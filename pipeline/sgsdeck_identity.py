@@ -33,12 +33,23 @@ def canonical_corpus(heroes, tactics):
             if identifier in corpus:
                 raise ValueError(f"duplicate canonical ID: {identifier}")
             corpus[identifier] = {"kind": kind, "record": record}
+    # Mã chiến pháp đã gộp vẫn trỏ về bản ghi giữ lại (snapshot SGSDeck có thể còn tham chiếu mã cũ).
+    for kind, records in (("tactic", tactics),):
+        for record in records:
+            for former in (record.get("lookup") or {}).get("formerIds") or []:
+                if former in corpus:
+                    raise ValueError(f"duplicate canonical ID: {former}")
+                corpus[former] = {"kind": kind, "record": record}
     return corpus
 
 
 def _owner_names(record) -> tuple:
-    """Tên Việt hợp lệ của chủ: tên hiển thị hiện tại và tên Hán-Việt (tên lúc snapshot được rà)."""
-    return tuple(name for name in (record.get("viet"), record.get("hanViet")) if isinstance(name, str) and name)
+    """Tên Việt hợp lệ của chủ: tên hiển thị hiện tại, tên Hán-Việt (tên lúc snapshot được rà) và, với chiến pháp
+    đã gộp mã, tên của mã cũ (nằm trong alias)."""
+    names = [record.get("viet"), record.get("hanViet")]
+    if (record.get("lookup") or {}).get("formerIds"):
+        names += list(record.get("aliases") or [])
+    return tuple(name for name in names if isinstance(name, str) and name)
 
 
 def _variant(value: str) -> str:

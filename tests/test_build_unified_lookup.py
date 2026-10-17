@@ -108,9 +108,18 @@ class BuildUnifiedLookupTest(unittest.TestCase):
 
             baseline_tactics = json.loads((ROOT / "pipeline" / "lookup-inputs" / "tactics.json").read_bytes())
             output_tactics = {row["id"]: row for row in tactics}
+            # Mã đã gộp theo client trỏ về mã giữ; mã bị bỏ hẳn (không phải chiến pháp) không còn.
+            retired = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())["retired"]
+            for row in tactics:
+                for former in row["lookup"]["formerIds"]:
+                    output_tactics[former] = row
             for baseline in baseline_tactics:
                 # Mã ổn định suy từ tên baseline; tên hiển thị có thể đã theo client.
                 identifier = build_module.canonical_id("tactic", baseline.get("viet") or baseline["hanViet"])
+                if identifier in retired:
+                    # Mã bị bỏ biến mất; mã gộp mở được qua mã giữ (kiểu trường theo mã giữ).
+                    self.assertEqual(identifier in output_tactics, retired[identifier] is not None)
+                    continue
                 self.assertEqual(type(output_tactics[identifier].get("target")), type(baseline.get("target")))
 
     def test_acquisition_union_revisions_rates_and_pending_are_semantic(self):
@@ -131,18 +140,11 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             rates = {row["lookup"]["activationRate"] for row in tactics}
             self.assertIn(1, rates)
             self.assertIn(0.25, rates)
-            dai_kich = next(row for row in catalog["troopMods"] if row["id"] == "troop-mod:dai-kich-si")
-            self.assertEqual(len(dai_kich["revisions"]), 3)
-            self.assertEqual(sum(row["isCurrent"] for row in dai_kich["revisions"]), 1)
-            self.assertEqual(
-                [row["effectiveDate"] for row in dai_kich["revisions"]],
-                ["2024-04-17", "2021-06-09", None],
-            )
-            for identifier in ("troop-mod:dan-duong-binh", "troop-mod:tien-dang-tu-si"):
-                revisions = next(row["revisions"] for row in catalog["troopMods"] if row["id"] == identifier)
-                self.assertTrue(revisions[0]["isCurrent"])
-                self.assertIsNotNone(revisions[0]["effectiveDate"])
-                self.assertFalse(revisions[-1]["isCurrent"])
+            # Cải tạo binh chủng chỉ giữ một bản client: không còn lịch sử bản SGSDeck.
+            client_mods = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())["troopMods"]
+            for row in catalog["troopMods"]:
+                self.assertEqual(row["revisions"], [])
+                self.assertEqual(row["effectVi"], client_mods[row["id"]]["effectVi"])
             self.assertFalse([row for row in tactics if row.get("effect") and not row.get("effectViet")])
             for group in ("equipment", "specials", "advisors", "troopMods", "buildings"):
                 for row in catalog[group]:
@@ -268,7 +270,8 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             )
             self.assertEqual(dien_vi["cardPacks"][0]["packZh"], "名將")
             self.assertEqual(sum(row["lookup"]["usageVi"] is not None for row in heroes), 94)
-            self.assertEqual(sum(bool(row["lookup"]["cardPacks"]) for row in heroes), 126)
+            # 126 tướng có gói thẻ trong guide; Hà Thị (không có ở client Global) đã bị bỏ.
+            self.assertEqual(sum(bool(row["lookup"]["cardPacks"]) for row in heroes), 125)
             for row in heroes:
                 self.assertEqual(row["lookup"]["usageVi"] is None, row["lookup"]["usageZh"] is None, row["id"])
             ledger = {
@@ -558,13 +561,16 @@ class ClientHeroSupplementTest(unittest.TestCase):
 
     def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None):
         # Ghim GOLDEN_HERO_DELTAS theo client: fixture mang đúng các `stats` đã duyệt của 7 tướng đó.
-        real = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())["overrides"]
+        client = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())
+        real = client["overrides"]
         pinned = {key: {"stats": real[key]["stats"]} for key in ("hero:vuong-nguyen-co", "hero:nhac-tien", "hero:truong-xuan-hoa", "hero:quan-ngan-binh", "hero:ma-van-loc", "hero:lu-linh-y", "hero:dong-bach")}
+        # Client tactics thật bỏ các chiến pháp chỉ có ở SGSDeck: giữ đúng danh sách tướng bị bỏ của client thật.
         overrides = {**pinned, **(overrides or {})}
         document = {
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Võ Tướng > Minh Giám", "capturedAt": "2026-10-15"},
             "heroes": list(heroes), "portraits": portraits or {}, "overrides": overrides or {}, "roleTags": role_tags or {}, "aliases": aliases or {},
+            "retired": client["retired"],
         }
         path = self.directory / "client.json"
         path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
@@ -702,22 +708,94 @@ class ClientTacticCaptureTest(unittest.TestCase):
         entry.update(overrides)
         return entry
 
-    def _build(self, tactics):
+    def _build(self, tactics, **extra):
         document = {
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Chiến Pháp > Toàn bộ", "capturedAt": "2026-10-16"},
             "tactics": tactics,
+            **extra,
         }
         path = self.directory / "client-tactics.json"
         path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+        # Tướng client thật, bỏ ghi đè liên kết chiến pháp (chúng trỏ tới chiến pháp chỉ có trong file client thật).
+        heroes = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())
+        overrides = {}
+        for owner, override in heroes["overrides"].items():
+            kept = {key: value for key, value in override.items() if key not in ("selfTacticId", "inheritTacticId")}
+            if kept:
+                overrides[owner] = kept
+        heroes["overrides"] = overrides
+        heroes_path = self.directory / "client-heroes.json"
+        heroes_path.write_text(json.dumps(heroes, ensure_ascii=False), encoding="utf-8")
         output = self.directory / "candidate"
         shutil.rmtree(output, ignore_errors=True)
         build_candidate(
             inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
             identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
-            client_tactics=path, output=output,
+            client_tactics=path, client_heroes=heroes_path, output=output,
         )
         return output
+
+    def test_retired_id_merges_into_survivor_and_removed_id_disappears(self):
+        output = self._build({}, retired={"tactic:nhanh-chan-tranh-dat": "tactic:si-tranh-tien-pho", "tactic:dao-vien-ket-nghia": None})
+        rows = self._rows(output, "tactics.json")
+        self.assertNotIn("tactic:nhanh-chan-tranh-dat", rows)
+        self.assertNotIn("tactic:dao-vien-ket-nghia", rows)
+        survivor = rows["tactic:si-tranh-tien-pho"]
+        self.assertEqual(survivor["lookup"]["formerIds"], ["tactic:nhanh-chan-tranh-dat"])
+        self.assertIn("Nhanh Chân Tranh Đất", survivor["aliases"])
+        self.assertTrue(all(row["lookup"]["formerIds"] == [] for key, row in rows.items() if key != "tactic:si-tranh-tien-pho"))
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
+        with self.assertRaisesRegex(ValueError, "retired tactic is invalid"):
+            self._build({}, retired={"tactic:khong-co": "tactic:si-tranh-tien-pho"})
+        with self.assertRaisesRegex(ValueError, "retired tactic is invalid"):
+            self._build({"tactic:nhanh-chan-tranh-dat": self._entry(nameVi="Nhanh Chân Tranh Đất")}, retired={"tactic:nhanh-chan-tranh-dat": "tactic:si-tranh-tien-pho"})
+
+    def test_client_troop_mod_is_the_only_version_and_keeps_matching_option_ids(self):
+        mod = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())["troopMods"]["troop-mod:dan-duong-binh"]
+        before = {row["id"]: row for row in json.loads(self._build({}).joinpath("lookup-catalog.json").read_bytes())["troopMods"]}["troop-mod:dan-duong-binh"]
+        output = self._build({}, troopMods={"troop-mod:dan-duong-binh": mod})
+        row = {row["id"]: row for row in json.loads((output / "lookup-catalog.json").read_bytes())["troopMods"]}["troop-mod:dan-duong-binh"]
+        self.assertEqual((row["nameVi"], row["effectVi"], row["revisions"]), (mod["nameVi"], mod["effectVi"], []))
+        self.assertIn(before["nameVi"], row["aliasesVi"])
+        self.assertEqual([item["tierVi"] for item in row["options"]], ["Đặc biệt"] * 3 + ["Sơ cấp"] * 3 + ["Trung cấp"] * 3 + ["Cao cấp"] * 3)
+        old_by_name = {item["nameVi"].lower(): item["id"] for item in before["options"]}
+        kept = row["options"][1]  # "Nâng Khiên" khác tên bản cũ ("Giơ khiên") -> mã mới; "Kháng Cự" trùng -> giữ mã
+        self.assertEqual(row["options"][2]["id"], old_by_name["kháng cự"])
+        self.assertEqual(kept["id"], "troop-option:dan-duong-binh:nang-khien")
+        self.assertEqual(row["options"][0]["convertsToVi"], "Thương binh")
+        with self.assertRaisesRegex(ValueError, "client troop mod is invalid"):
+            self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": mod["options"][:11]}})
+
+    def test_retired_hero_and_removed_tactics_leave_no_links(self):
+        output = self._build({}, retired={"tactic:tuyet-ke-chiet-muu": None, "tactic:duy-noi-thien-quyen": None})
+        heroes = self._rows(output, "heroes-dict.json")
+        tactics = self._rows(output, "tactics.json")
+        self.assertNotIn("hero:ha-thi", heroes)  # retired trong lookup-client-heroes.json
+        self.assertNotIn("tactic:tuyet-ke-chiet-muu", tactics)
+        self.assertFalse([row["id"] for row in tactics.values() if "hero:ha-thi" in row["lookup"]["inheritedFromIds"]])
+
+    def test_tactic_notes_add_alias_and_season_condition(self):
+        note = {"aliases": ["Thác-Cắt Xương Trị Độc"], "conditions": [{"kind": "season", "textVi": "Bán ở Thương nhân › Mùa giải."}]}
+        row = self._rows(self._build({}, tacticNotes={"tactic:cat-xuong-tri-doc": note}), "tactics.json")["tactic:cat-xuong-tri-doc"]
+        self.assertIn("Thác-Cắt Xương Trị Độc", row["aliases"])
+        self.assertEqual(row["lookup"]["conditions"][-1], note["conditions"][0])
+        with self.assertRaisesRegex(ValueError, "client tactic note is invalid"):
+            self._build({}, tacticNotes={"tactic:khong-co": note})
+
+    def test_new_client_tactic_is_appended_with_chinese_text(self):
+        entry = self._entry(nameVi="Hộ Vệ", effectVi="Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp")
+        season = [{"kind": "season", "textVi": "Chiến pháp bổ sung của mùa Binh Diễn Xuân Thu."}]
+        output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "為我軍主將分擔 10%→20% 傷害，持續 2 回合", "conditions": season, "aliases": ["Hộ Vệ Chủ Tướng"]}})
+        row = self._rows(output, "tactics.json")["tactic:ho-ve"]
+        self.assertEqual((row["viet"], row["chinese"], row["quality"], row["pending"]), ("Hộ Vệ", "護衛", "B", False))
+        self.assertEqual(row["lookup"]["conditions"], season)
+        self.assertEqual(row["aliases"], ["Hộ Vệ Chủ Tướng"])
+        with self.assertRaisesRegex(ValueError, "condition shape is invalid"):
+            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "x", "conditions": [{"kind": "mùa", "textVi": "x"}]}})
+        self.assertEqual(row["effectViet"], entry["effectVi"])
+        with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
+            self._build({"tactic:ho-ve-x": entry}, newTactics={"tactic:ho-ve-x": {"nameZh": "護衛", "effectZh": "x"}})
 
     @staticmethod
     def _rows(output, name):
@@ -731,7 +809,7 @@ class ClientTacticCaptureTest(unittest.TestCase):
         self.assertEqual((row["targetViet"], row["troopFit"], row["effectViet"].startswith("Khiến một quân ta")), ("Một quân Đồng Minh", self.ALL_TROOPS, True))
         self.assertEqual((row["lookup"]["activationRate"], row["lookup"]["effectTypeVi"], row["lookup"]["maxUsers"]), (0.4, "Trị liệu", 1))
         self.assertEqual(row["lookup"]["exchangeConditionVi"], "Sự kiện Thử — Lưu Bị (Thục): cần 1 thẻ")
-        validate_candidate(output, client_tactics=self.directory / "client-tactics.json")
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
         ledger = [item for item in json.loads((output / "ledger.json").read_bytes()) if item["sourceRecordId"] == "client-tactics:vien-cuu"]
         self.assertIn("clientCapture.effectVi", {item["fieldPath"] for item in ledger})
         self.assertTrue(all(item["chosenInput"] == "client-capture" for item in ledger))

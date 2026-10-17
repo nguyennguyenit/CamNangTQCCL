@@ -2125,7 +2125,7 @@
         "chinh": 0.43,
         "mi": 0.44
       },
-      "selfTacticId": null,
+      "selfTacticId": "tactic:tran-ap-khan-vang",
       "inheritTacticId": "tactic:thanh-dong-kich-tay"
     },
     "hero:chung-do": {
@@ -2821,7 +2821,8 @@
         "chinh": 1.76,
         "mi": 0.66
       },
-      "inheritTacticId": "tactic:tinh-hoa"
+      "inheritTacticId": "tactic:tinh-hoa",
+      "selfTacticId": "tactic:chi-diep-phu-to"
     },
     "hero:ly-quyet": {
       "troopApt": {
@@ -4199,5 +4200,8 @@
     "hero:vu-cat": [
       "Vu Cát"
     ]
-  }
+  },
+  "retired": [
+    "hero:ha-thi"
+  ]
 }

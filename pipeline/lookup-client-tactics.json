@@ -29,7 +29,7 @@
     },
     "tactic:am-tien-nan-phong": {
       "nameVi": "Ám Tiễn Nan Phòng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -45,7 +45,7 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:am-trieu-dung-dong": {
+    "tactic:am-trieu-hung-dung": {
       "nameVi": "Ám Triều Dũng Động",
       "quality": "A",
       "type": "ACTIVE",
@@ -63,27 +63,9 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:am-trieu-hung-dung": {
-      "nameVi": "Ám Triều Dũng Động",
-      "quality": null,
-      "type": "ACTIVE",
-      "activationRate": 0.35,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Binh đao đơn",
-      "effectVi": "Chuẩn bị 1 hiệp, gây ra 1 lần tấn công Binh Đao cho tướng chính quân địch (tỷ lệ sát thương 136%→272%)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:an-do-tac-ky": {
       "nameVi": "Án Đồ Tác Kí",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -153,9 +135,27 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:ap-che-so": {
+      "nameVi": "Áp Chế-Sơ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Khống chế",
+      "effectVi": "Khiến một quân địch Thống Soái giảm 6→12 điểm, duy trì 2 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:bac-van": {
       "nameVi": "Uyên Bác",
-      "quality": null,
+      "quality": "B",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -173,7 +173,7 @@
     },
     "tactic:bach-bo-xuyen-duong": {
       "nameVi": "Bách Phát Bách Trúng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -191,7 +191,7 @@
     },
     "tactic:bach-ke-da-muu": {
       "nameVi": "Bách Kế Đa Mưu",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -287,7 +287,7 @@
     },
     "tactic:bach-y-do-giang": {
       "nameVi": "Bạch Y Độ Giang",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -335,7 +335,7 @@
       ],
       "targetVi": "Một quân địch",
       "effectTypeVi": "Binh đao đơn",
-      "effectVi": "Phát động 2 lần tấn công Binh Đao vào cá thể quân địch (tỷ lệ sát thương 51%→102%), nếu mục tiêu ở trong trạng thái Chấn Động, sẽ gây ra trạng thái Cấm Trị Liệu cho mục tiêu, duy trì 2 hiệp, 2 lần tấn công mục tiêu được giảm định riêng",
+      "effectVi": "Phát động 2 lần tấn công Binh Đao vào cá thể quân địch (tỷ lệ sát thương 51%→102%), nếu mục tiêu ở trong trạng thái Chấn Động, sẽ gây ra trạng thái Cấm Trị Liệu cho mục tiêu, duy trì 2 hiệp, 2 lần tấn công mục tiêu được giám định riêng",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -395,7 +395,7 @@
     },
     "tactic:be-nguyet": {
       "nameVi": "Bế Nguyệt",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.75,
       "troopFit": [
@@ -485,7 +485,7 @@
     },
     "tactic:cam-nang-dieu-ke": {
       "nameVi": "Túi Gấm Diệu Kế",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -503,7 +503,7 @@
     },
     "tactic:cam-pham-bach-linh": {
       "nameVi": "Cẩm Phàm Bách Linh",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -521,7 +521,7 @@
     },
     "tactic:cao-chiem-vien-chuc": {
       "nameVi": "Cao Chiêm Viễn Chúc",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -539,7 +539,7 @@
     },
     "tactic:cao-lo-lien-doanh": {
       "nameVi": "Cao Lỗ Liên Doanh",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -552,6 +552,42 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Binh đao đơn",
       "effectVi": "Khi chiến đấu bắt đầu, vác lên ống tên, tiếp tên 10 lần (khi số lần bằng 0 sẽ vô hiệu hóa), mỗi hiệp bắn 2 lần, có 50% xác suất (chịu ảnh hưởng của võ lực) bắn thêm 1 lần, gây cho đơn thể quân địch sát thương binh đao (mục tiêu mỗi lần được chọn độc lập, tỉ lệ sát thương 41%→82%) và có 50% xác suất khiến sát thương mà mục tiêu phải chịu tăng 3%→6%, có thể cộng dồn 2 lần, hiệp đầu gây thêm hiệu ứng Giao Binh Khí, mỗi hiệp có 37.5%→75% xác suất không thể công kích phổ thông, duy trì 2 hiệp; khi bản thân là chủ tướng, mỗi hiệp sẽ tiếp tên 1 lần",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:cap-cuu-so": {
+      "nameVi": "Cấp Cứu-Sơ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến một quân ta nhận trạng thái Cấp Cứu, mỗi lần khi phải chịu sát thương có 50% xác suất hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 20%→40%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:cap-toc": {
+      "nameVi": "Cấp Tốc",
+      "quality": null,
+      "type": "PASSIVE",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến bản thân Tốc độ tăng 8.5→17 điểm",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -593,7 +629,7 @@
     },
     "tactic:chan-hai-tu-canh": {
       "nameVi": "Bốn Bề Rung Động",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -611,7 +647,7 @@
     },
     "tactic:chan-quan-kich-doanh": {
       "nameVi": "Trấn Quân Kích Doanh",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -627,9 +663,27 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:chi-diep-phu-to": {
+      "nameVi": "Chi Diệp Phù Tô",
+      "quality": "A",
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 1%→2%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:chi-nhu-dong-cuong": {
       "nameVi": "Lấy Nhu Chế Cương",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -647,7 +701,7 @@
     },
     "tactic:chi-qua-vy-vo": {
       "nameVi": "Chỉ Qua Vi Vũ",
-      "quality": null,
+      "quality": "S",
       "type": "BURST",
       "activationRate": 0.35,
       "troopFit": [
@@ -701,7 +755,7 @@
     },
     "tactic:chu-tuong": {
       "nameVi": "Thợ Rèn",
-      "quality": null,
+      "quality": "B",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -773,7 +827,7 @@
     },
     "tactic:co-chi-ac-lai": {
       "nameVi": "Cổ Chi Ác Lai",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -791,7 +845,7 @@
     },
     "tactic:co-giam-tien-thuc": {
       "nameVi": "Cơ Giám Tiên Thức",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -845,7 +899,7 @@
     },
     "tactic:co-nhuoc-kim-thang": {
       "nameVi": "Vững Như Thành Đồng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -863,7 +917,7 @@
     },
     "tactic:co-phan-sinh-tu": {
       "nameVi": "Nhìn Lại Xinh Tươi",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -876,6 +930,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Lấy trộm 17.5→35 điểm Trí Lực, Võ Lực, Thống Soái và Mị Lực của 1 Võ Tướng nam quân địch (chịu ảnh hưởng Mị Lực), chuyển sang cho bản thân và 1 quân đồng đội, duy trì 2 hiệp, có thể cộng dồn 2 lần",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:co-vu-so": {
+      "nameVi": "Cổ Vũ-Sơ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến một quân ta Võ Lực tăng 10→20 điểm, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -899,7 +971,7 @@
     },
     "tactic:cong-huan-khac-cu": {
       "nameVi": "Công Huân Khắc Cử",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -917,7 +989,7 @@
     },
     "tactic:cong-than": {
       "nameVi": "Công Thần",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -952,7 +1024,7 @@
     },
     "tactic:cung-yeu-co": {
       "nameVi": "Cung Yêu Cơ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -1024,7 +1096,7 @@
     },
     "tactic:cuong-liet-bat-khuat": {
       "nameVi": "Kiên Cường Bất Khuất",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -1057,7 +1129,7 @@
     },
     "tactic:cuu-doc": {
       "nameVi": "Rượu Độc",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.7,
       "troopFit": [
@@ -1089,7 +1161,7 @@
     },
     "tactic:dai-quan-quyet-chien": {
       "nameVi": "Đài Quan Quyết Chiến",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -1107,7 +1179,7 @@
     },
     "tactic:dam-tam": {
       "nameVi": "Tâm Sự",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -1133,7 +1205,7 @@
       ],
       "targetVi": "Tập thể quân ta (3 người)",
       "effectTypeVi": "Tăng ích",
-      "effectVi": "Tiến bậc Lính Khiên thành Lính Đan Dương dũng mãnh vô uy: Thống Soái toàn thể quân ta tăng 18→36 điểm, và trước khi bắt đầu mỗi hiệp, căn cứ vào sát thương binh đao toàn thể quân ta gây ra ở hiệp trước để nhận tỷ lệ Lính Đan Dương nhất định, được cộng dồn (Khi quân ta chịu sát thương mưu lược, sẽ tiêu hao Lính Đan Dương để chống đỡ 18%→36% sát thương Mưu Lược, số lượng Lính Đan Dương mỗi hiệp sẽ suy giảm10%); Nếu Đào Khiêm thống lĩnh, thì tỷ lệ chống đỡ sẽ tăng đến 20%→40%",
+      "effectVi": "Tiến bậc Lính Khiên thành Lính Đan Dương dũng mãnh vô uy: Thống Soái toàn thể quân ta tăng 18→36 điểm, và trước khi bắt đầu mỗi hiệp, căn cứ vào sát thương binh đao toàn thể quân ta gây ra ở hiệp trước để nhận tỷ lệ Lính Đan Dương nhất định, được cộng dồn (Khi quân ta chịu sát thương mưu lược, sẽ tiêu hao Lính Đan Dương để chống đỡ 18%→36% sát thương Mưu Lược, số lượng Lính Đan Dương mỗi hiệp sẽ suy giảm 10%); Nếu Đào Khiêm thống lĩnh, thì tỷ lệ chống đỡ sẽ tăng đến 20%→40%",
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Đan Dương Tinh Binh — tướng 5 sao phe Quần: cần 3 thẻ"
     },
@@ -1153,7 +1225,7 @@
     },
     "tactic:dang-phong-ham-tran": {
       "nameVi": "Đăng Phong Hãm Trận",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.55,
       "troopFit": [
@@ -1206,7 +1278,7 @@
     },
     "tactic:dao-xuat-nhu-dinh": {
       "nameVi": "Xuất Đao Như Sấm",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -1242,7 +1314,7 @@
     },
     "tactic:di-hoa-tiep-moc": {
       "nameVi": "Lập Lờ Đánh Tráo",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -1260,7 +1332,7 @@
     },
     "tactic:di-qua-dich-chung": {
       "nameVi": "Lấy Ít Đánh Nhiều",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -1278,7 +1350,7 @@
     },
     "tactic:dien-hau": {
       "nameVi": "Chốt Đuôi",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.25,
       "troopFit": [
@@ -1296,7 +1368,7 @@
     },
     "tactic:dieu-thu-minh-thach": {
       "nameVi": "Diệu Thư Minh Thạch",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -1332,7 +1404,7 @@
     },
     "tactic:dinh-quan-tram-tuong": {
       "nameVi": "Định Quân Trảm Tướng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -1366,7 +1438,7 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:doan-binh-tuong-kien": {
+    "tactic:doan-binh-tuong-tiep": {
       "nameVi": "Đoản Binh Tương Kiến",
       "quality": "A",
       "type": "ACTIVE",
@@ -1381,24 +1453,6 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Binh đao đơn",
       "effectVi": "Khiến cá thể quân địch giảm 15→30 điểm Thống Soái, duy trì 1 hiệp, và gây ra 1 lần tấn công Binh Đao đối với mục tiêu này (tỷ lệ sát thương 105%→210%)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:doan-binh-tuong-tiep": {
-      "nameVi": "Đoản Binh Tương Kiến",
-      "quality": null,
-      "type": "ACTIVE",
-      "activationRate": 0.4,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Binh đao đơn",
-      "effectVi": "Khiến một quân địch giảm 15→30 điểmThống Soái, duy trì 1 hiệp, và gây cho hắn 1 lần tấn công binh đao (tỷ lệ sát thương 105%→210%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -1476,7 +1530,7 @@
     },
     "tactic:doc-tuyen-cu-thuc": {
       "nameVi": "Độc Tuyền Cự Thục",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.6,
       "troopFit": [
@@ -1494,7 +1548,7 @@
     },
     "tactic:dong-chien-than-tien": {
       "nameVi": "Đi Đầu Cùng Chiến",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.7,
       "troopFit": [
@@ -1566,7 +1620,7 @@
     },
     "tactic:dung-liet-tri-trong": {
       "nameVi": "Thận Trọng Anh Dũng",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -1584,7 +1638,7 @@
     },
     "tactic:dung-quan-tam-quan": {
       "nameVi": "Dũng Quán Tam Quân",
-      "quality": null,
+      "quality": "S",
       "type": "BURST",
       "activationRate": 0.35,
       "troopFit": [
@@ -1597,6 +1651,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Khống chế",
       "effectVi": "Sau khi tấn công thường, lại phát động trọng kích vào mục tiêu tấn công (tỷ lệ sát thương 90%→180%), và khiến mục tiêu rơi vào trạng thái Chấn Động (không thể hành động), duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:dung-vo": {
+      "nameVi": "Dũng Võ",
+      "quality": null,
+      "type": "PASSIVE",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến bản thân Võ Lực tăng 8.5→17 điểm",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -1674,7 +1746,7 @@
     },
     "tactic:duong-suc-chong-dich": {
       "nameVi": "Dưỡng Sức Chống Địch",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -1701,9 +1773,27 @@
       ],
       "targetVi": "Một quân ta",
       "effectTypeVi": "Tăng ích",
-      "effectVi": "Khi chiến đấu, bản thân nhận được 10%→20% Trí Lực, 10%→20% Thống Soái và Tiến Công Trước, nhưng không thể gây sát thương; Mỗi hiệp có 17.5%→35% xác suất (bị ảnh hưởng bởi Trí Lực) giúp nhóm quân ta (1-2 người) nhận được 1hiệp10%→20% Né Tránh (bị ảnh hưởng bởi Trí Lực)",
+      "effectVi": "Khi chiến đấu, bản thân nhận được 10%→20% Trí Lực, 10%→20% Thống Soái và Tiến Công Trước, nhưng không thể gây sát thương; Mỗi hiệp có 17.5%→35% xác suất (bị ảnh hưởng bởi Trí Lực) giúp nhóm quân ta (1-2 người) nhận được 1 hiệp 10%→20% Né Tránh (bị ảnh hưởng bởi Trí Lực)",
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Trận trảm Hạ Hầu Uyên — Hoàng Trung (Thục) hoặc Pháp Chính (Thục) hoặc Hạ Hầu Uyên (Ngụy): cần 3 thẻ"
+    },
+    "tactic:gan-da": {
+      "nameVi": "Gan Dạ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.25,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến một quân ta trong hiệp này nhận Quan Sát, Miễn Dịch tất cả hiệu ứng khống chế (Xác suất phát động 13%→25%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
     },
     "tactic:giai-phien-ve": {
       "nameVi": "Giải Phiền Vệ",
@@ -1721,7 +1811,7 @@
     },
     "tactic:giam-thong-chan-quan": {
       "nameVi": "Giám Thống Chấn Xa",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -1757,7 +1847,7 @@
     },
     "tactic:giang-dong-manh-ho": {
       "nameVi": "Giang Đông Mãnh Hổ",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -1775,7 +1865,7 @@
     },
     "tactic:giang-dong-tieu-ba-vuong": {
       "nameVi": "Giang Đông Tiểu Bá Vương",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -1787,13 +1877,13 @@
       ],
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
-      "effectVi": "Trong chiến đấu, bản thân mỗi hiệp có 25%→50% xác suất (ảnh hưởng bởi Võ Lực) gây cho 1 quân địch sát thương Binh Đao (tỷ lệ sát thương 96%→192%) và trị liệu Võ Tướng có Binh Lực thấp nhất quân ta (tỷ lệ Trị Liệu28%→56%, ảnh hưởng bởi Võ Lực); khi bản thân là Chủ Tướng, 2 hiệp đầu, khiến sát thương phải chịu của 1 quân địch tăng 15%→30%",
+      "effectVi": "Trong chiến đấu, bản thân mỗi hiệp có 25%→50% xác suất (ảnh hưởng bởi Võ Lực) gây cho 1 quân địch sát thương Binh Đao (tỷ lệ sát thương 96%→192%) và trị liệu Võ Tướng có Binh Lực thấp nhất quân ta (tỷ lệ Trị Liệu 28%→56%, ảnh hưởng bởi Võ Lực); khi bản thân là Chủ Tướng, 2 hiệp đầu, khiến sát thương phải chịu của 1 quân địch tăng 15%→30%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
     "tactic:giang-thien-truong-diem": {
       "nameVi": "Giang Thiên Trường Diệm",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -1806,24 +1896,6 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Mưu Lược đơn",
       "effectVi": "Trong chiến đấu, mỗi hiệp sẽ thi triển 1 tầng Trường Diệm lên toàn thể quân địch (nếu mục tiêu trong trạng thái Đốt Cháy hoặc Thủy Công sẽ có 50% xác suất thi triển thêm 1 tầng), mỗi tầng Trường Diệm sẽ khiến sát thương Mưu Lược phải chịu tăng 2%→4%; Khi bản thân hành động sẽ gây sát thương Mưu Lược cho 1 quân địch ngẫu nhiên (tỷ lệ sát thương 50%→100%, Trí Lực ảnh hưởng); Khi bản thân là Tướng Chính, toàn thể quân địch mỗi có 5 tầng Trường Diệm, sẽ có 35% xác suất (Trí Lực ảnh hưởng) lặp lại 1 lần sát thương Mưu Lược này",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:gio-tap-mua-sa": {
-      "nameVi": "Gió Táp Mưa Sa",
-      "quality": "S",
-      "type": "ACTIVE",
-      "activationRate": 0.4,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Binh đao đơn",
-      "effectVi": "Gây ra cho Võ Tướng phe địch ngẫu nhiên 3-4 lần tấn công Binh Đao (tỉ lệ sát thương 39%→78%, mỗi lần tăng 6%), từ lần thứ 3 trở đi, sẽ kèm thêm trạng thái Cấm Trị Liệu",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -1843,7 +1915,7 @@
     },
     "tactic:ham-tran-dot-tap": {
       "nameVi": "Tập Kích Trận Địa",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -1861,7 +1933,7 @@
     },
     "tactic:han-thien-si-dia": {
       "nameVi": "Lửa Cháy Ngùn Ngụt",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -1873,7 +1945,25 @@
       ],
       "targetVi": "Tập thể địch (3 người)",
       "effectTypeVi": "Mưu Lược nhóm",
-      "effectVi": "Chuẩn bị 1 hiệp, phóng Hỏa Công vào toàn thể quân địch (tỷ lệ sát thương 51%→102%, bị Trí Lực ảnh hưởng), và phóng trạng thái Đốt Cháy, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 36%→72%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+      "effectVi": "Chuẩn bị 1 hiệp, phóng hỏa công vào toàn thể quân địch (tỷ lệ sát thương 51%→102%, bị Trí Lực ảnh hưởng), và phóng trạng thái Đốt Cháy (tỷ lệ sát thương 36%→72%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:hao-hung-so": {
+      "nameVi": "Hào Hùng-Sơ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến một quân ta Tốc độ tăng 10→20 điểm, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -1915,7 +2005,7 @@
     },
     "tactic:hieu-thang-duy-ac": {
       "nameVi": "Hiệu Thắng Duy Ác",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -1933,7 +2023,7 @@
     },
     "tactic:hieu-tri-luong-moc": {
       "nameVi": "Biết Được Gỗ Tốt",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -2019,7 +2109,7 @@
     },
     "tactic:ho-gia-du-am": {
       "nameVi": "Tiếng Sáo Dư Âm",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -2031,31 +2121,13 @@
       ],
       "targetVi": "Tập thể quân ta (2 người)",
       "effectTypeVi": "Trị liệu",
-      "effectVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, bị Trí lực ảnh hưởng) và có 50% xác suất khiến chính mình và một quân đồng minh gây ra sát thương binh đao và sát thương mưu lược tăng, phải chịu sát thương binh đao và sát thương mưu lược giảm 13%→26% (chịu ảnh hưởng của trí lực), giảm định riêng, duy trì 2 hiệp",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:ho-gia-thap-bat-phach": {
-      "nameVi": "Tiếng Sáo Dư Âm",
-      "quality": null,
-      "type": "ACTIVE",
-      "activationRate": 0.5,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tập thể quân ta (2 người)",
-      "effectTypeVi": "Trị liệu",
-      "effectVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, bị Trí lực ảnh hưởng) và có 50% xác suất khiến chính mình và một quân đồng minh gây ra sát thương binh đao và sát thương mưu lược tăng, phải chịu sát thương binh đao và sát thương mưu lược giảm 13%→26% (chịu ảnh hưởng của trí lực), giảm định riêng, duy trì 2 hiệp",
+      "effectVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, bị Trí lực ảnh hưởng) và có 50% xác suất khiến chính mình và một quân đồng minh gây ra sát thương binh đao và sát thương mưu lược tăng, phải chịu sát thương binh đao và sát thương mưu lược giảm 13%→26% (chịu ảnh hưởng của trí lực), giám định riêng, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
     "tactic:ho-hau": {
       "nameVi": "Hổ Hầu",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2073,7 +2145,7 @@
     },
     "tactic:ho-si": {
       "nameVi": "Hổ Dại",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -2086,6 +2158,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong trận, mỗi hiệp sẽ chọn một quân địch, tất cả tấn công do bản thân phát động đều sẽ khóa chọn mục tiêu này và sát thương gây ra tăng 16.5%→33% (bị Võ Lực ảnh hưởng); Nếu đánh bại được mục tiêu sẽ giúp bản thân nhận được trạng thái Phá Trận (khi gây sát thương sẽ bỏ qua Thống Soái và Trí Lực của mục tiêu), duy trì đến hết trận",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:ho-ve": {
+      "nameVi": "Hộ Vệ",
+      "quality": "B",
+      "type": "ACTIVE",
+      "activationRate": 0.35,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân Đồng Minh",
+      "effectTypeVi": "Cứu Viện",
+      "effectVi": "Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -2105,7 +2195,7 @@
     },
     "tactic:hoa-cong": {
       "nameVi": "Hỏa Công",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -2123,7 +2213,7 @@
     },
     "tactic:hoa-dung-nguyet-mao": {
       "nameVi": "Hoa Dung Nguyệt Mạo",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -2159,7 +2249,7 @@
     },
     "tactic:hoa-than-anh-phong": {
       "nameVi": "Hỏa Thần Anh Phong",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2177,7 +2267,7 @@
     },
     "tactic:hoa-thieu-lien-doanh": {
       "nameVi": "Hỏa Thiêu Liên Doanh",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -2231,7 +2321,7 @@
     },
     "tactic:hoanh-qua-duoc-ma": {
       "nameVi": "Hoành Qua Dược Mã",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2303,7 +2393,7 @@
     },
     "tactic:hu-thuc-ky-muu": {
       "nameVi": "Hư Thực Kỳ Mưu",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2321,7 +2411,7 @@
     },
     "tactic:hue-chat-lan-tam": {
       "nameVi": "Huệ Chất Lan Tâm",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2339,7 +2429,7 @@
     },
     "tactic:hung-van-bo-vu": {
       "nameVi": "Hưng Vân Bố Vũ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2357,7 +2447,7 @@
     },
     "tactic:huy-binh-muu-thang": {
       "nameVi": "Huy Binh Mưu Thắng",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2447,7 +2537,7 @@
     },
     "tactic:ke-dinh-muu-quyet": {
       "nameVi": "Kế Định Mưu Quyết",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -2483,7 +2573,7 @@
     },
     "tactic:ket-minh": {
       "nameVi": "Liên Minh",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.55,
       "troopFit": [
@@ -2517,27 +2607,9 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:khac-tuan-hoa-nhat": {
-      "nameVi": "Khắc Tôn Họa Nhất",
-      "quality": null,
-      "type": "INTERNAL",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Nội chính",
-      "effectVi": "Khi ủy nhiệm Võ Tướng làm Quan Đá, sản lượng đá tăng 1.5%→3%",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:khac-tuan-hoach-nhat": {
       "nameVi": "Khắc Tôn Họa Nhất",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -2609,7 +2681,7 @@
     },
     "tactic:khien-lien": {
       "nameVi": "Liên Luỵ",
-      "quality": null,
+      "quality": "B",
       "type": "BURST",
       "activationRate": 0.35,
       "troopFit": [
@@ -2681,7 +2753,7 @@
     },
     "tactic:kho-nhuc-ke": {
       "nameVi": "Khổ Nhục Kế",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -2785,7 +2857,7 @@
     },
     "tactic:kien-cuong-chi-hoa": {
       "nameVi": "Hoa Kiên Cường",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2803,7 +2875,7 @@
     },
     "tactic:kiet-trung-tan-tri": {
       "nameVi": "Tận Trung Tận Trí",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -2857,7 +2929,7 @@
     },
     "tactic:kim-dan-bi-thuat": {
       "nameVi": "Kim Đơn Mật Thuật",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2875,7 +2947,7 @@
     },
     "tactic:kim-thanh-thang-tri": {
       "nameVi": "Thành Trì Vững Chắc",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2893,7 +2965,7 @@
     },
     "tactic:kinh-thien-vi-dia": {
       "nameVi": "Dọc Ngang Trời Đất",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -2911,7 +2983,7 @@
     },
     "tactic:kinh-thuat-chinh-yeu": {
       "nameVi": "Kinh Thuật Chính Yếu",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -2929,7 +3001,7 @@
     },
     "tactic:ky-binh-gian-dao": {
       "nameVi": "Kỳ Binh Gian Đạo",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -2965,7 +3037,7 @@
     },
     "tactic:ky-thi-kinh-luoc": {
       "nameVi": "Kỳ Thi Kinh Lược",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -3019,7 +3091,7 @@
     },
     "tactic:lam-chien-tien-dang": {
       "nameVi": "Lâm Chiến Tiên Đăng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -3032,6 +3104,24 @@
       "targetVi": "Tập thể địch (2 người)",
       "effectTypeVi": "Binh đao nhóm",
       "effectVi": "Gây cho nhóm quân địch (2 người) sát thương binh đao (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy Nhược (không thể gây ra sát thương), duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:lam-loan-so": {
+      "nameVi": "Làm Loạn-Sơ",
+      "quality": "C",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Khống chế",
+      "effectVi": "Khiến một quân địch Tốc độ giảm 6→12 điểm, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3073,7 +3163,7 @@
     },
     "tactic:lap-lo-danh-trao": {
       "nameVi": "Ám Độ Trần Thương",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -3086,24 +3176,6 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Khống chế",
       "effectVi": "Chuẩn bị 1 hiệp, gây cho một quân địch sát thương Mưu Lược (tỷ lệ sát thương 260%, bị Trí Lực ảnh hưởng) và khiến mục tiêu rơi vào trạng thái Chấn Động, duy trì 2 hiệp (Xác suất phát động 25%→50%)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:lay-it-danh-nhieu": {
-      "nameVi": "Lấy Ít Đánh Nhiều",
-      "quality": "S",
-      "type": "PASSIVE",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Chiến đấu hiệp thứ 2, 4, 6, hồi phục Binh Lực bản thân (tỉ lệ Trị Liệu 144%→288%, ảnh hưởng bởi Võ Lực) và nâng cao bản thân 5%→10% Võ Lực; Chiến đấu hiệp thứ 5, gây cho toàn thể quân địch sát thương Binh Đao (tỉ lệ sát thương 36%→72%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3127,7 +3199,7 @@
     },
     "tactic:lien-hoan-ke": {
       "nameVi": "Liên Hoàn Kế",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -3245,7 +3317,7 @@
     },
     "tactic:loan-the-gian-hung": {
       "nameVi": "Loạn Thế Gian Hùng",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3279,24 +3351,6 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:lua-chay-ngun-ngut": {
-      "nameVi": "Lửa Cháy Ngùn Ngụt",
-      "quality": "S",
-      "type": "ACTIVE",
-      "activationRate": 0.35,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tập thể địch (3 người)",
-      "effectTypeVi": "Mưu Lược nhóm",
-      "effectVi": "Chuẩn bị 1 hiệp, phóng hỏa công vào toàn thể quân địch (tỷ lệ sát thương 51%→102%, bị Trí Lực ảnh hưởng), và phóng trạng thái Đốt Cháy (tỷ lệ sát thương 36%→72%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:lua-duoi-gio-bay": {
       "nameVi": "Lửa Đuổi Gió Bay",
       "quality": "S",
@@ -3315,45 +3369,9 @@
       "maxUsers": 1,
       "exchangeConditionVi": null
     },
-    "tactic:lua-lan-khap-chon": {
-      "nameVi": "Lửa Lan Khắp Chốn",
-      "quality": "S",
-      "type": "ACTIVE",
-      "activationRate": 0.5,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tập thể địch (2-3 người)",
-      "effectTypeVi": "Mưu Lược nhóm",
-      "effectVi": "Phóng cho nhóm quân địch (2-3 người) trạng thái Đốt Cháy (tỷ lệ sát thương 28%→56%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp; nếu mục tiêu đã có trạng thái Đốt Cháy sẽ gây ra sát thương Binh Đao (tỷ lệ sát thương 59%→118%)",
-      "maxUsers": null,
-      "exchangeConditionVi": "Sự kiện Lạc Dương Đại Hỏa — Đổng Trác (Quần): cần 1 thẻ; Lý Nho (Quần): cần 1 thẻ; Lý Thôi (Quần): cần 1 thẻ"
-    },
     "tactic:luc-luc-thuong-quoc": {
       "nameVi": "Lục Lực Thượng Quốc",
-      "quality": null,
-      "type": "INTERNAL",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Nội chính",
-      "effectVi": "Khi ủy nhiệm làm Quan Chủ Chính, thời gian tăng cấp hạ tầng xây dựng giảm 15%→30%",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:luc-luc-thuong-tam": {
-      "nameVi": "Lục Lực Thượng Quốc",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -3371,7 +3389,7 @@
     },
     "tactic:luy-the-lap-danh": {
       "nameVi": "Công Danh Nhiều Đời",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -3389,7 +3407,7 @@
     },
     "tactic:ly-nguyet": {
       "nameVi": "Li Nguyệt",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3425,7 +3443,7 @@
     },
     "tactic:mat-ke-tru-nghich": {
       "nameVi": "Mật Kế Giết Nghịch",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3479,7 +3497,7 @@
     },
     "tactic:minh-sat-thu-hao": {
       "nameVi": "Minh Sát Thu Hào",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -3515,7 +3533,7 @@
     },
     "tactic:nach-chien-quan-hung": {
       "nameVi": "Khiêu Chiến Quần Hùng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -3551,7 +3569,7 @@
     },
     "tactic:nam-man-cu-khoi": {
       "nameVi": "Nam Man Cự Khôi",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3569,7 +3587,7 @@
     },
     "tactic:ngao-nghe-vuong-hau": {
       "nameVi": "Ngạo Nghễ Vương Hầu",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3587,7 +3605,7 @@
     },
     "tactic:nghi-thanh-chi-chi": {
       "nameVi": "Nghi Thành",
-      "quality": null,
+      "quality": "A",
       "type": "ACTIVE",
       "activationRate": 0.75,
       "troopFit": [
@@ -3605,7 +3623,7 @@
     },
     "tactic:nghia-dam-hung-tam": {
       "nameVi": "Nghĩa Đản Hùng Tâm",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -3641,7 +3659,7 @@
     },
     "tactic:ngoan-thiet-sinh-huy": {
       "nameVi": "Ngoan Thiết Sinh Huy",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -3659,7 +3677,7 @@
     },
     "tactic:ngoc-co-hoa-mao": {
       "nameVi": "Ngọc Cơ Hoa Mạo",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -3728,7 +3746,7 @@
     },
     "tactic:ngu-loi-oanh-dinh": {
       "nameVi": "Ngũ Lôi Oanh Đỉnh",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -3746,7 +3764,7 @@
     },
     "tactic:nguy-thu-tuong-gian": {
       "nameVi": "Ngụy Thư Tương Gian",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -3764,7 +3782,7 @@
     },
     "tactic:nhan-duc-tai-the": {
       "nameVi": "Nhân Đức Tái Thế",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -3782,7 +3800,7 @@
     },
     "tactic:nhan-hanh-tran": {
       "nameVi": "Nhạn Hành Trận",
-      "quality": null,
+      "quality": "S",
       "type": "FORMATION",
       "activationRate": 1.0,
       "troopFit": [
@@ -3810,24 +3828,6 @@
       "targetVi": "Tập thể quân ta (2-3 người)",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Khiến quần thể quân ta (2-3 người) nhận 12.5%→25% Né Tránh (Chịu ảnh hưởng của mục cao hơn trong: Tốc Độ hoặc Thống Soái), duy trì 1 hiệp, sau khi phát động Chiến Pháp này sẽ vào 1 hiệp CD (Xác suất phát động 30%→55%)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:nhanh-chan-tranh-dat": {
-      "nameVi": "Nhanh Chân Tranh Đất",
-      "quality": "S",
-      "type": "PASSIVE",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Tăng 10%→20% sát thương chiến pháp chủ động tự mang, trước khi phát động thành công chiến pháp tự mang, sẽ có 50% xác suất gây sát thương Binh Đao cho một nhóm quân địch (2-3 người) (tỉ lệ sát thương 60%→120%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3902,7 +3902,7 @@
     },
     "tactic:nhat-than-thi-dam": {
       "nameVi": "Gan Góc Phi Thường",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -3920,7 +3920,7 @@
     },
     "tactic:nhuc-than-thiet-bich": {
       "nameVi": "Thân Hình Sắt Đá",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -3938,7 +3938,7 @@
     },
     "tactic:oat-khoang-tinh-thong": {
       "nameVi": "Tinh Thông Đào Mỏ",
-      "quality": null,
+      "quality": "B",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -3989,24 +3989,6 @@
       "effectVi": "Sau khi tấn công thường, giảm của mục tiêu tấn công 9→18 điểm Thống Soái, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
-    },
-    "tactic:pha-phong-doan-nhan": {
-      "nameVi": "Thôi Phong Đoạn Nhẫn",
-      "quality": "S",
-      "type": "BURST",
-      "activationRate": 0.45,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Binh đao đơn",
-      "effectVi": "Sau khi Tấn Công Thường, gây ra 3 lần sát thương Binh Đao lên một đơn vị quân địch (tỷ lệ sát thương 33%→66%, chọn mục tiêu độc lập mỗi lần), nếu Võ Lực của mục tiêu thấp hơn bản thân thì khiến nó giảm 10%→20% sát thương gây ra (bị ảnh hưởng bởi Võ Lực), duy trì 1 hiệp",
-      "maxUsers": null,
-      "exchangeConditionVi": "Sự kiện Tôn Sách bị thích sát — Tôn Sách (Ngô): cần 1 thẻ; Trình Phổ (Ngô): cần 1 thẻ"
     },
     "tactic:pha-quan-uy-thang": {
       "nameVi": "Phá Quân Uy Thắng",
@@ -4064,7 +4046,7 @@
     },
     "tactic:phan-mau-anh-tu": {
       "nameVi": "Phấn Mâu Anh Tư",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4132,7 +4114,7 @@
     },
     "tactic:phi-sa-tau-thach": {
       "nameVi": "Bụi Đất Mù Trời",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -4150,7 +4132,7 @@
     },
     "tactic:pho-thang-dao-hoa": {
       "nameVi": "Xông Pha Khói Lửa",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4161,7 +4143,7 @@
       ],
       "targetVi": "Tập thể quân ta (3 người)",
       "effectTypeVi": "Tăng ích",
-      "effectVi": "Hiệp đấu thứ 2-6 hiệp, mỗi hiệp có 25%→50% xác suất (bị ảnh hưởng bởi Thống Soái) giúp nhóm quân ta (2-3 người) nhận được 1 lần Chống Đỡ và đưa nó vào trạng thái Nghiêm ngặt (Nghiêm ngặt: Có thể cộng dồn lượt Chống Đỡ trong thời gian duy trì, và thời gian Chống Đỡ kéo dài 8 hiệp), duy trì 2hiệp",
+      "effectVi": "Hiệp đấu thứ 2-6 hiệp, mỗi hiệp có 25%→50% xác suất (bị ảnh hưởng bởi Thống Soái) giúp nhóm quân ta (2-3 người) nhận được 1 lần Chống Đỡ và đưa nó vào trạng thái Nghiêm ngặt (Nghiêm ngặt: Có thể cộng dồn lượt Chống Đỡ trong thời gian duy trì, và thời gian Chống Đỡ kéo dài 8 hiệp), duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -4255,7 +4237,7 @@
     },
     "tactic:phu-menh-tu-lap": {
       "nameVi": "Phù Mệnh Tự Lập",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4273,7 +4255,7 @@
     },
     "tactic:phu-nguy-dinh-khuynh": {
       "nameVi": "Phò Nguy Dẹp Loạn",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4291,7 +4273,7 @@
     },
     "tactic:phuc-boi-thau-dich": {
       "nameVi": "Phúc Bối Thụ Địch",
-      "quality": null,
+      "quality": "A",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -4309,7 +4291,7 @@
     },
     "tactic:phuc-my-phan-cong": {
       "nameVi": "Phục Khiên Phản Kích",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -4327,7 +4309,7 @@
     },
     "tactic:phung-linh-binh-lo": {
       "nameVi": "Phụng Lệnh Bình Lỗ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4359,7 +4341,7 @@
     },
     "tactic:quoc-chi-trinh-can": {
       "nameVi": "Nòng Cốt Quốc Gia",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4377,7 +4359,7 @@
     },
     "tactic:quoc-sac": {
       "nameVi": "Quốc Sắc",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -4395,7 +4377,7 @@
     },
     "tactic:quoc-si-tuong-phong": {
       "nameVi": "Quốc Thổ Tướng Phong",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4413,7 +4395,7 @@
     },
     "tactic:quy-than-chi-nu": {
       "nameVi": "Quỷ Thần Chi Nữ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4449,7 +4431,7 @@
     },
     "tactic:quyen-tiem-cuu-dinh": {
       "nameVi": "Quyền Tiếm Cửu Đỉnh",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4503,7 +4485,7 @@
     },
     "tactic:si-dieu-phuong-tu": {
       "nameVi": "Si Điều Phượng Tư",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4521,7 +4503,7 @@
     },
     "tactic:si-tranh-tien-pho": {
       "nameVi": "Nhanh Chân Tranh Đất",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4575,7 +4557,7 @@
     },
     "tactic:soc-huyet-tung-hoanh": {
       "nameVi": "Giáo Huyết Tung Hoành",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4593,7 +4575,7 @@
     },
     "tactic:su-tu-phan-tan": {
       "nameVi": "Sư Tử Phấn Tấn",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -4625,7 +4607,7 @@
     },
     "tactic:tai-bien-co-tiep": {
       "nameVi": "Tài Biện Cơ Tiệp",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4715,7 +4697,7 @@
     },
     "tactic:tat-phong-sau-vu": {
       "nameVi": "Gió Táp Mưa Sa",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -4747,7 +4729,7 @@
     },
     "tactic:te-ban-hao-thi": {
       "nameVi": "Cách Hay Cứu Trợ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4765,7 +4747,7 @@
     },
     "tactic:te-tri-nhap-vy": {
       "nameVi": "Cẩn Thận Tỉ Mỉ",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -4783,7 +4765,7 @@
     },
     "tactic:thac-qua-luy-luy": {
       "nameVi": "Thành Quả To Lớn",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -4837,22 +4819,7 @@
     },
     "tactic:tham-muu-vien-lu": {
       "nameVi": "Thâm Mưu Viễn Lược",
-      "quality": null,
-      "type": "COMMAND",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Cung binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân ta",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Khi chiến đấu, chuyển Tấn Công Thường của Tướng Chính quân ta thành sát thương Mưu Lược (tỷ lệ sát thương 60%→120%), và khiến nó khi gây sát thương Mưu Lược sẽ trị liệu một đơn vị quân ta (lượng Trị Liệu tương đương 6%→12% sát thương lần này, bị ảnh hưởng bởi Trí Lực)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:tham-muu-vien-luoc": {
-      "nameVi": "Thâm Mưu Viễn Lược",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4885,7 +4852,7 @@
     },
     "tactic:than-co-dieu-toan": {
       "nameVi": "Thần Cơ Diệu Toán",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -4903,7 +4870,7 @@
     },
     "tactic:than-co-mac-trac": {
       "nameVi": "Thần Cơ Khó Đoán",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.65,
       "troopFit": [
@@ -4915,13 +4882,13 @@
       ],
       "targetVi": "Toàn thể hai bên",
       "effectTypeVi": "Mưu Lược nhóm",
-      "effectVi": "Khiến một đơn vị quân địch Hỗn Loạn2 hiệp và phán định lần lượt toàn thể quân địch quân ta ngoại trừ bản thân: Nếu chưa Hỗn Loạn thì có 25%→35% xác suất khiến nó Hỗn Loạn 2 hiệp; Khi đồng đội đã Hỗn Loạn thì xóa bỏ trạng thái xấu cho họ (Khi Giả Hủ là Tướng Chính, tăng 6%→12% sát thương gây ra cho đồng đội mục tiêu, bị ảnh hưởng bởi Trí Lực, duy trì 2 hiệp); Khi quân địch đã Hỗn Loạn thì gây sát thương Mưu Lược lên nó (TL Sát thương 87.5%→175%, bị ảnh hưởng bởi Trí Lực)",
+      "effectVi": "Khiến một đơn vị quân địch Hỗn Loạn 2 hiệp và phán định lần lượt toàn thể quân địch quân ta ngoại trừ bản thân: Nếu chưa Hỗn Loạn thì có 25%→35% xác suất khiến nó Hỗn Loạn 2 hiệp; Khi đồng đội đã Hỗn Loạn thì xóa bỏ trạng thái xấu cho họ (Khi Giả Hủ là Tướng Chính, tăng 6%→12% sát thương gây ra cho đồng đội mục tiêu, bị ảnh hưởng bởi Trí Lực, duy trì 2 hiệp); Khi quân địch đã Hỗn Loạn thì gây sát thương Mưu Lược lên nó (TL Sát thương 87.5%→175%, bị ảnh hưởng bởi Trí Lực)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
     "tactic:than-hoa-ke": {
       "nameVi": "Thần Hỏa Kế",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -4975,7 +4942,7 @@
     },
     "tactic:than-xa": {
       "nameVi": "Thần Xạ",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -5011,7 +4978,7 @@
     },
     "tactic:thanh-luu-nha-vong": {
       "nameVi": "Thanh Lưu Nhã Vọng",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5029,7 +4996,7 @@
     },
     "tactic:thanh-nang": {
       "nameVi": "Thanh Nang",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5065,7 +5032,7 @@
     },
     "tactic:thap-dien-mai-phuc": {
       "nameVi": "Thập Diện Mai Phục",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -5083,7 +5050,7 @@
     },
     "tactic:thap-nhi-ky-sach": {
       "nameVi": "Thập Nhị Kỳ Sách",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -5101,7 +5068,7 @@
     },
     "tactic:thap-thang-thap-bai": {
       "nameVi": "Thập Thắng Thập Bại",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5119,7 +5086,7 @@
     },
     "tactic:that-bo-thanh-thi": {
       "nameVi": "Thất Bộ Thành Thi",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5137,7 +5104,7 @@
     },
     "tactic:thau-thien-xung-de": {
       "nameVi": "Thụ Thiền Xưng Đế",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5155,7 +5122,7 @@
     },
     "tactic:the-thu-vo-hang": {
       "nameVi": "Thệ Thủ Vô Hàng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -5191,7 +5158,7 @@
     },
     "tactic:thich-thuong": {
       "nameVi": "Đâm Thương",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -5209,7 +5176,7 @@
     },
     "tactic:thien-ha-danh-xao": {
       "nameVi": "Thiên Hạ Danh Xảo",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5227,7 +5194,7 @@
     },
     "tactic:thien-ha-vo-song": {
       "nameVi": "Thiên Hạ Vô Song",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -5263,7 +5230,7 @@
     },
     "tactic:thien-huong": {
       "nameVi": "Thiên Hương",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5299,7 +5266,7 @@
     },
     "tactic:thien-uy-khieu-tran": {
       "nameVi": "Thiên Uy Khiếu Trận",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.55,
       "troopFit": [
@@ -5312,6 +5279,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Binh đao đơn",
       "effectVi": "Với cái giá không thể phát động Chiến Pháp Đột Kích, phát động 2 lần Đánh thường, và có 32→50% xác suất (bị ảnh hưởng bởi Võ Lực, khi bản thân là Tướng Chính, tỷ lệ cơ bản tăng đến 42→60%) khiến những lần phát động sau đó, số lần Đánh thường tăng thêm 1 lần, có thể cộng dồn; khi số lần Đánh thường trong hiệp này đạt 3 lần, sát thương bản thân nhận được giảm 10→20% (bị ảnh hưởng bởi Võ Lực), duy trì 1 hiệp; khi đạt 5 lần, khiến nhóm quân địch (2-3 người) rơi vào trạng thái Sợ Hãi (khi gây sát thương hoặc áp dụng Khống chế, có 20% xác suất thất bại, bị ảnh hưởng bởi Võ Lực, nếu đang ở trạng thái Đảo Phản hoặc Bỏ chạy, thì xác suất tăng đến 40%), duy trì 1 hiệp; khi đạt 7 lần, khiến nhóm quân địch (2-3 người) rơi vào trạng thái Đảo Phản (tỷ lệ Sát thương 88→178%, bị ảnh hưởng bởi chỉ số cao nhất giữa Võ Lực hoặc Trí Lực, bỏ qua Phòng ngự), duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:thien-van": {
+      "nameVi": "Thiên Vận",
+      "quality": "B",
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Tăng 8→16 Mị Lực của Võ Tướng",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -5335,7 +5320,7 @@
     },
     "tactic:thiet-hanh-thua-sung": {
       "nameVi": "Lợi Dụng Lòng Tin",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5457,7 +5442,7 @@
     },
     "tactic:thu-ma-thon-thiet": {
       "nameVi": "Thủ Ma Thốn Thiết",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5529,7 +5514,7 @@
     },
     "tactic:thuan-khiet-chi-hoa": {
       "nameVi": "Hoa Thuần Khiết",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5565,7 +5550,7 @@
     },
     "tactic:thuc-y-chi-duc": {
       "nameVi": "Thục Ý Chi Đức",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5597,24 +5582,6 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:thuong-lam-nhi-thuc": {
-      "nameVi": "Thành Quả To Lớn",
-      "quality": null,
-      "type": "INTERNAL",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Nội chính",
-      "effectVi": "Khi Võ Tướng được ủy nhiệm làm Quan Lương Thảo, sản lượng lương thực tăng 1%→2%",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:thuong-lam-phong-thuc": {
       "nameVi": "Kho Lương Đầy Ắp",
       "quality": "A",
@@ -5635,7 +5602,7 @@
     },
     "tactic:thuong-vu-nhu-phong": {
       "nameVi": "Thương Vũ Như Phong",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -5653,7 +5620,7 @@
     },
     "tactic:thuy-kinh-tien-sinh": {
       "nameVi": "Thủy Kính Tiên Sinh",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -5671,7 +5638,7 @@
     },
     "tactic:thuy-tam-van-vat": {
       "nameVi": "Vạn Vật Giao Điểm",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -5689,7 +5656,7 @@
     },
     "tactic:thuy-yem-that-quan": {
       "nameVi": "Nước Ngập Thất Quân",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -5761,7 +5728,7 @@
     },
     "tactic:tien-dang-tu-si": {
       "nameVi": "Tử Sĩ Tiên Phong",
-      "quality": null,
+      "quality": "S",
       "type": "TROOP",
       "activationRate": 1.0,
       "troopFit": [
@@ -5775,7 +5742,7 @@
     },
     "tactic:tien-dap": {
       "nameVi": "Giẫm Đạp",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.3,
       "troopFit": [
@@ -5827,6 +5794,90 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tinh-bach-ma-nghia-tong": {
+      "nameVi": "Tinh • Bạch Mã Nghĩa Tòng",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Cung binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Cung thành Bạch Mã Nghĩa Tòng cưỡi ngựa bắn cung vô cùng điêu luyện: Tốc độ hành quân đội quân tăng 50%, Toàn quân ta chiến đấu 2 hiệp đầu nhận được Tiến Công Trước (ưu tiên hành động) và tăng 10% tỉ lệ phát động Chiến Pháp Chủ Động",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-bach-nhi-binh": {
+      "nameVi": "Tinh • Bạch Nhị Binh",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Thương binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Thương lên thành Bạch Nhị Binh đã đánh là thắng: Toàn thể quân ta nhận 12% Công Tâm, Và sau khi Tấn công thường, có 45% xác suất phát động thêm một lần tấn công Mưu Lược lên mục tiêu tấn công (Tỷ lệ sát thương 110%, bị ảnh hưởng bởi Trí Lực)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-dai-kich-si": {
+      "nameVi": "Tinh • Đại Kích Sĩ",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Thương binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Thương lên thành Đại Kích Sĩ xông pha ngang dọc: Tăng Võ Lực toàn quân 14 điểm, Khi tiến hành tấn công thường, có 35% xác suất gây Sát thương binh đao lên một đơn vị địch (Tỷ lệ sát thương 122%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-giai-phien-ve": {
+      "nameVi": "Tinh • Giải Phiền Vệ",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Thương binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khi Lính Thương tiến cấp thành Giải Phiền Vệ vô địch: Đang chiến đấu, toàn thể quân ta tăng 36 điểm Tốc Độ, và Võ Tướng Tốc Độ Nhanh Nhất của quân ta sau khi Tấn công thường, Có 30% xác suất gây một lần sát thương lên Một quân địch (Tỷ lệ sát thương 36%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn, kèm theo sát thương bằng 40% thuộc tính Tốc Độ của võ tướng này), nếu không kích hoạt thì sẽ hồi phục một lượng Binh Lực nhất định cho Một quân ta (tỷ lệ Trị Liệu 72%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn), nếu do Hàn Đương Thống lĩnh, thì tỷ lệ sát thương cơ bản được tăng thêm 36%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-ham-tran-doanh": {
+      "nameVi": "Tinh • Hãm Trận Doanh",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Khiên binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Khiên thành Hãm Trận Doanh thuận buồm xuôi gió: Toàn thể quân ta Võ Lực, Thống Soái tăng 22 điểm, trước chiến đấu 3 hiệp nhận Trạng thái Cấp Cứu, khi nhận sát thương có 40% xác suất nhận trị liệu (tỷ lệ trị liệu 60%, chịu ảnh hưởng của Trí Lực)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-ho-bao-ky": {
+      "nameVi": "Tinh • Hổ Báo Kỵ",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Kỵ lên thành Hổ Báo Kỵ thiên hạ tinh nhuệ: toàn thể quân ta tăng cao 40 Võ Lực, chiến đấu trước 3 hiệp, toàn thể quân ta tăng tỉ lệ phát động Chiến Pháp Đột Kích lên 10%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tinh-hoa": {
       "nameVi": "Tịnh Hóa",
       "quality": "A",
@@ -5845,9 +5896,51 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tinh-linh-dan-duong": {
+      "nameVi": "Tinh • Lính Đan Dương",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Khiên binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Khiên thành Lính Đan Dương dũng mãnh vô uy: Toàn quân ta tăng 36 điểm Thống Soái, và mỗi hiệp Trước khi bắt đầu, Dựa theo sát thương do Toàn quân ta gây ra trong hiệp trước Sát thương binh đao Nhận một tỷ lệ nhất định Lính Đan Dương, Có thể cộng dồn (Khi quân ta chịu Sát thương mưu lược, Sẽ tiêu hao Lính Đan Dương để ngăn chặn trong đó 36% Sát thương mưu lược, số lượng Lính Đan Dương giảm 10% mỗi hiệp), Nếu Đào Khiêm Thống lĩnh, thì tỷ lệ ngăn chặn được tăng thêm 4%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-linh-giap-may": {
+      "nameVi": "Tinh • Lính Giáp Mây",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Khiên binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Khiên lên thành Lính Giáp Mây đao thương đâm không thủng: Toàn thể quân ta nhận sát thương Binh Đao giảm 24% (chịu ảnh hưởng Thống Soái), nhưng khi ở trạng thái Đốt Cháy sẽ mất thêm Binh Lực mỗi hiệp (Tỷ lệ sát thương 300%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-linh-thanh-chau": {
+      "nameVi": "Tinh • Lính Thanh Châu",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Thương binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Thương thành Lính Thanh Châu xung phong phá trận: Trước khi Chiến đấu 2 Hiệp, khiến toàn thể quân ta(2 người)khi chịu Tấn công thường sẽ phản kích lại kẻ tấn công 1 lần Phản kích (Tỷ lệ sát thương 72%), vào đầu Hiệp thứ 3, lần lượt Hồi phục Binh Lực cho toàn bộ quân ta, ưu tiên Hồi phục hoàn toàn cho đơn vị có Binh Lực thấp nhất, sau đó Hồi phục cho các đơn vị khác của quân ta (Tổng tỷ lệ trị liệu 180%, Ảnh hưởng bởi Võ Lực, chịu ảnh hưởng thêm bởi sát thương từ địch quân), nếu Tào Tháo Thống lĩnh, hiệu quả Trị liệu còn chịu ảnh hưởng thêm bởi Thống Soái",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tinh-luyen-sach-so": {
       "nameVi": "Tinh Luyện Sách Số",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -5863,9 +5956,125 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tinh-nhanh-tri-dong-nao": {
+      "nameVi": "Tinh • Nhanh Trí Động Não",
+      "quality": "S",
+      "type": "ACTIVE",
+      "activationRate": 0.55,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể quân ta (2-3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến Trí Lực, Thống Soái, Mị Lực nhóm quân ta (2-3 người) tăng 5.5→10 (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2-3 hiệp (Xác suất phát động 30%→55%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-phi-hung-quan": {
+      "nameVi": "Tinh • Phi Hùng Quân",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Kỵ thành Phi Hùng Quân dũng bất khả đương: Hiệu quả Trị liệu mà toàn quân ta nhận được tăng 16%, Khi Tướng Chính của ta mỗi hiệp hành động Có 60% xác suất gây Sát thương Mưu Lược lên quần thể quân địch 2 người (Tỷ lệ sát thương 64%, Bị ảnh hưởng bởi toàn bộ Lượng Trị Liệu tích lũy gây ra của quân ta, Sau khi kích hoạt xong sẽ đặt lại tiến độ tích lũy.), nếu Đổng Trác Thống lĩnh, thì hiệu quả Trị liệu nhận được tăng thêm 4%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-quan-cam-pham": {
+      "nameVi": "Tinh • Quân Cẩm Phàm",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Cung binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Cung thành Quân Cẩm Phàm khí cái ngàn quân: Đội quân khi Tấn công thường, có 45% xác suất khiến Mục tiêu rơi vào Trạng thái Bỏ chạy (Tỷ lệ Sát thương 64%, Ảnh hưởng bởi Võ Lực), kéo dài 2 Hiệp; nếu Mục tiêu đã Bỏ chạy thì gây ra Tấn công Binh Đao (Tỷ lệ Sát thương 110%) và Khôi phục 30% Binh Lực từ lượng Sát thương, nếu Cam Ninh Thống lĩnh, xác suất kích hoạt chịu ảnh hưởng bởi Thuộc tính Cao nhất và tăng cao Hội Tâm cho Đồng đội 6%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-quan-ho-ve": {
+      "nameVi": "Tinh • Quân Hổ Vệ",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Khiên binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Khiên thành Quân Hổ Vệ thiện chiến giữ vững biên cương: Đang chiến đấu, Khi Chủ Tướng quân ta sắp bị Đánh thường, Phó Tướng Tăng cao 12 Võ Lực, tối đa Tăng cao 5 lần, và sẽ Đối với từng kẻ tấn công gây ra Sát thương Binh đao (Tỷ lệ sát thương 72%, bị ảnh hưởng bởi từngtổn thất binh lực, Tăng cao nhất 40%), Mỗi hiệp tối đa kích hoạt 1 lần, nếu Điển Vi hoặc Hứa Chử Thống lĩnh, bản thân Thống Soái Tăng cao 50",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-tay-luong-thiet-ky": {
+      "nameVi": "Tinh • Tây Lương Thiết Kỵ",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Kỵ lên thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Chiến đấu 3 hiệp đầu, Tăng cho toàn thể quân ta 25% xác suất Hội Tâm (khi kích hoạt, sát thương Binh Đao tăng 100%)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-tu-si-tien-phong": {
+      "nameVi": "Tinh • Tử Sĩ Tiên Phong",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Cung binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến Bậc Lính Cung thành Tử Sĩ Tiên Phong không sợ chết: Đang chiến đấu, toàn quân ta miễn dịch trạng thái Bị Tập Kích, và khi nhận sát thương, có 60% xác suất (bị ảnh hưởng bởi Thống Soái của người mang) kích hoạt hiệu ứng sau: Nếu tỷ lệ Binh Lực thấp hơn người tấn công thì sẽ lấy trộm 21 điểm Thống Soái của nó (chịu ảnh hưởng bởi Thống Soái của người mang), Ngược lại giảm 3% tỉ lệ phát động Chiến Pháp Chủ Động của nó, duy trì 2 hiệp, có thể tích lũy 4 lần",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-tuong-binh": {
+      "nameVi": "Tinh • Tượng Binh",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Kỵ lên thành Tượng Binh tung hoành tự do: Điểm Công Thành Cơ Bản của đội quân tăng 25% nhưng Tốc Độ Hành Quân giảm 50%,, 50% sát thương phải chịu sẽ được trì hoãn, tổng kết dần trong 3 hiệp, và sát thương tổng kết giảm 20%. Khi bản thân bị Đốt Cháy, Nhận 50% Tấn công nhóm và Hỗn Loạn.Nếu Man Tộc thống lĩnh, mỗi khi có thêm 1 Võ Tướng Man Tộc, sát thương tổng kết sẽ giảm thêm 10%",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tinh-vo-duong-phi-quan": {
+      "nameVi": "Tinh • Vô Đương Phi Quân",
+      "quality": null,
+      "type": "TROOP",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Cung binh"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Tiến bậc Lính Cung lên thành Vô Đương Phi Quân trăm phát trăm trúng: Toàn thể quân ta tăng Thống Soái, Tốc Độ 22 điểm, hiệp đầu tiên gây Trúng Độc cho Tập thể địch (2 người), mỗi hiệp gây sát thương duy trì (tỷ lệ sát thương 80%, bị ảnh hưởng bởi Trí Lực), duy trì 3 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:to-giang-dao-lo": {
       "nameVi": "Nghịch Giang Diêu Lỗ",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -5901,7 +6110,7 @@
     },
     "tactic:toa-dieu-kinh-ngao": {
       "nameVi": "Tọa Điếu Kình Ngao",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -5919,7 +6128,7 @@
     },
     "tactic:toa-doan-dong-nam": {
       "nameVi": "Tọa Đoạn Đông Nam",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6009,7 +6218,7 @@
     },
     "tactic:tram-doan-co-muu": {
       "nameVi": "Trầm Đoạn Cơ Mưu",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -6022,24 +6231,6 @@
       "targetVi": "Tập thể địch (2 người)",
       "effectTypeVi": "Mưu Lược nhóm",
       "effectVi": "Khiến một nhóm quân địch (2 người) Thống Soái giảm, Trí Lực giảm 30%, duy trì 2 hiệp, và gây ra sát thương Mưu Lược (tỷ lệ sát thương 78%→156%, bị Trí Lực ảnh hưởng)",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
-    "tactic:tram-doc": {
-      "nameVi": "Rượu Độc",
-      "quality": null,
-      "type": "ACTIVE",
-      "activationRate": 0.7,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Mưu Lược đơn",
-      "effectVi": "Gây ra Rượu Độc cho cá thể quân địch, giảm 30%→60% Võ Lực (bị Trí Lực ảnh hưởng), duy trì 1 hiệp, sau 1 hiệp độc phát tác gây sát thương Mưu Lược (tỷ lệ sát thương 113%→226%, bị Trí Lực ảnh hưởng) đồng thời giảm 30→60 điểm Thống Soái (bị Trí Lực ảnh hưởng), có thể cộng dồn vô hạn, duy trì tới khi kết thúc chiến đấu",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6063,7 +6254,7 @@
     },
     "tactic:tran-ach-phong-cu": {
       "nameVi": "Trấn Ách Phòng Cụ",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6076,6 +6267,24 @@
       "targetVi": "Một quân ta",
       "effectTypeVi": "Khống chế",
       "effectVi": "Mỗi hiệp có 50% tỉ lệ (chịu ảnh hưởng trí lực) khiến một quân ta (ưu tiên chọn phó tướng ngoài chính mình) cứu viện tất cả phe ta và nhận trạng thái Nghỉ Ngơi (mỗi hiệp hồi phục binh lực một lần, tỉ lệ trị liệu 96%→192%, chịu ảnh hưởng trí lực) duy trì 1 hiệp, đồng thời trong 1 hiệp khiến họ khi bị tấn công thường, có 27.5%→55% tỉ lệ (chịu trí lực ảnh hưởng) xóa trạng thái tăng ích của kẻ công kích",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tran-ap-khan-vang": {
+      "nameVi": "Trấn Áp Khăn Vàng",
+      "quality": "A",
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Toàn thể hai bên",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Chiến đấu 2 hiệp đầu, khiến toàn thể quân ta miễn nhiễm trạng thái Bão cát, và khiến toàn thể quân địch rơi vào trạng thái Đảo phản, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 44%→88%, bị Võ lực hoặc Trí lực một trong hai loại loại nào cao hơn sẽ ảnh hưởng, bỏ qua Phòng ngự), duy trì 2 hiệp, nếu mục tiêu là Quân Khăn Vàng, tỉ lệ sát thương tăng 20%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6098,7 +6307,7 @@
     },
     "tactic:tran-vu-chi-thien": {
       "nameVi": "Trân Vu Chí Thiện",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -6116,7 +6325,7 @@
     },
     "tactic:tranh-phan-doat-mieu": {
       "nameVi": "Tranh Phân",
-      "quality": null,
+      "quality": "A",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -6152,7 +6361,7 @@
     },
     "tactic:tri-quan-nghi-trong": {
       "nameVi": "Cầm Quân Thận Trọng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -6224,7 +6433,7 @@
     },
     "tactic:truong-khu-truc-nhap": {
       "nameVi": "Tiến Quân Thần Tốc",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6278,7 +6487,7 @@
     },
     "tactic:tu-chien-bat-thoai": {
       "nameVi": "Tử Chiến Không Lui",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -6330,23 +6539,9 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:tu-si-tien-phong": {
-      "nameVi": "Tử Sĩ Tiên Phong",
-      "quality": "S",
-      "type": "TROOP",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Cung binh"
-      ],
-      "targetVi": "Tập thể quân ta (3 người)",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Tiến bậc Lính Cung thành Tử Sĩ Tiên Phong không sợ chết chóc: Trong chiến đấu, toàn thể quân ta miễn dịch trạng thái Bị Tập Kích, và khi chịu sát thương, có 30%→60% xác suất (chịu ảnh hưởng Thống Soái của người mang) kích hoạt hiệu quả sau: Nếu tỷ lệ binh lực thấp hơn kẻ tấn công thì sẽ cướp 10.5→21 điểm Thống Soái (chịu ảnh hưởng Thống Soái của người mang), nếu không sẽ giảm 1.5%→3% tỷ lệ phát động Chiến Pháp Chủ Động của kẻ đó, duy trì 2 hiệp, có thể cộng dồn 4 lần; Nếu Khúc Nghĩa thống lĩnh, sẽ cộng dồn 5 lần",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:tu-thach-thanh-kim": {
       "nameVi": "Biến Đá Thành Vàng",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.5,
       "troopFit": [
@@ -6382,7 +6577,7 @@
     },
     "tactic:tuong-binh": {
       "nameVi": "Tượng Binh",
-      "quality": null,
+      "quality": "S",
       "type": "TROOP",
       "activationRate": 1.0,
       "troopFit": [
@@ -6396,7 +6591,7 @@
     },
     "tactic:tuong-hanh-ky-tat": {
       "nameVi": "Tướng Hành Kỳ Tật",
-      "quality": null,
+      "quality": "S",
       "type": "BURST",
       "activationRate": 0.6,
       "troopFit": [
@@ -6414,7 +6609,7 @@
     },
     "tactic:tuong-mon-ho-nu": {
       "nameVi": "Con Gái Tướng Môn",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.6,
       "troopFit": [
@@ -6432,7 +6627,7 @@
     },
     "tactic:tuu-tri-nhuc-lam": {
       "nameVi": "Tửu Trì Nhục Lâm",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -6482,27 +6677,9 @@
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Trận Nhai Đình — Trương Cáp (Ngụy): cần 1 thẻ; Vương Bình (Thục): cần 1 thẻ; Mã Tắc (Thục): cần 1 thẻ"
     },
-    "tactic:ung-thi": {
-      "nameVi": "Ưng Thị Lang Cố",
-      "quality": null,
-      "type": "COMMAND",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "4 hiệp đầu, mỗi hiệp sẽ có 80% xác suất khiến bản thân nhận 3.5%→7% Công Tâm hoặc 3.5%→7% Kỳ Mưu (mỗi loại hiệu quả nhiều nhất cộng dồn 2 lần); Từ hiệp thứ 5 trở đi, mỗi hiệp tạo sát thương Mưu Lược cho 1-2 cá thể quân địch (tỷ lệ sát thương 77%→154%, chịu ảnh hưởng Trí Lực); Khi bản thân là Tướng Chính, nhận 8%→16% Kỳ Mưu",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:ung-thi-lang-co": {
       "nameVi": "Ưng Thị Lang Cố",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6520,7 +6697,7 @@
     },
     "tactic:uy-chan-hoa-ha": {
       "nameVi": "Uy Chấn Hoa Hạ",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -6556,7 +6733,7 @@
     },
     "tactic:uy-phong-lam-lam": {
       "nameVi": "Uy Phong Lẫm Liệt",
-      "quality": null,
+      "quality": "A",
       "type": "ACTIVE",
       "activationRate": 0.45,
       "troopFit": [
@@ -6574,7 +6751,7 @@
     },
     "tactic:uy-vo-tinh-chieu": {
       "nameVi": "Uy Tín Dũng Võ",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -6592,7 +6769,7 @@
     },
     "tactic:uyen-nhien-nan-trac": {
       "nameVi": "Vực Sâu Khó Dò",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6608,27 +6785,9 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
-    "tactic:van-quan-doat-su": {
-      "nameVi": "Vạn Quân Đoạt Sư",
-      "quality": "S",
-      "type": "ACTIVE",
-      "activationRate": 0.6,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Một quân địch",
-      "effectTypeVi": "Giảm ích",
-      "effectVi": "Khiến Tốc Độ của Võ Tướng có Tốc Độ nhanh nhất quân địch giảm 42.5%→85%, và có 22.5%→45% xác suất khiến Võ Tướng này rơi vào trạng thái Bị Tập Kích, Phá Hoại, Cấm Trị Liệu, Kế Tận, Giao Binh Khí, mỗi trạng thái giảm định riêng, duy trì 2 hiệp, Chiến Pháp này sau khi phát động sẽ vào 1 hiệp CD",
-      "maxUsers": null,
-      "exchangeConditionVi": null
-    },
     "tactic:van-quan-doat-suy": {
       "nameVi": "Vạn Quân Đoạt Sư",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.6,
       "troopFit": [
@@ -6675,7 +6834,7 @@
     },
     "tactic:van-tu-anh-tong": {
       "nameVi": "Văn Tụ Ảnh Tòng",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6711,7 +6870,7 @@
     },
     "tactic:vi-su-tat-khuyet": {
       "nameVi": "Vi Sư Tất Khuyết",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6744,24 +6903,6 @@
       "effectVi": "Khiến một quân ta nhận trạng thái Cấp cứu, mỗi khi nhận phải sát thương có 50% xác suất hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 37.5%→75%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
-    },
-    "tactic:vo-dich-can-truong": {
-      "nameVi": "Vô Địch Can Trường",
-      "quality": "S",
-      "type": "PASSIVE",
-      "activationRate": 1.0,
-      "troopFit": [
-        "Kỵ binh",
-        "Khiên binh",
-        "Cung binh",
-        "Thương binh",
-        "Khí giới"
-      ],
-      "targetVi": "Tôi",
-      "effectTypeVi": "Tăng ích",
-      "effectVi": "Trong quá trình chiến đấu, sau khi chịu sát thương Binh Đao, hiệp sau khi hành động sẽ tăng 10%→20% Hội Tâm và khiến sát thương lần tấn công tiếp theo tăng 32.5%→65%, duy trì 1 hiệp",
-      "maxUsers": null,
-      "exchangeConditionVi": "Sự kiện Rút Tên Nuốt Mắt — Hạ Hầu Đôn (Ngụy): cần 1 thẻ; Cao Thuận (Quần): cần 1 thẻ; Hạ Hầu Uyên (Ngụy): cần 1 thẻ"
     },
     "tactic:vo-duong-phi-quan": {
       "nameVi": "Vô Đương Phi Quân",
@@ -6797,7 +6938,7 @@
     },
     "tactic:vo-song-thuong-tuong": {
       "nameVi": "Vô Song Thượng Tướng",
-      "quality": null,
+      "quality": "B",
       "type": "ACTIVE",
       "activationRate": 0.25,
       "troopFit": [
@@ -6815,7 +6956,7 @@
     },
     "tactic:vo-thanh-chi-tu": {
       "nameVi": "Quân Thần Chi Tử",
-      "quality": null,
+      "quality": "S",
       "type": "COMMAND",
       "activationRate": 1.0,
       "troopFit": [
@@ -6833,7 +6974,7 @@
     },
     "tactic:vuong-ta-chi-tai": {
       "nameVi": "Vương Tá Chi Tài",
-      "quality": null,
+      "quality": "S",
       "type": "INTERNAL",
       "activationRate": 1.0,
       "troopFit": [
@@ -6851,7 +6992,7 @@
     },
     "tactic:xa-than-cuu-chu": {
       "nameVi": "Xả Thân Cứu Chủ",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -6905,7 +7046,7 @@
     },
     "tactic:xu-tu-bat-hoac": {
       "nameVi": "Xử Từ Bất Hoặc",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.35,
       "troopFit": [
@@ -6977,7 +7118,7 @@
     },
     "tactic:yen-nhan-bao-hao": {
       "nameVi": "Yên Nhân Gào Thét",
-      "quality": null,
+      "quality": "S",
       "type": "PASSIVE",
       "activationRate": 1.0,
       "troopFit": [
@@ -7010,6 +7151,1959 @@
       "effectVi": "Chuẩn bị 1 hiệp, phóng cho toàn thể quân địch trạng thái Bão Cát (tỷ lệ sát thương 36%→72%, bị Trí Lực ảnh hưởng) và khiến bản thân nhận 1 lần Chống Đỡ, duy trì 2 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
+    }
+  },
+  "newTactics": {
+    "tactic:ap-che-so": {
+      "nameZh": "初級壓制",
+      "effectZh": "使敵軍單體統率降低6→12點，持續2回合"
+    },
+    "tactic:cap-cuu-so": {
+      "nameZh": "初級急救",
+      "effectZh": "使我軍單體獲得急救狀態，每次受到傷害時有50%機率恢復一定兵力（治療率20%→40%，受智力影響），持續2回合"
+    },
+    "tactic:cap-toc": {
+      "nameZh": "疾速",
+      "effectZh": "使自己的速度提升8.5→17點"
+    },
+    "tactic:chi-diep-phu-to": {
+      "nameZh": "枝葉扶蘇",
+      "effectZh": "武將委任為木材官時，木材產量提升1%→2%"
+    },
+    "tactic:co-vu-so": {
+      "nameZh": "初級鼓舞",
+      "effectZh": "使我軍單體武力提升10→20點，持續2回合"
+    },
+    "tactic:dung-vo": {
+      "nameZh": "勇武",
+      "effectZh": "使自己的武力提升8.5→17點"
+    },
+    "tactic:gan-da": {
+      "nameZh": "壯膽",
+      "effectZh": "使我軍單體本回合獲得洞察，免疫所有控制效果（發動率13%→25%）"
+    },
+    "tactic:hao-hung-so": {
+      "nameZh": "初級激昂",
+      "effectZh": "使我軍單體速度提升10→20點，持續2回合"
+    },
+    "tactic:ho-ve": {
+      "nameZh": "護衛",
+      "effectZh": "為友方主將分擔10%→20%傷害，持續2回合"
+    },
+    "tactic:lam-loan-so": {
+      "nameZh": "初級擾亂",
+      "effectZh": "使敵軍單體速度降低6→12點，持續2回合"
+    },
+    "tactic:thien-van": {
+      "nameZh": "天運",
+      "effectZh": "提升武將8→16魅力"
+    },
+    "tactic:tinh-bach-ma-nghia-tong": {
+      "nameZh": "精·白馬義從",
+      "effectZh": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高50%，我軍全體戰鬥前2回合獲得先攻（優先行動）並提高10%主動戰法發動率",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Bạch Mã Nghĩa Tòng."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Cung Cong — Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp; Nhẹ chân — Tốc độ hành quân tăng thêm 25%; Tật Trì — Tỉ lệ phát động tăng có bị ảnh hưởng bởi Tốc độ"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Tập Võ — Toàn quân ta nhận 14 điểm Võ Lực; Tập Trí — Toàn quân ta nhận 14 điểm Trí Lực; Thần Hành — Toàn thể quân ta nhận 14 điểm Tốc Độ"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Trăm Trận — Toàn quân ta nhận được 5% giảm sát thương; Không Sợ — Quân ta khi bị Kế Tận có 25% xác suất miễn dịch; Linh Quang — Tỉ lệ phát động Chiến Pháp Chủ Động tăng thêm 3%"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa); Tĩnh Tâm — Khi kết thúc hiệp, nếu bản thân chưa phát động Chiến Pháp Chủ Động trong hiệp này, thì tỉ lệ phát động Chiến Pháp Chủ Động của hiệp sau tăng 10%; Cửu Chiến — Hủy giới hạn hiệp, nhưng hiệu quả tăng TL Phát Động giảm 7%"
+        }
+      ]
+    },
+    "tactic:tinh-bach-nhi-binh": {
+      "nameZh": "精·白毦兵",
+      "effectZh": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得12%攻心，且普通攻擊後有45%機率對攻擊目標再次發起一次謀略攻擊（傷害率110%，受智力影響）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Bạch Nhị Binh."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Cung thì binh chủng mang tên Chuyển • Bạch Nhị Binh, dùng cho Cung binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Cung lên thành Bạch Nhị Binh đã đánh là thắng:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Đặc Thương — Người mang tăng 1 cấp độ ăn ý Binh chủng Thương; Chuyển.Cung — Tiến bậc Lính Cung lên thành Bạch Nhị Binh dũng mãnh vô uy; Tập Trí — Nhận 14 điểm Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Thành Thạo — Xác suất kích hoạt tăng thêm 10%; Phá Địch — Tỷ lệ sát thương tăng thêm 20%; Công Tâm — Buff Công Tâm tăng thêm 3%"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Tướng Uy — Chỉ có Tướng Chính quân ta có xác suất phát động, đồng thời xác suất kích hoạt tăng thêm 35%; Lưỡng Nghi — Sau khi thực hiện Tấn công thường, sát thương của Chiến Pháp Chủ Động trong hiệp tiếp theo tăng 15%. Sau khi phát động Chiến Pháp Chủ Động, sát thương của Tấn công thường trong hiệp tiếp theo tăng 15%; Sách Tập — Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Bút Đao — Toàn thể quân ta chuyển đổi thành sát thương Mưu Lược, nhưng tỷ lệ sát thương thay đổi thành 75%; Chữa Lành — Chưa có hiệu lực thì hồi phục Binh Lực nhất định cho một cá thể quân ta (tỷ lệ Trị Liệu 36%, bị Trí Lực ảnh hưởng); Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Bạch Nhị Binh",
+        "轉·白毦兵"
+      ]
+    },
+    "tactic:tinh-dai-kich-si": {
+      "nameZh": "精·大戟士",
+      "effectZh": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高14點，進行普通攻擊時，有35%機率對敵軍單體造成兵刃傷害（傷害率122%）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Đại Kích Sĩ."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Đặc Thương — Người mang tăng 1 cấp độ ăn ý Binh chủng Thương; Liên Kích — Nhận 15% Liên Kích; Làm Phản — Nhận được 15% Làm Phản"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Thành Thạo — Xác suất kích hoạt tăng thêm 5%; Phá Địch — Tỷ lệ sát thương tăng thêm 11%; Tập Võ — Võ Lực tăng thêm 6 điểm"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Tướng Uy — Chỉ có Tướng Chính quân ta có xác suất kích hoạt, đồng thời xác suất kích hoạt tăng 25%; Hỗ Bác — Thay đổi mục tiêu thành nhóm quân địch 2 người nhưng tỷ lệ sát thương giảm 62%; Khám Hư — Mục tiêu sẽ ngẫu nhiên khóa Võ Tướng Binh Lực thấp nhất hoặc Thống Soái thấp nhất của đối phương"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Phá trận — Sát thương Binh Đao của Đại Kích Sĩ gây ra kèm theo hiệu ứng Phá Trận 25%; Chữa Lành — nếu không có hiệu lực thì hồi phục một lượng binh lực nhất định cho một quân ta (tỷ lệ Trị Liệu 36%, bị Võ Lực ảnh hưởng); Sách Tập — Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động"
+        }
+      ]
+    },
+    "tactic:tinh-giai-phien-ve": {
+      "nameZh": "精·解煩衛",
+      "effectZh": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提升36點，且我軍速度最快的武將普通攻擊後，有30%機率對敵軍單體造成一次傷害（傷害率36%，受武力和智力較高的一項影響，額外附帶該武將速度屬性40%的傷害），若未生效則為我軍單體回復一定兵力（治療率72%，受武力和智力較高的一項影響），若韓當統領，則基礎傷害率額外提升36%",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Giải Phiền Vệ."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Kỵ thì binh chủng mang tên Chuyển • Giải Phiền Vệ, dùng cho Kỵ binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Kỵ thành Giải Phiền Vệ Chiến Vô Bất Thắng:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Đặc Thương — Người mang tăng 1 cấp độ ăn ý Binh chủng Thương; Chuyển.Kỵ — Tiến bậc Lính Kỵ lên thành Giải Phiền Vệ chiến vô bất thắng; Tinh Nghiên — Xác suất kích hoạt sát thương chịu ảnh hưởng bởi thuộc tính cao nhất của người mang"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Phá Địch — Tỷ lệ sát thương tăng 6%; Võ Khôi — Chuyển sang Võ Tướng có Võ Lực cao nhất trong quân ta kích hoạt; Trí Tuyệt — Thay đổi thành Võ Tướng có Trí Lực cao nhất quân ta kích hoạt"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Trăm Trận — Toàn quân ta nhận được 5% giảm sát thương; Cấp cứu — Khóa mục tiêu trị liệu vào đơn vị binh lực thấp nhất của quân ta; Khám Hư — Theo loại Sát Thương, khóa Mục tiêu Sát Thương vào đơn vị địch Thống Soái thấp nhất hoặc Trí Lực thấp nhất"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa); Quân Tâm — Thay đổi thành chắc chắn kích hoạt hiệu ứng hồi phục, phán định thêm hiệu quả sát thương; Sách Tập — Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Giải Phiền Vệ",
+        "轉·解煩衛"
+      ]
+    },
+    "tactic:tinh-ham-tran-doanh": {
+      "nameZh": "精·陷陣營",
+      "effectZh": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高22點，戰鬥前3回合獲得急救狀態，受到傷害時有40%機率獲得治療（治療率60%，受智力影響）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Hãm Trận Doanh."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Nâng Khiên — Người mang Khiên binh chủng ăn ý tăng 1 cấp; Dẫn Quân — Xác suất kích hoạt Cấp Cứu còn bị ảnh hưởng bởi Thống Soái của người mang; Mưu Công — Xác suất kích hoạt Cấp Cứu bị ảnh hưởng bởi Trí Lực của Người mang"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Kiêm Tu — Võ Lực và Thống Soái tăng thêm 11 điểm; Trị liệu — Tỷ lệ trị liệu tăng thêm 40%; Cường Thân — Đổi thành nhận Trí Lực và Thống Soái"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Cứu Chiến — Thay đổi thành nhận trạng thái Cấp Cứu ở 4 hiệp trước; Nghỉ Ngơi — Nhận thêm trạng thái Nghỉ Ngơi (tỷ lệ Trị Liệu 60%); Giải Trừ — Khi kích hoạt Cấp Cứu, có 20% xác suất giải trừ trạng thái tiêu cực của bản thân"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Cấp Cứu — Đang chiến đấu, mỗi khi Binh Lực Tổng của Ta tổn thất 5000, Buff Cấp Cứu nhận được tăng cao 25%; Chống Đỡ — Khi kích hoạt Cấp Cứu, có 20% xác suất Nhận 1 lớp Chống Đỡ; Đoạt Chí — Khi kích hoạt Cấp Cứu, có 25% xác suất đánh cắp 5 điểm Thuộc Tính Chiến Đấu từ nguồn sát thương, có thể cộng dồn, duy trì 2 hiệp"
+        }
+      ]
+    },
+    "tactic:tinh-ho-bao-ky": {
+      "nameZh": "精·虎豹騎",
+      "effectZh": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高40武力，戰鬥前3回合，我軍全體突擊戰法發動率提高10%",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Hổ Báo Kỵ."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Kỵ Thuật — Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp; Thần Hành — Nhận thêm 40 điểm Tốc Độ; Tập Trí — Nhận Võ Lực thay đổi thành nhận Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Xung Phong — Tăng sát thương Chiến Pháp Đột Kích 10% (chịu ảnh hưởng bởi chỉ số cao hơn giữa Võ Lực và Trí Lực); Thao Luyện — Tỉ lệ phát động Chiến Pháp Đột Kích tăng cao bị ảnh hưởng bởi Võ Lực của người mang; Mưu Công — Tăng tỉ lệ phát động Chiến Pháp Đột Kích bị ảnh hưởng bởi Trí Lực Trí Lực của người mang"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Giành Công — Tỉ lệ phát động Chiến Pháp Đột Kích tăng thêm 2%; Cửu Chiến — Hiệp hiệu lực thay đổi thành 3~4 hiệp đầu; Diên Ích — Nhận hiệu ứng tăng ích có 15% xác suất kéo dài thêm 1 hiệp"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Chống Đỡ — Sau khi phát động Chiến Pháp Đột Kích, có 15% xác suất nhận 1 tầng Chống Đỡ, duy trì 1 hiệp; Trọng Thương — Sau khi phát động Chiến Pháp Đột Kích, có 15% xác suất gây ngẫu nhiên 1 trong các hiệu quả sau cho mục tiêu (Chấn Động, Kế Tận, Giao Binh Khí, Hỗn Loạn, Suy Nhược, Cấm Trị Liệu, Phá Hoại); Trí Kế — Toàn thể quân ta, đánh thường chuyển hóa thành sát thương Mưu Lược"
+        }
+      ]
+    },
+    "tactic:tinh-linh-dan-duong": {
+      "nameZh": "精·丹陽兵",
+      "effectZh": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升36點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中36%謀略傷害，丹陽兵數量每回合衰減10%），若陶謙統領，則抵擋比例額外提升4%",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Lính Đan Dương."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Thương thì binh chủng mang tên Chuyển • Lính Đan Dương, dùng cho Thương binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Thương thành Lính Đan Dương dũng mãnh bất khuất:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Chuyển.Thương — Tiến bậc Lính Thương thành Lính Đan Dương dũng mãnh vô uy; Nâng Khiên — Người mang Khiên binh chủng ăn ý tăng 1 cấp; Kháng Cự — Hiệu ứng khắc chế binh chủng nhận vào giảm một nửa"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Tập Trí — Thay đổi từ tăng Thống Soái thành tăng Trí Lực; Tập Võ — Thay tăng Thống Soái thành tăng Võ Lực; Cường Thân — Thống Soái tăng thêm 8 điểm"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Chỉnh Quân — Lính Đan Dương nhận được không còn suy giảm mỗi hiệp, và nhận thêm 25%; Bàn Thạch — Tỷ lệ giảm sát thương của Lính Đan Dương tăng 36%; Hậu Phát — Sau khi Võ Tướng quân ta hành động, ngẫu nhiên gây ra sát thương cho cá thể quân địch."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Mộ Quân — Lính Đan Dương có thể chống lại mọi loại sát thương; Thiệp Liệp — Sát thương bất kỳ loại nào gây ra đều có thể nhận được Lính Đan Dương; Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Lính Đan Dương",
+        "轉·丹陽兵"
+      ]
+    },
+    "tactic:tinh-linh-giap-may": {
+      "nameZh": "精·藤甲兵",
+      "effectZh": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率300%）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Lính Giáp Mây."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Tượng thì binh chủng mang tên Chuyển • Lính Giáp Mây, dùng cho Kỵ binh; câu đầu hiệu ứng thành \"Tiến bậc Kỵ lên thành Tượng Giáp Mây đao thương đâm không thủng:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Nâng Khiên — Người mang Khiên binh chủng ăn ý tăng 1 cấp; Nhẫn Nại — Lượng Binh Lực tổn thất do trạng thái Đốt Cháy bị giảm đi, chịu ảnh hưởng bởi Thống Soái; Chuyển.Tượng — Tiến bậc Kỵ Binh lên thành Tượng Giáp Mây đao thương đâm không thủng tung hoành tự do"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Giáp Mây — Tăng cao hiệu quả Giảm sát thương Binh đao 8%; Hùng Chủ — Phó Tướng có thể kích hoạt hiệu ứng của Tướng Chính, đồng thời tăng cao 3% thuộc tính chiến đấu; Trọng Trang — Điểm Công Thành Cơ Bản của đội quân tăng 25% nhưng Tốc Độ Hành Quân giảm 50% (Được chọn sau khi cải tạo Tượng Binh)"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Miễn Dịch — Khi toàn bộ quân của ta chịu hiệu ứng giảm thuộc tính, có 25% xác suất miễn dịch; Tịnh Hoá — Toàn bộ Quân của ta chịu hiệu ứng Sát thương liên tục, 25% tịnh hoá bản thân; Chậm Chạp — Trì hoãn 50% sát thương nhận được sẽ tổng kết dần trong 3 hiệp, khi bản thân bị Đốt Cháy, nhận 50% tấn công nhóm và Hỗn Loạn (sau khi cải tạo Tượng Binh, Trọng Trang có thể được chon)"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Rắn Chắc — Sau khi chịu sát thương binh đao, võ tướng này giảm 3% sát thương binh đao phải chịu trong hiệp hiện tại, cài lại khi kết thúc hiệp; Chống Đỡ — Trước khi Chiến đấu 2 Hiệp, khi Tướng Chính chịu Sát thương Võ Lực, có 50% xác suất Nhận 1 lần Chống Đỡ (mỗi Hiệp kích hoạt tối đa 2 lần); Bỏ Qua — Sát thương tổng kết dần giảm 20% (Có thể chọn sau khi cải tạo Tượng Binh, Trọng Trang, Man Uy)"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Lính Giáp Mây",
+        "轉·藤甲兵"
+      ]
+    },
+    "tactic:tinh-linh-thanh-chau": {
+      "nameZh": "精·青州兵",
+      "effectZh": "將槍兵進階為衝堅毀銳的青州兵：戰鬥前2回合，使我軍群體（2人）受到普通攻擊時對攻擊者進行一次反擊（傷害率72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率180%，受武力影響，額外受敵軍造成傷害影響），若曹操統領，治療效果額外受統率影響",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Lính Thanh Châu."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Đặc Thương — Người mang tăng 1 cấp độ ăn ý Binh chủng Thương; Thiện Chiến — Tăng tỷ lệ sát thương Phản kích 36%; Mưu Lược — Phản kích biến thành sát thương Mưu Lược"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Quần Hùng — Thay đổi để nhóm quân ta (2~3 người) nhận Phản kích; Chữa Trị — Tổng tỷ lệ trị liệu tăng cao 60%; Mưu Công — Tổng tỷ lệ Trị Liệu thay đổi theo ảnh hưởng của Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Bất Khuất — Hiệp thứ năm kích hoạt thêm 1 lần trị liệu (tổng tỷ lệ trị liệu 120%, bị Võ Lực hoặc Trí Lực ảnh hưởng, thêm vào đó bị sát thương do quân địch gây ra ảnh hưởng); Thao Luyện — Sát thương phản kích bị ảnh hưởng bởi Võ Lực; Tập Trí — Sát thương phản kích bị ảnh hưởng bởi Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Vòng Vo — Nhận thêm 36% hiệu ứng Tránh; Tiên Cơ — 2 hiệp trước trận chiến, khi bắt đầu hiệp, người mang gây sát thương cho toàn bộ quân địch đang trong trạng thái bị khống chế (tỷ lệ sát thương 100%, bị ảnh hưởng bởi chỉ số cao hơn giữa Võ Lực và Trí Lực); Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)"
+        }
+      ]
+    },
+    "tactic:tinh-nhanh-tri-dong-nao": {
+      "nameZh": "精·靈機一動",
+      "effectZh": "使我軍群體（2-3人）智力、統率、魅力提升5.5→10（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp bổ sung của mùa Binh Diễn Xuân Thu, bản Tinh của Nhanh Trí Động Não: dùng được cho mọi binh chủng (bản gốc chỉ Kỵ binh, Khí giới) và mức tăng thấp hơn, 5.5→10 (bản gốc 7.5→15); tỷ lệ phát động như bản gốc."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Mua ở Sảnh Chính › Thương nhân › Mùa giải (Chiến Pháp mùa giải): xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
+    },
+    "tactic:tinh-phi-hung-quan": {
+      "nameZh": "精·飛熊軍",
+      "effectZh": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到治療效果提升16%，我軍主將每回合行動時有60%機率對敵軍群體2人造成謀略傷害（傷害率64%，受我軍全體累計造成治療量影響，觸發後重置累計進度），若董卓統領，則受到治療效果額外提升4%",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Phi Hùng Quân."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Cung thì binh chủng mang tên Chuyển • Phi Hùng Quân, dùng cho Cung binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Cung thành Phi Hùng Quân anh dũng bất phá:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Chuyển.Cung — Tiến bậc Lính Cung lên thành Phi Hùng Quân dũng bất khả đương; Kỵ Thuật — Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp; Tập Trí — Võ Tướng gây sát thương nhận 2% Trí Lực khi hành động, có thể tích lũy"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Tái Sinh — Hiệu quả Trị liệu của Phi Hùng Quân được tăng thêm 8%; Phá Địch — Tỷ lệ Sát thương của Phi Hùng Quân được tăng thêm 12%; Trí Tuyệt — Kích hoạt Võ Tướng thay đổi từ Tướng Chính thành Võ Tướng có Trí Lực cao nhất"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Phò Thương — Sau khi kích hoạt sát thương của Phi Hùng Quân, hồi phục cho đơn vị có Binh Lực thấp nhất của quân ta lượng Binh bằng 40% lượng sát thương gây ra; Tế Chúng — Quân địch khi được Trị Liệu, có 30% xác suất đồng thời Trị Liệu cho một đơn vị quân ta ngẫu nhiên (tối đa kích hoạt 3 lần mỗi hiệp); Giáp Cứng — Tỷ lệ sát thương được thay đổi theo lượng sát thương được miễn giảm tích lũy của quân ta"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Dư Uy — Thay đổi từ việc đặt lại toàn bộ tiến độ tích lũy sang đặt lại 50% tiến độ tích lũy; Trút Xuống — Sát thương mục tiêu đổi thành nhóm địch (2 ~ 3 người); Quân Lực — Mục tiêu ảnh hưởng đến lượng Sát thương được thay đổi từ Quân của ta thành toàn bộ trên trận"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Phi Hùng Quân",
+        "轉·飛熊軍"
+      ]
+    },
+    "tactic:tinh-quan-cam-pham": {
+      "nameZh": "精·錦帆軍",
+      "effectZh": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有45%機率使目標進入潰逃狀態（傷害率64%，受武力影響），持續2回合；若目標已經潰逃則造成兵刃攻擊（傷害率110%）並恢復傷害量的30%兵力，若甘寧統領，觸發機率受最高屬性影響並提高友軍6%會心",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Quân Cẩm Phàm."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Cung Cong — Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp; Thần Xạ — Xác suất kích hoạt tăng 5%; Trí Thủ — Hiệu ứng Bỏ chạy do Quân Cẩm Phàm gây ra được thay đổi thành sát thương Mưu Lược, bị ảnh hưởng bởi Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Dũng Võ — Nếu mục tiêu đã bỏ chạy, sát thương Binh Đao gây ra tăng 20%; Chữa Trị — Nếu mục tiêu đã bỏ chạy, sát thương binh đao gây ra và Binh Lực hồi phục theo sát thương tăng 40%; Mưu Lược — Đối với mục tiêu đã bỏ chạy, thay đổi từ gây sát thương Binh Đao thành gây sát thương Mưu Lược"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Sấn Nguy — Tăng 10% sát thương gây lên các tướng đang trong trạng thái duy trì.; Ngăn Chặn — Giảm 10% sát thương từ Võ Tướng đang trong trạng thái sát thương duy trì; Đe Dọa — Hiệp đầu chiến đấu, gây trạng thái Bỏ chạy cho Tướng chính quân địch (tỷ lệ sát thương 64%, duy trì 2 hiệp)"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa); Doanh Khiếu — Nếu mục tiêu đã Bỏ Chạy, 45% xác suất khiến mục tiêu vào trạng thái Đào Phản (tỉ lệ sát thương 55%, bị ảnh hưởng bởi chỉ số cao nhất giữa Võ Lực và Trí Lực, bỏ qua phòng ngự), duy trì 1 hiệp; Cấp cứu — Nếu mục tiêu đã bỏ chạy, gây sát thương Binh Đao và hồi phục Binh Lực bằng lượng sát thương gây ra, thay đổi mục tiêu hồi phục thành đơn thể có Binh Lực thấp nhất của quân ta"
+        }
+      ]
+    },
+    "tactic:tinh-quan-ho-ve": {
+      "nameZh": "精·虎衛軍",
+      "effectZh": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高12武力，最多提高5次，並會分別對攻擊者造成兵刃傷害（傷害率72%，受各自損失兵力影響，最多提高40%），每回合最多觸發1次，若典韋或許褚統領，自身統率提高50",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Quân Hổ Vệ."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Nâng Khiên — Người mang Khiên binh chủng ăn ý tăng 1 cấp; Đồng Lòng — Điều kiện kích hoạt thay đổi thành khi toàn quân ta chuẩn bị nhận đòn đánh thường; Mưu Lược — Quân Hổ Vệ gây ra sát thương đổi thành sát thương Mưu Lược"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Thiện Chiến — Tỷ lệ sát thương tăng 36%; Đột phá — Giới hạn ảnh hưởng sát thương tăng 20%; Tập Trí — Thay đổi từ tăng Võ Lực thành tăng Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Truy Đuổi — Tỷ lệ sát thương còn bị ảnh hưởng bởi tổn thất binh lực của mục tiêu; Làm Phản — Quân Hổ Vệ hiệu quả tăng thuộc tính đạt 5 tầng, nhận 15% Làm Phản; Công Tâm — Quân Hổ Vệ hiệu quả tăng thuộc tính đạt 5 tầng, nhận được 15% Công Tâm"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Tái Diễn — Mỗi hiệp số lần kích hoạt thay đổi thành 2 lần; Võ Khôi — Kích hoạt Võ Tướng thay đổi từ Phó Tướng thành Phó Tướng có Võ Lực cao nhất, mục tiêu gây sát thương thay đổi thành Toàn bộ địch quân; Trí Tuyệt — Võ Tướng kích hoạt thay từ Phó Tướng thành Phó Tướng có Trí Lực cao nhất, mục tiêu gây sát thương thay đổi thành Toàn thể quân địch"
+        }
+      ]
+    },
+    "tactic:tinh-tay-luong-thiet-ky": {
+      "nameZh": "精·西涼鐵騎",
+      "effectZh": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前3回合，提高我軍全體25%會心機率（觸發時兵刃傷害提高100%）",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Tây Lương Thiết Kỵ."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Kỵ Thuật — Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp; Loạn Trận — Hiệp đầu toàn phe địch vào trạng thái Bị Tập Kích; Kỳ Mưu — Thay đổi thành nhận được Kỳ Mưu"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Tật Trì — Hội Tâm/Kỳ Mưu nhận được bị ảnh hưởng bởi Tốc Độ; Thao Luyện — Nhận được Hội Tâm/Kỳ Mưu bị ảnh hưởng bởi Võ Lực; Mưu Công — Hội Tâm/Kỳ Mưu nhận được bị ảnh hưởng bởi Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Lĩnh Ngộ — Hội Tâm/Kỳ Mưu tăng thêm 3%; Võ Lực — Toàn quân ta nhận 15 Võ Lực; Tập Trí — Toàn quân ta nhận 15 Trí Lực"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Ắt Trúng — Sát thương Hội Tâm/Kỳ Mưu có 15% xác suất bỏ qua hiệu quả Chống Đỡ và Né Tránh; Cửu Chiến — Hủy giới hạn hiệp tăng Hội Tâm/Kỳ Mưu, nhưng hiệu quả tăng giảm 15%; Cứu Viện — Khi gây sát thương Hội Tâm/Kỳ Mưu, hồi phục cho đơn vị Binh Lực thấp nhất của quân ta bằng 35% lượng sát thương"
+        }
+      ]
+    },
+    "tactic:tinh-tu-si-tien-phong": {
+      "nameZh": "精·先登死士",
+      "effectZh": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時，有60%機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其21點統率（受攜帶者統率影響），否則降低其3%主動戰法發動率，持續2回合，可疊加4次",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Tử Sĩ Tiên Phong."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Khiên thì binh chủng mang tên Chuyển • Tử Sĩ Tiên Phong, dùng cho Khiên binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Khiên thành Tử Sĩ Tiên Đăng không sợ chết:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Cung Cong — Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp; Chuyển.Khiên — Khiến Lính Khiên tiến cấp thành Tử Sĩ Tiên Phong không sợ chết; Kháng Cự — Hiệu ứng khắc chế binh chủng mà quân ta nhận được giảm một nửa"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Ức Thế — Có thể đồng thời giảm tỉ lệ phát động Chiến Pháp Đột Kích, nhưng mỗi lần hiệu quả giảm đi sẽ giảm 1%; Thao Luyện — Chuyển sang bị ảnh hưởng bởi Võ Lực của người mang; Mưu Công — Thay đổi thành bị Trí Lực của Người mang ảnh hưởng"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Hào Đoạt — Mỗi lần có thể lấy trộm thêm 7 điểm Thống Soái; Đoạt Chí — Sẽ dựa theo Loại hình Sát thương để lấy trộm Võ Lực hoặc Trí Lực, nhưng hiệu quả lấy trộm giảm 11 điểm; Trăm Trận — Toàn quân ta nhận được 5% giảm sát thương"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Cửu Chiến — Kéo dài thêm 1 hiệp; Cộng Dồn — Số lần cộng dồn tối đa+1; Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Tử Sĩ Tiên Phong",
+        "轉·先登死士"
+      ]
+    },
+    "tactic:tinh-tuong-binh": {
+      "nameZh": "精·象兵",
+      "effectZh": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高25%但行軍速度降低50%，將受到傷害的50%延後於3回合內逐步結算，且結算傷害降低20%，自身灼燒時，獲得50%群攻及混亂；若蠻族統領，部隊每多1名蠻族武將結算的傷害額外降低10%。",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Tượng Binh."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Kỵ Thuật — Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp; Man Tộc — Người mang nhận nhãn Man Tộc; Tật Hành — Không còn giảm tốc độ hành quân"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Mặc Giáp — Trì hoãn thêm 25% sát thương nhận vào; Làm Dịu — Sát thương tổng kết giảm thêm 30%; Nặng Nề — Đội quân không bị Rào Cản Ngựa ngăn chặn"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Bạo Nộ — Khi bản thân bị Đốt Cháy, nhận thêm 50% tấn công nhóm; Kiên Định — Người mang trạng thái Miễn nhiễm Hỗn Loạn; Tốc Chiến — Chiến đấu sẽ kết thúc vào hiệp thứ 7"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Da Dày — Sát thương tổng kết dần đổi thành trì hoãn 4 hiệp; Ngự Địch — Đội quân nhận sát thương liên tục giảm 25%; Tu Dưỡng — Sau khi hòa sẽ lập tức hồi phục toàn bộ thương binh"
+        }
+      ]
+    },
+    "tactic:tinh-vo-duong-phi-quan": {
+      "nameZh": "精·無當飛軍",
+      "effectZh": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高22點，首回合對敵軍群體（2人）施加中毒狀態，每回合持續造成傷害（傷害率80%，受智力影響），持續3回合",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Chiến pháp binh chủng của mùa Binh Diễn Xuân Thu, bản Tinh của Vô Đương Phi Quân."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chỉ mùa Binh Diễn Xuân Thu cho tùy chỉnh và thay đổi chiến pháp binh chủng ở Sân Luyện Binh: mỗi cấp cải tạo chọn một trong ba hiệu ứng; tên trong Chiến Pháp là Chuyển • <binh chủng> khi Cải tạo đặc biệt chọn Chuyển, còn lại là Tinh • <binh chủng>. Hiệu ứng ở đây là hướng dẫn gốc của client, chưa gồm cải tạo."
+        },
+        {
+          "kind": "season",
+          "textVi": "Chọn Cải tạo đặc biệt Chuyển.Khiên thì binh chủng mang tên Chuyển • Vô Đương Phi Quân, dùng cho Khiên binh; câu đầu hiệu ứng thành \"Tiến bậc Lính Khiên lên thành Vô Đương Phi Quân trăm phát trăm trúng:\", phần còn lại như bản Tinh."
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo đặc biệt (S): Cung Cong — Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp; Chuyển.Khiên — Tiến bậc Lính Khiên lên thành Vô Đương Phi Quân trăm phát trăm trúng; Kiêm Tu — Thống Soái và Tốc Độ tăng thêm 11 điểm"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo sơ cấp (C): Trí Tuyệt — Áp dụng cho Võ Tướng có Trí Lực cao nhất của quân ta; Bão Cát — Thêm trạng thái Bão Cát, nhưng tỉ lệ sát thương giảm 15%; Phá Địch — Tỷ lệ sát thương tăng 40%"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo trung cấp (B): Trăm Trận — Toàn quân ta nhận được 5% giảm sát thương; Phá Quân — Hiệu ứng sát thương liên tục do quân ta gây ra bỏ qua 40% thuộc tính phòng ngự; Cửu Chiến — Thay đổi thời gian duy trì thành 4 hiệp"
+        },
+        {
+          "kind": "season",
+          "textVi": "Cải tạo cao cấp (A): Hương Dũng — Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa); Mùi Định — Mục tiêu trong thời gian Vô Đương Phi Quân gây sát thương, sát thương gây ra bị giảm (5%*số lượng trạng thái bất lợi tồn tại); Đoạt Hồn — Khi gây sát thương lên Võ Tướng đang có Trạng thái liên tục, Hồi phục Binh Lực của quân ta bằng lượng Sát thương thấp nhất (5%*Số lượng Trạng thái tiêu cực mà Mục tiêu đang mắc phải)"
+        }
+      ],
+      "aliases": [
+        "Chuyển • Vô Đương Phi Quân",
+        "轉·無當飛軍"
+      ]
+    },
+    "tactic:tran-ap-khan-vang": {
+      "nameZh": "鎮壓黃巾",
+      "effectZh": "戰鬥第2回合，使我軍全體免疫沙暴狀態，並且使敵軍全體陷入叛逃狀態（傷害率44%→88%，受武力或智力最高一項影響，無視防禦），持續2回合，若目標為黃巾軍，傷害率提高20%"
+    }
+  },
+  "retired": {
+    "tactic:am-trieu-dung-dong": "tactic:am-trieu-hung-dung",
+    "tactic:dao-vien-ket-nghia": null,
+    "tactic:doan-binh-tuong-kien": "tactic:doan-binh-tuong-tiep",
+    "tactic:doan-trang-tri-trong": null,
+    "tactic:duy-noi-thien-quyen": null,
+    "tactic:gio-tap-mua-sa": "tactic:tat-phong-sau-vu",
+    "tactic:ho-gia-thap-bat-phach": "tactic:ho-gia-du-am",
+    "tactic:khac-tuan-hoa-nhat": "tactic:khac-tuan-hoach-nhat",
+    "tactic:khien-che": null,
+    "tactic:lay-it-danh-nhieu": "tactic:di-qua-dich-chung",
+    "tactic:lua-chay-ngun-ngut": "tactic:han-thien-si-dia",
+    "tactic:lua-lan-khap-chon": "tactic:hoa-si-nguyen-lieu",
+    "tactic:luc-luc-thuong-tam": "tactic:luc-luc-thuong-quoc",
+    "tactic:nhanh-chan-tranh-dat": "tactic:si-tranh-tien-pho",
+    "tactic:pha-phong-doan-nhan": "tactic:thoi-phong-doan-nhan",
+    "tactic:tham-muu-vien-luoc": "tactic:tham-muu-vien-lu",
+    "tactic:thien-ly-quy-luong": null,
+    "tactic:thuong-lam-nhi-thuc": "tactic:thac-qua-luy-luy",
+    "tactic:thuy-hue-van-vat": null,
+    "tactic:tram-doc": "tactic:cuu-doc",
+    "tactic:tu-si-tien-phong": "tactic:tien-dang-tu-si",
+    "tactic:tuyet-ke-chiet-muu": null,
+    "tactic:ung-thi": "tactic:ung-thi-lang-co",
+    "tactic:van-quan-doat-su": "tactic:van-quan-doat-suy",
+    "tactic:van-quan-thu-tuong": null,
+    "tactic:vo-dich-can-truong": "tactic:cuong-dung-vo-tien"
+  },
+  "troopMods": {
+    "troop-mod:bach-ma-nghia-tong": {
+      "nameVi": "Bạch Mã Nghĩa Tòng",
+      "effectVi": "Tiến bậc Lính Cung thành Bạch Mã Nghĩa Tòng cưỡi ngựa bắn cung vô cùng điêu luyện: Tốc độ hành quân đội quân tăng 50%, Toàn quân ta chiến đấu 2 hiệp đầu nhận được Tiến Công Trước (ưu tiên hành động) và tăng 10% tỉ lệ phát động Chiến Pháp Chủ Động",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Cung Cong",
+          "descriptionVi": "Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Nhẹ chân",
+          "descriptionVi": "Tốc độ hành quân tăng thêm 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tật Trì",
+          "descriptionVi": "Tỉ lệ phát động tăng có bị ảnh hưởng bởi Tốc độ",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Võ",
+          "descriptionVi": "Toàn quân ta nhận 14 điểm Võ Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Toàn quân ta nhận 14 điểm Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thần Hành",
+          "descriptionVi": "Toàn thể quân ta nhận 14 điểm Tốc Độ",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Trăm Trận",
+          "descriptionVi": "Toàn quân ta nhận được 5% giảm sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Không Sợ",
+          "descriptionVi": "Quân ta khi bị Kế Tận có 25% xác suất miễn dịch",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Linh Quang",
+          "descriptionVi": "Tỉ lệ phát động Chiến Pháp Chủ Động tăng thêm 3%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Tĩnh Tâm",
+          "descriptionVi": "Khi kết thúc hiệp, nếu bản thân chưa phát động Chiến Pháp Chủ Động trong hiệp này, thì tỉ lệ phát động Chiến Pháp Chủ Động của hiệp sau tăng 10%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cửu Chiến",
+          "descriptionVi": "Hủy giới hạn hiệp, nhưng hiệu quả tăng TL Phát Động giảm 7%",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:bach-nhi-binh": {
+      "nameVi": "Bạch Nhị Binh",
+      "effectVi": "Tiến bậc Lính Thương lên thành Bạch Nhị Binh đã đánh là thắng: Toàn thể quân ta nhận 12% Công Tâm, Và sau khi Tấn công thường, có 45% xác suất phát động thêm một lần tấn công Mưu Lược lên mục tiêu tấn công (Tỷ lệ sát thương 110%, bị ảnh hưởng bởi Trí Lực)",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Đặc Thương",
+          "descriptionVi": "Người mang tăng 1 cấp độ ăn ý Binh chủng Thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Cung",
+          "descriptionVi": "Tiến bậc Lính Cung lên thành Bạch Nhị Binh dũng mãnh vô uy",
+          "convertsTo": "Cung binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Nhận 14 điểm Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thành Thạo",
+          "descriptionVi": "Xác suất kích hoạt tăng thêm 10%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Phá Địch",
+          "descriptionVi": "Tỷ lệ sát thương tăng thêm 20%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Công Tâm",
+          "descriptionVi": "Buff Công Tâm tăng thêm 3%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tướng Uy",
+          "descriptionVi": "Chỉ có Tướng Chính quân ta có xác suất phát động, đồng thời xác suất kích hoạt tăng thêm 35%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Lưỡng Nghi",
+          "descriptionVi": "Sau khi thực hiện Tấn công thường, sát thương của Chiến Pháp Chủ Động trong hiệp tiếp theo tăng 15%. Sau khi phát động Chiến Pháp Chủ Động, sát thương của Tấn công thường trong hiệp tiếp theo tăng 15%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Sách Tập",
+          "descriptionVi": "Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Bút Đao",
+          "descriptionVi": "Toàn thể quân ta chuyển đổi thành sát thương Mưu Lược, nhưng tỷ lệ sát thương thay đổi thành 75%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Chữa Lành",
+          "descriptionVi": "Chưa có hiệu lực thì hồi phục Binh Lực nhất định cho một cá thể quân ta (tỷ lệ Trị Liệu 36%, bị Trí Lực ảnh hưởng)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:cam-pham-quan": {
+      "nameVi": "Quân Cẩm Phàm",
+      "effectVi": "Tiến bậc Cung thành Quân Cẩm Phàm khí cái ngàn quân: Đội quân khi Tấn công thường, có 45% xác suất khiến Mục tiêu rơi vào Trạng thái Bỏ chạy (Tỷ lệ Sát thương 64%, Ảnh hưởng bởi Võ Lực), kéo dài 2 Hiệp; nếu Mục tiêu đã Bỏ chạy thì gây ra Tấn công Binh Đao (Tỷ lệ Sát thương 110%) và Khôi phục 30% Binh Lực từ lượng Sát thương, nếu Cam Ninh Thống lĩnh, xác suất kích hoạt chịu ảnh hưởng bởi Thuộc tính Cao nhất và tăng cao Hội Tâm cho Đồng đội 6%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Cung Cong",
+          "descriptionVi": "Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Thần Xạ",
+          "descriptionVi": "Xác suất kích hoạt tăng 5%",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Trí Thủ",
+          "descriptionVi": "Hiệu ứng Bỏ chạy do Quân Cẩm Phàm gây ra được thay đổi thành sát thương Mưu Lược, bị ảnh hưởng bởi Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Dũng Võ",
+          "descriptionVi": "Nếu mục tiêu đã bỏ chạy, sát thương Binh Đao gây ra tăng 20%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Chữa Trị",
+          "descriptionVi": "Nếu mục tiêu đã bỏ chạy, sát thương binh đao gây ra và Binh Lực hồi phục theo sát thương tăng 40%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mưu Lược",
+          "descriptionVi": "Đối với mục tiêu đã bỏ chạy, thay đổi từ gây sát thương Binh Đao thành gây sát thương Mưu Lược",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Sấn Nguy",
+          "descriptionVi": "Tăng 10% sát thương gây lên các tướng đang trong trạng thái duy trì.",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Ngăn Chặn",
+          "descriptionVi": "Giảm 10% sát thương từ Võ Tướng đang trong trạng thái sát thương duy trì",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Đe Dọa",
+          "descriptionVi": "Hiệp đầu chiến đấu, gây trạng thái Bỏ chạy cho Tướng chính quân địch (tỷ lệ sát thương 64%, duy trì 2 hiệp)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Doanh Khiếu",
+          "descriptionVi": "Nếu mục tiêu đã Bỏ Chạy, 45% xác suất khiến mục tiêu vào trạng thái Đào Phản (tỉ lệ sát thương 55%, bị ảnh hưởng bởi chỉ số cao nhất giữa Võ Lực và Trí Lực, bỏ qua phòng ngự), duy trì 1 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cấp cứu",
+          "descriptionVi": "Nếu mục tiêu đã bỏ chạy, gây sát thương Binh Đao và hồi phục Binh Lực bằng lượng sát thương gây ra, thay đổi mục tiêu hồi phục thành đơn thể có Binh Lực thấp nhất của quân ta",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:dai-kich-si": {
+      "nameVi": "Đại Kích Sĩ",
+      "effectVi": "Tiến bậc Lính Thương lên thành Đại Kích Sĩ xông pha ngang dọc: Tăng Võ Lực toàn quân 14 điểm, Khi tiến hành tấn công thường, có 35% xác suất gây Sát thương binh đao lên một đơn vị địch (Tỷ lệ sát thương 122%)",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Đặc Thương",
+          "descriptionVi": "Người mang tăng 1 cấp độ ăn ý Binh chủng Thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Liên Kích",
+          "descriptionVi": "Nhận 15% Liên Kích",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Làm Phản",
+          "descriptionVi": "Nhận được 15% Làm Phản",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thành Thạo",
+          "descriptionVi": "Xác suất kích hoạt tăng thêm 5%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Phá Địch",
+          "descriptionVi": "Tỷ lệ sát thương tăng thêm 11%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Võ",
+          "descriptionVi": "Võ Lực tăng thêm 6 điểm",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tướng Uy",
+          "descriptionVi": "Chỉ có Tướng Chính quân ta có xác suất kích hoạt, đồng thời xác suất kích hoạt tăng 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Hỗ Bác",
+          "descriptionVi": "Thay đổi mục tiêu thành nhóm quân địch 2 người nhưng tỷ lệ sát thương giảm 62%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Khám Hư",
+          "descriptionVi": "Mục tiêu sẽ ngẫu nhiên khóa Võ Tướng Binh Lực thấp nhất hoặc Thống Soái thấp nhất của đối phương",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Phá trận",
+          "descriptionVi": "Sát thương Binh Đao của Đại Kích Sĩ gây ra kèm theo hiệu ứng Phá Trận 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Chữa Lành",
+          "descriptionVi": "nếu không có hiệu lực thì hồi phục một lượng binh lực nhất định cho một quân ta (tỷ lệ Trị Liệu 36%, bị Võ Lực ảnh hưởng)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Sách Tập",
+          "descriptionVi": "Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:dan-duong-binh": {
+      "nameVi": "Lính Đan Dương",
+      "effectVi": "Tiến bậc Lính Khiên thành Lính Đan Dương dũng mãnh vô uy: Toàn quân ta tăng 36 điểm Thống Soái, và mỗi hiệp Trước khi bắt đầu, Dựa theo sát thương do Toàn quân ta gây ra trong hiệp trước Sát thương binh đao Nhận một tỷ lệ nhất định Lính Đan Dương, Có thể cộng dồn (Khi quân ta chịu Sát thương mưu lược, Sẽ tiêu hao Lính Đan Dương để ngăn chặn trong đó 36% Sát thương mưu lược, số lượng Lính Đan Dương giảm 10% mỗi hiệp), Nếu Đào Khiêm Thống lĩnh, thì tỷ lệ ngăn chặn được tăng thêm 4%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Thương",
+          "descriptionVi": "Tiến bậc Lính Thương thành Lính Đan Dương dũng mãnh vô uy",
+          "convertsTo": "Thương binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Nâng Khiên",
+          "descriptionVi": "Người mang Khiên binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Kháng Cự",
+          "descriptionVi": "Hiệu ứng khắc chế binh chủng nhận vào giảm một nửa",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Thay đổi từ tăng Thống Soái thành tăng Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Võ",
+          "descriptionVi": "Thay tăng Thống Soái thành tăng Võ Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Cường Thân",
+          "descriptionVi": "Thống Soái tăng thêm 8 điểm",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Chỉnh Quân",
+          "descriptionVi": "Lính Đan Dương nhận được không còn suy giảm mỗi hiệp, và nhận thêm 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Bàn Thạch",
+          "descriptionVi": "Tỷ lệ giảm sát thương của Lính Đan Dương tăng 36%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Hậu Phát",
+          "descriptionVi": "Sau khi Võ Tướng quân ta hành động, ngẫu nhiên gây ra sát thương cho cá thể quân địch.",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Mộ Quân",
+          "descriptionVi": "Lính Đan Dương có thể chống lại mọi loại sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Thiệp Liệp",
+          "descriptionVi": "Sát thương bất kỳ loại nào gây ra đều có thể nhận được Lính Đan Dương",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:dang-giap-binh": {
+      "nameVi": "Lính Giáp Mây",
+      "effectVi": "Tiến bậc Lính Khiên lên thành Lính Giáp Mây đao thương đâm không thủng: Toàn thể quân ta nhận sát thương Binh Đao giảm 24% (chịu ảnh hưởng Thống Soái), nhưng khi ở trạng thái Đốt Cháy sẽ mất thêm Binh Lực mỗi hiệp (Tỷ lệ sát thương 300%)",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Nâng Khiên",
+          "descriptionVi": "Người mang Khiên binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Nhẫn Nại",
+          "descriptionVi": "Lượng Binh Lực tổn thất do trạng thái Đốt Cháy bị giảm đi, chịu ảnh hưởng bởi Thống Soái",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Tượng",
+          "descriptionVi": "Tiến bậc Kỵ Binh lên thành Tượng Giáp Mây đao thương đâm không thủng tung hoành tự do",
+          "convertsTo": "Kỵ binh"
+        },
+        {
+          "tier": "C",
+          "nameVi": "Giáp Mây",
+          "descriptionVi": "Tăng cao hiệu quả Giảm sát thương Binh đao 8%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Hùng Chủ",
+          "descriptionVi": "Phó Tướng có thể kích hoạt hiệu ứng của Tướng Chính, đồng thời tăng cao 3% thuộc tính chiến đấu",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Trọng Trang",
+          "descriptionVi": "Điểm Công Thành Cơ Bản của đội quân tăng 25% nhưng Tốc Độ Hành Quân giảm 50% (Được chọn sau khi cải tạo Tượng Binh)",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Miễn Dịch",
+          "descriptionVi": "Khi toàn bộ quân của ta chịu hiệu ứng giảm thuộc tính, có 25% xác suất miễn dịch",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tịnh Hoá",
+          "descriptionVi": "Toàn bộ Quân của ta chịu hiệu ứng Sát thương liên tục, 25% tịnh hoá bản thân",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Chậm Chạp",
+          "descriptionVi": "Trì hoãn 50% sát thương nhận được sẽ tổng kết dần trong 3 hiệp, khi bản thân bị Đốt Cháy, nhận 50% tấn công nhóm và Hỗn Loạn (sau khi cải tạo Tượng Binh, Trọng Trang có thể được chon)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Rắn Chắc",
+          "descriptionVi": "Sau khi chịu sát thương binh đao, võ tướng này giảm 3% sát thương binh đao phải chịu trong hiệp hiện tại, cài lại khi kết thúc hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Chống Đỡ",
+          "descriptionVi": "Trước khi Chiến đấu 2 Hiệp, khi Tướng Chính chịu Sát thương Võ Lực, có 50% xác suất Nhận 1 lần Chống Đỡ (mỗi Hiệp kích hoạt tối đa 2 lần)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Bỏ Qua",
+          "descriptionVi": "Sát thương tổng kết dần giảm 20% (Có thể chọn sau khi cải tạo Tượng Binh, Trọng Trang, Man Uy)",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:giai-phien-ve": {
+      "nameVi": "Giải Phiền Vệ",
+      "effectVi": "Khi Lính Thương tiến cấp thành Giải Phiền Vệ vô địch: Đang chiến đấu, toàn thể quân ta tăng 36 điểm Tốc Độ, và Võ Tướng Tốc Độ Nhanh Nhất của quân ta sau khi Tấn công thường, Có 30% xác suất gây một lần sát thương lên Một quân địch (Tỷ lệ sát thương 36%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn, kèm theo sát thương bằng 40% thuộc tính Tốc Độ của võ tướng này), nếu không kích hoạt thì sẽ hồi phục một lượng Binh Lực nhất định cho Một quân ta (tỷ lệ Trị Liệu 72%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn), nếu do Hàn Đương Thống lĩnh, thì tỷ lệ sát thương cơ bản được tăng thêm 36%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Đặc Thương",
+          "descriptionVi": "Người mang tăng 1 cấp độ ăn ý Binh chủng Thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Kỵ",
+          "descriptionVi": "Tiến bậc Lính Kỵ lên thành Giải Phiền Vệ chiến vô bất thắng",
+          "convertsTo": "Kỵ binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tinh Nghiên",
+          "descriptionVi": "Xác suất kích hoạt sát thương chịu ảnh hưởng bởi thuộc tính cao nhất của người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Phá Địch",
+          "descriptionVi": "Tỷ lệ sát thương tăng 6%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Võ Khôi",
+          "descriptionVi": "Chuyển sang Võ Tướng có Võ Lực cao nhất trong quân ta kích hoạt",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Trí Tuyệt",
+          "descriptionVi": "Thay đổi thành Võ Tướng có Trí Lực cao nhất quân ta kích hoạt",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Trăm Trận",
+          "descriptionVi": "Toàn quân ta nhận được 5% giảm sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Cấp cứu",
+          "descriptionVi": "Khóa mục tiêu trị liệu vào đơn vị binh lực thấp nhất của quân ta",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Khám Hư",
+          "descriptionVi": "Theo loại Sát Thương, khóa Mục tiêu Sát Thương vào đơn vị địch Thống Soái thấp nhất hoặc Trí Lực thấp nhất",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Quân Tâm",
+          "descriptionVi": "Thay đổi thành chắc chắn kích hoạt hiệu ứng hồi phục, phán định thêm hiệu quả sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Sách Tập",
+          "descriptionVi": "Thay đổi từ sau khi Tấn Công Thường thành sau khi Phát Động Chiến Pháp Chủ Động",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:ham-tran-doanh": {
+      "nameVi": "Hãm Trận Doanh",
+      "effectVi": "Tiến bậc Lính Khiên thành Hãm Trận Doanh thuận buồm xuôi gió: Toàn thể quân ta Võ Lực, Thống Soái tăng 22 điểm, trước chiến đấu 3 hiệp nhận Trạng thái Cấp Cứu, khi nhận sát thương có 40% xác suất nhận trị liệu (tỷ lệ trị liệu 60%, chịu ảnh hưởng của Trí Lực)",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Nâng Khiên",
+          "descriptionVi": "Người mang Khiên binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Dẫn Quân",
+          "descriptionVi": "Xác suất kích hoạt Cấp Cứu còn bị ảnh hưởng bởi Thống Soái của người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Mưu Công",
+          "descriptionVi": "Xác suất kích hoạt Cấp Cứu bị ảnh hưởng bởi Trí Lực của Người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Kiêm Tu",
+          "descriptionVi": "Võ Lực và Thống Soái tăng thêm 11 điểm",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Trị liệu",
+          "descriptionVi": "Tỷ lệ trị liệu tăng thêm 40%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Cường Thân",
+          "descriptionVi": "Đổi thành nhận Trí Lực và Thống Soái",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Cứu Chiến",
+          "descriptionVi": "Thay đổi thành nhận trạng thái Cấp Cứu ở 4 hiệp trước",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Nghỉ Ngơi",
+          "descriptionVi": "Nhận thêm trạng thái Nghỉ Ngơi (tỷ lệ Trị Liệu 60%)",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Giải Trừ",
+          "descriptionVi": "Khi kích hoạt Cấp Cứu, có 20% xác suất giải trừ trạng thái tiêu cực của bản thân",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cấp Cứu",
+          "descriptionVi": "Đang chiến đấu, mỗi khi Binh Lực Tổng của Ta tổn thất 5000, Buff Cấp Cứu nhận được tăng cao 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Chống Đỡ",
+          "descriptionVi": "Khi kích hoạt Cấp Cứu, có 20% xác suất Nhận 1 lớp Chống Đỡ",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Đoạt Chí",
+          "descriptionVi": "Khi kích hoạt Cấp Cứu, có 25% xác suất đánh cắp 5 điểm Thuộc Tính Chiến Đấu từ nguồn sát thương, có thể cộng dồn, duy trì 2 hiệp",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:ho-bao-ky": {
+      "nameVi": "Hổ Báo Kỵ",
+      "effectVi": "Tiến bậc Kỵ lên thành Hổ Báo Kỵ thiên hạ tinh nhuệ: toàn thể quân ta tăng cao 40 Võ Lực, chiến đấu trước 3 hiệp, toàn thể quân ta tăng tỉ lệ phát động Chiến Pháp Đột Kích lên 10%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Kỵ Thuật",
+          "descriptionVi": "Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Thần Hành",
+          "descriptionVi": "Nhận thêm 40 điểm Tốc Độ",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Nhận Võ Lực thay đổi thành nhận Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Xung Phong",
+          "descriptionVi": "Tăng sát thương Chiến Pháp Đột Kích 10% (chịu ảnh hưởng bởi chỉ số cao hơn giữa Võ Lực và Trí Lực)",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thao Luyện",
+          "descriptionVi": "Tỉ lệ phát động Chiến Pháp Đột Kích tăng cao bị ảnh hưởng bởi Võ Lực của người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mưu Công",
+          "descriptionVi": "Tăng tỉ lệ phát động Chiến Pháp Đột Kích bị ảnh hưởng bởi Trí Lực Trí Lực của người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Giành Công",
+          "descriptionVi": "Tỉ lệ phát động Chiến Pháp Đột Kích tăng thêm 2%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Cửu Chiến",
+          "descriptionVi": "Hiệp hiệu lực thay đổi thành 3~4 hiệp đầu",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Diên Ích",
+          "descriptionVi": "Nhận hiệu ứng tăng ích có 15% xác suất kéo dài thêm 1 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Chống Đỡ",
+          "descriptionVi": "Sau khi phát động Chiến Pháp Đột Kích, có 15% xác suất nhận 1 tầng Chống Đỡ, duy trì 1 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Trọng Thương",
+          "descriptionVi": "Sau khi phát động Chiến Pháp Đột Kích, có 15% xác suất gây ngẫu nhiên 1 trong các hiệu quả sau cho mục tiêu (Chấn Động, Kế Tận, Giao Binh Khí, Hỗn Loạn, Suy Nhược, Cấm Trị Liệu, Phá Hoại)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Trí Kế",
+          "descriptionVi": "Toàn thể quân ta, đánh thường chuyển hóa thành sát thương Mưu Lược",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:ho-ve-quan": {
+      "nameVi": "Quân Hổ Vệ",
+      "effectVi": "Tiến bậc Khiên thành Quân Hổ Vệ thiện chiến giữ vững biên cương: Đang chiến đấu, Khi Chủ Tướng quân ta sắp bị Đánh thường, Phó Tướng Tăng cao 12 Võ Lực, tối đa Tăng cao 5 lần, và sẽ Đối với từng kẻ tấn công gây ra Sát thương Binh đao (Tỷ lệ sát thương 72%, bị ảnh hưởng bởi từngtổn thất binh lực, Tăng cao nhất 40%), Mỗi hiệp tối đa kích hoạt 1 lần, nếu Điển Vi hoặc Hứa Chử Thống lĩnh, bản thân Thống Soái Tăng cao 50",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Nâng Khiên",
+          "descriptionVi": "Người mang Khiên binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Đồng Lòng",
+          "descriptionVi": "Điều kiện kích hoạt thay đổi thành khi toàn quân ta chuẩn bị nhận đòn đánh thường",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Mưu Lược",
+          "descriptionVi": "Quân Hổ Vệ gây ra sát thương đổi thành sát thương Mưu Lược",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thiện Chiến",
+          "descriptionVi": "Tỷ lệ sát thương tăng 36%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Đột phá",
+          "descriptionVi": "Giới hạn ảnh hưởng sát thương tăng 20%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Thay đổi từ tăng Võ Lực thành tăng Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Truy Đuổi",
+          "descriptionVi": "Tỷ lệ sát thương còn bị ảnh hưởng bởi tổn thất binh lực của mục tiêu",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Làm Phản",
+          "descriptionVi": "Quân Hổ Vệ hiệu quả tăng thuộc tính đạt 5 tầng, nhận 15% Làm Phản",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Công Tâm",
+          "descriptionVi": "Quân Hổ Vệ hiệu quả tăng thuộc tính đạt 5 tầng, nhận được 15% Công Tâm",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Tái Diễn",
+          "descriptionVi": "Mỗi hiệp số lần kích hoạt thay đổi thành 2 lần",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Võ Khôi",
+          "descriptionVi": "Kích hoạt Võ Tướng thay đổi từ Phó Tướng thành Phó Tướng có Võ Lực cao nhất, mục tiêu gây sát thương thay đổi thành Toàn bộ địch quân",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Trí Tuyệt",
+          "descriptionVi": "Võ Tướng kích hoạt thay từ Phó Tướng thành Phó Tướng có Trí Lực cao nhất, mục tiêu gây sát thương thay đổi thành Toàn thể quân địch",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:phi-hung-quan": {
+      "nameVi": "Phi Hùng Quân",
+      "effectVi": "Tiến bậc Lính Kỵ thành Phi Hùng Quân dũng bất khả đương: Hiệu quả Trị liệu mà toàn quân ta nhận được tăng 16%, Khi Tướng Chính của ta mỗi hiệp hành động Có 60% xác suất gây Sát thương Mưu Lược lên quần thể quân địch 2 người (Tỷ lệ sát thương 64%, Bị ảnh hưởng bởi toàn bộ Lượng Trị Liệu tích lũy gây ra của quân ta, Sau khi kích hoạt xong sẽ đặt lại tiến độ tích lũy.), nếu Đổng Trác Thống lĩnh, thì hiệu quả Trị liệu nhận được tăng thêm 4%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Cung",
+          "descriptionVi": "Tiến bậc Lính Cung lên thành Phi Hùng Quân dũng bất khả đương",
+          "convertsTo": "Cung binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Kỵ Thuật",
+          "descriptionVi": "Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Võ Tướng gây sát thương nhận 2% Trí Lực khi hành động, có thể tích lũy",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tái Sinh",
+          "descriptionVi": "Hiệu quả Trị liệu của Phi Hùng Quân được tăng thêm 8%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Phá Địch",
+          "descriptionVi": "Tỷ lệ Sát thương của Phi Hùng Quân được tăng thêm 12%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Trí Tuyệt",
+          "descriptionVi": "Kích hoạt Võ Tướng thay đổi từ Tướng Chính thành Võ Tướng có Trí Lực cao nhất",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Phò Thương",
+          "descriptionVi": "Sau khi kích hoạt sát thương của Phi Hùng Quân, hồi phục cho đơn vị có Binh Lực thấp nhất của quân ta lượng Binh bằng 40% lượng sát thương gây ra",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tế Chúng",
+          "descriptionVi": "Quân địch khi được Trị Liệu, có 30% xác suất đồng thời Trị Liệu cho một đơn vị quân ta ngẫu nhiên (tối đa kích hoạt 3 lần mỗi hiệp)",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Giáp Cứng",
+          "descriptionVi": "Tỷ lệ sát thương được thay đổi theo lượng sát thương được miễn giảm tích lũy của quân ta",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Dư Uy",
+          "descriptionVi": "Thay đổi từ việc đặt lại toàn bộ tiến độ tích lũy sang đặt lại 50% tiến độ tích lũy",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Trút Xuống",
+          "descriptionVi": "Sát thương mục tiêu đổi thành nhóm địch (2 ~ 3 người)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Quân Lực",
+          "descriptionVi": "Mục tiêu ảnh hưởng đến lượng Sát thương được thay đổi từ Quân của ta thành toàn bộ trên trận",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:tay-luong-thiet-ky": {
+      "nameVi": "Tây Lương Thiết Kỵ",
+      "effectVi": "Tiến bậc Kỵ lên thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Chiến đấu 3 hiệp đầu, Tăng cho toàn thể quân ta 25% xác suất Hội Tâm (khi kích hoạt, sát thương Binh Đao tăng 100%)",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Kỵ Thuật",
+          "descriptionVi": "Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Loạn Trận",
+          "descriptionVi": "Hiệp đầu toàn phe địch vào trạng thái Bị Tập Kích",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Kỳ Mưu",
+          "descriptionVi": "Thay đổi thành nhận được Kỳ Mưu",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Tật Trì",
+          "descriptionVi": "Hội Tâm/Kỳ Mưu nhận được bị ảnh hưởng bởi Tốc Độ",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thao Luyện",
+          "descriptionVi": "Nhận được Hội Tâm/Kỳ Mưu bị ảnh hưởng bởi Võ Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mưu Công",
+          "descriptionVi": "Hội Tâm/Kỳ Mưu nhận được bị ảnh hưởng bởi Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Lĩnh Ngộ",
+          "descriptionVi": "Hội Tâm/Kỳ Mưu tăng thêm 3%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Võ Lực",
+          "descriptionVi": "Toàn quân ta nhận 15 Võ Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Toàn quân ta nhận 15 Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Ắt Trúng",
+          "descriptionVi": "Sát thương Hội Tâm/Kỳ Mưu có 15% xác suất bỏ qua hiệu quả Chống Đỡ và Né Tránh",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cửu Chiến",
+          "descriptionVi": "Hủy giới hạn hiệp tăng Hội Tâm/Kỳ Mưu, nhưng hiệu quả tăng giảm 15%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cứu Viện",
+          "descriptionVi": "Khi gây sát thương Hội Tâm/Kỳ Mưu, hồi phục cho đơn vị Binh Lực thấp nhất của quân ta bằng 35% lượng sát thương",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:thanh-chau-binh": {
+      "nameVi": "Lính Thanh Châu",
+      "effectVi": "Tiến bậc Thương thành Lính Thanh Châu xung phong phá trận: Trước khi Chiến đấu 2 Hiệp, khiến toàn thể quân ta(2 người)khi chịu Tấn công thường sẽ phản kích lại kẻ tấn công 1 lần Phản kích (Tỷ lệ sát thương 72%), vào đầu Hiệp thứ 3, lần lượt Hồi phục Binh Lực cho toàn bộ quân ta, ưu tiên Hồi phục hoàn toàn cho đơn vị có Binh Lực thấp nhất, sau đó Hồi phục cho các đơn vị khác của quân ta (Tổng tỷ lệ trị liệu 180%, Ảnh hưởng bởi Võ Lực, chịu ảnh hưởng thêm bởi sát thương từ địch quân), nếu Tào Tháo Thống lĩnh, hiệu quả Trị liệu còn chịu ảnh hưởng thêm bởi Thống Soái",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Đặc Thương",
+          "descriptionVi": "Người mang tăng 1 cấp độ ăn ý Binh chủng Thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Thiện Chiến",
+          "descriptionVi": "Tăng tỷ lệ sát thương Phản kích 36%",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Mưu Lược",
+          "descriptionVi": "Phản kích biến thành sát thương Mưu Lược",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Quần Hùng",
+          "descriptionVi": "Thay đổi để nhóm quân ta (2~3 người) nhận Phản kích",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Chữa Trị",
+          "descriptionVi": "Tổng tỷ lệ trị liệu tăng cao 60%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mưu Công",
+          "descriptionVi": "Tổng tỷ lệ Trị Liệu thay đổi theo ảnh hưởng của Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Bất Khuất",
+          "descriptionVi": "Hiệp thứ năm kích hoạt thêm 1 lần trị liệu (tổng tỷ lệ trị liệu 120%, bị Võ Lực hoặc Trí Lực ảnh hưởng, thêm vào đó bị sát thương do quân địch gây ra ảnh hưởng)",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Thao Luyện",
+          "descriptionVi": "Sát thương phản kích bị ảnh hưởng bởi Võ Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tập Trí",
+          "descriptionVi": "Sát thương phản kích bị ảnh hưởng bởi Trí Lực",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Vòng Vo",
+          "descriptionVi": "Nhận thêm 36% hiệu ứng Tránh",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Tiên Cơ",
+          "descriptionVi": "2 hiệp trước trận chiến, khi bắt đầu hiệp, người mang gây sát thương cho toàn bộ quân địch đang trong trạng thái bị khống chế (tỷ lệ sát thương 100%, bị ảnh hưởng bởi chỉ số cao hơn giữa Võ Lực và Trí Lực)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:tien-dang-tu-si": {
+      "nameVi": "Tử Sĩ Tiên Phong",
+      "effectVi": "Tiến Bậc Lính Cung thành Tử Sĩ Tiên Phong không sợ chết: Đang chiến đấu, toàn quân ta miễn dịch trạng thái Bị Tập Kích, và khi nhận sát thương, có 60% xác suất (bị ảnh hưởng bởi Thống Soái của người mang) kích hoạt hiệu ứng sau: Nếu tỷ lệ Binh Lực thấp hơn người tấn công thì sẽ lấy trộm 21 điểm Thống Soái của nó (chịu ảnh hưởng bởi Thống Soái của người mang), Ngược lại giảm 3% tỉ lệ phát động Chiến Pháp Chủ Động của nó, duy trì 2 hiệp, có thể tích lũy 4 lần",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Cung Cong",
+          "descriptionVi": "Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Khiên",
+          "descriptionVi": "Khiến Lính Khiên tiến cấp thành Tử Sĩ Tiên Phong không sợ chết",
+          "convertsTo": "Khiên binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Kháng Cự",
+          "descriptionVi": "Hiệu ứng khắc chế binh chủng mà quân ta nhận được giảm một nửa",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Ức Thế",
+          "descriptionVi": "Có thể đồng thời giảm tỉ lệ phát động Chiến Pháp Đột Kích, nhưng mỗi lần hiệu quả giảm đi sẽ giảm 1%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Thao Luyện",
+          "descriptionVi": "Chuyển sang bị ảnh hưởng bởi Võ Lực của người mang",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mưu Công",
+          "descriptionVi": "Thay đổi thành bị Trí Lực của Người mang ảnh hưởng",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Hào Đoạt",
+          "descriptionVi": "Mỗi lần có thể lấy trộm thêm 7 điểm Thống Soái",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Đoạt Chí",
+          "descriptionVi": "Sẽ dựa theo Loại hình Sát thương để lấy trộm Võ Lực hoặc Trí Lực, nhưng hiệu quả lấy trộm giảm 11 điểm",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Trăm Trận",
+          "descriptionVi": "Toàn quân ta nhận được 5% giảm sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cửu Chiến",
+          "descriptionVi": "Kéo dài thêm 1 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Cộng Dồn",
+          "descriptionVi": "Số lần cộng dồn tối đa+1",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:tuong-binh": {
+      "nameVi": "Tượng Binh",
+      "effectVi": "Tiến bậc Lính Kỵ lên thành Tượng Binh tung hoành tự do: Điểm Công Thành Cơ Bản của đội quân tăng 25% nhưng Tốc Độ Hành Quân giảm 50%,, 50% sát thương phải chịu sẽ được trì hoãn, tổng kết dần trong 3 hiệp, và sát thương tổng kết giảm 20%. Khi bản thân bị Đốt Cháy, Nhận 50% Tấn công nhóm và Hỗn Loạn.Nếu Man Tộc thống lĩnh, mỗi khi có thêm 1 Võ Tướng Man Tộc, sát thương tổng kết sẽ giảm thêm 10%",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Kỵ Thuật",
+          "descriptionVi": "Người mang Kỵ Binh binh chủng ăn ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Man Tộc",
+          "descriptionVi": "Người mang nhận nhãn Man Tộc",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Tật Hành",
+          "descriptionVi": "Không còn giảm tốc độ hành quân",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Mặc Giáp",
+          "descriptionVi": "Trì hoãn thêm 25% sát thương nhận vào",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Làm Dịu",
+          "descriptionVi": "Sát thương tổng kết giảm thêm 30%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Nặng Nề",
+          "descriptionVi": "Đội quân không bị Rào Cản Ngựa ngăn chặn",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Bạo Nộ",
+          "descriptionVi": "Khi bản thân bị Đốt Cháy, nhận thêm 50% tấn công nhóm",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Kiên Định",
+          "descriptionVi": "Người mang trạng thái Miễn nhiễm Hỗn Loạn",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Tốc Chiến",
+          "descriptionVi": "Chiến đấu sẽ kết thúc vào hiệp thứ 7",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Da Dày",
+          "descriptionVi": "Sát thương tổng kết dần đổi thành trì hoãn 4 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Ngự Địch",
+          "descriptionVi": "Đội quân nhận sát thương liên tục giảm 25%",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Tu Dưỡng",
+          "descriptionVi": "Sau khi hòa sẽ lập tức hồi phục toàn bộ thương binh",
+          "convertsTo": null
+        }
+      ]
+    },
+    "troop-mod:vo-duong-phi-quan": {
+      "nameVi": "Vô Đương Phi Quân",
+      "effectVi": "Tiến bậc Lính Cung lên thành Vô Đương Phi Quân trăm phát trăm trúng: Toàn thể quân ta tăng Thống Soái, Tốc Độ 22 điểm, hiệp đầu tiên gây Trúng Độc cho Tập thể địch (2 người), mỗi hiệp gây sát thương duy trì (tỷ lệ sát thương 80%, bị ảnh hưởng bởi Trí Lực), duy trì 3 hiệp",
+      "options": [
+        {
+          "tier": "S",
+          "nameVi": "Cung Cong",
+          "descriptionVi": "Người mang Lính Cung Binh chủng Ăn Ý tăng 1 cấp",
+          "convertsTo": null
+        },
+        {
+          "tier": "S",
+          "nameVi": "Chuyển.Khiên",
+          "descriptionVi": "Tiến bậc Lính Khiên lên thành Vô Đương Phi Quân trăm phát trăm trúng",
+          "convertsTo": "Khiên binh"
+        },
+        {
+          "tier": "S",
+          "nameVi": "Kiêm Tu",
+          "descriptionVi": "Thống Soái và Tốc Độ tăng thêm 11 điểm",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Trí Tuyệt",
+          "descriptionVi": "Áp dụng cho Võ Tướng có Trí Lực cao nhất của quân ta",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Bão Cát",
+          "descriptionVi": "Thêm trạng thái Bão Cát, nhưng tỉ lệ sát thương giảm 15%",
+          "convertsTo": null
+        },
+        {
+          "tier": "C",
+          "nameVi": "Phá Địch",
+          "descriptionVi": "Tỷ lệ sát thương tăng 40%",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Trăm Trận",
+          "descriptionVi": "Toàn quân ta nhận được 5% giảm sát thương",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Phá Quân",
+          "descriptionVi": "Hiệu ứng sát thương liên tục do quân ta gây ra bỏ qua 40% thuộc tính phòng ngự",
+          "convertsTo": null
+        },
+        {
+          "tier": "B",
+          "nameVi": "Cửu Chiến",
+          "descriptionVi": "Thay đổi thời gian duy trì thành 4 hiệp",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Hương Dũng",
+          "descriptionVi": "Toàn quân ta Nhận 150 Hương Dũng (Hương Dũng này sẽ chặn 50% Sát thương khi Đội quân Nhận sát thương, có hiệu lực khi Binh hiện tại ≥ 65% Binh Tối đa)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Mùi Định",
+          "descriptionVi": "Mục tiêu trong thời gian Vô Đương Phi Quân gây sát thương, sát thương gây ra bị giảm (5%*số lượng trạng thái bất lợi tồn tại)",
+          "convertsTo": null
+        },
+        {
+          "tier": "A",
+          "nameVi": "Đoạt Hồn",
+          "descriptionVi": "Khi gây sát thương lên Võ Tướng đang có Trạng thái liên tục, Hồi phục Binh Lực của quân ta bằng lượng Sát thương thấp nhất (5%*Số lượng Trạng thái tiêu cực mà Mục tiêu đang mắc phải)",
+          "convertsTo": null
+        }
+      ]
+    }
+  },
+  "tacticNotes": {
+    "tactic:thua-thien-tinh-the": {
+      "aliases": [],
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); SP Tào Tháo tự mang."
+        }
+      ]
+    },
+    "tactic:tang-khi-dai-thi": {
+      "aliases": [],
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); kế thừa từ SP Tào Tháo."
+        }
+      ]
+    },
+    "tactic:doat-hon-hiep-phach": {
+      "aliases": [
+        "Thác-Đoạt Hồn Hiệp Phách"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Đoạt Hồn Hiệp Phách (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
+    },
+    "tactic:duong-suc-doi-chien": {
+      "aliases": [
+        "Thác-Dưỡng Sức Đợi Chiến"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Dưỡng Sức Đợi Chiến (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
+    },
+    "tactic:thuyen-co-muon-ten": {
+      "aliases": [
+        "Thác-Thuyền Cỏ Mượn Tên"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Thuyền Cỏ Mượn Tên (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
+    },
+    "tactic:cat-xuong-tri-doc": {
+      "aliases": [
+        "Thác-Cắt Xương Trị Độc"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Cắt Xương Trị Độc (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
+    },
+    "tactic:si-biet-tam-nhat": {
+      "aliases": [
+        "Thác-Sĩ Biệt Tam Nhật"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Sĩ Biệt Tam Nhật (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
+        }
+      ]
     }
   }
 }

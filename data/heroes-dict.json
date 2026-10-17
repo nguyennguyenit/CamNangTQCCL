@@ -11487,7 +11487,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:tran-ap-khan-vang",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -12888,111 +12888,6 @@
   },
   {
     "aliases": [
-      "何氏"
-    ],
-    "chinese": "何氏",
-    "cost": "4",
-    "faction": "Quần",
-    "hanViet": "Hà Thị",
-    "iconUrl": null,
-    "id": "hero:ha-thi",
-    "inheritTacticCn": "絕計折謀",
-    "isSP": false,
-    "linkScore": null,
-    "lookup": {
-      "advisorId": null,
-      "cardPacks": [
-        {
-          "categoryVi": "Gói Danh tướng",
-          "categoryZh": "名將卡包",
-          "coreRate": 0.34,
-          "isCore": false,
-          "nonCoreRate": 0.66,
-          "packVi": "Danh tướng",
-          "packZh": "名將"
-        },
-        {
-          "categoryVi": "Gói EX (Quyền Âm Lôi)",
-          "categoryZh": "EX小卡包（權陰雷）",
-          "coreRate": 0.41,
-          "isCore": false,
-          "nonCoreRate": 0.59,
-          "packVi": "Nan Tri Như Âm",
-          "packZh": "難知如陰"
-        },
-        {
-          "categoryVi": "Gói Danh tướng PK",
-          "categoryZh": "PK名將卡包",
-          "coreRate": 0.4,
-          "isCore": false,
-          "nonCoreRate": 0.6,
-          "packVi": "PK Danh tướng IV",
-          "packZh": "PK 名將 IV"
-        }
-      ],
-      "categoryVi": "Quân sự",
-      "civil": {
-        "bonusVi": null,
-        "roleVi": null,
-        "specialtyVi": null,
-        "tacticBonusVi": null
-      },
-      "civilInnatePoints": null,
-      "collectibleBonusVi": null,
-      "conditions": [],
-      "exclusiveTitleVi": null,
-      "flags": {
-        "isCO": false,
-        "isCollectible": false,
-        "isDynamicOpen": true,
-        "isMusou": false,
-        "isSp": false
-      },
-      "growth": {
-        "chinh": 1.32,
-        "luc": 0.06,
-        "mi": 1.21,
-        "thong": 0.82,
-        "toc": 1.02,
-        "tri": 1.03
-      },
-      "inheritTacticId": "tactic:tuyet-ke-chiet-muu",
-      "missingFields": [],
-      "otherAptitudes": {
-        "infantry": "B",
-        "navy": "C"
-      },
-      "redRulesVi": null,
-      "revisions": [],
-      "selfTacticId": "tactic:duy-noi-thien-quyen",
-      "usageVi": null,
-      "usageZh": null,
-      "variant": "base"
-    },
-    "pending": false,
-    "roleTag": "謀",
-    "roleTagViet": "Mưu lược",
-    "selfTacticCn": null,
-    "stars": 5,
-    "stats": {
-      "chinh": "73",
-      "luc": "34",
-      "mi": "65",
-      "thong": "51",
-      "toc": "12",
-      "tri": "67"
-    },
-    "troopApt": {
-      "cung": "B",
-      "khiGioi": "C",
-      "ky": "C",
-      "thuan": "C",
-      "thuong": "C"
-    },
-    "viet": "Hà Thị"
-  },
-  {
-    "aliases": [
       "韓當",
       "韩当"
     ],
@@ -14161,7 +14056,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:chi-diep-phu-to",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -19865,7 +19760,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -19878,7 +19772,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ap-che-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -19956,7 +19850,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -19969,7 +19862,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:hao-hung-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -20047,7 +19940,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -20060,7 +19952,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:cap-toc",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -20498,7 +20390,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -20511,7 +20402,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:lam-loan-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -20770,7 +20661,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -20783,7 +20673,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ap-che-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -21221,7 +21111,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -21234,7 +21123,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:thien-van",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -21492,7 +21381,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -21505,7 +21393,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:co-vu-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -22033,7 +21921,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22046,7 +21933,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:ho-ve",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -22124,7 +22011,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22137,7 +22023,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:dung-vo",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -22395,7 +22281,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22408,7 +22293,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:gan-da",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -22486,7 +22371,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22499,7 +22383,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:lam-loan-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -22848,7 +22732,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -22861,7 +22744,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:cap-cuu-so",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -23029,7 +22912,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -23042,7 +22924,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:gan-da",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
@@ -23301,7 +23183,6 @@
         "civil",
         "civilInnatePoints",
         "inheritedTacticName",
-        "innateTacticId",
         "isCO",
         "isCollectible",
         "isDynamicOpen",
@@ -23314,7 +23195,7 @@
       },
       "redRulesVi": null,
       "revisions": [],
-      "selfTacticId": null,
+      "selfTacticId": "tactic:dung-vo",
       "usageVi": null,
       "usageZh": null,
       "variant": "base"
