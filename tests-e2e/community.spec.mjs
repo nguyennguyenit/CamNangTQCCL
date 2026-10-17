@@ -80,8 +80,21 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
       return json({ items: adminFeedback.filter((item) => !status || item.status === status), nextCursor: null });
     }
     const feedbackStatusMatch = url.pathname.match(/^\/api\/admin\/feedback\/([^/]+)\/status$/);
-    if (method === "POST" && feedbackStatusMatch) return json({ id: feedbackStatusMatch[1], status: body.status });
-    if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports, nextCursor: null });
+    if (method === "POST" && feedbackStatusMatch) {
+      const entry = adminFeedback.find((item) => item.id === feedbackStatusMatch[1]);
+      if (entry) entry.status = body.status;
+      return json({ id: feedbackStatusMatch[1], status: body.status });
+    }
+    if (method === "GET" && url.pathname === "/api/admin/reports") return json({ items: adminReports.filter((r) => r.status === "pending"), nextCursor: null });
+    if (method === "GET" && url.pathname === "/api/admin/counts") {
+      return json({
+        reportsPending: adminReports.filter((r) => r.status === "pending").length,
+        postsDraft: 0,
+        feedbackNew: adminFeedback.filter((f) => f.status === "new").length,
+        feedbackDone: adminFeedback.filter((f) => f.status === "done").length,
+        scanPending: 0,
+      });
+    }
     if (method === "GET" && url.pathname === "/api/admin/ai/config") return json(aiView());
     if (method === "PUT" && url.pathname === "/api/admin/ai/config") {
       const previous = new Map(storedAi.providers.map((p) => [p.id, p.apiKey]));
@@ -89,7 +102,11 @@ async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS, commen
       return json(aiView());
     }
     const approve = url.pathname.match(/^\/api\/admin\/reports\/([^/]+)\/approve$/);
-    if (method === "POST" && approve) return json({ id: approve[1], status: "approved", rejectReason: null });
+    if (method === "POST" && approve) {
+      const report = adminReports.find((r) => r.id === approve[1]);
+      if (report) report.status = "approved";
+      return json({ id: approve[1], status: "approved", rejectReason: null });
+    }
     if (method === "GET" && url.pathname.startsWith("/api/reports/") && url.pathname.endsWith("/image")) {
       return route.fulfill({ status: 200, contentType: "image/png", body: PNG_1X1 });
     }
@@ -214,14 +231,102 @@ test("admin approves a pending report through the API", async ({ page }) => {
   });
   await page.goto("/quan-tri/");
 
-  await expect(page.getByRole("tab", { name: "Duyệt chiến báo" })).toHaveAttribute("aria-selected", "true");
-  const panel = page.getByRole("tabpanel");
-  await expect(panel.locator(".cm-admin-report")).toHaveCount(1);
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const reportsLink = nav.getByRole("link", { name: "Duyệt chiến báo" });
+  await expect(reportsLink).toHaveAttribute("aria-current", "page");
+  // Badge số chờ duyệt lấy từ /api/admin/counts; duyệt xong thì đếm lại và badge ẩn khi về 0.
+  await expect(reportsLink.locator(".adm-nav-count")).toHaveText("1, 1 chiến báo chờ duyệt");
+  const panel = page.getByRole("region", { name: "Duyệt chiến báo" });
+  await expect(panel.locator(".adm-report")).toHaveCount(1);
   await panel.getByRole("button", { name: "Duyệt", exact: true }).click();
 
   await expect.poll(() => calls.some((call) => call.method === "POST" && call.path === "/api/admin/reports/r7/approve")).toBe(true);
-  await expect(panel.locator(".cm-admin-report")).toHaveCount(0);
+  await expect(panel.locator(".adm-report")).toHaveCount(0);
   await expect(panel.getByText("Không còn chiến báo nào chờ duyệt.")).toBeVisible();
+  await expect(reportsLink.locator(".adm-nav-count")).toBeHidden();
+});
+
+test("admin: Back về URL không hash khôi phục khu chiến báo, Forward mở lại AI", async ({ page }) => {
+  await mockCommunityApi(page, { user: ADMIN });
+  await page.goto("/quan-tri/");
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const reportsLink = nav.getByRole("link", { name: "Duyệt chiến báo" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
+  await expect(reportsLink).toHaveAttribute("aria-current", "page");
+  await aiLink.click();
+  await expect(page).toHaveURL(/#ai$/);
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/quan-tri\/$/);
+  await expect(reportsLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "Duyệt chiến báo" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeHidden();
+
+  await page.goForward();
+  await expect(page).toHaveURL(/#ai$/);
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+});
+
+test("admin: link bỏ qua tới nội dung không đổi khu đang mở", async ({ page }) => {
+  await mockCommunityApi(page, { user: ADMIN });
+  await page.goto("/quan-tri/#ai");
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+
+  await page.locator(".skip-link").focus();
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/#main-content$/);
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("region", { name: "AI", exact: true })).toBeVisible();
+  await expect(page.locator("#adm-title-reports")).not.toBeFocused();
+});
+
+test("admin mobile: tiêu đề bài dài không có dấu cách vẫn nằm trong thẻ và mở được trình soạn", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  await mockCommunityApi(page, { user: ADMIN });
+  const title = "A".repeat(200);
+  await page.route("**/api/admin/posts", (route) => route.fulfill({
+    contentType: "application/json",
+    body: JSON.stringify({ items: [{
+      id: "post-long-title", title, slug: "bai-tieu-de-dai", lang: "vi", status: "draft",
+      updatedAt: "2026-10-15T10:00:00.000Z",
+    }] }),
+  }));
+  await page.goto("/quan-tri/#bai-viet");
+  const open = page.getByRole("button", { name: title, exact: true });
+  await expect(open).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await open.click();
+  await expect(page.getByRole("region", { name: "Bài viết", exact: true }).getByLabel("Tiêu đề", { exact: true })).toHaveValue(title);
+});
+
+test("admin mobile: hàng chip điều hướng tự cuộn, chip đang chọn không bị badge đẩy khuất, trang không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 900 });
+  // Có số chờ để badge hiện sau khi trang đã cuộn hàng chip: badge làm chip rộng ra.
+  await mockCommunityApi(page, {
+    user: ADMIN,
+    adminReports: [{ id: "r1", status: "pending" }, { id: "r2", status: "pending" }],
+    adminFeedback: [{ id: "f1", status: "new" }, { id: "f2", status: "new" }],
+  });
+  let releaseCounts;
+  const countsReady = new Promise((resolve) => { releaseCounts = resolve; });
+  await page.route("**/api/admin/counts", async (route) => {
+    await countsReady;
+    await route.fallback();
+  });
+  await page.goto("/quan-tri/#ai");
+  const nav = page.getByRole("navigation", { name: "Khu quản trị" });
+  const aiLink = nav.getByRole("link", { name: "AI", exact: true });
+  await expect(aiLink).toHaveAttribute("aria-current", "page");
+  await expect(aiLink).toBeInViewport({ ratio: 1 });
+  await expect(nav.getByRole("link", { name: /^Góp ý/ }).locator(".adm-nav-count")).toBeHidden();
+  releaseCounts();
+  await expect(nav.getByRole("link", { name: /^Góp ý/ }).locator(".adm-nav-count")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await expect(aiLink).toBeInViewport({ ratio: 1 });
 });
 
 /* ---------- Góp ý, sửa lỗi (nút ở footer) ---------- */
@@ -323,11 +428,13 @@ test("admin xem góp ý, lọc theo trạng thái và đánh dấu đã xử lý
       { id: "f1", kind: "bug", title: "Lỗi lọc", body: "Danh sách trống.", email: "player@example.com", page: "/doi-chuan/", lang: "vi", status: "done", createdAt: "2026-09-25T08:00:00.000Z", author: { id: "u2", name: "Tào Tháo" } },
     ],
   });
-  await page.goto("/quan-tri/");
-  await page.getByRole("tab", { name: "Góp ý" }).click();
-  const panel = page.getByRole("tabpanel", { name: "Góp ý" });
+  // Link thẳng tới khu Góp ý bằng hash.
+  await page.goto("/quan-tri/#gop-y");
+  await expect(page.getByRole("navigation", { name: "Khu quản trị" }).getByRole("link", { name: "Góp ý" })).toHaveAttribute("aria-current", "page");
+  const panel = page.getByRole("region", { name: "Góp ý", exact: true });
 
   await expect(panel.getByLabel("Trạng thái")).toHaveValue("new");
+  await expect(panel.locator(".adm-filter-summary")).toHaveText("1 góp ý chưa xử lý · 1 đã xử lý");
   await expect(panel.locator(".cm-feedback-item")).toHaveCount(1);
   const item = panel.locator(".cm-feedback-item").first();
   await expect(item).toContainText("Sai chỉ số");
@@ -337,6 +444,7 @@ test("admin xem góp ý, lọc theo trạng thái và đánh dấu đã xử lý
   await item.getByRole("button", { name: "Đánh dấu đã xử lý" }).click();
   await expect.poll(() => calls.find((call) => call.path === "/api/admin/feedback/f2/status")?.body).toEqual({ status: "done" });
   await expect(item.getByRole("button", { name: "Đánh dấu chưa xử lý" })).toBeVisible();
+  await expect(panel.locator(".adm-filter-summary")).toHaveText("0 góp ý chưa xử lý · 2 đã xử lý");
 
   await panel.getByLabel("Trạng thái").selectOption("");
   await expect(panel.locator(".cm-feedback-item")).toHaveCount(2);
@@ -358,8 +466,9 @@ test("admin cấu hình AI: thêm nhà cung cấp + model tự thêm, chuỗi ri
     },
   });
   await page.goto("/quan-tri/");
-  await page.getByRole("tab", { name: "AI" }).click();
-  const panel = page.getByRole("tabpanel", { name: "AI" });
+  await page.getByRole("navigation", { name: "Khu quản trị" }).getByRole("link", { name: "AI", exact: true }).click();
+  await expect(page).toHaveURL(/#ai$/);
+  const panel = page.getByRole("region", { name: "AI", exact: true });
   const rows = panel.getByRole("list", { name: "Nhà cung cấp", exact: true }).locator(":scope > li");
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText("••••abcd");

@@ -6,6 +6,10 @@ const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.
 /** Byte gốc của nguồn: pin trên trang chi tiết và hash trong bản phát hành đều so với byte này. */
 const khaihoangSource = await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8");
 const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
+/** Giá trị đã phát hành của một trường nguồn Khai hoang (bản dịch Việt nếu có, không thì chính nguồn). */
+const publishedDisplay = JSON.parse(await readFile(new URL("../data/website-display.json", import.meta.url), "utf8"));
+const publishedValue = (owner, field, source) =>
+  publishedDisplay.values[JSON.stringify([`data:data/khaihoang.json:${owner}`, `${owner}.${field}`])] ?? source;
 const teamByTitle = (title) => data.teams.find((item) => item.title === title);
 /** Chip cấu hình của trang chi tiết (cùng nhóm chip `.kh-config-row` với thẻ danh sách). */
 const detailChip = (page, variantId) => page.locator(`#team-detail-body .kh-config-chip[data-variant="${variantId}"]`);
@@ -356,14 +360,35 @@ test("a legacy mines-only payload renders an empty list without crashing", async
 
 /* ---------- Trang chi tiết: hướng dẫn, ghi chú mở đất, URL và trạng thái lỗi ---------- */
 
-test("detail fetches only the display publication and khaihoang.json, each once", async ({ page, request }) => {
+test("default detail is prerendered: it fetches no data payload until a configuration is chosen, then each payload once", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const requests = [];
   page.on("request", (req) => {
     const { pathname } = new URL(req.url());
     if (pathname.startsWith("/data/")) requests.push(pathname);
   });
-  await page.goto(detailPath(handles, data.teams[0].id));
+  const target = data.teams.find((team) => team.variants?.length);
+  await page.goto(detailPath(handles, target.id));
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("#team-detail-body .kh-hero-card")).not.toHaveCount(0);
+  // Thân đã có trong HTML: không tải, không băm, không dựng lại cho tới khi người đọc đổi cấu hình.
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 300)));
+  expect(requests).toEqual([]);
+  await detailChip(page, target.variants[0].id).click();
+  await expect(detailChip(page, target.variants[0].id)).toHaveAttribute("aria-pressed", "true");
+  expect(requests.sort()).toEqual(["/data/khaihoang.json", "/data/website-display.json"]);
+});
+
+test("a variant URL fetches only the display publication and khaihoang.json, each once", async ({ page, request }) => {
+  const handles = await routeHandles(request);
+  const requests = [];
+  page.on("request", (req) => {
+    const { pathname } = new URL(req.url());
+    if (pathname.startsWith("/data/")) requests.push(pathname);
+  });
+  const target = data.teams.find((team) => team.variants?.length);
+  await page.goto(detailPath(handles, target.id, { variant: target.variants[0].id }));
   await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
   await expect(page.locator("#team-detail-body")).toBeVisible();
   expect(requests.sort()).toEqual(["/data/khaihoang.json", "/data/website-display.json"]);
@@ -462,8 +487,8 @@ test("detail keeps every opening note with its owner and never borrows from the 
 
   const chuThai = teamByTitle("Chu Thái · Trương Phi · Trương Xuân Hoa");
   await page.goto(detailPath(handles, chuThai.id));
-  // Ghi chú build của team, không phải ghi chú mở đất hay ghi chú của variant.
-  await expect(body.locator(".kh-build-note")).toHaveText(chuThai.buildNote);
+  // Ghi chú build của team, không phải ghi chú mở đất hay ghi chú của variant. Thân dựng sẵn mang bản dịch đã phát hành.
+  await expect(body.locator(".kh-build-note")).toHaveText(publishedValue(`teams[${data.teams.indexOf(chuThai)}]`, "buildNote", chuThai.buildNote));
   await expect(notes.locator(".kh-note").filter({ hasText: "Trương Xuân Hoa" }).locator(".detail-note-text")).toHaveText("Cộng Trí Lực.");
   await expect(notes.locator(".kh-note").filter({ hasText: "Nguồn sát thương chính" })).toHaveCount(0);
 });
@@ -669,7 +694,8 @@ test("unknown variants warn and offer the default build instead of pretending", 
 test("detail fails closed on loading, source hash, network and unsafe return sources", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
-  const detailUrl = detailPath(handles, target.id, { from: "https://ke-gian.example/#khaihoang" });
+  // Thân mặc định đã dựng sẵn nên không tải gì; URL xin cấu hình khác mặc định mới đi qua nguồn đã pin.
+  const detailUrl = detailPath(handles, target.id, { variant: target.variants[0].id, from: "https://ke-gian.example/#khaihoang" });
   await routeDetail(page);
 
   // Loading: nguồn trả chậm, trạng thái tải phải hiện trước nội dung.
@@ -680,7 +706,8 @@ test("detail fails closed on loading, source hash, network and unsafe return sou
   await page.goto(detailUrl, {waitUntil: "domcontentloaded"});
   await expect(page.locator("#team-detail-status")).toHaveText("Đang tải chi tiết…");
   await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "true");
-  await expect(page.locator("#team-detail-body")).toBeVisible();
+  // Thân dựng sẵn là bản mặc định: chưa biết cấu hình xin xong thì không được hiện.
+  await expect(page.locator("#team-detail-body")).toBeHidden();
   // `from` ngoài origin bị loại: nút quay lại về danh sách Khai hoang.
   await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/khai-hoang/");
 

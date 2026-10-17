@@ -832,7 +832,7 @@ test("khối Trong cẩm nang gộp vị trí hai họ, giữ trần 3 mục và
   assert.deepEqual(view.positions.map((row) => [row.label, row.count]), [["Phó tướng 2", 42], ["Phó tướng 1", 11], ["Chủ tướng", 2]]);
   assert.equal(view.positions[0].percent, 100);
   assert.equal(view.positions[2].percent, 5);
-  assert.deepEqual(POSITION_LABELS, ["Chủ tướng", "Phó tướng 1", "Phó tướng 2"]);
+  assert.deepEqual(POSITION_LABELS(), ["Chủ tướng", "Phó tướng 1", "Phó tướng 2"]);
   assert.deepEqual(view.representative.map((team) => team.positionLabel), ["Phó tướng 2", "Chủ tướng"]);
   assert.equal(camNangView(null), null);
 });

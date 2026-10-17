@@ -2,7 +2,17 @@
 // phân trang quá 60, hộp thoại hồ sơ theo `?id=` có focus trap (tướng, chiến pháp, binh thư), bốn nhóm catalog dạng
 // danh sách + chi tiết (chọn sẵn mục đầu, chip lọc, màn chi tiết mobile), live region tiếng Việt, link cũ
 // `?group=&id=` được mục lục chuyển tiếp, và mỗi trang nhóm chỉ tải đúng payload của nhóm mình.
+import { readFileSync } from 'node:fs';
 import { test, expect } from '@playwright/test';
+
+/** Slug đóng băng của trang riêng từng mục (`pipeline/lookup-route-handles.json`): đủ để biết số mục và link trang riêng của nhóm. */
+const HANDLES = JSON.parse(readFileSync(new URL('../pipeline/lookup-route-handles.json', import.meta.url), 'utf8')).handles;
+const ITEM_TOTAL = Object.fromEntries(Object.entries(HANDLES).map(([group, ids]) => [group, Object.keys(ids).length]));
+const itemPath = (group, id) => `${GROUP_PATH_BY_GROUP[group]}${HANDLES[group][id]}/`;
+const GROUP_PATH_BY_GROUP = {
+  heroes: '/tra-cuu/tuong/', tactics: '/tra-cuu/chien-phap/', equipment: '/tra-cuu/trang-bi/', advisors: '/tra-cuu/quan-su/',
+  'troop-mods': '/tra-cuu/cai-tao-binh-chung/', buildings: '/tra-cuu/cong-trinh/', books: '/tra-cuu/binh-thu/',
+};
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
 function navLink(page, name, mobile = false) {
@@ -246,7 +256,7 @@ test('bấm nền cũng đóng hộp thoại', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('hồ sơ tướng đi tới chiến pháp liên quan trên trang Chiến pháp', async ({ page }) => {
+test('hồ sơ tướng đi tới chiến pháp liên quan: link trang riêng của chiến pháp, Back về hồ sơ tướng', async ({ page }) => {
   await openLookup(page, '/tra-cuu/tuong/');
   await lookup(page).getByRole('searchbox').fill('luu bi');
   await firstResult(page).click();
@@ -256,10 +266,12 @@ test('hồ sơ tướng đi tới chiến pháp liên quan trên trang Chiến p
 
   const relation = dialog.locator('[data-lookup-relation]').first();
   const target = await relation.getAttribute('data-lookup-relation');
-  await expect(relation).toHaveAttribute('href', `/tra-cuu/chien-phap/?id=${encodeURIComponent(target)}`);
+  // Nhóm khác: link tới trang riêng của chiến pháp (không còn mở hộp thoại trên trang Chiến pháp).
+  await expect(relation).toHaveAttribute('href', itemPath('tactics', target));
   await relation.click();
-  await expect(page).toHaveURL(`/tra-cuu/chien-phap/?id=${encodeURIComponent(target)}`);
-  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page).toHaveURL(itemPath('tactics', target));
+  await expect(page.locator('h1')).toHaveCount(1);
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.goBack();
   await expect(page).toHaveURL(/\/tra-cuu\/tuong\/\?id=hero%3A/);
   await expect(page.getByRole('dialog')).toBeVisible();
@@ -1088,10 +1100,11 @@ test('nút đóng hồ sơ vẫn trong màn hình khi cuộn hộp thoại trên
 /* ---------- Bốn nhóm catalog: danh sách + chi tiết (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) ---------- */
 
 test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
-  test('HTML dựng sẵn đã có danh sách, chip lọc và chi tiết của mục đầu (không cần JS)', async ({ browser }) => {
+  test('HTML dựng sẵn đã có đủ mọi mục, chip lọc và chi tiết của mục đầu (không cần JS)', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const page = await context.newPage();
-    for (const [group, items] of [['equipment', 24], ['advisors', 18], ['troop-mods', 16], ['buildings', 20]]) {
+    for (const group of ['equipment', 'advisors', 'troop-mods', 'buildings']) {
+      const items = ITEM_TOTAL[group];
       await page.goto(GROUP_PATH[group]);
       await expect(lookup(page).locator('.lookup-master-item')).toHaveCount(items);
       await expect(selectedItem(page)).toHaveCount(1);
@@ -1168,7 +1181,7 @@ test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
     await openLookup(page, `${GROUP_PATH.equipment}?id=equipment-special%3Agian-hung`);
     await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Gian Hùng');
     await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Tào Tháo');
-    await expect(panel(page).locator('.lookup-special.is-target a.lookup-detail-link')).toHaveAttribute('href', '/tra-cuu/tuong/?id=hero%3Atao-thao');
+    await expect(panel(page).locator('.lookup-special.is-target a.lookup-detail-link')).toHaveAttribute('href', itemPath('heroes', 'hero:tao-thao'));
     await openLookup(page, `${GROUP_PATH.equipment}?id=equipment-special%3Aphu-chu`);
     await expect(panel(page).locator('.lookup-detail-title')).toHaveText('Phù Chú');
     await openLookup(page, `${GROUP_PATH.equipment}?id=equipment%3Akhong-co`);
@@ -1327,12 +1340,13 @@ test.describe('tải dữ liệu theo trang nhóm', () => {
     await expect.poll(() => names.slice(tacticsBooted)).toEqual(['heroes-dict.json']);
   });
 
-  test('HTML dựng sẵn của trang Tướng có đúng 60 mục đầu và tổng số', async ({ request }) => {
+  test('HTML dựng sẵn của trang Tướng có đủ mọi mục; chỉ 60 mục đầu hiện khi có JavaScript, phần còn lại chờ Xem thêm', async ({ request }) => {
     const html = await (await request.get(GROUP_PATH.heroes)).text();
-    expect(html.match(/data-lookup-id="/g)).toHaveLength(60);
+    expect(html.match(/data-lookup-id="/g)).toHaveLength(ITEM_TOTAL.heroes);
+    expect(html.match(/data-lookup-later/g)).toHaveLength(ITEM_TOTAL.heroes - 60);
     const heroes = await (await request.get('/data/heroes-dict.json')).json();
     const total = Number(html.match(/data-lookup-total="(\d+)"/)?.[1]);
-    expect(total).toBeGreaterThan(60);
+    expect(total).toBe(ITEM_TOTAL.heroes);
     expect(total).toBeLessThanOrEqual(heroes.length);
     expect(html).toContain('class="lookup-more');
   });
@@ -1346,7 +1360,7 @@ test.describe('tải dữ liệu theo trang nhóm', () => {
     await expect(currentChip(page)).toHaveAttribute('data-group', 'tactics');
   });
 
-  test('thẻ và tên chiến pháp dựng sẵn là link hồ sơ: bấm khi app chưa chạy vẫn tới đúng hồ sơ', async ({ page }) => {
+  test('thẻ và tên chiến pháp dựng sẵn là link trang riêng: bấm khi app chưa chạy vẫn tới đúng trang của mục', async ({ page }) => {
     // Chặn app.js: trang chỉ còn HTML dựng lúc build, như lúc người dùng bấm trước khi app sẵn sàng.
     await page.route('**/js/app.js', (route) => route.abort());
     for (const [group, selector] of [['heroes', '.lookup-card-button'], ['tactics', '.lookup-table-name']]) {
@@ -1354,10 +1368,8 @@ test.describe('tải dữ liệu theo trang nhóm', () => {
       const first = lookup(page).locator(selector).first();
       const id = await first.getAttribute('data-lookup-id');
       await first.click();
-      await expect(page).toHaveURL(`${GROUP_PATH[group]}?id=${encodeURIComponent(id)}`);
+      await expect(page).toHaveURL(itemPath(group, id));
+      await expect(page.locator('h1')).toHaveCount(1);
     }
-    await page.unroute('**/js/app.js');
-    await page.reload();
-    await expect(page.getByRole('dialog')).toBeVisible();
   });
 });

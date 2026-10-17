@@ -1,0 +1,49 @@
+---
+// Trang riêng của một mục Tra cứu `/tra-cuu/<nhóm>/<slug>/` dùng chung cho bản Việt và bản Trung. Hồ sơ đầy đủ dựng lúc
+// build bằng đúng cây view của hộp thoại/panel (src/lib/lookup-item-pages.ts) nên đọc được không cần JavaScript;
+// js/lookup-item-page.js chỉ gắn nút chọn phiên bản hiệu ứng. Canonical là chính URL này, hreflang vi/zh do SiteLayout phát.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { pick } from '../../../js/i18n.js';
+import { lookupItemPage } from '../../lib/lookup-item-pages';
+import { jsonLd } from '../../lib/blog-posts.ts';
+import type { LookupGroup } from '../../lib/lookup-pages';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  id: string;
+  group: LookupGroup;
+  locale: SiteLocale;
+}
+
+const { id, locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const page = await lookupItemPage(id, locale, Astro.site!);
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+---
+<SiteLayout
+  title={page.title}
+  description={page.description}
+  pageKind="detail"
+  activeSection="lookup"
+  tagline={t('Tra cứu', '图鉴查询')}
+  canonicalUrl={canonicalUrl}
+  ogType="article"
+  locale={locale}
+>
+  {/* Có JavaScript thì chỉ bản hiệu ứng đang chọn hiện (CSS `html[data-lookup-js]`); không JavaScript thì hiện mọi bản kèm nhãn. */}
+  <script is:inline slot="head">document.documentElement.dataset.lookupJs='';</script>
+  <Fragment slot="head">
+    {page.structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Tra cứu', '返回图鉴列表')}>
+    <a class="detail-link detail-back-link" href={page.groupHref}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      {t(`Quay lại ${page.groupLabel}`, `返回${page.groupLabel}`)}
+    </a>
+  </nav>
+  {page.master
+    ? <section class="lookup-item" data-lookup-item-root><div class="lookup-detail-panel" set:html={page.bodyHtml}></div></section>
+    : <section class="lookup-item" data-lookup-item-root set:html={page.bodyHtml}></section>}
+
+  <script is:inline type="module" src="/js/lookup-item-page.js" slot="scripts"></script>
+</SiteLayout>

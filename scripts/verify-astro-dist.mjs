@@ -4,9 +4,12 @@ import { relative, resolve, sep } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import astroConfig from "../astro.config.mjs";
 import { PUBLIC_ARTIFACTS, validatePublicArtifactManifest } from "../src/lib/public-artifact-manifest.mjs";
+import { llmsDocuments } from "../src/lib/llms-documents.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
+import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import {
   LOOKUP_GROUP_PATHS,
   SECTION_PATHS,
@@ -17,8 +20,9 @@ import {
   sitemapDocument,
 } from "../src/pages/sitemap.xml.ts";
 import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
+import { PRERENDERED_TEAM_SECTIONS as TEAM_SSR_SECTIONS } from "../src/lib/team-ssr.ts";
 import { validateLookupBundle } from "../js/lookup-data.js";
-import { LOOKUP_GROUP_SLUGS } from "../js/lookup-ids.js";
+import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
 const LOOKUP_HUB_PATH = "/tra-cuu/";
@@ -47,6 +51,28 @@ export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
   Object.freeze({ sourcePath: "public/heroes", outputPath: "heroes" }),
 ]);
 
+
+/** Chữ chờ/đòi JavaScript mà trang đội dựng sẵn không được còn mang (HTML tĩnh phải tự đủ nội dung). */
+const WAITING_OR_JS_REQUIRED = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
+
+/**
+ * Bốn trang danh sách đội dựng sẵn đội mặc định lúc build: mỗi mục phải mang dấu hiệu nội dung của nó
+ * (danh sách có dấu `data-ssr-signature` + link chi tiết; Cùng Tồn có nhóm + thẻ đội; Khai hoang có lưới thẻ + link).
+ */
+const SECTION_MARKERS = Object.freeze({
+  "team-chuan": ['class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
+  "team-khac": ['class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
+  coexist: ['class="coexist-group-view" data-ssr-signature=', "coexist-team-card"],
+  khaihoang: ['class="khaihoang"', "kh-card", "kh-title-link"],
+});
+// Danh sách mục dựng sẵn chỉ định nghĩa ở `team-ssr.ts` (layout dùng cùng mảng); verifier chỉ giữ dấu hiệu nội dung của từng mục.
+const PRERENDERED_TEAM_MARKERS = Object.freeze(Object.fromEntries(TEAM_SSR_SECTIONS.map((key) => {
+  if (!SECTION_MARKERS[key]) throw new Error(`Verifier has no prerendered content markers for team section: ${key}`);
+  return [key, SECTION_MARKERS[key]];
+})));
+for (const key of Object.keys(SECTION_MARKERS)) {
+  if (!TEAM_SSR_SECTIONS.includes(key)) throw new Error(`Verifier carries markers for a section team-ssr does not prerender: ${key}`);
+}
 
 /** Trang cộng đồng tĩnh (noindex, ngoài sitemap) ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. */
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
@@ -145,6 +171,35 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
   return posts;
 }
 
+/**
+ * llms: mỗi file con đúng byte của hàm sinh, `/llms-full.txt` đúng bằng các file con nối theo thứ tự, `llms.txt` link tới mọi
+ * file con và `llms-full.txt`, và mọi link của `llms.txt` về chính site trỏ tới file có thật trong dist.
+ */
+async function verifyLlmsOutputs(distPath, llms) {
+  const parts = [];
+  for (const file of llms.files) {
+    const emitted = await readFile(resolve(distPath, file.path.slice(1)), "utf8");
+    if (emitted !== file.text) throw new Error(`llms file differs from the generator: ${file.path}`);
+    parts.push(emitted);
+  }
+  if (await readFile(resolve(distPath, llms.fullPath.slice(1)), "utf8") !== parts.join("")) {
+    throw new Error("llms-full.txt is not the concatenation of the llms files in order");
+  }
+  const index = await readFile(resolve(distPath, "llms.txt"), "utf8");
+  const origin = new URL(astroConfig.site).origin;
+  for (const path of [...llms.files.map((file) => file.path), llms.fullPath]) {
+    if (!index.includes(`](${origin}${path})`)) throw new Error(`llms.txt does not link ${path}`);
+  }
+  for (const [, href] of index.matchAll(/\]\((https?:[^)\s]+)\)/gu)) {
+    const url = new URL(href);
+    if (url.origin !== origin) continue;
+    const file = url.pathname.endsWith("/") ? `${url.pathname.slice(1)}index.html` : url.pathname.slice(1);
+    if (!(await readFile(resolve(distPath, decodeURIComponent(file))).then(() => true, () => false))) {
+      throw new Error(`llms.txt links to a file that is not in dist: ${href}`);
+    }
+  }
+}
+
 async function listFiles(directory, base = directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -181,6 +236,14 @@ export async function verifyAstroDist({
   if (catalog.generationId !== recommended.pin.generationId) {
     throw new Error("Team detail catalog and emitted Recommended generation differ");
   }
+  // Trang riêng từng mục Tra cứu: ledger đóng băng + corpus của chính gốc dự án này. Chỉ khi manifest phát cả bundle Tra cứu
+  // lẫn books-dict (dist thật); fixture rút gọn không có kho Tra cứu đầy đủ nên không có trang mục.
+  const hasLookupItems = ["lookup-manifest", "books-dict"].every((routeParam) =>
+    manifest.some((artifact) => artifact.kind === "data" && artifact.routeParam === routeParam));
+  const lookupItems = hasLookupItems ? await lookupDetailRoutes({ rootDir: rootPath, manifest }) : null;
+  const lookupCorpus = hasLookupItems ? await lookupBuildCorpus({ rootDir: rootPath, manifest }) : null;
+  // Bộ file llms (con + gộp) từ cùng hàm sinh với route; chỉ khi dist đầy đủ dữ liệu đội và Tra cứu (fixture rút gọn không có).
+  const llms = hasWebsiteDisplay && hasLookupItems ? await llmsDocuments(astroConfig.site) : null;
   const recommendedFiles = [
     "data/recommended/current.json",
     ...Object.keys(recommended.files).map((name) => `data/recommended/${recommended.pin.generationId}/${name}`),
@@ -206,8 +269,10 @@ export async function verifyAstroDist({
     ...localizedHtml(sectionHtmlPaths),
     ...localizedHtml(STATIC_PAGE_PATHS.map((path) => `${path.slice(1)}index.html`)),
     ...localizedHtml(catalog.htmlPaths),
+    ...localizedHtml((lookupItems?.entries ?? []).map((entry) => `${entry.path.slice(1)}index.html`)),
     ...COMMUNITY_PAGES.map((page) => page.htmlPath),
     ...BLOG_FIXED_OUTPUTS,
+    ...(llms ? [...llms.files.map((file) => file.path.slice(1)), llms.fullPath.slice(1)] : []),
     ...blogPostFiles,
     ...expectedAssets,
     ...recommendedFiles,
@@ -234,11 +299,15 @@ export async function verifyAstroDist({
   if (emittedByDecodedPath.size !== files.length) throw new Error("dist contains colliding team detail paths");
 
   const blogPosts = await verifyBlogOutputs(distPath, blogPostFiles, astroConfig.site);
+  if (llms) await verifyLlmsOutputs(distPath, llms);
 
   // Byte equality with the build-owned generator enforces valid structure, exact absolute
   // origins, and the absence of query/hash drift without maintaining a second XML parser.
   const sitemapXml = await readFile(resolve(distPath, "sitemap.xml"), "utf8");
-  const detailRoutePaths = [...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath);
+  const detailRoutePaths = [
+    ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
+    ...(lookupItems?.entries ?? []).map((entry) => entry.path),
+  ];
   const sitemapRoutePaths = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths(detailRoutePaths)),
     ...blogSitemapRoutes(blogPosts),
@@ -297,10 +366,32 @@ export async function verifyAstroDist({
     const pageSection = page.match(/<body[^>]*\bdata-page-section="([a-z-]+)"/);
     if (!pageSection) throw new Error(`Section page does not declare its page section: ${htmlPath}`);
     if (!page.includes(`id="section-${pageSection[1]}"`)) throw new Error(`Section page lacks its own mount: ${htmlPath}`);
+    const prerenderedMarkers = PRERENDERED_TEAM_MARKERS[pageSection[1]];
+    if (prerenderedMarkers) {
+      for (const marker of prerenderedMarkers) {
+        if (!page.includes(marker)) throw new Error(`Team section page lacks its prerendered default content (${marker}): ${htmlPath}`);
+      }
+      if ((page.match(/<h1\b/gu) ?? []).length !== 1) throw new Error(`Team section page must carry exactly one h1: ${htmlPath}`);
+      // Chữ người đọc thấy: bỏ chú thích HTML và script (chú thích của footer nhắc JavaScript cho nút hộp thoại).
+      if (WAITING_OR_JS_REQUIRED.test(page.replace(/<!--[^]*?-->/gu, "").replace(/<script\b[^]*?<\/script>/gu, ""))) {
+        throw new Error(`Team section page must not carry waiting or JavaScript-required text: ${htmlPath}`);
+      }
+      // Trình duyệt chỉ nhận lại DOM dựng sẵn khi nó dựng từ đúng publication đã pin trên trang.
+      if (website && !page.includes(`data-ssr-source="${website.pin.sha256}"`)) {
+        throw new Error(`Team section page prerendered content is not tied to the website display publication: ${htmlPath}`);
+      }
+    }
     const registryMatch = page.match(/id="team-route-handles"[^>]*>([^<]+)<\/script>/);
     if (!registryMatch) throw new Error(`Section page lacks the team route handle registry: ${htmlPath}`);
     if (JSON.stringify(JSON.parse(registryMatch[1])) !== JSON.stringify(expectedRegistry)) {
       throw new Error(`Section page team route handle registry differs from the catalog: ${htmlPath}`);
+    }
+    // Ngoại lệ slug Tra cứu (quy tắc: slug = hậu tố mã) mà trình duyệt dùng dựng link trùng với HTML dựng sẵn.
+    if (lookupItems) {
+      const exceptions = page.match(/id="lookup-route-handles"[^>]*>([^<]+)<\/script>/)?.[1];
+      if (!exceptions || JSON.stringify(JSON.parse(exceptions)) !== JSON.stringify(lookupItems.exceptions)) {
+        throw new Error(`Section page lookup route exceptions differ from the ledger: ${htmlPath}`);
+      }
     }
     const embedded = page.match(/id="recommended-publication"[^>]*>([^<]+)<\/script>/);
     if (!embedded) throw new Error(`Section page lacks the Recommended publication pin: ${htmlPath}`);
@@ -327,6 +418,18 @@ export async function verifyAstroDist({
       const group = Object.keys(LOOKUP_GROUP_SLUGS).find((key) => `/tra-cuu/${LOOKUP_GROUP_SLUGS[key]}/` === sectionPath);
       if (!page.includes(`data-lookup-group="${group}"`)) throw new Error(`Lookup group page does not declare its group: ${htmlPath}`);
       if (!page.includes("data-lookup-id=")) throw new Error(`Lookup group page lacks its prerendered first page: ${htmlPath}`);
+      if (lookupCorpus) {
+        // Trang nhóm dựng sẵn ĐÚNG tập mục của nhóm (client chỉ ẩn/hiện), không thiếu cũng không lặp.
+        const rendered = [...page.matchAll(/data-lookup-id="([^"]+)"/gu)].map((match) => match[1]).sort();
+        const expected = lookupCorpus.groups[group].map((row) => row.id).sort();
+        if (rendered.length !== expected.length || rendered.some((id, index) => id !== expected[index])) {
+          const have = new Set(rendered);
+          const want = new Set(expected);
+          const missing = expected.filter((id) => !have.has(id));
+          const extra = rendered.filter((id, index) => !want.has(id) || rendered[index - 1] === id);
+          throw new Error(`Lookup group page must prerender every item exactly once (${rendered.length}/${expected.length}; missing ${JSON.stringify(missing.slice(0, 3))}, extra ${JSON.stringify(extra.slice(0, 3))}): ${htmlPath}`);
+        }
+      }
       if ((group === "books") !== page.includes('id="lookup-books-hash"')) {
         throw new Error(`Only the Binh thư page carries the books-dict pin: ${htmlPath}`);
       }
@@ -343,6 +446,46 @@ export async function verifyAstroDist({
     for (const groupPath of LOOKUP_GROUP_PATHS) {
       const href = locale === "zh" ? `/zh${groupPath}` : groupPath;
       if (!page.includes(`class="lookup-hub-card" href="${href}"`)) throw new Error(`Lookup hub lacks its card for ${href}: ${htmlPath}`);
+    }
+  }
+
+  // Trang riêng từng mục Tra cứu: hồ sơ dựng sẵn, canonical + hreflang của chính nó, title/description duy nhất, một h1.
+  if (lookupItems) {
+    const seen = { title: new Map(), description: new Map() };
+    for (const entry of lookupItems.entries) {
+      for (const locale of SITE_LOCALES) {
+        const htmlPath = localizedHtmlPath(`${entry.path.slice(1)}index.html`, locale);
+        const page = await readPage(htmlPath);
+        verifyLocalePair(page, htmlPath, locale, entry.path, site);
+        const canonical = new URL(locale === "zh" ? `/zh${entry.path}` : entry.path, site).href;
+        if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`Lookup item page lacks its own canonical URL: ${htmlPath}`);
+        for (const [kind, pattern] of [["title", /<title>([^<]*)<\/title>/u], ["description", /<meta name="description" content="([^"]*)"/u]]) {
+          const value = page.match(pattern)?.[1];
+          if (!value) throw new Error(`Lookup item page lacks its ${kind}: ${htmlPath}`);
+          if (kind === "description" && /[:：]$/u.test(value.trim())) throw new Error(`Lookup item page description ends with a dangling colon: ${htmlPath}`);
+          const key = `${locale}\u0000${value}`;
+          if (seen[kind].has(key)) throw new Error(`Lookup item pages share a ${kind}: ${htmlPath} and ${seen[kind].get(key)}`);
+          seen[kind].set(key, htmlPath);
+        }
+        if ((page.match(/<h1\b/gu) ?? []).length !== 1) throw new Error(`Lookup item page must carry exactly one h1: ${htmlPath}`);
+        // Link dựng sẵn lúc build, script riêng không đọc bảng route nào: bảng ≈4.9 KB × 1772 trang không được nhúng.
+        for (const table of ['id="team-route-handles"', 'id="lookup-route-handles"']) {
+          if (page.includes(table)) throw new Error(`Lookup item page must not embed the route table (${table}): ${htmlPath}`);
+        }
+        if (page.includes('src="/js/app.js"') || !page.includes('src="/js/lookup-item-page.js"')) {
+          throw new Error(`Lookup item page must load only its own script: ${htmlPath}`);
+        }
+        if (!page.includes(`data-lookup-item="${entry.id}"`) && !page.includes(`data-lookup-detail="${entry.id}"`)) {
+          throw new Error(`Lookup item page lacks its prerendered profile (${entry.id}): ${htmlPath}`);
+        }
+        const groupHref = locale === "zh" ? `/zh${lookupGroupPath(entry.group)}` : lookupGroupPath(entry.group);
+        if (!page.includes(`class="detail-link detail-back-link" href="${groupHref}"`)) {
+          throw new Error(`Lookup item page lacks its link back to the group page: ${htmlPath}`);
+        }
+        if (WAITING_OR_JS_REQUIRED.test(page.replace(/<!--[^]*?-->/gu, "").replace(/<script\b[^]*?<\/script>/gu, ""))) {
+          throw new Error(`Lookup item page must not carry waiting or JavaScript-required text: ${htmlPath}`);
+        }
+      }
     }
   }
 
@@ -428,6 +571,15 @@ export async function verifyAstroDist({
         }
       }
       if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
+      // Thân dựng sẵn lúc build: có nội dung ngay trong HTML, không trạng thái chờ và không đòi JavaScript.
+      const article = page.match(/<article\b[^>]*\bid="team-detail-root"[^]*?<\/article>/u)?.[0] ?? "";
+      const body = article.match(/<div\b[^>]*\bid="team-detail-body"[^>]*>/u)?.[0] ?? "";
+      if (!body.includes("data-prerendered") || /\bhidden\b/u.test(body) || !/<h2\b/u.test(article)) {
+        throw new Error(`Team detail page lacks its prerendered body: ${path}`);
+      }
+      if (article.includes('id="team-detail-status"') || WAITING_OR_JS_REQUIRED.test(article)) {
+        throw new Error(`Team detail page carries a waiting or JavaScript-required state: ${path}`);
+      }
       if (!page.includes('id="community-root"') || !page.includes('src="/js/community-page.js"')) {
         throw new Error(`Team detail page lacks its community section: ${path}`);
       }

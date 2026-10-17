@@ -1,11 +1,14 @@
 ---
 // Trang nhóm Tra cứu `/tra-cuu/<slug>/` dùng chung cho bản Việt và bản Trung. Khung (tiêu đề, ô tìm, chip nhóm,
-// dòng trạng thái) và trang đầu 60 mục dựng lúc build từ cùng cây markup với trình duyệt; js/app.js nạp đúng
-// payload của nhóm rồi `js/lookup-page.js` gắn vào khung này (tìm kiếm, "Xem thêm", hồ sơ theo `?id=`).
+// dòng trạng thái) và MỌI mục của nhóm dựng lúc build từ cùng cây markup với trình duyệt (mỗi mục là link tới trang
+// riêng của nó); khi có JavaScript chỉ trang đầu hiện, phần còn lại do "Xem thêm" mở. js/app.js nạp đúng payload của
+// nhóm rồi `js/lookup-page.js` gắn vào khung này (tìm kiếm, "Xem thêm", hồ sơ theo `?id=`).
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
 import { LOOKUP_GROUP_UNITS } from '../../../js/unified-lookup.js';
-import { lookupGroupEntries, lookupGroupFirstPage, type LookupGroup } from '../../lib/lookup-pages';
+import { lookupGroupEntries, lookupGroupPage, type LookupGroup } from '../../lib/lookup-pages';
+import { lookupGroupJsonLd } from '../../lib/structured-data.ts';
+import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
@@ -17,7 +20,7 @@ const { group, locale } = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
 const entries = await lookupGroupEntries(locale);
 const current = entries.find((entry) => entry.group === group)!;
-const firstPage = await lookupGroupFirstPage(group, locale);
+const firstPage = await lookupGroupPage(group, locale);
 const canonicalUrl = new URL(localePath(current.path, locale), Astro.site);
 const title = t(
   `${current.label} — Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`,
@@ -32,6 +35,15 @@ const searchPlaceholder = t(
   `Tìm ${LOOKUP_GROUP_UNITS[group]}… (gõ không dấu hoặc chữ Hán đều được)`,
   `搜索${current.label}……（支持中文名）`,
 );
+const structured = lookupGroupJsonLd({
+  locale,
+  site: Astro.site!,
+  path: localePath(current.path, locale),
+  name: current.label,
+  description,
+  items: firstPage.structuredItems,
+  hub: { name: t('Tra cứu', '图鉴查询'), path: localePath('/tra-cuu/', locale) },
+});
 ---
 <SiteLayout
   title={title}
@@ -42,6 +54,11 @@ const searchPlaceholder = t(
   canonicalUrl={canonicalUrl}
   locale={locale}
 >
+  {/* Có JavaScript thì chỉ trang đầu hiện (CSS `html[data-lookup-js]`); không JavaScript thì hiện đủ mọi mục. */}
+  <script is:inline slot="head">document.documentElement.dataset.lookupJs='';</script>
+  <Fragment slot="head">
+    {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
   <section id="section-lookup" class="section active">
     <header class="reference-head lookup-head">
       <div class="reference-head-text">

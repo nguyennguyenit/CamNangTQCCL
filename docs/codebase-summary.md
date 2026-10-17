@@ -2,18 +2,18 @@
 
 ## Tổng quan
 
-Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python offline, Cloudflare Worker cho Vision và Research MCP read-only. `mcp-worker/` có domain services, snapshot loader, bảy shared handler, JSON CLI, stdio và authenticated Streamable HTTP. Không có renderer frontend, SSR, backend chung hoặc database ứng dụng.
+Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy trong trình duyệt, pipeline Python offline, Cloudflare Worker cho Vision và Research MCP read-only. `mcp-worker/` có domain services, snapshot loader, bảy shared handler, JSON CLI, stdio và authenticated Streamable HTTP. Không có framework UI, SSR lúc chạy, backend chung hoặc database ứng dụng; nội dung trang đội và Tra cứu được dựng sẵn lúc build từ cùng builder cây view với trình duyệt.
 
 ## Cấu trúc
 
 ```text
 .
-├── src/pages/              # Landing + 8 trang mục + trang chi tiết đội
-├── src/lib/                # manifest và safe raw-artifact reader
+├── src/pages/              # Landing + 8 trang mục + trang chi tiết đội + trang nhóm/trang riêng Tra cứu + llms
+├── src/lib/                # manifest, safe raw-artifact reader, dựng sẵn trang đội/Tra cứu, JSON-LD, llms
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
 ├── public/_headers         # Pages cache policy source
-├── scripts/                # shared dist verifier
+├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
 ├── mcp-worker/             # data/domain + CLI/stdio/HTTP Research MCP read-only
@@ -35,9 +35,17 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `scripts/verify-astro-dist.mjs` | Kiểm toàn bộ `dist/`, byte parity và deployment-control artifact. |
 | `js/app.js`, `js/website-display.js` | Capture byte runtime, xác minh publication/source hash và áp overlay tiếng Việt trước khi khởi tạo mục của trang đang mở. |
 | `js/team-filter-section.js` | Mục Đội chuẩn/Đội khác (`createRecommendedSection`: search, chip động, stats, xoá lọc, thu gọn trên mobile, Thẻ/Thẻ gọn/Bảng) và mục Cùng Tồn (`createSeasonCoexistSection`). |
-| `js/render.js` | DOM builder dùng chung (`el`, icon), nhóm Cùng Tồn, bảng Khai hoang và chi tiết cấu hình mùa. |
+| `js/render.js` | Builder dùng chung: `el`/icon (DOM) và `t`/`svgTree`/`iconTree` (cây view), nhóm Cùng Tồn, bảng Khai hoang (`khaihoangTableTree`/`khaihoangTable`), thân chi tiết Khai hoang (`khaihoangDetailTrees`) và chi tiết cấu hình mùa. |
+| `js/view-tree.js` | Cây view một định nghĩa cho build và trình duyệt: `treeToHtml` (build, luôn escape), `treeToDom` (client), `treeToText` (llms), `disableButtons`/`enableControl` (nút dựng sẵn chờ gắn sự kiện). |
+| `js/recommended-reference-render.js` | Thẻ, bảng, nhóm Tier và thân chi tiết Đội chuẩn/Đội khác/Cùng Tồn dưới dạng cây view; nhận `locale` tường minh. |
+| `src/lib/team-ssr.ts`, `src/lib/team-section-ssr.js` | Dựng sẵn thân trang chi tiết đội và trạng thái mặc định của bốn trang danh sách từ publication đã pin. |
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
-| `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-master.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `js/view-tree.js`, `src/lib/lookup-pages.ts` | Tra cứu bảy nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM, hồ sơ và quan hệ theo ID; bốn nhóm catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) dùng bố cục danh sách + chi tiết của `lookup-master.js`. |
+| `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-master.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `src/lib/lookup-pages.ts` | Tra cứu bảy nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM (trang nhóm dựng sẵn đủ mọi mục), hồ sơ và quan hệ theo ID; bốn nhóm catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) dùng bố cục danh sách + chi tiết của `lookup-master.js`. |
+| `src/lib/lookup-item-pages.ts`, `src/components/pages/LookupItemPage.astro`, `js/lookup-item-page.js` | Trang riêng `/tra-cuu/<nhóm>/<slug>/` của từng mục: hồ sơ đầy đủ dựng lúc build, client chỉ gắn chân dung và nút phiên bản hiệu ứng. |
+| `pipeline/lookup_route_handles.py`, `pipeline/lookup-route-handles.json`, `src/lib/lookup-detail-routes.ts`, `js/lookup-ids.js` | Ledger slug trang riêng đóng băng theo mã (`--write`/`--check`, mã rời corpus vào `retired`), loader kiểm ledger lúc build, `lookupHref`/`lookupItemPath` cho mọi link Tra cứu. |
+| `src/lib/structured-data.ts` | JSON-LD trang chi tiết đội, trang nhóm và trang riêng Tra cứu (`ItemPage` + `mainEntity` `Thing`/`DefinedTerm`). |
+| `src/lib/llms-documents.ts`, `src/pages/llms.txt.ts`, `src/pages/llms/[...path].txt.ts`, `src/pages/llms-full.txt.ts` | Một hàm sinh bộ llms chữ thuần theo mục và bản gộp `/llms-full.txt`. |
+| `scripts/report-zh-gaps.mjs` | Báo cáo mục Tra cứu mà bản zh thiếu chữ (`viOnly`); `--check` so với file báo cáo đã sinh (chạy tay, `test:dist` chỉ kiểm bất biến). |
 | `js/recruit-tracker-store.js`, `js/recruit-tracker.js`, `js/recruit-sync.js` | Theo dõi chiêu mộ: store schema v2 (bản ghi có `id`/`updatedAt`/dấu xóa, chuyển v1→v2, bảo hiểm tính từ lượt theo `occurredAt`, gộp LWW theo bản ghi), UI (ghi nhanh, Hoàn tác, nhật ký, hộp thoại `<dialog>`), client đồng bộ tuỳ chọn với `/api/recruit`. |
 | `js/analyze.js`, `js/analyze-map.js`, `js/analyze-state.js` | Soi đội: nén ảnh, Turnstile, Worker call; ảnh hai phe có bước chọn phe (`normalizeTeamRead`); khớp 3 trạng thái cho editor xác nhận, diff từng ô với Đội chuẩn theo mùa/Đội khác (`findSimilarTeams` giữ cho MCP); link `?doi=v1.…`, lịch sử trên máy, thẻ PNG; đếm ẩn danh số ô phải sửa (`readStats` → `/api/scan-stats`) và gửi ảnh tự nguyện (`/api/scan-samples`). |
 | `worker/eval/` | Bộ ảnh chuẩn Soi đội: ảnh đã che tên + fixture ID canonical, `score.ts` chấm qua `draftFromRead`, `run-eval.ts` (`npm run eval:vision`) in độ chính xác theo màn hình × trường và p50/p95. |
@@ -100,9 +108,9 @@ Tab Khai hoang hỗ trợ `variants[]` tùy chọn trên từng đội: cấu h�
 
 ## Kiểm thử
 
-- `tests/`: parser, normalize, build, từ điển, tier, crawl/link.
-- `tests-js/`: Astro/dist/header contracts, filter, map, Tra cứu, mobile menu, tracker, roster state và recommend engine.
-- `tests-e2e/`: Chromium parity, storage, JSON failure, exposure local/routed HTTPS và mixed-content.
+- `tests/`: parser, normalize, build, từ điển, tier, crawl/link, ledger handle đội và slug Tra cứu.
+- `tests-js/`: Astro/dist/header contracts, SEO dist (`seo-dist-contract`: link path, JSON-LD, llms, bất biến zh-gaps), cây view của builder đội/hồ sơ Tra cứu, filter, map, Tra cứu, mobile menu, tracker, roster state và recommend engine.
+- `tests-e2e/`: Chromium parity, nội dung dựng sẵn khi không JavaScript và việc nhận lại DOM (`team-ssr-*`, `lookup-item-pages`), storage, JSON failure, exposure local/routed HTTPS và mixed-content.
 - `worker/test/`: config, guard, model, rate-limit, scan modes, schema.
 - `mcp-worker/test/`: snapshot/filesystem/Static Assets/cache, bảy tool, CLI/stdio/HTTP parity, bearer/limits/protocol, ownership-safe release/rollback, verifier, import guard và production-shaped Workerd budget.
 

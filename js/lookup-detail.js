@@ -6,10 +6,9 @@ import { heroSelfTacticId, innateHolderIndex, uniqueTacticIdByChinese } from "./
 // (tên, hiệu ứng/mục tiêu chiến pháp), là số, hoặc thuộc bộ giá trị đóng đã dịch bên dưới. Nội dung chỉ
 // có bản Việt (mô tả, điều kiện, lịch sử…) bị bỏ khỏi hồ sơ zh để không trộn hai ngôn ngữ.
 const ZH = () => currentLocale() === "zh";
-/** Chữ cho ô chưa có dữ liệu (theo ngôn ngữ trang). */
-export const LOOKUP_EMPTY = L("Đang cập nhật", "暂无数据");
-const EMPTY = LOOKUP_EMPTY;
-const LABELS = Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(([key, [vi, zh]]) => [key, L(vi, zh)]));
+/** Chữ cho ô chưa có dữ liệu (theo ngôn ngữ trang; hàm để build dựng cả hai ngôn ngữ trong một tiến trình). */
+export const lookupEmpty = () => L("Đang cập nhật", "暂无数据");
+const labels = () => Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(([key, [vi, zh]]) => [key, L(vi, zh)]));
 /** Khóa có giá trị là số/hạng chữ cái (chỉ số, tăng trưởng, thích tính) — hiện được ở bản zh. */
 const LANGUAGE_NEUTRAL_KEYS = new Set(["luc", "tri", "thong", "toc", "chinh", "mi", "ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]);
 /** Bộ giá trị đóng của dữ liệu (tiếng Việt) → chữ Trung cho bản zh. */
@@ -37,8 +36,8 @@ export function zhSafeValue(value, locale = currentLocale()) {
 /** Khóa không có nhãn bị bỏ khỏi hồ sơ; cảnh báo dev một lần cho mỗi khóa để bổ sung nhãn. */
 const UNKNOWN_LABEL_KEYS = new Set();
 
-const text = (value) => value === null || value === undefined || value === "" ? EMPTY : String(value);
-function field(key, value, labelVi = LABELS[key], render = text(value)) {
+const text = (value) => value === null || value === undefined || value === "" ? lookupEmpty() : String(value);
+function field(key, value, labelVi = labels()[key], render = text(value)) {
   if (!labelVi) {
     if (!UNKNOWN_LABEL_KEYS.has(key)) {
       UNKNOWN_LABEL_KEYS.add(key);
@@ -78,8 +77,8 @@ function viOnlyList(profile, rows) {
 }
 const conditions = (rows) => (Array.isArray(rows) ? rows.map((row) => typeof row === "string" ? row : row?.textVi).filter(Boolean) : []);
 const unresolved = (key, labelVi) => ({ key, labelVi, resolved: false, targetId: null, targetGroup: null, titleVi: null, statusVi: L("Liên kết đang được cập nhật", "关联条目更新中") });
-const listText = (values, empty = EMPTY) => Array.isArray(values) && values.length ? values.join(", ") : empty;
-const VARIANT_LABELS = { base: L("Thường", "普通"), sp: "SP", co: "CO", "40y": "40Y" };
+const listText = (values, empty = lookupEmpty()) => Array.isArray(values) && values.length ? values.join(", ") : empty;
+const variantLabels = () => ({ base: L("Thường", "普通"), sp: "SP", co: "CO", "40y": "40Y" });
 /** Loại chiến pháp trong dữ liệu là enum tiếng Anh/đã Việt hoá; UI chỉ hiện nhãn đã dịch (cặp vi/zh). */
 const TYPE_LABELS = {
   ACTIVE: ["Chủ động", "主动"], PASSIVE: ["Bị động", "被动"], COMMAND: ["Chỉ huy", "指挥"], INTERNAL: ["Nội chính", "内政"],
@@ -96,7 +95,7 @@ const RAW_ENUM = /^[A-Z][A-Z0-9_]*$/;
 const INVALID = "—";
 const RATE_WARNED = new Set();
 export function ratePercentText(value) {
-  if (value === null || value === undefined || value === "") return EMPTY;
+  if (value === null || value === undefined || value === "") return lookupEmpty();
   const rate = Number(value);
   if (!Number.isFinite(rate) || rate < 0 || rate > 1) {
     if (!RATE_WARNED.has(String(value))) {
@@ -114,6 +113,10 @@ const VERSION_WORD = "(?:Cập nhật|Phiên bản gốc|\\d{4}-\\d{2}-\\d{2}\\s
 const VERSION_ONLY = new RegExp(`^${VERSION_WORD}[^:：.;。；]{0,60}$`, "u");
 /** Đoạn mở bằng nhãn phiên bản rồi dấu hai chấm: "Cập nhật ngày 2020-04-01: <hiệu ứng>". */
 const VERSION_INLINE = new RegExp(`^(${VERSION_WORD}[^:：.;。；]{0,60}?)\\s*[:：]\\s*([\\s\\S]+)$`, "u");
+
+/** Đoạn chỉ là nhãn phiên bản (có thể kèm dấu hai chấm cuối): "Cập nhật 2023-05-09 (tăng cường):", "Phiên bản gốc". */
+const VERSION_HEADING = new RegExp(`^${VERSION_WORD}[^:：.;。；]{0,60}[:：]?$`, "u");
+export const isVersionHeading = (paragraph) => VERSION_HEADING.test(String(paragraph ?? "").trim());
 
 /**
  * Tách chữ hiệu ứng nhiều phiên bản thành các khối `{ labelVi, paragraphs }` theo thứ tự nguồn (bản hiện hành
@@ -159,9 +162,9 @@ export function tacticTypeLabel(value, locale = currentLocale()) {
   }
   return text;
 }
-const FLAG_LABELS = {
+const flagLabels = () => ({
   isCollectible: L("Sưu tầm", "典藏"), isDynamicOpen: L("Mở động", "动态开放"), isMusou: L("Vô Song", "无双"), isCO: "CO", isSp: "SP",
-};
+});
 
 /**
  * Tên hiển thị của một mục tra cứu: bản Việt dùng tên Việt, bản zh dùng tên chữ Hán nguồn
@@ -216,7 +219,7 @@ function heroProfile(corpus, entry) {
   const row = entry.record;
   const lookup = row.lookup ?? {};
   const profile = base(entry);
-  optionalField(profile, "variant", lookup.variant, L("Biến thể", "版本"), VARIANT_LABELS[lookup.variant] ?? text(lookup.variant));
+  optionalField(profile, "variant", lookup.variant, L("Biến thể", "版本"), variantLabels()[lookup.variant] ?? text(lookup.variant));
   optionalLocalized(profile, "faction", row.faction, L("Phe", "阵营"));
   optionalField(profile, "stars", row.stars, L("Sao", "星级"));
   optionalField(profile, "cost", row.cost, L("Thống ngự", "统御"));
@@ -229,7 +232,7 @@ function heroProfile(corpus, entry) {
     ["collectibleBonusVi", lookup.collectibleBonusVi, L("Thưởng sưu tầm", "典藏加成")],
     ["redRulesVi", lookup.redRulesVi, L("Quy tắc điểm đỏ", "红度规则")],
   ]) optionalLocalized(profile, key, value, label);
-  const enabledFlags = Object.entries(lookup.flags ?? {}).filter(([, enabled]) => enabled === true).map(([key]) => FLAG_LABELS[key] ?? key);
+  const enabledFlags = Object.entries(lookup.flags ?? {}).filter(([, enabled]) => enabled === true).map(([key]) => flagLabels()[key] ?? key);
   if (enabledFlags.length) pushField(profile, "flags", enabledFlags, L("Đặc tính", "特性"), enabledFlags.join(" · "));
   // Đánh giá giữ/rã thẻ: bản zh hiện chữ Hán nguồn `usageZh`.
   if (lookup.usageVi) pushLocalized(profile, "usage", lookup.usageVi, L("Đánh giá", "评价"), lookup.usageVi, lookup.usageZh);
@@ -339,7 +342,7 @@ function troopProfile(_corpus, entry) {
 /** Thời lượng dữ liệu dạng "2 giờ" / "5 phút": bản zh đổi đơn vị, dạng khác bỏ (`null`). */
 function durationText(value) {
   const shown = text(value);
-  if (!ZH() || shown === EMPTY) return shown;
+  if (!ZH() || shown === lookupEmpty()) return shown;
   const match = /^(\d+(?:[.,]\d+)?)\s*(giờ|phút|ngày|giây)$/u.exec(String(value).trim());
   if (!match) return null;
   return `${match[1]} ${{ "giờ": "小时", "phút": "分钟", "ngày": "天", "giây": "秒" }[match[2]]}`;
@@ -355,8 +358,8 @@ function buildingProfile(_corpus, entry) {
   const levels = [...row.levels].sort((a, b) => a.level - b.level).map((item) => {
     const durationVi = durationText(item.durationVi);
     // Hiệu ứng cấp chỉ có chữ Việt: bản zh bỏ ô này (và ô thời lượng không đọc được).
-    if (ZH() && ((item.effectVi && item.effectVi !== EMPTY) || durationVi === null)) profile.viOnly = true;
-    return { id: item.id, level: item.level, costs: { ...item.costs }, durationVi: durationVi ?? EMPTY, effectVi: ZH() ? EMPTY : text(item.effectVi) };
+    if (ZH() && ((item.effectVi && item.effectVi !== lookupEmpty()) || durationVi === null)) profile.viOnly = true;
+    return { id: item.id, level: item.level, costs: { ...item.costs }, durationVi: durationVi ?? lookupEmpty(), effectVi: ZH() ? lookupEmpty() : text(item.effectVi) };
   });
   profile.children.push({ key: "levels", titleVi: L("Cấp công trình", "建筑等级"), items: levels });
   profile.conditions = viOnlyList(profile, conditions(row.conditions));

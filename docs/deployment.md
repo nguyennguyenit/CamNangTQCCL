@@ -20,14 +20,14 @@ Project deploy is split into three surfaces:
 
 ## Latest Static Pages Deploy
 
-- Date: 2026-10-15
+- Date: 2026-10-16
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment URL: `https://ff01ace5.tqccl.pages.dev`
-- Source commit: `a9f055e` (`origin/main`, fast-forward of `feat/mcp-skill-redesign`). MCP skill redesign plus Gợi ý kho adapter fixes; the "Dùng món này" substitute button is enabled again (it carried `disabled="false"`). Recommended generation `e079390c…`.
-- Method: local `wrangler pages deploy dist --branch main --commit-hash a9f055e…` from a clean worktree, same `dist/` first deployed as preview `https://74b7c3b6.tqccl.pages.dev` (branch `release-a9f055e`). Build used `COMMUNITY_API_ORIGIN` like `pages-deploy.yml`. Local gate: localization `check --stage public`, `team_route_handles --check`, `build`, `verify` (3343 files), `test:dist` 32/32, `test:node` 540/540, pytest 393 passed, MCP `check` 526/526, `check:repository` Playwright 414/414.
-- Preview verified: shell, three team families, `/goi-y-doi-tu-kho/`, `/tra-cuu/` 200; unknown team, `/teams/…`, `pipeline/…` and `/_headers` 404 `no-store`; `/robots.txt` byte-equal to source; `/sitemap.xml` `application/xml`, 3140 URLs as `dist/`, no `/teams/`; JS/CSS/JSON byte-equal to `dist/`.
-- Production verified: `tqccl.com` and `tqccl.pages.dev` serve `js/roster-recommend-ui.js`, `data/recommended/current.json`, `data/lookup-manifest.json` byte-equal to `dist/`; Vision `OPTIONS /analyze` from `https://tqccl.com` 204, foreign origin 403; `/api/me` 200.
-- Previous production / rollback target: `ba81c78d-2c12-401f-8490-7febbca4e6ab` (`9291400`).
+- Deployment: `ad12bf98-9990-4ff3-b3d0-baeb792643fb` (`https://ad12bf98.tqccl.pages.dev`)
+- Source commit: `1194207` (`origin/main`): PR #9 (team and lookup content prerendered for AI crawlers, 1772 lookup item pages, JSON-LD, `/llms/*.txt` + `/llms-full.txt`, sitemap 4912 URLs, stale-state guard for list pages) and PR #8 (`/quan-tri/` redesign). Recommended generation `5d9358db…`.
+- Method: `pages-deploy.yml` `workflow_dispatch` on `main` (run `38935939825`: `npm run build`, `npm run verify` 5156 files, `wrangler pages deploy dist --branch main --commit-hash 1194207…`). Before merge, the PR head passed the credential-free release gate; locally Playwright 491/491, `test:node` 593/593, `test:dist` 49/49, pytest OK, `npm run check` 0 errors.
+- Production verified (`-A ClaudeBot`, no JS): `/llms.txt` and `/llms-full.txt` 200 `text/plain` (2.67 MB); `/tra-cuu/chien-phap/`, `/tra-cuu/tuong/sp-lu-mong/`, `/zh/tra-cuu/binh-thu/di-truc-bao-oan/`, `/doi-chuan/`, `/khai-hoang/`, `/quan-tri/` 200; a Đội chuẩn detail page carries heroes and tactics in HTML; `/sitemap.xml` 4912 `<loc>`; `/teams/` and `/_headers` 404; `js/app.js`, `js/khaihoang-detail.js` byte-equal to source; `www` 301 with path and query. Playwright on `https://tqccl.com`: `/doi-chuan/?season=pk-s24` ends on the PK-S24 list with no `data-ssr-stale` left, Khai hoang, lookup and `/quan-tri/` boot with no page errors.
+- Not yet deployed: community Worker `GET /api/admin/counts` (PR #8) still returns 404 on `tqccl-community`; `/quan-tri/` keeps working and only hides the pending-work badges until the Worker is deployed.
+- Previous production / rollback targets: `6a478f82-a2c9-46a6-8666-8f322ce15ef8` (`fabd7d4`), `ff01ace5-b799-4977-84ca-22580033c309` (`a9f055e`).
 
 ## Latest Community Worker Deploy
 
@@ -38,17 +38,19 @@ Project deploy is split into three surfaces:
 
 ## Latest Research MCP Deploy
 
-- Date: 2026-10-15
+- Date: 2026-10-15 (19:35 UTC)
 - Production URL: `https://mcp.tqccl.com`
-- GitHub Actions run: `38720407246` (manual exact-SHA dispatch, `rehearse_rollback: false`); push gate on the same SHA: run `38717554122` green.
-- Source commit: `a9f055effb4163825bfa4da156749dfd9983ea5a` (MCP skill redesign: seven tools, `fieldLabels`/`refNames`/`similarNames`, `build` in `tqccl_get_team`)
-- Release ID: `sha256:30a102a1d9709bc89caf3c93d7ac60ed348aed8d85f274130a813f204ef7cfb2`
-- Workflow build ID: `build:sha256b64:eWwYqy-IbV2Mlna4vlaYUfTtIiUftWAgfQbelTbghWs`
-- Worker version ID: `1e1b1191-a7b4-4b37-a092-92b0ba069150` (tag = source commit)
-- Deployments: smoke (prior 100% + candidate 0%) `cdfa1ff4-b75f-4564-a188-691862287df9`; production `10a33452-ae33-4c6a-8dbe-dc7c7eb41d8f`.
-- Status: verified at 100% traffic by the workflow verifier (Version Override, then production without override). `wrangler deployments status` shows only `1e1b1191…` at 100%; `/healthz` 200, unauthenticated `/mcp` 401.
-- Note: in the dispatch run the parallel `credential-free-release-gate` job failed on a timing-racy unit test (`roster-scan-state` compared two `new Date()` reads); the push gate for the same SHA had passed. Test fixed in the next commit.
-- Rollback target: version `8264ea76-efc2-4cd5-b446-49a03a89184d` (deployment `44f7d0c4-1b4f-487d-acb1-00596400843b`, `2a754f5`, eight old tools). Dewee: no agent or user grant on server `tqccl`; `tra` still uses local `tqccl-local`.
+- GitHub Actions run: `38791836717` (manual exact-SHA dispatch, `rehearse_rollback: false`); push gate on the same SHA: run `38789084426` green.
+- Source commit: `eb08691ec3cf34689e7c5b529bcfc98c6a8e653f`. Adds `innateHeroIds` to `tqccl_get_entity` for tactics (`fabd7d4`) and the release-driver fixes below (`f76d3af`, `6f7235e`, `7fe6198`, `eb08691`).
+- Release ID: `sha256:6a54e59da2365913e58a759960c31bb21fed47a700f036c384fb4cac55b11256`
+- Workflow build ID: `build:sha256b64:x7ucanKrRW220KswL0isAPFuvAmrv8DnO3xz_WkmbHQ`
+- Worker version ID: `dbba08a2-b92b-42ea-89c2-2265eba08a9c` (tag = source commit)
+- Deployments: prior `84303896-18f5-49a7-9c47-cd60a2262d86` (`1e1b1191` 100%), smoke `bdccf68c-5ee4-456a-ba80-d2133802ab44` (prior 100% + candidate 0%), production `a5815306-7be7-4b7f-acc3-11d263d1b886`.
+- Status: verified at 100% traffic by the workflow verifier (Version Override, then production without override). `wrangler deployments status` shows only `dbba08a2…` at 100%; `/healthz` 200, unauthenticated `/mcp` 401.
+- Evidence: settle before the override smoke took 24 probes with 4 responses from the other version; before production verification 23 probes with 3 from the other version. Both deployment POSTs (smoke, promote) returned responses the client rejects (`mutationErrors` reason `shape`); the controller reconciled each from the read-back.
+- Failed attempts the same day, production left on `1e1b1191` each time: `38743557129` (rolled back after promote, edge still served the prior version), `38754775623` (smoke restored, same cause under Version Override), `38762022539` (smoke POST response rejected and the immediate read-back still showed the prior; a 0% candidate was left and removed by hand with `wrangler versions deploy 1e1b1191…@100%` at 17:58 UTC), `38784835089` (rolled back after promote with only a 5-probe settle).
+- Rollback target: version `1e1b1191-a7b4-4b37-a092-92b0ba069150` (`a9f055e`, deployed 10:44 UTC as `10a33452-ae33-4c6a-8dbe-dc7c7eb41d8f`); older `8264ea76-efc2-4cd5-b446-49a03a89184d` (`2a754f5`, eight old tools).
+- Dewee consumer (self-hosted, build `ce452b49`), switched 2026-10-16: agent `tra` holds the grant on server `tqccl` (`https://mcp.tqccl.com/mcp`, 7 tools) with `tqccl_get_playbook` approved as safe context. Local server `tqccl-local` has no grant and is disabled; its config stays for rollback (`dewee mcp update tqccl-local --enabled=true`, `dewee mcp grant agent tqccl-local tra`, `dewee mcp revoke agent tqccl tra`). Smoke the same day: "Chiến pháp tự có của SP Tào Tháo" answered Thừa Thiên Tĩnh Thế through `mcp_tqccl__tqccl_get_playbook`, `tqccl_search` and `tqccl_get_entity`, citing data `6a54e59da236`.
 
 ## Deploy Commands
 

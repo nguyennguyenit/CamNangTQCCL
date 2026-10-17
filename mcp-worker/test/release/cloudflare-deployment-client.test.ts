@@ -217,4 +217,22 @@ describe("CloudflareDeploymentClient", () => {
       expect(String(error)).not.toContain("upstream");
     }
   });
+
+  it("lỗi mang mã lý do cố định để ghi evidence, không mang nội dung upstream", async () => {
+    const reasonOf = async (fetcher: typeof fetch, call: (client: CloudflareDeploymentClient) => Promise<unknown>) => {
+      const client = new CloudflareDeploymentClient({ accountId, workerName, apiToken: "private-token", runId, fetcher });
+      const error = await call(client).then(() => null, (caught: unknown) => caught);
+      expect(error).toBeInstanceOf(CloudflareDeploymentError);
+      return (error as CloudflareDeploymentError).reason;
+    };
+    expect(await reasonOf(async () => new Response("boom", { status: 502 }), (c) => c.readCurrent())).toBe("http-502");
+    expect(await reasonOf(async () => { throw new TypeError("fetch failed"); }, (c) => c.readCurrent())).toBe("network");
+    expect(await reasonOf(async () => Response.json({ success: false, result: null }), (c) => c.readCurrent())).toBe("envelope");
+    expect(
+      await reasonOf(
+        async () => response({ id: "d", annotations: {}, versions: [{ version_id: candidateVersionId, percentage: 100 }] }),
+        (c) => c.deployTest(priorVersionId, candidateVersionId),
+      ),
+    ).toBe("shape");
+  });
 });

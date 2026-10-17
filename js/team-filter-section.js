@@ -1,13 +1,28 @@
 // Ba mục danh sách: Cùng Tồn (chọn mùa + phiên bản), Đội chuẩn và Đội khác (sidebar lọc,
 // chế độ Thẻ / Thẻ gọn / Bảng). Trên điện thoại, vùng nhóm lọc thu gọn sau nút "Bộ lọc".
 
-import { el, FACTION_CODE, coexistGroupLabel, seasonCoexistGroup, sourceLabel } from './render.js';
+import { el, t, FACTION_CODE, coexistGroupLabel, seasonCoexistGroup, sourceLabel } from './render.js';
 import { L, currentLocale } from './i18n.js';
 
 /** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
-function coexistGroupKey(group, index) {
+export function coexistGroupKey(group, index) {
   return group.recordId ? String(group.recordId) : String(index + 1);
 }
+
+/** Chữ đầu mục Cùng Tồn (kicker, h1, lời dẫn) dạng cây: bản dựng sẵn và trình duyệt dùng chung một định nghĩa. */
+export function coexistHeadTextTree() {
+  return t('div', {class: 'reference-head-text'}, [
+    t('span', {class: 'reference-kicker'}, L('Đội hình', '阵容')),
+    t('h1', {class: 'reference-title', tabindex: '-1'}, L('Cùng Tồn', '共存阵容')),
+    t('p', {class: 'reference-lead'}, L('Năm đội dùng được cùng lúc trong một tài khoản, 15 tướng không trùng nhau. Chọn mùa rồi chọn phiên bản để tham khảo.', '同一账号可同时使用的五支队伍，15 名武将互不重复。先选赛季，再选版本参考。')),
+  ]);
+}
+
+/**
+ * Dấu của phần thân dựng sẵn (kịch bản + khóa nhóm đang chọn). Trình duyệt chỉ nhận lại DOM dựng sẵn khi
+ * dấu này khớp đúng trạng thái nó sắp vẽ; lệch thì thay như cũ.
+ */
+export const coexistViewSignature = (scenarioId, groupKey) => JSON.stringify([scenarioId ?? null, groupKey]);
 
 /**
  * Mục Cùng Tồn: đầu mục như Đội chuẩn (ô chọn mùa bên phải; URL `scenario` sở hữu lựa chọn, đổi mùa gọi
@@ -15,8 +30,9 @@ function coexistGroupKey(group, index) {
  * Tập phiên bản đúng bằng tập `update(groups)` nhận, không lọc thêm ngoài phép chiếu phạm vi.
  * `onGroup(key | null)` được gọi khi URL phải đổi: chọn phiên bản mới, hoặc bỏ `group` cũ không còn hợp lệ.
  */
-export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onGroup, onScenario} = {}) {
-  const title = el('h1', {class: 'reference-title', tabindex: '-1'}, L('Cùng Tồn', '共存阵容'));
+export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onGroup, onScenario, adopt = false} = {}) {
+  const headText = treeToDom(coexistHeadTextTree());
+  const title = headText.querySelector('h1');
   const season = el('select', {'aria-label': L('Mùa', '赛季')});
   const seasonStatus = el('span', {class: 'reference-season-status', hidden: ''}, L('Mới nhất', '最新'));
   const seasonField = el('label', {class: 'reference-season-field', hidden: ''}, [
@@ -28,20 +44,14 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
   season.addEventListener('change', () => {
     if (season.value !== selectedScenario && typeof onScenario === 'function') onScenario(season.value);
   });
-  const head = el('header', {class: 'reference-head coexist-head'}, [
-    el('div', {class: 'reference-head-text'}, [
-      el('span', {class: 'reference-kicker'}, L('Đội hình', '阵容')),
-      title,
-      el('p', {class: 'reference-lead'}, L('Năm đội dùng được cùng lúc trong một tài khoản, 15 tướng không trùng nhau. Chọn mùa rồi chọn phiên bản để tham khảo.', '同一账号可同时使用的五支队伍，15 名武将互不重复。先选赛季，再选版本参考。')),
-    ]),
-    seasonField,
-  ]);
+  const head = el('header', {class: 'reference-head coexist-head'}, [headText, seasonField]);
   const versionRow = el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': L('Chọn phiên bản Cùng Tồn', '选择共存版本')});
   const chooser = el('div', {class: 'coexist-groups'}, [
     el('span', {class: 'coexist-groups-label', 'aria-hidden': 'true'}, L('Phiên bản', '版本')),
     versionRow,
   ]);
-  const groupView = el('div', {class: 'coexist-group-view'});
+  // Nhóm đang xem do build dựng sẵn (`data-ssr-signature`): nhận lại nguyên DOM đó nếu đúng trạng thái đầu tiên.
+  const groupView = (adopt && mount.querySelector(':scope > .coexist-group-view[data-ssr-signature]')) || el('div', {class: 'coexist-group-view'});
   const empty = el('p', {class: 'empty'}, L('Không có nhóm Cùng Tồn trong mùa này.', '本赛季暂无共存阵容分组。'));
   mount.replaceChildren(head, chooser, groupView, empty);
   let items = [];
@@ -85,8 +95,13 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
   }
 
   function paintGroupView() {
+    const prerendered = groupView.dataset.ssrSignature;
+    if (prerendered !== undefined) {
+      groupView.removeAttribute('data-ssr-signature');
+      if (prerendered === coexistViewSignature(selectedScenario, selectedKey)) return;
+    }
     const selected = items.find((item) => item.key === selectedKey) || null;
-    groupView.replaceChildren(...(selected ? [seasonCoexistGroup(selected.group, {teamCard: coexistTeamCard})] : []));
+    groupView.replaceChildren(...(selected ? [treeToDom(seasonCoexistGroup(selected.group, {teamCard: coexistTeamCard}))] : []));
   }
 
   return {
@@ -114,13 +129,35 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
 }
 
 import { SOURCE_TIER_ORDER, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
-import { coexistTeamCard, recommendedTeamCard, recommendedTeamTable, recommendedTeamTableRow, referenceRowKey } from './recommended-reference-render.js';
+import { bindTacticTags, coexistTeamCard, groupRowsByTier, recommendedListTrees, referenceRowKey, teamItemTree, tierOf, tierSectionTree } from './recommended-reference-render.js';
+import { treeToDom } from './view-tree.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
-import { isNativeNavigationClick } from './team-detail-navigation.js';
+import { isNativeNavigationClick, safeReturnUrl } from './team-detail-navigation.js';
 
 /** Danh sách dài dựng theo lượt: dựng cả 1366 thẻ một lần làm trang đứng vài giây trên máy chậm. */
-const PAGE_SIZE=60;
+export const PAGE_SIZE=60;
+
+/** Tiêu đề (h1) của mục Đội chuẩn (`recommended`) / Đội khác (`other`); một nguồn cho build lẫn trình duyệt. */
+export const referenceSectionTitle=family=>family==='other' ? L('Đội khác','其他阵容') : L('Đội chuẩn','推荐阵容');
+
+/** Chữ đầu mục Đội chuẩn / Đội khác (kicker, h1, lời dẫn) dạng cây; dùng chung giữa bản dựng sẵn và trình duyệt. */
+export function referenceHeadTextTree(title,family) {
+  return t('div',{class:'reference-head-text'},[
+    t('span',{class:'reference-kicker'},L('Đội hình','阵容')),
+    t('h1',{class:'reference-title',tabindex:'-1'},title),
+    t('p',{class:'reference-lead'},family==='other'
+      ? L('Các đội có sẵn, đã đối chiếu với đội chuẩn.','现有阵容，已与推荐阵容核对。')
+      : L('Đội hình tham khảo, chia theo mùa tương ứng.','参考阵容，按对应赛季分类。')),
+  ]);
+}
+
+/**
+ * Dấu của danh sách dựng sẵn: mùa, từ khóa, bộ lọc, kiểu hiển thị, số đội đang hiện và nguồn quay lại của mọi
+ * link chi tiết (`from`). Trình duyệt chỉ nhận lại DOM dựng sẵn khi dấu khớp đúng trạng thái nó sắp vẽ.
+ */
+export const referenceViewSignature=(state,mode,from,shown=PAGE_SIZE)=>
+  JSON.stringify([state.season ?? null,state.query || '',state.filters || {},mode,from ?? null,shown]);
 
 // Nhóm chính Loại binh → Phe → Tier; Nhóm/Bộ đội hình thu gọn trong accordion.
 const PRIMARY_FACETS=['unit','faction','tier'];
@@ -170,16 +207,14 @@ export const seasonOptionTitle=item=>zh() ? null : [
 ].filter(Boolean).join(' · ') || null;
 
 /** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
-export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onNavigate}) {
+export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigate,adopt=false}) {
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
   // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
   let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
   const openFacets=new Set();
-  const heading=el('h1',{class:'reference-title',tabindex:'-1'},title);
-  const kicker=el('span',{class:'reference-kicker'},L('Đội hình','阵容'));
-  const intro=el('p',{class:'reference-lead'},family==='other'
-    ? L('Các đội có sẵn, đã đối chiếu với đội chuẩn.','现有阵容，已与推荐阵容核对。')
-    : L('Đội hình tham khảo, chia theo mùa tương ứng.','参考阵容，按对应赛季分类。'));
+  const title=referenceSectionTitle(family);
+  const headText=treeToDom(referenceHeadTextTree(title,family));
+  const heading=headText.querySelector('h1');
   const searchInput=el('input',{type:'search',class:'reference-search-input','aria-label':L(`Tìm ${title}`,`搜索${title}`),placeholder:L('Tìm tướng, chiến pháp, binh thư…','搜索武将、战法、兵书…')});
   const search=el('label',{class:'search reference-search'},[
     icon([svgNode('circle',{cx:11,cy:11,r:7}),svgNode('line',{x1:16.5,y1:16.5,x2:21,y2:21})]),
@@ -190,7 +225,8 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   const filters=el('aside',{class:'reference-filters collapsed',id:`${mount.id}-filters`,'aria-label':L('Bộ lọc','筛选')});
   const notice=el('p',{class:'scope-note reference-notice',role:'status'});
   const count=el('span',{class:'stats reference-count',role:'status'});
-  const view=el('div',{class:'reference-view'});
+  // Danh sách đầu do build dựng sẵn (`data-ssr-signature`): trình duyệt nhận lại nguyên DOM đó nếu đúng trạng thái đầu.
+  const view=(adopt && mount.querySelector(':scope > .reference-view[data-ssr-signature]')) || el('div',{class:'reference-view'});
   const more=el('div',{class:'lookup-more-row reference-more'});
   const empty=el('p',{class:'empty reference-empty'});
   const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>{
@@ -242,7 +278,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
   });
   mount.replaceChildren(
     el('header',{class:'reference-head'},[
-      el('div',{class:'reference-head-text'},[kicker,heading,intro]),
+      headText,
       // Chỉ còn một phạm vi (mùa): ô chọn gói trong một khung có nhãn nhỏ phía trên giá trị.
       el('label',{class:'reference-season-field'},[
         el('span',{class:'reference-season-label'},L('Mùa','赛季')),
@@ -358,9 +394,13 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     }
   }
 
-  const itemNode=(row,mode)=>mode===TEAM_VIEW_TABLE
-    ? recommendedTeamTableRow(row,{hrefFor,labels:viewLabels})
-    : recommendedTeamCard(row,{onTag:value=>onQuery({q:value}),href:hrefFor?.(row),labels:viewLabels});
+  // Cây view dựng ở recommended-reference-render.js; ở đây chỉ đổi sang DOM rồi gắn sự kiện "tìm chiến pháp".
+  const toNode=tree=>{
+    const node=treeToDom(tree);
+    bindTacticTags(node,value=>onQuery({q:value}));
+    return node;
+  };
+  const itemNode=(row,mode)=>toNode(teamItemTree(row,mode,{hrefFor,labels:viewLabels}));
 
   /** Focus vào link chi tiết của thẻ/hàng; thẻ không có link thì chính thẻ nhận focus. */
   function focusItem(node,options) {
@@ -371,42 +411,23 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     node.focus(options);
   }
 
-  const renderRows=(items,mode)=>mode===TEAM_VIEW_TABLE
-    ? el('div',{class:'reference-table-frame'},recommendedTeamTable(items,{hrefFor,labels:viewLabels}))
-    : el('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(row=>itemNode(row,mode)));
-  const tierOf=row=>row.tierRaw || 'unranked';
-
-  /** Nhóm theo Tier, giữ nguyên thứ tự projector (đã xếp theo Tier nguồn và điểm). */
-  function tierGroups(items) {
-    const groups=new Map();
-    for (const row of items) {
-      if (!groups.has(tierOf(row))) groups.set(tierOf(row),[]);
-      groups.get(tierOf(row)).push(row);
-    }
-    return groups;
-  }
-
   /** Một nhóm Tier; số đội của nhóm đếm trên toàn bộ danh sách đã lọc, không chỉ lượt đang hiện. */
-  function tierSection(tier,items,index,mode) {
-    const label=tier==='unranked' ? L('Chưa xếp hạng','未评级') : sourceTierLabel(tier);
-    const headingId=`${mount.id}-tier-heading-${index}`;
-    const total=filteredRows.filter(row=>tierOf(row)===tier).length;
-    return el('section',{class:'reference-tier-section',dataset:{tier},'aria-labelledby':headingId},[
-      el('h2',{class:'reference-tier-heading',id:headingId},[
-        el('span',{},label),
-        el('span',{class:'reference-tier-count'},L(` · ${total} đội`,` · ${total} 队`)),
-      ]),
-      renderRows(items,mode),
-    ]);
-  }
+  const tierSection=(tier,items,index,mode)=>toNode(tierSectionTree(tier,items,{
+    index,mode,mountId:mount.id,hrefFor,labels:viewLabels,
+    total:filteredRows.filter(row=>tierOf(row)===tier).length,
+  }));
 
   /** Dựng `shown` đội đầu của danh sách đã lọc; số đếm "N / M đội" vẫn là toàn bộ danh sách. */
   function renderView() {
     const mode=currentView();
-    const visible=filteredRows.slice(0,shown);
-    if (family==='recommended') {
-      view.replaceChildren(...[...tierGroups(visible)].map(([tier,items],index)=>tierSection(tier,items,index,mode)));
-    } else view.replaceChildren(renderRows(visible,mode));
+    const prerendered=view.dataset.ssrSignature;
+    view.removeAttribute('data-ssr-signature');
+    if (prerendered!==undefined && prerendered===referenceViewSignature(state,mode,safeReturnUrl(location.href),shown)) {
+      // Đúng danh sách đã dựng sẵn: giữ nguyên node, chỉ gắn sự kiện "tìm chiến pháp" (không nháy, không nhân đôi).
+      bindTacticTags(view,value=>onQuery({q:value}));
+    } else {
+      view.replaceChildren(...recommendedListTrees(filteredRows,{family,mode,limit:shown,labels:viewLabels,hrefFor,mountId:mount.id}).map(toNode));
+    }
     renderMore();
     empty.textContent=emptyText;
     empty.hidden=filteredRows.length>0;
@@ -432,7 +453,7 @@ export function createRecommendedSection({mount,title,family,onQuery,hrefFor,onN
     const container=root=>root.querySelector('.reference-table tbody') ?? root.querySelector('.team-grid') ?? root.firstElementChild;
     let first=null;
     if (family==='recommended') {
-      for (const [tier,items] of tierGroups(batch)) {
+      for (const [tier,items] of groupRowsByTier(batch)) {
         const existing=[...view.children].find(section=>section.dataset.tier===tier);
         if (existing) {
           const nodes=items.map(row=>itemNode(row,mode));

@@ -4,6 +4,7 @@
 import { seasonConfigDetail, el, khaihoangTable } from "./render.js";
 import { createLookupPayloadLoader, loadLookupBundle } from "./lookup-data.js";
 import { initLookupPage } from "./lookup-page.js";
+import { setLookupRouteHandlesFromJSON } from "./lookup-ids.js";
 import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
@@ -11,19 +12,21 @@ import { initRosterRecommend } from "./roster-recommend-ui.js";
 import { createByteLoader, displayValue, loadRawNameResolver, loadTacticDisplayName, loadWebsiteDisplay, localizeData } from "./website-display.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 
-import { loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
+import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse } from './season-context.js';
-import { loadRecommendedReference, readRecommendedQuery, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
-import { resolveTeamView, writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
+import { loadRecommendedReference, referenceSectionState, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
+import { writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
   KHAIHOANG_VARIANT_QUERY_KEY,
   captureReturnSnapshot,
   isNativeNavigationClick,
   khaiHoangPairFromUrl,
+  khaiHoangCardHref,
   khaiHoangUrlWithPair,
   matchesReturnSnapshot,
+  referenceDetailHref,
   migrateLegacyReferenceUrl,
   readReturnSnapshot,
   safeKhaiHoangVariants,
@@ -99,8 +102,6 @@ function scenarioText(scenario) {
   return /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(code) ? code : scenario.id;
 }
 const rulesetText = rule => (rule && currentLocale() === 'zh' ? rule.id : rule?.label || '');
-/** Mùa Cùng Tồn mới nhất (đang diễn ra): mặc định khi URL chưa chọn mùa và đứng đầu ô chọn mùa. */
-const COEXIST_LATEST_SCENARIO_ID = 'binh-dien-xuan-thu';
 
 const RETIRED_REFERENCE_PARAMS = ['score', 'category'];
 function stripRetiredReferenceParams(pageSection) {
@@ -142,6 +143,8 @@ async function main() {
   }
   // Bảng route handle phải sẵn sàng trước migrate và mọi lần dựng href.
   setTeamRouteHandlesFromJSON($('#team-route-handles')?.textContent);
+  // Slug trang riêng của từng mục Tra cứu: thẻ dựng lại trong trình duyệt phải trỏ đúng cùng link với HTML dựng sẵn.
+  setLookupRouteHandlesFromJSON($('#lookup-route-handles')?.textContent);
   stripTrackingParams();
   stripRetiredReferenceParams(pageSection);
   stripRetiredToolParams(pageSection);
@@ -165,8 +168,11 @@ async function main() {
     const lookupGroup = pageSection === 'lookup' ? document.body.dataset.lookupGroup : null;
     const lookupPayloads = lookupGroup ? LOOKUP_GROUP_PAYLOADS[lookupGroup] : null;
     if (lookupGroup && !lookupPayloads) throw new Error(`Nhóm Tra cứu không hợp lệ: ${lookupGroup}`);
+    const websitePin = JSON.parse($('#website-display-publication').textContent);
+    // Phần thân dựng sẵn của bốn mục đội chỉ được nhận lại khi build dựng từ đúng publication mà trang này xác minh.
+    const adoptPrerendered = mount.dataset.ssrSource === websitePin.sha256;
     websiteDisplay = await loadWebsiteDisplay(
-      JSON.parse($('#website-display-publication').textContent),
+      websitePin,
       loadBytes,
       recommendedPin,
       {paths: [
@@ -257,9 +263,7 @@ async function main() {
       ? seasonModel.data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => item.id)
       : [];
     // Ô chọn mùa Cùng Tồn đặt mùa mới nhất lên đầu, các mùa còn lại giữ thứ tự registry.
-    const coexistScenarioIds = reviewedScenarioIds.includes(COEXIST_LATEST_SCENARIO_ID)
-      ? [COEXIST_LATEST_SCENARIO_ID, ...reviewedScenarioIds.filter(id => id !== COEXIST_LATEST_SCENARIO_ID)]
-      : reviewedScenarioIds;
+    const coexistScenarioIds = coexistScenarioIdsOf(seasonModel);
     if (pageSection === 'coexist' && coexistScenarioIds.length && !new URL(location.href).searchParams.has('scenario')) {
       const groupParam = new URL(location.href).searchParams.getAll('group');
       const linked = groupParam.length === 1
@@ -287,6 +291,7 @@ async function main() {
       // Nhãn kịch bản lấy từ registry đã xác thực; nhóm không gắn kịch bản dùng nhãn riêng của mục.
       scenarioLabel: scenarioId => scenarioText(seasonModel?.data['season-registry'].find(item => item.id === scenarioId)),
       onGroup: syncCoexistGroup,
+      adopt: adoptPrerendered,
       onScenario: scenarioId => {
         const next = resolveBrowseState(seasonModel, {scenarioId}, {origin:'scenario-change'});
         navigateQuery({scenario:next.scenarioId, ruleset:next.rulesetId, config:null}, true);
@@ -351,12 +356,7 @@ async function main() {
     const sessionStore = () => {
       try { return globalThis.sessionStorage; } catch { return null; }
     };
-    const referenceHref = row => teamDetailHref(
-      row.sourceConfigId
-        ? {sourceConfigId:row.sourceConfigId}
-        : {legacyTeamId:row.legacyTeamId || row.id,legacyVariantId:row.legacyVariantId},
-      {from:location.href},
-    );
+    const referenceHref = row => referenceDetailHref(row, {from:location.href});
     // Snapshot chỉ là trạng thái giao diện; lỗi storage không được chặn điều hướng.
     const rememberReturn = () => {
       const tab = pageSection;
@@ -429,12 +429,9 @@ async function main() {
     function renderReference() {
       if (!REFERENCE_SECTIONS.includes(pageSection) || !recommendedModel) return;
       const registry = recommendedModel.seasons || {};
-      const state = readRecommendedQuery(location.href,registry);
-      // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn.
-      const resolved = {...state, view:resolveTeamView(state.view, localStore())};
-      const explicitSeason = new URL(location.href).searchParams.has('season');
-      sections['team-chuan']?.update(recommendedModel.index.records,resolved,registry);
-      sections['team-khac']?.update(recommendedModel.other.records,explicitSeason ? resolved : {...resolved,season:'all'},registry);
+      // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn (cùng hàm với bản dựng sẵn).
+      sections['team-chuan']?.update(recommendedModel.index.records,referenceSectionState('recommended',location.href,registry,localStore()),registry);
+      sections['team-khac']?.update(recommendedModel.other.records,referenceSectionState('other',location.href,registry,localStore()),registry);
       canonicaliseView();
     }
     /** N5-3: `view` chỉ có nghĩa khi là `luoi` hoặc `bang`; `?view=the` (mặc định) và giá trị lạ/lặp bị bỏ
@@ -482,7 +479,7 @@ async function main() {
       }
       summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? L('Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.','剧本或规则版本无效，请重新选择范围。') : browse.kind === 'all-reference' ? L('Tất cả — tham khảo','全部 — 仅供参考') : `${scenarioText(scenario)} · ${browse.kind === 'verified-pair' ? rulesetText(rule) : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? L('Chưa chọn phiên bản luật — tham khảo','未选择规则版本 — 仅供参考') : L('Chưa có phiên bản luật được xác minh — tham khảo','暂无已验证的规则版本 — 仅供参考')}`;
       if (coexistUI) {
-        const groups = projection ? [...projection.coexist.applicable, ...projection.coexist.scenarioReference, ...projection.coexist.unknown] : coexist.map(content=>({content,source:null}));
+        const groups = projection ? coexistGroups(projection) : coexist.map(content=>({content,source:null}));
         // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
         const groupParams = new URL(location.href).searchParams.getAll('group');
         coexistUI.update(groups, groupParams.length === 0 ? null : groupParams.length === 1 ? groupParams[0] : '', {
@@ -495,15 +492,16 @@ async function main() {
     }
     if (pageSection === 'team-chuan') {
       sections['team-chuan'] = recommendedModel
-        ? createRecommendedSection({mount,title:L('Đội chuẩn','推荐阵容'),family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate})
+        ? createRecommendedSection({mount,family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     } else if (pageSection === 'team-khac') {
       sections['team-khac'] = recommendedModel
-        ? createRecommendedSection({mount,title:L('Đội khác','其他阵容'),family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate})
+        ? createRecommendedSection({mount,family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
-      mount.append(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
+      // Lên đầu mục: sau thẻ dựng sẵn (tối đa 60 đội) thông báo sẽ nằm ngoài tầm nhìn.
+      mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
         ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。')
         : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。')));
     }
@@ -517,10 +515,9 @@ async function main() {
     // href tự đủ state cho Cmd/Ctrl-click và copy link mà không cần sửa URL nguồn.
     if (pageSection === 'khaihoang') {
       khaiHoangUI = khaihoangTable(khaihoang, {
-        hrefFor: (teamId, variantId) => teamDetailHref(
-          {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
-          {from: khaiHoangUrlWithPair(location.href, {teamId, variantId})},
-        ),
+        // Trang Khai hoang do build dựng sẵn: nhận lại nguyên DOM đó, chỉ gắn sự kiện.
+        adopt: adoptPrerendered ? mount.querySelector(':scope > .khaihoang') : null,
+        hrefFor: (teamId, variantId) => khaiHoangCardHref(teamId, variantId, {from: location.href}),
         // Primary click: đồng bộ cặp đang bấm rồi mới ghi snapshot, không preventDefault.
         onNavigate: (event, teamId, variantId) => {
           if (!isNativeNavigationClick(event)) return;
@@ -533,11 +530,15 @@ async function main() {
           rememberReturn();
         },
       });
-      mount.append(khaiHoangUI.element);
-      // Khối đích của link `#cham-su`/`#mo` chỉ có sau khi dựng: trình duyệt đã bỏ qua hash lúc tải trang.
+      // Thẻ dựng sẵn đã nằm trong mount: giữ nguyên node (không mất focus của người đã tab vào thẻ trước khi boot).
+      if (khaiHoangUI.element.parentNode !== mount) mount.replaceChildren(khaiHoangUI.element);
+      // Link `#cham-su`/`#mo` đã có đích từ HTML dựng sẵn, nhưng khi nhận lại DOM hay dựng mới, cuộn lại cho chắc.
       if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
     }
     refresh();
+    // Trạng thái đầu (URL, kiểu hiển thị) đã dựng xong: hiện lại phần dựng sẵn bị ẩn TRƯỚC khi khôi phục, vì focus() không
+    // vào được phần tử đang `visibility: hidden`. Cùng một task với restore nên lựa chọn Khai hoang không kịp nháy.
+    delete mount.dataset.ssrStale;
     restoreReturnState();
     // Back/Forward đổi URL: đọc lại và render trạng thái do URL sở hữu (mùa, bộ lọc, chi tiết
     // cấu hình) TRƯỚC khi khôi phục disclosure/lựa chọn/scroll.
@@ -595,8 +596,10 @@ async function main() {
     const template = websiteDisplay
       ? L(displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate"), "数据加载失败：{message}。请刷新页面，如问题持续请联系管理员。")
       : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。");
-    mount.append(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误"))));
+    mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误"))));
   } finally {
+    // Lỗi boot: thà hiện thân dựng sẵn (kèm thông báo lỗi ở trên) còn hơn để trống.
+    delete mount.dataset.ssrStale;
     // Tín hiệu cho e2e: mount xong, kể cả khi nhánh trên đã lỗi.
     document.body.dataset.boot = 'ready';
   }

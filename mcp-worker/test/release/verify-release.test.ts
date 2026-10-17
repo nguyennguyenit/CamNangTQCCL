@@ -250,6 +250,28 @@ describe("verifyRelease", () => {
     expect(steps.at(-1)).toBe("worker-version-missing");
   });
 
+  it("báo status và loại header của từng response để evidence ghi được lần fail cuối", async () => {
+    // Response 429 RATE_LIMITED vẫn mang đúng header version; evidence cần status mới phân biệt được.
+    const observations: Array<{ status: number; version: string }> = [];
+    await expect(
+      verifyRelease({
+        endpoint: new URL("https://mcp.example/mcp"),
+        bearer,
+        expectedReleaseId: `sha256:${"a".repeat(64)}`,
+        expectedWorkflowBuildId: WORKFLOW_BUILD_ID,
+        expectedWorkerVersionId: workerVersionId,
+        fixture,
+        fetcher: async (input) =>
+          new URL(new Request(input).url).pathname === "/healthz"
+            ? new Response(null, { status: 200 })
+            : new Response(null, { status: 429, headers: { "TQCCL-MCP-Worker-Version": workerVersionId } }),
+        onResponse: (observation) => observations.push(observation),
+      }),
+    ).rejects.toBeInstanceOf(ReleaseVerificationError);
+    expect(observations[0]).toEqual({ status: 200, version: "missing" });
+    expect(observations.at(-1)).toEqual({ status: 429, version: "expected" });
+  });
+
   it("không phản chiếu bearer khi xác minh thất bại", async () => {
     const privateBearer = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
 

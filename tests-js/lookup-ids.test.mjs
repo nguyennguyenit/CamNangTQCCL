@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupHubTarget, lookupProfilePath, lookupSlug,
+  LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupDerivedSlug, lookupHref, lookupHubTarget, lookupItemPath, lookupProfilePath, lookupSlug,
+  setLookupRouteHandles, setLookupRouteHandlesFromJSON,
 } from '../js/lookup-ids.js';
 import {createTacticIdResolver, createTacticNameIndex} from '../js/lookup-ids.js';
 
@@ -71,6 +72,20 @@ test('binh thư: tên Hán nguồn quyết định hồ sơ; tên Việt chỉ d
   // Nội dung đội gốc chỉ có tên Việt.
   assert.equal(resolve.book(null, 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
   assert.equal(resolve.book('—', 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
+});
+
+test('resolver hero: tên Hán nguồn rồi tên Việt chính xác; không đoán theo tên gần giống', () => {
+  const resolve = createLookupIdResolver({heroes: [
+    {id: 'hero:luu-bi', viet: 'Lưu Bị', chinese: '劉備'},
+    {id: 'hero:sp-tuan-uc', viet: 'SP Tuân Úc', chinese: 'SP荀彧'},
+    {id: 'tactic:khong-phai-tuong', viet: 'Lưu Bị', chinese: '劉備'},
+  ]});
+  assert.equal(resolve.hero('劉備', null), 'hero:luu-bi');
+  assert.equal(resolve.hero(null, 'Lưu Bị'), 'hero:luu-bi');
+  assert.equal(resolve.hero('', ' SP Tuân Úc '), 'hero:sp-tuan-uc');
+  assert.equal(resolve.hero('SP荀彧', 'tên khác'), 'hero:sp-tuan-uc');
+  assert.equal(resolve.hero('不存在', 'Lưu Bi'), null);
+  assert.equal(resolve.hero(null, null), null);
 });
 
 test('bookSourceAliases: tên nguồn hiện hành không thành "tên cũ", tên loại trừ không gắn vào hồ sơ', () => {
@@ -146,4 +161,35 @@ test('mã chiến pháp đã gộp (lookup.formerIds) tra ra mã còn sống ở
   // Mã còn là hàng sống không bị coi là đã gộp.
   const stillLive = [...tactics, {id: 'tactic:nhanh-chan-tranh-dat', viet: 'Nhánh Chân Tranh Đất', hanViet: 'x', aliases: []}];
   assert.equal(createTacticIdResolver(stillLive)('Nhánh Chân Tranh Đất'), 'tactic:nhanh-chan-tranh-dat');
+});
+
+test('item route: slug = hậu tố mã, bảng chỉ chứa ngoại lệ, mã không có trang riêng lùi về hồ sơ ?id=, bảng sai dạng bị từ chối nguyên khối', () => {
+  try {
+    assert.equal(lookupItemPath('hero:luu-bi'), '/tra-cuu/tuong/luu-bi/');
+    assert.equal(lookupHref('tactic:phong-thi-tran'), '/tra-cuu/chien-phap/phong-thi-tran/');
+    assert.equal(lookupHref('book:di-truc-bao-oan'), '/tra-cuu/binh-thu/di-truc-bao-oan/');
+    // Mã không phải route của ledger (đặc kỹ trang bị nằm trong trang bị) và mã sai dạng không có trang riêng.
+    assert.equal(lookupItemPath('equipment-special:xich-the'), null);
+    assert.equal(lookupHref('equipment-special:xich-the'), '/tra-cuu/trang-bi/?id=equipment-special%3Axich-the');
+    assert.equal(lookupItemPath('unit:x'), null);
+    assert.equal(lookupHref('hero'), null);
+    assert.equal(lookupDerivedSlug('hero:luu-bi'), 'luu-bi');
+    assert.equal(lookupDerivedSlug('equipment-special:x'), null);
+    assert.equal(setLookupRouteHandles({'equipment:dich-lo': 'dich-lo-2', 'hero:luu-bi': 'luu-bi-2'}), true);
+    assert.equal(lookupHref('equipment:dich-lo'), '/tra-cuu/trang-bi/dich-lo-2/');
+    assert.equal(lookupItemPath('hero:luu-bi'), '/tra-cuu/tuong/luu-bi-2/');
+    assert.equal(lookupItemPath('hero:ton-quyen'), '/tra-cuu/tuong/ton-quyen/');
+    // Bảng hỏng không thay bảng đang dùng.
+    for (const bad of [null, [], {'unit:x': 'x'}, {'hero:a': 'A b'}, {'hero:a': '../x'}, {'hero:a': ''}, {'hero:a': 3}, {'equipment-special:a': 'a'}]) {
+      assert.equal(setLookupRouteHandles(bad), false, JSON.stringify(bad));
+    }
+    assert.equal(setLookupRouteHandlesFromJSON('{not json'), false);
+    assert.equal(setLookupRouteHandlesFromJSON(''), false);
+    assert.equal(lookupItemPath('hero:luu-bi'), '/tra-cuu/tuong/luu-bi-2/');
+    assert.equal(setLookupRouteHandlesFromJSON('{"book:bach-chien":"bach-chien-2"}'), true);
+    assert.equal(lookupItemPath('hero:luu-bi'), '/tra-cuu/tuong/luu-bi/');
+    assert.equal(lookupItemPath('book:bach-chien'), '/tra-cuu/binh-thu/bach-chien-2/');
+  } finally {
+    setLookupRouteHandles({});
+  }
 });

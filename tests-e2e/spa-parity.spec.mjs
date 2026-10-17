@@ -2,6 +2,9 @@ import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
+/** Số mục của nhóm Tướng theo ledger slug đóng băng: trang nhóm dựng sẵn đủ từng ấy mục (không cần JavaScript). */
+const HEROES_TOTAL = Object.keys(JSON.parse(await readFile(new URL("../pipeline/lookup-route-handles.json", import.meta.url), "utf8")).handles.heroes).length;
+
 const storageFixture = JSON.parse(
   await readFile(new URL("./fixtures/legacy-storage.json", import.meta.url), "utf8"),
 );
@@ -422,12 +425,16 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
 
   // A4: chọn B rồi A, mở A bằng primary click, Back: cả hai lấy từ map của snapshot.
   await page.goBack();
+  // Thẻ dựng sẵn hiện trước khi app.js khôi phục lựa chọn từ snapshot: chờ khởi động xong mới đọc.
+  await waitForBoot(page);
   expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
   await cardB.locator(`.kh-config-chip[data-variant="${variantB}"]`).click();
   await cardA.locator(`.kh-config-chip[data-variant="${variantA}"]`).click();
   await cardA.locator(".kh-detail-link").click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await page.goBack();
+  // Thẻ dựng sẵn hiện trước khi app.js khôi phục lựa chọn từ snapshot: chờ khởi động xong mới đọc.
+  await waitForBoot(page);
   expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
   expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
 
@@ -436,6 +443,7 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
   await page.goto(new URL(hrefB, page.url()).href);
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await page.locator("#team-return-link").click();
+  await waitForBoot(page);
   expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
   expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
 
@@ -1328,14 +1336,15 @@ test("icon nút giao diện theo theme mà không cần JS của trang (không n
   await context.close();
 });
 
-test("không có JavaScript: trang mục có h1 tên mục và lời nhắn cần JavaScript, Tra cứu dựng sẵn thì không; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {
+test("không có JavaScript: trang mục có h1 tên mục; trang đội dựng sẵn không đòi JavaScript, ba mục công cụ vẫn nói cần JavaScript; có JavaScript chỉ một h1", async ({ browser, baseURL, page }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   // Trang dựng sẵn chỉ cần HTML: chờ DOMContentLoaded, không chờ 60 ảnh chân dung ở host ngoài.
   const nojs = await context.newPage();
   const cases = [...SECTION_SHELL.map(([path, label]) => [path, label]), [LOOKUP_GROUP_PAGE, "Tướng"]];
+  // Bốn mục đội và Tra cứu dựng nội dung lúc build; chỉ ba công cụ còn cần JavaScript.
+  const prerenderedPaths = ["/doi-chuan/", "/doi-khac/", "/cung-ton/", "/khai-hoang/"];
   for (const [path, label] of cases) {
-    // Mục lục và trang nhóm Tra cứu dựng sẵn nội dung lúc build: không cần (và không được nói cần) JavaScript.
-    const prerendered = path.startsWith(LOOKUP_HUB);
+    const prerendered = path.startsWith(LOOKUP_HUB) || prerenderedPaths.includes(path);
     await nojs.goto(new URL(path, baseURL).href, { waitUntil: "domcontentloaded" });
     await expect(nojs.locator("h1"), path).toHaveCount(1);
     await expect(nojs.locator("h1"), path).toHaveText(label);
@@ -1346,7 +1355,7 @@ test("không có JavaScript: trang mục có h1 tên mục và lời nhắn cầ
     await expect(page.locator("h1"), path).toHaveCount(1);
   }
   await nojs.goto(new URL(LOOKUP_GROUP_PAGE, baseURL).href, { waitUntil: "domcontentloaded" });
-  await expect(nojs.locator("#section-lookup [data-lookup-id]")).toHaveCount(60);
+  await expect(nojs.locator("#section-lookup [data-lookup-id]")).toHaveCount(HEROES_TOTAL);
   await expect(nojs.locator("#section-lookup .lookup-card").first()).toBeVisible();
   await nojs.goto(new URL(LOOKUP_HUB, baseURL).href, { waitUntil: "domcontentloaded" });
   await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(7);

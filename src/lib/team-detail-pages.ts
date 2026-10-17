@@ -9,8 +9,9 @@
 import { createLookupIdResolver } from '../../js/lookup-ids.js';
 import { createRawNameResolver } from '../../js/website-display.js';
 import { legacyLabelZh } from '../../js/recommended-reference-state.js';
+import { holderDisplayName } from '../../js/recommended-reference-render.js';
 import { SOURCE_LABEL } from '../../js/render.js';
-import { readPublicArtifact, websiteDisplayPublicationSnapshot } from './root-static-artifacts';
+import { readPublicArtifact, websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import {
   detailTitleRanks,
   teamDetailCatalog,
@@ -18,7 +19,11 @@ import {
   type LegacyRouteEntry,
   type RecommendedRouteEntry,
   type TeamDetailRouteCatalog,
-} from './team-detail-routes';
+} from './team-detail-routes.ts';
+import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
+import { lookupDetailRoutes } from './lookup-detail-routes.ts';
+import type { NamedPath } from './structured-data.ts';
+import { localePath } from '../../js/i18n.js';
 import type { SiteLocale } from './locale-routes';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -68,12 +73,22 @@ async function recommendedSeasonNamesRaw() {
   return names;
 }
 
+/** `sourceSeasonId` theo thứ tự registry mùa (`seasons.json` `seasonOptions`) của thế hệ Đội chuẩn đã pin. */
+export async function recommendedSeasonOrder(): Promise<string[]> {
+  const website = await websiteDisplayPublicationSnapshot();
+  const seasons = json(website.recommended.files['seasons.json']);
+  return (Array.isArray(seasons?.seasonOptions) ? seasons.seasonOptions : [])
+    .map((option: { sourceSeasonId?: unknown }) => option?.sourceSeasonId)
+    .filter((id: unknown): id is string => typeof id === 'string');
+}
+
 /** Bộ tra của js/lookup-ids.js (`createLookupIdResolver`): tên nguồn chữ Hán + tên Việt → mã hồ sơ Tra cứu. */
 interface LookupIdResolver {
   tactic(raw: string | null, vi: string | null): string | null;
   book(raw: string | null, vi: string | null): string | null;
+  hero(raw: string | null, vi: string | null): string | null;
 }
-/** Mã hồ sơ Tra cứu theo khoá tên (chữ Hán nguồn, thiếu thì tên Việt) — định dạng `team-lookup-links` mà js/team-detail.js đọc. */
+/** Mã hồ sơ Tra cứu theo khoá tên (chữ Hán nguồn, thiếu thì tên Việt); builder cây view (`lookupLinks`) đọc cùng dạng này khi dựng thân trang. */
 export interface TeamLookupLinks {
   tactic: Record<string, string>;
   book: Record<string, string>;
@@ -81,13 +96,42 @@ export interface TeamLookupLinks {
 
 let lookupResolverPromise: Promise<LookupIdResolver> | undefined;
 
-/** Bộ tra mã hồ sơ chiến pháp / binh thư từ đúng hai từ điển mà trang Tra cứu dùng. */
+/** Bộ tra mã hồ sơ chiến pháp / binh thư / tướng từ đúng ba từ điển mà trang Tra cứu dùng. */
 function lookupIdResolver() {
   return lookupResolverPromise ??= (async () => {
-    const [tactics, books] = await Promise.all(['tactics', 'books-dict'].map(async (routeParam) =>
+    const [tactics, books, heroes] = await Promise.all(['tactics', 'books-dict', 'heroes-dict'].map(async (routeParam) =>
       json((await readPublicArtifact({ kind: 'data', routeParam })).bytes)));
-    return createLookupIdResolver({ tactics, books });
+    return createLookupIdResolver({ tactics, books, heroes });
   })();
+}
+
+interface HeroRow {
+  raw?: unknown;
+  vi?: unknown;
+  /** Tên tướng đúng như trang hiển thị; vắng thì `raw` (bản zh) hoặc `vi` (bản vi). */
+  shown?: unknown;
+}
+
+/**
+ * Bộ dựng danh sách tướng có trang riêng của một đội theo ngôn ngữ trang: mỗi tướng một lần, theo thứ tự đội, tên đúng như
+ * trang hiển thị; tướng không có hồ sơ Tra cứu (hoặc không có tên ở ngôn ngữ này) không có mặt.
+ */
+async function heroLinkBuilder(locale: SiteLocale) {
+  const [resolve, routes] = await Promise.all([lookupIdResolver(), lookupDetailRoutes()]);
+  const text = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
+  return (rows: HeroRow[]): NamedPath[] => {
+    const seen = new Set<string>();
+    const out: NamedPath[] = [];
+    for (const row of rows) {
+      const id = resolve.hero(text(row.raw) || null, text(row.vi) || null);
+      const route = id ? routes.byId.get(id) : undefined;
+      const name = text(row.shown) || (locale === 'zh' ? text(row.raw) : text(row.vi));
+      if (!route || !name || seen.has(route.id)) continue;
+      seen.add(route.id);
+      out.push({ name, path: localePath(route.path, locale) });
+    }
+    return out;
+  };
 }
 
 const detailScopes = new Map<string, Map<string, Record<string, unknown>>>();
@@ -104,6 +148,20 @@ async function recommendedDetailRecord(entry: RecommendedRouteEntry) {
     detailScopes.set(entry.safeScopeKey, scope);
   }
   return scope.get(entry.sourceConfigId) ?? null;
+}
+
+/** Thân dựng sẵn của trang chi tiết Đội chuẩn: bản ghi chi tiết đã pin của cấu hình qua builder dùng chung với trình duyệt. */
+export async function recommendedDetailBody(entry: RecommendedRouteEntry, lookupLinks: TeamLookupLinks, locale: SiteLocale): Promise<TeamDetailParts> {
+  const record = await recommendedDetailRecord(entry);
+  if (!record) throw new Error(`Recommended detail record missing: ${entry.sourceConfigId}`);
+  return recommendedDetailParts(record, lookupLinks, locale);
+}
+
+/** Chữ thuần của trang chi tiết Đội chuẩn (llms.txt): cùng bản ghi và cùng builder với `recommendedDetailBody`. */
+export async function recommendedDetailPlainText(entry: RecommendedRouteEntry, lookupLinks: TeamLookupLinks, locale: SiteLocale): Promise<string> {
+  const record = await recommendedDetailRecord(entry);
+  if (!record) throw new Error(`Recommended detail record missing: ${entry.sourceConfigId}`);
+  return recommendedDetailText(record, lookupLinks, locale);
 }
 
 const strings = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
@@ -153,10 +211,14 @@ export interface RecommendedDetailProps {
   ordinal: number;
   /** Dòng phạm vi (mã mùa · tên mùa · danh mục) theo ngôn ngữ trang; rỗng thì không vẽ. */
   scopeLine: string;
+  /** Nhãn tiêu đề (tab/meta, llms.txt): tên đội kèm mã mùa và số thứ tự khi trùng. */
+  pageLabel: string;
   generationId: string;
   manifestSha256: string;
   legacyTeamsSha256: string;
   lookupLinks: TeamLookupLinks;
+  /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
+  heroes: NamedPath[];
 }
 
 /** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
@@ -169,6 +231,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
   const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
+  const links = await heroLinkBuilder(locale);
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
     locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
@@ -178,13 +241,24 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
     const scope = locale === 'zh'
       ? [entry.sourceSeasonCode, entry.sourceSeasonId ? seasonNames!.get(entry.sourceSeasonId) : null, entry.sourceCategoryId]
       : [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi];
+    const record = await recommendedDetailRecord(entry);
+    const heroes = links((strings(record?.heroes) as Array<{ nameRaw?: unknown; displayNameVi?: unknown }>).map((hero) => ({
+      raw: hero?.nameRaw,
+      vi: hero?.displayNameVi,
+      shown: holderDisplayName(hero, locale),
+    })));
+    const title = recommendedTitle(entry, locale);
+    const { ordinal } = ranks(entry);
+    const qualifier = [entry.sourceSeasonCode, ordinal > 1 ? String(ordinal) : null].filter(Boolean).join(' · ');
     const props: RecommendedDetailProps = {
       entry,
-      title: recommendedTitle(entry, locale),
-      ordinal: ranks(entry).ordinal,
+      title,
+      ordinal,
+      pageLabel: qualifier ? `${title} (${qualifier})` : title,
       scopeLine: scope.filter(Boolean).join(' · '),
       ...catalogPins(catalog),
-      lookupLinks: recordLookupLinks(await recommendedDetailRecord(entry), resolveLookupId),
+      lookupLinks: recordLookupLinks(record, resolveLookupId),
+      heroes,
     };
     return { params: { team: entry.routeSegment }, props };
   }));
@@ -198,16 +272,19 @@ export interface LegacyDetailProps {
   generationId: string;
   manifestSha256: string;
   legacyTeamsSha256: string;
+  /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
+  heroes: NamedPath[];
 }
 
 export async function legacyDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
+  const website = await websiteDisplayPublicationSnapshot();
+  const teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> = json(website.publicFiles['teams.json']);
+  const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
+  const resolve = await zhNameResolver();
+  const links = await heroLinkBuilder(locale);
   let title: (entry: LegacyRouteEntry) => string;
   if (locale === 'zh') {
-    const website = await websiteDisplayPublicationSnapshot();
-    const teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> = json(website.publicFiles['teams.json']);
-    const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
-    const resolve = await zhNameResolver();
     title = (entry) => lineupTitleZh(heroesById.get(entry.legacyTeamId) ?? [], resolve) ?? entry.legacyTeamId;
   } else {
     title = (entry) => {
@@ -229,7 +306,8 @@ export async function legacyDetailPaths(locale: SiteLocale) {
         : null,
       ordinal > 1 ? String(ordinal) : null,
     ].filter(Boolean).join(' · ');
-    const props: LegacyDetailProps = { entry, title: title(entry), pageLabel, ...catalogPins(catalog) };
+    const heroes = links((heroesById.get(entry.legacyTeamId) ?? []).map((name) => ({ raw: resolve(name), vi: name })));
+    const props: LegacyDetailProps = { entry, title: title(entry), pageLabel, heroes, ...catalogPins(catalog) };
     return { params: { team: entry.routeSegment }, props };
   });
 }
@@ -240,16 +318,19 @@ export interface KhaiHoangDetailProps {
   /** Tiêu đề tab/meta; bản zh thêm số thứ tự khi hai đội ghép ra cùng tên chữ Hán. */
   pageLabel: string;
   khaiHoangSha256: string;
+  /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
+  heroes: NamedPath[];
 }
 
 export async function khaiHoangDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
+  const website = await websiteDisplayPublicationSnapshot();
+  const source: { teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> } = json(website.publicFiles['khaihoang.json']);
+  const heroesById = new Map(source.teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
+  const resolve = await zhNameResolver();
+  const links = await heroLinkBuilder(locale);
   let title: (entry: KhaiHoangRouteEntry) => string;
   if (locale === 'zh') {
-    const website = await websiteDisplayPublicationSnapshot();
-    const source: { teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> } = json(website.publicFiles['khaihoang.json']);
-    const heroesById = new Map(source.teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
-    const resolve = await zhNameResolver();
     title = (entry) => lineupTitleZh(heroesById.get(entry.khaiHoangTeamId) ?? [], resolve) ?? entry.handle;
   } else {
     // Nguồn chưa dịch xong không được lộ chữ Hán ra tiêu đề công khai.
@@ -263,6 +344,7 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
       title: title(entry),
       pageLabel: ordinal > 1 ? `${title(entry)} · ${ordinal}` : title(entry),
       khaiHoangSha256: catalog.khaiHoangSha256,
+      heroes: links((heroesById.get(entry.khaiHoangTeamId) ?? []).map((name) => ({ raw: resolve(name), vi: name }))),
     };
     return { params: { team: entry.routeSegment }, props };
   });

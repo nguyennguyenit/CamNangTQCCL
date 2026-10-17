@@ -1,6 +1,18 @@
+import { setTimeout as delay } from "node:timers/promises";
+
 import type { WorkerDeploymentSnapshot } from "./cloudflare-deployment-client.js";
 
 type ExclusivePurpose = "bootstrap" | "promote" | "restore" | "rollback";
+type MutationPurpose = ExclusivePurpose | "smoke";
+type Sleep = (delayMs: number) => Promise<void>;
+
+/**
+ * Khoảng chờ giữa các lần đọc lại sau một mutation (~30 s tổng). API deployment của Cloudflare có thể commit
+ * nhưng làm mất/lỗi response, và lần đọc ngay sau đó còn trả deployment trước mutation (run 38762022539).
+ */
+export const MUTATION_READ_BACK_DELAYS_MS = [0, 1_000, 2_000, 4_000, 8_000, 15_000] as const;
+
+const defaultSleep: Sleep = (delayMs) => delay(delayMs);
 
 export interface WorkerDeploymentGateway {
   readCurrentOptional(): Promise<WorkerDeploymentSnapshot | null>;
@@ -103,19 +115,30 @@ async function reportDrift(
   throw new DeploymentOwnershipError();
 }
 
+/**
+ * Đọc deployment hiện tại sau mutation. Lỗi đọc và kết quả còn y nguyên `unchangedFrom` đều được đọc lại theo
+ * `MUTATION_READ_BACK_DELAYS_MS`; hết cửa sổ mà vẫn y nguyên thì trả bản đó để người gọi kết luận "chưa đổi".
+ * Không đọc được lần nào thì mở incident.
+ */
 async function readAfterMutation(
   deployment: WorkerDeploymentGateway,
   incident: (() => Promise<void>) | undefined,
+  sleep: Sleep,
+  unchangedFrom?: WorkerDeploymentSnapshot,
 ): Promise<WorkerDeploymentSnapshot> {
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+  let last: WorkerDeploymentSnapshot | undefined;
+  for (const delayMs of MUTATION_READ_BACK_DELAYS_MS) {
+    if (delayMs > 0) await sleep(delayMs);
+    let observed: WorkerDeploymentSnapshot;
     try {
-      return await deployment.readCurrent();
+      observed = await deployment.readCurrent();
     } catch {
-      // Retry immediately: the API can briefly lag or lose a response after a
-      // committed deployment. Three bounded reads avoid hanging automation.
+      continue;
     }
+    last = observed;
+    if (unchangedFrom === undefined || !sameDeployment(observed, unchangedFrom)) return observed;
   }
-  return reportDrift(incident);
+  return last ?? reportDrift(incident);
 }
 
 async function deployExclusiveAndConfirm(options: {
@@ -124,11 +147,14 @@ async function deployExclusiveAndConfirm(options: {
   targetVersionId: string;
   purpose: ExclusivePurpose;
   runId: string;
+  sleep: Sleep;
   incident?: () => Promise<void>;
+  onMutationError?: (purpose: MutationPurpose, error: unknown) => void;
 }): Promise<WorkerDeploymentSnapshot> {
   const current = await readAfterMutation(
     options.deployment,
     options.incident,
+    options.sleep,
   );
   if (!sameDeployment(current, options.expectedCurrent)) {
     return reportDrift(options.incident);
@@ -139,13 +165,16 @@ async function deployExclusiveAndConfirm(options: {
       options.targetVersionId,
       options.purpose,
     );
-  } catch {
+  } catch (error) {
     // A deployment POST can commit even when its response is lost. Reconcile
     // using the run annotation before deciding whether it failed.
+    options.onMutationError?.(options.purpose, error);
   }
   const observed = await readAfterMutation(
     options.deployment,
     options.incident,
+    options.sleep,
+    options.expectedCurrent,
   );
   const expectedVersions = [
     { versionId: options.targetVersionId, percentage: 100 },
@@ -196,7 +225,26 @@ export async function releaseWorkerVersion(options: {
   ) => Promise<() => Promise<void>>;
   incident?: () => Promise<void>;
   onState?: (name: string, snapshot: WorkerDeploymentSnapshot) => void;
+  /** Lỗi của một POST deployment (response lỗi/mất); controller vẫn đọc lại để quyết định. */
+  onMutationError?: (purpose: MutationPurpose, error: unknown) => void;
+  sleep?: Sleep;
 }): Promise<WorkerReleaseEvidence> {
+  const sleep = options.sleep ?? defaultSleep;
+  const confirm = (
+    expectedCurrent: WorkerDeploymentSnapshot,
+    targetVersionId: string,
+    purpose: ExclusivePurpose,
+  ) =>
+    deployExclusiveAndConfirm({
+      deployment: options.deployment,
+      expectedCurrent,
+      targetVersionId,
+      purpose,
+      runId: options.runId,
+      sleep,
+      ...(options.incident === undefined ? {} : { incident: options.incident }),
+      ...(options.onMutationError === undefined ? {} : { onMutationError: options.onMutationError }),
+    });
   const prior = await options.deployment.readCurrent();
   options.onState?.("prior", prior);
   const priorVersionId = exclusiveVersion(prior);
@@ -220,10 +268,13 @@ export async function releaseWorkerVersion(options: {
       priorVersionId,
       options.candidateVersionId,
     );
-  } catch {
+  } catch (error) {
+    options.onMutationError?.("smoke", error);
     const observed = await readAfterMutation(
       options.deployment,
       options.incident,
+      sleep,
+      prior,
     );
     if (sameDeployment(observed, prior)) {
       throw new Error("Tạo candidate deployment thất bại; prior không đổi.");
@@ -241,39 +292,18 @@ export async function releaseWorkerVersion(options: {
   try {
     await options.verifyCandidate(options.candidateVersionId);
   } catch {
-    const restored = await deployExclusiveAndConfirm({
-      deployment: options.deployment,
-      expectedCurrent: smoke,
-      targetVersionId: priorVersionId,
-      purpose: "restore",
-      runId: options.runId,
-      ...(options.incident === undefined ? {} : { incident: options.incident }),
-    });
+    const restored = await confirm(smoke, priorVersionId, "restore");
     options.onState?.("restored", restored);
     throw new Error("Xác minh candidate thất bại; đã phục hồi prior version.");
   }
 
-  const promoted = await deployExclusiveAndConfirm({
-    deployment: options.deployment,
-    expectedCurrent: smoke,
-    targetVersionId: options.candidateVersionId,
-    purpose: "promote",
-    runId: options.runId,
-    ...(options.incident === undefined ? {} : { incident: options.incident }),
-  });
+  const promoted = await confirm(smoke, options.candidateVersionId, "promote");
   options.onState?.("promoted", promoted);
 
   try {
     await options.verifyProduction(options.candidateVersionId);
   } catch {
-    const rolledBack = await deployExclusiveAndConfirm({
-      deployment: options.deployment,
-      expectedCurrent: promoted,
-      targetVersionId: priorVersionId,
-      purpose: "rollback",
-      runId: options.runId,
-      ...(options.incident === undefined ? {} : { incident: options.incident }),
-    });
+    const rolledBack = await confirm(promoted, priorVersionId, "rollback");
     options.onState?.("rolled-back", rolledBack);
     throw new Error("Xác minh production thất bại; đã rollback prior version.");
   }
@@ -282,27 +312,13 @@ export async function releaseWorkerVersion(options: {
     return { prior, smoke, final: promoted };
   }
 
-  const rolledBack = await deployExclusiveAndConfirm({
-    deployment: options.deployment,
-    expectedCurrent: promoted,
-    targetVersionId: priorVersionId,
-    purpose: "rollback",
-    runId: options.runId,
-    ...(options.incident === undefined ? {} : { incident: options.incident }),
-  });
+  const rolledBack = await confirm(promoted, priorVersionId, "rollback");
   options.onState?.("rehearsal-rolled-back", rolledBack);
 
   try {
     await verifyRolledBack();
   } catch {
-    const candidateRestored = await deployExclusiveAndConfirm({
-      deployment: options.deployment,
-      expectedCurrent: rolledBack,
-      targetVersionId: options.candidateVersionId,
-      purpose: "promote",
-      runId: options.runId,
-      ...(options.incident === undefined ? {} : { incident: options.incident }),
-    });
+    const candidateRestored = await confirm(rolledBack, options.candidateVersionId, "promote");
     options.onState?.("rehearsal-candidate-restored", candidateRestored);
     await options.verifyProduction(options.candidateVersionId);
     throw new Error(
@@ -310,27 +326,13 @@ export async function releaseWorkerVersion(options: {
     );
   }
 
-  const rehearsalPromoted = await deployExclusiveAndConfirm({
-    deployment: options.deployment,
-    expectedCurrent: rolledBack,
-    targetVersionId: options.candidateVersionId,
-    purpose: "promote",
-    runId: options.runId,
-    ...(options.incident === undefined ? {} : { incident: options.incident }),
-  });
+  const rehearsalPromoted = await confirm(rolledBack, options.candidateVersionId, "promote");
   options.onState?.("rehearsal-promoted", rehearsalPromoted);
 
   try {
     await options.verifyProduction(options.candidateVersionId);
   } catch {
-    const priorRestored = await deployExclusiveAndConfirm({
-      deployment: options.deployment,
-      expectedCurrent: rehearsalPromoted,
-      targetVersionId: priorVersionId,
-      purpose: "rollback",
-      runId: options.runId,
-      ...(options.incident === undefined ? {} : { incident: options.incident }),
-    });
+    const priorRestored = await confirm(rehearsalPromoted, priorVersionId, "rollback");
     options.onState?.("rehearsal-prior-restored", priorRestored);
     await verifyRolledBack();
     throw new Error(

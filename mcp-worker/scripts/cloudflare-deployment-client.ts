@@ -10,10 +10,16 @@ export interface WorkerDeploymentSnapshot {
   }>;
 }
 
+/** Mã lý do cố định (không chứa nội dung upstream hay token), ghi được vào evidence của release. */
+export type CloudflareDeploymentFailure = "input" | "network" | `http-${number}` | "envelope" | "shape";
+
 export class CloudflareDeploymentError extends Error {
-  constructor() {
+  readonly reason: CloudflareDeploymentFailure;
+
+  constructor(reason: CloudflareDeploymentFailure = "shape") {
     super("Không thể quản lý Worker deployment.");
     this.name = "CloudflareDeploymentError";
+    this.reason = reason;
   }
 }
 
@@ -102,7 +108,7 @@ export class CloudflareDeploymentClient {
       !/^[A-Za-z0-9._:-]{1,128}$/u.test(options.runId) ||
       options.apiToken === ""
     ) {
-      throw new CloudflareDeploymentError();
+      throw new CloudflareDeploymentError("input");
     }
     this.#endpoint = new URL(
       `/client/v4/accounts/${options.accountId}/workers/scripts/${encodeURIComponent(options.workerName)}/deployments`,
@@ -118,8 +124,9 @@ export class CloudflareDeploymentClient {
     body?: Record<string, unknown>,
     allowMissingWorker = false,
   ): Promise<unknown | null> {
+    let response: Response;
     try {
-      const response = await this.#fetcher(
+      response = await this.#fetcher(
         new Request(this.#endpoint, {
           method,
           headers: {
@@ -132,16 +139,27 @@ export class CloudflareDeploymentClient {
           ...(body === undefined ? {} : { body: JSON.stringify(body) }),
         }),
       );
-      if (allowMissingWorker && response.status === 404) return null;
-      if (!response.ok) throw new Error("request failed");
-      const envelope = record(await response.json());
-      if (envelope.success !== true || envelope.result === undefined) {
-        throw new Error("invalid envelope");
-      }
-      return envelope.result;
     } catch {
-      throw new CloudflareDeploymentError();
+      throw new CloudflareDeploymentError("network");
     }
+    if (allowMissingWorker && response.status === 404) return null;
+    if (!response.ok) throw new CloudflareDeploymentError(`http-${response.status}`);
+    let envelope: unknown;
+    try {
+      envelope = await response.json();
+    } catch {
+      throw new CloudflareDeploymentError("envelope");
+    }
+    if (
+      typeof envelope !== "object" ||
+      envelope === null ||
+      Array.isArray(envelope) ||
+      (envelope as Record<string, unknown>).success !== true ||
+      (envelope as Record<string, unknown>).result === undefined
+    ) {
+      throw new CloudflareDeploymentError("envelope");
+    }
+    return (envelope as Record<string, unknown>).result;
   }
 
   async readCurrentOptional(): Promise<WorkerDeploymentSnapshot | null> {
@@ -154,8 +172,8 @@ export class CloudflareDeploymentClient {
       }
       if (result.deployments.length === 0) return null;
       return parseDeployment(result.deployments[0]);
-    } catch {
-      throw new CloudflareDeploymentError();
+    } catch (error) {
+      throw error instanceof CloudflareDeploymentError ? error : new CloudflareDeploymentError();
     }
   }
 
@@ -188,7 +206,7 @@ export class CloudflareDeploymentClient {
     purpose: "bootstrap" | "promote" | "restore" | "rollback" = "promote",
   ): Promise<WorkerDeploymentSnapshot> {
     if (!VERSION_ID_PATTERN.test(versionId)) {
-      throw new CloudflareDeploymentError();
+      throw new CloudflareDeploymentError("input");
     }
     const deployed = await this.#deploy(
       [{ versionId, percentage: 100 }],
@@ -214,7 +232,7 @@ export class CloudflareDeploymentClient {
       !VERSION_ID_PATTERN.test(candidateVersionId) ||
       priorVersionId === candidateVersionId
     ) {
-      throw new CloudflareDeploymentError();
+      throw new CloudflareDeploymentError("input");
     }
     const deployed = await this.#deploy(
       [

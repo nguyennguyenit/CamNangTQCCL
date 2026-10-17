@@ -189,7 +189,7 @@ test("chi tiết trang bị: đặc kỹ độc quyền xếp T0 trước, link 
   const item = built.byId.get("equipment:y-thien-kiem");
   const html = treeToHtml(masterDetailTree("equipment", item, built, "vi", { targetId: "equipment-special:gian-hung" }));
   assert.ok(html.indexOf("Gian Hùng") < html.indexOf("Kiên Cố"), "T0 đứng trước T1");
-  assert.match(html, /Độc quyền khi <a class="lookup-detail-link" href="\/tra-cuu\/tuong\/\?id=hero%3Atao-thao">Tào Tháo<\/a> trang bị/);
+  assert.match(html, /Độc quyền khi <a class="lookup-detail-link" href="\/tra-cuu\/tuong\/tao-thao\/">Tào Tháo<\/a> trang bị/);
   assert.match(html, /class="lookup-special is-target"[^>]*data-special-id="equipment-special:gian-hung"/);
   assert.match(html, /Đặc kỹ chung có thể rèn/);
   assert.match(html, /2 đặc kỹ chung dùng cho mọi trang bị cùng loại/);

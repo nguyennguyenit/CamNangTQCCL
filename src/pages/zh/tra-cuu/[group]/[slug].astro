@@ -1,0 +1,12 @@
+---
+// Trang riêng từng mục Tra cứu bản Trung: nội dung ở src/components/pages/LookupItemPage.astro (dùng chung với bản Việt).
+import LookupItemPage from '../../../../components/pages/LookupItemPage.astro';
+import { lookupItemStaticPaths } from '../../../../lib/lookup-item-pages';
+
+export const prerender = true;
+
+export function getStaticPaths() {
+  return lookupItemStaticPaths();
+}
+---
+<LookupItemPage {...Astro.props} locale="zh" />

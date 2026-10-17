@@ -18,7 +18,7 @@ Người dùng chính: người chơi tra meta; người quản lý nhiều acco
 
 | Khối | Phạm vi |
 |---|---|
-| Static site | Astro build ra Landing `dist/index.html` + 8 trang mục theo đường dẫn (`src/pages/<mục>/index.astro`, ví dụ `/doi-chuan/`, `/tra-cuu/`) và trang chi tiết đội; root `css/*.css`, `js/*.js`; hash cũ (`#lookup`, …) chỉ còn được Landing chuyển tiếp sang đường dẫn |
+| Static site | Astro build ra Landing `dist/index.html` + 8 trang mục theo đường dẫn (`src/pages/<mục>/index.astro`, ví dụ `/doi-chuan/`, `/tra-cuu/`), 7 trang nhóm và trang riêng từng mục Tra cứu, trang chi tiết đội và bộ llms; root `css/*.css`, `js/*.js`; hash cũ (`#lookup`, …) chỉ còn được Landing chuyển tiếp sang đường dẫn |
 | Runtime data | `data/*.json`, commit và publish cùng site |
 | Public artifact | Astro static endpoints theo manifest; `public/_headers` là cache deployment-control |
 | Build-time | `pipeline/*.py`, Python stdlib, nguồn HTML/cache local |
@@ -49,7 +49,7 @@ Ngoài phạm vi: backend chung cho dữ liệu game, AI tự quyết đội, bu
 
 | ID | Yêu cầu |
 |---|---|
-| NFR-01 | Astro tạo static shell/artifact; behavior frontend dùng vanilla ES modules, không có SSR/UI renderer. |
+| NFR-01 | Astro tạo artifact tĩnh; nội dung trang đội và Tra cứu dựng sẵn lúc build bằng cùng builder cây view với trình duyệt; behavior frontend dùng vanilla ES modules, không có SSR lúc chạy hay UI framework. |
 | NFR-02 | Dữ liệu tra cứu cốt lõi hoạt động từ static host sau lần tải JSON. |
 | NFR-03 | Secret chỉ tồn tại trong Worker env; frontend chỉ chứa config công khai. |
 | NFR-04 | Worker kiểm tra origin khi có, Turnstile/replay, magic byte/MIME/kích thước và quota KV best-effort trước khi gọi model. |
@@ -57,6 +57,7 @@ Ngoài phạm vi: backend chung cho dữ liệu game, AI tự quyết đội, bu
 | NFR-06 | Logic filter/map/store/engine có test độc lập; pipeline fail-loud tại các invariant đã định nghĩa. |
 | NFR-07 | UI responsive, có nhãn/alt/ARIA cơ bản và theme sáng/tối lưu local. |
 | NFR-08 | Tài liệu evergreen bám code/data hiện tại; `plans/` chỉ là lịch sử. |
+| NFR-09 | Trang đội và Tra cứu đọc được không cần JavaScript (crawler, AI agent): HTML có đủ nội dung chính, URL ổn định cho từng đội và từng mục Tra cứu, JSON-LD chỉ mô tả chữ có trên trang, `/llms.txt` + `/llms-full.txt` sinh từ cùng nội dung. |
 
 ## Dữ liệu chấp nhận
 

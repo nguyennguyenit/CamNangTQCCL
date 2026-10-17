@@ -1,5 +1,6 @@
 ---
-// Nội dung trang /quan-tri/: khung tĩnh; js/community-admin.js kiểm phiên và dựng các tab quản trị.
+// Nội dung trang /quan-tri/: đầu trang tĩnh (artboard Admin*); js/community-admin.js kiểm phiên, điền thẻ tài khoản
+// quản trị và dựng khung điều hướng các khu quản trị.
 import { pick } from '../../../js/i18n.js';
 
 interface Props {
@@ -10,9 +11,15 @@ const { locale } = Astro.props;
 const t = (vi: string, zh: string) => pick(locale, vi, zh);
 ---
 <section class="cm-page cm-admin" aria-labelledby="cm-admin-title">
-  <h1 id="cm-admin-title" class="detail-title">{t('Quản trị cộng đồng', '社区管理')}</h1>
-  <p class="scope-note">{t('Duyệt chiến báo, kiểm duyệt bình luận, soạn bài viết, xử lý góp ý và quản lý nhà cung cấp AI. Chỉ tài khoản quản trị mới dùng được trang này.', '审核战报、管理评论、撰写文章、处理反馈并管理 AI 服务商。仅管理员账号可使用此页面。')}</p>
-  <div id="community-admin" class="cm-admin-root">
+  <header class="adm-head">
+    <div class="adm-head-text">
+      <span class="adm-kicker">{t('Quản trị · noindex', '管理 · noindex')}</span>
+      <h1 id="cm-admin-title" class="adm-title">{t('Quản trị cộng đồng', '社区管理')}</h1>
+      <p class="adm-intro">{t('Duyệt chiến báo, kiểm duyệt bình luận, soạn bài viết, xử lý góp ý và quản lý nhà cung cấp AI. Chỉ tài khoản quản trị mới dùng được trang này.', '审核战报、管理评论、撰写文章、处理反馈并管理 AI 服务商。仅管理员账号可使用此页面。')}</p>
+    </div>
+    <div id="community-admin-identity" class="adm-identity" hidden></div>
+  </header>
+  <div id="community-admin" class="adm-root">
     <noscript><p class="scope-note">{t('Trang quản trị cần JavaScript.', '管理页面需要启用 JavaScript。')}</p></noscript>
   </div>
 </section>

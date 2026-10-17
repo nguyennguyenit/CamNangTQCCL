@@ -41,7 +41,7 @@ python3 -m unittest discover -s tests
 
 Cài Chromium một lần bằng `npx playwright install chromium`. Test Node/E2E cũng kiểm tra local HTTP preview, routed HTTPS, private-path exclusion và mixed-content mà không gọi live third-party.
 
-Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml` và `_headers` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs` và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify`. Hành vi trình duyệt của route và 404 kiểm bằng:
+Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml` và `_headers` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs`, `tests-js/seo-dist-contract.test.mjs` cho link path/JSON-LD/llms/bất biến zh-gaps và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify`. Hành vi trình duyệt của route và 404 kiểm bằng:
 
 ```bash
 npx playwright test tests-e2e/team-detail-pages.spec.mjs
@@ -95,7 +95,7 @@ Build output: dist
 Node: 24.20.0
 ```
 
-Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), đúng bộ trang chi tiết đội sinh từ catalog, manifest-approved `js/`, `css/`, `fonts/`, `data/` và `_headers`. Shared verifier đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ.
+Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), 7 trang nhóm Tra cứu, đúng bộ trang chi tiết đội sinh từ catalog, đúng bộ trang riêng Tra cứu sinh từ ledger slug, bộ llms của `llmsDocuments()` (chỉ bản Việt), output blog, bản `/zh/` của các trang HTML (trừ `404.html`), manifest-approved `js/`, `css/`, `fonts/`, `data/` và `_headers`. Shared verifier dẫn xuất allowlist từ chính các inventory đó, đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ. Với dữ liệu ngày 2026-10-15, build ra 4917 trang HTML (gồm 1772 trang riêng Tra cứu), sitemap 4912 URL và 36 file `/llms/…`; con số đổi theo dữ liệu, không phải hằng số để kiểm tay.
 
 Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
 
@@ -103,27 +103,17 @@ Blog là HTML tĩnh sinh lúc build từ community API: `src/lib/blog-posts.ts` 
 
 Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`, và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v2, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Handle gán một lần; khi publication sinh successor chỉ rebind `generationId`, không sinh lại handle, rồi `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
 
-`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho đúng **mười sáu** rule (Landing, 8 trang mục,
-3 họ trang chi tiết, 404, JS/CSS/font/data và favicon):
+Trang riêng Tra cứu `/tra-cuu/<nhóm>/<slug>/` (và `/zh/…`) sinh từ [`src/lib/lookup-detail-routes.ts`](../src/lib/lookup-detail-routes.ts), đọc slug đóng băng trong `pipeline/lookup-route-handles.json`. Ledger pin `generationId` của `data/lookup-manifest.json` và hash `data/books-dict.json`; build **fail** nếu pin lệch, tập mã khác corpus hoặc ledger bị sửa tay. Vì vậy mỗi khi generation Tra cứu đổi (sau `promote_unified_lookup`) hoặc `books-dict.json` đổi, chạy trước `npm run build`:
 
-```text
-/
-/index.html
-/doi-chuan/*
-/doi-khac/*
-/khai-hoang/*
-/cung-ton/*
-/tra-cuu/*
-/theo-doi-chieu-mo/*
-/soi-doi-tu-anh/*
-/goi-y-doi-tu-kho/*
-/404.html
-/js/*
-/css/*
-/fonts/*
-/data/*
-/favicon.png
+```bash
+python3 -m pipeline.lookup_route_handles --write   # giữ mọi slug đã cấp, cấp slug cho mã mới, chuyển mã đã rời corpus sang retired, làm mới pin
+python3 -m pipeline.lookup_route_handles --check
+node scripts/report-zh-gaps.mjs                     # sinh lại báo cáo zh thiếu chữ (`--check` để so; test:dist chỉ kiểm bất biến, không đọc file báo cáo)
 ```
+
+`--write` từ chối ledger đã bị sửa tay; không sửa slug bằng tay để "đẹp" URL vì URL đã công bố. Mã không còn trong corpus không có trang (trả 404 tĩnh), slug của nó vẫn bị giữ để không bao giờ trỏ sang mục khác. Bộ llms (`/llms.txt`, `/llms/*.txt`, `/llms-full.txt`) sinh lại theo dữ liệu ở mỗi build, không có bước riêng.
+
+`public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho mọi shell, trang mục, trang chi tiết, bản `/zh/`, blog/RSS, bộ llms, JS/CSS/font/data và ảnh tĩnh; danh sách luật chỉ nằm trong chính file đó và được `tests-js/pages-headers-contract.test.mjs` kiểm phủ đủ output đã publish.
 
 Local test chỉ xác nhận syntax, coverage của mọi shell/trang mục/trang chi tiết/raw asset (gồm `fonts/`) đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
 
@@ -143,7 +133,7 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 1. Tạo release commit tập trung; không deploy từ worktree dirty.
 2. Ghi deployment ID/version production known-good hiện tại trước khi tạo preview.
 3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
-4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…`, `/khai-hoang/…`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
+4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…`, `/khai-hoang/…`, vài trang riêng `/tra-cuu/<nhóm>/<slug>/`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng; `/llms.txt`, một file `/llms/…` và `/llms-full.txt` trả `text/plain`. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
 5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
 6. Preview origin khác production nên Vision POST bị Worker từ chối theo danh sách exact `ALLOWED_ORIGINS`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
@@ -296,8 +286,8 @@ Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, đi qua Landing và đủ tám đường dẫn mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`), kiểm tra JSON/network không lỗi; dán một hash cũ (ví dụ `/#khaihoang`, `/#lookup?group=heroes`) và một URL `/` có khóa cũ vào tab đang mở `/` để xác nhận chuyển tiếp đúng.
 2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin, bộ lọc mùa/phe/loại binh và chuyển Thẻ/Thẻ gọn/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
-3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
-4. Test tra cứu, theme, tracker export/import bằng dữ liệu không nhạy cảm.
+3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; xem nguồn trang (hoặc tắt JavaScript) để xác nhận tướng, chiến pháp, binh thư có sẵn trong HTML và link chiến pháp/binh thư là `/tra-cuu/<nhóm>/<slug>/`; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
+4. Test tra cứu (trang nhóm, hộp thoại `?id=`, một trang riêng), theme, tracker export/import bằng dữ liệu không nhạy cảm.
 5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
 6. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.
 7. Kiểm tra origin lạ có header bị 403 và lỗi không leak upstream detail.

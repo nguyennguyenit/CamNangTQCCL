@@ -1,5 +1,5 @@
 import { normalizeText } from './filters.js';
-import { canonicalTeamView } from './team-view.js';
+import { canonicalTeamView, resolveTeamView } from './team-view.js';
 import { L, currentLocale, normalizeLocale } from './i18n.js';
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -96,6 +96,17 @@ export function readRecommendedQuery(href, registry = {}) {
     filters: Object.fromEntries(REPEATABLE.map(key=>[key,key === 'tier' && legacyTier ? [] : readFacet(url,key)])),
     notices,
   };
+}
+
+/**
+ * Trạng thái đưa vào danh sách Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): query của URL cộng
+ * kiểu hiển thị (URL > `storage` > Thẻ). Đội khác chưa chọn mùa tường minh thì xem mọi mùa. Hàm thuần: trình
+ * duyệt gọi với URL thật, bản dựng sẵn gọi với URL trang trống và `storage` rỗng — cùng một đường chọn mặc định.
+ */
+export function referenceSectionState(family, href, registry, storage = null) {
+  const state = readRecommendedQuery(href, registry);
+  const resolved = {...state, view: resolveTeamView(state.view, storage)};
+  return family === 'other' && !new URL(href).searchParams.has('season') ? {...resolved, season: 'all'} : resolved;
 }
 
 /** Facet lặp: giữ nguyên giá trị nguồn, bỏ trùng, không diễn giải. */
@@ -203,20 +214,6 @@ export function projectRecommendedRows(rows,state,labels) {
   }).slice().sort(fixedRank);
 }
 
-/**
- * Kiểm scheme dùng chung cho mọi URL nguồn lấy từ dữ liệu (quyết định #14): chỉ nhận `http(s)` tuyệt đối,
- * không userinfo, không ký tự điều khiển; fragment được giữ (link Google Sheets có `#gid=…`).
- * URL hỏng trả `null` để caller không dựng link — không ném lỗi ra ngoài.
- */
-export function validateHttpSourceUrl(raw) {
-  if (typeof raw !== 'string' || /[\u0000-\u001f]/.test(raw)) return null;
-  try {
-    const url = new URL(raw);
-    if (!['http:','https:'].includes(url.protocol) || url.username || url.password) return null;
-    return url.href;
-  } catch { return null; }
-}
-
 function bytesToJson(bytes) { return JSON.parse(new TextDecoder().decode(bytes)); }
 async function digest(bytes) { return [...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(value=>value.toString(16).padStart(2,'0')).join(''); }
 
@@ -242,19 +239,6 @@ export async function loadRecommendedReference(pin, loadBytes) {
   if (required.some(name=>!manifest.files?.[name])) throw new Error('Danh mục đội chuẩn thiếu dữ liệu bắt buộc.');
   const [seasons,index,other] = await Promise.all([load('seasons.json'),load('index.json'),load('other-teams.json')]);
   return Object.freeze({pin,manifest,seasons,index,other,loadDetail:scopeKey=>load(`details-${scopeKey}.json`)});
-}
-
-/**
- * Trang chi tiết chỉ tải đúng scope của nó: bản ghi đã xác minh + nhãn hiển thị phe/loại binh của
- * `seasons.json` cùng generation (đầu trang cần nhãn Việt cho giá trị nguồn), không kéo index/other.
- */
-export async function loadRecommendedDetailView(pin, {scopeKey, sourceConfigId}, loadBytes) {
-  if (!/^s-[0-9a-f]{64}$/.test(scopeKey || '')) throw new Error('Scope chi tiết không hợp lệ.');
-  const {load} = await loadVerifiedRecommendedManifest(pin, loadBytes);
-  const [payload,seasons] = await Promise.all([load(`details-${scopeKey}.json`),load('seasons.json')]);
-  const matches = (payload.records || []).filter(row=>row.sourceConfigId === sourceConfigId);
-  if (matches.length !== 1) throw new Error('Không tìm thấy đúng một cấu hình trong dữ liệu đã xác minh.');
-  return {record: matches[0], labels: seasons?.displayLabels ?? null};
 }
 
 /** Toàn bộ đội gốc tự xác minh bytes raw trước khi tạo bản hiển thị. */

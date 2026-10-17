@@ -14,7 +14,7 @@ const CASES = [
 ];
 
 test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () => {
-  test("nút quan hệ trong hồ sơ Tra cứu: đủ 44px, Enter mở hồ sơ liên quan", async ({ browser }) => {
+  test("nút quan hệ trong hồ sơ Tra cứu: đủ 44px, Enter mở trang riêng của mục liên quan", async ({ browser }) => {
     for (const { width, colorScheme } of CASES) {
       const context = await browser.newContext({ viewport: { width, height: 900 }, colorScheme });
       const page = await context.newPage();
@@ -32,8 +32,8 @@ test.describe("A5 — control đứng riêng phải đủ 44px ở mobile", () =
 
       await relation.focus();
       await page.keyboard.press("Enter");
-      await expect(page, `${width}/${colorScheme}: Enter phải mở hồ sơ liên quan`).toHaveURL(/\/tra-cuu\/chien-phap\/\?id=tactic%3A/);
-      await expect(dialog, `${width}/${colorScheme}: hồ sơ chiến pháp mở trên trang Chiến pháp`).toBeVisible();
+      await expect(page, `${width}/${colorScheme}: Enter phải mở trang riêng của chiến pháp liên quan`).toHaveURL(/\/tra-cuu\/chien-phap\/[a-z0-9-]+\/$/);
+      await expect(page.locator("h1"), `${width}/${colorScheme}: trang riêng của chiến pháp có tiêu đề`).toHaveCount(1);
       await context.close();
     }
   });

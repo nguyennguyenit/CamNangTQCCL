@@ -7,10 +7,10 @@
 import { lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText } from "./lookup-detail.js";
 import { L, currentLocale, localePath, normalizeLocale, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
-import { bookLookupId, createFormerTacticIdIndex, groupForId, lookupProfilePath } from "./lookup-ids.js";
+import { bookLookupId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
 import { portraitTree } from "./hero-portrait.js";
-import { isMasterGroup, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
+import { isMasterGroup, laterTree, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
 
 export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
 /** Nhãn nhóm dùng chung cho trang Tra cứu và menu điều hướng (SiteLayout, bản Việt). */
@@ -38,7 +38,7 @@ const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
   advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑", books: "本兵书",
 });
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
-export const POSITION_LABELS = Object.freeze([L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")]);
+export const POSITION_LABELS = () => [L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")];
 
 /**
  * Payload mà trang nhóm tải lúc vào (`entry`) và payload mà hồ sơ của nhóm cần thêm (`profile`, tải lười
@@ -320,7 +320,7 @@ export function lookupCardTree(group, item, locale = currentLocale()) {
   const role = view.meta.find((part) => part.kind === "role");
   return h("article", { class: "lookup-card", "data-faction": faction ? faction.code : null }, [
     // Link thật tới hồ sơ: bấm trước khi app sẵn sàng (hoặc không có JS) vẫn mở đúng hồ sơ; app chặn click thường để mở tại chỗ.
-    h("a", { class: "lookup-card-button", href: localePath(lookupProfilePath(item.id), locale), "data-lookup-id": item.id }, [
+    h("a", { class: "lookup-card-button", href: localePath(lookupHref(item.id), locale), "data-lookup-id": item.id }, [
       h("span", { class: "lookup-card-portrait" }, [
         portraitTree({ chinese: view.chinese, nameVi: view.title, iconUrl: item.record?.iconUrl, className: "lookup-portrait" }),
       ]),
@@ -339,7 +339,7 @@ export function lookupTableRowTree(item, locale = currentLocale()) {
   const chineseName = normalizeLocale(locale) === "zh" ? "" : recordChinese(item.record ?? {});
   return h("tr", {}, [
     h("th", { scope: "row", class: "lookup-table-cell-name", "data-label": head("name", locale) }, [
-      h("a", { class: "lookup-table-name", href: localePath(lookupProfilePath(item.id), locale), "data-lookup-id": item.id }, row.nameVi),
+      h("a", { class: "lookup-table-name", href: localePath(lookupHref(item.id), locale), "data-lookup-id": item.id }, row.nameVi),
       chineseName ? h("span", { class: "lookup-table-zh", lang: "zh-Hant" }, chineseName) : null,
       row.effect ? h("p", { class: "lookup-table-effect" }, row.effect) : null,
     ]),
@@ -357,12 +357,14 @@ export function lookupTableRowTree(item, locale = currentLocale()) {
  * @param {string} group
  * @param {any[]} items
  * @param {string} [locale]
- * @param {{selectedId?: string | null, byId?: Map<string, any> | null}} [options]
+ * `visibleCount` (số) đánh dấu `data-lookup-later` lên các mục từ vị trí đó trở đi: HTML dựng sẵn chứa đủ mọi mục,
+ * CSS ẩn phần sau trang đầu và trình duyệt bỏ chúng đi khi nhận lại danh sách (`null` = hiện hết).
+ * @param {{selectedId?: string | null, byId?: Map<string, any> | null, visibleCount?: number | null}} [options]
  */
-export function lookupResultTrees(group, items, locale = currentLocale(), { selectedId = null, byId = null } = {}) {
+export function lookupResultTrees(group, items, locale = currentLocale(), { selectedId = null, byId = null, visibleCount = null } = {}) {
   if (!items.length) return [];
-  if (isMasterGroup(group)) return masterResultTrees(group, items, locale, { selectedId, byId });
-  if (group !== "tactics") return items.map((item) => lookupCardTree(group, item, locale));
+  if (isMasterGroup(group)) return masterResultTrees(group, items, locale, { selectedId, byId, visibleCount });
+  if (group !== "tactics") return items.map((item, index) => laterTree(lookupCardTree(group, item, locale), index, visibleCount));
   return [h("div", { class: "lookup-table-panel" }, [
     h("table", { class: "lookup-table" }, [
       h("thead", {}, [h("tr", {}, [
@@ -373,7 +375,7 @@ export function lookupResultTrees(group, items, locale = currentLocale(), { sele
         h("th", { scope: "col" }, head("target", locale)),
         h("th", { scope: "col", class: "lookup-table-rate" }, head("rate", locale)),
       ])]),
-      h("tbody", {}, items.map((item) => lookupTableRowTree(item, locale))),
+      h("tbody", {}, items.map((item, index) => laterTree(lookupTableRowTree(item, locale), index, visibleCount))),
     ]),
   ])];
 }
@@ -423,7 +425,8 @@ export function barPercent(value, max) {
 export function camNangView(summary) {
   if (!summary) return null;
   // Thanh dài trước như artboard LookupProfile (Phó tướng 2 → Phó tướng 1 → Chủ tướng); hoà giữ thứ tự vị trí.
-  const positions = POSITION_LABELS.map((label, index) => {
+  const positionLabels = POSITION_LABELS();
+  const positions = positionLabels.map((label, index) => {
     const count = summary.standard.positions[index] + summary.other.positions[index];
     return { label, count };
   }).sort((a, b) => b.count - a.count);
@@ -436,7 +439,7 @@ export function camNangView(summary) {
     tactics: summary.tactics.map((item) => ({ ...item, percent: barPercent(item.teams, maxTactic) })),
     books: summary.books,
     statFocus: summary.statFocus,
-    representative: summary.representative.map((team) => ({ ...team, positionLabel: POSITION_LABELS[team.position] })),
+    representative: summary.representative.map((team) => ({ ...team, positionLabel: positionLabels[team.position] })),
     searchName: summary.searchName,
   };
 }
