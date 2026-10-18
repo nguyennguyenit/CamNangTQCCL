@@ -215,6 +215,11 @@ async function writeStaticFonts(projectDir, distDir) {
     await writeFile(join(projectDir, "public", "fonts", name), bytes);
     await writeFile(join(distDir, "fonts", name), bytes);
   }
+  // Chân dung tướng tự lưu (`public/heroes`) là thư mục tĩnh thứ hai; fixture dùng file giả, không phụ thuộc ảnh thật.
+  await mkdir(join(projectDir, "public", "heroes"), { recursive: true });
+  await mkdir(join(distDir, "heroes"), { recursive: true });
+  await writeFile(join(projectDir, "public", "heroes", "sample.webp"), "RIFF-sample");
+  await writeFile(join(distDir, "heroes", "sample.webp"), "RIFF-sample");
 }
 
 /** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, logo chữ, QR ủng hộ) được copy nguyên byte như Astro làm. */
@@ -968,10 +973,10 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
   // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang,
-  // 886 trang riêng mục Tra cứu — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  // 938 trang riêng mục Tra cứu (251 tướng, 409 chiến pháp sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
-  assert.equal(lookupRoutes.entries.length, 886);
-  assert.equal(locations.length, 4912);
+  assert.equal(lookupRoutes.entries.length, 938);
+  assert.equal(locations.length, 5016);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -1079,7 +1084,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 886 trang riêng mục Tra cứu).
+  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 938 trang riêng mục Tra cứu).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
@@ -1092,8 +1097,8 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(lookupRoutes.entries.length, 886);
-  assert.equal(locations.length, 4912);
+  assert.equal(lookupRoutes.entries.length, 938);
+  assert.equal(locations.length, 5016);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -1414,6 +1419,15 @@ test("dist verifier byte-locks the self-hosted font directory", async (t) => {
   // Thiếu một file font đã publish cũng chặn.
   await rm(join(distDir, "fonts", "OFL.txt"));
   await assert.rejects(verify(), /missing: fonts\/OFL\.txt/i);
+
+  // Chân dung tướng tự lưu cũng nằm trong allowlist: file lạ hoặc lệch byte đều bị chặn.
+  await writeStaticFonts(projectDir, distDir);
+  await verify();
+  await writeFile(join(distDir, "heroes", "extra.webp"), "x");
+  await assert.rejects(verify(), /unexpected: heroes\/extra\.webp/i);
+  await rm(join(distDir, "heroes", "extra.webp"));
+  await writeFile(join(distDir, "heroes", "sample.webp"), "tampered");
+  await assert.rejects(verify(), /heroes\/sample\.webp/i);
 });
 
 async function lookupDistFixture(t) {
@@ -1900,7 +1914,7 @@ test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường h�
   }
 });
 
-test("Tra cứu: mọi trang riêng (886 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+test("Tra cứu: mọi trang riêng (938 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
   const origin = new URL(await configuredSite()).origin;
   const routes = await lookupDetailRoutes();
   const titles = new Set();

@@ -422,3 +422,22 @@ test("createLookupPayloadLoader thử lại sau lỗi tải và từ chối payl
     : payloads[name]));
   await assert.rejects(drifted("heroes-dict.json"), /heroes-dict\.json/);
 });
+
+test("formerIds: mã đã gộp hợp lệ khi không còn hàng sống; mã còn sống, sai tiền tố hoặc thiếu khóa bị từ chối", async () => {
+  const base = tacticsDoc()[0];
+  const survivor = (formerIds) => ({ ...base, id: "tactic:si-tranh-tien-pho", lookup: { ...base.lookup, formerIds } });
+  const heroes = heroesDoc().map((row) => ({ ...row, lookup: { ...row.lookup, selfTacticId: null, inheritTacticId: null } }));
+  const make = (tactics) => bundleFixture({ heroes, tactics });
+  const ok = make([survivor(["tactic:nhanh-chan-tranh-dat"])]);
+  const bundle = await validateLookupBundle(ok.manifest, ok.rawFiles);
+  assert.deepEqual(bundle.tactics[0].lookup.formerIds, ["tactic:nhanh-chan-tranh-dat"]);
+
+  const live = make([survivor(["tactic:nhan-duc"]), base]);
+  await assert.rejects(validateLookupBundle(live.manifest, live.rawFiles), /tactic:nhan-duc/);
+  const badPrefix = make([survivor(["hero:luu-bi"])]);
+  await assert.rejects(validateLookupBundle(badPrefix.manifest, badPrefix.rawFiles), /lookup/);
+  const { formerIds, ...withoutKey } = survivor([]).lookup;
+  const missing = make([{ ...survivor([]), lookup: withoutKey }]);
+  await assert.rejects(validateLookupBundle(missing.manifest, missing.rawFiles), /lookup/);
+  assert.equal(formerIds.length, 0);
+});

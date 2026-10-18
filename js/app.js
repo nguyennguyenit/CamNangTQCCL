@@ -9,13 +9,13 @@ import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData } from "./website-display.js";
+import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from "./website-display.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 
 import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse } from './season-context.js';
-import { loadRecommendedReference, referenceSectionState, setZhNameResolver } from './recommended-reference-state.js';
+import { loadRecommendedReference, referenceSectionState, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
 import { writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
@@ -220,6 +220,8 @@ async function main() {
       lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
     ]);
     if (rawNames) setZhNameResolver(rawNames);
+    // Bản Việt: tên chiến pháp lưu trong dữ liệu đội hiển thị theo `viet` hiện hành (bảng nhúng lúc build, không tải thêm).
+    setTacticDisplayName(readTacticDisplayTable());
     if ((needsLookup && !lookupBundle) || (lookupPayloads && !lookupDocs)) {
       mount.append(el("p", { class: "error", role: "alert" }, L("Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động.", "图鉴查询数据暂不可用。阵容相关栏目仍可正常使用。")));
     }

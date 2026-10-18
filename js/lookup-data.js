@@ -9,7 +9,7 @@ const TACTIC_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "type", "qua
 const COMMON_KEYS = ["id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"];
 const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"];
 const CARD_PACK_KEYS = ["packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"];
-const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi"];
+const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds"];
 const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
 const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
 
@@ -109,7 +109,8 @@ function validateTactic(record) {
   requireShape(`${owner}.lookup`, lookup, TACTIC_LOOKUP_KEYS);
   if (![lookup.activationRate, lookup.cooldown, lookup.maxUsers, lookup.pointCost].every(isOptionalNumber)
     || ![lookup.effectTypeVi, lookup.exchangeConditionVi, lookup.conflictsVi].every(isOptionalString)
-    || !isStringList(lookup.acquiredFromVi) || !isStringList(lookup.inheritedFromIds) || !isStringList(lookup.missingFields)) {
+    || !isStringList(lookup.acquiredFromVi) || !isStringList(lookup.inheritedFromIds) || !isStringList(lookup.missingFields)
+    || !isStringList(lookup.formerIds) || lookup.formerIds.some((id) => !id.startsWith("tactic:") || id === record.id)) {
     throw new Error(`${owner}.lookup có scalar không hợp lệ`);
   }
   requireConditions(`${owner}.lookup`, lookup.conditions);
@@ -236,6 +237,7 @@ function validateRelations(heroes, tactics, catalog) {
   }
   for (const tactic of tactics) {
     for (const id of tactic.lookup.inheritedFromIds) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);
+    for (const id of tactic.lookup.formerIds) if (tacticIds.has(id)) throw new Error(`Mã chiến pháp đã gộp vẫn còn là mục sống: ${id}`);
   }
   for (const advisor of catalog.advisors) {
     for (const id of advisor.heroIds) if (!heroIds.has(id)) throw new Error(`Tham chiếu treo: ${id}`);

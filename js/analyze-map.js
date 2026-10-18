@@ -45,16 +45,18 @@ function slugOf(name) {
   return normalizeText(name).replace(/[^a-z0-9]+/gu, "-").replace(/^-+|-+$/gu, "");
 }
 
-function canonicalTacticId(name) {
-  return `tactic:${slugOf(name)}`;
+/** Mã chiến pháp của một tên; `idOf` (tên → mã theo danh mục) cần khi tên hiển thị đã khác tên gốc. */
+function canonicalTacticId(name, idOf = null) {
+  return idOf ? idOf(name) : `tactic:${slugOf(name)}`;
 }
 
 /**
  * ID canonical của một tên Việt theo loại: `hero:` (theo hero-identity, giữ tiền tố SP/CO/40Y),
- * `tactic:`, `book:`. Tên rỗng/không tạo được slug -> `null`.
+ * `tactic:`, `book:`. Tên rỗng/không tạo được slug -> `null`. Chiến pháp có `idOf` (tên → mã theo danh mục,
+ * `createTacticIdResolver`) thì dùng mã của danh mục thay vì slug tên.
  * @param {"hero"|"tactic"|"book"} kind
  */
-export function entityId(kind, name) {
+export function entityId(kind, name, idOf = null) {
   if (typeof name !== "string" || !name.trim()) return null;
   if (kind === "hero") {
     try {
@@ -63,8 +65,15 @@ export function entityId(kind, name) {
       return null;
     }
   }
+  if (kind === "tactic" && idOf) return idOf(name) || null;
   const slug = slugOf(name);
   return slug ? `${kind}:${slug}` : null;
+}
+
+/** ID canonical của một bản ghi từ điển: chiến pháp dùng `id` của bản ghi (tên Việt có thể đã đổi), còn lại suy từ tên Việt. */
+function recordEntityId(kind, record) {
+  if (kind === "tactic" && typeof record?.id === "string" && record.id.startsWith("tactic:") && typeof record.viet === "string" && record.viet.trim()) return record.id;
+  return entityId(kind, record?.viet);
 }
 
 /**
@@ -106,7 +115,7 @@ function mapName(cn, dict, { unknownLabel = null, kind = "tactic" } = {}) {
       m.matched && kind === "hero"
         ? canonicalHeroId(viet)
         : m.matched
-          ? canonicalTacticId(viet)
+          ? recordEntityId("tactic", { ...m.record, viet }) ?? canonicalTacticId(viet)
           : null,
   };
 }
@@ -153,11 +162,11 @@ const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu
  * @param {"hero"|"tactic"|"book"} kind
  */
 export function createEntityIndex(dict, kind) {
-  const records = (Array.isArray(dict) ? dict : []).filter((record) => entityId(kind, record?.viet));
+  const records = (Array.isArray(dict) ? dict : []).filter((record) => recordEntityId(kind, record));
   const byId = new Map();
   const exact = new Map();
   for (const record of records) {
-    const id = entityId(kind, record.viet);
+    const id = recordEntityId(kind, record);
     if (!byId.has(id)) byId.set(id, record);
     for (const name of [record.chinese, ...(record.aliases || [])]) {
       const key = compactCjk(name);
@@ -181,11 +190,11 @@ export function classifyName(raw, index, { candidateLimit = 3 } = {}) {
   if (exactId) return { state: "sure", raw: text, id: exactId, candidates: [] };
   const m = matchDict(text, index.records);
   if (m.matched && !m.reviewRequired) {
-    return { state: "sure", raw: text, id: entityId(index.kind, m.record.viet), candidates: [] };
+    return { state: "sure", raw: text, id: recordEntityId(index.kind, m.record), candidates: [] };
   }
   const candidates = [];
   const push = (record) => {
-    const id = record ? entityId(index.kind, record.viet) : null;
+    const id = record ? recordEntityId(index.kind, record) : null;
     if (id && !candidates.includes(id) && candidates.length < candidateLimit) candidates.push(id);
   };
   if (m.matched) push(m.record);
@@ -373,8 +382,8 @@ function safeHeroSlot(value) {
   }
 }
 
-function nameEntry(kind, name, alternatives = [], raw = "") {
-  const ids = [name, ...alternatives].map((value) => entityId(kind, value)).filter(Boolean);
+function nameEntry(kind, name, alternatives = [], raw = "", tacticIdOf = null) {
+  const ids = [name, ...alternatives].map((value) => entityId(kind, value, tacticIdOf)).filter(Boolean);
   return ids.length ? { ids, name, raw: typeof raw === "string" ? raw : "" } : null;
 }
 
@@ -385,8 +394,8 @@ const referenceCache = new WeakMap();
  * `tacticSlotsVi`, `bookSlotsVi`), Đội khác (`legacyContent.heroes`) hoặc đội gốc (`heroes[].name`).
  * Chiến pháp/binh thư mang `alternatives` được tính là cùng một ô.
  */
-export function referenceTeam(record) {
-  if (record && typeof record === "object" && referenceCache.has(record)) return referenceCache.get(record);
+export function referenceTeam(record, tacticIdOf = null) {
+  if (record && typeof record === "object" && referenceCache.get(record)?.tacticIdOf === tacticIdOf) return referenceCache.get(record).team;
   const heroes = Array.isArray(record?.legacyContent?.heroes) ? record.legacyContent.heroes : record?.heroes || [];
   const slots = heroes.map((hero) => {
     if (typeof hero?.displayNameVi === "string" && Array.isArray(hero.tacticSlotsVi)) {
@@ -396,7 +405,7 @@ export function referenceTeam(record) {
         name: hero.displayNameVi,
         raw: hero.nameRaw || "",
         tactics: hero.tacticSlotsVi
-          .map((name, index) => nameEntry("tactic", name, [], hero.tacticSlotsRaw?.[index]))
+          .map((name, index) => nameEntry("tactic", name, [], hero.tacticSlotsRaw?.[index], tacticIdOf))
           .filter(Boolean),
         book: nameEntry("book", hero.bookSlotsVi?.[0], [], hero.bookSlotsRaw?.[0]),
       };
@@ -408,13 +417,13 @@ export function referenceTeam(record) {
       name: slot.alternatives[0]?.displayName || hero?.name || "",
       raw: "",
       tactics: (hero?.tactics || [])
-        .map((tactic) => nameEntry("tactic", tactic?.name, tactic?.alternatives || []))
+        .map((tactic) => nameEntry("tactic", tactic?.name, tactic?.alternatives || [], "", tacticIdOf))
         .filter(Boolean),
       book: book ? nameEntry("book", book.name, book.alternatives || []) : null,
     };
   });
   const team = { slots };
-  if (record && typeof record === "object") referenceCache.set(record, team);
+  if (record && typeof record === "object") referenceCache.set(record, { tacticIdOf, team });
   return team;
 }
 
@@ -473,8 +482,8 @@ const tacticHitsFor = (tactics, slot) =>
  *   (đội không ghi binh thư) | `unchecked`.
  * - missingHeroes: ô tướng của đội không ai khớp.
  */
-export function diffTeam(team, record) {
-  const reference = referenceTeam(record);
+export function diffTeam(team, record, tacticIdOf = null) {
+  const reference = referenceTeam(record, tacticIdOf);
   const members = team?.heroes || [];
   const matches = matchReadHeroesToSlots(
     members.map((member) => member.hero),
@@ -531,9 +540,9 @@ export function diffTeam(team, record) {
  * xếp theo số tướng khớp rồi số chiến pháp khớp; hoà giữ thứ tự nguồn (thứ tự tier của danh sách).
  * @returns {{record: object, diff: ReturnType<typeof diffTeam>}[]}
  */
-export function compareTeams(team, records, { minHeroes = 2, limit = 5 } = {}) {
+export function compareTeams(team, records, { minHeroes = 2, limit = 5, tacticIdOf = null } = {}) {
   return (records || [])
-    .map((record, order) => ({ record, order, diff: diffTeam(team, record) }))
+    .map((record, order) => ({ record, order, diff: diffTeam(team, record, tacticIdOf) }))
     .filter(({ diff }) => diff.heroHit >= minHeroes)
     .sort((a, b) => b.diff.heroHit - a.diff.heroHit || b.diff.tacticHit - a.diff.tacticHit || a.order - b.order)
     .slice(0, limit)
@@ -550,7 +559,7 @@ function teamHeroSlots(team) {
  * normalize); tie-break theo số chiến pháp trùng. Trả top `limit` team đạt ngưỡng.
  * @param mapped kết quả mapTeamRead
  */
-export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {}) {
+export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5, tacticIdOf = null } = {}) {
   // [M1] Mẫu số là số tướng nhận diện được (matched) — tên Hán không khớp không vào mẫu số.
   const recognized = new Set(
     mapped
@@ -595,7 +604,7 @@ export function findSimilarTeams(mapped, teams, { minHeroes = 2, limit = 5 } = {
           const holder = heroMatches.find(({ slotIndex }) => slotIndex === index);
           if (!holder) return [];
           return [tactic.name, ...(tactic.alternatives || [])].map(
-            (name) => `${holder.readHeroId}|${canonicalTacticId(name)}`,
+            (name) => `${holder.readHeroId}|${canonicalTacticId(name, tacticIdOf)}`,
           );
         }),
       ),

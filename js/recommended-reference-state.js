@@ -13,6 +13,25 @@ export function setZhNameResolver(resolver) {
   zhNameResolver = typeof resolver === 'function' ? resolver : null;
 }
 
+let tacticDisplayResolver = null;
+
+/**
+ * Bản vi: bộ tra tên chiến pháp lưu trong dữ liệu đội → `viet` hiện hành của danh mục (xem `createTacticDisplayName`).
+ * Truyền giá trị không phải hàm để gỡ.
+ */
+export function setTacticDisplayName(resolver) {
+  tacticDisplayResolver = typeof resolver === 'function' ? resolver : null;
+}
+
+/**
+ * Tên chiến pháp hiển thị. Bản vi đổi tên lưu (Việt cũ hoặc chữ Hán `raw`) sang `viet` của danh mục khi tra được,
+ * không tra được thì giữ nguyên; bản zh giữ nguyên (đã có đường tên chữ Hán riêng qua `sourceName`).
+ */
+export function tacticDisplayName(value, raw = null, locale = currentLocale()) {
+  if (!tacticDisplayResolver || normalizeLocale(locale) === 'zh') return value;
+  return tacticDisplayResolver(value, raw);
+}
+
 /**
  * Tên nguồn theo ngôn ngữ trang. Bản vi trả nguyên; bản zh giữ nguyên chuỗi đã có chữ Hán, còn tên Hán-Việt
  * đổi sang chữ Hán gốc theo từng phần ngăn bởi `·`, `/`, `+`. Phần không tra được bị bỏ (không trộn tiếng Việt
@@ -116,6 +135,7 @@ function holderTerms(holder) {
   return [
     holder.displayNameVi,holder.nameRaw,holder.roleRaw,holder.statFocusVi,holder.statFocusRaw,holder.notesRaw,
     ...(holder.tacticSlotsRaw || []),...(holder.tacticSlotsVi || []),
+    ...(holder.tacticSlotsVi || []).map((vi,index)=>tacticDisplayName(vi,holder.tacticSlotsRaw?.[index])),
     ...(holder.bookSlotsRaw || []),...(holder.bookSlotsVi || []),
     ...(holder.alternatives || []),
   ];
@@ -127,7 +147,7 @@ function legacyContentTerms(content) {
     ...(content.unitType || []),
     ...(content.heroes || []).flatMap(hero=>[
       hero.name,hero.baseName,hero.note,...(hero.alternatives || []),
-      ...(hero.tactics || []).flatMap(item=>[item.name,...(item.alternatives || [])]),
+      ...(hero.tactics || []).flatMap(item=>[item.name,tacticDisplayName(item.name),...(item.alternatives || []),...(item.alternatives || []).map(name=>tacticDisplayName(name))]),
       ...(hero.books || []).flatMap(item=>[item.name,...(item.alternatives || [])]),
     ]),
     ...(content.counters?.good || []),...(content.counters?.avoid || []),
@@ -157,13 +177,13 @@ const searchBlobs = new WeakMap();
 function searchBlob(row,labels) {
   const resolver=currentLocale()==='zh' ? (zhNameResolver || 'zh') : null;
   const cached=searchBlobs.get(row);
-  if (cached && cached.labels === labels && cached.resolver === resolver) return cached.blob;
+  if (cached && cached.labels === labels && cached.resolver === resolver && cached.display === tacticDisplayResolver) return cached.blob;
   const terms=searchTerms(row,labels).filter(Boolean);
   const zhTerms=resolver ? terms.flatMap(term=>[
     sourceName(term),legacyLabelZh('faction',term),legacyLabelZh('unit',term),legacyLabelZh('source',term),
   ]).filter(term=>term && !terms.includes(term)) : [];
   const blob=normalizeText([...terms,...zhTerms].join(' '));
-  searchBlobs.set(row,{labels,resolver,blob});
+  searchBlobs.set(row,{labels,resolver,display:tacticDisplayResolver,blob});
   return blob;
 }
 

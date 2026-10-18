@@ -12,7 +12,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
 - Nội dung đội và Tra cứu có sẵn trong HTML (đọc được không cần JavaScript, kể cả với crawler/AI): trang chi tiết đội render đủ tướng, chiến pháp, binh thư, ghi chú; bốn trang danh sách đội render trạng thái mặc định; JavaScript chỉ thêm lọc, đổi mùa, "Xem thêm", hộp thoại. Trang đội, trang nhóm và trang riêng Tra cứu có JSON-LD; `/llms.txt` dẫn tới bộ chữ thuần theo mục `/llms/…` và bản gộp `/llms-full.txt`.
 - Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một hàng nút (mặc định kịch bản đầu theo registry). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Gợi ý đội có một ô "Mùa bạn đang chơi" (`?season=`, mặc định `defaultSourceSeasonId`) và gợi ý từ Đội chuẩn của mùa đó, đội cũ chỉ lấp chỗ trống; Soi đội đối chiếu với Đội chuẩn theo mùa (`?season=`) và Đội khác. Khai hoang dùng bản bảo trì mới nhất.
-- Tra cứu local 202 tướng, 406 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; HTML có đủ mọi mục, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` với slug đóng băng trong `pipeline/lookup-route-handles.json`; link Tra cứu từ trang đội trỏ tới trang riêng. `/tra-cuu/` là mục lục.
+- Tra cứu local 251 tướng, 409 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; HTML có đủ mọi mục, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` với slug đóng băng trong `pipeline/lookup-route-handles.json`; link Tra cứu từ trang đội trỏ tới trang riêng. `/tra-cuu/` là mục lục.
 - Theo dõi chiêu mộ (store schema v2, `js/recruit-tracker-store.js`): nhiều tài khoản, ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", "Có 5★"), Hoàn tác, nhật ký sửa/xóa từng dòng, đồng bộ số lượt từ game, gói hạn giờ (đổi tên, ngày hết hạn, lưu trữ, xóa), thống kê; dữ liệu nằm trong `localStorage`, xuất/nhập JSON (nhập = gộp). Đăng nhập Google là tuỳ chọn: bật đồng bộ cloud qua `community-worker` (`/api/recruit`, gộp theo từng bản ghi).
 - Soi screenshot qua Worker + nhà cung cấp AI OpenAI-compatible (tab AI của `/quan-tri/`: nhà cung cấp và API key dùng chung, mỗi tính năng AI có chuỗi failover riêng gồm nhà cung cấp, model, mức effort cùng timeout/trần tổng; mẫu DeepSeek, OpenCode Zen). AI chỉ chép chữ in trong ảnh (không đoán tướng qua chân dung, không chọn team); người dùng xác nhận từng ô trong editor (hoặc nhập tay), rồi frontend diff từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận chia sẻ qua link `?doi=v1.…` (chỉ ID canonical), lưu lịch sử 10 mục trên máy và xuất thẻ PNG.
 - Gợi ý portfolio tối đa 5 đội bằng engine local từ Đội chuẩn của mùa đang chọn (đội cũ `teams.json` chỉ lấp khi mùa thiếu, gắn nhãn tham khảo). Mục "Thiếu món" cho bấm "Tôi có…" để bổ sung kho hoặc chọn món bù (chiến pháp tướng đó mang ở cấu hình khác cùng mùa, có trong kho); nút "Vì sao?" gọi Worker mode chỉ văn bản `explainSubstitute` để AI giải thích món bù — AI không chọn đội hay món.
@@ -31,7 +31,7 @@ Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 | Tier | 31 team, 39 bản xếp hạng nguồn |
 | Cùng Tồn | 5 nhóm, 25 team |
 | Khai hoang | 11 team, 5 mỏ |
-| Tra cứu | 202 tướng / 406 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
+| Tra cứu | 252 tướng / 406 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
 | Binh thư map | 66 |
 
 Build local ngày 2026-10-15 (dữ liệu hiện tại): 4917 trang HTML (gồm 1772 trang riêng Tra cứu = 886 mục × vi/zh), sitemap 4912 URL, `/llms.txt` + 36 file `/llms/…` + `/llms-full.txt`.
@@ -103,7 +103,7 @@ python3 -m pipeline.query_sgsdeck_catalog query --group generals --name "趙雲"
 Snapshot nguồn validate đủ 202 generals, 393 tactics, 114 equipment + 90
 specials, 39 advisors, 16 troop-mods + 192 options và 41 buildings + 426 levels.
 Nguồn, provenance và review evidence vẫn private; website chỉ publish projection
-tiếng Việt đã review: 202 tướng, 406 chiến pháp và catalog bổ sung. Xem
+tiếng Việt đã review: 252 tướng (202 từ SGSDeck/baseline + 50 chụp từ client Global), 406 chiến pháp và catalog bổ sung. Xem
 [quy trình Tra cứu thống nhất](docs/unified-lookup.md) và
 [contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
 quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
@@ -147,7 +147,7 @@ src/layouts/SiteLayout.astro # shell dùng chung (head, header, menu, footer, pa
 src/lib/, src/pages/       # manifest, static endpoints byte-exact, dựng sẵn trang đội/Tra cứu (cây view), JSON-LD
 css/, js/, data/           # source runtime canonical
 js/legacy-routes.js        # bảng chuyển tiếp hash/URL cũ (một nguồn)
-public/_headers, public/fonts/  # Pages deployment-control + font self-host
+public/_headers, public/fonts/, public/heroes/  # Pages deployment-control + font self-host + chân dung tướng client Global tự lưu
 docs/design/so-binh-phap/tokens.json # token + danh mục component (nguồn duy nhất)
 scripts/design-tokens.mjs, scripts/design-compare.mjs # soát token và so ảnh
 pipeline/                  # build/normalize dữ liệu bằng Python stdlib

@@ -51,7 +51,7 @@ function dictionaryEntries(
 ): SearchEntry[] {
   return records.map((record) => {
     const displayName = text(record.viet);
-    const canonicalId = canonicalDictionaryId(artifact, displayName);
+    const canonicalId = canonicalDictionaryId(artifact, displayName, record.id);
     return {
       kind,
       canonicalId,

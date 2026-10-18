@@ -292,7 +292,7 @@ export function parseArtifact(
   ) {
     const identities = new Set<string>();
     parsed.forEach((item, index) => {
-      const identity = canonicalDictionaryId(name, item.viet as string);
+      const identity = canonicalDictionaryId(name, item.viet as string, item.id);
       if (identities.has(identity)) {
         throw new ArtifactContractError(
           "INVALID_ARTIFACT",

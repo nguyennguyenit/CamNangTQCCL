@@ -36,7 +36,7 @@ export function tacticsDoc(over = []) {
       lookup: {
         activationRate: 1, cooldown: null, maxUsers: 1, pointCost: null,
         effectTypeVi: null, exchangeConditionVi: null, acquiredFromVi: [], conflictsVi: null,
-        conditions: [], revisions: [], inheritedFromIds: [], missingFields: [],
+        conditions: [], revisions: [], inheritedFromIds: [], formerIds: [], missingFields: [],
       },
     },
     ...over,

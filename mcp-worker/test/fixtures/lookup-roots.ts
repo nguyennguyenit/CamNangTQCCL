@@ -96,19 +96,19 @@ export function withLookupIdentity(dictionaries: {
     id, nameVi, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [],
   });
   const tactics = dictionaries.tactics.map((row) => ({
-    id: canonicalDictionaryId("tactics", String(row.viet)),
+    id: canonicalDictionaryId("tactics", String(row.viet), row.id),
     chinese: String(row.chinese ?? ""), hanViet: String(row.hanViet ?? row.viet), viet: String(row.viet),
     aliases: [], type: null, quality: null, effect: null, effectViet: null, target: null, targetViet: null,
     troopFit: [], source: null, sourceHeroCn: null, iconUrl: null, linkScore: null, pending: true,
     lookup: {
       conditions: [], missingFields: [], revisions: [], activationRate: null, cooldown: null,
       maxUsers: null, pointCost: null, effectTypeVi: null, exchangeConditionVi: null,
-      acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null,
+      acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null,
     },
   }));
   const advisorId = "advisor:co-van-a";
   const heroes = dictionaries.heroes.map((row) => ({
-    id: canonicalDictionaryId("heroes-dict", String(row.viet)),
+    id: canonicalDictionaryId("heroes-dict", String(row.viet), row.id),
     chinese: String(row.chinese ?? ""), hanViet: String(row.hanViet ?? row.viet), viet: String(row.viet),
     aliases: [], faction: null, stars: null, cost: null,
     stats: Object.fromEntries(

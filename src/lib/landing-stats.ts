@@ -1,3 +1,4 @@
+import { createTacticDisplayName } from '../../js/lookup-ids.js';
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts';
 import { recommendedRoutePath, teamDetailCatalog } from './team-detail-routes';
 
@@ -213,7 +214,7 @@ function hasBeforeAfterBuild(team: unknown): boolean {
 }
 
 /** Bản ghi Recommended: mọi trường dùng cho số đếm và hai khối xem trước. */
-function parseRecommendedRecords(index: unknown) {
+function parseRecommendedRecords(index: unknown, tacticName: (stored: string, raw?: string | null) => string = (stored) => stored) {
   return fieldArray(index, 'records', 'recommended/index.json').map((row, at) => ({
     tierRaw: optionalString(field(row, 'tierRaw'), `index.records[${at}].tierRaw`),
     sourceSeasonId: optionalString(field(row, 'sourceSeasonId'), `index.records[${at}].sourceSeasonId`),
@@ -227,7 +228,10 @@ function parseRecommendedRecords(index: unknown) {
     unitsRaw: fieldArray(row, 'unitTypesRaw', `index.records[${at}]`).map((unit) => String(unit)),
     holders: fieldArray(row, 'heroes', `index.records[${at}]`).map((holder) => ({
       name: displayString(field(holder, 'displayNameVi')),
-      tactics: displaySlots(field(holder, 'tacticSlotsVi')).filter(Boolean) as string[],
+      tactics: displaySlots(field(holder, 'tacticSlotsVi')).map((name, slot) => {
+        const raw = field(holder, 'tacticSlotsRaw');
+        return name ? tacticName(name, Array.isArray(raw) && typeof raw[slot] === 'string' ? raw[slot] : null) : null;
+      }).filter(Boolean) as string[],
       books: displaySlots(field(holder, 'bookSlotsVi')).filter(Boolean) as string[],
       nameZh: rawString(field(holder, 'nameRaw')),
       tacticsZh: rawSlots(field(holder, 'tacticSlotsRaw')),
@@ -298,7 +302,7 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
   const zh = locale === 'zh';
   const snapshot = await websiteDisplayPublicationSnapshot();
   const seasons = publishedJson(snapshot.recommended.files, 'seasons.json');
-  const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'));
+  const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'), createTacticDisplayName(publishedJson(snapshot.publicFiles, 'tactics.json')));
   const labels = parseDisplayLabels(seasons);
 
   const defaultSeasonId = optionalString(field(seasons, 'defaultSourceSeasonId'), 'seasons.defaultSourceSeasonId');

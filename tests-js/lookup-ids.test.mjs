@@ -4,6 +4,35 @@ import {
   LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupDerivedSlug, lookupHref, lookupHubTarget, lookupItemPath, lookupProfilePath, lookupSlug,
   setLookupRouteHandles, setLookupRouteHandlesFromJSON,
 } from '../js/lookup-ids.js';
+import {createTacticIdResolver, createTacticNameIndex} from '../js/lookup-ids.js';
+
+test('tactic name index: tên cũ (hanViet) và tên mới đều ra cùng mã; tên trùng ở hai mã chọn mã có slug khớp', () => {
+  const tactics = [
+    {id: 'tactic:chan-hai-tu-canh', viet: 'Bốn Bề Rung Động', hanViet: 'Chấn Hãi Tứ Cảnh', aliases: []},
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc', aliases: []},
+    {id: 'tactic:lap-lo-danh-trao', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Lập Lờ Đánh Tráo', aliases: []},
+  ];
+  const index = createTacticNameIndex(tactics);
+  assert.equal(index('Chấn Hãi Tứ Cảnh'), 'tactic:chan-hai-tu-canh');
+  assert.equal(index('Bốn Bề Rung Động'), 'tactic:chan-hai-tu-canh');
+  assert.equal(index('Di Hoa Tiếp Mộc'), 'tactic:di-hoa-tiep-moc');
+  assert.equal(index('Lập Lờ Đánh Tráo'), 'tactic:lap-lo-danh-trao');
+  assert.equal(index('Không Có'), null);
+  assert.equal(createTacticIdResolver(tactics)('Không Có'), 'tactic:khong-co');
+  const resolve = createLookupIdResolver({tactics});
+  assert.equal(resolve.tactic(null, 'Bốn Bề Rung Động'), 'tactic:chan-hai-tu-canh');
+  assert.equal(resolve.tactic(null, 'Chấn Hãi Tứ Cảnh'), 'tactic:chan-hai-tu-canh');
+});
+
+test('tactic name index: tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ của mã khác', () => {
+  // Client: Lập Lờ Đánh Tráo = 移花接木; mã lap-lo-danh-trao (暗渡陳倉) nay hiện "Ám Độ Trần Thương", hanViet cũ vẫn là "Lập Lờ Đánh Tráo".
+  const index = createTacticNameIndex([
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc', aliases: []},
+    {id: 'tactic:lap-lo-danh-trao', viet: 'Ám Độ Trần Thương', hanViet: 'Lập Lờ Đánh Tráo', aliases: []},
+  ]);
+  assert.equal(index('Lập Lờ Đánh Tráo'), 'tactic:di-hoa-tiep-moc');
+  assert.equal(index('Ám Độ Trần Thương'), 'tactic:lap-lo-danh-trao');
+});
 
 test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
   assert.equal(lookupSlug('Đoạt Hồn Hiệp Phách'), 'doat-hon-hiep-phach');
@@ -118,6 +147,20 @@ test('lookupHubTarget chuyển link cũ của mục lục sang trang nhóm, giá
     '/zh/tra-cuu/tuong/?utm_source=x&id=hero%3Aluu-bi#top',
   );
   assert.equal(target('?group=zz', '/zh/tra-cuu/', '#top'), '/zh/tra-cuu/#top');
+});
+
+test('mã chiến pháp đã gộp (lookup.formerIds) tra ra mã còn sống ở cả ba bộ tra', () => {
+  const tactics = [
+    {id: 'tactic:si-tranh-tien-pho', viet: 'Sĩ Tranh Tiên Phô', hanViet: 'Sĩ Tranh Tiên Phô', aliases: [], lookup: {formerIds: ['tactic:nhanh-chan-tranh-dat']}},
+    {id: 'tactic:di-hoa-tiep-moc', viet: 'Di Hoa Tiếp Mộc', hanViet: 'Di Hoa Tiếp Mộc', aliases: [], lookup: {formerIds: []}},
+  ];
+  assert.equal(createTacticNameIndex(tactics)('Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createTacticIdResolver(tactics)('Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createLookupIdResolver({tactics}).tactic(null, 'Nhánh Chân Tranh Đất'), 'tactic:si-tranh-tien-pho');
+  assert.equal(createTacticIdResolver(tactics)('Không Có'), 'tactic:khong-co');
+  // Mã còn là hàng sống không bị coi là đã gộp.
+  const stillLive = [...tactics, {id: 'tactic:nhanh-chan-tranh-dat', viet: 'Nhánh Chân Tranh Đất', hanViet: 'x', aliases: []}];
+  assert.equal(createTacticIdResolver(stillLive)('Nhánh Chân Tranh Đất'), 'tactic:nhanh-chan-tranh-dat');
 });
 
 test('item route: slug = hậu tố mã, bảng chỉ chứa ngoại lệ, mã không có trang riêng lùi về hồ sơ ?id=, bảng sai dạng bị từ chối nguyên khối', () => {

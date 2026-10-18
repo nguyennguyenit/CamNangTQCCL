@@ -22,17 +22,34 @@ def canonical_id(kind: str, display_name: str) -> str:
 
 
 def canonical_corpus(heroes, tactics):
+    """Khóa theo `id` ổn định của bản ghi (tên hiển thị có thể đổi theo client); bản ghi chưa có `id` dùng slug `viet`."""
     corpus = {}
     for kind, records in (("hero", heroes), ("tactic", tactics)):
         for record in records:
             display_name = record.get("viet")
             if not isinstance(display_name, str) or not display_name.strip():
                 continue
-            identifier = canonical_id(kind, display_name)
+            identifier = record.get("id") or canonical_id(kind, display_name)
             if identifier in corpus:
                 raise ValueError(f"duplicate canonical ID: {identifier}")
             corpus[identifier] = {"kind": kind, "record": record}
+    # Mã chiến pháp đã gộp vẫn trỏ về bản ghi giữ lại (snapshot SGSDeck có thể còn tham chiếu mã cũ).
+    for kind, records in (("tactic", tactics),):
+        for record in records:
+            for former in (record.get("lookup") or {}).get("formerIds") or []:
+                if former in corpus:
+                    raise ValueError(f"duplicate canonical ID: {former}")
+                corpus[former] = {"kind": kind, "record": record}
     return corpus
+
+
+def _owner_names(record) -> tuple:
+    """Tên Việt hợp lệ của chủ: tên hiển thị hiện tại, tên Hán-Việt (tên lúc snapshot được rà) và, với chiến pháp
+    đã gộp mã, tên của mã cũ (nằm trong alias)."""
+    names = [record.get("viet"), record.get("hanViet")]
+    if (record.get("lookup") or {}).get("formerIds"):
+        names += list(record.get("aliases") or [])
+    return tuple(name for name in names if isinstance(name, str) and name)
 
 
 def _variant(value: str) -> str:
@@ -71,10 +88,10 @@ def validate_record_ref(category: str, record, corpus) -> None:
     validate_canonical_ref(category, reference, corpus)
     if reference is None:
         return
-    owner_name = corpus[reference["id"]]["record"].get("viet")
-    if record.get("nameVi") != owner_name:
+    owner = corpus[reference["id"]]["record"]
+    if record.get("nameVi") not in _owner_names(owner):
         raise ValueError("canonicalRef owner does not match nameVi")
-    if _variant(record.get("nameZh", "")) != _variant(owner_name):
+    if _variant(record.get("nameZh", "")) != _variant(owner["viet"]):
         raise ValueError("canonicalRef crosses source/canonical variants")
 
 
@@ -97,8 +114,8 @@ def apply_reviewed_mappings(category, records, mappings, heroes, tactics):
     canonical_records = heroes if category == "generals" else tactics if category == "tactics" else []
     by_name = {}
     for record in canonical_records:
-        name = record.get("viet")
-        if name:
+        names = _owner_names(record) if category == "tactics" else (record.get("viet"),)
+        for name in dict.fromkeys(name for name in names if name):
             by_name.setdefault(name, []).append(record)
 
     for record in records:
@@ -111,13 +128,14 @@ def apply_reviewed_mappings(category, records, mappings, heroes, tactics):
         candidates = by_name.get(mapping.get("canonicalName"), [])
         if len(candidates) != 1:
             raise ValueError(f"canonical mapping is missing or ambiguous: {mapping.get('canonicalName')}")
-        canonical_name = candidates[0]["viet"]
-        if _variant(record["nameZh"]) != _variant(canonical_name):
-            raise ValueError(f"canonical mapping crosses variants: {record['nameZh']} -> {canonical_name}")
+        owner = candidates[0]
+        if _variant(record["nameZh"]) != _variant(owner["viet"]):
+            raise ValueError(f"canonical mapping crosses variants: {record['nameZh']} -> {owner['viet']}")
         kind = "hero" if category == "generals" else "tactic"
-        reference = {"kind": kind, "id": canonical_id(kind, canonical_name)}
+        reference = {"kind": kind, "id": owner.get("id") or canonical_id(kind, owner["viet"])}
         validate_canonical_ref(category, reference, corpus)
-        record["nameVi"] = canonical_name
+        # Giữ tên đã rà trong mapping để snapshot không đổi byte khi tên hiển thị đổi theo client.
+        record["nameVi"] = mapping["canonicalName"]
         record["canonicalRef"] = reference
         record["verification"]["identity"] = "matched"
         validate_record_ref(category, record, corpus)

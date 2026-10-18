@@ -1,5 +1,73 @@
 # Project Changelog
 
+## 2026-10-17 (Gộp mã chiến pháp trùng, chiến pháp mới từ client)
+
+### Added
+- 13 chiến pháp chỉ có ở client Global (Trấn Áp Khăn Vàng, Chi Diệp Phù Tô, Thiên Vận, Hộ Vệ, Gan Dạ, Cấp Tốc, Dũng Võ, 5 bản "-Sơ", Tinh • Nhanh Trí Động Não) qua `newTactics` trong `pipeline/lookup-client-tactics.json`, có tên Hán (三略庫/ảnh TW) và hiệu ứng Hán. Chu Tuấn, Lý Nghiêm, Lưu Thiện, Phó Sĩ Nhân và các tướng 1–2★ nối chiến pháp tự mang tương ứng.
+- `lookup.formerIds` trên chiến pháp; link, resolver, luật đội và MCP quy mã cũ về mã giữ.
+- Đủ 16 chiến pháp binh chủng của mùa Binh Diễn Xuân Thu theo màn Sân Luyện Binh › Binh chủng Xem của client, mỗi binh chủng một mục `Tinh • <binh chủng>`. Hiệu ứng là hướng dẫn gốc của mùa (chưa gồm cải tạo; thay cho bản cấu hình riêng của tài khoản đã chụp trước). 4 cấp cải tạo S/C/B/A (mỗi cấp chọn 1 trong 3) và ghi chú mùa nằm trong `lookup.conditions`. `Chuyển • <binh chủng>` (chọn cải tạo đặc biệt Chuyển, đổi loại binh) là tên khác của cùng mục, có trong alias cùng `轉·…`; câu đầu hiệu ứng khi chọn Chuyển của cả 7 binh chủng lấy từ màn "Hiệu quả Chiến Pháp Xem trước" (chọn thử, không lưu). Chữ Hán `精·` và hướng dẫn lấy từ ảnh màn 訓兵場 client TW (Bahamut). `Tinh • Nhanh Trí Động Não` có ghi chú mùa nêu rõ chỗ khác bản gốc: dùng được cho mọi binh chủng (bản gốc Kỵ binh, Khí giới) và mức tăng 5.5→10 (bản gốc 7.5→15).
+
+### Fixed
+- Sau khi gộp `main` (trang dựng sẵn): tên chiến pháp hiển thị của bản Việt tính lúc build (`src/lib/tactic-display.ts`) và nhúng vào trang (`#tactic-display-names`), nên DOM dựng sẵn khớp DOM trình duyệt và trang đội/Khai hoang/Tra cứu không phải tải thêm `data/tactics.json` chỉ để đổi tên.
+
+### Changed
+- Cải tạo binh chủng (16 binh chủng, 192 lựa chọn) chỉ giữ một bản client: tên, hướng dẫn mùa, lựa chọn và cấp theo màn Sân Luyện Binh › Binh chủng Xem; bỏ lịch sử bản SGSDeck. Cấp "Cơ bản" đổi thành "Sơ cấp" theo client. 123 lựa chọn giữ mã cũ, 69 lựa chọn mới theo client thay 69 lựa chọn của đợt cũ.
+- 5 chiến pháp có bản `Thác-` bán ở Thương nhân › Mùa giải (Đoạt Hồn Hiệp Phách, Dưỡng Sức Đợi Chiến, Thuyền Cỏ Mượn Tên, Cắt Xương Trị Độc, Sĩ Biệt Tam Nhật): cùng hiệu ứng nên thêm tên khác `Thác-…` và ghi chú mùa vào mục gốc. Ghi chú Tinh/Chuyển nêu quy tắc tên đã thử trong client: chọn Chuyển ở cải tạo đặc biệt thì Chiến Pháp hiện `Chuyển • …`, còn lại `Tinh • …`.
+- Gộp 18 cặp mã chiến pháp trùng thành một mã (`retired` trong client file). Bỏ `tactic:dao-vien-ket-nghia` vì là duyên phận, không phải chiến pháp; bỏ 7 chiến pháp chỉ có ở SGSDeck (Thiên Lý Quỹ Lương, Đoan Trang Trì Trọng, Duy Nội Thiện Quyền, Khiên Chế, Thùy Huệ Vạn Vật, Tuyệt Kế Chiết Mưu, Vạn Quân Thủ Tướng) và tướng Hà Thị (`retired` trong `pipeline/lookup-client-heroes.json`). Giữ SP Tào Tháo cùng Thừa Thiên Tĩnh Thế / Tàng Khí Đãi Thì vì bản Trung có (SGSDeck TW, bài 2026 về SP曹操 truyền thừa 藏器待時); hai mục ghi chú "chưa có ở client Global, nội dung theo bản Trung".
+- Phẩm chiến pháp lấy theo màu tên trên thẻ tướng client (cam S, tím A, xanh B, xanh nhạt C). 8 mục ghi sai được sửa về A.
+- Tách 6 chỗ chữ dính số trong mô tả client ("giảm10%", "2hiệp"…).
+
+## 2026-10-17 (Chiến pháp tự mang/kế thừa theo thẻ tướng client)
+
+### Added
+
+- `pipeline/lookup-client-heroes.json` `overrides` nhận `selfTacticId`/`inheritTacticId` (mã chiến pháp có trong kho, `null` = thẻ ghi chiến pháp không có trong kho). Áp sau khi thêm tướng client (tướng client chỉ nhận hai khóa này); kế thừa cập nhật `lookup.inheritedFromIds` của chiến pháp; ledger `clientCapture.overrides.*`. Test `test_tactic_link_override_sets_links_and_inherited_holders`.
+- Kiểm 204 thẻ tướng ở Thượng Thư Đài (trừ 45 tướng xanh lam và SP Lô Trực đã kiểm; Hà Thị, SP Tào Tháo không có ở client Việt Nam; 40Y Lữ Bố tra bằng "40周年吕布", SP tra dạng "X SP"): 80 liên kết được ghi (45 tướng), gồm Chu Tuấn kế thừa Dương Đông Kích Tây (kho ghi nhầm Thiên Lý Trì Viện) và bỏ liên kết tự mang sai của Chu Tuấn (thẻ ghi Trấn Áp Khăn Vàng, chưa có trong kho).
+- 6 chiến pháp nội chính/chủ động lấy từ thẻ tướng (387/406): Tranh Phân Đoạt Miểu = Tranh Phân (Lưu Biểu), Tế Trí Nhập Vy = Cẩn Thận Tỉ Mỉ (Bộ Luyện Sư), Án Đồ Tác Ký = Án Đồ Tác Kí (Mã Thiết), Hiểu Tri Lương Mộc = Biết Được Gỗ Tốt (Thái Ung), Thạc Quả Lũy Lũy = Thành Quả To Lớn (Trần Lâm), Nghi Thành Chi Chí = Nghi Thành (Từ Thịnh).
+
+- 9 mã trùng trong kho nhận cùng dữ liệu client với mã đã chụp (tên client do người dùng xác nhận): Trậm Độc = Rượu Độc, Ưng Thị = Ưng Thị Lang Cố, Cương Dũng Vô Tiền = Vô Địch Can Trường, Hỏa Sí Nguyên Liệu = Lửa Lan Khắp Chốn, Hồ Già Thập Bát Phách = Tiếng Sáo Dư Âm, Khắc Tuân Họa Nhất = Khắc Tôn Họa Nhất, Thương Lẫm Nhi Thực = Thành Quả To Lớn, Lục Lực Thượng Tâm = Lục Lực Thượng Quốc, Phá Phong Đoạn Nhẫn = Thôi Phong Đoạn Nhẫn → 396/406. Test ghim tên cũ cập nhật: `tests-js/tactics-data.test.mjs` (Cương Dũng Vô Tiền hiện "Vô Địch Can Trường"), MCP `search-similar-names` (ví dụ tên gần duy nhất đổi sang Bốn Bề Rung Động vì Thôi Phong Đoạn Nhẫn có hai mã), test legacy id dò mã bằng `canonical_id` tên baseline. Promote `client-tactics-261017e` (`lookup:38da921b…`), generation Đội chuẩn `05936770…`.
+
+### Fixed
+
+- `tactic:lap-lo-danh-trao` (暗渡陳倉) là **Ám Độ Trần Thương** (tự mang Đặng Ngải); trước đó nhận nhầm dữ liệu client của Lập Lờ Đánh Tráo (= 移花接木 `di-hoa-tiep-moc`). Bộ tra tên chiến pháp (`js/lookup-ids.js` `createTacticNameIndex`, MCP `createTacticNameResolver`) xét tầng `viet` → `hanViet` → alias, tầng đầu có ứng viên quyết định: tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ.
+- Promote `client-tactics-261017c` (`lookup:0cf96fc9…`), generation Đội chuẩn `b4edc034…`; `mcp-worker/src/generated/workflow-build.ts` sinh lại.
+
+## 2026-10-17 (Chiến pháp B từ tướng xanh lam)
+
+### Added
+
+- `pipeline/lookup-client-tactics.json` thêm 9 chiến pháp B chụp ở Thượng Thư Đài qua thẻ tướng xanh lam (380/406): Bác Văn = Uyên Bác (Đặng Chi), Chú Tượng = Thợ Rèn (Gia Cát Chiêm), Xảo Tượng = Nghệ Nhân (Mao Giới), Đàm Tâm = Tâm Sự (Hướng Sủng), Thích Thương = Đâm Thương (Ngô Ý), Điện Hậu = Chốt Đuôi (Ngu Phiên), Khiên Liên = Liên Luỵ (Tôn Hạo), Tiễn Đạp = Giẫm Đạp (Tống Hiến), Truy Thương = Sát Thương Thêm (kế thừa Phan Phụng). Client không hiện chữ Hán nên ID nối theo nghĩa tên Hán-Việt + loại hình. Thêm Quốc Chi Trinh Cán = Nòng Cốt Quốc Gia, chiến pháp tự mang của SP Lô Trực (= SP Lô Thực 盧植, nối theo thẻ tướng) → 381/406. Promote `client-tactics-261017b` (`lookup:8d5c97be…`), generation Đội chuẩn `7b2b20e1…`, re-pin `pipeline/team-route-handles.json`.
+
+## 2026-10-16 (Chiến pháp từ client Global)
+
+### Added
+
+- **`pipeline/lookup-client-tactics.json`**: input capture có hash của `build_unified_lookup` (`inputHashes.clientTactics`, cờ `--client-tactics`) chụp từ client Global 24.526: mục Chiến Pháp (Toàn bộ 182 dòng đầy cấp, Kế thừa 15, Sự kiện 51) và Thượng Thư Đài (thẻ chiến pháp đầy cấp, tra theo tên hoặc mở từ thẻ tướng). 371/406 chiến pháp lấy theo client (ledger `client-tactics`): `effectViet` + bản hiện hành của `lookup.revisions` (371), `targetViet` (369), `lookup.effectTypeVi` (199), `troopFit` (97), `lookup.activationRate` (29), `type` (15), `quality` (9), `lookup.exchangeConditionVi` (47), `lookup.maxUsers` (1). Tên client thay `viet` của 127 chiến pháp (vd Chấn Hãi Tứ Cảnh → Bốn Bề Rung Động); `id` không đổi, tên cũ còn ở `hanViet`. Xem [unified-lookup.md](unified-lookup.md).
+
+### Changed
+
+- Tướng client nối `selfTacticId` cả qua alias trỏ đúng một chiến pháp: 14 tướng client Global có chiến pháp tự mang (vd Đào Khiêm → Viện Cứu "Cứu trợ").
+- Test `test_reviewed_activation_rate_correction_is_published_and_ledgered`: Thiên Uy Khiếu Trận phát hành 0.55 theo client (hiệu chỉnh nguồn 0.5 vẫn có trong ledger).
+- **Tên chiến pháp trên bản Việt = `viet` của danh mục Tra cứu** (tên chính thức client Global): `createTacticDisplayName` (`js/lookup-ids.js`) đổi tên lưu trong dữ liệu đội/Khai hoang/Cùng Tồn (Việt cũ, Hán-Việt, alias hoặc chữ Hán nguồn) sang `viet` hiện hành, không tra được thì giữ nguyên chuỗi lưu. Dữ liệu đội và ledger băm giữ nguyên tên cũ; chỉ lớp hiển thị đổi (`js/render.js`, `js/recommended-reference-render.js`, `js/roster-recommend-ui.js`, `js/analyze.js`, `js/lookup-profile.js`, `src/lib/landing-stats.ts`), nạp qua `loadTacticDisplayName`/`setTacticDisplayName`. Ô tìm đội khớp cả tên cũ lẫn tên mới. Tên ghép đội hình và văn xuôi không bị viết lại; bản zh giữ chữ Hán. Test `tests-js/tactic-display-name.test.mjs`; `teams-data-integrity`, `khaihoang-data`, `roster-adapter-audit` chuyển bất biến từ "tên lưu = `viet`" sang "tên lưu tra ra mã chiến pháp".
+- Định danh chiến pháp theo `id` của danh mục, không suy từ slug `viet` (vì `viet` có thể là tên client): `pipeline/sgsdeck_identity.py` (`canonical_corpus` khóa theo `id`; `nameVi` của snapshot SGSDeck hợp lệ khi bằng `viet` hoặc `hanViet`), `js/lookup-ids.js` (`createTacticNameIndex`/`createTacticIdResolver`: khớp `viet`, `hanViet`, alias, ưu tiên id trùng slug tên), các nơi dùng ở `js/` (công cụ đội, soi đội, gợi ý từ kho, mùa), MCP `mcp-worker/src/data/entity-identity.ts` (`createTacticNameResolver`, id tìm kiếm = id phát hành). 10 cặp ID kho cùng tên client (vd `di-hoa-tiep-moc`/`lap-lo-danh-trao`) khớp tên về id trùng slug.
+- Ghim lại hash nguồn đã sửa trong `pipeline/site-localization-policy.json` (15 file `js/`/`src/lib`); `mcp-worker/src/generated/workflow-build.ts` sinh lại.
+- Promote `client-tactics-261016e` (`lookup:f7aee7f1…`), generation Đội chuẩn `c47c5c65…` (prune generation cũ), re-pin `pipeline/team-route-handles.json`.
+
+## 2026-10-15 (Tướng từ client Global và chân dung tự lưu)
+
+### Added
+
+- **`pipeline/lookup-client-heroes.json`**: input capture có hash của `build_unified_lookup` (`inputHashes.clientHeroes`, cờ `--client-heroes`, mặc định file này, bắt buộc tồn tại) cho tướng chụp từ client Global (Tam Quốc Chí - Chiến Lược 24.526, màn Võ Tướng > Minh Giám) không có trong baseline/SGSDeck. Gồm `heroes[]` (phát sau tướng cũ, kiểm id = `canonical_id`, không trùng, enum, kiểu số, ảnh), `portraits{}` (ảnh cho tướng đã có mà `iconUrl` đang `null`, không ghi đè URL từ xa), `overrides{}`, `roleTags{}` và `aliases{}` (xem Changed). Ledger ghi `chosenInput: "client-capture"`; `selfTacticId` chỉ nối khi tên khớp đúng một chiến pháp. File rỗng cho output byte-identical.
+- **Chân dung tự lưu `public/heroes/<slug>.webp`** (300×300): `portraitUrl` nhận thêm đường dẫn cùng origin `^/heroes/[a-z0-9-]+\.webp$`; `verify-astro-dist` khóa `public/heroes`; `_headers` thêm `/heroes/*` (revalidate); test builder, renderer, headers và dist.
+
+### Changed
+
+- Quyết định C3 "không self-host chân dung" được thay cho tướng client Global vì không có URL ảnh từ xa (xem [unified-lookup.md](unified-lookup.md)).
+- **Client Global là nguồn có thẩm quyền cho bản Việt Nam** (user chốt 2026-10-15): `fills{}` bị thay bằng `overrides{}` (áp vô điều kiện lên stats/growth/troopApt/cost/stars/faction của tướng đã có, từ chối mục no-op, ledger ghi hash giá trị cũ), cộng `roleTags{}` (chỉ khi tag build ra đang `null`) và `aliases{}` (nối, không trùng); xem [unified-lookup.md](unified-lookup.md). Số liệu sau promote lần đầu (`client-heroes-261015c`): `heroes-dict.json` 202 → 252 tướng (50 tướng client Global, 79 chân dung gán cho tướng đã có, 14 mục sửa số liệu); tướng `iconUrl` rỗng 91 → 11 (8 CO, 40Y Lữ Bố, Hà Thị, SP Tào Tháo — không có trong Minh Giám Global). Thẻ lính phổ thông (Tử Sĩ, Vệ Thành, Du Kỵ, Quân Sĩ) mang `roleTagViet` "Tốt" (卒) lấy thẳng từ capture, không cần mục dịch mới. Landing đọc số tướng từ `heroes-dict.json` nên tự lên 252.
+- Tướng Trương Bảo (張寶, Quần) có `viet` "Trương Bảo Khăn Vàng" (id `hero:truong-bao-khan-vang`): slug `truong-bao` trùng Trương Bào (張苞), và `js/hero-identity.js` bỏ chú thích cuối ngoặc nên tên dạng "(…)" bị MCP coi là trùng ID. Builder từ chối tên client kết thúc bằng ngoặc.
+- Sinh lại sau promote: generation Đội chuẩn `707c3a8a…` (hero-summaries, `data/website-display.json`), re-pin `pipeline/team-route-handles.json` và hash `js/hero-portrait.js` trong `pipeline/site-localization-policy.json`, `mcp-worker/src/generated/workflow-build.ts`.
+- **Client chốt lại dữ liệu (promote `client-heroes-261015d`, generation Đội chuẩn `302c55d5…`)**: `lookup-client-heroes.json` có 50 tướng, 79 chân dung, 86 `overrides` (stats 63, growth 85, troopApt 56, cost 7), 55 `roleTags`, 14 `aliases`. Các ghim `GOLDEN_HERO_DELTAS` đổi theo giá trị client Global 24.526: Vương Nguyên Cơ mị 50, Nhạc Tiến tốc 68, Trương Xuân Hoa mị 68, Quan Ngân Bình mị 50, Mã Vân Lộc mị 47, Lữ Linh Ỷ mị 34, Đổng Bạch mị 57 (cơ chế ghim giữ nguyên). Nhãn vai trò mới của client: 控/Khống chế, 兼/Kiêm nhiệm, 蠻/Man tộc, 卒/Tốt. Còn 11 tướng `iconUrl` rỗng.
+- **Bổ sung CO/40Y từ client (promote `client-heroes-261016b`, generation Đội chuẩn `4c75d964…`)**: 88 chân dung (thêm 9: 40Y Lữ Bố, CO Chân Cơ, CO Chu Nhiên, CO Đại Kiều, CO Lữ Linh Ỷ, CO Quan Bình, CO Tào Phi, CO Tiểu Kiều, CO Tinh Thái), 93 `overrides`, 59 `roleTags`. `overrides` nay nhận cặp `roleTag`+`roleTagViet` (bắt buộc đi cùng, không no-op, ledger ghi giá trị cũ) để sửa câu mô tả dài nằm nhầm ở `roleTag` của CO Đại Kiều (輔 / 聯) và CO Lữ Linh Ỷ (武 / 聯); token mới 聯 / "Liên". Sửa chỉ số: 40Y Lữ Bố (growth chính 0.08, mị 0.58), CO Chân Cơ trí 95, CO Chu Nhiên lực 69, CO Quan Bình lực 82 tốc 57, CO Tinh Thái thống 85; `roleTags` cho CO Chân Cơ, CO Quan Bình, CO Tiểu Kiều, CO Tinh Thái. Nguồn: thẻ cấp 1 Thượng Thư Đài + nhãn vai trò chi tiết Võ Tướng, client 24.526. Tướng `iconUrl` rỗng còn 2.
 ## 2026-10-17 (Quản trị người dùng: kiểm duyệt viên, khoá, xoá tài khoản, nhật ký quản trị)
 
 ### Added
@@ -22,7 +90,6 @@
 ### Tests
 
 - community-worker vitest: `permissions`, `users`, `visibility`, `audit`, `moderation`, `auth-ban` (Better Auth thật trên D1 giả, Google giả lập; race, trigger, ban-notice). E2E: vai trò KDV/root, hộp thoại khoá/xoá, nhật ký, thông báo khoá, `/zh/quan-tri/`, 390 px. Smoke `wrangler dev` + `wrangler pages dev` với session seed; **chưa thử đăng nhập Google thật**. Trigger và `rollback/0007` đã thử trên D1 cục bộ.
-
 ## 2026-10-15 (SEO cho AI: nội dung đội và Tra cứu dựng sẵn, trang riêng từng mục, JSON-LD, llms)
 
 ### Added

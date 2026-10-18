@@ -1,7 +1,8 @@
 // Đội chuẩn theo mùa → ứng viên của engine Gợi ý đội, cùng dạng `data/teams.json`
 // (`team.id` + `teamTier[{teamId, rankings}]`) nên engine không cần nhánh riêng.
 import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
-import { buildTacticRules, canonicalTacticId, recommendTeams, teamUnitTypes, tacticRuleViolation } from "./team-recommend-engine.js";
+import { buildTacticRules, tacticIdForName, recommendTeams, teamUnitTypes, tacticRuleViolation } from "./team-recommend-engine.js";
+import { createTacticIdResolver } from "./lookup-ids.js";
 
 /** Chỉ cấu hình Giao chiến: Khai hoang có mục riêng và không dùng cho đội PK. */
 const BATTLE_CATEGORY = "交戰";
@@ -191,11 +192,12 @@ export function recommendRoster({
   tacticOverrides = [],
   tacticsDict = null,
   tacticRules = null,
+  tacticIdOf = null,
   maxTeams = 5,
   ...engineOptions
 } = {}) {
   const rules = tacticRules ?? (tacticsDict ? buildTacticRules(tacticsDict) : null);
-  const shared = { ...engineOptions, tacticRules: rules };
+  const shared = { ...engineOptions, tacticRules: rules, tacticIdOf: tacticIdOf ?? (tacticsDict ? createTacticIdResolver(tacticsDict) : null) };
   const season = recommendTeams({
     ...shared,
     teams: applyTacticOverrides(seasonTeams, tacticOverrides),
@@ -231,10 +233,6 @@ export function recommendRoster({
 
 const missingCount = (entry) => entry.missingHeroSlots?.length || entry.missingTacticSlots?.length || 0;
 
-const ownedTacticId = (item) => (typeof item === "object" && item?.canonicalId) || canonicalTacticId(typeof item === "string" ? item : item?.name);
-
-/** Như `canonicalOwnedTactic` của engine: giữ nguyên ID `tactic:` (đội đã khóa từ trạng thái chuẩn), còn lại suy từ tên. */
-const tacticKey = (item) => (typeof item === "string" && item.startsWith("tactic:") ? item : canonicalTacticId(item));
 
 /**
  * Chiến pháp cuối cùng của đội: mỗi ô lấy món bù đã chọn (nếu có) hoặc món gốc; bỏ ô `exclude`
@@ -275,6 +273,8 @@ export function analyzeTacticSubstitutes({
   slotIndex = null,
   unitType = null,
   tacticRules = null,
+  tacticsDict = null,
+  tacticIdOf = null,
 }) {
   const counts = usage?.get(canonicalHeroId(heroName));
   if (!counts) return { substitutes: [], incompatible: [] };
@@ -282,16 +282,19 @@ export function analyzeTacticSubstitutes({
     ? finalTeamTactics(team, tacticOverrides, { heroIndex, slotIndex })
     : teamTactics;
   const units = teamUnitTypes({ unitType: unitType ?? team?.unitType });
-  const owned = new Set(ownedTactics.map(ownedTacticId));
-  const otherIds = others.map(tacticKey);
-  const excluded = new Set([missingTactic, ...others, ...reservedTactics].map(tacticKey));
+  const idOf = tacticIdOf ?? (tacticsDict ? createTacticIdResolver(tacticsDict) : null);
+  const ownedId = (item) => (typeof item === "object" && item?.canonicalId) || tacticIdForName(typeof item === "string" ? item : item?.name, idOf);
+  const keyOf = (item) => (typeof item === "string" && item.startsWith("tactic:") ? item : tacticIdForName(item, idOf));
+  const owned = new Set(ownedTactics.map(ownedId));
+  const otherIds = others.map(keyOf);
+  const excluded = new Set([missingTactic, ...others, ...reservedTactics].map(keyOf));
   const substitutes = [];
   const incompatible = [];
   const ranked = [...counts]
-    .filter(([tactic]) => owned.has(canonicalTacticId(tactic)) && !excluded.has(canonicalTacticId(tactic)))
+    .filter(([tactic]) => owned.has(tacticIdForName(tactic, idOf)) && !excluded.has(tacticIdForName(tactic, idOf)))
     .sort(([a, countA], [b, countB]) => countB - countA || a.localeCompare(b, "vi"));
   for (const [tactic, configCount] of ranked) {
-    const reason = tacticRuleViolation(canonicalTacticId(tactic), otherIds, units, tacticRules);
+    const reason = tacticRuleViolation(tacticIdForName(tactic, idOf), otherIds, units, tacticRules);
     if (reason) incompatible.push({ tactic, configCount, reason });
     else substitutes.push({ tactic, configCount });
   }

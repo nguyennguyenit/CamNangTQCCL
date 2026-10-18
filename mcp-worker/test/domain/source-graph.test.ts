@@ -59,6 +59,7 @@ describe("legacy semantic source graph", () => {
       "js/hanviet.js",
       "js/hero-identity.js",
       "js/i18n.js",
+      "js/lookup-ids.js",
       "js/match-dict.js",
       "js/roster-scan-map.js",
       "js/roster-scan-state.js",

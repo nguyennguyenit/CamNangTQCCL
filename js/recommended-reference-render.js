@@ -1,5 +1,5 @@
 import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, sourceLabel, unitLabel, variantNameNodes } from './render.js';
-import { legacyLabelZh, sourceTierLabel, sourceName } from './recommended-reference-state.js';
+import { legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
@@ -85,12 +85,13 @@ function tacticSlotEntries(holder) {
   const length=Math.max(2,raw.length,vi.length);
   return Array.from({length},(_,index)=>{
     const slot=localizedSlot(raw[index],vi[index]);
+    const shown=kinds[index] === 'bond' || !slot.value ? slot.value : tacticDisplayName(slot.value,raw[index]);
     const prefix=kinds[index] === 'bond' ? null : modifiedTacticPrefix(raw[index],holder.notesRaw);
     return {
       ...slot,
       value:prefix && slot.value && slot.value !== unavailable()
-        ? `${L(...prefix)} · ${slot.value}` : formatModifiedTactic(slot.value),
-      searchValue:slot.value,
+        ? `${L(...prefix)} · ${shown}` : formatModifiedTactic(shown),
+      searchValue:shown,
       raw:raw[index],
       rawLabel:prefix ? `${prefix[1]} · ${raw[index]}` : formatModifiedTactic(raw[index]),
       index,
@@ -244,7 +245,7 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
   }
   const entries=legacy ? [] : tacticSlotEntries(holder);
   const tactics=legacy
-    ? (holder.tactics || []).map(item=>({value:text(item.name),raw:null,vi:item.name})).filter(item=>item.value !== UNRESOLVED_NAME)
+    ? (holder.tactics || []).map(item=>({value:tacticDisplayName(text(item.name)),raw:null,vi:item.name})).filter(item=>item.value !== UNRESOLVED_NAME)
     : entries.filter(entry=>!entry.bond && entry.value).map(entry=>({value:entry.value,raw:entry.raw,vi:holder.tacticSlotsVi?.[entry.index]}));
   const bonds=legacy ? [] : entries.filter(entry=>entry.bond && entry.value);
   const books=legacy
@@ -377,11 +378,13 @@ const scoreBadge=row=>row.value != null
 
 /** Tên các phương án thay thế của dữ liệu cũ; bản zh chỉ giữ tên đổi được sang chữ Hán. */
 const alternativeNames=values=>(values || []).map(zhResolved).filter(Boolean);
+/** Như `alternativeNames` cho ô chiến pháp: bản vi hiện tên `viet` hiện hành của danh mục. */
+const tacticAlternativeNames=values=>alternativeNames(values).map(value=>tacticDisplayName(value));
 
 function legacyAlternativeLines(content) {
   return (content?.heroes || []).flatMap(hero=>[
     ...alternativeNames(hero.alternatives).map(value=>[hero.name,L('Tướng thay','替换武将'),value]),
-    ...(hero.tactics || []).flatMap(item=>alternativeNames(item.alternatives).map(value=>[hero.name,L(`Chiến pháp ${item.name}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),value])),
+    ...(hero.tactics || []).flatMap(item=>tacticAlternativeNames(item.alternatives).map(value=>[hero.name,L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),value])),
     ...(hero.books || []).flatMap(item=>alternativeNames(item.alternatives).map(value=>[hero.name,L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim()),value])),
   ].map(([owner,label,value])=>t('p',{class:'alternative-line'},`${text(owner)} · ${label}: ${value}`)));
 }
@@ -621,7 +624,7 @@ function legacyContentSections(content,{title,provenance=[],links=null}={}) {
     const heroNames=alternativeNames(hero.alternatives);
     const rows=[
       heroNames.length ? fact('legacy-hero-alternatives',L('Tướng thay thế','替换武将'),heroNames.join(' · ')) : null,
-      ...(hero.tactics || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-tactic-alternatives',L(`Chiến pháp ${item.name}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),alternativeNames(item.alternatives).join(' · '))),
+      ...(hero.tactics || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-tactic-alternatives',L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),tacticAlternativeNames(item.alternatives).join(' · '))),
       ...(hero.books || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-book-alternatives',L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim()),alternativeNames(item.alternatives).join(' · '))),
     ].filter(Boolean);
     return rows.length ? [t('section',{class:'legacy-alternative-group'},[t('h3',{},text(hero.name)),t('dl',{class:'detail-facts'},rows)])] : [];

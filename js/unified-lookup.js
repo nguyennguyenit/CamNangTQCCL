@@ -7,7 +7,7 @@
 import { lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText } from "./lookup-detail.js";
 import { L, currentLocale, localePath, normalizeLocale, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
-import { bookLookupId, groupForId, lookupHref } from "./lookup-ids.js";
+import { bookLookupId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
 import { portraitTree } from "./hero-portrait.js";
 import { isMasterGroup, laterTree, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
@@ -95,7 +95,8 @@ function entry(group, record) {
     ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []),
     record.chinese,
   ].filter((value) => typeof value === "string" && value.length > 0);
-  const searchKeys = [nameVi, ...aliases].map(normalizeText);
+  // Tên Hán-Việt (tên cũ của chiến pháp đã đổi tên hiển thị) vẫn là khóa tìm.
+  const searchKeys = [nameVi, ...aliases, ...(typeof record.hanViet === "string" && record.hanViet.trim() ? [record.hanViet] : [])].map(normalizeText);
   return { id: record.id, group, nameVi, aliases, searchKeys, record };
 }
 
@@ -157,7 +158,18 @@ export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, b
   };
   const byId = new Map();
   for (const rows of [...Object.values(groups), specials]) for (const row of rows) byId.set(row.id, row);
-  return { groups, byId, heroes, tactics, catalog: source };
+  return { groups, byId, heroes, tactics, catalog: source, formerTacticIds: createFormerTacticIdIndex(tactics) };
+}
+
+/**
+ * Mã chiến pháp đã gộp trong `?id=` → đường dẫn hồ sơ của mã còn sống để trang `location.replace`; `null` khi mã còn
+ * là mục sống hoặc không phải mã đã gộp.
+ * @returns {string | null}
+ */
+export function retiredLookupRedirect(corpus, id) {
+  if (typeof id !== "string" || corpus?.byId?.has(id)) return null;
+  const survivor = corpus?.formerTacticIds?.get(id);
+  return survivor ? lookupProfilePath(survivor) : null;
 }
 
 /** Số bản ghi của từng nhóm (mục lục và dòng trạng thái). */

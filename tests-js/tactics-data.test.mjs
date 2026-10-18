@@ -10,7 +10,8 @@ const publicTactics = JSON.parse(await readFile(new URL("../data/tactics.json", 
 test("promoted Cương Dũng Vô Tiền resolves every supported name to one stable identity", async () => {
   const tactic = publicTactics.find((item) => item.id === "tactic:cuong-dung-vo-tien");
   assert.ok(tactic);
-  assert.equal(tactic.viet, "Cương Dũng Vô Tiền");
+  // Tên hiển thị theo client Việt (mã trùng với Vô Địch Can Trường); tên Hán-Việt cũ vẫn tra được.
+  assert.deepEqual([tactic.viet, tactic.hanViet], ["Vô Địch Can Trường", "Cương Dũng Vô Tiền"]);
   assert.equal(tactic.quality, "S");
   assert.ok(tactic.effectViet);
   assert.ok(tactic.iconUrl);

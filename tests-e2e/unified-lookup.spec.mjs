@@ -348,10 +348,11 @@ for (const width of [320, 375, 768, 1280]) {
 /** Mọi host chân dung lấy từ dữ liệu trong test (hiện image.aligames.com + cloud.lingxigames.com). */
 async function portraitHosts(request) {
   const heroes = await (await request.get('/data/heroes-dict.json')).json();
-  return [...new Set(heroes.map((hero) => hero.iconUrl).filter(Boolean).map((url) => new URL(url).host))];
+  // Chân dung tự lưu của tướng client Global là đường dẫn cùng origin `/heroes/<slug>.webp`: chặn theo tiền tố đường dẫn.
+  return [...new Set(heroes.map((hero) => hero.iconUrl).filter(Boolean).map((url) => (url.startsWith('/heroes/') ? '/heroes/' : new URL(url).host)))];
 }
 
-test('mọi ảnh chân dung là https + no-referrer + lazy; thiếu iconUrl thì hiện chữ Hán', async ({ page }) => {
+test('mọi ảnh chân dung là https hoặc ảnh tự lưu /heroes/ + no-referrer + lazy; thiếu iconUrl thì hiện chữ Hán', async ({ page }) => {
   await openLookup(page, '/tra-cuu/tuong/');
   await expect(cards(page)).toHaveCount(60);
   const portraits = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-card img')].map((image) => ({
@@ -360,14 +361,15 @@ test('mọi ảnh chân dung là https + no-referrer + lazy; thiếu iconUrl th�
   })));
   expect(portraits.length).toBeGreaterThan(0);
   for (const portrait of portraits) {
-    expect(portrait.src).toMatch(/^https:\/\//);
+    expect(portrait.src).toMatch(/^(https:\/\/|\/heroes\/[a-z0-9-]+\.webp$)/);
     expect(portrait.referrer).toBe('no-referrer');
     expect(portrait.loading).toBe('lazy');
     expect(portrait.decoding).toBe('async');
     expect(portrait.alt.length).toBeGreaterThan(0);
   }
-  // Trang đầu toàn tướng có ảnh; ô chữ Hán kiểm trên hồ sơ của tướng thiếu iconUrl (Chu Thương).
-  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Achu-thuong');
+  // Trang đầu toàn tướng có ảnh; ô chữ Hán kiểm trên hồ sơ của tướng thiếu iconUrl (SP Tào Tháo: chưa có ở client Global
+  // nên không có chân dung tự lưu).
+  await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-tao-thao');
   await expect(page.getByRole('dialog')).toBeVisible();
   const han = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-dialog-portrait .hero-portrait-han')].map((node) => ({
     char: node.textContent.trim(), lang: node.firstElementChild?.getAttribute('lang'), hidden: node.firstElementChild?.getAttribute('aria-hidden'),
@@ -784,7 +786,7 @@ test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập p
     expect(text).toMatch(/^(—|\d+(?:\.\d)?%)$/);
     if (text !== '—') expect(Number.parseFloat(text)).toBeLessThanOrEqual(100);
   }
-  // Thiên Uy Khiếu Trận: nguồn ghi 50 (thang phần trăm), pipeline hiệu chỉnh đã review thành 0.5 → hiện 50%.
+  // Thiên Uy Khiếu Trận: nguồn ghi 50 (thang phần trăm, hiệu chỉnh đã review thành 0.5); client Global ghi 55% nên hiện 55%.
   // Nhánh gạch ngang cho giá trị ngoài 0–1 vẫn được unit test ratePercentText (50 / −1) phủ.
   await openLookup(page, '/tra-cuu/chien-phap/?id=tactic%3Athien-uy-khieu-tran');
   const dialog = page.getByRole('dialog');
@@ -792,7 +794,7 @@ test('tỷ lệ kích hoạt trong bảng và hồ sơ không lộ số thập p
   const profile = await dialog.textContent();
   expect(profile).not.toMatch(/\d\.\d{6,}/);
   expect(profile).not.toContain('5000');
-  await expect(dialog.locator('.lookup-tactic-tile', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('50%');
+  await expect(dialog.locator('.lookup-tactic-tile', { hasText: 'Tỷ lệ kích hoạt' }).first()).toContainText('55%');
 });
 
 test('cách nhận hiện tên sự kiện, ẩn mã trích dẫn bsn của nguồn', async ({ page }) => {
@@ -1198,24 +1200,19 @@ test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
     await expect(panel(page).locator('.lookup-eq-common .lookup-detail-footnote')).toContainText(`${tiers.length} đặc kỹ chung`);
   });
 
-  test('cải tạo binh chủng: nhóm theo binh chủng, đổi phiên bản hiệu quả, đánh dấu lộ trình gợi ý', async ({ page }) => {
+  test('cải tạo binh chủng: nhóm theo binh chủng, một bản client (không đổi phiên bản), đánh dấu lộ trình gợi ý', async ({ page }) => {
     await openLookup(page, `${GROUP_PATH['troop-mods']}?id=troop-mod%3Adan-duong-binh`);
     const groups = lookup(page).locator('.lookup-row-group-title');
     await expect(groups).toHaveCount(4);
     await expect(groups.first()).toContainText('Khiên binh');
-    await expect(selectedItem(page)).toContainText('Đan Dương Binh');
+    // Tên và hướng dẫn theo client Global (tên cũ "Đan Dương Binh" thành tên khác).
+    await expect(selectedItem(page)).toContainText('Lính Đan Dương');
     await expect(panel(page).locator('.lookup-option-card')).toHaveCount(12);
-    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(4);
-    await expect(panel(page).locator('.lookup-option-card.is-suggested .badge-suggest')).toHaveCount(4);
-    const tabs = panel(page).locator('[data-effect-tab]');
-    await expect(tabs).toHaveCount(2);
-    const visible = panel(page).locator('.lookup-effect-text:not([hidden])');
-    const current = await visible.textContent();
-    await tabs.nth(1).click();
-    await expect(tabs.nth(1)).toHaveAttribute('aria-pressed', 'true');
-    await expect(tabs.nth(0)).toHaveAttribute('aria-pressed', 'false');
-    await expect(visible).toHaveCount(1);
-    expect(await visible.textContent()).not.toBe(current);
+    // Lộ trình gợi ý (SGSDeck) ghi "Chuyển·Cầm Thương", lựa chọn client tên "Chuyển.Thương": chỉ 3 lựa chọn khớp tên.
+    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(3);
+    await expect(panel(page).locator('.lookup-option-card.is-suggested .badge-suggest')).toHaveCount(3);
+    await expect(panel(page).locator('[data-effect-tab]')).toHaveCount(0);
+    await expect(panel(page).locator('.lookup-effect-text:not([hidden])')).toHaveCount(1);
     // Mục không có gợi ý build thì không đánh dấu và không có thanh gợi ý.
     await openLookup(page, `${GROUP_PATH['troop-mods']}?id=troop-mod%3Aho-bao-ky`);
     await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(0);

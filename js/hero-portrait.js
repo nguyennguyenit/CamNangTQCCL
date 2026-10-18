@@ -10,8 +10,14 @@ import { validateHttpSourceUrl } from "./http-source-url.js";
 
 const CJK = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
 
-/** URL chân dung hợp lệ (http/https tuyệt đối) và luôn dùng `https:` để không bị chặn mixed content. */
+const LOCAL_PORTRAIT = /^\/heroes\/[a-z0-9-]+\.webp$/u;
+
+/**
+ * URL chân dung hợp lệ: http/https tuyệt đối (luôn nâng lên `https:` để không bị chặn mixed content) hoặc
+ * ảnh tự lưu cùng origin `/heroes/<slug>.webp` (tướng chụp từ client Global, không có URL từ xa).
+ */
 export function portraitUrl(raw) {
+  if (typeof raw === "string" && LOCAL_PORTRAIT.test(raw)) return raw;
   const href = validateHttpSourceUrl(raw);
   return href ? href.replace(/^http:/iu, "https:") : null;
 }

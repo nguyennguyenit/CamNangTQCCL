@@ -12,6 +12,7 @@ import {
   SnapshotIndexError,
   buildSnapshotIndex,
 } from "../../src/data/snapshot-index.js";
+import { createTacticNameResolver } from "../../src/data/entity-identity.js";
 
 async function realSnapshot() {
   const objects = new Map(
@@ -48,6 +49,38 @@ describe("snapshot index", () => {
     expect(heroIds).toContain("hero:sp-lu-mong");
     expect(heroIds).toContain("hero:lu-mong");
     expect(new Set(heroIds).size).toBe(heroIds.length);
+  });
+
+  it("keys a renamed tactic by its published id and resolves old/new names deterministically", async () => {
+    const snapshot = await realSnapshot();
+    const renamed = [
+      { id: "tactic:chan-hai-tu-canh", viet: "Bốn Bề Rung Động", hanViet: "Chấn Hãi Tứ Cảnh", aliases: ["Chấn Hãi Tứ Cảnh"] },
+      { id: "tactic:di-hoa-tiep-moc", viet: "Lập Lờ Đánh Tráo", hanViet: "Di Hoa Tiếp Mộc", aliases: ["Di Hoa Tiếp Mộc"] },
+      { id: "tactic:lap-lo-danh-trao", viet: "Lập Lờ Đánh Tráo", hanViet: "Lập Lờ Đánh Tráo", aliases: [] },
+    ];
+    const index = buildSnapshotIndex({
+      ...snapshot,
+      artifacts: { ...snapshot.artifacts, tactics: renamed } as never,
+    });
+    const ids = index.searchEntries.filter(({ kind }) => kind === "tactic").map(({ canonicalId }) => canonicalId);
+    expect(ids.sort()).toEqual(renamed.map((row) => row.id).sort());
+
+    const resolve = createTacticNameResolver(renamed);
+    expect(resolve("Bốn Bề Rung Động")).toBe("tactic:chan-hai-tu-canh");
+    expect(resolve("Chấn Hãi Tứ Cảnh")).toBe("tactic:chan-hai-tu-canh");
+    expect(resolve("Di Hoa Tiếp Mộc")).toBe("tactic:di-hoa-tiep-moc");
+    // Duplicate new name: the row whose id slug equals the name wins.
+    expect(resolve("Lập Lờ Đánh Tráo")).toBe("tactic:lap-lo-danh-trao");
+    expect(resolve("Không Có")).toBeNull();
+  });
+
+  it("prefers the current display name over another row's stale Hán-Việt spelling", () => {
+    const resolve = createTacticNameResolver([
+      { id: "tactic:di-hoa-tiep-moc", viet: "Lập Lờ Đánh Tráo", hanViet: "Di Hoa Tiếp Mộc", aliases: [] },
+      { id: "tactic:lap-lo-danh-trao", viet: "Ám Độ Trần Thương", hanViet: "Lập Lờ Đánh Tráo", aliases: [] },
+    ]);
+    expect(resolve("Lập Lờ Đánh Tráo")).toBe("tactic:di-hoa-tiep-moc");
+    expect(resolve("Ám Độ Trần Thương")).toBe("tactic:lap-lo-danh-trao");
   });
 
   it("fails closed on duplicate canonical dictionary identity", async () => {

@@ -4,8 +4,8 @@ import { realHandlers } from "../fixtures/real-handlers.js";
 
 describe("tqccl_get_entity refNames", () => {
   it("mọi ID thực thể nhắc trong profile đều có tên hiển thị kèm theo (chiến pháp tự có, kế thừa…)", async () => {
-    const sp = await realHandlers().call("tqccl_get_entity", { entityId: "hero:sp-tao-thao" });
-    expect(sp.refNames?.["tactic:thua-thien-tinh-the"]).toBe("Thừa Thiên Tĩnh Thế");
+    const chu = await realHandlers().call("tqccl_get_entity", { entityId: "hero:chu-tuan" });
+    expect(chu.refNames?.["tactic:tran-ap-khan-vang"]).toBe("Trấn Áp Khăn Vàng");
 
     const base = await realHandlers().call("tqccl_get_entity", { entityId: "hero:tao-thao" });
     expect(base.refNames).toMatchObject({
@@ -16,8 +16,8 @@ describe("tqccl_get_entity refNames", () => {
   });
 
   it("locale zh trả tên Hán", async () => {
-    const result = await realHandlers().call("tqccl_get_entity", { entityId: "hero:sp-tao-thao", locale: "zh" });
-    expect(result.refNames?.["tactic:thua-thien-tinh-the"]).toBe("承天靖世");
+    const result = await realHandlers().call("tqccl_get_entity", { entityId: "hero:chu-tuan", locale: "zh" });
+    expect(result.refNames?.["tactic:tran-ap-khan-vang"]).toBe("鎮壓黃巾");
   });
 
   it("chỉ gồm ID có thật trong catalog; không có ID nào thì không có refNames", async () => {

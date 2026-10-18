@@ -30,7 +30,9 @@ function pageHtml(group, id, locale, options = {}) {
 }
 
 const hero = corpus.groups.heroes.find((row) => corpus.byId.get(row.record.lookup?.selfTacticId));
-const tactic = corpus.groups.tactics.find((row) => effectVersions(row.record.effectViet).length > 1);
+// Chữ client là bản hiện hành không ngày; các bản cũ nằm ở `lookup.revisions` nên chọn theo phiên bản đã gắn nhãn của cả hai ngôn ngữ.
+const tacticVersions = (record, locale) => tacticEffectVersions(record, locale).filter((version) => version.paragraphs.length);
+const tactic = corpus.groups.tactics.find((row) => tacticVersions(row.record, "vi").length > 1 && tacticVersions(row.record, "zh").length > 1);
 const book = corpus.groups.books.find((row) => row.record.effect && row.record.effectViet);
 
 for (const locale of ["vi", "zh"]) {
@@ -48,7 +50,7 @@ for (const locale of ["vi", "zh"]) {
 
   test(`chiến pháp (${locale}): trang riêng mang đủ phiên bản hiệu ứng, bản cũ ẩn; hiệu ứng hiện hành đọc được`, () => {
     const html = pageHtml("tactics", tactic.id, locale);
-    const versions = effectVersions(locale === "zh" ? tactic.record.effect : tactic.record.effectViet).filter((version) => version.paragraphs.length);
+    const versions = tacticVersions(tactic.record, locale);
     assert.ok(versions.length > 1);
     assert.equal((html.match(/data-effect-panel="/gu) ?? []).length, versions.length);
     assert.equal((html.match(/data-effect-panel="[1-9]\d*"[^>]*\bhidden\b/gu) ?? []).length, versions.length - 1);
@@ -119,9 +121,11 @@ test("chiến pháp nhiều phiên bản (vi): mỗi panel trang riêng mang nh�
   assertPanelsLabelled(tree, versionsOf(item), item.id);
 });
 
-test("cải tạo binh chủng nhiều phiên bản (vi): mỗi panel mang nhãn phiên bản, chữ thuần gắn nhãn với đúng đoạn", () => {
-  const item = corpus.groups["troop-mods"].find((row) => troopEffectVersions(row.record).length > 1);
-  assert.ok(item, "corpus phải có cải tạo nhiều phiên bản");
-  const tree = masterDetailTree("troop-mods", item, corpus, "vi", { page: true });
-  assertPanelsLabelled(tree, troopEffectVersions(item.record), item.id);
+test("cải tạo binh chủng chỉ giữ một bản client: trang riêng hiện hướng dẫn mùa, không có bản cũ ẩn", () => {
+  for (const item of corpus.groups["troop-mods"]) {
+    assert.equal(troopEffectVersions(item.record).length, 1, item.id);
+    const html = treeToHtml(masterDetailTree("troop-mods", item, corpus, "vi", { page: true }));
+    assert.doesNotMatch(html, /data-effect-panel="[1-9]/u, item.id);
+    assert.ok(visibleText(html).includes(item.record.effectVi.slice(0, 30)), item.id);
+  }
 });

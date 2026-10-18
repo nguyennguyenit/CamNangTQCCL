@@ -28,6 +28,7 @@ import { treeToHtml } from '../../js/view-tree.js';
 import { localePath, pick } from '../../js/i18n.js';
 import { lookupDisplayName } from '../../js/lookup-detail.js';
 import { lookupBookAliases, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts.ts';
+import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
 
 export type LookupGroup = keyof typeof LOOKUP_GROUP_SLUGS;
@@ -138,6 +139,8 @@ let routeHandlesPromise: Promise<Record<string, string>> | null = null;
 export function lookupRouteHandles() {
   routeHandlesPromise ??= (async () => {
     const { exceptions } = await lookupDetailRoutes();
+    // Khối "Trong cẩm nang" đổi tên chiến pháp lưu sang tên hiện hành bằng cùng bảng với trang đội.
+    await tacticDisplayTable();
     if (!setLookupRouteHandles(exceptions)) throw new Error('Lookup route handle table rejected while preparing lookup pages');
     return exceptions;
   })();

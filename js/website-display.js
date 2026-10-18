@@ -1,4 +1,5 @@
 import { L, currentLocale, normalizeLocale } from "./i18n.js";
+import { createTacticDisplayTable } from "./lookup-ids.js";
 
 const HASH = /^[0-9a-f]{64}$/;
 const GENERATION = /^site-localization:[0-9a-f]{64}$/;
@@ -204,4 +205,18 @@ export async function loadRawNameResolver(loadBytes, locale = currentLocale()) {
   if (normalizeLocale(locale) !== "zh") return null;
   const dicts = await Promise.all(RAW_NAME_SOURCES.map(async path => JSON.parse(decoder.decode(asBytes(await loadBytes(path))))));
   return createRawNameResolver(...dicts);
+}
+
+/**
+ * Bộ đổi tên chiến pháp lưu → tên Việt hiện hành cho bản Việt, đọc bảng nhúng `#tactic-display-names` của trang (tính
+ * lúc build, cùng bảng với bản dựng sẵn). Trang không nhúng hoặc bảng hỏng thì `null` (tên lưu hiển thị nguyên).
+ */
+export function readTacticDisplayTable(documentTarget = globalThis.document) {
+  const text = documentTarget?.querySelector?.("#tactic-display-names")?.textContent;
+  if (!text) return null;
+  try {
+    return createTacticDisplayTable(JSON.parse(text));
+  } catch {
+    return null;
+  }
 }

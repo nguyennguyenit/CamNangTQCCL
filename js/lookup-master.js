@@ -21,7 +21,7 @@ const SLOT_ORDER = ["Vũ khí", "Phòng cụ", "Tọa kỵ", "Bảo vật"];
 const QUALITY_ORDER = ["Cam", "Tím"];
 const ELEMENT_ORDER = ["Hỏa", "Phong", "Lâm", "Sơn"];
 const TROOP_ORDER = ["Khiên binh", "Cung binh", "Thương binh", "Kỵ binh"];
-const TROOP_TIER_ORDER = ["Đặc biệt", "Cơ bản", "Trung cấp", "Cao cấp"];
+const TROOP_TIER_ORDER = ["Đặc biệt", "Sơ cấp", "Trung cấp", "Cao cấp"];
 /** Chữ Hán đại diện của hệ quân sư (ô chữ trên thẻ và chi tiết). */
 const ELEMENT_GLYPH = { Hỏa: "火", Phong: "風", Lâm: "林", Sơn: "山" };
 const TROOP_ZH = { "Khiên binh": "盾兵", "Cung binh": "弓兵", "Thương binh": "枪兵", "Kỵ binh": "骑兵" };

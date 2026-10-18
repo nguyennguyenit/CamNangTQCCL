@@ -64,6 +64,66 @@ export function bookSourceAliases(books, identityEntries) {
 }
 
 /**
+ * Bảng mã chiến pháp đã gộp → mã còn sống: hàng nào có `lookup.formerIds` chứa mã đó. Mã còn là hàng sống thì không
+ * bao giờ bị coi là đã gộp.
+ * @returns {Map<string, string>}
+ */
+export function createFormerTacticIdIndex(tactics) {
+  const rows = Array.isArray(tactics) ? tactics : [];
+  const live = new Set(rows.map((row) => row?.id));
+  const former = new Map();
+  for (const row of rows) {
+    const ids = row?.lookup?.formerIds;
+    if (typeof row?.id !== "string" || !Array.isArray(ids)) continue;
+    for (const id of ids) if (typeof id === "string" && !live.has(id) && !former.has(id)) former.set(id, row.id);
+  }
+  return former;
+}
+
+/**
+ * Bộ tra tên chiến pháp → mã `tactic:` theo danh mục (`{id, viet, hanViet, aliases[]}`): tên Việt hiển thị có thể đã
+ * đổi nên slug của `viet` không còn bằng mã. Xét lần lượt các tầng `viet` → `hanViet` → alias; tầng đầu tiên có ứng
+ * viên quyết định (tên hiển thị hiện hành thắng tên Hán-Việt cũ trùng chữ). Trong tầng đó chọn hàng có
+ * `id === "tactic:" + slug(tên)` (cặp mã trùng tên client), nếu không thì hàng đầu tiên theo thứ tự danh mục.
+ * Không có ứng viên thì trả `null` để nơi gọi dùng đường dự phòng của mình.
+ * @returns {(name: unknown) => string | null}
+ */
+export function createTacticNameIndex(tactics) {
+  const former = createFormerTacticIdIndex(tactics);
+  const tiers = [new Map(), new Map(), new Map()];
+  const add = (map, name, id) => {
+    const slug = typeof name === "string" ? lookupSlug(name) : "";
+    if (!slug) return;
+    if (!map.has(slug)) map.set(slug, []);
+    if (!map.get(slug).includes(id)) map.get(slug).push(id);
+  };
+  for (const row of Array.isArray(tactics) ? tactics : []) {
+    if (typeof row?.id !== "string" || !row.id.startsWith("tactic:")) continue;
+    add(tiers[0], row.viet, row.id);
+    add(tiers[1], row.hanViet, row.id);
+    for (const alias of Array.isArray(row.aliases) ? row.aliases : []) add(tiers[2], alias, row.id);
+  }
+  return (name) => {
+    const slug = typeof name === "string" ? lookupSlug(name) : "";
+    if (!slug) return null;
+    const own = `tactic:${slug}`;
+    const ids = tiers.map((map) => map.get(slug)).find((list) => list?.length);
+    if (!ids) return former.get(own) ?? null;
+    return ids.includes(own) ? own : ids[0];
+  };
+}
+
+/** Như `createTacticNameIndex`, nhưng tên không có trong danh mục dùng `tactic:<slug tên>` (kể cả khi danh mục rỗng). */
+export function createTacticIdResolver(tactics) {
+  const index = createTacticNameIndex(tactics);
+  const former = createFormerTacticIdIndex(tactics);
+  return (name) => {
+    const id = index(name) ?? `tactic:${lookupSlug(name)}`;
+    return former.get(id) ?? id;
+  };
+}
+
+/**
  * Bộ tra mã hồ sơ Tra cứu từ tên chiến pháp / binh thư / tướng của dữ liệu đội. Chiến pháp: ưu tiên tên chữ Hán nguồn
  * (`chinese` + `aliases`), rồi tới slug tên Việt. Binh thư: ô có tên Hán nguồn chỉ khớp theo `chinese` +
  * `sourceNames` (bản dịch tên Việt của ô có thể lệch hoặc nhầm sang binh thư khác); ô chỉ có tên Việt mới tra
@@ -72,6 +132,8 @@ export function bookSourceAliases(books, identityEntries) {
 export function createLookupIdResolver({ tactics = [], books = [], heroes = [] } = {}) {
   const tacticByName = new Map();
   const tacticIds = new Set();
+  const tacticByVi = createTacticNameIndex(tactics);
+  const formerTactic = createFormerTacticIdIndex(tactics);
   for (const row of Array.isArray(tactics) ? tactics : []) {
     if (typeof row?.id !== "string" || !row.id.startsWith("tactic:")) continue;
     tacticIds.add(row.id);
@@ -97,6 +159,11 @@ export function createLookupIdResolver({ tactics = [], books = [], heroes = [] }
     const slug = lookupSlug(typeof vi === "string" ? vi.replace(VI_MODIFIED, "") : "");
     return slug && ids.has(`${prefix}:${slug}`) ? `${prefix}:${slug}` : null;
   };
+  const byTacticVi = (vi) => {
+    const name = typeof vi === "string" ? vi.replace(VI_MODIFIED, "") : "";
+    const id = tacticByVi(name) ?? byVi(tacticIds, "tactic", vi);
+    return id === null ? null : formerTactic.get(id) ?? id;
+  };
   const heroByRaw = new Map();
   const heroByVi = new Map();
   for (const row of Array.isArray(heroes) ? heroes : []) {
@@ -106,11 +173,58 @@ export function createLookupIdResolver({ tactics = [], books = [], heroes = [] }
     }
   }
   return {
-    tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byVi(tacticIds, "tactic", vi),
+    tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byTacticVi(vi),
     book: (raw, vi) => (hasRaw(raw) ? byRaw(bookByName, raw) : byVi(bookIds, "book", vi)),
     /** Tướng theo tên nguồn chữ Hán, thiếu thì theo đúng tên Việt của kho tướng; không đoán theo tên gần giống. */
     hero: (raw, vi) => (typeof raw === "string" ? heroByRaw.get(raw.trim()) : null) ?? (typeof vi === "string" ? heroByVi.get(vi.trim()) : null) ?? null,
   };
+}
+
+/**
+ * Tên chiến pháp hiển thị trên bản Việt = `viet` hiện hành của danh mục. Tên lưu trong dữ liệu đội/Khai hoang/Cùng Tồn
+ * (Việt cũ hoặc chữ Hán nguồn) được tra bằng `createLookupIdResolver` (chữ Hán trước, rồi tên Việt/Hán-Việt/alias);
+ * tiền tố cải tạo (`Tinh · `) giữ nguyên, ô nhiều lựa chọn `A/B` tra từng phần. Không tra được thì trả nguyên chuỗi lưu.
+ * Chỉ dựng chỉ mục một lần cho mỗi danh mục.
+ * @returns {(stored: unknown, raw?: unknown) => string}
+ */
+export function createTacticDisplayName(tactics) {
+  const viById = new Map();
+  for (const row of Array.isArray(tactics) ? tactics : []) {
+    if (typeof row?.id === "string" && row.id.startsWith("tactic:") && typeof row.viet === "string" && row.viet.trim()) viById.set(row.id, row.viet.trim());
+  }
+  const resolver = createLookupIdResolver({ tactics });
+  const MODIFIED_KEEP = /^((?:Tinh|Chuyển|Thác)\s*[·・]\s*)/u;
+  const single = (text, raw) => {
+    const id = resolver.tactic(raw, text);
+    const viet = id ? viById.get(id) : null;
+    if (!viet) return null;
+    const prefix = typeof text === "string" ? text.match(MODIFIED_KEEP)?.[1] ?? "" : "";
+    return prefix + viet;
+  };
+  return (stored, raw = null) => {
+    if (typeof stored !== "string") return typeof raw === "string" && raw.trim() ? (single("", raw) ?? stored) : stored;
+    const text = stored.trim();
+    if (!text) return stored;
+    const whole = single(text, raw);
+    if (whole !== null) return whole;
+    if (!text.includes("/")) return stored;
+    const parts = text.split(/(\s*\/\s*)/u);
+    return parts.map((part, index) => (index % 2 || !part.trim() ? part : (single(part.trim(), null) ?? part))).join("");
+  };
+}
+
+/**
+ * Bộ đổi tên từ bảng `{tên lưu: tên hiển thị}` đã tính lúc build (`#tactic-display-names`, xem `src/lib/tactic-display.ts`):
+ * trình duyệt dùng bảng nhỏ này thay vì tải cả danh mục chiến pháp; tên không có trong bảng giữ nguyên.
+ * Bảng sai dạng coi như rỗng.
+ * @returns {(stored: unknown) => unknown}
+ */
+export function createTacticDisplayTable(table) {
+  const names = new Map();
+  if (table && typeof table === "object" && !Array.isArray(table)) {
+    for (const [stored, shown] of Object.entries(table)) if (typeof shown === "string" && shown.trim()) names.set(stored, shown);
+  }
+  return (stored) => (typeof stored === "string" ? names.get(stored.trim()) ?? stored : stored);
 }
 
 /** Đường dẫn (bản Việt) của từng nhóm Tra cứu: `/tra-cuu/<slug>/`. Thứ tự là thứ tự công bố. */

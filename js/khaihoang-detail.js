@@ -6,9 +6,9 @@
 import { el, bindKhaihoangConfigRow, khaihoangBuildContent, khaihoangDetailTrees } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { detailBadges } from './recommended-reference-render.js';
-import { setZhNameResolver } from './recommended-reference-state.js';
+import { setTacticDisplayName, setZhNameResolver } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
-import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
 import { treeToDom } from './view-tree.js';
 
@@ -167,6 +167,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     // Bản Trung: tên Hán-Việt của build tra ngược về chữ Hán; từ điển lỗi chỉ làm tên lùi về Hán-Việt.
     const rawNames = await loadRawNameResolver(loadBytes).catch(() => null);
     if (rawNames) setZhNameResolver(rawNames);
+    setTacticDisplayName(readTacticDisplayTable(documentTarget));
     const matches = (Array.isArray(data) ? [] : (data.teams || [])).filter((item) => item?.id === teamId);
     if (matches.length !== 1) throw new Error(MISSING_TEAM_MESSAGE);
     team = matches[0];

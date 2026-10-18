@@ -94,6 +94,9 @@ test("every version replaces only its card and restores the default", async ({ p
   const handles = await routeHandles(request);
   await routeKhaihoang(page, data);
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
+  // Bản Việt hiện tên chiến pháp hiện hành của danh mục: tên lưu đổi theo bảng nhúng `#tactic-display-names`.
+  const displayNames = JSON.parse(await page.locator("#tactic-display-names").textContent() || "{}");
+  const shownTactic = (name) => displayNames[name.trim()] ?? name;
   for (const [index, team] of data.teams.entries()) {
     const card = page.locator(".kh-card").nth(index);
     const initial = await card.locator(".kh-build").textContent();
@@ -115,7 +118,7 @@ test("every version replaces only its card and restores the default", async ({ p
       for (const [i, hero] of displayHeroes(variant).entries()) {
         const row = card.locator(".kh-build > .hero").nth(i);
         await expect(row.locator(".hn")).toHaveText(heroName(hero.name));
-        await expect(row.locator(".tag")).toHaveText([hero.tacticBefore, ...(hero.tacticsAfter || [])].filter(Boolean));
+        await expect(row.locator(".tag")).toHaveText([hero.tacticBefore, ...(hero.tacticsAfter || [])].filter(Boolean).map(shownTactic));
         await expect(row.locator(".kh-label")).toHaveText([
           hero.tacticBefore ? "Trước" : null, hero.tacticsAfter?.length ? "Sau" : null,
         ].filter(Boolean));

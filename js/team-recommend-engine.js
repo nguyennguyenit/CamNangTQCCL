@@ -37,7 +37,11 @@ export function buildTacticRules(tacticsDict = []) {
   for (const item of tacticsDict || []) {
     const kind = item?.type === "FORMATION" ? "formation" : item?.type === "TROOP" ? "troop" : null;
     if (!kind || !item.viet) continue;
-    rules.set(canonicalTacticId(item.viet), { kind, troopFit: (item.troopFit || []).map(unitKey) });
+    const id = typeof item.id === "string" && item.id.startsWith("tactic:") ? item.id : canonicalTacticId(item.viet);
+    const rule = { kind, troopFit: (item.troopFit || []).map(unitKey) };
+    rules.set(id, rule);
+    // Mã cũ đã gộp (lookup.formerIds): tên cũ suy ra mã cũ vẫn phải chịu luật của mã giữ.
+    for (const former of item.lookup?.formerIds ?? []) if (!rules.has(former)) rules.set(former, rule);
   }
   return rules;
 }
@@ -69,6 +73,11 @@ export function canonicalTacticId(name) {
   return `tactic:${slug}`;
 }
 
+/** Mã chiến pháp của một tên theo danh mục: `idOf` (xem `createTacticIdResolver`) bắt buộc khi tên hiển thị khác tên gốc; không có thì slug tên. */
+export function tacticIdForName(name, idOf = null) {
+  return idOf ? idOf(name) : canonicalTacticId(name);
+}
+
 function displayName(item) {
   return typeof item === "string" ? item : item?.name;
 }
@@ -79,10 +88,10 @@ function canonicalOwnedHero(item) {
   return canonicalHeroId(displayName(item));
 }
 
-function canonicalOwnedTactic(item) {
+function canonicalOwnedTactic(item, idOf) {
   if (typeof item === "object" && item?.canonicalId) return item.canonicalId;
   if (typeof item === "string" && item.startsWith("tactic:")) return item;
-  return canonicalTacticId(displayName(item));
+  return tacticIdForName(displayName(item), idOf);
 }
 
 function tierIndex(teamTier, seasonal = false) {
@@ -99,19 +108,19 @@ function bestTier(rankings) {
   )[0]?.tier || "";
 }
 
-function tacticSlots(team, heroSlots) {
+function tacticSlots(team, heroSlots, idOf) {
   return (team.heroes || []).flatMap((hero, heroIndex) =>
     (hero.tactics || []).map((slot, slotIndex) => ({
       holderSlotId: heroSlots[heroIndex].slotId,
       slotIndex,
       primary: slot.name,
-      primaryId: canonicalTacticId(slot.name),
+      primaryId: tacticIdForName(slot.name, idOf),
       alternatives: slot.alternatives || [],
-      alternativeIds: (slot.alternatives || []).map(canonicalTacticId),
+      alternativeIds: (slot.alternatives || []).map((name) => tacticIdForName(name, idOf)),
       // Ô chưa đối chiếu được với từ điển: giữ tên Việt dự phòng, không bắt buộc sở hữu (không thể kiểm).
       unresolved: slot.unresolved === true,
       // Món bù do người dùng chọn (khác biến thể có sẵn trong dữ liệu đội): chịu luật đội, nhãn "chưa được đánh giá".
-      userAlternativeIds: new Set((slot.userAlternatives || []).map(canonicalTacticId)),
+      userAlternativeIds: new Set((slot.userAlternatives || []).map((name) => tacticIdForName(name, idOf))),
     })),
   );
 }
@@ -133,6 +142,7 @@ export function normalizeTeamCandidate(
   tierByTeam = new Map(),
   redByHero = new Map(),
   seasonContext = null,
+  tacticIdOf = null,
 ) {
   const key = seasonContext ? team.candidateKey : team.id;
   const rankings = tierByTeam.get(key) || [];
@@ -149,7 +159,7 @@ export function normalizeTeamCandidate(
     tierRankings: [...rankings],
     heroSlots,
     requiredHeroes: heroSlots.map((slot) => slot.alternatives[0].displayName),
-    tacticSlots: tacticSlots(team, heroSlots),
+    tacticSlots: tacticSlots(team, heroSlots, tacticIdOf),
     redCopyScore,
     rankingTuple: [TIER_RANK.get(tier) ?? Number.MAX_SAFE_INTEGER, -redCopyScore, String(key || "")],
   };
@@ -439,14 +449,14 @@ function lockedEntry(team, index) {
   };
 }
 
-function addEntry(entry, usedHeroes, usedTactics) {
+function addEntry(entry, usedHeroes, usedTactics, tacticIdOf = null) {
   for (const hero of entry.heroAssignments || []) usedHeroes.add(hero.canonicalId);
   for (const tactic of entry.tacticSelections || []) {
     if (!tactic.unresolved) usedTactics.add(tactic.selectedTacticId);
   }
   if (entry.locked) {
     for (const tactic of entry.selectedTactics || []) {
-      usedTactics.add(canonicalOwnedTactic(tactic));
+      usedTactics.add(canonicalOwnedTactic(tactic, tacticIdOf));
     }
   }
 }
@@ -618,6 +628,7 @@ export function recommendTeams({
   seedEntries = [],
   poolLimit = DEFAULT_POOL_LIMIT,
   tacticRules = null,
+  tacticIdOf = null,
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
   if (seasonContext) {
@@ -636,7 +647,7 @@ export function recommendTeams({
       .map((hero) => [canonicalOwnedHero(hero), hero.redStars]),
   );
   const ownedHeroSet = new Set(ownedHeroes.map(canonicalOwnedHero));
-  const ownedTacticSet = new Set(ownedTactics.map(canonicalOwnedTactic));
+  const ownedTacticSet = new Set(ownedTactics.map((tactic) => canonicalOwnedTactic(tactic, tacticIdOf)));
   const seed = { portfolio: [], usedHeroes: new Set(), usedTactics: new Set() };
 
   if (keepExistingTeams) {
@@ -649,7 +660,7 @@ export function recommendTeams({
         .map(({ canonicalId }) => canonicalId)
         .filter((canonicalId) => seed.usedHeroes.has(canonicalId));
       const tacticConflicts = entry.selectedTactics
-        .map(canonicalOwnedTactic)
+        .map((tactic) => canonicalOwnedTactic(tactic, tacticIdOf))
         .filter((canonicalId) => seed.usedTactics.has(canonicalId));
       if (heroConflicts.length || tacticConflicts.length) {
         if (heroConflicts.length) {
@@ -667,18 +678,18 @@ export function recommendTeams({
         continue;
       }
       seed.portfolio.push(entry);
-      addEntry(entry, seed.usedHeroes, seed.usedTactics);
+      addEntry(entry, seed.usedHeroes, seed.usedTactics, tacticIdOf);
     }
   }
   // Đội đã chọn ở lượt trước (vd. lượt đội chuẩn trước lượt đội cũ): giữ tài nguyên và tính vào giới hạn.
   for (const entry of seedEntries) {
     if (seed.portfolio.length >= maxTeams) break;
     seed.portfolio.push(entry);
-    addEntry(entry, seed.usedHeroes, seed.usedTactics);
+    addEntry(entry, seed.usedHeroes, seed.usedTactics, tacticIdOf);
   }
 
   const candidates = candidatePool(
-    teams.map((team) => ({ ...normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext), tacticRules })),
+    teams.map((team) => ({ ...normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext, tacticIdOf), tacticRules })),
     { mode, experimentalUntiered },
   );
 
@@ -805,7 +816,7 @@ export function recommendTeams({
     for (const tactic of entry.tacticSelections || []) {
       if (!tactic.unresolved) tacticOwner.set(tactic.selectedTacticId, entry.team.id);
     }
-    if (entry.locked) for (const tactic of entry.selectedTactics || []) tacticOwner.set(canonicalOwnedTactic(tactic), entry.team.id);
+    if (entry.locked) for (const tactic of entry.selectedTactics || []) tacticOwner.set(canonicalOwnedTactic(tactic, tacticIdOf), entry.team.id);
   }
   const conflictedTeams = eligible
     .filter((candidate) => !inPortfolio(candidate))

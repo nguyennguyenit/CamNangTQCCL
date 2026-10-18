@@ -2079,6 +2079,8 @@ def compile_candidate(root, output, *, stage):
         source=_repo_member(root, "data/sgsdeck"),
         identity=_repo_member(root, "pipeline/lookup-identity.json"),
         translations=_repo_member(root, "pipeline/lookup-translations.json"),
+        client_heroes=_repo_member(root, "pipeline/lookup-client-heroes.json"),
+        client_tactics=_repo_member(root, "pipeline/lookup-client-tactics.json"),
         output=lookup_root,
     )
     validate_lookup_candidate(
@@ -2087,6 +2089,8 @@ def compile_candidate(root, output, *, stage):
         source=_repo_member(root, "data/sgsdeck"),
         identity=_repo_member(root, "pipeline/lookup-identity.json"),
         translations=_repo_member(root, "pipeline/lookup-translations.json"),
+        client_heroes=_repo_member(root, "pipeline/lookup-client-heroes.json"),
+        client_tactics=_repo_member(root, "pipeline/lookup-client-tactics.json"),
     )
     lookup_lock = output / ".lookup.build.lock"
     if lookup_lock.is_symlink():

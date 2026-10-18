@@ -1,0 +1,4207 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "kind": "game-client",
+    "edition": "Global",
+    "client": "Tam Quốc Chí - Chiến Lược",
+    "version": "24.526",
+    "screen": "Võ Tướng > Minh Giám",
+    "capturedAt": "2026-10-15"
+  },
+  "heroes": [
+    {
+      "id": "hero:bien-hy",
+      "viet": "Biện Hỷ",
+      "chinese": "卞喜",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "70",
+        "tri": "62",
+        "thong": "56",
+        "toc": "19",
+        "chinh": "37",
+        "mi": "24"
+      },
+      "growth": {
+        "luc": 0.63,
+        "tri": 0.39,
+        "thong": 1.01,
+        "toc": 0.21,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "黃 / 盾",
+      "roleTagViet": "Khăn Vàng / Phòng thủ",
+      "selfTacticVi": "Áp Chế",
+      "portrait": "/heroes/bien-hy.webp"
+    },
+    {
+      "id": "hero:bo-chat",
+      "viet": "Bộ Chất",
+      "chinese": "步騭",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "51",
+        "tri": "84",
+        "thong": "72",
+        "toc": "49",
+        "chinh": "86",
+        "mi": "70"
+      },
+      "growth": {
+        "luc": 0.66,
+        "tri": 1.5,
+        "thong": 1.08,
+        "toc": 0.9,
+        "chinh": 0.68,
+        "mi": 0.48
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Tinh Thông Đào Mỏ",
+      "portrait": "/heroes/bo-chat.webp"
+    },
+    {
+      "id": "hero:bo-luyen-su",
+      "viet": "Bộ Luyện Sư",
+      "chinese": "步練師",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 4,
+      "cost": "6",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "10",
+        "tri": "64",
+        "thong": "47",
+        "toc": "35",
+        "chinh": "72",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 1.36,
+        "tri": 1.05,
+        "thong": 1.43,
+        "toc": 1.19,
+        "chinh": 0.9,
+        "mi": 1.89
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực",
+      "selfTacticVi": "Cẩn Thận Tỉ Mỉ",
+      "portrait": "/heroes/bo-luyen-su.webp"
+    },
+    {
+      "id": "hero:chu-nhien",
+      "viet": "Chu Nhiên",
+      "chinese": "朱然",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "69",
+        "tri": "71",
+        "thong": "79",
+        "toc": "55",
+        "chinh": "60",
+        "mi": "75"
+      },
+      "growth": {
+        "luc": 0.94,
+        "tri": 0.35,
+        "thong": 0.83,
+        "toc": 0.63,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "roleTag": "戰",
+      "roleTagViet": "Chiến",
+      "selfTacticVi": "Khí Độc",
+      "portrait": "/heroes/chu-nhien.webp"
+    },
+    {
+      "id": "hero:dang-chi",
+      "viet": "Đặng Chi",
+      "chinese": "鄧芝",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "52",
+        "tri": "81",
+        "thong": "73",
+        "toc": "49",
+        "chinh": "85",
+        "mi": "88"
+      },
+      "growth": {
+        "luc": 0.71,
+        "tri": 1.19,
+        "thong": 0.31,
+        "toc": 0.45,
+        "chinh": 0.48,
+        "mi": 0.73
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực",
+      "selfTacticVi": "Uyên Bác",
+      "portrait": "/heroes/dang-chi.webp"
+    },
+    {
+      "id": "hero:dao-khiem",
+      "viet": "Đào Khiêm",
+      "chinese": "陶謙",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "27",
+        "tri": "64",
+        "thong": "51",
+        "toc": "31",
+        "chinh": "63",
+        "mi": "77"
+      },
+      "growth": {
+        "luc": 0.36,
+        "tri": 0.77,
+        "thong": 0.7,
+        "toc": 0.59,
+        "chinh": 0.4,
+        "mi": 0.49
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Cứu trợ",
+      "portrait": "/heroes/dao-khiem.webp"
+    },
+    {
+      "id": "hero:dinh-nguyen",
+      "viet": "Đinh Nguyên",
+      "chinese": "丁原",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "76",
+        "tri": "35",
+        "thong": "70",
+        "toc": "28",
+        "chinh": "40",
+        "mi": "74"
+      },
+      "growth": {
+        "luc": 1.06,
+        "tri": 0.45,
+        "thong": 0.27,
+        "toc": 0.28,
+        "chinh": 0.43,
+        "mi": 0.2
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "A"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Mãnh Kích",
+      "portrait": "/heroes/dinh-nguyen.webp"
+    },
+    {
+      "id": "hero:dong-chieu",
+      "viet": "Đổng Chiêu",
+      "chinese": "董昭",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "25",
+        "tri": "80",
+        "thong": "34",
+        "toc": "36",
+        "chinh": "82",
+        "mi": "59"
+      },
+      "growth": {
+        "luc": 0.34,
+        "tri": 0.45,
+        "thong": 1.04,
+        "toc": 0.69,
+        "chinh": 0.74,
+        "mi": 0.46
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Chặt Đốn",
+      "portrait": "/heroes/dong-chieu.webp"
+    },
+    {
+      "id": "hero:dong-quyet",
+      "viet": "Đổng Quyết",
+      "chinese": "董厥",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 2,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "59",
+        "tri": "76",
+        "thong": "65",
+        "toc": "22",
+        "chinh": "78",
+        "mi": "66"
+      },
+      "growth": {
+        "luc": 0.66,
+        "tri": 0.21,
+        "thong": 0.34,
+        "toc": 0.33,
+        "chinh": 0.1,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Áp Chế-Sơ",
+      "portrait": "/heroes/dong-quyet.webp"
+    },
+    {
+      "id": "hero:dong-thua",
+      "viet": "Đổng Thừa",
+      "chinese": "董承",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 2,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "53",
+        "tri": "65",
+        "thong": "56",
+        "toc": "23",
+        "chinh": "63",
+        "mi": "75"
+      },
+      "growth": {
+        "luc": 0.21,
+        "tri": 0.48,
+        "thong": 0.49,
+        "toc": 0.35,
+        "chinh": 0.41,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Hào Hùng-Sơ",
+      "portrait": "/heroes/dong-thua.webp"
+    },
+    {
+      "id": "hero:du-ky",
+      "viet": "Du Kỵ",
+      "chinese": "遊騎",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 1,
+      "cost": "2",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "10",
+        "tri": "10",
+        "thong": "10",
+        "toc": "10",
+        "chinh": "1",
+        "mi": "1"
+      },
+      "growth": {
+        "luc": 0.07,
+        "tri": 0.07,
+        "thong": 0.07,
+        "toc": 0.07,
+        "chinh": 0.07,
+        "mi": 0.07
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "卒",
+      "roleTagViet": "Tốt",
+      "selfTacticVi": "Cấp Tốc",
+      "portrait": "/heroes/du-ky.webp"
+    },
+    {
+      "id": "hero:gia-cat-chiem",
+      "viet": "Gia Cát Chiêm",
+      "chinese": "諸葛瞻",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "57",
+        "tri": "76",
+        "thong": "70",
+        "toc": "36",
+        "chinh": "72",
+        "mi": "75"
+      },
+      "growth": {
+        "luc": 0.6,
+        "tri": 1.01,
+        "thong": 0.52,
+        "toc": 0.92,
+        "chinh": 0.71,
+        "mi": 0.51
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Thợ Rèn",
+      "portrait": "/heroes/gia-cat-chiem.webp"
+    },
+    {
+      "id": "hero:ha-hau-an",
+      "viet": "Hạ Hầu Ân",
+      "chinese": "夏侯恩",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "72",
+        "tri": "53",
+        "thong": "63",
+        "toc": "51",
+        "chinh": "45",
+        "mi": "71"
+      },
+      "growth": {
+        "luc": 0.91,
+        "tri": 0.42,
+        "thong": 0.91,
+        "toc": 0.52,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "戰",
+      "roleTagViet": "Chiến",
+      "selfTacticVi": "Khiêu Khích",
+      "portrait": "/heroes/ha-hau-an.webp"
+    },
+    {
+      "id": "hero:ha-tien",
+      "viet": "Hà Tiến",
+      "chinese": "何進",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "40",
+        "tri": "6",
+        "thong": "39",
+        "toc": "70",
+        "chinh": "41",
+        "mi": "68"
+      },
+      "growth": {
+        "luc": 0.69,
+        "tri": 0.38,
+        "thong": 0.99,
+        "toc": 0.22,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ",
+      "selfTacticVi": "Phản Kích",
+      "portrait": "/heroes/ha-tien.webp"
+    },
+    {
+      "id": "hero:ham-trach",
+      "viet": "Hám Trạch",
+      "chinese": "闞澤",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "49",
+        "tri": "83",
+        "thong": "43",
+        "toc": "50",
+        "chinh": "86",
+        "mi": "73"
+      },
+      "growth": {
+        "luc": 0.38,
+        "tri": 1.39,
+        "thong": 0.35,
+        "toc": 0.48,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược",
+      "selfTacticVi": "Đốt Lửa",
+      "portrait": "/heroes/ham-trach.webp"
+    },
+    {
+      "id": "hero:ho-chat",
+      "viet": "Hồ Chất",
+      "chinese": "胡質",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 2,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "46",
+        "tri": "74",
+        "thong": "73",
+        "toc": "31",
+        "chinh": "80",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 0.27,
+        "tri": 0.27,
+        "thong": 0.66,
+        "toc": 0.36,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ",
+      "selfTacticVi": "Làm Loạn-Sơ",
+      "portrait": "/heroes/ho-chat.webp"
+    },
+    {
+      "id": "hero:hoa-ham",
+      "viet": "Hoa Hâm",
+      "chinese": "華歆",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "33",
+        "tri": "82",
+        "thong": "33",
+        "toc": "32",
+        "chinh": "83",
+        "mi": "17"
+      },
+      "growth": {
+        "luc": 0.63,
+        "tri": 1.26,
+        "thong": 0.69,
+        "toc": 0.85,
+        "chinh": 0.88,
+        "mi": 0.51
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Giản Chính",
+      "portrait": "/heroes/hoa-ham.webp"
+    },
+    {
+      "id": "hero:hoang-phu-tung",
+      "viet": "Hoàng Phủ Tung",
+      "chinese": "皇甫嵩",
+      "aliasesVi": [
+        "Hoàng Phổ Tung"
+      ],
+      "faction": "Quần",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "61",
+        "tri": "73",
+        "thong": "92",
+        "toc": "18",
+        "chinh": "51",
+        "mi": "72"
+      },
+      "growth": {
+        "luc": 1.23,
+        "tri": 0.77,
+        "thong": 1.7,
+        "toc": 0.9,
+        "chinh": 0.48,
+        "mi": 0.59
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "S",
+        "khiGioi": "S"
+      },
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ",
+      "selfTacticVi": "Hậu Phát Chế Nhân",
+      "portrait": "/heroes/hoang-phu-tung.webp"
+    },
+    {
+      "id": "hero:huong-lang",
+      "viet": "Hướng Lãng",
+      "chinese": "向朗",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 2,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "18",
+        "tri": "74",
+        "thong": "28",
+        "toc": "29",
+        "chinh": "74",
+        "mi": "69"
+      },
+      "growth": {
+        "luc": 0.16,
+        "tri": 0.49,
+        "thong": 0.3,
+        "toc": 0.37,
+        "chinh": 0.4,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Áp Chế-Sơ",
+      "portrait": "/heroes/huong-lang.webp"
+    },
+    {
+      "id": "hero:huong-sung",
+      "viet": "Hướng Sủng",
+      "chinese": "向寵",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "61",
+        "tri": "77",
+        "thong": "76",
+        "toc": "55",
+        "chinh": "67",
+        "mi": "71"
+      },
+      "growth": {
+        "luc": 0.48,
+        "tri": 0.88,
+        "thong": 0.81,
+        "toc": 0.66,
+        "chinh": 0.53,
+        "mi": 0.36
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Tâm Sự",
+      "portrait": "/heroes/huong-sung.webp"
+    },
+    {
+      "id": "hero:lu-kien",
+      "viet": "Lữ Kiền",
+      "chinese": "呂虔",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "70",
+        "tri": "62",
+        "thong": "57",
+        "toc": "49",
+        "chinh": "72",
+        "mi": "60"
+      },
+      "growth": {
+        "luc": 1.13,
+        "tri": 0.83,
+        "thong": 0.67,
+        "toc": 0.87,
+        "chinh": 0.61,
+        "mi": 0.52
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Phá Giáp",
+      "portrait": "/heroes/lu-kien.webp"
+    },
+    {
+      "id": "hero:luu-ba",
+      "viet": "Lưu Ba",
+      "chinese": "劉巴",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "22",
+        "tri": "75",
+        "thong": "29",
+        "toc": "32",
+        "chinh": "81",
+        "mi": "57"
+      },
+      "growth": {
+        "luc": 1.44,
+        "tri": 1.05,
+        "thong": 0.76,
+        "toc": 0.9,
+        "chinh": 0.79,
+        "mi": 0.47
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Đào Hái",
+      "portrait": "/heroes/luu-ba.webp"
+    },
+    {
+      "id": "hero:luu-do",
+      "viet": "Lưu Do",
+      "chinese": "劉繇",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "67",
+        "tri": "46",
+        "thong": "62",
+        "toc": "32",
+        "chinh": "70",
+        "mi": "64"
+      },
+      "growth": {
+        "luc": 0.88,
+        "tri": 0.62,
+        "thong": 1.01,
+        "toc": 0.94,
+        "chinh": 0.77,
+        "mi": 0.42
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Tinh Thông Làm Ruộng",
+      "portrait": "/heroes/luu-do.webp"
+    },
+    {
+      "id": "hero:luu-thien",
+      "viet": "Lưu Thiện",
+      "chinese": "劉禪",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "5",
+        "tri": "9",
+        "thong": "3",
+        "toc": "49",
+        "chinh": "4",
+        "mi": "56"
+      },
+      "growth": {
+        "luc": 0.07,
+        "tri": 0.13,
+        "thong": 0.04,
+        "toc": 0.77,
+        "chinh": 0.01,
+        "mi": 1.18
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực",
+      "selfTacticVi": "Thiên Vận",
+      "portrait": "/heroes/luu-thien.webp"
+    },
+    {
+      "id": "hero:mao-gioi",
+      "viet": "Mao Giới",
+      "chinese": "毛玠",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "39",
+        "tri": "60",
+        "thong": "63",
+        "toc": "32",
+        "chinh": "78",
+        "mi": "61"
+      },
+      "growth": {
+        "luc": 0.8,
+        "tri": 0.99,
+        "thong": 0.71,
+        "toc": 0.92,
+        "chinh": 0.43,
+        "mi": 0.83
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực",
+      "selfTacticVi": "Nghệ Nhân",
+      "portrait": "/heroes/mao-gioi.webp"
+    },
+    {
+      "id": "hero:my-phuong",
+      "viet": "My Phương",
+      "chinese": "糜芳",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "61",
+        "tri": "32",
+        "thong": "54",
+        "toc": "59",
+        "chinh": "23",
+        "mi": "23"
+      },
+      "growth": {
+        "luc": 1.08,
+        "tri": 0.55,
+        "thong": 0.66,
+        "toc": 0.67,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Phát Hiện",
+      "portrait": "/heroes/my-phuong.webp"
+    },
+    {
+      "id": "hero:nghiem-tuan",
+      "viet": "Nghiêm Tuấn",
+      "chinese": "嚴畯",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 2,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "2",
+        "tri": "71",
+        "thong": "28",
+        "toc": "26",
+        "chinh": "84",
+        "mi": "72"
+      },
+      "growth": {
+        "luc": 0.12,
+        "tri": 0.51,
+        "thong": 0.3,
+        "toc": 0.41,
+        "chinh": 0.42,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Cổ Vũ-Sơ",
+      "portrait": "/heroes/nghiem-tuan.webp"
+    },
+    {
+      "id": "hero:ngo-y",
+      "viet": "Ngô Ý",
+      "chinese": "吳懿",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "73",
+        "tri": "70",
+        "thong": "79",
+        "toc": "51",
+        "chinh": "70",
+        "mi": "77"
+      },
+      "growth": {
+        "luc": 0.98,
+        "tri": 0.43,
+        "thong": 0.9,
+        "toc": 0.46,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "roleTag": "戰",
+      "roleTagViet": "Chiến",
+      "selfTacticVi": "Đâm Thương",
+      "portrait": "/heroes/ngo-y.webp"
+    },
+    {
+      "id": "hero:ngu-phien",
+      "viet": "Ngu Phiên",
+      "chinese": "虞翻",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "46",
+        "tri": "86",
+        "thong": "43",
+        "toc": "17",
+        "chinh": "81",
+        "mi": "46"
+      },
+      "growth": {
+        "luc": 0.28,
+        "tri": 0.84,
+        "thong": 0.83,
+        "toc": 0.2,
+        "chinh": 0.64,
+        "mi": 0.3
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ",
+      "selfTacticVi": "Chốt Đuôi",
+      "portrait": "/heroes/ngu-phien.webp"
+    },
+    {
+      "id": "hero:phan-phung",
+      "viet": "Phan Phụng",
+      "chinese": "潘鳳",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "77",
+        "tri": "4",
+        "thong": "56",
+        "toc": "68",
+        "chinh": "14",
+        "mi": "25"
+      },
+      "growth": {
+        "luc": 1.71,
+        "tri": 0.14,
+        "thong": 0.66,
+        "toc": 0.2,
+        "chinh": 0.14,
+        "mi": 0.17
+      },
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Vô Song Thượng Tướng",
+      "portrait": "/heroes/phan-phung.webp"
+    },
+    {
+      "id": "hero:phan-tuan",
+      "viet": "Phan Tuấn",
+      "chinese": "潘濬",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "18",
+        "tri": "68",
+        "thong": "61",
+        "toc": "49",
+        "chinh": "82",
+        "mi": "21"
+      },
+      "growth": {
+        "luc": 0.31,
+        "tri": 1.01,
+        "thong": 0.94,
+        "toc": 0.81,
+        "chinh": 0.71,
+        "mi": 0.53
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Tinh Thông Đốn Gỗ",
+      "portrait": "/heroes/phan-tuan.webp"
+    },
+    {
+      "id": "hero:phi-thi",
+      "viet": "Phí Thi",
+      "chinese": "費詩",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "28",
+        "tri": "65",
+        "thong": "18",
+        "toc": "44",
+        "chinh": "74",
+        "mi": "66"
+      },
+      "growth": {
+        "luc": 0.29,
+        "tri": 0.55,
+        "thong": 1.22,
+        "toc": 0.92,
+        "chinh": 0.27,
+        "mi": 0.86
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực",
+      "selfTacticVi": "Luyện Gấp",
+      "portrait": "/heroes/phi-thi.webp"
+    },
+    {
+      "id": "hero:pho-si-nhan",
+      "viet": "Phó Sĩ Nhân",
+      "chinese": "傅士仁",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "63",
+        "tri": "37",
+        "thong": "46",
+        "toc": "20",
+        "chinh": "24",
+        "mi": "20"
+      },
+      "growth": {
+        "luc": 0.71,
+        "tri": 0.49,
+        "thong": 1.29,
+        "toc": 0.27,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ",
+      "selfTacticVi": "Hộ Vệ",
+      "portrait": "/heroes/pho-si-nhan.webp"
+    },
+    {
+      "id": "hero:quan-si",
+      "viet": "Quân Sĩ",
+      "chinese": "軍士",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 1,
+      "cost": "2",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "10",
+        "tri": "10",
+        "thong": "10",
+        "toc": "10",
+        "chinh": "1",
+        "mi": "1"
+      },
+      "growth": {
+        "luc": 0.07,
+        "tri": 0.07,
+        "thong": 0.07,
+        "toc": 0.07,
+        "chinh": 0.07,
+        "mi": 0.07
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "卒",
+      "roleTagViet": "Tốt",
+      "selfTacticVi": "Dũng Võ",
+      "portrait": "/heroes/quan-si.webp"
+    },
+    {
+      "id": "hero:tao-chan",
+      "viet": "Tào Chân",
+      "chinese": "曹真",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "74",
+        "tri": "70",
+        "thong": "81",
+        "toc": "56",
+        "chinh": "72",
+        "mi": "88"
+      },
+      "growth": {
+        "luc": 1.58,
+        "tri": 1.57,
+        "thong": 0.85,
+        "toc": 0.88,
+        "chinh": 0.46,
+        "mi": 0.43
+      },
+      "troopApt": {
+        "ky": "A",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "戰",
+      "roleTagViet": "Chiến",
+      "selfTacticVi": "Đồ Kỳ Thượng Nhục",
+      "portrait": "/heroes/tao-chan.webp"
+    },
+    {
+      "id": "hero:tao-huu",
+      "viet": "Tào Hưu",
+      "chinese": "曹休",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "75",
+        "tri": "62",
+        "thong": "74",
+        "toc": "64",
+        "chinh": "56",
+        "mi": "67"
+      },
+      "growth": {
+        "luc": 1.23,
+        "tri": 0.57,
+        "thong": 0.62,
+        "toc": 0.7,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Vung Chém",
+      "portrait": "/heroes/tao-huu.webp"
+    },
+    {
+      "id": "hero:tao-ngang",
+      "viet": "Tào Ngang",
+      "chinese": "曹昂",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 2,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "67",
+        "tri": "69",
+        "thong": "74",
+        "toc": "34",
+        "chinh": "68",
+        "mi": "77"
+      },
+      "growth": {
+        "luc": 0.68,
+        "tri": 0.17,
+        "thong": 0.31,
+        "toc": 0.15,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Gan Dạ",
+      "portrait": "/heroes/tao-ngang.webp"
+    },
+    {
+      "id": "hero:tieu-chu",
+      "viet": "Tiều Chu",
+      "chinese": "譙周",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 2,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "3",
+        "tri": "67",
+        "thong": "16",
+        "toc": "25",
+        "chinh": "71",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 0.12,
+        "tri": 0.47,
+        "thong": 0.41,
+        "toc": 0.38,
+        "chinh": 0.1,
+        "mi": 0.42
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Làm Loạn-Sơ",
+      "portrait": "/heroes/tieu-chu.webp"
+    },
+    {
+      "id": "hero:toan-tong",
+      "viet": "Toàn Tông",
+      "chinese": "全琮",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "72",
+        "tri": "75",
+        "thong": "78",
+        "toc": "45",
+        "chinh": "61",
+        "mi": "67"
+      },
+      "growth": {
+        "luc": 0.81,
+        "tri": 0.36,
+        "thong": 0.76,
+        "toc": 0.52,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "A"
+      },
+      "roleTag": "戰",
+      "roleTagViet": "Chiến",
+      "selfTacticVi": "Hàng Hải",
+      "portrait": "/heroes/toan-tong.webp"
+    },
+    {
+      "id": "hero:ton-can",
+      "viet": "Tôn Càn",
+      "chinese": "孫乾",
+      "aliasesVi": [],
+      "faction": "Thục",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "33",
+        "tri": "79",
+        "thong": "34",
+        "toc": "57",
+        "chinh": "84",
+        "mi": "84"
+      },
+      "growth": {
+        "luc": 0.14,
+        "tri": 1.39,
+        "thong": 0.59,
+        "toc": 0.43,
+        "chinh": 0.4,
+        "mi": 0.49
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược",
+      "selfTacticVi": "Hỏa Công",
+      "portrait": "/heroes/ton-can.webp"
+    },
+    {
+      "id": "hero:ton-hao",
+      "viet": "Tôn Hạo",
+      "chinese": "孫皓",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "73",
+        "tri": "71",
+        "thong": "41",
+        "toc": "46",
+        "chinh": "23",
+        "mi": "3"
+      },
+      "growth": {
+        "luc": 1.05,
+        "tri": 0.95,
+        "thong": 0.49,
+        "toc": 0.81,
+        "chinh": 0.56,
+        "mi": 0.51
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Liên Luỵ",
+      "portrait": "/heroes/ton-hao.webp"
+    },
+    {
+      "id": "hero:ton-tinh",
+      "viet": "Tôn Tĩnh",
+      "chinese": "孫靜",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 2,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "53",
+        "tri": "73",
+        "thong": "66",
+        "toc": "20",
+        "chinh": "71",
+        "mi": "72"
+      },
+      "growth": {
+        "luc": 0.24,
+        "tri": 0.56,
+        "thong": 0.31,
+        "toc": 0.49,
+        "chinh": 0.43,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "醫",
+      "roleTagViet": "Y thuật",
+      "selfTacticVi": "Cấp Cứu-Sơ",
+      "portrait": "/heroes/ton-tinh.webp"
+    },
+    {
+      "id": "hero:tong-hien",
+      "viet": "Tống Hiến",
+      "chinese": "宋憲",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "77",
+        "tri": "38",
+        "thong": "68",
+        "toc": "29",
+        "chinh": "27",
+        "mi": "31"
+      },
+      "growth": {
+        "luc": 1.25,
+        "tri": 0.55,
+        "thong": 0.31,
+        "toc": 0.34,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Giẫm Đạp",
+      "portrait": "/heroes/tong-hien.webp"
+    },
+    {
+      "id": "hero:trinh-binh",
+      "viet": "Trình Bỉnh",
+      "chinese": "程秉",
+      "aliasesVi": [],
+      "faction": "Ngô",
+      "stars": 2,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "15",
+        "tri": "71",
+        "thong": "16",
+        "toc": "19",
+        "chinh": "72",
+        "mi": "65"
+      },
+      "growth": {
+        "luc": 0.27,
+        "tri": 0.52,
+        "thong": 0.31,
+        "toc": 0.42,
+        "chinh": 0.42,
+        "mi": 0.12
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Gan Dạ",
+      "portrait": "/heroes/trinh-binh.webp"
+    },
+    {
+      "id": "hero:truong-bao-khan-vang",
+      "viet": "Trương Bảo Khăn Vàng",
+      "chinese": "張寶",
+      "aliasesVi": [
+        "Trương Bảo"
+      ],
+      "faction": "Quần",
+      "stars": 4,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "71",
+        "tri": "81",
+        "thong": "83",
+        "toc": "30",
+        "chinh": "76",
+        "mi": "82"
+      },
+      "growth": {
+        "luc": 0.26,
+        "tri": 1.69,
+        "thong": 0.99,
+        "toc": 0.38,
+        "chinh": 0.44,
+        "mi": 0.43
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "A",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "S"
+      },
+      "roleTag": "黃 / 謀",
+      "roleTagViet": "Khăn Vàng / Mưu lược",
+      "selfTacticVi": "Yêu Thuật",
+      "portrait": "/heroes/truong-bao-khan-vang.webp"
+    },
+    {
+      "id": "hero:truong-luong",
+      "viet": "Trương Lương",
+      "chinese": "張梁",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "80",
+        "tri": "74",
+        "thong": "78",
+        "toc": "74",
+        "chinh": "56",
+        "mi": "80"
+      },
+      "growth": {
+        "luc": 1.78,
+        "tri": 1.01,
+        "thong": 0.97,
+        "toc": 1.24,
+        "chinh": 0.42,
+        "mi": 0.48
+      },
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "S",
+        "khiGioi": "A"
+      },
+      "roleTag": "黃 / 武",
+      "roleTagViet": "Khăn Vàng / Vũ lực",
+      "selfTacticVi": "Nhất Cử Tiêm Diệt",
+      "portrait": "/heroes/truong-luong.webp"
+    },
+    {
+      "id": "hero:tu-si",
+      "viet": "Tử Sĩ",
+      "chinese": "死士",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 1,
+      "cost": "2",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "10",
+        "tri": "10",
+        "thong": "10",
+        "toc": "10",
+        "chinh": "1",
+        "mi": "1"
+      },
+      "growth": {
+        "luc": 0.07,
+        "tri": 0.07,
+        "thong": 0.07,
+        "toc": 0.07,
+        "chinh": 0.07,
+        "mi": 0.07
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "卒",
+      "roleTagViet": "Tốt",
+      "selfTacticVi": "Dũng Võ",
+      "portrait": "/heroes/tu-si.webp"
+    },
+    {
+      "id": "hero:ve-thanh",
+      "viet": "Vệ Thành",
+      "chinese": "衛城",
+      "aliasesVi": [
+        "Vệ thành"
+      ],
+      "faction": "Quần",
+      "stars": 1,
+      "cost": "2",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "10",
+        "tri": "10",
+        "thong": "10",
+        "toc": "10",
+        "chinh": "1",
+        "mi": "1"
+      },
+      "growth": {
+        "luc": 0.07,
+        "tri": 0.07,
+        "thong": 0.07,
+        "toc": 0.07,
+        "chinh": 0.07,
+        "mi": 0.07
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "卒",
+      "roleTagViet": "Tốt",
+      "selfTacticVi": "Cố Trận",
+      "portrait": "/heroes/ve-thanh.webp"
+    },
+    {
+      "id": "hero:vuong-doan",
+      "viet": "Vương Doãn",
+      "chinese": "王允",
+      "aliasesVi": [],
+      "faction": "Quần",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "6",
+        "tri": "68",
+        "thong": "26",
+        "toc": "48",
+        "chinh": "80",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 0.17,
+        "tri": 0.43,
+        "thong": 1.27,
+        "toc": 0.77,
+        "chinh": 0.81,
+        "mi": 0.44
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Tinh Thông Nhặt Đá",
+      "portrait": "/heroes/vuong-doan.webp"
+    },
+    {
+      "id": "hero:xa-tru",
+      "viet": "Xa Trụ",
+      "chinese": "車冑",
+      "aliasesVi": [],
+      "faction": "Ngụy",
+      "stars": 3,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "49",
+        "tri": "40",
+        "thong": "49",
+        "toc": "31",
+        "chinh": "58",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 1.32,
+        "tri": 0.39,
+        "thong": 0.34,
+        "toc": 0.48,
+        "chinh": 0.1,
+        "mi": 0.1
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Trọng Kích",
+      "portrait": "/heroes/xa-tru.webp"
+    }
+  ],
+  "portraits": {
+    "hero:40y-lu-bo": "/heroes/40y-lu-bo.webp",
+    "hero:chu-hang": "/heroes/chu-hang.webp",
+    "hero:chu-thuong": "/heroes/chu-thuong.webp",
+    "hero:chu-tuan": "/heroes/chu-tuan.webp",
+    "hero:chung-do": "/heroes/chung-do.webp",
+    "hero:co-chan-co": "/heroes/co-chan-co.webp",
+    "hero:co-chu-nhien": "/heroes/co-chu-nhien.webp",
+    "hero:co-dai-kieu": "/heroes/co-dai-kieu.webp",
+    "hero:co-lu-linh-y": "/heroes/co-lu-linh-y.webp",
+    "hero:co-quan-binh": "/heroes/co-quan-binh.webp",
+    "hero:co-tao-phi": "/heroes/co-tao-phi.webp",
+    "hero:co-tieu-kieu": "/heroes/co-tieu-kieu.webp",
+    "hero:co-tinh-thai": "/heroes/co-tinh-thai.webp",
+    "hero:co-ung": "/heroes/co-ung.webp",
+    "hero:dinh-phung": "/heroes/dinh-phung.webp",
+    "hero:dong-duan": "/heroes/dong-duan.webp",
+    "hero:dong-tap": "/heroes/dong-tap.webp",
+    "hero:duong-tu": "/heroes/duong-tu.webp",
+    "hero:gia-cat-canh": "/heroes/gia-cat-canh.webp",
+    "hero:gia-cat-khac": "/heroes/gia-cat-khac.webp",
+    "hero:gian-ung": "/heroes/gian-ung.webp",
+    "hero:han-duong": "/heroes/han-duong.webp",
+    "hero:han-toai": "/heroes/han-toai.webp",
+    "hero:ho-xa-nhi": "/heroes/ho-xa-nhi.webp",
+    "hero:hoang-quyen": "/heroes/hoang-quyen.webp",
+    "hero:khong-dung": "/heroes/khong-dung.webp",
+    "hero:khuc-nghia": "/heroes/khuc-nghia.webp",
+    "hero:ky-linh": "/heroes/ky-linh.webp",
+    "hero:lieu-hoa": "/heroes/lieu-hoa.webp",
+    "hero:lo-thuc": "/heroes/lo-thuc.webp",
+    "hero:lu-pham": "/heroes/lu-pham.webp",
+    "hero:luu-bieu": "/heroes/luu-bieu.webp",
+    "hero:luu-diep": "/heroes/luu-diep.webp",
+    "hero:luu-phong": "/heroes/luu-phong.webp",
+    "hero:ly-dien": "/heroes/ly-dien.webp",
+    "hero:ly-nghiem": "/heroes/ly-nghiem.webp",
+    "hero:ly-quyet": "/heroes/ly-quyet.webp",
+    "hero:ma-dai": "/heroes/ma-dai.webp",
+    "hero:ma-luong": "/heroes/ma-luong.webp",
+    "hero:ma-quan": "/heroes/ma-quan.webp",
+    "hero:ma-tac": "/heroes/ma-tac.webp",
+    "hero:ma-thiet": "/heroes/ma-thiet.webp",
+    "hero:ma-trung": "/heroes/ma-trung.webp",
+    "hero:my-truc": "/heroes/my-truc.webp",
+    "hero:phan-chuong": "/heroes/phan-chuong.webp",
+    "hero:phi-y": "/heroes/phi-y.webp",
+    "hero:phung-ky": "/heroes/phung-ky.webp",
+    "hero:quach-do": "/heroes/quach-do.webp",
+    "hero:quach-hoai": "/heroes/quach-hoai.webp",
+    "hero:quach-ty": "/heroes/quach-ty.webp",
+    "hero:quan-binh": "/heroes/quan-binh.webp",
+    "hero:quan-hoi": "/heroes/quan-hoi.webp",
+    "hero:sa-ma-kha": "/heroes/sa-ma-kha.webp",
+    "hero:sp-bang-duc": "/heroes/sp-bang-duc.webp",
+    "hero:sp-bo-luyen-su": "/heroes/sp-bo-luyen-su.webp",
+    "hero:sp-dien-vi": "/heroes/sp-dien-vi.webp",
+    "hero:sp-dieu-thuyen": "/heroes/sp-dieu-thuyen.webp",
+    "hero:sp-dong-trac": "/heroes/sp-dong-trac.webp",
+    "hero:sp-hoang-nguyet-anh": "/heroes/sp-hoang-nguyet-anh.webp",
+    "hero:sp-hoang-phu-tung": "/heroes/sp-hoang-phu-tung.webp",
+    "hero:sp-hoang-trung": "/heroes/sp-hoang-trung.webp",
+    "hero:sp-hua-chu": "/heroes/sp-hua-chu.webp",
+    "hero:sp-lo-thuc": "/heroes/sp-lo-thuc.webp",
+    "hero:sp-luu-diep": "/heroes/sp-luu-diep.webp",
+    "hero:sp-ma-sieu": "/heroes/sp-ma-sieu.webp",
+    "hero:sp-nhac-tien": "/heroes/sp-nhac-tien.webp",
+    "hero:sp-phap-chinh": "/heroes/sp-phap-chinh.webp",
+    "hero:sp-quan-vu": "/heroes/sp-quan-vu.webp",
+    "hero:sp-tao-chan": "/heroes/sp-tao-chan.webp",
+    "hero:sp-ton-kien": "/heroes/sp-ton-kien.webp",
+    "hero:sp-truong-bao": "/heroes/sp-truong-bao.webp",
+    "hero:sp-truong-luong": "/heroes/sp-truong-luong.webp",
+    "hero:tang-ba": "/heroes/tang-ba.webp",
+    "hero:tao-chuong": "/heroes/tao-chuong.webp",
+    "hero:tao-hong": "/heroes/tao-hong.webp",
+    "hero:tham-phoi": "/heroes/tham-phoi.webp",
+    "hero:tran-lam": "/heroes/tran-lam.webp",
+    "hero:tran-vo": "/heroes/tran-vo.webp",
+    "hero:truong-lo": "/heroes/truong-lo.webp",
+    "hero:truong-man-thanh": "/heroes/truong-man-thanh.webp",
+    "hero:truong-nham": "/heroes/truong-nham.webp",
+    "hero:truong-tu": "/heroes/truong-tu.webp",
+    "hero:truong-yen": "/heroes/truong-yen.webp",
+    "hero:tu-thinh": "/heroes/tu-thinh.webp",
+    "hero:tuong-kham": "/heroes/tuong-kham.webp",
+    "hero:van-sinh": "/heroes/van-sinh.webp",
+    "hero:vuong-di": "/heroes/vuong-di.webp",
+    "hero:vuong-lang": "/heroes/vuong-lang.webp"
+  },
+  "overrides": {
+    "hero:40y-lu-bo": {
+      "stats": {
+        "luc": "100",
+        "tri": "26",
+        "thong": "97",
+        "toc": "74",
+        "chinh": "13",
+        "mi": "40"
+      },
+      "growth": {
+        "luc": 3.04,
+        "tri": 0.27,
+        "thong": 1.4,
+        "toc": 1.41,
+        "chinh": 0.08,
+        "mi": 0.58
+      }
+    },
+    "hero:bang-thong": {
+      "growth": {
+        "luc": 0.52,
+        "tri": 2.61,
+        "thong": 1.76,
+        "toc": 0.79,
+        "chinh": 1.16,
+        "mi": 0.13
+      }
+    },
+    "hero:bo-luyen-su": {
+      "inheritTacticId": "tactic:xuat-ky-bat-y"
+    },
+    "hero:chan-co": {
+      "growth": {
+        "luc": 0.31,
+        "tri": 1.07,
+        "thong": 0.87,
+        "toc": 0.46,
+        "chinh": 1.22,
+        "mi": 2.66
+      },
+      "selfTacticId": "tactic:hoa-dung-nguyet-mao",
+      "inheritTacticId": "tactic:me-hoac"
+    },
+    "hero:chu-hang": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "82",
+        "tri": "77",
+        "thong": "84",
+        "toc": "31",
+        "chinh": "56",
+        "mi": "59"
+      },
+      "growth": {
+        "luc": 1.36,
+        "tri": 1.03,
+        "thong": 1.82,
+        "toc": 0.36,
+        "chinh": 1.03,
+        "mi": 1.05
+      },
+      "inheritTacticId": "tactic:thien-ly-tri-vien"
+    },
+    "hero:chu-thuong": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "84",
+        "tri": "42",
+        "thong": "68",
+        "toc": "56",
+        "chinh": "33",
+        "mi": "60"
+      },
+      "growth": {
+        "luc": 1.86,
+        "tri": 0.53,
+        "thong": 1.41,
+        "toc": 0.98,
+        "chinh": 0.16,
+        "mi": 0.79
+      }
+    },
+    "hero:chu-tuan": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "65",
+        "tri": "70",
+        "thong": "89",
+        "toc": "49",
+        "chinh": "71",
+        "mi": "73"
+      },
+      "growth": {
+        "luc": 0.65,
+        "tri": 1.76,
+        "thong": 1.57,
+        "toc": 0.56,
+        "chinh": 0.43,
+        "mi": 0.44
+      },
+      "selfTacticId": "tactic:tran-ap-khan-vang",
+      "inheritTacticId": "tactic:thanh-dong-kich-tay"
+    },
+    "hero:chung-do": {
+      "cost": "5",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "24",
+        "tri": "77",
+        "thong": "70",
+        "toc": "56",
+        "chinh": "91",
+        "mi": "80"
+      },
+      "growth": {
+        "luc": 1.22,
+        "tri": 1.19,
+        "thong": 1.36,
+        "toc": 0.88,
+        "chinh": 1.85,
+        "mi": 0.77
+      },
+      "selfTacticId": "tactic:ngoan-thiet-sinh-huy",
+      "inheritTacticId": "tactic:phong-thanh-hac-le"
+    },
+    "hero:co-chan-co": {
+      "stats": {
+        "luc": "50",
+        "tri": "95",
+        "thong": "80",
+        "toc": "80",
+        "chinh": "66",
+        "mi": "94"
+      }
+    },
+    "hero:co-chu-nhien": {
+      "stats": {
+        "luc": "69",
+        "tri": "71",
+        "thong": "79",
+        "toc": "55",
+        "chinh": "60",
+        "mi": "75"
+      }
+    },
+    "hero:co-dai-kieu": {
+      "roleTag": "輔 / 聯",
+      "roleTagViet": "Phụ trợ / Liên"
+    },
+    "hero:co-lu-linh-y": {
+      "roleTag": "武 / 聯",
+      "roleTagViet": "Vũ lực / Liên"
+    },
+    "hero:co-quan-binh": {
+      "stats": {
+        "luc": "82",
+        "tri": "72",
+        "thong": "80",
+        "toc": "57",
+        "chinh": "60",
+        "mi": "76"
+      }
+    },
+    "hero:co-tinh-thai": {
+      "stats": {
+        "luc": "83",
+        "tri": "60",
+        "thong": "85",
+        "toc": "52",
+        "chinh": "22",
+        "mi": "78"
+      }
+    },
+    "hero:co-ung": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "18",
+        "tri": "80",
+        "thong": "43",
+        "toc": "54",
+        "chinh": "90",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 1.17,
+        "tri": 1.05,
+        "thong": 1.27,
+        "toc": 0.9,
+        "chinh": 1.87,
+        "mi": 0.77
+      },
+      "selfTacticId": "tactic:kho-moc-phung-xuan",
+      "inheritTacticId": "tactic:kho-moc-phung-xuan"
+    },
+    "hero:dai-kieu": {
+      "growth": {
+        "luc": 0.3,
+        "tri": 1.0,
+        "thong": 0.65,
+        "toc": 0.85,
+        "chinh": 1.1,
+        "mi": 2.4
+      },
+      "selfTacticId": "tactic:quoc-sac",
+      "inheritTacticId": "tactic:me-hoac"
+    },
+    "hero:dieu-thuyen": {
+      "growth": {
+        "luc": 0.45,
+        "tri": 1.97,
+        "thong": 1.89,
+        "toc": 1.32,
+        "chinh": 0.8,
+        "mi": 1.32
+      }
+    },
+    "hero:dinh-phung": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "S",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "80",
+        "tri": "75",
+        "thong": "81",
+        "toc": "52",
+        "chinh": "55",
+        "mi": "56"
+      },
+      "growth": {
+        "luc": 1.58,
+        "tri": 0.73,
+        "thong": 1.6,
+        "toc": 0.9,
+        "chinh": 0.43,
+        "mi": 0.53
+      }
+    },
+    "hero:dong-bach": {
+      "stats": {
+        "luc": "70",
+        "tri": "51",
+        "thong": "63",
+        "toc": "55",
+        "chinh": "56",
+        "mi": "57"
+      },
+      "growth": {
+        "luc": 1.86,
+        "tri": 0.36,
+        "thong": 1.63,
+        "toc": 1.22,
+        "chinh": 0.67,
+        "mi": 0.98
+      }
+    },
+    "hero:dong-duan": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "28",
+        "tri": "79",
+        "thong": "47",
+        "toc": "53",
+        "chinh": "91",
+        "mi": "79"
+      },
+      "growth": {
+        "luc": 1.15,
+        "tri": 0.84,
+        "thong": 1.09,
+        "toc": 0.59,
+        "chinh": 1.77,
+        "mi": 0.74
+      },
+      "selfTacticId": "tactic:thu-ma-thon-thiet",
+      "inheritTacticId": "tactic:thanh-dong-kich-tay"
+    },
+    "hero:dong-tap": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "85",
+        "tri": "50",
+        "thong": "72",
+        "toc": "59",
+        "chinh": "48",
+        "mi": "60"
+      },
+      "growth": {
+        "luc": 1.77,
+        "tri": 0.81,
+        "thong": 1.17,
+        "toc": 1.07,
+        "chinh": 0.42,
+        "mi": 0.51
+      }
+    },
+    "hero:duong-tu": {
+      "cost": "6",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "4",
+        "tri": "83",
+        "thong": "25",
+        "toc": "54",
+        "chinh": "79",
+        "mi": "43"
+      },
+      "growth": {
+        "luc": 1.17,
+        "tri": 0.97,
+        "thong": 1.13,
+        "toc": 0.85,
+        "chinh": 0.8,
+        "mi": 1.91
+      },
+      "selfTacticId": "tactic:xuat-khau-thanh-chuong",
+      "inheritTacticId": "tactic:xuat-khau-thanh-chuong"
+    },
+    "hero:gia-cat-canh": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "34",
+        "tri": "81",
+        "thong": "75",
+        "toc": "66",
+        "chinh": "89",
+        "mi": "90"
+      },
+      "growth": {
+        "luc": 1.34,
+        "tri": 1.19,
+        "thong": 1.5,
+        "toc": 0.88,
+        "chinh": 1.86,
+        "mi": 0.83
+      },
+      "selfTacticId": "tactic:duong-binh-thien-nhat",
+      "inheritTacticId": "tactic:duong-binh-thien-nhat"
+    },
+    "hero:gian-ung": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "32",
+        "tri": "75",
+        "thong": "20",
+        "toc": "63",
+        "chinh": "71",
+        "mi": "74"
+      },
+      "growth": {
+        "luc": 0.59,
+        "tri": 1.03,
+        "thong": 1.2,
+        "toc": 0.7,
+        "chinh": 1.85,
+        "mi": 0.79
+      },
+      "selfTacticId": "tactic:dieu-thu-minh-thach",
+      "inheritTacticId": "tactic:cuong-cong"
+    },
+    "hero:hac-chieu": {
+      "growth": {
+        "luc": 1.85,
+        "tri": 1.87,
+        "thong": 1.95,
+        "toc": 0.61,
+        "chinh": 0.31,
+        "mi": 0.23
+      }
+    },
+    "hero:han-duong": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "85",
+        "tri": "61",
+        "thong": "76",
+        "toc": "50",
+        "chinh": "51",
+        "mi": "68"
+      },
+      "growth": {
+        "luc": 1.81,
+        "tri": 0.85,
+        "thong": 1.52,
+        "toc": 0.97,
+        "chinh": 0.46,
+        "mi": 0.38
+      }
+    },
+    "hero:han-toai": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "75",
+        "tri": "82",
+        "thong": "81",
+        "toc": "46",
+        "chinh": "61",
+        "mi": "80"
+      },
+      "growth": {
+        "luc": 1.58,
+        "tri": 0.73,
+        "thong": 1.6,
+        "toc": 0.9,
+        "chinh": 0.42,
+        "mi": 0.53
+      },
+      "inheritTacticId": "tactic:am-tang-huyen-co"
+    },
+    "hero:ho-xa-nhi": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "S",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "82",
+        "tri": "41",
+        "thong": "70",
+        "toc": "67",
+        "chinh": "2",
+        "mi": "30"
+      },
+      "growth": {
+        "luc": 1.81,
+        "tri": 0.61,
+        "thong": 1.13,
+        "toc": 2.09,
+        "chinh": 0.01,
+        "mi": 0.43
+      }
+    },
+    "hero:hoang-phu-tung": {
+      "inheritTacticId": "tactic:hau-phat-che-nhan"
+    },
+    "hero:hoang-quyen": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "59",
+        "tri": "82",
+        "thong": "75",
+        "toc": "29",
+        "chinh": "79",
+        "mi": "78"
+      },
+      "growth": {
+        "luc": 0.62,
+        "tri": 1.93,
+        "thong": 1.47,
+        "toc": 0.36,
+        "chinh": 1.03,
+        "mi": 1.05
+      }
+    },
+    "hero:hua-du": {
+      "growth": {
+        "luc": 0.12,
+        "tri": 2.01,
+        "thong": 1.94,
+        "toc": 0.92,
+        "chinh": 0.71,
+        "mi": 0.38
+      }
+    },
+    "hero:khong-dung": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "5",
+        "tri": "73",
+        "thong": "30",
+        "toc": "38",
+        "chinh": "75",
+        "mi": "65"
+      },
+      "growth": {
+        "luc": 0.01,
+        "tri": 1.77,
+        "thong": 1.49,
+        "toc": 0.89,
+        "chinh": 1.22,
+        "mi": 0.95
+      },
+      "inheritTacticId": "tactic:khiem-nhuong"
+    },
+    "hero:ky-linh": {
+      "troopApt": {
+        "ky": "S",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "83",
+        "tri": "51",
+        "thong": "78",
+        "toc": "43",
+        "chinh": "48",
+        "mi": "55"
+      },
+      "growth": {
+        "luc": 1.87,
+        "tri": 0.66,
+        "thong": 1.99,
+        "toc": 0.32,
+        "chinh": 0.4,
+        "mi": 0.47
+      }
+    },
+    "hero:lieu-hoa": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "76",
+        "tri": "69",
+        "thong": "73",
+        "toc": "33",
+        "chinh": "49",
+        "mi": "66"
+      },
+      "growth": {
+        "luc": 1.25,
+        "tri": 0.89,
+        "thong": 1.85,
+        "toc": 0.34,
+        "chinh": 0.51,
+        "mi": 0.47
+      }
+    },
+    "hero:lo-thuc": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "63",
+        "tri": "82",
+        "thong": "86",
+        "toc": "64",
+        "chinh": "85",
+        "mi": "81"
+      },
+      "growth": {
+        "luc": 1.11,
+        "tri": 1.17,
+        "thong": 1.19,
+        "toc": 0.73,
+        "chinh": 1.76,
+        "mi": 1.03
+      },
+      "selfTacticId": "tactic:ngu-coc-phong-dang",
+      "inheritTacticId": "tactic:ngu-coc-phong-dang"
+    },
+    "hero:lu-linh-y": {
+      "stats": {
+        "luc": "88",
+        "tri": "37",
+        "thong": "79",
+        "toc": "60",
+        "chinh": "18",
+        "mi": "34"
+      },
+      "growth": {
+        "luc": 2.38,
+        "tri": 0.96,
+        "thong": 1.32,
+        "toc": 1.02,
+        "chinh": 0.18,
+        "mi": 0.59
+      }
+    },
+    "hero:lu-pham": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "63",
+        "tri": "75",
+        "thong": "73",
+        "toc": "66",
+        "chinh": "75",
+        "mi": "69"
+      },
+      "growth": {
+        "luc": 1.31,
+        "tri": 0.89,
+        "thong": 0.96,
+        "toc": 0.79,
+        "chinh": 1.71,
+        "mi": 0.87
+      },
+      "selfTacticId": "tactic:minh-sat-thu-hao",
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong"
+    },
+    "hero:luu-bieu": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "31",
+        "tri": "72",
+        "thong": "48",
+        "toc": "37",
+        "chinh": "81",
+        "mi": "83"
+      },
+      "growth": {
+        "luc": 0.43,
+        "tri": 1.01,
+        "thong": 0.73,
+        "toc": 0.77,
+        "chinh": 0.95,
+        "mi": 1.97
+      },
+      "inheritTacticId": "tactic:yen-ky-tuc-co",
+      "selfTacticId": "tactic:tranh-phan-doat-mieu"
+    },
+    "hero:luu-diep": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "S"
+      },
+      "growth": {
+        "luc": 0.34,
+        "tri": 2.31,
+        "thong": 1.47,
+        "toc": 0.54,
+        "chinh": 0.55,
+        "mi": 0.44
+      }
+    },
+    "hero:luu-phong": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "79",
+        "tri": "44",
+        "thong": "75",
+        "toc": "74",
+        "chinh": "50",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 1.67,
+        "tri": 0.89,
+        "thong": 1.01,
+        "toc": 1.28,
+        "chinh": 0.42,
+        "mi": 0.4
+      }
+    },
+    "hero:ly-dien": {
+      "cost": "3",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "S"
+      },
+      "stats": {
+        "luc": "77",
+        "tri": "79",
+        "thong": "78",
+        "toc": "52",
+        "chinh": "74",
+        "mi": "65"
+      },
+      "growth": {
+        "luc": 1.36,
+        "tri": 1.44,
+        "thong": 0.78,
+        "toc": 0.78,
+        "chinh": 0.51,
+        "mi": 0.46
+      }
+    },
+    "hero:ly-nghiem": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "84",
+        "tri": "76",
+        "thong": "83",
+        "toc": "60",
+        "chinh": "74",
+        "mi": "52"
+      },
+      "growth": {
+        "luc": 1.19,
+        "tri": 1.3,
+        "thong": 0.89,
+        "toc": 0.76,
+        "chinh": 1.76,
+        "mi": 0.66
+      },
+      "inheritTacticId": "tactic:tinh-hoa",
+      "selfTacticId": "tactic:chi-diep-phu-to"
+    },
+    "hero:ly-quyet": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "72",
+        "tri": "24",
+        "thong": "69",
+        "toc": "44",
+        "chinh": "1",
+        "mi": "17"
+      },
+      "growth": {
+        "luc": 1.71,
+        "tri": 0.7,
+        "thong": 1.09,
+        "toc": 1.07,
+        "chinh": 0.0,
+        "mi": 0.13
+      },
+      "inheritTacticId": "tactic:tung-binh-kiep-luoc"
+    },
+    "hero:ma-luong": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "A",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "23",
+        "tri": "88",
+        "thong": "53",
+        "toc": "54",
+        "chinh": "90",
+        "mi": "86"
+      },
+      "growth": {
+        "luc": 0.45,
+        "tri": 1.94,
+        "thong": 1.09,
+        "toc": 0.54,
+        "chinh": 1.44,
+        "mi": 1.09
+      },
+      "selfTacticId": "tactic:bach-my",
+      "inheritTacticId": "tactic:bach-my"
+    },
+    "hero:ma-quan": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "C",
+        "khiGioi": "S"
+      },
+      "stats": {
+        "luc": "17",
+        "tri": "71",
+        "thong": "22",
+        "toc": "35",
+        "chinh": "60",
+        "mi": "80"
+      },
+      "growth": {
+        "luc": 0.32,
+        "tri": 1.73,
+        "thong": 1.01,
+        "toc": 0.99,
+        "chinh": 1.34,
+        "mi": 2.11
+      },
+      "selfTacticId": "tactic:thien-ha-danh-xao",
+      "inheritTacticId": "tactic:biet-cu-tuong-tam"
+    },
+    "hero:ma-tac": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "67",
+        "tri": "87",
+        "thong": "61",
+        "toc": "68",
+        "chinh": "68",
+        "mi": "67"
+      },
+      "growth": {
+        "luc": 0.79,
+        "tri": 1.74,
+        "thong": 1.62,
+        "toc": 1.21,
+        "chinh": 0.7,
+        "mi": 0.33
+      },
+      "selfTacticId": "tactic:tai-khi-qua-nhan",
+      "inheritTacticId": "tactic:tai-khi-qua-nhan"
+    },
+    "hero:ma-thiet": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "62",
+        "tri": "58",
+        "thong": "70",
+        "toc": "60",
+        "chinh": "52",
+        "mi": "62"
+      },
+      "growth": {
+        "luc": 0.7,
+        "tri": 1.4,
+        "thong": 0.97,
+        "toc": 0.71,
+        "chinh": 0.96,
+        "mi": 1.93
+      },
+      "inheritTacticId": "tactic:khu-tan",
+      "selfTacticId": "tactic:an-do-tac-ky"
+    },
+    "hero:ma-van-loc": {
+      "stats": {
+        "luc": "77",
+        "tri": "55",
+        "thong": "85",
+        "toc": "53",
+        "chinh": "46",
+        "mi": "47"
+      },
+      "growth": {
+        "luc": 2.09,
+        "tri": 1.01,
+        "thong": 1.43,
+        "toc": 0.79,
+        "chinh": 0.32,
+        "mi": 0.26
+      }
+    },
+    "hero:my-truc": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "29",
+        "tri": "78",
+        "thong": "33",
+        "toc": "32",
+        "chinh": "83",
+        "mi": "85"
+      },
+      "growth": {
+        "luc": 0.28,
+        "tri": 1.17,
+        "thong": 0.73,
+        "toc": 0.8,
+        "chinh": 2.25,
+        "mi": 1.47
+      },
+      "selfTacticId": "tactic:kien-co-hanh-su",
+      "inheritTacticId": "tactic:kien-co-hanh-su"
+    },
+    "hero:nhac-tien": {
+      "stats": {
+        "luc": "85",
+        "tri": "56",
+        "thong": "80",
+        "toc": "68",
+        "chinh": "51",
+        "mi": "65"
+      }
+    },
+    "hero:phan-chuong": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "80",
+        "tri": "74",
+        "thong": "76",
+        "toc": "74",
+        "chinh": "28",
+        "mi": "12"
+      },
+      "growth": {
+        "luc": 1.77,
+        "tri": 1.05,
+        "thong": 1.03,
+        "toc": 1.19,
+        "chinh": 0.46,
+        "mi": 0.38
+      }
+    },
+    "hero:phi-y": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "30",
+        "tri": "83",
+        "thong": "77",
+        "toc": "58",
+        "chinh": "92",
+        "mi": "83"
+      },
+      "growth": {
+        "luc": 1.11,
+        "tri": 1.11,
+        "thong": 1.11,
+        "toc": 0.85,
+        "chinh": 1.76,
+        "mi": 0.72
+      },
+      "selfTacticId": "tactic:cao-chiem-vien-chuc",
+      "inheritTacticId": "tactic:yen-ky-tuc-co"
+    },
+    "hero:phung-ky": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "S",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "21",
+        "tri": "84",
+        "thong": "43",
+        "toc": "34",
+        "chinh": "70",
+        "mi": "39"
+      },
+      "growth": {
+        "luc": 0.36,
+        "tri": 2.06,
+        "thong": 1.16,
+        "toc": 0.61,
+        "chinh": 1.05,
+        "mi": 0.48
+      }
+    },
+    "hero:quach-do": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "50",
+        "tri": "82",
+        "thong": "52",
+        "toc": "59",
+        "chinh": "68",
+        "mi": "37"
+      },
+      "growth": {
+        "luc": 0.57,
+        "tri": 1.61,
+        "thong": 1.53,
+        "toc": 0.82,
+        "chinh": 1.03,
+        "mi": 0.42
+      },
+      "inheritTacticId": "tactic:tien-ngon"
+    },
+    "hero:quach-hoai": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "S",
+        "cung": "B",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "78",
+        "tri": "81",
+        "thong": "87",
+        "toc": "37",
+        "chinh": "75",
+        "mi": "77"
+      },
+      "growth": {
+        "luc": 0.93,
+        "tri": 1.27,
+        "thong": 1.53,
+        "toc": 0.41,
+        "chinh": 0.51,
+        "mi": 0.46
+      },
+      "selfTacticId": "tactic:ngu-dich-binh-chuong",
+      "inheritTacticId": "tactic:ngu-dich-binh-chuong"
+    },
+    "hero:quach-ty": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "76",
+        "tri": "13",
+        "thong": "64",
+        "toc": "42",
+        "chinh": "14",
+        "mi": "13"
+      },
+      "growth": {
+        "luc": 1.63,
+        "tri": 0.41,
+        "thong": 0.88,
+        "toc": 1.09,
+        "chinh": 0.03,
+        "mi": 0.03
+      }
+    },
+    "hero:quan-binh": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "82",
+        "tri": "72",
+        "thong": "80",
+        "toc": "57",
+        "chinh": "60",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 1.64,
+        "tri": 0.79,
+        "thong": 1.36,
+        "toc": 0.85,
+        "chinh": 0.44,
+        "mi": 0.48
+      }
+    },
+    "hero:quan-hoi": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "82",
+        "tri": "10",
+        "thong": "70",
+        "toc": "62",
+        "chinh": "5",
+        "mi": "25"
+      },
+      "growth": {
+        "luc": 1.94,
+        "tri": 0.18,
+        "thong": 0.9,
+        "toc": 1.08,
+        "chinh": 0.31,
+        "mi": 0.35
+      }
+    },
+    "hero:quan-ngan-binh": {
+      "stats": {
+        "luc": "78",
+        "tri": "42",
+        "thong": "73",
+        "toc": "65",
+        "chinh": "24",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 2.09,
+        "tri": 0.76,
+        "thong": 1.97,
+        "toc": 1.21,
+        "chinh": 0.31,
+        "mi": 0.47
+      }
+    },
+    "hero:sa-ma-kha": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "84",
+        "tri": "25",
+        "thong": "66",
+        "toc": "71",
+        "chinh": "14",
+        "mi": "44"
+      },
+      "growth": {
+        "luc": 1.66,
+        "tri": 0.81,
+        "thong": 0.83,
+        "toc": 0.97,
+        "chinh": 0.49,
+        "mi": 0.38
+      }
+    },
+    "hero:sp-chu-tuan": {
+      "stats": {
+        "luc": "65",
+        "tri": "70",
+        "thong": "89",
+        "toc": "49",
+        "chinh": "71",
+        "mi": "73"
+      },
+      "growth": {
+        "luc": 1.98,
+        "tri": 1.96,
+        "thong": 2.09,
+        "toc": 1.01,
+        "chinh": 0.43,
+        "mi": 0.44
+      }
+    },
+    "hero:sp-lu-mong": {
+      "growth": {
+        "luc": 1.96,
+        "tri": 1.98,
+        "thong": 2.27,
+        "toc": 0.59,
+        "chinh": 0.98,
+        "mi": 1.12
+      }
+    },
+    "hero:sp-quan-vu": {
+      "growth": {
+        "luc": 2.68,
+        "tri": 1.05,
+        "thong": 2.04,
+        "toc": 1.3,
+        "chinh": 0.5,
+        "mi": 0.3
+      }
+    },
+    "hero:sp-tuan-uc": {
+      "growth": {
+        "luc": 0.34,
+        "tri": 2.63,
+        "thong": 1.84,
+        "toc": 1.02,
+        "chinh": 2.7,
+        "mi": 1.29
+      }
+    },
+    "hero:tang-ba": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "75",
+        "tri": "53",
+        "thong": "78",
+        "toc": "66",
+        "chinh": "56",
+        "mi": "71"
+      },
+      "growth": {
+        "luc": 1.78,
+        "tri": 0.16,
+        "thong": 1.05,
+        "toc": 0.77,
+        "chinh": 0.15,
+        "mi": 0.44
+      }
+    },
+    "hero:tao-chan": {
+      "selfTacticId": "tactic:do-ky-thuong-nhuc",
+      "inheritTacticId": "tactic:do-ky-thuong-nhuc"
+    },
+    "hero:tao-chuong": {
+      "cost": "5",
+      "troopApt": {
+        "ky": "A",
+        "thuan": "S",
+        "cung": "B",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "90",
+        "tri": "40",
+        "thong": "82",
+        "toc": "56",
+        "chinh": "35",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 2.0,
+        "tri": 0.57,
+        "thong": 1.33,
+        "toc": 0.77,
+        "chinh": 0.42,
+        "mi": 0.55
+      }
+    },
+    "hero:tao-hong": {
+      "cost": "5",
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "A",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "81",
+        "tri": "44",
+        "thong": "79",
+        "toc": "48",
+        "chinh": "35",
+        "mi": "54"
+      },
+      "growth": {
+        "luc": 1.5,
+        "tri": 0.75,
+        "thong": 1.6,
+        "toc": 0.88,
+        "chinh": 0.42,
+        "mi": 0.55
+      }
+    },
+    "hero:tao-phi": {
+      "growth": {
+        "luc": 0.92,
+        "tri": 1.85,
+        "thong": 1.34,
+        "toc": 1.04,
+        "chinh": 2.4,
+        "mi": 1.05
+      },
+      "selfTacticId": "tactic:luc-luc-thuong-quoc",
+      "inheritTacticId": "tactic:thinh-khi-linh-dich"
+    },
+    "hero:tao-thuc": {
+      "growth": {
+        "luc": 0.72,
+        "tri": 1.78,
+        "thong": 1.01,
+        "toc": 0.99,
+        "chinh": 1.67,
+        "mi": 2.3
+      },
+      "selfTacticId": "tactic:that-bo-thanh-thi",
+      "inheritTacticId": "tactic:thu-nhi-tat-co"
+    },
+    "hero:thai-ung": {
+      "growth": {
+        "luc": 0.21,
+        "tri": 1.86,
+        "thong": 0.61,
+        "toc": 0.61,
+        "chinh": 2.59,
+        "mi": 1.24
+      },
+      "inheritTacticId": "tactic:kinh-thuat-chinh-yeu",
+      "selfTacticId": "tactic:hieu-tri-luong-moc"
+    },
+    "hero:tham-phoi": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "60",
+        "tri": "83",
+        "thong": "80",
+        "toc": "31",
+        "chinh": "73",
+        "mi": "70"
+      },
+      "growth": {
+        "luc": 0.14,
+        "tri": 1.92,
+        "thong": 1.27,
+        "toc": 0.48,
+        "chinh": 1.0,
+        "mi": 0.94
+      }
+    },
+    "hero:tieu-kieu": {
+      "growth": {
+        "luc": 0.35,
+        "tri": 0.95,
+        "thong": 0.7,
+        "toc": 0.9,
+        "chinh": 1.05,
+        "mi": 2.35
+      },
+      "selfTacticId": "tactic:thien-huong",
+      "inheritTacticId": "tactic:doat-hon-hiep-phach"
+    },
+    "hero:ton-kien": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "S",
+        "cung": "S",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "growth": {
+        "luc": 2.0,
+        "tri": 0.83,
+        "thong": 2.05,
+        "toc": 0.45,
+        "chinh": 0.45,
+        "mi": 0.33
+      }
+    },
+    "hero:ton-sach": {
+      "growth": {
+        "luc": 2.2,
+        "tri": 1.06,
+        "thong": 1.37,
+        "toc": 0.76,
+        "chinh": 0.34,
+        "mi": 0.27
+      }
+    },
+    "hero:ton-thuong-huong": {
+      "growth": {
+        "luc": 2.39,
+        "tri": 1.18,
+        "thong": 1.36,
+        "toc": 1.31,
+        "chinh": 0.75,
+        "mi": 1.35
+      }
+    },
+    "hero:tran-lam": {
+      "cost": "5",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "9",
+        "tri": "75",
+        "thong": "25",
+        "toc": "66",
+        "chinh": "78",
+        "mi": "72"
+      },
+      "growth": {
+        "luc": 1.23,
+        "tri": 1.03,
+        "thong": 1.16,
+        "toc": 0.82,
+        "chinh": 1.88,
+        "mi": 0.87
+      },
+      "inheritTacticId": "tactic:lac-loi",
+      "selfTacticId": "tactic:thac-qua-luy-luy"
+    },
+    "hero:tran-quan": {
+      "growth": {
+        "luc": 0.87,
+        "tri": 1.36,
+        "thong": 0.94,
+        "toc": 0.75,
+        "chinh": 2.62,
+        "mi": 0.99
+      },
+      "selfTacticId": "tactic:thanh-luu-nha-vong",
+      "inheritTacticId": "tactic:toa-nhue"
+    },
+    "hero:tran-vo": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "87",
+        "tri": "43",
+        "thong": "76",
+        "toc": "51",
+        "chinh": "40",
+        "mi": "62"
+      },
+      "growth": {
+        "luc": 1.84,
+        "tri": 1.32,
+        "thong": 1.66,
+        "toc": 0.77,
+        "chinh": 0.39,
+        "mi": 0.53
+      },
+      "inheritTacticId": "tactic:lu-giang-thuong-giap"
+    },
+    "hero:truong-bao-khan-vang": {
+      "inheritTacticId": "tactic:yeu-thuat"
+    },
+    "hero:truong-chieu": {
+      "growth": {
+        "luc": 0.31,
+        "tri": 1.25,
+        "thong": 0.74,
+        "toc": 0.65,
+        "chinh": 2.68,
+        "mi": 0.87
+      },
+      "selfTacticId": "tactic:cong-huan-khac-cu",
+      "inheritTacticId": "tactic:binh-phong"
+    },
+    "hero:truong-hoanh": {
+      "growth": {
+        "luc": 0.32,
+        "tri": 1.33,
+        "thong": 0.61,
+        "toc": 0.61,
+        "chinh": 2.67,
+        "mi": 0.84
+      },
+      "selfTacticId": "tactic:ky-thi-kinh-luoc",
+      "inheritTacticId": "tactic:tri-ke"
+    },
+    "hero:truong-lieu": {
+      "growth": {
+        "luc": 2.43,
+        "tri": 1.29,
+        "thong": 2.01,
+        "toc": 1.99,
+        "chinh": 0.51,
+        "mi": 1.39
+      }
+    },
+    "hero:truong-lo": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "26",
+        "tri": "74",
+        "thong": "51",
+        "toc": "36",
+        "chinh": "78",
+        "mi": "89"
+      },
+      "growth": {
+        "luc": 0.28,
+        "tri": 1.74,
+        "thong": 0.77,
+        "toc": 0.84,
+        "chinh": 0.99,
+        "mi": 1.96
+      },
+      "selfTacticId": "tactic:duong-ma-huu-dao",
+      "inheritTacticId": "tactic:duong-ma-huu-dao"
+    },
+    "hero:truong-luong": {
+      "inheritTacticId": "tactic:nhat-cu-tiem-diet"
+    },
+    "hero:truong-man-thanh": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "81",
+        "tri": "45",
+        "thong": "75",
+        "toc": "50",
+        "chinh": "47",
+        "mi": "53"
+      },
+      "growth": {
+        "luc": 1.63,
+        "tri": 0.41,
+        "thong": 1.11,
+        "toc": 1.52,
+        "chinh": 0.38,
+        "mi": 0.47
+      },
+      "inheritTacticId": "tactic:than-thuong-su"
+    },
+    "hero:truong-nham": {
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "84",
+        "tri": "78",
+        "thong": "84",
+        "toc": "56",
+        "chinh": "59",
+        "mi": "76"
+      },
+      "growth": {
+        "luc": 1.52,
+        "tri": 0.73,
+        "thong": 1.36,
+        "toc": 0.81,
+        "chinh": 0.44,
+        "mi": 0.51
+      },
+      "inheritTacticId": "tactic:lac-phuong"
+    },
+    "hero:truong-tu": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "S",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "73",
+        "tri": "64",
+        "thong": "80",
+        "toc": "74",
+        "chinh": "45",
+        "mi": "59"
+      },
+      "growth": {
+        "luc": 1.76,
+        "tri": 1.11,
+        "thong": 1.03,
+        "toc": 1.24,
+        "chinh": 0.44,
+        "mi": 0.38
+      }
+    },
+    "hero:truong-xuan-hoa": {
+      "stats": {
+        "luc": "49",
+        "tri": "79",
+        "thong": "60",
+        "toc": "48",
+        "chinh": "72",
+        "mi": "68"
+      },
+      "growth": {
+        "luc": 0.4,
+        "tri": 1.98,
+        "thong": 1.34,
+        "toc": 0.63,
+        "chinh": 0.92,
+        "mi": 0.75
+      }
+    },
+    "hero:truong-yen": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "A",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "stats": {
+        "luc": "81",
+        "tri": "57",
+        "thong": "76",
+        "toc": "51",
+        "chinh": "48",
+        "mi": "63"
+      },
+      "growth": {
+        "luc": 1.76,
+        "tri": 0.95,
+        "thong": 1.07,
+        "toc": 1.16,
+        "chinh": 0.43,
+        "mi": 0.56
+      }
+    },
+    "hero:tu-ma-huy": {
+      "growth": {
+        "luc": 0.13,
+        "tri": 2.01,
+        "thong": 0.74,
+        "toc": 0.37,
+        "chinh": 1.84,
+        "mi": 2.3
+      },
+      "selfTacticId": "tactic:thuy-kinh-tien-sinh",
+      "inheritTacticId": "tactic:du-dich-tham-nhap"
+    },
+    "hero:tu-thinh": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "81",
+        "tri": "78",
+        "thong": "86",
+        "toc": "34",
+        "chinh": "65",
+        "mi": "73"
+      },
+      "growth": {
+        "luc": 1.88,
+        "tri": 0.87,
+        "thong": 0.85,
+        "toc": 0.52,
+        "chinh": 0.39,
+        "mi": 0.48
+      },
+      "inheritTacticId": "tactic:bach-luyen-thanh-cuong",
+      "selfTacticId": "tactic:nghi-thanh-chi-chi"
+    },
+    "hero:tuan-uc": {
+      "stats": {
+        "luc": "14",
+        "tri": "95",
+        "thong": "62",
+        "toc": "61",
+        "chinh": "98",
+        "mi": "93"
+      },
+      "growth": {
+        "luc": 0.54,
+        "tri": 2.38,
+        "thong": 0.74,
+        "toc": 0.41,
+        "chinh": 2.7,
+        "mi": 1.29
+      },
+      "selfTacticId": "tactic:vuong-ta-chi-tai",
+      "inheritTacticId": "tactic:tu-dien-so-ca"
+    },
+    "hero:tuong-kham": {
+      "troopApt": {
+        "ky": "B",
+        "thuan": "A",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "84",
+        "tri": "54",
+        "thong": "78",
+        "toc": "39",
+        "chinh": "42",
+        "mi": "74"
+      },
+      "growth": {
+        "luc": 1.83,
+        "tri": 1.04,
+        "thong": 1.43,
+        "toc": 0.79,
+        "chinh": 0.85,
+        "mi": 1.33
+      }
+    },
+    "hero:tuong-uyen": {
+      "growth": {
+        "luc": 0.72,
+        "tri": 1.46,
+        "thong": 0.73,
+        "toc": 0.62,
+        "chinh": 2.39,
+        "mi": 1.19
+      },
+      "selfTacticId": "tactic:khac-tuan-hoach-nhat",
+      "inheritTacticId": "tactic:ke-hay-muu-gioi"
+    },
+    "hero:van-sinh": {
+      "cost": "5",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "S",
+        "cung": "B",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "stats": {
+        "luc": "82",
+        "tri": "69",
+        "thong": "80",
+        "toc": "20",
+        "chinh": "69",
+        "mi": "72"
+      },
+      "growth": {
+        "luc": 1.81,
+        "tri": 0.65,
+        "thong": 1.05,
+        "toc": 0.83,
+        "chinh": 0.9,
+        "mi": 0.53
+      }
+    },
+    "hero:vuong-lang": {
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "stats": {
+        "luc": "35",
+        "tri": "79",
+        "thong": "47",
+        "toc": "71",
+        "chinh": "81",
+        "mi": "51"
+      },
+      "growth": {
+        "luc": 0.38,
+        "tri": 1.99,
+        "thong": 0.5,
+        "toc": 0.77,
+        "chinh": 1.26,
+        "mi": 0.7
+      }
+    },
+    "hero:vuong-nguyen-co": {
+      "stats": {
+        "luc": "37",
+        "tri": "73",
+        "thong": "53",
+        "toc": "57",
+        "chinh": "75",
+        "mi": "50"
+      },
+      "growth": {
+        "luc": 0.37,
+        "tri": 2.01,
+        "thong": 1.93,
+        "toc": 1.0,
+        "chinh": 0.97,
+        "mi": 0.74
+      }
+    }
+  },
+  "roleTags": {
+    "hero:chu-hang": {
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ"
+    },
+    "hero:chu-thuong": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:chu-tuan": {
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược"
+    },
+    "hero:chung-do": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:co-chan-co": {
+      "roleTag": "謀 / 聯",
+      "roleTagViet": "Mưu lược / Liên"
+    },
+    "hero:co-quan-binh": {
+      "roleTag": "控 / 輔 / 聯",
+      "roleTagViet": "Khống chế / Phụ trợ / Liên"
+    },
+    "hero:co-tieu-kieu": {
+      "roleTag": "輔 / 武 / 聯",
+      "roleTagViet": "Phụ trợ / Vũ lực / Liên"
+    },
+    "hero:co-tinh-thai": {
+      "roleTag": "盾 / 戰 / 聯",
+      "roleTagViet": "Phòng thủ / Chiến / Liên"
+    },
+    "hero:co-ung": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:dinh-phung": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:dong-duan": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:dong-tap": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:duong-tu": {
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực"
+    },
+    "hero:gia-cat-canh": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:gian-ung": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:han-duong": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:han-toai": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:ho-xa-nhi": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:hoang-quyen": {
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược"
+    },
+    "hero:khong-dung": {
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ"
+    },
+    "hero:ky-linh": {
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ"
+    },
+    "hero:lieu-hoa": {
+      "roleTag": "盾",
+      "roleTagViet": "Phòng thủ"
+    },
+    "hero:lo-thuc": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:lu-pham": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:luu-bieu": {
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực"
+    },
+    "hero:luu-diep": {
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược"
+    },
+    "hero:luu-phong": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:ly-dien": {
+      "roleTag": "戰 / 輔",
+      "roleTagViet": "Chiến / Phụ trợ"
+    },
+    "hero:ly-nghiem": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:ly-quyet": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:ma-luong": {
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược"
+    },
+    "hero:ma-quan": {
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực"
+    },
+    "hero:ma-tac": {
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ"
+    },
+    "hero:ma-thiet": {
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực"
+    },
+    "hero:my-truc": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:phan-chuong": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:phi-y": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:phung-ky": {
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược"
+    },
+    "hero:quach-do": {
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ"
+    },
+    "hero:quach-hoai": {
+      "roleTag": "盾 / 輔",
+      "roleTagViet": "Phòng thủ / Phụ trợ"
+    },
+    "hero:quach-ty": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:quan-binh": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:quan-hoi": {
+      "roleTag": "黃 / 武",
+      "roleTagViet": "Khăn Vàng / Vũ lực"
+    },
+    "hero:sa-ma-kha": {
+      "roleTag": "蠻 / 武",
+      "roleTagViet": "Man tộc / Vũ lực"
+    },
+    "hero:tang-ba": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:tao-chuong": {
+      "roleTag": "戰 / 控",
+      "roleTagViet": "Chiến / Khống chế"
+    },
+    "hero:tao-hong": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:tham-phoi": {
+      "roleTag": "醫",
+      "roleTagViet": "Y thuật"
+    },
+    "hero:tran-lam": {
+      "roleTag": "政",
+      "roleTagViet": "Nội chính"
+    },
+    "hero:tran-vo": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:truong-lo": {
+      "roleTag": "魅",
+      "roleTagViet": "Mị lực"
+    },
+    "hero:truong-man-thanh": {
+      "roleTag": "黃 / 武",
+      "roleTagViet": "Khăn Vàng / Vũ lực"
+    },
+    "hero:truong-nham": {
+      "roleTag": "戰",
+      "roleTagViet": "Chiến"
+    },
+    "hero:truong-tu": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:truong-yen": {
+      "roleTag": "黃 / 武",
+      "roleTagViet": "Khăn Vàng / Vũ lực"
+    },
+    "hero:tu-thinh": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:tuong-kham": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:van-sinh": {
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực"
+    },
+    "hero:vuong-lang": {
+      "roleTag": "謀 / 控",
+      "roleTagViet": "Mưu lược / Khống chế"
+    }
+  },
+  "aliases": {
+    "hero:chu-hang": [
+      "Chu Hoàn"
+    ],
+    "hero:chuc-dung-phu-nhan": [
+      "Chúc Dung"
+    ],
+    "hero:dong-duan": [
+      "Đổng Doãn"
+    ],
+    "hero:gia-cat-canh": [
+      "Gia Cát Cẩn"
+    ],
+    "hero:lieu-hoa": [
+      "Liêu Hóa"
+    ],
+    "hero:lo-thuc": [
+      "Lô Trực"
+    ],
+    "hero:ly-quyet": [
+      "Lý Thôi"
+    ],
+    "hero:quach-ty": [
+      "Quách Dĩ"
+    ],
+    "hero:sp-hoang-phu-tung": [
+      "SP Hoàng Phổ Tung"
+    ],
+    "hero:sp-lo-thuc": [
+      "SP Lô Trực"
+    ],
+    "hero:tran-vo": [
+      "Trần Vũ"
+    ],
+    "hero:truong-nham": [
+      "Trương Nhiệm"
+    ],
+    "hero:van-suu": [
+      "Văn Xú"
+    ],
+    "hero:vu-cat": [
+      "Vu Cát"
+    ]
+  },
+  "retired": [
+    "hero:ha-thi"
+  ]
+}
