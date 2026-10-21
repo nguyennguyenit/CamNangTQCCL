@@ -49,8 +49,8 @@ Kết luận đã chốt (không còn câu hỏi mở):
    ```bash
    python3 -m pipeline.lookup_route_handles --write
    python3 -m pipeline.lookup_route_handles --check
-   node scripts/report-zh-gaps.mjs && node scripts/report-zh-gaps.mjs --check
    ```
+   <!-- Updated: Cook 2026-10-21 - zh-gaps chuyển sau publish: report-zh-gaps đọc pin `data/website-display.json`, chạy trước publish thì lỗi "Website display source hash mismatch: data/lookup-manifest.json" (thấy ở lần chạy thử) -->
 5. **Repin `policy.sourceFiles`** (sau lần sửa cuối của mọi file bị ghim): `sha256sum js/lookup-data.js js/lookup-detail.js js/lookup-profile.js js/lookup-tactic-profile.js js/unified-lookup.js src/lib/lookup-item-pages.ts` (cộng file khác đã sửa nếu có trong `:761-833`, ví dụ `js/lookup-tactic-view.js`) → cập nhật giá trị tương ứng.
 6. **Localization candidate + publish**:
    ```bash
@@ -58,8 +58,10 @@ Kết luận đã chốt (không còn câu hỏi mở):
    python3 -m pipeline.site_localization check --root . --stage all --candidate .cache/site-localization-candidate
    python3 -m pipeline.site_localization publish --root . --candidate .cache/site-localization-candidate
    python3 -m pipeline.site_localization check --root . --stage public
+   python3 -m pipeline.site_localization prune --root .
+   node scripts/report-zh-gaps.mjs && node scripts/report-zh-gaps.mjs --check
    ```
-   `prune` chỉ khi quy ước repo yêu cầu (`docs/deployment-guide.md:266`).
+   `prune` theo quy ước repo: chỉ giữ một generation Recommended (commit `22e3ffd` đổi tên trọn thư mục generation cũ).
 7. **Team route pin**: `pipeline/team-route-handles.json` `generationId` = `generationId` của `src/data/recommended-reference/current.json`; `python3 -m pipeline.team_route_handles --check`.
 8. **MCP workflow build (cuối cùng)**: `npm --prefix mcp-worker run generate:workflow-build && npm --prefix mcp-worker run check:workflow-build`.
 9. **Gate đầy đủ**:
