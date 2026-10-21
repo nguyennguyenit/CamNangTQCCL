@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-10-22 (Follow-up chữ Hán có nguồn)
+
+### Fixed
+- `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`): chữ Hán thêm dải tỉ lệ phát động theo cấp (23%→45%, 30%→45%, 25%→40%) từ cột tỉ lệ của cùng dòng trong bài Bahamut; trước đó bản zh chỉ hiện mức tối đa. Test dữ liệu mới: mọi dải `x→y` của `effectVi` phải có trong chữ Hán của mục `zhEffects`.
+- E2E: đổi phiên bản hiệu ứng ở hộp thoại và trang riêng vẫn giữ đúng một cờ chữ Hán dịch (bấm nút thật trên bản ghi `translation` hai phiên bản).
+
 ## 2026-10-21 (Đội cộng đồng)
 
 ### Added

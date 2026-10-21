@@ -150,7 +150,7 @@ Token Cloudflare/preflight lỗi; release, promote hoặc deploy lỗi không gi
 
 Kết quả: PR #19 (`6b17d23`) và PR #22 (`1fa81ab`) đã merge; Pages `cb91471a` và Research MCP `62cba122…` cùng SHA `1fa81ab`; ghi ở `docs/deployment.md`.
 
-Follow-up chưa làm (theo quyết định #5):
-- `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`): chữ Hán thiếu dải tỉ lệ phát động theo cấp (23%→45%, 30%→45%, 25%→40%) nằm ở cột riêng của bài Bahamut; bản zh chỉ hiện mức tối đa.
-- Test đổi phiên bản hiệu ứng chỉ kiểm cấu trúc (cờ ngoài panel), chưa bấm nút phiên bản trên record `translation` nhiều phiên bản.
+Follow-up (theo quyết định #5):
+- Đã sửa 2026-10-22: `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`) thêm dải tỉ lệ phát động theo cấp từ cột tỉ lệ của cùng dòng Bahamut; test dữ liệu `ZhEffectsDataTest`.
+- Đã sửa 2026-10-22: e2e bấm nút phiên bản thật ở hộp thoại và trang riêng trên bản ghi `translation` hai phiên bản.
 - Không gọi được `tqccl_get_entity` production có xác thực từ máy này (không có bearer); bằng chứng là verifier của workflow + release ID trùng với CLI cục bộ.

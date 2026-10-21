@@ -1,4 +1,5 @@
 import json
+import re
 import copy
 import hashlib
 import tempfile
@@ -947,6 +948,17 @@ class ClientTacticCaptureTest(unittest.TestCase):
             with self.subTest(error=error, tactics=tactics), self.assertRaisesRegex(ValueError, error):
                 self._build(tactics)
 
+
+class ZhEffectsDataTest(unittest.TestCase):
+    def test_every_level_range_of_the_vietnamese_effect_is_in_the_chinese_text(self):
+        # Kể cả "Xác suất phát động a%→b%": bản zh chỉ hiện mức tối đa ở ô tỉ lệ, nên dải cấp phải nằm trong chữ Hán.
+        document = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+        level_range = re.compile(r"\d+(?:\.\d+)?%?\s*→\s*\d+(?:\.\d+)?%?")
+        compact = lambda text: re.sub(r"\s+", "", text)
+        for owner, entry in document["zhEffects"].items():
+            text = compact(entry["text"])
+            missing = [compact(found) for found in level_range.findall(document["tactics"][owner]["effectVi"]) if compact(found) not in text]
+            self.assertEqual(missing, [], owner)
 
 
 if __name__ == "__main__":

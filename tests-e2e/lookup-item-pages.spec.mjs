@@ -134,6 +134,55 @@ test("trang riêng chiến pháp: nút chọn phiên bản đổi đoạn hiệu
   await expect(buttons.nth(1)).toHaveAttribute("aria-pressed", "true");
 });
 
+// Không chiến pháp thật nào vừa nhiều phiên bản vừa có chữ Hán dịch: dựng một bản ghi như vậy bằng chính module của trang
+// (hộp thoại: `bindTacticEffectVersions` dựng lại thân; trang riêng: `bindEffectVersionPanels` ẩn/hiện panel) rồi bấm nút thật.
+test("đổi phiên bản hiệu ứng giữ cờ chữ Hán dịch ở hộp thoại và trang riêng (có JavaScript)", async ({ page }) => {
+  await page.goto("/tra-cuu/chien-phap/bach-ke-da-muu/");
+  await expect(page.locator("body[data-boot=ready]")).toBeAttached();
+  await page.evaluate(async () => {
+    const [{ buildLookupCorpus }, { lookupProfile }, profileModule, { treeToDom }, { bindEffectVersionPanels }] = await Promise.all([
+      import("/js/unified-lookup.js"), import("/js/lookup-detail.js"), import("/js/lookup-tactic-profile.js"),
+      import("/js/view-tree.js"), import("/js/lookup-effect-panels.js"),
+    ]);
+    const record = {
+      id: "tactic:thu-hai-ban", chinese: "試兩版", hanViet: "Thử Hai Bản", viet: "Thử Hai Bản", aliases: [], type: "ACTIVE", quality: "S",
+      effect: "使敵軍單體受到傷害（傷害率100%→200%）", effectViet: "Bản mới: sát thương 100%→200%", target: null, targetViet: null,
+      troopFit: [], source: null, sourceHeroCn: null, iconUrl: null, linkScore: null, pending: false,
+      lookup: {
+        conditions: [], missingFields: [], activationRate: 0.35, cooldown: null, maxUsers: null, pointCost: null,
+        effectTypeVi: null, exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], conflictsVi: null, formerIds: [],
+        effectZhSource: { kind: "translation" },
+        revisions: [
+          { labelVi: "Bản hiện hành", effectiveDate: null, textVi: "Bản mới: sát thương 100%→200%", isCurrent: true },
+          { labelVi: "Bản 2021-06-09", effectiveDate: "2021-06-09", textVi: "Bản cũ: sát thương 80%→160%", isCurrent: false },
+        ],
+      },
+    };
+    const corpus = buildLookupCorpus({ tactics: [record] });
+    const entry = corpus.byId.get(record.id);
+    const profile = lookupProfile(corpus, record.id);
+    const mount = (id, options) => {
+      const host = document.createElement("div");
+      host.id = id;
+      host.append(treeToDom(profileModule.tacticProfileBody(corpus, entry, profile, [], options)));
+      document.body.append(host);
+      return host;
+    };
+    profileModule.bindTacticEffectVersions(mount("fixture-modal", {}), record);
+    bindEffectVersionPanels(mount("fixture-page", { panels: true }));
+  });
+  const modal = page.locator("#fixture-modal");
+  await modal.locator(".lookup-version-button").nth(1).click();
+  await expect(modal.locator(".lookup-tactic-effect-body")).toContainText("Bản cũ: sát thương 80%→160%");
+  await expect(modal.locator('[data-zh-source="translation"]')).toHaveCount(1);
+  const staticPage = page.locator("#fixture-page");
+  await staticPage.locator(".lookup-version-button").nth(1).click();
+  await expect(staticPage.locator('[data-effect-panel="1"]')).toBeVisible();
+  await expect(staticPage.locator('[data-effect-panel="0"]')).toBeHidden();
+  await expect(staticPage.locator('[data-zh-source="translation"]')).toHaveCount(1);
+  await expect(staticPage.locator('[data-zh-source="translation"]')).toBeVisible();
+});
+
 test("trang riêng cải tạo binh chủng: chỉ một bản client, hướng dẫn mùa hiện ngay, không có nút phiên bản", async ({ page }) => {
   await page.goto("/tra-cuu/cai-tao-binh-chung/ho-bao-ky/");
   await expect(page.locator("body[data-boot=ready]")).toBeAttached();
