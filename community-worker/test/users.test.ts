@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { encodeCursor } from "../src/http";
-import { createHarness, PNG_BYTES, type Harness } from "./fakes";
+import { createHarness, PNG_BYTES, seedSeason, seedTeam, type Harness } from "./fakes";
 
 const DAY = 86_400_000;
 
@@ -860,5 +860,114 @@ describe("nhật ký: bộ lọc action cho thao tác người dùng", () => {
       expect(body.items).toHaveLength(n);
       expect(body.items[0].action).toBe(action);
     }
+  });
+});
+
+describe("Đội cộng đồng: xoá tài khoản và khoá", () => {
+  const ALICE = "u-alice";
+  const TEAM = "/doi-cong-dong/t1/";
+  const vote = (h: Harness, team: string, user: string, value = 1) =>
+    h.sqlite.prepare("insert into community_team_votes (team_id, user_id, value, created_at) values (?, ?, ?, 1)").run(team, user, value);
+  const ups = (h: Harness, team: string) => (h.sqlite.prepare("select up_votes as n from community_teams where id = ?").get(team) as { n: number }).n;
+
+  async function seedAlice(h: Harness) {
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1", images: 2 }); // của alice
+    await seedTeam(h, { id: "t2", author: "u-bob" });
+    vote(h, "t2", ALICE);
+    vote(h, "t1", "u-bob");
+    h.sqlite.prepare("update community_teams set reviewed_by = ? where id = 't2'").run(ALICE);
+    await h.env.MEDIA.put("reports/b1.png", PNG_BYTES, { httpMetadata: { contentType: "image/png" } });
+    await h.env.MEDIA.put("reports/b2.png", PNG_BYTES, { httpMetadata: { contentType: "image/png" } });
+    const rep = h.sqlite.prepare(
+      "insert into battle_reports (id, page_key, lang, user_id, image_key, result, ally_heroes, enemy_heroes, status, created_at) values (?, ?, 'zh', 'u-bob', ?, 'win', '[]', '[]', 'approved', 1)",
+    );
+    rep.run("rb1", TEAM, "reports/b1.png");
+    rep.run("rb2", "/doi-cong-dong/t2/", "reports/b2.png"); // trang đội của bob: phải còn
+    const up = h.sqlite.prepare("insert into uploads (id, user_id, kind, object_key, content_type, size, status, created_at) values (?, 'u-bob', 'report', ?, 'image/png', 1, 'attached', 1)");
+    up.run("ub1", "reports/b1.png");
+    up.run("ub2", "reports/b2.png");
+    h.sqlite.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values ('cb1', ?, 'vi', 'u-bob', 'x', 1)").run(TEAM);
+    h.sqlite.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values ('cb2', '/doi-cong-dong/t2/', 'vi', 'u-bob', 'y', 1)").run();
+  }
+
+  it("xoá alice: R2 đúng tập khoá, đội/ảnh/vote/chiến báo/bình luận trên trang biến mất, vote của alice trên đội bob bị đếm lại", async () => {
+    const h = createHarness();
+    await seedAlice(h);
+    expect(ups(h, "t2")).toBe(1);
+    const calls: string[][] = [];
+    const real = h.env.MEDIA;
+    h.env.MEDIA = new Proxy(real, {
+      get(target, prop) {
+        if (prop !== "delete") return Reflect.get(target, prop) as unknown;
+        return async (keys: string | string[]) => {
+          const list = Array.isArray(keys) ? keys : [keys];
+          calls.push(list);
+          return target.delete(list);
+        };
+      },
+    });
+    const res = await del(h, "admin", ALICE, "alice@example.com");
+    expect(res.status).toBe(200);
+    expect(calls.flat().sort()).toEqual(["community-teams/t1/0.png", "community-teams/t1/1.png", "reports/b1.png"]);
+    expect(count(h, "community_teams where id = 't1'")).toBe(0);
+    expect(count(h, "community_team_images where team_id = 't1'")).toBe(0);
+    expect(count(h, "community_team_votes where team_id = 't1'")).toBe(0);
+    expect(count(h, "battle_reports where page_key = ?", TEAM)).toBe(0);
+    expect(count(h, "comments where page_key = ?", TEAM)).toBe(0);
+    expect(count(h, "uploads where id = 'ub1'")).toBe(0);
+    // Trang đội của người khác không bị đụng.
+    expect(count(h, "battle_reports where id = 'rb2'")).toBe(1);
+    expect(count(h, "comments where id = 'cb2'")).toBe(1);
+    expect(count(h, "uploads where id = 'ub2'")).toBe(1);
+    expect(h.objects.has("reports/b2.png")).toBe(true);
+    expect(count(h, "community_team_votes where user_id = ?", ALICE)).toBe(0);
+    expect(ups(h, "t2")).toBe(0);
+    expect(h.sqlite.prepare("select reviewed_by from community_teams where id = 't2'").get()).toMatchObject({ reviewed_by: null });
+    expect(JSON.parse(audits(h, "user.delete")[0].meta as string)).toMatchObject({ teams: 1 });
+  });
+
+  it("lỗi R2 rồi gọi lại vẫn hoàn tất; trong lúc chờ không ai gửi được chiến báo/bình luận vào đội", async () => {
+    const h = createHarness();
+    await seedAlice(h);
+    h.r2Error = new Error("r2 down");
+    expect((await del(h, "admin", ALICE, "alice@example.com")).status).toBe(502);
+    expect(count(h, "community_teams where id = 't1'")).toBe(1);
+    expect((await h.request("/api/comments", { as: "bob", json: { page: TEAM, lang: "vi", body: "muộn" } })).status).toBe(404);
+    h.r2Error = null;
+    expect((await del(h, "admin", ALICE, "alice@example.com")).status).toBe(200);
+    expect(count(h, "community_teams where author_id = ?", ALICE)).toBe(0);
+    expect(h.objects.has("community-teams/t1/0.png")).toBe(false);
+    expect(h.objects.has("reports/b1.png")).toBe(false);
+  });
+
+  async function seedVotes(h: Harness) {
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    await seedTeam(h, { id: "t3" });
+    vote(h, "t1", "u-bob");
+    vote(h, "t3", "u-bob");
+    vote(h, "t1", "u-admin");
+  }
+
+  it("khoá bob (đã vote 2 đội): vote biến mất, up_votes giảm, audit votesRemoved 2; mở khoá không khôi phục", async () => {
+    const h = createHarness();
+    await seedVotes(h);
+    expect(ups(h, "t1")).toBe(2);
+    expect((await ban(h, "admin", "u-bob")).status).toBe(200);
+    expect(count(h, "community_team_votes where user_id = 'u-bob'")).toBe(0);
+    expect(ups(h, "t1")).toBe(1);
+    expect(ups(h, "t3")).toBe(0);
+    expect(JSON.parse(audits(h, "user.ban")[0].meta as string)).toMatchObject({ votesRemoved: 2 });
+    expect((await unban(h, "admin", "u-bob")).status).toBe(200);
+    expect(count(h, "community_team_votes where user_id = 'u-bob'")).toBe(0);
+  });
+
+  it("khoá bị từ chối (KDV khoá root) -> vote còn nguyên", async () => {
+    const h = createHarness();
+    await seedVotes(h);
+    expect((await ban(h, "moderator", "u-admin")).status).toBe(403);
+    expect(count(h, "community_team_votes where user_id = 'u-admin'")).toBe(1);
+    expect(ups(h, "t1")).toBe(2);
   });
 });

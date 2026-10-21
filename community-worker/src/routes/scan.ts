@@ -8,7 +8,7 @@ import { currentUser, PAGE_SIZE, requireStaff, requireUser, type AppEnv, type Ct
 import { ApiError, decodeCursor, iso, paginate } from "../http";
 import { consumeRateLimit } from "../ratelimit";
 import { hashIp } from "../turnstile";
-import { IMAGE_TYPES, parseImageUpload, parseLang, readJson } from "../validate";
+import { ID_RE, IMAGE_TYPES, parseId, parseImageUpload, parseLang, readJson } from "../validate";
 
 export const SCAN_IMAGE_MAX_BYTES = 1_500_000;
 export const SCAN_SCREENS = ["battleReport", "teamDetail", "other"] as const;
@@ -21,11 +21,6 @@ const MAX_CELLS = 12;
 const MAX_AI_HEROES = 6;
 const MAX_READ_CHARS = 40;
 const MAX_PAYLOAD_CHARS = 20_000;
-const ID_RE = {
-  hero: /^hero:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
-  tactic: /^tactic:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
-  book: /^book:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
-} as const;
 
 const bad = (code: string, message: string) => new ApiError(400, code, message);
 
@@ -43,13 +38,6 @@ function parseCount(value: unknown, field: string): number {
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === "object" && !Array.isArray(value);
-}
-
-function parseId(value: unknown, kind: keyof typeof ID_RE, field: string): string {
-  if (typeof value !== "string" || value.length > 120 || !ID_RE[kind].test(value)) {
-    throw bad(`invalid_${field}`, `${field} phải là ID ${kind}:<slug>`);
-  }
-  return value;
 }
 
 function parseOptionalId(value: unknown, kind: keyof typeof ID_RE, field: string): string | null {

@@ -247,6 +247,7 @@ users.post("/api/admin/users/:id/ban", async (c) => {
     `id = ? and banned_by = ? and banned_by_role = ? and ban_reason = ? and banned_until = ? and deleting_at is null and id <> ? and not (${root.sql})` +
     (byModerator ? " and role = 'user'" : "");
   const auditId = newId();
+  const votes = await c.env.DB.prepare("select count(*) as n from community_team_votes where user_id = ?").bind(id).first<{ n: number }>();
   const [res, logged] = await c.env.DB.batch([
     c.env.DB.prepare(
       `update "user" set banned_until = ?, ban_reason = ?, banned_by = ?, banned_by_role = ? where id = ? and ${before}`,
@@ -262,7 +263,7 @@ users.post("/api/admin/users/:id/ban", async (c) => {
         targetLabel: maskEmail(target.email),
         subjectUserId: id,
         reason,
-        meta: { duration, until },
+        meta: { duration, until, votesRemoved: votes?.n ?? 0 },
         status: "ok",
       },
       `select 1 from "user" where ${after}`,
@@ -270,6 +271,8 @@ users.post("/api/admin/users/:id/ban", async (c) => {
     ),
     // Chỉ huỷ phiên khi dòng nhật ký của đúng yêu cầu này đã được ghi (tức khoá đã áp).
     c.env.DB.prepare('delete from session where "userId" = ? and exists (select 1 from admin_audit where id = ?)').bind(id, auditId),
+    // Cùng điều kiện với huỷ phiên: chỉ xoá vote khi khoá của đúng yêu cầu này đã áp (trigger đếm lại điểm đội).
+    c.env.DB.prepare("delete from community_team_votes where user_id = ? and exists (select 1 from admin_audit where id = ?)").bind(id, auditId),
   ]);
   if (!res.meta.changes || !logged.meta.changes) {
     const now2 = await c.env.DB.prepare(TARGET_SELECT).bind(id).first<TargetRow>();
@@ -367,6 +370,8 @@ async function inventoryKeys(c: Ctx, id: string): Promise<string[]> {
     "select object_key as k from uploads where user_id = ? and kind = 'report'",
     "select image_key as k from battle_reports where user_id = ? and image_key is not null",
     "select image_key as k from scan_samples where user_id = ? and image_key is not null",
+    "select i.object_key as k from community_team_images i join community_teams t on t.id = i.team_id where t.author_id = ?",
+    `select r.image_key as k from battle_reports r where r.page_key in (${TEAM_PAGES}) and r.image_key is not null`,
   ];
   for (const sql of queries) {
     const { results } = await c.env.DB.prepare(sql).bind(id).all<{ k: string }>();
@@ -374,6 +379,9 @@ async function inventoryKeys(c: Ctx, id: string): Promise<string[]> {
   }
   return [...keys];
 }
+
+/** Page key của mọi đội của một tác giả (bind một `author_id`). */
+const TEAM_PAGES = "select '/doi-cong-dong/' || id || '/' from community_teams where author_id = ?";
 
 users.delete("/api/admin/users/:id", async (c) => {
   const viewer = await requireRoot(c);
@@ -443,10 +451,11 @@ users.delete("/api/admin/users/:id", async (c) => {
 
   const counts = await c.env.DB.prepare(
     "select (select count(*) from comments where user_id = ?) as comments, (select count(*) from battle_reports where user_id = ?) as reports, " +
-      "(select count(*) from scan_samples where user_id = ?) as scan_samples, (select count(*) from feedback where user_id = ?) as feedback",
+      "(select count(*) from scan_samples where user_id = ?) as scan_samples, (select count(*) from feedback where user_id = ?) as feedback, " +
+      "(select count(*) from community_teams where author_id = ?) as teams",
   )
-    .bind(id, id, id, id)
-    .first<{ comments: number; reports: number; scan_samples: number; feedback: number }>();
+    .bind(id, id, id, id, id)
+    .first<{ comments: number; reports: number; scan_samples: number; feedback: number; teams: number }>();
 
   // Điều kiện đích dùng cho mọi câu của batch: vẫn đang xoá, không phải mình/root. Câu cuối DELETE (cascade phần còn lại).
   const eligible = `id = ? and deleting_at is not null and id <> ? and not (${root.sql})`;
@@ -464,7 +473,14 @@ users.delete("/api/admin/users/:id", async (c) => {
         targetId: id,
         targetLabel: label,
         subjectUserId: id,
-        meta: { objects: removed, comments: counts?.comments ?? 0, reports: counts?.reports ?? 0, scanSamples: counts?.scan_samples ?? 0, feedback: counts?.feedback ?? 0 },
+        meta: {
+          objects: removed,
+          comments: counts?.comments ?? 0,
+          reports: counts?.reports ?? 0,
+          scanSamples: counts?.scan_samples ?? 0,
+          feedback: counts?.feedback ?? 0,
+          teams: counts?.teams ?? 0,
+        },
         status: "ok",
       },
       `select 1 from "user" where ${eligible}`,
@@ -473,6 +489,13 @@ users.delete("/api/admin/users/:id", async (c) => {
     c.env.DB.prepare(`update uploads set user_id = ? where user_id = ? and kind = 'post'${gate}`).bind(actor.id, id, ...eligibleBinds),
     c.env.DB.prepare(`update posts set author_id = null where author_id = ?${gate}`).bind(id, ...eligibleBinds),
     c.env.DB.prepare(`update feedback set email = null, user_id = null where user_id = ?${gate}`).bind(id, ...eligibleBinds),
+    // Nội dung của người khác trên trang đội của user (đội cascade qua FK): xoá trước, ảnh chiến báo kèm dòng uploads.
+    c.env.DB.prepare(
+      `delete from uploads where object_key in (select r.image_key from battle_reports r where r.page_key in (${TEAM_PAGES}) and r.image_key is not null)${gate}`,
+    ).bind(id, ...eligibleBinds),
+    c.env.DB.prepare(`delete from comments where page_key in (${TEAM_PAGES})${gate}`).bind(id, ...eligibleBinds),
+    c.env.DB.prepare(`delete from battle_reports where page_key in (${TEAM_PAGES})${gate}`).bind(id, ...eligibleBinds),
+    c.env.DB.prepare(`update community_teams set reviewed_by = null where reviewed_by = ?${gate}`).bind(id, ...eligibleBinds),
     c.env.DB.prepare(`update battle_reports set reviewed_by = null where reviewed_by = ?${gate}`).bind(id, ...eligibleBinds),
     c.env.DB.prepare(`update scan_samples set reviewed_by = null where reviewed_by = ?${gate}`).bind(id, ...eligibleBinds),
     c.env.DB.prepare(`delete from "user" where ${eligible}`).bind(...eligibleBinds),

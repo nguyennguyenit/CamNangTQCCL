@@ -10,6 +10,7 @@ interface CountsRow {
   feedback_new: number;
   feedback_done: number;
   scan_pending: number;
+  teams_pending: number;
 }
 
 const COUNTS_SQL =
@@ -18,7 +19,8 @@ const COUNTS_SQL =
   "(select count(*) from posts where status = 'draft') as posts_draft, " +
   "(select count(*) from feedback where status = 'new') as feedback_new, " +
   "(select count(*) from feedback where status = 'done') as feedback_done, " +
-  "(select count(*) from scan_samples where status = 'pending') as scan_pending";
+  "(select count(*) from scan_samples where status = 'pending') as scan_pending, " +
+  "(select count(*) from community_teams where status = 'pending' and deleting_at is null) as teams_pending";
 
 export const admin = new Hono<AppEnv>();
 
@@ -31,5 +33,6 @@ admin.get("/api/admin/counts", async (c) => {
     feedbackNew: Number(row?.feedback_new ?? 0),
     feedbackDone: Number(row?.feedback_done ?? 0),
     scanPending: Number(row?.scan_pending ?? 0),
+    teamsPending: Number(row?.teams_pending ?? 0),
   });
 });

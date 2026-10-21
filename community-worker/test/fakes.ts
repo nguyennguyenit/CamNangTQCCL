@@ -31,34 +31,45 @@ class FakeStatement {
     return (column ? row[column] : { ...row }) as T;
   }
   async all<T>() {
-    const rows = this.db.prepare(this.sql).all(...this.params) as Record<string, unknown>[];
+    const res = this.runSync();
     // Dialect D1 của Better Auth đọc meta.changes/last_row_id cả khi gọi qua all().
-    return { results: rows.map((r) => ({ ...r })) as T[], success: true, meta: { changes: 0, last_row_id: 0 } };
+    return { results: res.results as T[], success: true, meta: res.meta };
   }
   async run() {
+    return this.runSync();
+  }
+  /**
+   * Chạy đồng bộ (không nhường lượt) để batch() nguyên tử như D1 thật. Câu trả cột (select, PRAGMA, `returning`)
+   * trả results; meta.changes lấy từ changes() của SQLite chỉ khi câu đó thực sự ghi (select thuần -> 0).
+   */
+  runSync() {
     const stmt = this.db.prepare(this.sql);
-    // Câu lệnh trả cột (PRAGMA, select) qua batch(): D1 thật trả results; Better Auth đọc schema bằng cách này.
     if (stmt.columns().length > 0) {
       const rows = stmt.all(...this.params) as Record<string, unknown>[];
-      return { results: rows.map((r) => ({ ...r })), success: true, meta: { changes: 0, last_row_id: 0 } };
+      const written = /^\s*(?:with\b[\s\S]*?)?(?:insert|update|delete|replace)\b/iu.test(this.sql);
+      const changes = written ? (this.db.prepare("select changes() as n").get() as { n: number }).n : 0;
+      return { results: rows.map((r) => ({ ...r })), success: true, meta: { changes: Number(changes), last_row_id: 0 } };
     }
     const res = stmt.run(...this.params);
     return { results: [], success: true, meta: { changes: Number(res.changes), last_row_id: Number(res.lastInsertRowid) } };
   }
 }
 
-export function createFakeD1(): { d1: D1Database; sqlite: DatabaseSync } {
+export function createFakeD1(): { d1: D1Database; sqlite: DatabaseSync; beforeBatch: (() => void)[] } {
   const sqlite = new DatabaseSync(":memory:");
+  // Hàng đợi hook chạy đồng bộ ngay trước batch kế tiếp (dựng race giữa lúc đọc và lúc ghi).
+  const beforeBatch: (() => void)[] = [];
   for (const file of readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort()) {
     sqlite.exec(readFileSync(`${MIGRATIONS_DIR}/${file}`, "utf8"));
   }
   const d1 = {
     prepare: (sql: string) => new FakeStatement(sqlite, sql),
     async batch(stmts: FakeStatement[]) {
+      beforeBatch.shift()?.();
+      // Không có await giữa begin và commit: hai batch() song song không lồng transaction (D1 chạy batch tuần tự, nguyên tử).
       sqlite.exec("begin");
       try {
-        const out = [];
-        for (const s of stmts) out.push(await s.run());
+        const out = stmts.map((s) => s.runSync());
         sqlite.exec("commit");
         return out;
       } catch (e) {
@@ -69,7 +80,7 @@ export function createFakeD1(): { d1: D1Database; sqlite: DatabaseSync } {
     exec: (sql: string) => sqlite.exec(sql),
   };
   // Fake chỉ cài phần API D1 mà mã nguồn dùng.
-  return { d1: d1 as unknown as D1Database, sqlite };
+  return { d1: d1 as unknown as D1Database, sqlite, beforeBatch };
 }
 
 interface StoredObject {
@@ -200,6 +211,12 @@ export interface Harness {
   r2Error: Error | null;
   /** Đặt lỗi để put của KV fake ném ra; null = bình thường. */
   kvError: Error | null;
+  /** Chỉ lần gọi thứ `nth` (1-based, đếm từ lúc đặt) của `put`/`delete` R2 ném lỗi; các lần khác bình thường. */
+  failR2On(plan: { op: "put" | "delete"; nth: number }): void;
+  /** Chạy `fn` (đồng bộ, vd SQL) ngay trước `DB.batch` kế tiếp, một lần. */
+  beforeNextBatch(fn: () => void): void;
+  /** Chạy `fn` (đồng bộ) ngay sau khi `getUser` của request kế tiếp đọc xong user, một lần (khoá user "giữa chừng"). */
+  afterNextGetUser(fn: () => void): void;
   setFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>): void;
   request(path: string, opts?: { method?: string; as?: string; json?: unknown; body?: BodyInit; headers?: Record<string, string> }): Promise<Response>;
   /** Chờ mọi việc nền `waitUntil` của các request đã gửi. */
@@ -208,9 +225,11 @@ export interface Harness {
 
 export function createHarness(envOverrides: Partial<Env> = {}): Harness {
   const clock = { now: Date.UTC(2026, 8, 27, 10, 0, 0) };
-  const { d1, sqlite } = createFakeD1();
+  const { d1, sqlite, beforeBatch } = createFakeD1();
   const { bucket: rawBucket, objects } = createFakeR2(() => clock.now);
   const errors = { r2: null as Error | null, kv: null as Error | null };
+  let r2Plan: { op: "put" | "delete"; nth: number; seen: number } | null = null;
+  const afterGetUser: (() => void)[] = [];
   // Bọc put/delete để h.r2Error có hiệu lực; get/list giữ nguyên.
   const bucket = new Proxy(rawBucket, {
     get(target, prop) {
@@ -218,6 +237,9 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
       if ((prop === "put" || prop === "delete") && typeof value === "function") {
         return (...args: unknown[]) => {
           if (errors.r2) return Promise.reject(errors.r2);
+          if (r2Plan && r2Plan.op === prop && ++r2Plan.seen === r2Plan.nth) {
+            return Promise.reject(new Error(`r2 ${String(prop)} #${r2Plan.nth} failed`));
+          }
           return (value as (...a: unknown[]) => Promise<unknown>).apply(target, args);
         };
       }
@@ -240,9 +262,11 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     getUser: async (env, headers) => {
       const token = headers.get("x-test-user");
       if (!token) return null;
-      return env.DB.prepare('select u.* from session s join "user" u on u.id = s."userId" where s.token = ?')
+      const row = await env.DB.prepare('select u.* from session s join "user" u on u.id = s."userId" where s.token = ?')
         .bind(token)
         .first<SessionUserRow>();
+      afterGetUser.shift()?.();
+      return row;
     },
     authHandler: async () => new Response("auth"),
     fetchImpl: (async (input: RequestInfo | URL, init?: RequestInit) => {
@@ -289,6 +313,15 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     },
     set kvError(value) {
       errors.kv = value;
+    },
+    failR2On(plan) {
+      r2Plan = { ...plan, seen: 0 };
+    },
+    beforeNextBatch(fn) {
+      beforeBatch.push(fn);
+    },
+    afterNextGetUser(fn) {
+      afterGetUser.push(fn);
     },
     setFetch(handler) {
       fetchHandler = handler;
@@ -340,4 +373,58 @@ export function imageForm(bytes: Uint8Array, type: string, field = "image"): For
   const form = new FormData();
   form.append(field, new File([bytes], "shot.png", { type }));
   return form;
+}
+
+/** Seed mùa của Đội cộng đồng (closedAt null = mùa mở). */
+export function seedSeason(h: Harness, id: string, closedAt: number | null = null, openedAt = 1): void {
+  h.sqlite
+    .prepare("insert into community_seasons (id, label_vi, label_zh, opened_at, closed_at) values (?, ?, ?, ?, ?)")
+    .run(id, `Mùa ${id}`, `赛季${id}`, openedAt, closedAt);
+}
+
+export interface SeedTeam {
+  id: string;
+  author?: string;
+  season?: string;
+  status?: "pending" | "approved" | "rejected";
+  title?: string;
+  heroes?: [string, string, string];
+  createdAt?: number;
+  /** Ghi thẳng bộ đếm (bỏ qua vote thật) để dựng thứ tự xếp hạng. */
+  upVotes?: number;
+  downVotes?: number;
+  /** Số ảnh (R2 `community-teams/<id>/<i>.png` + dòng community_team_images). */
+  images?: number;
+  rejectReason?: string | null;
+}
+
+/** Seed một đội (mặc định approved, tác giả alice, mùa s1, 1 ảnh) kèm ảnh R2. */
+export async function seedTeam(h: Harness, t: SeedTeam): Promise<void> {
+  const heroes = t.heroes ?? ["hero:a", "hero:b", "hero:c"];
+  h.sqlite
+    .prepare(
+      `insert into community_teams (id, author_id, season_id, status, title, hero_1, hero_2, hero_3, hero_key, tactics, troop, playstyle, text_lang, reject_reason, created_at, up_votes, down_votes)
+       values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'ky', 'Lối chơi thử nghiệm', 'vi', ?, ?, ?, ?)`,
+    )
+    .run(
+      t.id,
+      t.author ?? "u-alice",
+      t.season ?? "s1",
+      t.status ?? "approved",
+      t.title ?? `Đội ${t.id}`,
+      ...heroes,
+      [...heroes].sort().join(","),
+      JSON.stringify([["tactic:1", "tactic:2"], ["tactic:3", "tactic:4"], ["tactic:5", "tactic:6"]]),
+      t.rejectReason ?? null,
+      t.createdAt ?? h.clock.now,
+      t.upVotes ?? 0,
+      t.downVotes ?? 0,
+    );
+  for (let i = 0; i < (t.images ?? 1); i++) {
+    const key = `community-teams/${t.id}/${i}.png`;
+    await h.env.MEDIA.put(key, PNG_BYTES, { httpMetadata: { contentType: "image/png" } });
+    h.sqlite
+      .prepare("insert into community_team_images (team_id, position, object_key, content_type) values (?, ?, ?, 'image/png')")
+      .run(t.id, i, key);
+  }
 }

@@ -2,7 +2,7 @@
 // và hiện lại khi khoá hết hạn hoặc được mở.
 
 import { describe, expect, it } from "vitest";
-import { createHarness, PNG_BYTES, type Harness } from "./fakes";
+import { createHarness, PNG_BYTES, seedTeam, type Harness } from "./fakes";
 
 const PAGE = "/doi-chuan/s18-abc/";
 const IMAGE_KEY = "reports/r1.png";
@@ -151,5 +151,82 @@ describe("ảnh chiến báo của user bị khoá", () => {
     expect((await h.request(url, { as: "alice" })).status).toBe(200);
     expect((await h.request(url, { as: "moderator" })).status).toBe(200);
     expect((await h.request("/api/reports/khong-co/image")).status).toBe(404);
+  });
+});
+
+describe("ẩn đội cộng đồng của user bị khoá ở API công khai", () => {
+  it("danh sách, chi tiết, ảnh biến mất với khách/user khác; staff vẫn thấy; hết hạn thì hiện lại", async () => {
+    const h = createHarness();
+    h.sqlite.prepare("insert into community_seasons (id, label_vi, label_zh, opened_at) values ('s1', 'Mùa 1', '赛季1', 1)").run();
+    await seedTeam(h, { id: "t1" });
+    await seedTeam(h, { id: "t2", author: "u-bob", createdAt: 1 });
+    const ids = async (as?: string) => (await json(await h.request("/api/community-teams?sort=new", { as }))).items.map((i: { id: string }) => i.id);
+    expect(await ids()).toEqual(["t1", "t2"]);
+
+    expect((await ban(h, "admin", "u-alice")).status).toBe(200);
+    expect(await ids()).toEqual(["t2"]);
+    expect(await ids("bob")).toEqual(["t2"]);
+    expect((await h.request("/api/community-teams/t1")).status).toBe(404);
+    expect((await h.request("/api/community-teams/t1", { as: "bob" })).status).toBe(404);
+    expect((await h.request("/api/community-teams/t1/images/0")).status).toBe(404);
+    expect((await h.request("/api/community-teams/t1", { as: "moderator" })).status).toBe(200);
+    expect((await h.request("/api/community-teams/t1/images/0", { as: "moderator" })).status).toBe(200);
+
+    h.clock.now += 7 * DAY;
+    expect(await ids()).toEqual(["t1", "t2"]);
+    expect((await h.request("/api/community-teams/t1/images/0")).status).toBe(200);
+  });
+});
+
+describe("bình luận/chiến báo trên đội cộng đồng bị ẩn", () => {
+  const TEAM = "/doi-cong-dong/t1/";
+  async function setup(h: Harness) {
+    h.sqlite.prepare("insert into community_seasons (id, label_vi, label_zh, opened_at) values ('s1', 'Mùa 1', '赛季1', 1)").run();
+    await seedTeam(h, { id: "t1" });
+    await h.env.MEDIA.put("reports/tr.png", PNG_BYTES, { httpMetadata: { contentType: "image/png" } });
+    h.sqlite
+      .prepare(
+        "insert into battle_reports (id, page_key, lang, user_id, image_key, result, ally_heroes, enemy_heroes, status, created_at) values ('tr', ?, 'vi', 'u-bob', 'reports/tr.png', 'win', '[\"a\"]', '[]', 'approved', 1)",
+      )
+      .run(TEAM);
+    h.sqlite.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values ('tc', ?, 'vi', 'u-bob', 'x', 1)").run(TEAM);
+  }
+  const hidden = async (h: Harness) => {
+    expect((await json(await h.request(`/api/comments?page=${TEAM}&lang=vi`))).items).toEqual([]);
+    expect((await json(await h.request(`/api/reports?page=${TEAM}&lang=vi`))).items).toEqual([]);
+    expect((await json(await h.request(`/api/reports/stats?page=${TEAM}`))).total).toBe(0);
+    expect((await h.request("/api/comments", { as: "bob", json: { page: TEAM, lang: "vi", body: "mới" } })).status).toBe(404);
+    const { uploadId } = await json(await h.request("/api/reports/analyze", { as: "bob", method: "POST", body: imageFormData() }));
+    const res = await h.request("/api/reports", { as: "bob", json: { page: TEAM, lang: "vi", uploadId, result: "win", allyHeroes: ["a"], enemyHeroes: [] } });
+    expect(res.status).toBe(404);
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(uploadId)).toMatchObject({ status: "pending" });
+  };
+  const imageFormData = () => {
+    const form = new FormData();
+    form.append("image", new File([PNG_BYTES], "s.png", { type: "image/png" }));
+    return form;
+  };
+
+  it("tác giả đội bị khoá: POST 404, GET [], ảnh chiến báo 404 với khách (cả If-None-Match), bob và staff vẫn 200", async () => {
+    const h = createHarness();
+    await setup(h);
+    const url = "/api/reports/tr/image";
+    const etag = (await h.request(url)).headers.get("ETag") as string;
+    expect(etag).toBeTruthy();
+    expect((await ban(h, "admin", "u-alice")).status).toBe(200);
+    await hidden(h);
+    expect((await h.request(url)).status).toBe(404);
+    expect((await h.request(url, { headers: { "If-None-Match": etag } })).status).toBe(404);
+    expect((await h.request(url, { as: "bob" })).status).toBe(200);
+    expect((await h.request(url, { as: "moderator" })).status).toBe(200);
+  });
+
+  it("đội đã chốt xoá: POST 404, GET [], ảnh chiến báo 404 với khách", async () => {
+    const h = createHarness();
+    await setup(h);
+    h.sqlite.prepare("update community_teams set deleting_at = 5 where id = 't1'").run();
+    await hidden(h);
+    expect((await h.request("/api/reports/tr/image")).status).toBe(404);
+    expect((await h.request("/api/reports/tr/image", { as: "bob" })).status).toBe(200);
   });
 });

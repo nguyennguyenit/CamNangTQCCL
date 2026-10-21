@@ -24,6 +24,13 @@ export const RATE_RULES: Record<string, RateRule> = {
   scan_sample: { limit: 10, windowMs: DAY },
   // Đồng bộ chiêu mộ: lần đầu có thể đẩy ~40 lô 500 bản ghi, sau đó mỗi thay đổi (debounce 1,5 s) một lô.
   recruit_push: { limit: 600, windowMs: HOUR },
+  // Đội cộng đồng: ảnh tạm, AI nháp (tách khỏi `analyze` của chiến báo), đăng, vote.
+  team_upload: { limit: 30, windowMs: DAY },
+  team_analyze: { limit: 20, windowMs: DAY },
+  // Trần chung cả site cho chuỗi AI `teamScan` (gọi với userId 'site').
+  team_analyze_global: { limit: 300, windowMs: DAY },
+  team_post: { limit: 5, windowMs: DAY },
+  team_vote: { limit: 120, windowMs: HOUR },
 };
 
 /** Tăng bộ đếm; vượt ngưỡng -> ApiError 429 kèm retryAfter (giây). */

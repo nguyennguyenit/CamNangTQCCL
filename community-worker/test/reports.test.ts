@@ -3,7 +3,7 @@ import { parseAnalysis, REPORT_PROMPT } from "../src/analyze";
 import { cleanup } from "../src/cleanup";
 import { aggregateStats } from "../src/stats";
 import type { AiConfig } from "../../shared/ai-config";
-import { createHarness, imageForm, PNG_BYTES, TEST_CONFIG, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
+import { createHarness, imageForm, PNG_BYTES, seedSeason, seedTeam, TEST_CONFIG, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const PAGE = "/doi-chuan/s18-abc/";
 
@@ -294,5 +294,127 @@ describe("cron dọn dẹp", () => {
     expect([...h.objects.keys()].some((k) => k.startsWith("reports/"))).toBe(true);
     const rows = h.sqlite.prepare("select id from uploads where status = 'pending'").all();
     expect(rows.map((r) => r.id)).toEqual([fresh.uploadId]);
+  });
+});
+
+describe("chiến báo trên trang đội cộng đồng", () => {
+  const TEAM_PAGE = "/doi-cong-dong/t1/";
+  const reportCount = (h: Harness) =>
+    (h.sqlite.prepare("select coalesce(sum(count), 0) as n from rate_limits where key like 'report:u-bob:%'").get() as { n: number }).n;
+  const reportKeys = (h: Harness) => [...h.objects.keys()].filter((k) => k.startsWith("reports/"));
+
+  async function upload(h: Harness, as: "alice" | "bob" = "bob"): Promise<string> {
+    return (await (await analyze(h, as)).json<ApiJson>()).uploadId as string;
+  }
+  const send = (h: Harness, as: "alice" | "bob", uploadId: string, extra: Record<string, unknown> = {}, page = TEAM_PAGE) =>
+    h.request("/api/reports", { as, json: { page, lang: "vi", uploadId, result: "win", allyHeroes: ["曹操"], enemyHeroes: ["刘备"], ...extra } });
+
+  it("đội approved mùa mở -> 201, season = mùa của đội dù client gửi khác", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    const id = await upload(h);
+    const res = await send(h, "bob", id, { season: "khac" });
+    expect(res.status).toBe(201);
+    const reportId = (await res.json<ApiJson>()).id as string;
+    expect(h.sqlite.prepare("select season, page_key from battle_reports where id = ?").get(reportId)).toMatchObject({ season: "s1", page_key: TEAM_PAGE });
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "attached" });
+  });
+
+  it("đội pending -> 404; mùa đóng -> 409 season_closed; upload còn pending, không rate limit, gửi lại vào đội chuẩn được", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    seedSeason(h, "s0", 5);
+    await seedTeam(h, { id: "t1", status: "pending" });
+    await seedTeam(h, { id: "t2", season: "s0" });
+    const id = await upload(h);
+    const before = reportCount(h);
+    const missing = await send(h, "bob", id);
+    expect(missing.status).toBe(404);
+    expect((await missing.json<ApiJson>()).error.code).toBe("not_found");
+    const closed = await send(h, "bob", id, {}, "/doi-cong-dong/t2/");
+    expect(closed.status).toBe(409);
+    expect((await closed.json<ApiJson>()).error.code).toBe("season_closed");
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "pending" });
+    expect(h.objects.has(`pending/${id}`)).toBe(true);
+    expect(reportKeys(h)).toEqual([]);
+    expect(reportCount(h)).toBe(before);
+    expect((await send(h, "bob", id, {}, PAGE)).status).toBe(201);
+  });
+
+  it("mùa đóng giữa preflight và batch -> 409, upload vẫn pending, không còn ảnh reports/", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    const id = await upload(h);
+    h.beforeNextBatch(() => void h.sqlite.prepare("update community_seasons set closed_at = 9 where id = 's1'").run());
+    const res = await send(h, "bob", id);
+    expect(res.status).toBe(409);
+    expect((await res.json<ApiJson>()).error.code).toBe("season_closed");
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "pending" });
+    expect(h.objects.has(`pending/${id}`)).toBe(true);
+    expect(reportKeys(h)).toEqual([]);
+    expect(h.sqlite.prepare("select count(*) as n from battle_reports").get()).toMatchObject({ n: 0 });
+  });
+
+  it("đội bị gỡ giữa preflight và batch -> 404, upload vẫn pending", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    const id = await upload(h);
+    h.beforeNextBatch(() => void h.sqlite.prepare("update community_teams set deleting_at = 9 where id = 't1'").run());
+    expect((await send(h, "bob", id)).status).toBe(404);
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "pending" });
+    expect(reportKeys(h)).toEqual([]);
+  });
+
+  it("khoá pending/team-… không dùng được làm chiến báo -> 400 invalid_upload", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    const sent = await h.request("/api/community-teams/uploads", { as: "bob", method: "POST", body: imageForm(PNG_BYTES, "image/png") });
+    expect(sent.status).toBeLessThan(300);
+    const row = h.sqlite.prepare("select id, object_key from uploads where object_key like 'pending/team-%'").get() as { id: string; object_key: string };
+    const res = await send(h, "bob", row.id);
+    expect(res.status).toBe(400);
+    expect((await res.json<ApiJson>()).error.code).toBe("invalid_upload");
+    expect(h.sqlite.prepare("select status from uploads where id = ?").get(row.id)).toMatchObject({ status: "pending" });
+  });
+
+  it("danh sách + stats trang cộng đồng gộp vi và zh; đội pending -> rỗng; đội chuẩn vẫn lọc lang", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    await seedTeam(h, { id: "t3", status: "pending" });
+    const ins = h.sqlite.prepare(
+      "insert into battle_reports (id, page_key, lang, user_id, result, ally_heroes, enemy_heroes, status, created_at) values (?, ?, ?, 'u-bob', 'win', '[\"a\"]', '[\"x\"]', 'approved', ?)",
+    );
+    ins.run("rv", TEAM_PAGE, "vi", 1);
+    ins.run("rz", TEAM_PAGE, "zh", 2);
+    ins.run("pv", "/doi-cong-dong/t3/", "vi", 3);
+    ins.run("sv", PAGE, "vi", 4);
+    ins.run("sz", PAGE, "zh", 5);
+    const ids = async (page: string, lang = "vi") =>
+      (await (await h.request(`/api/reports?page=${page}&lang=${lang}`)).json<ApiJson>()).items.map((i: { id: string }) => i.id);
+    expect(await ids(TEAM_PAGE)).toEqual(["rz", "rv"]);
+    expect(await ids(TEAM_PAGE, "zh")).toEqual(["rz", "rv"]);
+    expect(await ids("/doi-cong-dong/t3/")).toEqual([]);
+    expect(await ids(PAGE)).toEqual(["sv"]);
+    expect(((await (await h.request(`/api/reports/stats?page=${TEAM_PAGE}`)).json()) as { total: number }).total).toBe(2);
+    expect(((await (await h.request("/api/reports/stats?page=/doi-cong-dong/t3/")).json()) as { total: number }).total).toBe(0);
+    expect(((await (await h.request(`/api/reports/stats?page=${PAGE}`)).json()) as { total: number }).total).toBe(2);
+  });
+
+  it("duyệt chiến báo thắng của bob -> evidence_count 1; chiến báo của tác giả -> không đổi", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    const bobReport = (await (await send(h, "bob", await upload(h))).json<ApiJson>()).id as string;
+    const aliceReport = (await (await send(h, "alice", await upload(h, "alice"))).json<ApiJson>()).id as string;
+    const evidence = () => (h.sqlite.prepare("select evidence_count as n from community_teams where id = 't1'").get() as { n: number }).n;
+    expect((await h.request(`/api/admin/reports/${aliceReport}/approve`, { as: "admin", method: "POST" })).status).toBe(200);
+    expect(evidence()).toBe(0);
+    expect((await h.request(`/api/admin/reports/${bobReport}/approve`, { as: "admin", method: "POST" })).status).toBe(200);
+    expect(evidence()).toBe(1);
   });
 });

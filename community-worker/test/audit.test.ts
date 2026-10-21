@@ -3,7 +3,7 @@
 import { describe, expect, it } from "vitest";
 import { AI_GROUPS } from "../../shared/ai-config";
 import { sanitizeLabel } from "../src/audit";
-import { createHarness, imageForm, PNG_BYTES, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
+import { createHarness, imageForm, PNG_BYTES, seedSeason, seedTeam, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const IMAGE_KEY = "scan-samples/s1.png";
 const PENDING_KEY = "scan-samples/s2.png";
@@ -512,6 +512,22 @@ describe("GET /api/admin/audit", () => {
     expect(body.items).toHaveLength(3);
     expect(body.items.every((i) => i.action === "report.reject")).toBe(true);
     expect((await h.request("/api/admin/audit?action=bad%20action", { as: "admin" })).status).toBe(400);
+  });
+
+  it("lọc team.approve / season.open qua thao tác thật; tên hành động hợp lệ", async () => {
+    const h = await fresh();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1", status: "pending" });
+    expect((await h.request("/api/admin/community-teams/t1/approve", { as: "moderator", json: {} })).status).toBe(200);
+    expect((await h.request("/api/admin/community-seasons", { as: "admin", json: { id: "s2", labelVi: "Mùa 2", labelZh: "赛季2" } })).status).toBe(201);
+    const list = async (action: string) =>
+      ((await (await h.request(`/api/admin/audit?action=${action}`, { as: "admin" })).json()) as { items: { action: string; target: { type: string; id: string }; subjectUserId: string | null; meta: unknown }[] }).items;
+    const approved = await list("team.approve");
+    expect(approved).toHaveLength(1);
+    expect(approved[0]).toMatchObject({ target: { type: "team", id: "t1" }, subjectUserId: "u-alice" });
+    const opened = await list("season.open");
+    expect(opened).toHaveLength(1);
+    expect(opened[0]).toMatchObject({ target: { type: "season", id: "s2" }, subjectUserId: null, meta: { previous: "s1" } });
   });
 
   it("phân trang 20/trang qua 25 dòng, không trùng, không sót (kể cả cùng created_at)", async () => {
