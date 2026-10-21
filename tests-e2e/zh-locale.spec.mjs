@@ -121,6 +121,15 @@ test.describe('cờ chữ Hán dịch, không JavaScript', () => {
   });
 });
 
+test('bản Trung có JavaScript: tìm chiến pháp chữ Hán dịch trong bảng thì hàng dựng lại vẫn mang cờ', async ({ page }) => {
+  await page.goto('/zh/tra-cuu/chien-phap/');
+  await expect(page.locator('body[data-boot=ready]')).toBeAttached();
+  await page.locator('#section-lookup input[type="search"]').fill('鎮壓黃巾');
+  const row = page.locator('tr:has(a[data-lookup-id="tactic:tran-ap-khan-vang"])');
+  await expect(row.locator('[data-zh-source="translation"]')).toHaveText('中文效果译自越南语，未经核对');
+  await expect(row).toBeVisible();
+});
+
 test('ba họ trang chi tiết bản Trung: tiêu đề chữ Hán, link về danh sách bản Trung, cặp hreflang', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const recommendedPath = await page.request.get('/sitemap.xml').then((response) => response.text())
