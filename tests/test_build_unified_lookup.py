@@ -885,9 +885,14 @@ class ClientTacticCaptureTest(unittest.TestCase):
             self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "分擔傷害"}}, zhEffects={"tactic:ho-ve": good})
 
     def test_baseline_chinese_effect_needs_a_declared_zh_effect(self):
-        # Ghim cứng: chỉ ba chiến pháp này xuất bản chữ Hán của baseline cũ (SGSDeck `待補充` hoặc không có bản ghi).
+        # Ghim cứng các chiến pháp xuất bản chữ Hán của baseline cũ (SGSDeck `待補充` hoặc không có bản ghi). Fixture này
+        # không gộp mã nên còn `khac-tuan-hoa-nhat` và `thuong-lam-nhi-thuc`; file client thật gộp hai mã đó (`retired`),
+        # nên dữ liệu thật chỉ còn ba mục `zhEffects` baseline.
         baseline = self._baseline_zh_effects()
-        self.assertEqual(sorted(baseline), ["tactic:luc-luc-thuong-quoc", "tactic:nhanh-tri-dong-nao", "tactic:vo-song-thuong-tuong"])
+        self.assertEqual(sorted(baseline), [
+            "tactic:khac-tuan-hoa-nhat", "tactic:luc-luc-thuong-quoc", "tactic:nhanh-tri-dong-nao",
+            "tactic:thuong-lam-nhi-thuc", "tactic:vo-song-thuong-tuong",
+        ])
         with self.assertRaisesRegex(ValueError, "non-SGSDeck zh effect without zhEffects: " + ", ".join(sorted(baseline))):
             self._build({}, baseline_zh=False)
         with self.assertRaisesRegex(ValueError, "zhEffects owner is retired: tactic:nhanh-tri-dong-nao"):
