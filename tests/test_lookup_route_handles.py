@@ -275,9 +275,10 @@ class LookupLedgerTest(unittest.TestCase):
     def test_survivor_without_live_slug_fails(self):
         self.merge_tactic()
         self.edit_ledger(lambda l: l["handles"]["tactics"].pop("tactic:binh-thanh"), redigest=True)
-        code, _, err = self.run_cli("--check")
-        self.assertEqual(code, 1)
-        self.assertIn("survivor tactic:binh-thanh of tactic:cu has no live slug", err)
+        self.assertEqual(self.run_cli("--check")[0], 1)  # the ledger check already misses the corpus id
+        ledger = json.loads(self.ledger.read_text(encoding="utf-8"))
+        with self.assertRaisesRegex(lrh.LookupRouteHandleError, "survivor tactic:binh-thanh of tactic:cu has no live slug"):
+            lrh.redirects_bytes({"tactic:cu": "tactic:binh-thanh"}, ledger)
 
     def test_former_id_without_retired_slug_fails(self):
         write_json(self.data / "tactics.json", [tactic("tactic:binh-thanh", "Binh Thánh", ["tactic:never-routed"])])
