@@ -140,7 +140,7 @@ MCP có bảy tool (xem [Research MCP server](mcp-research-server.md)); `tqccl_s
 ## Regeneration triggers
 
 - Đổi source snapshot, guide, identity decision, translation hoặc merge rule: build/validate candidate và review generation mới.
-- Promote generation mới hoặc đổi `data/books-dict.json`: chạy `python3 -m pipeline.lookup_route_handles --write` rồi `--check` trước build (build từ chối ledger slug lệch pin hay tập mã), và `node scripts/report-zh-gaps.mjs` để báo cáo zh thiếu chữ khớp dữ liệu; slug đã cấp không đổi, mã rời corpus chuyển sang `retired`.
+- Promote generation mới hoặc đổi `data/books-dict.json`: chạy `python3 -m pipeline.lookup_route_handles --write` rồi `--check` trước build (build từ chối ledger slug lệch pin hay tập mã), và `node scripts/report-zh-gaps.mjs` để báo cáo zh thiếu chữ khớp dữ liệu; slug đã cấp không đổi, mã rời corpus chuyển sang `retired`. `--write` cũng sinh `public/_redirects` (đầu ra, không sửa tay): mỗi mã trong `lookup.formerIds` của một chiến pháp có hai rule `301` (`/tra-cuu/chien-phap/<slug cũ>/` và `/zh/…`) tới trang mã giữ; `--check` báo `public/_redirects is stale` khi file lệch ledger. Mã đã gỡ mà không mã giữ nào liệt kê vẫn 404.
 - Đổi hero/tactic/catalog bytes: promote cả bundle bốn file; không thay từng file.
 - Đổi semantic runtime MCP: chạy `npm --prefix mcp-worker run generate:workflow-build`, commit generated identity rồi chạy `check`.
 - Đổi public manifest/build verifier/router: chạy root check, build, dist verifier, dev contract và Astro E2E.

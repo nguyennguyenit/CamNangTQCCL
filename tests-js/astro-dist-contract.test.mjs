@@ -97,6 +97,7 @@ const pairHead = (locale, viPath) => [
 const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/sitemap.xml\n`;
 
 const FIXTURE_HEADERS = "/\n  Cache-Control: max-age=0\n";
+const FIXTURE_REDIRECTS = "/tra-cuu/chien-phap/cu/ /tra-cuu/chien-phap/moi/ 301\n";
 
 /** Output blog đúng như build sinh ra từ một tập bài (rỗng khi không có API). */
 async function writeBlogOutputs(distDir, posts = []) {
@@ -626,6 +627,8 @@ test("dist verifier rejects missing, unexpected, and symlinked output", async (t
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "index.html"), "<!doctype html>\n");
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
@@ -687,6 +690,8 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   const fixture = await writeRecommendedFixture(projectDir, distDir);
@@ -876,6 +881,7 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   assert.equal(result.assetCount, PUBLIC_ARTIFACTS.length);
   assert.ok(result.files.includes("index.html"));
   assert.ok(result.files.includes("_headers"));
+  assert.ok(result.files.includes("_redirects"));
   // Font self-host đi kèm giấy phép và nằm trong allowlist dist.
   assert.ok(result.files.includes("fonts/be-vietnam-pro-400-latin.woff2"));
   assert.ok(result.files.includes("fonts/OFL.txt"));
@@ -886,6 +892,10 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   assert.deepEqual(
     await readFile(new URL("../dist/_headers", import.meta.url)),
     await readFile(new URL("../public/_headers", import.meta.url)),
+  );
+  assert.deepEqual(
+    await readFile(new URL("../dist/_redirects", import.meta.url)),
+    await readFile(new URL("../public/_redirects", import.meta.url)),
   );
   const html = await readFile(new URL("../dist/doi-chuan/index.html", import.meta.url), "utf8");
   assertFrontendShellContract(html, {
@@ -1163,6 +1173,8 @@ test("dist verifier admits blog posts only with consistent JSON-LD, index, feed 
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
@@ -1207,6 +1219,8 @@ test("dist verifier locks the emitted sitemap to the catalog route set", async (
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
@@ -1393,6 +1407,8 @@ test("dist verifier byte-locks the self-hosted font directory", async (t) => {
   await mkdir(join(projectDir, "public"), { recursive: true });
   await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
   await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
@@ -1444,6 +1460,8 @@ async function lookupDistFixture(t) {
   const headers = "/\n  Cache-Control: max-age=0\n";
   await writeFile(join(projectDir, "public", "_headers"), headers);
   await writeFile(join(distDir, "_headers"), headers);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
