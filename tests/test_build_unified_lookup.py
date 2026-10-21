@@ -345,6 +345,10 @@ class BuildUnifiedLookupTest(unittest.TestCase):
                 self.assertNotIn(b"sourceUrl", raw)
                 self.assertNotIn(b"fetchedAt", raw)
                 self.assertNotIn(b"sgsdeck.com", raw)
+                # Nguồn chữ Hán `zhEffects` chỉ công khai `kind`; `ref`/`note`/`viSha256` ở đầu vào và ledger riêng.
+                self.assertNotIn(b'"ref"', raw)
+                self.assertNotIn(b'"note"', raw)
+                self.assertNotIn(b"viSha256", raw)
 
     def test_output_alias_and_symlink_are_rejected_before_replacement(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -693,10 +697,30 @@ class ClientHeroSupplementTest(unittest.TestCase):
 
 class ClientTacticCaptureTest(unittest.TestCase):
     ALL_TROOPS = ["Kỵ binh", "Khiên binh", "Cung binh", "Thương binh", "Khí giới"]
+    _baseline_effect_vi = None  # {mã: effectViet} của chiến pháp có chữ Hán từ baseline cũ, dò một lần cho cả lớp
 
     def setUp(self):
         self.directory = Path(tempfile.mkdtemp())
         self.addCleanup(shutil.rmtree, self.directory, ignore_errors=True)
+
+    @staticmethod
+    def _zh(text, effect_vi, source=None):
+        return {"text": text, "viSha256": hashlib.sha256(effect_vi.encode("utf-8")).hexdigest(), "source": source or {"kind": "translation"}}
+
+    def _baseline_zh_effects(self):
+        """Mục `zhEffects` tối thiểu cho mọi chiến pháp baseline mà builder đòi (chưa có dữ liệu tra nguồn trong fixture)."""
+        if ClientTacticCaptureTest._baseline_effect_vi is None:
+            seen = {}
+
+            def probe(document, tactics, origin):
+                by_id = {row["id"]: row for row in tactics}
+                seen.update({owner: by_id[owner]["effectViet"] for owner, kind in origin.items() if kind == "baseline" and owner in by_id})
+                return []
+
+            with mock.patch.object(build_module, "_apply_zh_effects", probe):
+                self._build({}, baseline_zh=False)
+            ClientTacticCaptureTest._baseline_effect_vi = seen
+        return {owner: self._zh("測試", effect_vi) for owner, effect_vi in ClientTacticCaptureTest._baseline_effect_vi.items()}
 
     def _entry(self, **overrides):
         entry = {
@@ -708,7 +732,11 @@ class ClientTacticCaptureTest(unittest.TestCase):
         entry.update(overrides)
         return entry
 
-    def _build(self, tactics, **extra):
+    def _build(self, tactics, baseline_zh=True, **extra):
+        if baseline_zh:
+            retired = extra.get("retired", {})
+            defaults = {owner: entry for owner, entry in self._baseline_zh_effects().items() if owner not in retired}
+            extra["zhEffects"] = {**defaults, **extra.get("zhEffects", {})}
         document = {
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Chiến Pháp > Toàn bộ", "capturedAt": "2026-10-16"},
@@ -783,19 +811,80 @@ class ClientTacticCaptureTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "client tactic note is invalid"):
             self._build({}, tacticNotes={"tactic:khong-co": note})
 
+    def _ho_ve(self):
+        return self._entry(nameVi="Hộ Vệ", effectVi="Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp")
+
     def test_new_client_tactic_is_appended_with_chinese_text(self):
-        entry = self._entry(nameVi="Hộ Vệ", effectVi="Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp")
+        entry = self._ho_ve()
         season = [{"kind": "season", "textVi": "Chiến pháp bổ sung của mùa Binh Diễn Xuân Thu."}]
-        output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "為我軍主將分擔 10%→20% 傷害，持續 2 回合", "conditions": season, "aliases": ["Hộ Vệ Chủ Tướng"]}})
+        zh = self._zh("為我軍主將分擔 10%→20% 傷害，持續 2 回合", entry["effectVi"])
+        output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "conditions": season, "aliases": ["Hộ Vệ Chủ Tướng"]}}, zhEffects={"tactic:ho-ve": zh})
         row = self._rows(output, "tactics.json")["tactic:ho-ve"]
         self.assertEqual((row["viet"], row["chinese"], row["quality"], row["pending"]), ("Hộ Vệ", "護衛", "B", False))
+        self.assertEqual((row["effect"], row["lookup"]["effectZhSource"]), (zh["text"], {"kind": "translation"}))
         self.assertEqual(row["lookup"]["conditions"], season)
         self.assertEqual(row["aliases"], ["Hộ Vệ Chủ Tướng"])
-        with self.assertRaisesRegex(ValueError, "condition shape is invalid"):
-            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "x", "conditions": [{"kind": "mùa", "textVi": "x"}]}})
         self.assertEqual(row["effectViet"], entry["effectVi"])
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
+        with self.assertRaisesRegex(ValueError, "condition shape is invalid"):
+            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "conditions": [{"kind": "mùa", "textVi": "x"}]}}, zhEffects={"tactic:ho-ve": zh})
         with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
-            self._build({"tactic:ho-ve-x": entry}, newTactics={"tactic:ho-ve-x": {"nameZh": "護衛", "effectZh": "x"}})
+            self._build({"tactic:ho-ve-x": entry}, newTactics={"tactic:ho-ve-x": {"nameZh": "護衛"}})
+
+    def test_every_zh_effect_kind_publishes_only_its_kind(self):
+        entry = self._ho_ve()
+        for source in (
+            {"kind": "source", "ref": "https://sanzhan.slgsim.com/zhanfa/123"},
+            {"kind": "source", "ref": "https://forum.gamer.com.tw/C.php?bsn=26742&snA=1"},
+            {"kind": "capture", "note": "client TW 訓兵場 2026-10-17"},
+            {"kind": "translation"},
+        ):
+            with self.subTest(source=source):
+                output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛"}}, zhEffects={"tactic:ho-ve": self._zh("分擔傷害", entry["effectVi"], source)})
+                self.assertEqual(self._rows(output, "tactics.json")["tactic:ho-ve"]["lookup"]["effectZhSource"], {"kind": source["kind"]})
+                raw = (output / "tactics.json").read_bytes()
+                for private in (b'"ref"', b'"note"', b"viSha256", b"slgsim", b"gamer.com.tw", "訓兵場".encode("utf-8")):
+                    self.assertNotIn(private, raw)
+                ledger = [row for row in json.loads((output / "ledger.json").read_bytes()) if row["fieldPath"] == "clientCapture.zhEffects" and row["entityId"] == "tactic:ho-ve"]
+                self.assertEqual([row["chosenInput"] for row in ledger], [f"zh-effect-{source['kind']}"])
+
+    def test_invalid_zh_effects_are_rejected(self):
+        entry = self._ho_ve()
+        new = {"tactic:ho-ve": {"nameZh": "護衛"}}
+        good = self._zh("分擔傷害", entry["effectVi"])
+        for zh_effects, error in (
+            ({"tactic:ho-ve": {**good, "viSha256": "0" * 64}}, r"stale zhEffects \(effectViet changed\): tactic:ho-ve"),
+            ({"tactic:ho-ve": {**good, "viSha256": "ABC"}}, "zhEffects entry is invalid"),
+            ({"tactic:ho-ve": {**good, "extra": 1}}, "zhEffects entry is invalid"),
+            ({"tactic:ho-ve": {**good, "text": "分擔\u200b傷害"}}, "zhEffects.text is invalid"),
+            ({"tactic:ho-ve": {**good, "text": "分擔<br>傷害"}}, "zhEffects.text is invalid"),
+            ({"tactic:ho-ve": {**good, "text": "分擔&nbsp;傷害"}}, "zhEffects.text is invalid"),
+            ({"tactic:ho-ve": {**good, "text": "效" * 1501}}, "zhEffects.text is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://u@sanzhan.slgsim.com/x"}}}, "source.ref is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://sanzhan.slgsim.com/a b"}}}, "source.ref is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://example.com/x"}}}, "source.ref is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "http://sanzhan.slgsim.com/x"}}}, "source.ref is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://sanzhan.slgsim.com:8443/x"}}}, "source.ref is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "capture", "note": "https://sanzhan.slgsim.com/x"}}}, "source.note is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "translation", "ref": "https://sanzhan.slgsim.com/x"}}}, "zhEffects.source is invalid"),
+            ({"tactic:ho-ve": {**good, "source": {"kind": "sgsdeck"}}}, "zhEffects.source is invalid"),
+            ({"tactic:ho-ve": good, "tactic:vien-cuu": self._zh("x", "y")}, "zhEffects owner is invalid: tactic:vien-cuu"),
+            ({"tactic:ho-ve": good, "tactic:khong-co": self._zh("x", "y")}, "zhEffects owner is invalid: tactic:khong-co"),
+            ({}, "non-SGSDeck zh effect without zhEffects: .*tactic:ho-ve"),
+        ):
+            with self.subTest(error=error), self.assertRaisesRegex(ValueError, error):
+                self._build({"tactic:ho-ve": entry}, newTactics=new, zhEffects=zh_effects)
+        with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
+            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "分擔傷害"}}, zhEffects={"tactic:ho-ve": good})
+
+    def test_baseline_chinese_effect_needs_a_declared_zh_effect(self):
+        baseline = self._baseline_zh_effects()
+        self.assertTrue(baseline)
+        with self.assertRaisesRegex(ValueError, "non-SGSDeck zh effect without zhEffects: " + ", ".join(sorted(baseline))):
+            self._build({}, baseline_zh=False)
+        owner = sorted(baseline)[0]
+        row = self._rows(self._build({}), "tactics.json")[owner]
+        self.assertEqual((row["effect"], row["lookup"]["effectZhSource"], row["pending"]), ("測試", {"kind": "translation"}, False))
 
     @staticmethod
     def _rows(output, name):

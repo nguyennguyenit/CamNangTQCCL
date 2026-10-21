@@ -441,3 +441,24 @@ test("formerIds: mã đã gộp hợp lệ khi không còn hàng sống; mã cò
   await assert.rejects(validateLookupBundle(missing.manifest, missing.rawFiles), /lookup/);
   assert.equal(formerIds.length, 0);
 });
+
+test("effectZhSource: null hoặc đúng {kind} của source/capture/translation; khóa riêng tư, kind lạ hoặc thiếu chữ Hán bị từ chối", async () => {
+  const base = tacticsDoc()[0];
+  const make = (effectZhSource, over = {}) => withRaw("tactics.json", [{ ...base, ...over, lookup: { ...base.lookup, effectZhSource } }]);
+  for (const value of [null, { kind: "source" }, { kind: "capture" }, { kind: "translation" }]) {
+    const ok = make(value);
+    const bundle = await validateLookupBundle(ok.manifest, ok.rawFiles);
+    assert.deepEqual(bundle.tactics[0].lookup.effectZhSource, value);
+  }
+  for (const [label, value, over] of [
+    ["ref công khai", { kind: "source", ref: "https://sanzhan.slgsim.com/x" }],
+    ["note công khai", { kind: "capture", note: "client TW" }],
+    ["viSha256 công khai", { kind: "translation", viSha256: "0".repeat(64) }],
+    ["kind lạ", { kind: "sgsdeck" }],
+    ["chuỗi thay object", "translation"],
+    ["không có chữ Hán", { kind: "translation" }, { effect: null, pending: true }],
+  ]) {
+    const bad = make(value, over);
+    await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /effectZhSource/, label);
+  }
+});

@@ -237,7 +237,7 @@ const HERO_LOOKUP_FIELDS = [
 ] as const;
 const TACTIC_FIELDS = ["type", "quality", "target", "targetViet", "troopFit", "source", "sourceHeroCn", "effect", "effectViet"] as const;
 const TACTIC_LOOKUP_FIELDS = [
-  "acquiredFromVi", "activationRate", "conditions", "conflictsVi", "cooldown", "effectTypeVi", "exchangeConditionVi",
+  "acquiredFromVi", "activationRate", "conditions", "conflictsVi", "cooldown", "effectTypeVi", "effectZhSource", "exchangeConditionVi",
   "formerIds", "inheritedFromIds", "maxUsers", "missingFields", "pointCost", "revisions",
 ] as const;
 const BOOK_FIELDS = ["effect", "effectViet", "effectVersion", "sourceNames"] as const;

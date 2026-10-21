@@ -11,7 +11,9 @@ import os
 import re
 import secrets
 import stat
+import unicodedata
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from pipeline.lookup_translations import (
     canonical_json_bytes,
@@ -52,7 +54,15 @@ LEVEL_KEYS = {"id", "level", "costs", "durationVi", "effectVi"}
 FIELD_LEDGER_KEYS = {"entityId", "fieldPath", "disposition", "chosenInput", "sourceRecordId", "sourceFieldPath", "sourceValueHash", "localValueHash", "reason", "translationInputFingerprint", "reviewEvidence"}
 HERO_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"}
 CARD_PACK_KEYS = {"packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"}
-TACTIC_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds"}
+TACTIC_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds", "effectZhSource"}
+# Chữ Hán hiệu ứng không lấy từ SGSDeck (`zhEffects` của lookup-client-tactics.json): công khai chỉ `kind`.
+ZH_EFFECT_KINDS = ("source", "capture", "translation")
+ZH_EFFECT_KEYS = {"text", "viSha256", "source"}
+ZH_SOURCE_HOSTS = {"sanzhan.slgsim.com", "forum.gamer.com.tw"}
+ZH_EFFECT_MAX_LENGTH = 1500
+ZH_CAPTURE_NOTE_MAX_LENGTH = 120
+HTML_ENTITY = re.compile(r"&[#A-Za-z0-9]+;")
+SHA256_HEX = re.compile(r"[0-9a-f]{64}")
 SLOTS = {"武器": "Vũ khí", "防具": "Phòng cụ", "坐騎": "Tọa kỵ", "寶物": "Bảo vật", "WEAPON": "Vũ khí", "ARMOR": "Phòng cụ", "MOUNT": "Tọa kỵ", "TREASURE": "Bảo vật"}
 GOLDEN_HERO_DELTAS = {
     "hero:ha-hau-don": ("troopApt", "thuan", "S"),
@@ -1044,13 +1054,14 @@ def _apply_client_heroes(document, heroes, tactics, identity):
 def _validate_client_tactics_document(document):
     if (
         not isinstance(document, dict)
-        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes"}
+        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes", "zhEffects"}
         or type(document["schemaVersion"]) is not int
         or document["schemaVersion"] != 1
         or not isinstance(document.get("newTactics", {}), dict)
         or not isinstance(document.get("retired", {}), dict)
         or not isinstance(document.get("troopMods", {}), dict)
         or not isinstance(document.get("tacticNotes", {}), dict)
+        or not isinstance(document.get("zhEffects", {}), dict)
         or not isinstance(document["source"], dict)
         or set(document["source"]) != CLIENT_SOURCE_KEYS
         or any(not isinstance(value, str) or not value.strip() for value in document["source"].values())
@@ -1065,6 +1076,42 @@ def _client_tactic_text(value, owner, field, *, nullable=False):
     if not isinstance(value, str) or not value.strip() or value != value.strip():
         raise ValueError(f"client tactic {field} is invalid: {owner}")
     return value
+
+
+def _zh_effect_text(value, owner):
+    """Chữ Hán hiệu ứng đưa vào dữ liệu công khai: không HTML, thực thể, ký tự điều khiển/ẩn (trừ xuống dòng)."""
+    text = _client_tactic_text(value, owner, "zhEffects.text")
+    if (
+        len(text) > ZH_EFFECT_MAX_LENGTH
+        or "<" in text or ">" in text or HTML_ENTITY.search(text)
+        or any(char != "\n" and unicodedata.category(char) in ("Cc", "Cf") for char in text)
+    ):
+        raise ValueError(f"client tactic zhEffects.text is invalid: {owner}")
+    return text
+
+
+def _zh_effect_source(value, owner):
+    """`{kind: source, ref}` (trang công khai trên host đã duyệt), `{kind: capture, note}` hoặc `{kind: translation}`."""
+    kind = value.get("kind") if isinstance(value, dict) else None
+    expected = {"source": {"kind", "ref"}, "capture": {"kind", "note"}, "translation": {"kind"}}.get(kind)
+    if expected is None or set(value) != expected:
+        raise ValueError(f"client tactic zhEffects.source is invalid: {owner}")
+    if kind == "source":
+        ref = value["ref"]
+        parsed = urlsplit(ref) if isinstance(ref, str) and len(ref) <= 2048 and not any(char.isspace() for char in ref) else None
+        if (
+            parsed is None or parsed.scheme != "https" or parsed.netloc != parsed.hostname
+            or parsed.hostname not in ZH_SOURCE_HOSTS or not parsed.path.strip("/")
+        ):
+            raise ValueError(f"client tactic zhEffects.source.ref is invalid: {owner}")
+    if kind == "capture":
+        note = value["note"]
+        if (
+            not isinstance(note, str) or not note.strip() or note != note.strip() or len(note) > ZH_CAPTURE_NOTE_MAX_LENGTH
+            or "://" in note or "www." in note or any(unicodedata.category(char) in ("Cc", "Cf") for char in note)
+        ):
+            raise ValueError(f"client tactic zhEffects.source.note is invalid: {owner}")
+    return kind
 
 
 def _level_numbers(text):
@@ -1111,11 +1158,11 @@ def _apply_client_tactics(document, tactics):
             record(owner, path, value, target[key])
             target[key] = value
 
-    # Chiến pháp chỉ có ở client (kho chưa có mã): tạo hàng mới, tên/hiệu ứng chữ Hán từ nguồn hoặc bản dịch đã duyệt.
+    # Chiến pháp chỉ có ở client (kho chưa có mã): tạo hàng mới với tên chữ Hán; hiệu ứng chữ Hán đến từ `zhEffects`.
     for owner, extra in sorted(document.get("newTactics", {}).items()):
         entry = document["tactics"].get(owner)
         if (
-            owner in by_id or not isinstance(extra, dict) or not {"nameZh", "effectZh"} <= set(extra) <= {"nameZh", "effectZh", "conditions", "aliases"}
+            owner in by_id or not isinstance(extra, dict) or not {"nameZh"} <= set(extra) <= {"nameZh", "conditions", "aliases"}
             or not isinstance(entry, dict) or not isinstance(entry.get("nameVi"), str)
             or owner != canonical_id("tactic", entry["nameVi"])
         ):
@@ -1126,18 +1173,17 @@ def _apply_client_tactics(document, tactics):
         if not _string_list(aliases) or any(not name.strip() or name in (entry["nameVi"], extra["nameZh"]) for name in aliases) or len(set(aliases)) != len(aliases):
             raise ValueError(f"client new tactic aliases are invalid: {owner}")
         name_zh = _client_tactic_text(extra["nameZh"], owner, "nameZh")
-        effect_zh = _client_tactic_text(extra["effectZh"], owner, "effectZh")
         row = {
             "id": owner, "chinese": name_zh, "hanViet": entry["nameVi"], "viet": entry["nameVi"], "aliases": list(aliases),
-            "type": None, "quality": None, "effect": effect_zh, "effectViet": None, "target": None, "targetViet": None,
+            "type": None, "quality": None, "effect": None, "effectViet": None, "target": None, "targetViet": None,
             "troopFit": [], "source": None, "sourceHeroCn": None, "iconUrl": None, "linkScore": None, "pending": True,
             "lookup": {"conditions": [dict(row) for row in conditions], "missingFields": [], "revisions": [], "activationRate": None, "cooldown": None,
                        "maxUsers": None, "pointCost": None, "effectTypeVi": None, "exchangeConditionVi": None,
-                       "acquiredFromVi": [], "inheritedFromIds": [], "conflictsVi": None, "formerIds": []},
+                       "acquiredFromVi": [], "inheritedFromIds": [], "conflictsVi": None, "formerIds": [], "effectZhSource": None},
         }
         tactics.append(row)
         by_id[owner] = row
-        record(owner, "clientCapture.newTactic", {"nameZh": name_zh, "effectZh": effect_zh, "conditions": conditions, "aliases": aliases}, None)
+        record(owner, "clientCapture.newTactic", {"nameZh": name_zh, "conditions": conditions, "aliases": aliases}, None)
 
     for owner, entry in sorted(document["tactics"].items()):
         if owner not in by_id or not isinstance(entry, dict) or set(entry) != CLIENT_TACTIC_KEYS:
@@ -1183,6 +1229,47 @@ def _apply_client_tactics(document, tactics):
             record(owner, "clientCapture.effectVi", effect, row["effectViet"])
             _apply_client_effect(row, effect)
         row["pending"] = not bool(row.get("effect") and row["effectViet"])
+    return ledger
+
+
+def _apply_zh_effects(document, tactics, effect_origin):
+    """Chữ Hán hiệu ứng không đến từ SGSDeck: mỗi mục `zhEffects` gắn với đúng `effectViet` lúc gán (`viSha256`).
+
+    `effect_origin` ({mã: "sgsdeck" | "baseline" | "missing"}) do vòng chiến pháp gốc ghi; chiến pháp chỉ có ở client
+    không có mặt. Không đè chữ SGSDeck; chữ Hán từ baseline cũ hoặc chiến pháp mới thiếu mục `zhEffects` thì dừng build.
+    Công khai chỉ `lookup.effectZhSource = {kind}`; `ref`/`note` chỉ vào ledger riêng. Trả các dòng ledger."""
+    by_id = {row["id"]: row for row in tactics}
+    entries = document.get("zhEffects", {})
+    ledger = []
+    for owner, entry in sorted(entries.items()):
+        row = by_id.get(owner)
+        if row is None or effect_origin.get(owner) == "sgsdeck":
+            raise ValueError(f"client tactic zhEffects owner is invalid: {owner}")
+        if not isinstance(entry, dict) or set(entry) != ZH_EFFECT_KEYS or not isinstance(entry["viSha256"], str) or not SHA256_HEX.fullmatch(entry["viSha256"]):
+            raise ValueError(f"client tactic zhEffects entry is invalid: {owner}")
+        text = _zh_effect_text(entry["text"], owner)
+        kind = _zh_effect_source(entry["source"], owner)
+        if not isinstance(row["effectViet"], str) or _sha(row["effectViet"].encode("utf-8")) != entry["viSha256"]:
+            raise ValueError(f"stale zhEffects (effectViet changed): {owner}")
+        previous = row["effect"]
+        row["effect"] = text
+        row["lookup"]["effectZhSource"] = {"kind": kind}
+        row["pending"] = not bool(row["effect"] and row["effectViet"])
+        evidence = entry["source"].get("ref") or entry["source"].get("note")
+        ledger.append({
+            "entityId": owner, "fieldPath": "clientCapture.zhEffects",
+            "disposition": "typed-public" if previous in (None, "") else "corrected-public",
+            "chosenInput": f"zh-effect-{kind}", "sourceRecordId": f"client-tactics:{owner.removeprefix('tactic:')}",
+            "sourceFieldPath": "zhEffects", "sourceValueHash": _sha(canonical_json_bytes(entry)),
+            "localValueHash": None if previous in (None, "") else _sha(canonical_json_bytes(previous)),
+            "reason": "Chinese effect not provided by SGSDeck; declared source kind is published, reference stays private.",
+            "translationInputFingerprint": None,
+            "reviewEvidence": [f"zhEffects {kind}", *([evidence] if evidence else []), "pipeline/lookup-client-tactics.json"],
+        })
+    required = {owner for owner, origin in effect_origin.items() if origin == "baseline"} | set(document.get("newTactics", {}))
+    missing = sorted(owner for owner in required if owner in by_id and owner not in entries)
+    if missing:
+        raise ValueError(f"non-SGSDeck zh effect without zhEffects: {', '.join(missing)}")
     return ledger
 
 
@@ -1403,6 +1490,8 @@ def _build_model(capture):
         heroes.append(row)
 
     tactics = []
+    # Nguồn gốc chữ Hán hiệu ứng của từng chiến pháp gốc; `_apply_zh_effects` đòi mục `zhEffects` cho "baseline".
+    effect_origin = {}
     for owner in list(old_tactics) + sorted(set(tactic_sources) - set(old_tactics)):
         source = tactic_sources.get(owner)
         if source is None:
@@ -1411,7 +1500,8 @@ def _build_model(capture):
             row["effectViet"] = translated.get((owner, "effectViet")) or row.get("effectViet")
             row["targetViet"] = translated.get((owner, "targetViet")) or row.get("targetViet")
             row["pending"] = not bool(row.get("effect") and row.get("effectViet"))
-            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "activationRate": None, "cooldown": None, "maxUsers": None, "pointCost": None, "effectTypeVi": None, "exchangeConditionVi": None, "acquiredFromVi": [], "inheritedFromIds": [], "conflictsVi": None, "formerIds": []}
+            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "activationRate": None, "cooldown": None, "maxUsers": None, "pointCost": None, "effectTypeVi": None, "exchangeConditionVi": None, "acquiredFromVi": [], "inheritedFromIds": [], "conflictsVi": None, "formerIds": [], "effectZhSource": None}
+            effect_origin[owner] = "baseline" if row.get("effect") and row["effect"] not in MISSING_TEXT else "missing"
             tactics.append(row)
             continue
         attrs = source["attributes"]
@@ -1426,12 +1516,13 @@ def _build_model(capture):
         source_effect = attrs.get("effectText")
         usable_source_effect = source_effect if source_effect not in MISSING_TEXT else None
         effect = usable_source_effect or row.get("effect")
+        effect_origin[owner] = "sgsdeck" if usable_source_effect else ("baseline" if effect and effect not in MISSING_TEXT else "missing")
         row.update({"id": owner, "chinese": source["nameZh"], "hanViet": name_vi, "viet": name_vi,
             "aliases": list(dict.fromkeys(row.get("aliases", []) + decision.get("aliasesVi", []) + decision.get("aliasesZh", []))),
             "type": attrs.get("kind"), "quality": attrs.get("quality"), "effect": effect, "effectViet": effect_vi,
             "target": attrs.get("effectTarget") if attrs.get("effectTarget") is not None else row.get("target"), "targetViet": translated.get((owner, "targetViet")) or row.get("targetViet"), "troopFit": [_enum(TROOPS, value, "tactic.troopLimit") for value in attrs.get("troopLimit", [])],
             "source": attrs.get("source"), "sourceHeroCn": row.get("sourceHeroCn"), "iconUrl": row.get("iconUrl"), "linkScore": row.get("linkScore"), "pending": not bool(effect and effect_vi),
-            "lookup": {"conditions": _conditions(source, translated, owner), "missingFields": list(source.get("missingFields", [])), "revisions": _revisions(usable_source_effect, effect_vi), "activationRate": _adopted_number(corrections, consumed_corrections, "tactics", source, "activationRate"), "cooldown": _number_or_none(attrs.get("cooldown")), "maxUsers": _number_or_none(attrs.get("maxUsers")), "pointCost": _number_or_none(attrs.get("pointCost")), "effectTypeVi": translated.get((owner, "lookup.effectTypeVi")), "exchangeConditionVi": translated.get((owner, "lookup.exchangeConditionVi")), "acquiredFromVi": acquired_rows, "inheritedFromIds": inherited, "conflictsVi": translated.get((owner, "lookup.conflictsVi")), "formerIds": []}})
+            "lookup": {"conditions": _conditions(source, translated, owner), "missingFields": list(source.get("missingFields", [])), "revisions": _revisions(usable_source_effect, effect_vi), "activationRate": _adopted_number(corrections, consumed_corrections, "tactics", source, "activationRate"), "cooldown": _number_or_none(attrs.get("cooldown")), "maxUsers": _number_or_none(attrs.get("maxUsers")), "pointCost": _number_or_none(attrs.get("pointCost")), "effectTypeVi": translated.get((owner, "lookup.effectTypeVi")), "exchangeConditionVi": translated.get((owner, "lookup.exchangeConditionVi")), "acquiredFromVi": acquired_rows, "inheritedFromIds": inherited, "conflictsVi": translated.get((owner, "lookup.conflictsVi")), "formerIds": [], "effectZhSource": None}})
         tactics.append(row)
     # Mục hiệu chỉnh không được tiêu thụ là mục mồ côi: build phải dừng để review lại bảng.
     orphaned_corrections = set(corrections) - consumed_corrections
@@ -1439,6 +1530,7 @@ def _build_model(capture):
         raise ValueError(f"orphaned source value corrections: {sorted(orphaned_corrections)}")
     client_ledger = _apply_client_tactics(_json(capture["clientTactics"]), tactics)
     client_ledger += _retire_tactics(_json(capture["clientTactics"]), tactics, heroes)
+    client_ledger += _apply_zh_effects(_json(capture["clientTactics"]), tactics, effect_origin)
     client_ledger += _apply_client_tactic_notes(_json(capture["clientTactics"]), tactics)
     client_ledger += _apply_client_heroes(_json(capture["clientHeroes"]), heroes, tactics, identity)
 
@@ -1737,6 +1829,11 @@ def _validate_payloads(heroes, tactics, catalog):
         has_effect_vi = isinstance(row["effectViet"], str) and bool(row["effectViet"].strip())
         if (has_effect and not has_effect_vi) or row["pending"] != (not (has_effect and has_effect_vi)):
             raise ValueError(f"tactic effect translation state is invalid: {row['id']}")
+        zh_source = lookup["effectZhSource"]
+        if zh_source is not None and (
+            not isinstance(zh_source, dict) or set(zh_source) != {"kind"} or zh_source["kind"] not in ZH_EFFECT_KINDS or not has_effect
+        ):
+            raise ValueError(f"tactic effectZhSource is invalid: {row['id']}")
         _validate_conditions(lookup["conditions"], row["id"])
         _validate_revisions(lookup["revisions"], row["id"])
         if any(identifier not in hero_ids for identifier in lookup["inheritedFromIds"]):

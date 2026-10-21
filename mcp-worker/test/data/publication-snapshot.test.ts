@@ -327,7 +327,7 @@ describe("projection allowlist", () => {
   it("drops non-allowlisted and private fields instead of copying records", () => {
     const entities = projectCatalogEntities({
       heroes: [{ id: "hero:a", viet: "A", chinese: "甲", hanViet: "Giáp", aliases: ["甲"], iconUrl: "https://x", linkScore: 1, pending: false, sgsdeckPath: "data/sgsdeck/x", privateNote: "secret", stats: { luc: 1 }, lookup: { variant: "base", leaked: "secret" } }],
-      tactics: [{ id: "tactic:t", viet: "T", chinese: "戰", effect: "e", internalReview: "secret", lookup: { revisions: [], hidden: 1 } }],
+      tactics: [{ id: "tactic:t", viet: "T", chinese: "戰", effect: "e", internalReview: "secret", lookup: { revisions: [], hidden: 1, effectZhSource: { kind: "translation" } } }],
       books: [{ viet: "Sách", chinese: "書", effect: "e", effectViet: "v", editorNote: "secret" }],
       catalog: {
         equipment: [{ id: "equipment:e", nameVi: "E", aliasesVi: [], aliasesZh: ["裝"], conditions: [], missingFields: [], slotVi: "Vũ khí", qualityVi: "Cam", reviewer: "secret" }],
@@ -344,6 +344,8 @@ describe("projection allowlist", () => {
     expect(entities.map((entity) => entity.id).sort()).toEqual(["book:sach", "equipment-special:s", "equipment:e", "hero:a", "tactic:t"]);
     const equipment = entities.find((entity) => entity.id === "equipment:e")!;
     expect((equipment.profile as { specialIds: string[] }).specialIds).toEqual(["equipment-special:s"]);
+    const tactic = entities.find((entity) => entity.id === "tactic:t")!;
+    expect(tactic.profile).toHaveProperty("lookup", { revisions: [], effectZhSource: { kind: "translation" } });
   });
 
   it("never serializes the private subtree or non-allowlisted dictionary fields into artifacts", () => {

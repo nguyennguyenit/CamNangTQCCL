@@ -9,7 +9,9 @@ const TACTIC_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "type", "qua
 const COMMON_KEYS = ["id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"];
 const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"];
 const CARD_PACK_KEYS = ["packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"];
-const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds"];
+const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds", "effectZhSource"];
+/** Nguồn chữ Hán hiệu ứng không đến từ SGSDeck; `null` = SGSDeck hoặc chưa có chữ Hán. */
+const ZH_EFFECT_KINDS = new Set(["source", "capture", "translation"]);
 const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
 const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
 
@@ -112,6 +114,11 @@ function validateTactic(record) {
     || !isStringList(lookup.acquiredFromVi) || !isStringList(lookup.inheritedFromIds) || !isStringList(lookup.missingFields)
     || !isStringList(lookup.formerIds) || lookup.formerIds.some((id) => !id.startsWith("tactic:") || id === record.id)) {
     throw new Error(`${owner}.lookup có scalar không hợp lệ`);
+  }
+  const zhSource = lookup.effectZhSource;
+  if (zhSource !== null && (!isPlainObject(zhSource) || !keysEqual(zhSource, ["kind"]) || !ZH_EFFECT_KINDS.has(zhSource.kind)
+    || typeof record.effect !== "string" || !record.effect.trim())) {
+    throw new Error(`${owner}.lookup.effectZhSource không hợp lệ`);
   }
   requireConditions(`${owner}.lookup`, lookup.conditions);
   requireRevisions(`${owner}.lookup`, lookup.revisions);
