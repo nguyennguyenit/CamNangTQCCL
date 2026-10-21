@@ -22,11 +22,11 @@ Project deploy is split into three surfaces:
 
 - Date: 2026-10-21
 - Production URL: `https://tqccl.com` (primary). `https://www.tqccl.com` returns `301` to the same path and query through a zone Redirect Rule; `https://tqccl.pages.dev` hands over through the head bridge script.
-- Deployment: `https://cb91471a.tqccl.pages.dev`
-- Source commit: `1fa81ab` (`origin/main`): PR #22 (Chinese effects with a declared source: `zhEffects` → `lookup.effectZhSource`, 63 entries = 31 source + 16 capture + 16 translation, 0 pending tactics; translation flag on the tactic profile vi + zh, zh related cards and the zh tactic table; zh meta/JSON-LD of translated entries without the effect snippet). Same SHA as Research MCP release below.
-- Method: main frozen from the PR #22 merge to the MCP release. `pages-deploy.yml` `workflow_dispatch` on `main` (run `39630151392`, headSha `1fa81ab`, `main` unchanged until after MCP). Before merge (WSL, Node 24.20.0, on the generated outputs of transaction `chu-han-nguon-261020-r3`): `unittest` 458 OK, `test:node` 620/620, `test:dist` 50/50, `npm run verify`, `mcp-worker check` 544/544, Playwright 539 passed, `lookup_route_handles`/`team_route_handles`/`site_localization --stage public`/`report-zh-gaps`/`design-tokens` checks; PR gate green. Merged tree = tested head `ed833e2`.
-- Production verified: redirect matrix `rules=36 expected=36 orphans=18 fail=0`; `/tra-cuu/chien-phap/tran-ap-khan-vang/` and `/zh/…` carry one `data-zh-source="translation"` flag, `ap-che` (source) and `tinh-bach-ma-nghia-tong` (capture) none; `/zh/tra-cuu/chien-phap/` row of `tran-ap-khan-vang` flagged, `/tra-cuu/chien-phap/` no flag; zh meta description `鎮壓黃巾（战法，品质A·指挥）。` (no effect snippet), vi meta keeps the Vietnamese effect.
-- Previous production / rollback targets: `https://b60ddcd6.tqccl.pages.dev` (`5fe2933`, PR #24, run `39621620745`), `https://f9bffd66.tqccl.pages.dev` (`6b17d23`, PR #19). Rollback order: revert `main` first, then rerun `pages-deploy.yml`; roll back the Research MCP to `5dc07761…` together (it projects `effectZhSource`).
+- Deployment: `https://ec3c9558.tqccl.pages.dev`
+- Source commit: `957bb3d` (`origin/main`): PR #25 (follow-up of PR #22: `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` Chinese effects gain their level activation ranges; lookup generation `lookup:9da6c224…`). Same SHA as the Research MCP release below.
+- Method: `pages-deploy.yml` `workflow_dispatch` on `main` (run `39651871017`, headSha `957bb3d`, `main` unchanged until after MCP). PR gate green (full Playwright in CI). Local (WSL): `unittest` 459 OK, `test:node` 620/620, `test:dist` 50/50, route/l10n/zh-gaps/design-tokens checks; `mcp-worker check` 544/544 on rerun (first run `domain-budget` 2001 ms > 2000); local Playwright 538 passed + 2 timing failures outside Tra cứu, reruns stopped at the 30 s `webServer` limit while the host was loaded.
+- Production verified: `/zh/tra-cuu/chien-phap/dam-tam/`, `tinh-hoa`, `truy-thuong` show `發動率23%→45%`, `30%→45%`, `25%→40%`; `/tra-cuu/chien-phap/lua-chay-ngun-ngut/` still `301` → `/tra-cuu/chien-phap/han-thien-si-dia/`.
+- Previous production / rollback targets: `https://cb91471a.tqccl.pages.dev` (`1fa81ab`, PR #22, run `39630151392`; full redirect matrix and flag checks recorded at that deploy), `https://b60ddcd6.tqccl.pages.dev` (`5fe2933`, PR #24). Rollback order: revert `main` first, then rerun `pages-deploy.yml`; roll back the Research MCP together.
 
 ## Latest Community Worker Deploy
 
@@ -38,17 +38,17 @@ Project deploy is split into three surfaces:
 
 ## Latest Research MCP Deploy
 
-- Date: 2026-10-21 (16:00 UTC)
+- Date: 2026-10-21 (18:55 UTC)
 - Production URL: `https://mcp.tqccl.com`
-- GitHub Actions run: `39630530573` (manual exact-SHA dispatch, `rehearse_rollback: false`). Job `production-release` green on attempt 1; the parallel job `credential-free-release-gate` (no deploy steps) failed on attempt 1 with `Timed out waiting 30000ms from config.webServer` (Playwright preview start) and passed on rerun (attempt 2).
-- Source commit: `1fa81ab23758b022f7cc0209b56af24a27b2493d` (= Pages deployment above). `tqccl_get_entity` projects `profile.lookup.effectZhSource` (`null` | `{kind}`).
-- Release ID: `sha256:98117d62c5595d2fabd6ddc601aa1bb237bbb3bacc7c52b1787660d3aa4d73ad`
-- Workflow build ID: `build:sha256b64:Ch64kQimPnoGdnZ4UajzsY22LNGC3BdBeU3dJz5Iyi8`
-- Worker version ID: `62cba122-22ac-434c-a017-05007cdc56e1`
-- Deployments: prior `633e1dd6-8c64-4cf2-b68f-6a3b7725c686` (`5dc07761` 100%), smoke `a192f24e-e91d-4be9-8a85-36442b8d21dc` (prior 100% + candidate 0%), production `085f9618-8224-4b70-b1f4-a91a016449d7`.
-- Status: `verified` by the workflow verifier. The local `mcp-worker` CLI on the released tree computes the same release ID and returns `tactic:tran-ap-khan-vang` `effectZhSource {kind: "translation"}`, `tactic:ap-che` `{kind: "source"}`, `tactic:tinh-bach-ma-nghia-tong` `{kind: "capture"}`, `tactic:lua-chay-ngun-ngut` → `tactic:han-thien-si-dia`, with no `ref`/`note`/`viSha256`. An authenticated live `tqccl_get_entity` call was not made from this machine (no managed bearer).
+- GitHub Actions run: `39652210255` (manual exact-SHA dispatch, `rehearse_rollback: false`); both jobs green.
+- Source commit: `957bb3d92b0aef996720cbdf702657207a01a462` (= Pages deployment above).
+- Release ID: `sha256:0865667b80b49cf132fcf4086526459f0ae64223b81c9bdec8c7aa417fd7138e`
+- Workflow build ID: `build:sha256b64:Ch64kQimPnoGdnZ4UajzsY22LNGC3BdBeU3dJz5Iyi8` (code unchanged since `1fa81ab`)
+- Worker version ID: `93d02cc5-3b56-4e93-90aa-3fc6bc9f927b`
+- Deployments: prior `085f9618…` (`62cba122` 100%), smoke `4ba0b14c-f715-4b85-b390-4236cd6ba7d6`, production `16434098-6f0c-4d99-83e7-ee90446cabc0`. Status `verified` by the workflow verifier.
+- Previous release (16:00 UTC): run `39630530573`, source `1fa81ab` (PR #22), release `sha256:98117d62c5595d2fabd6ddc601aa1bb237bbb3bacc7c52b1787660d3aa4d73ad`, Worker version `62cba122-22ac-434c-a017-05007cdc56e1`, deployments smoke `a192f24e-e91d-4be9-8a85-36442b8d21dc`, production `085f9618-8224-4b70-b1f4-a91a016449d7`; job `credential-free-release-gate` passed on rerun after a `webServer` timeout. The local `mcp-worker` CLI on that tree computed the same release ID and returned `tactic:tran-ap-khan-vang` `effectZhSource {kind: "translation"}`, `tactic:ap-che` `{kind: "source"}`, `tactic:tinh-bach-ma-nghia-tong` `{kind: "capture"}`, `tactic:lua-chay-ngun-ngut` → `tactic:han-thien-si-dia`, no `ref`/`note`/`viSha256`. No authenticated live `tqccl_get_entity` call was made from this machine (no managed bearer).
 - Previous release (same day, 10:04 UTC, prerequisite "MCP #1"): run `39549913616` attempt 2 (attempt 1 stopped before deploy on a Playwright `page.goto` timeout), source `af3bc41` (PR #11 + PR #19), release `sha256:9bc5f63e72873a2be5ddbffc2a06f5a8dc900b87d9f78246dcf7d3651eed22a0`, workflow build `build:sha256b64:eAH85OT1z_TZ-scE_jimbjtEy5pfc-hRuE85XH6I980`, Worker version `5dc07761-6006-4adf-aa9a-ac749125530f`, deployments smoke `0666d99b-c49f-4166-a532-df8639033892`, production `633e1dd6-8c64-4cf2-b68f-6a3b7725c686`; settle 20/20 probes on the candidate. Local CLI on `af3bc41`: same release ID, `tactic:lua-chay-ngun-ngut` → `tactic:han-thien-si-dia`.
-- Rollback target: version `5dc07761-6006-4adf-aa9a-ac749125530f` (`af3bc41`); older `dbba08a2-b92b-42ea-89c2-2265eba08a9c` (`eb08691`, 2026-10-15).
+- Rollback target: version `62cba122-22ac-434c-a017-05007cdc56e1` (`1fa81ab`); older `5dc07761-6006-4adf-aa9a-ac749125530f` (`af3bc41`), `dbba08a2-b92b-42ea-89c2-2265eba08a9c` (`eb08691`, 2026-10-15).
 - Dewee consumer (self-hosted, build `ce452b49`), switched 2026-10-16: agent `tra` holds the grant on server `tqccl` (`https://mcp.tqccl.com/mcp`, 7 tools) with `tqccl_get_playbook` approved as safe context. Local server `tqccl-local` has no grant and is disabled; its config stays for rollback (`dewee mcp update tqccl-local --enabled=true`, `dewee mcp grant agent tqccl-local tra`, `dewee mcp revoke agent tqccl tra`). Smoke the same day: "Chiến pháp tự có của SP Tào Tháo" answered Thừa Thiên Tĩnh Thế through `mcp_tqccl__tqccl_get_playbook`, `tqccl_search` and `tqccl_get_entity`, citing data `6a54e59da236`.
 
 ## Deploy Commands
