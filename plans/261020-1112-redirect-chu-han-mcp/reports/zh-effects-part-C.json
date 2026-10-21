@@ -1,0 +1,166 @@
+{
+  "tactic:ap-che-so": {
+    "kind": "translation",
+    "text": "使敵軍單體統率降低6→12點，持續2回合",
+    "check": "三略庫 cùng cơ chế, tỉ lệ 40%, giá trị tối đa 12 khớp; trang không có cấp 1 (effectViet có dải 6→12) → dịch Bahamut: tìm \"初級壓制\"/site không thấy chủ đề nêu chiến pháp này (thread 戰法一覽 1819 chỉ có 壓制 của 卞喜, cơ chế khác) → giữ translation."
+  },
+  "tactic:cap-cuu-so": {
+    "kind": "translation",
+    "text": "使我軍單體獲得急救狀態，每次受到傷害時有50%機率恢復一定兵力（治療率20%→40%，受智力影響），持續2回合",
+    "check": "三略庫 cùng cơ chế, tỉ lệ 40%, 50%, trị liệu tối đa 40% khớp; thiếu cấp 1 (20%→40%) → dịch Bahamut: thread 急救戰法分析 (snA=6149) có 初級急救 nhưng đối tượng \"我軍全體\", chỉ tỉ lệ 40%/50%, không có dải trị liệu → không khớp, giữ translation."
+  },
+  "tactic:cap-toc": {
+    "kind": "translation",
+    "text": "使自己的速度提升8.5→17點",
+    "check": "三略庫 bị động 100%, tối đa 17 khớp; thiếu cấp 1 (8.5→17) → dịch Bahamut: tìm 疾速 không thấy chủ đề nêu chiến pháp này → giữ translation."
+  },
+  "tactic:chi-diep-phu-to": {
+    "kind": "source",
+    "text": "武將委任為木材官時，木材產量提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut 戰法一覽【S1-S9】 (snA=1819): cùng chiến pháp (李嚴 tự mang, màu A, Nội chính), dải 1% → 2% đủ cấp 1–tối đa, khớp effectViet; 三略庫 chỉ có tối đa → chuyển sang source (text nguyên văn, có khoảng trắng quanh mũi tên)."
+  },
+  "tactic:co-vu-so": {
+    "kind": "translation",
+    "text": "使我軍單體武力提升10→20點，持續2回合",
+    "check": "三略庫 tỉ lệ 40%, tối đa 20 khớp; thiếu cấp 1 (10→20) → dịch Bahamut: tìm 初級鼓舞 không thấy chủ đề nêu chiến pháp này → giữ translation."
+  },
+  "tactic:dung-vo": {
+    "kind": "translation",
+    "text": "使自己的武力提升8.5→17點",
+    "check": "三略庫 bị động 100%, tối đa 17 khớp; thiếu cấp 1 (8.5→17) → dịch Bahamut: tìm 勇武 không thấy chủ đề nêu chiến pháp này (chỉ kết quả game khác/đặc tính binh chủng) → giữ translation."
+  },
+  "tactic:gan-da": {
+    "kind": "translation",
+    "text": "使我軍單體本回合獲得洞察，免疫所有控制效果（發動率13%→25%）",
+    "check": "三略庫 cùng cơ chế, tỉ lệ tối đa 25% khớp; effectViet có dải phát động 13%→25% mà trang chỉ có 25% → dịch Bahamut: tìm 壯膽 không thấy chủ đề nêu chiến pháp này → giữ translation."
+  },
+  "tactic:hao-hung-so": {
+    "kind": "translation",
+    "text": "使我軍單體速度提升10→20點，持續2回合",
+    "check": "三略庫 tỉ lệ 40%, tối đa 20 khớp; thiếu cấp 1 (10→20) → dịch Bahamut: tìm 初級激昂 không thấy chủ đề nêu chiến pháp này → giữ translation."
+  },
+  "tactic:ho-ve": {
+    "kind": "source",
+    "text": "為友方主將分擔10% → 20%傷害，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut 戰法一覽【S1-S9】 (snA=1819): 護衛 (傅士仁, màu B) tỉ lệ 35%, Gánh Vác 10% → 20% cho Chủ tướng đồng minh, 2 hiệp, khớp effectViet đủ dải; chuyển sang source (text nguyên văn)."
+  },
+  "tactic:lam-loan-so": {
+    "kind": "translation",
+    "text": "使敵軍單體速度降低6→12點，持續2回合",
+    "check": "三略庫 tỉ lệ 40%, tối đa 12 khớp; thiếu cấp 1 (6→12) → dịch Bahamut: tìm 初級擾亂 không thấy chủ đề nêu chiến pháp này → giữ translation."
+  },
+  "tactic:thien-van": {
+    "kind": "source",
+    "text": "提升武將8 → 16魅力",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut 戰法一覽【S1-S9】 (snA=1819): 天運 (劉禪, màu B, Nội chính) 提升武將 8 → 16 魅力 khớp effectViet đủ dải; chuyển sang source (text nguyên văn)."
+  },
+  "tactic:tinh-bach-ma-nghia-tong": {
+    "kind": "capture",
+    "text": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高50%，我軍全體戰鬥前2回合獲得先攻（優先行動）並提高10%主動戰法發動率",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-bach-nhi-binh": {
+    "kind": "capture",
+    "text": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得12%攻心，且普通攻擊後有45%機率對攻擊目標再次發起一次謀略攻擊（傷害率110%，受智力影響）",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-dai-kich-si": {
+    "kind": "capture",
+    "text": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高14點，進行普通攻擊時，有35%機率對敵軍單體造成兵刃傷害（傷害率122%）",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-giai-phien-ve": {
+    "kind": "capture",
+    "text": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提升36點，且我軍速度最快的武將普通攻擊後，有30%機率對敵軍單體造成一次傷害（傷害率36%，受武力和智力較高的一項影響，額外附帶該武將速度屬性40%的傷害），若未生效則為我軍單體回復一定兵力（治療率72%，受武力和智力較高的一項影響），若韓當統領，則基礎傷害率額外提升36%",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-ham-tran-doanh": {
+    "kind": "capture",
+    "text": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高22點，戰鬥前3回合獲得急救狀態，受到傷害時有40%機率獲得治療（治療率60%，受智力影響）",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-ho-bao-ky": {
+    "kind": "capture",
+    "text": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高40武力，戰鬥前3回合，我軍全體突擊戰法發動率提高10%",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-linh-dan-duong": {
+    "kind": "capture",
+    "text": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升36點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中36%謀略傷害，丹陽兵數量每回合衰減10%），若陶謙統領，則抵擋比例額外提升4%",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-linh-giap-may": {
+    "kind": "capture",
+    "text": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率300%）",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-linh-thanh-chau": {
+    "kind": "capture",
+    "text": "將槍兵進階為衝堅毀銳的青州兵：戰鬥前2回合，使我軍群體（2人）受到普通攻擊時對攻擊者進行一次反擊（傷害率72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率180%，受武力影響，額外受敵軍造成傷害影響），若曹操統領，治療效果額外受統率影響",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu khớp effectViet (số \"1 lần\"/\"Hiệp 3\" viết bằng chữ Hán 一次/第三回合); trang 三略庫 chỉ là quân nền khác biệt → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-nhanh-tri-dong-nao": {
+    "kind": "translation",
+    "text": "使我軍群體（2-3人）智力、統率、魅力提升5.5→10（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+    "check": "三略庫 (精·靈機一動) tỉ lệ 55%, tối đa 10 khớp; thiếu cấp 1 (5.5→10, 30%→55%) → dịch Bahamut: thread 靈機一動對富貴的提升 (snA=10960) bàn cơ chế/công thức, không có văn bản hiệu ứng đủ dải → giữ translation."
+  },
+  "tactic:tinh-phi-hung-quan": {
+    "kind": "capture",
+    "text": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到治療效果提升16%，我軍主將每回合行動時有60%機率對敵軍群體2人造成謀略傷害（傷害率64%，受我軍全體累計造成治療量影響，觸發後重置累計進度），若董卓統領，則受到治療效果額外提升4%",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-quan-cam-pham": {
+    "kind": "capture",
+    "text": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有45%機率使目標進入潰逃狀態（傷害率64%，受武力影響），持續2回合；若目標已經潰逃則造成兵刃攻擊（傷害率110%）並恢復傷害量的30%兵力，若甘寧統領，觸發機率受最高屬性影響並提高友軍6%會心",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-quan-ho-ve": {
+    "kind": "capture",
+    "text": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高12武力，最多提高5次，並會分別對攻擊者造成兵刃傷害（傷害率72%，受各自損失兵力影響，最多提高40%），每回合最多觸發1次，若典韋或許褚統領，自身統率提高50",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-tay-luong-thiet-ky": {
+    "kind": "capture",
+    "text": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前3回合，提高我軍全體25%會心機率（觸發時兵刃傷害提高100%）",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-tu-si-tien-phong": {
+    "kind": "capture",
+    "text": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時，有60%機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其21點統率（受攜帶者統率影響），否則降低其3%主動戰法發動率，持續2回合，可疊加4次",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-tuong-binh": {
+    "kind": "capture",
+    "text": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高25%但行軍速度降低50%，將受到傷害的50%延後於3回合內逐步結算，且結算傷害降低20%，自身灼燒時，獲得50%群攻及混亂；若蠻族統領，部隊每多1名蠻族武將結算的傷害額外降低10%。",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tinh-vo-duong-phi-quan": {
+    "kind": "capture",
+    "text": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高22點，首回合對敵軍群體（2人）施加中毒狀態，每回合持續造成傷害（傷害率80%，受智力影響），持續3回合",
+    "note": "client TW 訓兵場 2026-10-17",
+    "check": "Số liệu currentZh khớp effectViet; trang 三略庫 chỉ có biến thể quân nền (khác chiến pháp 精·, có thêm vế thống lĩnh/số khác) nên không dùng làm nguồn → capture Bahamut: đã tìm site:forum.gamer.com.tw + \"兵種 練兵\"; chỉ thấy các bài 兵演春秋 (snA=11518/11527/11534/11539) đánh giá đặc tính, bài S3/2023 cũ về quân nền (vd. 青州兵 6808 có số liệu khác 36%→72%), không có văn bản hiệu ứng của biến thể 精· → giữ capture."
+  },
+  "tactic:tran-ap-khan-vang": {
+    "kind": "translation",
+    "text": "戰鬥前2回合，使我軍全體免疫沙暴狀態，並使敵軍全體陷入叛逃狀態，每回合持續造成傷害（傷害率44%→88%，受武力或智力較高的一項影響，無視防禦），持續2回合；若目標為黃巾軍，傷害率提高20%",
+    "check": "三略庫 chỉ nêu tối đa 88% và ghi \"第2回合\" (khác \"2 hiệp đầu\" của effectViet); thiếu cấp 1 (44%→88%) → dịch theo effectViet Bahamut: thread SP朱儁 (snA=6992) chỉ nhắc tên 鎮壓黃巾 (免疫沙暴), không có số liệu hiệu ứng → giữ translation."
+  }
+}

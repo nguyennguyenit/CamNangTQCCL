@@ -7155,52 +7155,40 @@
   },
   "newTactics": {
     "tactic:ap-che-so": {
-      "nameZh": "初級壓制",
-      "effectZh": "使敵軍單體統率降低6→12點，持續2回合"
+      "nameZh": "初級壓制"
     },
     "tactic:cap-cuu-so": {
-      "nameZh": "初級急救",
-      "effectZh": "使我軍單體獲得急救狀態，每次受到傷害時有50%機率恢復一定兵力（治療率20%→40%，受智力影響），持續2回合"
+      "nameZh": "初級急救"
     },
     "tactic:cap-toc": {
-      "nameZh": "疾速",
-      "effectZh": "使自己的速度提升8.5→17點"
+      "nameZh": "疾速"
     },
     "tactic:chi-diep-phu-to": {
-      "nameZh": "枝葉扶蘇",
-      "effectZh": "武將委任為木材官時，木材產量提升1%→2%"
+      "nameZh": "枝葉扶蘇"
     },
     "tactic:co-vu-so": {
-      "nameZh": "初級鼓舞",
-      "effectZh": "使我軍單體武力提升10→20點，持續2回合"
+      "nameZh": "初級鼓舞"
     },
     "tactic:dung-vo": {
-      "nameZh": "勇武",
-      "effectZh": "使自己的武力提升8.5→17點"
+      "nameZh": "勇武"
     },
     "tactic:gan-da": {
-      "nameZh": "壯膽",
-      "effectZh": "使我軍單體本回合獲得洞察，免疫所有控制效果（發動率13%→25%）"
+      "nameZh": "壯膽"
     },
     "tactic:hao-hung-so": {
-      "nameZh": "初級激昂",
-      "effectZh": "使我軍單體速度提升10→20點，持續2回合"
+      "nameZh": "初級激昂"
     },
     "tactic:ho-ve": {
-      "nameZh": "護衛",
-      "effectZh": "為友方主將分擔10%→20%傷害，持續2回合"
+      "nameZh": "護衛"
     },
     "tactic:lam-loan-so": {
-      "nameZh": "初級擾亂",
-      "effectZh": "使敵軍單體速度降低6→12點，持續2回合"
+      "nameZh": "初級擾亂"
     },
     "tactic:thien-van": {
-      "nameZh": "天運",
-      "effectZh": "提升武將8→16魅力"
+      "nameZh": "天運"
     },
     "tactic:tinh-bach-ma-nghia-tong": {
       "nameZh": "精·白馬義從",
-      "effectZh": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高50%，我軍全體戰鬥前2回合獲得先攻（優先行動）並提高10%主動戰法發動率",
       "conditions": [
         {
           "kind": "season",
@@ -7230,7 +7218,6 @@
     },
     "tactic:tinh-bach-nhi-binh": {
       "nameZh": "精·白毦兵",
-      "effectZh": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得12%攻心，且普通攻擊後有45%機率對攻擊目標再次發起一次謀略攻擊（傷害率110%，受智力影響）",
       "conditions": [
         {
           "kind": "season",
@@ -7268,7 +7255,6 @@
     },
     "tactic:tinh-dai-kich-si": {
       "nameZh": "精·大戟士",
-      "effectZh": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高14點，進行普通攻擊時，有35%機率對敵軍單體造成兵刃傷害（傷害率122%）",
       "conditions": [
         {
           "kind": "season",
@@ -7298,7 +7284,6 @@
     },
     "tactic:tinh-giai-phien-ve": {
       "nameZh": "精·解煩衛",
-      "effectZh": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提升36點，且我軍速度最快的武將普通攻擊後，有30%機率對敵軍單體造成一次傷害（傷害率36%，受武力和智力較高的一項影響，額外附帶該武將速度屬性40%的傷害），若未生效則為我軍單體回復一定兵力（治療率72%，受武力和智力較高的一項影響），若韓當統領，則基礎傷害率額外提升36%",
       "conditions": [
         {
           "kind": "season",
@@ -7336,7 +7321,6 @@
     },
     "tactic:tinh-ham-tran-doanh": {
       "nameZh": "精·陷陣營",
-      "effectZh": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高22點，戰鬥前3回合獲得急救狀態，受到傷害時有40%機率獲得治療（治療率60%，受智力影響）",
       "conditions": [
         {
           "kind": "season",
@@ -7366,7 +7350,6 @@
     },
     "tactic:tinh-ho-bao-ky": {
       "nameZh": "精·虎豹騎",
-      "effectZh": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高40武力，戰鬥前3回合，我軍全體突擊戰法發動率提高10%",
       "conditions": [
         {
           "kind": "season",
@@ -7396,7 +7379,6 @@
     },
     "tactic:tinh-linh-dan-duong": {
       "nameZh": "精·丹陽兵",
-      "effectZh": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升36點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中36%謀略傷害，丹陽兵數量每回合衰減10%），若陶謙統領，則抵擋比例額外提升4%",
       "conditions": [
         {
           "kind": "season",
@@ -7434,7 +7416,6 @@
     },
     "tactic:tinh-linh-giap-may": {
       "nameZh": "精·藤甲兵",
-      "effectZh": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率300%）",
       "conditions": [
         {
           "kind": "season",
@@ -7472,7 +7453,6 @@
     },
     "tactic:tinh-linh-thanh-chau": {
       "nameZh": "精·青州兵",
-      "effectZh": "將槍兵進階為衝堅毀銳的青州兵：戰鬥前2回合，使我軍群體（2人）受到普通攻擊時對攻擊者進行一次反擊（傷害率72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率180%，受武力影響，額外受敵軍造成傷害影響），若曹操統領，治療效果額外受統率影響",
       "conditions": [
         {
           "kind": "season",
@@ -7502,7 +7482,6 @@
     },
     "tactic:tinh-nhanh-tri-dong-nao": {
       "nameZh": "精·靈機一動",
-      "effectZh": "使我軍群體（2-3人）智力、統率、魅力提升5.5→10（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
       "conditions": [
         {
           "kind": "season",
@@ -7516,7 +7495,6 @@
     },
     "tactic:tinh-phi-hung-quan": {
       "nameZh": "精·飛熊軍",
-      "effectZh": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到治療效果提升16%，我軍主將每回合行動時有60%機率對敵軍群體2人造成謀略傷害（傷害率64%，受我軍全體累計造成治療量影響，觸發後重置累計進度），若董卓統領，則受到治療效果額外提升4%",
       "conditions": [
         {
           "kind": "season",
@@ -7554,7 +7532,6 @@
     },
     "tactic:tinh-quan-cam-pham": {
       "nameZh": "精·錦帆軍",
-      "effectZh": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有45%機率使目標進入潰逃狀態（傷害率64%，受武力影響），持續2回合；若目標已經潰逃則造成兵刃攻擊（傷害率110%）並恢復傷害量的30%兵力，若甘寧統領，觸發機率受最高屬性影響並提高友軍6%會心",
       "conditions": [
         {
           "kind": "season",
@@ -7584,7 +7561,6 @@
     },
     "tactic:tinh-quan-ho-ve": {
       "nameZh": "精·虎衛軍",
-      "effectZh": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高12武力，最多提高5次，並會分別對攻擊者造成兵刃傷害（傷害率72%，受各自損失兵力影響，最多提高40%），每回合最多觸發1次，若典韋或許褚統領，自身統率提高50",
       "conditions": [
         {
           "kind": "season",
@@ -7614,7 +7590,6 @@
     },
     "tactic:tinh-tay-luong-thiet-ky": {
       "nameZh": "精·西涼鐵騎",
-      "effectZh": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前3回合，提高我軍全體25%會心機率（觸發時兵刃傷害提高100%）",
       "conditions": [
         {
           "kind": "season",
@@ -7644,7 +7619,6 @@
     },
     "tactic:tinh-tu-si-tien-phong": {
       "nameZh": "精·先登死士",
-      "effectZh": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時，有60%機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其21點統率（受攜帶者統率影響），否則降低其3%主動戰法發動率，持續2回合，可疊加4次",
       "conditions": [
         {
           "kind": "season",
@@ -7682,7 +7656,6 @@
     },
     "tactic:tinh-tuong-binh": {
       "nameZh": "精·象兵",
-      "effectZh": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高25%但行軍速度降低50%，將受到傷害的50%延後於3回合內逐步結算，且結算傷害降低20%，自身灼燒時，獲得50%群攻及混亂；若蠻族統領，部隊每多1名蠻族武將結算的傷害額外降低10%。",
       "conditions": [
         {
           "kind": "season",
@@ -7712,7 +7685,6 @@
     },
     "tactic:tinh-vo-duong-phi-quan": {
       "nameZh": "精·無當飛軍",
-      "effectZh": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高22點，首回合對敵軍群體（2人）施加中毒狀態，每回合持續造成傷害（傷害率80%，受智力影響），持續3回合",
       "conditions": [
         {
           "kind": "season",
@@ -7749,8 +7721,7 @@
       ]
     },
     "tactic:tran-ap-khan-vang": {
-      "nameZh": "鎮壓黃巾",
-      "effectZh": "戰鬥第2回合，使我軍全體免疫沙暴狀態，並且使敵軍全體陷入叛逃狀態（傷害率44%→88%，受武力或智力最高一項影響，無視防禦），持續2回合，若目標為黃巾軍，傷害率提高20%"
+      "nameZh": "鎮壓黃巾"
     }
   },
   "retired": {
@@ -9104,6 +9075,496 @@
           "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Sĩ Biệt Tam Nhật (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
         }
       ]
+    }
+  },
+  "zhEffects": {
+    "tactic:ap-che": {
+      "text": "使敵軍群體（2人）造成傷害降低7.5%→15%，持續2回合",
+      "viSha256": "1b8b627785a5d213c554d055c895badef2a37ab2ec541c7a86913411841c1aac",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:ap-che-so": {
+      "text": "使敵軍單體統率降低6→12點，持續2回合",
+      "viSha256": "b3603e267c8f1513ea687c5d35172ea0a9294c72d4ca2b9e85d9dc228849a260",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:bac-van": {
+      "text": "武將委任為貿易官時，貿易比例提升0.7% → 1.4%",
+      "viSha256": "c2c7f48dd98adac7dc32171cb277ecf75ec814f46d52a4f763081bb593a97b03",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:cap-cuu-so": {
+      "text": "使我軍單體獲得急救狀態，每次受到傷害時有50%機率恢復一定兵力（治療率20%→40%，受智力影響），持續2回合",
+      "viSha256": "dac9b70504339c03213ec8d0fd37960d63e3e5fbd61b7637290349b35daecb44",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:cap-toc": {
+      "text": "使自己的速度提升8.5→17點",
+      "viSha256": "a562f3c249681ddff0c321ba34cb953d5ebe5553e5ccfc0f5c7853d41a81fd73",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:cap-tuan": {
+      "text": "武將委任為馴馬官時，馴馬時間降低1% → 2%",
+      "viSha256": "61cce20314370f3af8429cf9f7cf1c2439006103d48ce657da79b10dbf87403f",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:chi-diep-phu-to": {
+      "text": "武將委任為木材官時，木材產量提升1% → 2%",
+      "viSha256": "a54e550a65cce0ed0ce1e86872e46e9ee1b2bd217e1214c0a0b4b41120509e0f",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:chu-tuong": {
+      "text": "武將委任為治鐵官時，鐵礦產量提升0.7% → 1.4%",
+      "viSha256": "39dc56bc6f03c537af3a3ac7c1f911c319ec00de81d41ca53d9fa10c7f631db5",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:chung-dien-tinh-thong": {
+      "text": "武將委任為糧草官時，糧食屯田收益提升1% → 2%",
+      "viSha256": "e7ffabd659e5cadc5f2a8cdc352f14b1c1d5f63658d446bb31e00903b709d96f",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:co-vu-so": {
+      "text": "使我軍單體武力提升10→20點，持續2回合",
+      "viSha256": "f6851b1b29372abc8c69348c299b8cf5542dbf02db8a90325b1781f15e0d08ea",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:dam-tam": {
+      "text": "使我軍單體免疫混亂，持續3回合",
+      "viSha256": "c3a8f26b56d232d3739b7afcd87d6844452628e69caa58cbfea3714dded64116",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:dau-tri": {
+      "text": "準備1回合，對敵軍群體（2人）造成謀略傷害（傷害率77.5%→155%）",
+      "viSha256": "7e265a5a7e6b840701ce9c182141f7cb069ef39e10ff2a15b5e24dada54d6a93",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:dien-hau": {
+      "text": "提高自己15→30點武力，如果自己為副將則額外提高20→40點統率，持續2回合",
+      "viSha256": "5cd2aeb9d08e21596571f215397f5d6602e689a1600086f93af67b82f5cab3a5",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:doc-khi": {
+      "text": "準備1回合，對敵軍單體造成謀略攻擊（傷害率50%→100%），并施加中毒狀態，每回合持續造成傷害（傷害率25%→50%，受智力影響），持續2回合",
+      "viSha256": "f6173ea9097532c7b02445d113703ce9132ebb8e6095dec0273a381fe52531ee",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:dung-vo": {
+      "text": "使自己的武力提升8.5→17點",
+      "viSha256": "6ba55d8e1f17b58ede8dafa7bfd43aa0c33f2ba943c36cbe17909c548a073810",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:duong-binh-thien-nhat": {
+      "text": "武將委任為練兵使時，練兵獲得經驗提升1% → 2%",
+      "viSha256": "bc9a496ab38912efb5096b888c2b0e7c95d1dc303ce5c30ea8a29fc37af010b2",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:gan-da": {
+      "text": "使我軍單體本回合獲得洞察，免疫所有控制效果（發動率13%→25%）",
+      "viSha256": "1bf172f1f0cce2572115a714590d8c9091235f5ec545cc2384ebf6f0e1687bbe",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:gian-chinh": {
+      "text": "提升武將8 → 16政治",
+      "viSha256": "b41c35bbb1cfa04f6c69a4669bf4f9337ac0da2ee9bc76b38e2ead0b20524364",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:hao-hung-so": {
+      "text": "使我軍單體速度提升10→20點，持續2回合",
+      "viSha256": "223e8755eba20d7657c92f2996b8c473a201ca600daacef77b68cd3a1df6baee",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:ho-ve": {
+      "text": "為友方主將分擔10% → 20%傷害，持續2回合",
+      "viSha256": "245199cb96a9ef4369fe06a46e9449e9922f1ff87c51ac21b3c2d520a9917b72",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:hoan-kich": {
+      "text": "使自己獲得反擊狀態（每次受到普通攻擊時對攻擊者造成傷害，傷害率30%→60%），持續1回合",
+      "viSha256": "7063268b632b58302112932adeb7df8b791f6b4939291fd5b1b6631e3a0f3954",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:hoanh-tao": {
+      "text": "使自己獲得群攻狀態（傷害率20%→40%），持續1回合",
+      "viSha256": "95771a091effa5eeede9107a6821846afb31b8dd1d52c365e429e68b284e5f42",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:kham-phat": {
+      "text": "武將委任為木材官時，木材產量提升0.7% → 1.4%",
+      "viSha256": "9db42f31cea9fed85132c0c424fd345cfe3980043ffe2925a169937b82c677d4",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:khien-lien": {
+      "text": "普通攻擊之後，對敵軍單體造成一次兵刃攻擊（傷害率60%→120%）",
+      "viSha256": "c4f69c2eed3f0310e0b9774c2fec0f77485167179fe6dfd19a35c174b40f60ba",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:lam-loan-so": {
+      "text": "使敵軍單體速度降低6→12點，持續2回合",
+      "viSha256": "1e1904e61e8ee73ab480e9336f656996e184c02300db15696a9eeded2e2d2bbf",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:luc-luc-thuong-quoc": {
+      "text": "武將委任為主政官時，城建設施升級時間降低15% → 30%",
+      "viSha256": "37f2f62cb2c58d01264931f12407c71a4a97db344281c7e375794ae649018dde",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:manh-kich": {
+      "text": "普通攻擊之後，提高自身7.5%→15%會心幾率（觸發時兵刃傷害提高100%），持續2回合",
+      "viSha256": "29d76a081d21d158f8ea5df4de60171f999e1b6c4addda79e68326d0b4ed3401",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:nhan-hanh-tran": {
+      "text": "戰鬥中，每回合有17.5%→35%機率（受攜帶者統率影響）執行以下效果：將敵軍隨機武將的受到傷害降低效果轉移至我軍隨機武將（轉移後持續1回合）；將我軍群體隨機1-2種負面狀態轉移至隨機敵軍（轉移後持續1回合）；使我軍統率最低武將偷取敵軍全體5→10統率（受攜帶者統率影響，持續1回合）；每種效果機率獨立判定",
+      "viSha256": "a01644efc278b0485d4f93979aa7b051232875d0de3b54080bfdb27546d26752",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:nhanh-tri-dong-nao": {
+      "text": "使我軍群體（2-3人）智力、統率、魅力提升7.5→15（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+      "viSha256": "3d585073a93e4573f19b5e5983d2ec693c27711fbfc0bca7e1482f993156b4f4",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:oat-khoang-tinh-thong": {
+      "text": "武將委任為治鐵官時，鐵礦屯田收益提升1% → 2%",
+      "viSha256": "0a254a4dc270c2cffdb2455aecd07d14dbe8ce987ba17610aff96cf3a4cf5e7a",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:oat-thai": {
+      "text": "武將委任為采石官時，石料產量提升0.7% → 1.4%",
+      "viSha256": "3cc466af240702676d10d442fdf8dc60ddcd191cd14b6a44456c9ea2a0106a57",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:pha-giap": {
+      "text": "普通攻擊之後，降低攻擊目標9→18點統率，持續2回合",
+      "viSha256": "18884e31470d8ee0c3e44ff0de76acf2e534ad04c301fdb3ca1a77f879b1bdd7",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:phan-phat": {
+      "text": "使自己的武力、速度提升12.5 → 25點",
+      "viSha256": "cffc03fa73e9203005c0fa86844868c69824ea734120e420f7524a1c13f49ac2",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:phat-moc-tinh-thong": {
+      "text": "武將委任為木材官時，木材屯田收益提升1% → 2%",
+      "viSha256": "4767359bfba76d52746c0ecc7b47d26b6c8c0e30f895af65f323faaa64ae9090",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:phong-hoa": {
+      "text": "對敵軍單體施加灼燒狀態，每回合持續造成傷害（傷害率35%→70%，受智力影響），持續3回合",
+      "viSha256": "fa9d8997cc2b7f76c25471cfdb4cd8e06784b43c2e291ab1a5ba71ee164d646f",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:quoc-chi-trinh-can": {
+      "text": "戰鬥中，我軍全體統率提升（提升值相當於自身統率的10%→20%）並獲得5%→10%倒戈和攻心（受統率影響）；且敵軍每有一個被動或指揮戰法，我軍群體（2-3人）受到兵刃傷害降低1.5%→3%（受統率影響）",
+      "viSha256": "72a5620d5f773a755fd0bed29422d7a20e1504cf8b4a2c3b946d897d27938664",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:tai-khi-qua-nhan": {
+      "text": "使我軍群體（2人）造成的謀略傷害提高13.5%→27%，持續2回合",
+      "viSha256": "0f4c031e24cb8eade93dba533cc445857242aabd0ee31d88fa2908186348a514",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:thai-thach-tinh-thong": {
+      "text": "武將委任為采石官時，石料屯田收益提升1% → 2%",
+      "viSha256": "90e38bd5856f6db85e196c0d63ef998307b0c37414c41f819cf7fa163891c2db",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:thich-thuong": {
+      "text": "對敵軍單體施加潰逃狀態，每回合持續造成傷害（傷害率35%→70%，受武力影響），持續3回合",
+      "viSha256": "5c4a839efe2a7f4066d20f6722b74e28dfde5abe36f9c0774767992d07b34abb",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:thien-van": {
+      "text": "提升武將8 → 16魅力",
+      "viSha256": "25e2cee72694c3b036f55815a284ddfca6009b385cf65904239f9e427b086c1a",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:thuc-pha": {
+      "text": "解除敵軍單體的增益效果，并降低其9→18點智力，持續2回合",
+      "viSha256": "50399d388ca7b9ed35b2b66b464c18827e5a78c3199870957eeae4f576ea3660",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:tinh-bach-ma-nghia-tong": {
+      "text": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高50%，我軍全體戰鬥前2回合獲得先攻（優先行動）並提高10%主動戰法發動率",
+      "viSha256": "ebf127070efe374f7b5125bb8301c61d4ef1b761efc8814614fc195f7fba7101",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-bach-nhi-binh": {
+      "text": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得12%攻心，且普通攻擊後有45%機率對攻擊目標再次發起一次謀略攻擊（傷害率110%，受智力影響）",
+      "viSha256": "ba21ed827512a6b824cfb43aa702344d00fc1f58fb33d2568e440bfc35926122",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-dai-kich-si": {
+      "text": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高14點，進行普通攻擊時，有35%機率對敵軍單體造成兵刃傷害（傷害率122%）",
+      "viSha256": "61419d14063d164cec2bbbd6177cfdbe7ca496a45c26eeb93ee31d057423a7d9",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-giai-phien-ve": {
+      "text": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提升36點，且我軍速度最快的武將普通攻擊後，有30%機率對敵軍單體造成一次傷害（傷害率36%，受武力和智力較高的一項影響，額外附帶該武將速度屬性40%的傷害），若未生效則為我軍單體回復一定兵力（治療率72%，受武力和智力較高的一項影響），若韓當統領，則基礎傷害率額外提升36%",
+      "viSha256": "ab13c230dfb8e0d93bc1a604ea5e9127b2dcde2e5503aec8a407e68a111d0b76",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-ham-tran-doanh": {
+      "text": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高22點，戰鬥前3回合獲得急救狀態，受到傷害時有40%機率獲得治療（治療率60%，受智力影響）",
+      "viSha256": "b25357c7d12bc9cf634074a6e767c44fabebd22373d9d8f55eff516014bbf776",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-ho-bao-ky": {
+      "text": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高40武力，戰鬥前3回合，我軍全體突擊戰法發動率提高10%",
+      "viSha256": "5f58a9e9706024efffc46d4f0d29d961e394bce0069a0d74eacdd7f33080d349",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-hoa": {
+      "text": "提升我軍群體（2人）12→24點武力、智力、速度，持續2回合，并移除負面效果",
+      "viSha256": "ffe48ae06f6460daa3d3e3b7773691e704bfd0825401053180d2e2f436ed0798",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:tinh-linh-dan-duong": {
+      "text": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升36點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中36%謀略傷害，丹陽兵數量每回合衰減10%），若陶謙統領，則抵擋比例額外提升4%",
+      "viSha256": "bfc072023df6fd7845ec28f7ba41ab0992782bd3beeadda1d2467332fe316c96",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-linh-giap-may": {
+      "text": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率300%）",
+      "viSha256": "a2d5027340d7656e09075ea306433047ebc6bd97e0528842d5cca58a4e9524c8",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-linh-thanh-chau": {
+      "text": "將槍兵進階為衝堅毀銳的青州兵：戰鬥前2回合，使我軍群體（2人）受到普通攻擊時對攻擊者進行一次反擊（傷害率72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率180%，受武力影響，額外受敵軍造成傷害影響），若曹操統領，治療效果額外受統率影響",
+      "viSha256": "01d4de99f21868788199aae9ef183506abe52a786056bcb69fddad942ca9be21",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-nhanh-tri-dong-nao": {
+      "text": "使我軍群體（2-3人）智力、統率、魅力提升5.5→10（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+      "viSha256": "22a0636052085567dc8be66cded097d7d1a6fb59a7102304d15255842ec342e7",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:tinh-phi-hung-quan": {
+      "text": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到治療效果提升16%，我軍主將每回合行動時有60%機率對敵軍群體2人造成謀略傷害（傷害率64%，受我軍全體累計造成治療量影響，觸發後重置累計進度），若董卓統領，則受到治療效果額外提升4%",
+      "viSha256": "c04125d1a2a13eff2ea7492e6296379a5b119d7a1f3870dfdf2c3fe6f8adafd4",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-quan-cam-pham": {
+      "text": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有45%機率使目標進入潰逃狀態（傷害率64%，受武力影響），持續2回合；若目標已經潰逃則造成兵刃攻擊（傷害率110%）並恢復傷害量的30%兵力，若甘寧統領，觸發機率受最高屬性影響並提高友軍6%會心",
+      "viSha256": "06191dcf1551c9340144da3290178063059e5a3c73970564b06007c3a6739c33",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-quan-ho-ve": {
+      "text": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高12武力，最多提高5次，並會分別對攻擊者造成兵刃傷害（傷害率72%，受各自損失兵力影響，最多提高40%），每回合最多觸發1次，若典韋或許褚統領，自身統率提高50",
+      "viSha256": "fab15aaa4063b169073b542889b9b2605a19619dcdc24f4ccfec8bea476a2c00",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-tay-luong-thiet-ky": {
+      "text": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前3回合，提高我軍全體25%會心機率（觸發時兵刃傷害提高100%）",
+      "viSha256": "5e2a0676204779d9b8d5e42c8cf156ff03a82f21e80b021a95497ed97f661481",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-tu-si-tien-phong": {
+      "text": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時，有60%機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其21點統率（受攜帶者統率影響），否則降低其3%主動戰法發動率，持續2回合，可疊加4次",
+      "viSha256": "5f6eb9a82c26d189b1a535e00b3de3a7357cb3a24bcd623b64a7b02cbe00f64a",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-tuong-binh": {
+      "text": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高25%但行軍速度降低50%，將受到傷害的50%延後於3回合內逐步結算，且結算傷害降低20%，自身灼燒時，獲得50%群攻及混亂；若蠻族統領，部隊每多1名蠻族武將結算的傷害額外降低10%。",
+      "viSha256": "2e49a9056cbf4f0de521267b3ce909ad23ec47322afbec88e6fe6965754af21b",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tinh-vo-duong-phi-quan": {
+      "text": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高22點，首回合對敵軍群體（2人）施加中毒狀態，每回合持續造成傷害（傷害率80%，受智力影響），持續3回合",
+      "viSha256": "d8336c1d1f8717655c641ca6a9ed9c50c2681eb410d2cb5428ab0444889b56b7",
+      "source": {
+        "kind": "capture",
+        "note": "client TW 訓兵場 2026-10-17"
+      }
+    },
+    "tactic:tran-ap-khan-vang": {
+      "text": "戰鬥前2回合，使我軍全體免疫沙暴狀態，並使敵軍全體陷入叛逃狀態，每回合持續造成傷害（傷害率44%→88%，受武力或智力較高的一項影響，無視防禦），持續2回合；若目標為黃巾軍，傷害率提高20%",
+      "viSha256": "b39a82b4a03b0ecd0b5d977f2d809da22418de241e32f1b512c80d36388f510d",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:truy-thuong": {
+      "text": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合",
+      "viSha256": "78c04aa0b715767682b5415ad374c4d0385079195b903def7f0e472ba7703777",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:vo-song-thuong-tuong": {
+      "text": "對敵軍武力最高的武將造成兵刃傷害（傷害率123%→246%），並獲得破陣（造成傷害時無視目標的統率和智力）狀態，持續1回合",
+      "viSha256": "4f0c1d5df2625c1f2f826915d53b36b0a7ed855c7ac7f728e7bd5053431550ae",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:xao-tuong": {
+      "text": "武將委任為鍛造官時，鍛造消耗降低1% → 2%",
+      "viSha256": "5c02462b03eb6765d25d645dbc1dc674b639e100f28f79323983bae7fdf4d7fd",
+      "source": {
+        "kind": "source",
+        "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
     }
   }
 }

@@ -1,0 +1,1255 @@
+[
+ {
+  "id": "tactic:nhan-hanh-tran",
+  "group": "pending",
+  "viet": "Nhạn Hành Trận",
+  "chinese": "雁行陣",
+  "type": "FORMATION",
+  "quality": "S",
+  "effectViet": "Mỗi hiệp chiến đấu có 17.5%→35% xác suất (Bị ảnh hưởng bởi Thống Soái của người mang theo) thực hiện hiệu ứng sau: Chuyển hiệu ứng giảm ST phải chịu của Võ Tướng quân địch ngẫu nhiên cho Võ Tướng quân ta ngẫu nhiên (Sau khi chuyển duy trì 1 hiệp); chuyển ngẫu nhiên 1-2 loại trạng thái xấu của nhóm quân ta cho quân địch ngẫu nhiên (Sau khi chuyển duy trì 1 hiệp); Để Võ Tướng Thống Soái thấp nhất bên ta đánh cắp 5→10 Thống Soái của toàn quân địch (Bị ảnh hưởng bởi Thống Soái của người mang theo, duy trì 1 hiệp); Xác suất mỗi loại hiệu ứng được phán định độc lập",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Cung binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%9B%81%E8%A1%8C%E9%99%A3-20862/"
+ },
+ {
+  "id": "tactic:ap-che",
+  "group": "pending",
+  "viet": "Áp Chế",
+  "chinese": "壓制",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Khiến sát thương gây ra của Tập thể địch (2 người) giảm 7.5%→15%, duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.25,
+  "targetVi": "Tập thể địch (2 người)",
+  "effectTypeVi": "Khống chế",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%A3%93%E5%88%B6-29618/"
+ },
+ {
+  "id": "tactic:bac-van",
+  "group": "pending",
+  "viet": "Uyên Bác",
+  "chinese": "博聞",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan giao dịch, tỷ lệ giao dịch tăng 0.7%→1.4%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%8D%9A%E8%81%9E-26048/"
+ },
+ {
+  "id": "tactic:cap-tuan",
+  "group": "pending",
+  "viet": "Luyện Gấp",
+  "chinese": "急馴",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, thời gian Luyện Ngựa giảm 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%80%A5%E9%A6%B4-26058/"
+ },
+ {
+  "id": "tactic:chu-tuong",
+  "group": "pending",
+  "viet": "Thợ Rèn",
+  "chinese": "鑄匠",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, sản lượng Mỏ Sắt tăng 0.7%→1.4%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%91%84%E5%8C%A0-26055/"
+ },
+ {
+  "id": "tactic:chung-dien-tinh-thong",
+  "group": "pending",
+  "viet": "Tinh Thông Làm Ruộng",
+  "chinese": "種田精通",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Lương Thảo, thu hoạch lương thực Đồn Điền tăng 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%A8%AE%E7%94%B0%E7%B2%BE%E9%80%9A-26042/"
+ },
+ {
+  "id": "tactic:dam-tam",
+  "group": "pending",
+  "viet": "Tâm Sự",
+  "chinese": "談心",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Khiến một quân ta miễn nhiễm Hỗn Loạn, duy trì 3 hiệp (Xác suất phát động 23%→45%)",
+  "currentZh": null,
+  "activationRate": 0.45,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E8%AB%87%E5%BF%83-29629/"
+ },
+ {
+  "id": "tactic:dau-tri",
+  "group": "pending",
+  "viet": "Đấu Trí",
+  "chinese": "鬥智",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Chuẩn bị 1 hiệp, gây cho nhóm quân địch (2 người) sát thương Mưu Lược (tỷ lệ sát thương 77.5%→155%)",
+  "currentZh": null,
+  "activationRate": 0.3,
+  "targetVi": "Tập thể địch (2 người)",
+  "effectTypeVi": "Mưu Lược nhóm",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:dien-hau",
+  "group": "pending",
+  "viet": "Chốt Đuôi",
+  "chinese": "殿後",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Tăng cho bản thân 15→30 điểm Võ Lực, nếu bản thân là Phó Tướng sẽ tăng thêm 20→40 điểmThống Soái, duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.25,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%AE%BF%E5%BE%8C-29612/"
+ },
+ {
+  "id": "tactic:doc-khi",
+  "group": "pending",
+  "viet": "Khí Độc",
+  "chinese": "毒氣",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Chuẩn bị 1 hiệp, gây cho một tướng quân địch sát thương Mưu Lược (tỷ lệ sát thương 50%→100%) và phóng trạng thái Trúng Độc, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 25%→50%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.35,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Mưu Lược đơn",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%AF%92%E6%B0%A3-29622/"
+ },
+ {
+  "id": "tactic:duong-binh-thien-nhat",
+  "group": "pending",
+  "viet": "Dưỡng Binh Thiên Nhật",
+  "chinese": "養兵千日",
+  "type": "INTERNAL",
+  "quality": "A",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Sứ Luyện Binh, kinh nghiệm Luyện Binh tăng 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%A4%8A%E5%85%B5%E5%8D%83%E6%97%A5-26031/"
+ },
+ {
+  "id": "tactic:gian-chinh",
+  "group": "pending",
+  "viet": "Giản Chính",
+  "chinese": "簡政",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Tăng 8→16 Chính Trị của Võ Tướng",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%B0%A1%E6%94%BF-26033/"
+ },
+ {
+  "id": "tactic:hoan-kich",
+  "group": "pending",
+  "viet": "Phản Kích",
+  "chinese": "還擊",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Khiến bản thân nhận trạng thái Phản kích (mỗi lần bị tấn công thường sẽ gây sát thương cho người tấn công, tỷ lệ sát thương 30%→60%), duy trì 1 hiệp",
+  "currentZh": null,
+  "activationRate": 0.35,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%82%84%E6%93%8A-29627/"
+ },
+ {
+  "id": "tactic:hoanh-tao",
+  "group": "pending",
+  "viet": "Quét Sạch",
+  "chinese": "橫掃",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Khiến bản thân nhận trạng thái tấn công nhóm (tỷ lệ sát thương 20%→40%), duy trì 1 hiệp",
+  "currentZh": null,
+  "activationRate": 0.3,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:kham-phat",
+  "group": "pending",
+  "viet": "Chặt Đốn",
+  "chinese": "砍伐",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 0.7%→1.4%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%A0%8D%E4%BC%90-26056/"
+ },
+ {
+  "id": "tactic:khien-lien",
+  "group": "pending",
+  "viet": "Liên Luỵ",
+  "chinese": "牽連",
+  "type": "BURST",
+  "quality": "B",
+  "effectViet": "Sau khi tấn công thường, gây cho một tướng quân địch 1 lần Tấn Công Binh Đao (tỷ lệ sát thương 60%→120%)",
+  "currentZh": null,
+  "activationRate": 0.35,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Binh đao đơn",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%89%BD%E9%80%A3-29631/"
+ },
+ {
+  "id": "tactic:manh-kich",
+  "group": "pending",
+  "viet": "Mãnh Kích",
+  "chinese": "猛擊",
+  "type": "BURST",
+  "quality": "B",
+  "effectViet": "Sau khi tấn công thường, tăng cho bản thân 7.5%→15% xác suất Hội Tâm (khi kích hoạt sát thương Binh Đao tăng 100%), duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.45,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%8C%9B%E6%93%8A-29633/"
+ },
+ {
+  "id": "tactic:oat-khoang-tinh-thong",
+  "group": "pending",
+  "viet": "Tinh Thông Đào Mỏ",
+  "chinese": "挖礦精通",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, thu hoạch sắt Đồn Điền tăng 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%8C%96%E7%A4%A6%E7%B2%BE%E9%80%9A-26043/"
+ },
+ {
+  "id": "tactic:oat-thai",
+  "group": "pending",
+  "viet": "Đào Hái",
+  "chinese": "挖採",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Đá, sản lượng đá tăng 0.7%→1.4%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%8C%96%E6%8E%A1-26057/"
+ },
+ {
+  "id": "tactic:pha-giap",
+  "group": "pending",
+  "viet": "Phá Giáp",
+  "chinese": "破甲",
+  "type": "BURST",
+  "quality": "B",
+  "effectViet": "Sau khi tấn công thường, giảm của mục tiêu tấn công 9→18 điểm Thống Soái, duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Giảm ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%A0%B4%E7%94%B2-29632/"
+ },
+ {
+  "id": "tactic:phan-phat",
+  "group": "pending",
+  "viet": "Hăng Hái",
+  "chinese": "奮發",
+  "type": "PASSIVE",
+  "quality": "B",
+  "effectViet": "Khiến Võ Lực, Tốc Độ của bản thân tăng 12.5→25 điểm",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%A5%AE%E7%99%BC-29636/"
+ },
+ {
+  "id": "tactic:phat-moc-tinh-thong",
+  "group": "pending",
+  "viet": "Tinh Thông Đốn Gỗ",
+  "chinese": "伐木精通",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, thu hoạch gỗ Đồn Điền tăng 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E4%BC%90%E6%9C%A8%E7%B2%BE%E9%80%9A-26044/"
+ },
+ {
+  "id": "tactic:phong-hoa",
+  "group": "pending",
+  "viet": "Đốt Lửa",
+  "chinese": "放火",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Thi triển cho một tướng quân địch trạng thái Đốt Cháy (tỷ lệ sát thương 35%→70%, bị Trí Lực ảnh hưởng), duy trì 3 hiệp",
+  "currentZh": null,
+  "activationRate": 0.35,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Mưu Lược đơn",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%94%BE%E7%81%AB-29620/"
+ },
+ {
+  "id": "tactic:quoc-chi-trinh-can",
+  "group": "pending",
+  "viet": "Nòng Cốt Quốc Gia",
+  "chinese": "國之楨榦",
+  "type": "COMMAND",
+  "quality": "S",
+  "effectViet": "Khi chiến đấu, Thống Soái của toàn quân ta tăng (Trị số tăng tương đương 10%→20% Thống Soái của bản thân) và nhận được 5%→10% Làm Phản và Công Tâm (bị ảnh hưởng bởi Thống Soái); Và quân địch cứ mỗi có một Chiến Pháp Bị Động hoặc Chỉ Huy, nhóm quân ta (2-3 người) được giảm 1.5%→3% Sát thương binh đao phải chịu (bị ảnh hưởng bởi Thống Soái)",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tai-khi-qua-nhan",
+  "group": "pending",
+  "viet": "Tài Khí Quá Nhân",
+  "chinese": "才器過人",
+  "type": "ACTIVE",
+  "quality": "A",
+  "effectViet": "Khiến sát thương Mưu Lược của Tập thể quân ta (2 người) tăng 13.5%→27%, duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.4,
+  "targetVi": "Tập thể quân ta (2 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%89%8D%E5%99%A8%E9%81%8E%E4%BA%BA-24021/"
+ },
+ {
+  "id": "tactic:thai-thach-tinh-thong",
+  "group": "pending",
+  "viet": "Tinh Thông Nhặt Đá",
+  "chinese": "採石精通",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Đá, thu hoạch đá Đồn Điền tăng 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%8E%A1%E7%9F%B3%E7%B2%BE%E9%80%9A-26045/"
+ },
+ {
+  "id": "tactic:thich-thuong",
+  "group": "pending",
+  "viet": "Đâm Thương",
+  "chinese": "刺傷",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Phóng cho một quân địch trạng thái Bỏ chạy, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 35%→70%, bị Võ Lực ảnh hưởng), duy trì 3 hiệp",
+  "currentZh": null,
+  "activationRate": 0.4,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Binh đao đơn",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%BA%E5%82%B7-29619/"
+ },
+ {
+  "id": "tactic:thuc-pha",
+  "group": "pending",
+  "viet": "Phát Hiện",
+  "chinese": "識破",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Xóa hiệu ứng Tăng ích của một quân địch, và giảm của mục tiêu 9→18 điểm Trí Lực, duy trì 2 hiệp",
+  "currentZh": null,
+  "activationRate": 0.25,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Khống chế",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E8%AD%98%E7%A0%B4-29610/"
+ },
+ {
+  "id": "tactic:tinh-hoa",
+  "group": "pending",
+  "viet": "Tịnh Hóa",
+  "chinese": "淨化",
+  "type": "ACTIVE",
+  "quality": "A",
+  "effectViet": "Tăng 12→24 điểm Võ Lực, Trí Lực, tốc độ của Tập thể quân ta (2 người), duy trì 2 hiệp, và xóa hiệu ứng xấu (Xác suất phát động 30%→45%)",
+  "currentZh": null,
+  "activationRate": 0.45,
+  "targetVi": "Tập thể quân ta (2 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%B7%A8%E5%8C%96-20072/"
+ },
+ {
+  "id": "tactic:truy-thuong",
+  "group": "pending",
+  "viet": "Sát Thương Thêm",
+  "chinese": "追傷",
+  "type": "BURST",
+  "quality": "B",
+  "effectViet": "Sau khi tấn công thường, gây cho mục tiêu tấn công trạng thái Cấm Trị Liệu, duy trì 2 hiệp (Xác suất phát động 25%→40%)",
+  "currentZh": null,
+  "activationRate": 0.4,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Khống chế",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E8%BF%BD%E5%82%B7-29634/"
+ },
+ {
+  "id": "tactic:xao-tuong",
+  "group": "pending",
+  "viet": "Nghệ Nhân",
+  "chinese": "巧匠",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 1%→2%",
+  "currentZh": null,
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%B7%A7%E5%8C%A0-26050/"
+ },
+ {
+  "id": "tactic:ap-che-so",
+  "group": "newTactics",
+  "viet": "Áp Chế-Sơ",
+  "chinese": "初級壓制",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân địch Thống Soái giảm 6→12 điểm, duy trì 2 hiệp",
+  "currentZh": "使敵軍單體統率降低6→12點，持續2回合",
+  "activationRate": 0.4,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Khống chế",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%9D%E7%B4%9A%E5%A3%93%E5%88%B6-29704/"
+ },
+ {
+  "id": "tactic:cap-cuu-so",
+  "group": "newTactics",
+  "viet": "Cấp Cứu-Sơ",
+  "chinese": "初級急救",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân ta nhận trạng thái Cấp Cứu, mỗi lần khi phải chịu sát thương có 50% xác suất hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 20%→40%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
+  "currentZh": "使我軍單體獲得急救狀態，每次受到傷害時有50%機率恢復一定兵力（治療率20%→40%，受智力影響），持續2回合",
+  "activationRate": 0.4,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%9D%E7%B4%9A%E6%80%A5%E6%95%91-29706/"
+ },
+ {
+  "id": "tactic:cap-toc",
+  "group": "newTactics",
+  "viet": "Cấp Tốc",
+  "chinese": "疾速",
+  "type": "PASSIVE",
+  "quality": null,
+  "effectViet": "Khiến bản thân Tốc độ tăng 8.5→17 điểm",
+  "currentZh": "使自己的速度提升8.5→17點",
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%96%BE%E9%80%9F-29803/"
+ },
+ {
+  "id": "tactic:chi-diep-phu-to",
+  "group": "newTactics",
+  "viet": "Chi Diệp Phù Tô",
+  "chinese": "枝葉扶蘇",
+  "type": "INTERNAL",
+  "quality": "A",
+  "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 1%→2%",
+  "currentZh": "武將委任為木材官時，木材產量提升1%→2%",
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%9E%9D%E8%91%89%E6%89%B6%E8%98%87-26039/"
+ },
+ {
+  "id": "tactic:co-vu-so",
+  "group": "newTactics",
+  "viet": "Cổ Vũ-Sơ",
+  "chinese": "初級鼓舞",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân ta Võ Lực tăng 10→20 điểm, duy trì 2 hiệp",
+  "currentZh": "使我軍單體武力提升10→20點，持續2回合",
+  "activationRate": 0.4,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%9D%E7%B4%9A%E9%BC%93%E8%88%9E-29702/"
+ },
+ {
+  "id": "tactic:dung-vo",
+  "group": "newTactics",
+  "viet": "Dũng Võ",
+  "chinese": "勇武",
+  "type": "PASSIVE",
+  "quality": null,
+  "effectViet": "Khiến bản thân Võ Lực tăng 8.5→17 điểm",
+  "currentZh": "使自己的武力提升8.5→17點",
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%8B%87%E6%AD%A6-29801/"
+ },
+ {
+  "id": "tactic:gan-da",
+  "group": "newTactics",
+  "viet": "Gan Dạ",
+  "chinese": "壯膽",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân ta trong hiệp này nhận Quan Sát, Miễn Dịch tất cả hiệu ứng khống chế (Xác suất phát động 13%→25%)",
+  "currentZh": "使我軍單體本回合獲得洞察，免疫所有控制效果（發動率13%→25%）",
+  "activationRate": 0.25,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%A3%AF%E8%86%BD-29701/"
+ },
+ {
+  "id": "tactic:hao-hung-so",
+  "group": "newTactics",
+  "viet": "Hào Hùng-Sơ",
+  "chinese": "初級激昂",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân ta Tốc độ tăng 10→20 điểm, duy trì 2 hiệp",
+  "currentZh": "使我軍單體速度提升10→20點，持續2回合",
+  "activationRate": 0.4,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%9D%E7%B4%9A%E6%BF%80%E6%98%82-29703/"
+ },
+ {
+  "id": "tactic:ho-ve",
+  "group": "newTactics",
+  "viet": "Hộ Vệ",
+  "chinese": "護衛",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp",
+  "currentZh": "為友方主將分擔10%→20%傷害，持續2回合",
+  "activationRate": 0.35,
+  "targetVi": "Một quân Đồng Minh",
+  "effectTypeVi": "Cứu Viện",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E8%AD%B7%E8%A1%9B-29625/"
+ },
+ {
+  "id": "tactic:lam-loan-so",
+  "group": "newTactics",
+  "viet": "Làm Loạn-Sơ",
+  "chinese": "初級擾亂",
+  "type": "ACTIVE",
+  "quality": "C",
+  "effectViet": "Khiến một quân địch Tốc độ giảm 6→12 điểm, duy trì 2 hiệp",
+  "currentZh": "使敵軍單體速度降低6→12點，持續2回合",
+  "activationRate": 0.4,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Khống chế",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%88%9D%E7%B4%9A%E6%93%BE%E4%BA%82-29705/"
+ },
+ {
+  "id": "tactic:thien-van",
+  "group": "newTactics",
+  "viet": "Thiên Vận",
+  "chinese": "天運",
+  "type": "INTERNAL",
+  "quality": "B",
+  "effectViet": "Tăng 8→16 Mị Lực của Võ Tướng",
+  "currentZh": "提升武將8→16魅力",
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E5%A4%A9%E9%81%8B-26034/"
+ },
+ {
+  "id": "tactic:tinh-bach-ma-nghia-tong",
+  "group": "newTactics",
+  "viet": "Tinh • Bạch Mã Nghĩa Tòng",
+  "chinese": "精·白馬義從",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Cung thành Bạch Mã Nghĩa Tòng cưỡi ngựa bắn cung vô cùng điêu luyện: Tốc độ hành quân đội quân tăng 50%, Toàn quân ta chiến đấu 2 hiệp đầu nhận được Tiến Công Trước (ưu tiên hành động) và tăng 10% tỉ lệ phát động Chiến Pháp Chủ Động",
+  "currentZh": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高50%，我軍全體戰鬥前2回合獲得先攻（優先行動）並提高10%主動戰法發動率",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Cung binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-bach-nhi-binh",
+  "group": "newTactics",
+  "viet": "Tinh • Bạch Nhị Binh",
+  "chinese": "精·白毦兵",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Thương lên thành Bạch Nhị Binh đã đánh là thắng: Toàn thể quân ta nhận 12% Công Tâm, Và sau khi Tấn công thường, có 45% xác suất phát động thêm một lần tấn công Mưu Lược lên mục tiêu tấn công (Tỷ lệ sát thương 110%, bị ảnh hưởng bởi Trí Lực)",
+  "currentZh": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得12%攻心，且普通攻擊後有45%機率對攻擊目標再次發起一次謀略攻擊（傷害率110%，受智力影響）",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Thương binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-dai-kich-si",
+  "group": "newTactics",
+  "viet": "Tinh • Đại Kích Sĩ",
+  "chinese": "精·大戟士",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Thương lên thành Đại Kích Sĩ xông pha ngang dọc: Tăng Võ Lực toàn quân 14 điểm, Khi tiến hành tấn công thường, có 35% xác suất gây Sát thương binh đao lên một đơn vị địch (Tỷ lệ sát thương 122%)",
+  "currentZh": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高14點，進行普通攻擊時，有35%機率對敵軍單體造成兵刃傷害（傷害率122%）",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Thương binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-giai-phien-ve",
+  "group": "newTactics",
+  "viet": "Tinh • Giải Phiền Vệ",
+  "chinese": "精·解煩衛",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Khi Lính Thương tiến cấp thành Giải Phiền Vệ vô địch: Đang chiến đấu, toàn thể quân ta tăng 36 điểm Tốc Độ, và Võ Tướng Tốc Độ Nhanh Nhất của quân ta sau khi Tấn công thường, Có 30% xác suất gây một lần sát thương lên Một quân địch (Tỷ lệ sát thương 36%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn, kèm theo sát thương bằng 40% thuộc tính Tốc Độ của võ tướng này), nếu không kích hoạt thì sẽ hồi phục một lượng Binh Lực nhất định cho Một quân ta (tỷ lệ Trị Liệu 72%, chịu ảnh hưởng bởi chỉ số Võ Lực hoặc Trí Lực cao hơn), nếu do Hàn Đương Thống lĩnh, thì tỷ lệ sát thương cơ bản được tăng thêm 36%",
+  "currentZh": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提升36點，且我軍速度最快的武將普通攻擊後，有30%機率對敵軍單體造成一次傷害（傷害率36%，受武力和智力較高的一項影響，額外附帶該武將速度屬性40%的傷害），若未生效則為我軍單體回復一定兵力（治療率72%，受武力和智力較高的一項影響），若韓當統領，則基礎傷害率額外提升36%",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Thương binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-ham-tran-doanh",
+  "group": "newTactics",
+  "viet": "Tinh • Hãm Trận Doanh",
+  "chinese": "精·陷陣營",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Khiên thành Hãm Trận Doanh thuận buồm xuôi gió: Toàn thể quân ta Võ Lực, Thống Soái tăng 22 điểm, trước chiến đấu 3 hiệp nhận Trạng thái Cấp Cứu, khi nhận sát thương có 40% xác suất nhận trị liệu (tỷ lệ trị liệu 60%, chịu ảnh hưởng của Trí Lực)",
+  "currentZh": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高22點，戰鬥前3回合獲得急救狀態，受到傷害時有40%機率獲得治療（治療率60%，受智力影響）",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Khiên binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-ho-bao-ky",
+  "group": "newTactics",
+  "viet": "Tinh • Hổ Báo Kỵ",
+  "chinese": "精·虎豹騎",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Kỵ lên thành Hổ Báo Kỵ thiên hạ tinh nhuệ: toàn thể quân ta tăng cao 40 Võ Lực, chiến đấu trước 3 hiệp, toàn thể quân ta tăng tỉ lệ phát động Chiến Pháp Đột Kích lên 10%",
+  "currentZh": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高40武力，戰鬥前3回合，我軍全體突擊戰法發動率提高10%",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-linh-dan-duong",
+  "group": "newTactics",
+  "viet": "Tinh • Lính Đan Dương",
+  "chinese": "精·丹陽兵",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Khiên thành Lính Đan Dương dũng mãnh vô uy: Toàn quân ta tăng 36 điểm Thống Soái, và mỗi hiệp Trước khi bắt đầu, Dựa theo sát thương do Toàn quân ta gây ra trong hiệp trước Sát thương binh đao Nhận một tỷ lệ nhất định Lính Đan Dương, Có thể cộng dồn (Khi quân ta chịu Sát thương mưu lược, Sẽ tiêu hao Lính Đan Dương để ngăn chặn trong đó 36% Sát thương mưu lược, số lượng Lính Đan Dương giảm 10% mỗi hiệp), Nếu Đào Khiêm Thống lĩnh, thì tỷ lệ ngăn chặn được tăng thêm 4%",
+  "currentZh": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升36點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中36%謀略傷害，丹陽兵數量每回合衰減10%），若陶謙統領，則抵擋比例額外提升4%",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Khiên binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-linh-giap-may",
+  "group": "newTactics",
+  "viet": "Tinh • Lính Giáp Mây",
+  "chinese": "精·藤甲兵",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Khiên lên thành Lính Giáp Mây đao thương đâm không thủng: Toàn thể quân ta nhận sát thương Binh Đao giảm 24% (chịu ảnh hưởng Thống Soái), nhưng khi ở trạng thái Đốt Cháy sẽ mất thêm Binh Lực mỗi hiệp (Tỷ lệ sát thương 300%)",
+  "currentZh": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率300%）",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Khiên binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-linh-thanh-chau",
+  "group": "newTactics",
+  "viet": "Tinh • Lính Thanh Châu",
+  "chinese": "精·青州兵",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Thương thành Lính Thanh Châu xung phong phá trận: Trước khi Chiến đấu 2 Hiệp, khiến toàn thể quân ta(2 người)khi chịu Tấn công thường sẽ phản kích lại kẻ tấn công 1 lần Phản kích (Tỷ lệ sát thương 72%), vào đầu Hiệp thứ 3, lần lượt Hồi phục Binh Lực cho toàn bộ quân ta, ưu tiên Hồi phục hoàn toàn cho đơn vị có Binh Lực thấp nhất, sau đó Hồi phục cho các đơn vị khác của quân ta (Tổng tỷ lệ trị liệu 180%, Ảnh hưởng bởi Võ Lực, chịu ảnh hưởng thêm bởi sát thương từ địch quân), nếu Tào Tháo Thống lĩnh, hiệu quả Trị liệu còn chịu ảnh hưởng thêm bởi Thống Soái",
+  "currentZh": "將槍兵進階為衝堅毀銳的青州兵：戰鬥前2回合，使我軍群體（2人）受到普通攻擊時對攻擊者進行一次反擊（傷害率72%），第三回合回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率180%，受武力影響，額外受敵軍造成傷害影響），若曹操統領，治療效果額外受統率影響",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Thương binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-nhanh-tri-dong-nao",
+  "group": "newTactics",
+  "viet": "Tinh • Nhanh Trí Động Não",
+  "chinese": "精·靈機一動",
+  "type": "ACTIVE",
+  "quality": "S",
+  "effectViet": "Khiến Trí Lực, Thống Soái, Mị Lực nhóm quân ta (2-3 người) tăng 5.5→10 (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2-3 hiệp (Xác suất phát động 30%→55%)",
+  "currentZh": "使我軍群體（2-3人）智力、統率、魅力提升5.5→10（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+  "activationRate": 0.55,
+  "targetVi": "Tập thể quân ta (2-3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E7%B2%BE%C2%B7%E9%9D%88%E6%A9%9F%E4%B8%80%E5%8B%95-20989/"
+ },
+ {
+  "id": "tactic:tinh-phi-hung-quan",
+  "group": "newTactics",
+  "viet": "Tinh • Phi Hùng Quân",
+  "chinese": "精·飛熊軍",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Kỵ thành Phi Hùng Quân dũng bất khả đương: Hiệu quả Trị liệu mà toàn quân ta nhận được tăng 16%, Khi Tướng Chính của ta mỗi hiệp hành động Có 60% xác suất gây Sát thương Mưu Lược lên quần thể quân địch 2 người (Tỷ lệ sát thương 64%, Bị ảnh hưởng bởi toàn bộ Lượng Trị Liệu tích lũy gây ra của quân ta, Sau khi kích hoạt xong sẽ đặt lại tiến độ tích lũy.), nếu Đổng Trác Thống lĩnh, thì hiệu quả Trị liệu nhận được tăng thêm 4%",
+  "currentZh": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到治療效果提升16%，我軍主將每回合行動時有60%機率對敵軍群體2人造成謀略傷害（傷害率64%，受我軍全體累計造成治療量影響，觸發後重置累計進度），若董卓統領，則受到治療效果額外提升4%",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-quan-cam-pham",
+  "group": "newTactics",
+  "viet": "Tinh • Quân Cẩm Phàm",
+  "chinese": "精·錦帆軍",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Cung thành Quân Cẩm Phàm khí cái ngàn quân: Đội quân khi Tấn công thường, có 45% xác suất khiến Mục tiêu rơi vào Trạng thái Bỏ chạy (Tỷ lệ Sát thương 64%, Ảnh hưởng bởi Võ Lực), kéo dài 2 Hiệp; nếu Mục tiêu đã Bỏ chạy thì gây ra Tấn công Binh Đao (Tỷ lệ Sát thương 110%) và Khôi phục 30% Binh Lực từ lượng Sát thương, nếu Cam Ninh Thống lĩnh, xác suất kích hoạt chịu ảnh hưởng bởi Thuộc tính Cao nhất và tăng cao Hội Tâm cho Đồng đội 6%",
+  "currentZh": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有45%機率使目標進入潰逃狀態（傷害率64%，受武力影響），持續2回合；若目標已經潰逃則造成兵刃攻擊（傷害率110%）並恢復傷害量的30%兵力，若甘寧統領，觸發機率受最高屬性影響並提高友軍6%會心",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Cung binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-quan-ho-ve",
+  "group": "newTactics",
+  "viet": "Tinh • Quân Hổ Vệ",
+  "chinese": "精·虎衛軍",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Khiên thành Quân Hổ Vệ thiện chiến giữ vững biên cương: Đang chiến đấu, Khi Chủ Tướng quân ta sắp bị Đánh thường, Phó Tướng Tăng cao 12 Võ Lực, tối đa Tăng cao 5 lần, và sẽ Đối với từng kẻ tấn công gây ra Sát thương Binh đao (Tỷ lệ sát thương 72%, bị ảnh hưởng bởi từngtổn thất binh lực, Tăng cao nhất 40%), Mỗi hiệp tối đa kích hoạt 1 lần, nếu Điển Vi hoặc Hứa Chử Thống lĩnh, bản thân Thống Soái Tăng cao 50",
+  "currentZh": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高12武力，最多提高5次，並會分別對攻擊者造成兵刃傷害（傷害率72%，受各自損失兵力影響，最多提高40%），每回合最多觸發1次，若典韋或許褚統領，自身統率提高50",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Khiên binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-tay-luong-thiet-ky",
+  "group": "newTactics",
+  "viet": "Tinh • Tây Lương Thiết Kỵ",
+  "chinese": "精·西涼鐵騎",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Kỵ lên thành Tây Lương Thiết Kỵ tung hoành thiên hạ: Chiến đấu 3 hiệp đầu, Tăng cho toàn thể quân ta 25% xác suất Hội Tâm (khi kích hoạt, sát thương Binh Đao tăng 100%)",
+  "currentZh": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前3回合，提高我軍全體25%會心機率（觸發時兵刃傷害提高100%）",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-tu-si-tien-phong",
+  "group": "newTactics",
+  "viet": "Tinh • Tử Sĩ Tiên Phong",
+  "chinese": "精·先登死士",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến Bậc Lính Cung thành Tử Sĩ Tiên Phong không sợ chết: Đang chiến đấu, toàn quân ta miễn dịch trạng thái Bị Tập Kích, và khi nhận sát thương, có 60% xác suất (bị ảnh hưởng bởi Thống Soái của người mang) kích hoạt hiệu ứng sau: Nếu tỷ lệ Binh Lực thấp hơn người tấn công thì sẽ lấy trộm 21 điểm Thống Soái của nó (chịu ảnh hưởng bởi Thống Soái của người mang), Ngược lại giảm 3% tỉ lệ phát động Chiến Pháp Chủ Động của nó, duy trì 2 hiệp, có thể tích lũy 4 lần",
+  "currentZh": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時，有60%機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其21點統率（受攜帶者統率影響），否則降低其3%主動戰法發動率，持續2回合，可疊加4次",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Cung binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-tuong-binh",
+  "group": "newTactics",
+  "viet": "Tinh • Tượng Binh",
+  "chinese": "精·象兵",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Kỵ lên thành Tượng Binh tung hoành tự do: Điểm Công Thành Cơ Bản của đội quân tăng 25% nhưng Tốc Độ Hành Quân giảm 50%,, 50% sát thương phải chịu sẽ được trì hoãn, tổng kết dần trong 3 hiệp, và sát thương tổng kết giảm 20%. Khi bản thân bị Đốt Cháy, Nhận 50% Tấn công nhóm và Hỗn Loạn.Nếu Man Tộc thống lĩnh, mỗi khi có thêm 1 Võ Tướng Man Tộc, sát thương tổng kết sẽ giảm thêm 10%",
+  "currentZh": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高25%但行軍速度降低50%，將受到傷害的50%延後於3回合內逐步結算，且結算傷害降低20%，自身灼燒時，獲得50%群攻及混亂；若蠻族統領，部隊每多1名蠻族武將結算的傷害額外降低10%。",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tinh-vo-duong-phi-quan",
+  "group": "newTactics",
+  "viet": "Tinh • Vô Đương Phi Quân",
+  "chinese": "精·無當飛軍",
+  "type": "TROOP",
+  "quality": null,
+  "effectViet": "Tiến bậc Lính Cung lên thành Vô Đương Phi Quân trăm phát trăm trúng: Toàn thể quân ta tăng Thống Soái, Tốc Độ 22 điểm, hiệp đầu tiên gây Trúng Độc cho Tập thể địch (2 người), mỗi hiệp gây sát thương duy trì (tỷ lệ sát thương 80%, bị ảnh hưởng bởi Trí Lực), duy trì 3 hiệp",
+  "currentZh": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高22點，首回合對敵軍群體（2人）施加中毒狀態，每回合持續造成傷害（傷害率80%，受智力影響），持續3回合",
+  "activationRate": 1,
+  "targetVi": "Tập thể quân ta (3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Cung binh"
+  ],
+  "slgsimCandidate": null
+ },
+ {
+  "id": "tactic:tran-ap-khan-vang",
+  "group": "newTactics",
+  "viet": "Trấn Áp Khăn Vàng",
+  "chinese": "鎮壓黃巾",
+  "type": "COMMAND",
+  "quality": "A",
+  "effectViet": "Chiến đấu 2 hiệp đầu, khiến toàn thể quân ta miễn nhiễm trạng thái Bão cát, và khiến toàn thể quân địch rơi vào trạng thái Đảo phản, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 44%→88%, bị Võ lực hoặc Trí lực một trong hai loại loại nào cao hơn sẽ ảnh hưởng, bỏ qua Phòng ngự), duy trì 2 hiệp, nếu mục tiêu là Quân Khăn Vàng, tỉ lệ sát thương tăng 20%",
+  "currentZh": "戰鬥第2回合，使我軍全體免疫沙暴狀態，並且使敵軍全體陷入叛逃狀態（傷害率44%→88%，受武力或智力最高一項影響，無視防禦），持續2回合，若目標為黃巾軍，傷害率提高20%",
+  "activationRate": 1,
+  "targetVi": "Toàn thể hai bên",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%8E%AE%E5%A3%93%E9%BB%83%E5%B7%BE-24027/"
+ },
+ {
+  "id": "tactic:nhanh-tri-dong-nao",
+  "group": "baseline",
+  "viet": "Nhanh Trí Động Não",
+  "chinese": "靈機一動",
+  "type": "ACTIVE",
+  "quality": "S",
+  "effectViet": "Khiến Trí Lực, Thống Soái, Mị Lực nhóm quân ta (2-3 người) tăng 7.5→15 (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2-3 hiệp (Xác suất phát động 30%→55%)",
+  "currentZh": "使我军群体（2-3人）智力、统率、魅力提高7.5→15（受智力影响），可叠加，持续2-3回合（发动率30%→55%）",
+  "activationRate": 0.55,
+  "targetVi": "Tập thể quân ta (2-3 người)",
+  "effectTypeVi": "Tăng ích",
+  "troopFit": [
+   "Kỵ binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E9%9D%88%E6%A9%9F%E4%B8%80%E5%8B%95-20306/"
+ },
+ {
+  "id": "tactic:luc-luc-thuong-quoc",
+  "group": "baseline",
+  "viet": "Lục Lực Thượng Quốc",
+  "chinese": "戮力上國",
+  "type": "INTERNAL",
+  "quality": "S",
+  "effectViet": "Khi ủy nhiệm làm Quan Chủ Chính, thời gian tăng cấp hạ tầng xây dựng giảm 15%→30%",
+  "currentZh": "委任为主政官时，城建设施升级时间降低15%",
+  "activationRate": 1,
+  "targetVi": "Tôi",
+  "effectTypeVi": "Nội chính",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": "https://sanzhan.slgsim.com/zh-hant/tactics/%E6%88%AE%E5%8A%9B%E4%B8%8A%E5%9C%8B-26077/"
+ },
+ {
+  "id": "tactic:vo-song-thuong-tuong",
+  "group": "baseline",
+  "viet": "Vô Song Thượng Tướng",
+  "chinese": "无双上将",
+  "type": "ACTIVE",
+  "quality": "B",
+  "effectViet": "Gây cho Võ Tướng quân địch có Võ Lực cao nhất sát thương binh đao (tỷ lệ sát thương 123%→246%), và nhận trạng thái Phá trận (khi gây ra sát thương bỏ qua Thống Soái và Trí Lực của mục tiêu), duy trì 1 hiệp",
+  "currentZh": "对敌军武力最高的武将造成兵刃攻击（伤害率246%），并获得破阵（造成伤害时无视目标的统率和智力）状态，持续1回合",
+  "activationRate": 0.25,
+  "targetVi": "Một quân địch",
+  "effectTypeVi": "Binh đao đơn",
+  "troopFit": [
+   "Kỵ binh",
+   "Khiên binh",
+   "Cung binh",
+   "Thương binh",
+   "Khí giới"
+  ],
+  "slgsimCandidate": null
+ }
+]

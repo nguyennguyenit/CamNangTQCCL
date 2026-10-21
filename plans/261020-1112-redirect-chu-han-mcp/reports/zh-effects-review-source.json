@@ -1,0 +1,126 @@
+{
+ "tactic:ap-che": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:bac-van": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:cap-tuan": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:chi-diep-phu-to": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:chu-tuong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:chung-dien-tinh-thong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:dam-tam": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:dien-hau": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:doc-khi": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:duong-binh-thien-nhat": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:gian-chinh": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:ho-ve": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:hoan-kich": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:kham-phat": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:khien-lien": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:luc-luc-thuong-quoc": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:manh-kich": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:oat-khoang-tinh-thong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:oat-thai": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:pha-giap": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:phan-phat": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:phat-moc-tinh-thong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:phong-hoa": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:tai-khi-qua-nhan": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:thai-thach-tinh-thong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:thich-thuong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:thien-van": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:thuc-pha": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:tinh-hoa": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ },
+ "tactic:truy-thuong": {
+  "verdict": "ok",
+  "note": "Khớp trang Bahamut (潘鳳 追傷, 25%→40%, 2 hiệp); effectVi bỏ phần chú thích (無法恢復兵力) nhưng cùng cơ chế Cấm Trị Liệu, số liệu khớp."
+ },
+ "tactic:xao-tuong": {
+  "verdict": "ok",
+  "note": "Khớp tên, hiệu ứng, mục tiêu, tỉ lệ và mọi số x→y với trang Bahamut và effectVi; chỉ khác khoảng trắng quanh dấu →."
+ }
+}

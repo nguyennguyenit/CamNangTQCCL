@@ -133,10 +133,16 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             self.assertEqual(tam_the["lookup"]["acquiredFromVi"], ["Chư Hầu Thảo Đổng"])
             self.assertIn("chọn 4 thẻ bất kỳ", tam_the["lookup"]["exchangeConditionVi"].lower())
             self.assertNotIn("× 4", tam_the["lookup"]["exchangeConditionVi"])
+            # SGSDeck `待補充`: chữ Hán không lấy từ baseline cũ mà từ mục `zhEffects` có nguồn khai báo.
             placeholder_fallback = by_id["tactic:nhanh-tri-dong-nao"]
             self.assertNotEqual(placeholder_fallback["effect"], "待補充")
             self.assertNotEqual(placeholder_fallback["effectViet"], "Chờ bổ sung")
             self.assertFalse(placeholder_fallback["pending"])
+            zh_effects = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())["zhEffects"]
+            self.assertEqual(placeholder_fallback["effect"], zh_effects["tactic:nhanh-tri-dong-nao"]["text"])
+            self.assertEqual(placeholder_fallback["lookup"]["effectZhSource"], {"kind": zh_effects["tactic:nhanh-tri-dong-nao"]["source"]["kind"]})
+            self.assertEqual(sum(row["lookup"]["effectZhSource"] is not None for row in tactics), len(zh_effects))
+            self.assertFalse([row["id"] for row in tactics if row["pending"]])
             rates = {row["lookup"]["activationRate"] for row in tactics}
             self.assertIn(1, rates)
             self.assertIn(0.25, rates)

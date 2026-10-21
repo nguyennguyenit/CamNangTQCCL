@@ -1,0 +1,96 @@
+{
+  "tactic:ap-che": {
+    "kind": "source",
+    "text": "使敵軍群體（2人）造成傷害降低7.5%→15%，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 25% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:dam-tam": {
+    "kind": "source",
+    "text": "使我軍單體免疫混亂，持續3回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 23%→45% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:dau-tri": {
+    "kind": "translation",
+    "text": "準備1回合，對敵軍群體（2人）造成謀略傷害（傷害率77.5%→155%）",
+    "check": "Không có trang 三略庫 khớp tên → dịch từ effectViet, giữ đủ số; Bahamut: tìm site:forum.gamer.com.tw 鬥智 戰法 và thread 戰法一覽 không có mục 鬥智 (chỉ có 踐踏 cùng số nhưng khác tên) → giữ translation"
+  },
+  "tactic:dien-hau": {
+    "kind": "source",
+    "text": "提高自己15→30點武力，如果自己為副將則額外提高20→40點統率，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 25% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:doc-khi": {
+    "kind": "source",
+    "text": "準備1回合，對敵軍單體造成謀略攻擊（傷害率50%→100%），并施加中毒狀態，每回合持續造成傷害（傷害率25%→50%，受智力影響），持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 35% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:hoan-kich": {
+    "kind": "source",
+    "text": "使自己獲得反擊狀態（每次受到普通攻擊時對攻擊者造成傷害，傷害率30%→60%），持續1回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 35% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:hoanh-tao": {
+    "kind": "translation",
+    "text": "使自己獲得群攻狀態（傷害率20%→40%），持續1回合",
+    "check": "Không có trang 三略庫 khớp tên → dịch từ effectViet, giữ đủ số; Bahamut: tìm site:forum.gamer.com.tw 橫掃 戰法 chỉ thấy 橫掃千軍 (khác chiến pháp), không có trang khớp → giữ translation"
+  },
+  "tactic:khien-lien": {
+    "kind": "source",
+    "text": "普通攻擊之後，對敵軍單體造成一次兵刃攻擊（傷害率60%→120%）",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 35% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:manh-kich": {
+    "kind": "source",
+    "text": "普通攻擊之後，提高自身7.5%→15%會心幾率（觸發時兵刃傷害提高100%），持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 45% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:pha-giap": {
+    "kind": "source",
+    "text": "普通攻擊之後，降低攻擊目標9→18點統率，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 100% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:phong-hoa": {
+    "kind": "source",
+    "text": "對敵軍單體施加灼燒狀態，每回合持續造成傷害（傷害率35%→70%，受智力影響），持續3回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 35% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:tai-khi-qua-nhan": {
+    "kind": "source",
+    "text": "使我軍群體（2人）造成的謀略傷害提高13.5%→27%，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 40% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:thich-thuong": {
+    "kind": "source",
+    "text": "對敵軍單體施加潰逃狀態，每回合持續造成傷害（傷害率35%→70%，受武力影響），持續3回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 40% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:thuc-pha": {
+    "kind": "source",
+    "text": "解除敵軍單體的增益效果，并降低其9→18點智力，持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 25% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:tinh-hoa": {
+    "kind": "source",
+    "text": "提升我軍群體（2人）12→24點武力、智力、速度，持續2回合，并移除負面效果",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 30%→45% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  },
+  "tactic:truy-thuong": {
+    "kind": "source",
+    "text": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut thread 戰法一覽【S1-S9】: cùng cơ chế, tỉ lệ 25%→40% (khớp activationRate tối đa), mọi số và dải cấp x→y khớp effectViet; thread thêm chú thích \"（無法恢復兵力）\" cho 禁療, cùng cơ chế → source (3 từ khoá trang 三略庫 chỉ có giá trị tối đa)"
+  }
+}
