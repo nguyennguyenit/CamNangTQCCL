@@ -14109,7 +14109,7 @@ body[data-page-section="roster-recommend"] .layout {
 
 .cm-auth-notice { display: flex; align-items: flex-start; gap: var(--space-6); color: var(--ink); font: var(--type-small); }
 .cm-auth-notice p { margin: 0; overflow-wrap: anywhere; }
-.cm-auth-notice-close { flex: none; padding: 0 var(--space-6); border: 0; background: none; color: var(--muted); font: inherit; font-size: 1.25em; line-height: 1; cursor: pointer; }
+.cm-auth-notice-close { flex: none; padding: 0 var(--space-6); border: 0; background: none; color: var(--muted); font: var(--type-body); line-height: var(--leading-solid); cursor: pointer; }
 .cm-auth-notice-close:hover, .cm-auth-notice-close:focus-visible { color: var(--ink); }
 
 .adm-filter-summary { margin: 0; padding-bottom: var(--space-12); color: var(--muted); font: var(--type-small); }
