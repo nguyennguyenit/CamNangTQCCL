@@ -3,7 +3,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { withLocale } from "../js/i18n.js";
-import { treeToHtml, treeToText } from "../js/view-tree.js";
+import { h, treeToHtml, treeToText } from "../js/view-tree.js";
 import { effectVersions, lookupDisplayName } from "../js/lookup-detail.js";
 import { createProfileRenderer } from "../js/lookup-profile.js";
 import { setLookupRouteHandles } from "../js/lookup-ids.js";
@@ -128,4 +128,67 @@ test("cải tạo binh chủng chỉ giữ một bản client: trang riêng hi�
     assert.doesNotMatch(html, /data-effect-panel="[1-9]/u, item.id);
     assert.ok(visibleText(html).includes(item.record.effectVi.slice(0, 30)), item.id);
   }
+});
+
+const FLAG = /data-zh-source="translation"/gu;
+const flagCount = (html) => (html.match(FLAG) ?? []).length;
+const zhSourceKind = (row) => row.record.lookup?.effectZhSource?.kind ?? null;
+
+/** Chạy `run` khi bản ghi của `id` trong corpus thật được thay bằng `patch(record)` (corpus dùng chung cho mọi test). */
+function withRecord(id, patch, run) {
+  const item = corpus.byId.get(id);
+  const saved = item.record;
+  item.record = patch(saved);
+  try { return run(); } finally { item.record = saved; }
+}
+const asTranslated = (record) => ({ ...record, lookup: { ...record.lookup, effectZhSource: { kind: "translation" } } });
+
+test("cờ bản dịch chữ Hán: hồ sơ chiến pháp `translation` có cờ ở vi + zh; `source`/`capture`/`null` không có", () => {
+  const translated = corpus.groups.tactics.find((row) => zhSourceKind(row) === "translation");
+  assert.ok(translated, "dữ liệu phải có chiến pháp chữ Hán dịch");
+  for (const locale of ["vi", "zh"]) {
+    const html = pageHtml("tactics", translated.id, locale);
+    assert.equal(flagCount(html), 1, `${locale} ${translated.id}`);
+    assert.ok(visibleText(html).includes(locale === "zh" ? "中文效果译自越南语，未经核对" : "Hiệu ứng chữ Hán dịch từ tiếng Việt, chưa đối chiếu"), locale);
+  }
+  for (const kind of ["source", "capture", null]) {
+    const item = corpus.groups.tactics.find((row) => zhSourceKind(row) === kind && row.record.effect);
+    if (!item) continue; // dữ liệu có thể không có loại `source`
+    for (const locale of ["vi", "zh"]) assert.equal(flagCount(pageHtml("tactics", item.id, locale)), 0, `${locale} ${item.id} (${kind})`);
+  }
+});
+
+test("cờ bản dịch nằm ở đầu khung hiệu ứng, ngoài mọi panel phiên bản (đổi phiên bản không làm mất cờ)", () => {
+  withRecord(tactic.id, asTranslated, () => {
+    for (const locale of ["vi", "zh"]) {
+      const html = pageHtml("tactics", tactic.id, locale);
+      assert.ok(tacticVersions(corpus.byId.get(tactic.id).record, locale).length > 1, "bản ghi giả có nhiều phiên bản");
+      assert.equal(flagCount(html), 1, locale);
+      const head = html.match(/<div class="lookup-tactic-effect-head">([\s\S]*?)<\/div>/u)?.[1] ?? "";
+      assert.equal(flagCount(head), 1, `${locale}: cờ ở đầu khung`);
+      // `bindTacticEffectVersions` chỉ thay con của `.lookup-tactic-effect-body`; trang riêng chỉ ẩn/hiện panel.
+      for (const [, body] of html.matchAll(/<div class="lookup-tactic-effect-body"[^>]*>([\s\S]*?)<\/div>/gu)) assert.equal(flagCount(body), 0, locale);
+    }
+  });
+});
+
+test("thẻ chiến pháp liên quan trên hồ sơ tướng: cờ chỉ ở bản zh", () => {
+  const selfId = hero.record.lookup.selfTacticId;
+  const before = flagCount(pageHtml("heroes", hero.id, "zh"));
+  withRecord(selfId, asTranslated, () => {
+    assert.equal(flagCount(pageHtml("heroes", hero.id, "zh")), before + 1);
+    assert.equal(flagCount(pageHtml("heroes", hero.id, "vi")), 0);
+  });
+});
+
+test("bảng nhóm chiến pháp: cờ ở ô hiệu ứng của hàng `translation`, chỉ bản zh", () => {
+  const translated = corpus.groups.tactics.filter((row) => zhSourceKind(row) === "translation");
+  assert.ok(translated.length);
+  const zhHtml = treeToHtml(h("div", {}, lookupResultTrees("tactics", corpus.groups.tactics, "zh")));
+  assert.equal(flagCount(zhHtml), translated.length);
+  for (const row of translated) {
+    const cell = zhHtml.match(new RegExp(`data-lookup-id="${row.id}"[\\s\\S]*?</th>`, "u"))?.[0] ?? "";
+    assert.equal(flagCount(cell), 1, row.id);
+  }
+  assert.equal(flagCount(treeToHtml(h("div", {}, lookupResultTrees("tactics", corpus.groups.tactics, "vi")))), 0);
 });

@@ -4,7 +4,7 @@
 // rồi `treeToHtml`; tiêu đề và mô tả meta tính từ chính bản ghi nên mỗi trang một bộ riêng.
 import { createProfileRenderer } from '../../js/lookup-profile.js';
 import { isMasterGroup, masterDetailTree, masterTargetFor } from '../../js/lookup-master.js';
-import { effectVersions, isVersionHeading, lookupDisplayName, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
+import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
 import { lookupCardView, lookupGroupLabels } from '../../js/unified-lookup.js';
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
 import { localePath, pick, withLocale } from '../../js/i18n.js';
@@ -59,7 +59,8 @@ function describe(group: LookupGroup, item: Json, locale: SiteLocale): string {
         ? `${name}（${meta.join('·')}）：武将属性、兵种适性、自带战法与相关阵容。`
         : `${name} — tướng ${meta.join(' · ')}: chỉ số, thích tính binh chủng, chiến pháp bản thân và các đội hình dùng tướng này.`;
     }
-    const effect = snippet(currentEffect(zh ? record.effect : record.effectViet));
+    // Chữ Hán dịch từ tiếng Việt (chưa đối chiếu) không vào meta/JSON-LD của bản zh: trang mang cờ, snippet thì không.
+    const effect = zh && isTranslatedZhEffect(record) ? '' : snippet(currentEffect(zh ? record.effect : record.effectViet));
     if (group === 'tactics') {
       const type = tacticTypeLabel(record.type, locale);
       const head = parts(shown(record.quality) && (zh ? `品质${shown(record.quality)}` : `phẩm ${shown(record.quality)}`), type).join(zh ? '·' : ' · ');

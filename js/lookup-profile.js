@@ -11,7 +11,7 @@
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view, không `innerHTML`.
 
 import { t, iconTree, svgTree } from "./render.js";
-import { effectVersions, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue, zhTranslatedNote } from "./lookup-detail.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 import { portraitTree } from "./hero-portrait.js";
 import { lookupHref } from "./lookup-ids.js";
@@ -138,6 +138,8 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       label,
       t("div", { class: "lookup-relation-head" }, [name, sub ? t("span", { class: "lookup-relation-sub" }, sub) : null]),
       current?.labelVi ? t("span", { class: "lookup-version-tag" }, current.labelVi) : null,
+      // Chỉ bản zh hiện chữ Hán hiệu ứng, nên chỉ bản zh mang cờ bản dịch.
+      zh && current && isTranslatedZhEffect(record) ? t("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedNote()) : null,
       current ? t("p", { class: "lookup-relation-effect" }, current.paragraphs.join(" ")) : null,
     ]);
   }
