@@ -54,8 +54,8 @@ Toàn bộ lệnh ở bước 2 xanh trước bước 5.
 - [x] Docs + changelog
 - [x] Toàn bộ kiểm tra xanh (2026-10-21, worktree `feat/doi-cong-dong`: worker 537 test + typecheck; `test:node` 614; `build`; `verify` 5406 file; `test:dist` 49; `test:e2e` 533)
 - [x] Smoke cục bộ — API trên `wrangler dev` + D1/R2 cục bộ (session Better Auth seed): mở mùa, đăng đội có ảnh, KDV duyệt, vote ±1 (tác giả 403 `own_team`), chiến báo thắng được duyệt → `evidenceCount` 1, `points` 2, mở mùa mới → vote 409 `season_closed`, bình luận 201, chủ xoá 409 `has_evidence`, KDV xoá → D1 sạch. UI chỉ kiểm qua e2e (mock `/api`), chưa smoke UI với `pages dev`.
-- [ ] (hỏi) Kiểm SQLite D1 + bookmark Time Travel
-- [ ] (hỏi) Migrate remote → deploy Worker
-- [ ] (hỏi) Push `main` + chạy `pages-deploy.yml`
+- [x] (hỏi) Kiểm SQLite D1 + bookmark Time Travel — D1 chặn `sqlite_version()`; `log(100)` = 2 trên production; bookmark `00000544-00000000-0000510b-48686421508329cd216f59e064e90721`
+- [x] (hỏi) Migrate remote → deploy Worker — `0008` áp dụng, Worker `5ba5760f-c671-4a4b-9866-763cdb53ec16`
+- [x] (hỏi) Push `main` + chạy `pages-deploy.yml` — PR #24 merge `5fe2933`, run `39621620745` xanh, `https://b60ddcd6.tqccl.pages.dev`; production vi/zh hiện "Chưa mở mùa", `noindex`, không lỗi JS
 - [ ] Mở mùa đầu tiên
 - [ ] Smoke production vi + zh
