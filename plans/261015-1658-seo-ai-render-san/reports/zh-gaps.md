@@ -3,19 +3,19 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 570 / 886 mục.
+Tổng: 725 / 938 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
-| Tướng | 131 | 202 |
-| Chiến pháp | 343 | 406 |
+| Tướng | 220 | 251 |
+| Chiến pháp | 409 | 409 |
 | Trang bị | 0 | 114 |
 | Quân sư | 39 | 39 |
 | Cải tạo binh chủng | 16 | 16 |
 | Công trình | 41 | 41 |
 | Binh thư | 0 | 68 |
 
-## Tướng (heroes): 131 / 202
+## Tướng (heroes): 220 / 251
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -122,13 +122,46 @@ Tổng: 570 / 886 mục.
 | hero:hoang-nguyet-anh | Hoàng Nguyệt Anh | roleTagViet |
 | hero:hoang-cai | Hoàng Cái | roleTagViet |
 | hero:40y-lu-bo | 40Y Lữ Bố | roleTagViet |
+| hero:chu-hang | Chu Hằng | roleTagViet |
+| hero:chu-thuong | Chu Thương | roleTagViet |
+| hero:chu-tuan | Chu Tuấn | roleTagViet |
+| hero:co-chan-co | CO Chân Cơ | roleTagViet |
 | hero:co-dai-kieu | CO Đại Kiều | roleTagViet |
 | hero:co-lu-linh-y | CO Lữ Linh Ỷ | roleTagViet |
+| hero:co-quan-binh | CO Quan Bình | roleTagViet |
+| hero:co-tieu-kieu | CO Tiểu Kiều | roleTagViet |
+| hero:co-tinh-thai | CO Tinh Thái | roleTagViet |
+| hero:dinh-phung | Đinh Phụng | roleTagViet |
+| hero:dong-tap | Đổng Tập | roleTagViet |
+| hero:duong-tu | Dương Tu | roleTagViet |
 | hero:gia-cat-khac | Gia Cát Khác | roleTagViet |
-| hero:ha-thi | Hà Thị | roleTagViet |
+| hero:han-duong | Hàn Đương | roleTagViet |
+| hero:han-toai | Hàn Toại | roleTagViet |
+| hero:ho-xa-nhi | Hồ Xa Nhi | roleTagViet |
+| hero:hoang-quyen | Hoàng Quyền | roleTagViet |
+| hero:khong-dung | Khổng Dung | roleTagViet |
 | hero:khuc-nghia | Khúc Nghĩa | roleTagViet |
+| hero:ky-linh | Kỷ Linh | roleTagViet |
+| hero:lieu-hoa | Liêu Hoá | roleTagViet |
+| hero:luu-bieu | Lưu Biểu | roleTagViet |
+| hero:luu-diep | Lưu Diệp | roleTagViet |
+| hero:luu-phong | Lưu Phong | roleTagViet |
+| hero:ly-dien | Lý Điển | roleTagViet |
+| hero:ly-quyet | Lý Quyết | roleTagViet |
 | hero:ma-dai | Mã Đại | roleTagViet |
+| hero:ma-luong | Mã Lương | roleTagViet |
+| hero:ma-quan | Mã Quân | roleTagViet |
+| hero:ma-tac | Mã Tắc | roleTagViet |
+| hero:ma-thiet | Mã Thiết | roleTagViet |
 | hero:ma-trung | Mã Trung | roleTagViet |
+| hero:phan-chuong | Phan Chương | roleTagViet |
+| hero:phung-ky | Phùng Kỷ | roleTagViet |
+| hero:quach-do | Quách Đồ | roleTagViet |
+| hero:quach-hoai | Quách Hoài | roleTagViet |
+| hero:quach-ty | Quách Tỷ | roleTagViet |
+| hero:quan-binh | Quan Bình | roleTagViet |
+| hero:quan-hoi | Quản Hợi | roleTagViet |
+| hero:sa-ma-kha | Sa Ma Kha | roleTagViet |
 | hero:sp-bang-duc | SP Bàng Đức | roleTagViet |
 | hero:sp-bo-luyen-su | SP Bộ Luyện Sư | roleTagViet |
 | hero:sp-dien-vi | SP Điển Vi | roleTagViet |
@@ -149,219 +182,275 @@ Tổng: 570 / 886 mục.
 | hero:sp-ton-kien | SP Tôn Kiên | roleTagViet, exclusiveTitleVi |
 | hero:sp-truong-bao | SP Trương Bảo | roleTagViet |
 | hero:sp-truong-luong | SP Trương Lương | roleTagViet |
+| hero:tang-ba | Tang Bá | roleTagViet |
+| hero:tao-chuong | Tào Chương | roleTagViet |
+| hero:tao-hong | Tào Hồng | roleTagViet |
+| hero:tham-phoi | Thẩm Phối | roleTagViet |
+| hero:tran-vo | Trần Võ | roleTagViet |
+| hero:truong-lo | Trương Lỗ | roleTagViet |
+| hero:truong-man-thanh | Trương Mạn Thành | roleTagViet |
+| hero:truong-nham | Trương Nhậm | roleTagViet |
+| hero:truong-tu | Trương Tú | roleTagViet |
+| hero:truong-yen | Trương Yến | roleTagViet |
+| hero:tu-thinh | Từ Thịnh | roleTagViet |
+| hero:tuong-kham | Tưởng Khâm | roleTagViet |
+| hero:van-sinh | Văn Sính | roleTagViet |
 | hero:vuong-di | Vương Dị | roleTagViet |
+| hero:vuong-lang | Vương Lãng | roleTagViet |
+| hero:bien-hy | Biện Hỷ | roleTagViet |
+| hero:bo-luyen-su | Bộ Luyện Sư | roleTagViet |
+| hero:chu-nhien | Chu Nhiên | roleTagViet |
+| hero:dang-chi | Đặng Chi | roleTagViet |
+| hero:dao-khiem | Đào Khiêm | roleTagViet |
+| hero:dinh-nguyen | Đinh Nguyên | roleTagViet |
+| hero:dong-quyet | Đổng Quyết | roleTagViet |
+| hero:dong-thua | Đổng Thừa | roleTagViet |
+| hero:du-ky | Du Kỵ | roleTagViet |
+| hero:ha-hau-an | Hạ Hầu Ân | roleTagViet |
+| hero:ha-tien | Hà Tiến | roleTagViet |
+| hero:ham-trach | Hám Trạch | roleTagViet |
+| hero:ho-chat | Hồ Chất | roleTagViet |
+| hero:hoang-phu-tung | Hoàng Phủ Tung | roleTagViet |
+| hero:huong-lang | Hướng Lãng | roleTagViet |
+| hero:huong-sung | Hướng Sủng | roleTagViet |
+| hero:lu-kien | Lữ Kiền | roleTagViet |
+| hero:luu-thien | Lưu Thiện | roleTagViet |
+| hero:mao-gioi | Mao Giới | roleTagViet |
+| hero:my-phuong | My Phương | roleTagViet |
+| hero:nghiem-tuan | Nghiêm Tuấn | roleTagViet |
+| hero:ngo-y | Ngô Ý | roleTagViet |
+| hero:ngu-phien | Ngu Phiên | roleTagViet |
+| hero:phan-phung | Phan Phụng | roleTagViet |
+| hero:phi-thi | Phí Thi | roleTagViet |
+| hero:pho-si-nhan | Phó Sĩ Nhân | roleTagViet |
+| hero:quan-si | Quân Sĩ | roleTagViet |
+| hero:tao-chan | Tào Chân | roleTagViet |
+| hero:tao-huu | Tào Hưu | roleTagViet |
+| hero:tao-ngang | Tào Ngang | roleTagViet |
+| hero:tieu-chu | Tiều Chu | roleTagViet |
+| hero:toan-tong | Toàn Tông | roleTagViet |
+| hero:ton-can | Tôn Càn | roleTagViet |
+| hero:ton-hao | Tôn Hạo | roleTagViet |
+| hero:ton-tinh | Tôn Tĩnh | roleTagViet |
+| hero:tong-hien | Tống Hiến | roleTagViet |
+| hero:trinh-binh | Trình Bỉnh | roleTagViet |
+| hero:truong-bao-khan-vang | Trương Bảo Khăn Vàng | roleTagViet |
+| hero:truong-luong | Trương Lương | roleTagViet |
+| hero:tu-si | Tử Sĩ | roleTagViet |
+| hero:ve-thanh | Vệ Thành | roleTagViet |
+| hero:xa-tru | Xa Trụ | roleTagViet |
 
-## Chiến pháp (tactics): 343 / 406
+## Chiến pháp (tactics): 409 / 409
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
 | tactic:an-ui-quan-dan | An Ủi Quân Dân | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:anh-thanh-tu-thu | Anh Thành Tự Thủ | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:binh-phong | Binh Phong | acquiredFromVi, conflictsVi |
-| tactic:binh-vo-thuong-the | Binh Vô Thường Thế | acquiredFromVi, conflictsVi |
-| tactic:bach-bo-xuyen-duong | Bách Bộ Xuyên Dương | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:bach-ke-da-muu | Bách Kế Đa Mưu | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:bach-ky-kiep-doanh | Bách Kỵ Kiếp Doanh | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:binh-vo-thuong-the | Binh Vô Thường Thế | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:bach-bo-xuyen-duong | Bách Phát Bách Trúng | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:bach-ke-da-muu | Bách Kế Đa Mưu | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:bach-ky-kiep-doanh | Bách Kỵ Kiếp Doanh | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:bat-mon-kim-toa-tran | Bát Môn Kim Tỏa Trận | acquiredFromVi, conflictsVi |
 | tactic:bach-ma-nghia-tong | Bạch Mã Nghĩa Tòng | acquiredFromVi, conflictsVi |
-| tactic:bach-nhi-binh | Bạch Nhị Binh | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:bach-nhi-binh | Bạch Nhị Binh | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:bach-y-do-giang | Bạch Y Độ Giang | acquiredFromVi, conflictsVi |
-| tactic:bao-le-vo-nhan | Bạo Lệ Vô Nhân | acquiredFromVi, conflictsVi |
-| tactic:be-nguyet | Bế Nguyệt | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:cao-lo-lien-doanh | Cao Lỗ Liên Doanh | acquiredFromVi, conflictsVi, revisions (1) |
+| tactic:bao-le-vo-nhan | Bạo Lệ Vô Nhân | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:be-nguyet | Bế Nguyệt | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:cao-lo-lien-doanh | Cao Lỗ Liên Doanh | effectTypeVi, acquiredFromVi, conflictsVi, revisions (1) |
 | tactic:chung-dong-van-ke | Chúng Động Vạn Kế | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:chan-hai-tu-canh | Chấn Hãi Tứ Cảnh | acquiredFromVi, conflictsVi |
-| tactic:chan-quan-kich-doanh | Chấn Quân Kích Doanh | acquiredFromVi, conflictsVi |
+| tactic:chan-hai-tu-canh | Bốn Bề Rung Động | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:chan-quan-kich-doanh | Trấn Quân Kích Doanh | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:cho-doi-xuat-phat | Chờ Đợi Xuất Phát | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:cung-yeu-co | Cung Yêu Cơ | acquiredFromVi, conflictsVi |
+| tactic:cung-yeu-co | Cung Yêu Cơ | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:cong-huan-khac-cu | Công Huân Khắc Cử | acquiredFromVi, conflictsVi |
 | tactic:cong-than | Công Thần | acquiredFromVi, conflictsVi |
 | tactic:co-giam-tien-thuc | Cơ Giám Tiên Thức | acquiredFromVi, conflictsVi |
 | tactic:co-hinh-tran | Cơ Hình Trận | acquiredFromVi, conflictsVi |
-| tactic:cuong-dung-vo-tien | Cương Dũng Vô Tiền | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:cuong-liet-bat-khuat | Cương Liệt Bất Khuất | acquiredFromVi, conflictsVi |
+| tactic:cuong-dung-vo-tien | Vô Địch Can Trường | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:cuong-liet-bat-khuat | Kiên Cường Bất Khuất | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:cuoi-ngua-nghin-dam | Cưỡi Ngựa Nghìn Dặm | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:cam-nang-dieu-ke | Cẩm Nang Diệu Kế | acquiredFromVi, conflictsVi |
-| tactic:cam-pham-bach-linh | Cẩm Phàm Bách Linh | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:cat-xuong-tri-doc | Cắt Xương Trị Độc | acquiredFromVi, conflictsVi |
-| tactic:co-nhuoc-kim-thang | Cố Nhược Kim Thang | acquiredFromVi, conflictsVi |
-| tactic:co-phan-sinh-tu | Cố Phán Sinh Tư | acquiredFromVi, conflictsVi |
+| tactic:cam-nang-dieu-ke | Túi Gấm Diệu Kế | acquiredFromVi, conflictsVi |
+| tactic:cam-pham-bach-linh | Cẩm Phàm Bách Linh | acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:cat-xuong-tri-doc | Cắt Xương Trị Độc | acquiredFromVi, conflictsVi, conditions (1) |
+| tactic:co-nhuoc-kim-thang | Vững Như Thành Đồng | acquiredFromVi, conflictsVi |
+| tactic:co-phan-sinh-tu | Nhìn Lại Xinh Tươi | acquiredFromVi, conflictsVi |
 | tactic:co-chi-ac-lai | Cổ Chi Ác Lai | acquiredFromVi, conflictsVi |
-| tactic:cu-thuy-doan-kieu | Cứ Thủy Đoạn Kiều | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:dung-gia-dac-tien | Dũng Giả Đắc Tiền | acquiredFromVi, conflictsVi |
-| tactic:dung-liet-tri-trong | Dũng Liệt Trì Trọng | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:dung-quan-tam-quan | Dũng Quan Tam Quân | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:cu-thuy-doan-kieu | Dùng Nước Đẩy Cầu | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:dung-gia-dac-tien | Dũng Giả Hàng Đầu | acquiredFromVi, conflictsVi |
+| tactic:dung-liet-tri-trong | Thận Trọng Anh Dũng | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:dung-quan-tam-quan | Dũng Quán Tam Quân | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:duong-suc-chong-dich | Dưỡng Sức Chống Địch | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:dan-huyen-luc-chien | Dẫn Huyền Lực Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:doc-suc-tinh-ke | Dốc Sức Tính Kế | acquiredFromVi, conflictsVi |
-| tactic:du-dich-tham-nhap | Dụ Địch Thâm Nhập | acquiredFromVi, conflictsVi |
-| tactic:dung-vo-than-thong | Dụng Võ Thần Thông | acquiredFromVi, conflictsVi |
-| tactic:giang-thien-truong-diem | Giang Thiên Trường Diễm | acquiredFromVi, conflictsVi |
+| tactic:du-dich-tham-nhap | Dụ Địch Thâm Nhập | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:dung-vo-than-thong | Dụng Võ Thần Thông | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:giang-thien-truong-diem | Giang Thiên Trường Diệm | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:giang-dong-manh-ho | Giang Đông Mãnh Hổ | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:giang-dong-tieu-ba-vuong | Giang Đông Tiểu Bá Vương | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:giam-thong-chan-quan | Giám Thống Chấn Quân | acquiredFromVi, conflictsVi |
-| tactic:hieu-tri-luong-moc | Hiểu Tri Lương Mộc | acquiredFromVi, conflictsVi |
-| tactic:hiep-the-long-quyen | Hiệp Thế Lộng Quyền | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:hieu-thang-duy-ac | Hiệu Thắng Duy Ác | acquiredFromVi, conflictsVi |
+| tactic:giam-thong-chan-quan | Giám Thống Chấn Xa | acquiredFromVi, conflictsVi |
+| tactic:hieu-tri-luong-moc | Biết Được Gỗ Tốt | acquiredFromVi, conflictsVi |
+| tactic:hiep-the-long-quyen | Ỷ Thế Cầm Quyền | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:hieu-thang-duy-ac | Hiệu Thắng Duy Ác | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:hoa-dung-nguyet-mao | Hoa Dung Nguyệt Mạo | acquiredFromVi, conflictsVi |
 | tactic:hoang-thien-thai-binh | Hoàng Thiên Thái Bình | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:hoanh-qua-duoc-ma | Hoành Qua Dược Mã | acquiredFromVi, conflictsVi |
-| tactic:hoanh-tao-thien-quan | Hoành Tảo Thiên Quân | acquiredFromVi, conflictsVi |
+| tactic:hoanh-tao-thien-quan | Hoành Tảo Thiên Quân | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:huyet-dao-tranh-gianh | Huyết Đao Tranh Giành | exchangeConditionVi, conflictsVi |
 | tactic:ham-tran-doanh | Hãm Trận Doanh | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ham-tran-dot-tap | Hãm Trận Đột Tập | acquiredFromVi, conflictsVi, revisions (4) |
-| tactic:han-thien-si-dia | Hãn Thiên Sí Địa | acquiredFromVi, conflictsVi |
-| tactic:hinh-co-quan-luoc | Hình Cơ Quân Lược | acquiredFromVi, conflictsVi |
-| tactic:hinh-nhat-tran | Hình Nhất Trận | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:hung-van-bo-vu | Hưng Vân Bố Vũ | conflictsVi |
-| tactic:hoa-si-nguyen-lieu | Hỏa Sí Nguyên Liệu | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:hoa-thieu-lien-doanh | Hỏa Thiêu Liên Doanh | acquiredFromVi, conflictsVi, revisions (4) |
-| tactic:hoa-than-anh-phong | Hỏa Thần Anh Phong | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ho-gia-du-am | Hồ Già Dư Âm | acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:ham-tran-dot-tap | Tập Kích Trận Địa | acquiredFromVi, conflictsVi, revisions (5) |
+| tactic:han-thien-si-dia | Lửa Cháy Ngùn Ngụt | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:hinh-co-quan-luoc | Hình Cơ Quân Lược | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:hinh-nhat-tran | Hình Nhất Trận | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:hung-van-bo-vu | Hưng Vân Bố Vũ | effectTypeVi, conflictsVi |
+| tactic:hoa-si-nguyen-lieu | Lửa Lan Khắp Chốn | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:hoa-thieu-lien-doanh | Hỏa Thiêu Liên Doanh | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:hoa-than-anh-phong | Hỏa Thần Anh Phong | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:ho-gia-du-am | Tiếng Sáo Dư Âm | acquiredFromVi, conflictsVi, revisions (5) |
 | tactic:ho-bao-ky | Hổ Báo Kỵ | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:ho-cu-ung-duong | Hổ Cứ Ưng Dương | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:ho-si | Hổ Si | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ho-ve-quan | Hổ Vệ Quân | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:ho-si | Hổ Dại | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:ho-ve-quan | Quân Hổ Vệ | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:hop-quan-tu-chung | Hợp Quân Tụ Chúng | acquiredFromVi, conflictsVi |
-| tactic:khuynh-quoc-khuynh-thanh | Khuynh Quốc Khuynh Thành | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:khi-lang-tam-quan | Khí Lăng Tam Quân | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:khac-dich-che-thang | Khắc Địch Chế Thắng | acquiredFromVi, conflictsVi |
+| tactic:khuynh-quoc-khuynh-thanh | Đẹp Động Lòng Người | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:khi-lang-tam-quan | Khí Lăng Tam Quân | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:khac-dich-che-thang | Khắc Địch Chế Thắng | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:kho-nhuc-ke | Khổ Nhục Kế | acquiredFromVi, conflictsVi |
-| tactic:kim-thanh-thang-tri | Kim Thành Thang Trì | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:kim-dan-bi-thuat | Kim Đan Bí Thuật | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:kinh-thien-vi-dia | Kinh Thiên Vĩ Địa | conflictsVi |
+| tactic:kim-thanh-thang-tri | Thành Trì Vững Chắc | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:kim-dan-bi-thuat | Kim Đơn Mật Thuật | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:kinh-thien-vi-dia | Dọc Ngang Trời Đất | effectTypeVi, conflictsVi |
 | tactic:kinh-thuat-chinh-yeu | Kinh Thuật Chính Yếu | acquiredFromVi, conflictsVi |
-| tactic:kiet-trung-tan-tri | Kiệt Trung Tận Trí | acquiredFromVi, conflictsVi |
+| tactic:kiet-trung-tan-tri | Tận Trung Tận Trí | acquiredFromVi, conflictsVi |
 | tactic:kich-ky-noa-quy | Kích Kỳ Nọa Quy | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:ke-hay-muu-gioi | Kế Hay Mưu Giỏi | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ket-minh | Kết Minh | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ky-binh-gian-dao | Kỳ Binh Gian Đạo | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:ket-minh | Liên Minh | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:ky-binh-gian-dao | Kỳ Binh Gian Đạo | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:ky-thi-kinh-luoc | Kỳ Thi Kinh Lược | acquiredFromVi, conflictsVi |
-| tactic:lien-hoan-ke | Liên Hoàn Kế | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:liem-chung-nhi-kich | Liễm Chúng Nhi Kích | exchangeConditionVi, conflictsVi |
+| tactic:lien-hoan-ke | Liên Hoàn Kế | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:liem-chung-nhi-kich | Đánh Vào Chỗ Đông | effectTypeVi, exchangeConditionVi, conflictsVi |
 | tactic:loan-the-gian-hung | Loạn Thế Gian Hùng | acquiredFromVi, conflictsVi |
-| tactic:lam-chien-tien-dang | Lâm Chiến Tiên Đăng | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:lam-chien-tien-dang | Lâm Chiến Tiên Đăng | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:linh-giap-may | Lính Giáp Mây | acquiredFromVi, conflictsVi |
 | tactic:linh-thanh-chau | Lính Thanh Châu | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:loa-y-huyet-chien | Lõa Y Huyết Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:luy-the-lap-danh | Lũy Thế Lập Danh | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:lap-lo-danh-trao | Lập Lờ Đánh Tráo | acquiredFromVi, conflictsVi |
-| tactic:lua-duoi-gio-bay | Lửa Đuổi Gió Bay | acquiredFromVi, conflictsVi |
-| tactic:mau-gianh-loi-the | Mau Giành Lợi Thế | acquiredFromVi, conflictsVi |
+| tactic:loa-y-huyet-chien | Lõa Y Huyết Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:luy-the-lap-danh | Công Danh Nhiều Đời | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:lap-lo-danh-trao | Ám Độ Trần Thương | acquiredFromVi, conflictsVi |
+| tactic:lua-duoi-gio-bay | Lửa Đuổi Gió Bay | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:mau-gianh-loi-the | Mau Giành Lợi Thế | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:me-hoac | Mê Hoặc | acquiredFromVi, conflictsVi |
 | tactic:mong-trung-thi-than | Mộng Trung Thí Thần | acquiredFromVi, conflictsVi |
-| tactic:nam-man-cu-khoi | Nam Man Cừ Khôi | acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:nam-man-cu-khoi | Nam Man Cự Khôi | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
 | tactic:nghia-tam-chieu-liet | Nghĩa Tâm Chiêu Liệt | acquiredFromVi, conflictsVi |
-| tactic:nghia-dam-hung-tam | Nghĩa Đảm Hùng Tâm | acquiredFromVi, conflictsVi |
-| tactic:ngu-loi-oanh-dinh | Ngũ Lôi Oanh Đỉnh | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:nghia-dam-hung-tam | Nghĩa Đản Hùng Tâm | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:ngu-loi-oanh-dinh | Ngũ Lôi Oanh Đỉnh | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:ngao-nghe-vuong-hau | Ngạo Nghễ Vương Hầu | acquiredFromVi, conflictsVi |
-| tactic:nguy-thu-tuong-gian | Ngụy Thư Tương Gian | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:nguy-thu-tuong-gian | Ngụy Thư Tương Gian | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:nhanh-tri-dong-nao | Nhanh Trí Động Não | exchangeConditionVi, conflictsVi |
 | tactic:tai-bien-co-tiep | Tài Biện Cơ Tiệp | acquiredFromVi, conflictsVi |
-| tactic:nhan-duc-tai-the | Nhân Đức Tải Thế | acquiredFromVi, conflictsVi |
-| tactic:nhat-ky-duong-thien | Nhất Kỵ Đương Thiên | acquiredFromVi, conflictsVi |
+| tactic:nhan-duc-tai-the | Nhân Đức Tái Thế | acquiredFromVi, conflictsVi |
+| tactic:nhat-ky-duong-thien | Nhất Kỵ Đương Thiên | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:nhat-luc-cu-thu | Nhất Lực Cự Thủ | acquiredFromVi, conflictsVi |
-| tactic:nhat-than-thi-dam | Nhất Thân Thị Đảm | acquiredFromVi, conflictsVi |
-| tactic:nhuc-than-thiet-bich | Nhục Thân Thiết Bích | acquiredFromVi, conflictsVi |
-| tactic:nach-chien-quan-hung | Nạch Chiến Quần Hùng | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:nam-gai-nem-mat | Nằm Gai Nếm Mật | acquiredFromVi, conflictsVi |
+| tactic:nhat-than-thi-dam | Gan Góc Phi Thường | acquiredFromVi, conflictsVi |
+| tactic:nhuc-than-thiet-bich | Thân Hình Sắt Đá | acquiredFromVi, conflictsVi |
+| tactic:nach-chien-quan-hung | Khiêu Chiến Quần Hùng | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:nam-gai-nem-mat | Nằm Gai Nếm Mật | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:phong-thi-tran | Phong Thi Trận | acquiredFromVi, conflictsVi |
-| tactic:phong-tro-hoa-the | Phong Trợ Hỏa Thế | acquiredFromVi, conflictsVi |
-| tactic:pha-quan-uy-thang | Phá Quân Uy Thắng | acquiredFromVi, conflictsVi |
-| tactic:pha-tran-thoi-kien | Phá Trận Thôi Kiên | acquiredFromVi, conflictsVi |
+| tactic:phong-tro-hoa-the | Phong Trợ Hỏa Thế | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:pha-quan-uy-thang | Phá Quân Uy Thắng | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:pha-tran-thoi-kien | Phá Trận Thôi Kiên | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:phu-menh-tu-lap | Phù Mệnh Tự Lập | acquiredFromVi, conflictsVi |
 | tactic:phan-mau-anh-tu | Phấn Mâu Anh Tư | acquiredFromVi, conflictsVi |
-| tactic:quyet-thuy-hoi-thanh | Quyết Thủy Hội Thành | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:quyet-thuy-hoi-thanh | Quyết Thủy Hội Thành | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:quan-cam-pham | Quân Cẩm Phàm | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:quoc-si-tuong-phong | Quốc Sĩ Tướng Phong | acquiredFromVi, conflictsVi |
+| tactic:quoc-si-tuong-phong | Quốc Thổ Tướng Phong | acquiredFromVi, conflictsVi |
 | tactic:quoc-sac | Quốc Sắc | acquiredFromVi, conflictsVi |
-| tactic:quy-than-dinh-uy | Quỷ Thần Đình Uy | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:quy-than-dinh-uy | Quỷ Thần Đình Uy | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:si-dieu-phuong-tu | Si Điều Phượng Tư | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:soc-huyet-tung-hoanh | Sóc Huyết Túng Hoành | acquiredFromVi, conflictsVi |
-| tactic:si-biet-tam-nhat | Sĩ Biệt Tam Nhật | acquiredFromVi, conflictsVi |
-| tactic:si-tranh-tien-pho | Sĩ Tranh Tiên Phó | acquiredFromVi, conflictsVi |
-| tactic:su-tu-phan-tan | Sư Tử Phấn Tấn | acquiredFromVi, conflictsVi |
-| tactic:so-bong-so-gio | Sợ Bóng Sợ Gió | acquiredFromVi, conflictsVi |
+| tactic:soc-huyet-tung-hoanh | Giáo Huyết Tung Hoành | acquiredFromVi, conflictsVi |
+| tactic:si-biet-tam-nhat | Sĩ Biệt Tam Nhật | acquiredFromVi, conflictsVi, conditions (1) |
+| tactic:si-tranh-tien-pho | Nhanh Chân Tranh Đất | acquiredFromVi, conflictsVi |
+| tactic:su-tu-phan-tan | Sư Tử Phấn Tấn | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:so-bong-so-gio | Sợ Bóng Sợ Gió | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:tam-the-tran | Tam Thế Trận | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:thanh-luu-nha-vong | Thanh Lưu Nhã Vọng | acquiredFromVi, conflictsVi |
-| tactic:thanh-nang | Thanh Nang | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:thanh-nang | Thanh Nang | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:thien-huong | Thiên Hương | acquiredFromVi, conflictsVi |
-| tactic:thien-ha-vo-song | Thiên Hạ Vô Song | acquiredFromVi, conflictsVi |
-| tactic:thieu-dot-doanh-luy | Thiêu Đốt Doanh Lũy | exchangeConditionVi, conflictsVi, revisions (3) |
-| tactic:thiet-hanh-thua-sung | Thiết Hạnh Thừa Sủng | acquiredFromVi, conflictsVi |
+| tactic:thien-ha-vo-song | Thiên Hạ Vô Song | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:thieu-dot-doanh-luy | Thiêu Đốt Doanh Lũy | effectTypeVi, exchangeConditionVi, conflictsVi, revisions (4) |
+| tactic:thiet-hanh-thua-sung | Lợi Dụng Lòng Tin | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:thiet-ky-khu-tri | Thiết Kỵ Khu Trì | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:thiet-chien-quan-nho | Thiệt Chiến Quần Nho | acquiredFromVi, conflictsVi |
-| tactic:thuyen-co-muon-ten | Thuyền Cỏ Mượn Tên | exchangeConditionVi, acquiredFromVi |
+| tactic:thiet-chien-quan-nho | Nhà Nho Đấu Khẩu | acquiredFromVi, conflictsVi |
+| tactic:thuyen-co-muon-ten | Thuyền Cỏ Mượn Tên | exchangeConditionVi, acquiredFromVi, conditions (1) |
 | tactic:thai-binh-dao-phap | Thái Bình Đạo Pháp | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:thuy-tam-van-vat | Thùy Tâm Vạn Vật | acquiredFromVi, conflictsVi |
-| tactic:thuong-vu-nhu-phong | Thương Vũ Như Phong | acquiredFromVi, conflictsVi |
+| tactic:thuy-tam-van-vat | Vạn Vật Giao Điểm | acquiredFromVi, conflictsVi |
+| tactic:thuong-vu-nhu-phong | Thương Vũ Như Phong | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:that-bo-thanh-thi | Thất Bộ Thành Thi | acquiredFromVi, conflictsVi |
 | tactic:than-co-dieu-toan | Thần Cơ Diệu Toán | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:than-co-mac-trac | Thần Cơ Mạc Trắc | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:than-hoa-ke | Thần Hỏa Kế | acquiredFromVi, conflictsVi |
+| tactic:than-co-mac-trac | Thần Cơ Khó Đoán | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:than-hoa-ke | Thần Hỏa Kế | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:than-xa | Thần Xạ | acquiredFromVi, conflictsVi |
-| tactic:thap-dien-mai-phuc | Thập Diện Mai Phục | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:thap-dien-mai-phuc | Thập Diện Mai Phục | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:thap-nhi-ky-sach | Thập Nhị Kỳ Sách | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:thap-thang-thap-bai | Thập Thắng Thập Bại | acquiredFromVi, conflictsVi |
+| tactic:thap-thang-thap-bai | Thập Thắng Thập Bại | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:the-thu-vo-hang | Thệ Thủ Vô Hàng | acquiredFromVi, conflictsVi |
 | tactic:thinh-khi-linh-dich | Thịnh Khí Linh Địch | acquiredFromVi, conflictsVi |
-| tactic:thoi-co-chien-thang | Thời Cơ Chiến Thắng | acquiredFromVi, conflictsVi |
-| tactic:thu-nhi-tat-co | Thủ Nhi Tất Cố | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:thoi-co-chien-thang | Thời Cơ Chiến Thắng | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:thu-nhi-tat-co | Thủ Nhĩ Tất Cố | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:thuy-kinh-tien-sinh | Thủy Kính Tiên Sinh | acquiredFromVi, conflictsVi |
 | tactic:thua-thang-truong-khu | Thừa Thắng Trường Khu | acquiredFromVi, conflictsVi |
-| tactic:thua-dich-bat-ngu | Thừa Địch Bất Ngu | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:tinh-luyen-sach-so | Tinh Luyện Sách Số | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:tien-thanh-ky-lu | Tiên Thành Kỳ Lự | acquiredFromVi, conflictsVi |
-| tactic:tiem-long-tran | Tiềm Long Trận | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:thua-dich-bat-ngu | Thừa Địch Bất Ngu | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:tinh-luyen-sach-so | Tinh Luyện Sách Số | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:tien-thanh-ky-lu | Tiên Thành Kỳ Lự | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tiem-long-tran | Tiềm Long Trận | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:toan-quan-dong-long | Toàn Quân Đồng Lòng | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:truyen-hich-tuyen-uy | Truyền Hịch Tuyên Uy | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:tri-quan-nghi-trong | Trì Quân Nghị Trọng | acquiredFromVi, conflictsVi |
-| tactic:tri-ke | Trí Kế | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:truong-khu-truc-nhap | Trường Khu Trực Nhập | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:tran-muc-hoanh-mau | Trấn Mục Hoành Mâu | acquiredFromVi, conflictsVi |
-| tactic:tran-ach-phong-cu | Trấn Ách Phòng Cự | acquiredFromVi, conflictsVi |
-| tactic:tram-sa-quyet-thuy | Trầm Sa Quyết Thủy | acquiredFromVi, conflictsVi |
-| tactic:tram-doan-co-muu | Trầm Đoạn Cơ Mưu | acquiredFromVi, conflictsVi |
-| tactic:tram-doc | Trậm Độc | acquiredFromVi |
-| tactic:tuyet-ky-cap-dao | Tuyệt Kỳ Cấp Đạo | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:truyen-hich-tuyen-uy | Truyền Hịch Tuyên Uy | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:tri-quan-nghi-trong | Cầm Quân Thận Trọng | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tri-ke | Trí Kế | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:truong-khu-truc-nhap | Tiến Quân Thần Tốc | acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:tran-muc-hoanh-mau | Trấn Mục Hoành Mâu | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tran-ach-phong-cu | Trấn Ách Phòng Cụ | acquiredFromVi, conflictsVi |
+| tactic:tram-sa-quyet-thuy | Trầm Sa Quyết Thủy | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tram-doan-co-muu | Trầm Đoạn Cơ Mưu | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tuyet-ky-cap-dao | Tuyệt Kỳ Cấp Đạo | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:tuyet-dia-phan-kich | Tuyệt Địa Phản Kích | acquiredFromVi, conflictsVi |
 | tactic:tay-luong-thiet-ky | Tây Lương Thiết Kỵ | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:tuong-hanh-ky-tat | Tướng Hành Kỳ Tật | acquiredFromVi, conflictsVi |
-| tactic:tuong-mon-ho-nu | Tướng Môn Hổ Nữ | acquiredFromVi, conflictsVi |
+| tactic:tuong-mon-ho-nu | Con Gái Tướng Môn | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:tuong-binh | Tượng Binh | acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:tam-lanh-song-gio | Tạm Lánh Sóng Gió | acquiredFromVi, conflictsVi |
-| tactic:te-ban-hao-thi | Tế Bần Hảo Thi | acquiredFromVi, conflictsVi |
+| tactic:te-ban-hao-thi | Cách Hay Cứu Trợ | acquiredFromVi, conflictsVi |
 | tactic:toa-doan-dong-nam | Tọa Đoạn Đông Nam | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:toa-nhue | Tỏa Nhuệ | acquiredFromVi, conflictsVi |
-| tactic:to-giang-dao-lo | Tố Giang Dao Lỗ | acquiredFromVi, conflictsVi, revisions (1) |
-| tactic:tu-dien-so-ca | Tứ Diện Sở Ca | acquiredFromVi, conflictsVi |
-| tactic:tuu-tri-nhuc-lam | Tửu Trì Nhục Lâm | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:uy-chan-hoa-ha | Uy Chấn Hoa Hạ | acquiredFromVi, conflictsVi |
+| tactic:to-giang-dao-lo | Nghịch Giang Diêu Lỗ | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:tu-dien-so-ca | Tứ Diện Sở Ca | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tuu-tri-nhuc-lam | Tửu Trì Nhục Lâm | acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:uy-chan-hoa-ha | Uy Chấn Hoa Hạ | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:uy-muu-vo-dich | Uy Mưu Vô Địch | acquiredFromVi, conflictsVi |
 | tactic:vi-su-tat-khuyet | Vi Sư Tất Khuyết | acquiredFromVi, conflictsVi |
-| tactic:van-tu-anh-tong | Vân Tụ Ảnh Tòng | acquiredFromVi, conflictsVi |
+| tactic:van-tu-anh-tong | Văn Tụ Ảnh Tòng | acquiredFromVi, conflictsVi |
+| tactic:vo-song-thuong-tuong | Vô Song Thượng Tướng | effectTypeVi |
 | tactic:vo-duong-phi-quan | Vô Đương Phi Quân | acquiredFromVi, conflictsVi |
-| tactic:vo-phong-tran | Võ Phong Trận | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:vo-phong-tran | Võ Phong Trận | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (4) |
 | tactic:van-vo-song-toan | Văn Võ Song Toàn | acquiredFromVi, conflictsVi |
 | tactic:vuong-ta-chi-tai | Vương Tá Chi Tài | conflictsVi |
-| tactic:van-tien-te-phat | Vạn Tiễn Tề Phát | acquiredFromVi, conflictsVi |
-| tactic:van-tru-quyet-toan | Vận Trù Quyết Toán | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:xe-dao-chuoc-dich | Xế Đao Chước Địch | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:xu-tu-bat-hoac | Xử Tư Bất Hoặc | acquiredFromVi, conflictsVi |
-| tactic:yen-nhan-bao-hao | Yến Nhân Bào Hao | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ich-ky-kim-co | Ích Kỳ Kim Cổ | acquiredFromVi, conflictsVi |
-| tactic:dao-xuat-nhu-dinh | Đao Xuất Như Đình | acquiredFromVi, conflictsVi |
-| tactic:doat-hon-hiep-phach | Đoạt Hồn Hiệp Phách | acquiredFromVi, conflictsVi |
-| tactic:dai-quan-quyet-chien | Đài Quan Quyết Chiến | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:van-tien-te-phat | Vạn Tiễn Tề Phát | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:van-tru-quyet-toan | Vận Trù Quyết Toán | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:xe-dao-chuoc-dich | Xế Đao Chước Địch | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:xu-tu-bat-hoac | Xử Từ Bất Hoặc | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:yen-nhan-bao-hao | Yên Nhân Gào Thét | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:ich-ky-kim-co | Ích Kỉ Kim Cổ | acquiredFromVi, conflictsVi |
+| tactic:dao-xuat-nhu-dinh | Xuất Đao Như Sấm | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:doat-hon-hiep-phach | Đoạt Hồn Hiệp Phách | acquiredFromVi, conflictsVi, conditions (1) |
+| tactic:dai-quan-quyet-chien | Đài Quan Quyết Chiến | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:danh-bai-quan-dich | Đánh Bại Quân Địch | acquiredFromVi, conflictsVi |
-| tactic:danh-dau-thang-do | Đánh Đâu Thắng Đó | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:dang-phong-ham-tran | Đăng Phong Hãm Trận | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:duong-phong-thoi-quyet | Đương Phong Thôi Quyết | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:dai-kich-si | Đại Kích Sĩ | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:dinh-muu-quy-quyet | Định Mưu Quý Quyết | acquiredFromVi, conflictsVi |
+| tactic:danh-dau-thang-do | Đánh Đâu Thắng Đó | effectTypeVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:dang-phong-ham-tran | Đăng Phong Hãm Trận | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
+| tactic:duong-phong-thoi-quyet | Đương Phong Thôi Quyết | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:dai-kich-si | Đại Kích Sĩ | acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:dinh-muu-quy-quyet | Kế Hoạch Quyết Đoán | acquiredFromVi, conflictsVi |
 | tactic:luc-luc-thuong-quoc | Lục Lực Thượng Quốc | conflictsVi |
 | tactic:doc-hanh-pho-dau | Độc Hành Phó Đấu | exchangeConditionVi, conflictsVi, revisions (2) |
-| tactic:doc-tuyen-cu-thuc | Độc Tuyền Cự Thục | acquiredFromVi, conflictsVi |
+| tactic:doc-tuyen-cu-thuc | Độc Tuyền Cự Thục | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:ung-thi-lang-co | Ưng Thị Lang Cố | acquiredFromVi, conflictsVi |
 | tactic:biet-minh-biet-ta | Biết Mình Biết Ta | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:cong-bat-duong-quyen | Công Bất Đường Quyên | acquiredFromVi, conflictsVi |
@@ -371,133 +460,199 @@ Tổng: 570 / 886 mục.
 | tactic:lam-nguy-cuu-chu | Lâm Nguy Cứu Chủ | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:lam-phong-quyet-dich | Lâm Phong Quyết Địch | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:ngu-lan-tran | Ngư Lân Trận | acquiredFromVi, conflictsVi |
-| tactic:ngu-dich-binh-chuong | Ngự Địch Bình Chướng | acquiredFromVi |
+| tactic:ngu-dich-binh-chuong | Ngự Địch Bình Chướng | target, acquiredFromVi |
 | tactic:nhan-loi-che-quyen | Nhân Lợi Chế Quyền | acquiredFromVi, conflictsVi |
 | tactic:nhan-hanh-tran | Nhạn Hành Trận | acquiredFromVi, conflictsVi |
 | tactic:phi-hung-quan | Phi Hùng Quân | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:tham-tang-nhuoc-hu | Thâm Tàng Nhược Hư | exchangeConditionVi, conflictsVi |
-| tactic:thoi-phong-doan-nhan | Thôi Phong Đoạn Nhẫn | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:thuong-binh-phat-muu | Thượng Binh Phạt Mưu | acquiredFromVi, conflictsVi |
+| tactic:thoi-phong-doan-nhan | Thôi Phong Đoạn Nhẫn | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:thuong-binh-phat-muu | Thượng Binh Phạt Mưu | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:trung-dung-nghia-liet | Trung Dũng Nghĩa Liệt | acquiredFromVi, conflictsVi |
-| tactic:ti-thuc-kich-hu | Tị Thực Kích Hư | acquiredFromVi |
-| tactic:duong-suc-doi-chien | Dưỡng Sức Đợi Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:ti-thuc-kich-hu | Tị Thực Kích Hư | target, effectTypeVi, acquiredFromVi |
+| tactic:duong-suc-doi-chien | Dưỡng Sức Đợi Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi, conditions (1) |
 | tactic:dong-long-hop-suc | Đồng Lòng Hợp Sức | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:am-tang-huyen-co | Ám Tàng Huyền Cơ | acquiredFromVi |
-| tactic:am-tien-nan-phong | Ám Tiễn Nan Phòng | acquiredFromVi, conflictsVi |
-| tactic:bao-liem-tu-phuong | Bạo Liễm Tứ Phương | acquiredFromVi |
-| tactic:bao-trat | Bao Trát | acquiredFromVi |
-| tactic:bat-nhuc-su-menh | Bất Nhục Sử Mệnh | acquiredFromVi |
-| tactic:biet-cu-tuong-tam | Biệt Cụ Tượng Tâm | acquiredFromVi, conflictsVi |
-| tactic:chi-nhu-dong-cuong | Chí Nhu Động Cương | acquiredFromVi, conflictsVi |
-| tactic:chi-qua-vy-vo | Chỉ Qua Vy Võ | acquiredFromVi, conflictsVi |
-| tactic:chinh-quan-kinh-vo | Chỉnh Quân Kinh Võ | acquiredFromVi, conflictsVi |
-| tactic:chung-vong-so-quy | Chúng Vọng Sở Quy | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:co-luoc-tung-hoanh | Cơ Lược Túng Hoành | acquiredFromVi |
-| tactic:cuong-cong | Cường Công | acquiredFromVi |
-| tactic:cuu-doc | Cưu Độc | conflictsVi, revisions (2) |
-| tactic:dan-duong-binh | Đan Dương Binh | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:dao-vien-ket-nghia | Đào Viên Kết Nghĩa | exchangeConditionVi |
-| tactic:di-hoa-tiep-moc | Di Hoa Tiếp Mộc | acquiredFromVi, conflictsVi |
-| tactic:di-qua-dich-chung | Dĩ Quả Địch Chúng | acquiredFromVi, conflictsVi |
-| tactic:dinh-quan-tram-tuong | Định Quân Trảm Tướng | acquiredFromVi, conflictsVi |
-| tactic:doan-binh-tuong-kien | Đoản Binh Tương Kiến | acquiredFromVi |
-| tactic:doan-binh-tuong-tiep | Đoản Binh Tương Tiếp | acquiredFromVi |
-| tactic:doan-trang-tri-trong | Đoan Trang Trì Trọng | acquiredFromVi |
-| tactic:dong-chien-than-tien | Đồng Chiến Thân Tiên | conflictsVi |
-| tactic:hau-phat-che-nhan | Hậu Phát Chế Nhân | acquiredFromVi |
-| tactic:ho-gia-thap-bat-phach | Hồ Già Thập Bát Phách | acquiredFromVi |
+| tactic:am-tang-huyen-co | Ám Tàng Huyền Cơ | target, effectTypeVi, acquiredFromVi |
+| tactic:am-tien-nan-phong | Ám Tiễn Nan Phòng | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:am-trieu-hung-dung | Ám Triều Dũng Động | target, effectTypeVi |
+| tactic:an-do-tac-ky | Án Đồ Tác Kí | target |
+| tactic:ap-che | Áp Chế | target |
+| tactic:bac-van | Uyên Bác | target |
+| tactic:bach-luyen-thanh-cuong | Dày Công Tôi Luyện | target |
+| tactic:bach-my | Bạch Mi | target |
+| tactic:bao-liem-tu-phuong | Bạo Liễm Tứ Phương | target, effectTypeVi, acquiredFromVi |
+| tactic:bao-trat | Băng Bó | target, acquiredFromVi |
+| tactic:bat-nhuc-su-menh | Bất Nhục Sứ Mệnh | target, effectTypeVi, acquiredFromVi |
+| tactic:biet-cu-tuong-tam | Tư Duy Sáng Tạo | acquiredFromVi, conflictsVi |
+| tactic:cao-chiem-vien-chuc | Cao Chiêm Viễn Chúc | target |
+| tactic:cap-tuan | Luyện Gấp | target |
+| tactic:chi-nhu-dong-cuong | Lấy Nhu Chế Cương | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:chi-qua-vy-vo | Chỉ Qua Vi Vũ | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:chinh-quan-kinh-vo | Chỉnh Đốn Quân Ngũ | acquiredFromVi, conflictsVi |
+| tactic:chu-tuong | Thợ Rèn | target |
+| tactic:chung-dien-tinh-thong | Tinh Thông Làm Ruộng | target |
+| tactic:chung-vong-so-quy | Đích Đến Cuối Cùng | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:co-luoc-tung-hoanh | Mưu Lược Tung Hoành | target, effectTypeVi, acquiredFromVi |
+| tactic:cuong-cong | Cường Công | target, acquiredFromVi |
+| tactic:cuu-doc | Rượu Độc | effectTypeVi, conflictsVi, revisions (3) |
+| tactic:dam-tam | Tâm Sự | target |
+| tactic:dan-duong-binh | Lính Đan Dương | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:dau-tri | Đấu Trí | target, effectTypeVi |
+| tactic:di-hoa-tiep-moc | Lập Lờ Đánh Tráo | acquiredFromVi, conflictsVi |
+| tactic:di-qua-dich-chung | Lấy Ít Đánh Nhiều | acquiredFromVi, conflictsVi |
+| tactic:dien-hau | Chốt Đuôi | target |
+| tactic:dieu-thu-minh-thach | Diệu Thư Minh Thạch | target |
+| tactic:dinh-quan-tram-tuong | Định Quân Trảm Tướng | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:do-ky-thuong-nhuc | Đồ Kỷ Thượng Nhục | target, effectTypeVi |
+| tactic:doan-binh-tuong-tiep | Đoản Binh Tương Kiến | target, effectTypeVi, acquiredFromVi |
+| tactic:doc-khi | Khí Độc | target, effectTypeVi |
+| tactic:dong-chien-than-tien | Đi Đầu Cùng Chiến | conflictsVi |
+| tactic:duong-binh-thien-nhat | Dưỡng Binh Thiên Nhật | target |
+| tactic:duong-ma-huu-dao | Dưỡng Mã Hữu Đạo | target |
+| tactic:gian-chinh | Giản Chính | target |
+| tactic:hau-phat-che-nhan | Hậu Phát Chế Nhân | target, effectTypeVi, acquiredFromVi |
 | tactic:ho-hau | Hổ Hầu | acquiredFromVi, conflictsVi |
-| tactic:hoa-cong | Hỏa Công | acquiredFromVi |
+| tactic:hoa-cong | Hỏa Công | target, effectTypeVi, acquiredFromVi |
+| tactic:hoan-kich | Phản Kích | target |
+| tactic:hoanh-tao | Quét Sạch | target |
 | tactic:hu-thuc-ky-muu | Hư Thực Kỳ Mưu | acquiredFromVi, conflictsVi |
 | tactic:hue-chat-lan-tam | Huệ Chất Lan Tâm | acquiredFromVi, conflictsVi |
 | tactic:huy-binh-muu-thang | Huy Binh Mưu Thắng | acquiredFromVi, conflictsVi |
-| tactic:huy-kham | Huy Khảm | acquiredFromVi |
-| tactic:huy-quan-ket-tran | Huy Quân Kết Trận | effectTypeVi, exchangeConditionVi |
+| tactic:huy-kham | Vung Chém | target, effectTypeVi, acquiredFromVi |
+| tactic:huy-quan-ket-tran | Huy Quân Kết Trận | exchangeConditionVi |
 | tactic:ke-dinh-muu-quyet | Kế Định Mưu Quyết | acquiredFromVi, conflictsVi |
-| tactic:khac-tuan-hoach-nhat | Khắc Tuân Hoạch Nhất | acquiredFromVi, conflictsVi |
-| tactic:khiem-nhuong | Khiêm Nhượng | acquiredFromVi |
-| tactic:khien-che | Khiên Chế | acquiredFromVi |
-| tactic:khieu-han | Khiêu Hấn | acquiredFromVi |
-| tactic:khinh-dung-phi-yen | Khinh Dũng Phi Yến | acquiredFromVi |
-| tactic:kho-moc-phung-xuan | Khô Mộc Phùng Xuân | acquiredFromVi |
-| tactic:khu-tan | Khu Tán | acquiredFromVi |
-| tactic:kien-cuong-chi-hoa | Kiên Cường Chi Hoa | acquiredFromVi |
-| tactic:kieu-dung-thien-chien | Kiêu Dũng Thiện Chiến | acquiredFromVi |
-| tactic:kieu-kien-than-hanh | Kiêu Kiện Thần Hành | acquiredFromVi |
-| tactic:ky-ho-nan-ha | Kỵ Hổ Nan Hạ | acquiredFromVi |
-| tactic:lac-loi | Lạc Lôi | acquiredFromVi |
-| tactic:lac-phuong | Lạc Phượng | acquiredFromVi |
-| tactic:lieu-su-nhu-than | Liệu Sự Như Thần | acquiredFromVi |
-| tactic:lo-mang | Lỗ Mãng | acquiredFromVi |
-| tactic:loan-cung-am-vu | Loan Cung Ẩm Vũ | acquiredFromVi |
-| tactic:lu-giang-thuong-giap | Lư Giang Thượng Giáp | acquiredFromVi |
-| tactic:luc-luc-thuong-tam | Lục Lực Thượng Tâm | acquiredFromVi |
-| tactic:ly-nguyet | Ly Nguyệt | acquiredFromVi, conflictsVi |
-| tactic:mat-ke-tru-nghich | Mật Kế Tru Nghịch | acquiredFromVi, conflictsVi |
-| tactic:minh-sat-thu-hao | Minh Sát Thu Hào | acquiredFromVi |
-| tactic:nghi-thanh-chi-chi | Nghi Thành Chi Chí | acquiredFromVi |
-| tactic:ngoc-co-hoa-mao | Ngọc Cơ Hoa Mạo | acquiredFromVi |
-| tactic:nhat-cu-tiem-diet | Nhất Cử Tiêm Diệt | acquiredFromVi |
-| tactic:phan-dot | Phấn Đột | acquiredFromVi |
-| tactic:phi-sa-tau-thach | Phi Sa Tẩu Thạch | acquiredFromVi, conflictsVi |
-| tactic:pho-thang-dao-hoa | Phó Thang Đạo Hỏa | acquiredFromVi, conflictsVi |
-| tactic:phong-mang-tat-lo | Phong Mang Tất Lộ | acquiredFromVi, conflictsVi |
-| tactic:phong-thanh-hac-le | Phong Thanh Hạc Lệ | acquiredFromVi |
-| tactic:phu-nguy-dinh-khuynh | Phù Nguy Định Khuynh | acquiredFromVi, conflictsVi |
-| tactic:phuc-boi-thau-dich | Phúc Bối Thâu Địch | acquiredFromVi |
-| tactic:phuc-my-phan-cong | Phục My Phản Công | acquiredFromVi |
-| tactic:phung-linh-binh-lo | Phụng Linh Bình Lỗ | acquiredFromVi, conflictsVi |
-| tactic:quoc-chi-trinh-can | Quốc Chi Trinh Cán | conflictsVi |
-| tactic:quy-than-chi-nu | Quỷ Thần Chi Nữ | acquiredFromVi |
+| tactic:khac-tuan-hoach-nhat | Khắc Tôn Họa Nhất | acquiredFromVi, conflictsVi |
+| tactic:kham-phat | Chặt Đốn | target |
+| tactic:khiem-nhuong | Khiêm Nhường | target, acquiredFromVi |
+| tactic:khien-lien | Liên Luỵ | target, effectTypeVi |
+| tactic:khieu-han | Khiêu Khích | target, acquiredFromVi |
+| tactic:khinh-dung-phi-yen | Khinh Dũng Phi Yến | target, effectTypeVi, acquiredFromVi |
+| tactic:kho-moc-phung-xuan | Khô Mộc Phùng Xuân | target, acquiredFromVi |
+| tactic:khu-tan | Xua Đuổi | target, acquiredFromVi |
+| tactic:kien-co-hanh-su | Tùy Cơ Ứng Biến | target |
+| tactic:kien-cuong-chi-hoa | Hoa Kiên Cường | target, acquiredFromVi |
+| tactic:kieu-dung-thien-chien | Kiêu Dũng Thiện Chiến | target, effectTypeVi, acquiredFromVi |
+| tactic:kieu-kien-than-hanh | Kiêu Kiện Thần Hành | target, acquiredFromVi |
+| tactic:ky-ho-nan-ha | Kỵ Hổ Nan Hạ | target, effectTypeVi, acquiredFromVi |
+| tactic:lac-loi | Lạc Lôi | target, effectTypeVi, acquiredFromVi |
+| tactic:lac-phuong | Lạc Phượng | target, effectTypeVi, acquiredFromVi |
+| tactic:lieu-su-nhu-than | Liệu Sự Như Thần | effectTypeVi, acquiredFromVi |
+| tactic:lo-mang | Lỗ Mãng | target, acquiredFromVi |
+| tactic:loan-cung-am-vu | Loan Cung Ấm Vũ | target, acquiredFromVi |
+| tactic:lu-giang-thuong-giap | Lư Giang Thượng Giáp | target, effectTypeVi, acquiredFromVi |
+| tactic:ly-nguyet | Li Nguyệt | acquiredFromVi, conflictsVi |
+| tactic:manh-kich | Mãnh Kích | target |
+| tactic:mat-ke-tru-nghich | Mật Kế Giết Nghịch | acquiredFromVi, conflictsVi |
+| tactic:minh-sat-thu-hao | Minh Sát Thu Hào | target, acquiredFromVi |
+| tactic:nghi-thanh-chi-chi | Nghi Thành | target, acquiredFromVi |
+| tactic:ngoan-thiet-sinh-huy | Ngoan Thiết Sinh Huy | target |
+| tactic:ngoc-co-hoa-mao | Ngọc Cơ Hoa Mạo | target, acquiredFromVi |
+| tactic:ngu-coc-phong-dang | Ngũ Cốc Phong Đăng | target |
+| tactic:nhat-cu-tiem-diet | Nhất Cử Tiêm Diệt | target, effectTypeVi, acquiredFromVi |
+| tactic:oat-khoang-tinh-thong | Tinh Thông Đào Mỏ | target |
+| tactic:oat-thai | Đào Hái | target |
+| tactic:pha-giap | Phá Giáp | target |
+| tactic:phan-dot | Phấn Đột | target, acquiredFromVi |
+| tactic:phan-phat | Hăng Hái | target |
+| tactic:phat-moc-tinh-thong | Tinh Thông Đốn Gỗ | target |
+| tactic:phi-sa-tau-thach | Bụi Đất Mù Trời | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:pho-thang-dao-hoa | Xông Pha Khói Lửa | acquiredFromVi, conflictsVi |
+| tactic:phong-hoa | Đốt Lửa | target, effectTypeVi |
+| tactic:phong-mang-tat-lo | Thể Hiện Tài Năng | acquiredFromVi, conflictsVi |
+| tactic:phong-thanh-hac-le | Phong Thanh Hạc Lệ | target, effectTypeVi, acquiredFromVi |
+| tactic:phu-nguy-dinh-khuynh | Phò Nguy Dẹp Loạn | acquiredFromVi, conflictsVi |
+| tactic:phuc-boi-thau-dich | Phúc Bối Thụ Địch | target, effectTypeVi, acquiredFromVi |
+| tactic:phuc-my-phan-cong | Phục Khiên Phản Kích | target, acquiredFromVi |
+| tactic:phung-linh-binh-lo | Phụng Lệnh Bình Lỗ | acquiredFromVi, conflictsVi |
+| tactic:quoc-chi-trinh-can | Nòng Cốt Quốc Gia | conflictsVi |
+| tactic:quy-than-chi-nu | Quỷ Thần Chi Nữ | target, effectTypeVi, acquiredFromVi |
 | tactic:quyen-tiem-cuu-dinh | Quyền Tiếm Cửu Đỉnh | acquiredFromVi, conflictsVi |
-| tactic:so-trang-trich-kich | Sơ Trang Trịch Kích | exchangeConditionVi, conflictsVi, revisions (2) |
-| tactic:ta-huu-khai-cung | Tả Hữu Khai Cung | acquiredFromVi |
-| tactic:tam-quan-chi-chung | Tam Quân Chi Chúng | acquiredFromVi |
-| tactic:tang-khi-dai-thi | Tàng Khí Đãi Thì | acquiredFromVi, conflictsVi |
-| tactic:tat-phong-sau-vu | Tật Phong Sậu Vũ | acquiredFromVi, conflictsVi |
-| tactic:tham-muu-vien-lu | Thâm Mưu Viễn Lự | acquiredFromVi, conflictsVi |
-| tactic:than-thuong-su | Thần Thượng Sử | acquiredFromVi |
-| tactic:than-thuong-thiet-chien | Thần Thương Thiệt Chiến | acquiredFromVi |
-| tactic:thanh-dong-kich-tay | Thanh Đông Kích Tây | acquiredFromVi |
-| tactic:thao-tam-hoac-dich | Thao Tâm Hoặc Địch | acquiredFromVi, conflictsVi |
-| tactic:thau-thien-xung-de | Thâu Thiền Xưng Đế | acquiredFromVi |
-| tactic:thi-chi-bat-di | Thỉ Chí Bất Di | acquiredFromVi |
+| tactic:so-trang-trich-kich | Sơ Trang Chiến Kích | effectTypeVi, exchangeConditionVi, conflictsVi, revisions (2) |
+| tactic:ta-huu-khai-cung | Tả Hữu Khai Cung | target, effectTypeVi, acquiredFromVi |
+| tactic:tai-khi-qua-nhan | Tài Khí Quá Nhân | target |
+| tactic:tam-quan-chi-chung | Tam Quân Chi Chúng | target, acquiredFromVi |
+| tactic:tang-khi-dai-thi | Tàng Khí Đãi Thì | acquiredFromVi, conflictsVi, conditions (1) |
+| tactic:tat-phong-sau-vu | Gió Táp Mưa Sa | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:te-tri-nhap-vy | Cẩn Thận Tỉ Mỉ | target |
+| tactic:thac-qua-luy-luy | Thành Quả To Lớn | target |
+| tactic:thai-thach-tinh-thong | Tinh Thông Nhặt Đá | target |
+| tactic:tham-muu-vien-lu | Thâm Mưu Viễn Lược | acquiredFromVi, conflictsVi |
+| tactic:than-thuong-su | Thần Thượng Sứ | target, effectTypeVi, acquiredFromVi |
+| tactic:than-thuong-thiet-chien | Thần Thương Thiệt Chiến | target, effectTypeVi, acquiredFromVi |
+| tactic:thanh-dong-kich-tay | Dương Đông Kích Tây | target, effectTypeVi, acquiredFromVi |
+| tactic:thao-tam-hoac-dich | Che Giấu Tâm Tư | acquiredFromVi, conflictsVi |
+| tactic:thau-thien-xung-de | Thụ Thiền Xưng Đế | target, acquiredFromVi |
+| tactic:thi-chi-bat-di | Thi Chí Bất Di | target, acquiredFromVi |
+| tactic:thich-thuong | Đâm Thương | target, effectTypeVi |
 | tactic:thien-ha-danh-xao | Thiên Hạ Danh Xảo | acquiredFromVi, conflictsVi |
-| tactic:thien-hang-hoa-vu | Thiên Hàng Hỏa Vũ | acquiredFromVi |
-| tactic:thien-ly-quy-luong | Thiên Lý Quỹ Lương | acquiredFromVi |
-| tactic:thien-ly-tri-vien | Thiên Lý Trì Viện | acquiredFromVi |
-| tactic:thu-khoi-dao-lac | Thủ Khởi Đao Lạc | acquiredFromVi |
-| tactic:thua-thien-tinh-the | Thừa Thiên Tĩnh Thế | effectTypeVi, conflictsVi |
-| tactic:thuan-khiet-chi-hoa | Thuần Khiết Chi Hoa | acquiredFromVi |
+| tactic:thien-hang-hoa-vu | Thiên Giáng Hỏa Vũ | target, effectTypeVi, acquiredFromVi |
+| tactic:thien-ly-tri-vien | Thiên Lý Trì Viện | target, effectTypeVi, acquiredFromVi |
+| tactic:thien-uy-khieu-tran | Thiên Uy Khiếu Trận | effectTypeVi |
+| tactic:thu-khoi-dao-lac | Thủ Khởi Đao Lạc | target, effectTypeVi, acquiredFromVi |
+| tactic:thu-ma-thon-thiet | Thủ Ma Thốn Thiết | target |
+| tactic:thua-thien-tinh-the | Thừa Thiên Tĩnh Thế | effectTypeVi, conflictsVi, conditions (1) |
+| tactic:thuan-khiet-chi-hoa | Hoa Thuần Khiết | target, acquiredFromVi |
+| tactic:thuc-pha | Phát Hiện | target |
 | tactic:thuc-y-chi-duc | Thục Ý Chi Đức | acquiredFromVi, conflictsVi |
-| tactic:thuong-lam-phong-thuc | Thương Lẫm Phong Thực | exchangeConditionVi, acquiredFromVi, conflictsVi |
-| tactic:thuy-hue-van-vat | Thùy Huệ Vạn Vật | acquiredFromVi |
-| tactic:thuy-yem-that-quan | Thủy Yêm Thất Quân | acquiredFromVi, conflictsVi |
-| tactic:tien-dang-tu-si | Tiên Đăng Tử Sĩ | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:tien-dap | Tiễn Đạp | acquiredFromVi |
-| tactic:tien-ngon | Tiến Ngôn | acquiredFromVi |
-| tactic:toa-chi-no-tap | Tỏa Chí Nộ Tập | acquiredFromVi |
-| tactic:toa-dieu-kinh-ngao | Tọa Điếu Kình Ngao | acquiredFromVi |
-| tactic:toa-thu-co-thanh | Tọa Thủ Cô Thành | acquiredFromVi |
-| tactic:tra-hang | Trá Hàng | acquiredFromVi |
-| tactic:tran-vu-chi-thien | Trăn Vu Chí Thiện | acquiredFromVi, conflictsVi |
-| tactic:trong-kich | Trọng Kích | acquiredFromVi |
-| tactic:tu-chien-bat-thoai | Tử Chiến Bất Thoái | acquiredFromVi, conflictsVi |
-| tactic:tu-thach-thanh-kim | Tụ Thạch Thành Kim | acquiredFromVi, conflictsVi |
-| tactic:tung-binh-kiep-luoc | Túng Binh Kiếp Lược | acquiredFromVi |
-| tactic:tuyet-ke-chiet-muu | Tuyệt Kế Chiết Mưu | acquiredFromVi |
-| tactic:ung-thi | Ưng Thị | acquiredFromVi |
-| tactic:uy-phong-lam-lam | Uy Phong Lẫm Lẫm | acquiredFromVi |
-| tactic:uy-vo-tinh-chieu | Uy Võ Tịnh Chiêu | acquiredFromVi, conflictsVi |
-| tactic:uyen-nhien-nan-trac | Uyên Nhiên Nan Trắc | acquiredFromVi, conflictsVi |
-| tactic:van-quan-doat-suy | Vạn Quân Đoạt Suý | acquiredFromVi, conflictsVi |
-| tactic:van-quan-thu-tuong | Vạn Quân Thủ Tướng | acquiredFromVi |
-| tactic:vien-cuu | Viện Cứu | acquiredFromVi |
-| tactic:vo-thanh-chi-tu | Võ Thánh Chi Tử | acquiredFromVi |
-| tactic:xa-than-cuu-chu | Xá Thân Cứu Chủ | acquiredFromVi, conflictsVi |
-| tactic:xuat-ky-bat-y | Xuất Kỳ Bất Ý | acquiredFromVi |
-| tactic:yen-ky-tuc-co | Yển Kỳ Tức Cổ | acquiredFromVi |
-| tactic:yeu-thuat | Yêu Thuật | acquiredFromVi |
+| tactic:thuong-lam-phong-thuc | Kho Lương Đầy Ắp | exchangeConditionVi, acquiredFromVi, conflictsVi |
+| tactic:thuy-yem-that-quan | Nước Ngập Thất Quân | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tien-dang-tu-si | Tử Sĩ Tiên Phong | acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:tien-dap | Giẫm Đạp | target, effectTypeVi, acquiredFromVi |
+| tactic:tien-ngon | Tiến Ngôn | target, acquiredFromVi |
+| tactic:tinh-hoa | Tịnh Hóa | target |
+| tactic:toa-chi-no-tap | Tỏa Chí Nộ Tập | target, acquiredFromVi |
+| tactic:toa-dieu-kinh-ngao | Tọa Điếu Kình Ngao | target, effectTypeVi, acquiredFromVi |
+| tactic:toa-thu-co-thanh | Tọa Thủ Cô Thành | target, acquiredFromVi |
+| tactic:tra-hang | Trá Hàng | target, acquiredFromVi |
+| tactic:tran-vu-chi-thien | Trân Vu Chí Thiện | acquiredFromVi, conflictsVi |
+| tactic:tranh-phan-doat-mieu | Tranh Phân | target |
+| tactic:trong-kich | Trọng Kích | target, effectTypeVi, acquiredFromVi |
+| tactic:truong-gia-chi-phong | Trưởng Giả Chi Phong | target |
+| tactic:truy-thuong | Sát Thương Thêm | target |
+| tactic:tu-chien-bat-thoai | Tử Chiến Không Lui | effectTypeVi, acquiredFromVi, conflictsVi |
+| tactic:tu-du | Tự Lành | target |
+| tactic:tu-thach-thanh-kim | Biến Đá Thành Vàng | acquiredFromVi, conflictsVi |
+| tactic:tung-binh-kiep-luoc | Thả Lính Cướp Đoạt | target, effectTypeVi, acquiredFromVi |
+| tactic:uy-phong-lam-lam | Uy Phong Lẫm Liệt | target, acquiredFromVi |
+| tactic:uy-vo-tinh-chieu | Uy Tín Dũng Võ | acquiredFromVi, conflictsVi |
+| tactic:uyen-nhien-nan-trac | Vực Sâu Khó Dò | acquiredFromVi, conflictsVi |
+| tactic:van-quan-doat-suy | Vạn Quân Đoạt Sư | acquiredFromVi, conflictsVi |
+| tactic:vien-cuu | Cứu trợ | target, acquiredFromVi |
+| tactic:vo-thanh-chi-tu | Quân Thần Chi Tử | target, acquiredFromVi |
+| tactic:xa-than-cuu-chu | Xả Thân Cứu Chủ | acquiredFromVi, conflictsVi |
+| tactic:xao-tuong | Nghệ Nhân | target |
+| tactic:xuat-khau-thanh-chuong | Xuất Khẩu Thành Chương | target |
+| tactic:xuat-ky-bat-y | Xuất Kỳ Bất Ý | target, acquiredFromVi |
+| tactic:yen-ky-tuc-co | Yển Kỳ Tức Cổ | target, effectTypeVi, acquiredFromVi |
+| tactic:yeu-thuat | Yêu Thuật | target, effectTypeVi, acquiredFromVi |
+| tactic:ap-che-so | Áp Chế-Sơ | target |
+| tactic:cap-cuu-so | Cấp Cứu-Sơ | target |
+| tactic:cap-toc | Cấp Tốc | target |
+| tactic:chi-diep-phu-to | Chi Diệp Phù Tô | target |
+| tactic:co-vu-so | Cổ Vũ-Sơ | target |
+| tactic:dung-vo | Dũng Võ | target |
+| tactic:gan-da | Gan Dạ | target |
+| tactic:hao-hung-so | Hào Hùng-Sơ | target |
+| tactic:ho-ve | Hộ Vệ | target, effectTypeVi |
+| tactic:lam-loan-so | Làm Loạn-Sơ | target |
+| tactic:thien-van | Thiên Vận | target |
+| tactic:tinh-bach-ma-nghia-tong | Tinh • Bạch Mã Nghĩa Tòng | target, conditions (6) |
+| tactic:tinh-bach-nhi-binh | Tinh • Bạch Nhị Binh | target, conditions (7) |
+| tactic:tinh-dai-kich-si | Tinh • Đại Kích Sĩ | target, conditions (6) |
+| tactic:tinh-giai-phien-ve | Tinh • Giải Phiền Vệ | target, conditions (7) |
+| tactic:tinh-ham-tran-doanh | Tinh • Hãm Trận Doanh | target, conditions (6) |
+| tactic:tinh-ho-bao-ky | Tinh • Hổ Báo Kỵ | target, conditions (6) |
+| tactic:tinh-linh-dan-duong | Tinh • Lính Đan Dương | target, conditions (7) |
+| tactic:tinh-linh-giap-may | Tinh • Lính Giáp Mây | target, conditions (7) |
+| tactic:tinh-linh-thanh-chau | Tinh • Lính Thanh Châu | target, conditions (6) |
+| tactic:tinh-nhanh-tri-dong-nao | Tinh • Nhanh Trí Động Não | target, conditions (2) |
+| tactic:tinh-phi-hung-quan | Tinh • Phi Hùng Quân | target, conditions (7) |
+| tactic:tinh-quan-cam-pham | Tinh • Quân Cẩm Phàm | target, conditions (6) |
+| tactic:tinh-quan-ho-ve | Tinh • Quân Hổ Vệ | target, conditions (6) |
+| tactic:tinh-tay-luong-thiet-ky | Tinh • Tây Lương Thiết Kỵ | target, conditions (6) |
+| tactic:tinh-tu-si-tien-phong | Tinh • Tử Sĩ Tiên Phong | target, conditions (7) |
+| tactic:tinh-tuong-binh | Tinh • Tượng Binh | target, conditions (6) |
+| tactic:tinh-vo-duong-phi-quan | Tinh • Vô Đương Phi Quân | target, conditions (7) |
+| tactic:tran-ap-khan-vang | Trấn Áp Khăn Vàng | target |
 
 ## Trang bị (equipment): 0 / 114
 
@@ -551,21 +706,21 @@ Không có mục nào thiếu.
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
-| troop-mod:dan-duong-binh | Đan Dương Binh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (2), options (12) |
-| troop-mod:tien-dang-tu-si | Tiên Đăng Tử Sĩ | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (2), options (12) |
-| troop-mod:dai-kich-si | Đại Kích Sĩ | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (3), options (12) |
+| troop-mod:dan-duong-binh | Lính Đan Dương | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:tien-dang-tu-si | Tử Sĩ Tiên Phong | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:dai-kich-si | Đại Kích Sĩ | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
 | troop-mod:vo-duong-phi-quan | Vô Đương Phi Quân | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
-| troop-mod:bach-nhi-binh | Bạch Nhị Binh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (2), options (12) |
+| troop-mod:bach-nhi-binh | Bạch Nhị Binh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
 | troop-mod:bach-ma-nghia-tong | Bạch Mã Nghĩa Tòng | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
-| troop-mod:dang-giap-binh | Đằng Giáp Binh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
-| troop-mod:ho-ve-quan | Hổ Vệ Quân | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
-| troop-mod:ho-bao-ky | Hổ Báo Kỵ | effect, troopLimitVi, conditions (1), revisions (3), options (12) |
-| troop-mod:tay-luong-thiet-ky | Tây Lương Thiết Kỵ | effect, troopLimitVi, conditions (1), revisions (2), options (12) |
+| troop-mod:dang-giap-binh | Lính Giáp Mây | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:ho-ve-quan | Quân Hổ Vệ | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:ho-bao-ky | Hổ Báo Kỵ | effect, troopLimitVi, conditions (1), options (12) |
+| troop-mod:tay-luong-thiet-ky | Tây Lương Thiết Kỵ | effect, troopLimitVi, conditions (1), options (12) |
 | troop-mod:giai-phien-ve | Giải Phiền Vệ | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
-| troop-mod:tuong-binh | Tượng Binh | effect, troopLimitVi, conditions (1), revisions (2), options (12) |
-| troop-mod:cam-pham-quan | Cẩm Phàm Quân | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (2), options (12) |
-| troop-mod:ham-tran-doanh | Hãm Trận Doanh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (2), options (12) |
-| troop-mod:thanh-chau-binh | Thanh Châu Binh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), revisions (3), options (12) |
+| troop-mod:tuong-binh | Tượng Binh | effect, troopLimitVi, conditions (1), options (12) |
+| troop-mod:cam-pham-quan | Quân Cẩm Phàm | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:ham-tran-doanh | Hãm Trận Doanh | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
+| troop-mod:thanh-chau-binh | Lính Thanh Châu | effect, appliesTo, suggestedBuild, troopLimitVi, conditions (1), options (12) |
 | troop-mod:phi-hung-quan | Phi Hùng Quân | effect, troopLimitVi, conditions (1), options (12) |
 
 ## Công trình (buildings): 41 / 41

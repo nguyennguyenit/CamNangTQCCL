@@ -8,7 +8,7 @@
 
 import { t, iconTree, svgTree } from "./render.js";
 import { L, currentLocale, localePath } from "./i18n.js";
-import { lookupDisplayName, tacticTypeLabel, zhSafeValue } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, zhTranslatedNote } from "./lookup-detail.js";
 import { lookupHref } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
 import { teamDetailHref } from "./team-detail-navigation.js";
@@ -119,7 +119,10 @@ function effectSection(record, { panels = false } = {}) {
   const versions = effectVersionList(record);
   const head = [
     t("h3", { class: "lookup-section-title", id: "lookup-tactic-effect-title" }, L("Hiệu ứng", "效果")),
-  ];
+    // Cờ nằm ở đầu khung, ngoài panel phiên bản: đổi phiên bản (dựng lại thân) không làm mất cờ. Hồ sơ chiến pháp gắn cờ
+    // ở cả bản Việt (quyết định của plan 261020-1112: câu cờ nói rõ "chữ Hán"), khác thẻ liên quan/bảng chỉ gắn ở bản zh.
+    isTranslatedZhEffect(record) ? t("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedNote()) : null,
+  ].filter(Boolean);
   if (versions.length > 1 || versions[0]?.label) {
     head.push(t("div", { class: "lookup-version-buttons", role: "group", "aria-label": L("Phiên bản hiệu ứng", "效果版本") },
       versions.map((version, index) => t("button", {

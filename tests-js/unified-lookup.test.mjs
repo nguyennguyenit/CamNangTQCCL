@@ -50,7 +50,7 @@ function tactic(id, viet, over = {}) {
     aliases: [], ...sourceNoise(),
     lookup: {
       activationRate: 0.35, cooldown: 0, maxUsers: 3, pointCost: 0,
-      conditions: [], revisions: [], inheritedFromIds: [], formerIds: [],
+      conditions: [], revisions: [], inheritedFromIds: [], formerIds: [], effectZhSource: null,
       effectTypeVi: "Tăng ích", exchangeConditionVi: null,
       acquiredFromVi: ["Truyền thừa"], conflictsVi: "Không cộng dồn", missingFields: [], ...lookup,
     },
@@ -743,16 +743,17 @@ test("hàng bảng chiến pháp và hồ sơ cùng một giá trị cho mọi c
     return !field || field.value === null || field.value === undefined || field.value === "" ? fallback : field.textVi;
   };
   for (const locale of ["vi", "zh"]) {
-    const expected = (id) => {
-      const profile = lookupProfile(built, id);
+    const expected = (record) => {
+      const profile = lookupProfile(built, record.id);
       return {
         nameVi: profile.titleVi, quality: cell(profile, "quality"), type: cell(profile, "type"),
         effectType: cell(profile, "effectTypeVi"), target: cell(profile, "target"), effect: cell(profile, "effect", ""),
+        zhTranslated: locale === "zh" && record.lookup.effectZhSource?.kind === "translation",
         rate: cell(profile, "activationRate"),
       };
     };
     for (const record of data.tactics) {
-      const want = locale === "zh" ? asZhPage(() => expected(record.id)) : expected(record.id);
+      const want = locale === "zh" ? asZhPage(() => expected(record)) : expected(record);
       assert.deepEqual(tacticTableRow(record, locale), want, `${locale} ${record.id}`);
     }
   }

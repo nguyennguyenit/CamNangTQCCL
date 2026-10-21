@@ -1,0 +1,106 @@
+{
+  "tactic:nhan-hanh-tran": {
+    "kind": "translation",
+    "text": "戰鬥中，每回合有17.5%→35%機率（受攜帶者統率影響）執行以下效果：將敵軍隨機武將的受到傷害降低效果轉移至我軍隨機武將（轉移後持續1回合）；將我軍群體隨機1-2種負面狀態轉移至隨機敵軍（轉移後持續1回合）；使我軍統率最低武將偷取敵軍全體5→10統率（受攜帶者統率影響，持續1回合）；每種效果機率獨立判定",
+    "check": "三略庫 cùng cơ chế, 35%, 10 Thống Soái, các điều khoản khớp; nhưng chỉ có giá trị tối đa (không có 17.5%, 5) → dịch. Bahamut: chỉ có bài bình luận/攻略 (snA=11359, 11357, 11397), không mô tả đủ dải cấp 17.5%→35% / 5→10."
+  },
+  "tactic:bac-van": {
+    "kind": "source",
+    "text": "武將委任為貿易官時，貿易比例提升0.7% → 1.4%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:cap-tuan": {
+    "kind": "source",
+    "text": "武將委任為馴馬官時，馴馬時間降低1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:chu-tuong": {
+    "kind": "source",
+    "text": "武將委任為治鐵官時，鐵礦產量提升0.7% → 1.4%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source. Dùng 治鐵官 theo bài Bahamut, khớp data/tactics.json (SGSDeck 治鐵官); 三略庫 ghi 冶鐵官."
+  },
+  "tactic:chung-dien-tinh-thong": {
+    "kind": "source",
+    "text": "武將委任為糧草官時，糧食屯田收益提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:duong-binh-thien-nhat": {
+    "kind": "source",
+    "text": "武將委任為練兵使時，練兵獲得經驗提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:gian-chinh": {
+    "kind": "source",
+    "text": "提升武將8 → 16政治",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:kham-phat": {
+    "kind": "source",
+    "text": "武將委任為木材官時，木材產量提升0.7% → 1.4%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:oat-khoang-tinh-thong": {
+    "kind": "source",
+    "text": "武將委任為治鐵官時，鐵礦屯田收益提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source. Dùng 治鐵官 theo bài Bahamut, khớp data/tactics.json (SGSDeck 治鐵官); 三略庫 ghi 冶鐵官."
+  },
+  "tactic:oat-thai": {
+    "kind": "source",
+    "text": "武將委任為采石官時，石料產量提升0.7% → 1.4%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source. Tên trên bài là biến thể 「挖采」."
+  },
+  "tactic:phan-phat": {
+    "kind": "source",
+    "text": "使自己的武力、速度提升12.5 → 25點",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu (bản thân), Võ Lực/Tốc Độ 12.5→25, phát động 100%; thuộc nhóm Bị Động, đủ dải cấp khớp effectViet → source."
+  },
+  "tactic:phat-moc-tinh-thong": {
+    "kind": "source",
+    "text": "武將委任為木材官時，木材屯田收益提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:quoc-chi-trinh-can": {
+    "kind": "translation",
+    "text": "戰鬥中，我軍全體統率提升（提升值相當於自身統率的10%→20%）並獲得5%→10%倒戈和攻心（受統率影響）；且敵軍每有一個被動或指揮戰法，我軍群體（2-3人）受到兵刃傷害降低1.5%→3%（受統率影響）",
+    "check": "三略庫 (國之楨干) cùng cơ chế, 100%, 20%/10%/3% khớp tối đa; không có cấp 1 → dịch. Bahamut: không tìm thấy trang mô tả 國之楨榦/國之楨干."
+  },
+  "tactic:thai-thach-tinh-thong": {
+    "kind": "source",
+    "text": "武將委任為采石官時，石料屯田收益提升1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source. Tên trên bài là biến thể 「采石精通」."
+  },
+  "tactic:xao-tuong": {
+    "kind": "source",
+    "text": "武將委任為鍛造官時，鍛造消耗降低1% → 2%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:nhanh-tri-dong-nao": {
+    "kind": "translation",
+    "text": "使我軍群體（2-3人）智力、統率、魅力提升7.5→15（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
+    "check": "三略庫 cùng cơ chế, 15 khớp tối đa; không có cấp 1 → dịch; currentZh sai số (thiếu 7.5, 30%→) nên không giữ. Bahamut: không có trang mô tả đủ dải cấp (chỉ nhắc tên trong bài 督衛 snA=11397)."
+  },
+  "tactic:luc-luc-thuong-quoc": {
+    "kind": "source",
+    "text": "武將委任為主政官時，城建設施升級時間降低15% → 30%",
+    "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819",
+    "check": "Bahamut (bài 戰法一覽【S1-S9】, bsn=36815) mô tả cùng cơ chế, mục tiêu, đủ dải cấp x→y khớp effectViet → source."
+  },
+  "tactic:vo-song-thuong-tuong": {
+    "kind": "translation",
+    "text": "對敵軍武力最高的武將造成兵刃傷害（傷害率123%→246%），並獲得破陣（造成傷害時無視目標的統率和智力）狀態，持續1回合",
+    "check": "三略庫 cùng cơ chế, 25%, 246% khớp tối đa; không có 123% → dịch. Bahamut: không có trang mô tả 無雙上將."
+  }
+}

@@ -1,0 +1,130 @@
+{
+ "tactic:ap-che-so": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:cap-cuu-so": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:cap-toc": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:co-vu-so": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:dau-tri": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:dung-vo": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:gan-da": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:hao-hung-so": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:hoanh-tao": {
+  "verdict": "fix",
+  "note": "Số liệu đủ nhưng thuật ngữ lệch data/tactics.json (dùng 群攻, không dùng 群體攻擊): đề xuất text \"使自己獲得群攻狀態（傷害率20%→40%），持續1回合\"."
+ },
+ "tactic:lam-loan-so": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:nhan-hanh-tran": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:nhanh-tri-dong-nao": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:quoc-chi-trinh-can": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:tinh-bach-ma-nghia-tong": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-bach-nhi-binh": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-dai-kich-si": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-giai-phien-ve": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-ham-tran-doanh": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-ho-bao-ky": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-linh-dan-duong": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-linh-giap-may": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-linh-thanh-chau": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-nhanh-tri-dong-nao": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:tinh-phi-hung-quan": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-quan-cam-pham": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-quan-ho-ve": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-tay-luong-thiet-ky": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-tu-si-tien-phong": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-tuong-binh": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tinh-vo-duong-phi-quan": {
+  "verdict": "ok",
+  "note": "Chữ capture khớp số liệu và mệnh đề của effectVi, Hán phồn thể, không ký tự ẩn."
+ },
+ "tactic:tran-ap-khan-vang": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ },
+ "tactic:vo-song-thuong-tuong": {
+  "verdict": "ok",
+  "note": "Đủ mọi số liệu/khoảng x→y và mệnh đề của effectVi, thuật ngữ khớp data/tactics.json, không ký tự ẩn."
+ }
+}

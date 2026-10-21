@@ -20,6 +20,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện 3 lần nhượng Từ Châu — Lưu Bị (Thục): cần 1 thẻ; My Trúc (Thục): cần 1 thẻ; Khổng Dung (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -78,6 +79,7 @@
       "conflictsVi": "Hồi phục binh lực",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Nghiệp Thành — Tào Tháo (Ngụy): cần 1 thẻ; Từ Hoảng (Ngụy): cần 1 thẻ; Tào Hồng (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -124,6 +126,7 @@
       "conflictsVi": "Liên kích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -173,6 +176,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -221,6 +225,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -279,6 +284,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -349,6 +355,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -405,6 +412,7 @@
       "conflictsVi": "Tiên Công",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -452,6 +460,7 @@
       "conflictsVi": "Tiên Công",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -494,6 +503,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -555,6 +565,7 @@
       "conflictsVi": "Phòng ngự / Tước vũ khí / Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -600,6 +611,7 @@
       "conflictsVi": "Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -647,6 +659,7 @@
       "conflictsVi": "Gánh thay / Hỗn loạn / Kiệt kế / Suy nhược / Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -711,6 +724,7 @@
       "conflictsVi": "Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -763,6 +777,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Viên Thuật Xưng Đế — Viên Thuật (Quần): cần 1 thẻ; Tôn Kiên (Ngô): cần 1 thẻ; Tôn Sách (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -808,6 +823,7 @@
       "conflictsVi": "Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -853,6 +869,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -898,6 +915,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Bình Định Khăn Vàng — Hoàng Phổ Tung (Quần): cần 1 thẻ; Chu Tuấn (Quần): cần 1 thẻ; Lô Trực (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -942,6 +960,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -987,6 +1006,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1031,6 +1051,7 @@
       "conflictsVi": "Tiên Công",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1076,6 +1097,7 @@
       "conflictsVi": "Cảnh Giới",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1122,6 +1144,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -1170,6 +1193,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Rút Tên Nuốt Mắt — Hạ Hầu Đôn (Ngụy): cần 1 thẻ; Cao Thuận (Quần): cần 1 thẻ; Hạ Hầu Uyên (Ngụy): cần 1 thẻ",
       "formerIds": [
         "tactic:vo-dich-can-truong"
@@ -1217,6 +1241,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1262,6 +1287,7 @@
       "conflictsVi": "Động sát",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cưỡi Ngựa Nghìn Dặm — Quan Vũ (Thục): cần 1 thẻ; Nhan Lương (Quần): cần 1 thẻ; Văn Xú (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1307,6 +1333,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1352,6 +1379,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1428,6 +1456,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1473,6 +1502,7 @@
       "conflictsVi": "Động Sát / Khiêu Khích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1518,6 +1548,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1563,6 +1594,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1608,6 +1640,7 @@
       "conflictsVi": "Tan tác",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cầu Đương Dương — Trương Phi (Thục): cần 1 thẻ; Hạ Hầu Đôn (Ngụy): cần 1 thẻ; Nhạc Tiến (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1652,6 +1685,7 @@
       "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -1699,6 +1733,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1763,6 +1798,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1827,6 +1863,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1885,6 +1922,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Diên Tân — Văn Xú (Quần): cần 1 thẻ; Từ Hoảng (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -1927,6 +1965,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -1976,6 +2015,7 @@
       "conflictsVi": "Bão cát",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -2023,6 +2063,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -2070,6 +2111,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2115,6 +2157,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2173,6 +2216,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2231,6 +2275,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2276,6 +2321,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2321,6 +2367,7 @@
       "conflictsVi": "Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Phế Lập Hán Đế — tướng 4 sao phe Quần: cần 10 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2366,6 +2413,7 @@
       "conflictsVi": "Chia sẻ sát thương",
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2410,6 +2458,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2455,6 +2504,7 @@
       "conflictsVi": "Kế cùng / Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -2515,6 +2565,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -2563,6 +2614,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2606,6 +2658,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Thần Đình ác liệt — Tôn Sách (Ngô): cần 1 thẻ; Thái Sử Từ (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2651,6 +2704,7 @@
       "conflictsVi": "Cấp cứu",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2705,6 +2759,7 @@
       "conflictsVi": "Cùng truy",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2781,6 +2836,7 @@
       "conflictsVi": "Thiêu đốt",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:lua-chay-ngun-ngut"
@@ -2828,6 +2884,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -2875,6 +2932,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2937,6 +2995,7 @@
       "conflictsVi": "Thủy công",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -2982,6 +3041,7 @@
       "conflictsVi": "Thiêu đốt",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Lạc Dương Đại Hỏa — Đổng Trác (Quần): cần 1 thẻ; Lý Nho (Quần): cần 1 thẻ; Lý Thôi (Quần): cần 1 thẻ",
       "formerIds": [
         "tactic:lua-lan-khap-chon"
@@ -3042,6 +3102,7 @@
       "conflictsVi": "Thiêu đốt",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3112,6 +3173,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3178,6 +3240,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:ho-gia-thap-bat-phach"
@@ -3256,6 +3319,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -3318,6 +3382,7 @@
       "conflictsVi": "Miễn nhiễm",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Bình Định Giang Đông — Tôn Sách (Ngô): cần 1 thẻ; Chu Du (Ngô): cần 1 thẻ; Trương Chiêu (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3362,6 +3427,7 @@
       "conflictsVi": "Phá Trận",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3426,6 +3492,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Uyển Thành — Điển Vi (Ngụy): cần 1 thẻ; Trương Tú (Quần): cần 1 thẻ; Hồ Xa Nhi (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3468,6 +3535,7 @@
       "conflictsVi": "Hưu chỉnh",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -3516,6 +3584,7 @@
       "conflictsVi": "Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": "Điêu Thuyền (cần 1 thẻ), Lữ Bố (cần 1 thẻ), Đổng Trác (cần 1 thẻ), Vương Doãn (cần 1 thẻ)",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3561,6 +3630,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Dĩ Thủy Quan — Hoa Hùng (Quần): cần 1 thẻ; Phan Phụng (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3607,6 +3677,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -3655,6 +3726,7 @@
       "conflictsVi": "Hỗn loạn / Thiêu đốt",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3700,6 +3772,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3758,6 +3831,7 @@
       "conflictsVi": "Né tránh / Nghỉ dưỡng",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3820,6 +3894,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3865,6 +3940,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -3912,6 +3988,7 @@
       "conflictsVi": "Hỗn loạn / Chống đỡ",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3957,6 +4034,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Định Quân Sơn — Hạ Hầu Uyên (Ngụy): cần 1 thẻ; Hoàng Trung (Thục): cần 1 thẻ; Pháp Chính (Thục): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -3999,6 +4077,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4060,6 +4139,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4126,6 +4206,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4190,6 +4271,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4235,6 +4317,7 @@
       "conflictsVi": "Thiết tỏa liên hoàn",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4297,6 +4380,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Làm Loạn Trường An — Lý Thôi (Quần): cần 1 thẻ; Quách Dĩ (Quần): cần 1 thẻ; tướng 4 sao phe Quần: cần 8 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4342,6 +4426,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4387,6 +4472,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4450,6 +4536,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4492,6 +4579,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Tào Tháo / Tuân Úc (chọn 1 thẻ bất kỳ)",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4552,6 +4640,7 @@
       "conflictsVi": "Liên kích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cởi trần quyết đấu — Mã Siêu (Thục): cần 1 thẻ; Hứa Chử (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4615,6 +4704,7 @@
       "conflictsVi": "Thiêu đốt",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4685,6 +4775,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4731,6 +4822,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4779,6 +4871,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4827,6 +4920,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4875,6 +4969,7 @@
       "conflictsVi": "Phản kích / Chia sẻ",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -4922,6 +5017,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -4992,6 +5088,7 @@
       "conflictsVi": "Chia sẻ",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5039,6 +5136,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5084,6 +5182,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5141,6 +5240,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5186,6 +5286,7 @@
       "conflictsVi": "Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5235,7 +5336,7 @@
       "灵机一动"
     ],
     "chinese": "靈機一動",
-    "effect": "使我军群体（2-3人）智力、统率、魅力提高7.5→15（受智力影响），可叠加，持续2-3回合（发动率30%→55%）",
+    "effect": "使我軍群體（2-3人）智力、統率、魅力提升7.5→15（受智力影響），可疊加，持續2-3回合（發動率30%→55%）",
     "effectViet": "Khiến Trí Lực, Thống Soái, Mị Lực nhóm quân ta (2-3 người) tăng 7.5→15 (chịu ảnh hưởng bởi Trí Lực), có thể cộng dồn, duy trì 2-3 hiệp (Xác suất phát động 30%→55%)",
     "hanViet": "Nhanh Trí Động Não",
     "iconUrl": "",
@@ -5248,6 +5349,9 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": "Sự kiện Giả Kế Thoát Hiểm — Tào Tháo (Ngụy) hoặc Lữ Bố (Quần) hoặc Điển Vi (Ngụy): cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5290,6 +5394,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5335,6 +5440,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5380,6 +5486,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5427,6 +5534,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5475,6 +5583,7 @@
       "conflictsVi": "Động sát",
       "cooldown": 0,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5520,6 +5629,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5565,6 +5675,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5630,6 +5741,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5676,6 +5788,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5723,6 +5836,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5772,6 +5886,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -5820,6 +5935,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5864,6 +5980,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5909,6 +6026,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5954,6 +6072,7 @@
       "conflictsVi": "Thủy Công / Phá Hoại",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Nước ngập Hạ Bì — Tuân Du (Ngụy): cần 1 thẻ; Tuân Úc (Ngụy): cần 1 thẻ; Cao Thuận (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -5999,6 +6118,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cẩm Phàm Tuần Tập — Cam Ninh (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6053,6 +6173,7 @@
       "conflictsVi": "Tiên công / Tất trúng",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6098,6 +6219,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6142,6 +6264,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Hổ Lao Quan — Lữ Bố (Quần): cần 1 thẻ; Viên Thiệu (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6187,6 +6310,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6245,6 +6369,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6296,6 +6421,7 @@
       "conflictsVi": "Né tránh",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -6344,6 +6470,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:nhanh-chan-tranh-dat"
@@ -6394,6 +6521,7 @@
       "conflictsVi": "Phản Loạn",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6440,6 +6568,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6485,6 +6614,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Viên Thiệu / Tôn Kiên / Mã Đằng / Công Tôn Toản / Tào Tháo / Lưu Bị (chọn 4 thẻ bất kỳ)",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6542,6 +6672,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6586,6 +6717,7 @@
       "conflictsVi": "Cấp cứu",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6649,6 +6781,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6694,6 +6827,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6737,6 +6871,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Lửa Đốt Tổ Chim — tướng 5 sao phe Ngụy: cần 1 thẻ; tướng 5 sao phe Quần: cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6807,6 +6942,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6852,6 +6988,7 @@
       "conflictsVi": "Tập kích",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cầm Binh Rửa Hận — Mã Siêu (Thục): cần 1 thẻ; Mã Đằng (Quần): cần 1 thẻ; Bàng Đức (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6906,6 +7043,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -6956,6 +7094,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Thuyền Cỏ Mượn Tên — Chu Du (Ngô): cần 1 thẻ; Gia Cát Lượng (Thục): cần 1 thẻ; Vu Cấm (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7000,6 +7139,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Chiến Loạn Khăn Vàng — Trương Giác (Quần): cần 1 thẻ; Trương Bảo (Quần): cần 1 thẻ; Trương Lương (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7045,6 +7185,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7090,6 +7231,7 @@
       "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7135,6 +7277,7 @@
       "conflictsVi": "Không",
       "cooldown": 0,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7180,6 +7323,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7238,6 +7382,7 @@
       "conflictsVi": "Hỗn loạn",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7308,6 +7453,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7352,6 +7498,7 @@
       "conflictsVi": "Liên kích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7396,6 +7543,7 @@
       "conflictsVi": "Phản Loạn",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7453,6 +7601,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7511,6 +7660,7 @@
       "conflictsVi": "Động sát",
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7556,6 +7706,7 @@
       "conflictsVi": "Động sát / Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7602,6 +7753,7 @@
       "conflictsVi": "Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -7651,6 +7803,7 @@
       "conflictsVi": "Thiêu đốt / Trúng độc / Phản loạn / Bão cát",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -7699,6 +7852,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -7760,6 +7914,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7806,6 +7961,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -7855,6 +8011,7 @@
       "conflictsVi": "Suy yếu / Nghỉ dưỡng",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7913,6 +8070,7 @@
       "conflictsVi": "Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -7972,6 +8130,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -8020,6 +8179,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Nấu rượu luận anh hùng — Tào Tháo (Ngụy) hoặc Lưu Bị (Thục) hoặc Viên Thuật (Quần) hoặc Viên Thiệu (Quần) hoặc Tôn Sách (Ngô): cần 4 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8084,6 +8244,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Bát Trận Đồ — Lục Tốn (Ngô) hoặc Gia Cát Lượng (Thục): cần 1 thẻ; tướng 5 sao phe Ngô: cần 2 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8129,6 +8290,7 @@
       "conflictsVi": "Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Quần Hùng Manh Động — tướng 4 sao phe Ngụy: cần 10 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8187,6 +8349,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8233,6 +8396,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -8300,6 +8464,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8364,6 +8529,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8408,6 +8574,7 @@
       "conflictsVi": "Viện hộ / Hưu dưỡng",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8453,6 +8620,7 @@
       "conflictsVi": "Thủy công",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8498,6 +8666,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8543,6 +8712,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Nhai Đình — Trương Cáp (Ngụy): cần 1 thẻ; Vương Bình (Thục): cần 1 thẻ; Mã Tắc (Thục): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8589,6 +8759,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -8635,6 +8806,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -8691,6 +8863,7 @@
       "conflictsVi": "Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8736,6 +8909,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8780,6 +8954,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8834,6 +9009,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8879,6 +9055,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8924,6 +9101,7 @@
       "conflictsVi": "Liên kích / Động sát / Tiên công / Tất trúng / Phá trận",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -8988,6 +9166,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9035,6 +9214,7 @@
       "conflictsVi": "Kế cùng / Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9092,6 +9272,7 @@
       "conflictsVi": "Trúng Độc",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9138,6 +9319,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9208,6 +9390,7 @@
       "conflictsVi": "Cạn kế / Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9253,6 +9436,7 @@
       "conflictsVi": "Suy nhược",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9300,6 +9484,7 @@
       "conflictsVi": "Phản Loạn",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9345,6 +9530,7 @@
       "conflictsVi": "Cấp cứu",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9372,7 +9558,7 @@
   {
     "aliases": [],
     "chinese": "无双上将",
-    "effect": "对敌军武力最高的武将造成兵刃攻击（伤害率246%），并获得破阵（造成伤害时无视目标的统率和智力）状态，持续1回合",
+    "effect": "對敵軍武力最高的武將造成兵刃傷害（傷害率123%→246%），並獲得破陣（造成傷害時無視目標的統率和智力）狀態，持續1回合",
     "effectViet": "Gây cho Võ Tướng quân địch có Võ Lực cao nhất sát thương binh đao (tỷ lệ sát thương 123%→246%), và nhận trạng thái Phá trận (khi gây ra sát thương bỏ qua Thống Soái và Trí Lực của mục tiêu), duy trì 1 hiệp",
     "hanViet": "Vô Song Thượng Tướng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088203990289417.png",
@@ -9385,6 +9571,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9430,6 +9619,7 @@
       "conflictsVi": "Trúng Độc",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9473,6 +9663,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Viên Thiệu / Tào Tháo / Cao Lãm / Trương Cáp / Hứa Chử / Từ Hoảng (chọn 4 thẻ bất kỳ)",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9544,6 +9735,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9589,6 +9781,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9634,6 +9827,7 @@
       "conflictsVi": "Tan tác",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9679,6 +9873,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9737,6 +9932,7 @@
       "conflictsVi": "Chấn nhiếp",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cướp Pháp Trường — Ngụy Diên (Thục): cần 1 thẻ; Hoàng Trung (Thục): cần 1 thẻ; tướng 5 sao phe Thục: cần 2 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9782,6 +9978,7 @@
       "conflictsVi": "Thiêu Đốt / Trúng Độc / Hội Tẩu",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9826,6 +10023,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9884,6 +10082,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -9931,6 +10130,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -9982,6 +10182,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10029,6 +10230,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10088,6 +10290,7 @@
       "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10135,6 +10338,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10192,6 +10396,7 @@
       "conflictsVi": "Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10256,6 +10461,7 @@
       "conflictsVi": "Ngụy Báo",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Bạch Mã — Nhan Lương (Quần): cần 1 thẻ; Tống Hiến (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10300,6 +10506,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10368,6 +10575,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10402,7 +10610,7 @@
       "戮力上心"
     ],
     "chinese": "戮力上國",
-    "effect": "委任为主政官时，城建设施升级时间降低15%",
+    "effect": "武將委任為主政官時，城建設施升級時間降低15% → 30%",
     "effectViet": "Khi ủy nhiệm làm Quan Chủ Chính, thời gian tăng cấp hạ tầng xây dựng giảm 15%→30%",
     "hanViet": "Lục Lực Thượng Quốc",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088179508136960.png",
@@ -10415,6 +10623,9 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:luc-luc-thuong-tam"
@@ -10460,6 +10671,7 @@
       "conflictsVi": "Khiêu khích",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Mãnh hổ tử vong — Tôn Kiên (Ngô): cần 1 thẻ; Tôn Sách (Ngô): cần 1 thẻ; Hoàng Cái (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10517,6 +10729,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10565,6 +10778,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:ung-thi"
@@ -10611,6 +10825,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Chia Ba Thiên Hạ — tướng 5 sao phe Ngụy: cần 1 thẻ; tướng 5 sao phe Thục: cần 1 thẻ; tướng 5 sao phe Ngô: cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10655,6 +10870,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10702,6 +10918,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10746,6 +10963,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Giải Phiền Vệ — tướng 5 sao phe Ngô: cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10787,6 +11005,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Nước Ngập Thất Quân — Quan Vũ (Thục): cần 1 thẻ; Bàng Đức (Ngụy): cần 1 thẻ; Vu Cấm (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10832,6 +11051,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Cắt Râu Vứt Áo — Tào Tháo (Ngụy): cần 1 thẻ; Mã Siêu (Thục): cần 1 thẻ; Tào Hồng (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10877,6 +11097,7 @@
       "conflictsVi": "Liên kích",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Chung Hội Chi Loạn — Khương Duy (Thục): cần 1 thẻ; Đặng Ngải (Ngụy): cần 1 thẻ; Chung Hội (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -10923,6 +11144,7 @@
       "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -10968,6 +11190,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11016,6 +11239,7 @@
       "conflictsVi": "Né tránh",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11049,7 +11273,7 @@
       "雁行阵"
     ],
     "chinese": "雁行陣",
-    "effect": "",
+    "effect": "戰鬥中，每回合有17.5%→35%機率（受攜帶者統率影響）執行以下效果：將敵軍隨機武將的受到傷害降低效果轉移至我軍隨機武將（轉移後持續1回合）；將我軍群體隨機1-2種負面狀態轉移至隨機敵軍（轉移後持續1回合）；使我軍統率最低武將偷取敵軍全體5→10統率（受攜帶者統率影響，持續1回合）；每種效果機率獨立判定",
     "effectViet": "Mỗi hiệp chiến đấu có 17.5%→35% xác suất (Bị ảnh hưởng bởi Thống Soái của người mang theo) thực hiện hiệu ứng sau: Chuyển hiệu ứng giảm ST phải chịu của Võ Tướng quân địch ngẫu nhiên cho Võ Tướng quân ta ngẫu nhiên (Sau khi chuyển duy trì 1 hiệp); chuyển ngẫu nhiên 1-2 loại trạng thái xấu của nhóm quân ta cho quân địch ngẫu nhiên (Sau khi chuyển duy trì 1 hiệp); Để Võ Tướng Thống Soái thấp nhất bên ta đánh cắp 5→10 Thống Soái của toàn quân địch (Bị ảnh hưởng bởi Thống Soái của người mang theo, duy trì 1 hiệp); Xác suất mỗi loại hiệu ứng được phán định độc lập",
     "hanViet": "Nhạn Hành Trận",
     "iconUrl": "",
@@ -11064,6 +11288,9 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11074,7 +11301,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "S",
     "source": "INHERITANCE",
     "sourceHeroCn": "",
@@ -11108,6 +11335,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Dương Đông Kích Tây — tướng 5 sao phe Quần: cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11147,6 +11375,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận Nam Quận — Chu Du (Ngô) hoặc Cam Ninh (Ngô) hoặc Tào Nhân (Ngụy) hoặc Chu Thái (Ngô) hoặc Trình Phổ (Ngô): cần 4 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11195,6 +11424,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Tôn Sách bị thích sát — Tôn Sách (Ngô): cần 1 thẻ; Trình Phổ (Ngô): cần 1 thẻ",
       "formerIds": [
         "tactic:pha-phong-doan-nhan"
@@ -11242,6 +11472,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11288,6 +11519,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11336,6 +11568,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11387,6 +11620,7 @@
       "conflictsVi": "Tiên Công",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Trận trảm Hạ Hầu Uyên — Hoàng Trung (Thục) hoặc Pháp Chính (Thục) hoặc Hạ Hầu Uyên (Ngụy): cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11428,6 +11662,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Ép buộc thiên tử lệnh chư hầu — Tào Tháo (Ngụy): cần 1 thẻ; Tuân Úc (Ngụy): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11473,6 +11708,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11520,6 +11756,7 @@
       "conflictsVi": "Bắt Giữ",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11565,6 +11802,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:am-trieu-dung-dong"
@@ -11610,6 +11848,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11640,7 +11879,7 @@
       "压制"
     ],
     "chinese": "壓制",
-    "effect": null,
+    "effect": "使敵軍群體（2人）造成傷害降低7.5%→15%，持續2回合",
     "effectViet": "Khiến sát thương gây ra của Tập thể địch (2 người) giảm 7.5%→15%, duy trì 2 hiệp",
     "hanViet": "Áp Chế",
     "iconUrl": null,
@@ -11653,6 +11892,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11661,7 +11903,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -11683,7 +11925,7 @@
       "博闻"
     ],
     "chinese": "博聞",
-    "effect": null,
+    "effect": "武將委任為貿易官時，貿易比例提升0.7% → 1.4%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan giao dịch, tỷ lệ giao dịch tăng 0.7%→1.4%",
     "hanViet": "Bác Văn",
     "iconUrl": null,
@@ -11696,6 +11938,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11704,7 +11949,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -11739,6 +11984,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11784,6 +12030,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -11831,6 +12078,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11876,6 +12124,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11920,6 +12169,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -11965,6 +12215,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -12010,6 +12261,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12040,7 +12292,7 @@
       "急驯"
     ],
     "chinese": "急馴",
-    "effect": null,
+    "effect": "武將委任為馴馬官時，馴馬時間降低1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Luyện Ngựa, thời gian Luyện Ngựa giảm 1%→2%",
     "hanViet": "Cấp Tuần",
     "iconUrl": null,
@@ -12053,6 +12305,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12061,7 +12316,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12098,6 +12353,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12143,6 +12399,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -12190,6 +12447,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -12222,7 +12480,7 @@
       "铸匠"
     ],
     "chinese": "鑄匠",
-    "effect": null,
+    "effect": "武將委任為治鐵官時，鐵礦產量提升0.7% → 1.4%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, sản lượng Mỏ Sắt tăng 0.7%→1.4%",
     "hanViet": "Chú Tượng",
     "iconUrl": null,
@@ -12235,6 +12493,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12243,7 +12504,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12265,7 +12526,7 @@
       "种田精通"
     ],
     "chinese": "種田精通",
-    "effect": null,
+    "effect": "武將委任為糧草官時，糧食屯田收益提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Lương Thảo, thu hoạch lương thực Đồn Điền tăng 1%→2%",
     "hanViet": "Chủng Điền Tinh Thông",
     "iconUrl": null,
@@ -12278,6 +12539,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12286,7 +12550,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12323,6 +12587,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Vu Cát Cầu Mưa — Vu Cát (Quần): cần 1 thẻ; Trương Chiêu (Ngô): cần 1 thẻ; Tôn Sách (Ngô): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12368,6 +12633,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12414,6 +12680,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -12462,6 +12729,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:tram-doc"
@@ -12513,7 +12781,7 @@
       "谈心"
     ],
     "chinese": "談心",
-    "effect": null,
+    "effect": "使我軍單體免疫混亂，持續3回合",
     "effectViet": "Khiến một quân ta miễn nhiễm Hỗn Loạn, duy trì 3 hiệp (Xác suất phát động 23%→45%)",
     "hanViet": "Đàm Tâm",
     "iconUrl": null,
@@ -12526,6 +12794,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12534,7 +12805,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12571,6 +12842,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Đan Dương Tinh Binh — tướng 5 sao phe Quần: cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12610,7 +12882,7 @@
       "斗智"
     ],
     "chinese": "鬥智",
-    "effect": null,
+    "effect": "準備1回合，對敵軍群體（2人）造成謀略傷害（傷害率77.5%→155%）",
     "effectViet": "Chuẩn bị 1 hiệp, gây cho nhóm quân địch (2 người) sát thương Mưu Lược (tỷ lệ sát thương 77.5%→155%)",
     "hanViet": "Đấu Trí",
     "iconUrl": null,
@@ -12623,6 +12895,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12631,7 +12906,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12667,6 +12942,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12714,6 +12990,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:lay-it-danh-nhieu"
@@ -12748,7 +13025,7 @@
       "殿后"
     ],
     "chinese": "殿後",
-    "effect": null,
+    "effect": "提高自己15→30點武力，如果自己為副將則額外提高20→40點統率，持續2回合",
     "effectViet": "Tăng cho bản thân 15→30 điểm Võ Lực, nếu bản thân là Phó Tướng sẽ tăng thêm 20→40 điểmThống Soái, duy trì 2 hiệp",
     "hanViet": "Điện Hậu",
     "iconUrl": null,
@@ -12761,6 +13038,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12769,7 +13049,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -12804,6 +13084,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12849,6 +13130,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12891,6 +13173,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -12939,6 +13222,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:doan-binh-tuong-kien"
@@ -12971,7 +13255,7 @@
       "毒气"
     ],
     "chinese": "毒氣",
-    "effect": null,
+    "effect": "準備1回合，對敵軍單體造成謀略攻擊（傷害率50%→100%），并施加中毒狀態，每回合持續造成傷害（傷害率25%→50%，受智力影響），持續2回合",
     "effectViet": "Chuẩn bị 1 hiệp, gây cho một tướng quân địch sát thương Mưu Lược (tỷ lệ sát thương 50%→100%) và phóng trạng thái Trúng Độc, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 25%→50%, bị Trí Lực ảnh hưởng), duy trì 2 hiệp",
     "hanViet": "Độc Khí",
     "iconUrl": null,
@@ -12984,6 +13268,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -12992,7 +13279,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13027,6 +13314,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13057,7 +13345,7 @@
       "养兵千日"
     ],
     "chinese": "養兵千日",
-    "effect": null,
+    "effect": "武將委任為練兵使時，練兵獲得經驗提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Sứ Luyện Binh, kinh nghiệm Luyện Binh tăng 1%→2%",
     "hanViet": "Dưỡng Binh Thiên Nhật",
     "iconUrl": null,
@@ -13070,6 +13358,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -13080,7 +13371,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "A",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13115,6 +13406,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -13147,7 +13439,7 @@
       "简政"
     ],
     "chinese": "簡政",
-    "effect": null,
+    "effect": "提升武將8 → 16政治",
     "effectViet": "Tăng 8→16 Chính Trị của Võ Tướng",
     "hanViet": "Giản Chính",
     "iconUrl": null,
@@ -13160,6 +13452,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13168,7 +13463,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13205,6 +13500,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -13251,6 +13547,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13295,6 +13592,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13325,7 +13623,7 @@
       "还击"
     ],
     "chinese": "還擊",
-    "effect": null,
+    "effect": "使自己獲得反擊狀態（每次受到普通攻擊時對攻擊者造成傷害，傷害率30%→60%），持續1回合",
     "effectViet": "Khiến bản thân nhận trạng thái Phản kích (mỗi lần bị tấn công thường sẽ gây sát thương cho người tấn công, tỷ lệ sát thương 30%→60%), duy trì 1 hiệp",
     "hanViet": "Hoàn Kích",
     "iconUrl": null,
@@ -13338,6 +13636,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13346,7 +13647,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13368,7 +13669,7 @@
       "横扫"
     ],
     "chinese": "橫掃",
-    "effect": null,
+    "effect": "使自己獲得群攻狀態（傷害率20%→40%），持續1回合",
     "effectViet": "Khiến bản thân nhận trạng thái tấn công nhóm (tỷ lệ sát thương 20%→40%), duy trì 1 hiệp",
     "hanViet": "Hoành Tảo",
     "iconUrl": null,
@@ -13381,6 +13682,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13389,7 +13693,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13426,6 +13730,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13471,6 +13776,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13516,6 +13822,7 @@
       "conflictsVi": "Kháng cự. Lưu ý: Nguồn chưa có văn bản riêng xác nhận mục xung đột này hoặc xác nhận “Kháng cự” có đồng nghĩa với “Chống đỡ” trong mô tả hiệu ứng hay không.",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13561,6 +13868,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13604,6 +13912,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Huy Quân Kết Trận — tướng 5 sao phe Quần: cần 3 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13649,6 +13958,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13696,6 +14006,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:khac-tuan-hoa-nhat"
@@ -13727,7 +14038,7 @@
       "砍伐"
     ],
     "chinese": "砍伐",
-    "effect": null,
+    "effect": "武將委任為木材官時，木材產量提升0.7% → 1.4%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 0.7%→1.4%",
     "hanViet": "Khảm Phạt",
     "iconUrl": null,
@@ -13740,6 +14051,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13748,7 +14062,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13785,6 +14099,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -13817,7 +14132,7 @@
       "牵连"
     ],
     "chinese": "牽連",
-    "effect": null,
+    "effect": "普通攻擊之後，對敵軍單體造成一次兵刃攻擊（傷害率60%→120%）",
     "effectViet": "Sau khi tấn công thường, gây cho một tướng quân địch 1 lần Tấn Công Binh Đao (tỷ lệ sát thương 60%→120%)",
     "hanViet": "Khiên Liên",
     "iconUrl": null,
@@ -13830,6 +14145,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13838,7 +14156,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -13875,6 +14193,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13920,6 +14239,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -13964,6 +14284,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14011,6 +14332,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14056,6 +14378,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14103,6 +14426,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14148,6 +14472,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14193,6 +14518,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14238,6 +14564,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14282,6 +14609,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14329,6 +14657,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14375,6 +14704,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14422,6 +14752,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14467,6 +14798,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14512,6 +14844,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14559,6 +14892,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14589,7 +14923,7 @@
       "猛击"
     ],
     "chinese": "猛擊",
-    "effect": null,
+    "effect": "普通攻擊之後，提高自身7.5%→15%會心幾率（觸發時兵刃傷害提高100%），持續2回合",
     "effectViet": "Sau khi tấn công thường, tăng cho bản thân 7.5%→15% xác suất Hội Tâm (khi kích hoạt sát thương Binh Đao tăng 100%), duy trì 2 hiệp",
     "hanViet": "Mãnh Kích",
     "iconUrl": null,
@@ -14602,6 +14936,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14610,7 +14947,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -14647,6 +14984,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14691,6 +15029,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14735,6 +15074,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14778,6 +15118,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14822,6 +15163,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14865,6 +15207,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14912,6 +15255,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -14944,7 +15288,7 @@
       "挖矿精通"
     ],
     "chinese": "挖礦精通",
-    "effect": null,
+    "effect": "武將委任為治鐵官時，鐵礦屯田收益提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Sắt, thu hoạch sắt Đồn Điền tăng 1%→2%",
     "hanViet": "Oạt Khoáng Tinh Thông",
     "iconUrl": null,
@@ -14957,6 +15301,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -14965,7 +15312,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -14987,7 +15334,7 @@
       "挖采"
     ],
     "chinese": "挖採",
-    "effect": null,
+    "effect": "武將委任為采石官時，石料產量提升0.7% → 1.4%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Đá, sản lượng đá tăng 0.7%→1.4%",
     "hanViet": "Oạt Thái",
     "iconUrl": null,
@@ -15000,6 +15347,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15008,7 +15358,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15029,7 +15379,7 @@
       "破甲"
     ],
     "chinese": "破甲",
-    "effect": null,
+    "effect": "普通攻擊之後，降低攻擊目標9→18點統率，持續2回合",
     "effectViet": "Sau khi tấn công thường, giảm của mục tiêu tấn công 9→18 điểm Thống Soái, duy trì 2 hiệp",
     "hanViet": "Phá Giáp",
     "iconUrl": null,
@@ -15042,6 +15392,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15050,7 +15403,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15087,6 +15440,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15117,7 +15471,7 @@
       "奋发"
     ],
     "chinese": "奮發",
-    "effect": null,
+    "effect": "使自己的武力、速度提升12.5 → 25點",
     "effectViet": "Khiến Võ Lực, Tốc Độ của bản thân tăng 12.5→25 điểm",
     "hanViet": "Phấn Phát",
     "iconUrl": null,
@@ -15130,6 +15484,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15138,7 +15495,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15159,7 +15516,7 @@
       "伐木精通"
     ],
     "chinese": "伐木精通",
-    "effect": null,
+    "effect": "武將委任為木材官時，木材屯田收益提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, thu hoạch gỗ Đồn Điền tăng 1%→2%",
     "hanViet": "Phạt Mộc Tinh Thông",
     "iconUrl": null,
@@ -15172,6 +15529,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15180,7 +15540,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15217,6 +15577,7 @@
       "conflictsVi": "Thủy công / Bão cát",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15262,6 +15623,7 @@
       "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -15292,7 +15654,7 @@
       "放火"
     ],
     "chinese": "放火",
-    "effect": null,
+    "effect": "對敵軍單體施加灼燒狀態，每回合持續造成傷害（傷害率35%→70%，受智力影響），持續3回合",
     "effectViet": "Thi triển cho một tướng quân địch trạng thái Đốt Cháy (tỷ lệ sát thương 35%→70%, bị Trí Lực ảnh hưởng), duy trì 3 hiệp",
     "hanViet": "Phóng Hỏa",
     "iconUrl": null,
@@ -15305,6 +15667,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15313,7 +15678,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15350,6 +15715,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15396,6 +15762,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -15443,6 +15810,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15488,6 +15856,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15532,6 +15901,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15577,6 +15947,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15607,7 +15978,7 @@
       "国之桢榦"
     ],
     "chinese": "國之楨榦",
-    "effect": null,
+    "effect": "戰鬥中，我軍全體統率提升（提升值相當於自身統率的10%→20%）並獲得5%→10%倒戈和攻心（受統率影響）；且敵軍每有一個被動或指揮戰法，我軍群體（2-3人）受到兵刃傷害降低1.5%→3%（受統率影響）",
     "effectViet": "Khi chiến đấu, Thống Soái của toàn quân ta tăng (Trị số tăng tương đương 10%→20% Thống Soái của bản thân) và nhận được 5%→10% Làm Phản và Công Tâm (bị ảnh hưởng bởi Thống Soái); Và quân địch cứ mỗi có một Chiến Pháp Bị Động hoặc Chỉ Huy, nhóm quân ta (2-3 người) được giảm 1.5%→3% Sát thương binh đao phải chịu (bị ảnh hưởng bởi Thống Soái)",
     "hanViet": "Quốc Chi Trinh Cán",
     "iconUrl": null,
@@ -15620,6 +15991,9 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15628,7 +16002,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "S",
     "source": "INNATE",
     "sourceHeroCn": null,
@@ -15664,6 +16038,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15709,6 +16084,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15752,6 +16128,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Đình Phụng Nghi — Điêu Thuyền (Quần): cần 1 thẻ; Lữ Bố (Quần): cần 1 thẻ; Đổng Trác (Quần): cần 1 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15810,6 +16187,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15836,7 +16214,7 @@
       "才器过人"
     ],
     "chinese": "才器過人",
-    "effect": null,
+    "effect": "使我軍群體（2人）造成的謀略傷害提高13.5%→27%，持續2回合",
     "effectViet": "Khiến sát thương Mưu Lược của Tập thể quân ta (2 người) tăng 13.5%→27%, duy trì 2 hiệp",
     "hanViet": "Tài Khí Quá Nhân",
     "iconUrl": null,
@@ -15849,6 +16227,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -15859,7 +16240,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "A",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -15896,6 +16277,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -15946,6 +16328,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -15991,6 +16374,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:gio-tap-mua-sa"
@@ -16039,6 +16423,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16084,6 +16469,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:thuong-lam-nhi-thuc"
@@ -16116,7 +16502,7 @@
       "采石精通"
     ],
     "chinese": "採石精通",
-    "effect": null,
+    "effect": "武將委任為采石官時，石料屯田收益提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Đá, thu hoạch đá Đồn Điền tăng 1%→2%",
     "hanViet": "Thái Thạch Tinh Thông",
     "iconUrl": null,
@@ -16129,6 +16515,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16137,7 +16526,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -16175,6 +16564,7 @@
       "conflictsVi": "Không",
       "cooldown": 0,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:tham-muu-vien-luoc"
@@ -16220,6 +16610,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -16267,6 +16658,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16312,6 +16704,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -16360,6 +16753,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -16407,6 +16801,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16451,6 +16846,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16481,7 +16877,7 @@
       "刺伤"
     ],
     "chinese": "刺傷",
-    "effect": null,
+    "effect": "對敵軍單體施加潰逃狀態，每回合持續造成傷害（傷害率35%→70%，受武力影響），持續3回合",
     "effectViet": "Phóng cho một quân địch trạng thái Bỏ chạy, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 35%→70%, bị Võ Lực ảnh hưởng), duy trì 3 hiệp",
     "hanViet": "Thích Thương",
     "iconUrl": null,
@@ -16494,6 +16890,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16502,7 +16901,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -16538,6 +16937,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16582,6 +16982,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16627,6 +17028,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -16672,6 +17074,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16716,6 +17119,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16759,6 +17163,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16806,6 +17211,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Bất lợi + mưu lược quần thể",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16851,6 +17257,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16881,7 +17288,7 @@
       "识破"
     ],
     "chinese": "識破",
-    "effect": null,
+    "effect": "解除敵軍單體的增益效果，并降低其9→18點智力，持續2回合",
     "effectViet": "Xóa hiệu ứng Tăng ích của một quân địch, và giảm của mục tiêu 9→18 điểm Trí Lực, duy trì 2 hiệp",
     "hanViet": "Thức Phá",
     "iconUrl": null,
@@ -16894,6 +17301,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16902,7 +17312,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -16938,6 +17348,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -16983,6 +17394,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": "Sự kiện Xây Dựng Đồn Điền — tướng 4 sao phe Quần: cần 10 thẻ",
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17028,6 +17440,7 @@
       "conflictsVi": "Thủy công",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17072,6 +17485,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:tu-si-tien-phong"
@@ -17130,6 +17544,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17175,6 +17590,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -17207,7 +17623,7 @@
       "净化"
     ],
     "chinese": "淨化",
-    "effect": null,
+    "effect": "提升我軍群體（2人）12→24點武力、智力、速度，持續2回合，并移除負面效果",
     "effectViet": "Tăng 12→24 điểm Võ Lực, Trí Lực, tốc độ của Tập thể quân ta (2 người), duy trì 2 hiệp, và xóa hiệu ứng xấu (Xác suất phát động 30%→45%)",
     "hanViet": "Tịnh Hoá",
     "iconUrl": null,
@@ -17220,6 +17636,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -17230,7 +17649,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "A",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -17267,6 +17686,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17312,6 +17732,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17356,6 +17777,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17401,6 +17823,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17446,6 +17869,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -17491,6 +17915,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17536,6 +17961,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17579,6 +18005,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17609,7 +18036,7 @@
       "追伤"
     ],
     "chinese": "追傷",
-    "effect": null,
+    "effect": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合",
     "effectViet": "Sau khi tấn công thường, gây cho mục tiêu tấn công trạng thái Cấm Trị Liệu, duy trì 2 hiệp (Xác suất phát động 25%→40%)",
     "hanViet": "Truy Thương",
     "iconUrl": null,
@@ -17622,6 +18049,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17630,7 +18060,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -17667,6 +18097,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17710,6 +18141,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17754,6 +18186,7 @@
       "conflictsVi": "Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17799,6 +18232,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -17846,6 +18280,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17891,6 +18326,7 @@
       "conflictsVi": "Nhìn thấu",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17936,6 +18372,7 @@
       "conflictsVi": "Tước vũ khí / Kỹ cùng",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -17982,6 +18419,7 @@
       "conflictsVi": "Bị Tập Kích / Phá Hoại / Cấm Trị Liệu / Kiệt Kế / Tước Vũ Khí",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [
         "tactic:van-quan-doat-su"
@@ -18031,6 +18469,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18076,6 +18515,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18121,6 +18561,7 @@
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18150,7 +18591,7 @@
       "巧匠"
     ],
     "chinese": "巧匠",
-    "effect": null,
+    "effect": "武將委任為鍛造官時，鍛造消耗降低1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Rèn, Rèn tiêu hao giảm 1%→2%",
     "hanViet": "Xảo Tượng",
     "iconUrl": null,
@@ -18163,6 +18604,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18171,7 +18615,7 @@
       "pointCost": null,
       "revisions": []
     },
-    "pending": true,
+    "pending": false,
     "quality": "B",
     "source": "INHERITANCE",
     "sourceHeroCn": null,
@@ -18205,6 +18649,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -18251,6 +18696,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -18298,6 +18744,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược đơn",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -18346,6 +18793,7 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [
@@ -18388,6 +18836,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18428,6 +18879,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18468,6 +18922,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18495,7 +18952,7 @@
   {
     "aliases": [],
     "chinese": "枝葉扶蘇",
-    "effect": "武將委任為木材官時，木材產量提升1%→2%",
+    "effect": "武將委任為木材官時，木材產量提升1% → 2%",
     "effectViet": "Khi ủy nhiệm Võ Tướng làm Quan Gỗ, sản lượng gỗ tăng 1%→2%",
     "hanViet": "Chi Diệp Phù Tô",
     "iconUrl": null,
@@ -18508,6 +18965,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18548,6 +19008,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18588,6 +19051,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18628,6 +19094,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18668,6 +19137,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18695,7 +19167,7 @@
   {
     "aliases": [],
     "chinese": "護衛",
-    "effect": "為友方主將分擔10%→20%傷害，持續2回合",
+    "effect": "為友方主將分擔10% → 20%傷害，持續2回合",
     "effectViet": "Gánh Vác 10%→20% sát thương cho Chủ tướng quân Đồng Minh, duy trì 2 hiệp",
     "hanViet": "Hộ Vệ",
     "iconUrl": null,
@@ -18708,6 +19180,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Cứu Viện",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18748,6 +19223,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Khống chế",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18775,7 +19253,7 @@
   {
     "aliases": [],
     "chinese": "天運",
-    "effect": "提升武將8→16魅力",
+    "effect": "提升武將8 → 16魅力",
     "effectViet": "Tăng 8→16 Mị Lực của Võ Tướng",
     "hanViet": "Thiên Vận",
     "iconUrl": null,
@@ -18788,6 +19266,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "source"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18853,6 +19334,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18921,6 +19405,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -18982,6 +19469,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19050,6 +19540,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19111,6 +19604,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19172,6 +19668,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19240,6 +19739,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19308,6 +19810,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19369,6 +19874,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19414,6 +19922,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19486,6 +19997,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19547,6 +20061,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19608,6 +20125,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19669,6 +20189,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19737,6 +20260,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19798,6 +20324,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19866,6 +20395,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "capture"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],
@@ -19889,7 +20421,7 @@
   {
     "aliases": [],
     "chinese": "鎮壓黃巾",
-    "effect": "戰鬥第2回合，使我軍全體免疫沙暴狀態，並且使敵軍全體陷入叛逃狀態（傷害率44%→88%，受武力或智力最高一項影響，無視防禦），持續2回合，若目標為黃巾軍，傷害率提高20%",
+    "effect": "戰鬥前2回合，使我軍全體免疫沙暴狀態，並使敵軍全體陷入叛逃狀態，每回合持續造成傷害（傷害率44%→88%，受武力或智力較高的一項影響，無視防禦），持續2回合；若目標為黃巾軍，傷害率提高20%",
     "effectViet": "Chiến đấu 2 hiệp đầu, khiến toàn thể quân ta miễn nhiễm trạng thái Bão cát, và khiến toàn thể quân địch rơi vào trạng thái Đảo phản, mỗi hiệp gây ra sát thương liên tục (tỷ lệ sát thương 44%→88%, bị Võ lực hoặc Trí lực một trong hai loại loại nào cao hơn sẽ ảnh hưởng, bỏ qua Phòng ngự), duy trì 2 hiệp, nếu mục tiêu là Quân Khăn Vàng, tỉ lệ sát thương tăng 20%",
     "hanViet": "Trấn Áp Khăn Vàng",
     "iconUrl": null,
@@ -19902,6 +20434,9 @@
       "conflictsVi": null,
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
       "exchangeConditionVi": null,
       "formerIds": [],
       "inheritedFromIds": [],

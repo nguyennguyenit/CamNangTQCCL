@@ -103,7 +103,7 @@ export function withLookupIdentity(dictionaries: {
     lookup: {
       conditions: [], missingFields: [], revisions: [], activationRate: null, cooldown: null,
       maxUsers: null, pointCost: null, effectTypeVi: null, exchangeConditionVi: null,
-      acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null,
+      acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null, effectZhSource: null,
     },
   }));
   const advisorId = "advisor:co-van-a";

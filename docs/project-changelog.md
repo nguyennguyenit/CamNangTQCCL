@@ -16,6 +16,17 @@
 - Xoá đội hai bước: chốt `deleting_at` rồi dọn R2 và D1; lỗi R2 → 502 `delete_incomplete`, gọi lại `DELETE` để hoàn tất (`GET /api/me/community-teams` trả `deleting: true`, admin lọc `status=deleting`).
 - Triển khai: migration `0008` → Worker → `main` → chạy tay `pages-deploy.yml`. Không xoá tài khoản khi Worker cũ còn chạy trên DB đã có đội (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
 
+## 2026-10-21 (Redirect 301 chiến pháp gộp, chữ Hán có nguồn, cờ bản dịch)
+
+### Added
+- Redirect `301` cho URL cũ của 18 chiến pháp đã gộp (`/tra-cuu/chien-phap/<slug cũ>/` và `/zh/…` → trang mã giữ cùng locale): `public/_redirects` sinh bởi `python3 -m pipeline.lookup_route_handles --write` từ ledger slug + `lookup.formerIds`, `--check` báo file lệch, verifier dist kiểm byte. Mã bỏ hẳn (8 chiến pháp) và Hà Thị vẫn 404. Đã deploy Pages riêng (PR #19).
+- `zhEffects` trong `pipeline/lookup-client-tactics.json`: đầu vào duy nhất cho hiệu ứng chữ Hán không lấy từ SGSDeck, mỗi mục khai nguồn (`source` trang công khai 三略庫/Bahamut cùng cơ chế và đủ số cấp 1 → tối đa, `capture` chụp màn 訓兵場 client TW, `translation` dịch từ tiếng Việt) và `viSha256` khoá với `effectViet`. 63 mục (31 pending, 29 chiến pháp mới, 3 dòng chữ Hán baseline lệch số): 31 source, 16 capture (16 chiến pháp binh chủng `Tinh •`), 16 translation; bảng tra và rà độc lập ở `plans/261020-1112-redirect-chu-han-mcp/reports/nguon-chu-han.md`. Không còn chiến pháp `pending`.
+- Trường công khai `lookup.effectZhSource` (`null` hoặc `{kind}`), validator Python + JS, allowlist MCP `tqccl_get_entity`. `ref`/`note`/`viSha256` không ra dữ liệu công khai.
+- Cờ "Hiệu ứng chữ Hán dịch từ tiếng Việt, chưa đối chiếu" / "中文效果译自越南语，未经核对" cho mục `translation`: hồ sơ chiến pháp vi + zh (trang riêng, hộp thoại), thẻ chiến pháp liên quan bản zh, ô hiệu ứng bảng nhóm zh. Meta description + JSON-LD trang zh của mục đó bỏ đoạn hiệu ứng.
+
+### Changed
+- `newTactics` bỏ `effectZh` (clean cutover sang `zhEffects`). Builder dừng khi chữ Hán baseline hoặc chiến pháp mới thiếu `zhEffects`, khi `effectViet` đổi sau lúc gán (`stale zhEffects`), hoặc khi `zhEffects` trỏ tới chiến pháp SGSDeck.
+
 ## 2026-10-17 (Gộp mã chiến pháp trùng, chiến pháp mới từ client)
 
 ### Added

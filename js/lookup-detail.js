@@ -8,6 +8,14 @@ import { heroSelfTacticId, innateHolderIndex, uniqueTacticIdByChinese } from "./
 const ZH = () => currentLocale() === "zh";
 /** Chữ cho ô chưa có dữ liệu (theo ngôn ngữ trang; hàm để build dựng cả hai ngôn ngữ trong một tiến trình). */
 export const lookupEmpty = () => L("Đang cập nhật", "暂无数据");
+/**
+ * Chữ Hán hiệu ứng là bản dịch từ tiếng Việt, chưa đối chiếu nguồn (`lookup.effectZhSource.kind`, xem
+ * docs/unified-lookup.md). Chỉ `translation` mang cờ; `source`/`capture`/`null` thì không.
+ */
+export const isTranslatedZhEffect = (record) => record?.lookup?.effectZhSource?.kind === "translation";
+/** Câu cờ bản dịch (hồ sơ, thẻ liên quan, bảng nhóm zh); mỗi nơi tự dựng thẻ với `ZH_TRANSLATED_TAG_ATTRS`. */
+export const zhTranslatedNote = (locale = currentLocale()) => pick(locale, "Hiệu ứng chữ Hán dịch từ tiếng Việt, chưa đối chiếu", "中文效果译自越南语，未经核对");
+export const ZH_TRANSLATED_TAG_ATTRS = Object.freeze({ class: "lookup-version-tag lookup-zh-translated", "data-zh-source": "translation" });
 const labels = () => Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(([key, [vi, zh]]) => [key, L(vi, zh)]));
 /** Khóa có giá trị là số/hạng chữ cái (chỉ số, tăng trưởng, thích tính) — hiện được ở bản zh. */
 const LANGUAGE_NEUTRAL_KEYS = new Set(["luc", "tri", "thong", "toc", "chinh", "mi", "ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]);

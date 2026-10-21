@@ -9,6 +9,7 @@ import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import { LOOKUP_GROUP_SLUGS } from "../js/lookup-ids.js";
 import { zhGaps } from "../scripts/report-zh-gaps.mjs";
+import { effectVersions, isVersionHeading } from "../js/lookup-detail.js";
 
 const ORIGIN = new URL(astroConfig.site).origin;
 const dist = (path) => new URL(`../dist/${path}`, import.meta.url);
@@ -197,6 +198,28 @@ test("JSON-LD trang riêng từng mục (886 × 2): ItemPage (url, inLanguage, i
   }
   assert.ok(images > 100, `tướng có ảnh phải khai image (${images})`);
   assert.ok(alternates > 300, `bản Việt phải khai tên chữ Hán có trong trang (${alternates})`);
+});
+
+test("mô tả meta bản zh (JSON-LD dùng cùng mô tả) của chiến pháp chữ Hán dịch (`translation`) bỏ đoạn hiệu ứng; mục khác và bản Việt giữ", async () => {
+  const [routes, corpus] = await Promise.all([lookupDetailRoutes(), lookupBuildCorpus()]);
+  // Đoạn đầu của bản hiệu ứng hiện hành, như `describe` của src/lib/lookup-item-pages.ts.
+  const head = (text) => (effectVersions(text)[0]?.paragraphs.find((paragraph) => !isVersionHeading(paragraph)) ?? "").replace(/\s+/gu, " ").trim().slice(0, 12);
+  let translated = 0;
+  let kept = 0;
+  for (const entry of routes.entries.filter((row) => row.group === "tactics")) {
+    const record = corpus.byId.get(entry.id).record;
+    if (!record.effect) continue;
+    const zh = metaDescription(await read(pageFile(`/zh${entry.path}`)));
+    if (record.lookup.effectZhSource?.kind === "translation") {
+      assert.ok(!zh.includes(head(record.effect)), `zh ${entry.path}: meta không được chứa chữ Hán dịch`);
+      assert.ok(metaDescription(await read(pageFile(entry.path))).includes(head(record.effectViet)), `vi ${entry.path}: bản Việt giữ hiệu ứng`);
+      translated += 1;
+    } else if (zh.includes(head(record.effect))) {
+      kept += 1;
+    }
+  }
+  assert.ok(translated > 0, "dữ liệu phải có chiến pháp chữ Hán dịch");
+  assert.ok(kept > 300, `mục chữ Hán nguồn giữ hiệu ứng trong meta zh (${kept})`);
 });
 
 test("JSON-LD trang nhóm Tra cứu (7 × 2): CollectionPage + ItemList đủ mọi mục, mọi url có file dist", async () => {

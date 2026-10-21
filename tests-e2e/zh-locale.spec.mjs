@@ -10,6 +10,7 @@ const ORIGIN = 'https://tqccl.com';
 const handles = JSON.parse(await readFile(new URL('../pipeline/team-route-handles.json', import.meta.url), 'utf8')).handles;
 const legacySegment = Object.values(handles.legacy)[0];
 const khaiHoangSegment = Object.values(handles.khaihoang)[0];
+const lookupHandles = JSON.parse(await readFile(new URL('../pipeline/lookup-route-handles.json', import.meta.url), 'utf8')).handles;
 
 /** Chữ Việt có dấu (kể cả đ); chữ Latin không dấu như "Beta", "SP" hay mã mùa không bị tính. */
 const VIETNAMESE = /[ăâđêôơưàảãáạằẳẵắặầẩẫấậèẻẽéẹềểễếệìỉĩíịòỏõóọồổỗốộờởỡớợùủũúụừửữứựỳỷỹýỵ]/iu;
@@ -96,6 +97,38 @@ for (const [path, section] of SECTIONS) {
     await expectChineseOnly(page, 'main');
   });
 }
+
+// Chữ Hán hiệu ứng dịch từ tiếng Việt (`lookup.effectZhSource.kind === "translation"`): bảng nhóm và thẻ chiến pháp liên quan
+// của bản Trung mang cờ; bản Việt hiện chữ Việt nên không có cờ. Không JavaScript: trang nhóm dựng sẵn đủ mọi hàng
+// (có JavaScript chỉ trang đầu nằm trong DOM).
+test.describe('cờ chữ Hán dịch, không JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('bản Trung: bảng chiến pháp và thẻ chiến pháp tự mang của tướng có cờ; bản Việt không có', async ({ page }) => {
+    const row = (id) => `tr:has(a[data-lookup-id="${id}"]) [data-zh-source="translation"]`;
+    await page.goto('/zh/tra-cuu/chien-phap/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator(row('tactic:tran-ap-khan-vang'))).toHaveCount(1);
+    await expect(page.locator(row('tactic:ap-che'))).toHaveCount(0);
+    await expect(page.locator(row('tactic:tran-ap-khan-vang'))).toHaveText('中文效果译自越南语，未经核对');
+    await page.goto('/tra-cuu/chien-phap/', { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-zh-source="translation"]')).toHaveCount(0);
+
+    const hero = lookupHandles.heroes['hero:chu-tuan'];
+    await page.goto(`/zh/tra-cuu/tuong/${hero}/`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('.lookup-relation-card:has([data-lookup-relation="tactic:tran-ap-khan-vang"]) [data-zh-source="translation"]')).toHaveCount(1);
+    await page.goto(`/tra-cuu/tuong/${hero}/`, { waitUntil: 'domcontentloaded' });
+    await expect(page.locator('[data-zh-source="translation"]')).toHaveCount(0);
+  });
+});
+
+test('bản Trung có JavaScript: tìm chiến pháp chữ Hán dịch trong bảng thì hàng dựng lại vẫn mang cờ', async ({ page }) => {
+  await page.goto('/zh/tra-cuu/chien-phap/');
+  await expect(page.locator('body[data-boot=ready]')).toBeAttached();
+  await page.locator('#section-lookup input[type="search"]').fill('鎮壓黃巾');
+  const row = page.locator('tr:has(a[data-lookup-id="tactic:tran-ap-khan-vang"])');
+  await expect(row.locator('[data-zh-source="translation"]')).toHaveText('中文效果译自越南语，未经核对');
+  await expect(row).toBeVisible();
+});
 
 test('ba họ trang chi tiết bản Trung: tiêu đề chữ Hán, link về danh sách bản Trung, cặp hreflang', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });

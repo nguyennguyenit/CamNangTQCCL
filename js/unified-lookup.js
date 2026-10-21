@@ -4,7 +4,7 @@
 //
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view (`js/view-tree.js`), không HTML thô.
 
-import { lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText, zhTranslatedNote } from "./lookup-detail.js";
 import { L, currentLocale, localePath, normalizeLocale, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
 import { bookLookupId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
@@ -289,6 +289,8 @@ export function tacticTableRow(record, locale = currentLocale()) {
     effectType: localizedCell(record.lookup?.effectTypeVi, null, locale, MISSING),
     target: localizedCell(record.targetViet, record.target, locale, MISSING),
     effect: localizedCell(record.effectViet, record.effect, locale, ""),
+    // Ô hiệu ứng bản zh là chữ Hán; chữ dịch từ tiếng Việt mang cờ (bản Việt hiện chữ Việt, không cờ).
+    zhTranslated: normalizeLocale(locale) === "zh" && isTranslatedZhEffect(record),
     rate: rate === null || rate === undefined || rate === "" ? MISSING : ratePercentText(rate),
   };
 }
@@ -342,6 +344,7 @@ export function lookupTableRowTree(item, locale = currentLocale()) {
       h("a", { class: "lookup-table-name", href: localePath(lookupHref(item.id), locale), "data-lookup-id": item.id }, row.nameVi),
       chineseName ? h("span", { class: "lookup-table-zh", lang: "zh-Hant" }, chineseName) : null,
       row.effect ? h("p", { class: "lookup-table-effect" }, row.effect) : null,
+      row.effect && row.zhTranslated ? h("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedNote(locale)) : null,
     ]),
     h("td", { class: "lookup-table-quality", "data-label": head("quality", locale) }, [h("span", { class: "lookup-quality" }, row.quality)]),
     h("td", { "data-label": head("type", locale) }, row.type),
