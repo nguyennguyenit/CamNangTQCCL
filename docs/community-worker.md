@@ -18,7 +18,7 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | Tên | Loại | Ý nghĩa |
 |---|---|---|
 | `DB` | D1 binding | Bảng Better Auth và bảng ứng dụng (`migrations/`) |
-| `MEDIA` | R2 binding | `pending/<uploadId>` là ảnh chiến báo chờ gửi, `reports/<id>.<ext>` là ảnh chiến báo đã gửi, `posts/<id>.<ext>` là ảnh bài viết |
+| `MEDIA` | R2 binding | `pending/<uploadId>` là ảnh chiến báo chờ gửi, `pending/team-<uploadId>` là ảnh đội cộng đồng chờ gửi, `reports/<id>.<ext>` là ảnh chiến báo đã gửi, `community-teams/<teamId>/<vị trí>.<ext>` là ảnh đội đã đăng, `posts/<id>.<ext>` là ảnh bài viết |
 | `SITE_ORIGIN` | var | Danh sách origin của site, phân tách dấu phẩy (`https://tqccl.com,https://www.tqccl.com,https://tqccl.pages.dev,https://preview-community.tqccl.pages.dev`). Origin đầu là mặc định. Better Auth lấy `baseURL` theo domain của request nếu domain đó nằm trong danh sách; tất cả đều là origin tin cậy |
 | `ADMIN_EMAILS` | var | Danh sách email **root** (quản trị viên cao nhất), phân tách bằng dấu phẩy, không phân biệt hoa thường. Root chỉ lấy từ biến này, không cấp được qua UI; kiểm duyệt viên (KDV) do root cấp trên UI (xem [Vai trò và người dùng](#vai-trò-và-người-dùng)) |
 | `AI_KV` | KV binding | Cùng namespace `RL` của `worker/` (`6fff7d73c885457dbb71756de99e66fa`). Khoá `ai:config` chứa cấu hình AI đã mã hoá (nhà cung cấp + chuỗi của bốn nhóm tính năng); Worker này ghi (tab AI), `worker/` chỉ đọc |
@@ -33,7 +33,7 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `TURNSTILE_SECRET` | secret | Secret của widget Turnstile có site key trong `js/config.js` (dùng chung với công cụ đọc ảnh). Thiếu thì khách ẩn danh gửi góp ý nhận 503 `feedback_unavailable` |
 | `IP_HASH_SECRET` | secret | Khoá HMAC băm IP cho giới hạn góp ý ẩn danh (≥ 32 byte ngẫu nhiên). Thiếu thì khách ẩn danh nhận 503 `feedback_unavailable`; người đã đăng nhập vẫn gửi được |
 
-Cron `17 * * * *` chạy mỗi giờ để xoá object R2 `pending/` cũ hơn 24 giờ, bản ghi upload `pending` quá hạn và bộ đếm rate limit đã hết cửa sổ.
+Cron `17 * * * *` chạy mỗi giờ để xoá object R2 `pending/` cũ hơn 24 giờ (gồm cả `pending/team-`, vì cùng tiền tố), bản ghi upload `pending` quá hạn và bộ đếm rate limit đã hết cửa sổ.
 
 ## Hạ tầng đã dựng (2026-09-27)
 
@@ -235,7 +235,7 @@ Giới hạn độ bền: nếu D1 hỏng **sau khi** R2 đã xoá xong, dòng n
 
 Bảng `admin_audit` (epoch ms): người làm (`actor_id`, `actor_role`, `actor_label` đã che email), `action`, `target_type/id/label`, `subject_user_id` (chủ nội dung hoặc user đích, để tra theo user), `reason`, `meta` (JSON chọn lọc, không key/token/body thô), `status`, `created_at`. Chuỗi giống email trong nhãn (tên, tiêu đề người dùng nhập) bị che. `GET /api/admin/audit?action=&cursor=` chỉ root, mới nhất trước, 20/trang.
 
-Mỗi thao tác ghi của quản trị sinh một dòng, chung batch D1 với thay đổi (`insert … select … where exists`, điều kiện chứng minh chính yêu cầu này đã xảy ra: nhật ký lỗi thì thay đổi rollback). Riêng thao tác xoá đặt dòng nhật ký **trước** câu `DELETE` với cùng điều kiện đủ quyền, vì sau khi xoá không còn gì để chứng minh. Hành động: `report.approve|reject`, `comment.delete` (chủ tự xoá không phải thao tác quản trị), `feedback.status`, `scan_sample.approve|reject`, `post.create|update|delete|publish|unpublish|upload`, `ai.config.update`, `user.ban|unban|role|delete.start|delete`.
+Mỗi thao tác ghi của quản trị sinh một dòng, chung batch D1 với thay đổi (`insert … select … where exists`, điều kiện chứng minh chính yêu cầu này đã xảy ra: nhật ký lỗi thì thay đổi rollback). Riêng thao tác xoá đặt dòng nhật ký **trước** câu `DELETE` với cùng điều kiện đủ quyền, vì sau khi xoá không còn gì để chứng minh. Hành động: `report.approve|reject`, `comment.delete` (chủ tự xoá không phải thao tác quản trị), `feedback.status`, `scan_sample.approve|reject`, `post.create|update|delete|publish|unpublish|upload`, `ai.config.update`, `user.ban|unban|role|delete.start|delete`, `team.approve|reject|delete` (xoá đội chỉ ghi khi staff xoá, chủ tự xoá không ghi), `season.open`.
 
 Quy tắc `status`:
 
@@ -266,12 +266,105 @@ Rollback (phải **cùng lúc và khớp phiên bản** giữa Pages và Worker:
 4. Trigger không được Worker cũ hiểu: user đang bị khoá sẽ nhận 500 thay vì thông báo khi đăng nhập. Gỡ trigger bằng [`community-worker/rollback/0007_drop_user_block_triggers.sql`](../community-worker/rollback/0007_drop_user_block_triggers.sql) (không nằm trong `migrations/` nên không tự chạy): `npx wrangler d1 execute tqccl-community --remote --file rollback/0007_drop_user_block_triggers.sql`. Hệ quả: sau đó **không còn cưỡng chế khoá và ẩn nội dung** ở bản Worker cũ (user bị khoá đăng nhập lại được, bình luận/chiến báo của họ hiện lại); muốn bật lại phải deploy lại Worker mới và tạo lại trigger bằng phần trigger trong `0006`.
 
 
+## Đội cộng đồng
+
+Kế hoạch: [`plans/261021-0628-doi-cong-dong/plan.md`](../plans/261021-0628-doi-cong-dong/plan.md). Trang công khai `/doi-cong-dong/` và `/zh/doi-cong-dong/` (`js/community-teams.js`; bốn chế độ đọc từ query: danh sách, chi tiết `?id=`, đăng `?new=1`, của tôi `?mine=1`). Người dùng đăng đội 3 tướng + 6 chiến pháp kèm 1–3 ảnh, KDV/root duyệt, người khác vote, và bình luận/chiến báo của chính trang đội đó dùng lại hệ thống cũ với page key `/doi-cong-dong/<id>/`. Route nằm ở [`src/routes/teams.ts`](../community-worker/src/routes/teams.ts), kiểm tra đầu vào ở [`src/teams-validate.ts`](../community-worker/src/teams-validate.ts), migration [`0008_community_teams.sql`](../community-worker/migrations/0008_community_teams.sql).
+
+### Bảng và trigger
+
+- `community_seasons` (`id` slug 1–40 ký tự, `label_vi`, `label_zh`, `opened_at`, `closed_at`): unique index trên `(closed_at is null)` nên **đúng một** mùa mở (`closed_at is null`) tại một thời điểm.
+- `community_teams`: `status` `pending|rejected|approved`, `title`, `hero_1..3` + `hero_key` (3 id đã sắp xếp, nối `,`), `tactics` (JSON `[[t,t],[t,t],[t,t]]` theo thứ tự tướng), `troop` (`cung|khiGioi|ky|thuan|thuong`), `playstyle` và năm trường phân tích tuỳ chọn (`strengths`, `weaknesses`, `counters`, `countered_by`, `substitutes`), `text_lang` (`vi|zh`), `reject_reason`, `reviewed_by/at`, `deleting_at`, `created_at` (mọi thời gian là epoch ms), bộ đếm `up_votes`, `down_votes`, `evidence_count` và ba cột sinh STORED `points`, `hot_rank`, `top_rank` (để phân trang keyset theo index `community_teams_season_{hot,top,new}_idx`).
+- `community_team_images` (`team_id`, `position` 0–2, `object_key` unique, `content_type`): chủ duy nhất của khoá R2 ảnh đội sau khi gắn. `community_team_votes` (`team_id`, `user_id`, `value` ±1): một phiếu mỗi user mỗi đội. Cả hai cascade theo đội/user.
+- Trigger: ba trigger `community_team_votes_count_{ins,upd,del}` **đếm lại** `up_votes`/`down_votes` từ bảng phiếu (không cộng trừ 1, nên idempotent); ba trigger `battle_reports_team_evidence_{ins,upd,del}` trên bảng cũ `battle_reports` (chỉ chạy khi `page_key like '/doi-cong-dong/%'`) đếm lại `evidence_count`; trigger `community_teams_block_blocked_user` (`before insert`, đồng hồ DB như `0006`) chặn tác giả bị khoá/đang xoá (`account_blocked`) vì bảng này giữ khoá R2.
+- `evidence_count` = số user **khác tác giả** có ít nhất một chiến báo `approved` với `result = 'win'` trên trang của đội.
+
+### Công thức điểm và xếp hạng
+
+```text
+points   = up_votes - down_votes + 2 * evidence_count
+hot_rank = round(sign(points) * log(max(|points|, 1)) * 1_000_000 + created_at / 172.8)
+top_rank = points * 10_000_000_000 + created_at / 1000        (chia nguyên: giây)
+```
+
+- `created_at` là epoch ms, nên mỗi 172,8 giây tương đương một đơn vị; một bậc `log` (×10 điểm) trị giá 1 000 000 đơn vị = 48 giờ tuổi.
+- `log()` của SQLite là **logarit cơ số 10**. Không dùng `log10()`: workerd/D1 cục bộ từ chối hàm đó (`not authorized to use function`).
+- Sắp xếp `hot` → `hot_rank desc, id desc`; `top` → `top_rank desc, id desc`; `new` → `created_at desc, id desc`. Cột sinh STORED yêu cầu SQLite ≥ 3.31 (kiểm trước khi migrate remote, xem Triển khai).
+
+### Điều kiện hiển thị
+
+Đội công khai khi `status = 'approved'`, `deleting_at is null` và tác giả không bị khoá/đang xoá (`visibleUserSql`). Đội chưa công khai chỉ chủ đội hoặc staff xem được (404 cho người khác, kể cả ảnh). Đội `deleting_at` khác null ẩn khỏi **mọi** đọc/ghi, kể cả với chủ và staff (ngoại lệ duy nhất: `GET /api/me/community-teams` và `GET /api/admin/community-teams?status=deleting`, để gọi lại thao tác xoá).
+
+Bình luận và chiến báo trên `/doi-cong-dong/<id>/` đi qua `GET/POST /api/comments` và `/api/reports` cũ, `PAGE_KEY_RE` nhận thêm `/doi-cong-dong/<slug ≤ 64>/` và điều kiện hiển thị đội nằm trong chính câu `insert … select … where exists`:
+
+- Đội không hiển thị: danh sách trả rỗng, thống kê trả rỗng, ghi trả 404 `not_found`; ảnh chiến báo của trang đội chỉ công khai khi đội còn hiển thị.
+- Bình luận: kho chung vi/zh (bỏ lọc `lang`), **được ghi ở mùa đã đóng**.
+- Chiến báo: bỏ lọc `lang` khi đọc; ghi cần mùa của đội còn mở (mùa đóng → 409 `season_closed`), `season` của chiến báo lấy từ đội (bỏ giá trị client), kiểm tra này chạy **trước** rate limit `report`. `POST /api/reports` từ chối ảnh tạm `pending/team-*` (`invalid_upload`).
+
+### API
+
+Đọc công khai: `GET /api/community-seasons` → `{open: {id, labelVi, labelZh, openedAt}|null, seasons: [{id, labelVi, labelZh, openedAt, closedAt}]}`.
+
+- `GET /api/community-teams?sort=hot|new|top&heroes=hero:a,hero:b&season=<id>|all&cursor=` (20/trang, thiếu `sort` = `hot`): `heroes` tối đa 3 id khác nhau, đội phải chứa **mọi** tướng được lọc; thiếu `season` = mùa đang mở (không có mùa mở → `{items: [], nextCursor: null}`), `all` = mọi mùa. Mỗi mục: `id, title, season, heroes, tactics, troop, author:{id,name,image}, upVotes, downVotes, evidenceCount, points, commentCount, imageCount, textLang, createdAt`. `nextCursor` theo khoá xếp hạng + `id`.
+- `GET /api/community-teams/:id`: thêm `status, heroKey, analysis:{playstyle, strengths, weaknesses, counters, counteredBy, substitutes}, myVote (-1|0|1), seasonOpen`, và `rejectReason` (chỉ chủ/staff).
+- `GET /api/community-teams/:id/images/:pos` (`pos` 0–2): đội công khai trả `Cache-Control: public, no-cache` + `ETag` của R2 (`If-None-Match` khớp → 304, quyền xét trước ETag); đội chưa công khai (chủ/staff) trả `private, no-store`.
+- `GET /api/me/community-teams?cursor=` (cần đăng nhập): đội của mình mới nhất trước, thêm `status`, `rejectReason`, `deleting`. Đội xoá dở trả `deleting: true`.
+
+Ghi (cần đăng nhập; mọi `POST/PUT/DELETE` qua kiểm `Origin` như phần còn lại):
+
+- `POST /api/community-teams/uploads` (multipart `image`, JPEG/PNG/WebP ≤ 1 500 000 byte; rate `team_upload`) → `{uploadId}`. Ảnh lưu R2 `pending/team-<uploadId>` + dòng `uploads` (`kind = 'report'`, `pending`); không dùng được cho chiến báo.
+- `POST /api/community-teams/uploads/:id/analyze` → `{read}` (nháp AI, xem [AI đọc nháp đội](#ai-đọc-nháp-đội)). Không tìm thấy ảnh của mình → 404 `not_found`.
+- `POST /api/community-teams` body `{title 1–80, heroes[3] hero:<slug> khác nhau, tactics[3][2] tactic:<slug> cả 6 khác nhau, troop, playstyle 10–3000, strengths|weaknesses|counters|counteredBy|substitutes (tuỳ chọn, 1–2000, rỗng = null), lang vi|zh, uploadIds[1–3] khác nhau}` → 201 `{id, status: "pending"}`. Thứ tự: kiểm đầu vào → có mùa mở (409 `season_not_open`) → rate `team_post` → kiểm ảnh (409 `image_missing`) → sao chép từng ảnh sang `community-teams/<teamId>/<vị trí>.<ext>` → một batch D1 `insert` đội (điều kiện: đủ upload còn `pending` của đúng user và mùa còn mở) + `community_team_images` + xoá dòng `uploads` → xoá khoá `pending/team-`. Batch không ghi được: xoá bản sao R2, trả 409 `season_not_open` (mùa vừa đóng) hoặc `image_missing`. Lỗi đầu vào: 400 `invalid_body`, `invalid_title`, `invalid_heroes`, `invalid_tactics`, `invalid_troop`, `invalid_text`, `invalid_uploads`. Server chỉ kiểm **định dạng** id tướng/chiến pháp, không đối chiếu với dữ liệu tra cứu.
+- `PUT /api/community-teams/:id/vote` `{value: 1|-1|0}` (0 = bỏ phiếu; rate `team_vote`) → `{upVotes, downVotes, points, myVote}`. Chỉ vote đội công khai ở mùa đang mở; vote đội của mình → 403 `own_team`; mùa đóng → 409 `season_closed`; đội không hiển thị → 404 `not_found`; không ghi được vì race → 409 `vote_conflict`; `value` sai → 400 `invalid_vote`. Bỏ phiếu khi chưa vote vẫn thành công.
+
+Admin (staff = root và KDV; 401/403 như các route admin khác):
+
+- `GET /api/admin/community-teams?status=pending|approved|rejected|deleting&cursor=` (mặc định `pending`; sai → 400 `invalid_status`). `deleting` liệt kê mọi đội có `deleting_at` (mọi trạng thái); các lọc khác bỏ đội đang xoá. Mỗi mục như danh sách công khai + `status, rejectReason, deleting` và `author.email` (KDV: che, `emailMasked: true`).
+- `POST /api/admin/community-teams/:id/approve` → `{id, status: "approved"}`; `POST .../:id/reject` `{reason 1–500}` → `{id, status: "rejected", rejectReason}`. Chỉ chuyển từ `pending` (nếu không 409 `not_pending`); KDV duyệt được cả đội của chính mình. Audit đứng **trước** câu `update` với cùng điều kiện `pending`, nên chỉ request thật sự chuyển trạng thái mới ghi nhật ký. Đội bị từ chối **không giữ ảnh**: xoá R2 rồi xoá `community_team_images`; lỗi R2 → 502 `delete_incomplete`, gọi lại `reject` để làm tiếp (không ghi nhật ký lần hai, trả lý do đã lưu ở lần đầu).
+- `POST /api/admin/community-seasons` (**chỉ root**) `{id, labelVi, labelZh}` → 201 `{id, labelVi, labelZh, openedAt, closedAt: null, previous}` (`previous` = id mùa vừa đóng hoặc `null`).
+
+### Mùa
+
+Mở mùa mới đóng mùa đang mở và tạo mùa mới trong một batch D1 cùng dòng nhật ký `season.open` (`meta.previous`). `id` khớp `^[a-z0-9][a-z0-9-]{0,39}$` và **không được là `all`** (giá trị lọc "mọi mùa" của `GET /api/community-teams`) → 400 `invalid_season`; nhãn `labelVi`/`labelZh` 1–60 ký tự. Trùng id → 409 `season_exists`. Mùa đang mở đổi giữa lúc đọc và ghi (race) → batch rollback, 409 `season_conflict`, tải lại rồi thử lại. Mùa đóng: không đăng đội, không vote, không gửi chiến báo mới trên trang đội; bình luận vẫn được. Chưa có mùa nào mở thì không đăng được đội (409 `season_not_open`) và danh sách mặc định rỗng; trang hiện "Chưa mở mùa".
+
+### AI đọc nháp đội
+
+`POST /api/community-teams/uploads/:id/analyze` gọi `callModel` của [`worker/src/model.ts`](../worker/src/model.ts) (mode `analyzeTeamImage`, cùng prompt/schema với `/soi-doi-tu-anh/`) qua nhóm cấu hình **`teamScan`** của `ai:config` (cần ít nhất một mắt xích vision, xem [Cấu hình AI](#cấu-hình-ai-tab-ai)). Kết quả chỉ là **nháp**: form để người dùng kiểm tra/sửa trước khi gửi; ảnh vẫn được giữ khi AI lỗi để thử lại hoặc tự nhập.
+
+- Điều kiện: `FEATURE_ENABLED=false` → 503 `feature_disabled`; chuỗi `teamScan` rỗng → 503 `ai_not_configured`.
+- Rate limit chạy sau khi xác nhận ảnh còn tồn tại: `team_analyze` 20 lần/ngày/user **và** `team_analyze_global` 300 lần/ngày cho cả site (key `site`) để chặn tổng chi phí nhà cung cấp AI. Vượt → 429 `rate_limited` (`Retry-After`). Lượt đã tính vẫn mất dù AI lỗi.
+- Model không đọc được (status 422) → 200 `{read: {screen: "other", sides: []}}`; upstream lỗi (502) → 502 `ai_unavailable`; `AiCallError` (lỗi của chuỗi failover) được trả nguyên status và `code`.
+
+### Xoá đội
+
+`DELETE /api/community-teams/:id` cho chủ đội và staff:
+
+- **Chủ đội**: không xoá được khi đã có chiến báo `approved` của người khác trên trang đội → 409 `has_evidence` (nhờ quản trị viên gỡ). Điều kiện nằm trong câu SQL `update`.
+- **Staff**: bắt buộc body `{reason}` 1–500 ký tự; root xoá mọi đội, KDV chỉ xoá đội của tác giả không phải KDV/root (ngược lại 404). Ghi nhật ký `team.delete` (`meta.byAuthor`: số bình luận/chiến báo của từng người trên trang đội) trong cùng batch với bước chốt.
+- Thứ tự: (1) chốt `deleting_at` bằng một câu `update` có điều kiện quyền; từ đây đội ẩn khỏi mọi đọc/ghi công khai; (2) xoá R2 theo lô 100 khoá: ảnh đội và ảnh các chiến báo trên trang đội; lỗi R2 → **502 `delete_incomplete`**, gọi lại `DELETE` để làm tiếp (bước (1) bỏ qua khi `deleting_at` đã đặt và người gọi vẫn còn quyền); (3) một batch D1 xoá bình luận, dòng `uploads` của ảnh chiến báo, chiến báo trên trang đội rồi đội (cascade ảnh và phiếu); khoá R2 chèn thêm giữa chừng được dọn nốt. Trả `{ok: true}`.
+- `GET /api/me/community-teams` trả `deleting: true` cho đội xoá dở của mình và `GET /api/admin/community-teams?status=deleting` liệt kê cho staff để gọi lại.
+
+### Xoá và khoá tài khoản
+
+- **Khoá** (`POST /api/admin/users/:id/ban`): xoá mọi phiếu vote của user (trigger đếm lại điểm đội), số phiếu ghi vào `meta.votesRemoved` của nhật ký `user.ban`, cùng điều kiện với việc huỷ phiên. Đội của user bị ẩn khỏi API công khai cho tới khi hết khoá (phiếu đã xoá không hiện lại).
+- **Xoá tài khoản** (root, `DELETE /api/admin/users/:id`): danh sách khoá R2 cần xoá gồm thêm ảnh đội của user **và** ảnh chiến báo của người khác trên các trang đội của user; bước cuối xoá bình luận, `uploads` và chiến báo của người khác trên các trang đó, rồi đội cascade theo FK `author_id` (ảnh, phiếu). Nhật ký `user.delete` có thêm số đội. Lỗi R2 vẫn là 502 `delete_incomplete` như phần [Xoá tài khoản](#xoá-tài-khoản-chỉ-root).
+
+### Triển khai và rollback
+
+Thứ tự bắt buộc: **migration `0008` → deploy Worker → push `main` → chạy tay `pages-deploy.yml`** (`workflow_dispatch`; push `main` không tự deploy Pages: chỉ `blog-publish` và chạy tay mới chạy). Trước khi migrate remote: `npx wrangler d1 execute tqccl-community --remote --command "select sqlite_version()"` phải ≥ 3.31 và ghi bookmark `npx wrangler d1 time-travel info tqccl-community`. Nhóm `teamScan` ở tab AI phải có mắt xích vision (nhóm này cũng phục vụ `/soi-doi-tu-anh/`). Root mở mùa đầu tiên ở `/quan-tri/`; trước đó trang hiện "Chưa mở mùa".
+
+Rollback:
+
+1. Revert commit trên `main` **trước** (để `blog-publish` kế tiếp không dựng lại frontend mới), chạy lại `pages-deploy.yml`, rồi `npx wrangler rollback` Worker.
+2. Bảng/cột của `0008` để nguyên (Worker cũ bỏ qua). Ba trigger evidence nằm trên `battle_reports` vô hại với Worker cũ; nếu cần gỡ chạy tay [`rollback/0009_drop_community_team_triggers.sql`](../community-worker/rollback/0009_drop_community_team_triggers.sql) (`npx wrangler d1 execute tqccl-community --remote --file rollback/0009_drop_community_team_triggers.sql`). Khi deploy lại Worker có Đội cộng đồng chạy [`rollback/0010_restore_community_team_triggers.sql`](../community-worker/rollback/0010_restore_community_team_triggers.sql) (dựng lại ba trigger và đếm lại `evidence_count` cho mọi đội). Cả hai file không nằm trong `migrations/` nên không tự chạy; khi đổi trigger trong `0008` phải giữ ba file đồng bộ.
+3. **Không xoá tài khoản** trong thời gian chạy Worker cũ trên DB đã có đội: Worker cũ không biết `community_team_images` nên ảnh đội, chiến báo và bình luận trên trang đội bị bỏ sót và không dọn lại được, cho tới khi deploy lại Worker có Đội cộng đồng.
+4. Time Travel ghi đè mọi ghi sau bookmark: chỉ dùng khi dữ liệu sai nghiêm trọng.
+
 ## Hành vi cần biết
 
-- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*`, `duplicate_id`, `duplicate_model`, `unknown_provider`, `unknown_model`, `model_not_vision` và `missing_api_key` (400), `invalid_upload`, `image_too_large`, `recruit_quota_exceeded` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_secret_missing`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502).
+- Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*`, `duplicate_id`, `duplicate_model`, `unknown_provider`, `unknown_model`, `model_not_vision` và `missing_api_key` (400), `invalid_upload`, `image_too_large`, `recruit_quota_exceeded` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_secret_missing`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502). Mã riêng của Đội cộng đồng (`own_team` 403; `season_not_open`, `season_closed`, `season_exists`, `season_conflict`, `image_missing`, `has_evidence`, `not_pending`, `vote_conflict` 409; `delete_incomplete` 502; `invalid_season`, `invalid_heroes`, `invalid_tactics`, `invalid_troop`, `invalid_uploads`, `invalid_vote`, `invalid_sort`, `invalid_hero`, `invalid_page` 400) nằm ở mục [Đội cộng đồng](#đội-cộng-đồng).
 - Mã lỗi của quản trị người dùng: `invalid_target` (400, thao tác với chính mình), `invalid_duration`, `invalid_role`, `invalid_status`, `invalid_q`, `invalid_action`, `invalid_cursor` (400), `confirm_mismatch` (400, email xác nhận xoá không khớp), `user_banned`, `user_deleting`, `not_banned`, `role_unchanged` và `conflict` (409), `delete_incomplete` (502, xoá tài khoản chưa xong, gọi lại để hoàn tất). `forbidden` (403) còn dùng cho KDV vượt quyền và mọi thao tác nhắm root.
 - Request `POST`/`PUT`/`DELETE` có `Origin` không nằm trong `SITE_ORIGIN` và danh sách localhost dev sẽ bị chặn với 403 `forbidden_origin`. Body JSON bắt buộc có `Content-Type: application/json`.
-- Rate limit lưu trong bảng D1 `rate_limits`: bình luận 10 lần/giờ, analyze 20 lần/ngày, gửi chiến báo 30 lần/ngày, admin upload 100 lần/ngày, đẩy đồng bộ chiêu mộ 600 lô/giờ, gửi ảnh mẫu soi đội (`scan_sample`) 10 lần/ngày (theo user); góp ý 10 lần/giờ theo user khi đã đăng nhập, 5 lần/giờ theo IP đã băm HMAC khi ẩn danh (IPv6 gom theo /64, đếm trước siteverify); đếm ẩn danh soi đội (`scan_stats`) 60 lần/giờ theo IP đã băm. Better Auth có thêm rate limit riêng cho `/api/auth/*`, lưu trong bảng `rateLimit`.
+- Rate limit lưu trong bảng D1 `rate_limits`: bình luận 10 lần/giờ, analyze 20 lần/ngày, gửi chiến báo 30 lần/ngày, admin upload 100 lần/ngày, đẩy đồng bộ chiêu mộ 600 lô/giờ, gửi ảnh mẫu soi đội (`scan_sample`) 10 lần/ngày (theo user); Đội cộng đồng: `team_upload` 30 lần/ngày, `team_analyze` 20 lần/ngày (theo user), `team_analyze_global` 300 lần/ngày cho **cả site** (key `site`), `team_post` 5 lần/ngày, `team_vote` 120 lần/giờ (xem [Đội cộng đồng](#đội-cộng-đồng)); góp ý 10 lần/giờ theo user khi đã đăng nhập, 5 lần/giờ theo IP đã băm HMAC khi ẩn danh (IPv6 gom theo /64, đếm trước siteverify); đếm ẩn danh soi đội (`scan_stats`) 60 lần/giờ theo IP đã băm. Better Auth có thêm rate limit riêng cho `/api/auth/*`, lưu trong bảng `rateLimit`.
 - `POST /api/feedback` nhận `{kind, title, body, email?, page?, lang, turnstileToken?}`: `kind` là `feature`/`bug`/`wrong_info`/`other`, tiêu đề 1–120 ký tự (gộp khoảng trắng thành một dòng), nội dung 1–4000 ký tự, email tuỳ chọn, `page` là đường dẫn cùng site (bắt đầu bằng `/`). Khách ẩn danh bắt buộc có `turnstileToken`; người đã đăng nhập bỏ qua Turnstile. Trả 201 `{ok:true}` sau khi lưu; thư gửi nền bằng `waitUntil`. `GET /api/me` trả thêm `email` để hộp thoại điền sẵn.
 - Góp ý của admin (root và KDV): `GET /api/admin/feedback?status=new|done&kind=&cursor=` (mới nhất trước, 20/trang) và `POST /api/admin/feedback/:id/status` với `{status}` (ghi `feedback.status` vào nhật ký). Với KDV, `email` bị che (`ng***@gmail.com`) và mục có thêm `emailMasked: true` (UI không tạo link `mailto:`); root thấy email đầy đủ. Che email chỉ áp cho trường `email`: `body` (văn bản tự do người gửi nhập) **không** được che hay lọc, nên KDV vẫn đọc được thông tin liên hệ nếu người gửi tự viết vào nội dung.
 - **Soi đội: tín hiệu lỗi** (migration `0005_scan.sql`, bảng `scan_stats` và `scan_samples`; khi deploy phải chạy `npx wrangler d1 migrations apply tqccl-community --remote`, hay `db:migrate:remote`, trước `wrangler deploy`).
@@ -283,6 +376,6 @@ Rollback (phải **cùng lúc và khớp phiên bản** giữa Pages và Worker:
 - `POST /api/reports` nhận `allyHeroes` từ 1 đến 5 tên, `enemyHeroes` từ 0 đến 5 tên, mỗi tên dài 1 đến 20 ký tự và không trùng nhau; `note` tối đa 500 ký tự, `season` tối đa 40 ký tự. Ảnh được chuyển từ `pending/` sang `reports/`.
 - Ảnh chiến báo chưa duyệt trả 404 cho mọi người trừ chủ báo cáo và staff (`Cache-Control: private, no-store`). Ảnh đã duyệt của tác giả còn hoạt động dùng `Cache-Control: public, no-cache` + `ETag` của R2: trình duyệt phải hỏi lại mỗi lần, `If-None-Match` khớp trả 304 (quyền xem được xét trước ETag nên ETag cũ không dò được ảnh đã ẩn). Ảnh của tác giả đang bị khoá/đang xoá trả 404 cho khách, chỉ chủ và staff còn xem được. Media bài viết `/api/media/posts/...` được cache `immutable` 1 năm. Các khoá R2 khác không đọc được qua đường này.
 - Ngoài các endpoint trong plan, có thêm `GET /api/admin/comments?cursor=` để trang quản trị xem bình luận mới nhất toàn site (mỗi mục có kèm `page`).
-- `GET /api/admin/counts` (staff: root và KDV; khách 401, người thường 403) → `{reportsPending, postsDraft, feedbackNew, feedbackDone, scanPending}`: số chiến báo chờ duyệt, bài nháp, góp ý chưa/đã xử lý, ảnh soi đội chờ duyệt, một truy vấn đếm theo index trạng thái sẵn có (không migration). `/quan-tri/` dùng cho badge điều hướng và dòng tổng ở khu Góp ý, tải lại sau mỗi thao tác đổi trạng thái.
+- `GET /api/admin/counts` (staff: root và KDV; khách 401, người thường 403) → `{reportsPending, postsDraft, feedbackNew, feedbackDone, scanPending, teamsPending}`: số chiến báo chờ duyệt, bài nháp, góp ý chưa/đã xử lý, ảnh soi đội chờ duyệt, đội cộng đồng chờ duyệt (`status = 'pending'` và chưa chốt xoá), một truy vấn đếm theo index trạng thái sẵn có (không migration). `/quan-tri/` dùng cho badge điều hướng và dòng tổng ở khu Góp ý, tải lại sau mỗi thao tác đổi trạng thái.
 - `PUT /api/admin/posts/:id` chỉ cập nhật các trường được gửi lên và trả `{post, deploy|null}`. `POST /api/admin/posts` trả post (201). `publish` và `unpublish` trả `{post, deploy}`.
 - Đổi phiên bản `better-auth` có thể đổi schema. Khi đó sinh lại SQL bằng `getMigrations(...).compileMigrations()` từ `better-auth/db/migration`, dùng một DB `node:sqlite` trống và đúng cấu hình của `src/auth.ts`, rồi thêm file migration mới. Không sửa file migration đã áp dụng.

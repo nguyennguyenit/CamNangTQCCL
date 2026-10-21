@@ -71,6 +71,8 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
 | `worker/src/config.ts`, `schema.ts` | Env config và schema kết quả cho 4 mode. |
+| `community-worker/src/routes/teams.ts`, `community-worker/src/teams-validate.ts`, `community-worker/migrations/0008_community_teams.sql` | Đội cộng đồng: mùa, đội + ảnh R2, vote, duyệt, xoá hai bước (`deleting_at` rồi dọn R2), AI nháp qua `callModel` nhóm `teamScan`; điểm/`hot_rank`/`top_rank` là cột sinh STORED, bộ đếm do trigger đếm lại. Rollback evidence: `community-worker/rollback/0009*`, `0010*` (chạy tay). |
+| `js/community-teams.js`, `js/community-team-state.js`, `js/community-team-form.js`, `js/community-team-data.js`, `src/components/pages/CommunityTeamsPage.astro` | Trang `/doi-cong-dong/` (vi + `/zh/`): danh sách, chi tiết, form đăng, của tôi; hàm thuần tách khỏi DOM và mạng. |
 
 ## Dữ liệu runtime
 
