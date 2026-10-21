@@ -85,15 +85,15 @@ Kết luận đã chốt (không còn câu hỏi mở):
 2. Chạy lại bước 1–11 với transaction id mới (`-r2`, `-r3`…).
 
 ## Todo
-- [ ] Candidate build/validate
-- [ ] Manifest `paths: []` + promote (`-r1`)
-- [ ] Route ledger + `_redirects` + `zh-gaps.md`
-- [ ] Repin `sourceFiles`
-- [ ] Localization build/check/publish
-- [ ] Team route pin
-- [ ] `generate:workflow-build`
-- [ ] Gate đầy đủ, kiểm dữ liệu cuối
-- [ ] Commit sinh riêng + PR-B
+- [x] Candidate build/validate
+- [x] Manifest `paths: []` + promote (`-r1`)
+- [x] Route ledger + `_redirects` + `zh-gaps.md`
+- [x] Repin `sourceFiles`
+- [x] Localization build/check/publish
+- [x] Team route pin
+- [x] `generate:workflow-build`
+- [x] Gate đầy đủ, kiểm dữ liệu cuối
+- [x] Commit sinh riêng + PR-B
 
 ## Kiểm tra
 - Mọi lệnh bước 9 pass; số liệu ghi vào PR-B.

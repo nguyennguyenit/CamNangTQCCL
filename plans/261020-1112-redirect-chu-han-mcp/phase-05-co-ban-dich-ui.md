@@ -59,11 +59,11 @@ Mục `source`/`capture`/`null` không có cờ, meta không đổi. Giải thí
 4. `node scripts/design-tokens.mjs --check`.
 
 ## Todo
-- [ ] Test cây vi/zh, record giả 2 revision, thẻ, bảng, meta (đỏ trước)
-- [ ] Helper trong `lookup-detail.js`
-- [ ] Render: hồ sơ, thẻ zh, bảng zh, meta zh
-- [ ] E2E
-- [ ] `design-tokens --check`
+- [x] Test cây vi/zh, record giả 2 revision, thẻ, bảng, meta (đỏ trước)
+- [x] Helper trong `lookup-detail.js`
+- [x] Render: hồ sơ, thẻ zh, bảng zh, meta zh
+- [x] E2E
+- [x] `design-tokens --check`
 
 ## Kiểm tra
 - `node --experimental-strip-types --test tests-js/lookup-profile-trees.test.mjs tests-js/unified-lookup.test.mjs` pass.

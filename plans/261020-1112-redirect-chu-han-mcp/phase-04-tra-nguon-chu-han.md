@@ -51,13 +51,13 @@ Mọi chiến pháp có chữ Hán không từ SGSDeck (31 pending + 29 `newTact
 6. **Rà đủ mọi mục** bằng một reviewer độc lập (không phải người tra): mục `source` khớp cơ chế với trang `ref`; mục `translation` giữ đúng số liệu với `effectViet`; mục `capture` chỉ thuộc 16 TROOP; `text` không có HTML/ký tự ẩn. Ghi kết quả rà vào cột cuối bảng.
 
 ## Todo
-- [ ] Danh sách từ builder (kỳ vọng 63)
-- [ ] Bảng `nguon-chu-han.md`
-- [ ] Tra 31 pending + 3 baseline
-- [ ] Tra 29 `newTactics` (16 TROOP: source hoặc capture)
-- [ ] Hợp nhất `zhEffects` + bỏ `effectZh` (một commit)
-- [ ] Candidate build/validate xanh
-- [ ] Rà đủ mọi mục
+- [x] Danh sách từ builder (kỳ vọng 63)
+- [x] Bảng `nguon-chu-han.md`
+- [x] Tra 31 pending + 3 baseline
+- [x] Tra 29 `newTactics` (16 TROOP: source hoặc capture)
+- [x] Hợp nhất `zhEffects` + bỏ `effectZh` (một commit)
+- [x] Candidate build/validate xanh
+- [x] Rà đủ mọi mục
 
 ## Kiểm tra
 - Candidate validate pass; 0 dòng `pending`.

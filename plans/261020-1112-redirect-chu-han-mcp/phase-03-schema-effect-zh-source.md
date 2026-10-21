@@ -65,11 +65,11 @@ Builder biết nguồn gốc thật của từng hiệu ứng chữ Hán; đầu
 4. Chạy test đơn vị (WSL) với fixture; **không** build trên dữ liệu thật ở phase này (dữ liệu thật sẽ đỏ cho tới phase 04 — có chủ ý, tránh nhãn tạm sai).
 
 ## Todo
-- [ ] Test Python/JS/MCP (đỏ trước)
-- [ ] Builder: nguồn gốc, `zhEffects`, chặn baseline, stale sha, kiểm text/URL
-- [ ] Validator Py + JS, `TACTIC_LOOKUP_KEYS`
-- [ ] `TACTIC_LOOKUP_FIELDS` MCP
-- [ ] 4 fixture đủ khoá
+- [x] Test Python/JS/MCP (đỏ trước)
+- [x] Builder: nguồn gốc, `zhEffects`, chặn baseline, stale sha, kiểm text/URL
+- [x] Validator Py + JS, `TACTIC_LOOKUP_KEYS`
+- [x] `TACTIC_LOOKUP_FIELDS` MCP
+- [x] 4 fixture đủ khoá
 
 ## Kiểm tra
 - `python3 -m unittest tests.test_build_unified_lookup.ClientTacticCaptureTest -v` pass.

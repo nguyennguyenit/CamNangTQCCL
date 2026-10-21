@@ -55,13 +55,13 @@ dependencies: [1]
 7. PR-A `feat/redirect-301` → gate → merge → deploy Pages ngay (`gh workflow run pages-deploy.yml --ref main`; quyết định Validation 2026-10-20) → chạy ma trận phase 07 bước 4 trên `https://tqccl.com`, `fail=0`; ghi kết quả vào `docs/deployment.md` (mục Pages riêng cho PR-A).
 
 ## Todo
-- [ ] Test Python (đỏ trước), `make_data` có `lookup.formerIds`
-- [ ] Emitter + `--redirects` + check stale
-- [ ] Sinh `public/_redirects`
-- [ ] Verifier + fixture + real-dist assert
-- [ ] Kiểm `wrangler pages dev`
-- [ ] Docs + PR-A merge
-- [ ] Deploy Pages sau PR-A, ma trận HTTP `fail=0`, ghi `docs/deployment.md`
+- [x] Test Python (đỏ trước), `make_data` có `lookup.formerIds`
+- [x] Emitter + `--redirects` + check stale
+- [x] Sinh `public/_redirects`
+- [x] Verifier + fixture + real-dist assert
+- [x] Kiểm `wrangler pages dev`
+- [x] Docs + PR-A merge
+- [x] Deploy Pages sau PR-A, ma trận HTTP `fail=0`, ghi `docs/deployment.md`
 
 ## Kiểm tra
 - `python3 -m unittest tests.test_lookup_route_handles -v` pass.

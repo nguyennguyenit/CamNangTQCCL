@@ -45,9 +45,9 @@ Có một bản sao Linux thật của `main` trong WSL để chạy pipeline Py
 5. Test nào đỏ trên `main` thì ghi lại là lỗi có sẵn (không sửa trong plan này trừ khi chặn).
 
 ## Todo
-- [ ] Clone `~/w2` từ `origin/main`
-- [ ] `npm ci` gốc + `mcp-worker`
-- [ ] Baseline gate, ghi số liệu
+- [x] Clone `~/w2` từ `origin/main`
+- [x] `npm ci` gốc + `mcp-worker`
+- [x] Baseline gate, ghi số liệu
 
 ## Kiểm tra
 - `git -C ~/w2 rev-parse HEAD` = `git rev-parse origin/main` trên Windows.

@@ -1,7 +1,7 @@
 ---
 title: "Redirect 301 cho link cũ, chữ Hán có nguồn cho mọi hiệu ứng ngoài SGSDeck, phát hành lại MCP"
 description: "Sinh _redirects 301 cho chiến pháp gộp (vi + zh), điền chữ Hán cho 31 chiến pháp pending và gắn nguồn cho mọi chữ Hán không đến từ SGSDeck, hiện cờ bản dịch trên site + MCP, rồi deploy Pages và phát hành MCP #2 cùng SHA."
-status: pending
+status: completed
 priority: P1
 effort: "4d"
 branch: main
@@ -138,3 +138,19 @@ Token Cloudflare/preflight lỗi; release, promote hoặc deploy lỗi không gi
 - Decision deltas checked: 1 (deploy sớm PR-A thành bắt buộc)
 - Reconciled stale references: 1 (phase 02 bước 7 + Todo)
 - Unresolved contradictions: 0
+
+### Session 2 — 2026-10-21 (thực thi, `ak:cook --advice`)
+| # | Câu hỏi | Quyết định | Áp vào |
+|---|---------|------------|--------|
+| 1 | 三略庫 chỉ hiện số đầy cấp: đủ làm `source`? | Không (tư vấn: lựa chọn B). `source` chỉ khi trang có đủ dải cấp; 31 mục lấy từ bài Bahamut 戰法一覽【S1-S9】 | Phase 04 |
+| 2 | `design-tokens --check` đỏ sẵn trên `main` | Người dùng: sửa trong PR-B (`.cm-auth-notice-close` dùng token) | PR #22 |
+| 3 | MCP #1 chưa chạy | Người dùng: chạy ngay; lần 1 dừng ở Playwright timeout trước deploy, người dùng duyệt rerun một lần → xanh | Điều kiện tiên quyết |
+| 4 | Sửa theo review khi đã có commit sinh | Người dùng: force-push PR #22 (transaction `-r2`, rồi `-r3` sau khi `main` có PR #24) | Phase 06 |
+| 5 | Review Astra: MERGE-WITH-FOLLOWUPS | Người dùng: merge ngay, follow-up sau | Phase 07 |
+
+Kết quả: PR #19 (`6b17d23`) và PR #22 (`1fa81ab`) đã merge; Pages `cb91471a` và Research MCP `62cba122…` cùng SHA `1fa81ab`; ghi ở `docs/deployment.md`.
+
+Follow-up chưa làm (theo quyết định #5):
+- `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`): chữ Hán thiếu dải tỉ lệ phát động theo cấp (23%→45%, 30%→45%, 25%→40%) nằm ở cột riêng của bài Bahamut; bản zh chỉ hiện mức tối đa.
+- Test đổi phiên bản hiệu ứng chỉ kiểm cấu trúc (cờ ngoài panel), chưa bấm nút phiên bản trên record `translation` nhiều phiên bản.
+- Không gọi được `tqccl_get_entity` production có xác thực từ máy này (không có bearer); bằng chứng là verifier của workflow + release ID trùng với CLI cục bộ.

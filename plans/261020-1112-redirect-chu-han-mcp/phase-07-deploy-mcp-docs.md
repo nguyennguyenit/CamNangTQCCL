@@ -58,14 +58,14 @@ PR-B trên `main`; Pages và MCP production chạy cùng một SHA tại thời 
 10. `ak plan` cập nhật trạng thái; dọn `~/w2/pipeline/lookup-output`, `.cache` nếu không cần.
 
 ## Todo
-- [ ] Đóng băng `main` + blog
-- [ ] Merge PR-B, ghi `MAIN_SHA`
-- [ ] Deploy Pages, commit hash = `MAIN_SHA`
-- [ ] Ma trận HTTP `fail=0`
-- [ ] Trang mẫu: cờ, bảng zh, meta zh
-- [ ] MCP #2 cùng SHA
-- [ ] Kiểm `tqccl_get_entity`
-- [ ] Mở đóng băng, docs
+- [x] Đóng băng `main` + blog
+- [x] Merge PR-B, ghi `MAIN_SHA`
+- [x] Deploy Pages, commit hash = `MAIN_SHA`
+- [x] Ma trận HTTP `fail=0`
+- [x] Trang mẫu: cờ, bảng zh, meta zh
+- [x] MCP #2 cùng SHA
+- [x] Kiểm `tqccl_get_entity`
+- [x] Mở đóng băng, docs
 
 ## Kiểm tra
 - Ma trận HTTP `fail=0`.
