@@ -11,6 +11,7 @@ import {
   displayName,
   downscaleImage,
   formatPercent,
+  langTag,
   liveStatus,
   resultLabel,
   signInPrompt,
@@ -91,7 +92,7 @@ function statsPanel(stats) {
   ]);
 }
 
-function reportItem(report) {
+function reportItem(report, { tagged = false } = {}) {
   const imageUrl = typeof report.imageUrl === 'string' && report.imageUrl.startsWith('/api/') ? report.imageUrl : null;
   return el('li', { class: 'cm-report' }, [
     reportSummary(report),
@@ -104,6 +105,7 @@ function reportItem(report) {
     el('p', { class: 'cm-report-meta' }, [
       avatar(report.author),
       el('span', {}, displayName(report.author)),
+      tagged ? langTag(report.lang) : null,
       timeNode(report.createdAt),
     ]),
   ]);
@@ -272,8 +274,12 @@ function submitFlow({ pageKey, lang }) {
   return wrapper;
 }
 
-/** Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi. */
-export function mountReports(container, { pageKey, lang, user }) {
+/**
+ * Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi.
+ * `sharedPool` (đội cộng đồng): không lọc theo `lang`, mỗi chiến báo kèm nhãn `[VI]`/`[ZH]`.
+ * `archived` (mùa đã đóng): thay luồng gửi bằng ghi chú lưu trữ.
+ */
+export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false }) {
   const titleId = 'cm-reports-title';
   const statsBox = el('div', { class: 'cm-stats-box' });
   const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Chiến báo đã duyệt', '已审核战报') });
@@ -286,7 +292,7 @@ export function mountReports(container, { pageKey, lang, user }) {
     if (cursor) params.set('cursor', cursor);
     const body = await api(`/api/reports?${params}`);
     for (const report of Array.isArray(body?.items) ? body.items : []) {
-      if (report?.lang === lang) list.append(reportItem(report));
+      if (sharedPool || report?.lang === lang) list.append(reportItem(report, { tagged: sharedPool }));
     }
     list.hidden = list.childElementCount === 0;
     cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
@@ -325,7 +331,9 @@ export function mountReports(container, { pageKey, lang, user }) {
     list,
     moreButton,
     status,
-    user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。')),
+    archived
+      ? el('p', { class: 'scope-note cm-archived' }, L('Mùa đã lưu trữ — không nhận chiến báo mới.', '赛季已归档，不再接受新战报。'))
+      : user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。')),
   ]);
   list.hidden = true;
   container.append(section);

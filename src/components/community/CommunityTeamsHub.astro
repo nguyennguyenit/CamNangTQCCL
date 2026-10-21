@@ -1,0 +1,20 @@
+---
+// Khung tĩnh trang /doi-cong-dong/: tiêu đề + mount `#community-teams` do js/community-teams.js dựng.
+// Nhận `locale` để bản /zh/ dùng lại nguyên component.
+import { localePath, pick } from '../../../js/i18n.js';
+
+interface Props {
+  locale: 'vi' | 'zh';
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string) => pick(locale, vi, zh);
+---
+<section class="cm-page cm-team-page" aria-labelledby="cm-team-title">
+  <h1 id="cm-team-title" class="detail-title">{t('Đội cộng đồng', '社区阵容')}</h1>
+  <p class="scope-note">{t('Đội do người chơi đăng cho mùa đang mở. Bài được quản trị viên duyệt trước khi hiện; mọi người có thể bình chọn, bình luận và gửi chiến báo.', '玩家为当前赛季发布的阵容。内容经管理员审核后显示；大家可以投票、评论并提交战报。')}</p>
+  <p class="scope-note"><a class="cm-link" href={localePath('/chien-bao/', locale)}>{t('Tìm hiểu cách gửi chiến báo', '了解如何提交战报')}</a></p>
+  <div id="community-teams" class="cm-team-root">
+    <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。')}</p></noscript>
+  </div>
+</section>

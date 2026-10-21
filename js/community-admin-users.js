@@ -46,6 +46,10 @@ function actionLabel(action) {
     case 'post.unpublish': return L('Gỡ xuất bản bài viết', '取消发布文章');
     case 'post.upload': return L('Tải ảnh bài viết', '上传文章图片');
     case 'ai.config.update': return L('Cập nhật cấu hình AI', '更新 AI 配置');
+    case 'team.approve': return L('Duyệt đội cộng đồng', '通过社区阵容');
+    case 'team.reject': return L('Từ chối đội cộng đồng', '拒绝社区阵容');
+    case 'team.delete': return L('Gỡ đội cộng đồng', '下架社区阵容');
+    case 'season.open': return L('Mở mùa mới', '开启新赛季');
     default: return String(action || '');
   }
 }
@@ -54,6 +58,7 @@ const AUDIT_ACTIONS = [
   'user.ban', 'user.unban', 'user.role', 'user.delete.start', 'user.delete', 'comment.delete',
   'report.approve', 'report.reject', 'scan_sample.approve', 'scan_sample.reject', 'feedback.status',
   'post.create', 'post.update', 'post.delete', 'post.publish', 'post.unpublish', 'post.upload', 'ai.config.update',
+  'team.approve', 'team.reject', 'team.delete', 'season.open',
 ];
 
 function auditStatusBadge(status) {
@@ -82,6 +87,8 @@ function targetTypeLabel(type) {
     case 'post': return L('bài viết', '文章');
     case 'upload': return L('ảnh bài viết', '文章图片');
     case 'ai_config': return L('cấu hình AI', 'AI 配置');
+    case 'team': return L('đội cộng đồng', '社区阵容');
+    case 'season': return L('mùa', '赛季');
     default: return String(type || '');
   }
 }
@@ -224,7 +231,7 @@ let dialogSeq = 0;
  * `submit()` chạy khi bấm xác nhận; lỗi hiện ở dòng `role=alert` của hộp thoại (người gọi tự báo + tải lại trạng thái),
  * hoặc đóng hộp thoại nếu `closeOnError` (lỗi đã báo ở dòng trạng thái của khu). `confirmDisabled` khoá nút xác nhận ban đầu.
  */
-function actionDialog({ title, lead, fields, submitLabel, danger = false, confirmDisabled = false, closeOnError = false, validate, submit, onClose }) {
+export function actionDialog({ title, lead, fields, submitLabel, danger = false, confirmDisabled = false, closeOnError = false, validate, submit, onClose }) {
   const titleId = `adm-dialog-title-${++dialogSeq}`;
   const alert = el('p', { class: 'cm-status adm-status', role: 'alert', hidden: '' });
   alert.dataset.kind = 'error';

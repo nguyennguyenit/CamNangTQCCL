@@ -1,9 +1,9 @@
 // Trang /chien-bao/: "Chiến báo của tôi" kèm trạng thái duyệt (chờ duyệt, đã duyệt, bị từ chối + lý do).
 // Hướng dẫn đóng góp là HTML tĩnh trong src/components/community/ReportsHub.astro.
 
-import { L, currentLocale, localePath } from './i18n.js';
+import { L, currentLocale } from './i18n.js';
 import { el } from './render.js';
-import { api, loadSession, signInPrompt, timeNode, unavailableNotice } from './community-api.js';
+import { api, communityPageHref, loadSession, signInPrompt, timeNode, unavailableNotice } from './community-api.js';
 import { reportSummary } from './community-reports.js';
 
 const STATUS_LABELS = {
@@ -14,7 +14,7 @@ const STATUS_LABELS = {
 
 function teamLink(pageKey) {
   if (typeof pageKey !== 'string' || !pageKey.startsWith('/')) return null;
-  return el('a', { class: 'cm-link', href: localePath(pageKey) }, L('Mở trang đội', '打开阵容页面'));
+  return el('a', { class: 'cm-link', href: communityPageHref(pageKey) }, L('Mở trang đội', '打开阵容页面'));
 }
 
 function myReportItem(report) {

@@ -14131,6 +14131,20 @@ body[data-page-section="roster-recommend"] .layout {
 /* Duyệt chiến báo + mẫu Soi đội: ô ảnh 280×176 nền dải bên trái. */
 .adm-report { display: flex; align-items: flex-start; gap: var(--space-18); padding: var(--space-18); }
 
+.adm-team-title { margin: 0; color: var(--ink); font: var(--type-dialog-title); overflow-wrap: anywhere; }
+
+.adm-team-heroes { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); margin: 0; }
+
+.adm-team-tactics { display: grid; gap: var(--space-6); margin: 0; padding: 0; list-style: none; }
+
+.adm-team-images { display: flex; flex-wrap: wrap; gap: var(--space-10); }
+
+.adm-team-field { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.adm-season { display: grid; gap: var(--space-12); margin-bottom: var(--space-14); }
+
+.adm-season-form { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-12); }
+
 .adm-report-image {
   position: relative;
   display: flex;
@@ -14770,6 +14784,123 @@ body[data-page-section="roster-recommend"] .layout {
   }
 }
 
+/* ---------- Đội cộng đồng (/doi-cong-dong/) ---------- */
+.cm-team-root,
+.cm-team-view { display: grid; gap: var(--space-16); }
+
+.cm-team-nav { display: flex; flex-wrap: wrap; gap: var(--space-8); }
+
+.cm-team-tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-44);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  color: var(--ink-2);
+  font: var(--type-small);
+  text-decoration: none;
+}
+
+.cm-team-tab:hover,
+.cm-team-tab.is-active { border-color: var(--accent-ink); background-color: var(--accent-soft); color: var(--accent-ink); }
+
+.cm-team-heading { margin: 0; color: var(--ink); font: var(--type-list-title); }
+.cm-team-heading:focus { outline: none; }
+
+.cm-team-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-12); }
+.cm-team-filter-heroes { display: flex; flex-wrap: wrap; gap: var(--space-8); margin: 0; padding: 0; border: 0; }
+.cm-team-filter-heroes legend { width: 100%; padding: 0; }
+.cm-team-filter-hero { width: var(--size-col-120); }
+
+.cm-team-grid { display: grid; gap: var(--space-12); margin: 0; padding: 0; list-style: none; }
+
+.cm-team-card {
+  display: grid;
+  grid-template-columns: var(--size-col-120) minmax(0, 1fr);
+  gap: var(--space-14);
+  padding: var(--space-14);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background-color: var(--panel-3);
+}
+
+.cm-team-card:not(:has(.cm-team-thumb)) { grid-template-columns: minmax(0, 1fr); }
+
+.cm-team-thumb {
+  width: 100%;
+  height: var(--size-col-120);
+  border-radius: var(--radius-8);
+  object-fit: cover;
+  background-color: var(--panel-2);
+}
+
+.cm-team-card-body { display: grid; gap: var(--space-8); min-width: 0; align-content: start; }
+.cm-team-card-heading { margin: 0; font: var(--type-strong); overflow-wrap: anywhere; }
+.cm-team-card-title { color: var(--ink); }
+
+.cm-team-heroes { display: flex; flex-wrap: wrap; gap: var(--space-10); }
+.cm-team-hero { display: inline-flex; align-items: center; gap: var(--space-6); color: var(--ink); font: var(--type-hero-name); }
+.cm-team-portrait { flex: none; width: var(--control-32); height: var(--control-32); border-radius: var(--radius-round); }
+.cm-team-hero-preview { display: inline-flex; }
+
+.cm-team-meta,
+.cm-team-stats,
+.cm-team-author { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8); margin: 0; color: var(--muted); font: var(--type-meta); }
+
+.cm-team-stat { white-space: nowrap; }
+.cm-lang-tag { color: var(--accent-ink); font: var(--type-badge); }
+
+.cm-team-detail { display: grid; gap: var(--space-14); }
+.cm-team-images { display: flex; flex-wrap: wrap; gap: var(--space-10); }
+.cm-team-image { display: block; max-width: 100%; max-height: var(--size-panel-440); border-radius: var(--radius-8); border: var(--border-hair) solid var(--line-2); }
+
+.cm-team-table { width: 100%; border-collapse: collapse; }
+.cm-team-table th,
+.cm-team-table td { padding: var(--space-8) var(--space-10); border-bottom: var(--border-hair) solid var(--line-2); text-align: left; font: var(--type-small); vertical-align: middle; }
+
+.cm-team-analysis { display: grid; gap: var(--space-10); margin: 0; }
+.cm-team-analysis-item dt { color: var(--muted); font: var(--type-label-caps); letter-spacing: var(--type-label-caps-spacing); text-transform: uppercase; }
+.cm-team-analysis-item dd { margin: var(--space-4) 0 0; }
+.cm-team-text { color: var(--ink-2); font: var(--type-body); white-space: pre-wrap; overflow-wrap: anywhere; }
+
+.cm-team-vote-bar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); }
+.cm-team-vote[aria-pressed="true"] { border-color: var(--accent-ink); background-color: var(--accent-soft); color: var(--accent-ink); }
+.cm-team-points { color: var(--ink); font: var(--type-strong); }
+.cm-team-vote-note { margin: 0; }
+
+.cm-team-similar { display: grid; gap: var(--space-8); }
+.cm-team-similar-list { display: grid; gap: var(--space-6); margin: 0; padding-left: var(--space-20); }
+.cm-team-widgets { display: grid; gap: var(--space-20); }
+
+.cm-team-form,
+.cm-team-form-root { display: grid; gap: var(--space-16); }
+.cm-team-form fieldset { display: grid; gap: var(--space-12); margin: 0; padding: var(--space-14); border: var(--border-hair) solid var(--line-2); border-radius: var(--radius-12); }
+.cm-team-form legend { padding: 0 var(--space-6); }
+.cm-team-image-slot { display: grid; gap: var(--space-8); }
+.cm-team-preview { max-width: var(--size-col-230); max-height: var(--size-col-200); border-radius: var(--radius-8); object-fit: contain; }
+.cm-team-sides { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-12); }
+.cm-team-sides .scope-note { margin: 0; }
+.cm-team-side { display: inline-flex; align-items: center; gap: var(--space-6); font: var(--type-small); }
+
+.cm-team-form-grid { display: grid; gap: var(--space-12); }
+.cm-team-form-hero { grid-template-columns: repeat(auto-fit, minmax(var(--size-col-200), 1fr)); }
+.cm-team-form-hero legend { width: auto; }
+.cm-team-cell[data-state="unsure"] .cm-team-cell-input { border-color: var(--warn); background-color: var(--warn-bg); color: var(--warn); }
+.cm-team-cell[data-state="unknown"] .cm-team-cell-input { border-color: var(--avoid); }
+.cm-team-candidates { display: flex; flex-wrap: wrap; gap: var(--space-6); }
+.cm-team-candidate { color: var(--warn); }
+.cm-team-similar-warning { padding: var(--space-12) var(--space-16); border: var(--border-hair) solid var(--warn); border-radius: var(--radius-10); background-color: var(--warn-bg); color: var(--warn); font: var(--type-small); }
+.cm-team-similar-warning p { margin: 0 0 var(--space-6); }
+.cm-team-similar-warning ul { margin: 0; padding-left: var(--space-20); }
+
+.cm-archived { padding: var(--space-10) var(--space-14); border: var(--border-hair) dashed var(--line); border-radius: var(--radius-10); }
+
+@media (max-width: 680px) {
+  .cm-team-card { grid-template-columns: minmax(0, 1fr); }
+  .cm-team-thumb { height: var(--size-col-200); }
+}
+
 /* Nút đứng riêng trong khối lưới giữ bề rộng theo chữ, không kéo giãn hết hàng. */
 .cm-report-flow > .ana-btn,
 .cm-signin > .ana-btn { justify-self: start; }
@@ -14779,6 +14910,7 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-root[hidden],
 .cm-root [hidden],
 .cm-page [hidden],
+.cm-team-root [hidden],
 .cm-auth [hidden] { display: none; }
 
 /* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương vi ↔ zh, nhãn viết bằng ngôn ngữ đích. */

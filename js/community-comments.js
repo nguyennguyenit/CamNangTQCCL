@@ -9,12 +9,13 @@ import {
   avatar,
   describeError,
   displayName,
+  langTag,
   liveStatus,
   signInPrompt,
   timeNode,
 } from './community-api.js';
 
-function commentItem(comment, { onDelete }) {
+function commentItem(comment, { onDelete, tagged = false }) {
   const deleteButton = comment.canDelete
     ? el('button', { class: 'cm-text-btn cm-comment-delete', type: 'button' }, L('Xoá', '删除'))
     : null;
@@ -23,6 +24,7 @@ function commentItem(comment, { onDelete }) {
     el('div', { class: 'cm-comment-main' }, [
       el('p', { class: 'cm-comment-meta' }, [
         el('span', { class: 'cm-comment-author' }, displayName(comment.author)),
+        tagged ? langTag(comment.lang) : null,
         timeNode(comment.createdAt),
       ]),
       el('p', { class: 'cm-comment-body' }, String(comment.body || '')),
@@ -35,9 +37,11 @@ function commentItem(comment, { onDelete }) {
 
 /**
  * Khối bình luận. `user` null → mời đăng nhập thay cho ô nhập.
+ * `sharedPool` (đội cộng đồng, kho chung vi/zh): không lọc theo `lang`, mỗi bình luận kèm nhãn `[VI]`/`[ZH]`;
+ * bài mới vẫn gửi `lang` của trang.
  * Trả về element section để trang gắn vào.
  */
-export function mountComments(container, { pageKey, lang, user }) {
+export function mountComments(container, { pageKey, lang, user, sharedPool = false }) {
   const titleId = 'cm-comments-title';
   const list = el('ol', { class: 'cm-comment-list', 'aria-labelledby': titleId });
   const empty = el('p', { class: 'scope-note cm-empty' }, L('Chưa có bình luận nào. Hãy là người đầu tiên!', '还没有评论，来发表第一条吧！'));
@@ -67,8 +71,8 @@ export function mountComments(container, { pageKey, lang, user }) {
 
   const append = (items) => {
     for (const comment of items) {
-      if (comment?.lang !== lang) continue;
-      list.append(commentItem(comment, { onDelete }));
+      if (!sharedPool && comment?.lang !== lang) continue;
+      list.append(commentItem(comment, { onDelete, tagged: sharedPool }));
     }
     refreshEmpty();
   };
@@ -141,7 +145,7 @@ export function mountComments(container, { pageKey, lang, user }) {
       try {
         const created = await api('/api/comments', { method: 'POST', json: { page: pageKey, lang, body } });
         const comment = { ...created, lang: created?.lang || lang, author: created?.author || user, canDelete: created?.canDelete ?? true };
-        list.prepend(commentItem(comment, { onDelete }));
+        list.prepend(commentItem(comment, { onDelete, tagged: sharedPool }));
         refreshEmpty();
         textarea.value = '';
         updateCounter();
