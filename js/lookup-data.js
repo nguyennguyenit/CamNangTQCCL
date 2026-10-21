@@ -12,6 +12,8 @@ const CARD_PACK_KEYS = ["packVi", "packZh", "categoryVi", "categoryZh", "isCore"
 const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds", "effectZhSource"];
 /** Nguồn chữ Hán hiệu ứng không đến từ SGSDeck; `null` = SGSDeck hoặc chưa có chữ Hán. */
 const ZH_EFFECT_KINDS = new Set(["source", "capture", "translation"]);
+/** Chữ giữ chỗ của SGSDeck (`MISSING_TEXT` của pipeline/build_unified_lookup.py): không phải chữ Hán hiệu ứng. */
+const MISSING_TEXT = new Set(["待補充", "待补充"]);
 const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
 const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
 
@@ -117,7 +119,7 @@ function validateTactic(record) {
   }
   const zhSource = lookup.effectZhSource;
   if (zhSource !== null && (!isPlainObject(zhSource) || !keysEqual(zhSource, ["kind"]) || !ZH_EFFECT_KINDS.has(zhSource.kind)
-    || typeof record.effect !== "string" || !record.effect.trim())) {
+    || typeof record.effect !== "string" || !record.effect.trim() || MISSING_TEXT.has(record.effect))) {
     throw new Error(`${owner}.lookup.effectZhSource không hợp lệ`);
   }
   requireConditions(`${owner}.lookup`, lookup.conditions);

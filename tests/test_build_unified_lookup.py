@@ -866,6 +866,7 @@ class ClientTacticCaptureTest(unittest.TestCase):
             ({"tactic:ho-ve": {**good, "text": "分擔<br>傷害"}}, "zhEffects.text is invalid"),
             ({"tactic:ho-ve": {**good, "text": "分擔&nbsp;傷害"}}, "zhEffects.text is invalid"),
             ({"tactic:ho-ve": {**good, "text": "效" * 1501}}, "zhEffects.text is invalid"),
+            ({"tactic:ho-ve": {**good, "text": "待補充"}}, "zhEffects.text is invalid"),
             ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://u@sanzhan.slgsim.com/x"}}}, "source.ref is invalid"),
             ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://sanzhan.slgsim.com/a b"}}}, "source.ref is invalid"),
             ({"tactic:ho-ve": {**good, "source": {"kind": "source", "ref": "https://example.com/x"}}}, "source.ref is invalid"),
@@ -874,8 +875,8 @@ class ClientTacticCaptureTest(unittest.TestCase):
             ({"tactic:ho-ve": {**good, "source": {"kind": "capture", "note": "https://sanzhan.slgsim.com/x"}}}, "source.note is invalid"),
             ({"tactic:ho-ve": {**good, "source": {"kind": "translation", "ref": "https://sanzhan.slgsim.com/x"}}}, "zhEffects.source is invalid"),
             ({"tactic:ho-ve": {**good, "source": {"kind": "sgsdeck"}}}, "zhEffects.source is invalid"),
-            ({"tactic:ho-ve": good, "tactic:vien-cuu": self._zh("x", "y")}, "zhEffects owner is invalid: tactic:vien-cuu"),
-            ({"tactic:ho-ve": good, "tactic:khong-co": self._zh("x", "y")}, "zhEffects owner is invalid: tactic:khong-co"),
+            ({"tactic:ho-ve": good, "tactic:vien-cuu": self._zh("x", "y")}, "SGSDeck now provides the Chinese effect; remove the zhEffects entry: tactic:vien-cuu"),
+            ({"tactic:ho-ve": good, "tactic:khong-co": self._zh("x", "y")}, "zhEffects owner is not a tactic in the catalog: tactic:khong-co"),
             ({}, "non-SGSDeck zh effect without zhEffects: .*tactic:ho-ve"),
         ):
             with self.subTest(error=error), self.assertRaisesRegex(ValueError, error):
@@ -884,10 +885,13 @@ class ClientTacticCaptureTest(unittest.TestCase):
             self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "effectZh": "分擔傷害"}}, zhEffects={"tactic:ho-ve": good})
 
     def test_baseline_chinese_effect_needs_a_declared_zh_effect(self):
+        # Ghim cứng: chỉ ba chiến pháp này xuất bản chữ Hán của baseline cũ (SGSDeck `待補充` hoặc không có bản ghi).
         baseline = self._baseline_zh_effects()
-        self.assertTrue(baseline)
+        self.assertEqual(sorted(baseline), ["tactic:luc-luc-thuong-quoc", "tactic:nhanh-tri-dong-nao", "tactic:vo-song-thuong-tuong"])
         with self.assertRaisesRegex(ValueError, "non-SGSDeck zh effect without zhEffects: " + ", ".join(sorted(baseline))):
             self._build({}, baseline_zh=False)
+        with self.assertRaisesRegex(ValueError, "zhEffects owner is retired: tactic:nhanh-tri-dong-nao"):
+            self._build({}, retired={"tactic:nhanh-tri-dong-nao": None}, zhEffects=baseline)
         owner = sorted(baseline)[0]
         row = self._rows(self._build({}), "tactics.json")[owner]
         self.assertEqual((row["effect"], row["lookup"]["effectZhSource"], row["pending"]), ("測試", {"kind": "translation"}, False))

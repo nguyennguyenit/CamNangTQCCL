@@ -457,6 +457,7 @@ test("effectZhSource: null hoặc đúng {kind} của source/capture/translation
     ["kind lạ", { kind: "sgsdeck" }],
     ["chuỗi thay object", "translation"],
     ["không có chữ Hán", { kind: "translation" }, { effect: null, pending: true }],
+    ["chữ giữ chỗ SGSDeck", { kind: "translation" }, { effect: "待補充" }],
   ]) {
     const bad = make(value, over);
     await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /effectZhSource/, label);

@@ -1082,7 +1082,7 @@ def _zh_effect_text(value, owner):
     """Chữ Hán hiệu ứng đưa vào dữ liệu công khai: không HTML, thực thể, ký tự điều khiển/ẩn (trừ xuống dòng)."""
     text = _client_tactic_text(value, owner, "zhEffects.text")
     if (
-        len(text) > ZH_EFFECT_MAX_LENGTH
+        len(text) > ZH_EFFECT_MAX_LENGTH or text in MISSING_TEXT
         or "<" in text or ">" in text or HTML_ENTITY.search(text)
         or any(char != "\n" and unicodedata.category(char) in ("Cc", "Cf") for char in text)
     ):
@@ -1243,8 +1243,12 @@ def _apply_zh_effects(document, tactics, effect_origin):
     ledger = []
     for owner, entry in sorted(entries.items()):
         row = by_id.get(owner)
-        if row is None or effect_origin.get(owner) == "sgsdeck":
-            raise ValueError(f"client tactic zhEffects owner is invalid: {owner}")
+        if row is None:
+            state = "retired" if owner in document.get("retired", {}) else "not a tactic in the catalog"
+            raise ValueError(f"client tactic zhEffects owner is {state}: {owner}")
+        if effect_origin.get(owner) == "sgsdeck":
+            # Thường xảy ra khi làm mới snapshot: SGSDeck vừa có chữ cho một mục từng thiếu.
+            raise ValueError(f"SGSDeck now provides the Chinese effect; remove the zhEffects entry: {owner}")
         if not isinstance(entry, dict) or set(entry) != ZH_EFFECT_KEYS or not isinstance(entry["viSha256"], str) or not SHA256_HEX.fullmatch(entry["viSha256"]):
             raise ValueError(f"client tactic zhEffects entry is invalid: {owner}")
         text = _zh_effect_text(entry["text"], owner)

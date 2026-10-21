@@ -200,7 +200,7 @@ test("JSON-LD trang riêng từng mục (886 × 2): ItemPage (url, inLanguage, i
   assert.ok(alternates > 300, `bản Việt phải khai tên chữ Hán có trong trang (${alternates})`);
 });
 
-test("mô tả meta + JSON-LD bản zh của chiến pháp chữ Hán dịch (`translation`) bỏ đoạn hiệu ứng; mục khác và bản Việt giữ", async () => {
+test("mô tả meta bản zh (JSON-LD dùng cùng mô tả) của chiến pháp chữ Hán dịch (`translation`) bỏ đoạn hiệu ứng; mục khác và bản Việt giữ", async () => {
   const [routes, corpus] = await Promise.all([lookupDetailRoutes(), lookupBuildCorpus()]);
   // Đoạn đầu của bản hiệu ứng hiện hành, như `describe` của src/lib/lookup-item-pages.ts.
   const head = (text) => (effectVersions(text)[0]?.paragraphs.find((paragraph) => !isVersionHeading(paragraph)) ?? "").replace(/\s+/gu, " ").trim().slice(0, 12);
