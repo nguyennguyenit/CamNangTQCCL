@@ -21,7 +21,11 @@ def write_json(path: Path, value) -> None:
     path.write_text(json.dumps(value, ensure_ascii=False), encoding="utf-8")
 
 
-def make_data(root: Path, *, heroes=None, books=None, generation=GENERATION) -> Path:
+def tactic(tactic_id: str, viet: str, former=()) -> dict:
+    return {"id": tactic_id, "viet": viet, "lookup": {"formerIds": list(former)}}
+
+
+def make_data(root: Path, *, heroes=None, books=None, tactics=None, generation=GENERATION) -> Path:
     data = root / "data"
     data.mkdir(parents=True, exist_ok=True)
     write_json(data / "lookup-manifest.json", {"files": {}, "generationId": generation, "schemaVersion": 1})
@@ -30,7 +34,7 @@ def make_data(root: Path, *, heroes=None, books=None, generation=GENERATION) -> 
         {"id": "hero:sp-lu-mong", "viet": "Lữ Mông"},
         {"id": "hero:dang-ai", "viet": "Đặng Ngải"},
     ])
-    write_json(data / "tactics.json", [{"id": "tactic:binh-thanh", "viet": "Binh Thánh"}])
+    write_json(data / "tactics.json", tactics if tactics is not None else [tactic("tactic:binh-thanh", "Binh Thánh")])
     write_json(data / "lookup-catalog.json", {
         "equipment": [{"id": "equipment:kiem", "nameVi": "Kiếm"}],
         "specials": [{"id": "equipment-special:kiem-1", "nameVi": "Kiếm đặc kỹ", "equipmentId": "equipment:kiem"}],
@@ -53,11 +57,12 @@ class LookupLedgerTest(unittest.TestCase):
         self.addCleanup(shutil.rmtree, self.tmp, True)
         self.data = make_data(self.tmp)
         self.ledger = self.tmp / "ledger.json"
+        self.redirects = self.tmp / "_redirects"
 
     def run_cli(self, *args):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger)])
+            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects)])
         return code, out.getvalue(), err.getvalue()
 
     def handles(self):
@@ -237,8 +242,53 @@ class LookupLedgerTest(unittest.TestCase):
 
     def test_check_never_rederives_from_names(self):
         self.run_cli("--write")
-        write_json(self.data / "tactics.json", [{"id": "tactic:binh-thanh", "viet": "Đổi Tên"}])
+        write_json(self.data / "tactics.json", [tactic("tactic:binh-thanh", "Đổi Tên")])
         self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def merge_tactic(self):
+        """`tactic:cu` leaves the corpus as a former id of `tactic:binh-thanh`; `tactic:bo` leaves with no survivor."""
+        write_json(self.data / "tactics.json", [
+            tactic("tactic:binh-thanh", "Binh Thánh"), tactic("tactic:cu", "Cũ"), tactic("tactic:bo", "Bỏ"),
+        ])
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        write_json(self.data / "tactics.json", [tactic("tactic:binh-thanh", "Binh Thánh", ["tactic:cu"])])
+        self.assertEqual(self.run_cli("--write")[0], 0)
+
+    def test_merged_tactic_gets_one_301_per_locale_and_dropped_one_none(self):
+        self.merge_tactic()
+        self.assertEqual(self.redirects.read_text(encoding="utf-8"), "\n".join([
+            lrh.REDIRECTS_HEADER,
+            "/tra-cuu/chien-phap/cu/ /tra-cuu/chien-phap/binh-thanh/ 301",
+            "/zh/tra-cuu/chien-phap/cu/ /zh/tra-cuu/chien-phap/binh-thanh/ 301",
+        ]) + "\n")
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_check_fails_on_stale_redirects(self):
+        self.merge_tactic()
+        self.redirects.write_text(self.redirects.read_text(encoding="utf-8") + "/a/ /b/ 301\n", encoding="utf-8")
+        code, _, err = self.run_cli("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("is stale; run --write", err)
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_survivor_without_live_slug_fails(self):
+        self.merge_tactic()
+        self.edit_ledger(lambda l: l["handles"]["tactics"].pop("tactic:binh-thanh"), redigest=True)
+        self.assertEqual(self.run_cli("--check")[0], 1)  # the ledger check already misses the corpus id
+        ledger = json.loads(self.ledger.read_text(encoding="utf-8"))
+        with self.assertRaisesRegex(lrh.LookupRouteHandleError, "survivor tactic:binh-thanh of tactic:cu has no live slug"):
+            lrh.redirects_bytes({"tactic:cu": "tactic:binh-thanh"}, ledger)
+
+    def test_former_id_without_retired_slug_fails(self):
+        write_json(self.data / "tactics.json", [tactic("tactic:binh-thanh", "Binh Thánh", ["tactic:never-routed"])])
+        code, _, err = self.run_cli("--write")
+        self.assertEqual(code, 1)
+        self.assertIn("former id tactic:never-routed of tactic:binh-thanh has no retired slug", err)
+
+    def test_tactic_without_lookup_former_ids_is_a_data_error(self):
+        write_json(self.data / "tactics.json", [{"id": "tactic:binh-thanh", "viet": "Binh Thánh"}])
+        self.assertEqual(self.run_cli("--write")[0], 1)
 
 
 class RealLedgerTest(unittest.TestCase):
@@ -253,6 +303,16 @@ class RealLedgerTest(unittest.TestCase):
     def test_committed_bytes_are_canonical(self):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         self.assertEqual(lrh.ledger_bytes(copy.deepcopy(ledger)), lrh.DEFAULT_LEDGER_PATH.read_bytes())
+
+    def test_committed_redirects_match_the_ledger(self):
+        ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
+        former = lrh.former_owner_map(REPO_ROOT / "data")
+        self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger))
+        tactics = json.loads((REPO_ROOT / "data/tactics.json").read_bytes())
+        pairs = sum(len(row["lookup"]["formerIds"]) for row in tactics)
+        rules = [line for line in lrh.DEFAULT_REDIRECTS_PATH.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
+        self.assertEqual(len(rules), 2 * pairs)
+        self.assertTrue(all(line.endswith("/ 301") for line in rules))
 
 
 if __name__ == "__main__":

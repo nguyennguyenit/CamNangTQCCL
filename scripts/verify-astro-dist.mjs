@@ -30,6 +30,8 @@ const APP_PAGE_PATHS = [...SECTION_PATHS.filter((path) => path !== LOOKUP_HUB_PA
 
 export const DEPLOYMENT_CONTROL_ARTIFACTS = Object.freeze([
   Object.freeze({ sourcePath: "public/_headers", outputPath: "_headers" }),
+  // Redirect 301 của mã chiến pháp đã gộp; sinh bởi pipeline/lookup_route_handles.py.
+  Object.freeze({ sourcePath: "public/_redirects", outputPath: "_redirects" }),
 ]);
 
 export const STATIC_PUBLIC_ARTIFACTS = Object.freeze([
