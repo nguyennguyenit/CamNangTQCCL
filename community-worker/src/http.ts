@@ -72,5 +72,20 @@ export function paginate<T extends { created_at: number; id: string }>(
   return { rows: page, nextCursor: encodeCursor({ t: last.created_at, id: last.id }) };
 }
 
+/**
+ * Cắt trang theo khoá số tuỳ chọn (vd. hot_rank, top_rank): truy vấn `order by <key> desc, id desc` lấy limit+1 dòng.
+ * Cursor = [row[key], row.id]; giá trị khoá bằng nhau thì id phân xử.
+ */
+export function paginateByKey<T extends { id: string }, K extends keyof T & string>(
+  rows: T[],
+  limit: number,
+  key: K,
+): { rows: T[]; nextCursor: string | null } {
+  if (rows.length <= limit) return { rows, nextCursor: null };
+  const page = rows.slice(0, limit);
+  const last = page[page.length - 1];
+  return { rows: page, nextCursor: encodeCursor({ t: Number(last[key]), id: last.id }) };
+}
+
 export const iso = (ms: number | null | undefined): string | null =>
   ms == null ? null : new Date(ms).toISOString();

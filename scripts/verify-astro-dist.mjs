@@ -79,6 +79,7 @@ for (const key of Object.keys(SECTION_MARKERS)) {
 /** Trang cộng đồng tĩnh (noindex, ngoài sitemap) ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. */
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("chien-bao/index.html", locale), mount: 'id="community-hub"', entry: "/js/community-hub.js" }),
+  Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js" }),
   Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
 ]));
 

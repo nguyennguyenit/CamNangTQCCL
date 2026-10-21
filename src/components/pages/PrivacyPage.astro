@@ -85,6 +85,36 @@ const sections: PolicySection[] = [
     ],
   },
   {
+    id: 'doi-cong-dong',
+    heading: t('Đội cộng đồng', '社区阵容'),
+    items: [
+      t(
+        'Đội bạn đăng (tiêu đề, 3 tướng, chiến pháp, binh chủng, mô tả lối chơi và phân tích, ngôn ngữ, mùa) kèm 1–3 ảnh được lưu trên Cloudflare D1 và R2, chờ quản trị viên duyệt. Trước khi được duyệt, ảnh và nội dung chỉ bạn và quản trị viên xem được.',
+        '你发布的阵容（标题、3 名武将、战法、兵种、打法与分析说明、语言、赛季）连同 1–3 张图片保存在 Cloudflare D1 和 R2，等待管理员审核。审核通过前，图片和内容仅你本人和管理员可见。',
+      ),
+      t(
+        'Khi bạn bấm "Đọc bằng AI", ảnh đội được gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, theo thứ tự quản trị viên đặt) để đọc nháp tên tướng và chiến pháp. Kết quả chỉ là nháp để bạn tự kiểm tra, sửa rồi mới gửi.',
+        '当你点击“AI 识别”时，阵容图片会发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，按管理员设定的顺序），用于识别武将和战法草稿。识别结果只是草稿，需由你检查、修改后再提交。',
+      ),
+      t(
+        'Sau khi được duyệt, ảnh và phần phân tích hiện công khai kèm tên và ảnh đại diện của bạn. Chiến báo và bình luận của người khác trên trang đội cũng công khai theo quy định ở mục "Bình luận và chiến báo".',
+        '审核通过后，图片和分析内容会连同你的名称和头像公开显示。其他人在阵容页下的战报和评论，也按“评论与战报”一节的规定公开。',
+      ),
+      t(
+        'Đội bị từ chối: ảnh của đội bị xoá, chỉ giữ lý do từ chối cho bạn xem. Ảnh đã tải lên nhưng chưa gửi đội tự động bị xoá sau 24 giờ.',
+        '被拒绝的阵容：其图片会被删除，仅保留拒绝理由供你查看。已上传但未提交的图片会在 24 小时后自动删除。',
+      ),
+      t(
+        'Phiếu bầu: site lưu tài khoản, đội và giá trị phiếu (+1/−1) để tính điểm; site không hiển thị ai đã bầu cho đội nào.',
+        '投票：本站保存账号、阵容和投票值（+1/−1）用于计算分数；本站不会显示谁给哪个阵容投了票。',
+      ),
+      t(
+        'Bạn tự xoá được đội của mình; khi đó ảnh, phiếu bầu, cùng chiến báo và bình luận của mọi người trên trang đội đó cũng bị xoá. Xoá tài khoản sẽ xoá toàn bộ đội, ảnh và phiếu bầu của bạn.',
+        '你可以自行删除自己的阵容；删除时，其图片、投票，以及所有人在该阵容页下的战报和评论也会一并删除。删除账号将同时删除你的全部阵容、图片和投票。',
+      ),
+    ],
+  },
+  {
     id: 'gop-y',
     heading: t('Góp ý, sửa lỗi', '意见反馈'),
     paragraphs: [
@@ -154,8 +184,8 @@ const sections: PolicySection[] = [
     heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
     items: [
       t(
-        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, góp ý, bộ đếm ẩn danh Soi đội và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
-        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/反馈、截图识阵匿名计数以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
+        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, đội cộng đồng và phiếu bầu, góp ý, bộ đếm ẩn danh Soi đội và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo, ảnh đội cộng đồng và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
+        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/社区阵容与投票/反馈、截图识阵匿名计数以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图、社区阵容图片和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
       t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。'),
@@ -172,8 +202,8 @@ const sections: PolicySection[] = [
     heading: t('Thời gian lưu', '保存期限'),
     paragraphs: [
       t(
-        'Tài khoản, bình luận, chiến báo, góp ý và ảnh Soi đội bạn tự gửi được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá (ảnh Soi đội bị từ chối thì xoá ngay). Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn. Bộ đếm ẩn danh Soi đội không gắn với ai nên được giữ lâu dài.',
-        '账号、评论、战报、反馈以及你主动发送的识阵截图会一直保存，直到你自行删除或申请删除（被拒绝的识阵截图会立即删除）。已上传但未提交的截图在 24 小时后删除；登录会话和频率计数器到期自动失效。截图识阵匿名计数不关联任何人，因此会长期保存。',
+        'Tài khoản, bình luận, chiến báo, đội cộng đồng (cùng ảnh và phiếu bầu), góp ý và ảnh Soi đội bạn tự gửi được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá (ảnh Soi đội và ảnh đội cộng đồng bị từ chối thì xoá ngay). Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn. Bộ đếm ẩn danh Soi đội không gắn với ai nên được giữ lâu dài.',
+        '账号、评论、战报、社区阵容（连同图片和投票）、反馈以及你主动发送的识阵截图会一直保存，直到你自行删除或申请删除（被拒绝的识阵截图和社区阵容图片会立即删除）。已上传但未提交的图片在 24 小时后删除；登录会话和频率计数器到期自动失效。截图识阵匿名计数不关联任何人，因此会长期保存。',
       ),
     ],
   },
@@ -182,8 +212,8 @@ const sections: PolicySection[] = [
     heading: t('Quyền của bạn và yêu cầu xoá dữ liệu', '你的权利与删除数据申请'),
     contact: {
       before: t(
-        'Bạn có thể đăng xuất bất cứ lúc nào, tự xoá bình luận của mình và thu hồi quyền truy cập của site tại trang quản lý tài khoản Google. Để xem, sửa hoặc xoá toàn bộ tài khoản cùng bình luận, chiến báo và ảnh liên quan, hãy gửi email từ địa chỉ Gmail bạn dùng để đăng nhập tới',
-        '你可以随时退出登录、自行删除评论，并在 Google 账号管理页面撤销本站的访问权限。如需查看、更正或删除整个账号及相关评论、战报和截图，请使用登录所用的 Gmail 地址发送邮件至',
+        'Bạn có thể đăng xuất bất cứ lúc nào, tự xoá bình luận và đội cộng đồng của mình và thu hồi quyền truy cập của site tại trang quản lý tài khoản Google. Để xem, sửa hoặc xoá toàn bộ tài khoản cùng bình luận, chiến báo, đội cộng đồng và ảnh liên quan, hãy gửi email từ địa chỉ Gmail bạn dùng để đăng nhập tới',
+        '你可以随时退出登录、自行删除评论和社区阵容，并在 Google 账号管理页面撤销本站的访问权限。如需查看、更正或删除整个账号及相关评论、战报、社区阵容和图片，请使用登录所用的 Gmail 地址发送邮件至',
       ),
       after: t('. Chúng tôi sẽ xoá dữ liệu và phản hồi qua email khi hoàn tất.', '。我们会删除相关数据，并在完成后通过邮件回复你。'),
     },

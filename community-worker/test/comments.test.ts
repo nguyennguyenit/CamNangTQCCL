@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createHarness, type ApiJson, type Harness } from "./fakes";
+import { createHarness, seedSeason, seedTeam, type ApiJson, type Harness } from "./fakes";
 
 const PAGE = "/doi-chuan/s18-abc/";
 
@@ -80,5 +80,48 @@ describe("comments", () => {
     expect((await h.request("/api/admin/comments", { as: "bob" })).status).toBe(403);
     const res = await (await h.request("/api/admin/comments", { as: "admin" })).json<ApiJson>();
     expect(res.items[0]).toMatchObject({ page: PAGE, lang: "vi" });
+  });
+});
+
+describe("bình luận trên trang đội cộng đồng", () => {
+  const TEAM = "/doi-cong-dong/t1/";
+  const post = (h: Harness, as: "alice" | "bob", page = TEAM, lang = "vi") => h.request("/api/comments", { as, json: { page, lang, body: "hay" } });
+  const post2 = (h: Harness, as: "alice" | "bob", lang: string, page = TEAM) => h.request("/api/comments", { as, json: { page, lang, body: `n-${lang}` } });
+
+  it("mùa đóng vẫn 201; đội pending -> 404; đội đang xoá -> 404", async () => {
+    const h = createHarness();
+    seedSeason(h, "s0", 5);
+    await seedTeam(h, { id: "t1", season: "s0" });
+    await seedTeam(h, { id: "t2", status: "pending", season: "s0" });
+    await seedTeam(h, { id: "t3", season: "s0" });
+    h.sqlite.prepare("update community_teams set deleting_at = 1 where id = 't3'").run();
+    expect((await post(h, "bob")).status).toBe(201);
+    const pending = await post(h, "bob", "/doi-cong-dong/t2/");
+    expect(pending.status).toBe(404);
+    expect((await pending.json<ApiJson>()).error.code).toBe("not_found");
+    expect((await post(h, "bob", "/doi-cong-dong/t3/")).status).toBe(404);
+    expect((await post(h, "bob", "/doi-cong-dong/khong-co/")).status).toBe(404);
+    expect(h.sqlite.prepare("select count(*) as n from comments").get()).toMatchObject({ n: 1 });
+  });
+
+  it("GET gộp vi + zh (item vẫn có lang); đội pending -> []; đội chuẩn vẫn lọc lang", async () => {
+    const h = createHarness();
+    seedSeason(h, "s1");
+    await seedTeam(h, { id: "t1" });
+    await seedTeam(h, { id: "t2", status: "pending" });
+    h.clock.now += 1000;
+    await post2(h, "bob", "vi");
+    h.clock.now += 1000;
+    await post2(h, "bob", "zh");
+    h.sqlite.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values ('cp', '/doi-cong-dong/t2/', 'vi', 'u-bob', 'x', 1)").run();
+    for (const lang of ["vi", "zh"]) {
+      const res = await (await h.request(`/api/comments?page=${TEAM}&lang=${lang}`)).json<ApiJson>();
+      expect(res.items.map((i: { lang: string }) => i.lang)).toEqual(["zh", "vi"]);
+    }
+    expect((await (await h.request("/api/comments?page=/doi-cong-dong/t2/&lang=vi")).json<ApiJson>()).items).toEqual([]);
+    await postComment(h, "alice", "chuẩn vi");
+    await postComment(h, "alice", "chuẩn zh", "zh");
+    const std = await (await h.request(`/api/comments?page=${PAGE}&lang=zh`)).json<ApiJson>();
+    expect(std.items.map((i: { body: string }) => i.body)).toEqual(["chuẩn zh"]);
   });
 });

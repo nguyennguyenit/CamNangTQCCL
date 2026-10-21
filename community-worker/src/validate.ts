@@ -2,7 +2,15 @@
 
 import { ApiError } from "./http";
 
-export const PAGE_KEY_RE = /^\/(doi-chuan|doi-khac|khai-hoang)\/[a-z0-9][a-z0-9-]{0,120}\/$/u;
+/** Đội cộng đồng không ép uuid (id harness dạng `id-0001`): đội có tồn tại hay không do DB quyết. */
+export const PAGE_KEY_RE =
+  /^\/(?:(?:doi-chuan|doi-khac|khai-hoang)\/[a-z0-9][a-z0-9-]{0,120}|doi-cong-dong\/[a-z0-9][a-z0-9-]{0,63})\/$/u;
+const COMMUNITY_TEAM_PAGE_RE = /^\/doi-cong-dong\/([a-z0-9][a-z0-9-]{0,63})\/$/u;
+export const ID_RE = {
+  hero: /^hero:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
+  tactic: /^tactic:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
+  book: /^book:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
+} as const;
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,100}$/u;
 export const LANGS = ["vi", "zh"] as const;
 export type Lang = (typeof LANGS)[number];
@@ -16,6 +24,19 @@ const bad = (code: string, message: string) => new ApiError(400, code, message);
 export function parsePageKey(value: unknown): string {
   if (typeof value !== "string" || !PAGE_KEY_RE.test(value)) {
     throw bad("invalid_page", "pageKey không hợp lệ");
+  }
+  return value;
+}
+
+/** Id đội cộng đồng của một page key `/doi-cong-dong/<id>/`; page khác -> null. */
+export function communityTeamIdFromPage(page: string): string | null {
+  return COMMUNITY_TEAM_PAGE_RE.exec(page)?.[1] ?? null;
+}
+
+/** ID dạng `hero:<slug>` / `tactic:<slug>` / `book:<slug>`; lỗi `invalid_<field>`. */
+export function parseId(value: unknown, kind: keyof typeof ID_RE, field: string): string {
+  if (typeof value !== "string" || value.length > 120 || !ID_RE[kind].test(value)) {
+    throw bad(`invalid_${field}`, `${field} phải là ID ${kind}:<slug>`);
   }
   return value;
 }

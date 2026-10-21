@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createHarness, type ApiJson, type Harness } from "./fakes";
+import { createHarness, seedSeason, type ApiJson, type Harness } from "./fakes";
 
 function seed(h: Harness) {
   const report = h.sqlite.prepare(
@@ -16,6 +16,11 @@ function seed(h: Harness) {
     "insert into scan_samples (id, user_id, screen, side, lang, ai_read, confirmed, status, created_at) values (?, 'u-alice', 'battleReport', 'left', 'vi', '{}', '{}', ?, 1)",
   );
   for (const [id, status] of [["s1", "pending"], ["s2", "approved"]]) sample.run(id, status);
+  seedSeason(h, "s1");
+  const team = h.sqlite.prepare(
+    "insert into community_teams (id, author_id, season_id, status, title, hero_1, hero_2, hero_3, hero_key, tactics, troop, playstyle, text_lang, created_at) values (?, 'u-alice', 's1', ?, 't', 'a', 'b', 'c', 'a,b,c', '[]', 'ky', 'p', 'vi', 1)",
+  );
+  for (const [id, status] of [["t1", "pending"], ["t2", "pending"], ["t3", "pending"], ["t4", "approved"], ["t5", "rejected"]]) team.run(id, status);
 }
 
 describe("GET /api/admin/counts", () => {
@@ -30,13 +35,13 @@ describe("GET /api/admin/counts", () => {
     seed(h);
     const res = await h.request("/api/admin/counts", { as: "admin" });
     expect(res.status).toBe(200);
-    expect(await res.json<ApiJson>()).toEqual({ reportsPending: 2, postsDraft: 3, feedbackNew: 1, feedbackDone: 2, scanPending: 1 });
+    expect(await res.json<ApiJson>()).toEqual({ reportsPending: 2, postsDraft: 3, feedbackNew: 1, feedbackDone: 2, scanPending: 1, teamsPending: 3 });
   });
 
   it("bảng trống trả 0", async () => {
     const h = createHarness();
     expect(await (await h.request("/api/admin/counts", { as: "admin" })).json<ApiJson>()).toEqual({
-      reportsPending: 0, postsDraft: 0, feedbackNew: 0, feedbackDone: 0, scanPending: 0,
+      reportsPending: 0, postsDraft: 0, feedbackNew: 0, feedbackDone: 0, scanPending: 0, teamsPending: 0,
     });
   });
 });

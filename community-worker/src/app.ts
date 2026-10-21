@@ -15,6 +15,7 @@ import { posts } from "./routes/posts";
 import { recruit } from "./routes/recruit";
 import { reports } from "./routes/reports";
 import { scan } from "./routes/scan";
+import { teams } from "./routes/teams";
 import { users } from "./routes/users";
 
 export const defaultDeps: AppDeps = {
@@ -96,6 +97,7 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", recruit);
   app.route("/", ai);
   app.route("/", scan);
+  app.route("/", teams);
   app.route("/", audit);
   app.route("/", users);
   app.route("/", admin);

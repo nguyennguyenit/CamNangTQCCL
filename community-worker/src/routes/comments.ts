@@ -7,7 +7,8 @@ import { adminEmails, isAdminEmail, type Env } from "../env";
 import { ApiError, decodeCursor, iso, paginate } from "../http";
 import { visibleUserSql } from "../moderation";
 import { consumeRateLimit } from "../ratelimit";
-import { parseLang, parsePageKey, parseText, readJson } from "../validate";
+import { communityTeamVisibleSql } from "./teams";
+import { communityTeamIdFromPage, parseLang, parsePageKey, parseText, readJson } from "../validate";
 
 interface CommentRow {
   id: string;
@@ -54,8 +55,15 @@ comments.get("/api/comments", async (c) => {
   const lang = parseLang(c.req.query("lang"));
   const cursor = decodeCursor(c.req.query("cursor"));
   // Chỉ route công khai ẩn bình luận của user bị khoá/đang xoá; /api/admin/comments không lọc.
-  const where = ["c.page_key = ?", "c.lang = ?", visibleUserSql("u")];
-  const binds: unknown[] = [page, lang, c.get("deps").now()];
+  const now = c.get("deps").now();
+  const teamId = communityTeamIdFromPage(page);
+  if (teamId) {
+    // Trang đội cộng đồng: đội không hiển thị -> rỗng (không lộ trạng thái); kho chung vi/zh nên bỏ lọc lang.
+    const visible = await c.env.DB.prepare(`select ${communityTeamVisibleSql} as ok`).bind(teamId, now).first<{ ok: number }>();
+    if (visible?.ok !== 1) return c.json({ items: [], nextCursor: null });
+  }
+  const where = teamId ? ["c.page_key = ?", visibleUserSql("u")] : ["c.page_key = ?", "c.lang = ?", visibleUserSql("u")];
+  const binds: unknown[] = teamId ? [page, now] : [page, lang, now];
   if (cursor) {
     where.push(BEFORE_CURSOR);
     binds.push(cursor.t, cursor.t, cursor.id);
@@ -79,9 +87,14 @@ comments.post("/api/comments", async (c) => {
   const createdAt = now();
   await consumeRateLimit(c.env.DB, "comment", user.id, createdAt);
   const id = newId();
-  await c.env.DB.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values (?, ?, ?, ?, ?, ?)")
-    .bind(id, page, lang, user.id, body, createdAt)
+  const teamId = communityTeamIdFromPage(page);
+  // Trang đội: điều kiện hiển thị nằm trong câu ghi (không kiểm mùa: mùa cũ vẫn bình luận được).
+  const res = await c.env.DB.prepare(
+    `insert into comments (id, page_key, lang, user_id, body, created_at) select ?, ?, ?, ?, ?, ?${teamId ? ` where ${communityTeamVisibleSql}` : ""}`,
+  )
+    .bind(id, page, lang, user.id, body, createdAt, ...(teamId ? [teamId, createdAt] : []))
     .run();
+  if (!res.meta.changes) throw new ApiError(404, "not_found", "Không tìm thấy đội");
   const row: CommentRow = {
     id,
     page_key: page,

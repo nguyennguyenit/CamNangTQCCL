@@ -18,6 +18,7 @@ const expectedRules = [
   "/soi-doi-tu-anh/*",
   "/goi-y-doi-tu-kho/*",
   "/chien-bao/*",
+  "/doi-cong-dong/*",
   "/quan-tri/*",
   "/chinh-sach-bao-mat/*",
   "/dieu-khoan-su-dung/*",
@@ -120,7 +121,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/",
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
     // Trang cộng đồng (noindex) vẫn là HTML tĩnh phải revalidate.
-    ...["chien-bao", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
+    ...["chien-bao", "doi-cong-dong", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
     // Trang chính sách (bảo mật là URL khai với màn hình đồng ý OAuth của Google).
     ...["chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
       .flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
@@ -141,7 +142,7 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     // Bản tiếng Trung: Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
     "/zh/",
     "/zh/index.html",
-    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "quan-tri", "chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
+    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "doi-cong-dong", "quan-tri", "chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
       .flatMap((section) => [`/zh/${section}/`, `/zh/${section}/index.html`]),
     "/zh/doi-chuan/pk-s24-tu-ma-phi-hung/index.html",
     "/zh/doi-khac/hoang-ma-thuong/",

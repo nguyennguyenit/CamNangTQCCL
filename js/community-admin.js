@@ -3,16 +3,18 @@
 // "Bài viết" (#bai-viet: bảng bài, soạn/sửa Markdown có xem trước an toàn, FAQ, lưu nháp, xuất bản/gỡ xuất bản),
 // "Bình luận" (#binh-luan: xoá bình luận vi phạm trên mọi trang), "Góp ý" (#gop-y: góp ý/báo lỗi từ footer,
 // đánh dấu đã xử lý), "Soi đội" (#soi-doi: tỷ lệ ô sửa/không rõ ẩn danh, duyệt ảnh gửi tự nguyện, xuất fixture
-// bộ ảnh chuẩn), "AI" (#ai: nhà cung cấp AI + chuỗi failover của từng tính năng), "Người dùng" (#nguoi-dung) và
-// "Nhật ký" (#nhat-ky, root) — hai khu cuối nằm ở js/community-admin-users.js.
+// bộ ảnh chuẩn), "AI" (#ai: nhà cung cấp AI + chuỗi failover của từng tính năng), "Đội cộng đồng" (#doi-cong-dong: duyệt/từ chối/gỡ đội,
+// mở mùa — js/community-admin-teams.js), "Người dùng" (#nguoi-dung) và "Nhật ký" (#nhat-ky, root) — hai khu cuối nằm ở
+// js/community-admin-users.js.
 // Vai trò `root` thấy mọi khu; `moderator` (kiểm duyệt viên) chỉ thấy khu có `roles` cho phép, khu khác không dựng
 // và không gọi API. Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện.
 
-import { L, currentLocale, localePath } from './i18n.js';
+import { L, currentLocale } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 import {
   api,
   avatar,
+  communityPageHref,
   describeError,
   displayName,
   downscaleImage,
@@ -25,6 +27,7 @@ import {
 } from './community-api.js';
 import { reportSummary } from './community-reports.js';
 import { FEEDBACK_KINDS } from './feedback-kinds.js';
+import { openTeamsPanel } from './community-admin-teams.js';
 import { openAuditPanel, openUsersPanel } from './community-admin-users.js';
 
 const SLUG_PATTERN = /^[a-z0-9][a-z0-9-]{0,100}$/;
@@ -153,6 +156,7 @@ const ICONS = {
   up: [path('M12 19V5'), path('M6 11l6-6 6 6')],
   down: [path('M12 5v14'), path('M6 13l6 6 6-6')],
   image: [['rect', { x: 3, y: 5, width: 18, height: 14, rx: 2 }], ['circle', { cx: 9, cy: 10, r: 1.8 }], path('M21 16l-5-5-8 8')],
+  teams: [['circle', { cx: 8, cy: 8, r: 2.5 }], ['circle', { cx: 16, cy: 8, r: 2.5 }], ['circle', { cx: 12, cy: 16, r: 2.5 }], path('M10 9.5l1 4'), path('M14 9.5l-1 4')],
   users: [['circle', { cx: 9, cy: 8, r: 3.5 }], path('M2.5 20a6.5 6.5 0 0 1 13 0'), path('M16 4.5a3.5 3.5 0 0 1 0 7'), path('M18 14.2a6.5 6.5 0 0 1 3.5 5.8')],
   audit: [path('M6 3h9l4 4v14H6z'), path('M9 11h7'), path('M9 15h7'), path('M9 7h3')],
   external: [path('M14 4h6v6'), path('M20 4l-9 9'), path('M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5')],
@@ -296,7 +300,7 @@ export function emptyNote(text) {
 
 export function pagePath(page, lang) {
   return typeof page === 'string' && page.startsWith('/')
-    ? el('a', { class: 'adm-path', href: lang ? localePath(page, lang) : page }, page)
+    ? el('a', { class: 'adm-path', href: lang || page.startsWith('/doi-cong-dong/') ? communityPageHref(page, lang || 'vi') : page }, page)
     : null;
 }
 
@@ -324,7 +328,7 @@ export function selectInput(id, options, value, attrs = {}) {
 }
 
 /** Ô ảnh mở ảnh gốc ở tab mới (nền dải, icon mở ngoài ở góc). */
-function imageTile(href, alt) {
+export function imageTile(href, alt) {
   return el('a', { class: 'adm-report-image', href, target: '_blank', rel: 'noopener' }, [
     el('img', { src: href, alt, loading: 'lazy' }),
     el('span', { class: 'adm-report-image-open' }, glyph('external')),
@@ -1915,6 +1919,18 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
         '服务商保存共用的 endpoint 和 API 密钥。每个功能有自己的链：顺序即优先级，上一环出错（密钥错误、余额不足、过载、服务器错误）时自动切换到下一环，直到用完总时限。点击“保存”同时应用两部分，约 1 分钟内生效。',
       ),
       open: openAiPanel,
+    },
+    {
+      id: 'teams',
+      roles: STAFF,
+      hash: 'doi-cong-dong',
+      icon: 'teams',
+      label: L('Đội cộng đồng', '社区阵容'),
+      lead: user.role === 'root'
+        ? L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở và mở mùa mới.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容，并开启新赛季。')
+        : L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở. Email tác giả đã được che.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容。作者邮箱已做遮挡显示。'),
+      count: { key: 'teamsPending', unit: L('đội chờ', '待审') },
+      open: openTeamsPanel,
     },
     {
       id: 'users',

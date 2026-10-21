@@ -35,6 +35,9 @@
 /chien-bao/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/doi-cong-dong/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /quan-tri/*
   Cache-Control: public, max-age=0, must-revalidate
 

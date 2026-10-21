@@ -2,7 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 import { AI_GROUPS } from "../../shared/ai-config";
-import { createHarness, imageForm, PNG_BYTES, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
+import { createHarness, imageForm, PNG_BYTES, seedSeason, seedTeam, TEST_GROUP, TEST_PROVIDER, type ApiJson, type Harness } from "./fakes";
 
 const IMAGE_KEY = "scan-samples/s1.png";
 const PENDING_KEY = "scan-samples/s2.png";
@@ -28,6 +28,8 @@ async function seed(h: Harness) {
   sample.run("s1", IMAGE_KEY, "approved");
   sample.run("s2", PENDING_KEY, "pending");
   h.sqlite.prepare("insert into comments (id, page_key, lang, user_id, body, created_at) values ('c1', '/doi-chuan/x/', 'vi', 'u-alice', 'hi', 1)").run();
+  seedSeason(h, "s1");
+  await seedTeam(h, { id: "tm1", author: "u-bob", status: "pending" });
 }
 
 type Who = "guest" | "bob" | "moderator" | "admin";
@@ -53,15 +55,26 @@ function table(h: Harness, name: string, id: string): object {
 
 /** Toàn bộ trạng thái ghi được của các bảng admin + R2 + KV, để chứng minh yêu cầu bị từ chối không đổi gì. */
 function snapshot(h: Harness) {
-  const dump = (name: string) => h.sqlite.prepare(`select * from ${name} order by id`).all().map((r) => ({ ...r }));
+  const dump = (name: string, order: string) => h.sqlite.prepare(`select * from ${name} order by ${order}`).all().map((r) => ({ ...r }));
   return {
-    tables: ["battle_reports", "scan_samples", "feedback", "posts", "comments", "uploads"].map(dump),
+    tables: [
+      dump("battle_reports", "id"),
+      dump("scan_samples", "id"),
+      dump("feedback", "id"),
+      dump("posts", "id"),
+      dump("comments", "id"),
+      dump("uploads", "id"),
+      dump("community_teams", "id"),
+      dump("community_seasons", "id"),
+      dump("community_team_votes", "team_id, user_id"),
+      dump("community_team_images", "team_id, position"),
+    ],
     objects: [...h.objects.keys()].sort(),
     ai: [...h.aiStore.entries()],
   };
 }
 
-/** Danh mục tường minh 22 endpoint admin (theo route trong src/routes). */
+/** Danh mục tường minh 26 endpoint admin (theo route trong src/routes). */
 const INVENTORY = [
   "GET /api/admin/counts",
   "GET /api/admin/comments",
@@ -85,6 +98,10 @@ const INVENTORY = [
   "POST /api/admin/posts/p1/publish",
   "POST /api/admin/posts/p1/unpublish",
   "POST /api/admin/uploads",
+  "GET /api/admin/community-teams",
+  "POST /api/admin/community-teams/tm1/approve",
+  "POST /api/admin/community-teams/tm1/reject",
+  "POST /api/admin/community-seasons",
 ];
 
 const ENDPOINTS: Endpoint[] = [
@@ -154,6 +171,35 @@ const ENDPOINTS: Endpoint[] = [
   },
   { method: "POST", path: "/api/admin/posts/p1/unpublish", allowed: "root", body: () => ({ json: {} }) },
   { method: "POST", path: "/api/admin/uploads", allowed: "root", ok: 201, body: () => ({ body: imageForm(PNG_BYTES, "image/png") }) },
+  { method: "GET", path: "/api/admin/community-teams", allowed: "staff" },
+  {
+    method: "POST",
+    path: "/api/admin/community-teams/tm1/approve",
+    allowed: "staff",
+    body: () => ({ json: {} }),
+    persisted: (h) => expect(table(h, "community_teams", "tm1")).toMatchObject({ status: "approved", reviewed_at: h.clock.now }),
+  },
+  {
+    method: "POST",
+    path: "/api/admin/community-teams/tm1/reject",
+    allowed: "staff",
+    body: () => ({ json: { reason: "sai" } }),
+    persisted: (h) => {
+      expect(table(h, "community_teams", "tm1")).toMatchObject({ status: "rejected", reject_reason: "sai", reviewed_at: h.clock.now });
+      expect(h.sqlite.prepare("select count(*) n from community_team_images where team_id = 'tm1'").get()).toMatchObject({ n: 0 });
+    },
+  },
+  {
+    method: "POST",
+    path: "/api/admin/community-seasons",
+    allowed: "root",
+    ok: 201,
+    body: () => ({ json: { id: "s2", labelVi: "Mùa 2", labelZh: "赛季2" } }),
+    persisted: (h) => {
+      expect(table(h, "community_seasons", "s2")).toMatchObject({ closed_at: null });
+      expect(table(h, "community_seasons", "s1")).toMatchObject({ closed_at: h.clock.now });
+    },
+  },
 ];
 
 function expected(endpoint: Endpoint, who: Who): number {
@@ -162,8 +208,8 @@ function expected(endpoint: Endpoint, who: Who): number {
   return 403;
 }
 
-describe("ma trận quyền: 22 endpoint admin × khách/user/KDV/root", () => {
-  it("bảng phủ đúng 22 endpoint admin (so tập method + path với danh mục tường minh)", () => {
+describe("ma trận quyền: 26 endpoint admin × khách/user/KDV/root", () => {
+  it("bảng phủ đúng 26 endpoint admin (so tập method + path với danh mục tường minh)", () => {
     const covered = ENDPOINTS.map((e) => `${e.method} ${e.path}`);
     expect(new Set(covered).size).toBe(covered.length);
     expect([...covered].sort()).toEqual([...INVENTORY].sort());
@@ -191,10 +237,10 @@ describe("ma trận quyền: 22 endpoint admin × khách/user/KDV/root", () => {
 });
 
 describe("/api/admin/counts giữ nguyên hình dạng cho KDV", () => {
-  it("KDV và root cùng nhận 5 trường đếm", async () => {
+  it("KDV và root cùng nhận 6 trường đếm", async () => {
     const h = createHarness();
     await seed(h);
-    const keys = ["feedbackDone", "feedbackNew", "postsDraft", "reportsPending", "scanPending"];
+    const keys = ["feedbackDone", "feedbackNew", "postsDraft", "reportsPending", "scanPending", "teamsPending"];
     for (const as of ["moderator", "admin"]) {
       expect(Object.keys(await (await h.request("/api/admin/counts", { as })).json<ApiJson>()).sort()).toEqual(keys);
     }

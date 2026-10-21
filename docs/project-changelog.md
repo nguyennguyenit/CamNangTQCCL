@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-10-21 (Đội cộng đồng)
+
+### Added
+- Trang `/doi-cong-dong/` và `/zh/doi-cong-dong/`: người dùng đăng đội 3 tướng + 6 chiến pháp kèm 1–3 ảnh, KDV/root duyệt, người khác vote; chi tiết đội có chiến báo và bình luận dùng lại hệ thống cũ với page key `/doi-cong-dong/<id>/`.
+- Migration `0008_community_teams.sql`: `community_seasons` (đúng một mùa mở), `community_teams`, `community_team_images`, `community_team_votes`; bộ đếm vote và `evidence_count` do trigger đếm lại; `points`, `hot_rank`, `top_rank` là cột sinh STORED. `hot_rank` dùng `log()` (cơ số 10) của SQLite vì workerd/D1 từ chối `log10`.
+- API: `GET /api/community-seasons`, `GET/POST /api/community-teams`, `GET /api/community-teams/:id`, ảnh `/images/:pos`, `PUT .../vote`, `DELETE`, `GET /api/me/community-teams`, ảnh tạm `POST /api/community-teams/uploads` và AI nháp `.../uploads/:id/analyze` (nhóm `teamScan` qua `callModel` của `worker/src/model.ts`); admin: `GET /api/admin/community-teams`, `approve`, `reject`, `POST /api/admin/community-seasons` (chỉ root); `GET /api/admin/counts` thêm `teamsPending`.
+- Rate limit `team_upload` 30/ngày, `team_analyze` 20/ngày, `team_analyze_global` 300/ngày cho cả site, `team_post` 5/ngày, `team_vote` 120/giờ. Nhật ký quản trị thêm `team.approve|reject|delete`, `season.open`.
+- Trang `/chinh-sach-bao-mat/` (vi + zh) nêu rõ ảnh đội gửi tới nhà cung cấp AI để đọc nháp, ảnh + phân tích công khai sau khi duyệt, ảnh đội bị từ chối bị xoá, ảnh tạm xoá sau 24 giờ và toàn bộ xoá theo tài khoản.
+- Rollback thủ công `community-worker/rollback/0009_drop_community_team_triggers.sql` và `0010_restore_community_team_triggers.sql` cho ba trigger evidence trên `battle_reports`.
+
+### Changed
+- `PAGE_KEY_RE` nhận `/doi-cong-dong/<id>/`; `GET/POST /api/comments` và `/api/reports` kiểm đội hiển thị ngay trong câu ghi (đội không hiển thị → 404, chiến báo ở mùa đóng → 409 `season_closed`, bình luận mùa cũ vẫn được). `POST /api/reports` từ chối ảnh tạm `pending/team-*`.
+- Khoá tài khoản xoá mọi phiếu vote của user (`meta.votesRemoved`); xoá tài khoản dọn thêm ảnh đội và chiến báo/bình luận của người khác trên trang đội của user.
+- Xoá đội hai bước: chốt `deleting_at` rồi dọn R2 và D1; lỗi R2 → 502 `delete_incomplete`, gọi lại `DELETE` để hoàn tất (`GET /api/me/community-teams` trả `deleting: true`, admin lọc `status=deleting`).
+- Triển khai: migration `0008` → Worker → `main` → chạy tay `pages-deploy.yml`. Không xoá tài khoản khi Worker cũ còn chạy trên DB đã có đội (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
+
 ## 2026-10-17 (Gộp mã chiến pháp trùng, chiến pháp mới từ client)
 
 ### Added

@@ -2,7 +2,7 @@
 // Lỗi JSON `{error:{code,message}}` của server không bao giờ hiện nguyên văn: luôn đổi sang câu song ngữ
 // theo mã trạng thái, giống cách js/analyze.js chặn văn bản upstream.
 
-import { L, currentLocale, formatDate } from './i18n.js';
+import { L, currentLocale, formatDate, localePath } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 
 /** Khoá localStorage ghi "có thể đang đăng nhập": trang thường chỉ hỏi `/api/me` khi có dấu này. */
@@ -116,9 +116,42 @@ function codeMessage(code) {
       return L('Email xác nhận không khớp.', '确认邮箱不匹配。');
     case 'delete_incomplete':
       return L('Xoá chưa hoàn tất (lỗi lưu trữ ảnh). Có thể bấm “Thử xoá tiếp”.', '删除尚未完成（图片存储出错），可点击“继续删除”重试。');
+    case 'vote_conflict':
+      return L('Phiếu bình chọn vừa thay đổi ở nơi khác. Hãy thử lại.', '投票状态刚刚发生变化，请重试。');
+    case 'season_closed':
+      return L('Mùa của đội này đã đóng: không nhận thêm bình chọn hay chiến báo.', '该阵容所属赛季已结束，不再接受投票或战报。');
+    case 'season_not_open':
+      return L('Hiện chưa có mùa nào đang mở nên chưa thể đăng đội.', '目前没有进行中的赛季，暂时无法发布阵容。');
+    case 'own_team':
+      return L('Bạn không thể bình chọn cho đội của chính mình.', '不能给自己的阵容投票。');
+    case 'has_evidence':
+      return L('Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.', '该阵容已有他人通过审核的战报；请联系管理员处理。');
+    case 'image_missing':
+      return L('Một ảnh đã tải lên không còn nữa. Hãy chọn lại ảnh.', '有图片已丢失，请重新选择图片。');
+    case 'season_exists':
+      return L('Mã mùa này đã tồn tại.', '该赛季代码已存在。');
+    case 'season_conflict':
+      return L('Mùa đang mở vừa thay đổi ở nơi khác. Hãy tải lại trang rồi thử lại.', '进行中的赛季刚刚发生变化，请刷新页面后重试。');
+    case 'invalid_season':
+      return L('Mã mùa chỉ gồm chữ thường, số và dấu gạch ngang (không dùng “all”); hai tên mùa không được để trống.', '赛季代码只能包含小写字母、数字和连字符（不可用“all”）；两个赛季名称都不能为空。');
+    case 'invalid_heroes':
+      return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。');
+    case 'invalid_tactics':
+      return L('Cần đủ 6 chiến pháp khác nhau (2 cho mỗi tướng), chọn từ danh sách.', '需要六个互不相同的战法（每名武将两个），请从列表中选择。');
     default:
       return null;
   }
+}
+
+/**
+ * Đường dẫn trang của một page key. Đội cộng đồng `/doi-cong-dong/<id>/` chỉ có một trang khung tĩnh nên
+ * trỏ về `/doi-cong-dong/?id=<id>`; key khác đi qua `localePath` như cũ.
+ */
+export function communityPageHref(pageKey, locale = currentLocale()) {
+  const match = /^\/doi-cong-dong\/([a-z0-9][a-z0-9-]{0,63})\/$/u.exec(String(pageKey ?? ''));
+  return match
+    ? localePath(`/doi-cong-dong/?id=${match[1]}`, locale)
+    : localePath(pageKey, locale);
 }
 
 /** Câu hiển thị an toàn cho bất kỳ lỗi nào. */
@@ -296,6 +329,12 @@ export function avatar(user, className = 'cm-avatar') {
     });
   }
   return el('span', { class: `${className} cm-avatar-fallback`, 'aria-hidden': 'true' }, name ? name[0].toUpperCase() : '?');
+}
+
+/** Nhãn ngôn ngữ gốc `[VI]`/`[ZH]` của một văn bản trong kho dùng chung vi/zh; `null` khi không rõ. */
+export function langTag(lang, className = 'cm-lang-tag') {
+  if (lang !== 'vi' && lang !== 'zh') return null;
+  return el('span', { class: className, dataset: { lang }, title: lang === 'vi' ? 'Tiếng Việt' : '中文' }, `[${lang.toUpperCase()}]`);
 }
 
 export function displayName(user) {
