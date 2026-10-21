@@ -67,6 +67,16 @@ test("trang nhóm dựng sẵn đủ mọi mục; có JavaScript chỉ trang đ�
   await expect(page.locator("a[data-lookup-id]")).toHaveCount(120);
 });
 
+const needleEffect = { vi: /Hiệu ứng/u, zh: /效果/u };
+
+for (const [locale, prefix] of LOCALES) {
+  test(`${locale}: hộp thoại chiến pháp chữ Hán dịch mang cờ bản dịch (có JavaScript)`, async ({ page }) => {
+    await page.goto(`${prefix}/tra-cuu/chien-phap/?id=tactic%3Atran-ap-khan-vang`);
+    await expect(page.locator("body[data-boot=ready]")).toBeAttached();
+    await expect(page.locator('.lookup-dialog .lookup-tactic-effect-head [data-zh-source="translation"]')).toHaveCount(1);
+  });
+}
+
 test.describe("không có JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
@@ -96,6 +106,17 @@ test.describe("không có JavaScript", () => {
         await expect(page.locator("a.detail-back-link")).toHaveAttribute("href", `${prefix}/tra-cuu/${GROUP_SLUG[group]}/`);
       });
     }
+
+    // Cờ "chữ Hán dịch từ tiếng Việt" (lookup.effectZhSource.kind === "translation") có trong HTML tĩnh; mục source/capture không có.
+    test(`${locale}: trang riêng chiến pháp chữ Hán dịch có cờ bản dịch, mục có nguồn hoặc chụp client không có`, async ({ page }) => {
+      await page.goto(itemPath("tactics", "tactic:tran-ap-khan-vang", prefix), { waitUntil: "domcontentloaded" });
+      await expect(page.locator('.lookup-tactic-effect-head [data-zh-source="translation"]')).toHaveCount(1);
+      for (const id of ["tactic:ap-che", "tactic:tinh-bach-ma-nghia-tong"]) {
+        await page.goto(itemPath("tactics", id, prefix), { waitUntil: "domcontentloaded" });
+        await expect(page.locator("[data-lookup-item-root]")).toContainText(needleEffect[locale]);
+        await expect(page.locator('[data-zh-source="translation"]')).toHaveCount(0);
+      }
+    });
   }
 });
 
