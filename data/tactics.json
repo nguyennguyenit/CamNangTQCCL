@@ -12781,7 +12781,7 @@
       "谈心"
     ],
     "chinese": "談心",
-    "effect": "使我軍單體免疫混亂，持續3回合",
+    "effect": "使我軍單體免疫混亂，持續3回合（發動率23%→45%）",
     "effectViet": "Khiến một quân ta miễn nhiễm Hỗn Loạn, duy trì 3 hiệp (Xác suất phát động 23%→45%)",
     "hanViet": "Đàm Tâm",
     "iconUrl": null,
@@ -17623,7 +17623,7 @@
       "净化"
     ],
     "chinese": "淨化",
-    "effect": "提升我軍群體（2人）12→24點武力、智力、速度，持續2回合，并移除負面效果",
+    "effect": "提升我軍群體（2人）12→24點武力、智力、速度，持續2回合，并移除負面效果（發動率30%→45%）",
     "effectViet": "Tăng 12→24 điểm Võ Lực, Trí Lực, tốc độ của Tập thể quân ta (2 người), duy trì 2 hiệp, và xóa hiệu ứng xấu (Xác suất phát động 30%→45%)",
     "hanViet": "Tịnh Hoá",
     "iconUrl": null,
@@ -18036,7 +18036,7 @@
       "追伤"
     ],
     "chinese": "追傷",
-    "effect": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合",
+    "effect": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合（發動率25%→40%）",
     "effectViet": "Sau khi tấn công thường, gây cho mục tiêu tấn công trạng thái Cấm Trị Liệu, duy trì 2 hiệp (Xác suất phát động 25%→40%)",
     "hanViet": "Truy Thương",
     "iconUrl": null,
