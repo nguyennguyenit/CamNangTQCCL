@@ -12,6 +12,11 @@ the name changed. An id that vanished from the corpus is moved to `retired` (`{g
 stays reserved so it is never issued again, the TS loader ignores `retired`, and the id gets the same slug back
 if it returns. `handlesSha256` covers `handles` and `retired`, so `--write` refuses a hand-edited ledger.
 `--check` only validates the ledger against the current corpus and never re-derives a slug.
+
+Both modes also own `public/_redirects` (Cloudflare Pages): one 301 per locale from the retired slug of every
+tactic merged into a survivor (`lookup.formerIds` of data/tactics.json) to the survivor's live slug. `--write`
+regenerates it from the ledger it just wrote; `--check` fails when the committed file is stale. A retired id no
+survivor lists keeps its static 404.
 """
 
 from __future__ import annotations
@@ -29,6 +34,10 @@ LEDGER_SCHEMA_VERSION = 1
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LEDGER_PATH = REPO_ROOT / "pipeline" / "lookup-route-handles.json"
 DEFAULT_DATA_DIR = REPO_ROOT / "data"
+DEFAULT_REDIRECTS_PATH = REPO_ROOT / "public" / "_redirects"
+REDIRECTS_HEADER = "# Sinh bởi python3 -m pipeline.lookup_route_handles --write; không sửa tay."
+# Locale prefixes of the tactic detail route (src/lib/lookup-detail-routes.ts); zh group slugs equal vi ones.
+REDIRECT_LOCALE_PREFIXES = ("", "/zh")
 
 LEDGER_NOTE = "Slug URL đã gán một lần theo id; không suy lại từ tên Việt, tên đổi không đổi slug."
 LEDGER_KEYS = ("schemaVersion", "generationId", "booksSha256", "handlesSha256", "note", "handles", "retired")
@@ -217,7 +226,33 @@ def _read_ledger(path: Path):
     return json.loads(path.read_bytes())
 
 
-def write_ledger(*, data_dir, ledger_path, out=print) -> int:
+def former_owner_map(data_dir) -> dict[str, str]:
+    """`{retired tactic id: survivor id}` from `lookup.formerIds` of data/tactics.json; missing keys are data errors."""
+    owners: dict[str, str] = {}
+    for row in _load(Path(data_dir) / "tactics.json"):
+        for former in row["lookup"]["formerIds"]:
+            if former in owners:
+                raise LookupRouteHandleError(f"{former} is a former id of both {owners[former]} and {row['id']}")
+            owners[former] = row["id"]
+    return owners
+
+
+def redirects_bytes(former_map: dict[str, str], ledger: dict) -> bytes:
+    """Cloudflare Pages `_redirects`: per merged tactic, `old new 301` for each locale, sorted by retired id."""
+    retired, live = ledger["retired"]["tactics"], ledger["handles"]["tactics"]
+    lines = [REDIRECTS_HEADER]
+    for retired_id in sorted(former_map):
+        survivor_id = former_map[retired_id]
+        if retired_id not in retired:
+            raise LookupRouteHandleError(f"former id {retired_id} of {survivor_id} has no retired slug in the ledger")
+        if survivor_id not in live:
+            raise LookupRouteHandleError(f"survivor {survivor_id} of {retired_id} has no live slug in the ledger")
+        for prefix in REDIRECT_LOCALE_PREFIXES:
+            lines.append(f"{prefix}/tra-cuu/chien-phap/{retired[retired_id]}/ {prefix}/tra-cuu/chien-phap/{live[survivor_id]}/ 301")
+    return ("\n".join(lines) + "\n").encode("utf-8")
+
+
+def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, out=print) -> int:
     corpus = load_corpus(data_dir)
     ledger_path = Path(ledger_path)
     existing = retired = None
@@ -241,16 +276,28 @@ def write_ledger(*, data_dir, ledger_path, out=print) -> int:
     if not ledger_path.exists() or ledger_path.read_bytes() != payload:
         ledger_path.write_bytes(payload)
     out(f"ledger: {sum(len(v) for v in handles.values())} ids, {added} net new, {newly_retired} net retired, {len(collisions)} new collisions -> {ledger_path}")
+    redirects_path = Path(redirects_path)
+    redirects = redirects_bytes(former_owner_map(data_dir), ledger)
+    if not redirects_path.exists() or redirects_path.read_bytes() != redirects:
+        redirects_path.write_bytes(redirects)
+    rules = redirects.count(b"\n") - 1
+    out(f"redirects: {rules} rules -> {redirects_path}")
     return 0
 
 
-def check_ledger(*, data_dir, ledger_path, out=print) -> int:
+def check_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, out=print) -> int:
     corpus = load_corpus(data_dir)
-    problems = ledger_problems(_read_ledger(Path(ledger_path)), corpus)
+    ledger = _read_ledger(Path(ledger_path))
+    problems = ledger_problems(ledger, corpus)
     if problems:
         raise LookupRouteHandleError("ledger failed validation:\n" + "\n".join(problems[:40]))
+    redirects_path = Path(redirects_path)
+    redirects = redirects_bytes(former_owner_map(data_dir), ledger)
+    if not redirects_path.exists() or redirects_path.read_bytes() != redirects:
+        raise LookupRouteHandleError(f"{redirects_path} is stale; run --write")
     total = sum(len(items) for items in corpus["groups"].values())
-    out(f"ledger ok: {total} lookup ids frozen (generation {corpus['generationId'][:19]})")
+    rules = redirects.count(b"\n") - 1
+    out(f"ledger ok: {total} lookup ids frozen (generation {corpus['generationId'][:19]}), {rules} redirect rules")
     return 0
 
 
@@ -261,11 +308,12 @@ def main(argv=None) -> int:
     mode.add_argument("--check", action="store_true", help="validate the ledger against the corpus without deriving slugs")
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--ledger", type=Path, default=DEFAULT_LEDGER_PATH)
+    parser.add_argument("--redirects", type=Path, default=DEFAULT_REDIRECTS_PATH)
     args = parser.parse_args(argv)
     try:
         if args.write:
-            return write_ledger(data_dir=args.data_dir, ledger_path=args.ledger)
-        return check_ledger(data_dir=args.data_dir, ledger_path=args.ledger)
+            return write_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects)
+        return check_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects)
     except (LookupRouteHandleError, OSError, ValueError, KeyError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
