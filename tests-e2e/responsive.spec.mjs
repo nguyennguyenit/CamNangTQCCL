@@ -47,7 +47,7 @@ test('cột chuyển nhanh không đè control danh sách đội ở 821–900px
 });
 
 test('màn thấp dùng nút chuyển nhanh; danh sách mở nằm giữa header và nút', async ({ page }) => {
-  for (const [width, height] of [[844, 390], [1366, 500], [320, 568]]) {
+  for (const [width, height] of [[844, 390], [1366, 500], [1024, 619], [320, 568]]) {
     await page.setViewportSize({ width, height });
     await page.goto('/doi-chuan/');
     const toggle = page.locator('.quick-nav-toggle');
@@ -63,13 +63,13 @@ test('màn thấp dùng nút chuyển nhanh; danh sách mở nằm giữa header
     await last.scrollIntoViewIfNeeded();
     await expect(last).toBeInViewport();
   }
-  // Màn đủ cao vẫn là thanh icon cố định.
-  await page.setViewportSize({ width: 1024, height: 600 });
+  // Màn đủ cao vẫn là thanh icon cố định, nằm trọn giữa header và mép dưới.
+  await page.setViewportSize({ width: 1024, height: 620 });
   await page.goto('/doi-chuan/');
   await expect(page.locator('.quick-nav-toggle')).toBeHidden();
   const rail = await page.locator('.quick-nav-list').boundingBox();
   expect(rail.y).toBeGreaterThanOrEqual(64);
-  expect(rail.y + rail.height).toBeLessThanOrEqual(600);
+  expect(rail.y + rail.height).toBeLessThanOrEqual(620);
 });
 
 test('footer mobile thu gọn link game sau tiêu đề dải; desktop và không JS luôn hiện đủ', async ({ page, browser }) => {
