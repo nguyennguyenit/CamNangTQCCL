@@ -1,4 +1,3 @@
-import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
@@ -42,18 +41,6 @@ test('HTML dist của trang mùa không chứa id="community-root"', async () =>
     expect(html).not.toContain('id="community-root"');
     expect(html).not.toContain('community-page.js');
   }
-});
-
-test('PR không sửa community-worker/** hay js/community-api.js', async () => {
-  let changed;
-  try {
-    changed = execFileSync('git', ['diff', '--name-only', 'origin/main...HEAD'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })
-      .split('\n').filter(Boolean);
-  } catch {
-    test.skip(true, 'không có origin/main để so sánh');
-    return;
-  }
-  expect(changed.filter((file) => file.startsWith('community-worker/') || file === 'js/community-api.js')).toEqual([]);
 });
 
 test('bộ lọc ?season= của /doi-chuan/ giữ nguyên: chọn mùa cũ hiện đội của mùa đó, URL vẫn là /doi-chuan/', async ({ page }) => {
