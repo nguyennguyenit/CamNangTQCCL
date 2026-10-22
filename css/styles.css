@@ -1939,9 +1939,9 @@ a.lookup-more:hover {
   }
 }
 
-/* Thanh icon cao ~450px: màn thấp (điện thoại xoay ngang, cửa sổ laptop thấp) không đủ chỗ giữa header 64px và mép dưới
-   nên cũng dùng nút tròn như màn hẹp. */
-@media (max-width: 820px), (max-height: 579px) {
+/* Thanh icon cao ~492px (11 mục): căn giữa cần cao ≥ 492 + 2×64 (header) = 620px, màn thấp hơn (điện thoại xoay ngang,
+   cửa sổ laptop thấp) không đủ chỗ giữa header 64px và mép dưới nên cũng dùng nút tròn như màn hẹp. */
+@media (max-width: 820px), (max-height: 619px) {
   .quick-nav {
     top: auto;
     right: var(--space-16);
@@ -2789,7 +2789,7 @@ a.lookup-more:hover {
 }
 
 .landing-community-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .landing-tile-grid > li,
@@ -15043,6 +15043,16 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-team-similar { display: grid; gap: var(--space-8); }
 .cm-team-similar-list { display: grid; gap: var(--space-6); margin: 0; padding-left: var(--space-20); }
 .cm-team-widgets { display: grid; gap: var(--space-20); }
+
+/* Trang tĩnh một đội (`/doi-cong-dong/<id>/`) và danh sách link dựng sẵn trong mount. */
+.cm-team-static { display: grid; gap: var(--space-14); }
+.cm-team-static[hidden] { display: none; }
+.cm-team-static-back { margin: 0 0 var(--space-10); }
+.cm-team-static-list { display: grid; gap: var(--space-6); margin: 0; padding-left: var(--space-20); }
+.cm-team-faq { display: grid; gap: var(--space-10); }
+.cm-team-faq-item { display: grid; gap: var(--space-4); }
+.cm-team-faq-item h3 { margin: 0; }
+.cm-team-faq-item p { margin: 0; }
 
 .cm-team-form,
 .cm-team-form-root { display: grid; gap: var(--space-16); }

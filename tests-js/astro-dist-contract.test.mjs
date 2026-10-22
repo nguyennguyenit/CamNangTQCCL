@@ -35,6 +35,10 @@ import { jsonLd } from "../src/lib/blog-posts.ts";
 import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
 import { catalogDoc, heroesDoc, tacticsDoc } from "./fixtures/lookup-bundle-fixtures.mjs";
+import { communityTeamSitemapRoutes } from "../src/pages/sitemap.xml.ts";
+import { canonicalTeamPath, communityTeamPath, validateTeamsExport } from "../src/lib/community-teams.ts";
+import { teamAuthorName } from "../src/lib/community-team-pages.ts";
+import { communityTeamJsonLd } from "../src/lib/structured-data.ts";
 
 const projectRoot = new URL("../", import.meta.url);
 
@@ -2000,4 +2004,230 @@ test("Tra cứu: mọi trang riêng (938 × 2) có canonical + hreflang của ch
     }
   }
   assert.equal(titles.size, routes.entries.length * 2);
+});
+
+/* ---------- Trang đội cộng đồng (/doi-cong-dong/<id>/) ---------- */
+
+const COMMUNITY_TEAMS = validateTeamsExport(JSON.parse(await readFile(new URL("./fixtures/community-teams-export.json", import.meta.url), "utf8")));
+const teamById = (id) => COMMUNITY_TEAMS.find((team) => team.id === id);
+const LISTING_PATH = "/doi-cong-dong/";
+const localeOf = (viPath, locale) => (locale === "zh" ? zhPathOf(viPath) : viPath);
+
+/** Trang đội như component phát: self-canonical + JSON-LD ở bản gốc, canonical về bản gốc và không JSON-LD ở bản gương. */
+function teamPageHtml(team, locale, { canonical, blocks, extraHead = "", lang = locale === "zh" ? "zh-Hans" : "vi" } = {}) {
+  const original = locale === team.textLang;
+  const canonicalHref = canonical ?? `${FIXTURE_ORIGIN}${canonicalTeamPath(team)}`;
+  const data = blocks ?? (original
+    ? communityTeamJsonLd({
+      locale,
+      site: FIXTURE_ORIGIN,
+      path: canonicalTeamPath(team),
+      name: team.title,
+      description: "Mô tả",
+      createdAt: team.createdAt,
+      approvedAt: team.approvedAt,
+      authorName: teamAuthorName(team, locale),
+      heroes: [],
+      faq: [{ q: "Hỏi?", a: "Đáp." }],
+    })
+    : []);
+  return `<!doctype html><html lang="${lang}"><head><link rel="canonical" href="${canonicalHref}">${extraHead}${
+    data.map((block) => `<script type="application/ld+json">${jsonLd(block)}</script>`).join("")
+  }</head><body><article data-team-static></article><div id="community-teams" class="cm-team-root" data-team-id="${team.id}"></div><script type="module" src="/js/community-teams.js"></script></body>\n`;
+}
+
+/** Trang danh sách: dưới ngưỡng noindex + không canonical; từ ngưỡng index + canonical + hreflang. Luôn có link tới mọi đội. */
+function listingHtml(teams, locale, indexable) {
+  const head = indexable
+    ? `${pairHead(locale, LISTING_PATH)}<link rel="canonical" href="${FIXTURE_ORIGIN}${localeOf(LISTING_PATH, locale)}">`
+    : `<html lang="${locale === "zh" ? "zh-Hans" : "vi"}"><meta name="robots" content="noindex">`;
+  const links = teams.map((team) => `<li><a href="${communityTeamPath(team.id, locale)}">${team.id}</a></li>`).join("");
+  return `<!doctype html>${head}<div id="community-teams"><ul>${links}</ul></div><script type="module" src="/js/community-teams.js"></script>\n`;
+}
+
+async function communityTeamsFixture(t) {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-community-project-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-community-dist-"));
+  t.after(() => Promise.all([rm(projectDir, { recursive: true, force: true }), rm(distDir, { recursive: true, force: true })]));
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
+  await writeStaticImages(projectDir, distDir);
+  await writeStaticFonts(projectDir, distDir);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({
+    projectRoot: new URL(`file://${projectDir}/`),
+    distDir: new URL(`file://${distDir}/`),
+    manifest: [],
+  });
+  const pagePath = (id, locale) => join(distDir, ...(locale === "zh" ? ["zh"] : []), "doi-cong-dong", id, "index.html");
+  const listingPath = (locale) => join(distDir, ...(locale === "zh" ? ["zh"] : []), "doi-cong-dong", "index.html");
+  const writeSitemap = (teams, { routes } = {}) => writeFile(join(distDir, "sitemap.xml"), sitemapDocument(FIXTURE_ORIGIN, [
+    ...mirroredSitemapRoutes(mirroredSitemapPaths([`/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`])),
+    ...blogSitemapRoutes([]),
+    ...(routes ?? communityTeamSitemapRoutes(teams.map((team) => ({ path: canonicalTeamPath(team), lastmod: team.approvedAt })))),
+  ]));
+  /** Ghi cả bộ output của một tập đội: hai trang mỗi đội, hai trang danh sách theo ngưỡng, sitemap khớp. */
+  const writeAll = async (teams, { indexable = teams.length >= 10 } = {}) => {
+    await Promise.all([join(distDir, "doi-cong-dong"), join(distDir, "zh", "doi-cong-dong")].map((dir) => rm(dir, { recursive: true, force: true })));
+    for (const team of teams) {
+      for (const locale of ["vi", "zh"]) {
+        await mkdir(dirname(pagePath(team.id, locale)), { recursive: true });
+        await writeFile(pagePath(team.id, locale), teamPageHtml(team, locale));
+      }
+    }
+    for (const locale of ["vi", "zh"]) {
+      await mkdir(dirname(listingPath(locale)), { recursive: true });
+      await writeFile(listingPath(locale), listingHtml(teams, locale, indexable));
+    }
+    await writeSitemap(teams);
+  };
+  return { distDir, verify, pagePath, listingPath, writeAll, writeSitemap };
+}
+
+test("V1: dist 0 đội — trang danh sách noindex, không có trang đội, sitemap không có /doi-cong-dong/", async (t) => {
+  const { verify, writeAll, distDir } = await communityTeamsFixture(t);
+  await writeAll([]);
+  await verify();
+  assert.ok(!(await readFile(join(distDir, "sitemap.xml"), "utf8")).includes("/doi-cong-dong/"));
+});
+
+test("V2: hai đội — cặp hợp lệ qua; mọi vi phạm hợp đồng bị từ chối", async (t) => {
+  const { verify, writeAll, pagePath, listingPath, writeSitemap, distDir } = await communityTeamsFixture(t);
+  const vi = teamById("doi-05");
+  const zh = teamById("doi-09");
+  assert.equal(vi.textLang, "vi");
+  assert.equal(zh.textLang, "zh");
+  await writeAll([vi, zh]);
+  await verify();
+  const reset = () => writeAll([vi, zh]);
+  const viUrl = `${FIXTURE_ORIGIN}${canonicalTeamPath(vi)}`;
+  const { rm } = await import("node:fs/promises");
+
+  // Thiếu một locale.
+  await rm(pagePath(vi.id, "zh"));
+  await assert.rejects(verify(), /lacks its locale pair: doi-05/u);
+  await reset();
+  await verify();
+
+  // Bản zh (gương) tự canonical → hai bản cùng đòi là bản gốc.
+  await writeFile(pagePath(vi.id, "zh"), teamPageHtml(vi, "zh", { canonical: `${FIXTURE_ORIGIN}/zh/doi-cong-dong/${vi.id}/` }));
+  await assert.rejects(verify(), /canonical/iu);
+  await reset();
+
+  // Bản gương canonical sang URL khác bản gốc.
+  await writeFile(pagePath(vi.id, "zh"), teamPageHtml(vi, "zh", { canonical: `${FIXTURE_ORIGIN}/doi-cong-dong/khac/` }));
+  await assert.rejects(verify(), /canonical/iu);
+  await reset();
+
+  // hreflang ở bất kỳ bản nào.
+  const hreflang = `<link rel="alternate" hreflang="vi" href="${viUrl}">`;
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { extraHead: hreflang }));
+  await assert.rejects(verify(), /hreflang/iu);
+  await reset();
+  await writeFile(pagePath(vi.id, "zh"), teamPageHtml(vi, "zh", { extraHead: hreflang }));
+  await assert.rejects(verify(), /hreflang/iu);
+  await reset();
+
+  // noindex trên trang đội.
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { extraHead: '<meta name="robots" content="noindex">' }));
+  await assert.rejects(verify(), /noindex/iu);
+  await reset();
+
+  // Bản gương mang JSON-LD.
+  const originalBlocks = communityTeamJsonLd({
+    locale: "vi", site: FIXTURE_ORIGIN, path: canonicalTeamPath(vi), name: vi.title, description: "d", createdAt: vi.createdAt,
+    approvedAt: vi.approvedAt, authorName: teamAuthorName(vi, "vi"), heroes: [], faq: [{ q: "q", a: "a" }],
+  });
+  await writeFile(pagePath(vi.id, "zh"), teamPageHtml(vi, "zh", { blocks: originalBlocks }));
+  await assert.rejects(verify(), /JSON-LD/iu);
+  await reset();
+
+  // Bản gốc thiếu WebPage/FAQPage, sai url, thiếu tác giả.
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { blocks: [] }));
+  await assert.rejects(verify(), /JSON-LD/iu);
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { blocks: originalBlocks.filter((block) => block["@type"] !== "FAQPage") }));
+  await assert.rejects(verify(), /JSON-LD/iu);
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { blocks: [{ ...originalBlocks[0], url: `${FIXTURE_ORIGIN}/doi-cong-dong/khac/` }, ...originalBlocks.slice(1)] }));
+  await assert.rejects(verify(), /JSON-LD/iu);
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", { blocks: [{ ...originalBlocks[0], author: { "@type": "Person", name: "" } }, ...originalBlocks.slice(1)] }));
+  await assert.rejects(verify(), /JSON-LD/iu);
+  await reset();
+
+  // aggregateRating ở bất kỳ cấp nào.
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi", {
+    blocks: [{ ...originalBlocks[0], isPartOf: { "@type": "VideoGame", aggregateRating: { ratingValue: 5 } } }, ...originalBlocks.slice(1)],
+  }));
+  await assert.rejects(verify(), /aggregateRating/u);
+  await reset();
+
+  // Thiếu mount/entry hoặc nạp app.js.
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi").replace('data-team-id="doi-05"', 'data-team-id="khac"'));
+  await assert.rejects(verify(), /mount|entry/iu);
+  await writeFile(pagePath(vi.id, "vi"), teamPageHtml(vi, "vi").replace("</body>", '<script type="module" src="/js/app.js"></script></body>'));
+  await assert.rejects(verify(), /app\.js|entry/iu);
+  await reset();
+
+  // Sitemap có URL bản gương (zh) của đội vi.
+  await writeSitemap([vi, zh], {
+    routes: communityTeamSitemapRoutes([
+      { path: canonicalTeamPath(vi), lastmod: vi.approvedAt },
+      { path: `/zh/doi-cong-dong/${vi.id}/`, lastmod: vi.approvedAt },
+      { path: canonicalTeamPath(zh), lastmod: zh.approvedAt },
+    ]),
+  });
+  await assert.rejects(verify(), /sitemap/iu);
+  await reset();
+
+  // Danh sách thiếu link tới một đội.
+  await writeFile(listingPath("vi"), listingHtml([vi], "vi", false));
+  await assert.rejects(verify(), /does not link/iu);
+  await reset();
+
+  // id sai định dạng trong tên thư mục không phải trang đội hợp lệ → allowlist.
+  await mkdir(join(distDir, "doi-cong-dong", "BAD_ID"), { recursive: true });
+  await writeFile(join(distDir, "doi-cong-dong", "BAD_ID", "index.html"), "<!doctype html>\n");
+  await assert.rejects(verify(), /allowlist mismatch.*doi-cong-dong\/BAD_ID\/index\.html/su);
+  await rm(join(distDir, "doi-cong-dong", "BAD_ID"), { recursive: true });
+  await verify();
+});
+
+test("V3: ngưỡng 10 id duy nhất quyết định danh sách noindex hay index + canonical + hreflang + sitemap", async (t) => {
+  const { verify, writeAll, listingPath, writeSitemap } = await communityTeamsFixture(t);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+  await verify();
+
+  // 10 đội mà danh sách còn noindex.
+  await writeFile(listingPath("vi"), listingHtml(COMMUNITY_TEAMS, "vi", false));
+  await assert.rejects(verify(), /noindex|canonical/iu);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+
+  // Danh sách index nhưng thiếu canonical / thiếu hreflang.
+  await writeFile(listingPath("zh"), listingHtml(COMMUNITY_TEAMS, "zh", true).replace(/<link rel="canonical"[^>]*>/u, ""));
+  await assert.rejects(verify(), /canonical/iu);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+  await writeFile(listingPath("vi"), listingHtml(COMMUNITY_TEAMS, "vi", true).replace(/<link rel="alternate" hreflang="x-default"[^>]*>/u, ""));
+  await assert.rejects(verify(), /hreflang/iu);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+
+  // Danh sách thiếu link tới một đội.
+  await writeFile(listingPath("zh"), listingHtml(COMMUNITY_TEAMS.slice(1), "zh", true));
+  await assert.rejects(verify(), /does not link/iu);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+
+  // Sitemap thiếu cặp danh sách.
+  await writeSitemap(COMMUNITY_TEAMS, { routes: COMMUNITY_TEAMS.map((team) => ({ path: canonicalTeamPath(team), lastmod: team.approvedAt })) });
+  await assert.rejects(verify(), /sitemap/iu);
+  await writeAll(COMMUNITY_TEAMS, { indexable: true });
+  await verify();
+
+  // 9 đội mà danh sách index → từ chối; danh sách noindex → qua.
+  const nine = COMMUNITY_TEAMS.slice(0, 9);
+  await writeAll(nine, { indexable: true });
+  await assert.rejects(verify(), /noindex|canonical/iu);
+  await writeAll(nine, { indexable: false });
+  await verify();
 });

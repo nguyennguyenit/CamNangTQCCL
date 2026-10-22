@@ -1,0 +1,14 @@
+---
+import CommunityTeamPage from '../../components/pages/CommunityTeamPage.astro';
+import { loadCommunityTeams } from '../../lib/community-teams.ts';
+
+export const prerender = true;
+
+// Mọi đội hiển thị công khai có một trang bản Việt (bản gốc hoặc bản gương canonical); bản Trung ở /zh/doi-cong-dong/<id>/.
+export async function getStaticPaths() {
+  return (await loadCommunityTeams()).map((team) => ({ params: {id: team.id}, props: {team} }));
+}
+
+const {team} = Astro.props;
+---
+<CommunityTeamPage team={team} locale="vi" />

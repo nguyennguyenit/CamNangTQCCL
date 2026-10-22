@@ -73,8 +73,10 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
 | `worker/src/config.ts`, `schema.ts` | Env config và schema kết quả cho 4 mode. |
-| `community-worker/src/routes/teams.ts`, `community-worker/src/teams-validate.ts`, `community-worker/migrations/0008_community_teams.sql` | Đội cộng đồng: mùa, đội + ảnh R2, vote, duyệt, xoá hai bước (`deleting_at` rồi dọn R2), AI nháp qua `callModel` nhóm `teamScan`; điểm/`hot_rank`/`top_rank` là cột sinh STORED, bộ đếm do trigger đếm lại. Rollback evidence: `community-worker/rollback/0009*`, `0010*` (chạy tay). |
-| `js/community-teams.js`, `js/community-team-state.js`, `js/community-team-form.js`, `js/community-team-data.js`, `src/components/pages/CommunityTeamsPage.astro` | Trang `/doi-cong-dong/` (vi + `/zh/`): danh sách, chi tiết, form đăng, của tôi; hàm thuần tách khỏi DOM và mạng. |
+| `community-worker/src/routes/teams.ts`, `community-worker/src/teams-validate.ts`, `community-worker/migrations/0008_community_teams.sql` | Đội cộng đồng: mùa, đội + ảnh R2, vote, duyệt, xoá hai bước (`deleting_at` rồi dọn R2), AI nháp qua `callModel` nhóm `teamScan`, export `GET /api/community-teams/export` cho build; điểm/`hot_rank`/`top_rank` là cột sinh STORED, bộ đếm do trigger đếm lại. Rollback evidence: `community-worker/rollback/0009*`, `0010*` (chạy tay). |
+| `community-worker/src/deploy.ts` | Dispatch `site-publish` tới `pages-deploy.yml` (bài viết, duyệt/xoá đội, khoá/mở khoá/xoá tài khoản) và ghi kết quả vào `meta.deploy` của nhật ký quản trị. |
+| `js/community-teams.js`, `js/community-team-state.js`, `js/community-team-form.js`, `js/community-team-data.js`, `src/components/pages/CommunityTeamsPage.astro` | Trang `/doi-cong-dong/` (vi + `/zh/`): danh sách, chi tiết, form đăng, của tôi; hàm thuần tách khỏi DOM và mạng. Trên trang tĩnh từng đội, cùng entry chỉ gắn phần sống (vote, bình luận, chiến báo). |
+| `src/lib/community-teams.ts`, `src/lib/community-team-pages.ts`, `src/components/pages/CommunityTeamPage.astro`, `src/pages/{,zh/}doi-cong-dong/[id].astro` | Trang tĩnh `/doi-cong-dong/<id>/` (vi + `/zh/`): loader export fail-closed + ngưỡng index danh sách, nội dung/FAQ/JSON-LD/canonical theo `textLang`, component và hai route. |
 
 ## Dữ liệu runtime
 
