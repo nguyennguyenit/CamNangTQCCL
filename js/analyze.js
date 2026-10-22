@@ -20,7 +20,7 @@ import {
   referenceTeam,
   sureCell,
 } from "./analyze-map.js";
-import { createTacticIdResolver } from "./lookup-ids.js";
+import { createBookNameIndex, createTacticIdResolver } from "./lookup-ids.js";
 import {
   SEASON_QUERY_KEY,
   TEAM_QUERY_KEY,
@@ -395,6 +395,7 @@ export function initAnalyze(deps, mount) {
   };
   const INDEX_BY_KIND = { hero: indexes.heroes, tactic: indexes.tactics, book: indexes.books };
   const tacticIdOf = createTacticIdResolver(deps.tacticsDict);
+  const bookIdOf = createBookNameIndex(deps.booksDict || []);
   const resolveRaw = zh ? createRawNameResolver(deps.heroesDict, deps.tacticsDict, deps.booksDict || []) : null;
 
   /** Nhãn hiển thị của một mục từ điển: bản vi tên Việt chuẩn, bản zh chữ Hán gốc. */
@@ -988,7 +989,7 @@ export function initAnalyze(deps, mount) {
 
   /* ----- Kết quả đối chiếu ----- */
   const recordName = (record) => {
-    const reference = referenceTeam(record);
+    const reference = referenceTeam(record, tacticIdOf, bookIdOf);
     const heroNames = () => reference.slots.map((slot) => nameOf("hero", slot.alternatives[0]?.canonicalId, slot.name, slot.raw)).filter(Boolean).join(" · ");
     if (record.sourceConfigId) return zh ? record.nameZh || heroNames() : record.displayNameVi || heroNames();
     return zh ? heroNames() : record.name || heroNames();
@@ -1089,8 +1090,8 @@ export function initAnalyze(deps, mount) {
     const doi = encodeTeamParam(team);
     writeUrl({ [SEASON_QUERY_KEY]: season, [TEAM_QUERY_KEY]: doi }, push);
     const standardRecords = (loaded.index?.records || []).filter((record) => season === "all" || record.sourceSeasonId === season);
-    const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5, tacticIdOf });
-    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5, tacticIdOf });
+    const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
+    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
     compared = { team, season, standard, other };
     compareSub.textContent = L("Theo số tướng rồi số chiến pháp khớp", "按相同武将数、再按相同战法数排序");
     compareBody.replaceChildren(

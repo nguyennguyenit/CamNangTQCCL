@@ -1,5 +1,5 @@
 {
-  "booksSha256": "a8507748e206429eb5acbbd3f9e288603852aa6cf39460a3d56cde6ee52ddf77",
+  "booksSha256": "dce33c56e109442dd5ef093b50e1d77dfcf3b993f109d845f32961288926dfaa",
   "generationId": "lookup:9da6c2241824894af9dc208cce44f88ba3b8bab86f28a6bab94142e3b548caa1",
   "handles": {
     "advisors": {
@@ -956,7 +956,7 @@
     }
   },
   "handlesSha256": "700af1ff84f7edfe500df7204f2cb9c72999f37ca124629b99d2d108925b9e06",
-  "note": "Slug URL đã gán một lần theo id; không suy lại từ tên Việt, tên đổi không đổi slug.",
+  "note": "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết.",
   "retired": {
     "advisors": {},
     "books": {},

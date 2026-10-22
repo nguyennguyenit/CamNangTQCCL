@@ -1,6 +1,6 @@
 import { validateSeasonBundle } from "../../../js/season-context.js";
 import { stableStringify } from "../domain/contracts.js";
-import { canonicalDictionaryId } from "./entity-identity.js";
+import { MissingBookIdError, canonicalDictionaryId } from "./entity-identity.js";
 import {
   PublicationContractError,
   buildPublicationReadModel,
@@ -292,7 +292,15 @@ export function parseArtifact(
   ) {
     const identities = new Set<string>();
     parsed.forEach((item, index) => {
-      const identity = canonicalDictionaryId(name, item.viet as string, item.id);
+      let identity: string;
+      try {
+        identity = canonicalDictionaryId(name, item.viet as string, item.id);
+      } catch (error) {
+        if (error instanceof MissingBookIdError) {
+          throw new ArtifactContractError("INVALID_ARTIFACT", `${name}[${index}] has no frozen id (book:<slug>)`);
+        }
+        throw error;
+      }
       if (identities.has(identity)) {
         throw new ArtifactContractError(
           "INVALID_ARTIFACT",

@@ -83,6 +83,19 @@ describe("snapshot index", () => {
     expect(resolve("Ám Độ Trần Thương")).toBe("tactic:lap-lo-danh-trao");
   });
 
+  it("keys a renamed book by its frozen id; rows without id or sharing an id fail closed (no name-slug fallback)", async () => {
+    const snapshot = await realSnapshot();
+    const renamed = [
+      { id: "book:di-truc-bao-oan", chinese: "以直报怨", viet: "Lấy Thẳng Báo Oán", aliases: ["Dĩ Trực Báo Oán"] },
+      { id: "book:khai-hap", chinese: "开合", viet: "Khai Hạp" },
+    ];
+    const index = buildSnapshotIndex({ ...snapshot, artifacts: { ...snapshot.artifacts, "books-dict": renamed } as never });
+    expect(index.searchEntries.filter(({ kind }) => kind === "book").map(({ canonicalId }) => canonicalId).sort()).toEqual(["book:di-truc-bao-oan", "book:khai-hap"]);
+    for (const books of [[{ chinese: "无", viet: "Không Id" }], [{ id: "", viet: "Id Rỗng" }], [{ id: "book:a", viet: "A" }, { id: "book:a", viet: "B" }]]) {
+      expect(() => buildSnapshotIndex({ ...snapshot, artifacts: { ...snapshot.artifacts, "books-dict": books } as never })).toThrow(SnapshotIndexError);
+    }
+  });
+
   it("fails closed on duplicate canonical dictionary identity", async () => {
     const snapshot = await realSnapshot();
     const duplicate = {

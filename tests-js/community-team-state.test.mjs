@@ -25,7 +25,7 @@ const TACTICS = [
   { chinese: "焚辎营垒", viet: "Thiêu Đốt Doanh Lũy" },
   { chinese: "灵机一动", viet: "Nhanh Trí Động Não" },
 ];
-const BOOKS = [{ chinese: "铁甲", viet: "Giáp Sắt" }];
+const BOOKS = [{ id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Sắt" }];
 const INDEXES = {
   heroes: createEntityIndex(HEROES, "hero"),
   tactics: createEntityIndex(TACTICS, "tactic"),
@@ -132,7 +132,7 @@ test("đường ống thật: normalizeTeamRead -> pickSide -> draftFromRead cho
 });
 
 test("từ điển như trang dựng (createTeamLexicon): binh thư trùng tên chiến pháp không làm rơi chiến pháp đọc đúng", () => {
-  const books = [...BOOKS, { chinese: "三军之众", viet: "Tam Quân Chi Chúng" }];
+  const books = [...BOOKS, { id: "book:tam-quan-chi-chung", chinese: "三军之众", viet: "Tam Quân Chi Chúng" }];
   const tactics = [...TACTICS, { chinese: "三軍之眾", aliases: ["三军之众"], viet: "Tam Quân Chi Chúng" }];
   const read = { heroes: [{ nameCn: "曹操", tacticsCn: ["魅惑", "神机妙算"], booksCn: ["三军之众"], statFocusCn: "" }] };
   const lexicon = createTeamLexicon({ heroes: HEROES, tactics, books }, "vi");

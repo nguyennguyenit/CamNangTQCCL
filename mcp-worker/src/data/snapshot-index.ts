@@ -3,7 +3,7 @@ import type {
   ArtifactRecord,
   DataSnapshot,
 } from "./artifact-contracts.js";
-import { canonicalDictionaryId } from "./entity-identity.js";
+import { MissingBookIdError, canonicalDictionaryId } from "./entity-identity.js";
 
 export type SearchKind = "hero" | "tactic" | "team" | "book";
 
@@ -51,7 +51,13 @@ function dictionaryEntries(
 ): SearchEntry[] {
   return records.map((record) => {
     const displayName = text(record.viet);
-    const canonicalId = canonicalDictionaryId(artifact, displayName, record.id);
+    let canonicalId: string;
+    try {
+      canonicalId = canonicalDictionaryId(artifact, displayName, record.id);
+    } catch (error) {
+      if (error instanceof MissingBookIdError) throw new SnapshotIndexError(error.message);
+      throw error;
+    }
     return {
       kind,
       canonicalId,

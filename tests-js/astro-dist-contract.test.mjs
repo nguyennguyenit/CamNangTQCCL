@@ -1536,7 +1536,7 @@ const canonicalJson = (value) => (value && typeof value === "object"
 /** Dist fixture có đủ bundle Tra cứu + books-dict + ledger: trang nhóm đủ mọi mục, trang riêng từng mục, sitemap có mục. */
 async function lookupItemsFixture(t) {
   const fixture = await lookupDistFixture(t);
-  const booksBytes = jsonBytes([{ viet: "Dĩ Trực Báo Oán", hanViet: "Dĩ Trực Báo Oán", chinese: "以直报怨", effect: "效果", effectViet: "Hiệu ứng", effectVersion: "2021-11" }]);
+  const booksBytes = jsonBytes([{ id: "book:di-truc-bao-oan", viet: "Dĩ Trực Báo Oán", hanViet: "Dĩ Trực Báo Oán", chinese: "以直报怨", effect: "效果", effectViet: "Hiệu ứng", effectVersion: "2021-11" }]);
   for (const dir of [join(fixture.projectDir, "data"), join(fixture.distDir, "data")]) await writeFile(join(dir, "books-dict.json"), booksBytes);
   await mkdir(join(fixture.projectDir, "pipeline"), { recursive: true });
   await writeFile(join(fixture.projectDir, "pipeline", "recommended-identity-map.json"), jsonBytes({ entries: [] }));
@@ -1610,6 +1610,17 @@ async function lookupItemsFixture(t) {
     verify: () => verifyAstroDist({ projectRoot: new URL(`file://${fixture.projectDir}/`), distDir: new URL(`file://${fixture.distDir}/`), manifest }),
   };
 }
+
+test("lookup fixture: books carry a frozen id, and renaming `viet` in the fixture creates no new book route", async (t) => {
+  const fixture = await lookupItemsFixture(t);
+  const bookIds = fixture.entries.filter((entry) => entry.group === "books").map((entry) => entry.id);
+  assert.deepEqual(bookIds, ["book:di-truc-bao-oan"]);
+  const renamed = jsonBytes([{ id: "book:di-truc-bao-oan", viet: "Lấy Thẳng Báo Oán", aliases: ["Dĩ Trực Báo Oán"], chinese: "以直报怨", effect: "效果", effectViet: "Hiệu ứng", effectVersion: "2021-11" }]);
+  await writeFile(join(fixture.projectDir, "data", "books-dict.json"), renamed);
+  const manifest = ["heroes-dict", "tactics", "lookup-catalog", "lookup-manifest", "books-dict"].map(dataEntry);
+  const corpus = await lookupBuildCorpus({ rootDir: fixture.projectDir, manifest });
+  assert.deepEqual(corpus.groups.books.map((row) => row.id), bookIds);
+});
 
 test("dist verifier admits the lookup item pages only with the ledger routes, own metadata and every card prerendered", async (t) => {
   const fixture = await lookupItemsFixture(t);

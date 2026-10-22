@@ -2,8 +2,8 @@
 
 The corpus is the one `buildLookupCorpus` (js/unified-lookup.js) assembles from data/heroes-dict.json,
 data/tactics.json, data/lookup-catalog.json and data/books-dict.json. Those are plain JSON files, so the
-ids are read straight from them (books through the `bookLookupId` rule of js/lookup-ids.js) instead of
-spawning node; the slug rule below mirrors `lookupSlug` there and tests/test_lookup_route_handles.py pins it.
+ids are read straight from them (every book row carries its frozen `id`, written by hand in
+pipeline/books-han-viet-map.json and copied by pipeline/build_books_dict.py) instead of spawning node; the slug rule below mirrors `lookupSlug` there and tests/test_lookup_route_handles.py pins it.
 `equipment-special:*` records are not routes (they live inside their equipment page).
 
 Assignment is one-time: `--write` slugs every id missing from the ledger from its Vietnamese name (collision
@@ -39,7 +39,10 @@ REDIRECTS_HEADER = "# Sinh bởi python3 -m pipeline.lookup_route_handles --writ
 # Locale prefixes of the tactic detail route (src/lib/lookup-detail-routes.ts); zh group slugs equal vi ones.
 REDIRECT_LOCALE_PREFIXES = ("", "/zh")
 
-LEDGER_NOTE = "Slug URL đã gán một lần theo id; không suy lại từ tên Việt, tên đổi không đổi slug."
+LEDGER_NOTE = (
+    "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong "
+    "pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết."
+)
 LEDGER_KEYS = ("schemaVersion", "generationId", "booksSha256", "handlesSha256", "note", "handles", "retired")
 # Group order = LOOKUP_GROUPS of js/unified-lookup.js; value = id kind prefix of every id in the group.
 GROUP_KINDS = {
@@ -76,11 +79,15 @@ def _name(record: dict) -> str:
     return ""
 
 
-def _book_id(row: dict) -> str | None:
-    """`bookLookupId`: slug of viet ?? hanViet (JS `??` keeps an empty `viet`)."""
-    value = row.get("viet") if row.get("viet") is not None else row.get("hanViet")
-    text = slug(value)
-    return f"book:{text}" if text else None
+BOOK_ID_SHAPE = re.compile(r"book:[a-z0-9]+(?:-[a-z0-9]+)*")
+
+
+def _book_id(row: dict) -> str:
+    """The frozen `id` of a books-dict row; a row without a valid one fails closed (never slugged from a name)."""
+    value = row.get("id") if isinstance(row, dict) else None
+    if not isinstance(value, str) or not BOOK_ID_SHAPE.fullmatch(value):
+        raise LookupRouteHandleError(f"books-dict.json row has no valid frozen `id` (book:<slug>): {value!r}")
+    return value
 
 
 def _load(path: Path):
@@ -103,12 +110,7 @@ def load_corpus(data_dir) -> dict:
         "buildings": catalog["buildings"],
     }
     groups = {group: [(record["id"], _name(record)) for record in records] for group, records in sources.items()}
-    book_rows = []
-    for row in books if isinstance(books, list) else []:
-        book_id = _book_id(row)
-        if book_id:
-            book_rows.append((book_id, _name(row)))
-    groups["books"] = book_rows
+    groups["books"] = [(_book_id(row), _name(row)) for row in (books if isinstance(books, list) else [])]
     generation_id = manifest.get("generationId")
     if not isinstance(generation_id, str) or not GENERATION_ID.fullmatch(generation_id):
         raise LookupRouteHandleError("lookup-manifest.json generationId is not `lookup:<64-hex>`")

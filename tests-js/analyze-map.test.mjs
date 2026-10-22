@@ -1,4 +1,5 @@
 // TDD js/analyze-map.js — map Hán->Việt, khớp 3 trạng thái cho editor, diff từng ô + đối chiếu team.
+import { createBookNameIndex } from "../js/lookup-ids.js";
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -26,9 +27,9 @@ const HEROES = [
   { chinese: "张飞", viet: "Trương Phi" },
 ];
 const BOOKS = [
-  { chinese: "铁甲", viet: "Giáp Sắt" },
-  { chinese: "防备", viet: "Phòng Bị" },
-  { chinese: "三军之众", viet: "Tam Quân Chi Chúng" },
+  { id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Sắt" },
+  { id: "book:phong-bi", chinese: "防备", viet: "Phòng Bị" },
+  { id: "book:tam-quan-chi-chung", chinese: "三军之众", viet: "Tam Quân Chi Chúng" },
 ];
 const TACTICS = [
   { chinese: "魅惑", viet: "Mê Hoặc" },
@@ -422,6 +423,8 @@ test("draftReady/confirmedTeam: đủ 3 tướng chắc; chiến pháp/binh thư
 
 /* ---------- Diff từng ô ---------- */
 
+const bookIdOf = createBookNameIndex(BOOKS);
+
 const TEAM = {
   heroes: [
     { hero: "hero:tao-thao", tactics: ["tactic:me-hoac", "tactic:nhanh-tri-dong-nao"], book: "book:giap-sat" },
@@ -451,7 +454,7 @@ const OTHER = {
 };
 
 test("diffTeam: tướng khớp/thừa/thiếu, chiến pháp đúng/sai/thiếu theo từng tướng, binh thư đúng", () => {
-  const diff = diffTeam(TEAM, STANDARD);
+  const diff = diffTeam(TEAM, STANDARD, null, bookIdOf);
   assert.equal(diff.heroHit, 2);
   assert.equal(diff.heroTotal, 3);
   assert.equal(diff.tacticHit, 2);
@@ -470,7 +473,7 @@ test("diffTeam: tướng khớp/thừa/thiếu, chiến pháp đúng/sai/thiếu
 });
 
 test("diffTeam: chiến pháp trong alternatives tính là đúng; binh thư lệch/thiếu được đếm", () => {
-  const diff = diffTeam(TEAM, OTHER);
+  const diff = diffTeam(TEAM, OTHER, null, bookIdOf);
   assert.equal(diff.heroHit, 3);
   const [cao, quan, truong] = diff.heroes;
   assert.deepEqual(cao.tactics.map((cell) => cell.status), ["match", "wrong"]);
@@ -483,6 +486,34 @@ test("diffTeam: chiến pháp trong alternatives tính là đúng; binh thư l�
   assert.deepEqual(diff.missingHeroes, []);
 });
 
+test("diffTeam: đội tham chiếu lưu tên sách cũ, người dùng có sách id cố định -> match (đổi tên không làm lệch)", () => {
+  const renamed = [
+    { id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Thép", aliases: ["Giáp Sắt"] },
+    { id: "book:phong-bi", chinese: "防备", viet: "Phòng Bị" },
+  ];
+  const renamedIdOf = createBookNameIndex(renamed);
+  // STANDARD ghi "Giáp Sắt" (tên cũ); người dùng chọn sách theo id cố định.
+  const diff = diffTeam(TEAM, STANDARD, null, renamedIdOf);
+  assert.equal(diff.heroes[0].book.status, "match");
+  assert.equal(diff.bookDiff, 0);
+  // Không có bộ tra sách thì không suy id từ slug tên: ô sách của đội tham chiếu không bao giờ khớp nhầm.
+  assert.equal(diffTeam(TEAM, STANDARD).heroes[0].book.status, "mismatch");
+  // Cache theo (tacticIdOf, bookIdOf): đổi bộ tra sách trên cùng bản ghi phải tính lại.
+  assert.equal(diffTeam(TEAM, STANDARD, null, createBookNameIndex([])).heroes[0].book.status, "mismatch");
+  assert.equal(diffTeam(TEAM, STANDARD, null, renamedIdOf).heroes[0].book.status, "match");
+});
+
+test("mapRead: binh thư matched mang canonicalId book: cố định, không phải tactic:<slug>", () => {
+  const r = mapRead({ nameCn: "曹操", tacticsCn: [], booksCn: ["铁甲"], statFocusCn: "" }, DICTS);
+  assert.equal(r.books[0].canonicalId, "book:giap-sat");
+});
+
+test("createEntityIndex binh thư: id lấy từ bản ghi, dòng thiếu id bị bỏ, đổi tên không đổi id", () => {
+  const index = createEntityIndex([{ id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Thép" }, { chinese: "无", viet: "Không Id" }], "book");
+  assert.deepEqual([...index.byId.keys()], ["book:giap-sat"]);
+  assert.equal(classifyName("铁甲", index).id, "book:giap-sat");
+});
+
 test("diffTeam: hoà số tướng thì ghép tướng vào ô có nhiều chiến pháp khớp hơn", () => {
   const team = { heroes: [{ hero: "hero:tao-thao", tactics: ["tactic:me-hoac", null], book: null }] };
   const record = {
@@ -491,7 +522,7 @@ test("diffTeam: hoà số tướng thì ghép tướng vào ô có nhiều chi�
       { name: "Tào Tháo", tactics: [{ name: "Mê Hoặc" }] },
     ],
   };
-  const diff = diffTeam(team, record);
+  const diff = diffTeam(team, record, null, bookIdOf);
   assert.equal(diff.heroes[0].slotIndex, 1);
   assert.equal(diff.tacticHit, 1);
 });
@@ -505,9 +536,9 @@ test("compareTeams: xếp theo số tướng khớp rồi chiến pháp khớp, 
     record("mot-tuong", [["Tào Tháo", ["Mê Hoặc"]], ["Lưu Bị"], ["Tuân Úc"]]),
     record("hai-tuong-sau", [["Tào Tháo"], ["Trương Phi"], ["Lưu Bị"]]),
   ];
-  const ranked = compareTeams(TEAM, records, { minHeroes: 2, limit: 5 });
+  const ranked = compareTeams(TEAM, records, { minHeroes: 2, limit: 5, bookIdOf });
   assert.deepEqual(ranked.map(({ record: item }) => item.sourceConfigId), ["ba-tuong", "hai-tuong-co-chien-phap", "hai-tuong", "hai-tuong-sau"]);
-  assert.equal(compareTeams(TEAM, records, { minHeroes: 2, limit: 2 }).length, 2);
+  assert.equal(compareTeams(TEAM, records, { minHeroes: 2, limit: 2, bookIdOf }).length, 2);
 });
 
 /* ---------- 2 phe + tín hiệu lỗi ---------- */

@@ -15,6 +15,16 @@
 - `.githooks/pre-push` (bật bằng `git config core.hooksPath .githooks`): từ chối working tree bẩn, chạy secret scan, `check:workflow-build`, `check:knowledge-bundle`, `typecheck` (mcp-worker), `npm test` + `typecheck` (community-worker), `python3 -m unittest`; push tới `main` chạy thêm `npm run build && npm run verify`.
 - Test `tests-js/ci-workflow-contract.test.mjs` (trigger, paths, schedule, input, điều kiện `production-release`) và `tests-js/pre-push-hook.test.mjs`; README mục "Pre-push hook".
 
+## 2026-10-22 (Đóng băng id binh thư, #14)
+
+### Changed
+- 68 id `book:*` ghi cố định trong `pipeline/books-han-viet-map.json` (`"id"` ở từng mục, lấy từ ledger `pipeline/lookup-route-handles.json`, không tính lại) và `build_books_dict` chép sang `data/books-dict.json`. Generator từ chối mục thiếu id, id sai dạng, id trùng và id mới trùng `retired.books`; không bao giờ slug lại tên. Đổi tên Việt: sửa `viet`, tên cũ vào `aliases` (kiểm facet nhận `viet` hoặc một alias). URL `/tra-cuu/binh-thu/<slug>/`, link `?doi=` và lịch sử Soi đội không đổi.
+- Mọi consumer đọc `row.id`; `bookLookupId` bị xóa khỏi `js/lookup-ids.js` (thay bằng `bookRowId`, `createBookNameIndex`). Dòng thiếu `id` hợp lệ làm builder corpus, MCP builder, `entity-identity`/`artifact-contracts`/`snapshot-index` và season validator (Python + JS) dừng, không lùi về slug tên. `bookSourceAliases` nối mục danh tính theo `chinese`/`sourceNames` rồi mới theo `viet`/`aliases`.
+- Soi đội: `referenceTeam`/`diffTeam`/`compareTeams` nhận `bookIdOf` (khóa cache gồm cả `bookIdOf`), nên đội tham chiếu lưu tên sách cũ vẫn khớp sách id cố định. Sửa `mapName` (`js/analyze-map.js`): `canonicalId` của binh thư là `row.id` thay vì `tactic:<slug>`.
+- `pipeline/lookup-route-handles.json`: chỉ đổi `booksSha256` và `note` (68 handle sách giữ nguyên, `retired.books` rỗng). `LEDGER_NOTE` không còn nói tên không suy ra id cho sách.
+- Fixture binh thư có `id` (`tests-js/fixtures/season-fixtures.mjs`, `mcp-worker/test/fixtures/release-snapshot` kèm manifest/releaseId sinh lại, các test Soi đội/Tra cứu/MCP/worker). Quy trình thêm/đổi tên/gộp binh thư ở `docs/unified-lookup.md`.
+- Publish lại bản dịch hiển thị (file ghim `js/analyze-map.js`, `js/analyze.js`, `js/render.js`, `js/unified-lookup.js` đổi) và re-pin `generationId` trong `pipeline/team-route-handles.json`; sinh lại `mcp-worker/src/generated/workflow-build.ts`.
+
 ## 2026-10-22 (Follow-up chữ Hán có nguồn)
 
 ### Fixed

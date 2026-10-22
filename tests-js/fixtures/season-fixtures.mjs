@@ -10,7 +10,7 @@ export function seasonFixture() {
   ].map(({ id, kind, rulesetId }) => ({ schemaVersion: 1, id, provenance: { ...provenance }, canonicalRef: null, reviewStatus: 'reviewed', claim: { kind, scenarioId: 'scenario-a', rulesetId } }));
   const heroes = ['Anh', 'Bình', 'Cường', 'Dũng', 'Em', 'Giang'].map((viet) => ({ viet, chinese: viet, faction: 'Thục' }));
   const tactics = ['Một', 'Hai', 'Ba', 'Bốn', 'Năm', 'Sáu', 'Bảy'].map((viet) => ({ viet, chinese: viet }));
-  const books = ['Binh thư một', 'Binh thư hai', 'Binh thư ba'].map((viet) => ({ viet, chinese: viet }));
+  const books = [['mot', 'Binh thư một'], ['hai', 'Binh thư hai'], ['ba', 'Binh thư ba']].map(([slug, viet]) => ({ id: `book:binh-thu-${slug}`, viet, chinese: viet }));
   const teams = [{ id: 'team-a', name: 'Đội A', source: 'team-intro', faction: 'Thục', heroes: [] }];
   const config = { schemaVersion: 1, id: 'config-a', teamId: 'team-a', ...context, reviewStatus: 'reviewed', evidenceRefs: ['rule-proof'], unitTypes: ['Thương'],
     heroSlots: ['anh', 'binh', 'cuong'].map((name, i) => ({ heroRefs: [`hero:${name}`], tacticSlots: [['mot', 'hai'], ['ba', 'bon'], ['nam', 'sau']][i].map((id) => ({ tacticRefs: [`tactic:${id}`] })), bookSlots: ['mot', 'hai', 'ba'].map((id) => ({ bookRefs: [`book:binh-thu-${id}`] })), statFocusRaw: '' })),

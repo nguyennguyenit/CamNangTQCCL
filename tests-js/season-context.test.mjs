@@ -50,6 +50,16 @@ test('references resolve actual dictionary identity and ordered slots, not prefi
   assert.equal(projected.teamTier[0].candidateKey,'config-a');
 });
 
+test('book refs resolve by the frozen row id: a renamed viet keeps validating, a row without id is no identity', async () => {
+  const renamed = seasonFixture(); renamed['books-dict'][0].viet = 'Tên Việt Mới'; renamed['books-dict'][0].aliases = ['Binh thư một'];
+  const model = await validateSeasonBundle(refreshConfigProofs(renamed));
+  assert.equal(projectSeasonCandidates(model, context).ok, true);
+  const bare = seasonFixture(); delete bare['books-dict'][0].id;
+  await assert.rejects(validateSeasonBundle(refreshConfigProofs(bare)), SeasonContextError);
+  const slugOnly = seasonFixture(); delete slugOnly['books-dict'][0].id; slugOnly['season-team-configs'][0].heroSlots[0].bookSlots[0].bookRefs = ['book:ten-viet-moi']; slugOnly['books-dict'][0].viet = 'Tên Việt Mới';
+  await assert.rejects(validateSeasonBundle(refreshConfigProofs(slugOnly)), SeasonContextError);
+});
+
 test('unresolved default tier stays null and opt-in cannot bypass mandatory requirements',async()=>{
   const data=seasonFixture();data['season-team-evaluations'][0].rankings.push({id:'rank-b',tier:'T1',evidenceRefs:['rule-proof']});data['season-team-evaluations'][0].defaultRankingId=null;
   let model=await validateSeasonBundle(refreshConfigProofs(data));

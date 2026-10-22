@@ -1002,16 +1002,17 @@ import { compareSeasonInventory, defaultSeasonSelection } from './season-ui-stat
 import { ROSTER_SCAN_STORAGE_KEY, deserializeRosterScanState } from './roster-scan-state.js';
 import { canonicalHeroId } from './hero-identity.js';
 import { normalizeText } from './filters.js';
-import { createTacticIdResolver } from './lookup-ids.js';
+import { bookRowId, createTacticIdResolver } from './lookup-ids.js';
 
 /** Ordered configuration details use explicit selections; inventory facts never become tiers. */
 export function seasonConfigDetail(row, model, {onClose,importHref}) {
   const {config,team} = row;
   const names = new Map();
-  // Bản zh hiện tên chữ Hán gốc của từ điển; khóa ref vẫn dựng từ tên Việt như trước.
+  // Bản zh hiện tên chữ Hán gốc của từ điển; khóa ref: tướng dựng từ tên Việt, chiến pháp và binh thư theo `id` cố định của dòng.
   const zh = isZh();
   for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
-    const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+    if (kind === 'book' && !bookRowId(item)) continue;
+    const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'book' ? item.id : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     names.set(ref,zh && item.chinese ? item.chinese : item.viet);
   }
   const selection = defaultSeasonSelection(config);

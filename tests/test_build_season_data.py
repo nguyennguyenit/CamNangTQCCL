@@ -227,12 +227,24 @@ class SeasonalBundleTest(unittest.TestCase):
         config = dict(schemaVersion=1, id='config-a', teamId='team-a', scenarioId=registry[0]['id'], rulesetId='reviewed-rules', reviewStatus='reviewed', evidenceRefs=['rules-proof'], unitTypes=['Thương'], heroSlots=[dict(heroRefs=['hero:'+name], tacticSlots=[dict(tacticRefs=['tactic:'+chr(97+index*2)]),dict(tacticRefs=['tactic:'+chr(98+index*2)])], bookSlots=[dict(bookRefs=['book:a']),dict(bookRefs=['book:b']),dict(bookRefs=['book:c'])],statFocusRaw='Trí Lực') for index,name in enumerate(('a','b','c'))], requirements=[],effectBundles=[],notes='')
         evidence[1]['configFingerprint'] = config_fingerprint(config)
         legacy = dict(teams=[dict(id='team-a')],coexist=[dict(groupLabel='Same name',teams=[])])
-        catalog = {'heroes-dict':[{'viet':name.upper()} for name in ('a','b','c')], 'tactics':[{'viet':name} for name in 'ABCDEF'], 'books-dict':[{'viet':'A'},{'viet':'B'},{'viet':'C'}]}
+        catalog = {'heroes-dict':[{'viet':name.upper()} for name in ('a','b','c')], 'tactics':[{'viet':name} for name in 'ABCDEF'], 'books-dict':[{'id':'book:a','viet':'A'},{'id':'book:b','viet':'B'},{'id':'book:c','viet':'C'}]}
         return registry,evidence,dict(configs=[config],evaluations=[],content_links=[],legacy_data=legacy,identity_catalog=catalog)
 
     def build(self, bundle):
         registry,evidence,options=bundle
         return seasons.build_season_data(registry,evidence,**options)
+
+    def test_dictionary_ids_read_the_frozen_book_id_after_a_rename(self):
+        from pipeline.season_validation import dictionary_ids
+        catalog = {'heroes-dict': [], 'tactics': [], 'books-dict': [{'id': 'book:di-truc-bao-oan', 'viet': 'Lấy Thẳng Báo Oán', 'aliases': ['Dĩ Trực Báo Oán']}]}
+        self.assertEqual(dictionary_ids(catalog)['book'], {'book:di-truc-bao-oan'})
+
+    def test_dictionary_ids_reject_book_rows_without_a_valid_unique_id(self):
+        from pipeline.season_validation import dictionary_ids
+        base = {'heroes-dict': [], 'tactics': []}
+        for rows in ([{'viet': 'A'}], [{'id': '', 'viet': 'A'}], [{'id': 'book:a', 'viet': 'A'}, {'id': 'book:a', 'viet': 'B'}]):
+            with self.subTest(rows=rows), self.assertRaises(ValueError):
+                dictionary_ids({**base, 'books-dict': rows})
 
     def test_complete_bundle_requires_all_three_extension_arrays(self):
         registry,evidence=fixtures()
