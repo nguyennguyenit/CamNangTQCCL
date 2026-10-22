@@ -95,7 +95,7 @@ describe("snapshot v3 identity and layout", () => {
       upstream: { ...release.build.meta.upstream, lookup: { generationId: `lookup:${"0".repeat(64)}` } },
     };
     expect((await createDataManifest(release.all, { publication: repinned })).releaseId).not.toBe(release.manifest.releaseId);
-  }, 60_000);
+  }, 180_000); // dựng lại cả release: ~11 s local, 45–75 s trên runner CI
 
   it("round-trips through validateDataSnapshot with a read model", async () => {
     const snapshot = await validateDataSnapshot(release.manifest, release.all);
