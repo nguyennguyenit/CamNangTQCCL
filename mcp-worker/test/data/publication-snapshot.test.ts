@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { promisify } from "node:util";
@@ -6,7 +7,7 @@ import { promisify } from "node:util";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { buildSeasonCandidates } from "../../../js/roster-season-candidates.js";
-import { lookupProfilePath } from "../../../js/lookup-ids.js";
+import { lookupItemPath, lookupProfilePath } from "../../../js/lookup-ids.js";
 import {
   ArtifactContractError,
   MAX_ARTIFACT_BYTES,
@@ -388,18 +389,31 @@ async function websiteRouteCatalog() {
 }
 
 describe("route and locale parity", () => {
-  it("entity routes equal the Tra cứu profile paths for vi and zh", async () => {
+  it("entities with a page route to /tra-cuu/<nhóm>/<slug>/ for vi and zh; equipment-special keeps ?id=", async () => {
     const { publication } = await validateDataSnapshot(release.manifest, release.all);
     const model = publication!;
     const kinds = new Set(model.entities.map((entity) => entity.kind));
     expect([...kinds].sort()).toEqual(["advisor", "book", "building", "equipment", "equipment-special", "hero", "tactic", "troop-mod"]);
+    let withPage = 0;
+    let special = 0;
     for (const entity of model.entities) {
-      const vi = lookupProfilePath(entity.id)!;
+      if (entity.kind === "equipment-special") {
+        special += 1;
+        const vi = lookupProfilePath(entity.id)!;
+        expect(entity.pagePath).toEqual({ vi, zh: `/zh${vi}` });
+        expect(vi).toContain(`?id=${encodeURIComponent(entity.id)}`);
+        continue;
+      }
+      withPage += 1;
+      const vi = lookupItemPath(entity.id)!;
+      expect(vi).not.toContain("?id=");
       expect(entity.pagePath).toEqual({ vi, zh: `/zh${vi}` });
-      expect(vi.startsWith("/tra-cuu/")).toBe(true);
-      expect(vi).toContain(`?id=${encodeURIComponent(entity.id)}`);
+      expect(vi).toMatch(/^\/tra-cuu\/[a-z-]+\/[a-z0-9-]+\/$/u);
     }
-    expect(model.getEntity("hero:sp-lu-mong")?.pagePath.vi).toBe("/tra-cuu/tuong/?id=hero%3Asp-lu-mong");
+    expect(special).toBeGreaterThan(0);
+    expect(withPage).toBeGreaterThan(900);
+    expect(model.getEntity("hero:sp-lu-mong")?.pagePath.vi).toBe("/tra-cuu/tuong/sp-lu-mong/");
+    expect(model.getEntity("hero:sp-lu-mong")?.pagePath.zh).toBe("/zh/tra-cuu/tuong/sp-lu-mong/");
   });
 
   it("team routes equal the website's handle-ledger route catalog", async () => {
@@ -515,4 +529,79 @@ describe("read model", () => {
     const mapped = buildSeasonCandidates([...model.recommendSourceRecords(season)], season, { heroesDict, tacticsDict });
     expect(mapped.diagnostics.total).toBeGreaterThan(0);
   });
+});
+
+const canonical = (value: unknown): string =>
+  value && typeof value === "object" && !Array.isArray(value)
+    ? `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(",")}}`
+    : JSON.stringify(value);
+
+type LedgerDoc = { handles: Record<string, Record<string, string>>; retired: unknown; handlesSha256: string; booksSha256: string; generationId: string };
+/** Edit the lookup ledger and (by default) re-digest it so only the edit under test can fail. */
+const editLedger = (bytes: Uint8Array, edit: (ledger: LedgerDoc) => void, redigest = true) =>
+  editJson<LedgerDoc>(bytes, (ledger) => {
+    edit(ledger);
+    if (redigest) ledger.handlesSha256 = createHash("sha256").update(canonical({ handles: ledger.handles, retired: ledger.retired }), "utf8").digest("hex");
+  });
+
+const routeOf = (all: Map<ArtifactName, Uint8Array>, id: string) =>
+  (json(all.get("public-routes" as ArtifactName)!) as Array<{ id: string; vi: string; zh: string }>).find((route) => route.id === id);
+
+describe("lookup route ledger in the publication", () => {
+  it("an injected ledger exception shows in the published route and passes the projection", async () => {
+    const sources = { ...input.sources, lookupRouteLedger: editLedger(input.sources.lookupRouteLedger, (ledger) => { ledger.handles.heroes!["hero:luu-bi"] = "luu-bi-2"; }) };
+    const built = await buildRelease({ ...input, sources });
+    expect(routeOf(built.all, "hero:luu-bi")).toMatchObject({ vi: "/tra-cuu/tuong/luu-bi-2/", zh: "/zh/tra-cuu/tuong/luu-bi-2/" });
+    const { publication } = await validateDataSnapshot(built.manifest, built.all);
+    expect(publication!.getEntity("hero:luu-bi")?.pagePath).toEqual({ vi: "/tra-cuu/tuong/luu-bi-2/", zh: "/zh/tra-cuu/tuong/luu-bi-2/" });
+  }, 120_000);
+
+  it("the projection rejects a ?id= route for an id that has a page, accepts the profile route for equipment-special", async () => {
+    const tamper = async (edit: (route: { id: string; vi: string; zh: string }) => void) => {
+      const all = new Map(release.all);
+      const routes = json(all.get("public-routes" as ArtifactName)!) as Array<{ id: string; vi: string; zh: string }>;
+      edit(routes.find((route) => route.id === "hero:luu-bi")!);
+      all.set("public-routes" as ArtifactName, new TextEncoder().encode(`${stableStringify(routes)}\n`));
+      const manifest = await createDataManifest(all, { publication: release.build.meta });
+      return validateDataSnapshot(manifest, all);
+    };
+    await expect(tamper((route) => { route.vi = lookupProfilePath("hero:luu-bi")!; route.zh = `/zh${route.vi}`; })).rejects.toBeInstanceOf(ArtifactContractError);
+    // Wrong group / bad slug shape / mismatched zh.
+    await expect(tamper((route) => { route.vi = "/tra-cuu/chien-phap/luu-bi/"; route.zh = `/zh${route.vi}`; })).rejects.toBeInstanceOf(ArtifactContractError);
+    await expect(tamper((route) => { route.vi = "/tra-cuu/tuong/Luu_Bi/"; route.zh = `/zh${route.vi}`; })).rejects.toBeInstanceOf(ArtifactContractError);
+    await expect(tamper((route) => { route.vi = "/tra-cuu/tuong/luu-bi/extra/"; route.zh = `/zh${route.vi}`; })).rejects.toBeInstanceOf(ArtifactContractError);
+    await expect(tamper((route) => { route.zh = "/zh/tra-cuu/tuong/khac/"; })).rejects.toBeInstanceOf(ArtifactContractError);
+    const special = routeOf(release.all, [...(await validateDataSnapshot(release.manifest, release.all)).publication!.entities].find((entity) => entity.kind === "equipment-special")!.id)!;
+    expect(special.vi).toContain("?id=");
+  });
+
+  it("fails the build for a ledger from another generation, another books-dict or another book id set", async () => {
+    const build = (edit: (ledger: LedgerDoc) => void, redigest = true) =>
+      buildPublicationArtifacts({ objects: input.objects, sources: { ...input.sources, lookupRouteLedger: editLedger(input.sources.lookupRouteLedger, edit, redigest) } });
+    await expect(build((ledger) => { ledger.generationId = "7".repeat(64); })).rejects.toThrow(/generationId/u);
+    await expect(build((ledger) => { ledger.booksSha256 = "8".repeat(64); })).rejects.toThrow(/booksSha256/u);
+    await expect(build((ledger) => { delete ledger.handles.books![Object.keys(ledger.handles.books!)[0]!]; })).rejects.toThrow(/books/u);
+    await expect(build((ledger) => { ledger.handles.books!["book:khong-co-trong-books-dict"] = "khong-co"; })).rejects.toThrow(/books/u);
+  }, 120_000);
+
+  it("refuses a hand-edited ledger whose handlesSha256 was not updated", async () => {
+    const edited = editLedger(input.sources.lookupRouteLedger, (ledger) => { ledger.handles.heroes!["hero:luu-bi"] = "luu-bi-2"; }, false);
+    await expect(buildPublicationArtifacts({ objects: input.objects, sources: { ...input.sources, lookupRouteLedger: edited } })).rejects.toThrow(/handlesSha256/u);
+  });
+
+  it("two concurrent builds with different ledgers keep their own routes and leave lookupItemPath untouched", async () => {
+    const before = lookupItemPath("hero:luu-bi");
+    const other = { ...input.sources, lookupRouteLedger: editLedger(input.sources.lookupRouteLedger, (ledger) => { ledger.handles.heroes!["hero:luu-bi"] = "luu-bi-2"; }) };
+    const [plain, injected] = await Promise.all([buildRelease(input), buildRelease({ ...input, sources: other })]);
+    expect(routeOf(plain.all, "hero:luu-bi")?.vi).toBe("/tra-cuu/tuong/luu-bi/");
+    expect(routeOf(injected.all, "hero:luu-bi")?.vi).toBe("/tra-cuu/tuong/luu-bi-2/");
+    expect(lookupItemPath("hero:luu-bi")).toBe(before);
+    expect(before).toBe("/tra-cuu/tuong/luu-bi/");
+  }, 120_000);
+
+  it("a raw checkout without the lookup ledger refuses to load", async () => {
+    const { root, dataRoot } = await writeRawCheckout();
+    await rm(join(root, "pipeline/lookup-route-handles.json"));
+    await expect(new FilesystemDataSource({ dataRoot }).load()).rejects.toMatchObject({ code: "DATA_UNAVAILABLE" });
+  }, 60_000);
 });

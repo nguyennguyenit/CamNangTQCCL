@@ -58,7 +58,7 @@ export async function buildRelease(input: RepositoryPublication): Promise<BuiltR
 const encode = (value: unknown) => new TextEncoder().encode(JSON.stringify(value));
 
 /** Replace one JSON document's bytes while keeping everything else identical. */
-export function withBytes(sources: PublicationSources, patch: Partial<Pick<PublicationSources, "routeLedger" | "websiteDisplay">>): PublicationSources {
+export function withBytes(sources: PublicationSources, patch: Partial<Pick<PublicationSources, "routeLedger" | "lookupRouteLedger" | "websiteDisplay">>): PublicationSources {
   return { ...sources, ...patch };
 }
 
@@ -101,5 +101,6 @@ export async function writeRawCheckout(): Promise<{ root: string; dataRoot: stri
   for (const name of await readdir(source)) await copyFile(join(source, name), join(generation, name));
   await mkdir(join(root, "pipeline"));
   await copyFile(join(repositoryRoot, "pipeline/team-route-handles.json"), join(root, "pipeline/team-route-handles.json"));
+  await copyFile(join(repositoryRoot, "pipeline/lookup-route-handles.json"), join(root, "pipeline/lookup-route-handles.json"));
   return { root, dataRoot };
 }

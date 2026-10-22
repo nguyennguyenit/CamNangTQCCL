@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { lookupProfilePath } from "../../../js/lookup-ids.js";
+import { lookupHref, lookupProfilePath } from "../../../js/lookup-ids.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import type { CatalogEntityView } from "../../src/data/publication-projection.js";
 import { realHandlers, realPublication } from "../fixtures/real-handlers.js";
@@ -18,7 +18,7 @@ describe("tqccl_search", () => {
     const result = await handlers.call("tqccl_search", { query: "Thanh Long Yển Nguyệt Đao" });
     const hit = result.items.find((item) => item.entityId === "equipment:thanh-long-yen-nguyet-dao");
     expect(hit).toMatchObject({ kind: "equipment", displayName: "Thanh Long Yển Nguyệt Đao", matchedTerm: "Thanh Long Yển Nguyệt Đao" });
-    expect(hit?.pagePath).toBe(lookupProfilePath("equipment:thanh-long-yen-nguyet-dao"));
+    expect(hit?.pagePath).toBe(lookupHref("equipment:thanh-long-yen-nguyet-dao"));
   });
 
   it("covers all eight kinds when browsing with an empty query", async () => {

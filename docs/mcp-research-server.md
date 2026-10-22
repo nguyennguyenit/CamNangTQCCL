@@ -5,7 +5,7 @@
 `mcp-worker/` cung cấp dịch vụ nghiên cứu TQCCL chỉ đọc qua JSON CLI, MCP stdio và MCP Streamable HTTP. Cả ba dùng chung bảy tool (bề mặt P*; tám tên cũ đã bị xoá, không alias — consumer phải reconnect và refresh `tools/list`):
 
 - `tqccl_get_playbook` — version, capabilities, mùa nguồn, luật bắt buộc và tool kế tiếp.
-- `tqccl_search` — tìm tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội (có `pagePath` vi/zh).
+- `tqccl_search` — tìm tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội (có `pagePath` vi/zh: trang riêng `/tra-cuu/<nhóm>/<slug>/`, riêng `equipment-special:*` chưa có trang nên giữ `/tra-cuu/trang-bi/?id=…`; slug đọc từ `pipeline/lookup-route-handles.json` lúc build).
 - `tqccl_get_entity` — hồ sơ như trang Tra cứu; specials/options/levels/revisions phân trang bằng `section`/cursor.
 - `tqccl_find_teams` — duyệt/đối chiếu đội tham khảo theo `collection` ∈ recommended, other, khaihoang, engine.
 - `tqccl_get_team` — chi tiết một đội theo selector `reference`; ghi chú/biến thể phân trang.
