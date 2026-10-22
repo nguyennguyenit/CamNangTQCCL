@@ -166,10 +166,10 @@ Cả hai route yêu cầu phiên đăng nhập; không có phiên hoặc user b�
 
 ### `POST /api/roster`
 
-Thân `{expectedUserId, records: [{kind, id, updatedAt, deleted, data}]}`, **Batch tối đa 200 bản ghi** (`ROSTER_MAX_BATCH`, client `PUSH_CHUNK_SIZE` bằng đúng số này). `deleted` là boolean; push cũng nhận `0`/`1`. Rate limit `roster_push` 600/giờ.
+Thân `{expectedUserId, records: [{kind, id, updatedAt, deleted, data}]}`, **Batch tối đa 12 bản ghi** (`ROSTER_MAX_BATCH`, client `PUSH_CHUNK_SIZE` bằng đúng số này; lý do ở mục "Trần câu D1"). `deleted` là boolean; push cũng nhận `0`/`1`. Rate limit `roster_push` 600/giờ.
 
 - `expectedUserId` khác user của cookie → 409 `user_mismatch`, không ghi gì.
-- Lỗi cấu trúc thân request (không phải JSON, thiếu `records`, quá 200) → 400.
+- Lỗi cấu trúc thân request (không phải JSON, thiếu `records`, quá 12) → 400.
 - Lỗi của từng bản ghi không làm hỏng cả batch: trả `{results: [{kind, id, outcome, code?, server?}], cursor}`.
 
 | `outcome` | Khi nào |
@@ -179,9 +179,9 @@ Thân `{expectedUserId, records: [{kind, id, updatedAt, deleted, data}]}`, **Bat
 | `conflict` | server có bản mới hơn, hoặc cùng `updatedAt` khác payload; kèm `server` là bản đang lưu |
 | `rejected` | kèm `code`: `bytes`, `schema`, `clock_skew`, `box_missing`, `group_missing`, `box_changed`, `not_found`, `default_protected`, `quota`, `cap`, `retained_cap` |
 
-Server xử lý bản ghi `box` trước, rồi `group`, rồi mọi bản ghi còn lại (đội cần nhóm sống). Số câu D1 mỗi lần gọi tối đa `3 × 200 + 1 = 601` (xóa nhóm: ghi + chẩn đoán + chuyển đội; thêm 1 câu đọc rev cuối) cộng vài câu phiên/rate limit, dưới trần 1 000 câu mỗi lần gọi của gói trả phí (test `M2` khẳng định). Câu ghi bị bỏ qua mà không suy được lý do trả `conflict` kèm bản đang lưu (nếu có) hoặc `quota`, không trả 500 vì batch đã commit; `data` lồng quá 8 tầng → `rejected schema`. Tạo hộp + bản ghi con trong cùng request chạy được; xóa hộp + ghi con trong cùng request thì bản con nhận `box_missing`.
+Server xử lý bản ghi `box` trước, rồi `group`, rồi mọi bản ghi còn lại (đội cần nhóm sống). Số câu D1 mỗi lần gọi tối đa `3 × 12 + 1 = 37` (xóa nhóm: ghi + chẩn đoán + chuyển đội; thêm 1 câu đọc rev cuối) cộng 1 câu phiên và 1 câu rate limit (đo trong test `M2`, chừa thêm 4 câu cho Better Auth thật), dưới trần 50 câu mỗi lần gọi của gói Free. Câu ghi bị bỏ qua mà không suy được lý do trả `conflict` kèm bản đang lưu (nếu có) hoặc `quota`, không trả 500 vì batch đã commit; `data` lồng quá 8 tầng → `rejected schema`. Tạo hộp + bản ghi con trong cùng request chạy được; xóa hộp + ghi con trong cùng request thì bản con nhận `box_missing`.
 
-**Trần câu D1 (đã đối chiếu, 2026-10-22).** Cloudflare D1 limits (<https://developers.cloudflare.com/d1/platform/limits/>, trang ghi cập nhật 2026-04-21): "Queries per Worker invocation" là 1 000 (Workers Paid) và 50 (Free); mỗi câu trong `batch()` tính riêng. Đếm trên mã `src/routes/roster.ts`: mỗi bản ghi tối đa 3 câu (ghi + chẩn đoán + `MOVE_TEAMS` hoặc `DELETE_BOX_CHILDREN`) nên `3 × 200 + 1 = 601`, cộng vài câu phiên và rate limit, vẫn dưới 1 000, nên giữ `ROSTER_MAX_BATCH = 200`. **Điều kiện tiên quyết trước release production:** tài khoản Cloudflare phải ở gói Workers Paid (gói Free chỉ 50 câu, lô 200 bản ghi sẽ vượt). Gói của tài khoản chưa kiểm được qua API (403), cần xác nhận trên dashboard trước khi release.
+**Trần câu D1 (đã đối chiếu, 2026-10-22).** Cloudflare D1 limits (<https://developers.cloudflare.com/d1/platform/limits/>, trang ghi cập nhật 2026-04-21): "Queries per Worker invocation" là 1 000 (Workers Paid) và 50 (Free). Tài liệu không nói rõ một `batch()` tính là 1 hay N câu; hợp đồng giả định N (bảo thủ). Tài khoản đang ở gói **Free** (người dùng xác nhận 2026-10-22), nên `ROSTER_MAX_BATCH` hạ từ 200 xuống 12: lô xấu nhất 37 câu + phiên + rate limit = 39 câu đo được, chừa thêm 4 câu cho Better Auth thật vẫn ≤ 50 (test `M2` đếm mọi câu của request). Hệ quả: kho 2 000 bản ghi cần khoảng 170 request push, dưới rate limit 600/giờ. Lên Workers Paid thì có thể nâng lại (3N + 7 ≤ 1 000), đổi server và client `PUSH_CHUNK_SIZE` trong cùng một lần release.
 
 ## Đóng dấu thời gian và dirty
 

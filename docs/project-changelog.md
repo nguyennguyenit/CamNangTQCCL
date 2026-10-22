@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-10-22 (Roster push vừa gói Workers Free)
+
+### Changed
+- `POST /api/roster` nhận tối đa 12 bản ghi mỗi lô (trước: 200) vì tài khoản Cloudflare ở gói Free, trần 50 câu D1 mỗi lần gọi Worker. Lô xấu nhất 37 câu + phiên + rate limit; test `M2` đếm mọi câu D1 của request và chừa 4 câu cho Better Auth thật. Client `PUSH_CHUNK_SIZE` (PR #36) đổi theo. Route chưa release nên không cần tương thích với client cũ.
+
 ## 2026-10-22 (Độ phủ kho trên Gợi ý kho)
 
 ### Added
