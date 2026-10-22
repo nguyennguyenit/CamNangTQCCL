@@ -27,7 +27,7 @@ Trình duyệt ──/api/*──► Pages Function (proxy) ──service bindin
 | `BETTER_AUTH_SECRET` | secret | Chuỗi ngẫu nhiên từ 32 byte trở lên, ví dụ tạo bằng `openssl rand -base64 32` |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | secret | OAuth client loại Web application |
 | `GITHUB_REPOSITORY` | var | `nguyennguyenit/CamNangTQCCL`, repo nhận `repository_dispatch` |
-| `GITHUB_DISPATCH_TOKEN` | secret | Fine-grained PAT chỉ cho repo trên, quyền **Contents: Read and write** (bắt buộc cho `repository_dispatch`). Nếu thiếu, thao tác vẫn lưu DB nhưng dispatch trả `ok:false` (`deploy_hook_not_configured`), xem [Build lại site](#build-lại-site-khi-nội-dung-công-khai-đổi) |
+| `GITHUB_DISPATCH_TOKEN` | secret | Fine-grained PAT chỉ cho repo trên, quyền **Contents: Read and write** (bắt buộc cho `repository_dispatch`). Nếu thiếu, publish vẫn lưu DB nhưng trả `deploy.ok=false` |
 | `FEEDBACK_MAIL` | send_email binding | Gửi thư báo góp ý; `destination_address` khoá cứng người nhận `nguyennlt.ncc@gmail.com`. Thiếu binding hoặc gửi lỗi thì góp ý vẫn lưu D1 (chỉ ghi log) |
 | `FEEDBACK_FROM`, `FEEDBACK_TO` | var | Địa chỉ gửi `gopy@mail.tqccl.com` (subdomain đã bật Email Routing) và địa chỉ nhận (trùng `destination_address`) |
 | `TURNSTILE_SECRET` | secret | Secret của widget Turnstile có site key trong `js/config.js` (dùng chung với công cụ đọc ảnh). Thiếu thì khách ẩn danh gửi góp ý nhận 503 `feedback_unavailable` |
@@ -74,27 +74,13 @@ npx wrangler deploy
 
 Người dùng đăng nhập riêng trên từng domain (cookie gắn theo domain). Bỏ alias preview khỏi `SITE_ORIGIN` và Google khi không cần thử trên preview nữa.
 
-### Build lại site khi nội dung công khai đổi
+### Build lại site khi xuất bản bài
 
-Project Pages `tqccl` là direct upload (không nối Git) nên không có Deploy hook. Khi nội dung mà trang tĩnh dựng lúc build bị đổi, Worker gửi `POST https://api.github.com/repos/<GITHUB_REPOSITORY>/dispatches` với `event_type: "site-publish"` ([`src/deploy.ts`](../community-worker/src/deploy.ts), chờ tối đa 5 giây). Điểm gửi:
-
-- **Bài viết**: admin publish, unpublish, sửa hoặc xoá một bài đang public.
-- **Đội cộng đồng** (năm điểm làm đổi tập đội hiển thị; chỉ request thật sự chuyển trạng thái mới gửi, lần gọi lại sau lỗi không gửi lần hai):
-  1. duyệt đội;
-  2. xoá đội, khi request chốt `deleting_at` và đội lúc đó đang `approved` (đội chờ duyệt/bị từ chối vốn không có trang);
-  3. khoá tài khoản;
-  4. mở khoá;
-  5. xoá tài khoản, lúc chốt `deleting_at` (trước khi dọn R2).
-
-  Khoá/mở khoá/xoá tài khoản luôn gửi, kể cả khi user không có đội công khai. Không gửi: từ chối đội (đội chờ duyệt vốn ẩn), mở mùa (export lấy mọi mùa), đổi vai trò.
-
-Dispatch lỗi không rollback D1 và không đổi status HTTP; kết quả `{ok, status, error?}` với `error` là `deploy_hook_not_configured`, `deploy_hook_failed` (GitHub trả lỗi) hoặc `deploy_hook_unreachable` (lỗi mạng, quá 5 giây). Response trả kết quả dưới khoá `deploy` ở bài viết, duyệt đội, khoá, mở khoá và khi staff xoá đội (`null` nếu không gửi); chủ tự xoá đội và xoá tài khoản không có trường này. Thao tác có nhật ký quản trị ghi `meta.deploy` (xem [Nhật ký quản trị](#nhật-ký-quản-trị)); chủ tự xoá đội không có nhật ký nên dispatch lỗi chỉ `console.error`.
-
-Workflow [`pages-deploy.yml`](../.github/workflows/pages-deploy.yml) chạy khi nhận `repository_dispatch` loại `site-publish`, khi chạy tay (`workflow_dispatch`) và theo lịch `schedule` hằng ngày. Lịch là lưới an toàn best-effort (GitHub có thể trễ hoặc bỏ lượt): khoá tự hết hạn không sinh event nào, và dispatch có thể lỗi. Workflow checkout `main`, chạy `npm run build` + `npm run verify` rồi `wrangler pages deploy dist --branch main` từ root (đóng gói luôn `functions/`); nhiều lần chạy liên tiếp thì lần mới huỷ lần đang chạy. GitHub đọc `types` của `repository_dispatch` từ file workflow trên nhánh mặc định. Lúc chuyển từ `blog-publish` sang `site-publish`, workflow nhận cả hai loại (PR #32) cho tới khi Worker mới đã chạy trên production, sau đó phần site bỏ `blog-publish`.
+Project Pages `tqccl` là direct upload (không nối Git) nên không có Deploy hook. Khi admin publish, unpublish, sửa hoặc xoá một bài đang public, Worker gửi `POST https://api.github.com/repos/<GITHUB_REPOSITORY>/dispatches` với `event_type: "blog-publish"`. Workflow [`pages-deploy.yml`](../.github/workflows/pages-deploy.yml) checkout `main`, chạy `npm run build` + `npm run verify` rồi `wrangler pages deploy dist --branch main` từ root (đóng gói luôn `functions/`). Workflow cũng chạy tay được bằng `workflow_dispatch`. Nếu dispatch lỗi, dữ liệu trong DB vẫn giữ nguyên và response trả `deploy: {ok:false, status, error}`.
 
 Workflow cần secret GitHub `CLOUDFLARE_PAGES_API_TOKEN`: API token Cloudflare quyền **Account › Cloudflare Pages › Edit** trên account `e2ab96bb7fa53e5ad848286816d344a5`. Workflow luôn build từ `main`, nên chỉ nội dung đã push lên `main` mới được deploy.
 
-Lúc build, Astro đọc `GET {COMMUNITY_API_ORIGIN}/api/posts` (blog) và `GET {COMMUNITY_API_ORIGIN}/api/community-teams/export` (trang đội tĩnh). Workflow đặt `COMMUNITY_API_ORIGIN=https://tqccl-community.nguyennlt-ncc.workers.dev`; build tay cũng phải đặt biến này, nếu không blog và trang đội sẽ rỗng. Đã đặt mà một trong hai API lỗi hoặc sai hợp đồng thì build dừng (xem [Deployment Guide](deployment-guide.md)).
+Lúc build, Astro đọc `GET {COMMUNITY_API_ORIGIN}/api/posts`. Workflow đặt `COMMUNITY_API_ORIGIN=https://tqccl-community.nguyennlt-ncc.workers.dev`; build tay cũng phải đặt biến này, nếu không blog sẽ rỗng.
 
 ### Binding cho Pages Function
 
@@ -265,7 +251,7 @@ Dòng `failed`/`partial` ghi bằng `writeAuditQuietly` để lỗi ghi nhật k
 
 ### Triển khai và rollback
 
-Luật cứng: **không push `main` trước khi Worker mới đã chạy.** Pages build lại từ `main` mỗi lần workflow [`pages-deploy.yml`](../.github/workflows/pages-deploy.yml) chạy (dispatch `site-publish`, lịch hằng ngày hoặc chạy tay, xem [Build lại site](#build-lại-site-khi-nội-dung-công-khai-đổi)), và client mới cần `role` từ Worker mới (Better Auth cũng kiểm schema lúc chạy, nên Worker mới không được deploy trước migration).
+Luật cứng: **không push `main` trước khi Worker mới đã chạy.** Pages build lại từ `main` mỗi lần workflow [`pages-deploy.yml`](../.github/workflows/pages-deploy.yml) chạy (dispatch `blog-publish` khi publish/sửa bài, hoặc chạy tay), và client mới cần `role` từ Worker mới (Better Auth cũng kiểm schema lúc chạy, nên Worker mới không được deploy trước migration).
 
 1. Thử `0006` và trigger trên một D1 remote **không phải production**: insert session cho user bị khoá phải lỗi `SQLITE_CONSTRAINT_TRIGGER` (`account_blocked`).
 2. Trong `community-worker/`: `npm run db:migrate:remote`; xác nhận `npx wrangler d1 execute tqccl-community --remote --command "pragma table_info(\"user\")"` có `role`, `banned_until`, `deleting_at`, `last_seen_at`.
@@ -274,7 +260,7 @@ Luật cứng: **không push `main` trước khi Worker mới đã chạy.** Pag
 
 Rollback (phải **cùng lúc và khớp phiên bản** giữa Pages và Worker: client mới đọc `role`, client cũ đọc cờ boolean quản trị cũ trong `/api/me`; Worker mới không gửi cờ đó, Worker cũ không gửi `role`, nên lệch phiên bản làm mất khu quản trị):
 
-1. Chặn việc Pages tự dựng lại bản không tương thích: revert commit trên `main` **trước**, vì `pages-deploy.yml` luôn build từ `main`, chạy theo lịch hằng ngày và mỗi lần Worker dispatch.
+1. Chặn việc Pages tự dựng lại bản không tương thích: revert commit trên `main` (hoặc tạm không publish/sửa bài và không chạy workflow) **trước**, vì `pages-deploy.yml` luôn build từ `main` và Worker cũ vẫn dispatch khi publish.
 2. `npx wrangler rollback` Worker và rollback deployment Pages về bản trước, cùng một lượt.
 3. Cột mới và bảng `admin_audit` để nguyên (Worker cũ bỏ qua; nội dung từng bị ẩn sẽ hiện lại).
 4. Trigger không được Worker cũ hiểu: user đang bị khoá sẽ nhận 500 thay vì thông báo khi đăng nhập. Gỡ trigger bằng [`community-worker/rollback/0007_drop_user_block_triggers.sql`](../community-worker/rollback/0007_drop_user_block_triggers.sql) (không nằm trong `migrations/` nên không tự chạy): `npx wrangler d1 execute tqccl-community --remote --file rollback/0007_drop_user_block_triggers.sql`. Hệ quả: sau đó **không còn cưỡng chế khoá và ẩn nội dung** ở bản Worker cũ (user bị khoá đăng nhập lại được, bình luận/chiến báo của họ hiện lại); muốn bật lại phải deploy lại Worker mới và tạo lại trigger bằng phần trigger trong `0006`.
@@ -282,7 +268,7 @@ Rollback (phải **cùng lúc và khớp phiên bản** giữa Pages và Worker:
 
 ## Đội cộng đồng
 
-Kế hoạch: [`plans/261021-0628-doi-cong-dong/plan.md`](../plans/261021-0628-doi-cong-dong/plan.md), phần công khai tĩnh: [`plans/261022-1145-doi-cong-dong-cong-khai/plan.md`](../plans/261022-1145-doi-cong-dong-cong-khai/plan.md). Trang công khai `/doi-cong-dong/` và `/zh/doi-cong-dong/` (`js/community-teams.js`; bốn chế độ đọc từ query: danh sách, chi tiết `?id=`, đăng `?new=1`, của tôi `?mine=1`); mỗi đội hiển thị còn có trang tĩnh `/doi-cong-dong/<id>/` và `/zh/doi-cong-dong/<id>/` dựng lúc build từ [export](#api) (xem [Kiến trúc hệ thống](system-architecture.md#cộng-đồng-phía-trình-duyệt)). Người dùng đăng đội 3 tướng + 6 chiến pháp kèm 1–3 ảnh, KDV/root duyệt, người khác vote, và bình luận/chiến báo của chính trang đội đó dùng lại hệ thống cũ với page key `/doi-cong-dong/<id>/`. Route nằm ở [`src/routes/teams.ts`](../community-worker/src/routes/teams.ts), kiểm tra đầu vào ở [`src/teams-validate.ts`](../community-worker/src/teams-validate.ts), migration [`0008_community_teams.sql`](../community-worker/migrations/0008_community_teams.sql).
+Kế hoạch: [`plans/261021-0628-doi-cong-dong/plan.md`](../plans/261021-0628-doi-cong-dong/plan.md). Trang công khai `/doi-cong-dong/` và `/zh/doi-cong-dong/` (`js/community-teams.js`; bốn chế độ đọc từ query: danh sách, chi tiết `?id=`, đăng `?new=1`, của tôi `?mine=1`). Người dùng đăng đội 3 tướng + 6 chiến pháp kèm 1–3 ảnh, KDV/root duyệt, người khác vote, và bình luận/chiến báo của chính trang đội đó dùng lại hệ thống cũ với page key `/doi-cong-dong/<id>/`. Route nằm ở [`src/routes/teams.ts`](../community-worker/src/routes/teams.ts), kiểm tra đầu vào ở [`src/teams-validate.ts`](../community-worker/src/teams-validate.ts), migration [`0008_community_teams.sql`](../community-worker/migrations/0008_community_teams.sql).
 
 ### Bảng và trigger
 
@@ -321,7 +307,6 @@ Bình luận và chiến báo trên `/doi-cong-dong/<id>/` đi qua `GET/POST /ap
 - `GET /api/community-teams?sort=hot|new|top&heroes=hero:a,hero:b&season=<id>|all&cursor=` (20/trang, thiếu `sort` = `hot`): `heroes` tối đa 3 id khác nhau, đội phải chứa **mọi** tướng được lọc; thiếu `season` = mùa đang mở (không có mùa mở → `{items: [], nextCursor: null}`), `all` = mọi mùa. Mỗi mục: `id, title, season, heroes, tactics, troop, author:{id,name,image}, upVotes, downVotes, evidenceCount, points, commentCount, imageCount, textLang, createdAt`. `nextCursor` theo khoá xếp hạng + `id`.
 - `GET /api/community-teams/:id`: thêm `status, heroKey, analysis:{playstyle, strengths, weaknesses, counters, counteredBy, substitutes}, myVote (-1|0|1), seasonOpen`, và `rejectReason` (chỉ chủ/staff).
 - `GET /api/community-teams/:id/images/:pos` (`pos` 0–2): đội công khai trả `Cache-Control: public, no-cache` + `ETag` của R2 (`If-None-Match` khớp → 304, quyền xét trước ETag); đội chưa công khai (chủ/staff) trả `private, no-store`.
-- `GET /api/community-teams/export` (cho build Astro; không cần phiên, không phân trang, không rate limit, `Cache-Control: no-store`) → `{schemaVersion: 1, items}`: **mọi** đội hiển thị công khai ở mọi mùa, xếp `created_at desc, id desc`. Mỗi mục như danh sách nhưng `author` chỉ còn `{id, name}` (`name` là `string | null`: tên rỗng/toàn khoảng trắng → `null`, trang hiện "Người chơi"/"玩家"), thêm `analysis` (như `GET :id`) và `approvedAt` (ISO của `reviewed_at`, thiếu thì bằng `createdAt`). Không bao giờ có `author.image`, email, `status`, `rejectReason`, `heroKey`, `myVote`, `seasonOpen` hay khoá/URL ảnh R2. Route đăng ký trước `/:id` vì chữ `export` khớp mẫu id. Loader build [`src/lib/community-teams.ts`](../src/lib/community-teams.ts) kiểm từng trường và từ chối `schemaVersion` khác 1, nên đổi hợp đồng phải sửa cả hai phía cùng lúc.
 - `GET /api/me/community-teams?cursor=` (cần đăng nhập): đội của mình mới nhất trước, thêm `status`, `rejectReason`, `deleting`. Đội xoá dở trả `deleting: true`.
 
 Ghi (cần đăng nhập; mọi `POST/PUT/DELETE` qua kiểm `Origin` như phần còn lại):
@@ -334,7 +319,7 @@ Ghi (cần đăng nhập; mọi `POST/PUT/DELETE` qua kiểm `Origin` như phầ
 Admin (staff = root và KDV; 401/403 như các route admin khác):
 
 - `GET /api/admin/community-teams?status=pending|approved|rejected|deleting&cursor=` (mặc định `pending`; sai → 400 `invalid_status`). `deleting` liệt kê mọi đội có `deleting_at` (mọi trạng thái); các lọc khác bỏ đội đang xoá. Mỗi mục như danh sách công khai + `status, rejectReason, deleting` và `author.email` (KDV: che, `emailMasked: true`).
-- `POST /api/admin/community-teams/:id/approve` → `{id, status: "approved", deploy}` (gửi `site-publish`, xem [Build lại site](#build-lại-site-khi-nội-dung-công-khai-đổi)); `POST .../:id/reject` `{reason 1–500}` → `{id, status: "rejected", rejectReason}` (không dispatch). Chỉ chuyển từ `pending` (nếu không 409 `not_pending`); KDV duyệt được cả đội của chính mình. Audit đứng **trước** câu `update` với cùng điều kiện `pending`, nên chỉ request thật sự chuyển trạng thái mới ghi nhật ký. Đội bị từ chối **không giữ ảnh**: xoá R2 rồi xoá `community_team_images`; lỗi R2 → 502 `delete_incomplete`, gọi lại `reject` để làm tiếp (không ghi nhật ký lần hai, trả lý do đã lưu ở lần đầu).
+- `POST /api/admin/community-teams/:id/approve` → `{id, status: "approved"}`; `POST .../:id/reject` `{reason 1–500}` → `{id, status: "rejected", rejectReason}`. Chỉ chuyển từ `pending` (nếu không 409 `not_pending`); KDV duyệt được cả đội của chính mình. Audit đứng **trước** câu `update` với cùng điều kiện `pending`, nên chỉ request thật sự chuyển trạng thái mới ghi nhật ký. Đội bị từ chối **không giữ ảnh**: xoá R2 rồi xoá `community_team_images`; lỗi R2 → 502 `delete_incomplete`, gọi lại `reject` để làm tiếp (không ghi nhật ký lần hai, trả lý do đã lưu ở lần đầu).
 - `POST /api/admin/community-seasons` (**chỉ root**) `{id, labelVi, labelZh}` → 201 `{id, labelVi, labelZh, openedAt, closedAt: null, previous}` (`previous` = id mùa vừa đóng hoặc `null`).
 
 ### Mùa
@@ -354,24 +339,22 @@ Mở mùa mới đóng mùa đang mở và tạo mùa mới trong một batch D1
 `DELETE /api/community-teams/:id` cho chủ đội và staff:
 
 - **Chủ đội**: không xoá được khi đã có chiến báo `approved` của người khác trên trang đội → 409 `has_evidence` (nhờ quản trị viên gỡ). Điều kiện nằm trong câu SQL `update`.
-- **Staff**: bắt buộc body `{reason}` 1–500 ký tự; root xoá mọi đội, KDV chỉ xoá đội của tác giả không phải KDV/root (ngược lại 404). Ghi nhật ký `team.delete` (`meta.byAuthor`: số bình luận/chiến báo của từng người trên trang đội; thêm `meta.deploy` khi có dispatch) trong cùng batch với bước chốt.
-- Thứ tự: (1) chốt `deleting_at` bằng một câu `update` có điều kiện quyền; từ đây đội ẩn khỏi mọi đọc/ghi công khai; nếu đội lúc chốt đang `approved` thì gửi `site-publish` ngay (trước R2) để gỡ trang tĩnh; (2) xoá R2 theo lô 100 khoá: ảnh đội và ảnh các chiến báo trên trang đội; lỗi R2 → **502 `delete_incomplete`**, gọi lại `DELETE` để làm tiếp (bước (1) và dispatch bỏ qua khi `deleting_at` đã đặt và người gọi vẫn còn quyền); (3) một batch D1 xoá bình luận, dòng `uploads` của ảnh chiến báo, chiến báo trên trang đội rồi đội (cascade ảnh và phiếu); khoá R2 chèn thêm giữa chừng được dọn nốt. Chủ đội nhận `{ok: true}`; staff nhận `{ok: true, deploy}` (`deploy: null` khi không dispatch).
+- **Staff**: bắt buộc body `{reason}` 1–500 ký tự; root xoá mọi đội, KDV chỉ xoá đội của tác giả không phải KDV/root (ngược lại 404). Ghi nhật ký `team.delete` (`meta.byAuthor`: số bình luận/chiến báo của từng người trên trang đội) trong cùng batch với bước chốt.
+- Thứ tự: (1) chốt `deleting_at` bằng một câu `update` có điều kiện quyền; từ đây đội ẩn khỏi mọi đọc/ghi công khai; (2) xoá R2 theo lô 100 khoá: ảnh đội và ảnh các chiến báo trên trang đội; lỗi R2 → **502 `delete_incomplete`**, gọi lại `DELETE` để làm tiếp (bước (1) bỏ qua khi `deleting_at` đã đặt và người gọi vẫn còn quyền); (3) một batch D1 xoá bình luận, dòng `uploads` của ảnh chiến báo, chiến báo trên trang đội rồi đội (cascade ảnh và phiếu); khoá R2 chèn thêm giữa chừng được dọn nốt. Trả `{ok: true}`.
 - `GET /api/me/community-teams` trả `deleting: true` cho đội xoá dở của mình và `GET /api/admin/community-teams?status=deleting` liệt kê cho staff để gọi lại.
 
 ### Xoá và khoá tài khoản
 
-- **Khoá** (`POST /api/admin/users/:id/ban`): xoá mọi phiếu vote của user (trigger đếm lại điểm đội), số phiếu ghi vào `meta.votesRemoved` của nhật ký `user.ban`, cùng điều kiện với việc huỷ phiên. Đội của user bị ẩn khỏi API công khai cho tới khi hết khoá (phiếu đã xoá không hiện lại). Khoá và mở khoá (`POST .../unban`) đều gửi `site-publish` và trả `deploy`. Khoá tự hết hạn không có event: trang tĩnh của đội hiện lại ở lần build kế tiếp (dispatch khác hoặc lịch hằng ngày).
-- **Xoá tài khoản** (root, `DELETE /api/admin/users/:id`): danh sách khoá R2 cần xoá gồm thêm ảnh đội của user **và** ảnh chiến báo của người khác trên các trang đội của user; bước cuối xoá bình luận, `uploads` và chiến báo của người khác trên các trang đó, rồi đội cascade theo FK `author_id` (ảnh, phiếu). Nhật ký `user.delete` có thêm số đội. Lỗi R2 vẫn là 502 `delete_incomplete` như phần [Xoá tài khoản](#xoá-tài-khoản-chỉ-root). Request chốt `deleting_at` gửi `site-publish` trước khi dọn R2; kết quả chỉ ghi ở `meta.deploy` của dòng `user.delete.start` (response giữ `{ok, removedObjects}`).
+- **Khoá** (`POST /api/admin/users/:id/ban`): xoá mọi phiếu vote của user (trigger đếm lại điểm đội), số phiếu ghi vào `meta.votesRemoved` của nhật ký `user.ban`, cùng điều kiện với việc huỷ phiên. Đội của user bị ẩn khỏi API công khai cho tới khi hết khoá (phiếu đã xoá không hiện lại).
+- **Xoá tài khoản** (root, `DELETE /api/admin/users/:id`): danh sách khoá R2 cần xoá gồm thêm ảnh đội của user **và** ảnh chiến báo của người khác trên các trang đội của user; bước cuối xoá bình luận, `uploads` và chiến báo của người khác trên các trang đó, rồi đội cascade theo FK `author_id` (ảnh, phiếu). Nhật ký `user.delete` có thêm số đội. Lỗi R2 vẫn là 502 `delete_incomplete` như phần [Xoá tài khoản](#xoá-tài-khoản-chỉ-root).
 
 ### Triển khai và rollback
 
-Thứ tự bắt buộc: **migration `0008` → deploy Worker → push `main` → chạy tay `pages-deploy.yml`** (`workflow_dispatch`; push `main` không tự deploy Pages: chỉ dispatch `site-publish`, lịch hằng ngày và chạy tay mới chạy). Trước khi migrate remote: `npx wrangler d1 execute tqccl-community --remote --command "select sqlite_version()"` phải ≥ 3.31 và ghi bookmark `npx wrangler d1 time-travel info tqccl-community`. Nhóm `teamScan` ở tab AI phải có mắt xích vision (nhóm này cũng phục vụ `/soi-doi-tu-anh/`). Root mở mùa đầu tiên ở `/quan-tri/`; trước đó trang hiện "Chưa mở mùa".
-
-Trang đội tĩnh thêm hai ràng buộc. Worker có `GET /api/community-teams/export` phải chạy **trước** khi `main` mới lên: build đọc export fail-closed, nên `main` mới gặp Worker chưa có export (404) sẽ dừng build; không deploy bản hỏng nhưng chặn mọi deploy, kể cả bài viết. Từ lúc deploy Worker tới lúc merge `main`, GitHub bỏ qua dispatch `site-publish` (workflow trên `main` chưa nhận loại này), nên sau khi merge phải chạy tay `pages-deploy.yml` một lần.
+Thứ tự bắt buộc: **migration `0008` → deploy Worker → push `main` → chạy tay `pages-deploy.yml`** (`workflow_dispatch`; push `main` không tự deploy Pages: chỉ `blog-publish` và chạy tay mới chạy). Trước khi migrate remote: `npx wrangler d1 execute tqccl-community --remote --command "select sqlite_version()"` phải ≥ 3.31 và ghi bookmark `npx wrangler d1 time-travel info tqccl-community`. Nhóm `teamScan` ở tab AI phải có mắt xích vision (nhóm này cũng phục vụ `/soi-doi-tu-anh/`). Root mở mùa đầu tiên ở `/quan-tri/`; trước đó trang hiện "Chưa mở mùa".
 
 Rollback:
 
-1. Revert commit trên `main` **trước** (để dispatch hoặc lịch kế tiếp không dựng lại frontend mới), chạy lại `pages-deploy.yml`, rồi `npx wrangler rollback` Worker. Làm ngược thứ tự thì `main` mới gặp Worker không có export và mọi build dừng. Giữa hai bước, `site-publish` của Worker mới bị workflow đã revert bỏ qua → chạy tay workflow một lần sau khi rollback Worker. Chỉ hỏng trang đội tĩnh (Worker ổn): revert riêng commit trang tĩnh trên `main` rồi chạy workflow; giữ Worker (export thừa vô hại).
+1. Revert commit trên `main` **trước** (để `blog-publish` kế tiếp không dựng lại frontend mới), chạy lại `pages-deploy.yml`, rồi `npx wrangler rollback` Worker.
 2. Bảng/cột của `0008` để nguyên (Worker cũ bỏ qua). Ba trigger evidence nằm trên `battle_reports` vô hại với Worker cũ; nếu cần gỡ chạy tay [`rollback/0009_drop_community_team_triggers.sql`](../community-worker/rollback/0009_drop_community_team_triggers.sql) (`npx wrangler d1 execute tqccl-community --remote --file rollback/0009_drop_community_team_triggers.sql`). Khi deploy lại Worker có Đội cộng đồng chạy [`rollback/0010_restore_community_team_triggers.sql`](../community-worker/rollback/0010_restore_community_team_triggers.sql) (dựng lại ba trigger và đếm lại `evidence_count` cho mọi đội). Cả hai file không nằm trong `migrations/` nên không tự chạy; khi đổi trigger trong `0008` phải giữ ba file đồng bộ.
 3. **Không xoá tài khoản** trong thời gian chạy Worker cũ trên DB đã có đội: Worker cũ không biết `community_team_images` nên ảnh đội, chiến báo và bình luận trên trang đội bị bỏ sót và không dọn lại được, cho tới khi deploy lại Worker có Đội cộng đồng.
 4. Time Travel ghi đè mọi ghi sau bookmark: chỉ dùng khi dữ liệu sai nghiêm trọng.

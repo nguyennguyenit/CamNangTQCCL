@@ -29,7 +29,7 @@ import {
   troopLabel,
 } from './community-team-data.js';
 import { mountTeamForm } from './community-team-form.js';
-import { mergePage, modeFromSearch, staticTeamPath } from './community-team-state.js';
+import { mergePage, modeFromSearch } from './community-team-state.js';
 import { el } from './render.js';
 
 const ANALYSIS_FIELDS = [
@@ -54,9 +54,6 @@ const SORTS = [
 export function initCommunityTeams(mount = document.getElementById('community-teams')) {
   if (!mount) return null;
   const locale = currentLocale();
-  // Trang tĩnh `/doi-cong-dong/<id>/`: mount mang `data-team-id`; nội dung đã dựng sẵn, JS chỉ gắn phần sống (vote, bình luận…).
-  const staticId = mount.dataset.teamId ?? null;
-  const isStatic = modeFromSearch('', staticId).mode === 'static';
   let user = null;
   let renderToken = 0;
   let flash = '';
@@ -116,17 +113,12 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     return localePath('/doi-cong-dong/') + (query ? `?${query}` : '');
   };
   const go = (params = {}, { message = '' } = {}) => {
-    // Trang tĩnh không có SPA để dựng lại: mọi điều hướng là tải trang mới.
-    if (isStatic) {
-      location.assign(hrefFor(params));
-      return;
-    }
     history.pushState(null, '', hrefFor(params));
     flash = message;
     render();
   };
-  const link = (params, children, className = 'cm-link', href = hrefFor(params)) => {
-    const anchor = el('a', { class: className, href }, children);
+  const link = (params, children, className = 'cm-link') => {
+    const anchor = el('a', { class: className, href: hrefFor(params) }, children);
     anchor.addEventListener('click', (event) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
@@ -134,11 +126,6 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     });
     return anchor;
   };
-  // Đội đã duyệt có URL tĩnh công khai; click thường vẫn đi qua `?id=` (SPA kiểm HEAD rồi chuyển) để cửa sổ "đã duyệt,
-  // build chưa xong" không rơi vào 404. Đội chưa duyệt (Của tôi) giữ `?id=`.
-  const isApprovedItem = (team) => !team.status || team.status === 'approved';
-  const teamLink = (team, children, className = 'cm-link') =>
-    link({ id: team.id }, children, className, isApprovedItem(team) ? staticTeamPath(team.id, locale) : hrefFor({ id: team.id }));
   const nav = (active, { canPost = true } = {}) => el('nav', { class: 'cm-team-nav', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
     link({}, L('Danh sách', '列表'), `cm-team-tab${active === 'list' ? ' is-active' : ''}`),
     canPost ? link({ new: '1' }, L('Đăng đội', '发布阵容'), `cm-team-tab${active === 'new' ? ' is-active' : ''}`) : null,
@@ -165,7 +152,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   function teamCard(team, { showSeason = false, extra = null } = {}) {
     const card = el('li', { class: 'cm-team-card', dataset: { teamId: team.id } });
-    const title = teamLink(team, team.title, 'cm-team-card-title');
+    const title = link({ id: team.id }, team.title, 'cm-team-card-title');
     card.append(
       team.imageCount > 0
         ? el('img', { class: 'cm-team-thumb', src: imageUrl(team.id, 0), alt: '', loading: 'lazy', decoding: 'async' })
@@ -322,22 +309,13 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   }
 
   /* ---------- Chi tiết ---------- */
-  /** Đội approved có trang tĩnh (HEAD 200) → thay URL `?id=` bằng URL tĩnh; HEAD lỗi/404 hoặc đội chưa duyệt → ở lại. */
-  async function redirectToStatic(team, isCurrent) {
-    if (team.status !== 'approved') return false;
-    const target = staticTeamPath(team.id, locale);
-    try {
-      const response = await fetch(target, { method: 'HEAD', cache: 'no-store' });
-      if (!response.ok || !isCurrent()) return false;
-    } catch {
-      return false;
-    }
-    location.replace(target);
-    return true;
-  }
+  async function detailView(view, isCurrent, id) {
+    const team = await api(`/api/community-teams/${encodeURIComponent(id)}`);
+    if (!isCurrent()) return;
+    const isOwner = Boolean(user?.id) && team.author?.id === user.id;
+    const approved = team.status === 'approved';
+    const status = liveStatus();
 
-  /** Nội dung của đội (chỉ SPA; trang tĩnh đã có sẵn trong HTML): tiêu đề, meta, thông báo trạng thái, ảnh, bảng, phân tích. */
-  function detailContent(team) {
     const images = Array.from({ length: Math.min(Number(team.imageCount) || 0, 3) }, (_, position) => el('a', {
       class: 'cm-team-image-link',
       href: imageUrl(team.id, position),
@@ -376,38 +354,6 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         el('dd', { class: 'cm-team-text' }, text),
       ])];
     }));
-
-    return [
-      heading(team.title),
-      el('p', { class: 'cm-team-meta' }, [
-        team.status !== 'approved' ? statusBadge(team.status) : null,
-        team.season ? el('span', { class: 'cm-team-season' }, seasonLabel(team.season, locale)) : null,
-        el('span', { class: 'cm-team-troop' }, troopLabel(team.troop)),
-        langTag(team.textLang),
-        avatar(team.author),
-        el('span', {}, displayName(team.author)),
-        timeNode(team.createdAt),
-      ]),
-      team.status === 'pending'
-        ? el('p', { class: 'cm-notice', role: 'note' }, L('Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.', '阵容正在等待审核；仅你和管理员可见。'))
-        : null,
-      team.status === 'rejected'
-        ? el('p', { class: 'cm-reject-reason' }, [el('strong', {}, L('Lý do từ chối: ', '拒绝原因：')), String(team.rejectReason || '—')])
-        : null,
-      images.length ? el('div', { class: 'cm-team-images' }, images) : null,
-      table,
-      analysis,
-    ];
-  }
-
-  /**
-   * Phần sống của đội, gắn vào `host` (bài chi tiết SPA hoặc chính khung `view` của trang tĩnh): bình chọn, xoá, đội tương tự;
-   * rồi chiến báo + bình luận ở `view`. Cùng pageKey `/doi-cong-dong/<id>/` + `sharedPool` cho cả hai ngôn ngữ và cả hai chế độ.
-   */
-  async function detailLive(host, view, team, isCurrent) {
-    const isOwner = Boolean(user?.id) && team.author?.id === user.id;
-    const approved = team.status === 'approved';
-    const status = liveStatus();
 
     /* Bình chọn */
     let myVote = Number(team.myVote) || 0;
@@ -481,21 +427,44 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     const similarList = el('ul', { class: 'cm-team-similar-list' });
     similar.append(similarList);
 
-    host.append(...[
-      approved
-        ? el('div', { class: 'cm-team-vote-bar' }, [
-            upButton,
-            downButton,
-            pointsNode,
-            stat('⚔', team.evidenceCount, L('Người thắng', '获胜玩家')),
-            voteNote ? el('span', { class: 'scope-note cm-team-vote-note' }, voteNote) : null,
-          ])
-        : null,
-      guestSlot,
-      status,
-      deleteButton ? el('p', {}, deleteButton) : null,
-      similar,
-    ].filter(Boolean));
+    view.append(
+      nav('detail'),
+      el('p', {}, link({}, L('← Về danh sách', '← 返回列表'))),
+      el('article', { class: 'cm-team-detail' }, [
+        heading(team.title),
+        el('p', { class: 'cm-team-meta' }, [
+          team.status !== 'approved' ? statusBadge(team.status) : null,
+          team.season ? el('span', { class: 'cm-team-season' }, seasonLabel(team.season, locale)) : null,
+          el('span', { class: 'cm-team-troop' }, troopLabel(team.troop)),
+          langTag(team.textLang),
+          avatar(team.author),
+          el('span', {}, displayName(team.author)),
+          timeNode(team.createdAt),
+        ]),
+        team.status === 'pending'
+          ? el('p', { class: 'cm-notice', role: 'note' }, L('Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.', '阵容正在等待审核；仅你和管理员可见。'))
+          : null,
+        team.status === 'rejected'
+          ? el('p', { class: 'cm-reject-reason' }, [el('strong', {}, L('Lý do từ chối: ', '拒绝原因：')), String(team.rejectReason || '—')])
+          : null,
+        images.length ? el('div', { class: 'cm-team-images' }, images) : null,
+        table,
+        analysis,
+        approved
+          ? el('div', { class: 'cm-team-vote-bar' }, [
+              upButton,
+              downButton,
+              pointsNode,
+              stat('⚔', team.evidenceCount, L('Người thắng', '获胜玩家')),
+              voteNote ? el('span', { class: 'scope-note cm-team-vote-note' }, voteNote) : null,
+            ])
+          : null,
+        guestSlot,
+        status,
+        deleteButton ? el('p', {}, deleteButton) : null,
+        similar,
+      ]),
+    );
 
     if (approved && team.heroKey) {
       api(`/api/community-teams?${new URLSearchParams({ heroes: team.heroKey, season: 'all' })}`).then((body) => {
@@ -503,7 +472,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         const others = (Array.isArray(body?.items) ? body.items : []).filter((item) => item.id !== team.id).slice(0, 5);
         if (!others.length) return;
         similarList.replaceChildren(...others.map((item) => el('li', {}, [
-          teamLink(item, item.title),
+          link({ id: item.id }, item.title),
           ' ',
           el('span', { class: 'scope-note' }, `${seasonLabel(item.season, locale)} · ▲ ${formatNumber(item.upVotes)}`),
         ])));
@@ -523,39 +492,6 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         widgets.replaceChildren(unavailableNotice());
       }
     }
-  }
-
-  /** `?id=`: dựng chi tiết trong SPA, trừ khi đội đã có trang tĩnh (khi đó chuyển sang URL tĩnh). */
-  async function detailView(view, isCurrent, id) {
-    const team = await api(`/api/community-teams/${encodeURIComponent(id)}`);
-    if (!isCurrent()) return;
-    if (await redirectToStatic(team, isCurrent) || !isCurrent()) return;
-    const article = el('article', { class: 'cm-team-detail' }, detailContent(team));
-    view.append(nav('detail'), el('p', {}, link({}, L('← Về danh sách', '← 返回列表'))), article);
-    await detailLive(article, view, team, isCurrent);
-  }
-
-  /** Trang tĩnh `/doi-cong-dong/<id>/`: HTML đã có nội dung; chỉ gắn phần sống. API không còn công khai đội → ẩn khung tĩnh. */
-  async function staticView(view, isCurrent, id) {
-    const staticArticle = document.querySelector('[data-team-static]');
-    let team;
-    try {
-      team = await api(`/api/community-teams/${encodeURIComponent(id)}`);
-    } catch (error) {
-      if (error?.status === 404) staticArticle?.setAttribute('hidden', '');
-      throw error;
-    }
-    if (!isCurrent()) return;
-    if (team.status !== 'approved') {
-      // Đổi trạng thái sau lúc build (chủ đội/quản trị xem): khung tĩnh đã lỗi thời → dựng chi tiết đầy đủ kèm thông báo trạng thái.
-      staticArticle?.setAttribute('hidden', '');
-      getLexicon().catch(() => {});
-      const article = el('article', { class: 'cm-team-detail' }, detailContent(team));
-      view.append(article);
-      await detailLive(article, view, team, isCurrent);
-      return;
-    }
-    await detailLive(view, view, team, isCurrent);
   }
 
   /* ---------- Của tôi ---------- */
@@ -659,7 +595,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   async function render() {
     const token = ++renderToken;
     const isCurrent = () => token === renderToken;
-    const { mode, id } = modeFromSearch(location.search, staticId);
+    const { mode, id } = modeFromSearch(location.search);
     const view = el('div', { class: 'cm-team-view', dataset: { mode } });
     const message = flash;
     flash = '';
@@ -667,8 +603,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     if (message) view.append(el('p', { class: 'cm-notice', role: 'status' }, message));
     mount.setAttribute('aria-busy', 'true');
     try {
-      if (mode === 'static') await staticView(view, isCurrent, id);
-      else if (mode === 'detail') await detailView(view, isCurrent, id);
+      if (mode === 'detail') await detailView(view, isCurrent, id);
       else if (mode === 'mine') await mineView(view, isCurrent);
       else if (mode === 'new') await newView(view, isCurrent);
       else await listView(view, isCurrent);
@@ -684,11 +619,8 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     }
   }
 
-  // Trang tĩnh không điều hướng trong trang và không cần từ điển tên (nội dung đã dựng sẵn lúc build).
-  if (!isStatic) {
-    window.addEventListener('popstate', render);
-    getLexicon().catch(() => {});
-  }
+  window.addEventListener('popstate', render);
+  getLexicon().catch(() => {});
   loadSession({ probe: true }).catch(() => null).then((value) => {
     user = value || null;
     return render();
