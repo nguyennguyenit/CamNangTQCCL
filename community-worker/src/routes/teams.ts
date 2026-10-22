@@ -5,6 +5,7 @@ import { Hono } from "hono";
 import { AiCallError, loadAiConfig, resolveRoute } from "../../../shared/ai-config";
 import { callModel } from "../../../worker/src/model";
 import { auditIfStmt, auditStmt } from "../audit";
+import { deployMeta, settle, triggerDeploy, type DeployResult } from "../deploy";
 import { toDataUri } from "../analyze";
 import { currentUser, effectiveRole, PAGE_SIZE, requireRoot, requireStaff, requireUser, type AppEnv, type Ctx, type Viewer } from "../context";
 import { adminEmails, isAdminEmail } from "../env";
@@ -83,6 +84,7 @@ interface TeamRow {
   reject_reason: string | null;
   deleting_at: number | null;
   created_at: number;
+  reviewed_at: number | null;
   up_votes: number;
   down_votes: number;
   evidence_count: number;
@@ -101,7 +103,7 @@ interface TeamRow {
 // Cột đầu tiên có `?` là điều kiện hiển thị tác giả: mọi truy vấn bind `now` trước các điều kiện where.
 const TEAM_SELECT =
   "select t.id, t.author_id, t.season_id, t.status, t.title, t.hero_1, t.hero_2, t.hero_3, t.hero_key, t.tactics, t.troop, t.playstyle, " +
-  "t.strengths, t.weaknesses, t.counters, t.countered_by, t.substitutes, t.text_lang, t.reject_reason, t.deleting_at, t.created_at, " +
+  "t.strengths, t.weaknesses, t.counters, t.countered_by, t.substitutes, t.text_lang, t.reject_reason, t.deleting_at, t.created_at, t.reviewed_at, " +
   "t.up_votes, t.down_votes, t.evidence_count, t.points, s.label_vi as season_label_vi, s.label_zh as season_label_zh, " +
   's.closed_at as season_closed_at, u.name as author_name, u.image as author_image, (' +
   visibleUserSql("u") +
@@ -128,6 +130,17 @@ function toItem(row: TeamRow) {
     imageCount: row.image_count,
     textLang: row.text_lang,
     createdAt: iso(row.created_at),
+  };
+}
+
+function analysisOf(row: TeamRow) {
+  return {
+    playstyle: row.playstyle,
+    strengths: row.strengths,
+    weaknesses: row.weaknesses,
+    counters: row.counters,
+    counteredBy: row.countered_by,
+    substitutes: row.substitutes,
   };
 }
 
@@ -376,6 +389,26 @@ teams.get("/api/community-teams", async (c) => {
   return c.json({ items: page.rows.map(toItem), nextCursor: page.nextCursor });
 });
 
+// Một request cho build Astro: mọi đội hiển thị công khai (mọi mùa) kèm analysis. Đăng ký trước `/:id` vì `export` khớp regex id.
+teams.get("/api/community-teams/export", async (c) => {
+  const now = c.get("deps").now();
+  const { results } = await c.env.DB.prepare(
+    `${TEAM_SELECT}${TEAM_FROM} where ${teamVisibleSql("t", "u")} order by t.created_at desc, t.id desc`,
+  )
+    .bind(now, now)
+    .all<TeamRow>();
+  // `author.name` là `string | null`: tên rỗng/toàn khoảng trắng -> null (site tự chọn nhãn thay thế).
+  return c.json({
+    schemaVersion: 1,
+    items: results.map((row) => {
+      const item = toItem(row);
+      // Không lộ `author.image`: site không render ảnh đại diện.
+      const name = item.author.name?.trim() ? item.author.name : null;
+      return { ...item, author: { id: item.author.id, name }, analysis: analysisOf(row), approvedAt: iso(row.reviewed_at ?? row.created_at) };
+    }),
+  });
+});
+
 teams.get("/api/me/community-teams", async (c) => {
   const { user } = await requireUser(c);
   const cursor = decodeCursor(c.req.query("cursor"));
@@ -421,14 +454,7 @@ teams.get("/api/community-teams/:id", async (c) => {
     ...toItem(row),
     status: row.status,
     heroKey: row.hero_key,
-    analysis: {
-      playstyle: row.playstyle,
-      strengths: row.strengths,
-      weaknesses: row.weaknesses,
-      counters: row.counters,
-      counteredBy: row.countered_by,
-      substitutes: row.substitutes,
-    },
+    analysis: analysisOf(row),
     myVote: vote?.value ?? 0,
     seasonOpen: row.season_closed_at === null,
     ...(privileged ? { rejectReason: row.reject_reason } : {}),
@@ -517,13 +543,14 @@ teams.put("/api/community-teams/:id/vote", async (c) => {
 interface DeleteTarget {
   author_id: string;
   title: string;
+  status: string;
   deleting_at: number | null;
   author_role: string | null;
   author_email: string;
 }
 
 const DELETE_TARGET =
-  'select t.author_id, t.title, t.deleting_at, u.role as author_role, u.email as author_email from community_teams t join "user" u on u.id = t.author_id where t.id = ?';
+  'select t.author_id, t.title, t.status, t.deleting_at, u.role as author_role, u.email as author_email from community_teams t join "user" u on u.id = t.author_id where t.id = ?';
 
 /** Staff được xoá đội của tác giả này không: root luôn; KDV chỉ khi tác giả không phải KDV/root. */
 function staffMayDelete(c: Ctx, viewer: Viewer, target: DeleteTarget): boolean {
@@ -566,28 +593,39 @@ teams.delete("/api/community-teams/:id", async (c) => {
   const condition = `id = ? and deleting_at is null and (${perm})`;
 
   const statements: D1PreparedStatement[] = [];
-  if (byStaff) {
+  const auditId = byStaff ? c.get("deps").newId() : null;
+  let byAuthor: Record<string, { comments: number; reports: number }> = {};
+  if (byStaff && auditId) {
     const [commentRows, reportRows] = await Promise.all([
       db.prepare("select user_id, count(*) as n from comments where page_key = ? group by user_id").bind(page).all<{ user_id: string; n: number }>(),
       db.prepare("select user_id, count(*) as n from battle_reports where page_key = ? group by user_id").bind(page).all<{ user_id: string; n: number }>(),
     ]);
-    const byAuthor: Record<string, { comments: number; reports: number }> = {};
     for (const r of commentRows.results) (byAuthor[r.user_id] ??= { comments: 0, reports: 0 }).comments = r.n;
     for (const r of reportRows.results) (byAuthor[r.user_id] ??= { comments: 0, reports: 0 }).reports = r.n;
     statements.push(
       auditIfStmt(
         c,
         viewer,
-        { action: "team.delete", targetType: "team", targetId: id, targetLabel: target.title, subjectUserId: target.author_id, reason, meta: { byAuthor }, status: "ok" },
+        {
+          id: auditId,
+          action: "team.delete",
+          targetType: "team",
+          targetId: id,
+          targetLabel: target.title,
+          subjectUserId: target.author_id,
+          reason,
+          meta: deployMeta({ byAuthor }, target.status === "approved"),
+          status: "ok",
+        },
         `select 1 from community_teams where ${condition}`,
         [id, ...permBinds],
       ),
     );
   }
   statements.push(
-    db.prepare(`update community_teams set deleting_at = ? where ${condition}`).bind(c.get("deps").now(), id, ...permBinds),
+    db.prepare(`update community_teams set deleting_at = ? where ${condition} returning status`).bind(c.get("deps").now(), id, ...permBinds),
   );
-  const committed = (await db.batch(statements)).at(-1);
+  const committed = (await db.batch(statements)).at(-1) as D1Result<{ status: string }> | undefined;
 
   if (!committed || committed.meta.changes === 0) {
     // Không chốt được: đội đã chốt xoá từ lần gọi trước và người gọi còn quyền -> làm tiếp; còn lại giải thích.
@@ -600,6 +638,14 @@ teams.delete("/api/community-teams/:id", async (c) => {
       }
       throw notFound;
     }
+  }
+
+  // Request này vừa chốt xoá (lần gọi lại không vào đây): chỉ đội đang `approved` mới đã hiển thị công khai -> build lại site.
+  let deploy: DeployResult | null = null;
+  if (committed && committed.meta.changes > 0 && committed.results[0]?.status === "approved") {
+    deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+    if (auditId) await settle(c, auditId, { byAuthor }, deploy);
+    else if (!deploy.ok) console.error("team delete: site-publish dispatch failed", id, deploy);
   }
 
   // Từ đây đội đã ẩn khỏi mọi đọc/ghi công khai; R2 trước, D1 sau, lỗi -> gọi lại endpoint để làm tiếp.
@@ -633,7 +679,7 @@ teams.delete("/api/community-teams/:id", async (c) => {
   ]);
   const late = (final[2].results as { image_key: string | null }[]).flatMap((r) => (r.image_key && !known.has(r.image_key) ? [r.image_key] : []));
   await removeQuietly(c, late);
-  return c.json({ ok: true });
+  return c.json(byStaff ? { ok: true, deploy } : { ok: true });
 });
 
 const REVIEW_STATUSES = ["pending", "approved", "rejected", "deleting"] as const;
@@ -682,8 +728,16 @@ interface ReviewTarget {
  * Chuyển pending -> approved/rejected. Audit đứng TRƯỚC câu update với cùng điều kiện `pending`, nên chỉ request
  * thực sự chuyển trạng thái mới ghi audit (kể cả hai request cùng người, cùng mili-giây).
  * Trả `true` nếu request này chốt trạng thái; `false` nếu đội đã `rejected` từ lần gọi trước (để làm tiếp việc xoá ảnh).
+ * `auditId` (chỉ khi duyệt): id dòng nhật ký, `meta.deploy = 'pending'` để caller cập nhật sau khi gửi `site-publish`.
  */
-async function reviewTeam(c: Ctx, viewer: Viewer, id: string, status: "approved" | "rejected", reason: string | null): Promise<boolean> {
+async function reviewTeam(
+  c: Ctx,
+  viewer: Viewer,
+  id: string,
+  status: "approved" | "rejected",
+  reason: string | null,
+  auditId?: string,
+): Promise<boolean> {
   const db = c.env.DB;
   const notFound = new ApiError(404, "not_found", "Không tìm thấy đội");
   const target = await db
@@ -698,12 +752,14 @@ async function reviewTeam(c: Ctx, viewer: Viewer, id: string, status: "approved"
       c,
       viewer,
       {
+        id: auditId,
         action: status === "approved" ? "team.approve" : "team.reject",
         targetType: "team",
         targetId: id,
         targetLabel: target.title,
         subjectUserId: target.author_id,
         reason,
+        meta: auditId ? deployMeta({}, true) : undefined,
         status: "ok",
       },
       `select 1 from community_teams where ${pending}`,
@@ -731,8 +787,12 @@ async function reviewTeam(c: Ctx, viewer: Viewer, id: string, status: "approved"
 teams.post("/api/admin/community-teams/:id/approve", async (c) => {
   const viewer = await requireStaff(c);
   const id = teamIdParam(c);
-  await reviewTeam(c, viewer, id, "approved", null);
-  return c.json({ id, status: "approved" });
+  const auditId = c.get("deps").newId();
+  await reviewTeam(c, viewer, id, "approved", null, auditId);
+  // Đội vừa lên công khai (reviewTeam trả true; approve không có nhánh gọi lại): build lại site.
+  const deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+  await settle(c, auditId, {}, deploy);
+  return c.json({ id, status: "approved", deploy });
 });
 
 teams.post("/api/admin/community-teams/:id/reject", async (c) => {

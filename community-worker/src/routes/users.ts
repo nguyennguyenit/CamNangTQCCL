@@ -4,6 +4,7 @@
 
 import { Hono } from "hono";
 import { auditIfStmt, writeAuditQuietly } from "../audit";
+import { deployMeta, settle, triggerDeploy } from "../deploy";
 import { PAGE_SIZE, requireRoot, requireStaff, type AppEnv, type Ctx, type Viewer } from "../context";
 import { adminEmails, isAdminEmail, type Env } from "../env";
 import { ApiError, decodeCursor, encodeCursor, iso } from "../http";
@@ -247,7 +248,9 @@ users.post("/api/admin/users/:id/ban", async (c) => {
     `id = ? and banned_by = ? and banned_by_role = ? and ban_reason = ? and banned_until = ? and deleting_at is null and id <> ? and not (${root.sql})` +
     (byModerator ? " and role = 'user'" : "");
   const auditId = newId();
+  const banMeta = { duration, until, votesRemoved: 0 };
   const votes = await c.env.DB.prepare("select count(*) as n from community_team_votes where user_id = ?").bind(id).first<{ n: number }>();
+  banMeta.votesRemoved = votes?.n ?? 0;
   const [res, logged] = await c.env.DB.batch([
     c.env.DB.prepare(
       `update "user" set banned_until = ?, ban_reason = ?, banned_by = ?, banned_by_role = ? where id = ? and ${before}`,
@@ -263,7 +266,7 @@ users.post("/api/admin/users/:id/ban", async (c) => {
         targetLabel: maskEmail(target.email),
         subjectUserId: id,
         reason,
-        meta: { duration, until, votesRemoved: votes?.n ?? 0 },
+        meta: deployMeta(banMeta, true),
         status: "ok",
       },
       `select 1 from "user" where ${after}`,
@@ -279,7 +282,9 @@ users.post("/api/admin/users/:id/ban", async (c) => {
     if (!now2) throw new ApiError(404, "not_found", "Không tìm thấy người dùng");
     throw now2.deleting_at !== null ? deleting() : forbidden();
   }
-  return c.json({ id, ban: { until: span === null ? null : iso(until), reason, byRole: role } });
+  const deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+  await settle(c, auditId, banMeta, deploy);
+  return c.json({ id, ban: { until: span === null ? null : iso(until), reason, byRole: role }, deploy });
 });
 
 users.post("/api/admin/users/:id/unban", async (c) => {
@@ -296,18 +301,21 @@ users.post("/api/admin/users/:id/unban", async (c) => {
     "id = ? and banned_until = ? and banned_by_role is ? and ban_reason is ? and deleting_at is null" +
     (byModerator ? ` and role = 'user' and banned_by_role = 'moderator' and not (${root.sql})` : "");
   const guardBinds = [id, target.banned_until, target.banned_by_role, target.ban_reason, ...(byModerator ? root.binds : [])];
+  const previous = { previousUntil: target.banned_until, previousByRole: target.banned_by_role, previousReason: target.ban_reason };
+  const auditId = c.get("deps").newId();
   // Xoá cột làm mất bằng chứng -> dòng nhật ký đặt TRƯỚC UPDATE với đúng điều kiện của UPDATE.
   const [logged, res] = await c.env.DB.batch([
     auditIfStmt(
       c,
       viewer,
       {
+        id: auditId,
         action: "user.unban",
         targetType: "user",
         targetId: id,
         targetLabel: maskEmail(target.email),
         subjectUserId: id,
-        meta: { previousUntil: target.banned_until, previousByRole: target.banned_by_role, previousReason: target.ban_reason },
+        meta: deployMeta(previous, true),
         status: "ok",
       },
       `select 1 from "user" where ${guard}`,
@@ -324,7 +332,9 @@ users.post("/api/admin/users/:id/unban", async (c) => {
     if (now2.banned_until === null) throw new ApiError(409, "not_banned", "Người dùng không bị khoá");
     throw byModerator ? forbidden() : new ApiError(409, "conflict", "Trạng thái khoá vừa thay đổi, thử lại");
   }
-  return c.json({ id, ban: null });
+  const deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+  await settle(c, auditId, previous, deploy);
+  return c.json({ id, ban: null, deploy });
 });
 
 users.post("/api/admin/users/:id/role", async (c) => {
@@ -412,7 +422,16 @@ users.delete("/api/admin/users/:id", async (c) => {
       auditIfStmt(
         c,
         viewer,
-        { id: auditId, action: "user.delete.start", targetType: "user", targetId: id, targetLabel: label, subjectUserId: id, status: "ok" },
+        {
+          id: auditId,
+          action: "user.delete.start",
+          targetType: "user",
+          targetId: id,
+          targetLabel: label,
+          subjectUserId: id,
+          meta: deployMeta({}, true),
+          status: "ok",
+        },
         `select 1 from "user" where ${guard}`,
         guardBinds,
       ),
@@ -420,10 +439,14 @@ users.delete("/api/admin/users/:id", async (c) => {
       c.env.DB.prepare('delete from session where "userId" = ? and exists (select 1 from admin_audit where id = ?)').bind(id, auditId),
     ]);
     if (!res.meta.changes || !logged.meta.changes) {
-      // Thua cuộc đồng thời: nếu yêu cầu khác đã bắt đầu xoá thì chạy tiếp như thử lại; ngược lại giải thích vì sao không được.
+      // Thua cuộc đồng thời: nếu yêu cầu khác đã bắt đầu xoá thì chạy tiếp như thử lại (không gửi site-publish: yêu cầu thắng gửi); ngược lại giải thích vì sao không được.
       const now2 = await c.env.DB.prepare(TARGET_SELECT).bind(id).first<TargetRow>();
       if (!now2) throw new ApiError(404, "not_found", "Không tìm thấy người dùng");
       if (now2.deleting_at === null) throw now2.banned_until !== null && now2.banned_until > now ? banned() : forbidden();
+    } else {
+      // Tài khoản đã ẩn khỏi mọi đọc công khai: build lại site trước khi dọn R2 (lần gọi lại không vào đây).
+      const deploy = await triggerDeploy(c.env, c.get("deps").fetchImpl);
+      await settle(c, auditId, {}, deploy);
     }
   }
 

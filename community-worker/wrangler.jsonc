@@ -40,7 +40,7 @@
     // tới địa chỉ đích đã xác minh (trùng destination_address của binding FEEDBACK_MAIL).
     "FEEDBACK_FROM": "gopy@mail.tqccl.com",
     "FEEDBACK_TO": "nguyennlt.ncc@gmail.com",
-    // Repo nhận repository_dispatch "blog-publish" -> .github/workflows/pages-deploy.yml.
+    // Repo nhận repository_dispatch "site-publish" -> .github/workflows/pages-deploy.yml.
     "GITHUB_REPOSITORY": "nguyennguyenit/CamNangTQCCL",
     // "false" -> tắt phân tích ảnh chiến báo bằng AI (kill-switch chi phí).
     "FEATURE_ENABLED": "true"

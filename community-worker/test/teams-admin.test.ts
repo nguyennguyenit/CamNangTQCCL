@@ -28,7 +28,7 @@ describe("duyệt đội", () => {
     expect((await json(await h.request("/api/community-teams"))).items).toHaveLength(0);
     const res = await approve(h, "t1");
     expect(res.status).toBe(200);
-    expect(await json(res)).toEqual({ id: "t1", status: "approved" });
+    expect(await json(res)).toEqual({ id: "t1", status: "approved", deploy: { ok: true, status: 200 } });
     expect((await json(await h.request("/api/community-teams"))).items.map((i: { id: string }) => i.id)).toEqual(["t1"]);
     const rows = audits(h, "team.approve");
     expect(rows).toHaveLength(1);
