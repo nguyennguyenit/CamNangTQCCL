@@ -48,6 +48,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "legacy-routes"),
   entry("js", "lookup-data"),
   entry("js", "lookup-detail"),
+  entry("js", "lookup-detail-ledger"),
   entry("js", "lookup-effect-panels"),
   entry("js", "lookup-field-labels"),
   entry("js", "lookup-ids"),
