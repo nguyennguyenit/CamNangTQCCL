@@ -4,7 +4,7 @@ description: "Thêm Đội cộng đồng vào menu và landing (publish lại b
 status: in-progress
 priority: P1
 effort: 3d
-branch: feat/doi-cong-dong-cong-khai  # PR A: feat/doi-cong-dong-worker (#32)
+branch: feat/doi-cong-dong
 tags: [feature, frontend, backend, seo, i18n, ci]
 blockedBy: []  # phụ thuộc mềm: plans/261021-0628-doi-cong-dong phase 7 (bước remote) phải xong trước Phase 4
 blocks: []
@@ -104,15 +104,6 @@ Phụ thuộc: 1 và 2 song song được (file rời nhau: Phase 1 sở hữu `
 |---|---|---|
 | Ban/unban/xoá user chỉ dispatch khi user có ≥ 1 đội approved? | Không: luôn dispatch (giữ quyết định đã chốt; ban hiếm, concurrency gộp build) | Phase 2 |
 | Smoke Phase 4 khi chưa có đội thật? | Cho phép executor tạo một đội thử trên production bằng tài khoản chủ project, duyệt, kiểm, rồi xoá ngay; tiêu đề có tiền tố `[SMOKE]` | Phase 4 |
-
-### Session 2 — 2026-10-22 (phối hợp với đợt `261022-1109-dot-gom-9-issue`)
-**Trigger:** user chỉ tới orchestrator của đợt 9 issue (Orca `term_84f08ac1…`); orchestrator trả lời 3 mục.
-
-| Câu hỏi | Quyết định | Áp vào |
-|---|---|---|
-| Chỗ trong serial lane? | Sau phase 9 (#6), trước phase 10 của đợt. Base Stage B = commit merge `feat/trang-mua-doi-chuan` trên `origin/main`. Phần site chỉ merge trong cửa sổ release: deploy Worker → merge phần site → phase 10 rebase + publish → merge phase 10 | Phase 3, 4 |
-| Release Worker? | Gộp vào lần release community-worker duy nhất của đợt. Tách PR A (#32, `feat/doi-cong-dong-worker`): `community-worker/**` + workflow `types: [blog-publish, site-publish]`, không `schedule` (cron giữa đợt làm vỡ "Pages release một lần"); merge được bất cứ lúc nào | Phase 2, 4 |
-| Stage A? | Có: commit + push source ngay, file sinh (`src/data/recommended-reference/**`, `data/website-display.json`, `pipeline/team-route-handles.json`, hash trong `pipeline/site-localization-policy.json`) sinh lại ở Stage B trên base cuối. PR B (`feat/doi-cong-dong-cong-khai`) bỏ `blog-publish` và thêm `schedule` | Phase 1, 4 |
 
 ## Whole-Plan Consistency Sweep
 - Files reread: plan.md, phase-01-loi-vao-localization.md, phase-02-worker-export-dispatch.md, phase-03-trang-tinh-seo.md, phase-04-docs-trien-khai.md; đối chiếu local://verification-facts.md và 10 quyết định đã chốt.
