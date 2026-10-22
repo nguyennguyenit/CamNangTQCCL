@@ -76,6 +76,18 @@ node scripts/design-compare.mjs --phase 05 --theme dark   # cần npm run previe
 
 Playwright cần Chromium cài một lần bằng `npx playwright install chromium`.
 
+### Pre-push hook
+
+CI (`.github/workflows/mcp-worker.yml`) chạy `check:repository` đầy đủ trên mọi pull request, không chạy khi push thẳng `main`, và quét `main` mỗi thứ Hai 03:23 UTC. Hook local thay chốt chặn đó cho các lần push thẳng. Bật một lần cho mỗi clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Khi `git push`, hook `.githooks/pre-push` từ chối working tree bẩn (các kiểm đọc file trên đĩa; dùng `git stash -u`), rồi dừng ở lỗi đầu tiên của: `check:local-secrets`, `check:workflow-build`, `check:knowledge-bundle`, `typecheck` trong `mcp-worker`; `npm test` và `typecheck` trong `community-worker`; `python3 -m unittest discover -s tests`. Cần `npm ci` trong `mcp-worker/` và `community-worker/` trước. Push xóa nhánh hoặc tag bỏ qua hook.
+
+Push tới `main` chạy thêm `npm run build && npm run verify` (cùng cổng với `pages-deploy.yml`). Hook không chạy `npm run test:node` và e2e vì cần `dist/` mới và rất lâu; PR CI chạy đủ. `git push --no-verify` bỏ qua hook.
+
 ## Rebuild dữ liệu
 
 Đội theo kịch bản dùng builder riêng; xem [bảo trì dữ liệu đội theo kịch bản](docs/season-team-data.md)

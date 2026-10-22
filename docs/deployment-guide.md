@@ -123,7 +123,7 @@ Trước deploy:
 - ghi base commit, scoped-source digest và `dist/` digest;
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
 - chạy local HTTP/routed-HTTPS exposure probe và full gate;
-- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt; workflow này không deploy Pages;
+- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt (workflow chạy trên pull request và hằng tuần trên `main`, không chạy khi push; với commit đẩy thẳng `main`, tự chạy `npm run check:repository` local); workflow này không deploy Pages;
 - xác nhận `worker/wrangler.toml` `ALLOWED_ORIGINS` chứa đủ ba origin exact của site (`https://tqccl.com`, `https://www.tqccl.com`, `https://tqccl.pages.dev`).
 
 ### Preview, promotion và canary

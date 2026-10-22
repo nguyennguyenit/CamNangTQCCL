@@ -24,6 +24,7 @@ on:
         default: false
   pull_request:
     paths:
+      - "agent-knowledge/**"
       - ".node-version"
       - ".github/workflows/mcp-worker.yml"
       - ".github/workflows/mcp-edge-security-monitor.yml"
@@ -45,29 +46,8 @@ on:
       - "tests-js/**"
       - "worker/**"
       - "docs/zh-gaps.md"
-  push:
-    branches: [main]
-    paths:
-      - ".node-version"
-      - ".github/workflows/mcp-worker.yml"
-      - ".github/workflows/mcp-edge-security-monitor.yml"
-      - "data/**"
-      - "pipeline/**"
-      - "js/**"
-      - "css/**"
-      - "public/**"
-      - "mcp-worker/**"
-      - "package.json"
-      - "package-lock.json"
-      - "playwright.config.*"
-      - "scripts/**"
-      - "astro.config.*"
-      - "src/**"
-      - "tsconfig.json"
-      - "tests/**"
-      - "tests-e2e/**"
-      - "tests-js/**"
-      - "worker/**"
+  schedule:
+    - cron: "23 3 * * 1"
 
 permissions:
   contents: read
