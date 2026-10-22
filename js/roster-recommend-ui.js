@@ -17,6 +17,7 @@ import {
   tacticOverrideBlocked,
 } from "./roster-scan-state.js";
 import { analyzeTacticSubstitutes, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { buildConflictView } from "./roster-conflict-view.js";
 import { buildTacticRules } from "./team-recommend-engine.js";
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
 import { seasonNameText, seasonOptionText, seasonOptionTitle } from "./team-filter-section.js";
@@ -879,6 +880,32 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       el("button", { type: "button", class: "roster-ghost roster-undo", onClick: () => clearOverrides(entry.team.id) }, L("Bỏ món thay", "取消替换")),
       openButton(entry.team),
     ]);
+    // Đội đủ kho khi đứng một mình nhưng tranh tướng/chiến pháp với đội đã chọn: engine trả id đội giữ, view model đổi sang tên.
+    const conflictView = buildConflictView(result, {
+      teamLabel,
+      heroName: shown,
+      tacticName: tacticShown,
+      fallbackHolder: L("một đội đã chọn", "一支已选队伍"),
+    });
+    const conflictCard = (card) => el("article", { class: "roster-missing roster-conflicted", dataset: { status: "conflicted" } }, [
+      el("div", { class: "roster-result-head" }, [
+        el("strong", { class: "roster-result-name" }, card.label),
+        tierPill({ tier: card.tier }),
+        pill(L("Tranh món", "抢占库存"), "warn"),
+      ]),
+      ...card.items.map((item) => el("p", { class: "roster-missing-text" }, [
+        warnIcon(),
+        el("span", {}, L(
+          `${item.kind === "hero" ? "Tướng" : "Chiến pháp"} ${item.name} đang dùng ở ${item.holderLabel}`,
+          `${item.kind === "hero" ? "武将" : "战法"} ${item.name} 已用于 ${item.holderLabel}`,
+        )),
+      ])),
+      el("p", { class: "ana-note" }, L(
+        "Không dựng cùng lúc được; muốn dựng cả hai cần thêm một bản của mỗi món bị tranh.",
+        "无法同时组建；若想两队都组建，每件被抢占的物品还需再有一份。",
+      )),
+      openButton(card.team),
+    ]);
     // Món bù đã chọn mà đội vẫn không vào danh sách (trùng tướng/chiến pháp với đội xếp trên): vẫn phải gỡ được.
     const shownTeams = new Set([...portfolio, ...blocked, ...incompatible].map((entry) => entry.team?.id));
     const idleOverrides = [...overriddenTeams]
@@ -904,6 +931,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
           ? el("p", { class: "roster-empty" }, L("Chưa có đội phù hợp để thêm từ kho hiện tại.", "当前库存暂无适合新增的队伍。"))
           : null,
       ]),
+      conflictView.cards.length
+        ? el("section", { class: "roster-missing-section roster-conflict-section", "aria-labelledby": "roster-conflict-title" }, [
+          el("div", { class: "roster-section-head" }, [
+            el("h2", { class: "roster-section-title", id: "roster-conflict-title", tabindex: "-1" }, L("Đội dựng được nhưng tranh món với đội đã chọn", "可组建但与已选队伍抢同一件")),
+          ]),
+          ...conflictView.cards.map(conflictCard),
+          conflictView.hiddenCount
+            ? el("p", { class: "ana-note roster-conflict-more" }, L(`và ${conflictView.hiddenCount} đội khác`, `另有 ${conflictView.hiddenCount} 支队伍`))
+            : null,
+        ])
+        : null,
       el("section", { class: "roster-missing-section", "aria-labelledby": "roster-missing-title" }, [
         el("div", { class: "roster-section-head" }, [
           el("h2", { class: "roster-section-title", id: "roster-missing-title", tabindex: "-1" }, L("Thiếu món", "差一点就能组建")),
