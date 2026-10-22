@@ -5,6 +5,7 @@
 
 import { el, bindKhaihoangConfigRow, khaihoangBuildContent, khaihoangDetailTrees } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
+import { createSaveButton, embeddedBuilder } from './my-teams-save-button.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { setTacticDisplayName, setZhNameResolver } from './recommended-reference-state.js';
 import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
@@ -67,7 +68,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
       badges.replaceChildren(...nodes.map((node) => treeToDom(node)));
       badges.hidden = !nodes.length;
     }
-    if (panelActions && !panelActions.childElementCount) panelActions.replaceChildren(detailPanelActions());
+    if (panelActions && !panelActions.childElementCount) panelActions.replaceChildren(detailPanelActions({saveButton: createSaveButton({build: embeddedBuilder()})}));
     if (panel) panel.hidden = false;
   };
 
@@ -219,7 +220,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   /** Thân, điểm và hướng dẫn đã có trong HTML ở cấu hình mặc định: chỉ gắn chọn phiên bản và nút sao chép liên kết. */
   function adoptPrerendered() {
     mount = {chips: bindKhaihoangConfigRow(body, selectVariant), content: body.querySelector('.kh-build')};
-    if (panelActions) panelActions.replaceChildren(detailPanelActions());
+    if (panelActions) panelActions.replaceChildren(detailPanelActions({saveButton: createSaveButton({build: embeddedBuilder()})}));
     if (panel) panel.hidden = false;
     showContent();
   }

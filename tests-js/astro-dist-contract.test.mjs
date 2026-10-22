@@ -245,6 +245,11 @@ async function configuredSite() {
   return match[1];
 }
 
+/** Hash nguồn cố định của fixture và payload lưu đội tối thiểu mà trang chi tiết nhúng (khớp chỉ mục nguồn của fixture). */
+const MY_TEAMS_HASH = "0123456789abcdef";
+const savePayloadHtml = (kind, key) =>
+  `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind, items: { "": { defaultGroup: "ghep-team", draft: { source: { kind, key, contentHash: MY_TEAMS_HASH } } } } })}</script>`;
+
 async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } = {}) {
   const generationId = "1".repeat(64);
   const scope = `s-${"2".repeat(64)}`;
@@ -350,18 +355,19 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   const sitemap = orderedSitemap(FIXTURE_SITEMAP_ENTRIES);
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
   await writeBlogOutputs(distDir);
+  await writeFile(join(distDir, "my-teams-source-index.json"), `${JSON.stringify({ [`khaihoang:${KHAIHOANG_TEAM_ID}`]: MY_TEAMS_HASH, [`legacy:${LEGACY_TEAM_ID}`]: MY_TEAMS_HASH })}\n`);
   // Trang chi tiết có bản Trung cùng pin identity dưới `zh/`.
   for (const locale of ["vi", "zh"]) {
     const base = locale === "zh" ? join(distDir, "zh") : distDir;
     await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}</article><script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}</article>${savePayloadHtml("legacy", LEGACY_TEAM_ID)}<script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
     await mkdir(join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}">${PRERENDERED_DETAIL_BODY}</article><script type="module" src="/js/khaihoang-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-family="khaihoang" data-khaihoang-team-id="${KHAIHOANG_TEAM_ID}" data-khaihoang-sha256="sha256:${sha256(khaiHoangBytes)}">${PRERENDERED_DETAIL_BODY}</article>${savePayloadHtml("khaihoang", KHAIHOANG_TEAM_ID)}<script type="module" src="/js/khaihoang-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
   }
   return { ledger, generationId, manifest, sitemap };
@@ -830,6 +836,14 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await writeFile(adminPath, validAdmin.replace('<meta name="robots" content="noindex">', ""));
   await assert.rejects(verify(), /community page must declare robots=noindex/i);
   await writeFile(adminPath, validAdmin);
+  // Đội của tôi (vi + zh) là trang cộng đồng noindex: bỏ noindex hoặc bỏ mount/entry đều làm hỏng build.
+  const myTeamsPath = join(distDir, "zh", "doi-cua-toi", "index.html");
+  const validMyTeams = await readFile(myTeamsPath, "utf8");
+  await writeFile(myTeamsPath, validMyTeams.replace('<meta name="robots" content="noindex">', ""));
+  await assert.rejects(verify(), /community page must declare robots=noindex.*doi-cua-toi/i);
+  await writeFile(myTeamsPath, validMyTeams.replace('id="my-teams"', 'id="other"'));
+  await assert.rejects(verify(), /doi-cua-toi/i);
+  await writeFile(myTeamsPath, validMyTeams);
   // Chính sách bảo mật là URL khai với Google OAuth: phải index được và canonical đúng bản ngôn ngữ.
   const privacyZhPath = join(distDir, "zh", "chinh-sach-bao-mat", "index.html");
   const validPrivacyZh = await readFile(privacyZhPath, "utf8");
@@ -1029,6 +1043,13 @@ test("built dist declares canonical, article metadata, robots and the catalog si
     assert.equal(url.origin, origin, location);
     assert.equal(url.pathname.startsWith("/teams/"), false, location);
   }
+  // Đội của tôi: trang cộng đồng noindex, không vào sitemap, có trong COMMUNITY_PAGES với mount + entry riêng.
+  for (const htmlPath of ["doi-cua-toi/index.html", "zh/doi-cua-toi/index.html"]) {
+    const page = COMMUNITY_PAGES.find((candidate) => candidate.htmlPath === htmlPath);
+    assert.deepEqual([page?.mount, page?.entry], ['id="my-teams"', "/js/my-teams.js"], htmlPath);
+    assert.equal(metaContent(await read(htmlPath), "robots"), "noindex", htmlPath);
+  }
+  assert.equal(locations.some((location) => location.includes("doi-cua-toi")), false);
 });
 
 test("every canonical page declares its own-language site name, locale and an absolute og:image shipped in dist", async () => {
@@ -2000,4 +2021,110 @@ test("Tra cứu: mọi trang riêng (938 × 2) có canonical + hreflang của ch
     }
   }
   assert.equal(titles.size, routes.entries.length * 2);
+});
+
+test("#15 dist verifier: my-teams-source-index.json và payload lưu đội chỉ được nhận khi nhất quán", async (t) => {
+  const { rm } = await import("node:fs/promises");
+  const projectDir = await mkdtemp(join(tmpdir(), "tqccl-astro-myteams-source-"));
+  const distDir = await mkdtemp(join(tmpdir(), "tqccl-astro-myteams-dist-"));
+  t.after(() => Promise.all([rm(projectDir, { recursive: true, force: true }), rm(distDir, { recursive: true, force: true })]));
+  await mkdir(join(projectDir, "public"), { recursive: true });
+  await writeFile(join(projectDir, "public", "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(distDir, "_headers"), FIXTURE_HEADERS);
+  await writeFile(join(projectDir, "public", "_redirects"), FIXTURE_REDIRECTS);
+  await writeFile(join(distDir, "_redirects"), FIXTURE_REDIRECTS);
+  await writeStaticImages(projectDir, distDir);
+  await writeStaticFonts(projectDir, distDir);
+  await writeRecommendedFixture(projectDir, distDir);
+  const verify = () => verifyAstroDist({ projectRoot: new URL(`file://${projectDir}/`), distDir: new URL(`file://${distDir}/`), manifest: [] });
+  const indexPath = join(distDir, "my-teams-source-index.json");
+  const validIndex = await readFile(indexPath, "utf8");
+  const keyLegacy = `legacy:${LEGACY_TEAM_ID}`;
+  const keyKhaiHoang = `khaihoang:${KHAIHOANG_TEAM_ID}`;
+
+  const result = await verify();
+  assert.ok(result.files.includes("my-teams-source-index.json"), "file chỉ mục nằm trong allowlist");
+
+  // Thiếu file, không phải JSON, sai hình dạng, khóa/hash sai, khóa chưa sắp, thừa/thiếu khóa so với catalog.
+  await rm(indexPath);
+  await assert.rejects(verify(), /missing: my-teams-source-index\.json/i);
+  const cases = [
+    ["{không phải json", /not valid JSON/i],
+    ["[]\n", /must be an object/i],
+    [JSON.stringify({ [keyKhaiHoang]: "0123456789abcdef", [keyLegacy]: "xyz" }), /invalid hash/i],
+    [JSON.stringify({ [keyKhaiHoang]: "0123456789abcdef", "legacy:../x": "0123456789abcdef" }), /invalid key/i],
+    [JSON.stringify({ [keyLegacy]: "0123456789abcdef", [keyKhaiHoang]: "0123456789abcdef" }), /not sorted/i],
+    [JSON.stringify({ [keyKhaiHoang]: "0123456789abcdef" }), /key set differs.*missing: legacy:/i],
+    [JSON.stringify({ [keyKhaiHoang]: "0123456789abcdef", [keyLegacy]: "0123456789abcdef", "legacy:team-lạ": "0123456789abcdef" }), /invalid key/i],
+    [JSON.stringify({ [keyKhaiHoang]: "0123456789abcdef", [keyLegacy]: "0123456789abcdef", "legacy:team-la": "0123456789abcdef" }), /key set differs.*unexpected: legacy:team-la/i],
+  ];
+  for (const [body, expected] of cases) {
+    await writeFile(indexPath, body);
+    await assert.rejects(verify(), expected, body);
+  }
+  await writeFile(indexPath, validIndex);
+  await verify();
+
+  // Payload của trang: hash lệch chỉ mục, thừa id, sai họ, thiếu biến thể đều bị từ chối; chữ `</script>` trong tên không phá thẻ.
+  const pagePath = join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
+  const validPage = await readFile(pagePath, "utf8");
+  const payloadOf = (draft, extra = {}) => `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind: "legacy", items: { "": { defaultGroup: "ghep-team", draft } }, ...extra })}</script>`;
+  const swap = (payload) => writeFile(pagePath, validPage.replace(/<script type="application\/json" id="team-save-payload">[^<]*<\/script>/u, () => payload));
+  const source = { kind: "legacy", key: LEGACY_TEAM_ID, contentHash: "0123456789abcdef" };
+  await swap(payloadOf({ source: { ...source, contentHash: "fedcba9876543210" } }));
+  await assert.rejects(verify(), /differs from the source index/i);
+  await swap(payloadOf({ id: "team-abc", source }));
+  await assert.rejects(verify(), /must not carry a team id/i);
+  await swap(payloadOf({ source: { ...source, kind: "khaihoang" } }));
+  await assert.rejects(verify(), /differs from the source index/i);
+  await swap(payloadOf({ source }, { kind: "khaihoang" }));
+  await assert.rejects(verify(), /wrong shape/i);
+  await swap(payloadOf({ source }, { items: {} }));
+  await assert.rejects(verify(), /exactly its variants/i);
+  await swap('<script type="application/json" id="team-save-payload">{hỏng</script>');
+  await assert.rejects(verify(), /invalid save payload/i);
+  const hostile = "</script><script>alert(1)</script>";
+  const encoded = payloadOf({ name: hostile, source });
+  assert.ok(!encoded.slice(encoded.indexOf(">") + 1, encoded.lastIndexOf("</script>")).includes("<"), "jsonLd không để lọt `<` vào thân thẻ");
+  await swap(encoded);
+  await verify();
+  assert.equal(JSON.parse(encoded.match(/id="team-save-payload">([^<]*)</u)[1]).items[""].draft.name, hostile, "đọc lại đúng nguyên văn");
+  await writeFile(pagePath, validPage);
+  await verify();
+});
+
+test("#15 dist thật: payload lưu đội của mọi trang chi tiết parse được và contentHash khớp /my-teams-source-index.json", async () => {
+  const catalog = await teamDetailCatalog();
+  const index = JSON.parse(await distText("my-teams-source-index.json"));
+  assert.ok(Object.keys(index).length >= 1500, "chỉ mục phủ Đội chuẩn, Đội khác, Khai hoang và biến thể");
+  assert.ok(Object.values(index).every((hash) => /^[0-9a-f]{16}$/u.test(hash)));
+  assert.ok(Object.keys(index).some((key) => /^legacy:[^~]+~v-[0-9a-f]{64}$/u.test(key)), "có khóa biến thể đội khác");
+  assert.ok(Object.keys(index).some((key) => /^khaihoang:[^~]+~[a-z0-9-]+$/u.test(key)), "có khóa biến thể Khai hoang");
+  const pages = [
+    ...catalog.recommended.map((entry) => ({ kind: "recommended", path: entry.htmlPath })),
+    ...catalog.legacy.map((entry) => ({ kind: "legacy", path: entry.htmlPath })),
+    ...catalog.khaiHoang.map((entry) => ({ kind: "khaihoang", path: entry.htmlPath })),
+  ];
+  let largestKhaiHoang = { bytes: 0, path: "" };
+  let checked = 0;
+  for (const { kind, path } of pages) {
+    for (const htmlPath of [path, zhPath(path)]) {
+      const html = await distText(htmlPath);
+      const raw = html.match(/<script type="application\/json" id="team-save-payload">([^<]*)<\/script>/u)?.[1];
+      assert.ok(raw, `${htmlPath}: thiếu payload lưu đội`);
+      const payload = JSON.parse(raw);
+      assert.equal(payload.kind, kind);
+      for (const item of Object.values(payload.items)) {
+        assert.equal(item.draft.source.contentHash, index[`${kind}:${item.draft.source.key}`], `${htmlPath}: hash lệch chỉ mục`);
+        assert.ok(!("id" in item.draft));
+      }
+      if (kind === "khaihoang" && !htmlPath.startsWith("zh/") && Buffer.byteLength(html) > largestKhaiHoang.bytes) {
+        largestKhaiHoang = { bytes: Buffer.byteLength(html), path: htmlPath };
+      }
+      checked += 1;
+    }
+  }
+  assert.ok(checked >= 3000, `đã kiểm ${checked} trang`);
+  // Kích thước HTML của trang Khai hoang nhiều biến thể nhất (ghi vào docs/roster-sync.md § Số đo).
+  console.log(`# my-teams: trang Khai hoang lớn nhất ${largestKhaiHoang.path} = ${largestKhaiHoang.bytes} B`);
 });

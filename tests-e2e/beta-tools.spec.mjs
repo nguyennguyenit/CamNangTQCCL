@@ -1360,6 +1360,89 @@ test.describe("Gợi ý đội", () => {
     await expect(heroPanel).toContainText("Tướng thử nghiệm");
   });
 
+  test("8. bảng chọn nhanh: lọc chiến pháp, Chọn tất cả 36 thêm đủ vào kho, Bỏ chọn tất cả gỡ đúng tập đang lọc; thẻ đọc ảnh vẫn có khi đã cấu hình AI", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.locator(".roster-scan-card")).toHaveCount(3);
+    await expect(section.locator(".roster-ai-off")).toHaveCount(0);
+
+    const picker = section.locator(".roster-picker");
+    await expect(picker).toBeVisible();
+    const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1") || "{}"));
+    await picker.locator(".roster-seg-option", { hasText: "Chiến pháp" }).click();
+    await picker.getByLabel("Loại", { exact: true }).selectOption("ACTIVE");
+    await picker.getByLabel("Nguồn", { exact: true }).selectOption("INHERITANCE");
+    await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
+    // Nguồn "Tự mang"/INNATE không có trong kho: bộ lọc không mời chọn.
+    await expect(picker.getByLabel("Nguồn", { exact: true }).locator("option", { hasText: "Tự mang" })).toHaveCount(0);
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+
+    // Số trên nút đếm đúng tập đang lọc.
+    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 36");
+    await expect(section.locator(".roster-scan-count").nth(1)).toHaveText("36 chiến pháp đã đọc");
+    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Chiến pháp đã đọc" }) }).locator(".roster-panel-count")).toContainText("36 chiến pháp");
+    expect((await stored()).ownedTactics).toHaveLength(36);
+    // Bấm lại không nhân đôi; bỏ chọn một món rồi chọn lại.
+    await picker.locator(".roster-picker-item").first().click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 35");
+    expect((await stored()).ownedTactics).toHaveLength(35);
+    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
+    expect((await stored()).ownedTactics).toHaveLength(36);
+
+    // Bỏ chọn chỉ gỡ món đang lọc: thêm một tướng ngoài bộ lọc trước.
+    await picker.locator(".roster-seg-option", { hasText: "Tướng" }).click();
+    await picker.locator(".roster-picker-item").first().click();
+    expect((await stored()).ownedHeroes).toHaveLength(1);
+    await picker.locator(".roster-seg-option", { hasText: "Chiến pháp" }).click();
+    await picker.getByLabel("Loại", { exact: true }).selectOption("ACTIVE");
+    await picker.getByLabel("Nguồn", { exact: true }).selectOption("INHERITANCE");
+    await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
+    await picker.getByRole("button", { name: /^Bỏ chọn tất cả, 36 mục đã chọn/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+    const after = await stored();
+    expect(after.ownedTactics).toHaveLength(0);
+    expect(after.ownedHeroes).toHaveLength(1);
+
+    await page.reload();
+    await waitForBoot(page);
+    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) }).locator(".roster-panel-count")).toContainText("1 tướng");
+  });
+
+  test("7. chưa cấu hình AI (workerUrl/turnstileSiteKey còn REPLACE_ME): thấy bảng chọn, Gợi ý 5 đội chạy; không thẻ đọc ảnh, không tải Turnstile", async ({ page, request }) => {
+    await page.route("**/js/config.js", (route) => route.fulfill({
+      contentType: "application/javascript",
+      body: [
+        'export const ANALYZE_CONFIG = { workerUrl: "https://REPLACE_ME/analyze", turnstileSiteKey: "REPLACE_ME", maxImageDim: 1600, jpegQuality: 0.82 };',
+        'export function isAnalyzeConfigured() { return !ANALYZE_CONFIG.workerUrl.includes("REPLACE_ME") && !ANALYZE_CONFIG.turnstileSiteKey.includes("REPLACE_ME"); }',
+      ].join("\n"),
+    }));
+    const turnstileRequests = [];
+    await page.route("https://challenges.cloudflare.com/**", (route) => {
+      turnstileRequests.push(route.request().url());
+      return route.abort();
+    });
+    await seedRoster(page, request);
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.locator(".roster-picker")).toBeVisible();
+    await expect(section.locator(".roster-ai-off")).toBeVisible();
+    await expect(section.locator(".roster-scan-card")).toHaveCount(0);
+    await expect(section.locator(".ana-turnstile")).toHaveCount(0);
+    await expect(section.locator(".ana-setup")).toHaveCount(0);
+
+    await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-results")).toHaveCount(1);
+    await expect(section.locator(".roster-result-team").first()).toBeVisible();
+    await expect(section.getByRole("button", { name: "Vì sao?" })).toHaveCount(0);
+    expect(turnstileRequests).toEqual([]);
+  });
+
   test("mục Thiếu món ghi tên tướng thiếu theo slot, không lộ mã canonical", async ({ page, request }) => {
     await seedRoster(page, request);
     await page.goto("/goi-y-doi-tu-kho/");

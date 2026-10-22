@@ -69,6 +69,34 @@
 - `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`): chữ Hán thêm dải tỉ lệ phát động theo cấp (23%→45%, 30%→45%, 25%→40%) từ cột tỉ lệ của cùng dòng trong bài Bahamut; trước đó bản zh chỉ hiện mức tối đa. Test dữ liệu mới: mọi dải `x→y` của `effectVi` phải có trong chữ Hán của mục `zhEffects`.
 - E2E: đổi phiên bản hiệu ứng ở hộp thoại và trang riêng vẫn giữ đúng một cờ chữ Hán dịch (bấm nút thật trên bản ghi `translation` hai phiên bản).
 
+## 2026-10-22 (Đồng bộ kho Gợi ý đội và Đội của tôi)
+
+Issue #21 và #23. Hợp đồng dữ liệu: [roster-sync.md](roster-sync.md). Kế hoạch: `plans/261021-0632-dong-bo-kho-va-doi-cua-toi/`.
+
+### Added
+
+- **Đồng bộ kho tùy chọn** (`js/roster-sync.js`, `js/roster-cloud-store.js`, `js/roster-id-resolve.js`): khách vẫn chỉ dùng kho `localStorage` (`tqccl.rosterRecommend.scanState.v1`, không gọi `/api/roster`); đăng nhập Google thì lần đầu hỏi rồi gộp kho local (kể cả món thêm tay, đội khóa, món bù) vào hộp `main`, sau đó kéo theo `rev` và đẩy bản ghi dirty theo khúc 200 với đóng dấu Lamport. Cache `tqccl.roster.cloud.v1` ghi trong `navigator.locks`; ID món suy bằng resolver của engine rồi kiểm từ điển (món không qua kiểm chỉ ở máy này); món đã xóa trên cloud không sống lại.
+- **Bảng chọn nhanh** (`js/roster-picker.js`): tìm + lọc rồi "Chọn tất cả N mục" để nhập kho hàng loạt. `/goi-y-doi-tu-kho/` chạy khi Worker AI chưa cấu hình; chỉ ẩn đọc ảnh và giải thích AI.
+- **Đội của tôi** (`/doi-cua-toi/`, `/zh/doi-cua-toi/`, `noindex`, bắt buộc đăng nhập, không offline): hộp kho tự đặt tên, nhóm (mặc định Khai Hoang, Ghép Team; xóa hộp/nhóm có xác nhận), đội là bản sao độc lập có `source {kind, key, contentHash}`; trình soạn có cấu trúc + cột chữ tự do (đếm byte như server), dấu "chưa có trong kho", cảnh báo trùng tướng trừ cặp "thay thế cho", báo "Bản gốc đã cập nhật" không ghi đè. Nút "Lưu vào đội của tôi" ở chi tiết Đội chuẩn/Đội khác, chi tiết Khai hoang (cả biến thể), Gợi ý đội và Soi đội; khách lưu dở qua OAuth (`sessionStorage`, 30 phút, chỉ xóa khi server xác nhận).
+- **`GET /my-teams-source-index.json`** (`src/lib/my-teams-source-index.ts`, 1 601 mục, 83 562 B) và allowlist ở `public/_headers`, `scripts/verify-astro-dist.mjs`, manifest artifact công khai.
+- `community-worker`: migration `0011_roster.sql` (bảng `roster_records`, kind `box/owned/season/locked/override/group/team`, `box_id`, cột `deleted`, ba index), `GET/POST /api/roster` với kết quả từng bản ghi (`applied`/`already-applied`/`conflict`/`rejected`, mã `bytes`, `schema`, `clock_skew`, `box_missing`, `group_missing`, `box_changed`, `not_found`, `default_protected`, `quota`, `cap`, `retained_cap`), 409 `user_mismatch`; quota 20 000 bản ghi sống, 20 hộp, 50 nhóm/hộp, 500 đội, 40 000 khóa giữ lại, kiểm trong cùng câu ghi; rate limit `roster_push` 600 lô/giờ và `roster_pull` 1 200 lượt/giờ. Xóa hộp/nhóm theo kết quả LWW của chính bản xóa.
+
+### Changed
+
+- Menu tài khoản: mục tới `/doi-cong-dong/?mine=1` đổi tên "Đội đã đăng" / 我发布的阵容 để "Đội của tôi" (`/doi-cua-toi/`, 我的阵容) là mục duy nhất mang tên đó.
+- Trang Quyền riêng tư (vi/zh) nêu kho và đội được đồng bộ lên D1 khi đăng nhập.
+- `override` dùng id `${boxId}~${sha256hex16(teamId)}~…` vì 67/1 366 `sourceConfigId` có chữ Hán; `source.key` chỉ ASCII, id có chữ Hán hoặc dài dùng `h-<16 hex>` (xem § "Thay đổi sau duyệt" của roster-sync.md).
+- Sửa theo code review roster (chi tiết ở [roster-sync.md](roster-sync.md) § Thay đổi sau duyệt): xóa nhóm có đội không còn báo `conflict`; `GET /api/roster` trả `userId` và client kiểm chủ trước khi áp trang kéo; `signOut` luôn xóa cache roster; lô đẩy tối đa 200 bản ghi (giữ dưới trần 1 000 câu D1 mỗi lần gọi); xóa mềm của Gợi ý đội theo chênh lệch; con trỏ kéo lệch tự về 0; mặc định hộp/nhóm chỉ dựng sau lần kéo thành công; trần 30 đội khóa chỉ khi thêm.
+- Bản dịch: re-pin các file nguồn đổi (`js/analyze.js`, `js/community-auth.js`, `js/detail-actions.js`, `js/khaihoang-detail.js`, `js/roster-recommend-ui.js`, `js/roster-scan-state.js`, `js/team-detail.js`…), generation Recommended cuối `7949ff6c3dcdc8b3735a0856e99b9787d786000e4283cc15d42ab45de0430886` (`data/website-display.json`), re-pin `pipeline/team-route-handles.json`. Các file trong `docs/` và `README.md` không nằm trong `sourceFiles` nên đợt docs này không cần publish lại.
+
+### Tests
+
+- Node 704 (`roster-sync`, `roster-cloud-store`, `roster-id-resolve`, `roster-picker`, `my-teams-model/sources/links/pending/crud`), `test:dist` 52, `community-worker` vitest 570 (trong đó `roster.test.ts` 33 ca trên D1 giả), Playwright 187 gồm `tests-e2e/my-teams.spec.mjs`. Test chạy trên D1 giả và session Better Auth dựng sẵn: không chứng minh Google OAuth thật hay D1 production.
+
+### Deploy
+
+- Chưa rollout. Thứ tự: `cd community-worker && npm run db:migrate:remote` (`0011`) → `npm run deploy` → Pages. Rollback Pages: client cũ chỉ đọc kho local (món thêm lúc rollback không tự lên cloud); rollback Worker: `/api/roster` biến mất, Đội của tôi không lưu được; **không xóa bảng**. Sau rollout kiểm bằng một lượt đăng nhập Google thật và một lượt lưu/đọc trên production (xem [Deployment guide](deployment-guide.md#đồng-bộ-kho-và-đội-của-tôi-roster_records)).
+
 ## 2026-10-21 (Đội cộng đồng)
 
 ### Added

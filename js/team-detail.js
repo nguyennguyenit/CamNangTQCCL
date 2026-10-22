@@ -4,6 +4,7 @@
 
 import { el } from './render.js';
 import { detailPanelActions, isNetworkError } from './detail-actions.js';
+import { createSaveButton, embeddedBuilder } from './my-teams-save-button.js';
 import {
   loadVerifiedLegacyTeams,
   loadVerifiedRecommendedManifest,
@@ -57,14 +58,32 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   const panelActions = documentTarget.querySelector('#team-detail-actions');
   upgradeReturnLink(returnLink);
 
-  /** Đầu trang: huy hiệu phe/loại binh có dữ liệu (bỏ hẳn phần thiếu) và nút sao chép liên kết; không có link nguồn ngoài. */
-  const paintHeader = (record, labels) => {
+  /**
+   * Đội nháp của biến thể đội khác, dựng LÚC BẤM từ đúng nội dung đang hiển thị (`content` của `loadLegacy`, kèm ghi chú đội
+   * gốc). Hash nguồn chép từ chỉ mục build (không tính lại trên chữ đã bản địa hóa); không tải được chỉ mục thì hash rỗng.
+   */
+  const legacyVariantBuilder = (content, legacyVariantId) => async () => {
+    const [{createLookupIdResolver}, {fromLegacy, variantKey}, {loadTeamDictionaries, loadTeamBooks}, {loadSourceIndex}] = await Promise.all([
+      import('./lookup-ids.js'),
+      import('./my-teams-sources.js'),
+      import('./community-team-data.js'),
+      import('./my-teams-links.js'),
+    ]);
+    const [{heroes, tactics}, books, index] = await Promise.all([loadTeamDictionaries(), loadTeamBooks(), loadSourceIndex()]);
+    const ids = createLookupIdResolver({tactics, books, heroes});
+    const contentHash = index?.[`legacy:${variantKey(legacyTeamId, legacyVariantId)}`] ?? '';
+    const {draft, defaultGroup, unresolved} = fromLegacy(content, ids, {legacyTeamId, legacyVariantId, contentHash});
+    return {draft, defaultGroup, unresolved};
+  };
+
+  /** Đầu trang: huy hiệu phe/loại binh có dữ liệu (bỏ hẳn phần thiếu), nút lưu và nút sao chép liên kết; không có link nguồn ngoài. */
+  const paintHeader = (record, labels, build) => {
     if (badges) {
       const nodes = detailBadges(record, labels);
       badges.replaceChildren(...nodes.map(node => treeToDom(node)));
       badges.hidden = !nodes.length;
     }
-    if (panelActions) panelActions.replaceChildren(detailPanelActions());
+    if (panelActions) panelActions.replaceChildren(detailPanelActions({saveButton: createSaveButton({build})}));
     if (panel) panel.hidden = false;
   };
 
@@ -118,7 +137,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   /** Thân và huy hiệu đã có trong HTML: chỉ hiện panel và gắn nút sao chép liên kết, không tải gì, không dựng lại. */
   function adoptPrerendered() {
     body.removeAttribute('data-prerendered');
-    if (panelActions) panelActions.replaceChildren(detailPanelActions());
+    if (panelActions) panelActions.replaceChildren(detailPanelActions({saveButton: createSaveButton({build: embeddedBuilder()})}));
     if (panel) panel.hidden = false;
     root.setAttribute('aria-busy', 'false');
   }
@@ -149,7 +168,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};
-    paintHeader(content, null);
+    paintHeader(content, null, legacyVariantBuilder(content, requestedVariant));
     showContent(legacyOriginalDetailContent(content, {variant: admitted}));
   }
 

@@ -251,6 +251,32 @@ npm run deploy
 
 Endpoint/model/key/effort không nằm trong config: admin cấu hình ở tab **AI** của `/quan-tri/` — nhà cung cấp dùng chung (mẫu DeepSeek, OpenCode Zen hoặc tuỳ chỉnh, catalog model ở `shared/ai-models.ts` cộng model tự thêm) và chuỗi (nhà cung cấp, model, effort) + timeout/trần tổng riêng cho Soi đội, Gợi ý đội, Giải thích món bù, Chiến báo. Mỗi lượt thử mắt xích theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mắt xích kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
 
+## Đồng bộ kho và Đội của tôi (`roster_records`)
+
+Đợt này thêm bảng D1 `roster_records`, route `/api/roster` (hợp đồng ở [roster-sync.md](roster-sync.md), vận hành ở [community-worker.md](community-worker.md#đồng-bộ-kho-và-đội-của-tôi)), client `js/roster-sync.js` cho `/goi-y-doi-tu-kho/` và trang `/doi-cua-toi/` (+ `/zh/doi-cua-toi/`, `noindex`). Theo mẫu các đợt trước (migration `0004` chiêu mộ, `0006` quản trị người dùng, `0008` Đội cộng đồng): **migration → Worker → Pages**, vì client mới gọi `/api/roster` ngay khi người dùng đăng nhập.
+
+Rollout do chủ dự án thực hiện (cần quyền Cloudflare); tài liệu và test không deploy gì.
+
+### Thứ tự release
+
+1. `cd community-worker && npm run db:migrate:remote`. `0011_roster.sql` chỉ thêm bảng `roster_records` và ba index, không sửa bảng đang chạy; nếu `0008`–`0010` của Đội cộng đồng chưa áp, wrangler áp theo thứ tự tên file. Ghi bookmark trước khi migrate: `npx wrangler d1 time-travel info tqccl-community`.
+2. `cd community-worker && npm run deploy`. Kiểm: `GET https://tqccl.com/api/roster` không đăng nhập → `401`; đăng nhập rồi gọi → `200` với `records: []`.
+3. Deploy Pages (push `main`, rồi chạy tay `pages-deploy.yml`; xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)). Kiểm trên production:
+   - `/goi-y-doi-tu-kho/`: khách chạy như cũ, không có request `/api/roster`; công cụ dùng được cả khi Worker AI chưa cấu hình (chỉ ẩn đọc ảnh và giải thích AI).
+   - Đăng nhập: hỏi gộp kho local vào hộp `main` lần đầu, rồi đồng bộ; máy thứ hai thấy cùng kho.
+   - `/doi-cua-toi/` và `/zh/doi-cua-toi/` có `noindex` và không nằm trong `sitemap.xml`; `/my-teams-source-index.json` trả JSON (1 601 mục ở bản build hiện tại).
+   - Menu tài khoản: "Đội của tôi" → `/doi-cua-toi/`; mục cũ trỏ `/doi-cong-dong/?mine=1` đã đổi tên "Đội đã đăng" / 我发布的阵容.
+
+### Giới hạn của bằng chứng local
+
+Test Worker chạy trên D1 giả (`node:sqlite` áp migration thật) và smoke/E2E dùng session Better Auth dựng sẵn, nên **không chứng minh được Google OAuth thật hay D1 production** (xem [community-worker.md](community-worker.md#kiểm-tra)). Việc kiểm bắt buộc sau rollout: **một lượt đăng nhập Google thật và một lượt lưu/đọc trên production** (thêm một món vào kho ở `/goi-y-doi-tu-kho/`, hoặc lưu một đội ở `/doi-cua-toi/`; tải lại và đọc từ thiết bị/trình duyệt thứ hai), rồi xác nhận bằng `npx wrangler d1 execute tqccl-community --remote --command "select kind, count(*) from roster_records group by kind"`.
+
+### Rollback
+
+- **Pages về bản trước**: client cũ chỉ đọc `tqccl.rosterRecommend.scanState.v1`, nên người dùng thấy kho local như trước lần gộp; dữ liệu cloud nằm yên trong D1. Món thêm trong thời gian rollback chỉ nằm ở kho local và **không tự lên cloud** khi bản mới trở lại (cờ gộp đã đặt). Ghi rõ điều này trong thông báo sự cố. `/doi-cua-toi/` biến mất cùng bản cũ.
+- **Worker về version known-good**: `/api/roster` biến mất; client mới báo lỗi đồng bộ và giữ kho cloud cache ở chế độ chỉ đọc; Đội của tôi không lưu được.
+- **D1**: không xóa bảng khi rollback. Code cũ không đọc bảng mới; xóa bảng là thao tác phá hủy, chỉ làm khi có quyết định riêng. Time Travel ghi đè mọi ghi sau bookmark, chỉ dùng khi dữ liệu sai nghiêm trọng.
+
 ## Publish lại bản dịch hiển thị
 
 Mọi thay đổi chữ UI hoặc file trong `sourceFiles` của `pipeline/site-localization-policy.json` đều phải đi qua chuỗi

@@ -177,8 +177,14 @@ function lockedTeamKey(team) {
   return JSON.stringify([[...team.heroes].sort(), [...team.tactics].sort()]);
 }
 
+/**
+ * Tối đa khi THÊM đội khóa (server không đếm riêng, xem docs/roster-sync.md): đầy thì bỏ bản cũ nhất, UI báo qua
+ * `droppedLockedTeams`. Nạp/lưu dữ liệu đã có không cắt (khách cũ, hộp cloud gộp nhiều máy), kẻo xóa mất đội của người dùng.
+ */
+export const MAX_LOCKED_TEAMS = 30;
+
 /** Đội khóa trùng tướng + chiến pháp (không kể thứ tự) chỉ giữ bản đầu tiên. */
-function uniqLockedTeams(teams) {
+function dedupeLockedTeams(teams) {
   const seen = new Set();
   return (teams || []).map(normalizeLockedTeam).filter((team) => {
     const key = lockedTeamKey(team);
@@ -188,14 +194,21 @@ function uniqLockedTeams(teams) {
   });
 }
 
+/**
+ * Kết quả đọc ảnh vào kho. `droppedLockedTeams` (không lưu, `serializeRosterScanState` bỏ) = số đội khóa cũ bị loại
+ * vì vượt `MAX_LOCKED_TEAMS`; UI phải báo.
+ */
 export function applyScanResult(state, type, result) {
   const next = serializeRosterScanState(state || createInitialRosterScanState());
+  let droppedLockedTeams = 0;
   if (type === "heroes") {
     next.ownedHeroes = uniqByName([...(next.ownedHeroes || []), ...(result?.heroes || [])]);
   } else if (type === "tactics") {
     next.ownedTactics = uniqByName([...(next.ownedTactics || []), ...(result?.tactics || [])]);
   } else if (type === "builtTeams") {
-    next.lockedTeams = uniqLockedTeams([...(next.lockedTeams || []), ...(result?.teams || [])]);
+    const all = dedupeLockedTeams([...(next.lockedTeams || []), ...(result?.teams || [])]);
+    next.lockedTeams = all.slice(-MAX_LOCKED_TEAMS);
+    droppedLockedTeams = all.length - next.lockedTeams.length;
   }
   const now = new Date().toISOString();
   if (SCAN_TYPES.includes(type)) {
@@ -203,7 +216,7 @@ export function applyScanResult(state, type, result) {
   }
   next.confirmed = false;
   next.updatedAt = now;
-  return next;
+  return { ...next, droppedLockedTeams };
 }
 
 export function addCanonicalItem(state, type, name) {
@@ -300,7 +313,7 @@ export function serializeRosterScanState(state) {
   return {
     ownedHeroes: uniqByName(state?.ownedHeroes || []),
     ownedTactics: uniqByName(state?.ownedTactics || []),
-    lockedTeams: uniqLockedTeams(state?.lockedTeams),
+    lockedTeams: dedupeLockedTeams(state?.lockedTeams),
     tacticOverrides: cleanTacticOverrides(state?.tacticOverrides),
     scans: cleanScans(state?.scans),
     seasonId: boundedText(state?.seasonId, 64) ? state.seasonId : null,

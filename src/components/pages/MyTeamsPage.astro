@@ -1,0 +1,41 @@
+---
+// Trang Đội của tôi dùng chung cho bản Việt (`/doi-cua-toi/`) và bản Trung (`/zh/doi-cua-toi/`).
+// Bắt buộc đăng nhập; hộp/nhóm/đội và trình soạn do js/my-teams.js dựng trong `#my-teams`.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { teamDetailCatalog } from '../../lib/team-detail-routes';
+import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  locale: SiteLocale;
+}
+
+const { locale } = Astro.props;
+const t = (vi: string, zh: string) => pick(locale, vi, zh);
+// Layout chỉ nhúng `{l}` cho `pageKind="detail"`; trang này tự nhúng đủ `{r, l, k}` để dựng link nguồn của mọi họ đội
+// (`js/my-teams.js` đăng ký bằng `setTeamRouteHandlesFromJSON`, như js/team-detail.js).
+const catalog = await teamDetailCatalog();
+const routeTables = JSON.stringify({
+  r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),
+  l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
+  k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
+}).replace(/</g, '\\u003c');
+---
+<SiteLayout
+  title={t('Đội của tôi — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '我的阵容 — 三国志战略版攻略手册')}
+  description={t('Đội bạn đã lưu theo hộp và nhóm, đồng bộ theo tài khoản.', '按账号同步的已保存阵容，按仓库与分组整理。')}
+  pageKind="detail"
+  tagline={t('Đội của tôi', '我的阵容')}
+  robots="noindex"
+  locale={locale}
+>
+  <section class="mt-page" aria-labelledby="mt-title">
+    <h1 id="mt-title" class="detail-title">{t('Đội của tôi', '我的阵容')}</h1>
+    <p class="scope-note">{t('Đội bạn lưu từ Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội và Soi đội, đồng bộ theo tài khoản. Bản đã lưu là bản sao của riêng bạn: sửa tự do, không đổi khi nguồn cập nhật.', '你从标准阵容、其他阵容、开荒、阵容推荐和阵容分析保存的阵容，按账号同步。已保存的是你自己的副本：可随意修改，来源更新时不会改变。')}</p>
+    <div id="my-teams" class="mt-root">
+      <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。')}</p></noscript>
+    </div>
+    <script is:inline type="application/json" id="my-teams-routes" set:html={routeTables}></script>
+  </section>
+  <script is:inline type="module" src="/js/my-teams.js" slot="scripts"></script>
+</SiteLayout>
