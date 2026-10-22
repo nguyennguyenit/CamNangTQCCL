@@ -1,7 +1,8 @@
 // Bài viết blog: API công khai cho build tĩnh + CRUD/xuất bản của admin, upload và phục vụ media R2.
 
 import { Hono } from "hono";
-import { auditIfStmt, settleDeploy, writeAuditQuietly } from "../audit";
+import { auditIfStmt, writeAuditQuietly } from "../audit";
+import { deployMeta, settle, triggerDeploy } from "../deploy";
 import { requireRoot, type AppEnv, type Ctx } from "../context";
 import type { Env } from "../env";
 import { ApiError, iso } from "../http";
@@ -123,42 +124,6 @@ export function parsePostFields(input: Record<string, unknown>): PostFields {
   };
 }
 
-// ---- Kích hoạt build lại site ----
-
-export interface DeployResult {
-  ok: boolean;
-  status: number | null;
-  error?: string;
-}
-
-// Pages `tqccl` là project direct upload (không có Deploy hook): gửi repository_dispatch để
-// workflow .github/workflows/pages-deploy.yml build + deploy lại site từ main.
-export const DEPLOY_EVENT_TYPE = "blog-publish";
-
-/** Gọi GitHub repository_dispatch; lỗi chỉ báo trong response, không rollback DB. */
-export async function triggerDeploy(env: Env, fetchImpl: typeof fetch): Promise<DeployResult> {
-  const repo = env.GITHUB_REPOSITORY?.trim();
-  if (!env.GITHUB_DISPATCH_TOKEN || !repo || !/^[\w.-]+\/[\w.-]+$/u.test(repo)) {
-    return { ok: false, status: null, error: "deploy_hook_not_configured" };
-  }
-  try {
-    const resp = await fetchImpl(`https://api.github.com/repos/${repo}/dispatches`, {
-      method: "POST",
-      headers: {
-        Accept: "application/vnd.github+json",
-        Authorization: `Bearer ${env.GITHUB_DISPATCH_TOKEN}`,
-        "Content-Type": "application/json",
-        "User-Agent": "tqccl-community-worker",
-        "X-GitHub-Api-Version": "2022-11-28",
-      },
-      body: JSON.stringify({ event_type: DEPLOY_EVENT_TYPE }),
-    });
-    return resp.ok ? { ok: true, status: resp.status } : { ok: false, status: resp.status, error: "deploy_hook_failed" };
-  } catch {
-    return { ok: false, status: null, error: "deploy_hook_unreachable" };
-  }
-}
-
 // ---- Truy vấn ----
 
 async function findPost(env: Env, id: string): Promise<PostRow> {
@@ -180,20 +145,6 @@ async function writePost(db: D1Database, stmts: D1PreparedStatement[]): Promise<
       throw new ApiError(409, "slug_taken", "Slug đã tồn tại trong ngôn ngữ này");
     }
     throw e;
-  }
-}
-
-/** Thao tác có kích hoạt deploy: dòng nhật ký vào D1 cùng batch với `meta.deploy = 'pending'`, rồi cập nhật đúng dòng đó. */
-function deployMeta(meta: Record<string, unknown>, dispatch: boolean): Record<string, unknown> {
-  return dispatch ? { ...meta, deploy: "pending" } : meta;
-}
-
-async function settle(c: Ctx, auditId: string, meta: Record<string, unknown>, deploy: DeployResult): Promise<void> {
-  try {
-    await settleDeploy(c, auditId, meta, deploy);
-  } catch (error) {
-    // Bài và deploy đã xong: không đổi phản hồi thành lỗi; dòng giữ `deploy: pending` (kết quả chưa rõ).
-    console.error("admin_audit deploy settle failed", auditId, error);
   }
 }
 
