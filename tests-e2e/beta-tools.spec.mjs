@@ -408,9 +408,10 @@ test.describe("Chiêu mộ", () => {
  */
 async function analyzeFixture(page) {
   const fixture = await page.evaluate(async () => {
-    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }] = await Promise.all([
+    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }, { createBookNameIndex }] = await Promise.all([
       import("/js/analyze-map.js"),
       import("/js/analyze-state.js"),
+      import("/js/lookup-ids.js"),
     ]);
     const json = (path) => fetch(path).then((response) => response.json());
     const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
@@ -420,12 +421,13 @@ async function analyzeFixture(page) {
       json("/data/heroes-dict.json"), json("/data/tactics.json"), json("/data/books-dict.json"),
     ]);
     const indexes = { hero: createEntityIndex(heroes, "hero"), tactic: createEntityIndex(tactics, "tactic"), book: createEntityIndex(books, "book") };
+    const bookIdOf = createBookNameIndex(books);
     const recordOf = (kind, id) => indexes[kind].byId.get(id);
     const compact = (value) => String(value || "").replace(/\s+/gu, "");
     // Chữ Giản thể như in trong game: alias không khoảng trắng khác `chinese`, không có thì `chinese`.
     const printed = (record) => (record.aliases || []).find((alias) => !/\s/u.test(alias) && alias !== record.chinese) ?? compact(record.chinese);
     for (const record of index.records.filter((item) => item.sourceSeasonId === seasons.defaultSourceSeasonId)) {
-      const slots = referenceTeam(record).slots;
+      const slots = referenceTeam(record, null, bookIdOf).slots;
       if (slots.length !== 3) continue;
       const team = {
         heroes: slots.map((slot) => ({
@@ -438,7 +440,7 @@ async function analyzeFixture(page) {
         recordOf("hero", member.hero) && member.tactics.every((id) => id && recordOf("tactic", id)) && member.book && recordOf("book", member.book));
       if (!complete) continue;
       const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
-      const otherMatch = other.records.find((item) => diffTeam(team, item).heroHit >= 2);
+      const otherMatch = other.records.find((item) => diffTeam(team, item, null, bookIdOf).heroHit >= 2);
       if (unsureIndex < 0 || !otherMatch) continue;
       const reads = team.heroes.map((member, position) => ({
         nameCn: position === unsureIndex

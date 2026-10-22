@@ -6,6 +6,16 @@ export type DictionaryArtifact =
   | "tactics"
   | "books-dict";
 
+const BOOK_ID = /^book:[a-z0-9]+(?:-[a-z0-9]+)*$/u;
+
+/** A books-dict record has no valid frozen id; ids are never derived from the Vietnamese name. */
+export class MissingBookIdError extends Error {
+  constructor(displayName: string) {
+    super(`books-dict record ${JSON.stringify(displayName)} has no frozen id (book:<slug>)`);
+    this.name = "MissingBookIdError";
+  }
+}
+
 function slug(value: string): string {
   return normalizeText(value)
     .replace(/[^a-z0-9]+/gu, "-")
@@ -13,9 +23,9 @@ function slug(value: string): string {
 }
 
 /**
- * Canonical ID of a dictionary record. Heroes keep the hero-identity rule. Tactics/books use the published
- * `id` when the record has one (tactic ids are stable across display renames); only id-less records fall back
- * to the slug of the Vietnamese name.
+ * Canonical ID of a dictionary record. Heroes keep the hero-identity rule. Tactics use the published `id` when the
+ * record has one (stable across display renames); only id-less tactics fall back to the slug of the Vietnamese name.
+ * Books never fall back: their frozen `id` (`^book:[a-z0-9]+(-[a-z0-9]+)*$`) is required, else this throws.
  */
 export function canonicalDictionaryId(
   artifact: DictionaryArtifact,
@@ -25,10 +35,14 @@ export function canonicalDictionaryId(
   if (artifact === "heroes-dict") {
     return canonicalHeroId(displayName);
   }
+  if (artifact === "books-dict") {
+    if (typeof recordId === "string" && BOOK_ID.test(recordId)) return recordId;
+    throw new MissingBookIdError(displayName);
+  }
   if (typeof recordId === "string" && recordId.trim() !== "") {
     return recordId.trim();
   }
-  return `${artifact === "tactics" ? "tactic" : "book"}:${slug(displayName)}`;
+  return `tactic:${slug(displayName)}`;
 }
 
 interface TacticNameRow {

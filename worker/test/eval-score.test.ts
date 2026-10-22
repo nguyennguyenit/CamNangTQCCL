@@ -12,7 +12,7 @@ const indexes = buildIndexes({
     { chinese: "刀出如霆", viet: "Đao Xuất Như Đình" },
     { chinese: "文武双全", viet: "Văn Võ Song Toàn" },
   ],
-  books: [{ chinese: "铁甲", viet: "Giáp Sắt" }],
+  books: [{ id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Sắt" }],
 });
 
 const fixture: Fixture = {

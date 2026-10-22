@@ -323,12 +323,21 @@ describe("ingress", () => {
   });
 });
 
+describe("book ids", () => {
+  const catalog = { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] };
+  it("projection fails closed for a book row without a valid frozen id", () => {
+    for (const row of [{ viet: "Sách" }, { id: "", viet: "Sách" }, { id: "tactic:x", viet: "Sách" }, { id: "book:Sai-Dang", viet: "Sách" }]) {
+      expect(() => projectCatalogEntities({ heroes: [], tactics: [], books: [row], catalog })).toThrow();
+    }
+  });
+});
+
 describe("projection allowlist", () => {
   it("drops non-allowlisted and private fields instead of copying records", () => {
     const entities = projectCatalogEntities({
       heroes: [{ id: "hero:a", viet: "A", chinese: "甲", hanViet: "Giáp", aliases: ["甲"], iconUrl: "https://x", linkScore: 1, pending: false, sgsdeckPath: "data/sgsdeck/x", privateNote: "secret", stats: { luc: 1 }, lookup: { variant: "base", leaked: "secret" } }],
       tactics: [{ id: "tactic:t", viet: "T", chinese: "戰", effect: "e", internalReview: "secret", lookup: { revisions: [], hidden: 1, effectZhSource: { kind: "translation" } } }],
-      books: [{ viet: "Sách", chinese: "書", effect: "e", effectViet: "v", editorNote: "secret" }],
+      books: [{ id: "book:sach-co-dinh", viet: "Sách", aliases: ["Sách Cũ"], chinese: "書", effect: "e", effectViet: "v", editorNote: "secret" }],
       catalog: {
         equipment: [{ id: "equipment:e", nameVi: "E", aliasesVi: [], aliasesZh: ["裝"], conditions: [], missingFields: [], slotVi: "Vũ khí", qualityVi: "Cam", reviewer: "secret" }],
         specials: [{ id: "equipment-special:s", nameVi: "S", equipmentId: "equipment:e", aliasesVi: [], aliasesZh: [], slotVi: "Vũ khí", tierVi: "T0", conditions: [], missingFields: [], sgsdeck: "secret" }],
@@ -341,7 +350,9 @@ describe("projection allowlist", () => {
     for (const forbidden of ["secret", "sgsdeck", "iconUrl", "linkScore", "pending", "leaked", "hidden"]) {
       expect(text).not.toContain(forbidden);
     }
-    expect(entities.map((entity) => entity.id).sort()).toEqual(["book:sach", "equipment-special:s", "equipment:e", "hero:a", "tactic:t"]);
+    expect(entities.map((entity) => entity.id).sort()).toEqual(["book:sach-co-dinh", "equipment-special:s", "equipment:e", "hero:a", "tactic:t"]);
+    // Id cố định: khác slug của tên Việt "Sách"; tên Việt cũ trong `aliases` vẫn là khóa tìm.
+    expect(entities.find((entity) => entity.kind === "book")).toMatchObject({ id: "book:sach-co-dinh", nameVi: "Sách", aliases: ["Sách Cũ"] });
     const equipment = entities.find((entity) => entity.id === "equipment:e")!;
     expect((equipment.profile as { specialIds: string[] }).specialIds).toEqual(["equipment-special:s"]);
     const tactic = entities.find((entity) => entity.id === "tactic:t")!;

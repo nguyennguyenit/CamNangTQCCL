@@ -7,7 +7,7 @@
 import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText, zhTranslatedNote } from "./lookup-detail.js";
 import { L, currentLocale, localePath, normalizeLocale, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
-import { bookLookupId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
+import { bookRowId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
 import { portraitTree } from "./hero-portrait.js";
 import { isMasterGroup, laterTree, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
@@ -101,21 +101,21 @@ function entry(group, record) {
 }
 
 /**
- * Binh thư (`books-dict.json`) không có `id` trong dữ liệu: mã hồ sơ dựng bằng `bookLookupId` (dùng chung
- * với trang chi tiết đội), dòng không dựng được mã thì bỏ. Tên Hán-Việt và chữ Hán là khóa tìm phụ; tên nguồn
- * phồn thể (`sourceNames`) và `aliases` (`{[id]: {aliases, formerNames}}`, tính lúc build từ bảng danh tính)
- * thêm tên Hán nguồn và tên cũ đã xác nhận.
+ * Binh thư (`books-dict.json`) mang `id` cố định trong dữ liệu (ghi tay ở `pipeline/books-han-viet-map.json`):
+ * mã hồ sơ là `row.id`, dòng không có id hợp lệ thì bỏ (không dựng mã từ tên Việt). Tên Hán-Việt, chữ Hán và tên
+ * Việt cũ trong `aliases` của dòng là khóa tìm phụ; tên nguồn phồn thể (`sourceNames`) và `bookAliases`
+ * (`{[id]: {aliases, formerNames}}`, tính lúc build từ bảng danh tính) thêm tên Hán nguồn và tên cũ đã xác nhận.
  */
 function bookRecords(books, aliases) {
   return (Array.isArray(books) ? books : []).flatMap((row) => {
-    const id = bookLookupId(row);
+    const id = bookRowId(row);
     if (!id) return [];
     const extra = aliases && Object.hasOwn(aliases, id) ? aliases[id] : null;
     const names = (value) => (Array.isArray(value) ? value.filter((name) => typeof name === "string" && name.trim()) : []);
     return [{
       ...row,
       id,
-      aliases: typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : [],
+      aliases: [...(typeof row.hanViet === "string" && row.hanViet ? [row.hanViet] : []), ...names(row.aliases)],
       aliasesZh: [...names(row.sourceNames), ...names(extra?.aliases)],
       formerNames: names(extra?.formerNames),
     }];

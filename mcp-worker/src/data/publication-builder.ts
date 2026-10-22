@@ -4,7 +4,7 @@
  * Layout and byte measurements: see the header of `publication-projection.ts`.
  */
 import { loadWebsiteDisplay, localizeData } from "../../../js/website-display.js";
-import { bookLookupId, createLookupIdResolver, lookupProfilePath } from "../../../js/lookup-ids.js";
+import { bookRowId, createLookupIdResolver, lookupProfilePath } from "../../../js/lookup-ids.js";
 import { innateHolderIndex } from "../../../js/lookup-innate-holders.js";
 import { localePath } from "../../../js/i18n.js";
 import { stableStringify } from "../domain/contracts.js";
@@ -311,8 +311,7 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
   catalogRows("troopMods", "troop-mod");
   catalogRows("buildings", "building");
   for (const book of input.books) {
-    const id = bookLookupId(book);
-    if (id === null) continue;
+    const id = bookRowId(book) ?? fail(`book ${JSON.stringify(text(book.viet) ?? text(book.chinese))} has no valid frozen id`);
     output.push(entity("book", id, text(book.viet) ?? text(book.hanViet) ?? fail("book has no name"), text(book.chinese), text(book.hanViet), [...strings(book.sourceNames), ...strings(book.aliases)], pick(book, BOOK_FIELDS)));
   }
   const seen = new Set<string>();

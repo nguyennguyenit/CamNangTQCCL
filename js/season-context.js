@@ -1,6 +1,7 @@
 import { normalizeText } from './filters.js';
 import { canonicalHeroId } from './hero-identity.js';
 import { L } from './i18n.js';
+import { bookRowId } from './lookup-ids.js';
 
 const ARTIFACTS = ['season-registry', 'season-evidence', 'season-team-configs', 'season-team-evaluations', 'season-content-links'];
 const DATASETS = ['teams', 'coexist', 'heroes-dict', 'tactics', 'books-dict'];
@@ -138,7 +139,9 @@ function dictionary(rows, kind) {
     const name = row.viet;
     // Unmapped dictionary rows are not canonical identities.
     if (typeof name !== 'string' || !name.trim()) continue;
-    const key = kind === 'hero' ? canonicalHeroId(name) : kind === 'tactic' && typeof row.id === 'string' && row.id.startsWith('tactic:') ? row.id : `${kind}:${normalizeText(name).replace(/[^a-z0-9]+/gu, '-').replace(/^-+|-+$/gu, '')}`;
+    // Binh thư: id cố định của dòng; dòng không có id hợp lệ không phải danh tính canonical (không lùi về slug tên).
+    if (kind === 'book' && !bookRowId(row)) continue;
+    const key = kind === 'hero' ? canonicalHeroId(name) : kind === 'book' ? row.id : kind === 'tactic' && typeof row.id === 'string' && row.id.startsWith('tactic:') ? row.id : `${kind}:${normalizeText(name).replace(/[^a-z0-9]+/gu, '-').replace(/^-+|-+$/gu, '')}`;
     const previous = result.get(key);
     if (previous && (previous.viet !== row.viet || previous.chinese !== row.chinese)) result.set(key, null);
     else if (!result.has(key)) result.set(key, row);

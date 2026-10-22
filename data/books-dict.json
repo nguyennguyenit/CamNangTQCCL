@@ -1,5 +1,6 @@
 [
   {
+    "id": "book:binh-hanh-quy-dao",
     "chinese": "兵行诡道",
     "viet": "Binh Hành Quỷ Đạo",
     "sourceNames": [
@@ -10,6 +11,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:biet-cach-phong-thu",
     "chinese": "守而有道",
     "viet": "Biết Cách Phòng Thủ",
     "effect": "自身受到的謀略傷害降低5%(受統率影響)",
@@ -17,6 +19,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:bach-chien",
     "chinese": "百战",
     "viet": "Bách Chiến",
     "hanViet": "Bách Chiến",
@@ -28,6 +31,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:bo-tran-cho-doi",
     "chinese": "严阵以待",
     "viet": "Bố Trận Chờ Đợi",
     "hanViet": "Nghiêm Trận Dĩ Đãi",
@@ -39,6 +43,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:chia-loi",
     "chinese": "分利",
     "viet": "Chia Lời",
     "effect": "自身受到兵刃傷害後，統率提升1%，受到謀略傷害則智力提升1%,分別可疊加5次",
@@ -46,6 +51,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:chia-nho-danh-nhanh",
     "chinese": "分而疾战",
     "viet": "Chia Nhỏ Đánh Nhanh",
     "sourceNames": [
@@ -56,6 +62,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:chien-dau-truong-ky",
     "chinese": "久战",
     "viet": "Chiến Đấu Trường Kỳ",
     "sourceNames": [
@@ -66,6 +73,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:cham-qua-toa-giap",
     "chinese": "枕戈坐甲",
     "viet": "Chẩm Qua Tọa Giáp",
     "effect": "戰鬥第2-6回合,自身每回合有25%概率獲得1次抵禦",
@@ -73,6 +81,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:cuong-nhu",
     "chinese": "刚柔",
     "viet": "Cương Nhu",
     "hanViet": "Cương Nhu",
@@ -84,6 +93,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:cam-binh-khi",
     "chinese": "执锐",
     "viet": "Cầm Binh Khí",
     "sourceNames": [
@@ -94,6 +104,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:cuu-chu",
     "chinese": "救主",
     "viet": "Cứu Chủ",
     "hanViet": "Cứu Chủ",
@@ -102,6 +113,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:cuu-vien",
     "chinese": "驰援",
     "viet": "Cứu Viện",
     "sourceNames": [
@@ -112,6 +124,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:dieu-toan",
     "chinese": "妙算",
     "viet": "Diệu Toán",
     "hanViet": "Diệu Toán",
@@ -120,6 +133,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:di-truc-bao-oan",
     "chinese": "以直报怨",
     "viet": "Dĩ Trực Báo Oán",
     "sourceNames": [
@@ -133,6 +147,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:dan-quan",
     "chinese": "统军",
     "viet": "Dẫn Quân",
     "hanViet": "Thống Quân",
@@ -144,6 +159,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:giap-sat",
     "chinese": "铁甲",
     "viet": "Giáp Sắt",
     "hanViet": "Thiết Giáp",
@@ -155,6 +171,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:gia-nai-truoc-dich",
     "chinese": "示敌以弱",
     "viet": "Giả Nai Trước Địch",
     "sourceNames": [
@@ -165,6 +182,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:giau-dao",
     "chinese": "藏刀",
     "viet": "Giấu Đao",
     "hanViet": "Tàng Đao",
@@ -173,6 +191,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:gap-dich-khong-loan",
     "chinese": "临敌不乱",
     "viet": "Gặp Địch Không Loạn",
     "hanViet": "Lâm Địch Bất Loạn",
@@ -184,6 +203,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:hanh-dong-theo-thoi",
     "chinese": "应机立断",
     "viet": "Hành Động Theo Thời",
     "sourceNames": [
@@ -194,6 +214,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:hop-bien",
     "chinese": "合变",
     "viet": "Hợp Biến",
     "hanViet": "Hợp Biến",
@@ -205,6 +226,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:khai-hap",
     "chinese": "开合",
     "viet": "Khai Hạp",
     "sourceNames": [
@@ -215,6 +237,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:khep-ho",
     "chinese": "掩虚",
     "viet": "Khép Hờ",
     "sourceNames": [
@@ -225,6 +248,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:khich-le-long-quan",
     "chinese": "励军",
     "viet": "Khích Lệ Lòng Quân",
     "sourceNames": [
@@ -236,6 +260,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:khong-chien-ma-thang",
     "chinese": "无战而胜",
     "viet": "Không Chiến Mà Thắng",
     "hanViet": "Vô Chiến Nhi Thắng",
@@ -247,6 +272,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:khong-chien-se-chet",
     "chinese": "不勇则死",
     "viet": "Không Chiến Sẽ Chết",
     "sourceNames": [
@@ -257,6 +283,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:khong-lo-tai-nang",
     "chinese": "大谋不谋",
     "viet": "Không Lộ Tài Năng",
     "hanViet": "Đại Mưu Bất Mưu",
@@ -268,6 +295,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:ke-sach-du-dich",
     "chinese": "诱敌之策",
     "viet": "Kế Sách Dụ Địch",
     "hanViet": "Dụ Địch Chi Sách",
@@ -279,6 +307,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:ky-chinh-tuong-sinh",
     "chinese": "奇正相生",
     "viet": "Kỳ Chính Tương Sinh",
     "hanViet": "Kỳ Chính Tương Sinh",
@@ -287,6 +316,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:lien-mach-mot-hoi",
     "chinese": "一鼓作气",
     "viet": "Liền Mạch Một Hơi",
     "sourceNames": [
@@ -297,6 +327,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:lay-vo-dep-loan",
     "chinese": "以治击乱",
     "viet": "Lấy Võ Dẹp Loạn",
     "sourceNames": [
@@ -307,6 +338,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:man-dung-phi-dung",
     "chinese": "蛮勇非勇",
     "viet": "Man Dũng Phi Dũng",
     "hanViet": "Man Dũng Phi Dũng",
@@ -318,6 +350,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:muu-ke-sau-xa",
     "chinese": "远谋",
     "viet": "Mưu Kế Sâu Xa",
     "hanViet": "Viễn Mưu",
@@ -329,6 +362,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:nghia-dung",
     "chinese": "勇毅",
     "viet": "Nghĩa Dũng",
     "hanViet": "Dũng Nghị",
@@ -337,6 +371,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:nhin-ro-mon-mot",
     "chinese": "洞若观火",
     "viet": "Nhìn Rõ Mồn Một",
     "sourceNames": [
@@ -347,6 +382,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:phan-hiem",
     "chinese": "分险",
     "viet": "Phân Hiểm",
     "sourceNames": [
@@ -357,6 +393,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:phong-bi",
     "chinese": "防备",
     "viet": "Phòng Bị",
     "hanViet": "Phòng Bị",
@@ -368,6 +405,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:quy-thuan",
     "chinese": "归心",
     "viet": "Quy Thuận",
     "hanViet": "Quy Tâm",
@@ -379,6 +417,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:quy-muu",
     "chinese": "鬼谋",
     "viet": "Quỷ Mưu",
     "hanViet": "Quỷ Mưu",
@@ -390,6 +429,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:ren-luyen",
     "chinese": "锤炼",
     "viet": "Rèn Luyện",
     "sourceNames": [
@@ -401,6 +441,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:sac-ben",
     "chinese": "锐利",
     "viet": "Sắc Bén",
     "hanViet": "Nhuệ Lợi",
@@ -412,6 +453,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:tam-ly-nhi-hoan",
     "chinese": "三里而还",
     "viet": "Tam Lý Nhĩ Hoàn",
     "sourceNames": [
@@ -422,6 +464,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:tam-quan-chi-chung",
     "chinese": "三军之众",
     "viet": "Tam Quân Chi Chúng",
     "hanViet": "Tam Quân Chi Chúng",
@@ -433,6 +476,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:thien-chien",
     "chinese": "善战",
     "viet": "Thiện Chiến",
     "sourceNames": [
@@ -443,6 +487,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:thuan-thien-thuan-toi",
     "chinese": "顺天应时",
     "viet": "Thuận Thiên Thuận Tời",
     "sourceNames": [
@@ -453,6 +498,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:thich-lam-viec-thien",
     "chinese": "乐善好施",
     "viet": "Thích Làm Việc Thiện",
     "sourceNames": [
@@ -463,6 +509,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:than-co",
     "chinese": "神机",
     "viet": "Thần Cơ",
     "hanViet": "Thần Cơ",
@@ -474,6 +521,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:thang-se-cang-manh",
     "chinese": "胜而益强",
     "viet": "Thắng Sẽ Càng Mạnh",
     "sourceNames": [
@@ -484,6 +532,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:thang-tran",
     "chinese": "胜战",
     "viet": "Thắng Trận",
     "hanViet": "Thắng Chiến",
@@ -495,6 +544,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:the-phong-thu",
     "chinese": "守势",
     "viet": "Thế Phòng Thủ",
     "hanViet": "Thủ Thế",
@@ -506,6 +556,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:tinh-chuan",
     "chinese": "精准",
     "viet": "Tinh Chuẩn",
     "sourceNames": [
@@ -516,6 +567,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:tinh-than-sang-khoai",
     "chinese": "神清气净",
     "viet": "Tinh Thần Sảng Khoái",
     "sourceNames": [
@@ -526,6 +578,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:tranh-the-manh-cua-dich",
     "chinese": "避其锐气",
     "viet": "Tránh Thế Mạnh Của Địch",
     "hanViet": "Tị Kỳ Nhuệ Khí",
@@ -537,6 +590,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:tri-trong",
     "chinese": "持重",
     "viet": "Trì Trọng",
     "hanViet": "Trì Trọng",
@@ -545,6 +599,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:tinh-tam",
     "chinese": "静心",
     "viet": "Tĩnh Tâm",
     "sourceNames": [
@@ -555,6 +610,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:tuong-uy",
     "chinese": "将威",
     "viet": "Tướng Uy",
     "hanViet": "Tướng Uy",
@@ -566,6 +622,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:tan-tien",
     "chinese": "散仙",
     "viet": "Tản Tiên",
     "effect": "獲得6%規避效果",
@@ -573,6 +630,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:tan-cong-diem-yeu",
     "chinese": "援其必攻",
     "viet": "Tấn Công Điểm Yếu",
     "effect": "爲損失兵力最多的友軍恢復兵力時，使其受到的傷害降低12%，持續1回合",
@@ -580,6 +638,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:toc-chien",
     "chinese": "速战",
     "viet": "Tốc Chiến",
     "hanViet": "Tốc Chiến",
@@ -591,6 +650,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:vo-luoc",
     "chinese": "武略",
     "viet": "Võ Lược",
     "hanViet": "Võ Lược",
@@ -599,6 +659,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:van-thao",
     "chinese": "文韬",
     "viet": "Văn Thao",
     "sourceNames": [
@@ -609,6 +670,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:xem-boi",
     "chinese": "占卜",
     "viet": "Xem Bói",
     "effect": "每回合行動時，自身隨機獲得受到兵刃傷害降低6%或受到謀略傷害降低6%效果中的一種，持續1回合",
@@ -616,6 +678,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:yeu-linh-thuong-dan",
     "chinese": "惜兵爱民",
     "viet": "Yêu Lính Thương Dân",
     "sourceNames": [
@@ -626,6 +689,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:danh-bat-ngo-thang",
     "chinese": "出奇制胜",
     "viet": "Đánh Bất Ngờ Thắng",
     "hanViet": "Xuất Kỳ Chế Thắng",
@@ -637,6 +701,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:danh-gia-tinh-hinh",
     "chinese": "审时度势",
     "viet": "Đánh Giá Tình Hình",
     "sourceNames": [
@@ -647,6 +712,7 @@
     "effectVersion": "2024-07"
   },
   {
+    "id": "book:danh-pha-vong-vay",
     "chinese": "疾战突围",
     "viet": "Đánh Phá Vòng Vây",
     "hanViet": "Tật Chiến Đột Vi",
@@ -658,6 +724,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:danh-sau-trung-truoc",
     "chinese": "后发先至",
     "viet": "Đánh Sau Trúng Trước",
     "sourceNames": [
@@ -668,6 +735,7 @@
     "effectVersion": "2021-11"
   },
   {
+    "id": "book:danh-vao-cho-hiem",
     "chinese": "攻其不备",
     "viet": "Đánh Vào Chỗ Hiểm",
     "hanViet": "Công Kỳ Bất Bị",

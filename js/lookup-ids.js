@@ -1,6 +1,7 @@
 // Mã hồ sơ và đường dẫn Tra cứu (`/tra-cuu/<nhóm>/?id=…`) dùng chung cho trang Tra cứu, trang mục lục và các
-// trang liên kết vào đó. Slug mã khớp hàm `_slug` của pipeline định danh: chiến pháp đã có `id` trong dữ liệu,
-// binh thư dựng mã từ tên Việt. Mọi href Tra cứu đi qua module này, không tự nối chuỗi ở nơi khác.
+// trang liên kết vào đó. Slug mã khớp hàm `_slug` của pipeline định danh. Chiến pháp và binh thư đều mang `id`
+// cố định trong dữ liệu (binh thư: `pipeline/books-han-viet-map.json` -> `books-dict.json`); không nơi nào dựng
+// mã binh thư từ tên Việt. Mọi href Tra cứu đi qua module này, không tự nối chuỗi ở nơi khác.
 
 /** Slug ASCII của tên Việt: bỏ dấu, `đ` → `d`, cụm ký tự khác chữ/số thành một `-`. */
 export function lookupSlug(value) {
@@ -14,10 +15,11 @@ export function lookupSlug(value) {
     .replace(/^-+|-+$/g, "");
 }
 
-/** Mã hồ sơ binh thư `book:<slug tên Việt>`; bản ghi không có tên Việt thì không có hồ sơ. */
-export function bookLookupId(record) {
-  const slug = lookupSlug(record?.viet ?? record?.hanViet);
-  return slug ? `book:${slug}` : null;
+const BOOK_ID = /^book:[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+/** Mã hồ sơ cố định của một dòng `books-dict.json`; dòng không có `id` hợp lệ thì không có hồ sơ (không lùi về slug tên). */
+export function bookRowId(row) {
+  return typeof row?.id === "string" && BOOK_ID.test(row.id) ? row.id : null;
 }
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -28,29 +30,63 @@ const VI_MODIFIED = /^(?:Tinh|Chuyển|Thác)\s*·\s*/u;
 const nameList = (value) => (Array.isArray(value) ? value : []).filter((name) => typeof name === "string" && name.trim()).map((name) => name.trim());
 
 /**
+ * Bộ tra tên Việt của binh thư → `row.id`: tên hiện hành (`viet`, thiếu thì `hanViet`) thắng tên cũ trong `aliases`
+ * (tầng đầu tiên có ứng viên quyết định, ứng viên đầu theo thứ tự dữ liệu). Id lấy từ dòng, không dựng từ slug.
+ * Tên không có trong dữ liệu trả `null`.
+ * @returns {(name: unknown) => string | null}
+ */
+export function createBookNameIndex(books) {
+  const tiers = [new Map(), new Map()];
+  for (const row of Array.isArray(books) ? books : []) {
+    const id = bookRowId(row);
+    if (!id) continue;
+    const current = typeof row.viet === "string" && row.viet.trim() ? row.viet : row.hanViet;
+    const add = (map, name) => {
+      const slug = typeof name === "string" ? lookupSlug(name) : "";
+      if (slug && !map.has(slug)) map.set(slug, id);
+    };
+    add(tiers[0], current);
+    for (const alias of nameList(row.aliases)) add(tiers[1], alias);
+  }
+  return (name) => {
+    const slug = typeof name === "string" ? lookupSlug(name) : "";
+    if (!slug) return null;
+    return tiers[0].get(slug) ?? tiers[1].get(slug) ?? null;
+  };
+}
+
+/**
  * Tên chữ Hán nguồn của từng binh thư, lấy từ bảng danh tính đã duyệt (`pipeline/recommended-identity-map.json`,
- * mục `kind: "book"`), khớp theo tên Việt với `books-dict`. `aliases`: tên Hán của mục để tìm kiếm. `formerNames`:
- * tên nguồn của mục chỉ có chữ Hán (không kèm tên Việt nào) — tức tên cũ / biến thể đã xác nhận là cùng binh thư.
- * Tên mà `books-dict` đã nhận là tên nguồn hiện hành (`chinese`, `sourceNames`) không lặp lại ở đây; tên trong
+ * mục `kind: "book"`). Mục danh tính nối với binh thư qua tên Hán trước (`chinese` + `sourceNames` của dòng), rồi mới
+ * qua tên Việt (`viet`, `aliases`), nên đổi tên Việt không làm mất liên kết. `aliases`: tên Hán của mục để tìm kiếm.
+ * `formerNames`: tên nguồn của mục chỉ có chữ Hán (không kèm tên Việt nào) — tức tên cũ / biến thể đã xác nhận là cùng
+ * binh thư. Tên mà `books-dict` đã nhận là tên nguồn hiện hành (`chinese`, `sourceNames`) không lặp lại ở đây; tên trong
  * `excludedSourceNames` (binh thư khác bị dịch nhầm sang tên Việt) không gắn vào hồ sơ nào.
  * Trả `{[bookId]: {aliases, formerNames}}`.
  */
 export function bookSourceAliases(books, identityEntries) {
-  const byVi = new Map();
+  const byOwn = new Map();
+  const byId = new Map();
   const excluded = new Set();
+  const rows = [];
   for (const row of Array.isArray(books) ? books : []) {
-    const id = bookLookupId(row);
+    const id = bookRowId(row);
     for (const name of nameList(row?.excludedSourceNames)) excluded.add(name);
-    if (id) byVi.set(lookupSlug(row.viet ?? row.hanViet), {id, own: new Set([...nameList([row.chinese]), ...nameList(row.sourceNames)])});
+    if (!id) continue;
+    const book = {id, own: new Set([...nameList([row.chinese]), ...nameList(row.sourceNames)])};
+    rows.push(row);
+    byId.set(id, book);
+    for (const name of book.own) if (!byOwn.has(name)) byOwn.set(name, book);
   }
+  const byViet = createBookNameIndex(rows);
   const result = {};
   for (const item of Array.isArray(identityEntries) ? identityEntries : []) {
     if (item?.kind !== "book") continue;
     const names = nameList(item.aliases);
     const han = names.filter((name) => CJK.test(name));
-    const book = [item.displayNameVi, ...names.filter((name) => !CJK.test(name))]
-      .map((name) => byVi.get(lookupSlug(name)))
-      .find(Boolean);
+    const viName = [item.displayNameVi, ...names.filter((name) => !CJK.test(name))];
+    const book = han.map((name) => byOwn.get(name)).find(Boolean)
+      ?? byId.get(viName.map((name) => byViet(name)).find(Boolean) ?? "");
     if (!book) continue;
     const renamed = han.length === names.length;
     for (const name of han) {
@@ -142,11 +178,10 @@ export function createLookupIdResolver({ tactics = [], books = [], heroes = [] }
     }
   }
   const bookByName = new Map();
-  const bookIds = new Set();
+  const bookByVi = createBookNameIndex(books);
   for (const row of Array.isArray(books) ? books : []) {
-    const id = bookLookupId(row);
+    const id = bookRowId(row);
     if (!id) continue;
-    bookIds.add(id);
     for (const name of [...nameList([row.chinese]), ...nameList(row.sourceNames)]) if (!bookByName.has(name)) bookByName.set(name, id);
   }
   const hasRaw = (raw) => typeof raw === "string" && CJK.test(raw);
@@ -174,7 +209,7 @@ export function createLookupIdResolver({ tactics = [], books = [], heroes = [] }
   }
   return {
     tactic: (raw, vi) => byRaw(tacticByName, raw) ?? byTacticVi(vi),
-    book: (raw, vi) => (hasRaw(raw) ? byRaw(bookByName, raw) : byVi(bookIds, "book", vi)),
+    book: (raw, vi) => (hasRaw(raw) ? byRaw(bookByName, raw) : bookByVi(typeof vi === "string" ? vi.replace(VI_MODIFIED, "") : "")),
     /** Tướng theo tên nguồn chữ Hán, thiếu thì theo đúng tên Việt của kho tướng; không đoán theo tên gần giống. */
     hero: (raw, vi) => (typeof raw === "string" ? heroByRaw.get(raw.trim()) : null) ?? (typeof vi === "string" ? heroByVi.get(vi.trim()) : null) ?? null,
   };

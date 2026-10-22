@@ -130,11 +130,11 @@ const CATALOG = {
   ],
 };
 
-// Dạng thật của `data/books-dict.json`: không có `id`, `hanViet` có thể vắng hoặc khác tên dịch nghĩa.
+// Dạng thật của `data/books-dict.json`: mỗi dòng mang `id` cố định, `hanViet` có thể vắng hoặc khác tên dịch nghĩa.
 const BOOKS = [
-  { chinese: "百战", viet: "Bách Chiến", hanViet: "Bách Chiến", sourceNames: ["百戰"], effect: "自帶戰法的發動機率提高 3%", effectViet: "Tỷ lệ phát động của chiến pháp tự mang tăng 3%.", effectVersion: "2021-11" },
-  { chinese: "守而有道", viet: "Biết Cách Phòng Thủ" },
-  { chinese: "无名" },
+  { id: "book:bach-chien", chinese: "百战", viet: "Bách Chiến", hanViet: "Bách Chiến", sourceNames: ["百戰"], effect: "自帶戰法的發動機率提高 3%", effectViet: "Tỷ lệ phát động của chiến pháp tự mang tăng 3%.", effectVersion: "2021-11" },
+  { id: "book:biet-cach-phong-thu", chinese: "守而有道", viet: "Biết Cách Phòng Thủ" },
+  { chinese: "无名", viet: "Không Id" },
 ];
 
 const corpus = () => buildLookupCorpus({ heroes: HERO_POOL, tactics: TACTIC_POOL, catalog: CATALOG, books: BOOKS });
@@ -203,7 +203,7 @@ test("corpus phủ đủ bảy nhóm và mọi bản ghi con", () => {
   assert.equal(built.groups.advisors.length, CATALOG.advisors.length);
   assert.equal(built.groups["troop-mods"].length, CATALOG.troopMods.length);
   assert.equal(built.groups.buildings.length, CATALOG.buildings.length);
-  // Dòng binh thư không có tên Việt thì không có mã hồ sơ nên bị bỏ.
+  // Dòng binh thư không có `id` thì bị bỏ (không lùi về slug tên Việt).
   assert.deepEqual(built.groups.books.map((entry) => entry.id), ["book:bach-chien", "book:biet-cach-phong-thu"]);
 
   const equipmentIds = built.groups.equipment.map((entry) => entry.id);
@@ -373,7 +373,7 @@ test("corpus chỉ có payload đã tải: nhóm thiếu dữ liệu rỗng, qua
 
 test("tên cũ của binh thư (bảng danh tính) tìm được và chỉ hiện trên hồ sơ bản zh", () => {
   // Mục danh tính chỉ có chữ Hán = tên cũ đã xác nhận; mục có kèm tên Việt chỉ là alias tìm kiếm.
-  const books = [{ chinese: "新书", viet: "Sách Mới" }];
+  const books = [{ id: "book:sach-moi", chinese: "新书", viet: "Sách Mới" }];
   const bookAliases = bookSourceAliases(books, [
     { kind: "book", aliases: ["舊書"], displayNameVi: "Sách Mới" },
     { kind: "book", aliases: ["Sách Mới", "新書", "新书"], displayNameVi: "Sách Mới" },
@@ -392,6 +392,20 @@ test("tên cũ của binh thư (bảng danh tính) tìm được và chỉ hiệ
   } finally {
     globalThis.document = previous;
   }
+});
+
+test("binh thư đổi tên Việt: mã và đường dẫn giữ nguyên, tên cũ trong aliases vẫn tìm được", async () => {
+  const { lookupHref, setLookupRouteHandles } = await import("../js/lookup-ids.js");
+  const books = [{ id: "book:di-truc-bao-oan", chinese: "以直报怨", viet: "Lấy Thẳng Báo Oán", aliases: ["Dĩ Trực Báo Oán"], sourceNames: ["以直報怨"] }];
+  const built = buildLookupCorpus({ heroes: [], tactics: [], catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] }, books });
+  assert.deepEqual(built.groups.books.map((entry) => entry.id), ["book:di-truc-bao-oan"]);
+  assert.equal(lookupHref("book:di-truc-bao-oan"), "/tra-cuu/binh-thu/di-truc-bao-oan/");
+  for (const query of ["Lấy Thẳng Báo Oán", "Dĩ Trực Báo Oán", "以直報怨"]) {
+    assert.equal(searchLookupGroup(built, { group: "books", query }).items[0]?.id, "book:di-truc-bao-oan", query);
+  }
+  // Bảng ngoại lệ vẫn rỗng: slug lấy từ hậu tố mã cố định, không từ tên mới.
+  setLookupRouteHandles({});
+  assert.equal(lookupHref("book:di-truc-bao-oan"), "/tra-cuu/binh-thu/di-truc-bao-oan/");
 });
 
 /* ---------- Hồ sơ chi tiết ---------- */

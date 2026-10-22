@@ -120,7 +120,7 @@ tiếng Việt đã review: 252 tướng (202 từ SGSDeck/baseline + 50 chụp 
 [contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
 quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
-Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`), build sẽ dừng cho tới khi ledger slug trang riêng được làm mới; slug đã cấp không bao giờ đổi:
+Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`), build sẽ dừng cho tới khi ledger slug trang riêng được làm mới; slug đã cấp không bao giờ đổi. Id binh thư (`book:<slug>`) viết tay trong `pipeline/books-han-viet-map.json` và đi cùng mục (đổi tên Việt thì đưa tên cũ vào `aliases`, xem `docs/unified-lookup.md`):
 
 ```bash
 python3 -m pipeline.lookup_route_handles --write

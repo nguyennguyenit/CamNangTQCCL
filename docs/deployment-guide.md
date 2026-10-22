@@ -106,6 +106,7 @@ Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/
 Trang riêng Tra cứu `/tra-cuu/<nhóm>/<slug>/` (và `/zh/…`) sinh từ [`src/lib/lookup-detail-routes.ts`](../src/lib/lookup-detail-routes.ts), đọc slug đóng băng trong `pipeline/lookup-route-handles.json`. Ledger pin `generationId` của `data/lookup-manifest.json` và hash `data/books-dict.json`; build **fail** nếu pin lệch, tập mã khác corpus hoặc ledger bị sửa tay. Vì vậy mỗi khi generation Tra cứu đổi (sau `promote_unified_lookup`) hoặc `books-dict.json` đổi, chạy trước `npm run build`:
 
 ```bash
+python3 -m pipeline.build_books_dict                # chỉ khi sửa pipeline/books-han-viet-map.json (id binh thư viết tay, đổi tên Việt thì tên cũ vào `aliases`)
 python3 -m pipeline.lookup_route_handles --write   # giữ mọi slug đã cấp, cấp slug cho mã mới, chuyển mã đã rời corpus sang retired, làm mới pin, sinh lại public/_redirects
 python3 -m pipeline.lookup_route_handles --check
 node scripts/report-zh-gaps.mjs                     # sinh lại docs/zh-gaps.md (báo cáo zh thiếu chữ); `npm run verify` chạy `--check` và đỏ khi file lệch dữ liệu

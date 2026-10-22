@@ -69,6 +69,14 @@ def dictionary_ids(catalog):
         entries = {}
         ambiguous = set()
         for row in rows:
+            if kind == 'book':
+                book_id = row.get('id')
+                if not isinstance(book_id,str) or not re.fullmatch(r'book:[a-z0-9]+(?:-[a-z0-9]+)*',book_id):
+                    raise ValueError('book dictionary row requires a frozen id')
+                if book_id in ids:
+                    raise ValueError('duplicate book dictionary id')
+                ids.add(book_id)
+                continue
             name = row.get('viet')
             if not isinstance(name,str):
                 raise ValueError('dictionary name required')
