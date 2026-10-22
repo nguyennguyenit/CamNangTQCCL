@@ -1132,6 +1132,23 @@ test.describe("Gợi ý đội", () => {
     await expect(section.locator(".roster-conflicted")).toHaveCount(0);
   });
 
+  test("Khách chưa đăng nhập: Gợi ý đội vẫn có mục tranh món và Độ phủ kho, không gọi /api/roster", async ({ page }) => {
+    const fixture = conflictFixture();
+    const rosterCalls = [];
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname.startsWith("/api/roster")) rosterCalls.push(request.url());
+    });
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-conflict-section .roster-conflicted")).toHaveCount(1);
+    await expect(section.locator(".roster-coverage-section h2")).toHaveText("Độ phủ kho");
+    expect(rosterCalls).toEqual([]);
+  });
+
   test("Đội tranh món: bản zh hiện tiêu đề và tên chữ Hán, không lẫn tên Việt", async ({ page }) => {
     const fixture = conflictFixture();
     await stubTurnstile(page);
