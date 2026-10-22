@@ -48,6 +48,7 @@ Các ca chính đã có trong snapshot và phải xanh trên nhánh này (không
 3. Cổng kiểm: `cd community-worker && npx vitest run && npx tsc --noEmit`.
 4. Thử migration local: `cd community-worker && npm run db:migrate:local`.
 5. **Điều kiện chặn:** tra giới hạn số câu D1 mỗi lần gọi Worker của gói đang dùng (Cloudflare docs). Test M2 giả định trần 1 000 câu. Nếu trần thật thấp hơn số câu của batch xấu nhất, hạ `ROSTER_MAX_BATCH` trong `community-worker/src/routes/roster.ts`, sửa test M2 và `docs/roster-sync.md` trước khi merge. Ghi con số vào `docs/roster-sync.md`.
+   - **Kết quả (2026-10-22/23):** Cloudflare docs ghi 1 000 câu (Paid) / 50 câu (Free). Người dùng xác nhận tài khoản ở gói **Free**, nên PR #38 hạ `ROSTER_MAX_BATCH` xuống 12 (client `PUSH_CHUNK_SIZE` theo trong #36). M2 đếm mọi câu D1 của request: 39 câu, cộng 4 câu chừa cho Better Auth thật vẫn ≤ 50. `docs/roster-sync.md` ghi nguồn và con số.
 6. Mở PR, review, merge.
 7. **Dừng, hỏi người dùng** chạy release (cần quyền production):
    1. Ghi version worker hiện tại (rollback target) và bookmark: `npx wrangler d1 time-travel info tqccl-community`.
@@ -71,4 +72,4 @@ Các ca chính đã có trong snapshot và phải xanh trên nhánh này (không
 ## Risks
 
 - Schema đổi sau khi deploy sẽ cần migration thứ hai, phá mục tiêu "release worker một lần". Schema đã duyệt ở phase 1 của plan gốc và đã đo payload; phase 10 không được đổi hợp đồng `docs/roster-sync.md`. Nếu phase 10 phát hiện phải đổi schema: dừng và hỏi.
-- Giới hạn batch D1 lệch gói thật: bước 5 chặn trước khi deploy.
+- Giới hạn batch D1 lệch gói thật: đã xử lý ở bước 5 (#38, gói Free). Chưa đo: CPU 10 ms/request và 100 000 dòng ghi D1/ngày của gói Free.
