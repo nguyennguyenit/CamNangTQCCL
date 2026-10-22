@@ -12471,7 +12471,8 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .roster-portfolio,
-.roster-missing-section {
+.roster-missing-section,
+.roster-conflict-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-14);

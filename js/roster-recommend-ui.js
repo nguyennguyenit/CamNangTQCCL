@@ -932,7 +932,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
           : null,
       ]),
       conflictView.cards.length
-        ? el("section", { class: "roster-missing-section roster-conflict-section", "aria-labelledby": "roster-conflict-title" }, [
+        ? el("section", { class: "roster-conflict-section", "aria-labelledby": "roster-conflict-title" }, [
           el("div", { class: "roster-section-head" }, [
             el("h2", { class: "roster-section-title", id: "roster-conflict-title", tabindex: "-1" }, L("Đội dựng được nhưng tranh món với đội đã chọn", "可组建但与已选队伍抢同一件")),
           ]),
