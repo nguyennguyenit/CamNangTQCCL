@@ -57,63 +57,6 @@ export function teamDetailJsonLd(input: TeamDetailStructured) {
   ];
 }
 
-export interface CommunityTeamStructured {
-  /** Ngôn ngữ của bản gốc (`textLang`): JSON-LD chỉ phát ở bản này. */
-  locale: SiteLocale;
-  site: URL | string;
-  /** Đường dẫn canonical của trang đội (đã gắn tiền tố ngôn ngữ). */
-  path: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  approvedAt: string;
-  authorName: string;
-  /** Tướng của đội có trang riêng trong Tra cứu. */
-  heroes: readonly NamedPath[];
-  faq: readonly { q: string; a: string }[];
-}
-
-/**
- * Trang đội cộng đồng (chỉ bản gốc): `WebPage` có tác giả/ngày + `BreadcrumbList` + `FAQPage`.
- * Cố ý không có `aggregateRating`, `interactionStatistic` hay ảnh người dùng: số vote là dữ liệu sống, không nhúng tĩnh.
- */
-export function communityTeamJsonLd(input: CommunityTeamStructured) {
-  const { locale, site } = input;
-  const url = absolute(input.path, site);
-  return [
-    {
-      '@context': SCHEMA,
-      '@type': 'WebPage',
-      name: input.name,
-      description: input.description,
-      url,
-      inLanguage: htmlLang(locale),
-      datePublished: input.approvedAt,
-      dateCreated: input.createdAt,
-      author: { '@type': 'Person', name: input.authorName },
-      isPartOf: videoGame(locale),
-      ...(input.heroes.length
-        ? { about: input.heroes.map((hero) => ({ '@type': 'Thing', name: hero.name, url: absolute(hero.path, site) })) }
-        : {}),
-    },
-    breadcrumbJsonLd([
-      homeCrumb(locale),
-      { name: pick(locale, 'Đội cộng đồng', '社区阵容'), path: localePath('/doi-cong-dong/', locale) },
-      { name: input.name, path: input.path },
-    ], site),
-    {
-      '@context': SCHEMA,
-      '@type': 'FAQPage',
-      inLanguage: htmlLang(locale),
-      mainEntity: input.faq.map((entry) => ({
-        '@type': 'Question',
-        name: entry.q,
-        acceptedAnswer: { '@type': 'Answer', text: entry.a },
-      })),
-    },
-  ];
-}
-
 export interface LookupGroupStructured {
   locale: SiteLocale;
   site: URL | string;

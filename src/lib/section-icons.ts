@@ -5,7 +5,6 @@
 export const SECTION_ICONS = {
   standard: '<path d="M5 21V4"></path><path d="M5 4h11l-2 4 2 4H5"></path>',
   other: '<circle cx="9" cy="8" r="3.5"></circle><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"></path><path d="M16 4.5a3.5 3.5 0 0 1 0 7"></path><path d="M18 14c2 .8 3 2.8 3 6"></path>',
-  community: '<circle cx="12" cy="7.5" r="3"></circle><path d="M6.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"></path><circle cx="4.5" cy="10.5" r="2"></circle><circle cx="19.5" cy="10.5" r="2"></circle><path d="M1.5 18c0-1.8 1.3-3.2 3-3.5M22.5 18c0-1.8-1.3-3.2-3-3.5"></path>',
   coexist: '<path d="M12 3 3 8l9 5 9-5-9-5z"></path><path d="m3 13 9 5 9-5"></path>',
   khaihoang: '<path d="m3 20 6-11 4 7 3-4 5 8z"></path><circle cx="16" cy="6" r="2"></circle>',
   lookup: '<circle cx="11" cy="11" r="6.5"></circle><path d="m20 20-4.2-4.2"></path>',

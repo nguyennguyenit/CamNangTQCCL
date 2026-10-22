@@ -1,16 +1,14 @@
 # Build lại site tĩnh và deploy lên Cloudflare Pages (project direct upload `tqccl`).
-# Kích hoạt: community-worker gửi repository_dispatch "site-publish" khi nội dung công khai đổi (bài viết blog xuất bản/gỡ/sửa;
-# đội cộng đồng được duyệt/xoá, khoá/mở khoá/xoá tài khoản), lịch hằng ngày (schedule), hoặc chạy tay (workflow_dispatch). Luôn build từ nhánh main.
+# Kích hoạt: community-worker gửi repository_dispatch khi nội dung công khai đổi (bài viết blog xuất bản/gỡ/sửa;
+# đội cộng đồng được duyệt/xoá, khoá/mở khoá/xoá tài khoản), hoặc chạy tay (workflow_dispatch). Luôn build từ nhánh main.
+# Chuyển tiếp: Worker cũ gửi "blog-publish", Worker mới gửi "site-publish"; nhận cả hai tới khi Worker mới đã lên production.
 # Secret bắt buộc: CLOUDFLARE_PAGES_API_TOKEN (quyền Account › Cloudflare Pages › Edit).
 name: Pages deploy
 
 on:
   repository_dispatch:
-    types: [site-publish]
+    types: [blog-publish, site-publish]
   workflow_dispatch:
-  # Lưới an toàn best-effort: ban tự hết hạn không có event, dispatch có thể lỗi.
-  schedule:
-    - cron: "17 20 * * *" # 03:17 giờ Việt Nam
 
 permissions:
   contents: read

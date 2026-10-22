@@ -94,7 +94,7 @@ test('Landing dựng đủ các khối theo thứ tự, CTA tối đứng sau c�
   expect(links).toEqual([
     '/doi-chuan/', '/doi-khac/', '/cung-ton/', '/khai-hoang/',
     '/tra-cuu/', '/theo-doi-chieu-mo/', '/soi-doi-tu-anh/', '/goi-y-doi-tu-kho/',
-    '/chien-bao/', '/doi-cong-dong/', '/bai-viet/', '/doi-chuan/',
+    '/chien-bao/', '/bai-viet/', '/doi-chuan/',
   ]);
   // Hai nút hero: Đội chuẩn là CTA chính, Gợi ý đội từ kho là lối phụ.
   expect(await page.$$eval('#dau-trang .landing-hero-actions a', (anchors) => anchors.map((a) => a.getAttribute('href'))))
@@ -365,28 +365,11 @@ test('footer: nút Ủng hộ tác giả mở hộp thoại QR, Escape/nút đó
   }
 });
 
-test('điều hướng có mục Chiến báo, Đội cộng đồng và Bài viết ở menu, menu mobile và footer', async ({ page }) => {
+test('điều hướng có mục Chiến báo và Bài viết ở menu, menu mobile và footer', async ({ page }) => {
   await page.goto('/doi-chuan/');
   for (const scope of ['.site-nav', '#section-menu-items', '.site-footer']) {
-    for (const href of ['/chien-bao/', '/doi-cong-dong/', '/bai-viet/']) {
+    for (const href of ['/chien-bao/', '/bai-viet/']) {
       await expect(page.locator(`${scope} a[href="${href}"]`)).toHaveCount(1);
     }
   }
-});
-
-test('zh: menu, menu mobile và footer có mục Đội cộng đồng', async ({ page }) => {
-  await page.goto('/zh/doi-chuan/');
-  for (const scope of ['.site-nav', '#section-menu-items', '.site-footer']) {
-    await expect(page.locator(`${scope} a[href="/zh/doi-cong-dong/"]`)).toHaveCount(1);
-  }
-});
-
-test('zh: landing có đúng một thẻ cộng đồng tới Đội cộng đồng', async ({ page }) => {
-  await page.goto('/zh/');
-  await expect(page.locator('main .landing-community-card[href="/zh/doi-cong-dong/"]')).toHaveCount(1);
-});
-
-test('trang /doi-cong-dong/ đánh dấu aria-current=page ở menu', async ({ page }) => {
-  await page.goto('/doi-cong-dong/');
-  await expect(page.locator('.site-nav a[href="/doi-cong-dong/"]')).toHaveAttribute('aria-current', 'page');
 });
