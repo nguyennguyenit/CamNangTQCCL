@@ -24,6 +24,9 @@ export const RATE_RULES: Record<string, RateRule> = {
   scan_sample: { limit: 10, windowMs: DAY },
   // Đồng bộ chiêu mộ: lần đầu có thể đẩy ~40 lô 500 bản ghi, sau đó mỗi thay đổi (debounce 1,5 s) một lô.
   recruit_push: { limit: 600, windowMs: HOUR },
+  // Đồng bộ kho/Đội của tôi (roster): lần đầu gộp kho có thể đẩy nhiều lô 200, kéo mỗi lần mở trang + mỗi lượt thăm dò.
+  roster_push: { limit: 600, windowMs: HOUR },
+  roster_pull: { limit: 1200, windowMs: HOUR },
   // Đội cộng đồng: ảnh tạm, AI nháp (tách khỏi `analyze` của chiến báo), đăng, vote.
   team_upload: { limit: 30, windowMs: DAY },
   team_analyze: { limit: 20, windowMs: DAY },
