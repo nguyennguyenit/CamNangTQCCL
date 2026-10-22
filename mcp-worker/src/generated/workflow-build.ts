@@ -1,5 +1,5 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:A68xEsKm54DBQHvEC5UCrstZkkOxSCVhCqhnl4islX0" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:282g6ZqvfOOuc86Lvr6x4Ud8iZ7to4EW87EWPM6wuFU" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
