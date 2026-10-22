@@ -13,6 +13,7 @@ import { feedback } from "./routes/feedback";
 import { comments } from "./routes/comments";
 import { posts } from "./routes/posts";
 import { recruit } from "./routes/recruit";
+import { roster } from "./routes/roster";
 import { reports } from "./routes/reports";
 import { scan } from "./routes/scan";
 import { teams } from "./routes/teams";
@@ -95,6 +96,7 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", reports);
   app.route("/", posts);
   app.route("/", recruit);
+  app.route("/", roster);
   app.route("/", ai);
   app.route("/", scan);
   app.route("/", teams);
