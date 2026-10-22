@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-10-22 (Độ phủ kho trên Gợi ý kho)
+
+### Added
+- `/goi-y-doi-tu-kho/` (vi + zh) có khối "Độ phủ kho" ở đầu màn kết quả: theo bậc của mùa đang chọn, số đội ráp đủ khi đứng riêng, thiếu đúng 1 món và tổng; bấm ô mở danh sách đội (đội thiếu 1 ghi món thiếu, nút "Tôi có…", "Mở đội"); tiến độ sưu tầm tướng/chiến pháp so với Đội chuẩn của mùa; mùa không có đội hiện trạng thái rỗng, mùa có cấu hình chưa đối chiếu ghi chú số cấu hình không tính. Đội có ô chưa đối chiếu không bao giờ "ráp đủ" (tính "thiếu 1" nếu các ô khác đủ).
+- `js/roster-coverage.js` (hàm thuần, có trong `PUBLIC_ARTIFACTS`, không đụng `semanticFiles` nên không đổi hash workflow MCP), test `tests-js/roster-coverage.test.mjs` và ca e2e trong `tests-e2e/beta-tools.spec.mjs` (kho issue #5, mùa rỗng, zh/tối/mobile 390px).
+- Publish lại bản dịch hiển thị: re-pin hash `js/roster-recommend-ui.js` và generation Recommended mới.
+
 ## 2026-10-22 (Đội tranh món trên Gợi ý kho)
 
 ### Added
