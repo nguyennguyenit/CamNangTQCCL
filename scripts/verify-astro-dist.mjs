@@ -22,6 +22,8 @@ import {
 import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
 import { PRERENDERED_TEAM_SECTIONS as TEAM_SSR_SECTIONS } from "../src/lib/team-ssr.ts";
 import { validateLookupBundle } from "../js/lookup-data.js";
+import { sourceKeyPart, variantKey } from "../js/my-teams-sources.js";
+import { mySourceIndex, mySourceIndexJson } from "../src/lib/my-teams-source-index.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
@@ -80,6 +82,7 @@ for (const key of Object.keys(SECTION_MARKERS)) {
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("chien-bao/index.html", locale), mount: 'id="community-hub"', entry: "/js/community-hub.js" }),
   Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js" }),
+  Object.freeze({ htmlPath: localizedHtmlPath("doi-cua-toi/index.html", locale), mount: 'id="my-teams"', entry: "/js/my-teams.js" }),
   Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
 ]));
 
@@ -203,6 +206,86 @@ async function verifyLlmsOutputs(distPath, llms) {
   }
 }
 
+/** Chỉ mục hash nguồn của "Đội của tôi" (`kind:key` → 16 hex): đúng bộ khóa của catalog, khóa đã sắp, và (dist thật) đúng từng byte so với bộ sinh. */
+const MY_TEAMS_INDEX_KEY = /^(?:recommended|legacy|khaihoang):[A-Za-z0-9][A-Za-z0-9._~-]*$/u;
+const MY_TEAMS_CONTENT_HASH = /^[0-9a-f]{16}$/u;
+const MY_TEAMS_PAYLOAD = /<script type="application\/json" id="team-save-payload">([^<]*)<\/script>/u;
+
+/** Khóa chỉ mục của mọi đội lưu được theo catalog đã ghim và Khai hoang nguồn: nguồn sự thật cho cả chỉ mục lẫn payload trang. */
+function myTeamsExpectedKeys(catalog, khaiHoangSource) {
+  const recommended = new Map(catalog.recommended.map((entry) => [entry.sourceConfigId, [["", `recommended:${sourceKeyPart(entry.sourceConfigId)}`]]]));
+  const variantsOf = new Map();
+  for (const variant of catalog.variants ?? []) {
+    variantsOf.set(variant.legacyTeamId, [...(variantsOf.get(variant.legacyTeamId) ?? []), variant.legacyVariantId]);
+  }
+  const legacy = new Map(catalog.legacy.map((entry) => [entry.legacyTeamId, [["", `legacy:${variantKey(entry.legacyTeamId, null)}`]]]));
+  const khaiHoang = new Map((khaiHoangSource?.teams ?? []).map((team) => [team.id, [
+    ["", `khaihoang:${variantKey(team.id, null)}`],
+    ...(team.variants ?? []).map((variant) => [variant.id, `khaihoang:${variantKey(team.id, variant.id)}`]),
+  ]]));
+  const variantKeys = [...variantsOf].flatMap(([teamId, variantIds]) => variantIds.map((variantId) => `legacy:${variantKey(teamId, variantId)}`));
+  const all = new Set([
+    ...[...recommended.values(), ...legacy.values(), ...khaiHoang.values()].flatMap((items) => items.map(([, key]) => key)),
+    ...variantKeys,
+  ]);
+  return { recommended, legacy, khaiHoang, all };
+}
+
+async function verifyMyTeamsSourceIndex(distPath, expectedKeys, website) {
+  const raw = await readFile(resolve(distPath, "my-teams-source-index.json"), "utf8");
+  let index;
+  try {
+    index = JSON.parse(raw);
+  } catch {
+    throw new Error("my-teams-source-index.json is not valid JSON");
+  }
+  if (!index || typeof index !== "object" || Array.isArray(index)) throw new Error("my-teams-source-index.json must be an object");
+  const keys = Object.keys(index);
+  for (const key of keys) {
+    if (!MY_TEAMS_INDEX_KEY.test(key)) throw new Error(`my-teams-source-index.json has an invalid key: ${key}`);
+    if (typeof index[key] !== "string" || !MY_TEAMS_CONTENT_HASH.test(index[key])) throw new Error(`my-teams-source-index.json has an invalid hash for ${key}`);
+  }
+  if (keys.join("\n") !== [...keys].sort().join("\n")) throw new Error("my-teams-source-index.json keys are not sorted");
+  const missing = [...expectedKeys.all].filter((key) => !Object.hasOwn(index, key));
+  const unexpected = keys.filter((key) => !expectedKeys.all.has(key));
+  if (missing.length || unexpected.length) {
+    throw new Error(`my-teams-source-index.json key set differs from the catalog; unexpected: ${unexpected.slice(0, 5).join(", ") || "none"}; missing: ${missing.slice(0, 5).join(", ") || "none"}`);
+  }
+  // Dist thật: từng byte phải đúng bằng bộ sinh trên dữ liệu đã ghim (hash tính lại từ nguồn, không tin file).
+  if (website && raw !== mySourceIndexJson(mySourceIndex(website))) {
+    throw new Error("my-teams-source-index.json differs from the index generated from the pinned sources");
+  }
+  return index;
+}
+
+/** Payload lưu đội của một trang chi tiết: JSON hợp lệ, đúng họ, đúng bộ biến thể, `contentHash` khớp chỉ mục, không mang id. */
+function verifyTeamSavePayload(page, path, { kind, items }, index) {
+  const raw = page.match(MY_TEAMS_PAYLOAD)?.[1];
+  if (raw === undefined) return false;
+  let payload;
+  try {
+    payload = JSON.parse(raw);
+  } catch {
+    throw new Error(`Team detail page carries an invalid save payload: ${path}`);
+  }
+  if (payload?.schema !== 1 || payload.kind !== kind || !payload.items || typeof payload.items !== "object") {
+    throw new Error(`Team detail page save payload has the wrong shape: ${path}`);
+  }
+  const expected = new Map(items);
+  if (JSON.stringify(Object.keys(payload.items).sort()) !== JSON.stringify([...expected.keys()].sort())) {
+    throw new Error(`Team detail page save payload does not carry exactly its variants: ${path}`);
+  }
+  for (const [variantId, item] of Object.entries(payload.items)) {
+    const source = item?.draft?.source;
+    const key = expected.get(variantId);
+    if (source?.kind !== kind || `${kind}:${source.key}` !== key || source.contentHash !== index[key]) {
+      throw new Error(`Team detail page save payload differs from the source index: ${path} (${key})`);
+    }
+    if (Object.hasOwn(item.draft, "id")) throw new Error(`Team detail page save payload must not carry a team id: ${path}`);
+  }
+  return true;
+}
+
 async function listFiles(directory, base = directory) {
   const files = [];
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -275,6 +358,7 @@ export async function verifyAstroDist({
     ...localizedHtml((lookupItems?.entries ?? []).map((entry) => `${entry.path.slice(1)}index.html`)),
     ...COMMUNITY_PAGES.map((page) => page.htmlPath),
     ...BLOG_FIXED_OUTPUTS,
+    "my-teams-source-index.json",
     ...(llms ? [...llms.files.map((file) => file.path.slice(1)), llms.fullPath.slice(1)] : []),
     ...blogPostFiles,
     ...expectedAssets,
@@ -319,6 +403,10 @@ export async function verifyAstroDist({
   if (sitemapXml !== expectedSitemapXml) {
     throw new Error("dist sitemap.xml does not match the generated document");
   }
+
+  const khaiHoangSource = JSON.parse(await readFile(resolve(rootPath, "data/khaihoang.json"), "utf8"));
+  const myTeamsKeys = myTeamsExpectedKeys(catalog, khaiHoangSource);
+  const myTeamsIndex = await verifyMyTeamsSourceIndex(distPath, myTeamsKeys, website);
 
   for (const artifact of manifest) {
     const relativePath = `${artifact.kind}/${artifact.sourceBasename}`;
@@ -519,6 +607,7 @@ export async function verifyAstroDist({
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
+      save: { kind: "recommended", items: myTeamsKeys.recommended.get(entry.sourceConfigId) },
     })),
     ...catalog.legacy.map((entry) => ({
       path: entry.htmlPath,
@@ -530,6 +619,7 @@ export async function verifyAstroDist({
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
+      save: { kind: "legacy", items: myTeamsKeys.legacy.get(entry.legacyTeamId) },
     })),
     ...catalog.khaiHoang.map((entry) => ({
       path: entry.htmlPath,
@@ -540,6 +630,7 @@ export async function verifyAstroDist({
         `data-khaihoang-team-id="${entry.khaiHoangTeamId}"`,
         `data-khaihoang-sha256="${catalog.khaiHoangSha256}"`,
       ],
+      save: { kind: "khaihoang", items: myTeamsKeys.khaiHoang.get(entry.khaiHoangTeamId) ?? [["", `khaihoang:${variantKey(entry.khaiHoangTeamId, null)}`]] },
     })),
   ];
   // Bản Trung của mỗi trang chi tiết pin đúng cùng identity; tiêu đề/meta khác ngôn ngữ nên cũng không được trùng.
@@ -553,13 +644,13 @@ export async function verifyAstroDist({
     detailHeads[kind].set(value, path);
   };
   for (let start = 0; start < pages.length; start += 64) {
-    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins }) => {
+    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save }) => {
       const page = await readPage(path);
       claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, path);
       claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, path);
-      return { path, routePath, locale, entry, pins, page };
+      return { path, routePath, locale, entry, pins, save, page };
     }));
-    for (const { path, routePath, locale, entry, pins, page } of loaded) {
+    for (const { path, routePath, locale, entry, pins, save, page } of loaded) {
       verifyLocalePair(page, path, locale, routePath, site);
       for (const pin of pins) {
         if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
@@ -574,6 +665,9 @@ export async function verifyAstroDist({
         }
       }
       if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
+      // Nháp đội lưu được: dist thật (có dữ liệu hiển thị đã ghim) bắt buộc có; mọi trang có thì phải khớp chỉ mục nguồn.
+      const hasPayload = verifyTeamSavePayload(page, path, save, myTeamsIndex);
+      if (website && !hasPayload) throw new Error(`Team detail page lacks its save payload: ${path}`);
       // Thân dựng sẵn lúc build: có nội dung ngay trong HTML, không trạng thái chờ và không đòi JavaScript.
       const article = page.match(/<article\b[^>]*\bid="team-detail-root"[^]*?<\/article>/u)?.[0] ?? "";
       const body = article.match(/<div\b[^>]*\bid="team-detail-body"[^>]*>/u)?.[0] ?? "";

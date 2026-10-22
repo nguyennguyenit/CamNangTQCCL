@@ -12,7 +12,7 @@ import type { SiteLocale } from '../../lib/locale-routes';
 
 type Props = KhaiHoangDetailProps & { locale: SiteLocale };
 
-const {entry, title, pageLabel, khaiHoangSha256, heroes, locale} = Astro.props;
+const {entry, title, pageLabel, khaiHoangSha256, heroes, savePayload, locale} = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
 // Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
@@ -78,6 +78,9 @@ const structured = teamDetailJsonLd({
     <!-- URL xin biến thể: thân + huy hiệu dựng sẵn là bản mặc định nên ẩn ngay, js/khaihoang-detail.js tải rồi dựng đúng biến thể (không nháy sai nội dung). -->
     <script is:inline>if (new URLSearchParams(location.search).get('variant')) document.getElementById('team-detail-body').hidden = document.getElementById('team-detail-badges').hidden = true;</script>
   </article>
+
+  <!-- Nháp đội để lưu vào "Đội của tôi" (docs/roster-sync.md § Payload lưu đội); escape như JSON-LD nên tên chứa </script> không phá thẻ. -->
+  <script is:inline type="application/json" id="team-save-payload" set:html={jsonLd(savePayload)}></script>
 
   <!-- Chiến báo thực chiến + bình luận do js/community-page.js dựng; dịch vụ cộng đồng lỗi thì chỉ khối này báo. -->
   <section id="community-root" class="cm-root"></section>

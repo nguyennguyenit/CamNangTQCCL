@@ -268,9 +268,21 @@ export async function signIn() {
   }
 }
 
+/** Cache kho/đội đồng bộ của `js/roster-sync.js` (trùng `CLOUD_STORAGE_KEY` của `roster-cloud-store.js`, có test giữ hai bên khớp). */
+const ROSTER_CLOUD_KEY = 'tqccl.roster.cloud.v1';
+
 export async function signOut() {
-  await api('/api/auth/sign-out', { method: 'POST', json: {} });
-  writeHint(null);
+  try {
+    await api('/api/auth/sign-out', { method: 'POST', json: {} });
+    writeHint(null);
+  } finally {
+    // Máy dùng chung: kho cloud của tài khoản vừa thoát không được ở lại cho người đăng nhập kế tiếp, kể cả khi gọi sign-out lỗi.
+    try {
+      localStorage.removeItem(ROSTER_CLOUD_KEY);
+    } catch {
+      // Trình duyệt chặn storage: không có cache để xóa.
+    }
+  }
   location.reload();
 }
 

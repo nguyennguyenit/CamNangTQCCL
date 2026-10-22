@@ -819,8 +819,6 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/add-empty", "empty", "Chưa có đội phù hợp để thêm từ kho hiện tại.", "js/roster-recommend-ui.js", "renderRecommendation", "empty", "authored-vi"),
     ("ui:roster/result-tactics", "label", 'L("Chiến pháp", "战法")', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     ("ui:roster/result-variants", "label", "Đã thay:", "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
-    ("ui:roster/setup-missing", "message", "Tính năng gợi ý đội từ kho chưa được cấu hình.", "js/roster-recommend-ui.js", "initRosterRecommend", "error", "authored-vi"),
-    ("ui:roster/setup-hint", "message", "Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     # Gợi ý theo mùa + mục Thiếu món + "Vì sao?" (plans/260929-0415-goi-y-doi-theo-mua).
     ("ui:roster/ai-note", "note", "AI chỉ đọc ảnh, và chỉ giải thích món bù khi bạn hỏi. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn.", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     ("ui:roster/season-label", "label", "Mùa bạn đang chơi", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
