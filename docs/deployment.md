@@ -12,6 +12,9 @@ Project deploy is split into three surfaces:
 
 - Before the first merge of the batch (2026-10-22): `main` = `5b6014a` (docs-only on top of `957bb3d`); production Pages deployment `https://ec3c9558.tqccl.pages.dev` (`957bb3d`, run `39651871017`); Research MCP Worker version `93d02cc5-3b56-4e93-90aa-3fc6bc9f927b`; community Worker version `5ba5760f-c671-4a4b-9866-763cdb53ec16`.
 - Serial-lane merges (phases 5, 7, 8, 9, 10) record their merged SHA here and in the plan's progress table. Roll back by reverting those merges in reverse order down to a recorded SHA; never revert one PR from the middle of the lane.
+- Merged so far (none deployed to production yet; GitHub Actions minutes ran out mid-batch, so each PR was gated by the same `check:repository` job run locally on its exact head):
+  - Free lane: `18099d1` (PR #28, roster worker routes + D1 `0011` migration file, not applied remotely), `c82f8fa` (PR #27, #16), `a7e217b` (PR #32, community-worker export + `site-publish`; `pages-deploy.yml` accepts both dispatch types), `7c812a6` (PR #29, #12), `c95bdf1` (PR #30, #15).
+  - Serial lane: `edd9f08` (PR #31, #14), `444c791` (PR #33, #5), `6ef0395` (PR #34, #20), `5538533` (PR #35, #6). Phase 10 (PR #36) is not merged: it waits for the release window after the community Worker + D1 `0011` release.
 
 ## Latest Worker Deploy
 
