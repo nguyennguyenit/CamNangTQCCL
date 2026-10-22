@@ -21,6 +21,49 @@ test('footer 821–1440px: khối thương hiệu không đè cột link đầu'
   }
 });
 
+test('nút Đăng nhập header: từ 821px có chữ và viền đỏ dải, ≤820px chỉ còn icon', async ({ page }) => {
+  const state = (button) => button.evaluate((node) => {
+    const label = node.querySelector('.cm-auth-label');
+    const brandText = document.querySelector('.site-header .brand-text');
+    const probe = document.createElement('i');
+    probe.style.color = 'var(--nav-underline)';
+    document.body.append(probe);
+    const accentLine = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      labelShown: getComputedStyle(label).display !== 'none',
+      border: getComputedStyle(node).borderTopColor,
+      accentLine,
+      overflow: document.documentElement.scrollWidth - innerWidth,
+      brandClipped: brandText && getComputedStyle(brandText).display !== 'none' ? brandText.scrollWidth - brandText.clientWidth : 0,
+    };
+  });
+  for (const theme of ['light', 'dark']) {
+    await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
+    for (const path of ['/', '/doi-chuan/', '/zh/doi-chuan/']) {
+      for (const width of [390, 821, 1024, 1279, 1366]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
+        const button = page.locator('#community-auth .cm-auth-login');
+        await expect(button).toBeVisible();
+        const where = `${theme} ${path} @${width}`;
+        const rest = await state(button);
+        expect(rest.overflow, `${where}: tràn ngang`).toBe(0);
+        expect(rest.brandClipped, `${where}: chữ logo bị cắt`).toBeLessThanOrEqual(1);
+        if (width <= 820) {
+          expect(rest.labelShown, `${where}: mobile chỉ còn icon`).toBe(false);
+          expect(rest.border, `${where}: mobile không viền`).toBe('rgba(0, 0, 0, 0)');
+          continue;
+        }
+        expect(rest.labelShown, `${where}: hiện chữ Đăng nhập`).toBe(true);
+        expect(rest.border, `${where}: viền đỏ dải`).toBe(rest.accentLine);
+        await button.hover();
+        expect((await state(button)).border, `${where}: rê chuột giữ viền`).toBe(rest.accentLine);
+      }
+    }
+  }
+});
+
 test('bảng chiến pháp 681–1023px xếp dọc, không cột nào bị cắt khỏi khung', async ({ page }) => {
   for (const width of [768, 900, 1023]) {
     await page.setViewportSize({ width, height: 900 });
