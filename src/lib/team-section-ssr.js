@@ -10,7 +10,7 @@ import { coexistTeamCard, recommendedListTrees } from '../../js/recommended-refe
 import { coexistGroups, coexistScenarioIds, readSeasonQuery } from '../../js/season-ui-state.js';
 import { projectSeasonBrowse } from '../../js/season-context.js';
 import { SECTION_QUERY_KEYS, TEAM_RETURN_STORAGE_KEY, khaiHoangCardHref, referenceDetailHref, safeReturnUrl } from '../../js/team-detail-navigation.js';
-import { TEAM_VIEW_GRID, TEAM_VIEW_STORAGE_KEY, TEAM_VIEW_TABLE } from '../../js/team-view.js';
+import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_STORAGE_KEY, TEAM_VIEW_TABLE } from '../../js/team-view.js';
 import {
   PAGE_SIZE,
   coexistGroupKey,
@@ -35,9 +35,13 @@ const PAGE_ORIGIN = 'https://tqccl.invalid';
 const pageUrl = (path, locale) => new URL(localePath(path, locale), PAGE_ORIGIN);
 
 /**
- * Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): đầu mục + `.reference-view` của mùa mặc định, tối đa
- * `PAGE_SIZE` đội đầu, mỗi đội 3 tướng + link chi tiết. `rows`: `index.json` / `other-teams.json` đã xác minh;
- * `registry`: `seasons.json`.
+ * Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): đầu mục + `.reference-view` của mùa mặc định, mỗi đội
+ * 3 tướng + link chi tiết. Đội chuẩn dựng ĐỦ mọi đội của mùa mặc định (mùa hiện tại không có trang riêng, có thể hơn
+ * `PAGE_SIZE` đội khi đổi mùa mặc định); Đội khác tối đa `PAGE_SIZE` đội đầu. `rows`: `index.json` / `other-teams.json`
+ * đã xác minh; `registry`: `seasons.json`.
+ *
+ * Dấu danh sách ghi số đội đã dựng: tối thiểu `PAGE_SIZE` (khớp lượt đầu của client nên DOM được nhận lại); mùa hơn
+ * `PAGE_SIZE` đội thì dấu lệch lượt đầu, client dựng lại theo lượt như cũ — phân trang phía client giữ nguyên.
  */
 export function recommendedSectionTrees({ family, rows, registry, locale }) {
   return withLocale(locale, () => {
@@ -48,12 +52,37 @@ export function recommendedSectionTrees({ family, rows, registry, locale }) {
     const hrefFor = (row) => referenceDetailHref(row, { from: url.href, origin: url.origin, locale });
     const mountId = family === 'other' ? 'section-team-khac' : 'section-team-chuan';
     const title = referenceSectionTitle(family);
-    const signature = referenceViewSignature(state, state.view, safeReturnUrl(url.href, { origin: url.origin }), PAGE_SIZE);
+    const limit = family === 'other' ? PAGE_SIZE : filtered.length;
+    const signature = referenceViewSignature(state, state.view, safeReturnUrl(url.href, { origin: url.origin }), Math.max(PAGE_SIZE, limit));
     return inertUntilBound([
       t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family)]),
       t('div', { class: 'reference-view', dataset: { ssrSignature: signature } },
-        recommendedListTrees(filtered, { family, mode: state.view, limit: PAGE_SIZE, labels, hrefFor, mountId, locale })),
+        recommendedListTrees(filtered, { family, mode: state.view, limit, labels, hrefFor, mountId, locale })),
     ]);
+  });
+}
+
+/** Chip chiến pháp của thẻ là nút "tìm" cần app.js gắn sự kiện; trang mùa không nạp app.js nên đổi chúng thành chữ thuần. */
+const staticTacticTags = (tree) => {
+  if (typeof tree === 'string') return tree;
+  const search = tree.tag === 'button' && tree.attrs && 'data-tactic-search' in tree.attrs;
+  const attrs = search ? Object.fromEntries(Object.entries(tree.attrs).filter(([name]) => name !== 'type' && name !== 'data-tactic-search' && name !== 'title')) : tree.attrs;
+  return { tag: search ? 'span' : tree.tag, attrs, children: tree.children.map(staticTacticTags) };
+};
+
+/**
+ * Thân trang mùa Đội chuẩn: MỌI đội của mùa (không giới hạn `PAGE_SIZE`, không phân trang) nhóm theo Tier bằng đúng
+ * builder thẻ của danh sách, mỗi đội 3 tướng + chiến pháp + link chi tiết. Không có `from=` (trang mùa không thuộc
+ * `SECTION_QUERY_KEYS`): nút quay lại của trang đội giữ hành vi hiện tại. Trang tĩnh, không nạp app.js.
+ */
+export function seasonPageTrees({ rows, sourceSeasonId, registry, locale }) {
+  return withLocale(locale, () => {
+    const season = rows.filter((row) => row.sourceSeasonId === sourceSeasonId);
+    const filtered = projectRecommendedRows(season, { season: sourceSeasonId, query: '', filters: {} }, registry.displayLabels || {});
+    const hrefFor = (row) => referenceDetailHref(row, { locale });
+    return recommendedListTrees(filtered, {
+      family: 'recommended', mode: TEAM_VIEW_CARDS, labels: registry.displayLabels || {}, hrefFor, mountId: 'season-page', locale,
+    }).map(staticTacticTags);
   });
 }
 

@@ -186,7 +186,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       const fromUrl = explicit ? readRecommendedQuery(location.href, registry).season : null;
       const id = [fromUrl, state.seasonId, registry.defaultSourceSeasonId].find((value) => seasonOptions.has(value)) || options[0]?.sourceSeasonId;
       if (!id) throw new Error("no seasons");
-      seasonSelect.replaceChildren(...options.map((item) => el("option", { value: item.sourceSeasonId, title: seasonOptionTitle(item) }, seasonOptionText(item))));
+      seasonSelect.replaceChildren(...options.map((item) => el("option", { value: item.sourceSeasonId, title: seasonOptionTitle(item) }, seasonOptionText(item, registry.defaultSourceSeasonId))));
       seasonSelect.disabled = false;
       selectSeason(id);
     })

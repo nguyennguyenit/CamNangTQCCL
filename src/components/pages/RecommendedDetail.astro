@@ -11,7 +11,7 @@ import type { SiteLocale } from '../../lib/locale-routes';
 
 type Props = RecommendedDetailProps & { locale: SiteLocale };
 
-const {entry, title, ordinal, scopeLine, pageLabel, generationId, manifestSha256, legacyTeamsSha256, lookupLinks, heroes, locale} = Astro.props;
+const {entry, title, ordinal, scopeLine, pageLabel, generationId, manifestSha256, legacyTeamsSha256, lookupLinks, heroes, oldSeason, locale} = Astro.props;
 const t = (vi: string, zh: string): string => pick(locale, vi, zh);
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
@@ -71,7 +71,7 @@ const structured = teamDetailJsonLd({
   >
     <div class="detail-header">
       <div class="detail-head-main">
-        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}</p> : null}
+        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}{oldSeason ? <> · <span class="detail-season-old">{t('mùa cũ', '旧赛季')}</span></> : null}</p> : null}
         <h1 id="team-detail-title" class="detail-title">{title}</h1>
         <div class="detail-meta-row">
           {tier ? (

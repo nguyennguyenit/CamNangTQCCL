@@ -63,12 +63,15 @@ export interface LookupGroupStructured {
   path: string;
   name: string;
   description: string;
-  /** Mọi mục của nhóm theo thứ tự hiển thị, mỗi mục có trang riêng. */
+  /** Mọi mục của nhóm (hoặc mọi đội của mùa) theo thứ tự hiển thị, mỗi mục có trang riêng. */
   items: readonly NamedPath[];
   hub: NamedPath;
 }
 
-/** Trang nhóm Tra cứu: `CollectionPage` + `ItemList` (mọi phần tử có `url` trang riêng) + `BreadcrumbList`. */
+/**
+ * Trang nhóm Tra cứu: `CollectionPage` + `ItemList` (mọi phần tử có `url` trang riêng) + `BreadcrumbList`.
+ * Trang mùa Đội chuẩn dùng chung: `hub` là mục Đội chuẩn, `items` là các đội của mùa (Trang chủ › Đội chuẩn › mùa).
+ */
 export function lookupGroupJsonLd(input: LookupGroupStructured) {
   const { locale, site } = input;
   const url = absolute(input.path, site);

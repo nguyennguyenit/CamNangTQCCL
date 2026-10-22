@@ -56,12 +56,22 @@ class LookupLedgerTest(unittest.TestCase):
         self.data = make_data(self.tmp)
         self.ledger = self.tmp / "ledger.json"
         self.redirects = self.tmp / "_redirects"
+        self.recommended = self.tmp / "recommended"
 
     def run_cli(self, *args):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects)])
+            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects), "--recommended-root", str(self.recommended)])
         return code, out.getvalue(), err.getvalue()
+
+    def write_registry(self, default_id, options=(("og-兵演春秋", "OG"), ("pk-s24", "PK-S24"))):
+        generation = "1" * 64
+        (self.recommended / generation).mkdir(parents=True, exist_ok=True)
+        write_json(self.recommended / "current.json", {"schemaVersion": 1, "generationId": generation, "manifestSha256": "0" * 64})
+        write_json(self.recommended / generation / "seasons.json", {
+            "defaultSourceSeasonId": default_id,
+            "seasonOptions": [{"sourceSeasonId": season, "displayCode": code} for season, code in options],
+        })
 
     def handles(self):
         return json.loads(self.ledger.read_text(encoding="utf-8"))["handles"]
@@ -285,6 +295,31 @@ class LookupLedgerTest(unittest.TestCase):
         ]) + "\n")
         self.assertEqual(self.run_cli("--check")[0], 0)
 
+    def test_current_season_slug_is_301_to_the_list_and_follows_the_default_season(self):
+        self.merge_tactic()
+        self.write_registry("og-兵演春秋")
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        lines = self.redirects.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines[-2:], ["/doi-chuan/og/ /doi-chuan/ 301", "/zh/doi-chuan/og/ /zh/doi-chuan/ 301"])
+        self.assertEqual(self.run_cli("--check")[0], 0)
+        # The default season changes: the committed rule is stale until regenerated, then it follows the new season.
+        self.write_registry("pk-s24")
+        code, _, err = self.run_cli("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("is stale; run --write", err)
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        lines = self.redirects.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines[-2:], ["/doi-chuan/pk-s24/ /doi-chuan/ 301", "/zh/doi-chuan/pk-s24/ /zh/doi-chuan/ 301"])
+        self.assertNotIn("/doi-chuan/og/ /doi-chuan/ 301", lines)
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_registry_without_a_default_season_adds_no_rule_and_a_bad_code_is_an_error(self):
+        self.write_registry(None)
+        self.assertEqual(lrh.season_redirect_lines(self.recommended), [])
+        self.write_registry("og-兵演春秋", options=(("og-兵演春秋", "兵演"),))
+        with self.assertRaisesRegex(lrh.LookupRouteHandleError, "no usable page slug"):
+            lrh.season_redirect_lines(self.recommended)
+
     def test_check_fails_on_stale_redirects(self):
         self.merge_tactic()
         self.redirects.write_text(self.redirects.read_text(encoding="utf-8") + "/a/ /b/ 301\n", encoding="utf-8")
@@ -329,11 +364,13 @@ class RealLedgerTest(unittest.TestCase):
     def test_committed_redirects_match_the_ledger(self):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         former = lrh.former_owner_map(REPO_ROOT / "data")
-        self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger))
+        season = lrh.season_redirect_lines(lrh.DEFAULT_RECOMMENDED_ROOT)
+        self.assertEqual(len(season), 2, "the pinned registry has a current season, so one rule per locale")
+        self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger, season))
         tactics = json.loads((REPO_ROOT / "data/tactics.json").read_bytes())
         pairs = sum(len(row["lookup"]["formerIds"]) for row in tactics)
         rules = [line for line in lrh.DEFAULT_REDIRECTS_PATH.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
-        self.assertEqual(len(rules), 2 * pairs)
+        self.assertEqual(len(rules), 2 * pairs + 2)
         self.assertTrue(all(line.endswith("/ 301") for line in rules))
 
 

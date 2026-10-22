@@ -6,6 +6,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
 import { PRERENDERED_TEAM_SECTIONS, teamSectionParts, type TeamSection } from '../../lib/team-ssr';
 import { ssrStaleGuardScript } from '../../lib/team-section-ssr.js';
+import { seasonDisplayName, seasonPages } from '../../lib/season-pages';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 type SectionId = 'team-chuan' | 'team-khac' | 'coexist' | 'khaihoang' | 'recruit-tracker' | 'analyze' | 'roster-recommend';
@@ -81,6 +82,8 @@ const PAGES: Record<SectionId, { path: string; title: string; description: strin
 const page = PAGES[section];
 const canonicalUrl = new URL(localePath(page.path, locale), Astro.site);
 const prerendered = PRERENDERED_TEAM_SECTIONS.includes(section) ? await teamSectionParts(section as TeamSection, locale) : null;
+// Mùa cũ có trang riêng (`/doi-chuan/<mã mùa>/`): link thật ở NGOÀI `#section-team-chuan`, vùng mà trình duyệt dựng lại.
+const otherSeasons = section === 'team-chuan' ? (await seasonPages()).pages : [];
 ---
 <SiteLayout
   title={page.title}
@@ -93,6 +96,18 @@ const prerendered = PRERENDERED_TEAM_SECTIONS.includes(section) ? await teamSect
   <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source} set:html={prerendered?.html}></section>
   {/* Thân dựng sẵn là trạng thái mặc định: URL/kiểu hiển thị/snapshot khác mặc định thì ẩn đến khi js/app.js dựng đúng. */}
   {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
+  {otherSeasons.length > 0 && (
+    <nav class="other-seasons" data-other-seasons aria-labelledby="other-seasons-heading">
+      <h2 id="other-seasons-heading" class="other-seasons-heading">{t('Các mùa khác', '其他赛季')}</h2>
+      <p class="other-seasons-lead">{t('Đội chuẩn của các mùa cũ, mỗi mùa một trang.', '往期赛季的推荐阵容，每个赛季一页。')}</p>
+      <ul class="other-seasons-list">
+        {otherSeasons.map((season) => {
+          const name = seasonDisplayName(season, locale);
+          return <li><a href={localePath(season.routePath, locale)}>{name ? `${season.displayCode} · ${name}` : season.displayCode}{t(` (${season.count} đội)`, `（${season.count} 队）`)}</a></li>;
+        })}
+      </ul>
+    </nav>
+  )}
 
   <script is:inline type="module" src="/js/app.js" slot="scripts"></script>
 </SiteLayout>

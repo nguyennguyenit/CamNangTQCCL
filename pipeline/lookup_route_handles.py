@@ -35,6 +35,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LEDGER_PATH = REPO_ROOT / "pipeline" / "lookup-route-handles.json"
 DEFAULT_DATA_DIR = REPO_ROOT / "data"
 DEFAULT_REDIRECTS_PATH = REPO_ROOT / "public" / "_redirects"
+DEFAULT_RECOMMENDED_ROOT = REPO_ROOT / "src" / "data" / "recommended-reference"
 REDIRECTS_HEADER = "# Sinh bởi python3 -m pipeline.lookup_route_handles --write; không sửa tay."
 # Locale prefixes of the tactic detail route (src/lib/lookup-detail-routes.ts); zh group slugs equal vi ones.
 REDIRECT_LOCALE_PREFIXES = ("", "/zh")
@@ -239,8 +240,32 @@ def former_owner_map(data_dir) -> dict[str, str]:
     return owners
 
 
-def redirects_bytes(former_map: dict[str, str], ledger: dict) -> bytes:
-    """Cloudflare Pages `_redirects`: per merged tactic, `old new 301` for each locale, sorted by retired id."""
+def season_redirect_lines(recommended_root) -> list[str]:
+    """`/doi-chuan/<slug>/ /doi-chuan/ 301` per locale for the current season of the pinned Recommended registry.
+
+    A root without `current.json` (a fixture, a checkout without the data) has no season rule; a registry whose default
+    season has no usable `displayCode` is a data error.
+    """
+    if recommended_root is None:
+        return []
+    root = Path(recommended_root)
+    current = root / "current.json"
+    if not current.exists():
+        return []
+    generation = json.loads(current.read_bytes())["generationId"]
+    registry = json.loads((root / generation / "seasons.json").read_bytes())
+    default_id = registry.get("defaultSourceSeasonId")
+    option = next((item for item in registry.get("seasonOptions", []) if item.get("sourceSeasonId") == default_id), None)
+    if option is None:
+        return []
+    slug = str(option.get("displayCode") or "").lower()
+    if not SLUG_SHAPE.fullmatch(slug):
+        raise LookupRouteHandleError(f"default season {default_id} has no usable page slug: {option.get('displayCode')!r}")
+    return [f"{prefix}/doi-chuan/{slug}/ {prefix}/doi-chuan/ 301" for prefix in REDIRECT_LOCALE_PREFIXES]
+
+
+def redirects_bytes(former_map: dict[str, str], ledger: dict, season_lines=()) -> bytes:
+    """Cloudflare Pages `_redirects`: per merged tactic, `old new 301` for each locale, sorted by retired id; then the season rule."""
     retired, live = ledger["retired"]["tactics"], ledger["handles"]["tactics"]
     lines = [REDIRECTS_HEADER]
     for retired_id in sorted(former_map):
@@ -251,10 +276,11 @@ def redirects_bytes(former_map: dict[str, str], ledger: dict) -> bytes:
             raise LookupRouteHandleError(f"survivor {survivor_id} of {retired_id} has no live slug in the ledger")
         for prefix in REDIRECT_LOCALE_PREFIXES:
             lines.append(f"{prefix}/tra-cuu/chien-phap/{retired[retired_id]}/ {prefix}/tra-cuu/chien-phap/{live[survivor_id]}/ 301")
+    lines.extend(season_lines)
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 
-def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, out=print) -> int:
+def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, recommended_root=None, out=print) -> int:
     corpus = load_corpus(data_dir)
     ledger_path = Path(ledger_path)
     existing = retired = None
@@ -279,7 +305,7 @@ def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH
         ledger_path.write_bytes(payload)
     out(f"ledger: {sum(len(v) for v in handles.values())} ids, {added} net new, {newly_retired} net retired, {len(collisions)} new collisions -> {ledger_path}")
     redirects_path = Path(redirects_path)
-    redirects = redirects_bytes(former_owner_map(data_dir), ledger)
+    redirects = redirects_bytes(former_owner_map(data_dir), ledger, season_redirect_lines(recommended_root))
     if not redirects_path.exists() or redirects_path.read_bytes() != redirects:
         redirects_path.write_bytes(redirects)
     rules = redirects.count(b"\n") - 1
@@ -287,14 +313,14 @@ def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH
     return 0
 
 
-def check_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, out=print) -> int:
+def check_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, recommended_root=None, out=print) -> int:
     corpus = load_corpus(data_dir)
     ledger = _read_ledger(Path(ledger_path))
     problems = ledger_problems(ledger, corpus)
     if problems:
         raise LookupRouteHandleError("ledger failed validation:\n" + "\n".join(problems[:40]))
     redirects_path = Path(redirects_path)
-    redirects = redirects_bytes(former_owner_map(data_dir), ledger)
+    redirects = redirects_bytes(former_owner_map(data_dir), ledger, season_redirect_lines(recommended_root))
     if not redirects_path.exists() or redirects_path.read_bytes() != redirects:
         raise LookupRouteHandleError(f"{redirects_path} is stale; run --write")
     total = sum(len(items) for items in corpus["groups"].values())
@@ -311,11 +337,12 @@ def main(argv=None) -> int:
     parser.add_argument("--data-dir", type=Path, default=DEFAULT_DATA_DIR)
     parser.add_argument("--ledger", type=Path, default=DEFAULT_LEDGER_PATH)
     parser.add_argument("--redirects", type=Path, default=DEFAULT_REDIRECTS_PATH)
+    parser.add_argument("--recommended-root", type=Path, default=DEFAULT_RECOMMENDED_ROOT, help="pinned Recommended generation root (season-page redirect)")
     args = parser.parse_args(argv)
     try:
         if args.write:
-            return write_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects)
-        return check_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects)
+            return write_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects, recommended_root=args.recommended_root)
+        return check_ledger(data_dir=args.data_dir, ledger_path=args.ledger, redirects_path=args.redirects, recommended_root=args.recommended_root)
     except (LookupRouteHandleError, OSError, ValueError, KeyError) as error:
         print(f"error: {error}", file=sys.stderr)
         return 1
