@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-10-22 (Đội tranh món trên Gợi ý kho)
+
+### Added
+- `/goi-y-doi-tu-kho/` (vi + zh) có mục "Đội dựng được nhưng tranh món với đội đã chọn" hiển thị `conflictedTeams` của engine: tên đội + bậc, từng tướng/chiến pháp bị tranh kèm tên đội đang giữ (không lộ id), câu giải thích, nút "Mở đội"; tối đa 5 thẻ kèm "và N đội khác". Không có xung đột thì không render mục. Engine và MCP không đổi.
+- `js/roster-conflict-view.js` (hàm thuần, có trong `PUBLIC_ARTIFACTS`), test `tests-js/roster-conflict-view.test.mjs` và 6 ca e2e trong `tests-e2e/beta-tools.spec.mjs` (vi, zh, không tranh chấp, "Tôi có…", mobile 390px sáng/tối).
+- Publish lại bản dịch hiển thị: re-pin hash `js/roster-recommend-ui.js` và generation Recommended mới.
+
 ## 2026-10-22 (MCP route sang trang riêng, #15)
 
 ### Changed
