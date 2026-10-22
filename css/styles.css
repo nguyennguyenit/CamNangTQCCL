@@ -12471,6 +12471,7 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .roster-portfolio,
+.roster-coverage-section,
 .roster-missing-section,
 .roster-conflict-section {
   display: flex;
@@ -12628,6 +12629,120 @@ body[data-page-section="roster-recommend"] .layout {
 
 .roster-open:hover {
   color: var(--accent-strong);
+}
+
+/* ---------- Độ phủ kho ---------- */
+.roster-coverage-section {
+  grid-column: 1 / -1;
+}
+
+.roster-coverage-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.roster-coverage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--type-control);
+}
+
+.roster-coverage-table th,
+.roster-coverage-table td {
+  padding: var(--space-8) var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line);
+  text-align: left;
+}
+
+.roster-coverage-table th {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.roster-coverage-table .roster-coverage-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.roster-coverage-cell {
+  min-width: var(--control-36);
+  min-height: var(--control-36);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+  color: var(--accent);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.roster-coverage-cell:hover,
+.roster-coverage-cell[aria-expanded="true"] {
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+
+.roster-coverage-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  min-width: 0;
+}
+
+.roster-coverage-detail-title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--type-control);
+  font-weight: 600;
+}
+
+.roster-coverage-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roster-coverage-team {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  min-width: 0;
+}
+
+.roster-coverage-team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+}
+
+.roster-coverage-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-2);
+  font: var(--type-meta);
+}
+
+.roster-coverage-progress li {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.roster-coverage-progress strong {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Thiếu món ---------- */
@@ -13056,6 +13171,11 @@ body[data-page-section="roster-recommend"] .layout {
   .roster-missing-line {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .roster-coverage-team-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 

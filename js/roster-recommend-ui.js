@@ -16,10 +16,12 @@ import {
   setTacticOverride,
   tacticOverrideBlocked,
 } from "./roster-scan-state.js";
-import { analyzeTacticSubstitutes, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { analyzeTacticSubstitutes, applyTacticOverrides, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { buildRosterCoverage } from "./roster-coverage.js";
+import { createTacticIdResolver } from "./lookup-ids.js";
 import { buildConflictView } from "./roster-conflict-view.js";
 import { buildTacticRules } from "./team-recommend-engine.js";
-import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
+import { readRecommendedQuery, sourceTierLabel, tacticDisplayName } from "./recommended-reference-state.js";
 import { seasonNameText, seasonOptionText, seasonOptionTitle } from "./team-filter-section.js";
 import { L, currentLocale } from "./i18n.js";
 import { createRawNameResolver, localName } from "./website-display.js";
@@ -120,6 +122,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const zh = currentLocale() === "zh";
   const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
   const tacticRules = buildTacticRules(tacticsDict);
+  const tacticIdOf = createTacticIdResolver(tacticsDict);
+  /** Ô đang mở của bảng Độ phủ kho: `{tier, kind: "complete"|"missingOne"}`; giữ qua các lần vẽ lại kết quả. */
+  let coverageOpen = null;
   const shown = (name) => localName(name, resolveRaw);
   const joinNames = (names) => names.map(shown).join(" · ");
   // Tên chiến pháp lưu trong dữ liệu đội: bản vi hiện `viet` hiện hành của danh mục; bản zh như `shown`.
@@ -906,6 +911,115 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       )),
       openButton(card.team),
     ]);
+    // Độ phủ kho (#20): từng đội của mùa đang chọn xét độc lập, không ràng buộc dùng chung như danh sách bên dưới.
+    const coverageSection = () => {
+      if (!season) return null;
+      const coverage = buildRosterCoverage({
+        seasonTeams: applyTacticOverrides(season.teams, state.tacticOverrides),
+        seasonTier: season.teamTier,
+        ownedHeroes: state.ownedHeroes,
+        ownedTactics: state.ownedTactics,
+        tacticIdOf,
+        unmapped: season.diagnostics?.unmapped,
+      });
+      const tierText = (tier) => (tier ? sourceTierLabel(tier) : L("Chưa xếp bậc", "未评级"));
+      const body = el("div", { class: "roster-coverage-body" });
+      const detailRow = (team, missing) => el("li", { class: "roster-coverage-team", dataset: { teamId: team.id } }, [
+        el("div", { class: "roster-coverage-team-head" }, [
+          el("strong", { class: "roster-result-name" }, teamLabel(team) || team.id),
+          openButton(team),
+        ]),
+        missing
+          ? missingLine(
+            missing.unresolved
+              ? L(`Chiến pháp ${missing.name}: chưa đối chiếu`, `战法 ${shown(missing.name)}：尚未核对`)
+              : missing.kind === "hero"
+                ? L(`Thiếu tướng ${missing.name}`, `缺武将 ${shown(missing.name)}`)
+                : L(`Thiếu chiến pháp ${tacticDisplayName(missing.name)}`, `缺战法 ${shown(missing.name)}`),
+            missing.unresolved ? null : haveButton(missing.kind === "hero" ? "heroes" : "tactics", missing.name),
+          )
+          : null,
+      ]);
+      const paint = () => {
+        const open = coverageOpen && coverage.tiers.find((entry) => entry.tier === coverageOpen.tier);
+        const rows = open ? (coverageOpen.kind === "complete" ? open.complete.map((team) => [team, null]) : open.missingOne.map((item) => [item.team, item.missing])) : [];
+        body.replaceChildren(
+          open
+            ? el("div", { class: "roster-coverage-detail", role: "region", "aria-label": L(`Danh sách đội ${tierText(open.tier)}`, `${tierText(open.tier)} 队伍列表`) }, [
+              el("h3", { class: "roster-coverage-detail-title" }, coverageOpen.kind === "complete"
+                ? L(`${tierText(open.tier)} · Ráp đủ khi đứng riêng`, `${tierText(open.tier)} · 单独可组建`)
+                : L(`${tierText(open.tier)} · Thiếu đúng 1 món`, `${tierText(open.tier)} · 恰好缺 1 件`)),
+              rows.length
+                ? el("ul", { class: "roster-coverage-list" }, rows.map(([team, missing]) => detailRow(team, missing)))
+                : el("p", { class: "roster-empty" }, L("Không có đội nào.", "暂无队伍。")),
+            ])
+            : null,
+        );
+      };
+      const cell = (tier, kind, count) => {
+        const active = coverageOpen?.tier === tier && coverageOpen.kind === kind;
+        return el("td", { class: "roster-coverage-num", dataset: { kind } }, count
+          ? el("button", {
+            type: "button",
+            class: "roster-coverage-cell",
+            "aria-expanded": String(active),
+            "aria-label": kind === "complete"
+              ? L(`${tierText(tier)}: ${count} đội ráp đủ, xem danh sách`, `${tierText(tier)}：${count} 支可组建，查看列表`)
+              : L(`${tierText(tier)}: ${count} đội thiếu 1 món, xem danh sách`, `${tierText(tier)}：${count} 支缺 1 件，查看列表`),
+            onClick: (event) => {
+              const same = coverageOpen?.tier === tier && coverageOpen.kind === kind;
+              coverageOpen = same ? null : { tier, kind };
+              for (const button of event.currentTarget.closest("table").querySelectorAll(".roster-coverage-cell")) button.setAttribute("aria-expanded", "false");
+              if (!same) event.currentTarget.setAttribute("aria-expanded", "true");
+              paint();
+            },
+          }, String(count))
+          : String(count));
+      };
+      const progress = (label, value) => el("li", {}, [
+        el("span", { class: "roster-coverage-progress-label" }, label),
+        el("strong", {}, `${value.owned}/${value.total}`),
+      ]);
+      const unmappedCount = coverage.unmapped.length;
+      paint();
+      return el("section", { class: "roster-coverage-section", "aria-labelledby": "roster-coverage-title" }, [
+        el("div", { class: "roster-section-head" }, [
+          el("h2", { class: "roster-section-title", id: "roster-coverage-title", tabindex: "-1" }, L("Độ phủ kho", "库存覆盖度")),
+          el("p", { class: "roster-section-lead" }, L(
+            "Mỗi đội của mùa đang chọn được xét riêng, không tính đội khác đã chiếm món: bao nhiêu đội ráp đủ, bao nhiêu đội chỉ thiếu 1 món.",
+            "所选赛季的每支阵容单独核算，不考虑其他队伍占用：多少支可组建，多少支只缺 1 件。",
+          )),
+        ]),
+        coverage.tiers.length
+          ? el("div", { class: "roster-coverage-scroll" }, [
+            el("table", { class: "roster-coverage-table" }, [
+              el("thead", {}, el("tr", {}, [
+                el("th", { scope: "col" }, L("Bậc", "梯度")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Ráp đủ", "可组建")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Thiếu 1", "缺 1 件")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Tổng", "总数")),
+              ])),
+              el("tbody", {}, coverage.tiers.map((entry) => el("tr", { dataset: { tier: entry.tier } }, [
+                el("th", { scope: "row" }, tierText(entry.tier)),
+                cell(entry.tier, "complete", entry.complete.length),
+                cell(entry.tier, "missingOne", entry.missingOne.length),
+                el("td", { class: "roster-coverage-num", dataset: { kind: "total" } }, String(entry.total)),
+              ]))),
+            ]),
+          ])
+          : el("p", { class: "roster-empty roster-coverage-empty" }, L("Mùa này chưa có Đội chuẩn nào để tính độ phủ.", "本赛季暂无推荐阵容可计算覆盖度。")),
+        body,
+        coverage.tiers.length
+          ? el("ul", { class: "roster-coverage-progress", "aria-label": L("Tiến độ sưu tầm", "收集进度") }, [
+            progress(L("Tướng trong Đội chuẩn của mùa", "本赛季推荐阵容中的武将"), coverage.progress.heroes),
+            progress(L("Chiến pháp trong Đội chuẩn của mùa", "本赛季推荐阵容中的战法"), coverage.progress.tactics),
+          ])
+          : null,
+        unmappedCount
+          ? el("p", { class: "ana-note roster-coverage-unmapped" }, L(`${unmappedCount} cấu hình chưa đối chiếu, không tính.`, `${unmappedCount} 个配置尚未核对，未计入。`))
+          : null,
+      ]);
+    };
     // Món bù đã chọn mà đội vẫn không vào danh sách (trùng tướng/chiến pháp với đội xếp trên): vẫn phải gỡ được.
     const shownTeams = new Set([...portfolio, ...blocked, ...incompatible].map((entry) => entry.team?.id));
     const idleOverrides = [...overriddenTeams]
@@ -914,6 +1028,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       .filter(Boolean);
     const full = portfolio.length >= MAX_TEAMS;
     return el("div", { class: "roster-results" }, [
+      coverageSection(),
       el("section", { class: "roster-portfolio", "aria-labelledby": "roster-list-title" }, [
         el("div", { class: "roster-portfolio-head" }, [
           el("h2", { class: "roster-section-title", id: "roster-list-title", tabindex: "-1" }, L("Danh sách đội sau khi xây dựng", "组建后的队伍列表")),
