@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { RATE_RULES } from "../src/ratelimit";
-import { ROSTER_CAPS, ROSTER_MAX_BATCH, ROSTER_MAX_LIVE, ROSTER_MAX_RETAINED } from "../src/routes/roster";
+import { D1_FREE_QUERIES_PER_INVOCATION, ROSTER_CAPS, ROSTER_MAX_BATCH, ROSTER_MAX_LIVE, ROSTER_MAX_RETAINED } from "../src/routes/roster";
 import { createHarness, type Harness } from "./fakes";
 
 interface Wire {
@@ -113,6 +113,12 @@ async function ok(h: Harness, as: Who, records: Wire[]): Promise<PushBody> {
   const res = await push(h, as, records);
   expect(res.status).toBe(200);
   return res.json<PushBody>();
+}
+/** Đẩy theo khúc ROSTER_MAX_BATCH như client; trả outcome của mọi khúc theo thứ tự. */
+async function okChunked(h: Harness, as: Who, records: Wire[]): Promise<string[]> {
+  const out: string[] = [];
+  for (let i = 0; i < records.length; i += ROSTER_MAX_BATCH) out.push(...outcomes(await ok(h, as, records.slice(i, i + ROSTER_MAX_BATCH))));
+  return out;
 }
 async function pull(h: Harness, as: Who, query = ""): Promise<PullBody> {
   const res = await h.request(`/api/roster${query}`, { as });
@@ -252,7 +258,7 @@ describe("roster sync", () => {
   it("8. phân trang 501 bản ghi: trang 1 more=true, trang 2 phần còn lại", async () => {
     const h = createHarness();
     const all = [box("main", T0), ...Array.from({ length: 500 }, (_, i) => owned("main", `hero:h${i}`, T0 + 1))];
-    for (let i = 0; i < all.length; i += 100) expect((await ok(h, "alice", all.slice(i, i + 100))).results.every((r) => r.outcome === "applied")).toBe(true);
+    expect((await okChunked(h, "alice", all)).every((o) => o === "applied")).toBe(true);
     const p1 = await pull(h, "alice", "?since=0");
     expect(p1.records).toHaveLength(500);
     expect(p1.more).toBe(true);
@@ -491,7 +497,7 @@ describe("roster sync", () => {
   it("25. cap 20 hộp / 50 nhóm mỗi hộp / 500 đội: tạo mới, hồi sinh, hai batch đồng thời không vượt cap", async () => {
     const h = createHarness();
     // Hộp: 19 hộp sống (main + 18) -> hai request đồng thời tạo hộp thứ 20: đúng một bản thắng.
-    await ok(h, "alice", [box("main", T0), ...Array.from({ length: ROSTER_CAPS.box - 2 }, (_, i) => box(`box-${i}`, T0))]);
+    await okChunked(h, "alice", [box("main", T0), ...Array.from({ length: ROSTER_CAPS.box - 2 }, (_, i) => box(`box-${i}`, T0))]);
     expect(countOf(h, "alice", "kind = 'box' and deleted = 0")).toBe(ROSTER_CAPS.box - 1);
     const racing = await Promise.all([push(h, "alice", [box("box-r1", T0 + 1)]), push(h, "alice", [box("box-r2", T0 + 1)])]);
     const raced = (await Promise.all(racing.map((r) => r.json<PushBody>()))).flatMap((b) => outcomes(b)).sort();
@@ -506,7 +512,7 @@ describe("roster sync", () => {
 
     // Nhóm: 50 mỗi hộp (đếm riêng từng hộp).
     const g = Array.from({ length: ROSTER_CAPS.group }, (_, i) => group("main", `grp-${i}`, T0, `G${i}`, i));
-    expect((await ok(h, "alice", g)).results.every((r) => r.outcome === "applied")).toBe(true);
+    expect((await okChunked(h, "alice", g)).every((o) => o === "applied")).toBe(true);
     expect(outcomes(await ok(h, "alice", [group("main", "grp-over", T0 + 1)]))).toEqual(["rejected:cap"]);
     expect(outcomes(await ok(h, "alice", [group("box-1", "grp-over", T0 + 1)]))).toEqual(["applied"]);
     await ok(h, "alice", [tombstone("group", "grp-0", T0 + 2, "main")]);
@@ -628,24 +634,41 @@ describe("roster sync", () => {
     expect(countOf(h, "alice")).toBe(3);
   });
 
-  it("M2. lô tối đa ROSTER_MAX_BATCH bản ghi xấu nhất (xóa nhóm = ghi + chẩn đoán + MOVE_TEAMS) dưới trần 1 000 câu D1 mỗi lần gọi", async () => {
+  it("M2. lô tối đa ROSTER_MAX_BATCH bản ghi xấu nhất (xóa nhóm = ghi + chẩn đoán + MOVE_TEAMS) dưới trần 50 câu D1 mỗi lần gọi của gói Free", async () => {
     const h = createHarness();
     await withMain(h);
     seed(h, "alice", { kind: "group", boxId: "main", prefix: "grp-g", n: ROSTER_MAX_BATCH, deleted: 0 });
-    const sizes: number[] = [];
-    const db = h.env.DB as unknown as { batch: (stmts: unknown[]) => Promise<unknown> };
-    const batch = db.batch.bind(db);
-    db.batch = (stmts) => {
-      sizes.push(stmts.length);
+    // Đếm mọi câu D1 của request: câu chạy riêng (first/all/run/raw) và từng câu trong batch().
+    let queries = 0;
+    const db = h.env.DB as unknown as Record<string, unknown>;
+    const countStatement = (stmt: object): object =>
+      new Proxy(stmt, {
+        get(target, prop) {
+          const value = Reflect.get(target, prop) as unknown;
+          if (typeof value !== "function") return value;
+          if (prop === "bind") return (...args: unknown[]) => countStatement((value as (...a: unknown[]) => object).apply(target, args));
+          if (prop === "first" || prop === "all" || prop === "run" || prop === "raw") {
+            return (...args: unknown[]) => {
+              queries += 1;
+              return (value as (...a: unknown[]) => unknown).apply(target, args);
+            };
+          }
+          return (value as (...a: unknown[]) => unknown).bind(target);
+        },
+      });
+    const prepare = (db.prepare as (sql: string) => object).bind(db);
+    const batch = (db.batch as (stmts: unknown[]) => Promise<unknown>).bind(db);
+    db.prepare = (sql: string) => countStatement(prepare(sql));
+    db.batch = (stmts: unknown[]) => {
+      queries += stmts.length;
       return batch(stmts);
     };
     const records = Array.from({ length: ROSTER_MAX_BATCH }, (_, i) => tombstone("group", `grp-g${i + 1}`, T0 + 10, "main"));
     const body = await ok(h, "alice", records);
     expect(outcomes(body).filter((o) => o !== "applied")).toEqual([]);
-    const worst = ROSTER_MAX_BATCH * 3 + 1; // mỗi nhóm xóa: ghi + chẩn đoán + MOVE_TEAMS, cộng câu đọc rev cuối
-    expect(sizes).toEqual([worst]);
-    expect(ROSTER_MAX_BATCH).toBe(200);
-    expect(worst + 2).toBeLessThan(1000); // + câu rate limit và câu phiên
+    // Harness đọc phiên bằng 1 câu; Better Auth thật có thể tốn thêm (đọc session, user, gia hạn phiên): chừa 4 câu.
+    const BETTER_AUTH_EXTRA = 4;
+    expect(queries + BETTER_AUTH_EXTRA).toBeLessThanOrEqual(D1_FREE_QUERIES_PER_INVOCATION);
   });
 
   it("L3. câu ghi bị bỏ qua không rõ lý do: trả conflict kèm bản đang lưu (200), không phải 500", async () => {

@@ -11,7 +11,10 @@ import { DEFAULT_GROUP_SUFFIXES, ROSTER_KINDS, defaultGroupId, validateRecord, t
 import { readJson } from "../validate";
 
 export const ROSTER_PAGE_SIZE = 500;
-export const ROSTER_MAX_BATCH = 200;
+/** Cloudflare D1 "Queries per Worker invocation" của gói Free (Paid: 1 000); mỗi câu trong batch() tính riêng. */
+export const D1_FREE_QUERIES_PER_INVOCATION = 50;
+/** Lô xấu nhất 3 × 12 + 1 = 37 câu, cộng phiên + rate limit, dưới trần gói Free (test M2). Client `PUSH_CHUNK_SIZE` bằng số này. */
+export const ROSTER_MAX_BATCH = 12;
 /** Trần bản ghi SỐNG mỗi user (`quota`). */
 export const ROSTER_MAX_LIVE = 20_000;
 /** Trần tổng số khóa giữ lại (sống + bản xóa) mỗi user (`retained_cap`). */
