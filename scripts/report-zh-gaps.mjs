@@ -2,17 +2,19 @@
 // Báo cáo mục Tra cứu mà bản zh chưa đủ chữ: quét `lookupProfile(...).viOnly` trên toàn corpus (cùng hàm dựng hồ sơ mà trang
 // riêng dùng) rồi so hồ sơ vi với hồ sơ zh của mục đó để liệt kê trường/mục bị bỏ. Không bổ sung dữ liệu zh, chỉ báo cáo.
 //
-//   node scripts/report-zh-gaps.mjs            ghi plans/261015-1658-seo-ai-render-san/reports/zh-gaps.md
-//   node scripts/report-zh-gaps.mjs --check    báo lỗi (exit 1) nếu file trên không khớp dữ liệu hiện tại
+//   node scripts/report-zh-gaps.mjs            ghi docs/zh-gaps.md
+//   node scripts/report-zh-gaps.mjs --check    báo lỗi (exit 1) nếu docs/zh-gaps.md không khớp dữ liệu hiện tại (`npm run verify` chạy lệnh này)
 import { readFile, writeFile } from "node:fs/promises";
-import { pathToFileURL } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { withLocale } from "../js/i18n.js";
 import { lookupEmpty, lookupProfile } from "../js/lookup-detail.js";
 import { lookupGroupLabels } from "../js/unified-lookup.js";
-import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import { LOOKUP_GROUP_SLUGS } from "../js/lookup-ids.js";
 
-export const ZH_GAPS_REPORT_PATH = new URL("../plans/261015-1658-seo-ai-render-san/reports/zh-gaps.md", import.meta.url);
+// Biến môi trường ZH_GAPS_REPORT_PATH chỉ để test trỏ sang file tạm.
+export const ZH_GAPS_REPORT_PATH = process.env.ZH_GAPS_REPORT_PATH
+  ? pathToFileURL(process.env.ZH_GAPS_REPORT_PATH)
+  : new URL("../docs/zh-gaps.md", import.meta.url);
 
 const EMPTY_VI = withLocale("vi", () => lookupEmpty());
 const EMPTY_ZH = withLocale("zh", () => lookupEmpty());
@@ -94,13 +96,16 @@ export function renderZhGapsReport(gaps, totals) {
 }
 
 async function main(argv) {
+  // Thư viện corpus lấy gốc dự án từ cwd lúc nạp module: chuyển về gốc repo rồi mới nạp để chạy từ thư mục nào cũng ra cùng kết quả.
+  process.chdir(fileURLToPath(new URL("..", import.meta.url)));
+  const { lookupBuildCorpus } = await import("../src/lib/lookup-pages.ts");
   const corpus = await lookupBuildCorpus();
   const totals = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, corpus.groups[group].length]));
   const report = renderZhGapsReport(zhGaps(corpus), totals);
   if (argv.includes("--check")) {
     const current = await readFile(ZH_GAPS_REPORT_PATH, "utf8").catch(() => null);
     if (current !== report) {
-      console.error("zh-gaps.md không khớp dữ liệu hiện tại: chạy `node scripts/report-zh-gaps.mjs`");
+      console.error(`${fileURLToPath(ZH_GAPS_REPORT_PATH)} không có hoặc không khớp dữ liệu hiện tại: chạy \`node scripts/report-zh-gaps.mjs\``);
       return 1;
     }
     console.log("zh-gaps.md khớp dữ liệu hiện tại");

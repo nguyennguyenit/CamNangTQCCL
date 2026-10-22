@@ -41,7 +41,7 @@ python3 -m unittest discover -s tests
 
 Cài Chromium một lần bằng `npx playwright install chromium`. Test Node/E2E cũng kiểm tra local HTTP preview, routed HTTPS, private-path exclusion và mixed-content mà không gọi live third-party.
 
-Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml`, `_headers` và `_redirects` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs`, `tests-js/seo-dist-contract.test.mjs` cho link path/JSON-LD/llms/bất biến zh-gaps và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify`. Hành vi trình duyệt của route và 404 kiểm bằng:
+Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml`, `_headers` và `_redirects` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs`, `tests-js/seo-dist-contract.test.mjs` cho link path/JSON-LD/llms/bất biến zh-gaps và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify` (gồm `node scripts/report-zh-gaps.mjs --check`: `docs/zh-gaps.md` phải khớp dữ liệu Tra cứu). Hành vi trình duyệt của route và 404 kiểm bằng:
 
 ```bash
 npx playwright test tests-e2e/team-detail-pages.spec.mjs
@@ -108,7 +108,7 @@ Trang riêng Tra cứu `/tra-cuu/<nhóm>/<slug>/` (và `/zh/…`) sinh từ [`sr
 ```bash
 python3 -m pipeline.lookup_route_handles --write   # giữ mọi slug đã cấp, cấp slug cho mã mới, chuyển mã đã rời corpus sang retired, làm mới pin, sinh lại public/_redirects
 python3 -m pipeline.lookup_route_handles --check
-node scripts/report-zh-gaps.mjs                     # sinh lại báo cáo zh thiếu chữ (`--check` để so; test:dist chỉ kiểm bất biến, không đọc file báo cáo)
+node scripts/report-zh-gaps.mjs                     # sinh lại docs/zh-gaps.md (báo cáo zh thiếu chữ); `npm run verify` chạy `--check` và đỏ khi file lệch dữ liệu
 ```
 
 `--write` từ chối ledger đã bị sửa tay; không sửa slug bằng tay để "đẹp" URL vì URL đã công bố. Mã không còn trong corpus không có trang, slug của nó vẫn bị giữ để không bao giờ trỏ sang mục khác. Chiến pháp đã gộp (mã cũ nằm trong `lookup.formerIds` của mã giữ, `data/tactics.json`) có redirect `301` từ URL cũ sang trang mã giữ, cùng locale (`/tra-cuu/…` và `/zh/tra-cuu/…`, URL có `/` cuối); `public/_redirects` do `--write` sinh từ ledger và `--check` báo lỗi khi file lệch, không sửa tay. Mã bỏ hẳn (không mã giữ nào liệt kê) vẫn trả 404 tĩnh. Nếu mã đã gỡ quay lại corpus, `--write` bỏ rule của nó; trình duyệt đã cache 301 vẫn chuyển hướng cho tới khi cache hết. Bộ llms (`/llms.txt`, `/llms/*.txt`, `/llms-full.txt`) sinh lại theo dữ liệu ở mỗi build, không có bước riêng.

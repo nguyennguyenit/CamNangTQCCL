@@ -13,7 +13,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
 ├── public/_headers         # Pages cache policy source
-├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps
+├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps (`docs/zh-gaps.md`)
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
 ├── mcp-worker/             # data/domain + CLI/stdio/HTTP Research MCP read-only
@@ -45,7 +45,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `pipeline/lookup_route_handles.py`, `pipeline/lookup-route-handles.json`, `src/lib/lookup-detail-routes.ts`, `js/lookup-ids.js` | Ledger slug trang riêng đóng băng theo mã (`--write`/`--check`, mã rời corpus vào `retired`), loader kiểm ledger lúc build, `lookupHref`/`lookupItemPath` cho mọi link Tra cứu. |
 | `src/lib/structured-data.ts` | JSON-LD trang chi tiết đội, trang nhóm và trang riêng Tra cứu (`ItemPage` + `mainEntity` `Thing`/`DefinedTerm`). |
 | `src/lib/llms-documents.ts`, `src/pages/llms.txt.ts`, `src/pages/llms/[...path].txt.ts`, `src/pages/llms-full.txt.ts` | Một hàm sinh bộ llms chữ thuần theo mục và bản gộp `/llms-full.txt`. |
-| `scripts/report-zh-gaps.mjs` | Báo cáo mục Tra cứu mà bản zh thiếu chữ (`viOnly`); `--check` so với file báo cáo đã sinh (chạy tay, `test:dist` chỉ kiểm bất biến). |
+| `scripts/report-zh-gaps.mjs` | Báo cáo mục Tra cứu mà bản zh thiếu chữ (`viOnly`); ghi `docs/zh-gaps.md`; `--check` so với file đó và nằm trong `npm run verify` (`test:dist` chỉ kiểm bất biến). |
 | `js/recruit-tracker-store.js`, `js/recruit-tracker.js`, `js/recruit-sync.js` | Theo dõi chiêu mộ: store schema v2 (bản ghi có `id`/`updatedAt`/dấu xóa, chuyển v1→v2, bảo hiểm tính từ lượt theo `occurredAt`, gộp LWW theo bản ghi), UI (ghi nhanh, Hoàn tác, nhật ký, hộp thoại `<dialog>`), client đồng bộ tuỳ chọn với `/api/recruit`. |
 | `js/analyze.js`, `js/analyze-map.js`, `js/analyze-state.js` | Soi đội: nén ảnh, Turnstile, Worker call; ảnh hai phe có bước chọn phe (`normalizeTeamRead`); khớp 3 trạng thái cho editor xác nhận, diff từng ô với Đội chuẩn theo mùa/Đội khác (`findSimilarTeams` giữ cho MCP); link `?doi=v1.…`, lịch sử trên máy, thẻ PNG; đếm ẩn danh số ô phải sửa (`readStats` → `/api/scan-stats`) và gửi ảnh tự nguyện (`/api/scan-samples`). |
 | `worker/eval/` | Bộ ảnh chuẩn Soi đội: ảnh đã che tên + fixture ID canonical, `score.ts` chấm qua `draftFromRead`, `run-eval.ts` (`npm run eval:vision`) in độ chính xác theo màn hình × trường và p50/p95. |

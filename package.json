@@ -12,7 +12,7 @@
     "preview": "astro preview",
     "test:dist": "node --experimental-strip-types --test tests-js/astro-dist-contract.test.mjs tests-js/seo-dist-contract.test.mjs tests-js/pages-headers-contract.test.mjs",
     "test:node": "node --experimental-strip-types --test tests-js/*.test.mjs",
-    "verify": "python3 -m pipeline.site_localization check --root . --stage public && node scripts/verify-astro-dist.mjs",
+    "verify": "python3 -m pipeline.site_localization check --root . --stage public && node scripts/verify-astro-dist.mjs && node scripts/report-zh-gaps.mjs --check",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

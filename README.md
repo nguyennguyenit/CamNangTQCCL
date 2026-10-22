@@ -113,7 +113,7 @@ Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`
 ```bash
 python3 -m pipeline.lookup_route_handles --write
 python3 -m pipeline.lookup_route_handles --check
-node scripts/report-zh-gaps.mjs
+node scripts/report-zh-gaps.mjs   # sinh lại docs/zh-gaps.md; npm run verify chạy --check
 ```
 
 Chi tiết ở [deployment guide](docs/deployment-guide.md#static-pages).

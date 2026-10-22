@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-10-22 (Báo cáo zh-gaps vào docs)
+
+### Changed
+- `scripts/report-zh-gaps.mjs` ghi `docs/zh-gaps.md` (trước đó nằm trong thư mục kế hoạch cũ, đã xóa). Chạy từ thư mục nào cũng cho cùng kết quả; biến môi trường `ZH_GAPS_REPORT_PATH` chỉ để test.
+- `npm run verify` thêm `node scripts/report-zh-gaps.mjs --check`: đổi dữ liệu Tra cứu mà không sinh lại báo cáo thì `verify` đỏ. `mcp-worker.yml` lọc `pull_request` thêm `docs/zh-gaps.md`. Test: `tests-js/zh-gaps-report.test.mjs`.
+
 ## 2026-10-22 (Follow-up chữ Hán có nguồn)
 
 ### Fixed
