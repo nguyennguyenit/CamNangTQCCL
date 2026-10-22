@@ -381,15 +381,22 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     });
 
     const groupInput = el("input", { class: "ana-input mt-input", type: "text", id: "mt-new-group", autocomplete: "off" });
+    const addGroupButton = el("button", { type: "submit", class: "ana-btn" }, L("Thêm nhóm", "添加分组"));
     const addGroup = el("form", { class: "mt-add-group", novalidate: "" }, [
       el("label", { for: "mt-new-group" }, L("Thêm nhóm", "添加分组")),
       groupInput,
-      el("button", { type: "submit", class: "ana-btn" }, L("Thêm nhóm", "添加分组")),
+      addGroupButton,
     ]);
     addGroup.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const result = await run(() => api.createGroup(view.boxId, groupInput.value), () => L("Đã thêm nhóm.", "已添加分组。"));
-      if (result.ok) groupInput.value = "";
+      if (addGroupButton.disabled) return;
+      addGroupButton.disabled = true;
+      try {
+        const result = await run(() => api.createGroup(view.boxId, groupInput.value), () => L("Đã thêm nhóm.", "已添加分组。"));
+        if (result.ok) groupInput.value = "";
+      } finally {
+        addGroupButton.disabled = false;
+      }
     });
 
     const total = teams.length;

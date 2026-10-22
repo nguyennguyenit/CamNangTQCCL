@@ -414,12 +414,13 @@ test.describe("10–13 · cảnh báo, nhãn, dữ liệu hỏng", () => {
     await seedBox(server);
     await seedTeam(server, draft);
     // Kho của hộp chỉ có tướng đầu tiên.
+    const seededAt = NOW() - 60_000; // một lần đọc đồng hồ: updatedAt và data.updatedAt phải trùng ms (schema)
     await server.seed({
       kind: "owned",
       id: `main~${owned[0]}`,
-      updatedAt: NOW() - 60_000,
+      updatedAt: seededAt,
       deleted: false,
-      data: { id: `main~${owned[0]}`, boxId: "main", item: owned[0], name: heroName(owned[0]), type: "hero", updatedAt: new Date(NOW() - 60_000).toISOString(), deletedAt: "" },
+      data: { id: `main~${owned[0]}`, boxId: "main", item: owned[0], name: heroName(owned[0]), type: "hero", updatedAt: new Date(seededAt).toISOString(), deletedAt: "" },
     });
     await mockRoster(page, { server });
     await page.goto("/doi-cua-toi/");

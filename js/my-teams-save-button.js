@@ -9,7 +9,7 @@
 
 import { loadSession, signIn, describeError } from "./community-api.js";
 import { L, localePath } from "./i18n.js";
-import { completePendingSave, peekPendingSave, stashPendingSave } from "./my-teams-pending.js";
+import { completePendingSave, peekPendingSave, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
 import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, openDialog, showToast } from "./my-teams-ui.js";
 import { el } from "./render.js";
 
@@ -41,7 +41,9 @@ async function prepare(build) {
   const built = await build();
   const { newTeamId } = await import("./my-teams-sources.js");
   const key = `${built.draft.source.kind}:${built.draft.source.key}`;
-  if (!draftIds.has(key)) draftIds.set(key, newTeamId());
+  const pendingId = pendingIdForSource(key);
+  if (pendingId) draftIds.set(key, pendingId);
+  else if (!draftIds.has(key)) draftIds.set(key, newTeamId());
   return { ...built, key, draft: { ...built.draft, id: draftIds.get(key) } };
 }
 

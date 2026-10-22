@@ -141,8 +141,11 @@ export function createMyTeamsApi({ api = defaultApi, kinds = MY_TEAMS_KINDS, onC
       return { ok: false, pending: true, code: status };
     }
     // Không có phản hồi POST nhưng khóa đã sạch: lần kéo trước khi đẩy đã thấy đúng bản này trên server — trừ khi hộp đã bị
-    // xóa từ máy khác và lần kéo dọn luôn đội này khỏi bộ nhớ đệm (không có gì được lưu).
-    if (!live("team", team.id)) return { ok: false, rejected: true, code: "box_missing" };
+    // xóa từ máy khác và lần kéo dọn luôn đội này khỏi bộ nhớ đệm (không có gì được lưu). Không có `rev`/`acked` thì server chưa
+    // từng xác nhận bản này: không báo thành công.
+    const found = live("team", team.id);
+    if (!found) return { ok: false, rejected: true, code: "box_missing" };
+    if (found.rev === undefined && found.acked === undefined) return { ok: false, pending: true, code: sync.status() };
     return { ok: true, outcome: "already-applied", team: full };
   }
 
@@ -157,7 +160,11 @@ export function createMyTeamsApi({ api = defaultApi, kinds = MY_TEAMS_KINDS, onC
       const rejection = rejections.get(key);
       if (rejection) return rejected(rejection.code);
     }
-    if (keys.some((key) => sync.state()?.dirty?.[key] !== undefined)) {
+    const unproven = keys.some((key) => {
+      const found = record(...key.split(/:(.*)/su, 2));
+      return found && found.rev === undefined && found.acked === undefined;
+    });
+    if (unproven || keys.some((key) => sync.state()?.dirty?.[key] !== undefined)) {
       const status = sync.status();
       return status === "signed-out" || status === "mismatch" ? rejected(status) : { ok: false, pending: true, code: status };
     }

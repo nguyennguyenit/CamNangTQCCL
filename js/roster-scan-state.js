@@ -206,9 +206,11 @@ export function applyScanResult(state, type, result) {
   } else if (type === "tactics") {
     next.ownedTactics = uniqByName([...(next.ownedTactics || []), ...(result?.tactics || [])]);
   } else if (type === "builtTeams") {
-    const all = dedupeLockedTeams([...(next.lockedTeams || []), ...(result?.teams || [])]);
-    next.lockedTeams = all.slice(-MAX_LOCKED_TEAMS);
-    droppedLockedTeams = all.length - next.lockedTeams.length;
+    const existing = dedupeLockedTeams(next.lockedTeams || []);
+    const all = dedupeLockedTeams([...existing, ...(result?.teams || [])]);
+    // Chỉ loại bản cũ khi đội MỚI đẩy vượt trần, và không bao giờ nhiều hơn số đội vừa thêm: dữ liệu đã có không bị cắt.
+    droppedLockedTeams = Math.min(Math.max(0, all.length - MAX_LOCKED_TEAMS), all.length - existing.length);
+    next.lockedTeams = all.slice(droppedLockedTeams);
   }
   const now = new Date().toISOString();
   if (SCAN_TYPES.includes(type)) {

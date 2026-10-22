@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import {
   MAIN_BOX_ID,
   applyPull,
+  applyResults,
   boxes,
   clockOf,
   emptyCloudState,
@@ -14,6 +15,7 @@ import {
   lockedTeamKey,
   mergeCloudStates,
   mergeLocal,
+  nextStamp,
   overrideRecordId,
   overridesOf,
   ownedOf,
@@ -307,4 +309,67 @@ test("M4. applyPull: trang rỗng có cursor server thấp hơn con trỏ local 
   assert.deepEqual([same.state.cursor, same.reset], [99, false]);
   const withRecords = applyPull(state, [tombstone("owned", "main~hero:x", "main", NOW, 5)], 5);
   assert.deepEqual([withRecords.state.cursor, withRecords.reset], [99, false], "trang có bản ghi không reset");
+});
+
+const FUTURE = Date.UTC(2030, 0, 1);
+const NOW0 = Date.UTC(2026, 9, 21, 8, 0, 0);
+const rejectAll = (sent, code) => sent.map((item) => ({ kind: item.kind, id: item.id, outcome: "rejected", code }));
+
+test("L2. clock_skew: bản bị từ chối không kéo đồng hồ Lamport, dấu sau đó về lại gần giờ máy", () => {
+  let state = putRecord(emptyCloudState("u"), { kind: "box", id: "b1", data: { name: "H" } }, { now: FUTURE });
+  assert.equal(clockOf(state), FUTURE);
+  const sent = pendingPush(state);
+  state = applyResults(state, sent, rejectAll(sent, "clock_skew")).state;
+  assert.equal(clockOf(state), 0, "bản chưa từng được server nhận không tính vào đồng hồ");
+  assert.equal(nextStamp(state, NOW0), NOW0);
+  const retry = putRecord(state, { kind: "box", id: "b1", data: { name: "H" } }, { now: NOW0 });
+  assert.equal(retry.records["box:b1"].updatedAt, NOW0, "cùng nội dung vẫn được đóng dấu lại");
+  assert.deepEqual(Object.keys(retry.dirty), ["box:b1"]);
+});
+
+test("H1. rejected: ghi lại cùng nội dung đóng dấu mới và vào dirty; ensureBoxDefaults dựng lại hộp bị từ chối", () => {
+  let state = ensureBoxDefaults(emptyCloudState("u"), "main", { now: NOW0 });
+  const sent = pendingPush(state);
+  state = applyResults(state, sent, rejectAll(sent, "cap")).state;
+  assert.deepEqual(state.dirty, {});
+  assert.equal(pendingPush(state).length, 0);
+  const again = ensureBoxDefaults(state, "main", { now: NOW0 + 10 });
+  assert.notEqual(again, state);
+  assert.deepEqual(pendingPush(again).map((item) => item.kind + ":" + item.id).sort(), ["box:main", "group:main~ghep-team", "group:main~khai-hoang"]);
+});
+
+test("H1. rejected: bản kéo về của server thắng bản bị từ chối kể cả khi dấu local lớn hơn", () => {
+  let state = putRecord(emptyCloudState("u"), { kind: "box", id: "b1", data: { name: "Local" } }, { now: FUTURE });
+  const sent = pendingPush(state);
+  state = applyResults(state, sent, rejectAll(sent, "clock_skew")).state;
+  const iso = new Date(NOW0).toISOString();
+  const remote = { kind: "box", id: "b1", updatedAt: NOW0, rev: 3, deleted: false, data: { id: "b1", name: "Server", updatedAt: iso, deletedAt: "" } };
+  const pulled = applyPull(state, [remote], 3).state;
+  assert.equal(pulled.records["box:b1"].data.name, "Server");
+});
+
+test("L3. applyPull: bản sống của server thay bản xóa hộp local → cursor về 0 và reset để kéo lại các bản con", () => {
+  let state = emptyCloudState("u");
+  state = putRecord(state, { kind: "box", id: "b1", data: { name: "H" } }, { now: NOW0 });
+  state = putRecord(state, { kind: "group", id: "b1~ghep-team", boxId: "b1", data: { name: "G", order: 1 } }, { now: NOW0 });
+  state = removeRecord(state, "box", "b1", { now: NOW0 + 1 });
+  state = { ...state, cursor: 9 };
+  assert.equal(state.records["group:b1~ghep-team"], undefined);
+  const iso = new Date(NOW0 + 100).toISOString();
+  const remote = { kind: "box", id: "b1", updatedAt: NOW0 + 100, rev: 10, deleted: false, data: { id: "b1", name: "Server", updatedAt: iso, deletedAt: "" } };
+  const applied = applyPull(state, [remote], 10);
+  assert.equal(applied.reset, true);
+  assert.equal(applied.state.cursor, 0);
+});
+
+test("L3. applyResults conflict: server còn hộp sống sau khi local xóa → cursor về 0", () => {
+  let state = putRecord(emptyCloudState("u"), { kind: "box", id: "b1", data: { name: "H" } }, { now: NOW0 });
+  state = removeRecord(state, "box", "b1", { now: NOW0 + 1 });
+  state = { ...state, cursor: 9 };
+  const sent = pendingPush(state);
+  const iso = new Date(NOW0 + 100).toISOString();
+  const server = { kind: "box", id: "b1", updatedAt: NOW0 + 100, rev: 10, deleted: false, data: { id: "b1", name: "Server", updatedAt: iso, deletedAt: "" } };
+  const applied = applyResults(state, sent, [{ kind: "box", id: "b1", outcome: "conflict", server }]);
+  assert.equal(applied.state.cursor, 0);
+  assert.equal(applied.state.records["box:b1"].deleted, false);
 });

@@ -27,7 +27,8 @@ export function httpError(status, code, extra = {}) {
   return Object.assign(new Error(`${status} ${code}`), { status, code, ...extra });
 }
 
-const MAX_BATCH = 200;
+// Cùng nguồn với server thật: `ROSTER_MAX_BATCH` trong community-worker/src/routes/roster.ts (file đó kéo theo hono/D1 nên đọc hằng số từ mã nguồn).
+const MAX_BATCH = Number(/export const ROSTER_MAX_BATCH = (\d+)/u.exec(readFileSync(new URL("../../community-worker/src/routes/roster.ts", import.meta.url), "utf8"))?.[1]);
 const keyOf = (kind, id) => `${kind}:${id}`;
 
 /**
@@ -42,6 +43,7 @@ export async function createRosterServer({ userId = "u-alice", pageSize = 500 } 
   let dropNext = false;
   let hold = null;
   const calls = [];
+  const rejections = new Map();
 
   const wire = (row) => ({ kind: row.kind, id: row.id, boxId: row.boxId, updatedAt: row.updatedAt, rev: row.rev, deleted: row.deleted, data: structuredClone(row.data) });
 
@@ -62,6 +64,11 @@ export async function createRosterServer({ userId = "u-alice", pageSize = 500 } 
   }
 
   async function apply(record) {
+    const injected = rejections.get(keyOf(record.kind, record.id));
+    if (injected && injected.times > 0) {
+      injected.times -= 1;
+      return { kind: record.kind, id: record.id, outcome: "rejected", code: injected.code };
+    }
     const checked = await validateRosterRecord(record);
     if (!checked.ok) return { kind: checked.kind, id: checked.id, outcome: "rejected", code: checked.code };
     const { record: valid } = checked;
@@ -99,6 +106,10 @@ export async function createRosterServer({ userId = "u-alice", pageSize = 500 } 
     },
     fail(error) {
       failure = error;
+    },
+    /** Từ chối `code` cho `times` lần POST kế tiếp chứa bản ghi `kind:id` (không ghi vào server), như cap/quota/clock_skew. */
+    rejectNext(kind, id, code, times = 1) {
+      rejections.set(keyOf(kind, id), { code, times });
     },
     dropResponse() {
       dropNext = true;

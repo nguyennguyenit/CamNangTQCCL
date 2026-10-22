@@ -264,6 +264,22 @@ test("18. lockedTeams tối đa MAX_LOCKED_TEAMS: bản cũ nhất bị loại v
   assert.equal(serialized.lockedTeams.length, 40);
   assert.equal(deserializeRosterScanState(JSON.stringify({ lockedTeams: teams(0, 40) })).lockedTeams.length, 40);
   const added = applyScanResult(serialized, "builtTeams", { teams: teams(40, 41) });
-  assert.equal(added.lockedTeams.length, 30, "thêm đội thì áp trần");
-  assert.equal(added.droppedLockedTeams, 11);
+  assert.equal(added.lockedTeams.length, 40, "thêm 1 đội vào hộp đã quá trần chỉ loại đúng 1 bản cũ");
+  assert.equal(added.droppedLockedTeams, 1);
+});
+
+test("M1. đội khóa: 35 đội có sẵn + quét lại đội cũ/quét rỗng không mất đội; thêm mới chỉ loại cũ nhất vừa đủ", () => {
+  const teams = (from, to) => Array.from({ length: to - from }, (_, i) => ({ teamName: `Đội ${from + i}`, heroes: [`Tướng ${from + i}`], tactics: [`Chiến pháp ${from + i}`] }));
+  const base = serializeRosterScanState({ ...createInitialRosterScanState(), lockedTeams: teams(0, 35) });
+  const rescan = applyScanResult(base, "builtTeams", { teams: teams(0, 2) });
+  assert.equal(rescan.lockedTeams.length, 35);
+  assert.equal(rescan.droppedLockedTeams, 0);
+  const empty = applyScanResult(base, "builtTeams", { teams: [] });
+  assert.equal(empty.lockedTeams.length, 35);
+  assert.equal(empty.droppedLockedTeams, 0);
+  const added = applyScanResult(base, "builtTeams", { teams: teams(35, 37) });
+  assert.equal(added.droppedLockedTeams, 2, "chỉ loại bằng số đội mới thêm");
+  assert.equal(added.lockedTeams.length, 35);
+  assert.equal(added.lockedTeams[0].teamName, "Đội 2");
+  assert.equal(added.lockedTeams.at(-1).teamName, "Đội 36");
 });

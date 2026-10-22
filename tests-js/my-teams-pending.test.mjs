@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { PENDING_KEY, PENDING_TTL_MS, clearPendingSave, completePendingSave, peekPendingSave, stashPendingSave } from "../js/my-teams-pending.js";
+import { PENDING_KEY, PENDING_TTL_MS, clearPendingSave, completePendingSave, peekPendingSave, pendingIdForSource, stashPendingSave } from "../js/my-teams-pending.js";
 import { fromRecommended } from "../js/my-teams-sources.js";
 import { createMyTeamsApi } from "../js/my-teams-api.js";
 import { ids, recommendedById } from "./support/my-teams-fixtures.mjs";
@@ -272,4 +272,18 @@ test("M1 completePendingSave: lưu đội KHÁC thành công không xóa bản l
   assert.equal(completePendingSave({ ok: true, outcome: "applied", team: { id: "team-khac" } }, { storage, now: () => NOW }), false);
   assert.equal(peekPendingSave({ storage, now: () => NOW })?.id, draft.id);
   assert.equal(completePendingSave({ ok: true, outcome: "applied" }, { storage, now: () => NOW }), false, "kết quả không có team.id không xóa");
+});
+
+test("M4 sau OAuth: lưu lại cùng nguồn dùng lại draft.id đang chờ nên hoàn tất xóa bản lưu dở (không phát lại thành đội trùng)", () => {
+  const storage = memoryStorage();
+  const draft = draftOf("team-x");
+  stashPendingSave(draft, { storage, now: () => NOW });
+  const key = `${draft.source.kind}:${draft.source.key}`;
+  const reused = pendingIdForSource(key, { storage, now: () => NOW });
+  assert.equal(reused, "team-x", "cùng nguồn → dùng lại id đang chờ");
+  assert.equal(pendingIdForSource("recommended:nguon-khac", { storage, now: () => NOW }), null, "nguồn khác không dùng lại");
+  assert.equal(completePendingSave({ ok: true, outcome: "applied", team: { id: reused } }, { storage, now: () => NOW }), true);
+  assert.equal(peekPendingSave({ storage, now: () => NOW }), null, "bản lưu dở đã bị xóa, không còn gì để phát lại");
+  stashPendingSave(draft, { storage, now: () => NOW });
+  assert.equal(pendingIdForSource(key, { storage, now: () => NOW + PENDING_TTL_MS + 1 }), null, "hết hạn thì không dùng lại");
 });

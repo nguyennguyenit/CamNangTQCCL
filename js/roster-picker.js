@@ -242,7 +242,7 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
 
   const search = el("input", { type: "search", class: "ana-input roster-picker-search", id: `${uid}-q`, autocomplete: "off", placeholder: L("Tìm tên Việt, Hán-Việt hoặc chữ Hán…", "搜索越南名、汉越音或汉字…"), "aria-label": L("Tìm trong danh mục", "搜索图鉴") });
   const filterRow = el("div", { class: "roster-picker-filters" });
-  const status = el("p", { class: "roster-picker-count", role: "status", "aria-live": "polite" });
+  const status = el("p", { class: "roster-picker-count", role: "status", tabindex: "-1", "aria-live": "polite" });
   const selectAllBtn = el("button", { type: "button", class: "ana-btn roster-picker-selectall" });
   const clearBtn = el("button", { type: "button", class: "roster-ghost roster-picker-clearall" });
   const moreBtn = el("button", { type: "button", class: "roster-ghost roster-more roster-picker-more" });
@@ -332,19 +332,27 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
     listSlot.querySelector(`[data-picker-id="${CSS.escape(item.id)}"]`)?.focus();
   });
 
+  /** Vẽ lại sau chọn/bỏ chọn hàng loạt; nút vừa bấm có thể thành `disabled` và mất focus: chuyển sang nút kia (hoặc dòng trạng thái). */
+  function paintKeepingFocus(button, sibling) {
+    const hadFocus = document.activeElement === button;
+    paint();
+    if (!hadFocus || !button.disabled) return;
+    if (!sibling.disabled && !sibling.hidden) sibling.focus();
+    else status.focus();
+  }
   selectAllBtn.addEventListener("click", () => {
     const chosen = selected();
     const todo = current.filter((item) => !chosen.has(item.id));
     if (!todo.length || disabled) return;
     onToggle(todo, true);
-    paint();
+    paintKeepingFocus(selectAllBtn, clearBtn);
   });
   clearBtn.addEventListener("click", () => {
     const chosen = selected();
     const todo = current.filter((item) => chosen.has(item.id));
     if (!todo.length || disabled) return;
     onToggle(todo, false);
-    paint();
+    paintKeepingFocus(clearBtn, selectAllBtn);
   });
   moreBtn.addEventListener("click", () => {
     shownCount = shownCount < current.length ? shownCount + PAGE_SIZE : PAGE_SIZE;

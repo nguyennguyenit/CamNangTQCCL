@@ -28,7 +28,7 @@ import { L, currentLocale } from "./i18n.js";
 import { createRawNameResolver, localName } from "./website-display.js";
 import { describeError } from "./community-api.js";
 import { boxes, toScanState } from "./roster-cloud-store.js";
-import { createScanWriter } from "./roster-scan-writer.js";
+import { createScanWriter, reconcileScanWithCloud } from "./roster-scan-writer.js";
 import { createRosterIdResolver } from "./roster-id-resolve.js";
 import { DEFAULT_KINDS, createRosterSync } from "./roster-sync.js";
 import { addPicked, buildCatalog, createPicker, removePicked } from "./roster-picker.js";
@@ -171,6 +171,16 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const tacticShown = (name) => (zh ? shown(name) : tacticDisplayName(name));
   const joinTactics = (names) => names.map(tacticShown).join(" · ");
   // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
+  // Nhãn bản ghi đồng bộ trong cảnh báo: bản zh dùng tên chữ Hán/chiến pháp thay vì tên Việt hay id thô.
+  const recordLabelShown = (record) => {
+    const data = record?.data || {};
+    if (record?.kind === "owned" && data.name) return data.type === "tactic" ? tacticShown(data.name) : shown(data.name);
+    if (record?.kind === "override" && data.tactic) return tacticShown(data.tactic);
+    if (record?.kind === "locked" && zh && data.heroes?.length) return joinNames(data.heroes);
+    if (record?.kind === "season") return seasonOptions.has(data.seasonId) ? seasonNameText(seasonOptions.get(data.seasonId)) : recordLabel(record);
+    if (record?.kind === "team" && zh) return "队伍";
+    return recordLabel(record);
+  };
   const teamLabel = (team) => {
     if (!zh || !team?.heroes?.length) return team?.name;
     return team.heroes.map((hero) => shown(typeof hero === "string" ? hero : hero?.name)).filter(Boolean).join(" · ");
@@ -233,12 +243,12 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const dismissAction = (key, after) => ({ label: L("Đã hiểu", "知道了"), run: () => { clearAlert(key); after?.(); } });
 
   function showConflict({ key, loser }) {
-    const label = recordLabel(loser);
+    const label = recordLabelShown(loser);
     const alertKey = `conflict:${key}`;
     setAlert(alertKey, L(`Bản mới hơn từ thiết bị khác đã thay thế chỉnh sửa của bạn với “${label}”.`, `其他设备上更新的版本已替换你对“${label}”的修改。`), dismissAction(alertKey));
   }
   function showRejected(item) {
-    const label = recordLabel(item.record);
+    const label = recordLabelShown(item.record);
     const reason = REJECT_REASONS[item.code] || L("bị từ chối", "被拒绝");
     const alertKey = `rejected:${item.key}`;
     setAlert(
@@ -309,30 +319,42 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   };
 
   /** Nạp kho của hộp đang chọn từ cache cloud vào `state` (giữ ảnh đã đọc/cờ xác nhận); trả `true` khi nội dung kho đổi. */
-  function refreshFromCloud() {
+  function refreshFromCloud({ keepLocalOnly = true } = {}) {
     const cloudState = sync.state();
     const list = cloudState ? boxes(cloudState) : [];
     if (!list.length) return false;
     if (!list.some((box) => box.id === boxId)) boxId = preferredBox(list);
-    const next = toScanState(cloudState, boxId);
+    const fromCloud = toScanState(cloudState, boxId);
+    // Món "chỉ có trên máy này" (không lên được cloud) và cờ của món tương đương phải sống sót qua lần nạp lại.
+    const next = keepLocalOnly ? reconcileScanWithCloud(state, fromCloud, idResolver) : fromCloud;
     const changed = inventorySignature(next) !== inventorySignature(state);
     state = { ...next, scans: state.scans, confirmed: changed ? false : state.confirmed, updatedAt: state.updatedAt };
     writer.rebase(next);
     return changed;
   }
 
+  let urlSeasonPinned = false;
   async function applySeasonFromState() {
     await seasonReady;
+    // `?season=` tường minh thắng mùa đã lưu ở lần nạp đầu (như khách: URL > đã lưu > mặc định).
+    if (urlSeasonPinned) {
+      urlSeasonPinned = false;
+      return;
+    }
     if (state.seasonId && seasonOptions.has(state.seasonId) && season?.id !== state.seasonId) selectSeason(state.seasonId);
   }
 
   /** Lần đầu có kho cloud của user này: hỏi gộp kho local (cờ theo userId), bảo đảm có hộp `main`, rồi chuyển sang kho cloud. */
   async function enterCloud() {
     const local = loadState();
+    let merged = false;
     if (sync.mergeStatus() === "none" && hasLocalInventory(local)) {
       if (confirm(L("Gộp kho trên máy này vào tài khoản?\nChọn Hủy nếu đây là máy dùng chung với người khác.", "要把本机的库存合并到账号吗？\n如果这是与他人共用的设备，请选择取消。"))) {
-        const merged = await sync.mergeLocal(local, idResolver);
-        if (merged.ok) localOnlyNames = localOnlyList(merged.localOnly);
+        const result = await sync.mergeLocal(local, idResolver);
+        if (result.ok) {
+          merged = true;
+          localOnlyNames = localOnlyList(result.localOnly);
+        }
       } else {
         sync.declineMerge();
       }
@@ -341,7 +363,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     if (mode !== "loading") return;
     mode = "cloud";
     state = { ...state, scans: {} };
-    refreshFromCloud();
+    refreshFromCloud({ keepLocalOnly: merged });
     for (const item of sync.rejected()) showRejected(item);
     await applySeasonFromState();
     rerender();
@@ -350,19 +372,24 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   /** Không kéo được (mất mạng / hết phiên) nhưng cache của user này còn: xem kho cache, không rơi về kho local. */
   function enterFromCache(next) {
     state = { ...state, scans: {} };
-    refreshFromCloud();
+    refreshFromCloud({ keepLocalOnly: false });
     const usable = Boolean(sync.state() && boxes(sync.state()).length);
     mode = next === "signed-out" || !usable ? "readonly" : "cloud";
     applySeasonFromState().then(() => rerender());
   }
 
   async function onSyncStatus(next) {
+    const previousStatus = syncStatus;
     syncStatus = next;
     try {
       if (mode === "guest" && next !== "guest" && sync.user()) mode = "loading";
       if (next === "synced" && mode === "loading") await enterCloud();
       else if (mode === "loading" && (next === "offline" || next === "error" || next === "signed-out")) enterFromCache(next);
-      else if (next === "signed-out" && mode === "cloud") mode = "readonly";
+      else if (next === "synced" && mode === "readonly" && previousStatus !== "signed-out" && sync.user()) {
+        // Chỉ đọc vì offline/lỗi lúc vào trang mà chưa có cache: có kết nối lại thì nạp kho cloud.
+        mode = "loading";
+        await enterCloud();
+      } else if (next === "signed-out" && mode === "cloud") mode = "readonly";
       else if (next === "mismatch") mode = "locked";
     } catch {
       // Lỗi dựng UI không được làm hỏng vòng đồng bộ.
@@ -406,7 +433,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       // Storage bị chặn: chọn hộp chỉ còn hiệu lực trong phiên này.
     }
     state = { ...state, scans: {}, confirmed: false };
-    refreshFromCloud();
+    refreshFromCloud({ keepLocalOnly: false });
     applySeasonFromState().then(() => rerender());
   });
 
@@ -468,6 +495,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       // URL > mùa đã lưu > mặc định của site; giá trị lạ về mặc định.
       const explicit = new URL(location.href).searchParams.has("season");
       const fromUrl = explicit ? readRecommendedQuery(location.href, registry).season : null;
+      urlSeasonPinned = seasonOptions.has(fromUrl);
       const id = [fromUrl, state.seasonId, registry.defaultSourceSeasonId].find((value) => seasonOptions.has(value)) || options[0]?.sourceSeasonId;
       if (!id) throw new Error("no seasons");
       seasonSelect.replaceChildren(...options.map((item) => el("option", { value: item.sourceSeasonId, title: seasonOptionTitle(item) }, seasonOptionText(item, registry.defaultSourceSeasonId))));

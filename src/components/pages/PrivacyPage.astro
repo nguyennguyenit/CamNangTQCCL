@@ -176,14 +176,20 @@ const sections: PolicySection[] = [
         '“招募记录”的数据（账号、卡池、招募次数）。如果你在该页面登录，记录还会同步到服务器（见“存储位置与处理方”）；未登录时记录不会离开浏览器。',
       ),
       t(
-        'Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho" (cùng mùa đang chọn, đội đang khóa và món bù). Nếu bạn đăng nhập, kho còn được đồng bộ lên máy chủ theo từng hộp kho (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, kho không rời trình duyệt. Ảnh kho dùng để đọc không bao giờ được lưu hay đồng bộ.',
-        '在“武将库配队”中扫描得到的武将与战法库（以及所选赛季、锁定的队伍和替代战法）。如果你登录，库存还会按库存盒同步到服务器（见“存储位置与处理方”）；未登录时库存不会离开浏览器。用于识别的库存截图不会被保存或同步。',
-      ),
-      t(
-        'Đội, nhóm và hộp kho trong "Đội của tôi" (bắt buộc đăng nhập): chỉ lưu trên máy chủ theo tài khoản của bạn (xem mục "Nơi lưu trữ và bên xử lý"), không lưu bền trong trình duyệt. Riêng khi bạn bấm lưu lúc chưa đăng nhập, bản đội đang lưu được giữ tạm trong phiên trình duyệt tối đa 30 phút để hoàn tất sau khi đăng nhập. Nội dung bạn tự gõ vào cột chữ tự do được lưu nguyên văn.',
-        '“我的阵容”（需登录）中的阵容、分组和库存盒：仅按你的账号保存在服务器上（见“存储位置与处理方”），不会长期保存在浏览器中。若你在未登录时点击保存，正在保存的阵容会在浏览器会话中临时保留最多 30 分钟，以便登录后完成保存。你在自由文本栏中输入的内容会原样保存。',
+        'Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho" (cùng mùa đang chọn, đội đang khóa và món bù). Nếu bạn đăng nhập, kho còn được đồng bộ lên máy chủ theo từng hộp kho (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, kho không rời trình duyệt. Khi bạn đăng nhập, bản sao của kho (kèm tên hộp kho bạn tự đặt) được giữ trong localStorage của trình duyệt và xoá khi bạn đăng xuất. Ảnh kho dùng để đọc không bao giờ được lưu hay đồng bộ.',
+        '在“武将库配队”中扫描得到的武将与战法库（以及所选赛季、锁定的队伍和替代战法）。如果你登录，库存还会按库存盒同步到服务器（见“存储位置与处理方”）；未登录时库存不会离开浏览器。登录后，库存副本（含你自定义的库存盒名称）会保存在浏览器的 localStorage 中，退出登录时清除。用于识别的库存截图不会被保存或同步。',
       ),
       t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。'),
+    ],
+  },
+  {
+    id: 'doi-cua-toi',
+    heading: t('Đội của tôi', '我的阵容'),
+    paragraphs: [
+      t(
+        'Đội và nhóm trong "Đội của tôi" (bắt buộc đăng nhập) chỉ lưu trên máy chủ theo tài khoản của bạn (xem mục "Nơi lưu trữ và bên xử lý"), không lưu bền trong trình duyệt: trang chỉ giữ chúng trong bộ nhớ khi đang mở. Hộp kho (tên do bạn đặt) là hộp của "Gợi ý đội từ kho" nên cũng được lưu trong localStorage như mô tả ở trên. Riêng khi bạn bấm lưu lúc chưa đăng nhập, bản đội đang lưu được giữ tạm trong sessionStorage tối đa 30 phút để hoàn tất sau khi đăng nhập. Nội dung bạn tự gõ vào cột chữ tự do được lưu nguyên văn.',
+        '“我的阵容”（需登录）中的阵容和分组仅按你的账号保存在服务器上（见“存储位置与处理方”），不会长期保存在浏览器中：页面打开时只保留在内存中。库存盒（名称由你自定义）与“武将库配队”共用，因此也会如上所述保存在 localStorage 中。若你在未登录时点击保存，正在保存的阵容会在 sessionStorage 中临时保留最多 30 分钟，以便登录后完成保存。你在自由文本栏中输入的内容会原样保存。',
+      ),
     ],
   },
   {

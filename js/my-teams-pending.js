@@ -66,3 +66,10 @@ export function completePendingSave(result, { storage = defaultStorage(), now = 
   clearPendingSave({ storage });
   return true;
 }
+
+/** `draft.id` của bản lưu dở còn hạn có cùng nguồn (`kind:key`), hoặc `null`. Sau OAuth, lưu lại cùng nguồn dùng lại id này
+ *  thay vì sinh id mới (bản lưu dở còn nguyên sẽ bị phát lại thành đội trùng). */
+export function pendingIdForSource(sourceKey, opts = {}) {
+  const draft = peekPendingSave(opts);
+  return draft && `${draft.source?.kind}:${draft.source?.key}` === sourceKey ? draft.id : null;
+}

@@ -15402,7 +15402,7 @@ body[data-page-section="roster-recommend"] .layout {
 .mt-input, .mt-field .ana-input, .mt-field select { width: 100%; max-width: 100%; box-sizing: border-box; }
 .mt-input[aria-invalid="true"] { border-color: var(--avoid); }
 .mt-bytes { justify-self: end; color: var(--muted); font: var(--type-meta); }
-.mt-bytes[data-over="true"] { color: var(--avoid); font-weight: 700; }
+.mt-bytes[data-over="true"] { color: var(--avoid); font-weight: var(--weight-bold); }
 .mt-field-inline { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--space-8); }
 .mt-edit-heroes { display: grid; gap: var(--space-14); min-width: 0; }
 .mt-edit-hero { display: grid; gap: var(--space-10); min-width: 0; margin: 0; padding: var(--space-12); border: var(--border-hair) solid var(--line-2); border-radius: var(--radius-10); }
@@ -15410,7 +15410,7 @@ body[data-page-section="roster-recommend"] .layout {
 .mt-slot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-10); }
 .mt-slot-label { min-width: var(--size-col-120); color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
 .mt-slot-value { flex: 1 1 var(--size-col-120); min-width: 0; font: var(--type-hero-name); overflow-wrap: anywhere; }
-.mt-slot-value[data-empty="true"] { color: var(--muted); font-weight: 400; }
+.mt-slot-value[data-empty="true"] { color: var(--muted); font-weight: var(--weight-regular); }
 .mt-chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
 .mt-chips-label { color: var(--muted); font: var(--type-meta); }
 .mt-chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-2) 0 var(--space-12); border: var(--border-hair) solid var(--line); border-radius: var(--radius-999); font: var(--type-small); }
@@ -15451,7 +15451,7 @@ body[data-page-section="roster-recommend"] .layout {
 .mt-picker-limit { margin: 0; color: var(--warn); font: var(--type-small); }
 .mt-picker-dialog .roster-picker-list { max-height: 50dvh; overflow-y: auto; }
 
-.mt-toasts { position: fixed; z-index: 60; right: var(--space-16); bottom: var(--space-16); display: grid; gap: var(--space-8); width: min(420px, calc(100vw - var(--space-32))); }
+.mt-toasts { position: fixed; z-index: var(--z-50); right: var(--space-16); bottom: var(--space-16); display: grid; gap: var(--space-8); width: min(420px, calc(100vw - var(--space-32))); }
 .mt-toast { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-12); padding: var(--space-12) var(--space-14); border: var(--border-hair) solid var(--line); border-radius: var(--radius-12); background-color: var(--panel); color: var(--ink); box-shadow: var(--shadow-modal); font: var(--type-small); }
 .mt-toast[data-kind="error"] { border-color: var(--avoid); }
 .mt-toast-text { flex: 1 1 var(--size-col-120); min-width: 0; margin: 0; overflow-wrap: anywhere; }
@@ -15471,7 +15471,7 @@ body[data-page-section="roster-recommend"] .layout {
   .mt-toasts { right: var(--space-12); bottom: var(--space-12); }
   /* Bảng đội thành thẻ xếp dọc: mỗi ô một dòng, nhãn cột lấy từ `data-label`. */
   .mt-table, .mt-table tbody, .mt-table tr, .mt-table td { display: block; width: 100%; }
-  .mt-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+  .mt-table thead { position: absolute; width: var(--space-1); height: var(--space-1); overflow: hidden; clip-path: inset(50%); }
   .mt-row { padding: var(--space-8) 0; border-bottom: var(--border-hair) solid var(--line-2); }
   .mt-row:last-child { border-bottom: none; }
   .mt-table td { display: grid; grid-template-columns: var(--size-col-120) minmax(0, 1fr); gap: var(--space-8); border-bottom: none; padding: var(--space-4) 0; }

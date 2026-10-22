@@ -107,7 +107,7 @@ export function emptyCloudState(userId) {
 /** Đồng hồ Lamport: `updatedAt` lớn nhất trong mọi bản ghi (kể cả bản kéo về từ máy khác). */
 export function clockOf(state) {
   let max = 0;
-  for (const record of Object.values(state.records)) if (record.updatedAt > max) max = record.updatedAt;
+  for (const record of Object.values(state.records)) if (!record.rejected && record.updatedAt > max) max = record.updatedAt;
   return max;
 }
 
@@ -126,6 +126,7 @@ function normalizeRecord(raw) {
   };
   if (Number.isSafeInteger(raw.rev)) record.rev = raw.rev;
   if (Number.isSafeInteger(raw.acked)) record.acked = raw.acked;
+  if (raw.rejected === true) record.rejected = true;
   return record;
 }
 
@@ -186,18 +187,18 @@ function edit(state, now, fn) {
       const key = recordKey(kind, id);
       const data = { id, ...(kind === "box" ? {} : { boxId }), ...body, updatedAt: isoOf(stamp), deletedAt: "" };
       const old = next.records[key];
-      if (old && !old.deleted && sameBody(old.data, data)) return false;
+      if (old && !old.deleted && !old.rejected && sameBody(old.data, data)) return false;
       next.records[key] = { kind, id, boxId: kind === "box" ? null : boxId, updatedAt: stamp, deleted: false, data };
       next.dirty[key] = stamp;
       changed = true;
       return true;
     },
-    has: (kind, id) => Object.hasOwn(next.records, recordKey(kind, id)),
+    has: (kind, id) => Object.hasOwn(next.records, recordKey(kind, id)) && !next.records[recordKey(kind, id)].rejected,
     /** Xóa mềm; khóa chưa từng tồn tại hoặc đã xóa thì bỏ qua (server từ chối `not_found`). */
     tombstone(kind, id) {
       const key = recordKey(kind, id);
       const old = next.records[key];
-      if (!old || old.deleted) return false;
+      if (!old || (old.deleted && !old.rejected)) return false;
       const boxId = kind === "box" ? null : old.boxId;
       next.records[key] = {
         kind,
@@ -400,13 +401,14 @@ export function applyPull(state, incoming, cursor) {
   const records = { ...state.records };
   const dirty = { ...state.dirty };
   const lost = [];
+  let restore = false;
   for (const raw of incoming) {
     const remote = normalizeRecord(raw);
     if (!remote) continue;
     const key = recordKey(remote.kind, remote.id);
     const local = records[key];
     if (local) {
-      if (remote.updatedAt < local.updatedAt) continue;
+      if (remote.updatedAt < local.updatedAt && !local.rejected) continue; // bản bị từ chối (dấu có thể ở tương lai) không che bản server
       const pending = dirty[key];
       if (pending !== undefined && !(remote.updatedAt === local.updatedAt && remote.deleted === local.deleted && sameData(remote.data, local.data))) {
         lost.push(toWire(local));
@@ -415,10 +417,12 @@ export function applyPull(state, incoming, cursor) {
     records[key] = remote;
     delete dirty[key];
     if (remote.kind === "box" && remote.deleted) pruneBoxChildren(records, dirty, remote.id);
+    // Hộp xóa cục bộ (đã bỏ con) được bản sống của server thay: các bản con phải được kéo lại từ đầu.
+    if (local?.kind === "box" && local.deleted && !remote.deleted) restore = true;
   }
   // Trang rỗng mà `cursor` của server thấp hơn con trỏ local: con trỏ lệch (D1 khôi phục, hoặc đã lấy nhầm của tài khoản khác) và
   // đã bỏ sót bản ghi: về 0 để kéo lại toàn bộ (`reset` báo cho vòng kéo chạy tiếp).
-  const reset = incoming.length === 0 && Number.isSafeInteger(cursor) && cursor < state.cursor;
+  const reset = restore || (incoming.length === 0 && Number.isSafeInteger(cursor) && cursor < state.cursor);
   const next = { ...state, records, dirty, cursor: reset ? 0 : Number.isSafeInteger(cursor) ? Math.max(state.cursor, cursor) : state.cursor };
   return { state: next, lost, reset };
 }
@@ -443,6 +447,7 @@ export function applyResults(state, sent, results) {
   const byKey = new Map((results || []).filter((r) => r && typeof r.kind === "string").map((r) => [recordKey(r.kind, r.id), r]));
   const records = { ...state.records };
   const dirty = { ...state.dirty };
+  let cursor = state.cursor;
   const conflicts = [];
   const rejected = [];
   for (const item of sent) {
@@ -465,15 +470,20 @@ export function applyResults(state, sent, results) {
       delete dirty[key];
       conflicts.push({ key, loser: item, server: { ...toWire(server), boxId: server.boxId, rev: server.rev } });
       if (server.kind === "box" && server.deleted) pruneBoxChildren(records, dirty, server.id);
+      // Hộp xóa cục bộ (đã bỏ con) nhưng server còn sống: kéo lại từ đầu để lấy lại các bản con.
+      if (current.kind === "box" && current.deleted && !server.deleted) cursor = 0;
     } else if (result.outcome === "rejected") {
       if (unchanged) delete dirty[key];
       // Xóa khóa server chưa từng có: không có gì để xóa, không phải lỗi.
       if (result.code === "not_found" && item.deleted) continue;
+      // Bản server chưa từng nhận: giữ để hiển thị nhưng đánh dấu `rejected` để lần ghi lại cùng nội dung vẫn đóng dấu mới và
+      // đẩy lại, `ensureBoxDefaults` dựng lại khóa, và đồng hồ Lamport không bị kéo theo dấu của nó (vd. `clock_skew`).
+      if (unchanged) records[key] = { ...current, rejected: true };
       rejected.push({ key, kind: item.kind, id: item.id, code: String(result.code || "schema"), updatedAt: item.updatedAt, record: item });
     }
   }
   const kept = state.rejected.filter((old) => !rejected.some((item) => item.key === old.key));
-  return { state: { ...state, records, dirty, rejected: [...kept, ...rejected].slice(-MAX_REJECTED) }, conflicts, rejected };
+  return { state: { ...state, records, dirty, cursor, rejected: [...kept, ...rejected].slice(-MAX_REJECTED) }, conflicts, rejected };
 }
 
 export function dismissRejected(state, key) {

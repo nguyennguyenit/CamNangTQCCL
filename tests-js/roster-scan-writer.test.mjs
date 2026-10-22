@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { emptyCloudState, mergeLocal, putRecord, toScanState } from "../js/roster-cloud-store.js";
 import { createRosterIdResolver } from "../js/roster-id-resolve.js";
 import { addCanonicalItem, createInitialRosterScanState, removeItem } from "../js/roster-scan-state.js";
-import { createScanWriter } from "../js/roster-scan-writer.js";
+import { createScanWriter, reconcileScanWithCloud } from "../js/roster-scan-writer.js";
 
 const load = (name) => JSON.parse(readFileSync(new URL(`../data/${name}`, import.meta.url), "utf8"));
 const resolve = createRosterIdResolver({ heroesDict: load("heroes-dict.json"), tacticsDict: load("tactics.json") });
@@ -67,4 +67,35 @@ test("M3. writer: hai lần ghi liên tiếp dùng lần ghi trước làm previ
   assert.deepEqual([a.idle, b.idle], [false, true]);
   assert.equal(writer.busy(), false);
   assert.equal(sync.state().records["owned:main~hero:sp-quach-gia"]?.deleted ?? "none", true, "lần ghi 2 xóa món mà lần ghi 1 vừa thêm (previous = lần ghi 1)");
+});
+
+test("H2. reconcile: món chỉ có trên máy này sống sót sau lần ghi cloud, cờ của món tương đương không bị ghi đè", async () => {
+  const ui = { ...createInitialRosterScanState(), ownedHeroes: [{ name: "Mã Siêu", confidence: "high" }, { name: "曹纯", confidence: "low" }], confirmed: true };
+  assert.equal(resolve.item("hero", ui.ownedHeroes[1]), null, "tiền đề: 曹纯 không đối chiếu được");
+  const sync = fakeSync(emptyCloudState("u-alice"));
+  const writer = createScanWriter({ sync, resolve, boxId: () => "main" });
+  const { localOnly } = await writer.write(ui);
+  assert.deepEqual(localOnly.heroes, ["曹纯"]);
+  const merged = reconcileScanWithCloud(ui, toScanState(sync.state(), "main"), resolve);
+  assert.deepEqual(merged.ownedHeroes.map((h) => `${h.name}/${h.confidence}`).sort(), ["Mã Siêu/high", "曹纯/low"]);
+});
+
+test("H2. reconcile: món đã xóa trên máy khác biến mất, món cloud mới xuất hiện, lockedTeams/overrides local-only được giữ", () => {
+  const cloud = { ...createInitialRosterScanState(), ownedHeroes: [{ name: "Tào Tháo", confidence: "manual" }] };
+  const ui = { ...createInitialRosterScanState(), ownedHeroes: [{ name: "Mã Siêu", confidence: "high" }] };
+  assert.deepEqual(reconcileScanWithCloud(ui, cloud, resolve).ownedHeroes.map((h) => h.name), ["Tào Tháo"]);
+});
+
+test("M6. writer: boxId chụp lúc bắt đầu write(), đổi hộp trong lúc chờ không ghi nhầm hộp", async () => {
+  let box = "main";
+  const sync = fakeSync(emptyCloudState("u-alice"));
+  const writer = createScanWriter({ sync, resolve, boxId: () => box });
+  let release;
+  sync.gate = new Promise((done) => (release = done));
+  const pending = writer.write(inventory());
+  box = "box-khac";
+  release();
+  await pending;
+  assert.ok(sync.state().records["owned:main~hero:ma-sieu"], "ghi vào hộp lúc bắt đầu");
+  assert.equal(sync.state().records["owned:box-khac~hero:ma-sieu"], undefined);
 });
