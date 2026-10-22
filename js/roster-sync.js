@@ -1,5 +1,5 @@
 // Đồng bộ kho/đội qua `/api/roster` (hợp đồng: docs/roster-sync.md). Khách chỉ dùng local (UI không tạo sync khi không có
-// phiên); người đã đăng nhập kéo theo con trỏ `rev`, đẩy các bản ghi dirty theo khúc 200 kèm `expectedUserId`.
+// phiên); người đã đăng nhập kéo theo con trỏ `rev`, đẩy các bản ghi dirty theo khúc `PUSH_CHUNK_SIZE` kèm `expectedUserId`.
 // Cache và con trỏ lưu CÙNG một giá trị `tqccl.roster.cloud.v1`; mọi đọc–sửa–ghi chạy trong `navigator.locks` và gộp blob
 // mới nhất với state của tab, nên hai tab ghi đồng thời không đè nhau. Không ném lỗi cho UI: kết quả báo qua callback.
 // Không dùng chung code với `js/recruit-sync.js` (tính năng đang chạy, ngoài phạm vi).
@@ -25,7 +25,8 @@ import {
 
 export { CLOUD_STORAGE_KEY };
 export const PUSH_DEBOUNCE_MS = 1500;
-export const PUSH_CHUNK_SIZE = 200;
+/** Bằng `ROSTER_MAX_BATCH` của community-worker: 12 bản ghi mỗi lô để vừa trần 50 câu D1 của gói Workers Free. */
+export const PUSH_CHUNK_SIZE = 12;
 /** Gợi ý đội chỉ kéo năm loại này; "Đội của tôi" thêm `group,team`. */
 export const DEFAULT_KINDS = ["box", "owned", "season", "locked", "override"];
 const ENDPOINT = "/api/roster";

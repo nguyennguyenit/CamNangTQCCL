@@ -107,7 +107,7 @@ test("ghi: debounce 1,5 s rồi đẩy kèm expectedUserId, khóa chỉ được
   assert.equal(tab.sync.status(), "synced");
 });
 
-test("đẩy theo khúc 200 bản ghi", async () => {
+test("đẩy theo khúc PUSH_CHUNK_SIZE = ROSTER_MAX_BATCH của server (12, gói Workers Free)", async () => {
   const e = await env();
   const tab = await openTab(e);
   await tab.sync.mutate((state, { now }) => {
@@ -118,8 +118,10 @@ test("đẩy theo khúc 200 bản ghi", async () => {
   });
   await tab.sync.syncNow();
   const posts = postCalls(e.server);
-  assert.equal(PUSH_CHUNK_SIZE, 200);
-  assert.deepEqual(posts.map((p) => p.json.records.length), [200, 200, 123]);
+  assert.equal(PUSH_CHUNK_SIZE, 12);
+  const sizes = posts.map((p) => p.json.records.length);
+  assert.equal(sizes.reduce((a, b) => a + b, 0), 523);
+  assert.deepEqual(sizes, [...Array(43).fill(12), 7]);
   assert.equal(e.server.live("owned").length, 520);
   assert.deepEqual(blob(e.storage).dirty, {});
 });
