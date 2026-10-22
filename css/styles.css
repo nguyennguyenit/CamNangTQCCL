@@ -1314,7 +1314,8 @@ a.lookup-more:hover {
 }
 
 /* Cụm nút header (ngôn ngữ, sáng/tối, đăng nhập): nút ma không viền, cùng cao 44px, nền sáng lên khi rê;
-   chỉ CTA "Mở cẩm nang" là nút tô màu. */
+   chỉ CTA "Mở cẩm nang" là nút tô màu. Từ 821px nút Đăng nhập có chữ và viền đỏ dải (`--nav-underline`,
+   ≥3:1 trên `--band` ở cả hai theme; `--accent` sáng chỉ 2.4:1) để nổi lên mà không tranh CTA. */
 .header-actions .icon-btn,
 .header-actions .lang-switch {
   border-color: transparent;
@@ -1352,8 +1353,10 @@ a.lookup-more:hover {
     font: var(--type-header-action);
   }
 
-  .header-actions .cm-auth-login {
+  .header-actions .cm-auth-login,
+  .header-actions .cm-auth-login:hover {
     gap: var(--space-6);
+    border-color: var(--nav-underline);
   }
 
   .header-actions .header-cta {
@@ -13674,13 +13677,10 @@ body[data-page-section="roster-recommend"] .layout {
 
 .cm-auth-status { margin: 0; padding: 0 var(--space-12); color: var(--avoid); font: var(--type-meta); }
 
-/* Dưới 1280px header chỉ còn chỗ cho nút icon: nhãn "Đăng nhập" nằm ở aria-label. */
-@media (max-width: 1279px) {
+/* Mobile (≤820px) header chỉ còn chỗ cho nút icon không viền: nhãn "Đăng nhập" nằm ở aria-label. */
+@media (max-width: 820px) {
   .cm-auth-label { display: none; }
   .cm-auth-login { width: var(--control-44); padding: 0; }
-}
-
-@media (max-width: 820px) {
   .site-header .cm-auth-login { border-color: transparent; }
 }
 
