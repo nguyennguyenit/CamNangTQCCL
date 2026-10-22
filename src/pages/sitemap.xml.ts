@@ -2,7 +2,6 @@ import type { APIContext, APIRoute } from "astro";
 import { teamDetailCatalog } from "../lib/team-detail-routes.ts";
 import { lookupDetailRoutes } from "../lib/lookup-detail-routes.ts";
 import { blogIndexPath, loadBlogPosts, translationOf, type BlogLocale } from "../lib/blog-posts.ts";
-import { canonicalTeamPath, communityTeamsIndexable, loadCommunityTeams } from "../lib/community-teams.ts";
 import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
 import { localePath } from "../../js/i18n.js";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../../js/lookup-ids.js";
@@ -89,15 +88,6 @@ export function blogSitemapRoutes(posts: readonly SitemapPost[]): SitemapRoute[]
   return routes;
 }
 
-/**
- * Trang đội cộng đồng: một URL/đội (bản đúng ngôn ngữ văn bản, không `xhtml:link`) và — chỉ khi đủ ngưỡng id duy nhất —
- * cặp trang danh sách. Build và verifier dùng chung hàm này (verifier đọc lại đội từ dist) nên sitemap khớp từng byte.
- */
-export function communityTeamSitemapRoutes(teams: readonly { path: string; lastmod: string }[]): SitemapRoute[] {
-  const routes: SitemapRoute[] = teams.map(({ path, lastmod }) => ({ path, lastmod }));
-  return communityTeamsIndexable(teams.length) ? [...routes, ...mirroredSitemapRoutes(["/doi-cong-dong/"])] : routes;
-}
-
 const XML_ESCAPES: Record<string, string> = {
   "&": "&amp;",
   "<": "&lt;",
@@ -172,7 +162,6 @@ export const GET: APIRoute = async ({ site }: APIContext) => {
   const lookup = await lookupDetailRoutes();
   const seasons = await seasonPages();
   const posts = await loadBlogPosts();
-  const teams = await loadCommunityTeams();
   const routes = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths([
       ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
@@ -180,7 +169,6 @@ export const GET: APIRoute = async ({ site }: APIContext) => {
       ...seasons.pages.map((season) => season.routePath),
     ])),
     ...blogSitemapRoutes(posts.map((post) => ({ ...post, translationPath: translationOf(post, posts)?.path ?? null }))),
-    ...communityTeamSitemapRoutes(teams.map((team) => ({ path: canonicalTeamPath(team), lastmod: team.approvedAt }))),
   ];
   return new Response(sitemapDocument(site, routes), {
     headers: { "Content-Type": SITEMAP_MIME },

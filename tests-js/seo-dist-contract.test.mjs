@@ -338,17 +338,6 @@ test("llms.txt giữ nội dung blog hiện có và thêm 7 nhóm Tra cứu", as
   }
 });
 
-/* ---------- Đội cộng đồng (build không có COMMUNITY_API_ORIGIN → 0 đội) ---------- */
-
-test("D1: dist 0 đội — danh sách đội noindex ở cả hai ngôn ngữ và sitemap không chứa /doi-cong-dong/", async () => {
-  for (const [, prefix] of LOCALES) {
-    const html = await read(`${prefix ? `${prefix.slice(1)}/` : ""}doi-cong-dong/index.html`);
-    assert.match(html, /<meta\b(?=[^>]*\bname="robots")(?=[^>]*\bcontent="noindex")[^>]*>/u, `${prefix}/doi-cong-dong/ phải noindex`);
-    assert.ok(!/<link\b[^>]*\brel="canonical"/u.test(html), `${prefix}/doi-cong-dong/ không có canonical khi dưới ngưỡng`);
-  }
-  assert.ok(!(await read("sitemap.xml")).includes("/doi-cong-dong/"), "sitemap không có URL đội cộng đồng khi dưới ngưỡng");
-});
-
 /* ---------- Báo cáo zh ---------- */
 
 test("báo cáo zh-gaps: mỗi mục viOnly của bản zh nêu được phần thiếu", async () => {

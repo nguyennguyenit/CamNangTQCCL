@@ -219,7 +219,7 @@ const lookupActive = activeSection === 'lookup';
 const toolsActive = toolSections.some((section) => section.id === activeSection);
 const ogImageHref = ogImage ?? new URL(OG_IMAGE_PATH, Astro.site).href;
 /**
- * Mục cộng đồng (Chiến báo, Đội cộng đồng, Bài viết): không phải trang mục của app.js nên không mang `id`/`data-section`;
+ * Mục cộng đồng (Chiến báo, Bài viết): không phải trang mục của app.js nên không mang `id`/`data-section`;
  * mục đang xem suy từ pathname (bỏ tiền tố ngôn ngữ): đúng trang danh sách = `page`, trang con = `true`.
  */
 const basePath = stripLocale(Astro.url.pathname);
@@ -231,13 +231,6 @@ const communityEntries: Entry[] = [
     description: pick(locale, 'Kết quả trận thật, AI phân tích, tỉ lệ thắng', '实战结果、AI 分析与胜率统计'),
     ariaCurrent: pathMark('/chien-bao/'),
     icon: 'report',
-  },
-  {
-    label: pick(locale, 'Đội cộng đồng', '社区阵容'),
-    href: localePath('/doi-cong-dong/', locale),
-    description: pick(locale, 'Đội người chơi đăng, bình chọn và chiến báo', '玩家发布的阵容、投票与战报'),
-    ariaCurrent: pathMark('/doi-cong-dong/'),
-    icon: 'community',
   },
   {
     label: pick(locale, 'Bài viết', '文章'),
