@@ -14,7 +14,7 @@
 - `sitemap.xml` thêm bản gốc mỗi đội (`lastmod` = ngày duyệt); `scripts/verify-astro-dist.mjs` kiểm cặp vi/zh, canonical, JSON-LD, ngưỡng index của danh sách và sitemap.
 - Publish lại bản dịch (`site_localization`) vì `SiteLayout.astro` và `Landing.astro` đổi; `pipeline/team-route-handles.json` ghim lại `generationId`.
 - Thanh chuyển nhanh có thêm mục nên cao ~492px: chỉ là thanh icon cố định khi cao ≥ 620px (trước 580px), thấp hơn dùng nút tròn (`css/styles.css`, `docs/design-guidelines.md`).
-- Triển khai hai bước: PR #32 (Worker + workflow nhận cả `blog-publish` lẫn `site-publish`) vào `main` trước và Worker lên trong lần release community-worker; sau đó mới merge phần site (bỏ `blog-publish`, thêm lịch) và chạy tay `pages-deploy.yml`, vì build đọc export kiểu fail-closed. Rollback: revert `main` trước, rồi `wrangler rollback` (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
+- Triển khai hai bước: PR #32 (Worker + workflow nhận cả `blog-publish` lẫn `site-publish`) đã vào `main` và Worker đã release (#40; production `/api/community-teams/export` trả 200, 0 đội); PR này là bước hai (bỏ `blog-publish`, thêm lịch), sau khi merge phải chạy tay `pages-deploy.yml`, vì build đọc export kiểu fail-closed. Rollback: revert `main` trước, rồi `wrangler rollback` (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
 
 ## 2026-10-22 (Roster push vừa gói Workers Free)
 
