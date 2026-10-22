@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-10-22 (MCP route sang trang riêng, #15)
+
+### Changed
+- Research MCP: `pagePath` của mọi mục Tra cứu có trang riêng là `/tra-cuu/<nhóm>/<slug>/` (vi và `/zh/...`); `equipment-special:*` chưa có trang nên giữ `/tra-cuu/trang-bi/?id=`. Builder đọc `pipeline/lookup-route-handles.json` (kiểm `generationId`, `booksSha256` theo `books-dict`, `handlesSha256`, tập id) bằng `parseLookupDetailLedger`, nay nằm ở `js/lookup-detail-ledger.js` dùng chung với site; projection ở Worker kiểm route theo mẫu nhóm/slug. Cần release MCP mới (workflow thủ công) để bản chạy trả route mới.
+
 ## 2026-10-22 (Báo cáo zh-gaps vào docs)
 
 ### Changed

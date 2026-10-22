@@ -245,7 +245,7 @@ export const getEntityOutputSchema = commonResultSchema.extend({
       nameZh: z.string().max(2_048).nullable().optional().describe("Tên tiếng Hán nếu có."),
       hanViet: z.string().max(2_048).nullable().optional().describe("Âm Hán-Việt nếu có."),
       aliases: z.array(z.string().max(256)).max(100).describe("Tên khác và alias."),
-      pagePath: z.string().max(512).describe("Trang /tra-cuu/<nhóm>/ theo locale."),
+      pagePath: z.string().max(512).describe("Trang riêng /tra-cuu/<nhóm>/<slug>/ theo locale (equipment-special: ?id= trên trang nhóm)."),
     })
     .strict()
     .describe("Thông tin nhận dạng thực thể."),

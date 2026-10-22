@@ -36,7 +36,7 @@
  * Worker-safe: no node:* imports, no DOM.
  */
 import { normalizeText } from "../../../js/filters.js";
-import { lookupProfilePath, LOOKUP_GROUP_SLUGS } from "../../../js/lookup-ids.js";
+import { lookupDerivedSlug, lookupProfilePath, groupForId, LOOKUP_GROUP_SLUGS } from "../../../js/lookup-ids.js";
 import { localePath } from "../../../js/i18n.js";
 
 import type { ArtifactRecord } from "./artifact-contracts.js";
@@ -157,6 +157,21 @@ function pin(value: unknown, label: string): RecommendedPin {
     generationId: pattern(item.generationId, HEX64, `${label}.generationId`),
     manifestSha256: pattern(item.manifestSha256, HEX64, `${label}.manifestSha256`),
   };
+}
+
+/**
+ * The Worker has no ledger, so an entity route is valid by shape: `/tra-cuu/<nhóm của id>/<slug>/` for an id that has a
+ * page (the slug itself is frozen by the build-time ledger and may differ from the id suffix), or exactly the
+ * group-page profile route for an id without one (`equipment-special:*`).
+ */
+function entityRouteIsValid(id: string, route: PublicRoute): boolean {
+  const group = groupForId(id) as keyof typeof LOOKUP_GROUP_SLUGS | null;
+  if (group === null) return false;
+  const vi =
+    lookupDerivedSlug(id) === null
+      ? route.vi === lookupProfilePath(id)
+      : new RegExp(`^/tra-cuu/${LOOKUP_GROUP_SLUGS[group]}/[a-z0-9]+(?:-[a-z0-9]+)*/$`, "u").test(route.vi);
+  return vi && route.zh === localePath(route.vi, "zh");
 }
 
 export function validatePublicationMeta(value: unknown): PublicationMeta {
@@ -796,8 +811,7 @@ export function buildPublicationReadModel(
       if (route === undefined || route.kind !== "entity") {
         throw new PublicationContractError(`entity has no public route: ${entity.id}`);
       }
-      const expected = lookupProfilePath(entity.id);
-      if (expected === null || route.vi !== expected || route.zh !== localePath(expected, "zh")) {
+      if (!entityRouteIsValid(entity.id, route)) {
         throw new PublicationContractError(`entity route differs from the Tra cứu route: ${entity.id}`);
       }
       if (entityById.has(entity.id)) throw new PublicationContractError(`duplicate entity: ${entity.id}`);

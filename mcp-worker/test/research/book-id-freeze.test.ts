@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { lookupProfilePath } from "../../../js/lookup-ids.js";
+import { lookupHref } from "../../../js/lookup-ids.js";
 import { localePath } from "../../../js/i18n.js";
 import { projectCatalogEntities } from "../../src/data/publication-builder.js";
 import { buildPublicationReadModel, type PublicationMeta } from "../../src/data/publication-projection.js";
@@ -19,7 +19,7 @@ const upstream: PublicationMeta["upstream"] = {
   sources: { "books-dict": sha("1"), "heroes-dict": sha("2"), khaihoang: sha("3"), "lookup-catalog": sha("4"), "lookup-manifest": sha("5"), tactics: sha("6"), teams: sha("7") },
 };
 const route = (id: string) => {
-  const vi = lookupProfilePath(id)!;
+  const vi = lookupHref(id)!;
   return { id, kind: "entity", vi, zh: localePath(vi, "zh") };
 };
 
@@ -65,7 +65,7 @@ describe("frozen book ids in the publication", () => {
     } as unknown as ToolContext;
     const result = await handleGetEntity(ctx, { entityId: ID });
     expect(result.entity.entityId).toBe(ID);
-    expect(result.entity.pagePath).toBe(lookupProfilePath(ID));
+    expect(result.entity.pagePath).toBe(lookupHref(ID));
   });
 
   it("tqccl_search finds the book by the old Vietnamese name (aliases), the new name and the source name", () => {
