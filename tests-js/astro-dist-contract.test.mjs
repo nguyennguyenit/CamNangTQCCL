@@ -705,6 +705,15 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   assert.ok(result.files.includes(`doi-khac/${LEGACY_ROUTE_SEGMENT}/index.html`));
   assert.ok(result.files.includes("404.html"));
   assert.ok(!result.files.some((file) => file.startsWith("teams/")));
+  // Registry mùa rỗng: không có trang mùa nào; một trang mùa lạc vào dist là file thừa (cả hai ngôn ngữ).
+  for (const stray of ["doi-chuan/pk-s24/index.html", "zh/doi-chuan/pk-s24/index.html"]) {
+    await mkdir(dirname(join(distDir, stray)), { recursive: true });
+    await writeFile(join(distDir, stray), "<!doctype html>\n");
+    await assert.rejects(verify(), new RegExp(`unexpected: ${stray.replaceAll("/", "\\/").replace(".", "\\.")}`, "i"), stray);
+    await rm(join(distDir, stray));
+    await rm(dirname(join(distDir, stray)), { recursive: true });
+  }
+  await verify();
   await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap.replaceAll(FIXTURE_ORIGIN, "https://wrong.example"));
   await assert.rejects(verify(), /sitemap.*generated document/i);
   await writeFile(join(distDir, "sitemap.xml"), fixture.sitemap.replace("</loc>", "?q=wrong</loc>"));
@@ -888,6 +897,14 @@ test("built dist is allowlisted and every emitted asset is byte-identical", asyn
   // The Khai hoang page ships with its own entry: both must exist in the emitted dist.
   assert.ok(result.files.includes("js/khaihoang-detail.js"));
   assert.ok(result.files.includes("khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html"));
+  // Mọi trang mùa của Đội chuẩn (vi + zh) nằm trong allowlist và có mặt trong dist.
+  const { seasonPages } = await import("../src/lib/season-pages.ts");
+  const { pages: seasonPageList } = await seasonPages();
+  assert.ok(seasonPageList.length > 10);
+  for (const page of seasonPageList) {
+    assert.ok(result.files.includes(page.htmlPath), `thiếu ${page.htmlPath}`);
+    assert.ok(result.files.includes(`zh/${page.htmlPath}`), `thiếu zh/${page.htmlPath}`);
+  }
   assert.equal(result.unexpectedFiles.length, 0);
   assert.deepEqual(
     await readFile(new URL("../dist/_headers", import.meta.url)),
@@ -986,7 +1003,11 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   // 938 trang riêng mục Tra cứu (251 tướng, 409 chiến pháp sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
   assert.equal(lookupRoutes.entries.length, 938);
-  assert.equal(locations.length, 5016);
+  // + trang mùa Đội chuẩn: mỗi mùa cũ có đội một trang, hai ngôn ngữ (mùa hiện tại và mùa 0 đội không có).
+  const { seasonPages } = await import("../src/lib/season-pages.ts");
+  const { pages: seasonPageList } = await seasonPages();
+  assert.ok(seasonPageList.length > 10);
+  assert.equal(locations.length, 5016 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -997,6 +1018,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
         ...STATIC_PAGE_PATHS,
         ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
         ...lookupRoutes.entries.map((entry) => entry.path),
+        ...seasonPageList.map((page) => page.routePath),
       ].flatMap((path) => [path, zhPathOf(path)]),
       "/bai-viet/",
       "/zh/bai-viet/",
@@ -1085,6 +1107,8 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   const origin = new URL(site).origin;
   const catalog = await teamDetailCatalog();
   const lookupRoutes = await lookupDetailRoutes();
+  const { seasonPages } = await import("../src/lib/season-pages.ts");
+  const { pages: seasonPageList } = await seasonPages();
   const response = await sitemapGet({ site: new URL(site) });
 
   assert.equal(response.headers.get("content-type"), SITEMAP_MIME);
@@ -1102,13 +1126,14 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
     ...STATIC_PAGE_PATHS,
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
     ...lookupRoutes.entries.map((entry) => entry.path),
+    ...seasonPageList.map((page) => page.routePath),
   ];
   const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
   assert.equal(lookupRoutes.entries.length, 938);
-  assert.equal(locations.length, 5016);
+  assert.equal(locations.length, 5016 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],

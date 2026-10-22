@@ -344,3 +344,150 @@ test("báo cáo zh-gaps: mỗi mục viOnly của bản zh nêu được phần 
   const gaps = zhGaps(await lookupBuildCorpus());
   assert.ok(gaps.length > 0 && gaps.every((gap) => gap.missing.length > 0), "mỗi mục thiếu phải nêu được phần thiếu");
 });
+
+// ---- Trang mùa Đội chuẩn (#6) ----
+const SEASON_LABEL = { vi: "mùa cũ", zh: "旧赛季" };
+const OTHER_SEASONS_HEADING = { vi: "Các mùa khác", zh: "其他赛季" };
+
+async function seasonFixtures() {
+  const { seasonPages } = await import("../src/lib/season-pages.ts");
+  const catalog = await teamDetailCatalog();
+  const result = await seasonPages();
+  return { catalog, ...result };
+}
+
+test("trang mùa (vi + zh): một H1 có tên và mã mùa, đủ N đội có link tới trang đội tồn tại, canonical + hreflang, không đòi JavaScript", async () => {
+  const { catalog, pages } = await seasonFixtures();
+  assert.ok(pages.length > 10, `cần trang cho các mùa cũ (${pages.length})`);
+  for (const page of pages) {
+    const teams = catalog.recommended.filter((entry) => entry.sourceSeasonId === page.sourceSeasonId);
+    assert.equal(teams.length, page.count);
+    for (const [locale, prefix] of LOCALES) {
+      const path = `${prefix}${page.routePath}`;
+      const where = `${locale} ${page.routePath}`;
+      const html = await read(pageFile(path));
+      const h1 = [...html.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gu)].map((match) => visibleText(match[1]).trim());
+      assert.equal(h1.length, 1, `${where}: cần đúng một H1`);
+      assert.ok(h1[0].includes(page.displayCode), `${where}: H1 thiếu mã mùa (${h1[0]})`);
+      assert.ok(h1[0].includes(locale === "zh" ? page.nameRaw : page.nameVi), `${where}: H1 thiếu tên mùa (${h1[0]})`);
+      assert.equal([...html.matchAll(/data-reference-key="/gu)].length, teams.length, `${where}: số đội dựng sẵn`);
+      for (const entry of teams) {
+        const href = `${prefix}${entry.routePath}`;
+        assert.ok(html.includes(`href="${href}"`), `${where}: thiếu link ${href}`);
+      }
+      assert.ok(await exists(pageFile(`${prefix}${teams[0].routePath}`)), `${where}: trang đội không tồn tại`);
+      assert.doesNotMatch(visibleText(html.replace(/<!--[\s\S]*?-->/gu, "")), /cần JavaScript|需要 JavaScript|Đang tải chi tiết|正在加载详情/u, where);
+      assert.equal(canonicalOf(html), `${ORIGIN}${path}`, `${where}: canonical`);
+      assert.ok(html.includes(`<link rel="alternate" hreflang="vi" href="${ORIGIN}${page.routePath}">`), `${where}: hreflang vi`);
+      assert.ok(html.includes(`<link rel="alternate" hreflang="zh-Hans" href="${ORIGIN}/zh${page.routePath}">`), `${where}: hreflang zh-Hans`);
+      assert.ok(html.includes(`<link rel="alternate" hreflang="x-default" href="${ORIGIN}${page.routePath}">`), `${where}: hreflang x-default`);
+      assert.ok(visibleText(html).includes(SEASON_LABEL[locale]), `${where}: thiếu nhãn mùa cũ`);
+      // Trang mùa không có khung comment; trang tĩnh không cần các script nạp dữ liệu đội của trang mục.
+      assert.ok(!html.includes('id="community-root"'), `${where}: không được có khung comment`);
+    }
+  }
+});
+
+test("trang mùa: JSON-LD CollectionPage + ItemList mọi item có URL trang đội tồn tại, breadcrumb Trang chủ › Đội chuẩn › mùa", async () => {
+  const { catalog, pages } = await seasonFixtures();
+  for (const page of pages) {
+    const teams = catalog.recommended.filter((entry) => entry.sourceSeasonId === page.sourceSeasonId);
+    for (const [locale, prefix] of LOCALES) {
+      const path = `${prefix}${page.routePath}`;
+      const where = `${locale} ${page.routePath}`;
+      const html = await read(pageFile(path));
+      const blocks = jsonLdBlocks(html, where);
+      assert.equal(blocks.length, 2, where);
+      const collection = blockOf(blocks, "CollectionPage", where);
+      assertGameAndLanguage(collection, locale, where);
+      assert.equal(collection.url, `${ORIGIN}${path}`, where);
+      assert.equal(collection.description, metaDescription(html), `${where}: description phải là meta description`);
+      assert.ok(titleOf(html).startsWith(collection.name), `${where}: name phải là tiền tố của <title>`);
+      const list = collection.mainEntity;
+      assert.equal(list["@type"], "ItemList", where);
+      assert.equal(list.numberOfItems, teams.length, where);
+      assert.equal(list.itemListElement.length, teams.length, where);
+      const expected = new Set(teams.map((entry) => `${ORIGIN}${prefix}${entry.routePath}`));
+      for (const item of list.itemListElement) {
+        assert.ok(expected.has(item.url), `${where}: item ${item.url} không phải đội của mùa`);
+        assert.ok(item.name, where);
+        assert.ok(await exists(pageFile(item.url.slice(ORIGIN.length))), `${where}: ${item.url} không có file dist`);
+      }
+      const breadcrumb = blockOf(blocks, "BreadcrumbList", where);
+      assert.equal(breadcrumb.itemListElement.length, 3, where);
+      assertBreadcrumb(breadcrumb, [homeUrl(prefix), `${ORIGIN}${prefix}/doi-chuan/`, `${ORIGIN}${path}`], where);
+    }
+  }
+});
+
+test("trang mùa: title và description không trùng nhau (S3 và PK-S7 cùng tên Việt)", async () => {
+  const { pages } = await seasonFixtures();
+  for (const [locale, prefix] of LOCALES) {
+    const titles = new Map();
+    const descriptions = new Map();
+    for (const page of pages) {
+      const html = await read(pageFile(`${prefix}${page.routePath}`));
+      for (const [map, value, label] of [[titles, titleOf(html), "title"], [descriptions, metaDescription(html), "description"]]) {
+        assert.ok(value, `${locale} ${page.slug}: thiếu ${label}`);
+        assert.ok(!map.has(value), `${locale}: ${label} của ${page.slug} trùng ${map.get(value)}: ${value}`);
+        map.set(value, page.slug);
+      }
+    }
+  }
+  const vi = new Set(pages.map((page) => page.nameVi));
+  assert.ok(vi.size < pages.length, "dữ liệu thật phải có hai mùa trùng tên Việt để ca này có nghĩa");
+});
+
+test("sitemap.xml có mọi trang mùa × (vi, zh) với cặp hreflang", async () => {
+  const { pages } = await seasonFixtures();
+  const sitemap = await read("sitemap.xml");
+  for (const page of pages) {
+    for (const prefix of ["", "/zh"]) {
+      const loc = `${ORIGIN}${prefix}${page.routePath}`;
+      const entry = sitemap.match(new RegExp(`<url>\\s*<loc>${loc.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&")}</loc>[\\s\\S]*?</url>`, "u"))?.[0];
+      assert.ok(entry, `sitemap thiếu ${loc}`);
+      assert.ok(entry.includes(`hreflang="vi" href="${ORIGIN}${page.routePath}"`) && entry.includes(`hreflang="zh-Hans" href="${ORIGIN}/zh${page.routePath}"`), `${loc}: thiếu hreflang`);
+    }
+  }
+});
+
+test("/doi-chuan/ không JS: khối \"Các mùa khác\" có <a href> thật tới mọi trang mùa, nằm ngoài vùng client thay thế", async () => {
+  const { pages } = await seasonFixtures();
+  for (const [locale, prefix] of LOCALES) {
+    const html = await read(pageFile(`${prefix}/doi-chuan/`));
+    const block = html.match(/<nav\b[^>]*data-other-seasons[\s\S]*?<\/nav>/u)?.[0];
+    assert.ok(block, `${locale}: thiếu khối các mùa khác`);
+    assert.ok(visibleText(block).includes(OTHER_SEASONS_HEADING[locale]), locale);
+    for (const page of pages) assert.ok(block.includes(`<a href="${prefix}${page.routePath}"`), `${locale}: thiếu link ${page.slug}`);
+    assert.equal([...block.matchAll(/<a\b/gu)].length, pages.length, `${locale}: số link`);
+    // Vùng client thay thế là <section id="section-team-chuan">: khối phải nằm sau thẻ đóng của nó.
+    const mount = html.match(/<section id="section-team-chuan"[\s\S]*?<\/section>/u)?.[0];
+    assert.ok(mount && !mount.includes("data-other-seasons"), `${locale}: khối nằm trong vùng bị client thay`);
+    assert.ok(html.indexOf("data-other-seasons") > html.indexOf(mount) + mount.length - 1, locale);
+  }
+});
+
+test("trang đội mùa cũ có nhãn \"mùa cũ\" (zh: 旧赛季), đội mùa hiện tại không có; JSON-LD name vẫn là tiền tố <title>, H1 là tên đội", async () => {
+  const { catalog, defaultSourceSeasonId } = await seasonFixtures();
+  let old = 0;
+  let current = 0;
+  for (const entry of catalog.recommended) {
+    for (const [locale, prefix] of LOCALES) {
+      const html = await read(pageFile(`${prefix}${entry.routePath}`));
+      const kicker = visibleText(html.match(/<p class="scope-note detail-kicker">[\s\S]*?<\/p>/u)?.[0] ?? "");
+      const where = `${locale} ${entry.routePath}`;
+      if (entry.sourceSeasonId === defaultSourceSeasonId) {
+        current += 1;
+        assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: đội mùa hiện tại không được có nhãn`);
+      } else {
+        old += 1;
+        assert.ok(kicker.includes(SEASON_LABEL[locale]), `${where}: thiếu nhãn mùa cũ (${kicker})`);
+      }
+      const webPage = blockOf(jsonLdBlocks(html, where), "WebPage", where);
+      assert.ok(titleOf(html).startsWith(webPage.name), where);
+      assert.equal(webPage.description, metaDescription(html), where);
+      assert.doesNotMatch(webPage.description, new RegExp(SEASON_LABEL[locale], "u"), `${where}: nhãn chỉ ở dòng phụ`);
+    }
+  }
+  assert.ok(old > 0 && current > 0);
+});

@@ -8,11 +8,11 @@
  */
 import { createRawNameResolver, loadWebsiteDisplay, localizeData } from '../../js/website-display.js';
 import { treeToHtml, treeToText } from '../../js/view-tree.js';
-import { setZhNameResolver } from '../../js/recommended-reference-state.js';
+import { projectRecommendedRows, setZhNameResolver } from '../../js/recommended-reference-state.js';
 import { setTeamRouteHandles } from '../../js/team-detail-navigation.js';
 import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from '../../js/recommended-reference-render.js';
 import { khaihoangDetailTrees } from '../../js/render.js';
-import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees } from './team-section-ssr.js';
+import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees, seasonPageTrees } from './team-section-ssr.js';
 import { loadSeasonModel } from '../../js/season-ui-state.js';
 import { HERO_SUMMARY_FILE, parseHeroSummaries } from '../../js/hero-summaries.js';
 import { TACTIC_SUMMARY_FILE, parseTacticSummaries } from '../../js/tactic-summaries.js';
@@ -21,7 +21,7 @@ import { teamDetailCatalog } from './team-detail-routes.ts';
 import { lookupRouteHandles } from './lookup-pages.ts';
 import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
-import type { LegacyRouteEntry, KhaiHoangRouteEntry } from './team-detail-routes.ts';
+import type { LegacyRouteEntry, KhaiHoangRouteEntry, RecommendedRouteEntry } from './team-detail-routes.ts';
 
 type Tree = unknown;
 type Json = any;
@@ -180,6 +180,35 @@ export async function teamSectionParts(section: TeamSection, locale: SiteLocale)
   }
   if (section === 'coexist') return { html: html(coexistSectionTrees({ model: await seasonModel(), locale })), source };
   return { html: html(khaihoangSectionTrees({ data: await localizedData('khaihoang', locale), locale })), source };
+}
+
+export interface SeasonPageParts {
+  /** Thân trang mùa (đội nhóm theo Tier) dựng bằng đúng builder thẻ của danh sách. */
+  bodyHtml: string;
+  /** Vân tay publication mà HTML được dựng từ đó. */
+  source: string;
+  /** Route của mọi đội của mùa theo thứ tự hiển thị (cho `ItemList` của JSON-LD). */
+  teams: RecommendedRouteEntry[];
+}
+
+/** Trang mùa Đội chuẩn: thân + danh sách đội cho `ItemList`. Mọi đội của mùa, không phân trang. */
+export async function seasonPageParts(sourceSeasonId: string, locale: SiteLocale): Promise<SeasonPageParts> {
+  const env = await prepare();
+  const registry = parse(env.website.recommended.files['seasons.json']);
+  const rows = parse(env.website.recommended.files['index.json']).records;
+  const catalog = await teamDetailCatalog();
+  const byConfig = new Map(catalog.recommended.map((entry) => [entry.sourceConfigId, entry]));
+  const season = rows.filter((row: Json) => row.sourceSeasonId === sourceSeasonId);
+  const teams = projectRecommendedRows(season, { season: sourceSeasonId, query: '', filters: {} }, registry.displayLabels || {}).map((row: Json) => {
+    const entry = byConfig.get(row.sourceConfigId);
+    if (!entry) throw new Error(`Season page team has no route: ${row.sourceConfigId}`);
+    return entry;
+  });
+  return {
+    bodyHtml: html(seasonPageTrees({ rows, sourceSeasonId, registry, locale })),
+    source: env.website.pin.sha256,
+    teams,
+  };
 }
 
 export interface CoexistScenarioText {

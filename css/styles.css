@@ -4814,6 +4814,56 @@ main.layout:has(> .detail-content) {
   color: var(--accent);
 }
 
+/* Nhãn "mùa cũ" (trang đội và trang mùa): chữ ghi chú, không tranh với tên đội. */
+.detail-season-old {
+  color: var(--muted);
+}
+
+.season-old-note {
+  display: block;
+  margin: var(--space-8) 0 0;
+}
+
+/* Khối "Các mùa khác" của /doi-chuan/ (nằm ngoài vùng client thay thế): link thật tới trang từng mùa cũ. */
+.other-seasons {
+  margin-top: var(--space-48);
+  padding-top: var(--space-24);
+  border-top: var(--border-hair) solid var(--line);
+}
+
+.other-seasons-heading {
+  margin: 0 0 var(--space-8);
+  color: var(--ink);
+}
+
+.other-seasons-lead {
+  margin: 0 0 var(--space-16);
+  color: var(--muted);
+  font: var(--type-note);
+}
+
+.other-seasons-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-8) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.other-seasons-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-44);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.other-seasons-list a:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+}
+
 .detail-title-row {
   display: flex;
   flex-wrap: wrap;

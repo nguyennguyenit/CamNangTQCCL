@@ -22,6 +22,7 @@ import {
 } from './team-detail-routes.ts';
 import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
+import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
 import { localePath } from '../../js/i18n.js';
 import type { SiteLocale } from './locale-routes';
@@ -219,10 +220,12 @@ export interface RecommendedDetailProps {
   lookupLinks: TeamLookupLinks;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
+  /** Đội thuộc mùa cũ (khác `defaultSourceSeasonId` của registry): dòng phụ có nhãn "mùa cũ". */
+  oldSeason: boolean;
 }
 
 /** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
-function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
+export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
   if (locale === 'zh') return entry.nameZh?.trim() || entry.sourceConfigId;
   return entry.displayNameVi || VI_UNAVAILABLE;
 }
@@ -232,6 +235,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
   const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
   const links = await heroLinkBuilder(locale);
+  const { defaultSourceSeasonId } = await seasonPages();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
     locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
@@ -259,6 +263,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
       ...catalogPins(catalog),
       lookupLinks: recordLookupLinks(record, resolveLookupId),
       heroes,
+      oldSeason: isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId),
     };
     return { params: { team: entry.routeSegment }, props };
   }));

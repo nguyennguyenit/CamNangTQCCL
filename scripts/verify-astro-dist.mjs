@@ -8,6 +8,7 @@ import { llmsDocuments } from "../src/lib/llms-documents.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { seasonPageCatalog, seasonRedirectRules } from "../src/lib/season-pages.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import {
@@ -239,6 +240,8 @@ export async function verifyAstroDist({
   if (catalog.generationId !== recommended.pin.generationId) {
     throw new Error("Team detail catalog and emitted Recommended generation differ");
   }
+  // Trang mùa Đội chuẩn (mùa cũ có đội) từ cùng registry đã pin; registry rỗng thì không có trang nào.
+  const seasons = seasonPageCatalog(JSON.parse(Buffer.from(recommended.files["seasons.json"]).toString("utf8")), catalog);
   // Trang riêng từng mục Tra cứu: ledger đóng băng + corpus của chính gốc dự án này. Chỉ khi manifest phát cả bundle Tra cứu
   // lẫn books-dict (dist thật); fixture rút gọn không có kho Tra cứu đầy đủ nên không có trang mục.
   const hasLookupItems = ["lookup-manifest", "books-dict"].every((routeParam) =>
@@ -272,6 +275,7 @@ export async function verifyAstroDist({
     ...localizedHtml(sectionHtmlPaths),
     ...localizedHtml(STATIC_PAGE_PATHS.map((path) => `${path.slice(1)}index.html`)),
     ...localizedHtml(catalog.htmlPaths),
+    ...localizedHtml(seasons.pages.map((season) => season.htmlPath)),
     ...localizedHtml((lookupItems?.entries ?? []).map((entry) => `${entry.path.slice(1)}index.html`)),
     ...COMMUNITY_PAGES.map((page) => page.htmlPath),
     ...BLOG_FIXED_OUTPUTS,
@@ -310,6 +314,7 @@ export async function verifyAstroDist({
   const detailRoutePaths = [
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
     ...(lookupItems?.entries ?? []).map((entry) => entry.path),
+    ...seasons.pages.map((season) => season.routePath),
   ];
   const sitemapRoutePaths = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths(detailRoutePaths)),
@@ -588,6 +593,50 @@ export async function verifyAstroDist({
       }
     }
   }
+  // Trang mùa Đội chuẩn: tĩnh, đủ N đội, canonical + hreflang của chính nó, title/description không trùng (S3 và PK-S7 cùng tên Việt),
+  // không khung comment và không nạp app (trang mùa không thuộc `PAGE_KEY_PATTERN` của khung comment).
+  for (const season of seasons.pages) {
+    for (const locale of SITE_LOCALES) {
+      const htmlPath = localizedHtmlPath(season.htmlPath, locale);
+      const page = await readPage(htmlPath);
+      verifyLocalePair(page, htmlPath, locale, season.routePath, site);
+      const canonical = new URL(locale === "zh" ? `/zh${season.routePath}` : season.routePath, site).href;
+      if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`Season page lacks its own canonical URL: ${htmlPath}`);
+      claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, htmlPath);
+      claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, htmlPath);
+      if ((page.match(/<h1\b/gu) ?? []).length !== 1) throw new Error(`Season page must carry exactly one h1: ${htmlPath}`);
+      if (!page.includes(season.displayCode)) throw new Error(`Season page lacks its season code (${season.displayCode}): ${htmlPath}`);
+      const cards = (page.match(/data-reference-key="/gu) ?? []).length;
+      if (cards !== season.count) throw new Error(`Season page must prerender every team (${cards}/${season.count}): ${htmlPath}`);
+      if ((page.match(/\bdata-team-detail-link\b/gu) ?? []).length < season.count) throw new Error(`Season page lacks a detail link for every team: ${htmlPath}`);
+      if (page.includes('id="community-root"') || page.includes("community-page.js") || page.includes('src="/js/app.js"')) {
+        throw new Error(`Season page must not carry the community section or boot an application: ${htmlPath}`);
+      }
+      if (WAITING_OR_JS_REQUIRED.test(page.replace(/<!--[^]*?-->/gu, "").replace(/<script\b[^]*?<\/script>/gu, ""))) {
+        throw new Error(`Season page must not carry waiting or JavaScript-required text: ${htmlPath}`);
+      }
+      if (website && !page.includes(`data-ssr-source="${website.pin.sha256}"`)) {
+        throw new Error(`Season page prerendered content is not tied to the website display publication: ${htmlPath}`);
+      }
+    }
+  }
+  // `/doi-chuan/` liệt kê mọi trang mùa bằng <a href> thật, ngoài vùng client thay thế (`#section-team-chuan`).
+  for (const locale of SITE_LOCALES) {
+    const htmlPath = localizedHtmlPath("doi-chuan/index.html", locale);
+    const page = await readPage(htmlPath);
+    const block = page.match(/<nav\b[^>]*\bdata-other-seasons\b[^]*?<\/nav>/u)?.[0] ?? null;
+    if (!seasons.pages.length) {
+      if (block) throw new Error(`Section page lists other seasons but no season page exists: ${htmlPath}`);
+      continue;
+    }
+    if (!block) throw new Error(`Section page lacks its other-seasons block: ${htmlPath}`);
+    for (const season of seasons.pages) {
+      const href = locale === "zh" ? `/zh${season.routePath}` : season.routePath;
+      if (!block.includes(`<a href="${href}"`)) throw new Error(`Other-seasons block lacks its link ${href}: ${htmlPath}`);
+    }
+    const mount = page.match(/<section\b[^>]*\bid="section-team-chuan"[^]*?<\/section>/u)?.[0] ?? "";
+    if (!mount || mount.includes("data-other-seasons")) throw new Error(`Other-seasons block must sit outside the client-replaced mount: ${htmlPath}`);
+  }
   const notFound = await readPage("404.html");
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
   // Pages chỉ phục vụ một 404.html: khối tiếng Trung dựng sẵn, script chọn nó cho đường dẫn dưới /zh/.
@@ -666,6 +715,12 @@ export async function verifyAstroDist({
     if (!sourceBytes.equals(emittedBytes)) {
       throw new Error(`Deployment control artifact bytes differ from source: ${artifact.outputPath}`);
     }
+  }
+
+  // Mùa hiện tại không có trang: slug cũ của nó phải 301 về danh sách (luật sinh bởi pipeline/lookup_route_handles.py).
+  const redirects = (await readFile(resolve(distPath, "_redirects"), "utf8")).split("\n");
+  for (const rule of seasonRedirectRules(seasons)) {
+    if (!redirects.includes(`${rule.from} ${rule.to} ${rule.status}`)) throw new Error(`dist _redirects lacks the current-season rule: ${rule.from}`);
   }
 
   for (const [sourcePath, outputPath] of staticDirectoryFiles) {

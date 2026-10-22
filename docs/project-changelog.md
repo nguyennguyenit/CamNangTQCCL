@@ -19,6 +19,20 @@
 ### Changed
 - Research MCP: `pagePath` của mọi mục Tra cứu có trang riêng là `/tra-cuu/<nhóm>/<slug>/` (vi và `/zh/...`); `equipment-special:*` chưa có trang nên giữ `/tra-cuu/trang-bi/?id=`. Builder đọc `pipeline/lookup-route-handles.json` (kiểm `generationId`, `booksSha256` theo `books-dict`, `handlesSha256`, tập id) bằng `parseLookupDetailLedger`, nay nằm ở `js/lookup-detail-ledger.js` dùng chung với site; projection ở Worker kiểm route theo mẫu nhóm/slug. Cần release MCP mới (workflow thủ công) để bản chạy trả route mới.
 
+## 2026-10-22 (Trang mùa Đội chuẩn, #6)
+
+### Added
+- Trang tĩnh `/doi-chuan/<mã mùa>/` và `/zh/doi-chuan/<mã mùa>/` cho mỗi mùa cũ có đội (slug = `displayCode` viết thường: `pk-s24`, `s1`): H1 "Đội chuẩn mùa <tên> (<mã>)", đủ mọi đội nhóm theo tier với tướng, chiến pháp và link chi tiết, JSON-LD `CollectionPage` + `ItemList` + breadcrumb, canonical + hreflang, có trong sitemap, không có khung comment. Mùa hiện tại (`defaultSourceSeasonId`) và mùa 0 đội không có trang. Chỉ Đội chuẩn: Đội khác không có dữ liệu mùa (40/40 đội `sourceSeasonIds: null`).
+- `/doi-chuan/` (và zh) có khối "Các mùa khác" liệt kê mọi trang mùa bằng `<a href>` thật, đặt ngoài vùng client thay thế.
+- Trang đội của mùa cũ có nhãn "mùa cũ" (zh: 旧赛季) ở dòng phụ; H1 vẫn là tên đội.
+- `public/_redirects`: 301 `/doi-chuan/<slug mùa hiện tại>/ → /doi-chuan/` (vi + zh), sinh bởi `pipeline/lookup_route_handles.py`, nên URL của mùa vừa thành mùa mặc định không 404. `npm run verify` kiểm luật này.
+- Verifier: allowlist, so byte sitemap, canonical/hreflang, title/description không trùng, đủ đội và không khung comment của trang mùa.
+
+### Changed
+- `/doi-chuan/` dựng sẵn ĐỦ đội của mùa mặc định (trước đó tối đa 60); client vẫn phân trang theo lượt như cũ.
+- `js/team-filter-section.js` bỏ hằng số `CURRENT_SOURCE_SEASON_ID`: chip "Hiện tại" lấy `defaultSourceSeasonId` của registry (`seasonOptionText(item, currentSourceSeasonId)`, Gợi ý đội truyền cùng giá trị).
+- Không đổi: bộ lọc `?season=`, `js/community-api.js`, `community-worker/**`, `/llms/doi-chuan/*.txt`.
+
 ## 2026-10-22 (Báo cáo zh-gaps vào docs)
 
 ### Changed

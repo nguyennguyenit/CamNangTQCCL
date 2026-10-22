@@ -6,6 +6,7 @@ import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
 import { localePath } from "../../js/i18n.js";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../../js/lookup-ids.js";
 import { POLICY_PAGES } from "../lib/policy-pages.ts";
+import { seasonPages } from "../lib/season-pages.ts";
 
 export const prerender = true;
 
@@ -59,7 +60,7 @@ export function mirroredSitemapRoutes(viPaths: readonly string[]): SitemapRoute[
   });
 }
 
-/** Tập route có bản gương của sitemap: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh và mọi trang chi tiết (đội + mục Tra cứu). */
+/** Tập route có bản gương của sitemap: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh và mọi trang chi tiết (đội + mục Tra cứu + trang mùa Đội chuẩn). */
 export function mirroredSitemapPaths(detailRoutePaths: readonly string[]): string[] {
   return ["/", ...SECTION_PATHS, ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, ...detailRoutePaths];
 }
@@ -159,11 +160,13 @@ export function sitemapDocument(site: string | URL | undefined, routes: readonly
 export const GET: APIRoute = async ({ site }: APIContext) => {
   const catalog = await teamDetailCatalog();
   const lookup = await lookupDetailRoutes();
+  const seasons = await seasonPages();
   const posts = await loadBlogPosts();
   const routes = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths([
       ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
       ...lookup.entries.map((entry) => entry.path),
+      ...seasons.pages.map((season) => season.routePath),
     ])),
     ...blogSitemapRoutes(posts.map((post) => ({ ...post, translationPath: translationOf(post, posts)?.path ?? null }))),
   ];
