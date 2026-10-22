@@ -6,6 +6,15 @@
 - `scripts/report-zh-gaps.mjs` ghi `docs/zh-gaps.md` (trước đó nằm trong thư mục kế hoạch cũ, đã xóa). Chạy từ thư mục nào cũng cho cùng kết quả; biến môi trường `ZH_GAPS_REPORT_PATH` chỉ để test.
 - `npm run verify` thêm `node scripts/report-zh-gaps.mjs --check`: đổi dữ liệu Tra cứu mà không sinh lại báo cáo thì `verify` đỏ. `mcp-worker.yml` lọc `pull_request` thêm `docs/zh-gaps.md`. Test: `tests-js/zh-gaps-report.test.mjs`.
 
+## 2026-10-22 (CI và pre-push hook, #12)
+
+### Changed
+- `.github/workflows/mcp-worker.yml`: bỏ trigger `push` (không còn chờ CI ~25 phút khi push thẳng `main`); thêm `schedule` thứ Hai 03:23 UTC chạy cổng credential-free trên `main`; `pull_request.paths` thêm `agent-knowledge/**` (nguồn của knowledge bundle).
+
+### Added
+- `.githooks/pre-push` (bật bằng `git config core.hooksPath .githooks`): từ chối working tree bẩn, chạy secret scan, `check:workflow-build`, `check:knowledge-bundle`, `typecheck` (mcp-worker), `npm test` + `typecheck` (community-worker), `python3 -m unittest`; push tới `main` chạy thêm `npm run build && npm run verify`.
+- Test `tests-js/ci-workflow-contract.test.mjs` (trigger, paths, schedule, input, điều kiện `production-release`) và `tests-js/pre-push-hook.test.mjs`; README mục "Pre-push hook".
+
 ## 2026-10-22 (Follow-up chữ Hán có nguồn)
 
 ### Fixed

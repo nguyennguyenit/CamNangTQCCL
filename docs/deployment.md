@@ -63,8 +63,9 @@ Follow the preview and production checks in [the deployment guide](deployment-gu
 After verification, upload `dist/` with `wrangler pages deploy dist --project-name tqccl --branch main --commit-hash <verified-sha>`.
 
 Research MCP production deploys only through the manual exact-SHA workflow in
-`.github/workflows/mcp-worker.yml`. A push to `main` runs the credential-free
-release gate but does not deploy production.
+`.github/workflows/mcp-worker.yml`. The credential-free release gate runs on
+pull requests and weekly on `main` (not on every push; direct pushes are gated by
+the local `.githooks/pre-push` hook) and never deploys production.
 
 Worker deploy:
 
