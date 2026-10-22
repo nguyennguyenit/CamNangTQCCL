@@ -8,6 +8,11 @@ Project deploy is split into three surfaces:
 - Research MCP Worker: `https://mcp.tqccl.com`.
 - Vision proxy Worker: `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`.
 
+## Batch rollback markers (plan 261022-1109, 9 issues)
+
+- Before the first merge of the batch (2026-10-22): `main` = `5b6014a` (docs-only on top of `957bb3d`); production Pages deployment `https://ec3c9558.tqccl.pages.dev` (`957bb3d`, run `39651871017`); Research MCP Worker version `93d02cc5-3b56-4e93-90aa-3fc6bc9f927b`; community Worker version `5ba5760f-c671-4a4b-9866-763cdb53ec16`.
+- Serial-lane merges (phases 5, 7, 8, 9, 10) record their merged SHA here and in the plan's progress table. Roll back by reverting those merges in reverse order down to a recorded SHA; never revert one PR from the middle of the lane.
+
 ## Latest Worker Deploy
 
 - Date: 2026-10-07
