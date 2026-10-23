@@ -696,7 +696,7 @@ test('hồ sơ tướng và bảng chiến pháp không in enum loại thô', as
 test('hồ sơ giữ đủ trường đã có: bậc đặc kỹ, phẩm trang bị, loại và dạng hiệu ứng chiến pháp', async ({ page }) => {
   // Mã đặc kỹ mở trang bị cha: đặc kỹ được tô khung và giữ bậc T0, trang bị cha là mục đang chọn.
   await openLookup(page, '/tra-cuu/trang-bi/?id=equipment-special%3Agian-hung');
-  await expect(panel(page).locator('.lookup-detail-title')).toHaveText('Ỷ Thiên Kiếm');
+  await expect(panel(page).locator('.lookup-detail-title')).toHaveText('Kiếm Ỷ Thiên');
   await expect(panel(page).locator('.lookup-special.is-target')).toContainText('Gian Hùng');
   await expect(panel(page).locator('.lookup-special.is-target .badge-tier')).toHaveText('T0');
   await expect(selectedItem(page)).toHaveAttribute('data-lookup-id', 'equipment:y-thien-kiem');
@@ -1174,8 +1174,8 @@ test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
   test('chip hệ của quân sư lọc danh sách và dòng trạng thái', async ({ page }) => {
     await openLookup(page, GROUP_PATH.advisors);
     await lookup(page).locator('button[data-facet="element"][data-value="Sơn"]').click();
-    await expect(lookup(page).locator('.lookup-summary')).toContainText(/^6 kỹ năng quân sư/);
-    await expect(lookup(page).locator('.lookup-adv-card')).toHaveCount(6);
+    await expect(lookup(page).locator('.lookup-summary')).toContainText(/^11 kỹ năng quân sư/);
+    await expect(lookup(page).locator('.lookup-adv-card')).toHaveCount(11);
     for (const meta of await lookup(page).locator('.lookup-adv-card .lookup-adv-meta').allTextContents()) expect(meta).toMatch(/hệ Sơn$/);
   });
 
