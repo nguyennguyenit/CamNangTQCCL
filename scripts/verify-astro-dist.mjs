@@ -16,14 +16,17 @@ import {
   SECTION_PATHS,
   STATIC_PAGE_PATHS,
   blogSitemapRoutes,
+  communityTeamSitemapRoutes,
   mirroredSitemapPaths,
   mirroredSitemapRoutes,
   sitemapDocument,
 } from "../src/pages/sitemap.xml.ts";
+import { communityTeamPath, communityTeamsIndexable } from "../src/lib/community-teams.ts";
 import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
 import { PRERENDERED_TEAM_SECTIONS as TEAM_SSR_SECTIONS } from "../src/lib/team-ssr.ts";
 import { validateLookupBundle } from "../js/lookup-data.js";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
+import { localePath } from "../js/i18n.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
 const LOOKUP_HUB_PATH = "/tra-cuu/";
@@ -77,10 +80,13 @@ for (const key of Object.keys(SECTION_MARKERS)) {
   if (!TEAM_SSR_SECTIONS.includes(key)) throw new Error(`Verifier carries markers for a section team-ssr does not prerender: ${key}`);
 }
 
-/** Trang cộng đồng tĩnh (noindex, ngoài sitemap) ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. */
+/**
+ * Trang cộng đồng tĩnh ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. Mặc định noindex, ngoài sitemap;
+ * riêng danh sách đội (`listing`) noindex hay index tuỳ số đội trong dist nên do `verifyCommunityTeamOutputs` kiểm.
+ */
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("chien-bao/index.html", locale), mount: 'id="community-hub"', entry: "/js/community-hub.js" }),
-  Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js" }),
+  Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js", listing: true }),
   Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
 ]));
 
@@ -115,7 +121,7 @@ function jsonLdBlocks(html, path) {
     try {
       return JSON.parse(body);
     } catch {
-      throw new Error(`Blog page carries invalid JSON-LD: ${path}`);
+      throw new Error(`Page carries invalid JSON-LD: ${path}`);
     }
   });
 }
@@ -173,6 +179,91 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
     if (!llms.includes(`](${post.url})`)) throw new Error(`llms.txt does not list blog post: ${post.url}`);
   }
   return posts;
+}
+
+/** Trang đội cộng đồng: tập đội do community API quyết định lúc build nên verifier đọc lại từ chính dist. */
+const COMMUNITY_TEAM_FILE = /^(zh\/)?doi-cong-dong\/([a-z0-9][a-z0-9-]{0,63})\/index\.html$/u;
+const COMMUNITY_LISTING_PATH = "/doi-cong-dong/";
+const NOINDEX_META = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu;
+const CANONICAL_LINK = /<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu;
+const HREFLANG_LINK = /<link\b(?=[^>]*\brel=["']alternate["'])(?=[^>]*\bhreflang=)[^>]*>/iu;
+
+const hasKey = (value, key) => Array.isArray(value)
+  ? value.some((item) => hasKey(item, key))
+  : value !== null && typeof value === "object" && (key in value || Object.values(value).some((item) => hasKey(item, key)));
+
+const canonicalHref = (html) => CANONICAL_LINK.exec(html)?.[0].match(/\bhref=["']([^"']*)["']/u)?.[1] ?? null;
+
+/**
+ * Trang đội tự nhất quán: mỗi id đủ cặp vi/zh, đúng MỘT bản self-canonical (bản `text_lang`, mang JSON-LD) và bản kia canonical về
+ * nó, không hreflang, không noindex, không aggregateRating; danh sách index/noindex theo số id duy nhất và link tới mọi đội.
+ * Trả về `{path, lastmod}` của bản gốc từng đội cho sitemap.
+ */
+async function verifyCommunityTeamOutputs(distPath, teamFiles, site) {
+  const origin = new URL(site).origin;
+  const byId = new Map();
+  for (const file of teamFiles) {
+    const [, zhPrefix, id] = file.match(COMMUNITY_TEAM_FILE);
+    byId.set(id, { ...byId.get(id), [zhPrefix ? "zh" : "vi"]: file });
+  }
+  const routes = [];
+  for (const [id, pair] of byId) {
+    if (!pair.vi || !pair.zh) throw new Error(`Community team page lacks its locale pair: ${id}`);
+    const pages = [];
+    for (const locale of SITE_LOCALES) {
+      const file = pair[locale];
+      const html = await readFile(resolve(distPath, file), "utf8");
+      const url = new URL(communityTeamPath(id, locale), origin).href;
+      if (!html.includes(`<html lang="${HREFLANG[locale]}"`)) throw new Error(`Page does not declare its language (${HREFLANG[locale]}): ${file}`);
+      if (HREFLANG_LINK.test(html)) throw new Error(`Community team page must not declare hreflang alternates: ${file}`);
+      if (NOINDEX_META.test(html)) throw new Error(`Community team page must not declare robots=noindex: ${file}`);
+      if (!html.includes('id="community-teams"') || !html.includes(`data-team-id="${id}"`) || !html.includes('src="/js/community-teams.js"')) {
+        throw new Error(`Community team page lacks its mount or entry: ${file}`);
+      }
+      if (html.includes('src="/js/app.js"')) throw new Error(`Community team page must not boot app.js: ${file}`);
+      const blocks = jsonLdBlocks(html, file);
+      if (hasKey(blocks, "aggregateRating")) throw new Error(`Community team page must not carry aggregateRating: ${file}`);
+      pages.push({ locale, file, html, url, canonical: canonicalHref(html), blocks });
+    }
+    const selfCanonical = pages.filter((page) => page.canonical === page.url);
+    const original = selfCanonical[0];
+    if (selfCanonical.length !== 1 || pages.some((page) => page !== original && page.canonical !== original.url)) {
+      throw new Error(`Community team canonical pair is inconsistent (exactly one self-canonical page, the other pointing at it): ${id}`);
+    }
+    for (const page of pages) {
+      if (page === original) continue;
+      if (page.blocks.length) throw new Error(`Community team mirror page must not carry JSON-LD: ${page.file}`);
+    }
+    const webPage = original.blocks.find((block) => block?.["@type"] === "WebPage");
+    if (
+      !webPage
+      || webPage.url !== original.url
+      || webPage.inLanguage !== HREFLANG[original.locale]
+      || !webPage.name
+      || !webPage.author?.name
+      || !Number.isFinite(Date.parse(webPage.datePublished))
+      || !original.blocks.some((block) => block?.["@type"] === "FAQPage")
+    ) throw new Error(`Community team page lacks valid WebPage and FAQPage JSON-LD: ${original.file}`);
+    routes.push({ path: new URL(original.url).pathname, lastmod: webPage.datePublished });
+  }
+  const indexable = communityTeamsIndexable(byId.size);
+  for (const locale of SITE_LOCALES) {
+    const file = localizedHtmlPath("doi-cong-dong/index.html", locale);
+    const html = await readFile(resolve(distPath, file), "utf8");
+    if (indexable) {
+      if (NOINDEX_META.test(html)) throw new Error(`Community teams listing must be indexable with ${byId.size} teams (found robots=noindex): ${file}`);
+      const expected = new URL(localePath(COMMUNITY_LISTING_PATH, locale), origin).href;
+      if (canonicalHref(html) !== expected) throw new Error(`Community teams listing canonical must be ${expected}: ${file}`);
+      verifyLocalePair(html, file, locale, COMMUNITY_LISTING_PATH, site);
+    } else {
+      if (!NOINDEX_META.test(html)) throw new Error(`Community teams listing must declare robots=noindex below the index threshold: ${file}`);
+      if (CANONICAL_LINK.test(html)) throw new Error(`Community teams listing must not declare a canonical URL below the index threshold: ${file}`);
+    }
+    for (const id of byId.keys()) {
+      if (!html.includes(`href="${communityTeamPath(id, locale)}"`)) throw new Error(`Community teams listing does not link team ${id}: ${file}`);
+    }
+  }
+  return routes;
 }
 
 /**
@@ -268,6 +359,7 @@ export async function verifyAstroDist({
   const localizedHtml = (paths) => SITE_LOCALES.flatMap((locale) => paths.map((path) => localizedHtmlPath(path, locale)));
   const files = await listFiles(distPath);
   const blogPostFiles = files.filter((file) => BLOG_POST_FILE.test(file));
+  const communityTeamFiles = files.filter((file) => COMMUNITY_TEAM_FILE.test(file));
   const expectedFiles = [
     ...localizedHtml(["index.html"]),
     "404.html",
@@ -281,6 +373,7 @@ export async function verifyAstroDist({
     ...BLOG_FIXED_OUTPUTS,
     ...(llms ? [...llms.files.map((file) => file.path.slice(1)), llms.fullPath.slice(1)] : []),
     ...blogPostFiles,
+    ...communityTeamFiles,
     ...expectedAssets,
     ...recommendedFiles,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
@@ -306,6 +399,7 @@ export async function verifyAstroDist({
   if (emittedByDecodedPath.size !== files.length) throw new Error("dist contains colliding team detail paths");
 
   const blogPosts = await verifyBlogOutputs(distPath, blogPostFiles, astroConfig.site);
+  const communityTeamRoutes = await verifyCommunityTeamOutputs(distPath, communityTeamFiles, astroConfig.site);
   if (llms) await verifyLlmsOutputs(distPath, llms);
 
   // Byte equality with the build-owned generator enforces valid structure, exact absolute
@@ -319,6 +413,7 @@ export async function verifyAstroDist({
   const sitemapRoutePaths = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths(detailRoutePaths)),
     ...blogSitemapRoutes(blogPosts),
+    ...communityTeamSitemapRoutes(communityTeamRoutes),
   ];
   const expectedSitemapXml = sitemapDocument(astroConfig.site, sitemapRoutePaths);
   if (sitemapXml !== expectedSitemapXml) {
@@ -655,17 +750,16 @@ export async function verifyAstroDist({
   if (/<meta\b(?=[^>]*\bproperty=["']og:url["'])[^>]*>/iu.test(notFound)) {
     throw new Error("Static 404 page must not declare og:url");
   }
-  for (const { htmlPath, mount, entry } of COMMUNITY_PAGES) {
+  for (const { htmlPath, mount, entry, listing } of COMMUNITY_PAGES) {
     const page = await readPage(htmlPath);
     if (!page.includes(mount) || !page.includes(`src="${entry}"`)) {
       throw new Error(`Community page lacks its mount or entry: ${htmlPath}`);
     }
-    if (!/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu.test(page)) {
-      throw new Error(`Community page must declare robots=noindex: ${htmlPath}`);
-    }
-    if (/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu.test(page) || page.includes('src="/js/app.js"')) {
-      throw new Error(`Community page must not declare a canonical URL or boot the root application: ${htmlPath}`);
-    }
+    if (page.includes('src="/js/app.js"')) throw new Error(`Community page must not boot the root application: ${htmlPath}`);
+    // Danh sách đội: noindex/canonical theo ngưỡng đã kiểm ở verifyCommunityTeamOutputs.
+    if (listing) continue;
+    if (!NOINDEX_META.test(page)) throw new Error(`Community page must declare robots=noindex: ${htmlPath}`);
+    if (CANONICAL_LINK.test(page)) throw new Error(`Community page must not declare a canonical URL: ${htmlPath}`);
   }
   let lookupGenerationId = null;
   const lookupRoutes = new Set(manifest.filter((artifact) => artifact.kind === "data").map((artifact) => artifact.routeParam));

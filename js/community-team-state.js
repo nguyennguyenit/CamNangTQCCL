@@ -1,6 +1,8 @@
 // Hàm thuần của trang Đội cộng đồng (không đụng DOM, không gọi mạng): kiểm form → body API, chọn phe
 // từ kết quả AI, đọc chế độ từ query, gộp trang danh sách, câu cảnh báo đội tương tự.
 
+import { localePath } from './i18n.js';
+
 /** Binh chủng mà API chấp nhận (thứ tự hiển thị). */
 export const TROOPS = Object.freeze(['cung', 'khiGioi', 'ky', 'thuan', 'thuong']);
 
@@ -78,8 +80,17 @@ export function pickSide(normalized, choice) {
   return sides.find((entry) => entry.side === choice) ?? null;
 }
 
-/** `location.search` → `{mode: 'list'|'detail'|'new'|'mine', id}`. `id` chỉ nhận định dạng id server. */
-export function modeFromSearch(search) {
+/** Đường dẫn trang tĩnh của đội (`/doi-cong-dong/<id>/`, bản zh có tiền tố `/zh`). */
+export function staticTeamPath(id, locale) {
+  return localePath(`/doi-cong-dong/${id}/`, locale);
+}
+
+/**
+ * `location.search` → `{mode: 'static'|'list'|'detail'|'new'|'mine', id}`. `id` chỉ nhận định dạng id server.
+ * `staticId` là id trên mount của trang tĩnh (`data-team-id`): hợp lệ thì trang luôn là chế độ `static`, bất kể query.
+ */
+export function modeFromSearch(search, staticId = null) {
+  if (typeof staticId === 'string' && TEAM_ID_RE.test(staticId)) return { mode: 'static', id: staticId };
   const params = new URLSearchParams(typeof search === 'string' ? search : '');
   const id = params.get('id');
   if (id !== null && TEAM_ID_RE.test(id)) return { mode: 'detail', id };

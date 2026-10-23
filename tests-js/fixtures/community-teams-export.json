@@ -1,0 +1,505 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "doi-10",
+      "title": "阵容 10",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:tao-thao",
+        "hero:quan-vu",
+        "hero:truong-phi"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "ky",
+      "author": {
+        "id": "u10",
+        "name": "Người chơi 10"
+      },
+      "upVotes": 10,
+      "downVotes": 1,
+      "evidenceCount": 1,
+      "points": 9,
+      "commentCount": 2,
+      "imageCount": 1,
+      "textLang": "zh",
+      "createdAt": "2026-10-10T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "开局先控制，再集中输出。",
+        "strengths": "前期强势",
+        "weaknesses": "后期乏力",
+        "counters": "克制骑兵",
+        "counteredBy": "被弓兵克制",
+        "substitutes": "可换用其他武将"
+      },
+      "approvedAt": "2026-10-10T09:00:00.000Z"
+    },
+    {
+      "id": "doi-09",
+      "title": "阵容 9",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:luu-bi",
+        "hero:gia-cat-luong",
+        "hero:chu-du"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "khiGioi",
+      "author": {
+        "id": "u9",
+        "name": "Người chơi 9"
+      },
+      "upVotes": 9,
+      "downVotes": 1,
+      "evidenceCount": 0,
+      "points": 8,
+      "commentCount": 1,
+      "imageCount": 1,
+      "textLang": "zh",
+      "createdAt": "2026-10-09T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "开局先控制，再集中输出。",
+        "strengths": "前期强势",
+        "weaknesses": "后期乏力",
+        "counters": "克制骑兵",
+        "counteredBy": "被弓兵克制",
+        "substitutes": "可换用其他武将"
+      },
+      "approvedAt": "2026-10-09T09:00:00.000Z"
+    },
+    {
+      "id": "doi-08",
+      "title": "阵容 8",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:tao-thao",
+        "hero:quan-vu",
+        "hero:truong-phi"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "thuong",
+      "author": {
+        "id": "u8",
+        "name": "Người chơi 8"
+      },
+      "upVotes": 8,
+      "downVotes": 1,
+      "evidenceCount": 2,
+      "points": 7,
+      "commentCount": 0,
+      "imageCount": 1,
+      "textLang": "zh",
+      "createdAt": "2026-10-08T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "开局先控制，再集中输出。",
+        "strengths": "前期强势",
+        "weaknesses": "后期乏力",
+        "counters": "克制骑兵",
+        "counteredBy": "被弓兵克制",
+        "substitutes": "可换用其他武将"
+      },
+      "approvedAt": "2026-10-08T09:00:00.000Z"
+    },
+    {
+      "id": "doi-07",
+      "title": "Đội mẫu 7",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:luu-bi",
+        "hero:gia-cat-luong",
+        "hero:chu-du"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "thuan",
+      "author": {
+        "id": "u7",
+        "name": "Người chơi 7"
+      },
+      "upVotes": 7,
+      "downVotes": 1,
+      "evidenceCount": 1,
+      "points": 6,
+      "commentCount": 3,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-07T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.",
+        "strengths": null,
+        "weaknesses": null,
+        "counters": null,
+        "counteredBy": null,
+        "substitutes": null
+      },
+      "approvedAt": "2026-10-07T09:00:00.000Z"
+    },
+    {
+      "id": "doi-06",
+      "title": "Đội mẫu 6",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:tao-thao",
+        "hero:quan-vu",
+        "hero:truong-phi"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "cung",
+      "author": {
+        "id": "u6",
+        "name": "Người chơi 6"
+      },
+      "upVotes": 6,
+      "downVotes": 1,
+      "evidenceCount": 0,
+      "points": 5,
+      "commentCount": 2,
+      "imageCount": 0,
+      "textLang": "vi",
+      "createdAt": "2026-10-06T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-06T09:00:00.000Z"
+    },
+    {
+      "id": "doi-05",
+      "title": "Đội mẫu 5",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:luu-bi",
+        "hero:gia-cat-luong",
+        "hero:chu-du"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "ky",
+      "author": {
+        "id": "u5",
+        "name": "<b>Gia Cát</b>"
+      },
+      "upVotes": 5,
+      "downVotes": 1,
+      "evidenceCount": 2,
+      "points": 4,
+      "commentCount": 1,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-05T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-05T09:00:00.000Z"
+    },
+    {
+      "id": "doi-04",
+      "title": "Đội </script><img src=x onerror=alert(1)>",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:tao-thao",
+        "hero:quan-vu",
+        "hero:truong-phi"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "khiGioi",
+      "author": {
+        "id": "u4",
+        "name": "Người chơi 4"
+      },
+      "upVotes": 4,
+      "downVotes": 1,
+      "evidenceCount": 1,
+      "points": 3,
+      "commentCount": 0,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-04T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-04T09:00:00.000Z"
+    },
+    {
+      "id": "3f2c-team",
+      "title": "Đội mẫu 3",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:luu-bi",
+        "hero:gia-cat-luong",
+        "hero:chu-du"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "thuong",
+      "author": {
+        "id": "u3",
+        "name": ""
+      },
+      "upVotes": 3,
+      "downVotes": 1,
+      "evidenceCount": 0,
+      "points": 2,
+      "commentCount": 3,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-03T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-03T09:00:00.000Z"
+    },
+    {
+      "id": "doi-02",
+      "title": "Đội mẫu 2",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:tao-thao",
+        "hero:quan-vu",
+        "hero:truong-phi"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "thuan",
+      "author": {
+        "id": "u2",
+        "name": "   "
+      },
+      "upVotes": 2,
+      "downVotes": 1,
+      "evidenceCount": 2,
+      "points": 1,
+      "commentCount": 2,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-02T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-02T09:00:00.000Z"
+    },
+    {
+      "id": "doi-01",
+      "title": "Đội mẫu 1",
+      "season": {
+        "id": "s1",
+        "labelVi": "Mùa 1",
+        "labelZh": "第一赛季"
+      },
+      "heroes": [
+        "hero:luu-bi",
+        "hero:gia-cat-luong",
+        "hero:chu-du"
+      ],
+      "tactics": [
+        [
+          "tactic:binh-phong",
+          "tactic:an-ui-quan-dan"
+        ],
+        [
+          "tactic:anh-thanh-tu-thu",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:bach-bo-xuyen-duong",
+          "tactic:bach-ke-da-muu"
+        ]
+      ],
+      "troop": "cung",
+      "author": {
+        "id": "u1",
+        "name": null
+      },
+      "upVotes": 1,
+      "downVotes": 1,
+      "evidenceCount": 1,
+      "points": 0,
+      "commentCount": 1,
+      "imageCount": 1,
+      "textLang": "vi",
+      "createdAt": "2026-10-01T08:00:00.000Z",
+      "analysis": {
+        "playstyle": "Mở đầu bằng khống chế.\nRồi dồn sát thương.",
+        "strengths": "Mạnh đầu trận",
+        "weaknesses": "Yếu cuối trận",
+        "counters": "Khắc chế kỵ binh",
+        "counteredBy": "Bị cung khắc chế",
+        "substitutes": "Có thể thay tướng"
+      },
+      "approvedAt": "2026-10-01T09:00:00.000Z"
+    }
+  ]
+}
