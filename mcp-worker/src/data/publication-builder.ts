@@ -232,7 +232,7 @@ function exactKeySet(actual: Record<string, string>, expected: Set<string>, labe
 const HERO_FIELDS = ["faction", "stars", "cost", "stats", "troopApt", "roleTag", "roleTagViet", "isSP", "inheritTacticCn", "selfTacticCn"] as const;
 const HERO_LOOKUP_FIELDS = [
   "advisorId", "cardPacks", "categoryVi", "civil", "civilInnatePoints", "collectibleBonusVi", "conditions",
-  "exclusiveTitleVi", "flags", "growth", "inheritTacticId", "missingFields", "otherAptitudes", "redRulesVi",
+  "exclusiveTitleVi", "exclusiveTitleZh", "flags", "growth", "inheritTacticId", "missingFields", "otherAptitudes", "redRulesVi",
   "revisions", "selfTacticId", "usageVi", "usageZh", "variant",
 ] as const;
 const TACTIC_FIELDS = ["type", "quality", "target", "targetViet", "troopFit", "source", "sourceHeroCn", "effect", "effectViet"] as const;
@@ -240,12 +240,12 @@ const TACTIC_LOOKUP_FIELDS = [
   "acquiredFromVi", "activationRate", "conditions", "conflictsVi", "cooldown", "effectTypeVi", "effectZhSource", "exchangeConditionVi",
   "formerIds", "inheritedFromIds", "maxUsers", "missingFields", "pointCost", "revisions",
 ] as const;
-const BOOK_FIELDS = ["effect", "effectViet", "effectVersion", "sourceNames"] as const;
+const BOOK_FIELDS = ["effect", "effectViet", "effectVersion", "effectVietVersion", "sourceNames"] as const;
 const CATALOG_FIELDS = {
   equipment: ["slotVi", "qualityVi", "conditions", "missingFields"],
-  advisors: ["effectVi", "elementVi", "usageVi", "heroIds", "tacticPoints", "conditions", "missingFields"],
-  troopMods: ["effectVi", "appliesToVi", "troopLimitVi", "suggestedBuildVi", "options", "revisions", "conditions", "missingFields"],
-  buildings: ["summaryVi", "mainCityOnly", "maxLevel", "levels", "conditions", "missingFields"],
+  advisors: ["effectVi", "elementVi", "usageVi", "nameZh", "effectZh", "usageZh", "zhSource", "heroIds", "tacticPoints", "conditions", "missingFields"],
+  troopMods: ["effectVi", "appliesToVi", "troopLimitVi", "suggestedBuildVi", "effectZh", "appliesToZh", "suggestedBuildZh", "zhSource", "options", "revisions", "conditions", "missingFields"],
+  buildings: ["summaryVi", "summaryZh", "zhSource", "mainCityOnly", "maxLevel", "levels", "conditions", "missingFields"],
   specials: ["equipmentId", "slotVi", "tierVi", "exclusiveHeroId", "descriptionVi", "acquisitionVi", "conditions", "missingFields"],
 } as const;
 

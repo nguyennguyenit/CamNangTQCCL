@@ -46,13 +46,17 @@ TACTIC_KEYS = {"id", "chinese", "hanViet", "viet", "aliases", "type", "quality",
 COMMON_KEYS = {"id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"}
 EQUIPMENT_KEYS = COMMON_KEYS | {"qualityVi", "slotVi"}
 SPECIAL_KEYS = COMMON_KEYS | {"tierVi", "slotVi", "descriptionVi", "acquisitionVi", "equipmentId", "exclusiveHeroId"}
-ADVISOR_KEYS = COMMON_KEYS | {"elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds"}
-TROOP_MOD_KEYS = COMMON_KEYS | {"effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options"}
-BUILDING_KEYS = COMMON_KEYS | {"summaryVi", "mainCityOnly", "maxLevel", "levels"}
-OPTION_KEYS = {"id", "tierVi", "nameVi", "descriptionVi", "convertsToVi"}
-LEVEL_KEYS = {"id", "level", "costs", "durationVi", "effectVi"}
+# Trường zh của catalog: chữ Hán nguồn SGSDeck (TW) khi có, không thì bản dịch đã duyệt (`zhTexts` của file client);
+# `zhSource = {kind: source|translation}` nói chữ chính của hàng (tên/hiệu quả/tóm tắt/mô tả) đến từ đâu, `null` khi không có.
+# `usageZh`, `appliesToZh`, `suggestedBuildZh` và chữ từng cấp công trình chỉ lấy từ nguồn.
+ADVISOR_KEYS = COMMON_KEYS | {"elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds", "nameZh", "effectZh", "usageZh", "zhSource"}
+TROOP_MOD_KEYS = COMMON_KEYS | {"effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options", "effectZh", "appliesToZh", "suggestedBuildZh", "zhSource"}
+BUILDING_KEYS = COMMON_KEYS | {"summaryVi", "mainCityOnly", "maxLevel", "levels", "summaryZh", "zhSource"}
+OPTION_KEYS = {"id", "tierVi", "nameVi", "descriptionVi", "convertsToVi", "nameZh", "descriptionZh", "zhSource"}
+LEVEL_KEYS = {"id", "level", "costs", "durationVi", "effectVi", "effectZh", "durationZh"}
+ZH_SOURCE_KINDS = {"source", "translation"}
 FIELD_LEDGER_KEYS = {"entityId", "fieldPath", "disposition", "chosenInput", "sourceRecordId", "sourceFieldPath", "sourceValueHash", "localValueHash", "reason", "translationInputFingerprint", "reviewEvidence"}
-HERO_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"}
+HERO_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "exclusiveTitleZh", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"}
 CARD_PACK_KEYS = {"packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"}
 TACTIC_LOOKUP_KEYS = {"conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds", "effectZhSource"}
 # Chữ Hán hiệu ứng không lấy từ SGSDeck (`zhEffects` của lookup-client-tactics.json): công khai chỉ `kind`.
@@ -1012,7 +1016,7 @@ def _apply_client_heroes(document, heroes, tactics, identity):
                 "conditions": [], "missingFields": missing, "revisions": [], "variant": entry["variant"],
                 "selfTacticId": self_tactic, "inheritTacticId": None, "advisorId": None,
                 "growth": {key: _number_or_none(entry["growth"][key]) for key in CLIENT_STAT_KEYS},
-                "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None,
+                "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None, "exclusiveTitleZh": None,
                 "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None},
                 "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None,
                 "flags": {"isCollectible": None, "isDynamicOpen": None, "isMusou": None, "isCO": None, "isSp": entry["isSP"]},
@@ -1054,7 +1058,7 @@ def _apply_client_heroes(document, heroes, tactics, identity):
 def _validate_client_tactics_document(document):
     if (
         not isinstance(document, dict)
-        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes", "zhEffects"}
+        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes", "zhEffects", "newAdvisors", "zhTexts", *CLIENT_CATALOG_FIELDS}
         or type(document["schemaVersion"]) is not int
         or document["schemaVersion"] != 1
         or not isinstance(document.get("newTactics", {}), dict)
@@ -1062,6 +1066,7 @@ def _validate_client_tactics_document(document):
         or not isinstance(document.get("troopMods", {}), dict)
         or not isinstance(document.get("tacticNotes", {}), dict)
         or not isinstance(document.get("zhEffects", {}), dict)
+        or any(not isinstance(document.get(key, {}), dict) for key in (*CLIENT_CATALOG_FIELDS, "newAdvisors", "zhTexts"))
         or not isinstance(document["source"], dict)
         or set(document["source"]) != CLIENT_SOURCE_KEYS
         or any(not isinstance(value, str) or not value.strip() for value in document["source"].values())
@@ -1090,20 +1095,23 @@ def _zh_effect_text(value, owner):
     return text
 
 
+def _approved_ref(ref):
+    """URL `https` cụ thể trên host đã duyệt (`ZH_SOURCE_HOSTS`), không port/userinfo/khoảng trắng."""
+    parsed = urlsplit(ref) if isinstance(ref, str) and len(ref) <= 2048 and not any(char.isspace() for char in ref) else None
+    return (
+        parsed is not None and parsed.scheme == "https" and parsed.netloc == parsed.hostname
+        and parsed.hostname in ZH_SOURCE_HOSTS and bool(parsed.path.strip("/"))
+    )
+
+
 def _zh_effect_source(value, owner):
     """`{kind: source, ref}` (trang công khai trên host đã duyệt), `{kind: capture, note}` hoặc `{kind: translation}`."""
     kind = value.get("kind") if isinstance(value, dict) else None
     expected = {"source": {"kind", "ref"}, "capture": {"kind", "note"}, "translation": {"kind"}}.get(kind)
     if expected is None or set(value) != expected:
         raise ValueError(f"client tactic zhEffects.source is invalid: {owner}")
-    if kind == "source":
-        ref = value["ref"]
-        parsed = urlsplit(ref) if isinstance(ref, str) and len(ref) <= 2048 and not any(char.isspace() for char in ref) else None
-        if (
-            parsed is None or parsed.scheme != "https" or parsed.netloc != parsed.hostname
-            or parsed.hostname not in ZH_SOURCE_HOSTS or not parsed.path.strip("/")
-        ):
-            raise ValueError(f"client tactic zhEffects.source.ref is invalid: {owner}")
+    if kind == "source" and not _approved_ref(value["ref"]):
+        raise ValueError(f"client tactic zhEffects.source.ref is invalid: {owner}")
     if kind == "capture":
         note = value["note"]
         if (
@@ -1374,6 +1382,8 @@ def _apply_client_troop_mods(document, troop_mods):
         old_ids = {canonical_id("tactic", option["nameVi"]): option["id"] for option in row["options"]}
         slug = owner.removeprefix("troop-mod:")
         built, used = [], set()
+        # Lựa chọn giữ mã cũ (trùng tên) giữ chữ Hán nguồn của nó; lựa chọn mới chưa có chữ Hán.
+        old_zh = {option["id"]: {key: option[key] for key in ("nameZh", "descriptionZh", "zhSource")} for option in row["options"]}
         for item in options:
             option_name = _client_tactic_text(item["nameVi"], owner, "options.nameVi")
             key = canonical_id("tactic", option_name)
@@ -1383,8 +1393,10 @@ def _apply_client_troop_mods(document, troop_mods):
             used.add(identifier)
             built.append({"id": identifier, "tierVi": CLIENT_TROOP_TIERS[item["tier"]], "nameVi": option_name,
                           "descriptionVi": _client_tactic_text(item["descriptionVi"], owner, "options.descriptionVi"),
-                          "convertsToVi": item["convertsTo"]})
-        row.update({"nameVi": name, "effectVi": effect, "options": built, "revisions": []})
+                          "convertsToVi": item["convertsTo"],
+                          **old_zh.get(identifier, {"nameZh": None, "descriptionZh": None, "zhSource": None})})
+        # Hướng dẫn mùa của client không phải chữ hiệu quả nguồn: bỏ `effectZh` nguồn (bản zh dùng bản dịch nếu có).
+        row.update({"nameVi": name, "effectVi": effect, "options": built, "revisions": [], "effectZh": None, "zhSource": None})
         ledger.append({
             "entityId": owner, "fieldPath": "clientCapture.troopMod", "disposition": "corrected-public",
             "chosenInput": "client-capture", "sourceRecordId": f"client-troop-mods:{slug}",
@@ -1394,6 +1406,167 @@ def _apply_client_troop_mods(document, troop_mods):
             "translationInputFingerprint": None,
             "reviewEvidence": ["captured Global client Sân Luyện Binh › Binh chủng Xem", "pipeline/lookup-client-tactics.json"],
         })
+    return ledger
+
+
+# Nhóm catalog nhận số liệu chụp từ client Global (Thượng Thư Đài; quân sư: Minh Giám › Quân sư): trường được ghi đè theo client.
+CLIENT_CATALOG_FIELDS = {
+    "equipment": {"nameVi"},
+    "specials": {"nameVi", "descriptionVi"},
+    "advisors": {"nameVi", "elementVi", "tacticPoints", "effectVi", "heroIds"},
+    "buildings": {"nameVi", "summaryVi"},
+}
+
+
+def _client_catalog_value(value, owner, field):
+    """Giá trị client đã kiểm kiểu: điểm Kế Lược là số nguyên không âm, tướng mang là danh sách mã tướng không trùng."""
+    if field == "tacticPoints":
+        if type(value) is not int or value < 0:
+            raise ValueError(f"client catalog value is invalid: {owner}.{field}")
+        return value
+    if field == "heroIds":
+        if not isinstance(value, list) or not value or len(set(value)) != len(value) or any(
+                not isinstance(item, str) or not item.startswith("hero:") for item in value):
+            raise ValueError(f"client catalog value is invalid: {owner}.{field}")
+        return list(value)
+    return _client_tactic_text(value, owner, field)
+
+
+def _source_zh(value):
+    """Chữ Hán nguồn công khai được: chuỗi khác rỗng, không phải chữ giữ chỗ của nguồn; còn lại `None`."""
+    if not isinstance(value, str) or not value.strip() or value.strip() in MISSING_TEXT:
+        return None
+    return value.strip()
+
+
+# Bản dịch zh đã duyệt (`zhTexts` của file client): trường zh -> trường Việt mà nó dịch (khóa bằng `viSha256`).
+# `ref` (tùy chọn): trang công khai trên host đã duyệt ghi đúng chữ Hán này (vd tên quân sư trên slgsim); chỉ nằm ở
+# đầu vào/ledger. Hàng vẫn mang `zhSource = translation` vì các trường còn lại của nó là bản dịch.
+ZH_TEXT_FIELDS = {
+    "advisors": {"nameZh": "nameVi", "effectZh": "effectVi"},
+    "buildings": {"summaryZh": "summaryVi"},
+    "troopMods": {"effectZh": "effectVi"},
+    "troopOptions": {"nameZh": "nameVi", "descriptionZh": "descriptionVi"},
+}
+ZH_TEXT_KEYS = {"text", "viSha256"}
+ZH_TEXT_OPTIONAL_KEYS = {"ref"}
+
+
+def _apply_zh_texts(document, catalog):
+    """Điền trường zh còn trống bằng bản dịch đã duyệt; hàng nhận `zhSource = {kind: translation}`.
+    Bản dịch chỉ lấp chỗ thiếu: trùng trường đã có chữ Hán nguồn, mã lạ hoặc chữ Việt đã đổi (`viSha256`) làm build dừng."""
+    targets = {}
+    for group in ("advisors", "buildings", "troopMods"):
+        for row in catalog[group]:
+            targets[row["id"]] = (group, row)
+    for row in catalog["troopMods"]:
+        for option in row["options"]:
+            targets[option["id"]] = ("troopOptions", option)
+    ledger = []
+    texts = document.get("zhTexts", {})
+    if not isinstance(texts, dict):
+        raise ValueError("client zhTexts must be an object")
+    for owner, fields in sorted(texts.items()):
+        group, row = targets.get(owner, (None, None))
+        allowed = ZH_TEXT_FIELDS.get(group, {})
+        if row is None or not isinstance(fields, dict) or not fields or not set(fields) <= set(allowed):
+            raise ValueError(f"client zhTexts entry is invalid: {owner}")
+        for field, entry in sorted(fields.items()):
+            vi = row[allowed[field]]
+            if (
+                not isinstance(entry, dict) or not ZH_TEXT_KEYS <= set(entry) <= ZH_TEXT_KEYS | ZH_TEXT_OPTIONAL_KEYS
+                or not isinstance(entry["viSha256"], str) or not SHA256_HEX.fullmatch(entry["viSha256"])
+                or ("ref" in entry and not _approved_ref(entry["ref"]))
+            ):
+                raise ValueError(f"client zhTexts value is invalid: {owner}.{field}")
+            if row[field] is not None:
+                raise ValueError(f"client zhTexts overrides a source Chinese text: {owner}.{field}")
+            if not isinstance(vi, str) or _sha(vi.encode("utf-8")) != entry["viSha256"]:
+                raise ValueError(f"client zhTexts is stale against the Vietnamese text: {owner}.{field}")
+            text = _client_tactic_text(entry["text"], owner, field)
+            if not re.search(r"[\u3400-\u9fff]", text):
+                raise ValueError(f"client zhTexts has no Chinese text: {owner}.{field}")
+            row[field] = text
+            row["zhSource"] = {"kind": "translation"}
+            ledger.append({
+                "entityId": owner, "fieldPath": f"zhTexts.{field}", "disposition": "corrected-public",
+                "chosenInput": "zh-text-sourced" if "ref" in entry else "zh-text-translation", "sourceRecordId": f"client-zh-texts:{owner}",
+                "sourceFieldPath": f"zhTexts.{field}", "sourceValueHash": _sha(canonical_json_bytes(entry)),
+                "localValueHash": None,
+                "reason": "Chinese text taken from an approved public source page." if "ref" in entry
+                else "Chinese text not provided by SGSDeck; reviewed translation of the Vietnamese client text.",
+                "translationInputFingerprint": None,
+                "reviewEvidence": [entry["ref"]] if "ref" in entry else ["zhTexts translation", "pipeline/lookup-client-tactics.json"],
+            })
+    return ledger
+
+
+def _rename_catalog_row(row, name):
+    """Tên hiển thị theo client; tên cũ thành alias để tra cứu theo tên cũ vẫn khớp."""
+    if row["nameVi"] != name and row["nameVi"] not in row["aliasesVi"]:
+        row["aliasesVi"].append(row["nameVi"])
+    if name in row["aliasesVi"]:
+        row["aliasesVi"].remove(name)
+    row["nameVi"] = name
+
+
+def _apply_client_catalog(document, catalog, heroes):
+    """Trang bị, tuyệt kỹ, quân sư, công trình chụp từ client: tên client (tên cũ thành alias) và chữ/số liệu client.
+    Chỉ trường được khai mới bị ghi đè; mã không có trong catalog làm build dừng. `newAdvisors` thêm quân sư chỉ có ở
+    client (không có chữ Hán, không có `usageVi`). Trả các dòng ledger."""
+    ledger = []
+    for group, fields in CLIENT_CATALOG_FIELDS.items():
+        by_id = {row["id"]: row for row in catalog[group]}
+        for owner, entry in sorted(document.get(group, {}).items()):
+            row = by_id.get(owner)
+            if row is None or not isinstance(entry, dict) or not {"nameVi"} <= set(entry) <= fields:
+                raise ValueError(f"client {group} entry is invalid: {owner}")
+            previous = {field: row[field] for field in entry}
+            for field in sorted(entry):
+                value = _client_catalog_value(entry[field], owner, field)
+                if field == "nameVi":
+                    _rename_catalog_row(row, value)
+                else:
+                    row[field] = value
+            ledger.append({
+                "entityId": owner, "fieldPath": f"clientCapture.{group}", "disposition": "corrected-public",
+                "chosenInput": "client-capture", "sourceRecordId": f"client-{group}:{owner}",
+                "sourceFieldPath": group, "sourceValueHash": _sha(canonical_json_bytes(entry)),
+                "localValueHash": _sha(canonical_json_bytes(previous)),
+                "reason": "Global client card is the authority for the Vietnamese name, text and numbers.",
+                "translationInputFingerprint": None,
+                "reviewEvidence": ["captured Global client Thượng Thư Đài", "pipeline/lookup-client-tactics.json"],
+            })
+    taken = {row["id"] for group in ("equipment", "specials", "advisors", "troopMods", "buildings") for row in catalog[group]}
+    for owner, entry in sorted(document.get("newAdvisors", {}).items()):
+        if (
+            not owner.startswith("advisor:") or owner in taken
+            or not isinstance(entry, dict) or set(entry) != CLIENT_CATALOG_FIELDS["advisors"]
+            or entry["elementVi"] not in ELEMENTS.values()
+        ):
+            raise ValueError(f"client new advisor is invalid: {owner}")
+        row = {"id": owner, "aliasesVi": [], "aliasesZh": [], "conditions": [], "missingFields": ["usageVi"], "usageVi": None,
+               "nameZh": None, "effectZh": None, "usageZh": None, "zhSource": None}
+        row.update({field: _client_catalog_value(entry[field], owner, field) for field in sorted(entry)})
+        catalog["advisors"].append(row)
+        ledger.append({
+            "entityId": owner, "fieldPath": "clientCapture.newAdvisor", "disposition": "corrected-public",
+            "chosenInput": "client-capture", "sourceRecordId": f"client-advisors:{owner}",
+            "sourceFieldPath": "newAdvisors", "sourceValueHash": _sha(canonical_json_bytes(entry)),
+            "localValueHash": None,
+            "reason": "Advisor listed by the Global client but missing from the source catalog.",
+            "translationInputFingerprint": None,
+            "reviewEvidence": ["captured Global client Minh Giám › Quân sư", "pipeline/lookup-client-tactics.json"],
+        })
+    # Hồ sơ tướng trỏ ngược tới quân sư theo `heroIds` client: mỗi tướng mang đúng một kỹ năng quân sư.
+    hero_rows = {row["id"]: row for row in heroes}
+    owners = {}
+    for owner, entry in [*document.get("advisors", {}).items(), *document.get("newAdvisors", {}).items()]:
+        for hero_id in entry.get("heroIds", []):
+            if hero_id not in hero_rows or hero_id in owners:
+                raise ValueError(f"client advisor hero link is invalid: {owner} -> {hero_id}")
+            owners[hero_id] = owner
+            hero_rows[hero_id]["lookup"]["advisorId"] = owner
     return ledger
 
 
@@ -1450,7 +1623,7 @@ def _build_model(capture):
         if source is None:
             row = dict(old_heroes[owner])
             row["id"] = owner
-            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "variant": "base", "selfTacticId": None, "inheritTacticId": None, "advisorId": None, "growth": {key: None for key in ("luc", "tri", "thong", "toc", "chinh", "mi")}, "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None, "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None}, "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None, "flags": {key: None for key in ("isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp")}, "usageVi": None, "usageZh": None, "cardPacks": []}
+            row["lookup"] = {"conditions": [], "missingFields": [], "revisions": [], "variant": "base", "selfTacticId": None, "inheritTacticId": None, "advisorId": None, "growth": {key: None for key in ("luc", "tri", "thong", "toc", "chinh", "mi")}, "otherAptitudes": {"infantry": None, "navy": None}, "categoryVi": None, "exclusiveTitleVi": None, "exclusiveTitleZh": None, "civil": {"roleVi": None, "bonusVi": None, "specialtyVi": None, "tacticBonusVi": None}, "civilInnatePoints": None, "collectibleBonusVi": None, "redRulesVi": None, "flags": {key: None for key in ("isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp")}, "usageVi": None, "usageZh": None, "cardPacks": []}
             heroes.append(row)
             continue
         attrs = source["attributes"]
@@ -1485,6 +1658,8 @@ def _build_model(capture):
             "growth": {"luc": _number_or_none(attrs.get("growForce")), "tri": _number_or_none(attrs.get("growWisdom")), "thong": _number_or_none(attrs.get("growCommand")), "toc": _number_or_none(attrs.get("growSpeed")), "chinh": _number_or_none(attrs.get("growPolitics")), "mi": _number_or_none(attrs.get("growCharm"))},
             "otherAptitudes": {"infantry": attrs.get("adaptInfantry"), "navy": attrs.get("adaptNavy")},
             "categoryVi": translated.get((owner, "lookup.categoryVi")), "exclusiveTitleVi": translated.get((owner, "lookup.exclusiveTitleVi")),
+            # Danh hiệu chữ Hán nguồn chỉ công khai khi có bản Việt tương ứng (bản zh hiện thay cho chữ Việt).
+            "exclusiveTitleZh": _source_zh(attrs.get("exclusiveTitle")) if translated.get((owner, "lookup.exclusiveTitleVi")) else None,
             "civil": {"roleVi": translated.get((owner, "lookup.civil.roleVi")), "bonusVi": translated.get((owner, "lookup.civil.bonusVi")), "specialtyVi": translated.get((owner, "lookup.civil.specialtyVi")), "tacticBonusVi": translated.get((owner, "lookup.civil.tacticBonusVi"))},
             "civilInnatePoints": _number_or_none(attrs.get("civilInnatePoints")), "collectibleBonusVi": translated.get((owner, "lookup.collectibleBonusVi")), "redRulesVi": translated.get((owner, "lookup.redRulesVi")),
             "flags": {"isCollectible": attrs.get("isCollectible"), "isDynamicOpen": attrs.get("isDynamicOpen"), "isMusou": attrs.get("isMusou"), "isCO": attrs.get("isCO"), "isSp": attrs.get("isSp")},
@@ -1553,7 +1728,9 @@ def _build_model(capture):
     for record in source_docs["advisors"]["records"]:
         owner = source_owner[f"advisors:{record['sourceId']}"]; decision = decisions[f"advisors:{record['sourceId']}"]; attrs = record["attributes"]
         hero_ids = [source_owner[f"generals:{item['id']}"] for item in attrs.get("generals", []) if f"generals:{item['id']}" in source_owner]
-        advisors.append({**_common(record, owner, decision, translated), "elementVi": _enum(ELEMENTS, attrs.get("element"), "advisor.element"), "effectVi": translated.get((owner, "effectVi")), "usageVi": translated.get((owner, "usageVi")), "tacticPoints": _number_or_none(attrs.get("tacticPoints")), "heroIds": hero_ids})
+        effect_zh = _source_zh(attrs.get("effectText"))
+        advisors.append({**_common(record, owner, decision, translated), "elementVi": _enum(ELEMENTS, attrs.get("element"), "advisor.element"), "effectVi": translated.get((owner, "effectVi")), "usageVi": translated.get((owner, "usageVi")), "tacticPoints": _number_or_none(attrs.get("tacticPoints")), "heroIds": hero_ids,
+                         "nameZh": None, "effectZh": effect_zh, "usageZh": _source_zh(attrs.get("description")), "zhSource": {"kind": "source"} if effect_zh else None})
     troop_mods = []
     for record in source_docs["troop-mods"]["records"]:
         owner = source_owner[f"troop-mods:{record['sourceId']}"]
@@ -1562,8 +1739,12 @@ def _build_model(capture):
         options = []
         for index, option in enumerate(attrs.get("options", [])):
             child_id = child_ids[(record["sourceId"], "troop-option", str(index))]
-            options.append({"id": child_id, "tierVi": _enum(TIERS, option["tier"], "troop-option.tier"), "nameVi": translated[(child_id, "nameVi")], "descriptionVi": translated.get((child_id, "descriptionVi")), "convertsToVi": _enum(TROOPS, option.get("convertsTo"), "troop-option.convertsTo")})
-        troop_mods.append({**_common(record, owner, decision, translated), "effectVi": translated.get((owner, "effectVi")), "appliesToVi": translated.get((owner, "appliesToVi")), "suggestedBuildVi": translated.get((owner, "suggestedBuildVi")), "troopLimitVi": [_enum(TROOPS, value, "troop-mod.troopLimit") for value in attrs.get("troopLimit", [])], "revisions": _revisions(attrs.get("effectText"), translated.get((owner, "effectVi"))), "options": options})
+            name_zh = _source_zh(option.get("traitName"))
+            options.append({"id": child_id, "tierVi": _enum(TIERS, option["tier"], "troop-option.tier"), "nameVi": translated[(child_id, "nameVi")], "descriptionVi": translated.get((child_id, "descriptionVi")), "convertsToVi": _enum(TROOPS, option.get("convertsTo"), "troop-option.convertsTo"),
+                            "nameZh": name_zh, "descriptionZh": _source_zh(option.get("description")), "zhSource": {"kind": "source"} if name_zh else None})
+        effect_zh = _source_zh(attrs.get("effectText"))
+        troop_mods.append({**_common(record, owner, decision, translated), "effectVi": translated.get((owner, "effectVi")), "appliesToVi": translated.get((owner, "appliesToVi")), "suggestedBuildVi": translated.get((owner, "suggestedBuildVi")), "troopLimitVi": [_enum(TROOPS, value, "troop-mod.troopLimit") for value in attrs.get("troopLimit", [])], "revisions": _revisions(attrs.get("effectText"), translated.get((owner, "effectVi"))), "options": options,
+                           "effectZh": effect_zh, "appliesToZh": _source_zh(attrs.get("appliesTo")), "suggestedBuildZh": _source_zh(attrs.get("suggestedBuild")), "zhSource": {"kind": "source"} if effect_zh else None})
     client_ledger += _apply_client_troop_mods(_json(capture["clientTactics"]), troop_mods)
     buildings = []
     for record in source_docs["buildings"]["records"]:
@@ -1572,8 +1753,11 @@ def _build_model(capture):
         for level in attrs.get("levels", []):
             child_id = child_ids[(record["sourceId"], "building-level", str(level["level"]))]
             costs = level.get("costs") or {}
-            levels.append({"id": child_id, "level": level["level"], "costs": {name: _number_or_none(costs.get(name)) for name in ("wood", "iron", "stone")}, "durationVi": translated.get((child_id, "durationVi")), "effectVi": translated.get((child_id, "effectVi"))})
-        buildings.append({**_common(record, owner, decision, translated), "summaryVi": translated.get((owner, "summaryVi")), "mainCityOnly": attrs.get("mainCityOnly"), "maxLevel": attrs.get("maxLevel"), "levels": levels})
+            levels.append({"id": child_id, "level": level["level"], "costs": {name: _number_or_none(costs.get(name)) for name in ("wood", "iron", "stone")}, "durationVi": translated.get((child_id, "durationVi")), "effectVi": translated.get((child_id, "effectVi")),
+                           "effectZh": _source_zh(level.get("effect")), "durationZh": _source_zh(level.get("duration"))})
+        summary_zh = _source_zh(attrs.get("summary"))
+        buildings.append({**_common(record, owner, decision, translated), "summaryVi": translated.get((owner, "summaryVi")), "mainCityOnly": attrs.get("mainCityOnly"), "maxLevel": attrs.get("maxLevel"), "levels": levels,
+                          "summaryZh": summary_zh, "zhSource": {"kind": "source"} if summary_zh else None})
 
     ledger = []
     for group in SOURCE_GROUPS:
@@ -1662,8 +1846,10 @@ def _build_model(capture):
                 )
                 translation_fingerprint_value = specs.get((owner, target_field)) if target_field and selected_fallback else None
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_fingerprint_value else "compatibility-preimage", "chosenInput": "local-baseline", "sourceRecordId": None, "sourceFieldPath": None, "sourceValueHash": None, "localValueHash": _sha(canonical_json_bytes(value)), "reason": "Frozen local fallback selected and bound to reviewed Vietnamese output." if translation_fingerprint_value else "Frozen local field retained or explicitly compared before source projection.", "translationInputFingerprint": translation_fingerprint_value, "reviewEvidence": ["frozen baseline manifest", "exact compatibility merge"]})
-    ledger.extend(client_ledger)
     catalog = {"schemaVersion": 1, "equipment": equipment, "specials": specials, "advisors": advisors, "troopMods": troop_mods, "buildings": buildings}
+    client_ledger += _apply_client_catalog(_json(capture["clientTactics"]), catalog, heroes)
+    client_ledger += _apply_zh_texts(_json(capture["clientTactics"]), catalog)
+    ledger.extend(client_ledger)
     return heroes, tactics, catalog, ledger, specs
 
 
@@ -1780,7 +1966,8 @@ def _validate_payloads(heroes, tactics, catalog):
             or any(value is not None and not isinstance(value, str) for value in lookup["otherAptitudes"].values())
             or any(value is not None and type(value) is not bool for value in lookup["flags"].values())
             or any(not _optional_string(value) for value in lookup["civil"].values())
-            or any(not _optional_string(lookup[field]) for field in ("categoryVi", "exclusiveTitleVi", "collectibleBonusVi", "redRulesVi", "usageVi", "usageZh"))
+            or any(not _optional_string(lookup[field]) for field in ("categoryVi", "exclusiveTitleVi", "exclusiveTitleZh", "collectibleBonusVi", "redRulesVi", "usageVi", "usageZh"))
+            or (lookup["exclusiveTitleZh"] is not None and lookup["exclusiveTitleVi"] is None)
             or (lookup["usageVi"] is None) != (lookup["usageZh"] is None)
             or not isinstance(lookup["cardPacks"], list)
             or any(
@@ -1869,19 +2056,23 @@ def _validate_payloads(heroes, tactics, catalog):
             ):
                 raise ValueError(f"special scalar type is invalid: {row['id']}")
             if group == "advisors" and (
-                any(not _optional_string(row[field]) for field in ("elementVi", "effectVi", "usageVi"))
+                any(not _optional_string(row[field]) for field in ("elementVi", "effectVi", "usageVi", "nameZh", "effectZh", "usageZh"))
+                or not _zh_source_ok(row["zhSource"], row["nameZh"] or row["effectZh"])
                 or not _optional_number(row["tacticPoints"])
                 or not _string_list(row["heroIds"])
             ):
                 raise ValueError(f"advisor scalar type is invalid: {row['id']}")
             if group == "troopMods" and (
-                any(not _optional_string(row[field]) for field in ("effectVi", "appliesToVi", "suggestedBuildVi"))
+                any(not _optional_string(row[field]) for field in ("effectVi", "appliesToVi", "suggestedBuildVi", "effectZh", "appliesToZh", "suggestedBuildZh"))
+                or not _zh_source_ok(row["zhSource"], row["effectZh"])
                 or not _string_list(row["troopLimitVi"])
                 or not isinstance(row["options"], list)
             ):
                 raise ValueError(f"troop mod scalar type is invalid: {row['id']}")
             if group == "buildings" and (
                 not _optional_string(row["summaryVi"])
+                or not _optional_string(row["summaryZh"])
+                or not _zh_source_ok(row["zhSource"], row["summaryZh"])
                 or type(row["mainCityOnly"]) is not bool
                 or type(row["maxLevel"]) is not int
                 or not isinstance(row["levels"], list)
@@ -1892,7 +2083,8 @@ def _validate_payloads(heroes, tactics, catalog):
         or set(option) != OPTION_KEYS
         or not isinstance(option["id"], str)
         or not isinstance(option["nameVi"], str)
-        or any(not _optional_string(option[field]) for field in ("tierVi", "descriptionVi", "convertsToVi"))
+        or any(not _optional_string(option[field]) for field in ("tierVi", "descriptionVi", "convertsToVi", "nameZh", "descriptionZh"))
+        or not _zh_source_ok(option["zhSource"], option["nameZh"] or option["descriptionZh"])
         for row in catalog["troopMods"]
         for option in row["options"]
     ):
@@ -1903,7 +2095,7 @@ def _validate_payloads(heroes, tactics, catalog):
         or set(level["costs"]) != {"wood", "iron", "stone"}
         or type(level["level"]) is not int
         or any(not _optional_number(value) for value in level["costs"].values())
-        or any(not _optional_string(level[field]) for field in ("durationVi", "effectVi"))
+        or any(not _optional_string(level[field]) for field in ("durationVi", "effectVi", "effectZh", "durationZh"))
         for row in catalog["buildings"]
         for level in row["levels"]
     ):
@@ -1925,6 +2117,13 @@ def _validate_payloads(heroes, tactics, catalog):
     if any(type(row["mainCityOnly"]) is not bool or type(row["maxLevel"]) is not int for row in catalog["buildings"]):
         raise ValueError("building scalar type is invalid")
     _walk_vi({"heroes": heroes, "tactics": tactics, "catalog": catalog})
+
+
+def _zh_source_ok(value, main_text):
+    """`zhSource` có khi và chỉ khi hàng có chữ Hán chính, và chỉ là `{kind: source|translation}`."""
+    if main_text is None:
+        return value is None
+    return isinstance(value, dict) and set(value) == {"kind"} and value["kind"] in ZH_SOURCE_KINDS
 
 
 def _type_signature(value):

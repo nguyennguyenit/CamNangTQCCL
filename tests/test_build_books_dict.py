@@ -71,6 +71,15 @@ class BuildBooksDictTest(unittest.TestCase):
             with self.assertRaises(ValueError, msg=partial):
                 bbd.build_books_dict({"防备": {"viet": "Phòng Bị", **partial}}, FACET)
 
+    def test_client_vietnamese_version_needs_the_full_effect(self):
+        # Mốc riêng của chữ Việt (chép từ client) đi kèm bộ ba hiệu ứng; đứng một mình thì zh không có gì đối ứng -> ném.
+        effect = {"effect": "使自身受到的傷害降低 3%", "effectViet": "Bản thân giảm 3%.", "effectVersion": "2021-11"}
+        recs = bbd.build_books_dict({"防备": {"viet": "Phòng Bị", **effect, "effectVietVersion": "Global 24.535"}}, FACET)
+        self.assertEqual((recs[0]["effectVersion"], recs[0]["effectVietVersion"]), ("2021-11", "Global 24.535"))
+        for bad in ({"effectVietVersion": "Global 24.535"}, {**effect, "effectVietVersion": " "}):
+            with self.assertRaises(ValueError, msg=bad):
+                bbd.build_books_dict({"防备": {"viet": "Phòng Bị", **bad}}, FACET)
+
     def test_source_names_carried_sorted(self):
         recs = bbd.build_books_dict({"防备": {"viet": "Phòng Bị", "sourceNames": ["防備"]}}, FACET)
         self.assertEqual(recs[0]["sourceNames"], ["防備"])

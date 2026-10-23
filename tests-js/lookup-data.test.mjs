@@ -190,8 +190,8 @@ test("ID bản ghi phải đúng tiền tố và duy nhất", async () => {
 
   const duplicatedAcrossGroups = withRaw("lookup-catalog.json", catalogDoc({
     advisors: [
-      { id: "advisor:an-phuc-binh-tam", nameVi: "A", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
-      { id: "advisor:an-phuc-binh-tam", nameVi: "B", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
+      { id: "advisor:an-phuc-binh-tam", nameVi: "A", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", nameZh: null, effectZh: null, usageZh: null, zhSource: null, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
+      { id: "advisor:an-phuc-binh-tam", nameVi: "B", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", nameZh: null, effectZh: null, usageZh: null, zhSource: null, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
     ],
   }));
   await assert.rejects(validateLookupBundle(duplicatedAcrossGroups.manifest, duplicatedAcrossGroups.rawFiles), /advisor:an-phuc-binh-tam/);

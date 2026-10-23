@@ -15,9 +15,9 @@ async function entities(): Promise<readonly CatalogEntityView[]> {
 
 describe("tqccl_search", () => {
   it("finds an equipment record by its exact Vietnamese name", async () => {
-    const result = await handlers.call("tqccl_search", { query: "Thanh Long Yển Nguyệt Đao" });
+    const result = await handlers.call("tqccl_search", { query: "Đao Thanh Long Yển Nguyệt" });
     const hit = result.items.find((item) => item.entityId === "equipment:thanh-long-yen-nguyet-dao");
-    expect(hit).toMatchObject({ kind: "equipment", displayName: "Thanh Long Yển Nguyệt Đao", matchedTerm: "Thanh Long Yển Nguyệt Đao" });
+    expect(hit).toMatchObject({ kind: "equipment", displayName: "Đao Thanh Long Yển Nguyệt", matchedTerm: "Đao Thanh Long Yển Nguyệt" });
     expect(hit?.pagePath).toBe(lookupProfilePath("equipment:thanh-long-yen-nguyet-dao"));
   });
 
