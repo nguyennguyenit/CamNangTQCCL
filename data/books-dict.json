@@ -7,16 +7,18 @@
       "兵行詭道"
     ],
     "effect": "戰鬥第2回合,我軍單體與敵軍隨機單體造成傷害降低75%,持續1回合",
-    "effectViet": "Hiệp 2 của trận, một tướng quân ta và một tướng địch ngẫu nhiên giảm 75% sát thương gây ra, kéo dài 1 hiệp.",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 2, sát thương gây ra của 1 quân ta và 1 quân địch ngẫu nhiên giảm 65%, duy trì 1 hiệp.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:biet-cach-phong-thu",
     "chinese": "守而有道",
     "viet": "Biết Cách Phòng Thủ",
     "effect": "自身受到的謀略傷害降低5%(受統率影響)",
-    "effectViet": "Bản thân giảm 5% sát thương mưu lược phải chịu (chịu ảnh hưởng của Thống suất).",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân sát thương Mưu Lược giảm 5% (bị Thống Soái ảnh hưởng)",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:bach-chien",
@@ -27,8 +29,9 @@
       "百戰"
     ],
     "effect": "自帶戰法的發動機率提高3%",
-    "effectViet": "Tỷ lệ phát động của chiến pháp tự mang tăng 3%.",
-    "effectVersion": "2021-11"
+    "effectViet": "Xác suất phát động Chiến Pháp mang theo tăng 3%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:bo-tran-cho-doi",
@@ -39,16 +42,18 @@
       "嚴陣以待"
     ],
     "effect": "戰鬥前2回合，爲友軍群體(2人)分擔15%的傷害",
-    "effectViet": "Trong 2 hiệp đầu trận, gánh 15% sát thương thay cho nhóm quân ta (2 người).",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu 2 hiệp đầu, Gánh Vác 15% sát thương cho một nhóm quân Đồng Minh (2 người)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:chia-loi",
     "chinese": "分利",
     "viet": "Chia Lời",
     "effect": "自身受到兵刃傷害後，統率提升1%，受到謀略傷害則智力提升1%,分別可疊加5次",
-    "effectViet": "Sau khi chịu sát thương binh khí, bản thân tăng 1% Thống suất; sau khi chịu sát thương mưu lược, tăng 1% Trí lực. Mỗi loại cộng dồn tối đa 5 lần.",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân sau khi chịu sát thương Binh Đao, Thống Soái tăng 1%, sau khi chịu sát thương Mưu Lược, Trí Lực tăng 1%, mỗi trường hợp có thể cộng dồn 5 lần.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:chia-nho-danh-nhanh",
@@ -58,8 +63,9 @@
       "分而疾戰"
     ],
     "effect": "自身受到的傷害降低3.5% (受速度屬性影響)",
-    "effectViet": "Bản thân giảm 3,5% sát thương phải chịu (chịu ảnh hưởng của Tốc độ).",
-    "effectVersion": "2021-11"
+    "effectViet": "Bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 3.5% (bị Tốc độ ảnh hưởng)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:chien-dau-truong-ky",
@@ -69,16 +75,18 @@
       "久戰"
     ],
     "effect": "自身獲得3%攻心和倒戈",
-    "effectViet": "Bản thân nhận 3% công tâm và Đảo Qua.",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân nhận 3% Công Tâm và Làm Phản.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:cham-qua-toa-giap",
     "chinese": "枕戈坐甲",
     "viet": "Chẩm Qua Tọa Giáp",
     "effect": "戰鬥第2-6回合,自身每回合有25%概率獲得1次抵禦",
-    "effectViet": "Từ hiệp 2 đến hiệp 6, mỗi hiệp bản thân có 25% xác suất nhận 1 lần chống đỡ.",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 2-6, bản thân mỗi hiệp có 25% xác suất nhận 1 lần Chống Đỡ.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:cuong-nhu",
@@ -89,8 +97,9 @@
       "剛柔"
     ],
     "effect": "受到治療時,提高9%治療效果",
-    "effectViet": "Khi được trị liệu, hiệu quả trị liệu nhận được tăng 9%.",
-    "effectVersion": "2024-07"
+    "effectViet": "Khi được Trị Liệu, tăng 9% hiệu ứng Trị Liệu.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:cam-binh-khi",
@@ -100,8 +109,9 @@
       "執銳"
     ],
     "effect": "使自身造成的兵刃傷害和謀略傷害提高3%",
-    "effectViet": "Bản thân tăng 3% sát thương binh khí và sát thương mưu lược gây ra.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân sát thương Binh Đao và sát thương Mưu Lược tăng 3%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:cuu-chu",
@@ -109,8 +119,9 @@
     "viet": "Cứu Chủ",
     "hanViet": "Cứu Chủ",
     "effect": "戰鬥中，使我軍主將受到的傷害降低7%，自身受到的傷害提高7%；註：多人携帶效果無法叠加",
-    "effectViet": "Trong trận, chủ tướng quân ta giảm 7% sát thương phải chịu, bản thân tăng 7% sát thương phải chịu. Nhiều tướng cùng mang không cộng dồn.",
-    "effectVersion": "2021-11"
+    "effectViet": "Trong chiến đấu, khiến tướng chính quân ta sát thương Binh Đao và sát thương Mưu Lược giảm 7%, bản thân sát thương Binh Đao và sát thương Mưu Lược tăng 7%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:cuu-vien",
@@ -129,8 +140,9 @@
     "viet": "Diệu Toán",
     "hanViet": "Diệu Toán",
     "effect": "造成控制效果時，50%機率減低目標16點智力和統率，持續1回合",
-    "effectViet": "Khi gây hiệu ứng khống chế, có 50% xác suất giảm 16 điểm Trí lực và Thống suất của mục tiêu, kéo dài 1 hiệp.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi gây ra hiệu ứng khống chế, có 50% tỉ lệ giảm của mục tiêu 16 điểm trí lực và thống soái, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:di-truc-bao-oan",
@@ -143,8 +155,9 @@
       "以退為進"
     ],
     "effect": "自身受到控制狀態時,有50%概率對敵軍單體造成1次兵刃傷害(傷害率70%)",
-    "effectViet": "Khi bản thân bị khống chế, có 50% xác suất gây 1 lần sát thương binh khí lên một tướng địch (tỷ lệ sát thương 70%).",
-    "effectVersion": "2024-07"
+    "effectViet": "Khi bản thân chịu trạng thái khống chế có 50% xác suất gây cho 1 quân địch 1 lần sát thương Binh Đao (tỷ lệ sát thương 70%)",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:dan-quan",
@@ -155,8 +168,9 @@
       "統軍"
     ],
     "effect": "自身統率提升20",
-    "effectViet": "Bản thân tăng 20 Thống suất.",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân Thống Soái tăng 20.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:giap-sat",
@@ -167,8 +181,9 @@
       "鐵甲"
     ],
     "effect": "使自身受到普通攻擊以及突擊戰法傷害降低6%",
-    "effectViet": "Bản thân giảm 6% sát thương phải chịu từ đánh thường và chiến pháp đột kích.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân tấn công thường nhận vào và sát thương Chiến Pháp đột kích giảm 6%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:gia-nai-truoc-dich",
@@ -178,8 +193,9 @@
       "示敵以弱"
     ],
     "effect": "戰鬥前4回合,使自身造成傷害降低15%,第4回合開始自身主動戰法發動率提升7%",
-    "effectViet": "Trong 4 hiệp đầu trận, bản thân giảm 15% sát thương gây ra; từ hiệp 4, tỷ lệ phát động chiến pháp chủ động của bản thân tăng 7%.",
-    "effectVersion": "2024-07"
+    "effectViet": "4 hiệp đầu, sát thương Binh Đao và sát thương Mưu Lược bản thân gây ra giảm 15%, từ hiệp 4, xác suất phát động Chiến Pháp Chủ Động của bản thân tăng 7%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:giau-dao",
@@ -187,8 +203,9 @@
     "viet": "Giấu Đao",
     "hanViet": "Tàng Đao",
     "effect": "自身突擊戰法傷害下降5%，突擊戰法發動率增加3%",
-    "effectViet": "Sát thương chiến pháp đột kích của bản thân giảm 5%, tỷ lệ phát động chiến pháp đột kích tăng 3%.",
-    "effectVersion": "2021-11"
+    "effectViet": "Sát thương chiến pháp đột kích của chính mình giảm 5%, xác suất phát động chiến pháp đột kích tăng cao 3%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:gap-dich-khong-loan",
@@ -199,8 +216,9 @@
       "臨敵不亂"
     ],
     "effect": "戰鬥第4回合，移除友軍單體所有的負面狀態",
-    "effectViet": "Hiệp 4 của trận, xoá mọi trạng thái bất lợi của một tướng đồng minh.",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu hiệp thứ 4, xóa trạng thái xấu của một mục tiêu quân hảo hữu.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:hanh-dong-theo-thoi",
@@ -210,8 +228,9 @@
       "應機立斷"
     ],
     "effect": "自身每回合首次造成傷害提升12%",
-    "effectViet": "Mỗi hiệp, lần gây sát thương đầu tiên của bản thân tăng 12%.",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân lần đầu gây sát thương của mỗi hiệp tăng 12%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:hop-bien",
@@ -222,8 +241,9 @@
       "合變"
     ],
     "effect": "每回合結束時，若本回合自身未發動主動戰法，則使自身受到的兵刃和謀略傷害降低6%，持續1回合；註：準備發動並不算作發動",
-    "effectViet": "Cuối mỗi hiệp, nếu trong hiệp đó bản thân không phát động chiến pháp chủ động thì giảm 6% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp. Đang chuẩn bị không tính là đã phát động.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi mỗi hiệp kết thúc, nếu hiệp này bản thân chưa phát động Chiến Pháp chủ động, sẽ khiến bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 6%, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khai-hap",
@@ -233,8 +253,9 @@
       "開闔"
     ],
     "effect": "成功發動主動戰法後,自身受到傷害降低6%,持續1回合",
-    "effectViet": "Sau khi phát động thành công chiến pháp chủ động, bản thân giảm 6% sát thương phải chịu, kéo dài 1 hiệp.",
-    "effectVersion": "2024-07"
+    "effectViet": "Sau khi phát động thành công Chiến Pháp Chủ Động, sát thương phải chịu của bản thân giảm 6%, duy trì 1 hiệp.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khep-ho",
@@ -244,8 +265,9 @@
       "掩虛"
     ],
     "effect": "每回合行動時，若自身為我軍損失兵力最多者，自身受到的兵刃和謀略傷害降低6%",
-    "effectViet": "Mỗi lượt hành động, nếu bản thân là tướng quân ta mất nhiều binh lực nhất thì giảm 6% sát thương binh khí và sát thương mưu lược phải chịu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Mỗi hiệp khi hành động, nếu bản thân là người tổn thất Binh Lực nhiều nhất phía quân ta, thì bản thân sẽ được sát thương Binh Đao và sát thương Mưu Lược giảm 6%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khich-le-long-quan",
@@ -256,8 +278,9 @@
       "厲軍"
     ],
     "effect": "戰鬥中，使隨機友軍單體造成傷害提高3%",
-    "effectViet": "Trong trận, một tướng đồng minh ngẫu nhiên tăng 3% sát thương gây ra.",
-    "effectVersion": "2021-11"
+    "effectViet": "Trong chiến đấu, khiến một quân Đồng Minh ngẫu nhiên sát thương Binh Đao và sát thương Mưu Lược tăng 3%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khong-chien-ma-thang",
@@ -268,8 +291,9 @@
       "無戰而勝"
     ],
     "effect": "造成控制效果時，自身受到的兵刃傷害和謀略傷害降低10%，持續1回合",
-    "effectViet": "Khi gây hiệu ứng khống chế, bản thân giảm 10% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi gây ra hiệu ứng Khống chế, bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 10%, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khong-chien-se-chet",
@@ -279,8 +303,9 @@
       "不勇則死"
     ],
     "effect": "戰鬥第5回合開始，每回合有40%進入連擊，禁療狀態",
-    "effectViet": "Từ hiệp 5 của trận, mỗi hiệp có 40% xác suất vào trạng thái Liên kích và cấm trị liệu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu hiệp thứ 5 trở đi, mỗi hiệp có 40% rơi vào trạng thái Liên Kích, Cấm Trị Liệu.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:khong-lo-tai-nang",
@@ -291,8 +316,9 @@
       "大謀不謀"
     ],
     "effect": "戰鬥中，每次成功發動主動戰法時，有50%機率增加4.5%奇謀和會心，持續2回合，可叠加兩次",
-    "effectViet": "Trong trận, mỗi lần phát động thành công chiến pháp chủ động có 50% xác suất tăng 4,5% kỳ mưu và hội tâm, kéo dài 2 hiệp, cộng dồn tối đa 2 lần.",
-    "effectVersion": "2021-11"
+    "effectViet": "Trong chiến đấu, mỗi khi phát động thành công Chiến Pháp chủ động, có 50% xác suất tăng 4.5% Kỳ Mưu và Hội Tâm, duy trì 2 hiệp. Được cộng dồn 2 lần.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:ke-sach-du-dich",
@@ -303,8 +329,9 @@
       "誘敵之策"
     ],
     "effect": "自身受到的傷害提高16%，友軍造成的傷害提高5%；註：多人携帶效果無法叠加",
-    "effectViet": "Bản thân tăng 16% sát thương phải chịu, tướng đồng minh tăng 5% sát thương gây ra. Nhiều tướng cùng mang không cộng dồn.",
-    "effectVersion": "2021-11"
+    "effectViet": "Bản thân sát thương Binh Đao và sát thương Mưu Lược tăng 16%, quân Đồng Minh sát thương Binh Đao và sát thương Mưu Lược tăng 5%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:ky-chinh-tuong-sinh",
@@ -312,8 +339,9 @@
     "viet": "Kỳ Chính Tương Sinh",
     "hanViet": "Kỳ Chính Tương Sinh",
     "effect": "每回合有15%(受智力屬性加成)的機率獲得連擊狀態",
-    "effectViet": "Mỗi hiệp có 15% xác suất (chịu ảnh hưởng của Trí lực) nhận trạng thái Liên kích.",
-    "effectVersion": "2021-11"
+    "effectViet": "Mỗi hiệp có 15% xác suất (được thuộc tính Trí Lực cộng thêm) nhận trạng thái Liên Kích.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:lien-mach-mot-hoi",
@@ -323,8 +351,9 @@
       "一鼓作氣"
     ],
     "effect": "增加突擊戰法18%的傷害，隨後每次發動突擊戰法該戰法效果降低1/3；註：沒有傷害的突擊戰法也會消耗1/3此兵書的效果，例如彎弓和折衝",
-    "effectViet": "Tăng 18% sát thương chiến pháp đột kích; sau mỗi lần phát động chiến pháp đột kích, hiệu quả này giảm 1/3. Chiến pháp đột kích không gây sát thương cũng làm giảm 1/3.",
-    "effectVersion": "2021-11"
+    "effectViet": "Tăng 18% sát thương Chiến Pháp đột kích, sau đó mỗi lần phát động Chiến Pháp đột kích hiệu ứng này giảm 1/3.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:lay-vo-dep-loan",
@@ -334,8 +363,9 @@
       "以治擊亂"
     ],
     "effect": "對處於控制狀態的武將造成的傷害提高12%",
-    "effectViet": "Đối với võ tướng trong trạng thái khống chế, sát thương gây ra tăng 12%.",
-    "effectVersion": "2021-11"
+    "effectViet": "Gây cho Võ Tướng rơi vào trạng thái khống chế sát thương Binh Đao và sát thương Mưu Lược tăng 12%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:man-dung-phi-dung",
@@ -346,8 +376,9 @@
       "蠻勇非勇"
     ],
     "effect": "提高自身智力屬性，其值等於自身武力屬性的16%",
-    "effectViet": "Bản thân tăng Trí lực, bằng 16% Vũ lực của bản thân.",
-    "effectVersion": "2021-11"
+    "effectViet": "Bản thân tăng 16% điểm thuộc tính Trí Lực, giá trị bằng 16% thuộc tính Võ Lực của bản thân.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:muu-ke-sau-xa",
@@ -358,8 +389,9 @@
       "遠謀"
     ],
     "effect": "自身造成持續性狀態傷害提升6%",
-    "effectViet": "Bản thân tăng 6% sát thương trạng thái kéo dài gây ra.",
-    "effectVersion": "2024-07"
+    "effectViet": "Sát thương trạng thái có tính duy trì bản thân gây ra tăng 6%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:nghia-dung",
@@ -367,8 +399,9 @@
     "viet": "Nghĩa Dũng",
     "hanViet": "Dũng Nghị",
     "effect": "受到克制兵種的傷害減少15%",
-    "effectViet": "Giảm 15% sát thương phải chịu từ binh chủng khắc chế.",
-    "effectVersion": "2021-11"
+    "effectViet": "Sát thương binh chủng khắc chế nhận vào giảm 15%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:nhin-ro-mon-mot",
@@ -378,8 +411,9 @@
       "洞若觀火"
     ],
     "effect": "自身受到屬性降低效果時,有20%概率免疫",
-    "effectViet": "Khi bản thân bị giảm thuộc tính, có 20% xác suất miễn nhiễm.",
-    "effectVersion": "2024-07"
+    "effectViet": "Khi bản thân chịu hiệu quả giảm thuộc tính, có 20% xác suất miễn dịch.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:phan-hiem",
@@ -389,8 +423,9 @@
       "分險"
     ],
     "effect": "成功發動突擊戰法后，使自身受到的兵刃傷害和謀略傷害降低6%，持續1回合；註：不可叠加",
-    "effectViet": "Sau khi phát động thành công chiến pháp đột kích, bản thân giảm 6% sát thương binh khí và sát thương mưu lược phải chịu, kéo dài 1 hiệp. Không cộng dồn.",
-    "effectVersion": "2021-11"
+    "effectViet": "Sau khi phát động thành công Chiến Pháp đột kích, khiến bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 6%, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:phong-bi",
@@ -401,8 +436,9 @@
       "防備"
     ],
     "effect": "使自身受到的傷害降低3%",
-    "effectViet": "Bản thân giảm 3% sát thương phải chịu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 3%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:quy-thuan",
@@ -413,8 +449,9 @@
       "歸心"
     ],
     "effect": "自身準備戰法發動率提升3%",
-    "effectViet": "Tỷ lệ phát động chiến pháp cần chuẩn bị của bản thân tăng 3%.",
-    "effectVersion": "2024-07"
+    "effectViet": "Xác suất phát động Chiến Pháp chuẩn bị của bản thân tăng 3%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:quy-muu",
@@ -425,8 +462,9 @@
       "鬼謀"
     ],
     "effect": "提升4.5%主動戰法傷害",
-    "effectViet": "Tăng 4,5% sát thương chiến pháp chủ động.",
-    "effectVersion": "2021-11"
+    "effectViet": "Tăng 4.5% sát thương Chiến Pháp chủ động.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:ren-luyen",
@@ -437,8 +475,9 @@
       "錘鍊"
     ],
     "effect": "自身受到持續性狀態傷害降低10%",
-    "effectViet": "Bản thân giảm 10% sát thương trạng thái kéo dài phải chịu.",
-    "effectVersion": "2024-07"
+    "effectViet": "Sát thương trạng thái có tính duy trì bản thân phải chịu giảm 10%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:sac-ben",
@@ -449,8 +488,9 @@
       "銳利"
     ],
     "effect": "自身突擊戰法發動率提升2%",
-    "effectViet": "Tỷ lệ phát động chiến pháp đột kích của bản thân tăng 2%.",
-    "effectVersion": "2024-07"
+    "effectViet": "Xác suất phát động Chiến Pháp đột kích của bản thân tăng 2%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tam-ly-nhi-hoan",
@@ -460,8 +500,9 @@
       "三里而還"
     ],
     "effect": "戰鬥第3回合,自身獲得反擊狀態(傷害率50%),持續3回合",
-    "effectViet": "Hiệp 3 của trận, bản thân nhận trạng thái phản kích (tỷ lệ sát thương 50%), kéo dài 3 hiệp.",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 3, bản thân nhận trạng thái Phản Đòn (tỷ lệ sát thương 50%), duy trì 3 hiệp.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tam-quan-chi-chung",
@@ -472,8 +513,9 @@
       "三軍之眾"
     ],
     "effect": "戰鬥第2-4回合,自身獲得急救(治療率25%,受智力影響)",
-    "effectViet": "Từ hiệp 2 đến hiệp 4, bản thân nhận cấp cứu (tỷ lệ trị liệu 25%, chịu ảnh hưởng của Trí lực).",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 2-4, bản thân nhận Cấp Cứu (tỷ lệ Trị Liệu 30%, ảnh hưởng bởi Trí Lực)",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:thien-chien",
@@ -483,8 +525,9 @@
       "善戰"
     ],
     "effect": "自身每次造成傷害後,造成傷害提升0.5%,可疊加8次",
-    "effectViet": "Sau mỗi lần gây sát thương, bản thân tăng 0,5% sát thương gây ra, cộng dồn tối đa 8 lần.",
-    "effectVersion": "2024-07"
+    "effectViet": "Bản thân sau mỗi lần gây sát thương, sát thương gây ra tăng 0.5%, có thể cộng dồn 8 lần.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:thuan-thien-thuan-toi",
@@ -494,8 +537,9 @@
       "順天應時"
     ],
     "effect": "施加持續性狀態時，有35%的機率增加1回合持續時間；註：不包括奪魂，智計",
-    "effectViet": "Khi gây trạng thái kéo dài, có 35% xác suất tăng thêm 1 hiệp thời gian duy trì. Không áp dụng cho Đoạt Hồn và Trí Kế.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi thi triển trạng thái liên tục, có 35% xác suất tăng 1 hiệp thời gian duy trì.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:thich-lam-viec-thien",
@@ -505,8 +549,9 @@
       "樂善好施"
     ],
     "effect": "自身造成治療時有概率(取會心和奇謀幾率更高一項)使此次治療提升100%(取會心傷害和奇謀傷害更高一項)",
-    "effectViet": "Khi bản thân trị liệu, có xác suất (lấy mức cao hơn giữa tỷ lệ hội tâm và kỳ mưu) tăng 100% lượng trị liệu của lần đó (lấy mức cao hơn giữa sát thương hội tâm và kỳ mưu).",
-    "effectVersion": "2024-07"
+    "effectViet": "Khi bản thân tạo trị liệu có xác suất (lấy xác suất cao hơn trong Hội Tâm và Kỳ Mưu) khiến lần trị liệu này tăng 100% (lấy mức cao hơn trong sát thương Hội Tâm và sát thương Kỳ Mưu)",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:than-co",
@@ -517,8 +562,9 @@
       "神機"
     ],
     "effect": "戰鬥首回合，使自身獲得先攻狀態(優先行動)",
-    "effectViet": "Hiệp đầu của trận, bản thân nhận trạng thái Tiên công (hành động trước).",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu hiệp đầu, khiến bản thân nhận trạng thái Tiến Công Trước (ưu tiên hành động)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:thang-se-cang-manh",
@@ -528,8 +574,9 @@
       "勝而益強"
     ],
     "effect": "使自身在成功發動普通攻擊後，有40%機率恢復一定兵力(治療率65%)",
-    "effectViet": "Sau khi đánh thường thành công, bản thân có 40% xác suất hồi phục binh lực (tỷ lệ trị liệu 65%).",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân sau khi phát động thành công tấn công thường, có 40% xác suất hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 65%)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:thang-tran",
@@ -540,8 +587,9 @@
       "勝戰"
     ],
     "effect": "戰鬥第2回合，自身獲得65%破陣狀態(造成傷害時無視目標的統帥和智力)",
-    "effectViet": "Hiệp 2 của trận, bản thân nhận 65% Phá trận (khi gây sát thương bỏ qua Thống suất và Trí lực của mục tiêu).",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu hiệp thứ 2, bản thân nhận trạng thái 65% Phá trận (khi gây ra sát thương bỏ qua Thống soái và Trí lực của mục tiêu)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:the-phong-thu",
@@ -552,8 +600,9 @@
       "守勢"
     ],
     "effect": "戰鬥前3回合，自身受到的所有傷害降低5%",
-    "effectViet": "Trong 3 hiệp đầu trận, bản thân giảm 5% mọi sát thương phải chịu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Chiến đấu 3 hiệp đầu, bản thân sát thương Binh Đao và sát thương Mưu Lược giảm 5%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tinh-chuan",
@@ -563,8 +612,9 @@
       "精準"
     ],
     "effect": "戰鬥第2、3回合,自身獲得必中狀態",
-    "effectViet": "Hiệp 2 và hiệp 3 của trận, bản thân nhận trạng thái Tất trúng.",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 2, 3 hiệp, bản thân nhận trạng thái Ắt Trúng.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tinh-than-sang-khoai",
@@ -574,8 +624,9 @@
       "神清氣凈"
     ],
     "effect": "自身累計受到2次控制狀態時,清除我軍單體負面狀態,僅觸發1次",
-    "effectViet": "Khi bản thân đã bị khống chế tổng cộng 2 lần, xoá trạng thái bất lợi của một tướng quân ta; chỉ kích hoạt 1 lần.",
-    "effectVersion": "2024-07"
+    "effectViet": "Khi bản thân tích lũy chịu 2 lần trạng thái khống chế, xóa trạng thái bất lợi của 1 đơn vị quân ta, chỉ có thể kích hoạt 1 lần.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tranh-the-manh-cua-dich",
@@ -586,8 +637,9 @@
       "避其銳氣"
     ],
     "effect": "自身為主將時，戰鬥前2回合，獲得10%規避",
-    "effectViet": "Khi bản thân là chủ tướng, trong 2 hiệp đầu trận nhận 10% né tránh.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi bản thân là Chủ tướng, chiến đấu 2 hiệp đầu, nhận 10% Né Tránh.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tri-trong",
@@ -595,8 +647,9 @@
     "viet": "Trì Trọng",
     "hanViet": "Trì Trọng",
     "effect": "戰鬥第4、5回合,自身免疫混亂狀態",
-    "effectViet": "Hiệp 4 và hiệp 5 của trận, bản thân miễn nhiễm Hỗn loạn.",
-    "effectVersion": "2024-07"
+    "effectViet": "Chiến đấu hiệp thứ 4, 5, bản thân miễn dịch trạng thái Hỗn Loạn.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tinh-tam",
@@ -606,8 +659,9 @@
       "靜心"
     ],
     "effect": "使自身受到主動戰法傷害降低7%",
-    "effectViet": "Bản thân giảm 7% sát thương chiến pháp chủ động phải chịu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân sát thương Chiến Pháp chủ động phải chịu giảm 7%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tuong-uy",
@@ -618,24 +672,27 @@
       "將威"
     ],
     "effect": "提高自身2.5%會心和奇謀機率",
-    "effectViet": "Bản thân tăng 2,5% tỷ lệ hội tâm và kỳ mưu.",
-    "effectVersion": "2021-11"
+    "effectViet": "Tăng cho bản thân 2.5% Hội Tâm và Kỳ Mưu.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tan-tien",
     "chinese": "散仙",
     "viet": "Tản Tiên",
     "effect": "獲得6%規避效果",
-    "effectViet": "Nhận 6% né tránh.",
-    "effectVersion": "2021-11"
+    "effectViet": "Nhận hiệu ứng 6% Né Tránh.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:tan-cong-diem-yeu",
     "chinese": "援其必攻",
     "viet": "Tấn Công Điểm Yếu",
     "effect": "爲損失兵力最多的友軍恢復兵力時，使其受到的傷害降低12%，持續1回合",
-    "effectViet": "Khi hồi phục binh lực cho tướng đồng minh mất nhiều binh lực nhất, tướng đó giảm 12% sát thương phải chịu, kéo dài 1 hiệp.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi hồi phục Binh Lực cho quân Đồng Minh bị tổn thất Binh Lực nhiều nhất, khiến mục tiêu sát thương Binh Đao và sát thương Mưu Lược giảm 12%, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:toc-chien",
@@ -646,8 +703,9 @@
       "速戰"
     ],
     "effect": "戰鬥中，提高自身24點速度",
-    "effectViet": "Trong trận, bản thân tăng 24 Tốc độ.",
-    "effectVersion": "2021-11"
+    "effectViet": "Trong chiến đấu, tăng cho bản thân 24 điểm Tốc độ.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:vo-luoc",
@@ -655,8 +713,9 @@
     "viet": "Võ Lược",
     "hanViet": "Võ Lược",
     "effect": "提高8%普通攻擊傷害",
-    "effectViet": "Tăng 8% sát thương đánh thường.",
-    "effectVersion": "2021-11"
+    "effectViet": "Tăng 8% sát thương tấn công thường.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:van-thao",
@@ -666,16 +725,18 @@
       "文韜"
     ],
     "effect": "使自身造成的謀略傷害提高2.8% (受智力屬性影響)",
-    "effectViet": "Bản thân tăng 2,8% sát thương mưu lược gây ra (chịu ảnh hưởng của Trí lực).",
-    "effectVersion": "2021-11"
+    "effectViet": "Khiến bản thân sát thương Mưu Lược gây ra tăng 2.8% (bị thuộc tính Trí Lực ảnh hưởng)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:xem-boi",
     "chinese": "占卜",
     "viet": "Xem Bói",
     "effect": "每回合行動時，自身隨機獲得受到兵刃傷害降低6%或受到謀略傷害降低6%效果中的一種，持續1回合",
-    "effectViet": "Mỗi lượt hành động, bản thân ngẫu nhiên nhận một trong hai hiệu ứng: giảm 6% sát thương binh khí phải chịu hoặc giảm 6% sát thương mưu lược phải chịu, kéo dài 1 hiệp.",
-    "effectVersion": "2021-11"
+    "effectViet": "Mỗi hiệp khi hành động, khiến bản thân nhận ngẫu nhiên một trong số các hiệu ứng sát thương Binh Đao phải chịu giảm 6% hoặc sát thương Mưu Lược phải chịu giảm 6%, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:yeu-linh-thuong-dan",
@@ -685,8 +746,9 @@
       "惜兵愛民"
     ],
     "effect": "每回合有50%機率回復一定兵力(恢復率65%)",
-    "effectViet": "Mỗi hiệp có 50% xác suất hồi phục binh lực (tỷ lệ hồi phục 65%).",
-    "effectVersion": "2021-11"
+    "effectViet": "Mỗi hiệp có 50% xác suất phục hồi lượng binh lực nhất định (tỉ lệ phục hồi 65%)",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:danh-bat-ngo-thang",
@@ -697,8 +759,9 @@
       "出奇制勝"
     ],
     "effect": "自身造成傷害降低50%,會心傷害和奇謀傷害降低50%,第2回合起自帶主動戰法發動率提升30%",
-    "effectViet": "Bản thân giảm 50% sát thương gây ra, sát thương hội tâm và sát thương kỳ mưu giảm 50%; từ hiệp 2, tỷ lệ phát động chiến pháp chủ động tự mang tăng 30%.",
-    "effectVersion": "2024-07"
+    "effectViet": "Sát thương bản thân gây ra giảm 55%, sát thương Hội Tâm và sát thương Kỳ Mưu giảm 55%, từ hiệp 2, xác suất phát động Chiến Pháp Chủ Động có sẵn tăng 30%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:danh-gia-tinh-hinh",
@@ -708,8 +771,9 @@
       "審時度勢"
     ],
     "effect": "自身受到傷害提升3%,造成治療提升12%",
-    "effectViet": "Bản thân tăng 3% sát thương phải chịu, tăng 12% lượng trị liệu gây ra.",
-    "effectVersion": "2024-07"
+    "effectViet": "Sát thương phải chịu của bản thân tăng 5%, trị liệu tạo ra tăng 12%.",
+    "effectVersion": "2024-07",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:danh-pha-vong-vay",
@@ -720,8 +784,9 @@
       "疾戰突圍"
     ],
     "effect": "發動需要準備的戰法時，有20%的機率跳過1回合準備",
-    "effectViet": "Khi phát động chiến pháp cần chuẩn bị, có 20% xác suất bỏ qua 1 hiệp chuẩn bị.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi phát động Chiến Pháp tự mang cần chuẩn bị, có 20% xác suất bỏ qua 1 hiệp chuẩn bị.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:danh-sau-trung-truoc",
@@ -731,8 +796,9 @@
       "後發先至"
     ],
     "effect": "發動需要準備的戰法時，使自身獲得先攻狀態，持續1回合",
-    "effectViet": "Khi phát động chiến pháp cần chuẩn bị, bản thân nhận trạng thái Tiên công, kéo dài 1 hiệp.",
-    "effectVersion": "2021-11"
+    "effectViet": "Khi phát động Chiến Pháp cần chuẩn bị, khiến bản thân nhận trạng thái Tiên thủ, duy trì 1 hiệp.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   },
   {
     "id": "book:danh-vao-cho-hiem",
@@ -743,7 +809,8 @@
       "攻其不備"
     ],
     "effect": "對敵軍兵力最高者造成的傷害提高10%",
-    "effectViet": "Tăng 10% sát thương gây ra lên tướng địch có binh lực cao nhất.",
-    "effectVersion": "2021-11"
+    "effectViet": "Gây cho người có Binh Lực cao nhất của quân địch sát thương Binh Đao và sát thương Mưu Lược tăng 10%.",
+    "effectVersion": "2021-11",
+    "effectVietVersion": "Global 24.535"
   }
 ]

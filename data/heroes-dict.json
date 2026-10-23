@@ -64,6 +64,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Bạch y độ giang",
+      "exclusiveTitleZh": "白衣渡江",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -178,6 +179,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Anh tư bột phát",
+      "exclusiveTitleZh": "英姿勃發",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -292,6 +294,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -406,6 +409,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -521,6 +525,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -636,6 +641,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Công cái Tam Quốc",
+      "exclusiveTitleZh": "功蓋三國",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -750,6 +756,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thế chi kỳ sĩ",
+      "exclusiveTitleZh": "世之奇士",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -865,6 +872,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -962,6 +970,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1059,6 +1068,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1164,6 +1174,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1260,6 +1271,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1356,6 +1368,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1453,6 +1466,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1518,7 +1532,7 @@
     "isSP": false,
     "linkScore": 1.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:vo-thanh-duong-uy",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -1568,6 +1582,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -1683,6 +1698,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Uy chấn Hoa Hạ",
+      "exclusiveTitleZh": "威震華夏",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -1798,6 +1814,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -1886,6 +1903,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -1983,6 +2001,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2080,6 +2099,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -2177,6 +2197,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -2274,6 +2295,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -2352,6 +2374,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -2449,6 +2472,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Dụng vũ thông thần",
+      "exclusiveTitleZh": "用武通神",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2564,6 +2588,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thiên hạ vô song",
+      "exclusiveTitleZh": "天下無雙",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2661,6 +2686,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2767,6 +2793,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Bạch y độ giang",
+      "exclusiveTitleZh": "白衣渡江",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2881,6 +2908,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Bất tích khu mệnh",
+      "exclusiveTitleZh": "不惜軀命",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -2995,6 +3023,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Anh tư bột phát",
+      "exclusiveTitleZh": "英姿勃發",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3100,6 +3129,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Cương dũng vô tiền",
+      "exclusiveTitleZh": "剛勇無前",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3215,6 +3245,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3293,6 +3324,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -3389,6 +3421,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thỉ Chí Tường Long",
+      "exclusiveTitleZh": "矢志翔龍",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3504,6 +3537,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thiên Thủy Kỳ Lân",
+      "exclusiveTitleZh": "天水麒麟",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3601,6 +3635,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Giang Đông mãnh hổ",
+      "exclusiveTitleZh": "江東猛虎",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3698,6 +3733,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -3795,6 +3831,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Hoàng Long chi chí",
+      "exclusiveTitleZh": "黃龍之志",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -3860,7 +3897,7 @@
     "isSP": false,
     "linkScore": 0.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:ba-vuong-thao-nghich",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -3901,6 +3938,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Giang Đông Bá Vương",
+      "exclusiveTitleZh": "江東霸王",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -3998,6 +4036,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -4076,6 +4115,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -4181,6 +4221,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Kim đan bí thuật",
+      "exclusiveTitleZh": "金丹秘術",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -4278,6 +4319,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -4343,7 +4385,7 @@
     "isSP": false,
     "linkScore": 1.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:bach-ma-thay-chu",
       "cardPacks": [
         {
           "categoryVi": "Giới hạn 11/11",
@@ -4366,6 +4408,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Phượng minh Cửu Châu",
+      "exclusiveTitleZh": "鳳鳴九州",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -4454,6 +4497,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -4551,6 +4595,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -4629,6 +4674,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -4707,6 +4753,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -4822,6 +4869,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -4887,7 +4935,7 @@
     "isSP": false,
     "linkScore": 1.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:thien-cong-tuong-quan",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -4937,6 +4985,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Đại Hiền Lương Sư",
+      "exclusiveTitleZh": "大賢良師",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -5052,6 +5101,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -5149,6 +5199,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Cổ Chi Thiệu Hổ",
+      "exclusiveTitleZh": "古之召虎",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -5246,6 +5297,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -5352,6 +5404,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Cự thủy đoạn kiều",
+      "exclusiveTitleZh": "拒水斷橋",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -5448,6 +5501,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -5512,7 +5566,7 @@
     "isSP": false,
     "linkScore": 1.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:don-doc-tham-nhap",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -5544,6 +5598,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -5669,6 +5724,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -5746,6 +5802,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -5851,6 +5908,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -5915,7 +5973,7 @@
     "isSP": false,
     "linkScore": 1.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:hieu-lenh-thien-ha",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -5956,6 +6014,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Ngụy Vũ huy tiên",
+      "exclusiveTitleZh": "魏武揮鞭",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -6033,6 +6092,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -6130,6 +6190,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -6226,6 +6287,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -6322,6 +6384,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -6418,6 +6481,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -6523,6 +6587,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -6637,6 +6702,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -6752,6 +6818,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Trấn ách phòng cự",
+      "exclusiveTitleZh": "鎮扼防拒",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -6848,6 +6915,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -6945,6 +7013,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -7050,6 +7119,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -7127,6 +7197,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -7233,6 +7304,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Cẩm phàm vũ linh",
+      "exclusiveTitleZh": "錦帆羽翎",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -7330,6 +7402,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -7418,6 +7491,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -7514,6 +7588,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -7628,6 +7703,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Dũng liệt trì trọng",
+      "exclusiveTitleZh": "勇烈持重",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -7705,6 +7781,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -7801,6 +7878,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -7915,6 +7993,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -8020,6 +8099,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -8098,6 +8178,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -8212,6 +8293,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -8289,6 +8371,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -8386,6 +8469,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -8483,6 +8567,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -8580,6 +8665,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -8645,7 +8731,7 @@
     "isSP": false,
     "linkScore": 0.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:ho-ve-than-uy",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -8668,6 +8754,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -8765,6 +8852,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Công cái Tam Quốc",
+      "exclusiveTitleZh": "功蓋三國",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -8871,6 +8959,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -8959,6 +9048,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thần cơ mạc trắc",
+      "exclusiveTitleZh": "神機莫測",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9056,6 +9146,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Nhất thân thị đảm",
+      "exclusiveTitleZh": "一身是膽",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9121,7 +9212,7 @@
     "isSP": false,
     "linkScore": 0.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:don-quan-doi-chien",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -9171,6 +9262,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -9268,6 +9360,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9355,6 +9448,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9451,6 +9545,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Thế chi kỳ sĩ",
+      "exclusiveTitleZh": "世之奇士",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -9557,6 +9652,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -9663,6 +9759,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Tây Lăng phá Tấn",
+      "exclusiveTitleZh": "西陵破晉",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9760,6 +9857,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Liệt hỏa trương thiên",
+      "exclusiveTitleZh": "烈火張天",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -9866,6 +9964,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -9931,7 +10030,7 @@
     "isSP": false,
     "linkScore": 0.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:ke-hoach-chu-toan",
       "cardPacks": [
         {
           "categoryVi": "Giới hạn 11/11",
@@ -9954,6 +10053,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10032,6 +10132,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -10156,6 +10257,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -10244,6 +10346,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10341,6 +10444,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10447,6 +10551,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Lõa y huyết chiến",
+      "exclusiveTitleZh": "裸衣血戰",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -10544,6 +10649,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10609,7 +10715,7 @@
     "isSP": false,
     "linkScore": 0.0,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:chi-bay-tran",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -10650,6 +10756,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10746,6 +10853,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -10834,6 +10942,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Lạc thiện hảo thí",
+      "exclusiveTitleZh": "樂善好施",
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -10940,6 +11049,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -11046,6 +11156,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -11152,6 +11263,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -11230,6 +11342,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -11309,6 +11422,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -11387,6 +11501,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -11464,6 +11579,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -11542,6 +11658,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -11620,6 +11737,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -11698,6 +11816,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -11776,6 +11895,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -11854,6 +11974,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -11932,6 +12053,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -12010,6 +12132,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -12088,6 +12211,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -12166,6 +12290,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": true,
         "isCollectible": false,
@@ -12244,6 +12369,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -12321,6 +12447,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -12399,6 +12526,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -12477,6 +12605,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -12555,6 +12684,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -12634,6 +12764,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -12758,6 +12889,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -12836,6 +12968,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -12914,6 +13047,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -12992,6 +13126,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13070,6 +13205,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13148,6 +13284,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13225,6 +13362,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13331,6 +13469,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13409,6 +13548,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13487,6 +13627,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13566,6 +13707,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -13644,6 +13786,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -13722,6 +13865,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -13800,6 +13944,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13878,6 +14023,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -13955,6 +14101,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14033,6 +14180,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -14111,6 +14259,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14176,7 +14325,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:chu-nghich-binh-phan",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -14226,6 +14375,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -14304,6 +14454,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14382,6 +14533,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -14460,6 +14612,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14538,6 +14691,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -14635,6 +14789,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14712,6 +14867,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14789,6 +14945,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -14867,6 +15024,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -14945,6 +15103,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15023,6 +15182,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15100,6 +15260,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15178,6 +15339,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15256,6 +15418,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15333,6 +15496,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15410,6 +15574,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -15516,6 +15681,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -15581,7 +15747,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:sung-vinh-ai-dai",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -15631,6 +15797,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -15746,6 +15913,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -15811,7 +15979,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:tinh-khien-kich-nghich",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -15861,6 +16029,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -15926,7 +16095,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:tay-luong-phi-hung",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -15976,6 +16145,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16091,6 +16261,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16207,6 +16378,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16272,7 +16444,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:lao-thang-phia-truoc",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -16322,6 +16494,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16437,6 +16610,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16553,6 +16727,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16618,7 +16793,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:tich-lich-xa-tran",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -16659,6 +16834,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -16774,6 +16950,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Lõa y huyết chiến",
+      "exclusiveTitleZh": "裸衣血戰",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16839,7 +17016,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:vo-kien-bat-ham",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -16889,6 +17066,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -16954,7 +17132,7 @@
     "isSP": true,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:ky-hoa-sach-toan",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -17004,6 +17182,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17119,6 +17298,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Uy chấn Hoa Hạ",
+      "exclusiveTitleZh": "威震華夏",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17234,6 +17414,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17349,6 +17530,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17464,6 +17646,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": "Giang Đông mãnh hổ",
+      "exclusiveTitleZh": "江東猛虎",
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17579,6 +17762,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": true,
@@ -17676,6 +17860,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -17753,6 +17938,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -17830,6 +18016,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -17907,6 +18094,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -17985,6 +18173,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18063,6 +18252,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -18142,6 +18332,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18220,6 +18411,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": null,
@@ -18298,6 +18490,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18377,6 +18570,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18455,6 +18649,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18520,7 +18715,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:tap-dia-doat-thanh",
       "cardPacks": [],
       "categoryVi": "Quân sự",
       "civil": {
@@ -18533,6 +18728,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18610,6 +18806,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18688,6 +18885,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18765,6 +18963,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18830,7 +19029,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:tiet-nghia-da-muu",
       "cardPacks": [
         {
           "categoryVi": "Gói Danh tướng",
@@ -18862,6 +19061,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -18939,6 +19139,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": false,
         "isCollectible": false,
@@ -19016,6 +19217,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19106,6 +19308,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19196,6 +19399,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19286,6 +19490,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19376,6 +19581,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19466,6 +19672,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19556,6 +19763,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19646,6 +19854,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19736,6 +19945,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19826,6 +20036,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -19916,6 +20127,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20006,6 +20218,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20096,6 +20309,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20186,6 +20400,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20276,6 +20491,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20366,6 +20582,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20456,6 +20673,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20534,7 +20752,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:chan-phan-ngang-duong",
       "cardPacks": [],
       "categoryVi": null,
       "civil": {
@@ -20547,6 +20765,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20637,6 +20856,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20727,6 +20947,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20817,6 +21038,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20907,6 +21129,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -20997,6 +21220,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21087,6 +21311,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21177,6 +21402,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21267,6 +21493,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21357,6 +21584,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21447,6 +21675,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21537,6 +21766,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21614,7 +21844,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:thuong-tuong-uy-danh",
       "cardPacks": [],
       "categoryVi": null,
       "civil": {
@@ -21627,6 +21857,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21717,6 +21948,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21807,6 +22039,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21897,6 +22130,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -21987,6 +22221,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22077,6 +22312,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22167,6 +22403,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22257,6 +22494,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22347,6 +22585,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22437,6 +22676,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22528,6 +22768,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22618,6 +22859,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22708,6 +22950,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22798,6 +23041,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22888,6 +23132,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -22979,6 +23224,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -23056,7 +23302,7 @@
     "isSP": false,
     "linkScore": null,
     "lookup": {
-      "advisorId": null,
+      "advisorId": "advisor:thong-quan-tai-chien",
       "cardPacks": [],
       "categoryVi": null,
       "civil": {
@@ -23069,6 +23315,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -23159,6 +23406,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -23250,6 +23498,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -23341,6 +23590,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,
@@ -23431,6 +23681,7 @@
       "collectibleBonusVi": null,
       "conditions": [],
       "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
       "flags": {
         "isCO": null,
         "isCollectible": null,

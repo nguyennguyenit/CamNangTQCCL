@@ -13,8 +13,12 @@ export const lookupEmpty = () => L("Đang cập nhật", "暂无数据");
  * docs/unified-lookup.md). Chỉ `translation` mang cờ; `source`/`capture`/`null` thì không.
  */
 export const isTranslatedZhEffect = (record) => record?.lookup?.effectZhSource?.kind === "translation";
+/** Hàng catalog (quân sư, công trình, cải tạo, lựa chọn) có chữ Hán chính dịch từ tiếng Việt (`zhSource.kind`). */
+export const isTranslatedZhText = (record) => record?.zhSource?.kind === "translation";
 /** Câu cờ bản dịch (hồ sơ, thẻ liên quan, bảng nhóm zh); mỗi nơi tự dựng thẻ với `ZH_TRANSLATED_TAG_ATTRS`. */
 export const zhTranslatedNote = (locale = currentLocale()) => pick(locale, "Hiệu ứng chữ Hán dịch từ tiếng Việt, chưa đối chiếu", "中文效果译自越南语，未经核对");
+/** Câu cờ cho chữ Hán (tên/mô tả) của hàng catalog dịch từ tiếng Việt. */
+export const zhTranslatedTextNote = (locale = currentLocale()) => pick(locale, "Chữ Hán dịch từ tiếng Việt, chưa đối chiếu", "中文译自越南语，未经核对");
 export const ZH_TRANSLATED_TAG_ATTRS = Object.freeze({ class: "lookup-version-tag lookup-zh-translated", "data-zh-source": "translation" });
 const labels = () => Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(([key, [vi, zh]]) => [key, L(vi, zh)]));
 /** Khóa có giá trị là số/hạng chữ cái (chỉ số, tăng trưởng, thích tính) — hiện được ở bản zh. */
@@ -29,16 +33,50 @@ const ZH_VALUES = {
   "Tăng ích": "增益", "Giảm ích": "减益", "Khống chế": "控制", "Trị liệu": "治疗", "Viện hộ": "援护",
   "Sát thương binh khí quần thể": "群体兵刃伤害", "Sát thương binh khí đơn thể": "单体兵刃伤害",
   "Mưu lược quần thể": "群体谋略伤害", "Mưu lược đơn thể": "单体谋略伤害",
+  // Dạng hiệu ứng chiến pháp theo client (Thượng Thư Đài).
+  "Mưu Lược đơn": "单体谋略伤害", "Mưu Lược nhóm": "群体谋略伤害", "Binh đao đơn": "单体兵刃伤害", "Binh đao nhóm": "群体兵刃伤害",
+  "Cứu Viện": "援护", "Bất lợi + mưu lược quần thể": "减益 + 群体谋略伤害",
+  // Mục tiêu chiến pháp chỉ có chữ Việt client (chữ Hán nguồn, khi có, dùng `target`).
+  "Tôi": "自身", "Một quân địch": "敌军单体", "Một quân ta": "我军单体", "Một quân Đồng Minh": "友军单体",
+  "Tập thể địch (1-2 người)": "敌军群体（1-2人）", "Tập thể địch (2 người)": "敌军群体（2人）", "Tập thể địch (3 người)": "敌军群体（3人）",
+  "Tập thể quân ta (2 người)": "我军群体（2人）", "Tập thể quân ta (2-3 người)": "我军群体（2-3人）", "Tập thể quân ta (3 người)": "我军群体（3人）",
+  "Nhóm tướng Đồng Minh (2 người)": "友军群体（2人）", "Toàn thể hai bên": "敌我全体",
+  // Trạng thái trong ô Xung đột (so khớp không phân biệt hoa thường, nhãn ghép " / " dịch từng phần).
+  "Không": "无", "Chấn nhiếp": "震慑", "Cấm trị liệu": "禁疗", "Cấp cứu": "急救", "Hỗn loạn": "混乱", "Khiêu khích": "挑衅",
+  "Kháng cự": "抵御", "Kế cùng": "计穷", "Cạn kế": "计穷", "Kiệt kế": "计穷", "Kỹ cùng": "技穷", "Liên kích": "连击", "Động sát": "洞察",
+  "Né tránh": "规避", "Nghỉ dưỡng": "休整", "Hưu chỉnh": "休整", "Hưu dưỡng": "休整", "Phá trận": "破阵", "Phản loạn": "叛逃",
+  "Phản kích": "反击", "Chia sẻ": "分担", "Chia sẻ sát thương": "分担伤害", "Gánh thay": "分担", "Suy nhược": "虚弱", "Suy yếu": "虚弱",
+  "Tan tác": "溃逃", "Hội tẩu": "溃走", "Thiêu đốt": "灼烧", "Trúng độc": "中毒", "Bão cát": "沙暴", "Thủy công": "水攻",
+  "Thiết tỏa liên hoàn": "铁索连环", "Tiên công": "先攻", "Tất trúng": "必中", "Tước vũ khí": "缴械", "Phá hoại": "破坏",
+  "Miễn nhiễm": "免疫", "Cảnh giới": "警戒", "Hồi phục binh lực": "恢复兵力", "Chống đỡ": "抵挡", "Ngụy báo": "伪报", "Bị tập kích": "遇袭",
+  // Đối chiếu ô "效果衝突" của SGSDeck cùng chiến pháp (白衣渡江, 陷陣突襲, 鐵騎驅馳, 暗箭難防, 威武並昭).
+  "Phòng ngự": "抵御", "Cùng truy": "穷追", "Tập kích": "遇袭", "Bắt giữ": "捕获", "Nhìn thấu": "看破",
+  // Binh chủng và mùa.
+  "Khiên binh": "盾兵", "Cung binh": "弓兵", "Thương binh": "枪兵", "Kỵ binh": "骑兵", "Khí giới": "器械",
+  "Binh Diễn Xuân Thu": "兵演春秋",
+  // Cấp lựa chọn cải tạo (client và nguồn).
+  "Đặc biệt": "特殊", "Cơ bản": "基础", "Sơ cấp": "初级", "Trung cấp": "中级", "Cao cấp": "高级",
 };
+/** Khóa so khớp không phân biệt hoa thường của bộ giá trị đóng (dữ liệu client viết "Phá Trận" lẫn "Phá trận"). */
+const ZH_VALUES_FOLDED = new Map(Object.entries(ZH_VALUES).map(([vi, zh]) => [vi.toLocaleLowerCase("vi"), zh]));
+const zhValue = (value) => ZH_VALUES[value] ?? ZH_VALUES_FOLDED.get(String(value).trim().toLocaleLowerCase("vi")) ?? null;
 /**
- * Giá trị hiển thị của bản zh: số và hạng giữ nguyên, giá trị trong bộ đóng được dịch, còn lại `null`
- * (bị bỏ). Bản Việt luôn trả chữ gốc. `locale` mặc định là ngôn ngữ trang (build truyền tường minh).
+ * Giá trị hiển thị của bản zh: số và hạng giữ nguyên, giá trị trong bộ đóng được dịch (không phân biệt hoa thường;
+ * nhãn ghép "A / B" và danh sách dịch được khi mọi phần đều dịch được), còn lại `null` (bị bỏ). Bản Việt luôn trả
+ * chữ gốc. `locale` mặc định là ngôn ngữ trang (build truyền tường minh).
  */
 export function zhSafeValue(value, locale = currentLocale()) {
   if (normalizeLocale(locale) !== "zh") return value;
   if (value === null || value === undefined || value === "") return null;
+  if (Array.isArray(value)) {
+    const parts = value.map((item) => zhSafeValue(item, locale));
+    return parts.length && parts.every((part) => part !== null) ? parts.join("、") : null;
+  }
   if (typeof value === "number" || /^[\d.,%+\-/ ~]+$/u.test(String(value)) || /^(?:[SABCD]|T\d|SP|CO|40Y)$/u.test(String(value))) return String(value);
-  return ZH_VALUES[String(value)] ?? null;
+  const whole = zhValue(value);
+  if (whole !== null || !String(value).includes(" / ")) return whole;
+  const parts = String(value).split(" / ").map(zhValue);
+  return parts.every((part) => part !== null) ? parts.join(" / ") : null;
 }
 
 /** Khóa không có nhãn bị bỏ khỏi hồ sơ; cảnh báo dev một lần cho mỗi khóa để bổ sung nhãn. */
@@ -81,6 +119,14 @@ function pushLocalized(profile, key, value, labelVi, render = text(value), raw =
 function viOnlyList(profile, rows) {
   if (!ZH()) return rows;
   if (rows.length) profile.viOnly = true;
+  return [];
+}
+/** Điều kiện: bản zh hiện khi mọi dòng thuộc bộ giá trị đóng (vd mùa "Binh Diễn Xuân Thu"), không thì bỏ và đánh dấu. */
+function localizedConditions(profile, rows) {
+  if (!ZH()) return rows;
+  const shown = rows.map((row) => zhSafeValue(row));
+  if (shown.every((row) => row !== null)) return shown;
+  profile.viOnly = true;
   return [];
 }
 const conditions = (rows) => (Array.isArray(rows) ? rows.map((row) => typeof row === "string" ? row : row?.textVi).filter(Boolean) : []);
@@ -176,12 +222,13 @@ const flagLabels = () => ({
 
 /**
  * Tên hiển thị của một mục tra cứu: bản Việt dùng tên Việt, bản zh dùng tên chữ Hán nguồn
- * (`chinese` của tướng/chiến pháp, `aliasesZh` của catalog), thiếu thì lùi về tên Việt.
+ * (`chinese` của tướng/chiến pháp, `aliasesZh` của catalog), rồi tên dịch `nameZh` của catalog, thiếu thì lùi về tên Việt.
  */
 export function lookupDisplayName(record, nameVi, locale = currentLocale()) {
   if (normalizeLocale(locale) !== "zh") return nameVi;
   if (typeof record?.chinese === "string" && record.chinese.trim()) return record.chinese.trim();
   for (const value of record?.aliasesZh ?? []) if (typeof value === "string" && /[\u3400-\u9fff]/u.test(value)) return value;
+  if (typeof record?.nameZh === "string" && record.nameZh.trim()) return record.nameZh.trim();
   return nameVi;
 }
 
@@ -211,7 +258,131 @@ function innateHolders(corpus) {
 }
 
 function base(entry) {
-  return { id: entry.id, group: entry.group, titleVi: entryTitle(entry), fields: [], aptitudes: [], sections: [], relations: [], children: [], conditions: [], revisions: [], viOnly: false };
+  return { id: entry.id, group: entry.group, titleVi: entryTitle(entry), fields: [], aptitudes: [], sections: [], relations: [], children: [], conditions: [], revisions: [], viOnly: false, zhTranslated: false };
+}
+
+/** Tên chữ Hán của võ tướng theo tên Việt hiển thị trong dữ liệu (tên chính, Hán-Việt, bí danh không có chữ Hán). */
+const HERO_ZH_BY_NAME = new WeakMap();
+function heroChinese(corpus, name) {
+  if (!corpus?.byId) return null;
+  let index = HERO_ZH_BY_NAME.get(corpus);
+  if (!index) {
+    index = new Map();
+    for (const entry of corpus.byId.values()) {
+      const record = entry?.record;
+      if (entry?.group !== "heroes" || typeof record?.chinese !== "string" || !record.chinese.trim()) continue;
+      for (const value of [entry.nameVi, record.viet, record.hanViet, ...(record.aliases ?? [])]) {
+        if (typeof value === "string" && value.trim() && !/[\u3400-\u9fff]/u.test(value) && !index.has(value.trim())) index.set(value.trim(), record.chinese.trim());
+      }
+    }
+    HERO_ZH_BY_NAME.set(corpus, index);
+  }
+  return index.get(String(name ?? "").trim()) ?? null;
+}
+
+const CJK = /[\u3400-\u9fff]/u;
+
+/**
+ * Tên sự kiện chữ Hán (TW) theo tên Việt client, đối chiếu trang chiến pháp sự kiện tương ứng trên sgsdeck.com
+ * (tên trong "Sự kiện X — …" và tên ở "Cách nhận"). Sự kiện chưa có nguồn đối chiếu thì không có ở đây.
+ */
+const EVENT_ZH = new Map(Object.entries({
+  "Giả Kế Thoát Hiểm": "詐計脫險", "Bát Trận Đồ": "八陣圖", "Chia Ba Thiên Hạ": "三分天下", "Tam Phân Thiên Hạ": "三分天下",
+  "Giải Phiền Vệ": "解煩衛", "Nước Ngập Thất Quân": "水淹七軍", "Thủy Yêm Thất Quân": "水淹七軍",
+  "Cắt Râu Vứt Áo": "割須棄袍", "Cắt râu bỏ áo": "割須棄袍", "Chung Hội Chi Loạn": "鍾會之亂", "Loạn Chung Hội": "鍾會之亂",
+  "Dương Đông Kích Tây": "彭越撓楚", "Bành Việt Nạo Sở": "彭越撓楚", "Trận Nam Quận": "南郡之戰",
+  "Tôn Sách bị thích sát": "孫策遇刺", "Tôn Sách bị ám sát": "孫策遇刺", "Trận trảm Hạ Hầu Uyên": "陣斬夏侯淵",
+  "Ép buộc thiên tử lệnh chư hầu": "挾天子令諸侯", "Đồng lực hiệp khế": "同力協契", "Vu Cát Cầu Mưa": "于吉請雨",
+  "Đan Dương Tinh Binh": "丹陽精兵", "Đình Phụng Nghi": "鳳儀亭", "Xây Dựng Đồn Điền": "建置屯田", "Kiến Trí Đồn Điền": "建置屯田",
+}).map(([vi, zh]) => [vi.toLocaleLowerCase("vi"), zh]));
+
+/**
+ * Tên sự kiện chữ Hán theo tên Việt: `sourceHeroCn` nguồn ("事件战法X") của chính chiến pháp, rồi của chiến pháp sự kiện
+ * khác cùng tên (khóa bằng tên trong "Sự kiện X — …" lẫn mục `acquiredFromVi` duy nhất), rồi `EVENT_ZH`.
+ */
+const EVENT_ZH_BY_NAME = new WeakMap();
+function eventChinese(corpus, row, name) {
+  if (row.source === "EVENT" && typeof row.sourceHeroCn === "string" && CJK.test(row.sourceHeroCn)) return row.sourceHeroCn.replace(/^事件(?:战法|戰法)?/u, "").trim();
+  if (!corpus?.byId) return null;
+  let index = EVENT_ZH_BY_NAME.get(corpus);
+  if (!index) {
+    index = new Map();
+    for (const entry of corpus.byId.values()) {
+      const record = entry?.record;
+      if (entry?.group !== "tactics" || record?.source !== "EVENT" || typeof record.sourceHeroCn !== "string" || !CJK.test(record.sourceHeroCn)) continue;
+      const zh = record.sourceHeroCn.replace(/^事件(?:战法|戰法)?/u, "").trim();
+      const exchange = /^Sự kiện (.+?) — /u.exec(String(record.lookup?.exchangeConditionVi ?? ""))?.[1];
+      const acquired = record.lookup?.acquiredFromVi?.length === 1 ? record.lookup.acquiredFromVi[0] : null;
+      for (const key of [exchange, acquired]) if (key && !index.has(key)) index.set(key, zh);
+    }
+    EVENT_ZH_BY_NAME.set(corpus, index);
+  }
+  const key = String(name ?? "").trim();
+  return index.get(key) ?? EVENT_ZH.get(key.toLocaleLowerCase("vi")) ?? null;
+}
+
+/** Một mục "Cách nhận" dạng tên võ tướng: "A & SP A" / "A, B", hậu tố "(cấp B)" đổi sang "（B级）"; tên không tra được thì `null`. */
+function acquiredItemZh(corpus, item) {
+  const grade = /^(.+?)\s*\(cấp ([A-Z])\)$/u.exec(item);
+  const names = (grade ? grade[1] : item).split(/ & |, /u).map((name) => heroChinese(corpus, name));
+  return names.every(Boolean) ? `${names.join("、")}${grade ? `（${grade[2]}级）` : ""}` : null;
+}
+
+/** Cách nhận (bản zh): chữ Hán nguồn `sourceHeroCn`; thiếu thì ghép tên Hán của võ tướng/sự kiện (mọi mục phải tra được). */
+function acquiredFromZh(corpus, row) {
+  if (typeof row.sourceHeroCn === "string" && CJK.test(row.sourceHeroCn)) return row.sourceHeroCn.trim();
+  const items = (row.lookup?.acquiredFromVi ?? []).map((item) => (row.source === "EVENT" ? eventChinese(corpus, row, item) : null) ?? acquiredItemZh(corpus, item));
+  return items.length && items.every(Boolean) ? items.join("、") : null;
+}
+
+/** Một ô đổi thẻ: "A (Thục) hoặc B (Ngô): cần 1 thẻ" hoặc "tướng 5 sao phe Quần: cần 3 thẻ"; dạng khác/tên lạ thì `null`. */
+function exchangeCellZh(corpus, cell) {
+  const tier = /^tướng (\d) sao phe (Ngụy|Thục|Ngô|Quần): cần (\d+) thẻ$/u.exec(cell);
+  if (tier) return `${ZH_VALUES[tier[2]]}阵营 ${tier[1]} 星武将需 ${tier[3]} 张`;
+  const match = /^(.+): cần (\d+) thẻ$/u.exec(cell);
+  if (!match) return null;
+  const heroes = match[1].split(" hoặc ").map((part) => {
+    const hero = /^(.+?) \((Ngụy|Thục|Ngô|Quần)\)$/u.exec(part);
+    const zh = hero ? heroChinese(corpus, hero[1]) : null;
+    return zh ? `${zh}（${ZH_VALUES[hero[2]]}）` : null;
+  });
+  return heroes.every(Boolean) ? `${heroes.join("或")}需 ${match[2]} 张` : null;
+}
+
+/**
+ * Điều kiện đổi không theo mẫu "Sự kiện X — …": "A / B / C (chọn 4 thẻ bất kỳ)" hoặc "A (cần 1 thẻ), B (cần 1 thẻ)";
+ * dạng khác hoặc tên không tra được thì `null`.
+ */
+function heroCardsZh(corpus, text) {
+  const any = /^(.+) \(chọn (\d+) thẻ bất kỳ\)$/u.exec(text);
+  if (any) {
+    const names = any[1].split(" / ").map((name) => heroChinese(corpus, name));
+    return names.every(Boolean) ? `${names.join("、")}（任选 ${any[2]} 张）` : null;
+  }
+  const cells = text.split(", ").map((cell) => {
+    const match = /^(.+?) \(cần (\d+) thẻ\)$/u.exec(cell);
+    const hero = match ? heroChinese(corpus, match[1]) : null;
+    return hero ? `${hero}需 ${match[2]} 张` : null;
+  });
+  return cells.every(Boolean) ? cells.join("；") : null;
+}
+
+/**
+ * Điều kiện đổi chiến pháp (bản zh): "Sự kiện X — A (Thục): cần 1 thẻ; …" ghép từ tên sự kiện chữ Hán (`eventChinese`)
+ * và từng ô đổi thẻ; dạng chỉ có danh sách thẻ (`heroCardsZh`) thêm tên sự kiện nguồn khi chiến pháp là chiến pháp sự kiện.
+ */
+function exchangeConditionZh(corpus, row) {
+  const text = String(row.lookup?.exchangeConditionVi ?? "");
+  const match = /^Sự kiện (.+?) — (.+)$/u.exec(text);
+  if (!match) {
+    const cards = text ? heroCardsZh(corpus, text) : null;
+    const event = cards && row.source === "EVENT" ? eventChinese(corpus, row, row.lookup?.acquiredFromVi?.[0]) : null;
+    return cards && event ? `${event}事件：${cards}` : cards;
+  }
+  const event = eventChinese(corpus, row, match[1]);
+  if (!event) return null;
+  const parts = match[2].split("; ").map((cell) => exchangeCellZh(corpus, cell));
+  return parts.every(Boolean) ? `${event}事件：${parts.join("；")}` : null;
 }
 
 const percentText = (rate) => `${Number((rate * 100).toFixed(1))}%`;
@@ -231,10 +402,10 @@ function heroProfile(corpus, entry) {
   optionalLocalized(profile, "faction", row.faction, L("Phe", "阵营"));
   optionalField(profile, "stars", row.stars, L("Sao", "星级"));
   optionalField(profile, "cost", row.cost, L("Thống ngự", "统御"));
-  for (const [key, value, label] of [
-    ["roleTagViet", row.roleTagViet, L("Vai trò", "定位")], ["categoryVi", lookup.categoryVi, L("Phân loại", "类别")],
-    ["exclusiveTitleVi", lookup.exclusiveTitleVi, L("Danh hiệu độc quyền", "专属称号")],
-  ]) optionalLocalized(profile, key, value, label);
+  // Vai trò và danh hiệu: bản zh hiện chữ Hán nguồn (`roleTag`, `exclusiveTitleZh`).
+  if (row.roleTagViet) pushLocalized(profile, "roleTagViet", row.roleTagViet, L("Vai trò", "定位"), text(row.roleTagViet), row.roleTag);
+  optionalLocalized(profile, "categoryVi", lookup.categoryVi, L("Phân loại", "类别"));
+  if (lookup.exclusiveTitleVi) pushLocalized(profile, "exclusiveTitleVi", lookup.exclusiveTitleVi, L("Danh hiệu độc quyền", "专属称号"), text(lookup.exclusiveTitleVi), lookup.exclusiveTitleZh);
   optionalField(profile, "civilInnatePoints", lookup.civilInnatePoints, L("Điểm nội chính", "内政点数"));
   for (const [key, value, label] of [
     ["collectibleBonusVi", lookup.collectibleBonusVi, L("Thưởng sưu tầm", "典藏加成")],
@@ -257,7 +428,7 @@ function heroProfile(corpus, entry) {
   profile.relations.push(relation(corpus, "selfTactic", L("Chiến pháp bản thân", "自带战法"), selfId, "tactics"));
   if (lookup.inheritTacticId || row.inheritTacticCn) profile.relations.push(relation(corpus, "inheritTactic", L("Chiến pháp truyền thừa", "传承战法"), inheritId, "tactics"));
   if (lookup.advisorId) profile.relations.push(relation(corpus, "advisor", L("Kỹ năng quân sư", "军师技"), lookup.advisorId, "advisors"));
-  profile.conditions = viOnlyList(profile, conditions(lookup.conditions));
+  profile.conditions = localizedConditions(profile, conditions(lookup.conditions));
   profile.revisions = viOnlyList(profile, lookup.revisions ?? []);
   return profile;
 }
@@ -280,16 +451,16 @@ function tacticProfile(corpus, entry) {
       pushField(profile, key, value, label, typeVi);
       continue;
     }
-    pushLocalized(profile, key, value, label);
+    pushLocalized(profile, key, value, label, text(value), key === "exchangeConditionVi" ? exchangeConditionZh(corpus, row) : null);
   }
   for (const [key, label] of [["cooldown", L("Hồi chiêu", "冷却")], ["maxUsers", L("Số người dùng tối đa", "最多携带人数")], ["pointCost", L("Điểm chiến pháp", "战法点")]]) {
     optionalLocalized(profile, key, lookup[key], label);
   }
-  if (lookup.acquiredFromVi?.length) pushLocalized(profile, "acquiredFromVi", lookup.acquiredFromVi, L("Cách nhận", "获取方式"), listText(lookup.acquiredFromVi));
+  if (lookup.acquiredFromVi?.length) pushLocalized(profile, "acquiredFromVi", lookup.acquiredFromVi, L("Cách nhận", "获取方式"), listText(lookup.acquiredFromVi), acquiredFromZh(corpus, row));
   optionalLocalized(profile, "conflictsVi", lookup.conflictsVi, L("Xung đột", "冲突"));
   for (const id of lookup.inheritedFromIds ?? []) profile.relations.push(relation(corpus, `inheritedFrom:${id}`, L("Truyền thừa từ", "传承自"), id, "heroes"));
   for (const id of innateHolders(corpus).get(row.id) ?? []) profile.relations.push(relation(corpus, `innateHolder:${id}`, L("Chiến pháp tự có của", "自带武将"), id, "heroes"));
-  profile.conditions = viOnlyList(profile, conditions(lookup.conditions));
+  profile.conditions = localizedConditions(profile, conditions(lookup.conditions));
   profile.revisions = viOnlyList(profile, lookup.revisions.map((item) => ({ ...item })));
   return profile;
 }
@@ -301,7 +472,7 @@ function equipmentProfile(corpus, entry) {
   pushLocalized(profile, "quality", row.qualityVi, L("Phẩm chất", "品质"));
   const items = corpus.catalog.specials.filter((item) => item.equipmentId === row.id).map((item) => ({ id: item.id, titleVi: lookupDisplayName(item, item.nameVi) }));
   profile.children.push({ key: "specials", titleVi: L("Đặc kỹ", "特技"), items });
-  profile.conditions = viOnlyList(profile, conditions(row.conditions));
+  profile.conditions = localizedConditions(profile, conditions(row.conditions));
   return profile;
 }
 
@@ -314,7 +485,7 @@ function specialProfile(corpus, entry) {
   pushLocalized(profile, "acquisitionVi", row.acquisitionVi, L("Cách nhận", "获取方式"), listText(row.acquisitionVi));
   profile.relations.push(relation(corpus, "equipment", L("Trang bị", "装备"), row.equipmentId, "equipment"));
   if (row.exclusiveHeroId) profile.relations.push(relation(corpus, "exclusiveHero", L("Tướng độc quyền", "专属武将"), row.exclusiveHeroId, "heroes"));
-  profile.conditions = viOnlyList(profile, conditions(row.conditions));
+  profile.conditions = localizedConditions(profile, conditions(row.conditions));
   return profile;
 }
 
@@ -322,28 +493,33 @@ function advisorProfile(corpus, entry) {
   const row = entry.record;
   const profile = base(entry);
   pushLocalized(profile, "elementVi", row.elementVi, L("Nguyên tố", "属性"));
-  pushLocalized(profile, "effect", row.effectVi, L("Hiệu ứng", "效果"));
-  pushLocalized(profile, "usage", row.usageVi, L("Cách dùng", "用法"));
+  pushLocalized(profile, "effect", row.effectVi, L("Hiệu ứng", "效果"), text(row.effectVi), row.effectZh);
+  pushLocalized(profile, "usage", row.usageVi, L("Cách dùng", "用法"), text(row.usageVi), row.usageZh);
+  profile.zhTranslated = ZH() && isTranslatedZhText(row);
   pushField(profile, "tacticPoints", row.tacticPoints, L("Điểm chiến pháp", "战法点"));
 
   profile.children.push({ key: "heroes", titleVi: L("Tướng", "武将"), items: row.heroIds.map((id) => corpus.byId.get(id)).filter(Boolean).map((item) => ({ id: item.id, titleVi: entryTitle(item) })) });
-  profile.conditions = viOnlyList(profile, conditions(row.conditions));
+  profile.conditions = localizedConditions(profile, conditions(row.conditions));
   return profile;
 }
 
 function troopProfile(_corpus, entry) {
   const row = entry.record;
   const profile = base(entry);
-  pushLocalized(profile, "effect", row.effectVi, L("Hiệu ứng", "效果"));
-  pushLocalized(profile, "appliesTo", row.appliesToVi, L("Áp dụng", "适用"));
-  pushLocalized(profile, "suggestedBuild", row.suggestedBuildVi, L("Gợi ý", "推荐"));
+  pushLocalized(profile, "effect", row.effectVi, L("Hiệu ứng", "效果"), text(row.effectVi), row.effectZh);
+  pushLocalized(profile, "appliesTo", row.appliesToVi, L("Áp dụng", "适用"), text(row.appliesToVi), row.appliesToZh);
+  pushLocalized(profile, "suggestedBuild", row.suggestedBuildVi, L("Gợi ý", "推荐"), text(row.suggestedBuildVi), row.suggestedBuildZh);
   pushLocalized(profile, "troopLimitVi", row.troopLimitVi, L("Giới hạn binh chủng", "兵种限制"), listText(row.troopLimitVi, L("Không giới hạn", "无限制")));
 
-  // Lựa chọn cải tạo chỉ có tên/mô tả tiếng Việt: bản zh bỏ danh sách này.
-  const options = viOnlyList(profile, row.options);
-  profile.children.push({ key: "options", titleVi: L("Lựa chọn", "选项"), items: options.map((item) => ({ id: item.id, titleVi: item.nameVi, tierVi: item.tierVi, descriptionVi: text(item.descriptionVi), convertsToVi: text(item.convertsToVi) })) });
+  // Bản zh hiện lựa chọn có chữ Hán (nguồn hoặc bản dịch); lựa chọn chỉ có chữ Việt bị bỏ và hồ sơ được đánh dấu.
+  const options = ZH() ? row.options.filter((item) => item.nameZh) : row.options;
+  if (ZH() && options.length < row.options.length) profile.viOnly = true;
+  profile.children.push({ key: "options", titleVi: L("Lựa chọn", "选项"), items: options.map((item) => ZH()
+    ? { id: item.id, titleVi: item.nameZh, tierVi: zhSafeValue(item.tierVi) ?? lookupEmpty(), descriptionVi: text(item.descriptionZh), convertsToVi: zhSafeValue(item.convertsToVi) ?? lookupEmpty() }
+    : { id: item.id, titleVi: item.nameVi, tierVi: item.tierVi, descriptionVi: text(item.descriptionVi), convertsToVi: text(item.convertsToVi) }) });
+  profile.zhTranslated = ZH() && (isTranslatedZhText(row) || options.some(isTranslatedZhText));
   profile.revisions = viOnlyList(profile, row.revisions.map((item) => ({ ...item })));
-  profile.conditions = viOnlyList(profile, conditions(row.conditions));
+  profile.conditions = localizedConditions(profile, conditions(row.conditions));
   return profile;
 }
 
@@ -359,24 +535,27 @@ function durationText(value) {
 function buildingProfile(_corpus, entry) {
   const row = entry.record;
   const profile = base(entry);
-  pushLocalized(profile, "summary", row.summaryVi, L("Tóm tắt", "概述"));
+  pushLocalized(profile, "summary", row.summaryVi, L("Tóm tắt", "概述"), text(row.summaryVi), row.summaryZh);
+  profile.zhTranslated = ZH() && isTranslatedZhText(row);
   pushField(profile, "maxLevel", row.maxLevel, L("Cấp tối đa", "最高等级"));
   pushField(profile, "mainCityOnly", row.mainCityOnly, L("Phạm vi xây dựng", "建造范围"), row.mainCityOnly ? L("Chỉ thành chính", "仅主城") : L("Mọi thành", "所有城池"));
 
   const levels = [...row.levels].sort((a, b) => a.level - b.level).map((item) => {
-    const durationVi = durationText(item.durationVi);
-    // Hiệu ứng cấp chỉ có chữ Việt: bản zh bỏ ô này (và ô thời lượng không đọc được).
-    if (ZH() && ((item.effectVi && item.effectVi !== lookupEmpty()) || durationVi === null)) profile.viOnly = true;
-    return { id: item.id, level: item.level, costs: { ...item.costs }, durationVi: durationVi ?? lookupEmpty(), effectVi: ZH() ? lookupEmpty() : text(item.effectVi) };
+    const durationVi = ZH() && item.durationZh ? item.durationZh : durationText(item.durationVi);
+    // Hiệu ứng cấp: bản zh dùng chữ Hán nguồn; cấp chỉ có chữ Việt (hoặc thời lượng không đọc được) bị bỏ ô và đánh dấu.
+    const effectZh = item.effectZh ?? null;
+    if (ZH() && ((!effectZh && item.effectVi && item.effectVi !== lookupEmpty()) || durationVi === null)) profile.viOnly = true;
+    return { id: item.id, level: item.level, costs: { ...item.costs }, durationVi: durationVi ?? lookupEmpty(), effectVi: ZH() ? text(effectZh) : text(item.effectVi) };
   });
   profile.children.push({ key: "levels", titleVi: L("Cấp công trình", "建筑等级"), items: levels });
-  profile.conditions = viOnlyList(profile, conditions(row.conditions));
+  profile.conditions = localizedConditions(profile, conditions(row.conditions));
   return profile;
 }
 
 /**
  * Binh thư: tên (Việt, Hán-Việt, chữ Hán) và hiệu ứng nếu dữ liệu có — bản Việt hiện `effectViet` đã duyệt,
- * bản zh hiện chữ Hán nguồn `effect`, kèm mốc số liệu `effectVersion`. Mục chưa có hiệu ứng để trạng thái
+ * bản zh hiện chữ Hán nguồn `effect`, kèm mốc số liệu: bản Việt dùng `effectVietVersion` khi chữ Việt chép từ
+ * client Global (mốc riêng), không thì `effectVersion` của nguồn. Mục chưa có hiệu ứng để trạng thái
  * trống chung, không bịa. Tên Hán-Việt chỉ hiện ở bản Việt khi khác tên dịch nghĩa. Tên cũ trong nguồn
  * (`formerNames`, chữ Hán) chỉ hiện ở bản zh để trang Việt không lẫn chữ Hán.
  */
@@ -387,7 +566,8 @@ function bookProfile(_corpus, entry) {
   if (ZH() && row.formerNames?.length) pushField(profile, "formerNames", row.formerNames.join(" · "), L("Tên cũ", "旧名"));
   const hasEffect = Boolean(row.effect && row.effectViet);
   pushField(profile, "effect", hasEffect ? (ZH() ? row.effect : row.effectViet) : null, L("Hiệu ứng", "效果"));
-  if (hasEffect && row.effectVersion) pushField(profile, "effectVersion", row.effectVersion, L("Số liệu theo bản", "数据版本"));
+  const version = ZH() ? row.effectVersion : (row.effectVietVersion ?? row.effectVersion);
+  if (hasEffect && version) pushField(profile, "effectVersion", version, L("Số liệu theo bản", "数据版本"));
   return profile;
 }
 

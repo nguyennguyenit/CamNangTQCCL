@@ -585,12 +585,20 @@ class ClientHeroSupplementTest(unittest.TestCase):
         }
         path = self.directory / "client.json"
         path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+        # Quân sư client trỏ tới tướng chỉ có trong file tướng client thật; fixture tướng thu gọn nên bỏ hai khóa này
+        # cùng bản dịch zh của quân sư (chúng khóa theo chữ Việt client của hai khóa đó).
+        tactics = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+        tactics.pop("advisors", None)
+        tactics.pop("newAdvisors", None)
+        tactics["zhTexts"] = {owner: entry for owner, entry in tactics.get("zhTexts", {}).items() if not owner.startswith("advisor:")}
+        tactics_path = self.directory / "client-tactics.json"
+        tactics_path.write_text(json.dumps(tactics, ensure_ascii=False), encoding="utf-8")
         output = self.directory / "candidate"
         shutil.rmtree(output, ignore_errors=True)
         build_candidate(
             inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
             identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
-            client_heroes=path, output=output,
+            client_heroes=path, client_tactics=tactics_path, output=output,
         )
         return output
 
@@ -606,7 +614,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
         self.assertIn("usage", row["lookup"]["missingFields"])
         self.assertNotIn("innateTacticId", row["lookup"]["missingFields"])
         self.assertEqual(by_id["hero:chu-hang"]["iconUrl"], "/heroes/chu-hang.webp")
-        validate_candidate(output, client_heroes=self.directory / "client.json")
+        validate_candidate(output, client_heroes=self.directory / "client.json", client_tactics=self.directory / "client-tactics.json")
         ledger = json.loads((output / "ledger.json").read_bytes())
         self.assertTrue(any(item["entityId"] == "hero:tao-ngang" and item["chosenInput"] == "client-capture" for item in ledger))
 
@@ -801,6 +809,72 @@ class ClientTacticCaptureTest(unittest.TestCase):
         self.assertEqual(row["options"][0]["convertsToVi"], "Thương binh")
         with self.assertRaisesRegex(ValueError, "client troop mod is invalid"):
             self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": mod["options"][:11]}})
+
+    def test_client_catalog_renames_keep_old_name_and_only_declared_fields_change(self):
+        output = self._build(
+            {},
+            equipment={"equipment:tu-luan-xa": {"nameVi": "Xe Bốn Bánh"}},
+            specials={"equipment-special:te-phong": {"nameVi": "Xé Gió", "descriptionVi": "Tăng 8 điểm Võ Lực"}},
+            buildings={"building:thai-thach-xu": {"nameVi": "Điểm nhặt đá"}, "building:my-binh-dinh": {"nameVi": "Trại Lính Khiên", "summaryVi": "Giảm sát thương Lính Khiên phải nhận"}},
+            advisors={"advisor:thong-quan-tai-chien": {"nameVi": "Thống Quân Tái Chiến", "tacticPoints": 12, "heroIds": ["hero:truong-luong"]}},
+            newAdvisors={"advisor:hieu-lenh-thien-ha": {"nameVi": "Hiệu Lệnh Thiên Hạ", "elementVi": "Hỏa", "tacticPoints": 8, "effectVi": "Thống Lĩnh: Công Thành", "heroIds": ["hero:tao-thao"]}},
+        )
+        catalog = json.loads((output / "lookup-catalog.json").read_bytes())
+        rows = {row["id"]: row for group in ("equipment", "specials", "buildings", "advisors") for row in catalog[group]}
+        heroes = self._rows(output, "heroes-dict.json")
+        # Quân sư mới: không có chữ Hán/usageVi; tướng mang trỏ ngược tới đúng mã (cả mã cũ được nối tướng lần đầu).
+        self.assertEqual((rows["advisor:hieu-lenh-thien-ha"]["aliasesZh"], rows["advisor:hieu-lenh-thien-ha"]["missingFields"]), ([], ["usageVi"]))
+        self.assertEqual(heroes["hero:tao-thao"]["lookup"]["advisorId"], "advisor:hieu-lenh-thien-ha")
+        self.assertEqual((rows["advisor:thong-quan-tai-chien"]["heroIds"], heroes["hero:truong-luong"]["lookup"]["advisorId"]), (["hero:truong-luong"], "advisor:thong-quan-tai-chien"))
+        self.assertEqual((rows["equipment:tu-luan-xa"]["nameVi"], rows["equipment:tu-luan-xa"]["aliasesVi"]), ("Xe Bốn Bánh", ["Tứ Luân Xa"]))
+        self.assertEqual(rows["equipment-special:te-phong"]["descriptionVi"], "Tăng 8 điểm Võ Lực")
+        # Chỉ ghi đè trường được khai: summaryVi cũ (có mốc Lv10/Lv20) giữ nguyên khi client chỉ đổi tên.
+        self.assertIn("Lv10", rows["building:thai-thach-xu"]["summaryVi"])
+        self.assertEqual((rows["building:my-binh-dinh"]["nameVi"], rows["building:my-binh-dinh"]["aliasesVi"]), ("Trại Lính Khiên", ["My Binh Dinh"]))
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
+        for bad in (
+            {"equipment": {"equipment:khong-co": {"nameVi": "X"}}},
+            {"buildings": {"building:thai-thach-xu": {"summaryVi": "thiếu tên"}}},
+            {"equipment": {"equipment:tu-luan-xa": {"nameVi": "Xe Bốn Bánh", "slotVi": "Bảo vật"}}},
+            {"advisors": {"advisor:thong-quan-tai-chien": {"nameVi": "Thống Quân Tái Chiến", "tacticPoints": "12"}}},
+            {"newAdvisors": {"advisor:an-nhan-doat-quyen": {"nameVi": "Trùng", "elementVi": "Hỏa", "tacticPoints": 1, "effectVi": "x", "heroIds": ["hero:tu-ma-y"]}}},
+            {"advisors": {"advisor:thong-quan-tai-chien": {"nameVi": "Thống Quân Tái Chiến", "heroIds": ["hero:tu-ma-y"]}},
+             "newAdvisors": {"advisor:moi": {"nameVi": "Mới", "elementVi": "Hỏa", "tacticPoints": 1, "effectVi": "x", "heroIds": ["hero:tu-ma-y"]}}},
+        ):
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "client (equipment|buildings) entry is invalid|client catalog value is invalid|client new advisor is invalid|client advisor hero link is invalid"):
+                self._build({}, **bad)
+
+    def test_zh_texts_fill_only_missing_chinese_and_are_flagged_as_translation(self):
+        def sha(text):
+            return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+        new = {"advisor:hieu-lenh-thien-ha": {"nameVi": "Hiệu Lệnh Thiên Hạ", "elementVi": "Hỏa", "tacticPoints": 8, "effectVi": "Thống Lĩnh: Công Thành", "heroIds": ["hero:tao-thao"]}}
+        ref = "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%8F%B7%E4%BB%A4%E5%A4%A9%E4%B8%8B-1/"
+        texts = {"advisor:hieu-lenh-thien-ha": {
+            "nameZh": {"text": "号令天下", "viSha256": sha("Hiệu Lệnh Thiên Hạ"), "ref": ref},
+            "effectZh": {"text": "統領：攻城", "viSha256": sha("Thống Lĩnh: Công Thành")},
+        }}
+        output = self._build({}, newAdvisors=new, zhTexts=texts)
+        rows = {row["id"]: row for row in json.loads((output / "lookup-catalog.json").read_bytes())["advisors"]}
+        translated, source = rows["advisor:hieu-lenh-thien-ha"], rows["advisor:an-nhan-doat-quyen"]
+        self.assertEqual((translated["nameZh"], translated["effectZh"], translated["zhSource"]), ("号令天下", "統領：攻城", {"kind": "translation"}))
+        # `ref` chỉ ở đầu vào/ledger: tên có nguồn ghi bằng chứng URL, hiệu ứng ghi là bản dịch.
+        ledger = {row["fieldPath"]: row for row in json.loads((output / "ledger.json").read_bytes()) if row["entityId"] == "advisor:hieu-lenh-thien-ha" and row["fieldPath"].startswith("zhTexts.")}
+        self.assertEqual((ledger["zhTexts.nameZh"]["chosenInput"], ledger["zhTexts.nameZh"]["reviewEvidence"]), ("zh-text-sourced", [ref]))
+        self.assertEqual(ledger["zhTexts.effectZh"]["chosenInput"], "zh-text-translation")
+        self.assertNotIn("slgsim", (output / "lookup-catalog.json").read_text(encoding="utf-8"))
+        self.assertEqual(source["zhSource"], {"kind": "source"})
+        self.assertTrue(source["effectZh"])
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
+        for bad, message in (
+            ({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "號令天下", "viSha256": sha("Tên cũ")}}}, "stale against the Vietnamese text"),
+            ({"advisor:an-nhan-doat-quyen": {"effectZh": {"text": "動員", "viSha256": sha(source["effectVi"])}}}, "overrides a source Chinese text"),
+            ({"advisor:hieu-lenh-thien-ha": {"usageZh": {"text": "用法", "viSha256": sha("x")}}}, "entry is invalid"),
+            ({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "Hieu Lenh", "viSha256": sha("Hiệu Lệnh Thiên Hạ")}}}, "has no Chinese text"),
+            ({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "号令天下", "viSha256": sha("Hiệu Lệnh Thiên Hạ"), "ref": "https://example.com/x"}}}, "value is invalid"),
+        ):
+            with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
+                self._build({}, newAdvisors=new, zhTexts=bad)
 
     def test_retired_hero_and_removed_tactics_leave_no_links(self):
         output = self._build({}, retired={"tactic:tuyet-ke-chiet-muu": None, "tactic:duy-noi-thien-quyen": None})
