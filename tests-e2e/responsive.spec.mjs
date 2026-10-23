@@ -21,6 +21,49 @@ test('footer 821–1440px: khối thương hiệu không đè cột link đầu'
   }
 });
 
+test('nút Đăng nhập header: từ 821px có chữ và viền đỏ dải, ≤820px chỉ còn icon', async ({ page }) => {
+  const state = (button) => button.evaluate((node) => {
+    const label = node.querySelector('.cm-auth-label');
+    const brandText = document.querySelector('.site-header .brand-text');
+    const probe = document.createElement('i');
+    probe.style.color = 'var(--nav-underline)';
+    document.body.append(probe);
+    const accentLine = getComputedStyle(probe).color;
+    probe.remove();
+    return {
+      labelShown: getComputedStyle(label).display !== 'none',
+      border: getComputedStyle(node).borderTopColor,
+      accentLine,
+      overflow: document.documentElement.scrollWidth - innerWidth,
+      brandClipped: brandText && getComputedStyle(brandText).display !== 'none' ? brandText.scrollWidth - brandText.clientWidth : 0,
+    };
+  });
+  for (const theme of ['light', 'dark']) {
+    await page.addInitScript((value) => localStorage.setItem('theme', value), theme);
+    for (const path of ['/', '/doi-chuan/', '/zh/doi-chuan/']) {
+      for (const width of [390, 821, 1024, 1279, 1366]) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(path);
+        const button = page.locator('#community-auth .cm-auth-login');
+        await expect(button).toBeVisible();
+        const where = `${theme} ${path} @${width}`;
+        const rest = await state(button);
+        expect(rest.overflow, `${where}: tràn ngang`).toBe(0);
+        expect(rest.brandClipped, `${where}: chữ logo bị cắt`).toBeLessThanOrEqual(1);
+        if (width <= 820) {
+          expect(rest.labelShown, `${where}: mobile chỉ còn icon`).toBe(false);
+          expect(rest.border, `${where}: mobile không viền`).toBe('rgba(0, 0, 0, 0)');
+          continue;
+        }
+        expect(rest.labelShown, `${where}: hiện chữ Đăng nhập`).toBe(true);
+        expect(rest.border, `${where}: viền đỏ dải`).toBe(rest.accentLine);
+        await button.hover();
+        expect((await state(button)).border, `${where}: rê chuột giữ viền`).toBe(rest.accentLine);
+      }
+    }
+  }
+});
+
 test('bảng chiến pháp 681–1023px xếp dọc, không cột nào bị cắt khỏi khung', async ({ page }) => {
   for (const width of [768, 900, 1023]) {
     await page.setViewportSize({ width, height: 900 });
@@ -47,7 +90,7 @@ test('cột chuyển nhanh không đè control danh sách đội ở 821–900px
 });
 
 test('màn thấp dùng nút chuyển nhanh; danh sách mở nằm giữa header và nút', async ({ page }) => {
-  for (const [width, height] of [[844, 390], [1366, 500], [320, 568]]) {
+  for (const [width, height] of [[844, 390], [1366, 500], [1024, 619], [320, 568]]) {
     await page.setViewportSize({ width, height });
     await page.goto('/doi-chuan/');
     const toggle = page.locator('.quick-nav-toggle');
@@ -63,13 +106,13 @@ test('màn thấp dùng nút chuyển nhanh; danh sách mở nằm giữa header
     await last.scrollIntoViewIfNeeded();
     await expect(last).toBeInViewport();
   }
-  // Màn đủ cao vẫn là thanh icon cố định.
-  await page.setViewportSize({ width: 1024, height: 600 });
+  // Màn đủ cao vẫn là thanh icon cố định, nằm trọn giữa header và mép dưới.
+  await page.setViewportSize({ width: 1024, height: 620 });
   await page.goto('/doi-chuan/');
   await expect(page.locator('.quick-nav-toggle')).toBeHidden();
   const rail = await page.locator('.quick-nav-list').boundingBox();
   expect(rail.y).toBeGreaterThanOrEqual(64);
-  expect(rail.y + rail.height).toBeLessThanOrEqual(600);
+  expect(rail.y + rail.height).toBeLessThanOrEqual(620);
 });
 
 test('footer mobile thu gọn link game sau tiêu đề dải; desktop và không JS luôn hiện đủ', async ({ page, browser }) => {

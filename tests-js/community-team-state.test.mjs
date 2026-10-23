@@ -9,6 +9,7 @@ import {
   modeFromSearch,
   pickSide,
   similarWarning,
+  staticTeamPath,
   teamPayloadFromDraft,
 } from "../js/community-team-state.js";
 
@@ -168,6 +169,16 @@ test("modeFromSearch: id hợp lệ -> chi tiết; new=1; mine=1; còn lại dan
   assert.deepEqual(modeFromSearch("?mine=1"), { mode: "mine", id: null });
   assert.deepEqual(modeFromSearch("?new=0"), { mode: "list", id: null });
   assert.deepEqual(modeFromSearch("?id=x1&new=1"), { mode: "detail", id: "x1" });
+});
+
+test("J1: modeFromSearch có staticId hợp lệ -> static; staticId sai -> như cũ; staticTeamPath theo locale", () => {
+  assert.deepEqual(modeFromSearch("", "t1"), { mode: "static", id: "t1" });
+  assert.deepEqual(modeFromSearch("?new=1", "t1"), { mode: "static", id: "t1" });
+  assert.deepEqual(modeFromSearch("?id=t1", "BAD"), { mode: "detail", id: "t1" });
+  assert.deepEqual(modeFromSearch("", "BAD"), { mode: "list", id: null });
+  assert.deepEqual(modeFromSearch("", null), { mode: "list", id: null });
+  assert.equal(staticTeamPath("t1", "zh"), "/zh/doi-cong-dong/t1/");
+  assert.equal(staticTeamPath("t1", "vi"), "/doi-cong-dong/t1/");
 });
 
 test("mergePage: nối trang sau và bỏ id đã có", () => {

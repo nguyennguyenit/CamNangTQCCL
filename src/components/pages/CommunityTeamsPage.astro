@@ -3,7 +3,8 @@
 // Bốn chế độ (danh sách, chi tiết `?id=`, đăng `?new=1`, của tôi `?mine=1`) do js/community-teams.js dựng.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import CommunityTeamsHub from '../community/CommunityTeamsHub.astro';
-import { pick } from '../../../js/i18n.js';
+import { pick, localePath } from '../../../js/i18n.js';
+import { communityTeamsIndexable, loadCommunityTeams } from '../../lib/community-teams.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
@@ -11,15 +12,20 @@ interface Props {
 }
 
 const { locale } = Astro.props;
+const teams = await loadCommunityTeams();
+// Danh sách chỉ index khi đủ đội (đếm id duy nhất lúc build); dưới ngưỡng noindex và không canonical.
+const indexable = communityTeamsIndexable(teams.length);
+const canonicalUrl = indexable ? new URL(localePath('/doi-cong-dong/', locale), Astro.site) : undefined;
 ---
 <SiteLayout
   title={pick(locale, 'Đội cộng đồng — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '社区阵容 — 三国志战略版攻略手册')}
   description={pick(locale, 'Kho đội do người chơi đăng theo mùa: xem, bình chọn, bình luận và gửi chiến báo.', '玩家按赛季发布的阵容库：浏览、投票、评论并提交战报。')}
   pageKind="detail"
   tagline={pick(locale, 'Đội cộng đồng', '社区阵容')}
-  robots="noindex"
+  robots={indexable ? undefined : 'noindex'}
+  canonicalUrl={canonicalUrl}
   locale={locale}
 >
-  <CommunityTeamsHub locale={locale} />
+  <CommunityTeamsHub locale={locale} teams={teams} />
   <script is:inline type="module" src="/js/community-teams.js" slot="scripts"></script>
 </SiteLayout>

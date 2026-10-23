@@ -1,5 +1,21 @@
 # Project Changelog
 
+## 2026-10-22 (Đội cộng đồng công khai)
+
+### Added
+- Lối vào "Đội cộng đồng" trong nhóm Cộng đồng của menu (desktop, mobile, thanh chuyển nhanh, footer) và một thẻ mới (sau Chiến báo) trong khối Cộng đồng của landing, ở cả `/` và `/zh/`; khối bốn thẻ trên desktop thành lưới 2×2.
+- Trang tĩnh từng đội `/doi-cong-dong/<id>/` và `/zh/doi-cong-dong/<id>/` sinh lúc build cho mọi đội hiển thị công khai: tiêu đề, tác giả (tên rỗng → "Người chơi"/"玩家"), ngày duyệt, ảnh, bảng tướng (link trang Tra cứu) và chiến pháp, FAQ từ phần phân tích. Bản đúng `text_lang` tự canonical và mang JSON-LD `WebPage` + `BreadcrumbList` + `FAQPage` (không `aggregateRating`); bản kia canonical về bản gốc; không hreflang. Vote, bình luận, chiến báo vẫn tải live.
+- `GET /api/community-teams/export` (schema v1): mọi đội hiển thị công khai ở mọi mùa kèm `analysis` và `approvedAt`; `author` chỉ `{id, name}` với `name` là `string | null`; `Cache-Control: no-store`. Loader build `src/lib/community-teams.ts` fail-closed như blog.
+- `pages-deploy.yml` chạy thêm theo lịch hằng ngày (best-effort) để bắt khoá tự hết hạn và dispatch lỗi.
+
+### Changed
+- Dispatch build lại site đổi từ `blog-publish` sang `site-publish` (`community-worker/src/deploy.ts`, chờ tối đa 5 giây) và gửi thêm khi duyệt đội, xoá đội đang `approved`, khoá, mở khoá, xoá tài khoản; kết quả ghi `meta.deploy` của nhật ký. Response `approve`, `ban`, `unban` và staff xoá đội có `deploy`; chủ tự xoá đội không có.
+- Danh sách `/doi-cong-dong/` có sẵn link tới trang từng đội; dưới 10 đội thì `noindex`, không canonical, ngoài sitemap. `?id=` của đội đã duyệt chuyển sang URL tĩnh khi trang đã có (kiểm `HEAD`).
+- `sitemap.xml` thêm bản gốc mỗi đội (`lastmod` = ngày duyệt); `scripts/verify-astro-dist.mjs` kiểm cặp vi/zh, canonical, JSON-LD, ngưỡng index của danh sách và sitemap.
+- Publish lại bản dịch (`site_localization`) vì `SiteLayout.astro` và `Landing.astro` đổi; `pipeline/team-route-handles.json` ghim lại `generationId`.
+- Thanh chuyển nhanh có thêm mục nên cao ~492px: chỉ là thanh icon cố định khi cao ≥ 620px (trước 580px), thấp hơn dùng nút tròn (`css/styles.css`, `docs/design-guidelines.md`).
+- Triển khai hai bước: PR #32 (Worker + workflow nhận cả `blog-publish` lẫn `site-publish`) đã vào `main` và Worker đã release (#40; production `/api/community-teams/export` trả 200, 0 đội); PR này là bước hai (bỏ `blog-publish`, thêm lịch), sau khi merge phải chạy tay `pages-deploy.yml`, vì build đọc export kiểu fail-closed. Rollback: revert `main` trước, rồi `wrangler rollback` (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
+
 ## 2026-10-22 (Roster push vừa gói Workers Free)
 
 ### Changed
@@ -88,7 +104,7 @@ Issue #21 và #23. Hợp đồng dữ liệu: [roster-sync.md](roster-sync.md). 
 - `override` dùng id `${boxId}~${sha256hex16(teamId)}~…` vì 67/1 366 `sourceConfigId` có chữ Hán; `source.key` chỉ ASCII, id có chữ Hán hoặc dài dùng `h-<16 hex>` (xem § "Thay đổi sau duyệt" của roster-sync.md).
 - Sửa theo code review roster (chi tiết ở [roster-sync.md](roster-sync.md) § Thay đổi sau duyệt): xóa nhóm có đội không còn báo `conflict`; `GET /api/roster` trả `userId` và client kiểm chủ trước khi áp trang kéo; `signOut` luôn xóa cache roster; lô đẩy tối đa 12 bản ghi (dưới trần 50 câu D1 mỗi lần gọi của gói Free); xóa mềm của Gợi ý đội theo chênh lệch; con trỏ kéo lệch tự về 0; mặc định hộp/nhóm chỉ dựng sau lần kéo thành công; trần 30 đội khóa chỉ khi thêm.
 - Sửa theo review PR #36: lưu lại sau khi server từ chối không còn báo thành công giả (kể cả bản lưu dở sau OAuth và `box main`); `clock_skew` không kéo đồng hồ về tương lai mãi; xóa hộp thua `conflict` kéo lại bản con; món chưa đối chiếu được ở Gợi ý đội không mất sau khi ghi cloud; quét đội khóa không cắt đội đã có; chế độ chỉ đọc tự vào cloud khi đồng bộ lại được; `?season=` thắng mùa đã lưu ở lần nạp đầu; nút lưu sau OAuth dùng lại id bản lưu dở (không tạo đội trùng); "Thêm nhóm" chặn bấm hai lần; nhãn cảnh báo zh dùng tên chữ Hán; giữ focus bàn phím sau "Chọn tất cả".
-- Bản dịch: re-pin các file nguồn đổi (`js/analyze.js`, `js/detail-actions.js`, `js/khaihoang-detail.js`, `js/roster-picker.js`, `js/roster-recommend-ui.js`, `js/roster-scan-state.js`, `js/team-detail.js`…), generation Recommended cuối `2be9daf5b5adb1589f3443dae38fcef81e9cdc9d3d5377fe509d19776ef56268` (`data/website-display.json`), re-pin `pipeline/team-route-handles.json`. Các file trong `docs/` và `README.md` không nằm trong `sourceFiles` nên đợt docs này không cần publish lại.
+- Bản dịch: re-pin các file nguồn đổi (`js/analyze.js`, `js/detail-actions.js`, `js/khaihoang-detail.js`, `js/roster-picker.js`, `js/roster-recommend-ui.js`, `js/roster-scan-state.js`, `js/team-detail.js`…), generation Recommended cuối `5218bdd490b6bfd21d54f461cdfe886d36a54e409e766256a90ca465a3774bd6` (`data/website-display.json`), re-pin `pipeline/team-route-handles.json`. Các file trong `docs/` và `README.md` không nằm trong `sourceFiles` nên đợt docs này không cần publish lại.
 
 ### Tests
 

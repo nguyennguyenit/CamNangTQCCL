@@ -124,6 +124,10 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
     // Trang cộng đồng (noindex) vẫn là HTML tĩnh phải revalidate.
     ...["chien-bao", "doi-cong-dong", "doi-cua-toi", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
+    // Trang đội cộng đồng dựng lúc build: cùng luật `/doi-cong-dong/*` và `/zh/*`.
+    "/doi-cong-dong/3f2c-team/",
+    "/doi-cong-dong/3f2c-team/index.html",
+    "/zh/doi-cong-dong/3f2c-team/",
     // Trang chính sách (bảo mật là URL khai với màn hình đồng ý OAuth của Google).
     ...["chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
       .flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
