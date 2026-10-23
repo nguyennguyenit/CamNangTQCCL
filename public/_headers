@@ -38,6 +38,9 @@
 /doi-cong-dong/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/doi-cua-toi/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /quan-tri/*
   Cache-Control: public, max-age=0, must-revalidate
 
@@ -66,6 +69,9 @@
   Cache-Control: public, max-age=0, must-revalidate
 
 /llms/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/my-teams-source-index.json
   Cache-Control: public, max-age=0, must-revalidate
 
 /404.html

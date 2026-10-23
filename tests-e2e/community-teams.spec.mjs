@@ -342,7 +342,9 @@ test("menu tài khoản có Đội cộng đồng; /chien-bao/ có link tới tr
   await page.locator("#community-auth .cm-auth-toggle").click();
   const menu = page.locator("#community-auth");
   await expect(menu.getByRole("link", { name: "Đội cộng đồng" })).toHaveAttribute("href", "/doi-cong-dong/");
-  await expect(menu.getByRole("link", { name: "Đội của tôi" })).toHaveAttribute("href", "/doi-cong-dong/?mine=1");
+  await expect(menu.getByRole("link", { name: "Đội đã đăng" })).toHaveAttribute("href", "/doi-cong-dong/?mine=1");
+  // "Đội của tôi" là kho đội đã lưu (roster), tách khỏi đội đã đăng lên cộng đồng.
+  await expect(menu.getByRole("link", { name: "Đội của tôi" })).toHaveAttribute("href", "/doi-cua-toi/");
 });
 
 test("của tôi: đội xoá dở hiện trạng thái + Thử xoá tiếp; 502 delete_incomplete báo lỗi, thử lại xong thì gỡ thẻ", async ({ page }) => {

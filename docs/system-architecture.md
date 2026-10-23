@@ -204,7 +204,8 @@ Boundary này fail closed và có bounds trước xử lý: chuỗi/control char
 |---|---|---|
 | Theme | `localStorage.theme` | `light` hoặc `dark` |
 | Recruit tracker | `localStorage.tqcclRecruitTracker` | schema v2: account, banner, pull events (mỗi bản ghi `id`, `updatedAt`, `deletedAt`); đồng bộ tuỳ chọn lên D1 `recruit_records` khi đăng nhập |
-| Roster scan | `localStorage.tqccl.rosterRecommend.scanState.v1` | tướng, chiến pháp, team khóa, confirmed, updatedAt |
+| Roster scan | `localStorage.tqccl.rosterRecommend.scanState.v1` | tướng, chiến pháp, team khóa, confirmed, updatedAt; khi đăng nhập và đồng ý gộp, đồng bộ lên D1 `roster_records` qua `/api/roster` (cache `tqccl.roster.cloud.v1`, hợp đồng `docs/roster-sync.md`) |
+| Đội của tôi | đội/nhóm không ghi `localStorage` (cache trong bộ nhớ trang); hộp kho (kể cả tên người dùng đặt) nằm trong cache `tqccl.roster.cloud.v1` khi đăng nhập ở `/goi-y-doi-tu-kho/`, xóa khi `signOut`; bản lưu dở OAuth ở `sessionStorage` 30 phút | đội, nhóm, hộp trong D1 `roster_records`; bắt buộc đăng nhập |
 | Ảnh | memory phiên UI | data URL preview/request; không serialize vào roster state |
 
 Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileToken`. Tracker có validate import, JSON export/import (nhập = gộp theo bản ghi) và, khi đã đăng nhập, đồng bộ `GET/POST /api/recruit`: kéo theo con trỏ `rev` của server, đẩy bản ghi sửa sau `pushedAt`, gộp "bản sửa sau cùng thắng" theo `updatedAt`. Store đóng dấu mọi thay đổi tại chỗ lớn hơn `updatedAt` lớn nhất nó đã thấy nên đồng hồ máy lệch không làm mất thay đổi.
