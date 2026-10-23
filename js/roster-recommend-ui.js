@@ -4,6 +4,7 @@ import { renderTurnstileWidget } from "./turnstile.js";
 import { el, icon, svgNode } from "./render.js";
 import { mapBuiltTeamsScan, mapHeroesScan, mapTacticsScan } from "./roster-scan-map.js";
 import {
+  MAX_LOCKED_TEAMS,
   MAX_TACTIC_OVERRIDES,
   ROSTER_SCAN_STORAGE_KEY,
   addCanonicalItem,
@@ -16,12 +17,22 @@ import {
   setTacticOverride,
   tacticOverrideBlocked,
 } from "./roster-scan-state.js";
-import { analyzeTacticSubstitutes, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { analyzeTacticSubstitutes, applyTacticOverrides, buildSeasonCandidates, recommendRoster, seasonTacticUsage } from "./roster-season-candidates.js";
+import { buildRosterCoverage } from "./roster-coverage.js";
+import { createTacticIdResolver } from "./lookup-ids.js";
+import { buildConflictView } from "./roster-conflict-view.js";
 import { buildTacticRules } from "./team-recommend-engine.js";
-import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
+import { readRecommendedQuery, sourceTierLabel, tacticDisplayName } from "./recommended-reference-state.js";
 import { seasonNameText, seasonOptionText, seasonOptionTitle } from "./team-filter-section.js";
 import { L, currentLocale } from "./i18n.js";
 import { createRawNameResolver, localName } from "./website-display.js";
+import { describeError } from "./community-api.js";
+import { boxes, toScanState } from "./roster-cloud-store.js";
+import { createScanWriter, reconcileScanWithCloud } from "./roster-scan-writer.js";
+import { createRosterIdResolver } from "./roster-id-resolve.js";
+import { DEFAULT_KINDS, createRosterSync } from "./roster-sync.js";
+import { addPicked, buildCatalog, createPicker, removePicked } from "./roster-picker.js";
+import { createSaveButton } from "./my-teams-save-button.js";
 
 // `<html lang>` cố định theo trang nên nhãn dịch lúc nạp module vẫn đúng ngôn ngữ.
 // `unit` dùng cho câu đếm tiếng Việt, `unitZh` là lượng từ + danh từ cho câu đếm tiếng Trung.
@@ -85,6 +96,45 @@ function saveState(state) {
   localStorage.setItem(ROSTER_SCAN_STORAGE_KEY, JSON.stringify(serializeRosterScanState(state)));
 }
 
+/* ---------- Đồng bộ kho theo hộp (chỉ khi đã đăng nhập) ---------- */
+const BOX_STORAGE_KEY = "tqccl.roster.box.v1";
+const SYNC_STATUS_TEXT = {
+  syncing: L("Đang đồng bộ…", "正在同步…"),
+  synced: L("Đã đồng bộ với tài khoản.", "已与账号同步。"),
+  offline: L("Chưa có kết nối. Thay đổi được giữ trên máy và sẽ đồng bộ khi có mạng.", "当前无网络连接。修改会保留在本机，联网后自动同步。"),
+  error: L("Chưa đồng bộ được lúc này. Thay đổi vẫn được giữ trên máy.", "暂时无法同步。修改仍保留在本机。"),
+  // "signed-out" và "mismatch" chỉ hiện qua cảnh báo `role="alert"` (có nút hành động), không lặp ở dòng trạng thái.
+};
+const REJECT_REASONS = {
+  bytes: L("nội dung quá dài", "内容过长"),
+  schema: L("dữ liệu không hợp lệ", "数据无效"),
+  clock_skew: L("đồng hồ máy lệch so với máy chủ", "本机时间与服务器相差过大"),
+  box_missing: L("hộp kho không còn tồn tại", "库存盒已不存在"),
+  quota: L("tài khoản đã đủ số bản ghi tối đa", "账号已达记录数量上限"),
+  cap: L("đã đủ số lượng tối đa", "已达数量上限"),
+  retained_cap: L("tài khoản đã đủ số bản ghi lưu giữ tối đa", "账号已达保留记录上限"),
+};
+
+/** Nội dung kho (không kể ảnh đã đọc và cờ xác nhận) dưới dạng chuỗi so sánh, không phụ thuộc thứ tự món. */
+function inventorySignature(scan) {
+  const items = (list) => (list || []).map((item) => `${item.name}|${Number.isFinite(item.redStars) ? item.redStars : ""}`).sort();
+  return JSON.stringify([
+    items(scan?.ownedHeroes),
+    items(scan?.ownedTactics),
+    (scan?.lockedTeams || []).map((team) => JSON.stringify([team.teamName, team.heroes, team.tactics, team.teamId ?? "", team.configId ?? ""])).sort(),
+    (scan?.tacticOverrides || []).map((item) => `${item.teamId}|${item.heroIndex}|${item.slotIndex}|${item.tactic}`).sort(),
+    scan?.seasonId ?? null,
+  ]);
+}
+
+const hasLocalInventory = (scan) =>
+  Boolean(scan?.ownedHeroes?.length || scan?.ownedTactics?.length || scan?.lockedTeams?.length || scan?.tacticOverrides?.length || scan?.seasonId);
+
+/** Tên các món không đẩy được (ngoài từ điển, quá trần byte) để báo "chỉ có trên máy này". */
+const localOnlyList = (localOnly) => [...(localOnly?.heroes || []), ...(localOnly?.tactics || []), ...(localOnly?.lockedTeams || []), ...(localOnly?.overrides || [])];
+
+const recordLabel = (record) => record?.data?.name || record?.data?.teamName || record?.data?.tactic || record?.data?.seasonId || record?.id || "";
+
 /** "vừa xong" / "2 phút trước" cho lần đọc ảnh gần nhất. */
 function relativeTime(iso, locale) {
   const seconds = Math.max(0, (Date.now() - Date.parse(iso)) / 1000);
@@ -97,15 +147,8 @@ function relativeTime(iso, locale) {
 
 export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, loadRecommended, onOpenTeam }, mount) {
   if (!mount) return;
-  if (!isAnalyzeConfigured()) {
-    mount.replaceChildren(
-      el("div", { class: "ana-setup" }, [
-        el("p", {}, L("Tính năng gợi ý đội từ kho chưa được cấu hình.", "“武将库配队”功能尚未配置。")),
-        el("p", { class: "ana-note" }, L("Cần deploy Worker (worker/) + điền workerUrl & turnstileSiteKey trong js/config.js.", "需部署 Worker（worker/），并在 js/config.js 中填写 workerUrl 与 turnstileSiteKey。")),
-      ]),
-    );
-    return;
-  }
+  // Gợi ý đội chạy bằng công cụ cục bộ nên không phụ thuộc Worker AI: chưa cấu hình thì chỉ thiếu đọc ảnh và nút "Vì sao?".
+  const aiReady = isAnalyzeConfigured();
   const doc = mount.ownerDocument ?? globalThis.document;
   let state = loadState();
   /** Màn đang hiện: "review" = đọc kho + kiểm tra (Roster.dc.html), "result" = danh sách gợi ý (RosterResult.dc.html). */
@@ -119,12 +162,25 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const zh = currentLocale() === "zh";
   const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
   const tacticRules = buildTacticRules(tacticsDict);
+  const tacticIdOf = createTacticIdResolver(tacticsDict);
+  /** Ô đang mở của bảng Độ phủ kho: `{tier, kind: "complete"|"missingOne"}`; giữ qua các lần vẽ lại kết quả. */
+  let coverageOpen = null;
   const shown = (name) => localName(name, resolveRaw);
   const joinNames = (names) => names.map(shown).join(" · ");
   // Tên chiến pháp lưu trong dữ liệu đội: bản vi hiện `viet` hiện hành của danh mục; bản zh như `shown`.
   const tacticShown = (name) => (zh ? shown(name) : tacticDisplayName(name));
   const joinTactics = (names) => names.map(tacticShown).join(" · ");
   // Tên đội trong dữ liệu chỉ có bản Việt: bản zh gọi đội bằng tên chữ Hán của các tướng trong đội.
+  // Nhãn bản ghi đồng bộ trong cảnh báo: bản zh dùng tên chữ Hán/chiến pháp thay vì tên Việt hay id thô.
+  const recordLabelShown = (record) => {
+    const data = record?.data || {};
+    if (record?.kind === "owned" && data.name) return data.type === "tactic" ? tacticShown(data.name) : shown(data.name);
+    if (record?.kind === "override" && data.tactic) return tacticShown(data.tactic);
+    if (record?.kind === "locked" && zh && data.heroes?.length) return joinNames(data.heroes);
+    if (record?.kind === "season") return seasonOptions.has(data.seasonId) ? seasonNameText(seasonOptions.get(data.seasonId)) : recordLabel(record);
+    if (record?.kind === "team" && zh) return "队伍";
+    return recordLabel(record);
+  };
   const teamLabel = (team) => {
     if (!zh || !team?.heroes?.length) return team?.name;
     return team.heroes.map((hero) => shown(typeof hero === "string" ? hero : hero?.name)).filter(Boolean).join(" · ");
@@ -138,6 +194,263 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const recommendBtn = el("button", { type: "button", class: "ana-btn primary", disabled: "" }, [sparkIcon(), L("Gợi ý 5 đội", "推荐 5 支队伍")]);
   const confirmBtn = el("button", { type: "button", class: "ana-btn", disabled: "" }, [checkIcon(), L("Xác nhận dữ liệu đã đọc", "确认识别结果")]);
   const resultsSlot = el("div", { class: "roster-results-slot" });
+
+  /* ---------- Đồng bộ kho: khách giữ kho local như cũ; đã đăng nhập dùng kho của hộp đang chọn ---------- */
+  const idResolver = createRosterIdResolver({ heroesDict, tacticsDict });
+  /**
+   * "guest": kho local · "loading": đã có phiên, đang kéo kho tài khoản · "cloud": kho của hộp đang chọn ·
+   * "readonly": hết phiên (401) hoặc chưa tải được kho, chỉ đọc, KHÔNG chuyển sang kho local ·
+   * "locked": tài khoản đã đổi ở tab khác, phải nạp lại phiên.
+   */
+  let mode = "guest";
+  let boxId = null;
+  let syncStatus = "guest";
+  let localOnlyNames = [];
+  const editControls = [];
+  let picker = null;
+  const canEdit = () => mode === "guest" || mode === "cloud";
+  const paintEditable = () => {
+    for (const control of editControls) control.disabled = !canEdit();
+    picker?.setDisabled(!canEdit());
+  };
+
+  const syncLine = el("p", { class: "roster-sync-status", role: "status" });
+  const syncAlerts = el("div", { class: "roster-sync-alerts" });
+  const boxSelect = el("select", { class: "ana-input", id: "roster-box" });
+  const boxField = el("div", { class: "roster-field roster-box-control", hidden: "" }, [
+    el("label", { class: "roster-field-label", for: "roster-box" }, L("Hộp kho", "库存盒")),
+    boxSelect,
+  ]);
+  const syncBar = el("section", { class: "roster-sync", "aria-label": L("Đồng bộ kho", "库存同步"), hidden: "" }, [boxField, syncLine, syncAlerts]);
+
+  /** Mỗi cảnh báo là một `role="alert"` riêng; chỉ cảnh báo mới/đổi chữ mới được chèn lại để không đọc lặp. */
+  const alertNodes = new Map();
+  function setAlert(key, text, action) {
+    const old = alertNodes.get(key);
+    if (old?.dataset.text === text) return;
+    const node = el("p", { class: "roster-sync-alert", role: "alert", dataset: { text } }, [
+      el("span", {}, text),
+      action ? el("button", { type: "button", class: "roster-ghost", onClick: action.run }, action.label) : null,
+    ]);
+    if (old) old.replaceWith(node);
+    else syncAlerts.append(node);
+    alertNodes.set(key, node);
+  }
+  function clearAlert(key) {
+    alertNodes.get(key)?.remove();
+    alertNodes.delete(key);
+  }
+  const dismissAction = (key, after) => ({ label: L("Đã hiểu", "知道了"), run: () => { clearAlert(key); after?.(); } });
+
+  function showConflict({ key, loser }) {
+    const label = recordLabelShown(loser);
+    const alertKey = `conflict:${key}`;
+    setAlert(alertKey, L(`Bản mới hơn từ thiết bị khác đã thay thế chỉnh sửa của bạn với “${label}”.`, `其他设备上更新的版本已替换你对“${label}”的修改。`), dismissAction(alertKey));
+  }
+  function showRejected(item) {
+    const label = recordLabelShown(item.record);
+    const reason = REJECT_REASONS[item.code] || L("bị từ chối", "被拒绝");
+    const alertKey = `rejected:${item.key}`;
+    setAlert(
+      alertKey,
+      L(`Không đồng bộ được “${label}” (${reason}). Nội dung vẫn giữ trên máy này.`, `无法同步“${label}”（${reason}）。内容仍保留在本机。`),
+      dismissAction(alertKey, () => sync.dismissRejected(item.key)),
+    );
+  }
+
+  function guardEdit() {
+    if (canEdit()) return true;
+    setScanStatus(
+      mode === "loading" ? L("Đang tải kho từ tài khoản…", "正在从账号加载库存…") : L("Kho tài khoản đang ở chế độ chỉ đọc.", "账号库存当前为只读。"),
+      "err",
+    );
+    return false;
+  }
+
+  function paintSync() {
+    paintEditable();
+    syncBar.hidden = mode === "guest";
+    if (mode === "guest") return;
+    const cloudState = sync.state();
+    const list = cloudState ? boxes(cloudState) : [];
+    boxSelect.replaceChildren(...list.map((box) => el("option", { value: box.id }, box.name)));
+    if (boxId) boxSelect.value = boxId;
+    boxField.hidden = list.length < 2;
+    const base = mode === "loading" ? L("Đang tải kho từ tài khoản…", "正在从账号加载库存…") : SYNC_STATUS_TEXT[syncStatus] || "";
+    const extra = localOnlyNames.length
+      ? L(
+        ` ${localOnlyNames.length} món chỉ có trên máy này, chưa đồng bộ: ${localOnlyNames.slice(0, 5).join(", ")}${localOnlyNames.length > 5 ? "…" : ""}.`,
+        ` ${localOnlyNames.length} 项仅存在于本机，尚未同步：${localOnlyNames.slice(0, 5).join("、")}${localOnlyNames.length > 5 ? "…" : ""}。`,
+      )
+      : "";
+    syncLine.textContent = `${base}${extra}`;
+    syncLine.dataset.status = syncStatus;
+    if (syncStatus === "signed-out") {
+      setAlert("session", L("Phiên đăng nhập đã hết. Kho tài khoản chỉ đọc; thay đổi mới chưa được lưu.", "登录已过期。账号库存为只读，新的修改尚未保存。"), {
+        label: L("Đăng nhập lại", "重新登录"),
+        run: async () => {
+          const error = await sync.signIn();
+          if (error) setScanStatus(describeError(error), "err");
+        },
+      });
+    } else if (syncStatus === "mismatch") {
+      setAlert("session", L("Tài khoản đăng nhập đã đổi ở tab khác. Tải lại trang để tiếp tục.", "登录账号已在其他标签页更换。请重新加载页面后继续。"), {
+        label: L("Tải lại trang", "重新加载页面"),
+        run: () => location.reload(),
+      });
+    } else if (mode === "readonly" && !list.length) {
+      setAlert("session", L("Chưa tải được kho từ tài khoản. Kiểm tra kết nối rồi tải lại trang.", "尚未能从账号加载库存。请检查网络后重新加载页面。"), {
+        label: L("Tải lại trang", "重新加载页面"),
+        run: () => location.reload(),
+      });
+    } else {
+      clearAlert("session");
+    }
+  }
+
+  const preferredBox = (list) => {
+    let stored = null;
+    try {
+      stored = localStorage.getItem(BOX_STORAGE_KEY);
+    } catch {
+      // Storage bị chặn: dùng hộp mặc định.
+    }
+    return [stored, "main"].find((id) => list.some((box) => box.id === id)) || list[0].id;
+  };
+
+  /** Nạp kho của hộp đang chọn từ cache cloud vào `state` (giữ ảnh đã đọc/cờ xác nhận); trả `true` khi nội dung kho đổi. */
+  function refreshFromCloud({ keepLocalOnly = true } = {}) {
+    const cloudState = sync.state();
+    const list = cloudState ? boxes(cloudState) : [];
+    if (!list.length) return false;
+    if (!list.some((box) => box.id === boxId)) boxId = preferredBox(list);
+    const fromCloud = toScanState(cloudState, boxId);
+    // Món "chỉ có trên máy này" (không lên được cloud) và cờ của món tương đương phải sống sót qua lần nạp lại.
+    const next = keepLocalOnly ? reconcileScanWithCloud(state, fromCloud, idResolver) : fromCloud;
+    const changed = inventorySignature(next) !== inventorySignature(state);
+    state = { ...next, scans: state.scans, confirmed: changed ? false : state.confirmed, updatedAt: state.updatedAt };
+    writer.rebase(next);
+    return changed;
+  }
+
+  let urlSeasonPinned = false;
+  async function applySeasonFromState() {
+    await seasonReady;
+    // `?season=` tường minh thắng mùa đã lưu ở lần nạp đầu (như khách: URL > đã lưu > mặc định).
+    if (urlSeasonPinned) {
+      urlSeasonPinned = false;
+      return;
+    }
+    if (state.seasonId && seasonOptions.has(state.seasonId) && season?.id !== state.seasonId) selectSeason(state.seasonId);
+  }
+
+  /** Lần đầu có kho cloud của user này: hỏi gộp kho local (cờ theo userId), bảo đảm có hộp `main`, rồi chuyển sang kho cloud. */
+  async function enterCloud() {
+    const local = loadState();
+    let merged = false;
+    if (sync.mergeStatus() === "none" && hasLocalInventory(local)) {
+      if (confirm(L("Gộp kho trên máy này vào tài khoản?\nChọn Hủy nếu đây là máy dùng chung với người khác.", "要把本机的库存合并到账号吗？\n如果这是与他人共用的设备，请选择取消。"))) {
+        const result = await sync.mergeLocal(local, idResolver);
+        if (result.ok) {
+          merged = true;
+          localOnlyNames = localOnlyList(result.localOnly);
+        }
+      } else {
+        sync.declineMerge();
+      }
+    }
+    if (!(sync.state() && boxes(sync.state()).length)) await sync.ensureMainBox();
+    if (mode !== "loading") return;
+    mode = "cloud";
+    state = { ...state, scans: {} };
+    refreshFromCloud({ keepLocalOnly: merged });
+    for (const item of sync.rejected()) showRejected(item);
+    await applySeasonFromState();
+    rerender();
+  }
+
+  /** Không kéo được (mất mạng / hết phiên) nhưng cache của user này còn: xem kho cache, không rơi về kho local. */
+  function enterFromCache(next) {
+    state = { ...state, scans: {} };
+    refreshFromCloud({ keepLocalOnly: false });
+    const usable = Boolean(sync.state() && boxes(sync.state()).length);
+    mode = next === "signed-out" || !usable ? "readonly" : "cloud";
+    applySeasonFromState().then(() => rerender());
+  }
+
+  async function onSyncStatus(next) {
+    const previousStatus = syncStatus;
+    syncStatus = next;
+    try {
+      if (mode === "guest" && next !== "guest" && sync.user()) mode = "loading";
+      if (next === "synced" && mode === "loading") await enterCloud();
+      else if (mode === "loading" && (next === "offline" || next === "error" || next === "signed-out")) enterFromCache(next);
+      else if (next === "synced" && mode === "readonly" && previousStatus !== "signed-out" && sync.user()) {
+        // Chỉ đọc vì offline/lỗi lúc vào trang mà chưa có cache: có kết nối lại thì nạp kho cloud.
+        mode = "loading";
+        await enterCloud();
+      } else if (next === "signed-out" && mode === "cloud") mode = "readonly";
+      else if (next === "mismatch") mode = "locked";
+    } catch {
+      // Lỗi dựng UI không được làm hỏng vòng đồng bộ.
+    } finally {
+      paintSync();
+    }
+  }
+
+  function applyCloudChange() {
+    // Đang ghi: nạp lại lúc này sẽ kéo `state` lùi về trước thao tác kế tiếp; `persist` nạp lại khi lần ghi cuối xong.
+    if (writer.busy()) return paintSync();
+    const changed = refreshFromCloud();
+    paintSync();
+    if (!changed) return;
+    applySeasonFromState().then(() => rerender());
+  }
+
+  const sync = createRosterSync({
+    kinds: DEFAULT_KINDS,
+    storage: localStorage,
+    onStatus: (status) => void onSyncStatus(status),
+    onChange: () => {
+      if (mode === "cloud") applyCloudChange();
+    },
+    onConflict: showConflict,
+    onRejected: (items) => items.forEach(showRejected),
+    onMismatch: () => {
+      mode = "locked";
+      paintSync();
+    },
+  });
+
+  const writer = createScanWriter({ sync, resolve: idResolver, boxId: () => boxId });
+
+  boxSelect.addEventListener("change", () => {
+    if (mode !== "cloud" || !boxes(sync.state()).some((box) => box.id === boxSelect.value)) return;
+    boxId = boxSelect.value;
+    try {
+      localStorage.setItem(BOX_STORAGE_KEY, boxId);
+    } catch {
+      // Storage bị chặn: chọn hộp chỉ còn hiệu lực trong phiên này.
+    }
+    state = { ...state, scans: {}, confirmed: false };
+    refreshFromCloud({ keepLocalOnly: false });
+    applySeasonFromState().then(() => rerender());
+  });
+
+  /** Khách: lưu local như cũ. Đã đăng nhập: ghi chênh lệch vào hộp đang chọn rồi đồng bộ nền; chỉ đọc thì bỏ qua. */
+  function persist(next) {
+    if (mode === "guest") {
+      saveState(next);
+      return;
+    }
+    if (mode !== "cloud") return;
+    writer.write(next).then(({ outcome, localOnly, idle }) => {
+      if (outcome.ok) localOnlyNames = localOnlyList(localOnly);
+      // Chỉ nạp lại khi không còn lần ghi nào đang chờ (kể cả thay đổi từ cloud bị hoãn trong lúc ghi).
+      if (idle && refreshFromCloud()) rerender();
+      paintSync();
+    });
+  }
 
   /* ---------- Mùa bạn đang chơi: đội chuẩn của mùa là nguồn chính, đội cũ chỉ lấp chỗ trống ---------- */
   // `season` = { id, teams, teamTier, usage } của mùa đang chọn; null khi chưa tải hoặc tải lỗi.
@@ -160,9 +473,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     seasonSelect.value = id;
   }
   seasonSelect.addEventListener("change", () => {
+    if (!guardEdit()) {
+      if (season) seasonSelect.value = season.id;
+      return;
+    }
     selectSeason(seasonSelect.value);
     state = { ...state, seasonId: season.id };
-    saveState(state);
+    persist(state);
     // Mùa ghi trên URL để link chia sẻ mở đúng mùa; replaceState không thêm bước lịch sử.
     const url = new URL(location.href);
     url.searchParams.set("season", season.id);
@@ -178,9 +495,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       // URL > mùa đã lưu > mặc định của site; giá trị lạ về mặc định.
       const explicit = new URL(location.href).searchParams.has("season");
       const fromUrl = explicit ? readRecommendedQuery(location.href, registry).season : null;
+      urlSeasonPinned = seasonOptions.has(fromUrl);
       const id = [fromUrl, state.seasonId, registry.defaultSourceSeasonId].find((value) => seasonOptions.has(value)) || options[0]?.sourceSeasonId;
       if (!id) throw new Error("no seasons");
-      seasonSelect.replaceChildren(...options.map((item) => el("option", { value: item.sourceSeasonId, title: seasonOptionTitle(item) }, seasonOptionText(item))));
+      seasonSelect.replaceChildren(...options.map((item) => el("option", { value: item.sourceSeasonId, title: seasonOptionTitle(item) }, seasonOptionText(item, registry.defaultSourceSeasonId))));
       seasonSelect.disabled = false;
       selectSeason(id);
     })
@@ -210,7 +528,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     modeField,
     el("p", { class: "tool-notice" }, [
       el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [shieldIcon()]),
-      el("span", {}, L("AI chỉ đọc ảnh, và chỉ giải thích món bù khi bạn hỏi. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn.", "AI 仅负责识别图片，并只在你询问时解释替代战法；队伍由本地工具依据精选数据挑选。")),
+      el("span", {}, aiReady
+        ? L("AI chỉ đọc ảnh, và chỉ giải thích món bù khi bạn hỏi. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn.", "AI 仅负责识别图片，并只在你询问时解释替代战法；队伍由本地工具依据精选数据挑选。")
+        : L("Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn. Đọc ảnh và giải thích bằng AI đang tạm tắt.", "队伍由本地工具依据精选数据挑选。截图识别与 AI 解释功能暂时关闭。")),
     ]),
   ]);
 
@@ -250,12 +570,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     scanStatus.dataset.kind = kind;
     scanStatus.replaceChildren(...(text ? [kind === "ok" ? checkIcon() : null, el("span", {}, text)].filter(Boolean) : []));
   }
-  const scanControls = SCAN_TYPES.map((scan, index) => {
+  const scanControls = (aiReady ? SCAN_TYPES : []).map((scan, index) => {
     // Ô chọn tệp hệ thống ẩn như `.ana-file` của Soi đội; nút "Chọn ảnh" mở hộp chọn tệp.
     const titleId = `roster-scan-title-${scan.id}`;
     const fileInput = el("input", { type: "file", accept: "image/*", class: "ana-file", "aria-labelledby": titleId });
     const control = { scan, file: null };
     const pickBtn = el("button", { type: "button", class: "ana-btn", "aria-describedby": titleId, onClick: () => fileInput.click() }, [uploadIcon(), L("Chọn ảnh", "选择图片")]);
+    editControls.push(pickBtn);
     const readBtn = el("button", { type: "button", class: "roster-ghost", disabled: "" });
     const count = el("span", { class: "roster-pill roster-scan-count" });
     const previewText = el("span", {});
@@ -285,7 +606,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   async function readScan(control) {
     const { scan, file } = control;
-    if (!file || scanBusy) return;
+    if (!file || scanBusy || !guardEdit()) return;
     if (!token) {
       setScanStatus(L("Xác thực Turnstile trước.", "请先完成 Turnstile 验证。"), "err");
       paintScanCards();
@@ -314,9 +635,19 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
           ? mapTacticsScan(raw, { heroesDict, tacticsDict })
           : mapBuiltTeamsScan(raw, { heroesDict, tacticsDict });
       state = applyScanResult(state, scan.id, mapped);
-      saveState(state);
+      const droppedTeams = state.droppedLockedTeams || 0;
+      delete state.droppedLockedTeams;
+      persist(state);
       // Đọc xong là thay đổi kho: huỷ kết quả gợi ý cũ và khoá lại nút cho tới khi xác nhận lại.
       rerender();
+      if (droppedTeams) {
+        const limitKey = "limit";
+        setAlert(
+          limitKey,
+          L(`Mỗi hộp chỉ giữ tối đa ${MAX_LOCKED_TEAMS} đội khóa: đã bỏ ${droppedTeams} đội cũ nhất.`, `每个库存盒最多保留 ${MAX_LOCKED_TEAMS} 支锁定队伍：已移除最早的 ${droppedTeams} 支。`),
+          dismissAction(limitKey),
+        );
+      }
       setScanStatus(L("Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.", "识别完成，请核对下方数据。"), "ok");
     } catch (err) {
       setScanStatus(describeAnalyzeError(err, ROSTER_PROVIDER_ERROR), "err");
@@ -354,7 +685,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       const again = Boolean(record);
       control.readBtn.textContent = again ? L("Đọc lại", "重新识别") : L("Đọc ảnh", "识别图片");
       control.readBtn.setAttribute("aria-label", again ? L(`Đọc lại ảnh ${scan.label}`, `重新识别${scan.label}图片`) : L(`Đọc ảnh ${scan.label}`, `识别${scan.label}图片`));
-      control.readBtn.disabled = scanBusy || !control.file;
+      control.readBtn.disabled = scanBusy || !control.file || !canEdit();
     }
   }
 
@@ -376,7 +707,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       list.replaceChildren(...visible.map((item) => {
         const name = item.name || item;
         const label = type === "tactics" ? tacticShown(name) : shown(name);
-        const remove = el("button", { type: "button", class: "roster-remove", "aria-label": L(`Bỏ ${label}`, `移除${label}`) }, [closeIcon()]);
+        const remove = el("button", { type: "button", class: "roster-remove", "aria-label": L(`Bỏ ${label}`, `移除${label}`), disabled: canEdit() ? null : "" }, [closeIcon()]);
         remove.addEventListener("click", () => removeItemAt(type, name, remove));
         const flag = needsCheck(item) ? el("span", { class: "ana-flag" }, L("kiểm tra", "待核对")) : null;
         return el("li", needsCheck(item) ? { class: "roster-chip-check" } : {}, [el("span", {}, label), flag, remove]);
@@ -403,6 +734,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       addItem(type, canonicalByShown.get(value) ?? value);
       input.value = "";
     } }, [plusIcon(), L("Thêm", "添加")]);
+    editControls.push(input, button);
     return el("div", { class: "roster-add-row" }, [input, datalist, button]);
   }
 
@@ -439,10 +771,12 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       el("button", {
         type: "button",
         class: "roster-ghost roster-danger",
+        disabled: canEdit() ? null : "",
         "aria-label": L(`Bỏ đội ${team.teamName}`, `移除队伍 ${team.teamName}`),
         onClick: () => {
+          if (!guardEdit()) return;
           state = removeLockedTeam(state, index);
-          saveState(state);
+          persist(state);
           rerender();
         },
       }, L("Bỏ đội", "移除队伍")),
@@ -469,6 +803,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     paintLocked();
     paintScanCards();
     paintSteps();
+    picker?.refresh();
   }
 
   function removeItemAt(type, name, button) {
@@ -476,8 +811,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     const buttons = list ? [...list.querySelectorAll(".roster-remove")] : [];
     const index = buttons.indexOf(button);
     const hadFocus = doc.activeElement === button;
+    if (!guardEdit()) return;
     state = removeItem(state, type, name);
-    saveState(state);
+    persist(state);
     rerender();
     if (!hadFocus) return;
     // Nút vừa bấm biến mất theo chip: chuyển focus sang chip kế tiếp, lùi về ô nhập khi hết chip.
@@ -488,23 +824,26 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   }
 
   function addItem(type, name) {
+    if (!guardEdit()) return;
     state = addCanonicalItem(state, type, name);
-    saveState(state);
+    persist(state);
     rerender();
   }
 
   const clearBtn = el("button", { type: "button", class: "roster-ghost roster-danger", onClick: () => {
+    if (!guardEdit()) return;
     if (!confirm(L("Xóa toàn bộ kho đã đọc (tướng, chiến pháp, đội khóa)? Không hoàn tác được.", "清空全部已识别库存（武将、战法、锁定队伍）？此操作无法撤销。"))) return;
     // Xoá kho không đổi mùa đang chọn.
     state = { ...clearRosterScanState(), seasonId: state.seasonId };
-    saveState(state);
+    persist(state);
     rerender();
     setScanStatus("");
   } }, [trashIcon(), L("Xóa toàn bộ kho", "清空全部库存")]);
+  editControls.push(clearBtn);
 
   confirmBtn.addEventListener("click", () => {
     state = { ...serializeRosterScanState(state), confirmed: true, updatedAt: new Date().toISOString() };
-    saveState(state);
+    persist(state);
     rerender();
   });
 
@@ -531,11 +870,46 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     ].filter(Boolean));
   }
 
+  /* ---------- Thêm nhanh từ danh mục: lọc rồi "Chọn tất cả"; khách ghi local, đã đăng nhập ghi vào hộp đang chọn ---------- */
+  const catalog = buildCatalog({ heroesDict, tacticsDict }, "inventory");
+  const ownedNames = (list) => new Set((list || []).flatMap((entry) => [entry.name, entry.canonicalId].filter(Boolean)));
+  /** ID các món trong danh mục đang có trong kho (khớp theo ID canonical hoặc tên Việt chuẩn). */
+  const pickerSelected = () => {
+    const heroes = ownedNames(state.ownedHeroes);
+    const tactics = ownedNames(state.ownedTactics);
+    return new Set(catalog.filter((item) => {
+      const owned = item.type === "heroes" ? heroes : tactics;
+      return owned.has(item.name) || owned.has(item.id);
+    }).map((item) => item.id));
+  };
+  picker = createPicker({
+    policy: "inventory",
+    catalog,
+    title: L("Thêm nhanh từ danh mục", "从图鉴快速添加"),
+    lead: L("Tìm hoặc lọc rồi chọn từng món, hoặc “Chọn tất cả” cho đúng tập đang hiện.", "搜索或筛选后逐项选择，也可对当前显示的全部条目“全选”。"),
+    selected: pickerSelected,
+    label: (item) => (item.type === "tactics" ? tacticShown(item.name) : shown(item.name)),
+    onToggle: (items, on) => {
+      if (!guardEdit()) return;
+      state = on ? addPicked(state, items) : removePicked(state, items);
+      persist(state);
+      rerender();
+    },
+  });
+  picker.setDisabled(!canEdit());
+  const quickAdd = el("div", { class: "roster-quick-add" }, [picker.node]);
+
   const reviewStage = el("div", { class: "roster-stage", dataset: { stage: "review" } }, [
     settings,
-    el("div", { class: "roster-scan-grid" }, scanControls.map((control) => control.card)),
-    el("div", { class: "roster-verify" }, [tsBox, tsStatus]),
+    aiReady
+      ? el("div", { class: "roster-scan-grid" }, scanControls.map((control) => control.card))
+      : el("p", { class: "tool-notice roster-ai-off" }, [
+        el("span", { class: "tool-notice-icon", "aria-hidden": "true" }, [imageIcon()]),
+        el("span", {}, L("Đọc ảnh kho đang tạm tắt. Hãy thêm tướng và chiến pháp bằng bảng chọn bên dưới.", "截图识别库存暂时关闭。请使用下方的选择面板添加武将和战法。")),
+      ]),
+    aiReady ? el("div", { class: "roster-verify" }, [tsBox, tsStatus]) : null,
     scanStatus,
+    quickAdd,
     reviewArea,
     actionBar,
   ]);
@@ -585,8 +959,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
    * nhận và gợi ý lại ngay. Nút vừa bấm biến mất theo lượt vẽ mới: focus về đầu mục Thiếu món.
    */
   async function applyFromResults(next) {
+    if (!guardEdit()) return;
     state = { ...next, confirmed: true, updatedAt: new Date().toISOString() };
-    saveState(state);
+    persist(state);
     syncReview();
     refreshRecommend();
     if (await runRecommend()) resultsSlot.querySelector(".roster-missing-section h2")?.focus();
@@ -691,6 +1066,34 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   );
   const openButton = (team) => el("button", { type: "button", class: "roster-open", onClick: () => onOpenTeam?.(team) }, [L("Mở đội", "查看队伍"), arrowIcon()]);
 
+  /**
+   * Nút "Lưu vào đội của tôi" của một thẻ kết quả: đội nháp dựng LÚC BẤM từ đúng lựa chọn đang hiện (tướng/chiến pháp đã
+   * thay, món bù). Đội khóa (đội đã xây của bạn) không có bản ghi nguồn nên không có nút. Hash nguồn chép từ chỉ mục build.
+   */
+  const saveButtonFor = (entry) => {
+    if (!entry?.team || entry.locked || !(entry.source === "legacy" || entry.team.source === "season")) return null;
+    return createSaveButton({
+      className: "ana-btn mt-save-btn",
+      build: async () => {
+        const [{ createLookupIdResolver }, { fromRosterEntry }, { loadTeamBooks }, { loadSourceIndex }] = await Promise.all([
+          import("./lookup-ids.js"),
+          import("./my-teams-sources.js"),
+          import("./community-team-data.js"),
+          import("./my-teams-links.js"),
+        ]);
+        const [books, index] = await Promise.all([loadTeamBooks(), loadSourceIndex()]);
+        const built = fromRosterEntry(entry, seasonRecords, createLookupIdResolver({ tactics: tacticsDict, books, heroes: heroesDict }));
+        if (!built) throw new Error("no-draft");
+        const { draft } = built;
+        const indexed = index?.[`${draft.source.kind}:${draft.source.key}`];
+        // Đội khác dựng từ engine không phải đúng chữ nguồn: hash lấy từ chỉ mục (không có thì rỗng, không báo "đã cập nhật" sai).
+        if (typeof indexed === "string") draft.source.contentHash = indexed;
+        else if (draft.source.kind === "legacy") draft.source.contentHash = "";
+        return { draft, defaultGroup: built.defaultGroup, unresolved: built.unresolved };
+      },
+    });
+  };
+
   function renderRecommendation(result) {
     const portfolio = result.portfolioTeams || [];
     const addTeams = result.addTeams || [];
@@ -739,7 +1142,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
                 : null,
             ])
             : null,
-          entry.team && !entry.locked ? openButton(entry.team) : null,
+          el("div", { class: "roster-result-actions" }, [
+            entry.team && !entry.locked ? openButton(entry.team) : null,
+            saveButtonFor(entry),
+          ]),
         ]),
       ]);
     };
@@ -813,8 +1219,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
                   el("span", { class: "roster-explain-source" }, L("AI giải thích · đối chiếu hiệu ứng trong Tra cứu.", "AI 解释 · 请在图鉴中对照效果。")),
                 ]),
               ]);
-              const why = el("button", { type: "button", class: "roster-ghost" }, [questionIcon(), L("Vì sao?", "为什么？")]);
-              why.addEventListener("click", () => explainSubstitute({ holderName: slot.holderName, missing: storedSlot.tactic, substitute: storedTactic, configCount }, why, output, box));
+              const why = aiReady ? el("button", { type: "button", class: "roster-ghost" }, [questionIcon(), L("Vì sao?", "为什么？")]) : null;
+              why?.addEventListener("click", () => explainSubstitute({ holderName: slot.holderName, missing: storedSlot.tactic, substitute: storedTactic, configCount }, why, output, box));
               return el("li", { class: "roster-substitute" }, [
                 el("span", { class: "roster-substitute-text" }, [
                   el("span", { class: "roster-substitute-title" }, L(
@@ -833,7 +1239,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
                     onClick: () => applyFromResults(setTacticOverride(state, { teamId: entry.team.id, heroIndex: slot.heroIndex, slotIndex: slot.slotIndex, tactic: storedTactic })),
                   }, L("Dùng món này", "使用此战法")),
                 ]),
-                box,
+                aiReady ? box : null,
               ]);
             })),
           ]
@@ -856,7 +1262,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         ])),
         ...(heroSlots.length ? [noSubstitute()] : []),
         ...tacticSlots.map((slot) => missingTacticBlock(entry, slot)),
-        openButton(entry.team),
+        el("div", { class: "roster-result-actions" }, [openButton(entry.team), saveButtonFor(entry)]),
       ]);
     };
 
@@ -877,8 +1283,143 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         )),
       ])),
       el("button", { type: "button", class: "roster-ghost roster-undo", onClick: () => clearOverrides(entry.team.id) }, L("Bỏ món thay", "取消替换")),
-      openButton(entry.team),
+      el("div", { class: "roster-result-actions" }, [openButton(entry.team), saveButtonFor(entry)]),
     ]);
+    // Đội đủ kho khi đứng một mình nhưng tranh tướng/chiến pháp với đội đã chọn: engine trả id đội giữ, view model đổi sang tên.
+    const conflictView = buildConflictView(result, {
+      teamLabel,
+      heroName: shown,
+      tacticName: tacticShown,
+      fallbackHolder: L("một đội đã chọn", "一支已选队伍"),
+    });
+    const conflictCard = (card) => el("article", { class: "roster-missing roster-conflicted", dataset: { status: "conflicted" } }, [
+      el("div", { class: "roster-result-head" }, [
+        el("strong", { class: "roster-result-name" }, card.label),
+        tierPill({ tier: card.tier }),
+        pill(L("Tranh món", "抢占库存"), "warn"),
+      ]),
+      ...card.items.map((item) => el("p", { class: "roster-missing-text" }, [
+        warnIcon(),
+        el("span", {}, L(
+          `${item.kind === "hero" ? "Tướng" : "Chiến pháp"} ${item.name} đang dùng ở ${item.holderLabel}`,
+          `${item.kind === "hero" ? "武将" : "战法"} ${item.name} 已用于 ${item.holderLabel}`,
+        )),
+      ])),
+      el("p", { class: "ana-note" }, L(
+        "Không dựng cùng lúc được; muốn dựng cả hai cần thêm một bản của mỗi món bị tranh.",
+        "无法同时组建；若想两队都组建，每件被抢占的物品还需再有一份。",
+      )),
+      openButton(card.team),
+    ]);
+    // Độ phủ kho (#20): từng đội của mùa đang chọn xét độc lập, không ràng buộc dùng chung như danh sách bên dưới.
+    const coverageSection = () => {
+      if (!season) return null;
+      const coverage = buildRosterCoverage({
+        seasonTeams: applyTacticOverrides(season.teams, state.tacticOverrides),
+        seasonTier: season.teamTier,
+        ownedHeroes: state.ownedHeroes,
+        ownedTactics: state.ownedTactics,
+        tacticIdOf,
+        unmapped: season.diagnostics?.unmapped,
+      });
+      const tierText = (tier) => (tier ? sourceTierLabel(tier) : L("Chưa xếp bậc", "未评级"));
+      const body = el("div", { class: "roster-coverage-body" });
+      const detailRow = (team, missing) => el("li", { class: "roster-coverage-team", dataset: { teamId: team.id } }, [
+        el("div", { class: "roster-coverage-team-head" }, [
+          el("strong", { class: "roster-result-name" }, teamLabel(team) || team.id),
+          openButton(team),
+        ]),
+        missing
+          ? missingLine(
+            missing.unresolved
+              ? L(`Chiến pháp ${missing.name}: chưa đối chiếu`, `战法 ${shown(missing.name)}：尚未核对`)
+              : missing.kind === "hero"
+                ? L(`Thiếu tướng ${missing.name}`, `缺武将 ${shown(missing.name)}`)
+                : L(`Thiếu chiến pháp ${tacticDisplayName(missing.name)}`, `缺战法 ${shown(missing.name)}`),
+            missing.unresolved ? null : haveButton(missing.kind === "hero" ? "heroes" : "tactics", missing.name),
+          )
+          : null,
+      ]);
+      const paint = () => {
+        const open = coverageOpen && coverage.tiers.find((entry) => entry.tier === coverageOpen.tier);
+        const rows = open ? (coverageOpen.kind === "complete" ? open.complete.map((team) => [team, null]) : open.missingOne.map((item) => [item.team, item.missing])) : [];
+        body.replaceChildren(
+          open
+            ? el("div", { class: "roster-coverage-detail", role: "region", "aria-label": L(`Danh sách đội ${tierText(open.tier)}`, `${tierText(open.tier)} 队伍列表`) }, [
+              el("h3", { class: "roster-coverage-detail-title" }, coverageOpen.kind === "complete"
+                ? L(`${tierText(open.tier)} · Ráp đủ khi đứng riêng`, `${tierText(open.tier)} · 单独可组建`)
+                : L(`${tierText(open.tier)} · Thiếu đúng 1 món`, `${tierText(open.tier)} · 恰好缺 1 件`)),
+              rows.length
+                ? el("ul", { class: "roster-coverage-list" }, rows.map(([team, missing]) => detailRow(team, missing)))
+                : el("p", { class: "roster-empty" }, L("Không có đội nào.", "暂无队伍。")),
+            ])
+            : null,
+        );
+      };
+      const cell = (tier, kind, count) => {
+        const active = coverageOpen?.tier === tier && coverageOpen.kind === kind;
+        return el("td", { class: "roster-coverage-num", dataset: { kind } }, count
+          ? el("button", {
+            type: "button",
+            class: "roster-coverage-cell",
+            "aria-expanded": String(active),
+            "aria-label": kind === "complete"
+              ? L(`${tierText(tier)}: ${count} đội ráp đủ, xem danh sách`, `${tierText(tier)}：${count} 支可组建，查看列表`)
+              : L(`${tierText(tier)}: ${count} đội thiếu 1 món, xem danh sách`, `${tierText(tier)}：${count} 支缺 1 件，查看列表`),
+            onClick: (event) => {
+              const same = coverageOpen?.tier === tier && coverageOpen.kind === kind;
+              coverageOpen = same ? null : { tier, kind };
+              for (const button of event.currentTarget.closest("table").querySelectorAll(".roster-coverage-cell")) button.setAttribute("aria-expanded", "false");
+              if (!same) event.currentTarget.setAttribute("aria-expanded", "true");
+              paint();
+            },
+          }, String(count))
+          : String(count));
+      };
+      const progress = (label, value) => el("li", {}, [
+        el("span", { class: "roster-coverage-progress-label" }, label),
+        el("strong", {}, `${value.owned}/${value.total}`),
+      ]);
+      const unmappedCount = coverage.unmapped.length;
+      paint();
+      return el("section", { class: "roster-coverage-section", "aria-labelledby": "roster-coverage-title" }, [
+        el("div", { class: "roster-section-head" }, [
+          el("h2", { class: "roster-section-title", id: "roster-coverage-title", tabindex: "-1" }, L("Độ phủ kho", "库存覆盖度")),
+          el("p", { class: "roster-section-lead" }, L(
+            "Mỗi đội của mùa đang chọn được xét riêng, không tính đội khác đã chiếm món: bao nhiêu đội ráp đủ, bao nhiêu đội chỉ thiếu 1 món.",
+            "所选赛季的每支阵容单独核算，不考虑其他队伍占用：多少支可组建，多少支只缺 1 件。",
+          )),
+        ]),
+        coverage.tiers.length
+          ? el("div", { class: "roster-coverage-scroll" }, [
+            el("table", { class: "roster-coverage-table" }, [
+              el("thead", {}, el("tr", {}, [
+                el("th", { scope: "col" }, L("Bậc", "梯度")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Ráp đủ", "可组建")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Thiếu 1", "缺 1 件")),
+                el("th", { scope: "col", class: "roster-coverage-num" }, L("Tổng", "总数")),
+              ])),
+              el("tbody", {}, coverage.tiers.map((entry) => el("tr", { dataset: { tier: entry.tier } }, [
+                el("th", { scope: "row" }, tierText(entry.tier)),
+                cell(entry.tier, "complete", entry.complete.length),
+                cell(entry.tier, "missingOne", entry.missingOne.length),
+                el("td", { class: "roster-coverage-num", dataset: { kind: "total" } }, String(entry.total)),
+              ]))),
+            ]),
+          ])
+          : el("p", { class: "roster-empty roster-coverage-empty" }, L("Mùa này chưa có Đội chuẩn nào để tính độ phủ.", "本赛季暂无推荐阵容可计算覆盖度。")),
+        body,
+        coverage.tiers.length
+          ? el("ul", { class: "roster-coverage-progress", "aria-label": L("Tiến độ sưu tầm", "收集进度") }, [
+            progress(L("Tướng trong Đội chuẩn của mùa", "本赛季推荐阵容中的武将"), coverage.progress.heroes),
+            progress(L("Chiến pháp trong Đội chuẩn của mùa", "本赛季推荐阵容中的战法"), coverage.progress.tactics),
+          ])
+          : null,
+        unmappedCount
+          ? el("p", { class: "ana-note roster-coverage-unmapped" }, L(`${unmappedCount} cấu hình chưa đối chiếu, không tính.`, `${unmappedCount} 个配置尚未核对，未计入。`))
+          : null,
+      ]);
+    };
     // Món bù đã chọn mà đội vẫn không vào danh sách (trùng tướng/chiến pháp với đội xếp trên): vẫn phải gỡ được.
     const shownTeams = new Set([...portfolio, ...blocked, ...incompatible].map((entry) => entry.team?.id));
     const idleOverrides = [...overriddenTeams]
@@ -887,6 +1428,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       .filter(Boolean);
     const full = portfolio.length >= MAX_TEAMS;
     return el("div", { class: "roster-results" }, [
+      coverageSection(),
       el("section", { class: "roster-portfolio", "aria-labelledby": "roster-list-title" }, [
         el("div", { class: "roster-portfolio-head" }, [
           el("h2", { class: "roster-section-title", id: "roster-list-title", tabindex: "-1" }, L("Danh sách đội sau khi xây dựng", "组建后的队伍列表")),
@@ -904,6 +1446,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
           ? el("p", { class: "roster-empty" }, L("Chưa có đội phù hợp để thêm từ kho hiện tại.", "当前库存暂无适合新增的队伍。"))
           : null,
       ]),
+      conflictView.cards.length
+        ? el("section", { class: "roster-conflict-section", "aria-labelledby": "roster-conflict-title" }, [
+          el("div", { class: "roster-section-head" }, [
+            el("h2", { class: "roster-section-title", id: "roster-conflict-title", tabindex: "-1" }, L("Đội dựng được nhưng tranh món với đội đã chọn", "可组建但与已选队伍抢同一件")),
+          ]),
+          ...conflictView.cards.map(conflictCard),
+          conflictView.hiddenCount
+            ? el("p", { class: "ana-note roster-conflict-more" }, L(`và ${conflictView.hiddenCount} đội khác`, `另有 ${conflictView.hiddenCount} 支队伍`))
+            : null,
+        ])
+        : null,
       el("section", { class: "roster-missing-section", "aria-labelledby": "roster-missing-title" }, [
         el("div", { class: "roster-section-head" }, [
           el("h2", { class: "roster-section-title", id: "roster-missing-title", tabindex: "-1" }, L("Thiếu món", "差一点就能组建")),
@@ -928,19 +1481,21 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     ]);
   }
 
-  renderTurnstileWidget(tsBox, {
-    onToken: (tok) => {
-      token = tok;
-      tsStatus.hidden = true;
-    },
-    onExpire: () => { token = ""; },
-    onError: (message) => {
-      tsStatus.textContent = message;
-      tsStatus.hidden = false;
-    },
-  }).catch(() => {
-    tsBox.textContent = L("Không tải được Turnstile.", "Turnstile 加载失败。");
-  });
+  if (aiReady) {
+    renderTurnstileWidget(tsBox, {
+      onToken: (tok) => {
+        token = tok;
+        tsStatus.hidden = true;
+      },
+      onExpire: () => { token = ""; },
+      onError: (message) => {
+        tsStatus.textContent = message;
+        tsStatus.hidden = false;
+      },
+    }).catch(() => {
+      tsBox.textContent = L("Không tải được Turnstile.", "Turnstile 加载失败。");
+    });
+  }
 
   mount.replaceChildren(
     el("div", { class: "analyze-panel roster-recommend" }, [
@@ -948,13 +1503,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         el("div", { class: "reference-head-text" }, [
           el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta")),
           el("h1", { class: "reference-title", tabindex: "-1" }, L("Gợi ý đội từ kho", "武将库配队")),
-          el("p", { class: "reference-lead" }, L("Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "识别武将与战法库存截图并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。")),
+          el("p", { class: "reference-lead" }, aiReady
+            ? L("Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "识别武将与战法库存截图并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。")
+            : L("Chọn tướng và chiến pháp bạn đang có, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "选择你拥有的武将与战法并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。")),
         ]),
       ]),
       flow,
+      syncBar,
       reviewStage,
       resultStage,
     ]),
   );
   rerender();
+  sync.start();
 }

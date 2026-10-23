@@ -41,6 +41,21 @@ test('frozen ledger covers every corpus item and resolves both ways', async () =
   assert.equal(routes.byId.has('equipment-special:anything'), false);
 });
 
+test('đổi tên Việt của binh thư không tạo route mới: id cố định, slug giữ nguyên, bảng ngoại lệ rỗng', async () => {
+  const [heroes, tactics, catalog, books] = await Promise.all(
+    ['data/heroes-dict.json', 'data/tactics.json', 'data/lookup-catalog.json', 'data/books-dict.json'].map(readJson),
+  );
+  const row = books.find(item => item.id === 'book:di-truc-bao-oan');
+  assert.ok(row, 'books-dict.json phải mang id cố định');
+  const renamed = books.map(item => (item === row ? {...item, viet: 'Lấy Thẳng Báo Oán', aliases: [item.viet]} : item));
+  const corpus = buildLookupCorpus({heroes, tactics, catalog, books: renamed});
+  const ids = Object.fromEntries(LOOKUP_GROUPS.map(group => [group, corpus.groups[group].map(item => item.id)]));
+  const routes = await lookupDetailRoutes({corpusIds: ids});
+  assert.equal(routes.byId.get('book:di-truc-bao-oan').path, '/tra-cuu/binh-thu/di-truc-bao-oan/');
+  assert.equal(ids.books.length, 68);
+  assert.deepEqual(routes.exceptions, {});
+});
+
 test('slug rule: Python slug() and JS lookupSlug agree on every corpus name', async () => {
   const {corpus} = await realCorpus();
   const names = [...new Set(LOOKUP_GROUPS.flatMap(group => corpus.groups[group].map(item => item.nameVi)).filter(name => typeof name === 'string'))];

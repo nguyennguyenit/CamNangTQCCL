@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "releaseId": "sha256:016ad90c0a00b6b3fa122494d0e8c1b5d754a8b5ae2c4cce617be41f70fa823d",
-  "dataVersion": "data:016ad90c0a00",
+  "releaseId": "sha256:0f63337316c5fa126d773979e5cc3944ca3acd390ef56375a37d495652c2f979",
+  "dataVersion": "data:0f63337316c5",
   "artifacts": [
     {
       "name": "teams",
@@ -41,8 +41,8 @@
     {
       "name": "books-dict",
       "key": "books-dict.json",
-      "sha256": "sha256:a9633bbefbedcfabc2bb152cbddb7728f0f946acd4bab2df568bb4a68f5bd010",
-      "byteLength": 66,
+      "sha256": "sha256:d3a2f40bcad62b276de846ebfb304aeec969b9930e363029c4fe6a4e2411724c",
+      "byteLength": 95,
       "count": 1
     }
   ]

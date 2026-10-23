@@ -53,7 +53,7 @@ describe("posts", () => {
     expect(url).toBe("https://api.github.com/repos/owner/repo/dispatches");
     expect(init?.method).toBe("POST");
     expect(new Headers(init?.headers).get("authorization")).toBe("Bearer gh-test-token");
-    expect(JSON.parse(String(init?.body))).toEqual({ event_type: "blog-publish" });
+    expect(JSON.parse(String(init?.body))).toEqual({ event_type: "site-publish" });
 
     const list = await (await h.request("/api/posts")).json<ApiJson>();
     expect(list.items).toHaveLength(1);

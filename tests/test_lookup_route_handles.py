@@ -43,10 +43,8 @@ def make_data(root: Path, *, heroes=None, books=None, tactics=None, generation=G
         "buildings": [{"id": "building:bat-tran-do", "nameVi": "Bát Trận Đồ"}],
     })
     write_json(data / "books-dict.json", books if books is not None else [
-        {"viet": "Binh Hành Quỷ Đạo", "chinese": "兵行诡道"},
-        {"hanViet": "Hán Việt Thư"},
-        {"viet": "", "hanViet": "Bỏ"},
-        {"viet": None, "hanViet": None},
+        {"id": "book:binh-hanh-quy-dao", "viet": "Binh Hành Quỷ Đạo", "chinese": "兵行诡道"},
+        {"id": "book:han-viet-thu", "hanViet": "Hán Việt Thư"},
     ])
     return data
 
@@ -58,12 +56,22 @@ class LookupLedgerTest(unittest.TestCase):
         self.data = make_data(self.tmp)
         self.ledger = self.tmp / "ledger.json"
         self.redirects = self.tmp / "_redirects"
+        self.recommended = self.tmp / "recommended"
 
     def run_cli(self, *args):
         out, err = io.StringIO(), io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects)])
+            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects), "--recommended-root", str(self.recommended)])
         return code, out.getvalue(), err.getvalue()
+
+    def write_registry(self, default_id, options=(("og-兵演春秋", "OG"), ("pk-s24", "PK-S24"))):
+        generation = "1" * 64
+        (self.recommended / generation).mkdir(parents=True, exist_ok=True)
+        write_json(self.recommended / "current.json", {"schemaVersion": 1, "generationId": generation, "manifestSha256": "0" * 64})
+        write_json(self.recommended / generation / "seasons.json", {
+            "defaultSourceSeasonId": default_id,
+            "seasonOptions": [{"sourceSeasonId": season, "displayCode": code} for season, code in options],
+        })
 
     def handles(self):
         return json.loads(self.ledger.read_text(encoding="utf-8"))["handles"]
@@ -87,6 +95,30 @@ class LookupLedgerTest(unittest.TestCase):
         self.assertEqual([i for i, _ in corpus["groups"]["books"]], ["book:binh-hanh-quy-dao", "book:han-viet-thu"])
         every = [i for items in corpus["groups"].values() for i, _ in items]
         self.assertFalse([i for i in every if i.startswith("equipment-special:")])
+
+    def test_book_ids_are_read_from_rows_never_derived_from_names(self):
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        before = self.handles()["books"]
+        write_json(self.data / "books-dict.json", [
+            {"id": "book:binh-hanh-quy-dao", "viet": "Tên Việt Mới", "chinese": "兵行诡道", "aliases": ["Binh Hành Quỷ Đạo"]},
+            {"id": "book:han-viet-thu", "hanViet": "Hán Việt Thư"},
+        ])
+        corpus = lrh.load_corpus(self.data)
+        self.assertEqual(corpus["groups"]["books"][0], ("book:binh-hanh-quy-dao", "Tên Việt Mới"))
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        self.assertEqual(self.handles()["books"], before)
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_book_row_without_valid_id_fails_closed(self):
+        for row in ({"viet": "Không Id"}, {"id": "", "viet": "Rỗng"}, {"id": "book:Sai-Dang", "viet": "Sai"}, {"id": "tactic:x", "viet": "Sai Loại"}):
+            write_json(self.data / "books-dict.json", [row])
+            with self.subTest(row), self.assertRaises(lrh.LookupRouteHandleError):
+                lrh.load_corpus(self.data)
+
+    def test_ledger_note_does_not_claim_names_never_derive_book_ids(self):
+        self.assertNotIn("không suy lại từ tên Việt", lrh.LEDGER_NOTE)
+        self.assertIn("binh thư", lrh.LEDGER_NOTE.lower())
+        self.assertIn("books-han-viet-map", lrh.LEDGER_NOTE)
 
     def test_minting_is_stable_and_collisions_get_suffix(self):
         self.assertEqual(self.run_cli("--write")[0], 0)
@@ -237,7 +269,7 @@ class LookupLedgerTest(unittest.TestCase):
         self.assertEqual(self.run_cli("--check")[0], 1)
         self.run_cli("--write")  # restores the pin without changing slugs
         self.assertEqual(self.run_cli("--check")[0], 0)
-        write_json(self.data / "books-dict.json", [{"viet": "Binh Hành Quỷ Đạo"}, {"viet": "Hán Việt Thư"}])
+        write_json(self.data / "books-dict.json", [{"id": "book:binh-hanh-quy-dao", "viet": "Binh Hành Quỷ Đạo"}, {"id": "book:han-viet-thu", "viet": "Hán Việt Thư"}])
         self.assertEqual(self.run_cli("--check")[0], 1)
 
     def test_check_never_rederives_from_names(self):
@@ -262,6 +294,31 @@ class LookupLedgerTest(unittest.TestCase):
             "/zh/tra-cuu/chien-phap/cu/ /zh/tra-cuu/chien-phap/binh-thanh/ 301",
         ]) + "\n")
         self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_current_season_slug_is_301_to_the_list_and_follows_the_default_season(self):
+        self.merge_tactic()
+        self.write_registry("og-兵演春秋")
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        lines = self.redirects.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines[-2:], ["/doi-chuan/og/ /doi-chuan/ 301", "/zh/doi-chuan/og/ /zh/doi-chuan/ 301"])
+        self.assertEqual(self.run_cli("--check")[0], 0)
+        # The default season changes: the committed rule is stale until regenerated, then it follows the new season.
+        self.write_registry("pk-s24")
+        code, _, err = self.run_cli("--check")
+        self.assertEqual(code, 1)
+        self.assertIn("is stale; run --write", err)
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        lines = self.redirects.read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines[-2:], ["/doi-chuan/pk-s24/ /doi-chuan/ 301", "/zh/doi-chuan/pk-s24/ /zh/doi-chuan/ 301"])
+        self.assertNotIn("/doi-chuan/og/ /doi-chuan/ 301", lines)
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_registry_without_a_default_season_adds_no_rule_and_a_bad_code_is_an_error(self):
+        self.write_registry(None)
+        self.assertEqual(lrh.season_redirect_lines(self.recommended), [])
+        self.write_registry("og-兵演春秋", options=(("og-兵演春秋", "兵演"),))
+        with self.assertRaisesRegex(lrh.LookupRouteHandleError, "no usable page slug"):
+            lrh.season_redirect_lines(self.recommended)
 
     def test_check_fails_on_stale_redirects(self):
         self.merge_tactic()
@@ -307,12 +364,49 @@ class RealLedgerTest(unittest.TestCase):
     def test_committed_redirects_match_the_ledger(self):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         former = lrh.former_owner_map(REPO_ROOT / "data")
-        self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger))
+        season = lrh.season_redirect_lines(lrh.DEFAULT_RECOMMENDED_ROOT)
+        self.assertEqual(len(season), 2, "the pinned registry has a current season, so one rule per locale")
+        self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger, season))
         tactics = json.loads((REPO_ROOT / "data/tactics.json").read_bytes())
         pairs = sum(len(row["lookup"]["formerIds"]) for row in tactics)
         rules = [line for line in lrh.DEFAULT_REDIRECTS_PATH.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
-        self.assertEqual(len(rules), 2 * pairs)
+        self.assertEqual(len(rules), 2 * pairs + 2)
         self.assertTrue(all(line.endswith("/ 301") for line in rules))
+
+
+
+class RealBooksRenameTest(unittest.TestCase):
+    """Renaming a real book's `viet` (old name into `aliases`) keeps its id, so the real ledger stays frozen."""
+
+    def test_rename_on_real_map_and_facets_keeps_ledger_handles(self):
+        from pipeline import build_books_dict as bbd
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp, True)
+        data = tmp / "data"
+        shutil.copytree(REPO_ROOT / "data", data)
+        facets = json.loads((data / "facets.json").read_text(encoding="utf-8"))
+        facet_books = [b["value"] for b in facets["books"]]
+        book_map = bbd._load_map()
+        chinese = next(c for c, e in book_map.items() if e["viet"] == "Dĩ Trực Báo Oán")
+        book_map[chinese]["viet"] = "Lấy Thẳng Báo Oán"
+        book_map[chinese]["aliases"] = ["Dĩ Trực Báo Oán"]
+        rows = bbd.build_books_dict(book_map, facet_books)
+        (data / "books-dict.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        ledger = tmp / "ledger.json"
+        shutil.copy(REPO_ROOT / "pipeline" / "lookup-route-handles.json", ledger)
+        before = json.loads(ledger.read_text(encoding="utf-8"))
+        redirects = tmp / "_redirects"
+        shutil.copy(REPO_ROOT / "public" / "_redirects", redirects)
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = lrh.main(["--write", "--data-dir", str(data), "--ledger", str(ledger), "--redirects", str(redirects)])
+            check = lrh.main(["--check", "--data-dir", str(data), "--ledger", str(ledger), "--redirects", str(redirects)])
+        self.assertEqual((code, check), (0, 0), err.getvalue())
+        after = json.loads(ledger.read_text(encoding="utf-8"))
+        self.assertEqual(after["handles"], before["handles"])
+        self.assertEqual(after["retired"]["books"], {})
+        self.assertEqual(after["handles"]["books"]["book:di-truc-bao-oan"], "di-truc-bao-oan")
+        self.assertEqual(len(after["handles"]["books"]), 68)
 
 
 if __name__ == "__main__":

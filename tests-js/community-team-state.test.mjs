@@ -9,6 +9,7 @@ import {
   modeFromSearch,
   pickSide,
   similarWarning,
+  staticTeamPath,
   teamPayloadFromDraft,
 } from "../js/community-team-state.js";
 
@@ -25,7 +26,7 @@ const TACTICS = [
   { chinese: "焚辎营垒", viet: "Thiêu Đốt Doanh Lũy" },
   { chinese: "灵机一动", viet: "Nhanh Trí Động Não" },
 ];
-const BOOKS = [{ chinese: "铁甲", viet: "Giáp Sắt" }];
+const BOOKS = [{ id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Sắt" }];
 const INDEXES = {
   heroes: createEntityIndex(HEROES, "hero"),
   tactics: createEntityIndex(TACTICS, "tactic"),
@@ -132,7 +133,7 @@ test("đường ống thật: normalizeTeamRead -> pickSide -> draftFromRead cho
 });
 
 test("từ điển như trang dựng (createTeamLexicon): binh thư trùng tên chiến pháp không làm rơi chiến pháp đọc đúng", () => {
-  const books = [...BOOKS, { chinese: "三军之众", viet: "Tam Quân Chi Chúng" }];
+  const books = [...BOOKS, { id: "book:tam-quan-chi-chung", chinese: "三军之众", viet: "Tam Quân Chi Chúng" }];
   const tactics = [...TACTICS, { chinese: "三軍之眾", aliases: ["三军之众"], viet: "Tam Quân Chi Chúng" }];
   const read = { heroes: [{ nameCn: "曹操", tacticsCn: ["魅惑", "神机妙算"], booksCn: ["三军之众"], statFocusCn: "" }] };
   const lexicon = createTeamLexicon({ heroes: HEROES, tactics, books }, "vi");
@@ -168,6 +169,16 @@ test("modeFromSearch: id hợp lệ -> chi tiết; new=1; mine=1; còn lại dan
   assert.deepEqual(modeFromSearch("?mine=1"), { mode: "mine", id: null });
   assert.deepEqual(modeFromSearch("?new=0"), { mode: "list", id: null });
   assert.deepEqual(modeFromSearch("?id=x1&new=1"), { mode: "detail", id: "x1" });
+});
+
+test("J1: modeFromSearch có staticId hợp lệ -> static; staticId sai -> như cũ; staticTeamPath theo locale", () => {
+  assert.deepEqual(modeFromSearch("", "t1"), { mode: "static", id: "t1" });
+  assert.deepEqual(modeFromSearch("?new=1", "t1"), { mode: "static", id: "t1" });
+  assert.deepEqual(modeFromSearch("?id=t1", "BAD"), { mode: "detail", id: "t1" });
+  assert.deepEqual(modeFromSearch("", "BAD"), { mode: "list", id: null });
+  assert.deepEqual(modeFromSearch("", null), { mode: "list", id: null });
+  assert.equal(staticTeamPath("t1", "zh"), "/zh/doi-cong-dong/t1/");
+  assert.equal(staticTeamPath("t1", "vi"), "/doi-cong-dong/t1/");
 });
 
 test("mergePage: nối trang sau và bỏ id đã có", () => {

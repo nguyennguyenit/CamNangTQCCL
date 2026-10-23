@@ -63,9 +63,10 @@ function renderSignedIn(mount, user) {
   const panel = el('div', { id: MENU_ID, class: 'cm-auth-menu', hidden: '' }, [
     el('p', { class: 'cm-auth-name' }, name),
     el('ul', { class: 'cm-auth-list' }, [
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cua-toi/') }, L('Đội của tôi', '我的阵容'))),
       el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/chien-bao/') }, L('Chiến báo của tôi', '我的战报'))),
       el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/') }, L('Đội cộng đồng', '社区阵容'))),
-      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/?mine=1') }, L('Đội của tôi', '我的阵容'))),
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/?mine=1') }, L('Đội đã đăng', '我发布的阵容'))),
       user.role === 'root' || user.role === 'moderator' ? el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/quan-tri/') }, L('Quản trị', '管理后台'))) : null,
       el('li', {}, signOutButton),
     ]),

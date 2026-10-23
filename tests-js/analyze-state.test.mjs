@@ -1,6 +1,7 @@
 // js/analyze-state.js — link chia sẻ `?doi=` (chỉ ID canonical, có phiên bản) và lịch sử trên máy.
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { createEntityIndex } from "../js/analyze-map.js";
 import {
   HISTORY_LIMIT,
   HISTORY_STORAGE_KEY,
@@ -122,4 +123,16 @@ test("lịch sử: chỉ lưu đội + mùa + thời điểm; đọc bỏ qua JS
   // Xoá hết lịch sử bỏ hẳn khoá.
   writeHistory(storage, []);
   assert.equal(storage.data.has(HISTORY_STORAGE_KEY), false);
+});
+
+test("link ?doi= và lịch sử tạo trước khi đổi tên binh thư vẫn giải mã được (id cố định)", () => {
+  // Link cũ mang `giap-sat`; sau đổi tên `viet` thành "Giáp Thép" id vẫn là book:giap-sat.
+  const oldLink = encodeTeamParam(TEAM);
+  assert.match(oldLink, /_giap-sat(\.|$)/);
+  const books = createEntityIndex([{ id: "book:giap-sat", chinese: "铁甲", viet: "Giáp Thép", aliases: ["Giáp Sắt"] }], "book");
+  const hasId = (id) => KNOWN.has(id) && (!id.startsWith("book:") || books.byId.has(id));
+  assert.deepEqual(decodeTeamParam(oldLink, { hasId }), TEAM);
+  const history = readHistory(memoryStorage({ [HISTORY_STORAGE_KEY]: JSON.stringify([{ doi: oldLink, season: "pk-s28", savedAt: "2026-09-01T00:00:00.000Z" }]) }));
+  assert.equal(history.length, 1);
+  assert.deepEqual(decodeTeamParam(history[0].doi, { hasId }), TEAM);
 });

@@ -1,13 +1,16 @@
 ---
 // Khung tĩnh trang /doi-cong-dong/: tiêu đề + mount `#community-teams` do js/community-teams.js dựng.
-// Nhận `locale` để bản /zh/ dùng lại nguyên component.
+// Nhận `locale` để bản /zh/ dùng lại nguyên component. Trong mount có danh sách link dựng sẵn tới trang từng đội:
+// `/api/` bị robots.txt chặn nên crawler không render được danh sách bằng JS; JS thay nội dung mount khi chạy.
 import { localePath, pick } from '../../../js/i18n.js';
+import { communityTeamPath, type CommunityTeam } from '../../lib/community-teams.ts';
 
 interface Props {
   locale: 'vi' | 'zh';
+  teams: readonly CommunityTeam[];
 }
 
-const { locale } = Astro.props;
+const { locale, teams } = Astro.props;
 const t = (vi: string, zh: string) => pick(locale, vi, zh);
 ---
 <section class="cm-page cm-team-page" aria-labelledby="cm-team-title">
@@ -15,6 +18,13 @@ const t = (vi: string, zh: string) => pick(locale, vi, zh);
   <p class="scope-note">{t('Đội do người chơi đăng cho mùa đang mở. Bài được quản trị viên duyệt trước khi hiện; mọi người có thể bình chọn, bình luận và gửi chiến báo.', '玩家为当前赛季发布的阵容。内容经管理员审核后显示；大家可以投票、评论并提交战报。')}</p>
   <p class="scope-note"><a class="cm-link" href={localePath('/chien-bao/', locale)}>{t('Tìm hiểu cách gửi chiến báo', '了解如何提交战报')}</a></p>
   <div id="community-teams" class="cm-team-root">
+    {teams.length > 0 && (
+      <ul class="cm-team-static-list" aria-label={t('Danh sách đội', '阵容列表')}>
+        {teams.map((team) => (
+          <li><a class="cm-link" href={communityTeamPath(team.id, locale)} lang={team.textLang === 'zh' ? 'zh-Hans' : 'vi'}>{team.title}</a></li>
+        ))}
+      </ul>
+    )}
     <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。')}</p></noscript>
   </div>
 </section>

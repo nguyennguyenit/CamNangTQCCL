@@ -1,0 +1,75 @@
+---
+// Trang mùa Đội chuẩn `/doi-chuan/<mã mùa>/` và `/zh/doi-chuan/<mã mùa>/` (mùa cũ; mùa hiện tại là `/doi-chuan/`).
+// Trang tĩnh: MỌI đội của mùa dựng lúc build bằng đúng builder thẻ của danh sách (nhóm theo Tier), mỗi đội có link tới
+// trang chi tiết. Không nạp app.js và không có khung comment (`#community-root`), nên `js/community-page.js` không chạy ở đây.
+import SiteLayout from '../../layouts/SiteLayout.astro';
+import { localePath, pick } from '../../../js/i18n.js';
+import { seasonPageParts } from '../../lib/team-ssr';
+import { recommendedTitle } from '../../lib/team-detail-pages';
+import { seasonDisplayName, type SeasonPage } from '../../lib/season-pages';
+import { lookupGroupJsonLd } from '../../lib/structured-data.ts';
+import { jsonLd } from '../../lib/blog-posts.ts';
+import type { SiteLocale } from '../../lib/locale-routes';
+
+interface Props {
+  season: SeasonPage;
+  locale: SiteLocale;
+}
+
+const { season, locale } = Astro.props;
+const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const { bodyHtml, source, teams } = await seasonPageParts(season.sourceSeasonId, locale);
+// Mã mùa luôn có trong tên trang: hai mùa có thể trùng tên Việt (S3 và PK-S7 đều là "Trận chiến Xích Bích").
+const name = seasonDisplayName(season, locale);
+const label = name ? `${name} (${season.displayCode})` : season.displayCode;
+const heading = t(`Đội chuẩn mùa ${label}`, `${name ? `${name}（${season.displayCode}）` : season.displayCode}赛季推荐阵容`);
+const title = `${heading}${t(' — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 三国志战略版攻略手册')}`;
+const description = t(
+  `Danh sách ${season.count} đội hình Đội chuẩn của mùa ${label}, nhóm theo tier: tướng, chiến pháp và link chi tiết từng đội.`,
+  `${name ? `${name}（${season.displayCode}）` : season.displayCode}赛季共 ${season.count} 套推荐阵容，按等级分组：武将、战法与各阵容详情链接。`,
+);
+const listPath = localePath('/doi-chuan/', locale);
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const structured = lookupGroupJsonLd({
+  locale,
+  site: Astro.site!,
+  path: Astro.url.pathname,
+  name: heading,
+  description,
+  items: teams.map((entry) => ({ name: recommendedTitle(entry, locale), path: localePath(entry.routePath, locale) })),
+  hub: { name: t('Đội chuẩn', '推荐阵容'), path: listPath },
+});
+---
+<SiteLayout
+  title={title}
+  description={description}
+  pageKind="detail"
+  activeSection="team-chuan"
+  tagline={t('Đội chuẩn theo mùa', '按赛季推荐阵容')}
+  canonicalUrl={canonicalUrl}
+  locale={locale}
+>
+  <Fragment slot="head">
+    {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
+  </Fragment>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+    <a class="detail-link detail-back-link" href={listPath}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+      {t('Quay lại đội chuẩn', '返回推荐阵容')}
+    </a>
+  </nav>
+  <section id="section-season-page" class="section active" data-ssr-source={source} data-season={season.slug}>
+    <header class="reference-head">
+      <div class="reference-head-text">
+        <span class="reference-kicker">{t('Đội hình', '阵容')}</span>
+        <h1 class="reference-title">{heading}</h1>
+        <p class="reference-lead">{t('Đội hình tham khảo của mùa này, chia theo tier.', '本赛季的参考阵容，按等级分类。')}</p>
+        <p class="scope-note season-old-note">
+          <span class="detail-season-old">{t('mùa cũ', '旧赛季')}</span>
+          {' · '}{t('Đội của mùa hiện tại xem ở', '当前赛季的阵容请见')} <a href={listPath}>{t('Đội chuẩn', '推荐阵容')}</a>.
+        </p>
+      </div>
+    </header>
+    <div class="reference-view season-page-list" set:html={bodyHtml}></div>
+  </section>
+</SiteLayout>

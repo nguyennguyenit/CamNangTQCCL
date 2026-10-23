@@ -1,12 +1,14 @@
 ---
-// Route bản Trung: cùng component với bản Việt, props (tiêu đề chữ Hán…) tính theo `zh`.
+// Route bản Trung: cùng component với bản Việt, props (tiêu đề chữ Hán…) tính theo `zh`; trang mùa đi chung route.
 import RecommendedDetail from '../../../components/pages/RecommendedDetail.astro';
+import SeasonPage from '../../../components/pages/SeasonPage.astro';
 import { recommendedDetailPaths } from '../../../lib/team-detail-pages';
+import { seasonPagePaths } from '../../../lib/season-pages';
 
 export const prerender = true;
 
-export function getStaticPaths() {
-  return recommendedDetailPaths('zh');
+export async function getStaticPaths() {
+  return [...(await recommendedDetailPaths('zh')), ...(await seasonPagePaths())];
 }
 ---
-<RecommendedDetail {...Astro.props} locale="zh" />
+{Astro.props.season ? <SeasonPage {...Astro.props} locale="zh" /> : <RecommendedDetail {...Astro.props} locale="zh" />}

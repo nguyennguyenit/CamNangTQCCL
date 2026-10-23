@@ -175,8 +175,21 @@ const sections: PolicySection[] = [
         'Nhật ký "Theo dõi chiêu mộ" (tài khoản, banner, lượt chiêu mộ). Nếu bạn đăng nhập trên trang này, nhật ký còn được đồng bộ lên máy chủ (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, nhật ký không rời trình duyệt.',
         '“招募记录”的数据（账号、卡池、招募次数）。如果你在该页面登录，记录还会同步到服务器（见“存储位置与处理方”）；未登录时记录不会离开浏览器。',
       ),
-      t('Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho".', '在“武将库配队”中扫描得到的武将与战法库。'),
+      t(
+        'Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho" (cùng mùa đang chọn, đội đang khóa và món bù). Nếu bạn đăng nhập, kho còn được đồng bộ lên máy chủ theo từng hộp kho (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, kho không rời trình duyệt. Khi bạn đăng nhập, bản sao của kho (kèm tên hộp kho bạn tự đặt) được giữ trong localStorage của trình duyệt và xoá khi bạn đăng xuất. Ảnh kho dùng để đọc không bao giờ được lưu hay đồng bộ.',
+        '在“武将库配队”中扫描得到的武将与战法库（以及所选赛季、锁定的队伍和替代战法）。如果你登录，库存还会按库存盒同步到服务器（见“存储位置与处理方”）；未登录时库存不会离开浏览器。登录后，库存副本（含你自定义的库存盒名称）会保存在浏览器的 localStorage 中，退出登录时清除。用于识别的库存截图不会被保存或同步。',
+      ),
       t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。'),
+    ],
+  },
+  {
+    id: 'doi-cua-toi',
+    heading: t('Đội của tôi', '我的阵容'),
+    paragraphs: [
+      t(
+        'Đội và nhóm trong "Đội của tôi" (bắt buộc đăng nhập) chỉ lưu trên máy chủ theo tài khoản của bạn (xem mục "Nơi lưu trữ và bên xử lý"), không lưu bền trong trình duyệt: trang chỉ giữ chúng trong bộ nhớ khi đang mở. Hộp kho (tên do bạn đặt) là hộp của "Gợi ý đội từ kho" nên cũng được lưu trong localStorage như mô tả ở trên. Riêng khi bạn bấm lưu lúc chưa đăng nhập, bản đội đang lưu được giữ tạm trong sessionStorage tối đa 30 phút để hoàn tất sau khi đăng nhập. Nội dung bạn tự gõ vào cột chữ tự do được lưu nguyên văn.',
+        '“我的阵容”（需登录）中的阵容和分组仅按你的账号保存在服务器上（见“存储位置与处理方”），不会长期保存在浏览器中：页面打开时只保留在内存中。库存盒（名称由你自定义）与“武将库配队”共用，因此也会如上所述保存在 localStorage 中。若你在未登录时点击保存，正在保存的阵容会在 sessionStorage 中临时保留最多 30 分钟，以便登录后完成保存。你在自由文本栏中输入的内容会原样保存。',
+      ),
     ],
   },
   {
@@ -184,8 +197,8 @@ const sections: PolicySection[] = [
     heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
     items: [
       t(
-        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, đội cộng đồng và phiếu bầu, góp ý, bộ đếm ẩn danh Soi đội và nhật ký "Theo dõi chiêu mộ" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo, ảnh đội cộng đồng và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
-        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/社区阵容与投票/反馈、截图识阵匿名计数以及登录后同步的“招募记录”数据库（D1；随账号删除）、战报截图、社区阵容图片和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
+        'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, đội cộng đồng và phiếu bầu, góp ý, bộ đếm ẩn danh Soi đội, nhật ký "Theo dõi chiêu mộ", kho "Gợi ý đội từ kho" và các đội, nhóm, hộp kho trong "Đội của tôi" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo, ảnh đội cộng đồng và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
+        'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/社区阵容与投票/反馈、截图识阵匿名计数以及登录后同步的“招募记录”、“武将库配队”库存和“我的阵容”（阵容、分组、库存盒）数据库（D1；随账号删除）、战报截图、社区阵容图片和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
       t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。'),

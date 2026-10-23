@@ -8,6 +8,14 @@ Project deploy is split into three surfaces:
 - Research MCP Worker: `https://mcp.tqccl.com`.
 - Vision proxy Worker: `https://tqccl-vision-proxy.nguyennlt-ncc.workers.dev`.
 
+## Batch rollback markers (plan 261022-1109, 9 issues)
+
+- Before the first merge of the batch (2026-10-22): `main` = `5b6014a` (docs-only on top of `957bb3d`); production Pages deployment `https://ec3c9558.tqccl.pages.dev` (`957bb3d`, run `39651871017`); Research MCP Worker version `93d02cc5-3b56-4e93-90aa-3fc6bc9f927b`; community Worker version `5ba5760f-c671-4a4b-9866-763cdb53ec16`.
+- Serial-lane merges (phases 5, 7, 8, 9, 10) record their merged SHA here and in the plan's progress table. Roll back by reverting those merges in reverse order down to a recorded SHA; never revert one PR from the middle of the lane.
+- Merged so far (none deployed to production yet; GitHub Actions minutes ran out mid-batch, so each PR was gated by the same `check:repository` job run locally on its exact head):
+  - Free lane: `18099d1` (PR #28, roster worker routes + D1 `0011` migration file, not applied remotely), `c82f8fa` (PR #27, #16), `a7e217b` (PR #32, community-worker export + `site-publish`; `pages-deploy.yml` accepts both dispatch types), `7c812a6` (PR #29, #12), `c95bdf1` (PR #30, #15).
+  - Serial lane: `edd9f08` (PR #31, #14), `444c791` (PR #33, #5), `6ef0395` (PR #34, #20), `5538533` (PR #35, #6). Phase 10 (PR #36) is not merged: it waits for the release window after the community Worker + D1 `0011` release.
+
 ## Latest Worker Deploy
 
 - Date: 2026-10-07
@@ -30,11 +38,13 @@ Project deploy is split into three surfaces:
 
 ## Latest Community Worker Deploy
 
-- Date: 2026-10-21
-- Worker: `tqccl-community`, version `5ba5760f-c671-4a4b-9866-763cdb53ec16`, source `feat/doi-cong-dong` merged with `af3bc41` (PR #24, merged as `5fe2933`); `tsc` clean, vitest 537/537. Rollback target: `a8092192-4fb3-4b46-9a3b-1496f5ca40cb` (2026-10-18, PR #18). While the old Worker runs on a DB with community teams, do **not** delete accounts (see `community-worker.md` rollback).
-- D1 `tqccl-community`: migration `0008_community_teams.sql` applied 2026-10-21 (20 statements: 4 tables, 8 indexes, 7 triggers). Time-travel bookmark before the migration: `00000544-00000000-0000510b-48686421508329cd216f59e064e90721`. Production D1 refuses `sqlite_version()`; `log(100)` returns `2` (base 10), so `hot_rank` works. Rehearsed on local workerd D1 + R2 with seeded sessions: open season → post team with image → moderator approve → votes → approved win report (`evidenceCount` 1, `points` 2) → new season (vote 409 `season_closed`, comment 201) → owner delete 409 `has_evidence` → moderator delete leaves no rows.
-- Live verification through `https://tqccl.com`: `/api/community-seasons` 200 `{"open":null,"seasons":[]}`; `/api/community-teams?season=all` 200 empty; `/api/me/community-teams` 401 `unauthorized`.
-- Previous: 2026-10-18 version `a8092192-4fb3-4b46-9a3b-1496f5ca40cb` (PR #18, migration `0006_user_admin.sql`, bookmark `00000473-00000000-00005107-2cb1e9c2d69074179a7caa097e865ed9`).
+- Date: 2026-10-22 17:45 UTC (2026-10-23 00:45 UTC+7)
+- Worker: `tqccl-community`, version `771191b8-8ca8-4c19-bb05-4e4f91465e7b`, source `main` `99de31c` (includes PR #28 roster routes, PR #32 public team export + `site-publish` dispatch, PR #38 roster batch cap 12 for the Workers Free plan). Gate on that tree: vitest 595/595, `tsc` clean, `wrangler deploy --dry-run` ok.
+- Rollback target: `c04a352c-9bf7-45c1-8b42-fd60eabb1a6b` (deployed 2026-10-22 13:42 UTC outside this record: it already served `/api/roster` (401) but D1 `0011` was not applied yet and `/api/community-teams/export` was 404). Older: `5ba5760f-c671-4a4b-9866-763cdb53ec16` (PR #24). While an older Worker runs on this DB, do **not** delete accounts (see `community-worker.md` rollback).
+- D1 `tqccl-community`: migration `0011_roster.sql` applied 2026-10-22 ~17:45 UTC, just before the deploy (5 commands: table `roster_records` + 3 indexes, confirmed via `sqlite_master`). Time-travel bookmark before the migration: `0000058d-00000000-0000510c-dfbfecc410f7c85bf0f0f97854dabd44`. Account is on Workers Free: 50 D1 queries per invocation, hence `ROSTER_MAX_BATCH = 12`.
+- Live verification through `https://tqccl.com`: `/api/roster` 401 `unauthorized`; `/api/community-teams/export` 200 `{"schemaVersion":1,"items":[]}`; `/api/community-seasons` 200; `/api/community-teams?season=all` 200 empty; `/api/me/community-teams` 401. Not yet run: the signed-in `/api/roster` round trip (save → read → tombstone a test box with a real Google account) — the browser relay was unavailable; do it in the release-window checklist.
+- Pages workflow: the Worker now dispatches `site-publish` (blog publish/unpublish/edit, community team approve/delete, user ban/unban/delete); `pages-deploy.yml` on `main` accepts both `blog-publish` and `site-publish`. GitHub Actions minutes are exhausted, so no Pages run will start until they return.
+- Previous: 2026-10-21 version `5ba5760f-c671-4a4b-9866-763cdb53ec16` (PR #24, migration `0008_community_teams.sql`, bookmark `00000544-00000000-0000510b-48686421508329cd216f59e064e90721`); 2026-10-18 `a8092192-4fb3-4b46-9a3b-1496f5ca40cb` (PR #18, migration `0006_user_admin.sql`, bookmark `00000473-00000000-00005107-2cb1e9c2d69074179a7caa097e865ed9`).
 
 ## Latest Research MCP Deploy
 
@@ -58,8 +68,9 @@ Follow the preview and production checks in [the deployment guide](deployment-gu
 After verification, upload `dist/` with `wrangler pages deploy dist --project-name tqccl --branch main --commit-hash <verified-sha>`.
 
 Research MCP production deploys only through the manual exact-SHA workflow in
-`.github/workflows/mcp-worker.yml`. A push to `main` runs the credential-free
-release gate but does not deploy production.
+`.github/workflows/mcp-worker.yml`. The credential-free release gate runs on
+pull requests and weekly on `main` (not on every push; direct pushes are gated by
+the local `.githooks/pre-push` hook) and never deploys production.
 
 Worker deploy:
 

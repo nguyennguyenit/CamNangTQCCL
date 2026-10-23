@@ -24,12 +24,119 @@
 ### Added
 - `newAdvisors`: 20 quân sư chỉ có ở client (Hiệu Lệnh Thiên Hạ của Tào Tháo, Bá Vương Thảo Nghịch của Tôn Sách, Tây Lương Phi Hùng của SP Đổng Trác…), mỗi mục một trang `/tra-cuu/quan-su/<slug>/`; Tra cứu nay 958 mục. Hồ sơ tướng trỏ ngược quân sư qua `lookup.advisorId` cho cả 59 kỹ năng.
 - Báo cáo đối chiếu: `plans/reports/261022-client-binh-thu-trang-bi-cong-trinh.md`.
+## 2026-10-22 (Đội cộng đồng công khai)
+
+### Added
+- Lối vào "Đội cộng đồng" trong nhóm Cộng đồng của menu (desktop, mobile, thanh chuyển nhanh, footer) và một thẻ mới (sau Chiến báo) trong khối Cộng đồng của landing, ở cả `/` và `/zh/`; khối bốn thẻ trên desktop thành lưới 2×2.
+- Trang tĩnh từng đội `/doi-cong-dong/<id>/` và `/zh/doi-cong-dong/<id>/` sinh lúc build cho mọi đội hiển thị công khai: tiêu đề, tác giả (tên rỗng → "Người chơi"/"玩家"), ngày duyệt, ảnh, bảng tướng (link trang Tra cứu) và chiến pháp, FAQ từ phần phân tích. Bản đúng `text_lang` tự canonical và mang JSON-LD `WebPage` + `BreadcrumbList` + `FAQPage` (không `aggregateRating`); bản kia canonical về bản gốc; không hreflang. Vote, bình luận, chiến báo vẫn tải live.
+- `GET /api/community-teams/export` (schema v1): mọi đội hiển thị công khai ở mọi mùa kèm `analysis` và `approvedAt`; `author` chỉ `{id, name}` với `name` là `string | null`; `Cache-Control: no-store`. Loader build `src/lib/community-teams.ts` fail-closed như blog.
+- `pages-deploy.yml` chạy thêm theo lịch hằng ngày (best-effort) để bắt khoá tự hết hạn và dispatch lỗi.
+
+### Changed
+- Dispatch build lại site đổi từ `blog-publish` sang `site-publish` (`community-worker/src/deploy.ts`, chờ tối đa 5 giây) và gửi thêm khi duyệt đội, xoá đội đang `approved`, khoá, mở khoá, xoá tài khoản; kết quả ghi `meta.deploy` của nhật ký. Response `approve`, `ban`, `unban` và staff xoá đội có `deploy`; chủ tự xoá đội không có.
+- Danh sách `/doi-cong-dong/` có sẵn link tới trang từng đội; dưới 10 đội thì `noindex`, không canonical, ngoài sitemap. `?id=` của đội đã duyệt chuyển sang URL tĩnh khi trang đã có (kiểm `HEAD`).
+- `sitemap.xml` thêm bản gốc mỗi đội (`lastmod` = ngày duyệt); `scripts/verify-astro-dist.mjs` kiểm cặp vi/zh, canonical, JSON-LD, ngưỡng index của danh sách và sitemap.
+- Publish lại bản dịch (`site_localization`) vì `SiteLayout.astro` và `Landing.astro` đổi; `pipeline/team-route-handles.json` ghim lại `generationId`.
+- Thanh chuyển nhanh có thêm mục nên cao ~492px: chỉ là thanh icon cố định khi cao ≥ 620px (trước 580px), thấp hơn dùng nút tròn (`css/styles.css`, `docs/design-guidelines.md`).
+- Triển khai hai bước: PR #32 (Worker + workflow nhận cả `blog-publish` lẫn `site-publish`) đã vào `main` và Worker đã release (#40; production `/api/community-teams/export` trả 200, 0 đội); PR này là bước hai (bỏ `blog-publish`, thêm lịch), sau khi merge phải chạy tay `pages-deploy.yml`, vì build đọc export kiểu fail-closed. Rollback: revert `main` trước, rồi `wrangler rollback` (xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)).
+
+## 2026-10-22 (Roster push vừa gói Workers Free)
+
+### Changed
+- `POST /api/roster` nhận tối đa 12 bản ghi mỗi lô (trước: 200) vì tài khoản Cloudflare ở gói Free, trần 50 câu D1 mỗi lần gọi Worker. Lô xấu nhất 37 câu + phiên + rate limit; test `M2` đếm mọi câu D1 của request và chừa 4 câu cho Better Auth thật. Client `PUSH_CHUNK_SIZE` (PR #36) đổi theo. Route chưa release nên không cần tương thích với client cũ.
+
+## 2026-10-22 (Độ phủ kho trên Gợi ý kho)
+
+### Added
+- `/goi-y-doi-tu-kho/` (vi + zh) có khối "Độ phủ kho" ở đầu màn kết quả: theo bậc của mùa đang chọn, số đội ráp đủ khi đứng riêng, thiếu đúng 1 món và tổng; bấm ô mở danh sách đội (đội thiếu 1 ghi món thiếu, nút "Tôi có…", "Mở đội"); tiến độ sưu tầm tướng/chiến pháp so với Đội chuẩn của mùa; mùa không có đội hiện trạng thái rỗng, mùa có cấu hình chưa đối chiếu ghi chú số cấu hình không tính. Đội có ô chưa đối chiếu không bao giờ "ráp đủ" (tính "thiếu 1" nếu các ô khác đủ).
+- `js/roster-coverage.js` (hàm thuần, có trong `PUBLIC_ARTIFACTS`, không đụng `semanticFiles` nên không đổi hash workflow MCP), test `tests-js/roster-coverage.test.mjs` và ca e2e trong `tests-e2e/beta-tools.spec.mjs` (kho issue #5, mùa rỗng, zh/tối/mobile 390px).
+- Publish lại bản dịch hiển thị: re-pin hash `js/roster-recommend-ui.js` và generation Recommended mới.
+
+## 2026-10-22 (Đội tranh món trên Gợi ý kho)
+
+### Added
+- `/goi-y-doi-tu-kho/` (vi + zh) có mục "Đội dựng được nhưng tranh món với đội đã chọn" hiển thị `conflictedTeams` của engine: tên đội + bậc, từng tướng/chiến pháp bị tranh kèm tên đội đang giữ (không lộ id), câu giải thích, nút "Mở đội"; tối đa 5 thẻ kèm "và N đội khác". Không có xung đột thì không render mục. Engine và MCP không đổi.
+- `js/roster-conflict-view.js` (hàm thuần, có trong `PUBLIC_ARTIFACTS`), test `tests-js/roster-conflict-view.test.mjs` và 6 ca e2e trong `tests-e2e/beta-tools.spec.mjs` (vi, zh, không tranh chấp, "Tôi có…", mobile 390px sáng/tối).
+- Publish lại bản dịch hiển thị: re-pin hash `js/roster-recommend-ui.js` và generation Recommended mới.
+
+## 2026-10-22 (MCP route sang trang riêng, #15)
+
+### Changed
+- Research MCP: `pagePath` của mọi mục Tra cứu có trang riêng là `/tra-cuu/<nhóm>/<slug>/` (vi và `/zh/...`); `equipment-special:*` chưa có trang nên giữ `/tra-cuu/trang-bi/?id=`. Builder đọc `pipeline/lookup-route-handles.json` (kiểm `generationId`, `booksSha256` theo `books-dict`, `handlesSha256`, tập id) bằng `parseLookupDetailLedger`, nay nằm ở `js/lookup-detail-ledger.js` dùng chung với site; projection ở Worker kiểm route theo mẫu nhóm/slug. Cần release MCP mới (workflow thủ công) để bản chạy trả route mới.
+
+## 2026-10-22 (Trang mùa Đội chuẩn, #6)
+
+### Added
+- Trang tĩnh `/doi-chuan/<mã mùa>/` và `/zh/doi-chuan/<mã mùa>/` cho mỗi mùa cũ có đội (slug = `displayCode` viết thường: `pk-s24`, `s1`): H1 "Đội chuẩn mùa <tên> (<mã>)", đủ mọi đội nhóm theo tier với tướng, chiến pháp và link chi tiết, JSON-LD `CollectionPage` + `ItemList` + breadcrumb, canonical + hreflang, có trong sitemap, không có khung comment. Mùa hiện tại (`defaultSourceSeasonId`) và mùa 0 đội không có trang. Chỉ Đội chuẩn: Đội khác không có dữ liệu mùa (40/40 đội `sourceSeasonIds: null`).
+- `/doi-chuan/` (và zh) có khối "Các mùa khác" liệt kê mọi trang mùa bằng `<a href>` thật, đặt ngoài vùng client thay thế.
+- Trang đội của mùa cũ có nhãn "mùa cũ" (zh: 旧赛季) ở dòng phụ; H1 vẫn là tên đội.
+- `public/_redirects`: 301 `/doi-chuan/<slug mùa hiện tại>/ → /doi-chuan/` (vi + zh), sinh bởi `pipeline/lookup_route_handles.py`, nên URL của mùa vừa thành mùa mặc định không 404. `npm run verify` kiểm luật này.
+- Verifier: allowlist, so byte sitemap, canonical/hreflang, title/description không trùng, đủ đội và không khung comment của trang mùa.
+
+### Changed
+- `/doi-chuan/` dựng sẵn ĐỦ đội của mùa mặc định (trước đó tối đa 60); client vẫn phân trang theo lượt như cũ.
+- `js/team-filter-section.js` bỏ hằng số `CURRENT_SOURCE_SEASON_ID`: chip "Hiện tại" lấy `defaultSourceSeasonId` của registry (`seasonOptionText(item, currentSourceSeasonId)`, Gợi ý đội truyền cùng giá trị).
+- Không đổi: bộ lọc `?season=`, `js/community-api.js`, `community-worker/**`, `/llms/doi-chuan/*.txt`.
+
+## 2026-10-22 (Báo cáo zh-gaps vào docs)
+
+### Changed
+- `scripts/report-zh-gaps.mjs` ghi `docs/zh-gaps.md` (trước đó nằm trong thư mục kế hoạch cũ, đã xóa). Chạy từ thư mục nào cũng cho cùng kết quả; biến môi trường `ZH_GAPS_REPORT_PATH` chỉ để test.
+- `npm run verify` thêm `node scripts/report-zh-gaps.mjs --check`: đổi dữ liệu Tra cứu mà không sinh lại báo cáo thì `verify` đỏ. `mcp-worker.yml` lọc `pull_request` thêm `docs/zh-gaps.md`. Test: `tests-js/zh-gaps-report.test.mjs`.
+
+## 2026-10-22 (CI và pre-push hook, #12)
+
+### Changed
+- `.github/workflows/mcp-worker.yml`: bỏ trigger `push` (không còn chờ CI ~25 phút khi push thẳng `main`); thêm `schedule` thứ Hai 03:23 UTC chạy cổng credential-free trên `main`; `pull_request.paths` thêm `agent-knowledge/**` (nguồn của knowledge bundle).
+
+### Added
+- `.githooks/pre-push` (bật bằng `git config core.hooksPath .githooks`): từ chối working tree bẩn, chạy secret scan, `check:workflow-build`, `check:knowledge-bundle`, `typecheck` (mcp-worker), `npm test` + `typecheck` (community-worker), `python3 -m unittest`; push tới `main` chạy thêm `npm run build && npm run verify`.
+- Test `tests-js/ci-workflow-contract.test.mjs` (trigger, paths, schedule, input, điều kiện `production-release`) và `tests-js/pre-push-hook.test.mjs`; README mục "Pre-push hook".
+
+## 2026-10-22 (Đóng băng id binh thư, #14)
+
+### Changed
+- 68 id `book:*` ghi cố định trong `pipeline/books-han-viet-map.json` (`"id"` ở từng mục, lấy từ ledger `pipeline/lookup-route-handles.json`, không tính lại) và `build_books_dict` chép sang `data/books-dict.json`. Generator từ chối mục thiếu id, id sai dạng, id trùng và id mới trùng `retired.books`; không bao giờ slug lại tên. Đổi tên Việt: sửa `viet`, tên cũ vào `aliases` (kiểm facet nhận `viet` hoặc một alias). URL `/tra-cuu/binh-thu/<slug>/`, link `?doi=` và lịch sử Soi đội không đổi.
+- Mọi consumer đọc `row.id`; `bookLookupId` bị xóa khỏi `js/lookup-ids.js` (thay bằng `bookRowId`, `createBookNameIndex`). Dòng thiếu `id` hợp lệ làm builder corpus, MCP builder, `entity-identity`/`artifact-contracts`/`snapshot-index` và season validator (Python + JS) dừng, không lùi về slug tên. `bookSourceAliases` nối mục danh tính theo `chinese`/`sourceNames` rồi mới theo `viet`/`aliases`.
+- Soi đội: `referenceTeam`/`diffTeam`/`compareTeams` nhận `bookIdOf` (khóa cache gồm cả `bookIdOf`), nên đội tham chiếu lưu tên sách cũ vẫn khớp sách id cố định. Sửa `mapName` (`js/analyze-map.js`): `canonicalId` của binh thư là `row.id` thay vì `tactic:<slug>`.
+- `pipeline/lookup-route-handles.json`: chỉ đổi `booksSha256` và `note` (68 handle sách giữ nguyên, `retired.books` rỗng). `LEDGER_NOTE` không còn nói tên không suy ra id cho sách.
+- Fixture binh thư có `id` (`tests-js/fixtures/season-fixtures.mjs`, `mcp-worker/test/fixtures/release-snapshot` kèm manifest/releaseId sinh lại, các test Soi đội/Tra cứu/MCP/worker). Quy trình thêm/đổi tên/gộp binh thư ở `docs/unified-lookup.md`.
+- Publish lại bản dịch hiển thị (file ghim `js/analyze-map.js`, `js/analyze.js`, `js/render.js`, `js/unified-lookup.js` đổi) và re-pin `generationId` trong `pipeline/team-route-handles.json`; sinh lại `mcp-worker/src/generated/workflow-build.ts`.
 
 ## 2026-10-22 (Follow-up chữ Hán có nguồn)
 
 ### Fixed
 - `tactic:dam-tam`, `tactic:tinh-hoa`, `tactic:truy-thuong` (`source`): chữ Hán thêm dải tỉ lệ phát động theo cấp (23%→45%, 30%→45%, 25%→40%) từ cột tỉ lệ của cùng dòng trong bài Bahamut; trước đó bản zh chỉ hiện mức tối đa. Test dữ liệu mới: mọi dải `x→y` của `effectVi` phải có trong chữ Hán của mục `zhEffects`.
 - E2E: đổi phiên bản hiệu ứng ở hộp thoại và trang riêng vẫn giữ đúng một cờ chữ Hán dịch (bấm nút thật trên bản ghi `translation` hai phiên bản).
+
+## 2026-10-22 (Đồng bộ kho Gợi ý đội và Đội của tôi)
+
+Issue #21 và #23. Hợp đồng dữ liệu: [roster-sync.md](roster-sync.md). Kế hoạch: `plans/261021-0632-dong-bo-kho-va-doi-cua-toi/`.
+
+### Added
+
+- **Đồng bộ kho tùy chọn** (`js/roster-sync.js`, `js/roster-cloud-store.js`, `js/roster-id-resolve.js`): khách vẫn chỉ dùng kho `localStorage` (`tqccl.rosterRecommend.scanState.v1`, không gọi `/api/roster`); đăng nhập Google thì lần đầu hỏi rồi gộp kho local (kể cả món thêm tay, đội khóa, món bù) vào hộp `main`, sau đó kéo theo `rev` và đẩy bản ghi dirty theo khúc 12 (bằng `ROSTER_MAX_BATCH` của server, gói Workers Free) với đóng dấu Lamport. Cache `tqccl.roster.cloud.v1` ghi trong `navigator.locks`; ID món suy bằng resolver của engine rồi kiểm từ điển (món không qua kiểm chỉ ở máy này); món đã xóa trên cloud không sống lại.
+- **Bảng chọn nhanh** (`js/roster-picker.js`): tìm + lọc rồi "Chọn tất cả N mục" để nhập kho hàng loạt. `/goi-y-doi-tu-kho/` chạy khi Worker AI chưa cấu hình; chỉ ẩn đọc ảnh và giải thích AI.
+- **Đội của tôi** (`/doi-cua-toi/`, `/zh/doi-cua-toi/`, `noindex`, bắt buộc đăng nhập, không offline): hộp kho tự đặt tên, nhóm (mặc định Khai Hoang, Ghép Team; xóa hộp/nhóm có xác nhận), đội là bản sao độc lập có `source {kind, key, contentHash}`; trình soạn có cấu trúc + cột chữ tự do (đếm byte như server), dấu "chưa có trong kho", cảnh báo trùng tướng trừ cặp "thay thế cho", báo "Bản gốc đã cập nhật" không ghi đè. Nút "Lưu vào đội của tôi" ở chi tiết Đội chuẩn/Đội khác, chi tiết Khai hoang (cả biến thể), Gợi ý đội và Soi đội; khách lưu dở qua OAuth (`sessionStorage`, 30 phút, chỉ xóa khi server xác nhận).
+- **`GET /my-teams-source-index.json`** (`src/lib/my-teams-source-index.ts`, 1 601 mục, 83 562 B) và allowlist ở `public/_headers`, `scripts/verify-astro-dist.mjs`, manifest artifact công khai.
+- `community-worker`: migration `0011_roster.sql` (bảng `roster_records`, kind `box/owned/season/locked/override/group/team`, `box_id`, cột `deleted`, ba index), `GET/POST /api/roster` với kết quả từng bản ghi (`applied`/`already-applied`/`conflict`/`rejected`, mã `bytes`, `schema`, `clock_skew`, `box_missing`, `group_missing`, `box_changed`, `not_found`, `default_protected`, `quota`, `cap`, `retained_cap`), 409 `user_mismatch`; quota 20 000 bản ghi sống, 20 hộp, 50 nhóm/hộp, 500 đội, 40 000 khóa giữ lại, kiểm trong cùng câu ghi; rate limit `roster_push` 600 lô/giờ và `roster_pull` 1 200 lượt/giờ. Xóa hộp/nhóm theo kết quả LWW của chính bản xóa.
+
+### Changed
+
+- Menu tài khoản: mục tới `/doi-cong-dong/?mine=1` đổi tên "Đội đã đăng" / 我发布的阵容 để "Đội của tôi" (`/doi-cua-toi/`, 我的阵容) là mục duy nhất mang tên đó.
+- Trang Quyền riêng tư (vi/zh) nêu kho và đội được đồng bộ lên D1 khi đăng nhập.
+- `override` dùng id `${boxId}~${sha256hex16(teamId)}~…` vì 67/1 366 `sourceConfigId` có chữ Hán; `source.key` chỉ ASCII, id có chữ Hán hoặc dài dùng `h-<16 hex>` (xem § "Thay đổi sau duyệt" của roster-sync.md).
+- Sửa theo code review roster (chi tiết ở [roster-sync.md](roster-sync.md) § Thay đổi sau duyệt): xóa nhóm có đội không còn báo `conflict`; `GET /api/roster` trả `userId` và client kiểm chủ trước khi áp trang kéo; `signOut` luôn xóa cache roster; lô đẩy tối đa 12 bản ghi (dưới trần 50 câu D1 mỗi lần gọi của gói Free); xóa mềm của Gợi ý đội theo chênh lệch; con trỏ kéo lệch tự về 0; mặc định hộp/nhóm chỉ dựng sau lần kéo thành công; trần 30 đội khóa chỉ khi thêm.
+- Sửa theo review PR #36: lưu lại sau khi server từ chối không còn báo thành công giả (kể cả bản lưu dở sau OAuth và `box main`); `clock_skew` không kéo đồng hồ về tương lai mãi; xóa hộp thua `conflict` kéo lại bản con; món chưa đối chiếu được ở Gợi ý đội không mất sau khi ghi cloud; quét đội khóa không cắt đội đã có; chế độ chỉ đọc tự vào cloud khi đồng bộ lại được; `?season=` thắng mùa đã lưu ở lần nạp đầu; nút lưu sau OAuth dùng lại id bản lưu dở (không tạo đội trùng); "Thêm nhóm" chặn bấm hai lần; nhãn cảnh báo zh dùng tên chữ Hán; giữ focus bàn phím sau "Chọn tất cả".
+- Bản dịch: re-pin các file nguồn đổi (`js/analyze.js`, `js/detail-actions.js`, `js/khaihoang-detail.js`, `js/roster-picker.js`, `js/roster-recommend-ui.js`, `js/roster-scan-state.js`, `js/team-detail.js`…), generation Recommended cuối `5218bdd490b6bfd21d54f461cdfe886d36a54e409e766256a90ca465a3774bd6` (`data/website-display.json`), re-pin `pipeline/team-route-handles.json`. Các file trong `docs/` và `README.md` không nằm trong `sourceFiles` nên đợt docs này không cần publish lại.
+
+### Tests
+
+- Node 704 (`roster-sync`, `roster-cloud-store`, `roster-id-resolve`, `roster-picker`, `my-teams-model/sources/links/pending/crud`), `test:dist` 52, `community-worker` vitest 570 (trong đó `roster.test.ts` 33 ca trên D1 giả), Playwright 187 gồm `tests-e2e/my-teams.spec.mjs`. Test chạy trên D1 giả và session Better Auth dựng sẵn: không chứng minh Google OAuth thật hay D1 production.
+
+### Deploy
+
+- Chưa rollout. Thứ tự: `cd community-worker && npm run db:migrate:remote` (`0011`) → `npm run deploy` → Pages. Rollback Pages: client cũ chỉ đọc kho local (món thêm lúc rollback không tự lên cloud); rollback Worker: `/api/roster` biến mất, Đội của tôi không lưu được; **không xóa bảng**. Sau rollout kiểm bằng một lượt đăng nhập Google thật và một lượt lưu/đọc trên production (xem [Deployment guide](deployment-guide.md#đồng-bộ-kho-và-đội-của-tôi-roster_records)).
 
 ## 2026-10-21 (Đội cộng đồng)
 

@@ -1,5 +1,5 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:LYNH7-f2eiIgKS9HJTvGmQ8UVA9OG8lWce8yGSg9gtA" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:OsST7rcIUKEKS-8GNT8eAqGHqelC8QIAi31ttFSHp0o" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
@@ -7,6 +7,7 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "js/hero-identity.js",
   "js/i18n.js",
   "js/lookup-data.js",
+  "js/lookup-detail-ledger.js",
   "js/lookup-field-labels.js",
   "js/lookup-ids.js",
   "js/lookup-innate-holders.js",

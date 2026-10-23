@@ -13,7 +13,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
 ├── public/_headers         # Pages cache policy source
-├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps
+├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps (`docs/zh-gaps.md`)
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare
 ├── mcp-worker/             # data/domain + CLI/stdio/HTTP Research MCP read-only
@@ -45,12 +45,17 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `pipeline/lookup_route_handles.py`, `pipeline/lookup-route-handles.json`, `src/lib/lookup-detail-routes.ts`, `js/lookup-ids.js` | Ledger slug trang riêng đóng băng theo mã (`--write`/`--check`, mã rời corpus vào `retired`), loader kiểm ledger lúc build, `lookupHref`/`lookupItemPath` cho mọi link Tra cứu. |
 | `src/lib/structured-data.ts` | JSON-LD trang chi tiết đội, trang nhóm và trang riêng Tra cứu (`ItemPage` + `mainEntity` `Thing`/`DefinedTerm`). |
 | `src/lib/llms-documents.ts`, `src/pages/llms.txt.ts`, `src/pages/llms/[...path].txt.ts`, `src/pages/llms-full.txt.ts` | Một hàm sinh bộ llms chữ thuần theo mục và bản gộp `/llms-full.txt`. |
-| `scripts/report-zh-gaps.mjs` | Báo cáo mục Tra cứu mà bản zh thiếu chữ (`viOnly`); `--check` so với file báo cáo đã sinh (chạy tay, `test:dist` chỉ kiểm bất biến). |
+| `scripts/report-zh-gaps.mjs` | Báo cáo mục Tra cứu mà bản zh thiếu chữ (`viOnly`); ghi `docs/zh-gaps.md`; `--check` so với file đó và nằm trong `npm run verify` (`test:dist` chỉ kiểm bất biến). |
 | `js/recruit-tracker-store.js`, `js/recruit-tracker.js`, `js/recruit-sync.js` | Theo dõi chiêu mộ: store schema v2 (bản ghi có `id`/`updatedAt`/dấu xóa, chuyển v1→v2, bảo hiểm tính từ lượt theo `occurredAt`, gộp LWW theo bản ghi), UI (ghi nhanh, Hoàn tác, nhật ký, hộp thoại `<dialog>`), client đồng bộ tuỳ chọn với `/api/recruit`. |
 | `js/analyze.js`, `js/analyze-map.js`, `js/analyze-state.js` | Soi đội: nén ảnh, Turnstile, Worker call; ảnh hai phe có bước chọn phe (`normalizeTeamRead`); khớp 3 trạng thái cho editor xác nhận, diff từng ô với Đội chuẩn theo mùa/Đội khác (`findSimilarTeams` giữ cho MCP); link `?doi=v1.…`, lịch sử trên máy, thẻ PNG; đếm ẩn danh số ô phải sửa (`readStats` → `/api/scan-stats`) và gửi ảnh tự nguyện (`/api/scan-samples`). |
 | `worker/eval/` | Bộ ảnh chuẩn Soi đội: ảnh đã che tên + fixture ID canonical, `score.ts` chấm qua `draftFromRead`, `run-eval.ts` (`npm run eval:vision`) in độ chính xác theo màn hình × trường và p50/p95. |
 | `js/hero-identity.js` | Canonical identity tướng: SP/CO/base tách biệt, `familyId` riêng và combined slot là alternatives. |
 | `js/roster-scan-state.js` | Serialize scan state, loại dữ liệu ảnh/token. |
+| `js/roster-conflict-view.js` | Hàm thuần đổi `conflictedTeams` của engine thành thẻ mục "tranh món" (đổi id đội giữ món thành tên, tối đa 5 thẻ + số đội ẩn); chữ hiển thị do `roster-recommend-ui.js` truyền vào. |
+| `js/roster-coverage.js` | Hàm thuần `buildRosterCoverage`: độ phủ kho theo bậc của một mùa (ráp đủ / thiếu đúng 1 món / tổng, từng đội xét độc lập) và tiến độ sưu tầm; so khớp bằng id cùng bộ đối chiếu với engine, không nằm trong `semanticFiles` của MCP. |
+| `js/roster-sync.js`, `js/roster-cloud-store.js`, `js/roster-id-resolve.js`, `js/roster-picker.js` | Đồng bộ kho qua `/api/roster` (hợp đồng `docs/roster-sync.md`): client kéo theo `rev` và đẩy dirty theo khúc 12 (`ROSTER_MAX_BATCH`) với đóng dấu Lamport, cache `tqccl.roster.cloud.v1` ghi trong `navigator.locks`; store thuần; suy và kiểm ID món kho local; bảng chọn nhanh có lọc và "Chọn tất cả N" (policy `inventory` cho Gợi ý đội, `editor` cho trình soạn). Gợi ý đội chạy khi Worker AI chưa cấu hình. |
+| `js/my-teams.js`, `js/my-teams-api.js`, `js/my-teams-model.js`, `js/my-teams-sources.js`, `js/my-teams-links.js`, `js/my-teams-editor.js`, `js/my-teams-ui.js`, `js/my-teams-pending.js`, `js/my-teams-save-button.js`, `src/components/pages/MyTeamsPage.astro`, `src/pages/doi-cua-toi/`, `src/pages/zh/doi-cua-toi/` | Đội của tôi (`/doi-cua-toi/`, vi + `/zh/`, `noindex`, bắt buộc đăng nhập): mô hình đội thuần (chuẩn hóa, kiểm, trùng tướng, dấu thiếu món), bộ chuyển 4 nguồn → đội nháp, API lưu/hộp/nhóm/đội với cache chỉ trong bộ nhớ, link ngược về nguồn, trình soạn, bản lưu dở qua OAuth (`sessionStorage`, 30 phút) và nút "Lưu vào đội của tôi" dùng chung. |
+| `src/lib/my-teams-source-index.ts`, `src/pages/my-teams-source-index.json.ts` | Endpoint `/my-teams-source-index.json`: `{"kind:key": contentHash}` cho mọi đội nguồn (1 601 mục) để báo "Bản gốc đã cập nhật"; hash tính trên dữ liệu đã ghim của lần build. |
 | `js/team-recommend-engine.js` | Chấm tier, kiểm tra conflict, greedy/DFS và tạo portfolio local. |
 | [`mcp-worker/src/data/artifact-contracts.ts`](../mcp-worker/src/data/artifact-contracts.ts) | Owner của canonical manifest/snapshot gồm đúng sáu artifact và full `releaseId`. |
 | [`mcp-worker/src/data/{filesystem-data-source,static-assets-data-source,data-source}.ts`](../mcp-worker/src/data/) | Nguồn filesystem/Static Assets read-only và cache snapshot immutable. |
@@ -71,8 +76,11 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
 | `worker/src/config.ts`, `schema.ts` | Env config và schema kết quả cho 4 mode. |
-| `community-worker/src/routes/teams.ts`, `community-worker/src/teams-validate.ts`, `community-worker/migrations/0008_community_teams.sql` | Đội cộng đồng: mùa, đội + ảnh R2, vote, duyệt, xoá hai bước (`deleting_at` rồi dọn R2), AI nháp qua `callModel` nhóm `teamScan`; điểm/`hot_rank`/`top_rank` là cột sinh STORED, bộ đếm do trigger đếm lại. Rollback evidence: `community-worker/rollback/0009*`, `0010*` (chạy tay). |
-| `js/community-teams.js`, `js/community-team-state.js`, `js/community-team-form.js`, `js/community-team-data.js`, `src/components/pages/CommunityTeamsPage.astro` | Trang `/doi-cong-dong/` (vi + `/zh/`): danh sách, chi tiết, form đăng, của tôi; hàm thuần tách khỏi DOM và mạng. |
+| `community-worker/src/routes/teams.ts`, `community-worker/src/teams-validate.ts`, `community-worker/migrations/0008_community_teams.sql` | Đội cộng đồng: mùa, đội + ảnh R2, vote, duyệt, xoá hai bước (`deleting_at` rồi dọn R2), AI nháp qua `callModel` nhóm `teamScan`, export `GET /api/community-teams/export` cho build; điểm/`hot_rank`/`top_rank` là cột sinh STORED, bộ đếm do trigger đếm lại. Rollback evidence: `community-worker/rollback/0009*`, `0010*` (chạy tay). |
+| `community-worker/src/routes/roster.ts`, `community-worker/src/roster-schema.ts`, `community-worker/migrations/0011_roster.sql` | `GET/POST /api/roster` trên bảng D1 `roster_records` (kind `box/owned/season/locked/override/group/team`): LWW theo bản ghi, kết quả `applied/already-applied/conflict/rejected` từng bản, quota và cap kiểm trong câu ghi, xóa hộp/nhóm theo kết quả LWW; rate limit `roster_push`/`roster_pull`. Test `community-worker/test/roster.test.ts`. |
+| `community-worker/src/deploy.ts` | Dispatch `site-publish` tới `pages-deploy.yml` (bài viết, duyệt/xoá đội, khoá/mở khoá/xoá tài khoản) và ghi kết quả vào `meta.deploy` của nhật ký quản trị. |
+| `js/community-teams.js`, `js/community-team-state.js`, `js/community-team-form.js`, `js/community-team-data.js`, `src/components/pages/CommunityTeamsPage.astro` | Trang `/doi-cong-dong/` (vi + `/zh/`): danh sách, chi tiết, form đăng, của tôi; hàm thuần tách khỏi DOM và mạng. Trên trang tĩnh từng đội, cùng entry chỉ gắn phần sống (vote, bình luận, chiến báo). |
+| `src/lib/community-teams.ts`, `src/lib/community-team-pages.ts`, `src/components/pages/CommunityTeamPage.astro`, `src/pages/{,zh/}doi-cong-dong/[id].astro` | Trang tĩnh `/doi-cong-dong/<id>/` (vi + `/zh/`): loader export fail-closed + ngưỡng index danh sách, nội dung/FAQ/JSON-LD/canonical theo `textLang`, component và hai route. |
 
 ## Dữ liệu runtime
 
@@ -82,7 +90,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `data/team-tier.json` | 31 team, 39 rankings |
 | `data/tactics.json` | 409 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)); 407 chiến pháp lấy chữ/số liệu client Global, 2 chiến pháp của SP Tào Tháo theo bản Trung (`pipeline/lookup-client-tactics.json`, gồm 29 mục chỉ có ở client: 13 chiến pháp và 16 chiến pháp binh chủng Tinh của mùa Binh Diễn Xuân Thu), 18 mã trùng đã gộp (`lookup.formerIds`) |
 | `data/heroes-dict.json` | 251 = 201 baseline/SGSDeck (đã bỏ Hà Thị, không có ở client) + 50 từ client Global (`pipeline/lookup-client-heroes.json`) — Tra cứu thống nhất; chân dung tự lưu ở `public/heroes/` |
-| `data/books-dict.json` | 68 |
+| `data/books-dict.json` | 68 (mỗi dòng mang `id` cố định từ `pipeline/books-han-viet-map.json`) |
 | `data/coexist.json` | 5 nhóm, 25 team |
 | `data/khaihoang.json` | 17 team, 5 mỏ |
 | `data/tactics-generic.json` | 29 record nguồn |

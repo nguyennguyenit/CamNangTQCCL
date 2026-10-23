@@ -8,6 +8,7 @@ import { llmsDocuments } from "../src/lib/llms-documents.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { seasonPageCatalog, seasonRedirectRules } from "../src/lib/season-pages.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import {
@@ -15,14 +16,19 @@ import {
   SECTION_PATHS,
   STATIC_PAGE_PATHS,
   blogSitemapRoutes,
+  communityTeamSitemapRoutes,
   mirroredSitemapPaths,
   mirroredSitemapRoutes,
   sitemapDocument,
 } from "../src/pages/sitemap.xml.ts";
+import { communityTeamPath, communityTeamsIndexable } from "../src/lib/community-teams.ts";
 import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
 import { PRERENDERED_TEAM_SECTIONS as TEAM_SSR_SECTIONS } from "../src/lib/team-ssr.ts";
 import { validateLookupBundle } from "../js/lookup-data.js";
+import { sourceKeyPart, variantKey } from "../js/my-teams-sources.js";
+import { mySourceIndex, mySourceIndexJson } from "../src/lib/my-teams-source-index.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
+import { localePath } from "../js/i18n.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
 const LOOKUP_HUB_PATH = "/tra-cuu/";
@@ -76,10 +82,14 @@ for (const key of Object.keys(SECTION_MARKERS)) {
   if (!TEAM_SSR_SECTIONS.includes(key)) throw new Error(`Verifier carries markers for a section team-ssr does not prerender: ${key}`);
 }
 
-/** Trang cộng đồng tĩnh (noindex, ngoài sitemap) ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. */
+/**
+ * Trang cộng đồng tĩnh ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. Mặc định noindex, ngoài sitemap;
+ * riêng danh sách đội (`listing`) noindex hay index tuỳ số đội trong dist nên do `verifyCommunityTeamOutputs` kiểm.
+ */
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("chien-bao/index.html", locale), mount: 'id="community-hub"', entry: "/js/community-hub.js" }),
-  Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js" }),
+  Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js", listing: true }),
+  Object.freeze({ htmlPath: localizedHtmlPath("doi-cua-toi/index.html", locale), mount: 'id="my-teams"', entry: "/js/my-teams.js" }),
   Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
 ]));
 
@@ -114,7 +124,7 @@ function jsonLdBlocks(html, path) {
     try {
       return JSON.parse(body);
     } catch {
-      throw new Error(`Blog page carries invalid JSON-LD: ${path}`);
+      throw new Error(`Page carries invalid JSON-LD: ${path}`);
     }
   });
 }
@@ -174,6 +184,91 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
   return posts;
 }
 
+/** Trang đội cộng đồng: tập đội do community API quyết định lúc build nên verifier đọc lại từ chính dist. */
+const COMMUNITY_TEAM_FILE = /^(zh\/)?doi-cong-dong\/([a-z0-9][a-z0-9-]{0,63})\/index\.html$/u;
+const COMMUNITY_LISTING_PATH = "/doi-cong-dong/";
+const NOINDEX_META = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu;
+const CANONICAL_LINK = /<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu;
+const HREFLANG_LINK = /<link\b(?=[^>]*\brel=["']alternate["'])(?=[^>]*\bhreflang=)[^>]*>/iu;
+
+const hasKey = (value, key) => Array.isArray(value)
+  ? value.some((item) => hasKey(item, key))
+  : value !== null && typeof value === "object" && (key in value || Object.values(value).some((item) => hasKey(item, key)));
+
+const canonicalHref = (html) => CANONICAL_LINK.exec(html)?.[0].match(/\bhref=["']([^"']*)["']/u)?.[1] ?? null;
+
+/**
+ * Trang đội tự nhất quán: mỗi id đủ cặp vi/zh, đúng MỘT bản self-canonical (bản `text_lang`, mang JSON-LD) và bản kia canonical về
+ * nó, không hreflang, không noindex, không aggregateRating; danh sách index/noindex theo số id duy nhất và link tới mọi đội.
+ * Trả về `{path, lastmod}` của bản gốc từng đội cho sitemap.
+ */
+async function verifyCommunityTeamOutputs(distPath, teamFiles, site) {
+  const origin = new URL(site).origin;
+  const byId = new Map();
+  for (const file of teamFiles) {
+    const [, zhPrefix, id] = file.match(COMMUNITY_TEAM_FILE);
+    byId.set(id, { ...byId.get(id), [zhPrefix ? "zh" : "vi"]: file });
+  }
+  const routes = [];
+  for (const [id, pair] of byId) {
+    if (!pair.vi || !pair.zh) throw new Error(`Community team page lacks its locale pair: ${id}`);
+    const pages = [];
+    for (const locale of SITE_LOCALES) {
+      const file = pair[locale];
+      const html = await readFile(resolve(distPath, file), "utf8");
+      const url = new URL(communityTeamPath(id, locale), origin).href;
+      if (!html.includes(`<html lang="${HREFLANG[locale]}"`)) throw new Error(`Page does not declare its language (${HREFLANG[locale]}): ${file}`);
+      if (HREFLANG_LINK.test(html)) throw new Error(`Community team page must not declare hreflang alternates: ${file}`);
+      if (NOINDEX_META.test(html)) throw new Error(`Community team page must not declare robots=noindex: ${file}`);
+      if (!html.includes('id="community-teams"') || !html.includes(`data-team-id="${id}"`) || !html.includes('src="/js/community-teams.js"')) {
+        throw new Error(`Community team page lacks its mount or entry: ${file}`);
+      }
+      if (html.includes('src="/js/app.js"')) throw new Error(`Community team page must not boot app.js: ${file}`);
+      const blocks = jsonLdBlocks(html, file);
+      if (hasKey(blocks, "aggregateRating")) throw new Error(`Community team page must not carry aggregateRating: ${file}`);
+      pages.push({ locale, file, html, url, canonical: canonicalHref(html), blocks });
+    }
+    const selfCanonical = pages.filter((page) => page.canonical === page.url);
+    const original = selfCanonical[0];
+    if (selfCanonical.length !== 1 || pages.some((page) => page !== original && page.canonical !== original.url)) {
+      throw new Error(`Community team canonical pair is inconsistent (exactly one self-canonical page, the other pointing at it): ${id}`);
+    }
+    for (const page of pages) {
+      if (page === original) continue;
+      if (page.blocks.length) throw new Error(`Community team mirror page must not carry JSON-LD: ${page.file}`);
+    }
+    const webPage = original.blocks.find((block) => block?.["@type"] === "WebPage");
+    if (
+      !webPage
+      || webPage.url !== original.url
+      || webPage.inLanguage !== HREFLANG[original.locale]
+      || !webPage.name
+      || !webPage.author?.name
+      || !Number.isFinite(Date.parse(webPage.datePublished))
+      || !original.blocks.some((block) => block?.["@type"] === "FAQPage")
+    ) throw new Error(`Community team page lacks valid WebPage and FAQPage JSON-LD: ${original.file}`);
+    routes.push({ path: new URL(original.url).pathname, lastmod: webPage.datePublished });
+  }
+  const indexable = communityTeamsIndexable(byId.size);
+  for (const locale of SITE_LOCALES) {
+    const file = localizedHtmlPath("doi-cong-dong/index.html", locale);
+    const html = await readFile(resolve(distPath, file), "utf8");
+    if (indexable) {
+      if (NOINDEX_META.test(html)) throw new Error(`Community teams listing must be indexable with ${byId.size} teams (found robots=noindex): ${file}`);
+      const expected = new URL(localePath(COMMUNITY_LISTING_PATH, locale), origin).href;
+      if (canonicalHref(html) !== expected) throw new Error(`Community teams listing canonical must be ${expected}: ${file}`);
+      verifyLocalePair(html, file, locale, COMMUNITY_LISTING_PATH, site);
+    } else {
+      if (!NOINDEX_META.test(html)) throw new Error(`Community teams listing must declare robots=noindex below the index threshold: ${file}`);
+      if (CANONICAL_LINK.test(html)) throw new Error(`Community teams listing must not declare a canonical URL below the index threshold: ${file}`);
+    }
+    for (const id of byId.keys()) {
+      if (!html.includes(`href="${communityTeamPath(id, locale)}"`)) throw new Error(`Community teams listing does not link team ${id}: ${file}`);
+    }
+  }
+  return routes;
+}
+
 /**
  * llms: mỗi file con đúng byte của hàm sinh, `/llms-full.txt` đúng bằng các file con nối theo thứ tự, `llms.txt` link tới mọi
  * file con và `llms-full.txt`, và mọi link của `llms.txt` về chính site trỏ tới file có thật trong dist.
@@ -201,6 +296,86 @@ async function verifyLlmsOutputs(distPath, llms) {
       throw new Error(`llms.txt links to a file that is not in dist: ${href}`);
     }
   }
+}
+
+/** Chỉ mục hash nguồn của "Đội của tôi" (`kind:key` → 16 hex): đúng bộ khóa của catalog, khóa đã sắp, và (dist thật) đúng từng byte so với bộ sinh. */
+const MY_TEAMS_INDEX_KEY = /^(?:recommended|legacy|khaihoang):[A-Za-z0-9][A-Za-z0-9._~-]*$/u;
+const MY_TEAMS_CONTENT_HASH = /^[0-9a-f]{16}$/u;
+const MY_TEAMS_PAYLOAD = /<script type="application\/json" id="team-save-payload">([^<]*)<\/script>/u;
+
+/** Khóa chỉ mục của mọi đội lưu được theo catalog đã ghim và Khai hoang nguồn: nguồn sự thật cho cả chỉ mục lẫn payload trang. */
+function myTeamsExpectedKeys(catalog, khaiHoangSource) {
+  const recommended = new Map(catalog.recommended.map((entry) => [entry.sourceConfigId, [["", `recommended:${sourceKeyPart(entry.sourceConfigId)}`]]]));
+  const variantsOf = new Map();
+  for (const variant of catalog.variants ?? []) {
+    variantsOf.set(variant.legacyTeamId, [...(variantsOf.get(variant.legacyTeamId) ?? []), variant.legacyVariantId]);
+  }
+  const legacy = new Map(catalog.legacy.map((entry) => [entry.legacyTeamId, [["", `legacy:${variantKey(entry.legacyTeamId, null)}`]]]));
+  const khaiHoang = new Map((khaiHoangSource?.teams ?? []).map((team) => [team.id, [
+    ["", `khaihoang:${variantKey(team.id, null)}`],
+    ...(team.variants ?? []).map((variant) => [variant.id, `khaihoang:${variantKey(team.id, variant.id)}`]),
+  ]]));
+  const variantKeys = [...variantsOf].flatMap(([teamId, variantIds]) => variantIds.map((variantId) => `legacy:${variantKey(teamId, variantId)}`));
+  const all = new Set([
+    ...[...recommended.values(), ...legacy.values(), ...khaiHoang.values()].flatMap((items) => items.map(([, key]) => key)),
+    ...variantKeys,
+  ]);
+  return { recommended, legacy, khaiHoang, all };
+}
+
+async function verifyMyTeamsSourceIndex(distPath, expectedKeys, website) {
+  const raw = await readFile(resolve(distPath, "my-teams-source-index.json"), "utf8");
+  let index;
+  try {
+    index = JSON.parse(raw);
+  } catch {
+    throw new Error("my-teams-source-index.json is not valid JSON");
+  }
+  if (!index || typeof index !== "object" || Array.isArray(index)) throw new Error("my-teams-source-index.json must be an object");
+  const keys = Object.keys(index);
+  for (const key of keys) {
+    if (!MY_TEAMS_INDEX_KEY.test(key)) throw new Error(`my-teams-source-index.json has an invalid key: ${key}`);
+    if (typeof index[key] !== "string" || !MY_TEAMS_CONTENT_HASH.test(index[key])) throw new Error(`my-teams-source-index.json has an invalid hash for ${key}`);
+  }
+  if (keys.join("\n") !== [...keys].sort().join("\n")) throw new Error("my-teams-source-index.json keys are not sorted");
+  const missing = [...expectedKeys.all].filter((key) => !Object.hasOwn(index, key));
+  const unexpected = keys.filter((key) => !expectedKeys.all.has(key));
+  if (missing.length || unexpected.length) {
+    throw new Error(`my-teams-source-index.json key set differs from the catalog; unexpected: ${unexpected.slice(0, 5).join(", ") || "none"}; missing: ${missing.slice(0, 5).join(", ") || "none"}`);
+  }
+  // Dist thật: từng byte phải đúng bằng bộ sinh trên dữ liệu đã ghim (hash tính lại từ nguồn, không tin file).
+  if (website && raw !== mySourceIndexJson(mySourceIndex(website))) {
+    throw new Error("my-teams-source-index.json differs from the index generated from the pinned sources");
+  }
+  return index;
+}
+
+/** Payload lưu đội của một trang chi tiết: JSON hợp lệ, đúng họ, đúng bộ biến thể, `contentHash` khớp chỉ mục, không mang id. */
+function verifyTeamSavePayload(page, path, { kind, items }, index) {
+  const raw = page.match(MY_TEAMS_PAYLOAD)?.[1];
+  if (raw === undefined) return false;
+  let payload;
+  try {
+    payload = JSON.parse(raw);
+  } catch {
+    throw new Error(`Team detail page carries an invalid save payload: ${path}`);
+  }
+  if (payload?.schema !== 1 || payload.kind !== kind || !payload.items || typeof payload.items !== "object") {
+    throw new Error(`Team detail page save payload has the wrong shape: ${path}`);
+  }
+  const expected = new Map(items);
+  if (JSON.stringify(Object.keys(payload.items).sort()) !== JSON.stringify([...expected.keys()].sort())) {
+    throw new Error(`Team detail page save payload does not carry exactly its variants: ${path}`);
+  }
+  for (const [variantId, item] of Object.entries(payload.items)) {
+    const source = item?.draft?.source;
+    const key = expected.get(variantId);
+    if (source?.kind !== kind || `${kind}:${source.key}` !== key || source.contentHash !== index[key]) {
+      throw new Error(`Team detail page save payload differs from the source index: ${path} (${key})`);
+    }
+    if (Object.hasOwn(item.draft, "id")) throw new Error(`Team detail page save payload must not carry a team id: ${path}`);
+  }
+  return true;
 }
 
 async function listFiles(directory, base = directory) {
@@ -239,6 +414,8 @@ export async function verifyAstroDist({
   if (catalog.generationId !== recommended.pin.generationId) {
     throw new Error("Team detail catalog and emitted Recommended generation differ");
   }
+  // Trang mùa Đội chuẩn (mùa cũ có đội) từ cùng registry đã pin; registry rỗng thì không có trang nào.
+  const seasons = seasonPageCatalog(JSON.parse(Buffer.from(recommended.files["seasons.json"]).toString("utf8")), catalog);
   // Trang riêng từng mục Tra cứu: ledger đóng băng + corpus của chính gốc dự án này. Chỉ khi manifest phát cả bundle Tra cứu
   // lẫn books-dict (dist thật); fixture rút gọn không có kho Tra cứu đầy đủ nên không có trang mục.
   const hasLookupItems = ["lookup-manifest", "books-dict"].every((routeParam) =>
@@ -265,6 +442,7 @@ export async function verifyAstroDist({
   const localizedHtml = (paths) => SITE_LOCALES.flatMap((locale) => paths.map((path) => localizedHtmlPath(path, locale)));
   const files = await listFiles(distPath);
   const blogPostFiles = files.filter((file) => BLOG_POST_FILE.test(file));
+  const communityTeamFiles = files.filter((file) => COMMUNITY_TEAM_FILE.test(file));
   const expectedFiles = [
     ...localizedHtml(["index.html"]),
     "404.html",
@@ -272,11 +450,14 @@ export async function verifyAstroDist({
     ...localizedHtml(sectionHtmlPaths),
     ...localizedHtml(STATIC_PAGE_PATHS.map((path) => `${path.slice(1)}index.html`)),
     ...localizedHtml(catalog.htmlPaths),
+    ...localizedHtml(seasons.pages.map((season) => season.htmlPath)),
     ...localizedHtml((lookupItems?.entries ?? []).map((entry) => `${entry.path.slice(1)}index.html`)),
     ...COMMUNITY_PAGES.map((page) => page.htmlPath),
     ...BLOG_FIXED_OUTPUTS,
+    "my-teams-source-index.json",
     ...(llms ? [...llms.files.map((file) => file.path.slice(1)), llms.fullPath.slice(1)] : []),
     ...blogPostFiles,
+    ...communityTeamFiles,
     ...expectedAssets,
     ...recommendedFiles,
     ...controlArtifacts.map((artifact) => artifact.outputPath),
@@ -302,6 +483,7 @@ export async function verifyAstroDist({
   if (emittedByDecodedPath.size !== files.length) throw new Error("dist contains colliding team detail paths");
 
   const blogPosts = await verifyBlogOutputs(distPath, blogPostFiles, astroConfig.site);
+  const communityTeamRoutes = await verifyCommunityTeamOutputs(distPath, communityTeamFiles, astroConfig.site);
   if (llms) await verifyLlmsOutputs(distPath, llms);
 
   // Byte equality with the build-owned generator enforces valid structure, exact absolute
@@ -310,15 +492,21 @@ export async function verifyAstroDist({
   const detailRoutePaths = [
     ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
     ...(lookupItems?.entries ?? []).map((entry) => entry.path),
+    ...seasons.pages.map((season) => season.routePath),
   ];
   const sitemapRoutePaths = [
     ...mirroredSitemapRoutes(mirroredSitemapPaths(detailRoutePaths)),
     ...blogSitemapRoutes(blogPosts),
+    ...communityTeamSitemapRoutes(communityTeamRoutes),
   ];
   const expectedSitemapXml = sitemapDocument(astroConfig.site, sitemapRoutePaths);
   if (sitemapXml !== expectedSitemapXml) {
     throw new Error("dist sitemap.xml does not match the generated document");
   }
+
+  const khaiHoangSource = JSON.parse(await readFile(resolve(rootPath, "data/khaihoang.json"), "utf8"));
+  const myTeamsKeys = myTeamsExpectedKeys(catalog, khaiHoangSource);
+  const myTeamsIndex = await verifyMyTeamsSourceIndex(distPath, myTeamsKeys, website);
 
   for (const artifact of manifest) {
     const relativePath = `${artifact.kind}/${artifact.sourceBasename}`;
@@ -519,6 +707,7 @@ export async function verifyAstroDist({
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
+      save: { kind: "recommended", items: myTeamsKeys.recommended.get(entry.sourceConfigId) },
     })),
     ...catalog.legacy.map((entry) => ({
       path: entry.htmlPath,
@@ -530,6 +719,7 @@ export async function verifyAstroDist({
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
+      save: { kind: "legacy", items: myTeamsKeys.legacy.get(entry.legacyTeamId) },
     })),
     ...catalog.khaiHoang.map((entry) => ({
       path: entry.htmlPath,
@@ -540,6 +730,7 @@ export async function verifyAstroDist({
         `data-khaihoang-team-id="${entry.khaiHoangTeamId}"`,
         `data-khaihoang-sha256="${catalog.khaiHoangSha256}"`,
       ],
+      save: { kind: "khaihoang", items: myTeamsKeys.khaiHoang.get(entry.khaiHoangTeamId) ?? [["", `khaihoang:${variantKey(entry.khaiHoangTeamId, null)}`]] },
     })),
   ];
   // Bản Trung của mỗi trang chi tiết pin đúng cùng identity; tiêu đề/meta khác ngôn ngữ nên cũng không được trùng.
@@ -553,13 +744,13 @@ export async function verifyAstroDist({
     detailHeads[kind].set(value, path);
   };
   for (let start = 0; start < pages.length; start += 64) {
-    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins }) => {
+    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save }) => {
       const page = await readPage(path);
       claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, path);
       claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, path);
-      return { path, routePath, locale, entry, pins, page };
+      return { path, routePath, locale, entry, pins, save, page };
     }));
-    for (const { path, routePath, locale, entry, pins, page } of loaded) {
+    for (const { path, routePath, locale, entry, pins, save, page } of loaded) {
       verifyLocalePair(page, path, locale, routePath, site);
       for (const pin of pins) {
         if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
@@ -574,6 +765,9 @@ export async function verifyAstroDist({
         }
       }
       if (page.includes('src="/js/app.js"')) throw new Error(`Team detail page boots the root application: ${path}`);
+      // Nháp đội lưu được: dist thật (có dữ liệu hiển thị đã ghim) bắt buộc có; mọi trang có thì phải khớp chỉ mục nguồn.
+      const hasPayload = verifyTeamSavePayload(page, path, save, myTeamsIndex);
+      if (website && !hasPayload) throw new Error(`Team detail page lacks its save payload: ${path}`);
       // Thân dựng sẵn lúc build: có nội dung ngay trong HTML, không trạng thái chờ và không đòi JavaScript.
       const article = page.match(/<article\b[^>]*\bid="team-detail-root"[^]*?<\/article>/u)?.[0] ?? "";
       const body = article.match(/<div\b[^>]*\bid="team-detail-body"[^>]*>/u)?.[0] ?? "";
@@ -587,6 +781,50 @@ export async function verifyAstroDist({
         throw new Error(`Team detail page lacks its community section: ${path}`);
       }
     }
+  }
+  // Trang mùa Đội chuẩn: tĩnh, đủ N đội, canonical + hreflang của chính nó, title/description không trùng (S3 và PK-S7 cùng tên Việt),
+  // không khung comment và không nạp app (trang mùa không thuộc `PAGE_KEY_PATTERN` của khung comment).
+  for (const season of seasons.pages) {
+    for (const locale of SITE_LOCALES) {
+      const htmlPath = localizedHtmlPath(season.htmlPath, locale);
+      const page = await readPage(htmlPath);
+      verifyLocalePair(page, htmlPath, locale, season.routePath, site);
+      const canonical = new URL(locale === "zh" ? `/zh${season.routePath}` : season.routePath, site).href;
+      if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`Season page lacks its own canonical URL: ${htmlPath}`);
+      claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, htmlPath);
+      claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, htmlPath);
+      if ((page.match(/<h1\b/gu) ?? []).length !== 1) throw new Error(`Season page must carry exactly one h1: ${htmlPath}`);
+      if (!page.includes(season.displayCode)) throw new Error(`Season page lacks its season code (${season.displayCode}): ${htmlPath}`);
+      const cards = (page.match(/data-reference-key="/gu) ?? []).length;
+      if (cards !== season.count) throw new Error(`Season page must prerender every team (${cards}/${season.count}): ${htmlPath}`);
+      if ((page.match(/\bdata-team-detail-link\b/gu) ?? []).length < season.count) throw new Error(`Season page lacks a detail link for every team: ${htmlPath}`);
+      if (page.includes('id="community-root"') || page.includes("community-page.js") || page.includes('src="/js/app.js"')) {
+        throw new Error(`Season page must not carry the community section or boot an application: ${htmlPath}`);
+      }
+      if (WAITING_OR_JS_REQUIRED.test(page.replace(/<!--[^]*?-->/gu, "").replace(/<script\b[^]*?<\/script>/gu, ""))) {
+        throw new Error(`Season page must not carry waiting or JavaScript-required text: ${htmlPath}`);
+      }
+      if (website && !page.includes(`data-ssr-source="${website.pin.sha256}"`)) {
+        throw new Error(`Season page prerendered content is not tied to the website display publication: ${htmlPath}`);
+      }
+    }
+  }
+  // `/doi-chuan/` liệt kê mọi trang mùa bằng <a href> thật, ngoài vùng client thay thế (`#section-team-chuan`).
+  for (const locale of SITE_LOCALES) {
+    const htmlPath = localizedHtmlPath("doi-chuan/index.html", locale);
+    const page = await readPage(htmlPath);
+    const block = page.match(/<nav\b[^>]*\bdata-other-seasons\b[^]*?<\/nav>/u)?.[0] ?? null;
+    if (!seasons.pages.length) {
+      if (block) throw new Error(`Section page lists other seasons but no season page exists: ${htmlPath}`);
+      continue;
+    }
+    if (!block) throw new Error(`Section page lacks its other-seasons block: ${htmlPath}`);
+    for (const season of seasons.pages) {
+      const href = locale === "zh" ? `/zh${season.routePath}` : season.routePath;
+      if (!block.includes(`<a href="${href}"`)) throw new Error(`Other-seasons block lacks its link ${href}: ${htmlPath}`);
+    }
+    const mount = page.match(/<section\b[^>]*\bid="section-team-chuan"[^]*?<\/section>/u)?.[0] ?? "";
+    if (!mount || mount.includes("data-other-seasons")) throw new Error(`Other-seasons block must sit outside the client-replaced mount: ${htmlPath}`);
   }
   const notFound = await readPage("404.html");
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
@@ -606,17 +844,16 @@ export async function verifyAstroDist({
   if (/<meta\b(?=[^>]*\bproperty=["']og:url["'])[^>]*>/iu.test(notFound)) {
     throw new Error("Static 404 page must not declare og:url");
   }
-  for (const { htmlPath, mount, entry } of COMMUNITY_PAGES) {
+  for (const { htmlPath, mount, entry, listing } of COMMUNITY_PAGES) {
     const page = await readPage(htmlPath);
     if (!page.includes(mount) || !page.includes(`src="${entry}"`)) {
       throw new Error(`Community page lacks its mount or entry: ${htmlPath}`);
     }
-    if (!/<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu.test(page)) {
-      throw new Error(`Community page must declare robots=noindex: ${htmlPath}`);
-    }
-    if (/<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu.test(page) || page.includes('src="/js/app.js"')) {
-      throw new Error(`Community page must not declare a canonical URL or boot the root application: ${htmlPath}`);
-    }
+    if (page.includes('src="/js/app.js"')) throw new Error(`Community page must not boot the root application: ${htmlPath}`);
+    // Danh sách đội: noindex/canonical theo ngưỡng đã kiểm ở verifyCommunityTeamOutputs.
+    if (listing) continue;
+    if (!NOINDEX_META.test(page)) throw new Error(`Community page must declare robots=noindex: ${htmlPath}`);
+    if (CANONICAL_LINK.test(page)) throw new Error(`Community page must not declare a canonical URL: ${htmlPath}`);
   }
   let lookupGenerationId = null;
   const lookupRoutes = new Set(manifest.filter((artifact) => artifact.kind === "data").map((artifact) => artifact.routeParam));
@@ -666,6 +903,12 @@ export async function verifyAstroDist({
     if (!sourceBytes.equals(emittedBytes)) {
       throw new Error(`Deployment control artifact bytes differ from source: ${artifact.outputPath}`);
     }
+  }
+
+  // Mùa hiện tại không có trang: slug cũ của nó phải 301 về danh sách (luật sinh bởi pipeline/lookup_route_handles.py).
+  const redirects = (await readFile(resolve(distPath, "_redirects"), "utf8")).split("\n");
+  for (const rule of seasonRedirectRules(seasons)) {
+    if (!redirects.includes(`${rule.from} ${rule.to} ${rule.status}`)) throw new Error(`dist _redirects lacks the current-season rule: ${rule.from}`);
   }
 
   for (const [sourcePath, outputPath] of staticDirectoryFiles) {

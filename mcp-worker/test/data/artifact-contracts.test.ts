@@ -177,6 +177,22 @@ describe("artifact contracts", () => {
     ).toThrow("size limit");
   });
 
+  it("rejects book rows that share an id or have no frozen id, never falling back to the name slug", async () => {
+    for (const [label, rows, message] of [
+      ["shared id", [{ id: "book:a", viet: "A" }, { id: "book:a", viet: "B" }], "duplicate canonical identity"],
+      ["no id", [{ viet: "Sách Không Id" }], "frozen id"],
+      ["blank id", [{ id: " ", viet: "Sách" }], "frozen id"],
+    ] as const) {
+      const artifacts = await committedArtifacts();
+      artifacts.set("books-dict", new TextEncoder().encode(JSON.stringify(rows)));
+      await expect(createDataManifest(artifacts), label).rejects.toThrow(message);
+    }
+    // Same display name, different frozen ids: two distinct books, not a collision.
+    const distinct = await committedArtifacts();
+    distinct.set("books-dict", new TextEncoder().encode(JSON.stringify([{ id: "book:a", viet: "Sách" }, { id: "book:b", viet: "Sách" }])));
+    await expect(createDataManifest(distinct)).resolves.toBeDefined();
+  });
+
   it("tolerates unknown future fields and reports weak cross references", async () => {
     const artifacts: ArtifactBytes = new Map([
       [
@@ -219,7 +235,7 @@ describe("artifact contracts", () => {
       [
         "books-dict",
         new TextEncoder().encode(
-          JSON.stringify([{ viet: "Binh Thư A", future: true }]),
+          JSON.stringify([{ id: "book:binh-thu-a", viet: "Binh Thư A", future: true }]),
         ),
       ],
     ]);

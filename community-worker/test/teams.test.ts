@@ -587,6 +587,7 @@ describe("xoá đội", () => {
         "u-alice": { comments: 1, reports: 0 },
         "u-bob": { comments: 1, reports: 2 },
       },
+      deploy: "ok",
     });
   });
 

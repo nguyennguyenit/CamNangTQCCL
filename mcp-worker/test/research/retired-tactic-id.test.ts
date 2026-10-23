@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { lookupProfilePath } from "../../../js/lookup-ids.js";
+import { lookupHref } from "../../../js/lookup-ids.js";
 import { localePath } from "../../../js/i18n.js";
 import { buildPublicationReadModel, type PublicationMeta } from "../../src/data/publication-projection.js";
 import { handleGetEntity } from "../../src/research/catalog-handlers.js";
@@ -26,7 +26,7 @@ const tactic = (id: string, nameVi: string, formerIds: string[]) => ({
   profile: { lookup: { formerIds } },
 });
 const route = (id: string) => {
-  const vi = lookupProfilePath(id)!;
+  const vi = lookupHref(id)!;
   return { id, kind: "entity", vi, zh: localePath(vi, "zh") };
 };
 
@@ -70,7 +70,7 @@ describe("retired tactic ids (lookup.formerIds)", () => {
     } as unknown as ToolContext;
     const result = await handleGetEntity(ctx, { entityId: RETIRED });
     expect(result.entity.entityId).toBe(SURVIVOR);
-    expect(result.entity.pagePath).toBe(lookupProfilePath(SURVIVOR));
+    expect(result.entity.pagePath).toBe(lookupHref(SURVIVOR));
     expect("profile" in result).toBe(true);
     const lookup = "profile" in result ? result.profile?.lookup : undefined;
     expect(lookup && typeof lookup === "object" && "formerIds" in lookup ? lookup.formerIds : undefined).toEqual([RETIRED]);

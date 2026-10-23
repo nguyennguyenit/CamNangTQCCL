@@ -1,12 +1,16 @@
 ---
 // Route bản Việt: nội dung ở src/components/pages/RecommendedDetail.astro, props do src/lib/team-detail-pages.ts tính.
+// Trang mùa (`/doi-chuan/<mã mùa>/`) đi chung route vì Astro không cho hai route động cùng cấp; path mùa nối vào đây,
+// không bao giờ nằm trong `recommendedDetailPaths` (llms-documents.ts đọc `entry.sourceSeasonId` của mọi path ở đó).
 import RecommendedDetail from '../../components/pages/RecommendedDetail.astro';
+import SeasonPage from '../../components/pages/SeasonPage.astro';
 import { recommendedDetailPaths } from '../../lib/team-detail-pages';
+import { seasonPagePaths } from '../../lib/season-pages';
 
 export const prerender = true;
 
-export function getStaticPaths() {
-  return recommendedDetailPaths('vi');
+export async function getStaticPaths() {
+  return [...(await recommendedDetailPaths('vi')), ...(await seasonPagePaths())];
 }
 ---
-<RecommendedDetail {...Astro.props} locale="vi" />
+{Astro.props.season ? <SeasonPage {...Astro.props} locale="vi" /> : <RecommendedDetail {...Astro.props} locale="vi" />}

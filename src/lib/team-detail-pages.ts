@@ -11,6 +11,7 @@ import { createRawNameResolver } from '../../js/website-display.js';
 import { legacyLabelZh } from '../../js/recommended-reference-state.js';
 import { holderDisplayName } from '../../js/recommended-reference-render.js';
 import { SOURCE_LABEL } from '../../js/render.js';
+import { fromKhaiHoang, fromLegacy, fromRecommended } from '../../js/my-teams-sources.js';
 import { readPublicArtifact, websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import {
   detailTitleRanks,
@@ -22,6 +23,7 @@ import {
 } from './team-detail-routes.ts';
 import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
+import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
 import { localePath } from '../../js/i18n.js';
 import type { SiteLocale } from './locale-routes';
@@ -166,6 +168,37 @@ export async function recommendedDetailPlainText(entry: RecommendedRouteEntry, l
 
 const strings = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 
+/** Một đội nháp có thể lưu: `draft` chưa có `id` (id sinh một lần ở trình duyệt lúc bấm lưu) và `defaultGroup` là hậu tố nhóm mặc định. */
+export interface TeamSaveItem {
+  defaultGroup: string;
+  draft: Record<string, unknown>;
+}
+
+/**
+ * Payload lưu đội nhúng trong HTML (`<script type="application/json" id="team-save-payload">`): `items` khóa theo id biến thể,
+ * `""` là bản mặc định. Hash nguồn nằm trong `draft.source.contentHash` và khớp `/my-teams-source-index.json`.
+ */
+export interface TeamSavePayload {
+  schema: 1;
+  kind: 'recommended' | 'legacy' | 'khaihoang';
+  items: Record<string, TeamSaveItem>;
+}
+
+/** Id giữ chỗ khi chuyển nguồn lúc build: payload không mang id (mỗi lần lưu của người dùng tự sinh id riêng). */
+const BUILD_DRAFT_ID = 'team-build';
+
+function saveItem(result: { draft: Record<string, unknown>; defaultGroup: string }): TeamSaveItem {
+  const { id: _id, ...draft } = result.draft;
+  return { defaultGroup: result.defaultGroup, draft };
+}
+
+function khaiHoangSavePayload(team: Record<string, any> | undefined, ids: LookupIdResolver): TeamSavePayload {
+  if (!team) throw new Error('Khai hoang source team missing for the save payload');
+  const items: Record<string, TeamSaveItem> = { '': saveItem(fromKhaiHoang(team, null, ids, { id: BUILD_DRAFT_ID })) };
+  for (const variant of team.variants ?? []) items[variant.id] = saveItem(fromKhaiHoang(team, variant, ids, { id: BUILD_DRAFT_ID }));
+  return { schema: 1, kind: 'khaihoang', items };
+}
+
 /** Link Tra cứu của mọi ô chiến pháp / binh thư trong đội, cấu hình thay thế và nội dung đội gốc đã đối chiếu. */
 function recordLookupLinks(record: Record<string, unknown> | null, resolve: LookupIdResolver): TeamLookupLinks {
   const links: TeamLookupLinks = { tactic: {}, book: {} };
@@ -219,10 +252,13 @@ export interface RecommendedDetailProps {
   lookupLinks: TeamLookupLinks;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
+  /** Đội thuộc mùa cũ (khác `defaultSourceSeasonId` của registry): dòng phụ có nhãn "mùa cũ". */
+  oldSeason: boolean;
+  savePayload: TeamSavePayload;
 }
 
 /** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
-function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
+export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
   if (locale === 'zh') return entry.nameZh?.trim() || entry.sourceConfigId;
   return entry.displayNameVi || VI_UNAVAILABLE;
 }
@@ -232,6 +268,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
   const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
   const links = await heroLinkBuilder(locale);
+  const { defaultSourceSeasonId } = await seasonPages();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
     locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
@@ -259,6 +296,12 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
       ...catalogPins(catalog),
       lookupLinks: recordLookupLinks(record, resolveLookupId),
       heroes,
+      oldSeason: isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId),
+      savePayload: {
+        schema: 1,
+        kind: 'recommended',
+        items: { '': saveItem(fromRecommended(record, resolveLookupId, { id: BUILD_DRAFT_ID, seasonId: entry.sourceSeasonId })) },
+      },
     };
     return { params: { team: entry.routeSegment }, props };
   }));
@@ -274,12 +317,16 @@ export interface LegacyDetailProps {
   legacyTeamsSha256: string;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
+  /** Chỉ đội gốc: biến thể đội khác chỉ biết lúc chạy (`?variant`) nên nháp được dựng lúc bấm lưu. */
+  savePayload: TeamSavePayload;
 }
 
 export async function legacyDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
   const website = await websiteDisplayPublicationSnapshot();
   const teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> = json(website.publicFiles['teams.json']);
+  const teamsById = new Map(teams.map((team) => [team.id, team]));
+  const ids = await lookupIdResolver();
   const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
   const resolve = await zhNameResolver();
   const links = await heroLinkBuilder(locale);
@@ -307,7 +354,14 @@ export async function legacyDetailPaths(locale: SiteLocale) {
       ordinal > 1 ? String(ordinal) : null,
     ].filter(Boolean).join(' · ');
     const heroes = links((heroesById.get(entry.legacyTeamId) ?? []).map((name) => ({ raw: resolve(name), vi: name })));
-    const props: LegacyDetailProps = { entry, title: title(entry), pageLabel, heroes, ...catalogPins(catalog) };
+    const sourceTeam = teamsById.get(entry.legacyTeamId);
+    if (!sourceTeam) throw new Error(`Legacy source team missing for the save payload: ${entry.legacyTeamId}`);
+    const savePayload: TeamSavePayload = {
+      schema: 1,
+      kind: 'legacy',
+      items: { '': saveItem(fromLegacy(sourceTeam, ids, { legacyTeamId: entry.legacyTeamId, id: BUILD_DRAFT_ID })) },
+    };
+    const props: LegacyDetailProps = { entry, title: title(entry), pageLabel, heroes, savePayload, ...catalogPins(catalog) };
     return { params: { team: entry.routeSegment }, props };
   });
 }
@@ -320,6 +374,8 @@ export interface KhaiHoangDetailProps {
   khaiHoangSha256: string;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
+  /** Mọi biến thể: nút lưu đọc biến thể lúc bấm từ `?variant`. */
+  savePayload: TeamSavePayload;
 }
 
 export async function khaiHoangDetailPaths(locale: SiteLocale) {
@@ -327,6 +383,8 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
   const website = await websiteDisplayPublicationSnapshot();
   const source: { teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> } = json(website.publicFiles['khaihoang.json']);
   const heroesById = new Map(source.teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
+  const teamsById = new Map(source.teams.map((team) => [team.id, team]));
+  const ids = await lookupIdResolver();
   const resolve = await zhNameResolver();
   const links = await heroLinkBuilder(locale);
   let title: (entry: KhaiHoangRouteEntry) => string;
@@ -345,6 +403,7 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
       pageLabel: ordinal > 1 ? `${title(entry)} · ${ordinal}` : title(entry),
       khaiHoangSha256: catalog.khaiHoangSha256,
       heroes: links((heroesById.get(entry.khaiHoangTeamId) ?? []).map((name) => ({ raw: resolve(name), vi: name }))),
+      savePayload: khaiHoangSavePayload(teamsById.get(entry.khaiHoangTeamId), ids),
     };
     return { params: { team: entry.routeSegment }, props };
   });

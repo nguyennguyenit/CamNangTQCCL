@@ -20,7 +20,8 @@ import {
   referenceTeam,
   sureCell,
 } from "./analyze-map.js";
-import { createTacticIdResolver } from "./lookup-ids.js";
+import { createBookNameIndex, createTacticIdResolver } from "./lookup-ids.js";
+import { createSaveButton } from "./my-teams-save-button.js";
 import {
   SEASON_QUERY_KEY,
   TEAM_QUERY_KEY,
@@ -395,6 +396,7 @@ export function initAnalyze(deps, mount) {
   };
   const INDEX_BY_KIND = { hero: indexes.heroes, tactic: indexes.tactics, book: indexes.books };
   const tacticIdOf = createTacticIdResolver(deps.tacticsDict);
+  const bookIdOf = createBookNameIndex(deps.booksDict || []);
   const resolveRaw = zh ? createRawNameResolver(deps.heroesDict, deps.tacticsDict, deps.booksDict || []) : null;
 
   /** Nhãn hiển thị của một mục từ điển: bản vi tên Việt chuẩn, bản zh chữ Hán gốc. */
@@ -638,13 +640,25 @@ export function initAnalyze(deps, mount) {
   const compareSub = el("span", { class: "rt-sub" });
   const shareBtn = el("button", { type: "button", class: "ana-btn ana-share" }, L("Chép link", "复制链接"));
   const pngBtn = el("button", { type: "button", class: "ana-btn ana-png" }, L("Tải ảnh PNG", "下载 PNG 图片"));
+  // Đội nháp dựng LÚC BẤM từ đội đã xác nhận đang có (Soi đội không có hash nguồn và không có link nguồn).
+  const saveBtn = createSaveButton({
+    className: "ana-btn mt-save-btn",
+    build: async () => {
+      const team = confirmedTeam(draft);
+      if (!team) throw new Error("no-draft");
+      const { fromAnalyze } = await import("./my-teams-sources.js");
+      const name = team.heroes.map((member) => nameOf("hero", member.hero)).join(" · ");
+      const { draft: built, defaultGroup, unresolved } = fromAnalyze(team, { name });
+      return { draft: built, defaultGroup, unresolved };
+    },
+  });
   const shareNote = el("p", { class: "ana-note ana-share-note", role: "status" });
   const compareCard = el("section", { class: "ana-card ana-compare", hidden: "" }, [
     el("header", { class: "ana-card-head" }, [
       el("h2", { class: "ana-card-title" }, L("3 · Đội có sẵn tương tự", "3 · 相似的现有队伍")),
       compareSub,
     ]),
-    el("div", { class: "ana-compare-actions" }, [shareBtn, pngBtn]),
+    el("div", { class: "ana-compare-actions" }, [saveBtn, shareBtn, pngBtn]),
     shareNote,
     compareBody,
     sampleBox,
@@ -988,7 +1002,7 @@ export function initAnalyze(deps, mount) {
 
   /* ----- Kết quả đối chiếu ----- */
   const recordName = (record) => {
-    const reference = referenceTeam(record);
+    const reference = referenceTeam(record, tacticIdOf, bookIdOf);
     const heroNames = () => reference.slots.map((slot) => nameOf("hero", slot.alternatives[0]?.canonicalId, slot.name, slot.raw)).filter(Boolean).join(" · ");
     if (record.sourceConfigId) return zh ? record.nameZh || heroNames() : record.displayNameVi || heroNames();
     return zh ? heroNames() : record.name || heroNames();
@@ -1089,8 +1103,8 @@ export function initAnalyze(deps, mount) {
     const doi = encodeTeamParam(team);
     writeUrl({ [SEASON_QUERY_KEY]: season, [TEAM_QUERY_KEY]: doi }, push);
     const standardRecords = (loaded.index?.records || []).filter((record) => season === "all" || record.sourceSeasonId === season);
-    const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5, tacticIdOf });
-    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5, tacticIdOf });
+    const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
+    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
     compared = { team, season, standard, other };
     compareSub.textContent = L("Theo số tướng rồi số chiến pháp khớp", "按相同武将数、再按相同战法数排序");
     compareBody.replaceChildren(

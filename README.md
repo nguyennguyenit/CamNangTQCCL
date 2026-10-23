@@ -10,12 +10,15 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Hash cũ của SPA (`#team-pk`, `#meta-cu`, `#khaihoang`, `#lookup?group=…`, `#heroes`, `#tactics`…) và URL `/` không hash có khóa cũ được Landing chuyển tiếp sang đường dẫn mới, giữ query; bảng chuyển tiếp ở `js/legacy-routes.js`.
 - Hai trang danh sách đội dùng chung một browser và một kiểu thẻ: search toàn văn, một ô chọn mùa nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo mùa đang chọn, chuyển **Thẻ / Thẻ gọn / Bảng** (`?view=luoi`, `?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
+- Mỗi mùa cũ của Đội chuẩn có trang tĩnh riêng `/doi-chuan/<mã mùa>/` (`/doi-chuan/pk-s24/`, `/doi-chuan/s1/`; bản zh dưới `/zh/`): đủ mọi đội của mùa nhóm theo tier, có trong sitemap và JSON-LD, đọc được khi không chạy JavaScript, không có khung comment. `/doi-chuan/` (mùa hiện tại) liệt kê các mùa còn lại ở khối "Các mùa khác" bằng link thật; trang đội của mùa cũ có nhãn "mùa cũ". Chỉ Đội chuẩn có trang mùa (Đội khác chưa có dữ liệu mùa); `?season=` vẫn là bộ lọc của trang danh sách.
 - Nội dung đội và Tra cứu có sẵn trong HTML (đọc được không cần JavaScript, kể cả với crawler/AI): trang chi tiết đội render đủ tướng, chiến pháp, binh thư, ghi chú; bốn trang danh sách đội render trạng thái mặc định; JavaScript chỉ thêm lọc, đổi mùa, "Xem thêm", hộp thoại. Trang đội, trang nhóm và trang riêng Tra cứu có JSON-LD; `/llms.txt` dẫn tới bộ chữ thuần theo mục `/llms/…` và bản gộp `/llms-full.txt`.
 - Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một hàng nút (mặc định kịch bản đầu theo registry). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Gợi ý đội có một ô "Mùa bạn đang chơi" (`?season=`, mặc định `defaultSourceSeasonId`) và gợi ý từ Đội chuẩn của mùa đó, đội cũ chỉ lấp chỗ trống; Soi đội đối chiếu với Đội chuẩn theo mùa (`?season=`) và Đội khác. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu local 251 tướng, 409 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; HTML có đủ mọi mục, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` với slug đóng băng trong `pipeline/lookup-route-handles.json`; link Tra cứu từ trang đội trỏ tới trang riêng. `/tra-cuu/` là mục lục.
 - Theo dõi chiêu mộ (store schema v2, `js/recruit-tracker-store.js`): nhiều tài khoản, ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", "Có 5★"), Hoàn tác, nhật ký sửa/xóa từng dòng, đồng bộ số lượt từ game, gói hạn giờ (đổi tên, ngày hết hạn, lưu trữ, xóa), thống kê; dữ liệu nằm trong `localStorage`, xuất/nhập JSON (nhập = gộp). Đăng nhập Google là tuỳ chọn: bật đồng bộ cloud qua `community-worker` (`/api/recruit`, gộp theo từng bản ghi).
 - Soi screenshot qua Worker + nhà cung cấp AI OpenAI-compatible (tab AI của `/quan-tri/`: nhà cung cấp và API key dùng chung, mỗi tính năng AI có chuỗi failover riêng gồm nhà cung cấp, model, mức effort cùng timeout/trần tổng; mẫu DeepSeek, OpenCode Zen). AI chỉ chép chữ in trong ảnh (không đoán tướng qua chân dung, không chọn team); người dùng xác nhận từng ô trong editor (hoặc nhập tay), rồi frontend diff từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận chia sẻ qua link `?doi=v1.…` (chỉ ID canonical), lưu lịch sử 10 mục trên máy và xuất thẻ PNG.
-- Gợi ý portfolio tối đa 5 đội bằng engine local từ Đội chuẩn của mùa đang chọn (đội cũ `teams.json` chỉ lấp khi mùa thiếu, gắn nhãn tham khảo). Mục "Thiếu món" cho bấm "Tôi có…" để bổ sung kho hoặc chọn món bù (chiến pháp tướng đó mang ở cấu hình khác cùng mùa, có trong kho); nút "Vì sao?" gọi Worker mode chỉ văn bản `explainSubstitute` để AI giải thích món bù — AI không chọn đội hay món.
+- Gợi ý portfolio tối đa 5 đội bằng engine local từ Đội chuẩn của mùa đang chọn (đội cũ `teams.json` chỉ lấp khi mùa thiếu, gắn nhãn tham khảo). Mục "Thiếu món" cho bấm "Tôi có…" để bổ sung kho hoặc chọn món bù (chiến pháp tướng đó mang ở cấu hình khác cùng mùa, có trong kho); nút "Vì sao?" gọi Worker mode chỉ văn bản `explainSubstitute` để AI giải thích món bù — AI không chọn đội hay món. Mục "Đội dựng được nhưng tranh món với đội đã chọn" (sau danh sách đội, trước "Thiếu món") hiện tối đa 5 đội đủ kho nhưng dùng chung tướng/chiến pháp với đội đã chọn, kèm tên đội đang giữ món; không có xung đột thì không hiện. Khối "Độ phủ kho" (đầu màn kết quả) tính cho mùa đang chọn, từng đội xét độc lập (không ràng buộc dùng chung): theo bậc, số đội ráp đủ / thiếu đúng 1 món / tổng, bấm ô mở danh sách đội (đội thiếu 1 ghi món thiếu kèm nút "Tôi có…"), cùng tiến độ sưu tầm tướng/chiến pháp so với Đội chuẩn của mùa; mùa không có đội hiện trạng thái rỗng.
+- Gợi ý đội (`/goi-y-doi-tu-kho/`) đồng bộ kho là **tùy chọn**: khách vẫn dùng kho `localStorage` như cũ; đăng nhập Google thì lần đầu hỏi gộp kho local vào hộp `main`, rồi đồng bộ qua `community-worker` (`/api/roster`, `js/roster-sync.js`, gộp theo từng bản ghi, hợp đồng ở [docs/roster-sync.md](docs/roster-sync.md)). Bảng chọn nhanh (`js/roster-picker.js`) cho lọc rồi "Chọn tất cả N mục" để nhập kho hàng loạt; công cụ chạy cả khi Worker AI chưa cấu hình (chỉ ẩn đọc ảnh và giải thích AI).
+- Đội của tôi (`/doi-cua-toi/`, `/zh/doi-cua-toi/`, `noindex`, **bắt buộc đăng nhập Google**, không chế độ offline cho đội): hộp kho tự đặt tên, nhóm (mặc định Khai Hoang, Ghép Team), đội là bản sao độc lập lưu từ Đội chuẩn/Đội khác, Khai hoang, Gợi ý đội và Soi đội (nút "Lưu vào đội của tôi"); trình soạn có cấu trúc kèm cột chữ tự do, dấu "chưa có trong kho", cảnh báo trùng tướng, báo "Bản gốc đã cập nhật" nhưng không ghi đè bản của người chơi. Menu tài khoản có "Đội của tôi"; mục cũ tới `/doi-cong-dong/?mine=1` đổi tên "Đội đã đăng". Không chia sẻ đội.
 - Giao diện Sổ binh pháp dùng chung một shell (header, menu thả, menu mobile, footer), một stylesheet và bộ token ở `docs/design/so-binh-phap/tokens.json`; theme sáng/tối theo lựa chọn đã lưu hoặc hệ điều hành, không nháy khi chuyển trang.
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung bảy tool (bề mặt P*; chưa deploy).
 
@@ -76,6 +79,18 @@ node scripts/design-compare.mjs --phase 05 --theme dark   # cần npm run previe
 
 Playwright cần Chromium cài một lần bằng `npx playwright install chromium`.
 
+### Pre-push hook
+
+CI (`.github/workflows/mcp-worker.yml`) chạy `check:repository` đầy đủ trên mọi pull request, không chạy khi push thẳng `main`, và quét `main` mỗi thứ Hai 03:23 UTC. Hook local thay chốt chặn đó cho các lần push thẳng. Bật một lần cho mỗi clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
+Khi `git push`, hook `.githooks/pre-push` từ chối working tree bẩn (các kiểm đọc file trên đĩa; dùng `git stash -u`), rồi dừng ở lỗi đầu tiên của: `check:local-secrets`, `check:workflow-build`, `check:knowledge-bundle`, `typecheck` trong `mcp-worker`; `npm test` và `typecheck` trong `community-worker`; `python3 -m unittest discover -s tests`. Cần `npm ci` trong `mcp-worker/` và `community-worker/` trước. Push xóa nhánh hoặc tag bỏ qua hook.
+
+Push tới `main` chạy thêm `npm run build && npm run verify` (cùng cổng với `pages-deploy.yml`). Hook không chạy `npm run test:node` và e2e vì cần `dist/` mới và rất lâu; PR CI chạy đủ. `git push --no-verify` bỏ qua hook.
+
 ## Rebuild dữ liệu
 
 Đội theo kịch bản dùng builder riêng; xem [bảo trì dữ liệu đội theo kịch bản](docs/season-team-data.md)
@@ -108,12 +123,12 @@ tiếng Việt đã review: 252 tướng (202 từ SGSDeck/baseline + 50 chụp 
 [contract SGSDeck private/public](docs/sgsdeck-catalog.md). Chủ project xác nhận
 quyền import trong phạm vi sáu catalog ngày 2026-09-12; đây không phải open license.
 
-Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`), build sẽ dừng cho tới khi ledger slug trang riêng được làm mới; slug đã cấp không bao giờ đổi:
+Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`), build sẽ dừng cho tới khi ledger slug trang riêng được làm mới; slug đã cấp không bao giờ đổi. Id binh thư (`book:<slug>`) viết tay trong `pipeline/books-han-viet-map.json` và đi cùng mục (đổi tên Việt thì đưa tên cũ vào `aliases`, xem `docs/unified-lookup.md`):
 
 ```bash
 python3 -m pipeline.lookup_route_handles --write
 python3 -m pipeline.lookup_route_handles --check
-node scripts/report-zh-gaps.mjs
+node scripts/report-zh-gaps.mjs   # sinh lại docs/zh-gaps.md; npm run verify chạy --check
 ```
 
 Chi tiết ở [deployment guide](docs/deployment-guide.md#static-pages).
@@ -178,7 +193,7 @@ plans/                     # kế hoạch/báo cáo lịch sử, không phải r
 - Sửa giao diện thì sửa token/component trong `docs/design/so-binh-phap/tokens.json` trước, rồi chạy `node scripts/design-tokens.mjs --check`; CSS không giữ mã màu hay giá trị vi mô ngoài khối token.
 - Theme lưu ở `localStorage.theme`; không có giá trị thì theo `prefers-color-scheme` của hệ điều hành.
 - `data/tactics-generic.json` có 29 nguồn bổ sung; 27 record đang mang trạng thái `pending` sau merge vào `tactics.json`.
-- Tracker lưu local; chỉ khi người dùng đăng nhập mới đồng bộ bản ghi chiêu mộ lên D1 của `community-worker`. Scan state lưu local, loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
+- Tracker lưu local; chỉ khi người dùng đăng nhập mới đồng bộ bản ghi chiêu mộ lên D1 của `community-worker`. Kho Gợi ý đội cũng chỉ lên D1 (`roster_records`) sau khi đăng nhập và đồng ý gộp; đội của `/doi-cua-toi/` luôn nằm trên D1 theo tài khoản (không ghi `localStorage`). Scan state lưu local, loại bỏ ảnh, base64, blob và Turnstile token; ảnh chỉ giữ trong bộ nhớ của phiên UI.
 - Ảnh soi đội và ảnh chiến báo được gửi tới nhà cung cấp AI trong chuỗi của tính năng đó ở tab AI của `/quan-tri/` (mặc định DeepSeek); nên crop thông tin tài khoản trước khi dùng. Soi đội chỉ lưu đếm ẩn danh số ô phải sửa theo ngày (không ảnh, không tên, không IP); ảnh chỉ được lưu khi người dùng đăng nhập, tick đồng ý và tự bấm "Gửi ảnh này" (admin duyệt, từ chối thì xoá ảnh).
 
 ## Tham chiếu

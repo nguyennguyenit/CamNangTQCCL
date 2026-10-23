@@ -57,5 +57,5 @@ Toàn bộ lệnh ở bước 2 xanh trước bước 5.
 - [x] (hỏi) Kiểm SQLite D1 + bookmark Time Travel — D1 chặn `sqlite_version()`; `log(100)` = 2 trên production; bookmark `00000544-00000000-0000510b-48686421508329cd216f59e064e90721`
 - [x] (hỏi) Migrate remote → deploy Worker — `0008` áp dụng, Worker `5ba5760f-c671-4a4b-9866-763cdb53ec16`
 - [x] (hỏi) Push `main` + chạy `pages-deploy.yml` — PR #24 merge `5fe2933`, run `39621620745` xanh, `https://b60ddcd6.tqccl.pages.dev`; production vi/zh hiện "Chưa mở mùa", `noindex`, không lỗi JS
-- [ ] Mở mùa đầu tiên
+- [x] Mở mùa đầu tiên — `binh-dien-xuan-thu` (Binh Diễn Xuân Thu / 兵演春秋), mở 2026-10-22T11:05Z qua `/quan-tri/`, có 1 dòng audit `season.open`
 - [ ] Smoke production vi + zh

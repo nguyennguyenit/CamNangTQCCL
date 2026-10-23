@@ -1,7 +1,8 @@
+import * as lookupIdsModule from '../js/lookup-ids.js';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  LOOKUP_HUB_TABLES, bookLookupId, bookSourceAliases, createLookupIdResolver, groupForId, lookupDerivedSlug, lookupHref, lookupHubTarget, lookupItemPath, lookupProfilePath, lookupSlug,
+  LOOKUP_HUB_TABLES, bookSourceAliases, createLookupIdResolver, groupForId, lookupDerivedSlug, lookupHref, lookupHubTarget, lookupItemPath, lookupProfilePath, lookupSlug,
   setLookupRouteHandles, setLookupRouteHandlesFromJSON,
 } from '../js/lookup-ids.js';
 import {createTacticIdResolver, createTacticNameIndex} from '../js/lookup-ids.js';
@@ -37,14 +38,13 @@ test('tactic name index: tên hiển thị hiện hành thắng tên Hán-Việt
 test('slug matches pipeline canonical ids (đ, dấu, ký tự lạ)', () => {
   assert.equal(lookupSlug('Đoạt Hồn Hiệp Phách'), 'doat-hon-hiep-phach');
   assert.equal(lookupSlug('  Tinh · Phong Thỉ Trận! '), 'tinh-phong-thi-tran');
-  assert.equal(bookLookupId({viet: 'Dĩ Trực Báo Oán'}), 'book:di-truc-bao-oan');
-  assert.equal(bookLookupId({viet: '  '}), null);
+  assert.equal('bookLookupId' in lookupIdsModule, false);
 });
 
 test('resolver maps source Chinese (incl. aliases, modified prefixes) and Vietnamese names to lookup ids', () => {
   const resolve = createLookupIdResolver({
     tactics: [{id: 'tactic:phong-thi-tran', chinese: '锋矢阵', aliases: ['鋒矢陣'], viet: 'Phong Thỉ Trận'}],
-    books: [{chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời'}],
+    books: [{id: 'book:thuan-thien-thuan-toi', chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời'}],
   });
   assert.equal(resolve.tactic('鋒矢陣', null), 'tactic:phong-thi-tran');
   // Chiến pháp cải tạo (`精・`) dẫn về hồ sơ chiến pháp gốc.
@@ -60,8 +60,8 @@ test('resolver maps source Chinese (incl. aliases, modified prefixes) and Vietna
 test('binh thư: tên Hán nguồn quyết định hồ sơ; tên Việt chỉ dùng khi ô không có tên nguồn', () => {
   const resolve = createLookupIdResolver({
     books: [
-      {chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời', sourceNames: ['順天應時']},
-      {chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
+      {id: 'book:thuan-thien-thuan-toi', chinese: '顺天应时', viet: 'Thuận Thiên Thuận Tời', sourceNames: ['順天應時']},
+      {id: 'book:di-truc-bao-oan', chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
     ],
   });
   // Bản dịch ô lệch tên Việt của từ điển: tên nguồn vẫn dẫn đúng hồ sơ.
@@ -72,6 +72,45 @@ test('binh thư: tên Hán nguồn quyết định hồ sơ; tên Việt chỉ d
   // Nội dung đội gốc chỉ có tên Việt.
   assert.equal(resolve.book(null, 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
   assert.equal(resolve.book('—', 'Dĩ Trực Báo Oán'), 'book:di-truc-bao-oan');
+});
+
+test('binh thư: id cố định sau khi đổi tên Việt, tra được bằng Hán, tên nguồn, tên mới và tên cũ trong aliases', () => {
+  const resolve = createLookupIdResolver({
+    books: [
+      {id: 'book:di-truc-bao-oan', chinese: '以直报怨', viet: 'Lấy Thẳng Báo Oán', aliases: ['Dĩ Trực Báo Oán'], sourceNames: ['以直報怨']},
+      {id: 'book:khai-hap', chinese: '开合', viet: 'Khai Hạp'},
+    ],
+  });
+  const fixed = 'book:di-truc-bao-oan';
+  assert.equal(resolve.book('以直报怨', null), fixed);
+  assert.equal(resolve.book('以直報怨', 'tên bất kỳ'), fixed);
+  assert.equal(resolve.book(null, 'Lấy Thẳng Báo Oán'), fixed);
+  assert.equal(resolve.book(null, 'Dĩ Trực Báo Oán'), fixed);
+  assert.equal(resolve.book('—', 'dĩ trực báo oán'), fixed);
+  // Không bao giờ dựng id từ slug tên mới.
+  assert.equal(resolve.book(null, 'Khai Hạp'), 'book:khai-hap');
+  assert.notEqual(resolve.book(null, 'Lấy Thẳng Báo Oán'), 'book:lay-thang-bao-oan');
+  assert.equal(resolve.book(null, 'Tên Không Có'), null);
+});
+
+test('binh thư: dòng không có id hợp lệ bị bỏ, không lùi về slug tên Việt', () => {
+  const resolve = createLookupIdResolver({books: [{chinese: '无id', viet: 'Không Id'}, {id: '', chinese: '空', viet: 'Id Rỗng'}, {id: 'tactic:x', chinese: '错', viet: 'Sai Loại'}]});
+  assert.equal(resolve.book(null, 'Không Id'), null);
+  assert.equal(resolve.book('无id', null), null);
+  assert.equal(resolve.book(null, 'Id Rỗng'), null);
+  assert.equal(resolve.book(null, 'Sai Loại'), null);
+  assert.deepEqual(bookSourceAliases([{chinese: '无id', viet: 'Không Id'}], [{kind: 'book', aliases: ['無'], displayNameVi: 'Không Id'}]), {});
+});
+
+test('bookSourceAliases: join theo chinese/sourceNames, tên Việt đổi vẫn gắn đúng id', () => {
+  const books = [{id: 'book:di-truc-bao-oan', chinese: '以直报怨', viet: 'Lấy Thẳng Báo Oán', aliases: ['Dĩ Trực Báo Oán'], sourceNames: ['以直報怨']}];
+  const identity = [
+    // Mục danh tính còn mang tên Việt cũ, không có trong viet nữa: join qua alias/tên nguồn.
+    {kind: 'book', aliases: ['以直報怨', '以直抱怨'], displayNameVi: 'Dĩ Trực Báo Oán'},
+  ];
+  assert.deepEqual(bookSourceAliases(books, identity), {'book:di-truc-bao-oan': {aliases: ['以直抱怨'], formerNames: ['以直抱怨']}});
+  // Mục danh tính có tên Việt lạ nhưng chữ Hán trùng chinese của sách: vẫn join theo chinese.
+  assert.deepEqual(bookSourceAliases(books, [{kind: 'book', aliases: ['以直报怨', '以直抱怨'], displayNameVi: 'Tên Lạ'}]), {'book:di-truc-bao-oan': {aliases: ['以直抱怨'], formerNames: ['以直抱怨']}});
 });
 
 test('resolver hero: tên Hán nguồn rồi tên Việt chính xác; không đoán theo tên gần giống', () => {
@@ -90,9 +129,9 @@ test('resolver hero: tên Hán nguồn rồi tên Việt chính xác; không đo
 
 test('bookSourceAliases: tên nguồn hiện hành không thành "tên cũ", tên loại trừ không gắn vào hồ sơ', () => {
   const books = [
-    {chinese: '出奇制胜', viet: 'Đánh Bất Ngờ Thắng', sourceNames: ['出奇制勝']},
-    {chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
-    {chinese: '开合', viet: 'Khai Hạp'},
+    {id: 'book:danh-bat-ngo-thang', chinese: '出奇制胜', viet: 'Đánh Bất Ngờ Thắng', sourceNames: ['出奇制勝']},
+    {id: 'book:di-truc-bao-oan', chinese: '以直报怨', viet: 'Dĩ Trực Báo Oán', sourceNames: ['以直報怨'], excludedSourceNames: ['以退為進']},
+    {id: 'book:khai-hap', chinese: '开合', viet: 'Khai Hạp'},
   ];
   const aliases = bookSourceAliases(books, [
     {kind: 'book', aliases: ['出奇制勝'], displayNameVi: 'Đánh Bất Ngờ Thắng'},

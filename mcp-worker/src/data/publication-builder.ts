@@ -4,7 +4,8 @@
  * Layout and byte measurements: see the header of `publication-projection.ts`.
  */
 import { loadWebsiteDisplay, localizeData } from "../../../js/website-display.js";
-import { bookLookupId, createLookupIdResolver, lookupProfilePath } from "../../../js/lookup-ids.js";
+import { bookRowId, createLookupIdResolver, LOOKUP_GROUP_SLUGS, groupForId, lookupDerivedSlug, lookupProfilePath } from "../../../js/lookup-ids.js";
+import { lookupDetailPath, parseLookupDetailLedger } from "../../../js/lookup-detail-ledger.js";
 import { innateHolderIndex } from "../../../js/lookup-innate-holders.js";
 import { localePath } from "../../../js/i18n.js";
 import { stableStringify } from "../domain/contracts.js";
@@ -44,6 +45,8 @@ export interface PublicationSources {
   recommended: RecommendedGenerationBytes;
   /** `pipeline/team-route-handles.json` bytes. */
   routeLedger: Uint8Array;
+  /** `pipeline/lookup-route-handles.json` bytes: the frozen slug of every Tra cứu page (`/tra-cuu/<nhóm>/<slug>/`). */
+  lookupRouteLedger: Uint8Array;
   /** `data/website-display.json` bytes. */
   websiteDisplay: Uint8Array;
   /** Website-public files that are not MCP artifacts: khaihoang.json, lookup-catalog.json, lookup-manifest.json. */
@@ -311,8 +314,7 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
   catalogRows("troopMods", "troop-mod");
   catalogRows("buildings", "building");
   for (const book of input.books) {
-    const id = bookLookupId(book);
-    if (id === null) continue;
+    const id = bookRowId(book) ?? fail(`book ${JSON.stringify(text(book.viet) ?? text(book.chinese))} has no valid frozen id`);
     output.push(entity("book", id, text(book.viet) ?? text(book.hanViet) ?? fail("book has no name"), text(book.chinese), text(book.hanViet), [...strings(book.sourceNames), ...strings(book.aliases)], pick(book, BOOK_FIELDS)));
   }
   const seen = new Set<string>();
@@ -320,7 +322,7 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
     const id = record.id as string;
     if (seen.has(id)) fail(`duplicate catalog entity: ${id}`);
     seen.add(id);
-    if (lookupProfilePath(id) === null) fail(`catalog entity id is not routable: ${id}`);
+    if (groupForId(id) === null) fail(`catalog entity id is not routable: ${id}`);
   }
   return output.sort(
     (left, right) => entityShardOrder(left) - entityShardOrder(right) || (left.id as string).localeCompare(right.id as string, "en"),
@@ -815,10 +817,29 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
     ],
   };
 
-  // 9. routes.
+  // 9. routes. Entity pages come from the frozen lookup ledger (checked against the built corpus, `generationId`
+  // and the `books-dict` bytes); ids without a page (`equipment-special:*`) keep the group-page profile route.
+  // Computed locally: nothing here touches the module-global exception table of `js/lookup-ids.js`.
+  const pageIdsByGroup: Record<string, string[]> = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, []]));
+  for (const record of entities) {
+    const id = record.id as string;
+    if (lookupDerivedSlug(id) !== null) pageIdsByGroup[groupForId(id) as string]!.push(id);
+  }
+  let pageRoutes;
+  try {
+    pageRoutes = parseLookupDetailLedger(parseJson(sources.lookupRouteLedger, "lookup-route-handles.json"), pageIdsByGroup, {
+      generationId: String(lookupManifest.generationId),
+      booksSha256: await sha256Hex(need("books-dict")),
+    });
+  } catch (error) {
+    return fail(`lookup route ledger is not valid for this publication: ${error instanceof Error ? error.message : String(error)}`);
+  }
   const routes = [
     ...entities.map((record) => {
-      const vi = lookupProfilePath(record.id as string) as string;
+      const id = record.id as string;
+      const page = pageRoutes.byId.get(id);
+      const vi = page ? lookupDetailPath(page.group, page.slug) : lookupDerivedSlug(id) === null ? lookupProfilePath(id) : null;
+      if (vi === null) return fail(`catalog entity has no route: ${id}`);
       return { id: record.id, kind: "entity", vi, zh: localePath(vi, "zh") };
     }),
     ...teams.map((team) => ({ id: team.route.id, kind: "team", vi: team.route.vi, zh: localePath(team.route.vi, "zh") })),

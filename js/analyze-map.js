@@ -8,6 +8,7 @@ import { canonicalHeroId, normalizeHeroSlot } from "./hero-identity.js";
 import { matchDict, searchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
+import { bookRowId } from "./lookup-ids.js";
 
 // Chất tướng Hán -> Việt.
 const STAT_MAP = {
@@ -53,7 +54,8 @@ function canonicalTacticId(name, idOf = null) {
 /**
  * ID canonical của một tên Việt theo loại: `hero:` (theo hero-identity, giữ tiền tố SP/CO/40Y),
  * `tactic:`, `book:`. Tên rỗng/không tạo được slug -> `null`. Chiến pháp có `idOf` (tên → mã theo danh mục,
- * `createTacticIdResolver`) thì dùng mã của danh mục thay vì slug tên.
+ * `createTacticIdResolver`) thì dùng mã của danh mục thay vì slug tên. Binh thư KHÔNG BAO GIỜ suy mã từ slug tên:
+ * cần `idOf` (`createBookNameIndex`, tên → `row.id` cố định), không có thì `null`.
  * @param {"hero"|"tactic"|"book"} kind
  */
 export function entityId(kind, name, idOf = null) {
@@ -66,12 +68,14 @@ export function entityId(kind, name, idOf = null) {
     }
   }
   if (kind === "tactic" && idOf) return idOf(name) || null;
+  if (kind === "book") return idOf ? idOf(name) || null : null;
   const slug = slugOf(name);
   return slug ? `${kind}:${slug}` : null;
 }
 
-/** ID canonical của một bản ghi từ điển: chiến pháp dùng `id` của bản ghi (tên Việt có thể đã đổi), còn lại suy từ tên Việt. */
+/** ID canonical của một bản ghi từ điển: chiến pháp và binh thư dùng `id` của bản ghi (tên Việt có thể đã đổi), còn lại suy từ tên Việt. */
 function recordEntityId(kind, record) {
+  if (kind === "book") return bookRowId(record);
   if (kind === "tactic" && typeof record?.id === "string" && record.id.startsWith("tactic:") && typeof record.viet === "string" && record.viet.trim()) return record.id;
   return entityId(kind, record?.viet);
 }
@@ -114,9 +118,11 @@ function mapName(cn, dict, { unknownLabel = null, kind = "tactic" } = {}) {
     canonicalId:
       m.matched && kind === "hero"
         ? canonicalHeroId(viet)
-        : m.matched
-          ? recordEntityId("tactic", { ...m.record, viet }) ?? canonicalTacticId(viet)
-          : null,
+        : m.matched && kind === "book"
+          ? recordEntityId("book", m.record)
+          : m.matched
+            ? recordEntityId("tactic", { ...m.record, viet }) ?? canonicalTacticId(viet)
+            : null,
   };
 }
 
@@ -382,9 +388,13 @@ function safeHeroSlot(value) {
   }
 }
 
-function nameEntry(kind, name, alternatives = [], raw = "", tacticIdOf = null) {
-  const ids = [name, ...alternatives].map((value) => entityId(kind, value, tacticIdOf)).filter(Boolean);
-  return ids.length ? { ids, name, raw: typeof raw === "string" ? raw : "" } : null;
+function nameEntry(kind, name, alternatives = [], raw = "", idOf = null) {
+  const names = [name, ...alternatives].filter((value) => typeof value === "string" && value.trim());
+  const ids = names.map((value) => entityId(kind, value, idOf)).filter(Boolean);
+  if (ids.length) return { ids, name, raw: typeof raw === "string" ? raw : "" };
+  // Tên binh thư không tra được id (không có trong từ điển) vẫn là ô đội ghi: ô tồn tại nhưng không id nào khớp,
+  // để đối chiếu báo lệch thay vì coi như đội không ghi binh thư.
+  return kind === "book" && names.length ? { ids: [], name, raw: typeof raw === "string" ? raw : "" } : null;
 }
 
 const referenceCache = new WeakMap();
@@ -394,8 +404,11 @@ const referenceCache = new WeakMap();
  * `tacticSlotsVi`, `bookSlotsVi`), Đội khác (`legacyContent.heroes`) hoặc đội gốc (`heroes[].name`).
  * Chiến pháp/binh thư mang `alternatives` được tính là cùng một ô.
  */
-export function referenceTeam(record, tacticIdOf = null) {
-  if (record && typeof record === "object" && referenceCache.get(record)?.tacticIdOf === tacticIdOf) return referenceCache.get(record).team;
+export function referenceTeam(record, tacticIdOf = null, bookIdOf = null) {
+  if (record && typeof record === "object") {
+    const cached = referenceCache.get(record);
+    if (cached?.tacticIdOf === tacticIdOf && cached?.bookIdOf === bookIdOf) return cached.team;
+  }
   const heroes = Array.isArray(record?.legacyContent?.heroes) ? record.legacyContent.heroes : record?.heroes || [];
   const slots = heroes.map((hero) => {
     if (typeof hero?.displayNameVi === "string" && Array.isArray(hero.tacticSlotsVi)) {
@@ -407,7 +420,7 @@ export function referenceTeam(record, tacticIdOf = null) {
         tactics: hero.tacticSlotsVi
           .map((name, index) => nameEntry("tactic", name, [], hero.tacticSlotsRaw?.[index], tacticIdOf))
           .filter(Boolean),
-        book: nameEntry("book", hero.bookSlotsVi?.[0], [], hero.bookSlotsRaw?.[0]),
+        book: nameEntry("book", hero.bookSlotsVi?.[0], [], hero.bookSlotsRaw?.[0], bookIdOf),
       };
     }
     const slot = safeHeroSlot(hero);
@@ -419,11 +432,11 @@ export function referenceTeam(record, tacticIdOf = null) {
       tactics: (hero?.tactics || [])
         .map((tactic) => nameEntry("tactic", tactic?.name, tactic?.alternatives || [], "", tacticIdOf))
         .filter(Boolean),
-      book: book ? nameEntry("book", book.name, book.alternatives || []) : null,
+      book: book ? nameEntry("book", book.name, book.alternatives || [], "", bookIdOf) : null,
     };
   });
   const team = { slots };
-  if (record && typeof record === "object") referenceCache.set(record, { tacticIdOf, team });
+  if (record && typeof record === "object") referenceCache.set(record, { tacticIdOf, bookIdOf, team });
   return team;
 }
 
@@ -482,8 +495,8 @@ const tacticHitsFor = (tactics, slot) =>
  *   (đội không ghi binh thư) | `unchecked`.
  * - missingHeroes: ô tướng của đội không ai khớp.
  */
-export function diffTeam(team, record, tacticIdOf = null) {
-  const reference = referenceTeam(record, tacticIdOf);
+export function diffTeam(team, record, tacticIdOf = null, bookIdOf = null) {
+  const reference = referenceTeam(record, tacticIdOf, bookIdOf);
   const members = team?.heroes || [];
   const matches = matchReadHeroesToSlots(
     members.map((member) => member.hero),
@@ -540,9 +553,9 @@ export function diffTeam(team, record, tacticIdOf = null) {
  * xếp theo số tướng khớp rồi số chiến pháp khớp; hoà giữ thứ tự nguồn (thứ tự tier của danh sách).
  * @returns {{record: object, diff: ReturnType<typeof diffTeam>}[]}
  */
-export function compareTeams(team, records, { minHeroes = 2, limit = 5, tacticIdOf = null } = {}) {
+export function compareTeams(team, records, { minHeroes = 2, limit = 5, tacticIdOf = null, bookIdOf = null } = {}) {
   return (records || [])
-    .map((record, order) => ({ record, order, diff: diffTeam(team, record, tacticIdOf) }))
+    .map((record, order) => ({ record, order, diff: diffTeam(team, record, tacticIdOf, bookIdOf) }))
     .filter(({ diff }) => diff.heroHit >= minHeroes)
     .sort((a, b) => b.diff.heroHit - a.diff.heroHit || b.diff.tacticHit - a.diff.tacticHit || a.order - b.order)
     .slice(0, limit)

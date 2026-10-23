@@ -16,7 +16,7 @@ export const HREFLANG: Readonly<Record<SiteLocale, string>> = Object.freeze({ vi
 export const LOCALE_LABEL: Readonly<Record<SiteLocale, string>> = Object.freeze({ vi: 'Tiếng Việt', zh: '中文' });
 
 /** Trang cộng đồng tĩnh (noindex): vẫn có bản Trung nhưng không vào sitemap. */
-export const COMMUNITY_PATHS = Object.freeze(['/chien-bao/', '/quan-tri/']);
+export const COMMUNITY_PATHS = Object.freeze(['/chien-bao/', '/doi-cua-toi/', '/quan-tri/']);
 
 export const otherLocale = (locale: SiteLocale): SiteLocale => (locale === 'zh' ? 'vi' : 'zh');
 

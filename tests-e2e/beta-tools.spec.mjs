@@ -4,6 +4,8 @@ import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { canonicalHeroId } from "../js/hero-identity.js";
 import { buildSeasonCandidates, seasonTacticUsage } from "../js/roster-season-candidates.js";
+import { buildRosterCoverage } from "../js/roster-coverage.js";
+import { createTacticIdResolver } from "../js/lookup-ids.js";
 
 const transparentPng = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+4gZ8WQAAAABJRU5ErkJggg==",
@@ -408,9 +410,10 @@ test.describe("Chiêu mộ", () => {
  */
 async function analyzeFixture(page) {
   const fixture = await page.evaluate(async () => {
-    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }] = await Promise.all([
+    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }, { createBookNameIndex }] = await Promise.all([
       import("/js/analyze-map.js"),
       import("/js/analyze-state.js"),
+      import("/js/lookup-ids.js"),
     ]);
     const json = (path) => fetch(path).then((response) => response.json());
     const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
@@ -420,12 +423,13 @@ async function analyzeFixture(page) {
       json("/data/heroes-dict.json"), json("/data/tactics.json"), json("/data/books-dict.json"),
     ]);
     const indexes = { hero: createEntityIndex(heroes, "hero"), tactic: createEntityIndex(tactics, "tactic"), book: createEntityIndex(books, "book") };
+    const bookIdOf = createBookNameIndex(books);
     const recordOf = (kind, id) => indexes[kind].byId.get(id);
     const compact = (value) => String(value || "").replace(/\s+/gu, "");
     // Chữ Giản thể như in trong game: alias không khoảng trắng khác `chinese`, không có thì `chinese`.
     const printed = (record) => (record.aliases || []).find((alias) => !/\s/u.test(alias) && alias !== record.chinese) ?? compact(record.chinese);
     for (const record of index.records.filter((item) => item.sourceSeasonId === seasons.defaultSourceSeasonId)) {
-      const slots = referenceTeam(record).slots;
+      const slots = referenceTeam(record, null, bookIdOf).slots;
       if (slots.length !== 3) continue;
       const team = {
         heroes: slots.map((slot) => ({
@@ -438,7 +442,7 @@ async function analyzeFixture(page) {
         recordOf("hero", member.hero) && member.tactics.every((id) => id && recordOf("tactic", id)) && member.book && recordOf("book", member.book));
       if (!complete) continue;
       const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
-      const otherMatch = other.records.find((item) => diffTeam(team, item).heroHit >= 2);
+      const otherMatch = other.records.find((item) => diffTeam(team, item, null, bookIdOf).heroHit >= 2);
       if (unsureIndex < 0 || !otherMatch) continue;
       const reads = team.heroes.map((member, position) => ({
         nameCn: position === unsureIndex
@@ -1050,6 +1054,285 @@ test.describe("Gợi ý đội", () => {
     await expect(section.locator(".roster-scan-count")).toHaveText(["Chưa đọc", "Chưa đọc", "Chưa đọc"]);
   });
 
+  /**
+   * Kho của issue #5: đúng tài nguyên của hai đội mùa og-兵演春秋 dùng chung hai chiến pháp. 40Y Lữ Bố Cung được chọn,
+   * Ngô Nữ Kỵ đủ kho nhưng tranh món nên chỉ nằm ở mục tranh món.
+   */
+  function conflictFixture() {
+    const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+    const { generationId } = read("src/data/recommended-reference/current.json");
+    const { records } = read(`src/data/recommended-reference/${generationId}/index.json`);
+    const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
+    const seasonId = "og-兵演春秋";
+    const { teams } = buildSeasonCandidates(
+      records.filter((record) => ["og-bingyan-40y-lvbu-b", "og-bingyan-wunv-cavalry-hubaoqi"].includes(record.sourceConfigId)),
+      seasonId,
+      dicts,
+    );
+    const lvbu = teams.find((team) => team.id === "og-bingyan-40y-lvbu-b");
+    const wunv = teams.find((team) => team.id === "og-bingyan-wunv-cavalry-hubaoqi");
+    const heroNames = (team) => team.heroes.map((hero) => hero.name);
+    const tacticNames = (team) => team.heroes.flatMap((hero) => hero.tactics.filter((tactic) => !tactic.unresolved).map((tactic) => tactic.name));
+    const shared = tacticNames(wunv).filter((name) => tacticNames(lvbu).includes(name));
+    const wunvOnly = tacticNames(wunv).filter((name) => !tacticNames(lvbu).includes(name));
+    const state = (omit = []) => ({
+      ownedHeroes: [...new Set([...heroNames(lvbu), ...heroNames(wunv)])].map((name) => ({ name })),
+      ownedTactics: [...new Set([...tacticNames(lvbu), ...tacticNames(wunv)])].filter((name) => !omit.includes(name)).map((name) => ({ name })),
+      lockedTeams: [],
+      confirmed: true,
+      updatedAt: "2026-10-22T00:00:00.000Z",
+    });
+    return { seasonId, shared, wunvOnly, state };
+  }
+  const CONFLICT_QUERY = "?season=og-%E5%85%B5%E6%BC%94%E6%98%A5%E7%A7%8B";
+  const WUNV_NAME = "Ngô Nữ Kỵ (Tinh·Hổ Báo Kỵ)";
+  const LVBU_NAME = "40Y Lữ Bố Cung (Vương Dị, Pháp Chính)";
+  const stubTurnstile = (page) => page.route("https://challenges.cloudflare.com/**", (route) =>
+    route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+
+  test("Đội tranh món: kho của issue hiện thẻ Ngô Nữ Kỵ cùng chiến pháp bị tranh và đội đang giữ, Thiếu món vẫn còn", async ({ page }) => {
+    const fixture = conflictFixture();
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.getByLabel("Mùa bạn đang chơi")).toHaveValue(fixture.seasonId);
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+
+    const conflict = section.locator(".roster-conflict-section");
+    await expect(conflict.locator("h2")).toHaveText("Đội dựng được nhưng tranh món với đội đã chọn");
+    const card = conflict.locator(".roster-conflicted");
+    await expect(card).toHaveCount(1);
+    await expect(card).toContainText(WUNV_NAME);
+    await expect(card.locator(".roster-tier")).toHaveText("Bậc: T0");
+    for (const name of fixture.shared) await expect(card).toContainText(name);
+    await expect(card).toContainText(LVBU_NAME);
+    await expect(card).not.toContainText("og-bingyan");
+    await expect(card).toContainText("muốn dựng cả hai cần thêm một bản của mỗi món bị tranh");
+    await expect(card.getByRole("button", { name: "Mở đội" })).toBeVisible();
+    await expect(section.locator(".roster-missing-section h2").filter({ hasText: /^Thiếu món$/ })).toHaveCount(1);
+    // Độ phủ kho đứng đầu; mục tranh món nằm sau danh sách đội và trước Thiếu món.
+    const headings = await section.locator(".roster-results h2").allInnerTexts();
+    expect(headings.indexOf("Độ phủ kho")).toBe(0);
+    expect(headings.indexOf("Đội dựng được nhưng tranh món với đội đã chọn")).toBe(2);
+    expect(headings.indexOf("Thiếu món")).toBe(3);
+  });
+
+  test("Đội tranh món: kho không tranh chấp thì không có mục", async ({ page, request }) => {
+    await seedRoster(page, request, { single: true });
+    await stubTurnstile(page);
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-missing-section").first()).toBeVisible();
+    await expect(section.locator(".roster-conflict-section")).toHaveCount(0);
+    await expect(section.locator(".roster-conflicted")).toHaveCount(0);
+  });
+
+  test("Khách chưa đăng nhập: Gợi ý đội vẫn có mục tranh món và Độ phủ kho, không gọi /api/roster", async ({ page }) => {
+    const fixture = conflictFixture();
+    const rosterCalls = [];
+    page.on("request", (request) => {
+      if (new URL(request.url()).pathname.startsWith("/api/roster")) rosterCalls.push(request.url());
+    });
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-conflict-section .roster-conflicted")).toHaveCount(1);
+    await expect(section.locator(".roster-coverage-section h2")).toHaveText("Độ phủ kho");
+    expect(rosterCalls).toEqual([]);
+  });
+
+  test("Đội tranh món: bản zh hiện tiêu đề và tên chữ Hán, không lẫn tên Việt", async ({ page }) => {
+    const fixture = conflictFixture();
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto(`/zh/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "推荐 5 支队伍", exact: true }).click();
+
+    const conflict = section.locator(".roster-conflict-section");
+    await expect(conflict.locator("h2")).toHaveText("可组建但与已选队伍抢同一件");
+    const card = conflict.locator(".roster-conflicted");
+    await expect(card).toHaveCount(1);
+    const text = await card.innerText();
+    for (const viet of [WUNV_NAME, "Ngô Nữ Kỵ", "Lữ Bố", "Đương Phong", "Lâm Nguy", "Tướng ", "Chiến pháp ", "Mở đội"]) {
+      expect(text, viet).not.toContain(viet);
+    }
+    expect(text).toMatch(/\p{Script=Han}/u);
+    await expect(card.getByRole("button", { name: "查看队伍" })).toBeVisible();
+  });
+
+  test("Đội tranh món: bấm Tôi có chiến pháp… làm thẻ xuất hiện ngay, không cần tải lại", async ({ page }) => {
+    const fixture = conflictFixture();
+    const missing = fixture.wunvOnly[0];
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state([missing]) });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-conflict-section")).toHaveCount(0);
+
+    await section.locator(".roster-missing").filter({ hasText: WUNV_NAME })
+      .getByRole("button", { name: `Tôi có chiến pháp ${missing}` }).first().click();
+    await expect(section.locator(".roster-conflicted").filter({ hasText: WUNV_NAME })).toHaveCount(1);
+    await expect(section.locator(".roster-missing").filter({ hasText: "Thiếu" }).filter({ hasText: WUNV_NAME })).toHaveCount(0);
+  });
+
+  for (const theme of ["light", "dark"]) {
+    test(`Đội tranh món: mobile 390px không tràn ngang, theme ${theme} đọc được`, async ({ page }) => {
+      const fixture = conflictFixture();
+      await ensureTheme(page, theme);
+      await stubTurnstile(page);
+      await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+      await waitForBoot(page);
+      const section = page.locator("#section-roster-recommend");
+      await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+      const card = section.locator(".roster-conflicted");
+      await expect(card).toHaveCount(1);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+      const box = await card.boundingBox();
+      expect(box.x + box.width).toBeLessThanOrEqual(390);
+      const contrast = await card.locator(".roster-missing-text span").first().evaluate((node) => {
+        const parse = (value) => value.match(/[\d.]+/g).map(Number);
+        const channel = (v) => { const c = v / 255; return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4; };
+        const lum = ([r, g, b]) => 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+        let bg = node;
+        while (bg) {
+          const [, , , a = 1] = parse(getComputedStyle(bg).backgroundColor);
+          if (a > 0.9) break;
+          bg = bg.parentElement;
+        }
+        const back = bg ? parse(getComputedStyle(bg).backgroundColor) : [255, 255, 255];
+        const [hi, lo] = [lum(parse(getComputedStyle(node).color)), lum(back)].sort((x, y) => y - x);
+        return (hi + 0.05) / (lo + 0.05);
+      });
+      expect(contrast).toBeGreaterThanOrEqual(4.5);
+    });
+  }
+
+  /** Độ phủ kho dự kiến của kho issue #5 trên cả mùa og-兵演春秋 (cùng hàm thuần với UI; số tuyệt đối đã khóa ở unit test). */
+  function coverageExpectation(fixture, owned = fixture.state()) {
+    const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+    const { generationId } = read("src/data/recommended-reference/current.json");
+    const { records } = read(`src/data/recommended-reference/${generationId}/index.json`);
+    const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
+    const season = buildSeasonCandidates(records, fixture.seasonId, dicts);
+    return buildRosterCoverage({
+      seasonTeams: season.teams,
+      seasonTier: season.teamTier,
+      ownedHeroes: owned.ownedHeroes,
+      ownedTactics: owned.ownedTactics,
+      tacticIdOf: createTacticIdResolver(dicts.tacticsDict),
+    });
+  }
+
+  test("Độ phủ kho: kho issue #5 mùa og-兵演春秋 đúng số, bấm ô mở danh sách, đội thiếu 1 ghi món thiếu và có nút Tôi có…", async ({ page }) => {
+    const fixture = conflictFixture();
+    const expected = coverageExpectation(fixture);
+    const t0 = expected.tiers.find((entry) => entry.tier === "T0");
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+
+    const coverage = section.locator(".roster-coverage-section");
+    await expect(coverage.locator("h2")).toHaveText("Độ phủ kho");
+    await expect(coverage.locator("tbody tr")).toHaveCount(3);
+    for (const [tier, total] of [["T0", 12], ["T0.5", 1], ["T1", 12]]) {
+      await expect(coverage.locator(`tr[data-tier="${tier}"] td[data-kind="total"]`)).toHaveText(String(total));
+    }
+    await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="complete"]')).toHaveText(String(t0.complete.length));
+    await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="missingOne"]')).toHaveText(String(t0.missingOne.length));
+    await expect(coverage.locator(".roster-coverage-progress li")).toHaveCount(2);
+
+    // Ô "ráp đủ" T0: cả hai đội của issue đều có khi đứng riêng.
+    await coverage.locator('tr[data-tier="T0"] td[data-kind="complete"] button').click();
+    const detail = coverage.locator(".roster-coverage-detail");
+    await expect(detail.locator(".roster-coverage-team")).toHaveCount(t0.complete.length);
+    await expect(detail).toContainText(LVBU_NAME);
+    await expect(detail).toContainText(WUNV_NAME);
+    await expect(detail.getByRole("button", { name: "Mở đội" }).first()).toBeVisible();
+  });
+
+  test("Độ phủ kho: đội thiếu 1 món ghi món thiếu và nút Tôi có… đưa đội sang ráp đủ", async ({ page }) => {
+    const fixture = conflictFixture();
+    const missing = fixture.wunvOnly[0];
+    const owned = fixture.state([missing]);
+    const expected = coverageExpectation(fixture, owned);
+    const t0 = expected.tiers.find((entry) => entry.tier === "T0");
+    expect(t0.missingOne.map((item) => item.team.id)).toContain("og-bingyan-wunv-cavalry-hubaoqi");
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": owned });
+    await page.goto(`/goi-y-doi-tu-kho/${CONFLICT_QUERY}`);
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    const coverage = section.locator(".roster-coverage-section");
+    await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="missingOne"]')).toHaveText(String(t0.missingOne.length));
+
+    await coverage.locator('tr[data-tier="T0"] td[data-kind="missingOne"] button').click();
+    const detail = coverage.locator(".roster-coverage-detail");
+    await expect(detail.locator(".roster-coverage-team")).toHaveCount(t0.missingOne.length);
+    const row = detail.locator(".roster-coverage-team").filter({ hasText: WUNV_NAME });
+    await expect(row.locator(".roster-missing-text")).toContainText(`Thiếu chiến pháp ${missing}`);
+    await row.getByRole("button", { name: `Tôi có chiến pháp ${missing}` }).click();
+    await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="missingOne"]')).toHaveText(String(t0.missingOne.length - 1));
+    await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="complete"]')).toHaveText(String(t0.complete.length + 1));
+  });
+
+  test("Độ phủ kho: mùa không có đội (pk-s20) hiện trạng thái rỗng", async ({ page }) => {
+    const fixture = conflictFixture();
+    await stubTurnstile(page);
+    await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+    await page.goto("/goi-y-doi-tu-kho/?season=pk-s20");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.getByLabel("Mùa bạn đang chơi")).toHaveValue("pk-s20");
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    const coverage = section.locator(".roster-coverage-section");
+    await expect(coverage.locator(".roster-coverage-empty")).toContainText("chưa có Đội chuẩn nào");
+    await expect(coverage.locator("table")).toHaveCount(0);
+  });
+
+  for (const [locale, theme, path, heading] of [["vi", "light", "/goi-y-doi-tu-kho/", "Độ phủ kho"], ["zh", "dark", "/zh/goi-y-doi-tu-kho/", "库存覆盖度"]]) {
+    test(`Độ phủ kho: ${locale}, theme ${theme}, mobile 390px không tràn ngang`, async ({ page }) => {
+      const fixture = conflictFixture();
+      await ensureTheme(page, theme);
+      await stubTurnstile(page);
+      await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`${path}${CONFLICT_QUERY}`);
+      await waitForBoot(page);
+      const section = page.locator("#section-roster-recommend");
+      await section.getByRole("button", { name: locale === "zh" ? "推荐 5 支队伍" : "Gợi ý 5 đội", exact: true }).click();
+      const coverage = section.locator(".roster-coverage-section");
+      await expect(coverage.locator("h2")).toHaveText(heading);
+      await coverage.locator('tr[data-tier="T0"] td[data-kind="complete"] button').click();
+      await expect(coverage.locator(".roster-coverage-team").first()).toBeVisible();
+      if (locale === "zh") {
+        const text = await coverage.innerText();
+        for (const viet of ["Độ phủ", "Ráp đủ", "Thiếu", "Tổng", "Mở đội", "Ngô Nữ Kỵ", "Lữ Bố"]) expect(text, viet).not.toContain(viet);
+        expect(text).toMatch(/\p{Script=Han}/u);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+      const box = await coverage.boundingBox();
+      expect(box.x + box.width).toBeLessThanOrEqual(390);
+    });
+  }
+
   test("mobile: kho kiểm tra hiện ngay, Sửa kho đã đọc từ màn kết quả quay lại kho; thêm/bỏ chip giữ focus", async ({ page, request }) => {
     await seedRoster(page, request, { single: true });
     await page.setViewportSize({ width: 390, height: 844 });
@@ -1092,6 +1375,89 @@ test.describe("Gợi ý đội", () => {
     await expect(addButton).toBeFocused();
     await expect(input).toHaveValue("");
     await expect(heroPanel).toContainText("Tướng thử nghiệm");
+  });
+
+  test("8. bảng chọn nhanh: lọc chiến pháp, Chọn tất cả 36 thêm đủ vào kho, Bỏ chọn tất cả gỡ đúng tập đang lọc; thẻ đọc ảnh vẫn có khi đã cấu hình AI", async ({ page }) => {
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.locator(".roster-scan-card")).toHaveCount(3);
+    await expect(section.locator(".roster-ai-off")).toHaveCount(0);
+
+    const picker = section.locator(".roster-picker");
+    await expect(picker).toBeVisible();
+    const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1") || "{}"));
+    await picker.locator(".roster-seg-option", { hasText: "Chiến pháp" }).click();
+    await picker.getByLabel("Loại", { exact: true }).selectOption("ACTIVE");
+    await picker.getByLabel("Nguồn", { exact: true }).selectOption("INHERITANCE");
+    await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
+    // Nguồn "Tự mang"/INNATE không có trong kho: bộ lọc không mời chọn.
+    await expect(picker.getByLabel("Nguồn", { exact: true }).locator("option", { hasText: "Tự mang" })).toHaveCount(0);
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+
+    // Số trên nút đếm đúng tập đang lọc.
+    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 36");
+    await expect(section.locator(".roster-scan-count").nth(1)).toHaveText("36 chiến pháp đã đọc");
+    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Chiến pháp đã đọc" }) }).locator(".roster-panel-count")).toContainText("36 chiến pháp");
+    expect((await stored()).ownedTactics).toHaveLength(36);
+    // Bấm lại không nhân đôi; bỏ chọn một món rồi chọn lại.
+    await picker.locator(".roster-picker-item").first().click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 35");
+    expect((await stored()).ownedTactics).toHaveLength(35);
+    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
+    expect((await stored()).ownedTactics).toHaveLength(36);
+
+    // Bỏ chọn chỉ gỡ món đang lọc: thêm một tướng ngoài bộ lọc trước.
+    await picker.locator(".roster-seg-option", { hasText: "Tướng" }).click();
+    await picker.locator(".roster-picker-item").first().click();
+    expect((await stored()).ownedHeroes).toHaveLength(1);
+    await picker.locator(".roster-seg-option", { hasText: "Chiến pháp" }).click();
+    await picker.getByLabel("Loại", { exact: true }).selectOption("ACTIVE");
+    await picker.getByLabel("Nguồn", { exact: true }).selectOption("INHERITANCE");
+    await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
+    await picker.getByRole("button", { name: /^Bỏ chọn tất cả, 36 mục đã chọn/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+    const after = await stored();
+    expect(after.ownedTactics).toHaveLength(0);
+    expect(after.ownedHeroes).toHaveLength(1);
+
+    await page.reload();
+    await waitForBoot(page);
+    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Tướng đã đọc" }) }).locator(".roster-panel-count")).toContainText("1 tướng");
+  });
+
+  test("7. chưa cấu hình AI (workerUrl/turnstileSiteKey còn REPLACE_ME): thấy bảng chọn, Gợi ý 5 đội chạy; không thẻ đọc ảnh, không tải Turnstile", async ({ page, request }) => {
+    await page.route("**/js/config.js", (route) => route.fulfill({
+      contentType: "application/javascript",
+      body: [
+        'export const ANALYZE_CONFIG = { workerUrl: "https://REPLACE_ME/analyze", turnstileSiteKey: "REPLACE_ME", maxImageDim: 1600, jpegQuality: 0.82 };',
+        'export function isAnalyzeConfigured() { return !ANALYZE_CONFIG.workerUrl.includes("REPLACE_ME") && !ANALYZE_CONFIG.turnstileSiteKey.includes("REPLACE_ME"); }',
+      ].join("\n"),
+    }));
+    const turnstileRequests = [];
+    await page.route("https://challenges.cloudflare.com/**", (route) => {
+      turnstileRequests.push(route.request().url());
+      return route.abort();
+    });
+    await seedRoster(page, request);
+    await page.goto("/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await expect(section.locator(".roster-picker")).toBeVisible();
+    await expect(section.locator(".roster-ai-off")).toBeVisible();
+    await expect(section.locator(".roster-scan-card")).toHaveCount(0);
+    await expect(section.locator(".ana-turnstile")).toHaveCount(0);
+    await expect(section.locator(".ana-setup")).toHaveCount(0);
+
+    await section.getByRole("button", { name: "Xác nhận dữ liệu đã đọc" }).click();
+    await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
+    await expect(section.locator(".roster-results")).toHaveCount(1);
+    await expect(section.locator(".roster-result-team").first()).toBeVisible();
+    await expect(section.getByRole("button", { name: "Vì sao?" })).toHaveCount(0);
+    expect(turnstileRequests).toEqual([]);
   });
 
   test("mục Thiếu món ghi tên tướng thiếu theo slot, không lộ mã canonical", async ({ page, request }) => {
@@ -1189,7 +1555,7 @@ test.describe("Gợi ý đội", () => {
     expect(bodies).toHaveLength(1);
 
     await firstSubstitute.getByRole("button", { name: `Dùng ${substitute} thay ${fixture.missing}` }).click();
-    const portfolio = section.locator(".roster-results section").first();
+    const portfolio = section.locator(".roster-portfolio");
     const row = portfolio.locator(".roster-result-team").filter({ hasText: fixture.team.name });
     await expect(row).toContainText(`Đã thay: ${fixture.missing} → ${substitute}`);
     await expect(section.locator(".roster-missing").filter({ hasText: fixture.team.name })).toHaveCount(0);

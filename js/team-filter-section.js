@@ -161,8 +161,6 @@ export const referenceViewSignature=(state,mode,from,shown=PAGE_SIZE)=>
 
 // Nhóm chính Loại binh → Phe → Tier; Nhóm/Bộ đội hình thu gọn trong accordion.
 const PRIMARY_FACETS=['unit','faction','tier'];
-// Mùa đang diễn ra, đối chiếu ngày 2026-09-27; độc lập mùa đang xem.
-const CURRENT_SOURCE_SEASON_ID='og-兵演春秋';
 const SECONDARY_FACETS=['subcategory','source'];
 const FACET_LABEL={unit:'Loại binh',faction:'Phe',tier:'Tier',subcategory:'Nhóm',source:'Bộ đội hình'};
 const FACET_LABEL_ZH={tier:'等级',unit:'兵种',faction:'阵营',subcategory:'分组',source:'阵容合集'};
@@ -198,8 +196,11 @@ export const seasonNameText=item=>zh()
   : item.displayCode && item.displayNameVi
     ? `${item.displayCode} · ${item.displayNameVi}`
     : safeLabel(item.displayNameVi);
-/** Nhãn một mùa trong ô chọn mùa (Đội chuẩn và công cụ Gợi ý đội dùng chung). */
-export const seasonOptionText=item=>`${seasonNameText(item)}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}${item.sourceSeasonId===CURRENT_SOURCE_SEASON_ID ? L(' · Hiện tại',' · 当前') : ''}`;
+/**
+ * Nhãn một mùa trong ô chọn mùa (Đội chuẩn và công cụ Gợi ý đội dùng chung). `currentSourceSeasonId` là mùa đang diễn ra:
+ * `defaultSourceSeasonId` của registry, cùng nguồn với trang mùa và nhãn "mùa cũ" của trang đội (không còn hằng số ở client).
+ */
+export const seasonOptionText=(item,currentSourceSeasonId)=>`${seasonNameText(item)}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}${currentSourceSeasonId && item.sourceSeasonId===currentSourceSeasonId ? L(' · Hiện tại',' · 当前') : ''}`;
 // Bản zh hiện đúng tên mùa nguồn nên không cần chú thích tên dịch.
 export const seasonOptionTitle=item=>zh() ? null : [
   item.label && !cjk.test(item.label) ? item.label : null,
@@ -309,10 +310,10 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     season.replaceChildren(
       el('option',{value:'all'},L('Tất cả','全部')),
       ...(family==='other'?[el('option',{value:'unknown'},L('Chưa rõ mùa','赛季不明'))]:[]),
-      ...options.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item))),
+      ...options.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item,registry.defaultSourceSeasonId))),
     );
     if ([...season.options].some(option=>option.value===current)) season.value=current;
-    seasonStatus.hidden=season.value!==CURRENT_SOURCE_SEASON_ID;
+    seasonStatus.hidden=season.value!==registry.defaultSourceSeasonId;
   }
 
   // Facet sắp theo số đếm giảm dần (như artboard), hòa thì theo nhãn hiển thị của ngôn ngữ trang;

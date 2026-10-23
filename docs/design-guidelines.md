@@ -58,7 +58,7 @@ Danh mục đầy đủ ở `tokens.json` → `components`. Nhóm chính: thẻ 
 - **Vùng bấm ≥ 44px trên mobile** cho mọi control (nút, chip, select, ô nhập, nút icon, menu item). Control bên trong nhãn bọc (ô tìm) hoặc checkbox native cũng phải đạt 44px ở phần tử bấm được.
 - **Ngoại lệ có ý thức**: link nằm trong câu/dòng chữ (tên tướng trong hàng, chiến pháp, nguồn trong đoạn văn) giữ dòng chữ theo ngoại lệ "inline target" của WCAG 2.5.8; các link đứng riêng (thương hiệu header/footer, danh sách nguồn Khai hoang) vẫn phải đạt 44px.
 - Không tạo cuộn ngang ở 320/390: `document.documentElement.scrollWidth` phải bằng `innerWidth` ở 320, 390, 768, 1440. Phần tử chạm mép phải phải nằm trong container `overflow-x: auto` có chủ đích (bảng xem trước, khung Turnstile 300px ở bề rộng hẹp).
-- Cột chuyển nhanh là thanh icon cố định chỉ khi bề rộng ≥ 821px **và** chiều cao ≥ 580px; còn lại là nút tròn góc dưới phải, danh sách cuộn trong khoảng giữa header và nút. Trang nào có thanh cố định thì lề phải nội dung phải ≥ 48px.
+- Cột chuyển nhanh là thanh icon cố định chỉ khi bề rộng ≥ 821px **và** chiều cao ≥ 620px (thanh 11 mục cao ~492px, căn giữa phải nằm dưới header 64px); còn lại là nút tròn góc dưới phải, danh sách cuộn trong khoảng giữa header và nút. Trang nào có thanh cố định thì lề phải nội dung phải ≥ 48px.
 - Bảng chiến pháp Tra cứu chỉ là bảng 6 cột từ 1024px; dưới mốc đó xếp dọc có nhãn cột. Footer 821–1279px: khối giới thiệu một hàng riêng, năm cột link bên dưới, dải Game tiêu đề/link game/link cộng đồng mỗi phần một hàng. Footer ≤820px: nhóm link chảy hai cột báo (`columns: 2`, nhóm không bị cắt đôi); dải Game thu gọn mặc định sau nút mũi tên (cả đầu dải bấm được), mở ra là lưới hai cột điền theo cột, link cộng đồng ngăn bằng vạch ngang. Không JS thì dải luôn mở.
 - Lưới Tướng của Tra cứu (`.lookup-grid-heroes`): 5 cột desktop, 4 cột ≤1023px, 3 cột ≤820px, 2 cột ≤680px; chân dung vuông với vạch phe 3px (`data-faction` trên `.lookup-card`), dòng phụ "Phe · N sao · Thống ngự N" (mobile bỏ số sao). Bốn nhóm catalog không còn lưới thẻ chung: dùng bố cục danh sách + chi tiết (mục "Tra cứu theo nhóm").
 - Theme sáng/tối giữ contrast và không làm mất nghĩa của phe/tier/trạng thái.
@@ -147,6 +147,15 @@ Hai công cụ Soi đội và Gợi ý đội không có bộ chọn Mùa / Phi�
 - Đội khóa đọc từ ảnh không ghi tướng nào giữ chiến pháp nào: thẻ kết quả hiện hai hàng Tướng / Chiến pháp, không đoán.
 - Ảnh chỉ đọc để trích xuất; engine local dùng dữ liệu curate để chọn đội.
 - State persist chỉ chứa dữ liệu canonical cần thiết; không ảnh, base64, blob hoặc Turnstile token.
+
+## Đội của tôi
+
+- Trang `/doi-cua-toi/` (+ `/zh/doi-cua-toi/`) là trang cộng đồng `noindex`, không vào sitemap, tự nhúng bảng route `{r, l, k}` (`#my-teams-routes`) vì layout chỉ nhúng `{l}` cho `pageKind="detail"`. Khách chỉ thấy hộp mời đăng nhập và không gọi `/api/roster`. Menu tài khoản có "Đội của tôi" (kho đội đã lưu) và "Đội đã đăng" (đội đã đăng lên cộng đồng, `/doi-cong-dong/?mine=1`).
+- Bố cục: thanh hộp (select + Tạo/Đổi tên/Xóa hộp; hộp `main` không xóa được) → cảnh báo trùng và thông báo bản ghi hỏng → mỗi nhóm một khối (nhóm mặc định Khai Hoang/Ghép Team không đổi tên/xóa) → thẻ đội dạng bảng như sheet (tướng · chiến pháp 1 · chiến pháp 2 · binh thư · ghi chú) → ô "Thêm nhóm". Dưới 820px bảng thành thẻ xếp dọc, nhãn cột lấy từ `data-label`; không cuộn ngang ở 390px.
+- Nhãn trên thẻ: "chưa có trong kho" (chỉ khi hộp có kho để đối chiếu), "Bản gốc đã cập nhật" (so `contentHash` với `/my-teams-source-index.json`), cảnh báo trùng tướng/chiến pháp chính, "Thay thế cho …"; link "Xem bản gốc" dựng bằng `createSourceLinker` (`js/my-teams-links.js`) và `teamDetailHref` (giữ `?variant`). Đội Soi đội không có link nguồn.
+- Xóa hộp/nhóm/đội luôn qua hộp thoại xác nhận nêu số đội sẽ mất (hộp) hoặc chuyển về Ghép Team (nhóm). Lỗi thao tác hiện bằng `role="alert"`, thành công bằng `role="status"`.
+- Trình soạn (`js/my-teams-editor.js`): chọn tướng/chiến pháp/binh thư bằng `roster-picker` policy `editor` (`kinds` thu hẹp theo ô đang sửa), ô chữ có bộ đếm byte `N / trần B` cùng cách đếm với server. Lưu lỗi hoặc bị từ chối: `role="alert"` nêu lý do, nội dung giữ nguyên, nút đổi thành "Lưu lại". Xung đột: hai cột "Bản trên máy chủ" / "Bản đang soạn" và chọn giữ bản nào.
+- Nút "Lưu vào đội của tôi" (`js/my-teams-save-button.js`) có ở chi tiết Đội chuẩn/Đội khác/Khai hoang (cạnh nút sao chép liên kết), mỗi thẻ kết quả Gợi ý đội (trừ đội khóa) và thẻ đối chiếu của Soi đội. Đội nháp dựng lúc bấm; khách được cất nháp vào `sessionStorage` rồi đăng nhập, trang quay lại tự lưu đúng một lần (module tự tiếp tục khi nạp, không chờ nút xuất hiện); lỗi thì toast "Lưu lại" và giữ bản lưu dở.
 
 ## Content safety và error state
 

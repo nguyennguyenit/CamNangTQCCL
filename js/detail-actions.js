@@ -1,4 +1,4 @@
-// Khối hành động dùng chung cho ba trang chi tiết đội: nút sao chép URL của trang.
+// Khối hành động dùng chung cho ba trang chi tiết đội: nút lưu vào Đội của tôi và nút sao chép URL của trang.
 // Không tự đọc dữ liệu và không dẫn link ra ngoài.
 
 import { el, icon, svgNode } from './render.js';
@@ -64,10 +64,11 @@ function copyControl() {
 }
 
 /**
- * Nội dung panel điểm: nút sao chép, ô chọn sẵn và vùng trạng thái.
+ * Nội dung panel điểm: nút lưu vào "Đội của tôi" (nếu có), nút sao chép, ô chọn sẵn và vùng trạng thái.
  * Trả fragment để entry page tự gắn vào `#team-detail-actions` của shell.
+ * @param saveButton nút từ `createSaveButton` (js/my-teams-save-button.js); trang không có đội lưu được thì bỏ qua
  */
-export function detailPanelActions() {
+export function detailPanelActions({saveButton = null} = {}) {
   const {button, fallback, status} = copyControl();
-  return el('div', {class: 'detail-actions-body'}, [button, fallback, status]);
+  return el('div', {class: 'detail-actions-body'}, [saveButton, button, fallback, status]);
 }

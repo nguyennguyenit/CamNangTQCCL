@@ -12,6 +12,7 @@ export interface PublicationRoots {
   dataRoot: string;
   recommendedRoot: string;
   routeLedgerPath: string;
+  lookupRouteLedgerPath: string;
 }
 
 export function repositoryPublicationRoots(dataRoot: string): PublicationRoots {
@@ -20,6 +21,7 @@ export function repositoryPublicationRoots(dataRoot: string): PublicationRoots {
     dataRoot: resolve(dataRoot),
     recommendedRoot: resolve(root, "src/data/recommended-reference"),
     routeLedgerPath: resolve(root, "pipeline/team-route-handles.json"),
+    lookupRouteLedgerPath: resolve(root, "pipeline/lookup-route-handles.json"),
   };
 }
 
@@ -61,13 +63,14 @@ export async function readPublicationSources(roots: PublicationRoots): Promise<P
   if (manifest === undefined) throw new Error("Recommended generation has no manifest");
   const sidecars = new Map<string, Uint8Array>();
   for (const name of SIDECARS) sidecars.set(name, await regularBytes(resolve(roots.dataRoot, name)));
-  const [websiteDisplay, routeLedger, reread] = await Promise.all([
+  const [websiteDisplay, routeLedger, lookupRouteLedger, reread] = await Promise.all([
     regularBytes(resolve(roots.dataRoot, "website-display.json")),
     regularBytes(roots.routeLedgerPath),
+    regularBytes(roots.lookupRouteLedgerPath),
     regularBytes(currentPath),
   ]);
   if (reread.byteLength !== current.byteLength || reread.some((byte, index) => byte !== current[index])) {
     throw new Error("Recommended selector changed during capture");
   }
-  return { recommended: { current, manifest, files }, routeLedger, websiteDisplay, sidecars };
+  return { recommended: { current, manifest, files }, routeLedger, lookupRouteLedger, websiteDisplay, sidecars };
 }

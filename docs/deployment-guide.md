@@ -41,7 +41,7 @@ python3 -m unittest discover -s tests
 
 Cài Chromium một lần bằng `npx playwright install chromium`. Test Node/E2E cũng kiểm tra local HTTP preview, routed HTTPS, private-path exclusion và mixed-content mà không gọi live third-party.
 
-Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml`, `_headers` và `_redirects` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs`, `tests-js/seo-dist-contract.test.mjs` cho link path/JSON-LD/llms/bất biến zh-gaps và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify`. Hành vi trình duyệt của route và 404 kiểm bằng:
+Contract route chi tiết, `404.html`, `robots.txt`, `sitemap.xml`, `_headers` và `_redirects` thuộc `npm run test:dist` (`tests-js/astro-dist-contract.test.mjs`, `tests-js/seo-dist-contract.test.mjs` cho link path/JSON-LD/llms/bất biến zh-gaps và `tests-js/pages-headers-contract.test.mjs`) cùng `npm run verify` (gồm `node scripts/report-zh-gaps.mjs --check`: `docs/zh-gaps.md` phải khớp dữ liệu Tra cứu). Hành vi trình duyệt của route và 404 kiểm bằng:
 
 ```bash
 npx playwright test tests-e2e/team-detail-pages.spec.mjs
@@ -95,20 +95,27 @@ Build output: dist
 Node: 24.20.0
 ```
 
-Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), 7 trang nhóm Tra cứu, đúng bộ trang chi tiết đội sinh từ catalog, đúng bộ trang riêng Tra cứu sinh từ ledger slug, bộ llms của `llmsDocuments()` (chỉ bản Việt), output blog, bản `/zh/` của các trang HTML (trừ `404.html`), manifest-approved `js/`, `css/`, `fonts/`, `data/`, `_headers` và `_redirects`. Shared verifier dẫn xuất allowlist từ chính các inventory đó, đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ. Với dữ liệu ngày 2026-10-15, build ra 4917 trang HTML (gồm 1772 trang riêng Tra cứu), sitemap 4912 URL và 36 file `/llms/…`; con số đổi theo dữ liệu, không phải hằng số để kiểm tay.
+Astro dùng static output, không adapter và không có Pages Functions. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), 7 trang nhóm Tra cứu, đúng bộ trang chi tiết đội sinh từ catalog, đúng bộ trang riêng Tra cứu sinh từ ledger slug, bộ llms của `llmsDocuments()` (chỉ bản Việt), output blog, trang đội cộng đồng, bản `/zh/` của các trang HTML (trừ `404.html`), manifest-approved `js/`, `css/`, `fonts/`, `data/`, `_headers` và `_redirects`. Shared verifier dẫn xuất allowlist từ chính các inventory đó, đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ. Với dữ liệu ngày 2026-10-15, build ra 4917 trang HTML (gồm 1772 trang riêng Tra cứu), sitemap 4912 URL và 36 file `/llms/…`; con số đổi theo dữ liệu, không phải hằng số để kiểm tay.
 
 Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
 
-Blog là HTML tĩnh sinh lúc build từ community API: `src/lib/blog-posts.ts` gọi `GET ${COMMUNITY_API_ORIGIN}/api/posts` một lần cho cả lần build. Biến môi trường build `COMMUNITY_API_ORIGIN` (origin http(s) của `community-worker`, khai ở Pages → Settings → Environment variables cho Production và Preview) **không khai** → blog rỗng (trang danh sách trạng thái rỗng, feed rỗng); **đã khai** mà API lỗi, trả không phải JSON hoặc payload sai hợp đồng (slug/lang/status/ngày ISO, trùng `(lang, slug)`/`(lang, translationKey)`) → build dừng, không deploy nửa vời. Output blog: `bai-viet/index.html`, `zh/bai-viet/index.html`, `bai-viet/<slug>/index.html` (bài vi), `zh/bai-viet/<slug>/index.html` (bài zh), `rss.xml`, `zh/rss.xml`, `llms.txt`; sitemap thêm hai trang danh sách và mọi bài kèm `<lastmod>`. Tập bài do API quyết định nên `scripts/verify-astro-dist.mjs` đọc lại bài từ chính `dist/` và bắt buộc blog tự nhất quán: mỗi bài có JSON-LD `BlogPosting` đúng URL/ngôn ngữ/ngày và canonical đúng, trang danh sách (JSON-LD `CollectionPage`) và RSS liệt kê đúng tập bài cùng ngôn ngữ, `llms.txt` nhắc đủ URL, sitemap khớp byte kể cả `lastmod`. Xuất bản/gỡ bài ở trang quản trị gọi deploy hook để build lại.
+Blog là HTML tĩnh sinh lúc build từ community API: `src/lib/blog-posts.ts` gọi `GET ${COMMUNITY_API_ORIGIN}/api/posts` một lần cho cả lần build. Biến môi trường build `COMMUNITY_API_ORIGIN` (origin http(s) của `community-worker`, khai ở Pages → Settings → Environment variables cho Production và Preview) **không khai** → blog rỗng (trang danh sách trạng thái rỗng, feed rỗng); **đã khai** mà API lỗi, trả không phải JSON hoặc payload sai hợp đồng (slug/lang/status/ngày ISO, trùng `(lang, slug)`/`(lang, translationKey)`) → build dừng, không deploy nửa vời. Output blog: `bai-viet/index.html`, `zh/bai-viet/index.html`, `bai-viet/<slug>/index.html` (bài vi), `zh/bai-viet/<slug>/index.html` (bài zh), `rss.xml`, `zh/rss.xml`, `llms.txt`; sitemap thêm hai trang danh sách và mọi bài kèm `<lastmod>`. Tập bài do API quyết định nên `scripts/verify-astro-dist.mjs` đọc lại bài từ chính `dist/` và bắt buộc blog tự nhất quán: mỗi bài có JSON-LD `BlogPosting` đúng URL/ngôn ngữ/ngày và canonical đúng, trang danh sách (JSON-LD `CollectionPage`) và RSS liệt kê đúng tập bài cùng ngôn ngữ, `llms.txt` nhắc đủ URL, sitemap khớp byte kể cả `lastmod`.
+
+Trang đội cộng đồng cũng sinh lúc build từ cùng origin: [`src/lib/community-teams.ts`](../src/lib/community-teams.ts) gọi `GET ${COMMUNITY_API_ORIGIN}/api/community-teams/export` một lần (dùng chung cho hai route trang đội, trang danh sách và sitemap), với cùng chính sách: **không khai** → 0 đội (danh sách `noindex`, không trang đội); **đã khai** mà API lỗi (kể cả Worker cũ chưa có export → 404), trả không phải JSON hoặc payload sai schema v1 (vd. `schemaVersion` khác 1, id, tướng/chiến pháp, binh chủng, ngôn ngữ, ngày không đọc được, id trùng) → build dừng. Output: `doi-cong-dong/<id>/index.html` và `zh/doi-cong-dong/<id>/index.html` cho mỗi đội; sitemap chỉ thêm bản gốc theo ngôn ngữ văn bản, và thêm hai trang danh sách khi đủ ngưỡng index. Verifier đọc lại tập đội từ `dist/` như blog; hợp đồng trang và SEO ở [Kiến trúc hệ thống](system-architecture.md#cộng-đồng-phía-trình-duyệt).
+
+Xuất bản/gỡ bài, duyệt/xoá đội, khoá/mở khoá/xoá tài khoản gửi dispatch `site-publish` để build lại; workflow còn chạy theo lịch hằng ngày. Điểm gửi, kết quả và thứ tự triển khai Worker trước `main`: [Community Worker](community-worker.md#build-lại-site-khi-nội-dung-công-khai-đổi).
+
+Trang mùa Đội chuẩn `/doi-chuan/<mã mùa>/` (và `/zh/…`) sinh từ [`src/lib/season-pages.ts`](../src/lib/season-pages.ts) cùng registry mùa (`seasons.json`) của generation đã pin: mỗi mùa cũ có đội một trang, mùa hiện tại (`defaultSourceSeasonId`) và mùa 0 đội không có trang. Khi mùa mặc định đổi, trang cũ của mùa mới hiện tại biến mất nên `public/_redirects` có 301 `/doi-chuan/<slug>/ → /doi-chuan/` (vi + zh) do `python3 -m pipeline.lookup_route_handles --write` sinh và `--check` giữ khớp; `npm run verify` kiểm lại luật này trong `dist/_redirects`. Sau khi publish generation Recommended mới hoặc đổi mùa mặc định, chạy `--write` rồi commit `public/_redirects`.
 
 Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`, và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v2, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Handle gán một lần; khi publication sinh successor chỉ rebind `generationId`, không sinh lại handle, rồi `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
 
 Trang riêng Tra cứu `/tra-cuu/<nhóm>/<slug>/` (và `/zh/…`) sinh từ [`src/lib/lookup-detail-routes.ts`](../src/lib/lookup-detail-routes.ts), đọc slug đóng băng trong `pipeline/lookup-route-handles.json`. Ledger pin `generationId` của `data/lookup-manifest.json` và hash `data/books-dict.json`; build **fail** nếu pin lệch, tập mã khác corpus hoặc ledger bị sửa tay. Vì vậy mỗi khi generation Tra cứu đổi (sau `promote_unified_lookup`) hoặc `books-dict.json` đổi, chạy trước `npm run build`:
 
 ```bash
+python3 -m pipeline.build_books_dict                # chỉ khi sửa pipeline/books-han-viet-map.json (id binh thư viết tay, đổi tên Việt thì tên cũ vào `aliases`)
 python3 -m pipeline.lookup_route_handles --write   # giữ mọi slug đã cấp, cấp slug cho mã mới, chuyển mã đã rời corpus sang retired, làm mới pin, sinh lại public/_redirects
 python3 -m pipeline.lookup_route_handles --check
-node scripts/report-zh-gaps.mjs                     # sinh lại báo cáo zh thiếu chữ (`--check` để so; test:dist chỉ kiểm bất biến, không đọc file báo cáo)
+node scripts/report-zh-gaps.mjs                     # sinh lại docs/zh-gaps.md (báo cáo zh thiếu chữ); `npm run verify` chạy `--check` và đỏ khi file lệch dữ liệu
 ```
 
 `--write` từ chối ledger đã bị sửa tay; không sửa slug bằng tay để "đẹp" URL vì URL đã công bố. Mã không còn trong corpus không có trang, slug của nó vẫn bị giữ để không bao giờ trỏ sang mục khác. Chiến pháp đã gộp (mã cũ nằm trong `lookup.formerIds` của mã giữ, `data/tactics.json`) có redirect `301` từ URL cũ sang trang mã giữ, cùng locale (`/tra-cuu/…` và `/zh/tra-cuu/…`, URL có `/` cuối); `public/_redirects` do `--write` sinh từ ledger và `--check` báo lỗi khi file lệch, không sửa tay. Mã bỏ hẳn (không mã giữ nào liệt kê) vẫn trả 404 tĩnh. Nếu mã đã gỡ quay lại corpus, `--write` bỏ rule của nó; trình duyệt đã cache 301 vẫn chuyển hướng cho tới khi cache hết. Bộ llms (`/llms.txt`, `/llms/*.txt`, `/llms-full.txt`) sinh lại theo dữ liệu ở mỗi build, không có bước riêng.
@@ -123,7 +130,7 @@ Trước deploy:
 - ghi base commit, scoped-source digest và `dist/` digest;
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
 - chạy local HTTP/routed-HTTPS exposure probe và full gate;
-- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt; workflow này không deploy Pages;
+- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt (workflow chạy trên pull request và hằng tuần trên `main`, không chạy khi push; với commit đẩy thẳng `main`, tự chạy `npm run check:repository` local); workflow này không deploy Pages;
 - xác nhận `worker/wrangler.toml` `ALLOWED_ORIGINS` chứa đủ ba origin exact của site (`https://tqccl.com`, `https://www.tqccl.com`, `https://tqccl.pages.dev`).
 
 ### Preview, promotion và canary
@@ -247,6 +254,32 @@ npm run deploy
 ```
 
 Endpoint/model/key/effort không nằm trong config: admin cấu hình ở tab **AI** của `/quan-tri/` — nhà cung cấp dùng chung (mẫu DeepSeek, OpenCode Zen hoặc tuỳ chỉnh, catalog model ở `shared/ai-models.ts` cộng model tự thêm) và chuỗi (nhà cung cấp, model, effort) + timeout/trần tổng riêng cho Soi đội, Gợi ý đội, Giải thích món bù, Chiến báo. Mỗi lượt thử mắt xích theo thứ tự, lỗi 401/402/403/429/5xx/mạng/timeout thì chuyển mắt xích kế; xem [worker/README.md](../worker/README.md#nhà-cung-cấp-ai).
+
+## Đồng bộ kho và Đội của tôi (`roster_records`)
+
+Đợt này thêm bảng D1 `roster_records`, route `/api/roster` (hợp đồng ở [roster-sync.md](roster-sync.md), vận hành ở [community-worker.md](community-worker.md#đồng-bộ-kho-và-đội-của-tôi)), client `js/roster-sync.js` cho `/goi-y-doi-tu-kho/` và trang `/doi-cua-toi/` (+ `/zh/doi-cua-toi/`, `noindex`). Theo mẫu các đợt trước (migration `0004` chiêu mộ, `0006` quản trị người dùng, `0008` Đội cộng đồng): **migration → Worker → Pages**, vì client mới gọi `/api/roster` ngay khi người dùng đăng nhập.
+
+Rollout do chủ dự án thực hiện (cần quyền Cloudflare); tài liệu và test không deploy gì.
+
+### Thứ tự release
+
+1. `cd community-worker && npm run db:migrate:remote`. `0011_roster.sql` chỉ thêm bảng `roster_records` và ba index, không sửa bảng đang chạy; nếu `0008`–`0010` của Đội cộng đồng chưa áp, wrangler áp theo thứ tự tên file. Ghi bookmark trước khi migrate: `npx wrangler d1 time-travel info tqccl-community`.
+2. `cd community-worker && npm run deploy`. Kiểm: `GET https://tqccl.com/api/roster` không đăng nhập → `401`; đăng nhập rồi gọi → `200` với `records: []`.
+3. Deploy Pages (push `main`, rồi chạy tay `pages-deploy.yml`; xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)). Kiểm trên production:
+   - `/goi-y-doi-tu-kho/`: khách chạy như cũ, không có request `/api/roster`; công cụ dùng được cả khi Worker AI chưa cấu hình (chỉ ẩn đọc ảnh và giải thích AI).
+   - Đăng nhập: hỏi gộp kho local vào hộp `main` lần đầu, rồi đồng bộ; máy thứ hai thấy cùng kho.
+   - `/doi-cua-toi/` và `/zh/doi-cua-toi/` có `noindex` và không nằm trong `sitemap.xml`; `/my-teams-source-index.json` trả JSON (1 601 mục ở bản build hiện tại).
+   - Menu tài khoản: "Đội của tôi" → `/doi-cua-toi/`; mục cũ trỏ `/doi-cong-dong/?mine=1` đã đổi tên "Đội đã đăng" / 我发布的阵容.
+
+### Giới hạn của bằng chứng local
+
+Test Worker chạy trên D1 giả (`node:sqlite` áp migration thật) và smoke/E2E dùng session Better Auth dựng sẵn, nên **không chứng minh được Google OAuth thật hay D1 production** (xem [community-worker.md](community-worker.md#kiểm-tra)). Việc kiểm bắt buộc sau rollout: **một lượt đăng nhập Google thật và một lượt lưu/đọc trên production** (thêm một món vào kho ở `/goi-y-doi-tu-kho/`, hoặc lưu một đội ở `/doi-cua-toi/`; tải lại và đọc từ thiết bị/trình duyệt thứ hai), rồi xác nhận bằng `npx wrangler d1 execute tqccl-community --remote --command "select kind, count(*) from roster_records group by kind"`.
+
+### Rollback
+
+- **Pages về bản trước**: client cũ chỉ đọc `tqccl.rosterRecommend.scanState.v1`, nên người dùng thấy kho local như trước lần gộp; dữ liệu cloud nằm yên trong D1. Món thêm trong thời gian rollback chỉ nằm ở kho local và **không tự lên cloud** khi bản mới trở lại (cờ gộp đã đặt). Ghi rõ điều này trong thông báo sự cố. `/doi-cua-toi/` biến mất cùng bản cũ.
+- **Worker về version known-good**: `/api/roster` biến mất; client mới báo lỗi đồng bộ và giữ kho cloud cache ở chế độ chỉ đọc; Đội của tôi không lưu được.
+- **D1**: không xóa bảng khi rollback. Code cũ không đọc bảng mới; xóa bảng là thao tác phá hủy, chỉ làm khi có quyết định riêng. Time Travel ghi đè mọi ghi sau bookmark, chỉ dùng khi dữ liệu sai nghiêm trọng.
 
 ## Publish lại bản dịch hiển thị
 

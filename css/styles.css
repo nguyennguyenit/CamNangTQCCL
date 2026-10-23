@@ -1314,7 +1314,8 @@ a.lookup-more:hover {
 }
 
 /* Cụm nút header (ngôn ngữ, sáng/tối, đăng nhập): nút ma không viền, cùng cao 44px, nền sáng lên khi rê;
-   chỉ CTA "Mở cẩm nang" là nút tô màu. */
+   chỉ CTA "Mở cẩm nang" là nút tô màu. Từ 821px nút Đăng nhập có chữ và viền đỏ dải (`--nav-underline`,
+   ≥3:1 trên `--band` ở cả hai theme; `--accent` sáng chỉ 2.4:1) để nổi lên mà không tranh CTA. */
 .header-actions .icon-btn,
 .header-actions .lang-switch {
   border-color: transparent;
@@ -1352,8 +1353,10 @@ a.lookup-more:hover {
     font: var(--type-header-action);
   }
 
-  .header-actions .cm-auth-login {
+  .header-actions .cm-auth-login,
+  .header-actions .cm-auth-login:hover {
     gap: var(--space-6);
+    border-color: var(--nav-underline);
   }
 
   .header-actions .header-cta {
@@ -1939,9 +1942,9 @@ a.lookup-more:hover {
   }
 }
 
-/* Thanh icon cao ~450px: màn thấp (điện thoại xoay ngang, cửa sổ laptop thấp) không đủ chỗ giữa header 64px và mép dưới
-   nên cũng dùng nút tròn như màn hẹp. */
-@media (max-width: 820px), (max-height: 579px) {
+/* Thanh icon cao ~492px (11 mục): căn giữa cần cao ≥ 492 + 2×64 (header) = 620px, màn thấp hơn (điện thoại xoay ngang,
+   cửa sổ laptop thấp) không đủ chỗ giữa header 64px và mép dưới nên cũng dùng nút tròn như màn hẹp. */
+@media (max-width: 820px), (max-height: 619px) {
   .quick-nav {
     top: auto;
     right: var(--space-16);
@@ -2789,7 +2792,7 @@ a.lookup-more:hover {
 }
 
 .landing-community-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .landing-tile-grid > li,
@@ -4812,6 +4815,56 @@ main.layout:has(> .detail-content) {
   letter-spacing: var(--type-detail-kicker-spacing);
   text-transform: uppercase;
   color: var(--accent);
+}
+
+/* Nhãn "mùa cũ" (trang đội và trang mùa): chữ ghi chú, không tranh với tên đội. */
+.detail-season-old {
+  color: var(--muted);
+}
+
+.season-old-note {
+  display: block;
+  margin: var(--space-8) 0 0;
+}
+
+/* Khối "Các mùa khác" của /doi-chuan/ (nằm ngoài vùng client thay thế): link thật tới trang từng mùa cũ. */
+.other-seasons {
+  margin-top: var(--space-48);
+  padding-top: var(--space-24);
+  border-top: var(--border-hair) solid var(--line);
+}
+
+.other-seasons-heading {
+  margin: 0 0 var(--space-8);
+  color: var(--ink);
+}
+
+.other-seasons-lead {
+  margin: 0 0 var(--space-16);
+  color: var(--muted);
+  font: var(--type-note);
+}
+
+.other-seasons-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-8) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.other-seasons-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-44);
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.other-seasons-list a:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
 }
 
 .detail-title-row {
@@ -12143,6 +12196,50 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--avoid);
 }
 
+/* ---------- Đồng bộ kho theo hộp (đã đăng nhập) ---------- */
+.roster-sync {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.roster-sync[hidden],
+.roster-box-control[hidden] {
+  display: none;
+}
+
+.roster-box-control select {
+  width: 100%;
+  min-width: 0;
+}
+
+.roster-sync-status {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-control);
+}
+
+.roster-sync-status[data-status="error"],
+.roster-sync-status[data-status="signed-out"],
+.roster-sync-status[data-status="mismatch"] {
+  color: var(--avoid);
+}
+
+.roster-sync-status:empty,
+.roster-sync-alerts:empty {
+  display: none;
+}
+
+.roster-sync-alert {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0 0 var(--space-6);
+  color: var(--avoid);
+  font: var(--type-control);
+}
+
 /* ---------- Pill (số đã đọc, bậc, trạng thái, tóm tắt kho) ---------- */
 .roster-pill,
 .roster-status {
@@ -12349,6 +12446,150 @@ body[data-page-section="roster-recommend"] .layout {
   padding: 0 var(--space-10);
 }
 
+/* ---------- Bảng chọn nhanh (js/roster-picker.js): tìm, lọc, chọn từng món hoặc cả tập đang lọc ---------- */
+.roster-quick-add {
+  display: block;
+}
+
+.roster-ai-off {
+  margin: 0;
+}
+
+.roster-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  padding: var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+  box-shadow: var(--shadow-card);
+}
+
+.roster-picker .roster-section-lead {
+  margin: 0;
+}
+
+.roster-picker-kinds {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.roster-picker-search-row .ana-input {
+  width: 100%;
+}
+
+.roster-picker-filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
+  gap: var(--space-8);
+}
+
+.roster-picker-filters[hidden] {
+  display: none;
+}
+
+.roster-picker-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.roster-picker-bar [hidden] {
+  display: none;
+}
+
+.roster-picker-slot[hidden],
+.roster-picker-empty[hidden] {
+  display: none;
+}
+
+.roster-picker-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--space-6);
+  max-height: 22rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.roster-picker-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  width: 100%;
+  min-height: var(--control-38);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-tactic);
+  text-align: left;
+  cursor: pointer;
+}
+
+.roster-picker-item:hover:not(:disabled) {
+  background: var(--panel-3);
+}
+
+.roster-picker-item:focus-visible {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.roster-picker-item[aria-pressed="true"] {
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.roster-picker-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.roster-picker-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--control-24);
+  height: var(--control-24);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-6);
+  background: var(--panel);
+  color: var(--accent-ink);
+  font: var(--type-small);
+}
+
+.roster-picker-item[aria-pressed="true"] .roster-picker-mark {
+  border-color: var(--accent-line);
+}
+
+.roster-picker-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.roster-picker-meta {
+  flex: none;
+  color: var(--muted);
+  font: var(--type-small);
+  white-space: nowrap;
+}
+
+.roster-picker-count {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-small);
+}
+
 .roster-locked-list {
   display: flex;
   flex-direction: column;
@@ -12471,7 +12712,9 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .roster-portfolio,
-.roster-missing-section {
+.roster-coverage-section,
+.roster-missing-section,
+.roster-conflict-section {
   display: flex;
   flex-direction: column;
   gap: var(--space-14);
@@ -12627,6 +12870,120 @@ body[data-page-section="roster-recommend"] .layout {
 
 .roster-open:hover {
   color: var(--accent-strong);
+}
+
+/* ---------- Độ phủ kho ---------- */
+.roster-coverage-section {
+  grid-column: 1 / -1;
+}
+
+.roster-coverage-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.roster-coverage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--type-control);
+}
+
+.roster-coverage-table th,
+.roster-coverage-table td {
+  padding: var(--space-8) var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line);
+  text-align: left;
+}
+
+.roster-coverage-table th {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.roster-coverage-table .roster-coverage-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.roster-coverage-cell {
+  min-width: var(--control-36);
+  min-height: var(--control-36);
+  padding: 0 var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+  color: var(--accent);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.roster-coverage-cell:hover,
+.roster-coverage-cell[aria-expanded="true"] {
+  color: var(--accent-strong);
+  border-color: var(--accent);
+}
+
+.roster-coverage-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  min-width: 0;
+}
+
+.roster-coverage-detail-title {
+  margin: 0;
+  color: var(--ink);
+  font: var(--type-control);
+  font-weight: 600;
+}
+
+.roster-coverage-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roster-coverage-team {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-12) var(--space-14);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  min-width: 0;
+}
+
+.roster-coverage-team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-10);
+}
+
+.roster-coverage-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8) var(--space-24);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-2);
+  font: var(--type-meta);
+}
+
+.roster-coverage-progress li {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.roster-coverage-progress strong {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ---------- Thiếu món ---------- */
@@ -13017,6 +13374,16 @@ body[data-page-section="roster-recommend"] .layout {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .roster-picker-list {
+    grid-template-columns: minmax(0, 1fr);
+    max-height: 18rem;
+  }
+
+  .roster-picker-bar .ana-btn,
+  .roster-picker-bar .roster-ghost {
+    flex: 1 1 auto;
+  }
+
   /* Dải bước mobile vẫn giữ chữ cả ba bước (RosterMobile.dc.html). */
   .roster-flow .ana-flow-step:not([data-state="current"]) .ana-flow-label {
     display: inline;
@@ -13055,6 +13422,11 @@ body[data-page-section="roster-recommend"] .layout {
   .roster-missing-line {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .roster-coverage-team-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -13503,13 +13875,10 @@ body[data-page-section="roster-recommend"] .layout {
 
 .cm-auth-status { margin: 0; padding: 0 var(--space-12); color: var(--avoid); font: var(--type-meta); }
 
-/* Dưới 1280px header chỉ còn chỗ cho nút icon: nhãn "Đăng nhập" nằm ở aria-label. */
-@media (max-width: 1279px) {
+/* Mobile (≤820px) header chỉ còn chỗ cho nút icon không viền: nhãn "Đăng nhập" nằm ở aria-label. */
+@media (max-width: 820px) {
   .cm-auth-label { display: none; }
   .cm-auth-login { width: var(--control-44); padding: 0; }
-}
-
-@media (max-width: 820px) {
   .site-header .cm-auth-login { border-color: transparent; }
 }
 
@@ -14873,6 +15242,16 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-team-similar-list { display: grid; gap: var(--space-6); margin: 0; padding-left: var(--space-20); }
 .cm-team-widgets { display: grid; gap: var(--space-20); }
 
+/* Trang tĩnh một đội (`/doi-cong-dong/<id>/`) và danh sách link dựng sẵn trong mount. */
+.cm-team-static { display: grid; gap: var(--space-14); }
+.cm-team-static[hidden] { display: none; }
+.cm-team-static-back { margin: 0 0 var(--space-10); }
+.cm-team-static-list { display: grid; gap: var(--space-6); margin: 0; padding-left: var(--space-20); }
+.cm-team-faq { display: grid; gap: var(--space-10); }
+.cm-team-faq-item { display: grid; gap: var(--space-4); }
+.cm-team-faq-item h3 { margin: 0; }
+.cm-team-faq-item p { margin: 0; }
+
 .cm-team-form,
 .cm-team-form-root { display: grid; gap: var(--space-16); }
 .cm-team-form fieldset { display: grid; gap: var(--space-12); margin: 0; padding: var(--space-14); border: var(--border-hair) solid var(--line-2); border-radius: var(--radius-12); }
@@ -14931,4 +15310,183 @@ body[data-page-section="roster-recommend"] .layout {
 
 .lang-switch:hover {
   border-color: var(--band-ink);
+}
+
+/* ---------- Đội của tôi (/doi-cua-toi/) và nút "Lưu vào đội của tôi" ---------- */
+
+.mt-page { display: grid; gap: var(--space-16); min-width: 0; }
+.mt-root, .mt-body { display: grid; gap: var(--space-16); min-width: 0; }
+.mt-page [hidden], .mt-dialog [hidden], .mt-toasts [hidden] { display: none; }
+
+.mt-loading, .mt-empty { margin: 0; color: var(--muted); font: var(--type-body); }
+.mt-empty-all { padding: var(--space-20); border: var(--border-hair) dashed var(--line); border-radius: var(--radius-12); }
+
+.mt-status { margin: 0; color: var(--good); font: var(--type-small); }
+.mt-alert {
+  margin: 0;
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--avoid);
+  border-radius: var(--radius-8);
+  color: var(--avoid);
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+}
+.mt-notice {
+  margin: 0;
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-8);
+  background-color: var(--warn-bg);
+  color: var(--warn);
+  font: var(--type-small);
+}
+
+/* Thanh hộp: select + nút, tự xuống hàng ở bề rộng hẹp. */
+.mt-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-10); }
+.mt-box-label { color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
+.mt-toolbar .ana-input { min-width: 0; max-width: 100%; }
+.mt-toolbar .ana-btn, .mt-toolbar .roster-ghost, .mt-team-actions .ana-btn, .mt-team-actions .roster-ghost, .mt-group-head .roster-ghost { min-height: var(--control-44); }
+.mt-delete { color: var(--avoid); }
+
+.mt-dups { padding: var(--space-10) var(--space-14); border-radius: var(--radius-8); background-color: var(--warn-bg); color: var(--warn); font: var(--type-small); }
+.mt-dups-title { margin: 0 0 var(--space-4); font: var(--type-strong); }
+.mt-dups ul { margin: 0; padding-left: var(--space-18); }
+
+/* Nhóm */
+.mt-group { display: grid; gap: var(--space-10); min-width: 0; padding-top: var(--space-12); border-top: var(--border-hair) solid var(--line-2); }
+.mt-group-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-10); }
+.mt-group-name { margin: 0; font: var(--type-list-title); }
+.mt-count { color: var(--muted); font: var(--type-meta); }
+.mt-teams { display: grid; gap: var(--space-12); min-width: 0; }
+
+/* Thẻ đội dạng bảng như sheet: tướng + hai chiến pháp + binh thư + ghi chú trên một hàng; mobile xếp dọc có nhãn cột. */
+.mt-team {
+  display: grid;
+  gap: var(--space-10);
+  min-width: 0;
+  padding: var(--space-14);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-12);
+  background-color: var(--panel-3);
+}
+.mt-team-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-4) var(--space-10); }
+.mt-team-name { margin: 0; font: var(--type-card-title); overflow-wrap: anywhere; }
+.mt-tier { color: var(--accent-ink); font: var(--type-badge); }
+.mt-source-link { color: var(--accent-ink); font: var(--type-meta); }
+.mt-source-note { color: var(--muted); font: var(--type-meta); }
+.mt-badges { display: flex; flex-wrap: wrap; gap: var(--space-6); }
+.mt-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-8);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-999);
+  color: var(--ink-2);
+  font: var(--type-badge);
+}
+.mt-badge-missing { margin-left: var(--space-6); border-color: var(--warn); background-color: var(--warn-bg); color: var(--warn); }
+.mt-badge-updated { border-color: var(--accent-line); background-color: var(--accent-soft); color: var(--accent-ink); }
+.mt-badge-dup { border-color: var(--warn); color: var(--warn); }
+
+.mt-table { width: 100%; border-collapse: collapse; }
+.mt-table th, .mt-table td { padding: var(--space-6) var(--space-8); border-bottom: var(--border-hair) solid var(--line-2); text-align: left; vertical-align: top; overflow-wrap: anywhere; }
+.mt-table th { color: var(--muted); font: var(--type-table-head); letter-spacing: var(--type-table-head-spacing); text-transform: uppercase; }
+.mt-cell { font: var(--type-small); }
+.mt-name { color: var(--ink); font: var(--type-hero-name); }
+.mt-muted { color: var(--muted); }
+.mt-stars { color: var(--accent-ink); font: var(--type-badge); }
+.mt-alt { display: block; color: var(--muted); font: var(--type-meta); }
+.mt-note { margin: 0; color: var(--ink-2); font: var(--type-small); overflow-wrap: anywhere; white-space: pre-line; }
+.mt-team-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-12); }
+.mt-move-label { display: inline-flex; align-items: center; gap: var(--space-6); color: var(--muted); font: var(--type-meta); }
+.mt-move { min-width: 0; max-width: 100%; }
+
+.mt-add-group { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-10); padding-top: var(--space-12); border-top: var(--border-hair) solid var(--line-2); }
+.mt-add-group label { color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
+.mt-add-group .ana-input { flex: 1 1 var(--size-col-120); min-width: 0; }
+
+/* Trình soạn */
+.mt-editor { display: grid; gap: var(--space-14); min-width: 0; padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-12); background-color: var(--panel); }
+.mt-editor-title { margin: 0; font: var(--type-list-title); }
+.mt-field { display: grid; gap: var(--space-4); min-width: 0; }
+.mt-field label, .mt-field > span:first-child { color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
+.mt-input, .mt-field .ana-input, .mt-field select { width: 100%; max-width: 100%; box-sizing: border-box; }
+.mt-input[aria-invalid="true"] { border-color: var(--avoid); }
+.mt-bytes { justify-self: end; color: var(--muted); font: var(--type-meta); }
+.mt-bytes[data-over="true"] { color: var(--avoid); font-weight: var(--weight-bold); }
+.mt-field-inline { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--space-8); }
+.mt-edit-heroes { display: grid; gap: var(--space-14); min-width: 0; }
+.mt-edit-hero { display: grid; gap: var(--space-10); min-width: 0; margin: 0; padding: var(--space-12); border: var(--border-hair) solid var(--line-2); border-radius: var(--radius-10); }
+.mt-edit-hero legend { padding: 0 var(--space-6); font: var(--type-strong); }
+.mt-slot { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-10); }
+.mt-slot-label { min-width: var(--size-col-120); color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
+.mt-slot-value { flex: 1 1 var(--size-col-120); min-width: 0; font: var(--type-hero-name); overflow-wrap: anywhere; }
+.mt-slot-value[data-empty="true"] { color: var(--muted); font-weight: var(--weight-regular); }
+.mt-chips { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
+.mt-chips-label { color: var(--muted); font: var(--type-meta); }
+.mt-chip { display: inline-flex; align-items: center; gap: var(--space-2); padding: 0 var(--space-2) 0 var(--space-12); border: var(--border-hair) solid var(--line); border-radius: var(--radius-999); font: var(--type-small); }
+.mt-chip-remove { display: inline-flex; align-items: center; justify-content: center; width: var(--control-44); height: var(--control-44); border: none; background: none; color: var(--muted); font: var(--type-control); cursor: pointer; }
+.mt-chip-remove:hover { color: var(--avoid); }
+.mt-chip-add, .mt-add-hero { min-height: var(--control-44); }
+.mt-editor-actions, .mt-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-8); }
+.mt-editor-actions .ana-btn, .mt-dialog-actions .ana-btn { min-height: var(--control-44); }
+
+/* Xung đột: hai bản cạnh nhau, mobile xếp dọc. */
+.mt-conflict { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-12); padding: var(--space-12); border: var(--border-hair) solid var(--warn); border-radius: var(--radius-10); background-color: var(--warn-bg); }
+.mt-conflict .mt-dialog-actions { grid-column: 1 / -1; }
+.mt-conflict-col { display: grid; gap: var(--space-4); min-width: 0; padding: var(--space-10); border-radius: var(--radius-8); background-color: var(--panel); color: var(--ink); font: var(--type-small); overflow-wrap: anywhere; }
+.mt-conflict-col h4 { margin: 0; font: var(--type-strong); }
+.mt-conflict-col p { margin: 0; }
+.mt-conflict-name { font: var(--type-hero-name); }
+.mt-conflict-time { color: var(--muted); font: var(--type-meta); }
+
+/* Hộp thoại + toast */
+.mt-dialog {
+  width: min(560px, calc(100vw - var(--space-32)));
+  max-height: calc(100dvh - var(--space-32));
+  padding: 0;
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-18);
+  background-color: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-modal);
+}
+.mt-dialog::backdrop { background-color: var(--overlay); }
+.mt-picker-dialog { width: min(720px, calc(100vw - var(--space-32))); }
+.mt-dialog-body { display: grid; gap: var(--space-12); padding: var(--space-24); min-width: 0; }
+.mt-dialog-title { margin: 0; font: var(--type-dialog-title); }
+.mt-dialog-lead { margin: 0; color: var(--ink-2); font: var(--type-body); overflow-wrap: anywhere; }
+.mt-save-form, .mt-prompt, .mt-confirm, .mt-picker-body { display: grid; gap: var(--space-12); min-width: 0; }
+.mt-confirm p { margin: 0; font: var(--type-body); }
+.mt-danger { border-color: var(--avoid); color: var(--avoid); }
+.mt-picker-limit { margin: 0; color: var(--warn); font: var(--type-small); }
+.mt-picker-dialog .roster-picker-list { max-height: 50dvh; overflow-y: auto; }
+
+.mt-toasts { position: fixed; z-index: var(--z-50); right: var(--space-16); bottom: var(--space-16); display: grid; gap: var(--space-8); width: min(420px, calc(100vw - var(--space-32))); }
+.mt-toast { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6) var(--space-12); padding: var(--space-12) var(--space-14); border: var(--border-hair) solid var(--line); border-radius: var(--radius-12); background-color: var(--panel); color: var(--ink); box-shadow: var(--shadow-modal); font: var(--type-small); }
+.mt-toast[data-kind="error"] { border-color: var(--avoid); }
+.mt-toast-text { flex: 1 1 var(--size-col-120); min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.mt-toast-link { color: var(--accent-ink); font: var(--type-control); }
+.mt-toast-action, .mt-toast-close { min-height: var(--control-44); padding: 0 var(--space-10); border: var(--border-hair) solid var(--line); border-radius: var(--radius-8); background: none; color: var(--ink); font: var(--type-control); cursor: pointer; }
+.mt-toast-close { min-width: var(--control-44); border-color: transparent; }
+
+/* Nút lưu trên các trang nguồn. */
+.mt-save-btn { cursor: pointer; }
+.detail-actions-body .mt-save-btn { min-height: var(--control-44); }
+.roster-result-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-8) var(--space-14); }
+.ana-compare-actions .mt-save-btn { min-height: var(--control-44); }
+
+@media (max-width: 820px) {
+  .mt-conflict { grid-template-columns: minmax(0, 1fr); }
+  .mt-dialog-body { padding: var(--space-18); }
+  .mt-toasts { right: var(--space-12); bottom: var(--space-12); }
+  /* Bảng đội thành thẻ xếp dọc: mỗi ô một dòng, nhãn cột lấy từ `data-label`. */
+  .mt-table, .mt-table tbody, .mt-table tr, .mt-table td { display: block; width: 100%; }
+  .mt-table thead { position: absolute; width: var(--space-1); height: var(--space-1); overflow: hidden; clip-path: inset(50%); }
+  .mt-row { padding: var(--space-8) 0; border-bottom: var(--border-hair) solid var(--line-2); }
+  .mt-row:last-child { border-bottom: none; }
+  .mt-table td { display: grid; grid-template-columns: var(--size-col-120) minmax(0, 1fr); gap: var(--space-8); border-bottom: none; padding: var(--space-4) 0; }
+  .mt-table td::before { content: attr(data-label); color: var(--muted); font: var(--type-meta); }
+  .mt-table td > .mt-badge, .mt-table td > .mt-alt, .mt-table td > .mt-stars { grid-column: 2; }
+  .mt-field-inline { grid-template-columns: minmax(0, 1fr); }
+  .mt-slot-label { min-width: 0; flex-basis: 100%; }
 }
