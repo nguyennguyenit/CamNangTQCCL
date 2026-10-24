@@ -1382,8 +1382,9 @@ def _apply_client_troop_mods(document, troop_mods):
         old_ids = {canonical_id("tactic", option["nameVi"]): option["id"] for option in row["options"]}
         slug = owner.removeprefix("troop-mod:")
         built, used = [], set()
-        # Lựa chọn giữ mã cũ (trùng tên) giữ chữ Hán nguồn của nó; lựa chọn mới chưa có chữ Hán.
-        old_zh = {option["id"]: {key: option[key] for key in ("nameZh", "descriptionZh", "zhSource")} for option in row["options"]}
+        # Lựa chọn giữ mã cũ (trùng tên) chỉ giữ tên chữ Hán nguồn: mô tả Việt nay là chữ client (số liệu Global có thể
+        # khác bản TW của SGSDeck), nên mô tả chữ Hán nguồn bị bỏ; bản zh dùng bản dịch `zhTexts` theo chữ client.
+        old_names = {option["id"]: option["nameZh"] for option in row["options"]}
         for item in options:
             option_name = _client_tactic_text(item["nameVi"], owner, "options.nameVi")
             key = canonical_id("tactic", option_name)
@@ -1394,7 +1395,8 @@ def _apply_client_troop_mods(document, troop_mods):
             built.append({"id": identifier, "tierVi": CLIENT_TROOP_TIERS[item["tier"]], "nameVi": option_name,
                           "descriptionVi": _client_tactic_text(item["descriptionVi"], owner, "options.descriptionVi"),
                           "convertsToVi": item["convertsTo"],
-                          **old_zh.get(identifier, {"nameZh": None, "descriptionZh": None, "zhSource": None})})
+                          "nameZh": old_names.get(identifier), "descriptionZh": None,
+                          "zhSource": {"kind": "source"} if old_names.get(identifier) else None})
         # Hướng dẫn mùa của client không phải chữ hiệu quả nguồn: bỏ `effectZh` nguồn (bản zh dùng bản dịch nếu có).
         row.update({"nameVi": name, "effectVi": effect, "options": built, "revisions": [], "effectZh": None, "zhSource": None})
         ledger.append({
@@ -1416,6 +1418,10 @@ CLIENT_CATALOG_FIELDS = {
     "advisors": {"nameVi", "elementVi", "tacticPoints", "effectVi", "heroIds"},
     "buildings": {"nameVi", "summaryVi"},
 }
+# Trường Việt bị client ghi đè -> trường chữ Hán nguồn đi kèm bị bỏ (chữ nguồn là bản TW, số liệu có thể khác client).
+CLIENT_ZH_PAIRS = {"advisors": {"effectVi": "effectZh"}, "buildings": {"summaryVi": "summaryZh"}}
+# Trường chữ Hán chính quyết định `zhSource` của hàng (cùng quy tắc với `_zh_source_ok`).
+ZH_MAIN_FIELDS = {"advisors": ("nameZh", "effectZh"), "buildings": ("summaryZh",)}
 
 
 def _client_catalog_value(value, owner, field):
@@ -1432,9 +1438,13 @@ def _client_catalog_value(value, owner, field):
     return _client_tactic_text(value, owner, field)
 
 
+# Ghi chú biên tập của nguồn (chữ chưa đủ/bị cắt) nằm trong chuỗi: cả chuỗi không phải chữ Hán công khai được.
+SOURCE_ZH_NOTE_MARKERS = ("待補充", "待补充", "待補全", "待补全")
+
+
 def _source_zh(value):
-    """Chữ Hán nguồn công khai được: chuỗi khác rỗng, không phải chữ giữ chỗ của nguồn; còn lại `None`."""
-    if not isinstance(value, str) or not value.strip() or value.strip() in MISSING_TEXT:
+    """Chữ Hán nguồn công khai được: chuỗi khác rỗng, không là/chứa ghi chú giữ chỗ của nguồn; còn lại `None`."""
+    if not isinstance(value, str) or not value.strip() or any(marker in value for marker in SOURCE_ZH_NOTE_MARKERS):
         return None
     return value.strip()
 
@@ -1528,6 +1538,11 @@ def _apply_client_catalog(document, catalog, heroes):
                     _rename_catalog_row(row, value)
                 else:
                     row[field] = value
+                    paired = CLIENT_ZH_PAIRS.get(group, {}).get(field)
+                    if paired:
+                        row[paired] = None
+            if group in ZH_MAIN_FIELDS:
+                row["zhSource"] = {"kind": "source"} if any(row[key] for key in ZH_MAIN_FIELDS[group]) else None
             ledger.append({
                 "entityId": owner, "fieldPath": f"clientCapture.{group}", "disposition": "corrected-public",
                 "chosenInput": "client-capture", "sourceRecordId": f"client-{group}:{owner}",
@@ -1741,7 +1756,8 @@ def _build_model(capture):
             child_id = child_ids[(record["sourceId"], "troop-option", str(index))]
             name_zh = _source_zh(option.get("traitName"))
             options.append({"id": child_id, "tierVi": _enum(TIERS, option["tier"], "troop-option.tier"), "nameVi": translated[(child_id, "nameVi")], "descriptionVi": translated.get((child_id, "descriptionVi")), "convertsToVi": _enum(TROOPS, option.get("convertsTo"), "troop-option.convertsTo"),
-                            "nameZh": name_zh, "descriptionZh": _source_zh(option.get("description")), "zhSource": {"kind": "source"} if name_zh else None})
+                            "nameZh": name_zh, "descriptionZh": _source_zh(option.get("description")),
+                            "zhSource": {"kind": "source"} if name_zh or _source_zh(option.get("description")) else None})
         effect_zh = _source_zh(attrs.get("effectText"))
         troop_mods.append({**_common(record, owner, decision, translated), "effectVi": translated.get((owner, "effectVi")), "appliesToVi": translated.get((owner, "appliesToVi")), "suggestedBuildVi": translated.get((owner, "suggestedBuildVi")), "troopLimitVi": [_enum(TROOPS, value, "troop-mod.troopLimit") for value in attrs.get("troopLimit", [])], "revisions": _revisions(attrs.get("effectText"), translated.get((owner, "effectVi"))), "options": options,
                            "effectZh": effect_zh, "appliesToZh": _source_zh(attrs.get("appliesTo")), "suggestedBuildZh": _source_zh(attrs.get("suggestedBuild")), "zhSource": {"kind": "source"} if effect_zh else None})

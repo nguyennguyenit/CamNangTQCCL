@@ -807,6 +807,19 @@ class ClientTacticCaptureTest(unittest.TestCase):
         self.assertEqual(row["options"][2]["id"], old_by_name["kháng cự"])
         self.assertEqual(kept["id"], "troop-option:dan-duong-binh:nang-khien")
         self.assertEqual(row["options"][0]["convertsToVi"], "Thương binh")
+        # Lựa chọn giữ mã chỉ giữ tên chữ Hán nguồn; mô tả chữ Hán nguồn (bản TW) bị bỏ vì mô tả Việt nay là chữ client.
+        option = row["options"][2]
+        old_option = {item["id"]: item for item in before["options"]}[option["id"]]
+        self.assertTrue(old_option["descriptionZh"])
+        self.assertEqual((option["nameZh"], option["descriptionZh"], option["zhSource"]), (old_option["nameZh"], None, {"kind": "source"}))
+        self.assertEqual((kept["nameZh"], kept["zhSource"]), (None, None))
+        self.assertEqual((row["effectZh"], row["zhSource"]), (None, None))
+        # Mô tả của lựa chọn giữ mã nhận bản dịch theo chữ client; tên nguồn giữ nguyên, hàng thành `translation`.
+        texts = {option["id"]: {"descriptionZh": {"text": "我軍受到的兵種剋制效果減半", "viSha256": hashlib.sha256(option["descriptionVi"].encode("utf-8")).hexdigest()}}}
+        output = self._build({}, troopMods={"troop-mod:dan-duong-binh": mod}, zhTexts=texts)
+        translated = {item["id"]: item for row in json.loads((output / "lookup-catalog.json").read_bytes())["troopMods"] for item in row["options"]}[option["id"]]
+        self.assertEqual((translated["nameZh"], translated["descriptionZh"], translated["zhSource"]), (old_option["nameZh"], "我軍受到的兵種剋制效果減半", {"kind": "translation"}))
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
         with self.assertRaisesRegex(ValueError, "client troop mod is invalid"):
             self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": mod["options"][:11]}})
 
@@ -844,6 +857,29 @@ class ClientTacticCaptureTest(unittest.TestCase):
             with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "client (equipment|buildings) entry is invalid|client catalog value is invalid|client new advisor is invalid|client advisor hero link is invalid"):
                 self._build({}, **bad)
 
+    def test_client_text_override_drops_the_paired_source_chinese(self):
+        # Chữ Hán nguồn là bản TW: khi client thay chữ Việt, chữ Hán đi kèm bị bỏ để hai bản không lệch số liệu.
+        before = json.loads(self._build({}).joinpath("lookup-catalog.json").read_bytes())
+        advisor = next(row for row in before["advisors"] if row["effectZh"] and row["usageZh"])
+        building = next(row for row in before["buildings"] if row["summaryZh"])
+        output = self._build(
+            {},
+            advisors={advisor["id"]: {"nameVi": advisor["nameVi"], "effectVi": "Động Viên: chữ client"}},
+            buildings={building["id"]: {"nameVi": building["nameVi"], "summaryVi": "Tóm tắt client"}},
+        )
+        catalog = json.loads((output / "lookup-catalog.json").read_bytes())
+        advisor_after = {row["id"]: row for row in catalog["advisors"]}[advisor["id"]]
+        building_after = {row["id"]: row for row in catalog["buildings"]}[building["id"]]
+        self.assertEqual((advisor_after["effectZh"], advisor_after["usageZh"], advisor_after["zhSource"]), (None, advisor["usageZh"], None))
+        self.assertEqual((building_after["summaryZh"], building_after["zhSource"]), (None, None))
+        self.assertEqual([level["effectZh"] for level in building_after["levels"]], [level["effectZh"] for level in building["levels"]])
+        validate_candidate(output, client_heroes=self.directory / "client-heroes.json", client_tactics=self.directory / "client-tactics.json")
+
+    def test_source_chinese_with_an_editor_note_is_not_published(self):
+        self.assertIsNone(build_module._source_zh("發動突擊戰法後，有25%機率（遊戲畫面此處文字被截斷，待補全）"))
+        self.assertIsNone(build_module._source_zh("待補充"))
+        self.assertEqual(build_module._source_zh(" 我軍全體獲得5%減傷 "), "我軍全體獲得5%減傷")
+
     def test_zh_texts_fill_only_missing_chinese_and_are_flagged_as_translation(self):
         def sha(text):
             return hashlib.sha256(text.encode("utf-8")).hexdigest()
@@ -872,6 +908,8 @@ class ClientTacticCaptureTest(unittest.TestCase):
             ({"advisor:hieu-lenh-thien-ha": {"usageZh": {"text": "用法", "viSha256": sha("x")}}}, "entry is invalid"),
             ({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "Hieu Lenh", "viSha256": sha("Hiệu Lệnh Thiên Hạ")}}}, "has no Chinese text"),
             ({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "号令天下", "viSha256": sha("Hiệu Lệnh Thiên Hạ"), "ref": "https://example.com/x"}}}, "value is invalid"),
+            *[({"advisor:hieu-lenh-thien-ha": {"nameZh": {"text": "号令天下", "viSha256": sha("Hiệu Lệnh Thiên Hạ"), "ref": bad_ref}}}, "value is invalid")
+              for bad_ref in ("http://sanzhan.slgsim.com/x", "https://sanzhan.slgsim.com:8443/x", "https://user@sanzhan.slgsim.com/x", "https://sanzhan.slgsim.com/", "https://sanzhan.slgsim.com/a b")],
         ):
             with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
                 self._build({}, newAdvisors=new, zhTexts=bad)

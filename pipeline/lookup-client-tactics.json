@@ -10684,6 +10684,18 @@
     }
   },
   "zhTexts": {
+    "advisor:an-nhan-doat-quyen": {
+      "effectZh": {
+        "text": "動員：與玩家部隊戰鬥時，主將提升 8 點智力和 5% 攻心（受熟練度影響，至多提升 15% 攻心），每戰勝兵力大於 15000 的部隊智力加成提升 1 點（上限 30 點，賽季結束重置），效果持續 30 分鐘，撤退後立即結束。",
+        "viSha256": "88d7a39a3843a0b86698e8a319fdfa22346274759ce667c631f5f8dcb67bb6c1"
+      }
+    },
+    "advisor:an-phuc-binh-tam": {
+      "effectZh": {
+        "text": "被動：已任命的風類軍師不多於 3 名時（超過 3 名仍按 3 名計算），每有 1 支任命風類軍師的部隊，所有部隊的城外徵兵速度提升 3%（受熟練度影響，至多提升 4.5%）。\n動員：使得自身被動的徵兵加速效果提升 100%（受熟練度影響，至多提升 200%），持續 2 小時（魯肅卸任軍師後效果立刻結束）。（每日限定使用 2 次）",
+        "viSha256": "0dca4aa7c56f15be38db7452ee275625ea7ec3fada3863a9b102c27b2ef15ea3"
+      }
+    },
     "advisor:ba-vuong-thao-nghich": {
       "nameZh": {
         "text": "霸王讨逆",
@@ -10706,6 +10718,30 @@
         "viSha256": "baf32de02e02ce7436365d6a5a3597c3138822ab4a9d955a568194ebccc3a8d2"
       }
     },
+    "advisor:bach-ma-tuong-quan": {
+      "effectZh": {
+        "text": "被動：使得部隊內趙雲獲得增益：統率、速度提升 20 點且弓兵適性 +1，武力、智力下降 15 點且槍兵適性 -1。\n衝鋒：若所在隊伍有趙雲，則與玩家部隊交戰時，我方部隊前 4 回合主動戰法發動率提升 5%（受熟練度影響，至多提升 10%）。",
+        "viSha256": "c7ab536dbebaeead79e30279dddcb3bb51405599ea632298ca30ffc249bae0cd"
+      }
+    },
+    "advisor:binh-quy-than-toc": {
+      "effectZh": {
+        "text": "被動：我方所有騎兵部隊行軍速度高於 50 點時，每 10 點（受熟練度影響，最低 5 點）行軍速度將使我方主將最高屬性額外提升 1 點（上限 25 點）。\n衝鋒：騎兵專屬，戰鬥第 3 回合我方隨機單體獲得破陣狀態，持續 1 回合。",
+        "viSha256": "16e57fac3b7d5a7e8b5911a6e41286c28265b090b0a1fd2810c2bf8e3e9fd23e"
+      }
+    },
+    "advisor:cam-pham-du-hiep": {
+      "effectZh": {
+        "text": "衝鋒：選擇地塊發起進攻且獲得增益：在河道附近 3 格內與玩家部隊交戰時獲得 25 點士氣提升，且我方每造成 10 點傷害可獲得 20 糧食（受熟練度影響，至多 40 糧食），每日上限 40 萬（到達後未發生戰鬥則返還 80% 除體力外的消耗資源）。",
+        "viSha256": "e9c090d051e2862f7a39b06fe93c7ed306f42c1495c302d9e1b1284b0f25362d"
+      }
+    },
+    "advisor:chan-phan-ngang-duong": {
+      "effectZh": {
+        "text": "向目的地行軍，到達目的地後恢復 25 點士氣（受熟練度影響，至多恢復 50 點）。",
+        "viSha256": "9e461cbe2c0f79e3bd676488810cce73196424de8e337b69f33e3da6260bf192"
+      }
+    },
     "advisor:chi-bay-tran": {
       "nameZh": {
         "text": "陷阵之志",
@@ -10717,6 +10753,18 @@
         "viSha256": "b8c61d03abd739420221f8220cdde89e28c2d4d9f44c523859a3f3fae9975eda"
       }
     },
+    "advisor:chiem-tinh-boc-quai": {
+      "effectZh": {
+        "text": "動員：使部隊獲得隨機增益，若部隊附近 2 格範圍內有山或水，則有概率獲得特殊卦象增益，持續 10 分鐘（受熟練度影響，至多持續 30 分鐘）。",
+        "viSha256": "ed9e2b7376b2909ea5718b36a89490a922c614ac1d44f197d99182d6be147af7"
+      }
+    },
+    "advisor:chien-y-ngang-duong": {
+      "effectZh": {
+        "text": "被動：所在部隊獲得戰功時將額外獲得戰意值，戰意值達到 100 時釋放軍師技將清除全部戰意值並降低 30% 釋放消耗（受熟練度影響，至多降低 50%）。\n動員：部隊武將立即移除重傷狀態、恢復 100% 傷兵並獲得 3000 兵力。（每日限定使用 2 次）",
+        "viSha256": "c866336585b8ecd90cb322554059d6e73dd214cef01a213b559144955b38d9e9"
+      }
+    },
     "advisor:chu-nghich-binh-phan": {
       "nameZh": {
         "text": "诛逆平叛",
@@ -10726,6 +10774,30 @@
       "effectZh": {
         "text": "動員：對自身或盟友地塊進行 1 次掃蕩，掃蕩戰鬥中我方全體免疫混亂，並獲得 10% 造成傷害提升與受到傷害降低效果（受熟練度影響，至多 20%），且每場戰鬥結束後立即恢復所有傷兵，1 次軍師技至多生效 3 場戰鬥",
         "viSha256": "c67d6142bf2587cf3a8326cf0802ac89ae110ced07b23335ff138a2e460036e1"
+      }
+    },
+    "advisor:dan-cung-phuc-xa": {
+      "effectZh": {
+        "text": "弓兵專屬，選擇 2 格內非自身所在地塊，準備 15 秒後，與該地塊上的玩家部隊依次發生交戰，若敵方部隊為盾兵，則進入戰鬥時獲得減益：首回合我方全體造成傷害降低 5%（受熟練度影響，至少降低 0%）。\n注：無法選中免戰建築釋放。",
+        "viSha256": "28a1eac3c68c84a87544f99c16f805029a117105c0ddce1e84e87a6bd3108205"
+      }
+    },
+    "advisor:dan-ky-trung-tran": {
+      "effectZh": {
+        "text": "選擇 4 格內的非自身所在地塊，準備 15 秒後快速衝鋒到目標地塊，過程中無視阻擋且不發生交戰，3 分鐘後返回原地，期間無法主動撤退。衝鋒後部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），體力消耗降低 40%。",
+        "viSha256": "3db22763a5266d4ffb65b8216650c8dc367246f535e6bb12c914baba95ce0ca2"
+      }
+    },
+    "advisor:dang-giap-ngu-dich": {
+      "effectZh": {
+        "text": "盾兵專屬，消耗 3000 木材為隊伍打造簡易藤甲：使我方部隊受到的兵刃傷害降低 8%（受熟練度影響，至多降低 12%），隊伍行軍速度降低 10%，處於灼燒時額外損失兵力（傷害率 300%），並燒毀該簡易藤甲。藤甲兵無法使用該軍師技；撤退後效果立刻結束。",
+        "viSha256": "eb195b0243e73cbe89c0bf85478e76d865c044a20189adad8bdf56e376c5d779"
+      }
+    },
+    "advisor:dinh-quan-ky-tap": {
+      "effectZh": {
+        "text": "遠程：弓兵專屬，選擇 3 格內非自身所在地塊（非建築地塊或符合連地規則的建築地塊），準備 15 秒後，與該地塊上的玩家部隊依次發生交戰並獲得戰鬥增益：首回合行動前，我軍全體對敵軍隨機單體造成 50% 傷害（傷害類型受主將武力和智力中較高一項影響，傷害率受熟練度影響，至多 75%）；若我軍主將為蜀陣營，則傷害率額外提升 10%；若釋放後未發生交戰，返還 80% 計略點和策力消耗。",
+        "viSha256": "6ab6ca609b9d13356fa985b6e23f34762d24337892481e952037d29a8142c890"
       }
     },
     "advisor:don-doc-tham-nhap": {
@@ -10750,6 +10822,12 @@
         "viSha256": "afb72385d69c8effb8c361c6946f070ec10c98ba90528249adb5a9599b396a22"
       }
     },
+    "advisor:hanh-tat-nhu-phi": {
+      "effectZh": {
+        "text": "動員：部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時。",
+        "viSha256": "da41ab0c4f90b5fa1bae51fd28902a49cfbefe73bbb01f0f39fc24dbcde09dc9"
+      }
+    },
     "advisor:hieu-lenh-thien-ha": {
       "nameZh": {
         "text": "号令天下",
@@ -10772,6 +10850,18 @@
         "viSha256": "8a803d2eb603912d1d3388fde4c580b1ea0c4ee51851fda428bbccf66ee40690"
       }
     },
+    "advisor:hoanh-trung-bao-liem": {
+      "effectZh": {
+        "text": "兵法：為部隊立即徵召 6000 兵力，每 1 兵力消耗 40 糧食（受熟練度影響，至少消耗 25 糧食）。（每日限定使用 2 次）",
+        "viSha256": "ddd7ec66bf2c1a6c59d1fa881f710ee98610f7f2a5218e578ea6387992820ac7"
+      }
+    },
+    "advisor:hong-nhan-hoac-tam": {
+      "effectZh": {
+        "text": "被動：將部隊內呂布自帶戰法替換為無雙飛將。\n衝鋒：下次與玩家部隊交戰時，部隊內呂布自帶戰法發動率提升 10%（受熟練度影響，至多提升 20%）。",
+        "viSha256": "a99b25f59ebbf9681803b52849c247cefaf2dbf88bb48904be2e4662a731465d"
+      }
+    },
     "advisor:ke-hoach-chu-toan": {
       "nameZh": {
         "text": "计出万全",
@@ -10781,6 +10871,24 @@
       "effectZh": {
         "text": "動員：使用後對中立地塊（銅礦除外）進行攻佔，此次攻佔跳過戰平階段（連續跳過 3 次戰平後部隊將撤退）；若部隊成功佔領地塊，則使該地塊資源產量提升 50%（受熟練度影響，至多提升 100%），持續 24 小時；若部隊攻佔時戰敗，則返還陣亡兵力對應徵兵資源的 30%（受熟練度影響，至多 50%）",
         "viSha256": "d39b27444952b765e85d51b476db441e76c83eec2ea8d69203fd1bf295895759"
+      }
+    },
+    "advisor:ke-luoc-van-dan": {
+      "effectZh": {
+        "text": "動員：發動後使部隊獲得持續 2 小時的掠奪狀態：成功攻佔敵方領地時，立即獲得該地塊 20 小時資源產量的資源（受熟練度影響，至多獲得 30 小時產量），並使該地塊進入遭掠狀態：資源產量降低 80%，持續 10 小時（俠客軍的掠奪狀態無法生效）。",
+        "viSha256": "44e1e34ae7ae2cb221931e0c3ed8d0849d2dddd41c9f29d825938733d20c35e2"
+      }
+    },
+    "advisor:ky-binh-dot-tap": {
+      "effectZh": {
+        "text": "衝鋒：騎兵專屬，向目的地發起行軍並獲得與玩家部隊戰鬥增益：首回合，我方全體各自對隨機敵方單體造成 20% 兵刃傷害（受自身速度與熟練度影響，至多造成 40%）。",
+        "viSha256": "178397c47ff62f6f466ee0040dd95c53d7c7ef634627446c3f3c2bd4240c4393"
+      }
+    },
+    "advisor:ky-cong-xao-nghe": {
+      "effectZh": {
+        "text": "兵法：建造一支存在 1 小時的機關獸部隊，攻城值為 60 點（受熟練度影響，至多提高至 660 點），同一時間只能存在一支機關獸部隊。",
+        "viSha256": "f2387e0461c830c36dc857b1b5b05f07844eee368ba863e4a5f276c6709daa7e"
       }
     },
     "advisor:ky-hoa-sach-toan": {
@@ -10794,6 +10902,18 @@
         "viSha256": "9507dedc45d328460c86c1cd7bb117a030c9da1cac9f9ee7ac498df59fd666a3"
       }
     },
+    "advisor:ky-phong-dao-vu": {
+      "effectZh": {
+        "text": "遠程、動員：選擇 3 格內地塊，準備 1 分鐘後在目標地塊半徑 1 格內召喚雲雨：澆滅燃燒地塊並有 50% 概率留下水窪（目標地塊與糧食地塊 100% 獲得水窪），持續 3 小時；水窪地塊發生交戰時敵我雙方造成的灼燒傷害降低 5%，水攻傷害提升 5%；同時範圍內自身 4 級以上糧食地塊有 50% 概率（受熟練度影響，至多 100%）永久提升地塊等級（不超過 8 級），地塊易主後恢復原等級；每名玩家至多提升 7 塊糧食地塊（勢力值不增加）。",
+        "viSha256": "029c1801e0a1a1c168aef721ad9de81c449f761c28b78c1da36e04f98a8f88a1"
+      }
+    },
+    "advisor:lam-dich-che-bien": {
+      "effectZh": {
+        "text": "衝鋒：下一場與玩家部隊戰鬥時，我方部隊死兵數減少 30%（受熟練度影響，至多減少 60%），且戰敗時，副將不會因主將死亡額外損失兵力。（每日限定使用 2 次）",
+        "viSha256": "05d157b0ccd87ffdc99cb53b8690879b433a1df8c1b325dfb6be1a60494b969f"
+      }
+    },
     "advisor:lao-thang-phia-truoc": {
       "nameZh": {
         "text": "蓄锐摧锋",
@@ -10803,6 +10923,42 @@
       "effectZh": {
         "text": "蓄勢：到達目標點後進入駐守狀態並獲得戰鬥增益：與玩家部隊交戰時，首回合我方主將對敵方主將造成 50% 傷害（傷害類型為主將武力與智力中較高的一項，傷害率受熟練度影響，至多 100%）；且戰鬥中敵方主將兵力低於最大兵力的 5% 時將被直接斬殺（受熟練度影響，至多斬殺最大兵力的 10%）；戰鬥後部隊含傷兵的總兵力首次低於 65% 時，斬殺效果失效",
         "viSha256": "cec98431c7325c27ae811cc8ef8aefd520ea38df10e48180655d7b10e89704ba"
+      }
+    },
+    "advisor:minh-the-thu-ngu": {
+      "effectZh": {
+        "text": "蓄勢：盾兵專屬，到達目的地後進入駐守狀態並獲得戰鬥增益：與玩家部隊戰鬥時，首回合我方全體獲得 10% 急救（受熟練度影響，至多 20%），且每持續駐守半小時治療率提升 5%（最多提升 2 次）；若我軍主將為魏陣營，則治療率額外提升 5%。",
+        "viSha256": "8d5ff0d41297113539c48b0245f8869935c8a513cac6eeac05e093aa9ac85e44"
+      }
+    },
+    "advisor:nghiem-tran-thu-ngu": {
+      "effectZh": {
+        "text": "動員、兵法：駐守在友方城池上並緩慢恢復該城池耐久（每 5 分鐘恢復 100 耐久，受熟練度影響，至多恢復 200），持續 1 小時，同一城池至多存在 5 支部隊進行耐久恢復；同時部隊獲得壘敵效果：戰鬥開始時使敵軍隨機單體陷入禁療狀態，持續 2 回合。",
+        "viSha256": "1f6ee1aeb4a27b1ce292ed0f2cfcc7fed635fbe7c3c172fc726684e705cda84e"
+      }
+    },
+    "advisor:nguy-phuc-am-do": {
+      "effectZh": {
+        "text": "動員、兵法：將部隊偽裝為同一兵種的常規形態，持續 2 小時，下次與玩家部隊戰鬥時結束偽裝並使敵方全體首回合處於遇襲狀態（行動滯後）（計略點消耗量受熟練度影響，至少消耗 4 點）。",
+        "viSha256": "33c87ccf1246d2ddff6fec6b803c2293aa1e6cb24f7b2d1d034a3177e54c68c0"
+      }
+    },
+    "advisor:nhan-tam-dac-chung": {
+      "effectZh": {
+        "text": "選擇 2 格內的地塊，對該地塊停留的至多 5 支同盟部隊施加持續 30 分鐘的援助效果：每名武將獲得 350 樊城鄉勇，與玩家部隊戰鬥受到傷害時，將由樊城鄉勇抵擋其中 50% 傷害（與玩家部隊戰鬥 3 場後失效）；受到援助的同盟部隊獲得戰功時，將贈予主公 10% 戰功（受熟練度影響，至多贈予 20% 戰功），每日至多可獲取 15000 戰功。",
+        "viSha256": "8fa27681e9248a04b502b85833d298c0174f98c871038b6fcff06ca29b20714d"
+      }
+    },
+    "advisor:nhan-than-chi-le": {
+      "effectZh": {
+        "text": "動員：對不超過 10 級的盟友地塊（除銅礦外）使用，立即獲得該地塊 50 小時（受熟練度影響，至多 100 小時）基礎產量的資源，並使該地塊產量提升 50%，持續 3 小時。（每日限定使用 2 次）",
+        "viSha256": "11b23b79c07617cc400bfdf5cb4303eefce510e0a662ac2306f37da903719434"
+      }
+    },
+    "advisor:qua-cam-nhac-chien": {
+      "effectZh": {
+        "text": "動員：使部隊行軍、駐守指令的體力消耗降低為 2 點，且行軍速度提升 20%，持續 15 分鐘（受熟練度影響，至多持續 30 分鐘）。",
+        "viSha256": "a59ec8df6349e22528d8453f5cf9fb1e77e82c3ceb592561532ac37c37222e96"
       }
     },
     "advisor:sung-vinh-ai-dai": {
@@ -10827,6 +10983,12 @@
         "viSha256": "e98b040d7c4574da2715ae72178d765494bcdf6ed7b6d848564f51f02f9fb9d2"
       }
     },
+    "advisor:tat-chien-dot-tap": {
+      "effectZh": {
+        "text": "動員：部隊獲得疾戰突襲狀態：接下來 3 場與玩家部隊的戰鬥將在第 5 回合結束，前 4 回合我軍全體受到傷害提升 25%（受熟練度影響，至少提升 10%）。",
+        "viSha256": "676bfd66a1abc6181d8887e227c005f4a38c7b1c0057da55cc220c9390a97736"
+      }
+    },
     "advisor:tay-luong-phi-hung": {
       "nameZh": {
         "text": "西凉飞熊",
@@ -10836,6 +10998,18 @@
       "effectZh": {
         "text": "動員：騎兵專屬，消耗 3000 糧食將部隊訓練為飛熊騎兵：我軍主將每回合行動時，有 20% 機率（受熟練度影響，至多 40% 機率）對敵軍群體（2 人）造成謀略傷害（傷害率 10%，受我軍全體累計受到的治療量影響，觸發後重置累計進度），持續 30 分鐘，撤退後立即結束此效果；飛熊軍無法使用此軍師技",
         "viSha256": "07dcd28040c9e65274962198b956cdaf73e0c1b08902a7f081b3a6de08be3d22"
+      }
+    },
+    "advisor:thach-binh-bat-tran": {
+      "effectZh": {
+        "text": "兵法：選擇 3 格內的地塊，準備 1 分鐘後布下石兵八陣（佈陣失敗時不消耗計略點與策力）：進入石兵八陣的敵方部隊行軍速度降低 50%（受熟練度影響，至多降低 80%）；繼續準備 5 分鐘後，額外使處於石兵八陣內的敵方部隊獲得持續 10 分鐘的不可撤退狀態（同一地塊 12 小時內只可被石兵八陣影響 1 次）。",
+        "viSha256": "7d81cd2c0f14651c8d6ed744bd8e91be7df7c6eddf29135d17f6fdbfe6415394"
+      }
+    },
+    "advisor:thien-chien-vo-tien": {
+      "effectZh": {
+        "text": "動員：與玩家部隊戰鬥時，主將武力提升 6 點（受熟練度影響，至多因熟練度提升 15 點），每戰勝兵力大於 15000 的部隊額外提升 5 點（群雄陣營主將為 6 點，上限 20 點）；且每額外提升 5 點武力，本賽季釋放時武力提升 1 點（上限 40 點，賽季結束重置），效果持續 10 分鐘，撤退後立即結束。",
+        "viSha256": "6258bb0b57298ab7c7326eaec8ab97524eb69ff1472fb752a641577544532ebd"
       }
     },
     "advisor:thien-cong-tuong-quan": {
@@ -10849,6 +11023,24 @@
         "viSha256": "259de3ebffb7e3665882ab2cc843dde24247e0d4c068be27fce19e2669bc60a6"
       }
     },
+    "advisor:thiet-ky-truong-khu": {
+      "effectZh": {
+        "text": "部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時；距離目的地 15 格內時，行軍速度額外提升 20%。",
+        "viSha256": "dc6cedf89ae490a47df1cc3fe2471c23c164d9b3fecf96cb3efbdd256bcbbc88"
+      }
+    },
+    "advisor:thong-quan-tai-chien": {
+      "effectZh": {
+        "text": "動員：為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點）。（每日限定使用 2 次）",
+        "viSha256": "393854f67b3b71f448eecc835735bc1cfc3f5b0bdf88dd001fd46cabb7f88963"
+      }
+    },
+    "advisor:thuong-tuong-uy-danh": {
+      "effectZh": {
+        "text": "使部隊獲得無雙上將狀態：下次與玩家部隊交戰時，使得隊伍內的良將提升 10% 全屬性（受熟練度影響，至多提升 20%）。",
+        "viSha256": "b53051340ee2521797c5496fa35a7d5ff94d4a8feff4c30a7e9af6ee5ada3089"
+      }
+    },
     "advisor:tich-lich-xa-tran": {
       "nameZh": {
         "text": "霹雳车阵",
@@ -10858,6 +11050,18 @@
       "effectZh": {
         "text": "動員：使用後部隊攻城值提升 15%（受熟練度影響，至多提升 30%），與城池守軍交戰時，全體獲得 500 鄉勇，持續 1 小時",
         "viSha256": "4f0ce1a64a7596c76d3e68b752e240a7c86a47487e2635c9756e03be473e2832"
+      }
+    },
+    "advisor:tich-quyen-tay-luong": {
+      "effectZh": {
+        "text": "動員：消耗 30 點體力對 8 級（含）以下地塊進行 1 次掃蕩，獲得的經驗提高 100%（受熟練度影響，至多提升 150%），1 次軍師技至多生效 3 場戰鬥。",
+        "viSha256": "3adfa6e1219aa5d0f80fa277c6fcc5e80c0e5798f9234913deec866929d75662"
+      }
+    },
+    "advisor:tien-phong-tiet-kich": {
+      "effectZh": {
+        "text": "動員：槍兵專屬，與行軍中的玩家部隊交戰時獲得戰鬥增益：首回合我軍全體行動前對敵方隨機單體造成 60% 傷害（傷害類型受主將武力和智力中較高的一項，傷害率受熟練度影響，至多 90%）；若我軍主將為群陣營，則傷害率額外提升 10%，持續 5 小時或回到調動點後效果清除。",
+        "viSha256": "ea2c5bf3d98b85819b5fecaff4c6682259817ca3d1e340d2a4819275753fc1a3"
       }
     },
     "advisor:tiet-nghia-da-muu": {
@@ -10882,6 +11086,30 @@
         "viSha256": "ae96f6fa128ec82408b59f01afe7dbc6bf72fe3f9ab4e9dfacd8ecc6ba5f5c67"
       }
     },
+    "advisor:trac-le-phan-phat": {
+      "effectZh": {
+        "text": "蓄勢：朝目的地行軍，到達後恢復 25 點士氣（受熟練度影響，至多恢復 50 點），且士氣低於 75/50/25 點時，士氣恢復量額外提升 15/30/45 點。",
+        "viSha256": "4fa343f5949d6630cfff60cff54704ea9d6b08504885117b390ebda47179bfe6"
+      }
+    },
+    "advisor:tu-ngo-ky-muu": {
+      "effectZh": {
+        "text": "兵法：選擇 4 格內可行軍到達地塊，突襲至該地塊，中途不發生交戰。到達目的地後獲得持續 60 分鐘的突襲狀態：與玩家交戰首回合，我軍全體主動/突擊戰法發動率提升 6%（受熟練度影響，至多 12%）；同時部隊進入持續 60 分鐘（受熟練度影響，至少持續 30 分鐘）的疲乏狀態：部隊攻佔地塊時間增加 25 分鐘（撤退後清除）。",
+        "viSha256": "914b134cfbd1883f45986236885c10e1daf284a7773a5b9fcd61bad56ebe7e36"
+      }
+    },
+    "advisor:uy-chan-ha-soc": {
+      "effectZh": {
+        "text": "被動：部隊內文醜的速度、武力提升 40 點。\n衝鋒：部隊內文醜的自帶戰法有 70% 概率（受熟練度影響，至多 100%）額外對隨機敵方單體生效 1 次。",
+        "viSha256": "d7cabd146b07e3636a3966223ff2a0e40fb4882070ae06bd964599d027f55677"
+      }
+    },
+    "advisor:uy-chan-tay-tho": {
+      "effectZh": {
+        "text": "動員：為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點），並使其體力恢復速度提升 50%，持續 1 小時（鍾會卸任軍師後效果立即結束）。（每日限定使用 2 次）",
+        "viSha256": "7be339fe5eae07625e8d1bc8c156b18d862ce6842d0142c20a80325ed10d10a7"
+      }
+    },
     "advisor:vo-kien-bat-ham": {
       "nameZh": {
         "text": "无坚不陷",
@@ -10902,6 +11130,12 @@
       "effectZh": {
         "text": "被動：部隊內關羽的盾兵適性提升至 S。衝鋒：與玩家部隊戰鬥時，部隊內關羽首次發動自帶戰法有 50% 機率（受熟練度影響，至多 100% 機率）跳過 1 回合準備時間",
         "viSha256": "247697ea2269f6abaf106600f3022818cdd89933d98312e799309b150de092aa"
+      }
+    },
+    "advisor:xich-de-du-liet": {
+      "effectZh": {
+        "text": "騎兵專屬，釋放後行軍過程中，部隊獲得與玩家部隊戰鬥增益：首回合我軍主將向敵軍群體（2 人）施加灼燒效果（傷害率 50%，受我軍主將智力和熟練度影響，至多 75%），持續 2 回合；每行軍一格提升 1% 傷害率，最多提升 20% 傷害率；若我軍主將為蠻族，則傷害率額外提升 20%。",
+        "viSha256": "cf894e833dd59d1338e004e1d26196955c0fe05fdb7601b6e5eaefef79180f50"
       }
     },
     "building:bat-tran-do": {
@@ -11100,6 +11334,18 @@
         "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
       }
     },
+    "troop-option:bach-ma-nghia-tong:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "取消回合限制，但發動率提升效果降低7%",
+        "viSha256": "6e813473cc8ef0d952997d9124386d12ec0adbee36b64f0e7c2ba9e119afe645"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
     "troop-option:bach-ma-nghia-tong:khong-so": {
       "nameZh": {
         "text": "無懼",
@@ -11108,6 +11354,12 @@
       "descriptionZh": {
         "text": "我軍被計窮時有25%機率免疫",
         "viSha256": "8b5af19ed9cee76eb54d266a66222abfea2a943134b10f0d4e0a3c87001cdd26"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:linh-quang-intermediate": {
+      "descriptionZh": {
+        "text": "主動戰法發動率額外提升3%",
+        "viSha256": "d3843964ae39cd2cd3dc2bfa18d85287f11f03f5e51cdb0d98fc9485a8ba1a04"
       }
     },
     "troop-option:bach-ma-nghia-tong:nhe-chan": {
@@ -11120,6 +11372,18 @@
         "viSha256": "26d6675f3026e787face3e4b8a90d1d601284eb04023c8daa85cd44a8ae6c5a7"
       }
     },
+    "troop-option:bach-ma-nghia-tong:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點智力",
+        "viSha256": "8fd113ce274fd376e388bb2bbf373421a4fc07a93efd8d76c821e79906538e80"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點武力",
+        "viSha256": "187538a4cb321328acbe1312155057e040d3c0720640cf2acf56965621e7ae2f"
+      }
+    },
     "troop-option:bach-ma-nghia-tong:tat-tri": {
       "nameZh": {
         "text": "疾馳",
@@ -11130,6 +11394,18 @@
         "viSha256": "7c67df1d625a0d2bd87617b92acc822074986465bb82500f3c662edaa834c655"
       }
     },
+    "troop-option:bach-ma-nghia-tong:than-hanh-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點速度",
+        "viSha256": "48edc726ec00bfabcf793de5aa184120b2da7f51fc853701810bce64dadf8671"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tinh-tam-advanced": {
+      "descriptionZh": {
+        "text": "回合結束時，若本回合自身未發動主動戰法，則下回合主動戰法發動率提高10%",
+        "viSha256": "a8c59bd074a659c39678b0ebdb45a9553b5c0994e47e588c52101007ab5b7aa3"
+      }
+    },
     "troop-option:bach-ma-nghia-tong:tram-tran": {
       "nameZh": {
         "text": "百戰",
@@ -11138,6 +11414,12 @@
       "descriptionZh": {
         "text": "我軍全體獲得5%減傷",
         "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:bach-nhi-binh:but-dao-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體普攻轉化為謀略傷害，但傷害率改為75%",
+        "viSha256": "492354eb90fd46588e72c042ba29e7dda5b8923193bc6a38c66cde50c711fdc3"
       }
     },
     "troop-option:bach-nhi-binh:chua-lanh": {
@@ -11160,6 +11442,12 @@
         "viSha256": "d061bd14f8594647467fd7c188e079dcb5126a664cf07cc113a419bfb8a7f19b"
       }
     },
+    "troop-option:bach-nhi-binh:cong-tam-basic": {
+      "descriptionZh": {
+        "text": "攻心效果額外提升3%",
+        "viSha256": "b8962fdc7f811be8c71437bf75f6ec4bec34771af9dd70064a1340693cb51a34"
+      }
+    },
     "troop-option:bach-nhi-binh:dac-thuong": {
       "nameZh": {
         "text": "持槍",
@@ -11170,6 +11458,36 @@
         "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
       }
     },
+    "troop-option:bach-nhi-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:bach-nhi-binh:luong-nghi-intermediate": {
+      "descriptionZh": {
+        "text": "進行普通攻擊後，下回合主動戰法傷害提高15%。發動主動戰法後，下回合普通攻擊傷害提高15%",
+        "viSha256": "817306370dd17f8e7ec52ab6c1d650ea502d06067c905f8a95b9f284d58636b3"
+      }
+    },
+    "troop-option:bach-nhi-binh:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率額外增加20%",
+        "viSha256": "1a60fdcb052a5f2e8c9271726d7b343786c5a9d2b6cd64d871ad72a73bac1e45"
+      }
+    },
+    "troop-option:bach-nhi-binh:sach-tap-intermediate": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:bach-nhi-binh:tap-tri-special": {
+      "descriptionZh": {
+        "text": "獲得14點智力",
+        "viSha256": "dbfb52481d3003c09763db41183458c04a49f4be598208394a2c0fe1f9d4f114"
+      }
+    },
     "troop-option:bach-nhi-binh:thanh-thao": {
       "nameZh": {
         "text": "熟練",
@@ -11178,6 +11496,12 @@
       "descriptionZh": {
         "text": "觸發機率額外提高10%",
         "viSha256": "3314d8039e3d8d446e34386ab4cc43cd96a0f9f1feb346d7f5be548a78b0ec00"
+      }
+    },
+    "troop-option:bach-nhi-binh:tuong-uy-intermediate": {
+      "descriptionZh": {
+        "text": "改為僅我軍主將有機率發起，同時觸發機率提升35%",
+        "viSha256": "cfd7869d85f64adb709754369af319223c2ac15f50d732b4ba5bf3113d7c8277"
       }
     },
     "troop-option:cam-pham-quan:cap-cuu": {
@@ -11220,6 +11544,30 @@
         "viSha256": "a4b98826519f1a6f5bc23c56eceb02c213fb98729f33f8cfed2955be850889c9"
       }
     },
+    "troop-option:cam-pham-quan:dinh-khieu-advanced": {
+      "descriptionZh": {
+        "text": "若目標已潰逃，45%機率使目標進入叛逃狀態（傷害率55%，受武力或智力最高一項影響，無視防禦），持續1回合",
+        "viSha256": "fa14f152c100eaf69e8e4bd6560afd90de6af94d5ac9e581f2df4fb9c8d1ef44"
+      }
+    },
+    "troop-option:cam-pham-quan:dung-vo-basic": {
+      "descriptionZh": {
+        "text": "若目標已潰逃，造成的兵刃傷害提高20%",
+        "viSha256": "653b1676dee1d839373d3625cfe79c5bc126fd30c236da0f613f267a622e9189"
+      }
+    },
+    "troop-option:cam-pham-quan:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:cam-pham-quan:muu-luoc-basic": {
+      "descriptionZh": {
+        "text": "對已潰逃目標，由造成兵刃傷害改為造成謀略傷害",
+        "viSha256": "b51613afb51e11f1f3ae944b5f3d3ecf7fdd636d81b28bf83eda7a43fcb5a19d"
+      }
+    },
     "troop-option:cam-pham-quan:ngan-chan": {
       "nameZh": {
         "text": "招架",
@@ -11238,6 +11586,18 @@
       "descriptionZh": {
         "text": "對處於持續性狀態的武將造成的傷害提升10%",
         "viSha256": "80ede9ae6ed7cb3df739d459dcc72871bd939749ae6c6c5340f1fc443cd057c3"
+      }
+    },
+    "troop-option:cam-pham-quan:than-xa-special": {
+      "descriptionZh": {
+        "text": "觸發機率提高5%",
+        "viSha256": "f9f42e1db41b071f804c187746c846047bc3323c3c0cd6bb065a10c29934d1f8"
+      }
+    },
+    "troop-option:cam-pham-quan:tri-thu-special": {
+      "descriptionZh": {
+        "text": "錦帆軍施加的潰逃效果改為謀略傷害，受智力影響",
+        "viSha256": "df33e466e6ab3254c4e5482bcaea207b14264cb18ebcfdf58341719a0c238bd7"
       }
     },
     "troop-option:dai-kich-si:chua-lanh": {
@@ -11260,6 +11620,18 @@
         "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
       }
     },
+    "troop-option:dai-kich-si:ho-bac-intermediate": {
+      "descriptionZh": {
+        "text": "目標改為敵軍群體2人但傷害率下降62%",
+        "viSha256": "2503be30e264afe2c9ae2b8b148508a90735e0eded16be17dec7d3346bea3756"
+      }
+    },
+    "troop-option:dai-kich-si:kham-hu-intermediate": {
+      "descriptionZh": {
+        "text": "目標將隨機鎖定對方兵力最低或統率最低武將",
+        "viSha256": "8d9a955876d5ef3855ad27b1468b496246580fecf87119b632c4da56ed6e8f1c"
+      }
+    },
     "troop-option:dai-kich-si:lam-phan": {
       "nameZh": {
         "text": "倒戈",
@@ -11268,6 +11640,36 @@
       "descriptionZh": {
         "text": "獲得15%倒戈",
         "viSha256": "696fd9549b40956fb18a1305a66343294202e70f07b40947213fada20c8844f2"
+      }
+    },
+    "troop-option:dai-kich-si:lien-kich-special": {
+      "descriptionZh": {
+        "text": "獲得15%連擊",
+        "viSha256": "20ee03f2684aa334ef26a110a37c5a3d6b0348e403735625994561167660dd70"
+      }
+    },
+    "troop-option:dai-kich-si:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率額外提高11%",
+        "viSha256": "f1e37cf00fd6eee17a159648fa982bf207f6c0b8ffc1905f972144fce7fabbcf"
+      }
+    },
+    "troop-option:dai-kich-si:pha-tran-advanced": {
+      "descriptionZh": {
+        "text": "大戟士造成的兵刃傷害附帶25%破陣效果",
+        "viSha256": "fdfb5a77973e18e70523ee9a0699f37c18fc3191701141a06f3375c8053c5045"
+      }
+    },
+    "troop-option:dai-kich-si:sach-tap-advanced": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:dai-kich-si:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "武力額外提高6點",
+        "viSha256": "b6720ad88cf60dd6a4dc77df91cc3fde86fd926ce739a333105874257d4c67bc"
       }
     },
     "troop-option:dai-kich-si:thanh-thao": {
@@ -11280,6 +11682,24 @@
         "viSha256": "000268ce52553eb405206538cee064692032ca40e543858e38a3e5311b1f5bd4"
       }
     },
+    "troop-option:dai-kich-si:tuong-uy-intermediate": {
+      "descriptionZh": {
+        "text": "改為僅我軍主將有機率發起，同時觸發機率提升25%",
+        "viSha256": "d4cd163366b94617d73917f1f8e200abf493dd800eaa36025795eae1a8b4eaf9"
+      }
+    },
+    "troop-option:dan-duong-binh:ban-thach-intermediate": {
+      "descriptionZh": {
+        "text": "丹陽兵抵擋傷害的比例提升36%",
+        "viSha256": "5feb8436695e64f2baae567a32cecc48e0001a8b7e549c752668d1af1b853770"
+      }
+    },
+    "troop-option:dan-duong-binh:chinh-quan-intermediate": {
+      "descriptionZh": {
+        "text": "獲得的丹陽兵不再每回合衰減，且額外獲得25%",
+        "viSha256": "63a06d40062669a2252d835220a66026e6d0bc29955b181cea1429bbb3266c16"
+      }
+    },
     "troop-option:dan-duong-binh:chuyen-thuong": {
       "nameZh": {
         "text": "轉·持槍",
@@ -11290,6 +11710,36 @@
         "viSha256": "0c9c01ac4cf5a7d023806a5edad8d96eb92f5f76dc41cef7b1c73165e0c9a544"
       }
     },
+    "troop-option:dan-duong-binh:cuong-than-basic": {
+      "descriptionZh": {
+        "text": "統率額外提升8點",
+        "viSha256": "b1e27c4ed594bbc0fcdf745da6033c9003cd9e895b245079bd66b9166327026e"
+      }
+    },
+    "troop-option:dan-duong-binh:de-khang-special": {
+      "descriptionZh": {
+        "text": "我軍受到的兵種剋制效果減半",
+        "viSha256": "47404a6971ef507dbfd417b709f9b000adabbf2a4d344de4c0e7eef0c68cda43"
+      }
+    },
+    "troop-option:dan-duong-binh:hau-phat-intermediate": {
+      "descriptionZh": {
+        "text": "我軍武將行動後對隨機敵軍單體造成傷害",
+        "viSha256": "7ea95d3e7510b7acc3d525458ea7ffeb82a1e006dff087553d333e95766d832d"
+      }
+    },
+    "troop-option:dan-duong-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:dan-duong-binh:mo-quan-advanced": {
+      "descriptionZh": {
+        "text": "丹陽兵可抵擋任意種類傷害",
+        "viSha256": "27f7c987b0da96ae51f77b6b6451108cc3fc2f8689b62606426d8083bddda4a2"
+      }
+    },
     "troop-option:dan-duong-binh:nang-khien": {
       "nameZh": {
         "text": "舉盾",
@@ -11298,6 +11748,24 @@
       "descriptionZh": {
         "text": "攜帶者盾兵兵種適性提升1級",
         "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
+      }
+    },
+    "troop-option:dan-duong-binh:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "由提升統率改為提升智力",
+        "viSha256": "b31bc5cab79f3fdee1b46d91093e8beef545d798184be6545d888757f8f469c7"
+      }
+    },
+    "troop-option:dan-duong-binh:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "由提升統率改為提升武力",
+        "viSha256": "e970a154144e85f35b6c712c33b7756f247faa5712842a8b41d3e63359fad58a"
+      }
+    },
+    "troop-option:dan-duong-binh:thiep-lap-advanced": {
+      "descriptionZh": {
+        "text": "造成的任意種類傷害均可獲得丹陽兵",
+        "viSha256": "f5ea8df7d0aceb579b68635702b9337db87f94bf89a969cd00123dc03bf9de0c"
       }
     },
     "troop-option:dang-giap-binh:bo-qua": {
@@ -11350,6 +11818,12 @@
         "viSha256": "0846fe308e09fe3fd0ce661b235608e6262c812dc521f0b967d8c532ee46c40b"
       }
     },
+    "troop-option:dang-giap-binh:hung-chu-basic": {
+      "descriptionZh": {
+        "text": "副將可觸發主將效果，且提高3%戰鬥屬性",
+        "viSha256": "c39fb454121585fce6be1f62c5a95f2be53aaf76efc21ae6cebc49591399742c"
+      }
+    },
     "troop-option:dang-giap-binh:mien-dich": {
       "nameZh": {
         "text": "免疫",
@@ -11370,6 +11844,12 @@
         "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
       }
     },
+    "troop-option:dang-giap-binh:nhan-nai-special": {
+      "descriptionZh": {
+        "text": "灼燒狀態損失的兵力受統率影響降低",
+        "viSha256": "e2e15bcd565ea8d4b02991ad1e272ec55f8d09b54be8694bf898041f1941d4b5"
+      }
+    },
     "troop-option:dang-giap-binh:ran-chac": {
       "nameZh": {
         "text": "堅韌",
@@ -11378,6 +11858,18 @@
       "descriptionZh": {
         "text": "受到兵刃傷害後，該武將本回合受到的兵刃傷害降低3%，回合結束時重置",
         "viSha256": "510b739a1996a6b8343738800ce42c64fe6fd1c2a7ced7e53bf66a463c3c4537"
+      }
+    },
+    "troop-option:dang-giap-binh:tinh-hoa-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體受到持續傷害效果時，有25%淨化自身",
+        "viSha256": "68dacf2e987960a7c93e082e690877eff63828f38a694198816cafb8cce4f167"
+      }
+    },
+    "troop-option:dang-giap-binh:trong-trang-basic": {
+      "descriptionZh": {
+        "text": "部隊基礎攻城值提高25%但行軍速度降低50%（進行象兵改造後可選）",
+        "viSha256": "a7da3e50707017dc789a5ddd2d0def30cc9e5abf48f6a65b7a7174566d2e6c8f"
       }
     },
     "troop-option:giai-phien-ve:cap-cuu": {
@@ -11410,6 +11902,42 @@
         "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
       }
     },
+    "troop-option:giai-phien-ve:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:giai-phien-ve:kham-hu-intermediate": {
+      "descriptionZh": {
+        "text": "根據傷害類型，傷害目標鎖定敵軍統率最低或智力最低單體",
+        "viSha256": "f82a1fd49165468002dcebba2428ea187183182b96a97e164b56e9606f6df329"
+      }
+    },
+    "troop-option:giai-phien-ve:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率提高6%",
+        "viSha256": "4329eac6670c99af7ab3d0c93133b7e37bd80aaaf7d6e51bde5f2b519cb2c021"
+      }
+    },
+    "troop-option:giai-phien-ve:quan-tam-advanced": {
+      "descriptionZh": {
+        "text": "改為必定觸發回復效果，額外判定傷害效果",
+        "viSha256": "c8b09710bccedb056e3d7b8fa96f54a22a729ccad3f071a9849c4b2db1781c3c"
+      }
+    },
+    "troop-option:giai-phien-ve:sach-tap-advanced": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:giai-phien-ve:tinh-nghien-special": {
+      "descriptionZh": {
+        "text": "傷害觸發機率受攜帶者最高屬性影響",
+        "viSha256": "2a3ab98399c12e8908128fb770e67743301e7f3628787e088128c53f8166ddcf"
+      }
+    },
     "troop-option:giai-phien-ve:tram-tran": {
       "nameZh": {
         "text": "百戰",
@@ -11418,6 +11946,24 @@
       "descriptionZh": {
         "text": "我軍全體獲得5%減傷",
         "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:giai-phien-ve:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "改為我軍智力最高武將觸發",
+        "viSha256": "e48c0c8758f3262f2c1343bd3f32ba713378a0806b54a1a11b13b6856f407909"
+      }
+    },
+    "troop-option:giai-phien-ve:vo-khoi-basic": {
+      "descriptionZh": {
+        "text": "改為我軍武力最高武將觸發",
+        "viSha256": "2d7f2ea9b7e4596640d0cdf3bf7d2f6919d0d4d72799afa679cc918ff6d30e80"
+      }
+    },
+    "troop-option:ham-tran-doanh:cap-cuu-advanced": {
+      "descriptionZh": {
+        "text": "戰鬥中，我軍每損失5000總兵力，受到的急救效果提高25%",
+        "viSha256": "04a9907ba1e1c9a1ff6b8a9958814ec6829b2fd4bff94002d4747eac7eb059a0"
       }
     },
     "troop-option:ham-tran-doanh:chong-do": {
@@ -11430,6 +11976,18 @@
         "viSha256": "ea7d8d69ac027b7a784288bf6ee41b445d5dfd3d2342e332f1ac3affe5dbe9a7"
       }
     },
+    "troop-option:ham-tran-doanh:cuong-than-basic": {
+      "descriptionZh": {
+        "text": "改為獲得智力與統率",
+        "viSha256": "c4719ea1152942bded2ff6bc1f00308648dfd7c0f7f78fd043a91e4b8c20f13e"
+      }
+    },
+    "troop-option:ham-tran-doanh:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "改為前4回合獲得急救狀態",
+        "viSha256": "acc4d135c54ab96a7cec6587e566ecdf50b7b06d33475a36d8301c181f115d8f"
+      }
+    },
     "troop-option:ham-tran-doanh:dan-quan": {
       "nameZh": {
         "text": "統軍",
@@ -11440,6 +11998,12 @@
         "viSha256": "b3fbb768b43803faa83af7275eb9b604a19bab96e7521b5778b337bf321e4556"
       }
     },
+    "troop-option:ham-tran-doanh:doat-chi-advanced": {
+      "descriptionZh": {
+        "text": "觸發急救時，有25%機率偷取傷害來源5點戰鬥屬性，可疊加，持續2回合",
+        "viSha256": "ab3d88e5e6d2297768f75b2007ffd8d9452bc5c95870a70ec1c6d8942c98f49d"
+      }
+    },
     "troop-option:ham-tran-doanh:giai-tru": {
       "nameZh": {
         "text": "驅散",
@@ -11448,6 +12012,18 @@
       "descriptionZh": {
         "text": "觸發急救時，有20%機率驅散自身負面狀態",
         "viSha256": "3713bd26dc4553ed610bda874c4f9053832fbefa4227f30dfd775755bb0fd474"
+      }
+    },
+    "troop-option:ham-tran-doanh:kiem-tu-basic": {
+      "descriptionZh": {
+        "text": "武力與統率額外提高11點",
+        "viSha256": "70affabfbe9e295fc309fc45ddcb32f8ebb3a1f7e6d81f55c86ffa02a0f544cc"
+      }
+    },
+    "troop-option:ham-tran-doanh:muu-cong-special": {
+      "descriptionZh": {
+        "text": "急救觸發機率額外受攜帶者智力影響",
+        "viSha256": "e88fe4c5f5c68836451653f4be28185af8700088f59742743262128efbb236d2"
       }
     },
     "troop-option:ham-tran-doanh:nang-khien": {
@@ -11470,6 +12046,12 @@
         "viSha256": "065bce726b1eb4eee8b9af18c5fc753d0417f18a1301680b671ee89567fcce7a"
       }
     },
+    "troop-option:ham-tran-doanh:tri-lieu-basic": {
+      "descriptionZh": {
+        "text": "治療率額外提升40%",
+        "viSha256": "714d04a140eb0eb9528cffc4c2fa0e4ccf4221e1d570af3de37ba97bc6e266e0"
+      }
+    },
     "troop-option:ho-bao-ky:chong-do": {
       "nameZh": {
         "text": "抵禦",
@@ -11478,6 +12060,18 @@
       "descriptionZh": {
         "text": "發動突擊戰法後，有15%機率獲得1層抵禦，持續1回合",
         "viSha256": "c0fd7fea93da1779852c42c2afb58c4d4eab0ea3ef08e88b556a9eb044a792ea"
+      }
+    },
+    "troop-option:ho-bao-ky:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "生效回合變為前3~4回合",
+        "viSha256": "e9d6c0214bdf0ff4b3c325cf44021742ca49f3d2483e5c62868a9e1a27b325b0"
+      }
+    },
+    "troop-option:ho-bao-ky:dien-ich-intermediate": {
+      "descriptionZh": {
+        "text": "獲得增益效果有15%機率延長1回合",
+        "viSha256": "d72533ee834646d7045d9ca8ae479667645eb1be7087ef195acafa284afe1875"
       }
     },
     "troop-option:ho-bao-ky:gianh-cong": {
@@ -11490,6 +12084,30 @@
         "viSha256": "55beea119262af44920eac5b6598d0fdad13eef295d71fb82c67ab68ecd5fc52"
       }
     },
+    "troop-option:ho-bao-ky:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:ho-bao-ky:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "提高的突擊戰法發動率受攜帶者智力影響",
+        "viSha256": "395b04dea3e703ea9d3bef2ea851ade02fd2c9871b608ae36580a73fa9a2f15d"
+      }
+    },
+    "troop-option:ho-bao-ky:tap-tri-special": {
+      "descriptionZh": {
+        "text": "獲得武力改為獲得智力",
+        "viSha256": "d5851bbeeea128887cb0a80badac30a574484e92dde213251775f0165f169c87"
+      }
+    },
+    "troop-option:ho-bao-ky:than-hanh-special": {
+      "descriptionZh": {
+        "text": "額外獲得40點速度",
+        "viSha256": "82cb86609c9546392ff391b78b0646237a6eba7273038b56d8a3b83e8b9a88d7"
+      }
+    },
     "troop-option:ho-bao-ky:thao-luyen": {
       "nameZh": {
         "text": "操演",
@@ -11498,6 +12116,30 @@
       "descriptionZh": {
         "text": "提高的突擊戰法發動率受攜帶者武力影響",
         "viSha256": "793f3438e3ed9f659107259e59dce71fd7fb402f25e22a83040b05fa15b3a352"
+      }
+    },
+    "troop-option:ho-bao-ky:tri-ke-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體普攻轉化為謀略傷害",
+        "viSha256": "11bab44bbc437c9d204e353d1f527024da667a54d57c7c935f7ad3898db3b616"
+      }
+    },
+    "troop-option:ho-bao-ky:trong-sang-advanced": {
+      "descriptionZh": {
+        "text": "發動突擊戰法後，有15%機率對目標隨機造成以下效果之一（震懾、計窮、繳械、混亂、虛弱、禁療、破壞）",
+        "viSha256": "c116b80b0d12c016cf1419811afe3c22b085672c1e975c363192dfa2d79e4bcb"
+      }
+    },
+    "troop-option:ho-bao-ky:xung-phong-basic": {
+      "descriptionZh": {
+        "text": "突擊戰法傷害提高10%（受武力和智力較高一項影響）",
+        "viSha256": "9a34cbc7555b0b4fe98a0cc6cb4125b89dd2c8db91313a96db8b36aeea7f4086"
+      }
+    },
+    "troop-option:ho-ve-quan:cong-tam-intermediate": {
+      "descriptionZh": {
+        "text": "虎衛軍屬性提升效果達5層時，獲得15%攻心",
+        "viSha256": "74fb89193d17723edf4b0534889ee8f4e56d19c868f2edcffbb69247578ec17b"
       }
     },
     "troop-option:ho-ve-quan:dong-long": {
@@ -11510,6 +12152,12 @@
         "viSha256": "39d6f2ea19daee74d6db4dd1e42f79b7943ac8df507b9ca2731d927ce5a30719"
       }
     },
+    "troop-option:ho-ve-quan:dot-pha-basic": {
+      "descriptionZh": {
+        "text": "傷害影響上限提升20%",
+        "viSha256": "78cfab0352e125963fbad2dd24499e5d75105a6b38b5f031f9a44c69ee369867"
+      }
+    },
     "troop-option:ho-ve-quan:lam-phan": {
       "nameZh": {
         "text": "倒戈",
@@ -11518,6 +12166,12 @@
       "descriptionZh": {
         "text": "虎衛軍屬性提升效果達5層時，獲得15%倒戈",
         "viSha256": "8c96d6a41d0edadd6a8682f21f43b2d749b365c2595c44ccdfd931dd9aadb03f"
+      }
+    },
+    "troop-option:ho-ve-quan:muu-luoc-special": {
+      "descriptionZh": {
+        "text": "虎衛軍造成的傷害改為謀略傷害",
+        "viSha256": "76f3a9b25e08a8f7a9d3317585fa58b5cf89b31684c10b1d85800317eabc1516"
       }
     },
     "troop-option:ho-ve-quan:nang-khien": {
@@ -11530,6 +12184,30 @@
         "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
       }
     },
+    "troop-option:ho-ve-quan:tai-dien-advanced": {
+      "descriptionZh": {
+        "text": "每回合觸發次數改為2次",
+        "viSha256": "f26947fd24763bdb120605e27982f777929a2c54cad6f23089ac5e22c25ab624"
+      }
+    },
+    "troop-option:ho-ve-quan:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "由武力提升改為智力提升",
+        "viSha256": "005c1cc187f78071ea00a7f3789ab3a033b9c03562f1015c780375ba19a7bef8"
+      }
+    },
+    "troop-option:ho-ve-quan:thien-chien-basic": {
+      "descriptionZh": {
+        "text": "傷害率提升36%",
+        "viSha256": "c21936428fa7d604645691731cf5bf81829e6a37315d66203b3924e93114245e"
+      }
+    },
+    "troop-option:ho-ve-quan:tri-tuyet-advanced": {
+      "descriptionZh": {
+        "text": "觸發武將由副將改為智力最高副將，傷害目標改為敵軍全體",
+        "viSha256": "6ed844a9751af4fa7106542d0b9b22a25fa598213fd6774f0ebf66e4c725544f"
+      }
+    },
     "troop-option:ho-ve-quan:truy-duoi": {
       "nameZh": {
         "text": "窮追",
@@ -11538,6 +12216,12 @@
       "descriptionZh": {
         "text": "傷害率額外受目標損失兵力影響",
         "viSha256": "616c5bdf89a1885bf5b880a89c396a07494b116210091e1b2ad825cff5e0a046"
+      }
+    },
+    "troop-option:ho-ve-quan:vo-khoi-advanced": {
+      "descriptionZh": {
+        "text": "觸發武將由副將改為武力最高副將，傷害目標改為敵軍全體",
+        "viSha256": "0d62a3685d778fdf3d868be4f1080976a19c0bd0cd293c7e0f3cc1e997c2e335"
       }
     },
     "troop-option:phi-hung-quan:chuyen-cung": {
@@ -11550,6 +12234,12 @@
         "viSha256": "237b7266a2b29ed6e87d16ce78de14ee885a6abac2182b81b3e17da3818972fb"
       }
     },
+    "troop-option:phi-hung-quan:du-uy-advanced": {
+      "descriptionZh": {
+        "text": "由重置全部累計進度，改為重置50%累計進度",
+        "viSha256": "28755e9b4450ccc57584a2adf9285eb148ba4cd98138ec17b7b07c1f94d02f0e"
+      }
+    },
     "troop-option:phi-hung-quan:giap-cung": {
       "nameZh": {
         "text": "披堅",
@@ -11560,6 +12250,18 @@
         "viSha256": "c96d832307386748105d2bc51ad009775af425b8500fca81fb9278180abbc4c2"
       }
     },
+    "troop-option:phi-hung-quan:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:phi-hung-quan:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "飛熊軍的傷害率額外提升12%",
+        "viSha256": "6ab6a43992f5b2562202361800abd5d8f4a5fe04844e4d8fe3ad3c2ffb78721c"
+      }
+    },
     "troop-option:phi-hung-quan:pho-thuong": {
       "nameZh": {
         "text": "扶傷",
@@ -11568,6 +12270,36 @@
       "descriptionZh": {
         "text": "觸發飛熊軍傷害後，為我軍兵力最低單體恢復傷害量40%的兵力",
         "viSha256": "3e4bb5dc26e6e25eb8d557abc6941d0526f9afdf80b1fa62fb34c736abb62b02"
+      }
+    },
+    "troop-option:phi-hung-quan:quan-luc-advanced": {
+      "descriptionZh": {
+        "text": "影響傷害量的目標由我軍改為戰場全體",
+        "viSha256": "69cbc233b71d85757cb5f73d8c70c31e353a5d9caf2ece1a01a1636ffb99953e"
+      }
+    },
+    "troop-option:phi-hung-quan:tai-sinh-basic": {
+      "descriptionZh": {
+        "text": "飛熊軍的治療效果額外提升8%",
+        "viSha256": "1ca94ad7a37af6412cf2edb07792c785b36debf1235dc1420f0b35fd0727da98"
+      }
+    },
+    "troop-option:phi-hung-quan:tap-tri-special": {
+      "descriptionZh": {
+        "text": "造成傷害的武將行動時獲得2%智力，可疊加",
+        "viSha256": "1523f21efafc2f7965c820e7730760d31c9db46f2e07726a48a246323917b96f"
+      }
+    },
+    "troop-option:phi-hung-quan:te-chung-intermediate": {
+      "descriptionZh": {
+        "text": "敵軍受到治療時，有30%機率同時治療我軍隨機單體（每回合最多觸發3次）",
+        "viSha256": "108af6e42cf4b7eb9182f76482f0829bfd488a8b10f5259b1f57d579643d5c76"
+      }
+    },
+    "troop-option:phi-hung-quan:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "觸發武將由主將改為智力最高武將",
+        "viSha256": "4a4cbac0a172a0334f43f445f83a789397f58d0926727ce74dda3358b4962a83"
       }
     },
     "troop-option:phi-hung-quan:trut-xuong": {
@@ -11590,6 +12322,54 @@
         "viSha256": "f56a0ca9d334dfe76cf8aa6dcb005ae859b4c362c83170870501448f665d3e7e"
       }
     },
+    "troop-option:tay-luong-thiet-ky:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "會心/奇謀提升取消回合限制，但提升效果降低15%",
+        "viSha256": "8f3aa54fbd5c83ea16044483eb7f0b7e280b3e72a7966ba4171b67a9e35aea78"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:cuu-vien-advanced": {
+      "descriptionZh": {
+        "text": "造成會心/奇謀傷害時，為我軍兵力最低單體恢復傷害量的35%",
+        "viSha256": "300e9389577098582af8f952c868dcf49673c877385de5f991628dfb1bc37c88"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:ky-muu-special": {
+      "descriptionZh": {
+        "text": "改為獲得奇謀",
+        "viSha256": "e981f6263f6ba46704460d96442918eece0e2f98ef87adb1350b0a237736cb0a"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:linh-ngo-intermediate": {
+      "descriptionZh": {
+        "text": "會心/奇謀額外提升3%",
+        "viSha256": "87301779b8c7ba6bfe55153a8ff8517a5c3cccace9ef3ee2593ee68fac5b4902"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:loan-tran-special": {
+      "descriptionZh": {
+        "text": "首回合敵軍全體進入遇襲狀態",
+        "viSha256": "1c67f2fdfc7cbf57e1e380d9ee533a69d8b03b3ac6443b7d367f7e9a345d22ef"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "獲得的會心/奇謀受智力影響",
+        "viSha256": "9354b16e2dc8db9ba4be143309db8389f6ee3991a9305e2188b8fc9bc0913756"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:tap-tri-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體獲得15智力",
+        "viSha256": "a9f07eb5ceb2fcde2dd7134160e4964996e75ed2cf1d87f1899c6963660481b8"
+      }
+    },
     "troop-option:tay-luong-thiet-ky:tat-tri": {
       "nameZh": {
         "text": "飛馳",
@@ -11608,6 +12388,18 @@
       "descriptionZh": {
         "text": "獲得的會心/奇謀受武力影響",
         "viSha256": "a7773fdf40e5ca3ba4b55d5e753eac9e4ffad221829debde25899be72a2f648c"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:vo-luc-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體獲得15武力",
+        "viSha256": "1276732952023e758ba18dea330e682483c30aa4a27501df4c654e18c7d75f22"
+      }
+    },
+    "troop-option:thanh-chau-binh:bat-khuat-intermediate": {
+      "descriptionZh": {
+        "text": "第5回合額外觸發1次治療（總治療率120%，受武力或智力影響，額外受敵軍造成傷害影響）",
+        "viSha256": "35080816499fb76c0ca50e1d7b4f5fbfa5631752f56d2439507a8a9bcda3850e"
       }
     },
     "troop-option:thanh-chau-binh:chua-tri": {
@@ -11630,6 +12422,30 @@
         "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
       }
     },
+    "troop-option:thanh-chau-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:thanh-chau-binh:muu-cong-intermediate": {
+      "descriptionZh": {
+        "text": "反擊傷害受智力影響",
+        "viSha256": "06b1fdda9c62932bd8fd67a2f43296b416cd8d19f62467edb09ad0ef92e66327"
+      }
+    },
+    "troop-option:thanh-chau-binh:muu-luoc-special": {
+      "descriptionZh": {
+        "text": "反擊改為謀略傷害",
+        "viSha256": "4ced966ad39375f29009829e709063e7795f1eff06715210a54069c45ef1d967"
+      }
+    },
+    "troop-option:thanh-chau-binh:quan-hung-basic": {
+      "descriptionZh": {
+        "text": "改為我軍群體（2~3人）獲得反擊",
+        "viSha256": "5ab39adfa4666fd10879b09dd93e36e81ba430345394f1fc4d345a7693c27ef0"
+      }
+    },
     "troop-option:thanh-chau-binh:tap-tri": {
       "nameZh": {
         "text": "謀攻",
@@ -11648,6 +12464,18 @@
       "descriptionZh": {
         "text": "反擊傷害受武力影響",
         "viSha256": "d8bb4d79b50f720eebe8c5b34d1069d0121a0e1509372490c7e8983d6d7e7688"
+      }
+    },
+    "troop-option:thanh-chau-binh:thien-chien-special": {
+      "descriptionZh": {
+        "text": "反擊傷害率提高36%",
+        "viSha256": "7ac9d8a0e4cc7f6dd3c6ffbaf391dfa2720df5dcf0de1f49835ae784869a0de6"
+      }
+    },
+    "troop-option:thanh-chau-binh:tien-co-advanced": {
+      "descriptionZh": {
+        "text": "戰鬥前2回合開始時，攜帶者對所有處於控制狀態的敵軍造成傷害（傷害率100%，受武力或智力更高一項影響）",
+        "viSha256": "293882e9a85977381e9ebf52bb7934f24cc2a9c7a6ed077c15bd4f7871ff8928"
       }
     },
     "troop-option:thanh-chau-binh:vong-vo": {
@@ -11680,6 +12508,48 @@
         "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
       }
     },
+    "troop-option:tien-dang-tu-si:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "額外延長1回合",
+        "viSha256": "d5f9177ab55866ac94509ec4950e4767f23a572973920bae4f4b38a1bf98ce11"
+      }
+    },
+    "troop-option:tien-dang-tu-si:de-khang-special": {
+      "descriptionZh": {
+        "text": "我軍受到的兵種剋制效果減半",
+        "viSha256": "d8d777213a6bd52e29c0b02017843b647716e7d254ee664919a9785c2b55958a"
+      }
+    },
+    "troop-option:tien-dang-tu-si:diep-gia-advanced": {
+      "descriptionZh": {
+        "text": "最大疊加次數+1",
+        "viSha256": "0e6dd8eeb4fa988e9f736f8a5de843853ac824731af7bd1656520a5766317756"
+      }
+    },
+    "troop-option:tien-dang-tu-si:doat-chi-intermediate": {
+      "descriptionZh": {
+        "text": "會額外根據傷害類型偷取武力或智力，但偷取效果下降11點",
+        "viSha256": "445812063b00dadaf4b77d4126432a1a848beaa70f06eea3520e349222fb6837"
+      }
+    },
+    "troop-option:tien-dang-tu-si:hao-doat-intermediate": {
+      "descriptionZh": {
+        "text": "每次可額外偷取7點統率",
+        "viSha256": "1f167664f3ebf2b15d7894f9d0b8d6e6115c83ee649c52a264c3384fcdb743e7"
+      }
+    },
+    "troop-option:tien-dang-tu-si:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:tien-dang-tu-si:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "改為受攜帶者智力影響",
+        "viSha256": "16c84af1b96abd5c48c0feca081766d4b7d1070d367c5457a3283136181cae84"
+      }
+    },
     "troop-option:tien-dang-tu-si:thao-luyen": {
       "nameZh": {
         "text": "操演",
@@ -11698,6 +12568,36 @@
       "descriptionZh": {
         "text": "我軍全體獲得5%減傷",
         "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:tien-dang-tu-si:uc-the-basic": {
+      "descriptionZh": {
+        "text": "可同時降低突擊戰法發動率，但每次降低效果下降1%",
+        "viSha256": "e18acbf13f46ab1696ef36a98ec46044b417bba245e535d0525686a27830a665"
+      }
+    },
+    "troop-option:tuong-binh:bao-no-intermediate": {
+      "descriptionZh": {
+        "text": "自身灼燒時，額外獲得50%群攻",
+        "viSha256": "2419471f7acf2479f35e3d966ca2e63900f2ce5c6a83e3fcc09278a62fc9a8a4"
+      }
+    },
+    "troop-option:tuong-binh:bi-thao-advanced": {
+      "descriptionZh": {
+        "text": "逐步結算的傷害改為延後4回合",
+        "viSha256": "0bcfd104dc8c25fe83071c7b354852fbfb491bc144a91e615340c2a5f5c261a1"
+      }
+    },
+    "troop-option:tuong-binh:kien-dinh-intermediate": {
+      "descriptionZh": {
+        "text": "攜帶者免疫混亂狀態",
+        "viSha256": "d5720f9330a5f8ea6d79e24236f9351551e743eba645bcab9296663f5335c02f"
+      }
+    },
+    "troop-option:tuong-binh:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
       }
     },
     "troop-option:tuong-binh:lam-diu": {
@@ -11720,6 +12620,12 @@
         "viSha256": "a4b40fc0dfef2cec062c199a29649a7fa711fb79b4a0867c95bb588a653d9ff1"
       }
     },
+    "troop-option:tuong-binh:man-toc-special": {
+      "descriptionZh": {
+        "text": "攜帶者獲得蠻族標籤",
+        "viSha256": "312d00d02bcd53fb4829746fc5a10523e0b8551cd9d4ddf5d86d1800cefafb5d"
+      }
+    },
     "troop-option:tuong-binh:nang-ne": {
       "nameZh": {
         "text": "厚重",
@@ -11728,6 +12634,30 @@
       "descriptionZh": {
         "text": "部隊不會被拒馬阻擋",
         "viSha256": "25d207282256eb16517b4f0ae0b47c2b03b90f5e9945a5504e409e88d48c7754"
+      }
+    },
+    "troop-option:tuong-binh:ngu-dich-advanced": {
+      "descriptionZh": {
+        "text": "部隊受到持續傷害降低25%",
+        "viSha256": "9fb227294b2f498a8dafc6378e36a529f878cce034d8c08101ee8f6bc4cfd6b5"
+      }
+    },
+    "troop-option:tuong-binh:tat-hanh-special": {
+      "descriptionZh": {
+        "text": "不再降低行軍速度",
+        "viSha256": "154ba813e70b9debc79e05b1f84406c401576e3669b7cbccf3e7a3f3297e39cf"
+      }
+    },
+    "troop-option:tuong-binh:toc-chien-intermediate": {
+      "descriptionZh": {
+        "text": "戰鬥將在第七回合結束",
+        "viSha256": "270836e87eaa2dd00290da40d52306a4ad2a534ece84f407e1d75fe07213595f"
+      }
+    },
+    "troop-option:tuong-binh:tu-duong-advanced": {
+      "descriptionZh": {
+        "text": "戰平後立刻恢復所有傷兵",
+        "viSha256": "1d9c113e0a9dc03a376191ebb14612b3e4bf61de312a3ae099bc0c5f44448cf2"
       }
     },
     "troop-option:vo-duong-phi-quan:bao-cat": {
@@ -11760,6 +12690,30 @@
         "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
       }
     },
+    "troop-option:vo-duong-phi-quan:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "持續回合改為4回合",
+        "viSha256": "26234f8fcc337f9383601812f3b07c2a677133f830d732e18c4fb44f5d3721bd"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:doat-hon-advanced": {
+      "descriptionZh": {
+        "text": "對存在持續性狀態的武將造成傷害時，恢復我軍兵力最低（5%*目標存在的負面狀態數量）傷害量",
+        "viSha256": "eb96c59fa9926babc419856145e5975e237d445c746f3a493562b0a9a76e5ab9"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:kiem-tu-special": {
+      "descriptionZh": {
+        "text": "統率和速度額外提升11點",
+        "viSha256": "e8c45805e32f60e3f4a8031d2aa98c60ad740980f207381262910a7ede33f53b"
+      }
+    },
     "troop-option:vo-duong-phi-quan:mui-dinh": {
       "nameZh": {
         "text": "未定",
@@ -11770,6 +12724,18 @@
         "viSha256": "60aded3ee973529dab6b9bbb9b9bfc2447edeb6e40403bf3fae1fb905e6f9c84"
       }
     },
+    "troop-option:vo-duong-phi-quan:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率提高40%",
+        "viSha256": "d5206fbe1a0633dc029724149c9b7a065176a39a2b1ab99291b98f5ccd918452"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:pha-quan-intermediate": {
+      "descriptionZh": {
+        "text": "我軍造成的持續傷害效果無視40%防禦屬性",
+        "viSha256": "4bff8bf306f7cd727c8b4b60a1b44063d6271fad60d6e62d69b4459c75f2cc02"
+      }
+    },
     "troop-option:vo-duong-phi-quan:tram-tran": {
       "nameZh": {
         "text": "百戰",
@@ -11778,6 +12744,12 @@
       "descriptionZh": {
         "text": "我軍全體獲得5%減傷",
         "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "改為我軍智力最高武將施加",
+        "viSha256": "09bcbad65462e96f4d7f26d907c6a8411b40255abe96f24a439de9aae30b152d"
       }
     }
   }

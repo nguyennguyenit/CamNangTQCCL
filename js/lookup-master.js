@@ -250,6 +250,7 @@ function advisorCardTree(item, locale, selectedId, byId) {
       ]),
     ]),
     effect ? h("span", { class: "lookup-adv-effect" }, effect) : null,
+    effect && isZh(locale) && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
     h("span", { class: "lookup-adv-foot" }, [
       h("span", {}, points === null ? "" : text(locale, `${points} điểm chiến pháp`, `${points} 战法点`)),
       h("span", { class: "lookup-adv-more" }, text(locale, "Chi tiết →", "详情 →")),
