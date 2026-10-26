@@ -8,6 +8,7 @@
 
 ### Added
 - Phe Hán trên giao diện: màu `--f-han` (sáng/tối) cho badge, chip, thẻ tướng Tra cứu và ấn phe Soi đội; nhãn zh 汉; bộ lọc phe ở công cụ chọn tướng (roster).
+- Chân dung SP Tào Tháo (`public/heroes/sp-tao-thao.webp`, 300×300) cắt từ tranh trong ảnh thông báo, khai qua `portraits` của `pipeline/lookup-client-heroes.json`; trước đó tướng này không có chân dung.
 
 ## 2026-10-22 (Bản zh: chữ Hán cho Quân sư, Công trình, Cải tạo binh chủng, nhãn chiến pháp và tướng)
 
