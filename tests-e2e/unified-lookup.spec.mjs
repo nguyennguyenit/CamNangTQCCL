@@ -352,7 +352,7 @@ async function portraitHosts(request) {
   return [...new Set(heroes.map((hero) => hero.iconUrl).filter(Boolean).map((url) => (url.startsWith('/heroes/') ? '/heroes/' : new URL(url).host)))];
 }
 
-test('mọi ảnh chân dung là https hoặc ảnh tự lưu /heroes/ + no-referrer + lazy; thiếu iconUrl thì hiện chữ Hán', async ({ page }) => {
+test('mọi ảnh chân dung là https hoặc ảnh tự lưu /heroes/ + no-referrer + lazy; ảnh hồ sơ lỗi thì hiện chữ Hán', async ({ page }) => {
   await openLookup(page, '/tra-cuu/tuong/');
   await expect(cards(page)).toHaveCount(60);
   const portraits = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-card img')].map((image) => ({
@@ -367,10 +367,11 @@ test('mọi ảnh chân dung là https hoặc ảnh tự lưu /heroes/ + no-refe
     expect(portrait.decoding).toBe('async');
     expect(portrait.alt.length).toBeGreaterThan(0);
   }
-  // Trang đầu toàn tướng có ảnh; ô chữ Hán kiểm trên hồ sơ của tướng thiếu iconUrl (SP Tào Tháo: chưa có ở client Global
-  // nên không có chân dung tự lưu).
+  // Ô chữ Hán của hồ sơ: mọi tướng đều có chân dung, nên chặn ảnh của một tướng để ảnh lỗi và hồ sơ hiện ô chữ Hán thay thế.
+  await page.route('**/heroes/sp-tao-thao.webp', (route) => route.abort());
   await openLookup(page, '/tra-cuu/tuong/?id=hero%3Asp-tao-thao');
   await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.locator('#section-lookup .lookup-dialog-portrait .hero-portrait-han')).toHaveCount(1);
   const han = await page.evaluate(() => [...document.querySelectorAll('#section-lookup .lookup-dialog-portrait .hero-portrait-han')].map((node) => ({
     char: node.textContent.trim(), lang: node.firstElementChild?.getAttribute('lang'), hidden: node.firstElementChild?.getAttribute('aria-hidden'),
     images: node.parentElement.querySelectorAll('img').length, font: getComputedStyle(node).fontFamily,
