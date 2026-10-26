@@ -17474,7 +17474,7 @@
     "cost": "7",
     "faction": "Hán",
     "hanViet": "SP Tào Tháo",
-    "iconUrl": null,
+    "iconUrl": "/heroes/sp-tao-thao.webp",
     "id": "hero:sp-tao-thao",
     "inheritTacticCn": "藏器待時",
     "isSP": true,
