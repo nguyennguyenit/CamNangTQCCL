@@ -3299,6 +3299,9 @@
         "mi": 0.3
       }
     },
+    "hero:sp-tao-thao": {
+      "faction": "Hán"
+    },
     "hero:sp-tuan-uc": {
       "growth": {
         "luc": 0.34,

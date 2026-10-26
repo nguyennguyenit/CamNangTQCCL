@@ -1,5 +1,14 @@
 # Project Changelog
 
+## 2026-10-26 (SP Tào Tháo theo thông báo Global)
+
+### Changed
+- SP Tào Tháo lấy dữ liệu từ ảnh thông báo "Võ Tướng Mới & Chiến Pháp" của bản Global: phe **Hán** (trước là Quần theo SGSDeck TW), COST 7 và thích tính Kỵ S/Khiên A/Cung S/Thương A/Xe B (đã khớp).
+- Thừa Thiên Tĩnh Thế (Chỉ huy) và Tàng Khí Đợi Thời (Bị động, chuyên Khiên/Xe; tên cũ Tàng Khí Đãi Thì) dùng chữ hiệu ứng Global thay bản dịch từ nguồn Trung; bỏ ghi chú "Chưa có ở client Global". Phẩm, Mục tiêu và Buff không có trong thông báo nên giữ nguyên: mục `tactics{}` của client nay nhận `targetVi`/`effectTypeVi` = `null`.
+
+### Added
+- Phe Hán trên giao diện: màu `--f-han` (sáng/tối) cho badge, chip, thẻ tướng Tra cứu và ấn phe Soi đội; nhãn zh 汉; bộ lọc phe ở công cụ chọn tướng (roster).
+
 ## 2026-10-22 (Bản zh: chữ Hán cho Quân sư, Công trình, Cải tạo binh chủng, nhãn chiến pháp và tướng)
 
 ### Added

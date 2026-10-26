@@ -1047,6 +1047,13 @@ class ClientTacticCaptureTest(unittest.TestCase):
         heroes = self._rows(self._build({"tactic:vien-cuu": self._entry()}), "heroes-dict.json")
         self.assertEqual(heroes["hero:dao-khiem"]["lookup"]["selfTacticId"], "tactic:vien-cuu")
 
+    def test_null_target_and_effect_type_keep_the_built_values(self):
+        # Thông báo tướng mới không ghi Mục tiêu/Buff: `null` giữ giá trị đã dựng, các trường khác vẫn theo client.
+        before = self._rows(self._build({}), "tactics.json")["tactic:vien-cuu"]
+        row = self._rows(self._build({"tactic:vien-cuu": self._entry(targetVi=None, effectTypeVi=None)}), "tactics.json")["tactic:vien-cuu"]
+        self.assertEqual((row["targetViet"], row["lookup"]["effectTypeVi"]), (before["targetViet"], before["lookup"]["effectTypeVi"]))
+        self.assertEqual((row["viet"], row["effectViet"]), ("Cứu trợ", self._entry()["effectVi"]))
+
     def test_invalid_entries_are_rejected(self):
         for tactics, error in (
             ({"tactic:khong-co": self._entry()}, "entry is invalid"),

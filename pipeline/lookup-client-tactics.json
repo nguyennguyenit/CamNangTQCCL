@@ -4695,6 +4695,21 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tang-khi-dai-thi": {
+      "nameVi": "Tàng Khí Đợi Thời",
+      "quality": null,
+      "type": "PASSIVE",
+      "activationRate": 1,
+      "troopFit": [
+        "Khiên binh",
+        "Khí giới"
+      ],
+      "targetVi": null,
+      "effectTypeVi": null,
+      "effectVi": "Chiến đấu 2 hiệp đầu, bản thân chịu sát thương từ Tấn Công Thường giảm 10%→20% (chịu ảnh hưởng Thống Soái); Từ hiệp 3 trở đi, xác suất phát động Chiến Pháp Chủ Động tự mang của bản thân tăng 4%→8% (chịu ảnh hưởng Võ Lực) và khi gây ra sát thương có 15%→30% xác suất (chịu ảnh hưởng Võ Lực) kèm theo 10%→20% Phá Trận (chịu ảnh hưởng Võ Lực)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tat-phong-sau-vu": {
       "nameVi": "Gió Táp Mưa Sa",
       "quality": "S",
@@ -5509,6 +5524,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong khi chiến đấu, mỗi hiệp khiến sát thương bản thân gây ra tăng 5.5%→11%, được cộng dồn đến khi kết thúc chiến đấu",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:thua-thien-tinh-the": {
+      "nameVi": "Thừa Thiên Tĩnh Thế",
+      "quality": null,
+      "type": "COMMAND",
+      "activationRate": 1,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": null,
+      "effectTypeVi": null,
+      "effectVi": "Trong chiến đấu, mỗi đầu hiệp có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn toàn thể quân địch (khiến 1 Chiến Pháp của mục tiêu vô hiệu, ngoại trừ Pháp Trận), duy trì 1 hiệp; Mỗi cuối hiệp gây sát thương Mưu Lược cho quân địch (2-3 người) (tỷ lệ sát thương 5%→10% + 5%→10%* số lần Uy Chấn, chịu ảnh hưởng độ chênh lệch Thống Soái, bỏ qua Phòng Ngự); Khi quân ta chịu sát thương cao hơn 6% Binh Lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn ngẫu nhiên quân địch; Khi bản thân là Tướng Chính, 3 hiệp chiến đấu đầu, quân ta chịu sát thương Mưu Lược có 17.5%→35% xác suất bị giảm theo thuộc tính Thống Soái",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -9003,24 +9036,6 @@
     }
   },
   "tacticNotes": {
-    "tactic:thua-thien-tinh-the": {
-      "aliases": [],
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); SP Tào Tháo tự mang."
-        }
-      ]
-    },
-    "tactic:tang-khi-dai-thi": {
-      "aliases": [],
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); kế thừa từ SP Tào Tháo."
-        }
-      ]
-    },
     "tactic:doat-hon-hiep-phach": {
       "aliases": [
         "Thác-Đoạt Hồn Hiệp Phách"

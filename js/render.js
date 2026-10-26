@@ -98,8 +98,8 @@ const viProse = (value) => (isZh() ? "" : value);
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
 /** Nhãn loại binh của dữ liệu cũ theo ngôn ngữ trang (class màu vẫn tra theo giá trị gốc). */
 export const unitLabel = (value) => legacyLabelZh("unit", value) ?? value;
-// Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng).
-export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
+// Phe -> hậu tố class màu (Ngụy xanh đậm, Thục xanh lá, Ngô đỏ, Quần vàng, Hán xanh mòng két).
+export const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hán": "han", "Hỗn hợp": "honhop" };
 // Nhãn nguồn của đội cũ (`data/teams.json`): chip Nguồn ở Đội khác và trang chi tiết.
 export const SOURCE_LABEL = {
   "team-intro": "Giới thiệu",

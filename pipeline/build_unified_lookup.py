@@ -1209,8 +1209,9 @@ def _apply_client_tactics(document, tactics):
             or troops != sorted(troops, key=troop_order.index)
         ):
             raise ValueError(f"client tactic value is invalid: {owner}")
-        target = _client_tactic_text(entry["targetVi"], owner, "targetVi")
-        effect_type = _client_tactic_text(entry["effectTypeVi"], owner, "effectTypeVi")
+        # `null` = không đổi (vd thông báo tướng mới của client không ghi Mục tiêu/Buff như màn Chiến Pháp).
+        target = _client_tactic_text(entry["targetVi"], owner, "targetVi", nullable=True)
+        effect_type = _client_tactic_text(entry["effectTypeVi"], owner, "effectTypeVi", nullable=True)
         effect = _client_tactic_text(entry["effectVi"], owner, "effectVi")
         exchange = _client_tactic_text(entry["exchangeConditionVi"], owner, "exchangeConditionVi", nullable=True)
         if name != row["viet"]:
@@ -1226,9 +1227,11 @@ def _apply_client_tactics(document, tactics):
             assign(owner, row, "quality", entry["quality"], "clientCapture.quality")
         assign(owner, row, "type", entry["type"], "clientCapture.type")
         assign(owner, row, "troopFit", list(troops), "clientCapture.troopFit")
-        assign(owner, row, "targetViet", target, "clientCapture.targetVi")
+        if target is not None:
+            assign(owner, row, "targetViet", target, "clientCapture.targetVi")
         assign(owner, lookup, "activationRate", rate, "clientCapture.activationRate")
-        assign(owner, lookup, "effectTypeVi", effect_type, "clientCapture.effectTypeVi")
+        if effect_type is not None:
+            assign(owner, lookup, "effectTypeVi", effect_type, "clientCapture.effectTypeVi")
         if max_users is not None:
             assign(owner, lookup, "maxUsers", max_users, "clientCapture.maxUsers")
         if exchange is not None:

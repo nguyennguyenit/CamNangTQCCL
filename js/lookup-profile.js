@@ -28,7 +28,7 @@ import {
 } from "./lookup-tactic-profile.js";
 
 const MISSING = "—";
-const FACTION_CODE_BY_LABEL = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop", "魏": "nguy", "蜀": "thuc", "吴": "ngo", "群": "quan" };
+const FACTION_CODE_BY_LABEL = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hán": "han", "Hỗn hợp": "honhop", "魏": "nguy", "蜀": "thuc", "吴": "ngo", "群": "quan", "汉": "han" };
 /* Trần thanh chỉ số hồ sơ: artboard LookupProfile vẽ 81→68%, 89→74%, 91→76%, 37→31% (= giá trị/120).
    Dữ liệu thật đa số ≤100 nhưng vài tướng vượt (tới ~249); phần vượt 120 khoá đầy thanh, số vẫn in đúng. */
 const STAT_BAR_MAX = 120;

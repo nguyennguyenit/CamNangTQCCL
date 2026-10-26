@@ -121,7 +121,7 @@ const SOURCE_LABELS = {
   other: ["Khác", "其他"],
 };
 const QUALITY_LABELS = { S: ["S", "S"], A: ["A", "A"], B: ["B", "B"], C: ["C", "C"], other: ["Khác", "其他"] };
-const FACTIONS = [["Ngụy", "魏"], ["Thục", "蜀"], ["Ngô", "吴"], ["Quần", "群"]];
+const FACTIONS = [["Ngụy", "魏"], ["Thục", "蜀"], ["Ngô", "吴"], ["Quần", "群"], ["Hán", "汉"]];
 
 const option = (value, pair) => ({ value, label: L(pair[0], pair[1]) });
 

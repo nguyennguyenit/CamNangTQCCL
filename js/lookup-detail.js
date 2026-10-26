@@ -25,7 +25,7 @@ const labels = () => Object.fromEntries(Object.entries(LOOKUP_FIELD_LABELS).map(
 const LANGUAGE_NEUTRAL_KEYS = new Set(["luc", "tri", "thong", "toc", "chinh", "mi", "ky", "thuan", "cung", "thuong", "khiGioi", "infantry", "navy"]);
 /** Bộ giá trị đóng của dữ liệu (tiếng Việt) → chữ Trung cho bản zh. */
 const ZH_VALUES = {
-  "Ngụy": "魏", "Thục": "蜀", "Ngô": "吴", "Quần": "群",
+  "Ngụy": "魏", "Thục": "蜀", "Ngô": "吴", "Quần": "群", "Hán": "汉",
   "Quân sự": "军事", "Nội chính": "内政",
   "Vũ khí": "武器", "Phòng cụ": "防具", "Tọa kỵ": "坐骑", "Bảo vật": "宝物",
   "Cam": "橙", "Tím": "紫",
@@ -337,12 +337,12 @@ function acquiredFromZh(corpus, row) {
 
 /** Một ô đổi thẻ: "A (Thục) hoặc B (Ngô): cần 1 thẻ" hoặc "tướng 5 sao phe Quần: cần 3 thẻ"; dạng khác/tên lạ thì `null`. */
 function exchangeCellZh(corpus, cell) {
-  const tier = /^tướng (\d) sao phe (Ngụy|Thục|Ngô|Quần): cần (\d+) thẻ$/u.exec(cell);
+  const tier = /^tướng (\d) sao phe (Ngụy|Thục|Ngô|Quần|Hán): cần (\d+) thẻ$/u.exec(cell);
   if (tier) return `${ZH_VALUES[tier[2]]}阵营 ${tier[1]} 星武将需 ${tier[3]} 张`;
   const match = /^(.+): cần (\d+) thẻ$/u.exec(cell);
   if (!match) return null;
   const heroes = match[1].split(" hoặc ").map((part) => {
-    const hero = /^(.+?) \((Ngụy|Thục|Ngô|Quần)\)$/u.exec(part);
+    const hero = /^(.+?) \((Ngụy|Thục|Ngô|Quần|Hán)\)$/u.exec(part);
     const zh = hero ? heroChinese(corpus, hero[1]) : null;
     return zh ? `${zh}（${ZH_VALUES[hero[2]]}）` : null;
   });
