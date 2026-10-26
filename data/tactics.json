@@ -16309,7 +16309,7 @@
     ],
     "chinese": "藏器待時",
     "effect": "戰鬥前兩回合，自身受到普通攻擊傷害降低10%→20%（受統帥影響）；第三回合起，自身自帶主動戰法發動率提升4%→8%（受武力影響）且造成傷害時有15%→30%機率（受武力影響）附帶10%→20%破陣（受武力影響）",
-    "effectViet": "Trong 2 lượt đầu của trận đấu, sát thương từ đòn đánh thường mà bản thân phải chịu giảm 10%→20% (chịu ảnh hưởng của thống soái). Từ lượt 3, tỷ lệ phát động chiến pháp chủ động vốn có của bản thân tăng 4%→8% (chịu ảnh hưởng của vũ lực), đồng thời khi gây sát thương có 15%→30% xác suất (chịu ảnh hưởng của vũ lực) kèm theo 10%→20% phá trận (chịu ảnh hưởng của vũ lực).",
+    "effectViet": "Chiến đấu 2 hiệp đầu, bản thân chịu sát thương từ Tấn Công Thường giảm 10%→20% (chịu ảnh hưởng Thống Soái); Từ hiệp 3 trở đi, xác suất phát động Chiến Pháp Chủ Động tự mang của bản thân tăng 4%→8% (chịu ảnh hưởng Võ Lực) và khi gây ra sát thương có 15%→30% xác suất (chịu ảnh hưởng Võ Lực) kèm theo 10%→20% Phá Trận (chịu ảnh hưởng Võ Lực)",
     "hanViet": "Tàng Khí Đãi Thì",
     "iconUrl": null,
     "id": "tactic:tang-khi-dai-thi",
@@ -16319,12 +16319,7 @@
         "SP Tào Tháo"
       ],
       "activationRate": 1,
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); kế thừa từ SP Tào Tháo."
-        }
-      ],
+      "conditions": [],
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
@@ -16346,11 +16341,11 @@
     "target": "自己",
     "targetViet": "Bản thân",
     "troopFit": [
-      "Khí giới",
-      "Khiên binh"
+      "Khiên binh",
+      "Khí giới"
     ],
     "type": "PASSIVE",
-    "viet": "Tàng Khí Đãi Thì"
+    "viet": "Tàng Khí Đợi Thời"
   },
   {
     "aliases": [
@@ -17194,7 +17189,7 @@
     ],
     "chinese": "承天靖世",
     "effect": "戰鬥中，每回合開始有6%→12%機率（受統帥影響）威懾敵軍全體（使目標一個戰法失效，除陣法外），持續一回合；每回合結束時對敵軍（2～3人）造成謀略傷害（傷害率5%→10%+5%→10%*威懾次數，受統帥影響，無視防禦）；我軍收到高於最大兵力6%的傷害時，有6%→12%概率（受統帥影響）威懾隨機敵軍；自身為主將時，戰鬥前三回合我軍受到謀略傷害有17.5%→35%機率可被統帥屬性降低。",
-    "effectViet": "Trong chiến đấu, đầu mỗi lượt có 6%→12% xác suất (chịu ảnh hưởng của thống soái) uy hiếp toàn thể quân địch (khiến một chiến pháp của mục tiêu mất hiệu lực, ngoại trừ trận pháp), duy trì 1 lượt; cuối mỗi lượt gây sát thương mưu lược lên quân địch (2～3 người) (tỷ lệ sát thương 5%→10% + 5%→10% × số lần uy hiếp, chịu ảnh hưởng của thống soái, bỏ qua phòng thủ). Khi quân ta chịu sát thương cao hơn 6% binh lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng của thống soái) uy hiếp một quân địch ngẫu nhiên. Khi bản thân là chủ tướng, trong 3 lượt đầu của trận đấu, sát thương mưu lược quân ta phải chịu có 17.5%→35% xác suất được giảm bởi thuộc tính thống soái.",
+    "effectViet": "Trong chiến đấu, mỗi đầu hiệp có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn toàn thể quân địch (khiến 1 Chiến Pháp của mục tiêu vô hiệu, ngoại trừ Pháp Trận), duy trì 1 hiệp; Mỗi cuối hiệp gây sát thương Mưu Lược cho quân địch (2-3 người) (tỷ lệ sát thương 5%→10% + 5%→10%* số lần Uy Chấn, chịu ảnh hưởng độ chênh lệch Thống Soái, bỏ qua Phòng Ngự); Khi quân ta chịu sát thương cao hơn 6% Binh Lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn ngẫu nhiên quân địch; Khi bản thân là Tướng Chính, 3 hiệp chiến đấu đầu, quân ta chịu sát thương Mưu Lược có 17.5%→35% xác suất bị giảm theo thuộc tính Thống Soái",
     "hanViet": "Thừa Thiên Tĩnh Thế",
     "iconUrl": null,
     "id": "tactic:thua-thien-tinh-the",
@@ -17202,12 +17197,7 @@
     "lookup": {
       "acquiredFromVi": [],
       "activationRate": 1,
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); SP Tào Tháo tự mang."
-        }
-      ],
+      "conditions": [],
       "conflictsVi": "Không",
       "cooldown": null,
       "effectTypeVi": "Bất lợi + mưu lược quần thể",

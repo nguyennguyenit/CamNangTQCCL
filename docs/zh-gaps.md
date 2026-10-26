@@ -3,12 +3,12 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 109 / 958 mục.
+Tổng: 107 / 958 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
 | Tướng | 0 | 251 |
-| Chiến pháp | 109 | 409 |
+| Chiến pháp | 107 | 409 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
@@ -19,7 +19,7 @@ Tổng: 109 / 958 mục.
 
 Không có mục nào thiếu.
 
-## Chiến pháp (tactics): 109 / 409
+## Chiến pháp (tactics): 107 / 409
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -108,9 +108,7 @@ Không có mục nào thiếu.
 | tactic:quy-than-chi-nu | Quỷ Thần Chi Nữ | acquiredFromVi |
 | tactic:quyen-tiem-cuu-dinh | Quyền Tiếm Cửu Đỉnh | acquiredFromVi |
 | tactic:so-trang-trich-kich | Sơ Trang Chiến Kích | revisions (2) |
-| tactic:tang-khi-dai-thi | Tàng Khí Đãi Thì | conditions (1) |
 | tactic:thau-thien-xung-de | Thụ Thiền Xưng Đế | acquiredFromVi |
-| tactic:thua-thien-tinh-the | Thừa Thiên Tĩnh Thế | conditions (1) |
 | tactic:thuan-khiet-chi-hoa | Hoa Thuần Khiết | acquiredFromVi |
 | tactic:tien-dang-tu-si | Tử Sĩ Tiên Phong | revisions (2) |
 | tactic:toa-dieu-kinh-ngao | Tọa Điếu Kình Ngao | acquiredFromVi |
