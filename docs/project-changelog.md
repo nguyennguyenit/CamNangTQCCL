@@ -1,5 +1,40 @@
 # Project Changelog
 
+## 2026-10-26 (SP Tào Tháo theo thông báo Global)
+
+### Changed
+- SP Tào Tháo lấy dữ liệu từ ảnh thông báo "Võ Tướng Mới & Chiến Pháp" của bản Global: phe **Hán** (trước là Quần theo SGSDeck TW), COST 7 và thích tính Kỵ S/Khiên A/Cung S/Thương A/Xe B (đã khớp).
+- Thừa Thiên Tĩnh Thế (Chỉ huy) và Tàng Khí Đợi Thời (Bị động, chuyên Khiên/Xe; tên cũ Tàng Khí Đãi Thì) dùng chữ hiệu ứng Global thay bản dịch từ nguồn Trung; bỏ ghi chú "Chưa có ở client Global". Phẩm, Mục tiêu và Buff không có trong thông báo nên giữ nguyên: mục `tactics{}` của client nay nhận `targetVi`/`effectTypeVi` = `null`.
+
+### Added
+- Phe Hán trên giao diện: màu `--f-han` (sáng/tối) cho badge, chip, thẻ tướng Tra cứu và ấn phe Soi đội; nhãn zh 汉; bộ lọc phe ở công cụ chọn tướng (roster).
+- Chân dung SP Tào Tháo (`public/heroes/sp-tao-thao.webp`, 300×300) cắt từ tranh trong ảnh thông báo, khai qua `portraits` của `pipeline/lookup-client-heroes.json`; trước đó tướng này không có chân dung.
+
+## 2026-10-22 (Bản zh: chữ Hán cho Quân sư, Công trình, Cải tạo binh chủng, nhãn chiến pháp và tướng)
+
+### Added
+- Catalog công khai trường zh: quân sư `nameZh`/`effectZh`/`usageZh`, cải tạo `effectZh`/`appliesToZh`/`suggestedBuildZh`, lựa chọn `nameZh`/`descriptionZh`, công trình `summaryZh`, cấp công trình `effectZh`/`durationZh`, kèm `zhSource` (`source` = SGSDeck TW, `translation` = bản dịch). Tướng thêm `lookup.exclusiveTitleZh`. MCP trả các trường này.
+- `zhTexts` trong `pipeline/lookup-client-tactics.json`: 282 mục khóa bằng `viSha256` của chữ Việt client (20 quân sư chỉ có ở client: tên + hiệu ứng; hiệu ứng 39 quân sư có sẵn; 15 tóm tắt công trình; 16 hiệu ứng cải tạo; 69 lựa chọn cải tạo mới và mô tả 123 lựa chọn giữ mã, ghép với bảng lựa chọn chữ Hán SGSDeck cùng binh chủng, số theo client). 20 tên quân sư là tên game lấy nguyên văn từ sanzhan.slgsim.com (khóa `ref`, chỉ vào ledger); hiệu ứng là bản dịch. Bản zh gắn cờ "中文译自越南语，未经核对" (cả ở thẻ danh sách quân sư); bản dịch không vào meta/JSON-LD.
+- Client thay chữ Việt thì chữ Hán nguồn đi kèm (bản TW, số liệu có thể khác Global) bị bỏ: hiệu ứng quân sư, tóm tắt công trình, mô tả lựa chọn giữ mã (chỉ giữ tên). Trước đó 11 lựa chọn và khoảng 8 quân sư hiện số khác nhau giữa vi và zh (vd Tây Lương Thiết Kỵ 15 Võ Lực / 40武力). Chuỗi chữ Hán nguồn chứa ghi chú biên tập (`待補全`, `待補充`) không còn được công khai.
+- Tên sự kiện chữ Hán (16 sự kiện, đối chiếu sgsdeck.com) cho "Điều kiện đổi"/"Cách nhận" của chiến pháp sự kiện; 5 trạng thái xung đột (抵御, 穷追, 遇袭, 捕获, 看破). Bằng chứng: `plans/reports/261023-zh-quan-su-su-kien-trang-thai.md`.
+- Bản zh dịch nhãn chiến pháp chỉ có chữ Việt client (dạng hiệu ứng, mục tiêu, trạng thái xung đột, mùa) bằng bộ giá trị đóng; ghép "Cách nhận" và "Điều kiện đổi" từ tên Hán của võ tướng/sự kiện nguồn; vai trò tướng dùng `roleTag` nguồn.
+
+### Changed
+- Báo cáo zh-gaps: 745 → 109 / 958 mục thiếu chữ; Tướng, Quân sư, Cải tạo binh chủng, Công trình về 0. Còn lại là chiến pháp: lịch sử phiên bản chỉ có chữ Việt, ghi chú mùa, và 17 mục có nhãn/sự kiện chưa đối chiếu được chữ Hán (sự kiện liên động Đài Loan, Huy Quân Kết Trận, tướng chưa có trong kho như SP Lư Thực; không đoán tên riêng).
+
+## 2026-10-22 (Binh thư, trang bị, tuyệt kỹ, quân sư, công trình theo client Global 24.535)
+
+### Changed
+- Binh thư: `effectViet` của 67/68 mục thay bằng chữ thẻ Thượng Thư Đài client 24.535 (`pipeline/books-han-viet-map.json`), sửa 4 số lệch nguồn Trung: Binh Hành Quỷ Đạo 75%→65%, Tam Quân Chi Chúng 25%→30%, Đánh Bất Ngờ Thắng 50%→55%, Đánh Giá Tình Hình +3%→+5%. Trường mới `effectVietVersion` ("Global 24.535") là mốc của riêng chữ Việt; trang Việt hiện mốc này, trang zh vẫn hiện `effect`/`effectVersion` của nguồn Trung. MCP `tqccl_get_entity` trả thêm trường này. Tên binh thư giữ nguyên (tên nằm trong facet đội và quyết định slug).
+- `pipeline/lookup-client-tactics.json` thêm `equipment`, `specials`, `buildings`: tên client làm tên hiển thị (tên cũ thành `aliasesVi`) cho 60 trang bị, 66 tuyệt kỹ (kèm mô tả client) và 39 công trình; `summaryVi` điền cho 15 công trình còn trống, giữ mô tả cũ có mốc Lv10/Lv20.
+- Quân sư: 39 mục có sẵn lấy tên, hệ, Điểm Kế Lược, mô tả và tướng mang theo Minh Giám › Quân sư; tên Hán-Việt cũ thành `aliasesVi` (vd Hoành Trưng Bạo Liễm → Sưu Cao Thuế Nặng). Lệch đã sửa: điểm Trương Liêu 10→12, Vu Cát 15→10, Đổng Trác 13→14, Chung Hội 15→13, Chu Thái 20→18, Quách Gia 10→9, Lý Nho 12→20, Hoàng Nguyệt Anh 20→18; hệ Đổng Trác Sơn→Lâm, Viên Thiệu Hỏa→Phong; Tư Mã Ý +5→+8 Trí Lực; nối tướng cho Thống Quân Tái Chiến (Trương Lương), Chấn Phấn Ngang Dương (Hoàng Phổ Tung), Thượng Tướng Uy Danh (Phan Phụng).
+
+### Fixed
+- `building:my-binh-dinh` (盾兵營) là Trại Lính Khiên, không phải "My Binh Dinh"; `building:trung-binh-xu` (徵兵處) hiện là Nơi Chiêu Binh. Slug cũ giữ nguyên.
+
+### Added
+- `newAdvisors`: 20 quân sư chỉ có ở client (Hiệu Lệnh Thiên Hạ của Tào Tháo, Bá Vương Thảo Nghịch của Tôn Sách, Tây Lương Phi Hùng của SP Đổng Trác…), mỗi mục một trang `/tra-cuu/quan-su/<slug>/`; Tra cứu nay 958 mục. Hồ sơ tướng trỏ ngược quân sư qua `lookup.advisorId` cho cả 59 kỹ năng.
+- Báo cáo đối chiếu: `plans/reports/261022-client-binh-thu-trang-bi-cong-trinh.md`.
 ## 2026-10-22 (Đội cộng đồng công khai)
 
 ### Added

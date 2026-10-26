@@ -303,3 +303,44 @@ test("thẻ trang bị: đầu thẻ theo phẩm, số đặc kỹ độc quyề
   assert.match(zh, /倚天劍/);
   assert.doesNotMatch(zh, /Vũ khí|đặc kỹ/);
 });
+
+test("bản zh catalog: chữ Hán nguồn/bản dịch thay chữ Việt; bản dịch mang cờ ở thẻ và chi tiết; phần chưa có chữ Hán bị ẩn kèm dòng báo", () => {
+  const [adv, other] = CATALOG.advisors;
+  const advisors = [
+    { ...adv, effectZh: "動員：譯文", zhSource: { kind: "translation" } },
+    { ...other, effectZh: "被動：原文", zhSource: { kind: "source" } },
+  ];
+  const [dan, ...troops] = CATALOG.troopMods;
+  const troop = {
+    ...dan, effectZh: "將盾兵進階", appliesToZh: "法關盾", suggestedBuildZh: null, zhSource: { kind: "translation" },
+    options: dan.options.map((option, index) => (index === 0
+      ? { ...option, nameZh: "轉·持槍", descriptionZh: "將槍兵進階", zhSource: { kind: "source" } }
+      : { ...option, nameZh: null, descriptionZh: null, zhSource: null })),
+  };
+  const [bat, ...buildings] = CATALOG.buildings;
+  const building = {
+    ...bat, summaryVi: "Tóm tắt", summaryZh: "降低傷害", zhSource: { kind: "translation" },
+    levels: bat.levels.map((level) => ({ ...level, effectZh: `降低傷害+${level.level * 3}%`, durationZh: `${level.level}小時` })),
+  };
+  const built = buildLookupCorpus({ heroes: HEROES, catalog: { ...CATALOG, advisors, troopMods: [troop, ...troops], buildings: [building, ...buildings] } });
+
+  const cards = text(masterResultTrees("advisors", built.groups.advisors, "zh", { byId: built.byId }));
+  assert.match(cards, /動員：譯文/);
+  assert.match(cards, /被動：原文/);
+  assert.equal([...cards.matchAll(/data-zh-source="translation"/g)].length, 1, "chỉ thẻ có bản dịch mang cờ");
+  assert.doesNotMatch(text(masterResultTrees("advisors", built.groups.advisors, "vi", { byId: built.byId })), /data-zh-source|譯文/);
+  assert.match(treeToHtml(masterDetailTree("advisors", built.byId.get(adv.id), built, "zh")), /data-zh-source="translation"/);
+  assert.doesNotMatch(treeToHtml(masterDetailTree("advisors", built.byId.get(other.id), built, "zh")), /data-zh-source/);
+
+  const troopHtml = treeToHtml(masterDetailTree("troop-mods", built.byId.get(troop.id), built, "zh"));
+  assert.match(troopHtml, /轉·持槍/);
+  assert.match(troopHtml, /进阶树 · 1 个选项/);
+  assert.match(troopHtml, /部分说明暂无中文原文/);
+  assert.doesNotMatch(troopHtml, /Pháp Quan Thuẫn|Mô tả|Hiệu ứng/);
+
+  const buildingHtml = treeToHtml(masterDetailTree("buildings", built.byId.get(building.id), built, "zh"));
+  assert.match(buildingHtml, /降低傷害\+6%/);
+  assert.match(buildingHtml, /2小時/);
+  assert.match(buildingHtml, /data-zh-source="translation"/);
+  assert.doesNotMatch(buildingHtml, /部分说明暂无中文原文|Tóm tắt|giờ/);
+});

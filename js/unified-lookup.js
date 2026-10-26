@@ -223,7 +223,7 @@ export function recordChinese(record) {
 }
 
 const VARIANT_LABEL = { sp: "SP", co: "CO", "40y": "40Y", base: null };
-const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hỗn hợp": "honhop" };
+const FACTION_CODE = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hán": "han", "Hỗn hợp": "honhop" };
 /** Giá trị chữ của dữ liệu theo ngôn ngữ: bản zh chỉ giữ giá trị dịch được, còn lại rỗng (bị bỏ). */
 const shown = (value, locale) => {
   if (value === null || value === undefined || value === "") return "";

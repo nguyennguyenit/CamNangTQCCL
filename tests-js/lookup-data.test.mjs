@@ -190,8 +190,8 @@ test("ID bản ghi phải đúng tiền tố và duy nhất", async () => {
 
   const duplicatedAcrossGroups = withRaw("lookup-catalog.json", catalogDoc({
     advisors: [
-      { id: "advisor:an-phuc-binh-tam", nameVi: "A", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
-      { id: "advisor:an-phuc-binh-tam", nameVi: "B", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
+      { id: "advisor:an-phuc-binh-tam", nameVi: "A", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", nameZh: null, effectZh: null, usageZh: null, zhSource: null, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
+      { id: "advisor:an-phuc-binh-tam", nameVi: "B", elementVi: "Phong", heroIds: [], effectVi: "", tacticPoints: 1, usageVi: "", nameZh: null, effectZh: null, usageZh: null, zhSource: null, aliasesVi: [], aliasesZh: [], conditions: [], missingFields: [] },
     ],
   }));
   await assert.rejects(validateLookupBundle(duplicatedAcrossGroups.manifest, duplicatedAcrossGroups.rawFiles), /advisor:an-phuc-binh-tam/);
@@ -461,5 +461,27 @@ test("effectZhSource: null hoặc đúng {kind} của source/capture/translation
   ]) {
     const bad = make(value, over);
     await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /effectZhSource/, label);
+  }
+});
+
+test("zhSource của catalog: có khi và chỉ khi hàng có chữ Hán chính, chỉ đúng {kind}; ref công khai hoặc kind lạ bị từ chối", async () => {
+  const base = catalogDoc();
+  const make = (over) => withRaw("lookup-catalog.json", { ...base, advisors: [{ ...base.advisors[0], ...over }] });
+  for (const over of [
+    { effectZh: "效果", zhSource: { kind: "source" } },
+    { effectZh: null, nameZh: "名", zhSource: { kind: "translation" } },
+    { effectZh: null, nameZh: null, zhSource: null },
+  ]) {
+    const ok = make(over);
+    await validateLookupBundle(ok.manifest, ok.rawFiles);
+  }
+  for (const [label, over] of [
+    ["có chữ Hán mà thiếu zhSource", { effectZh: "效果", zhSource: null }],
+    ["zhSource mà không có chữ Hán", { effectZh: null, nameZh: null, zhSource: { kind: "source" } }],
+    ["ref công khai", { effectZh: "效果", zhSource: { kind: "source", ref: "https://sanzhan.slgsim.com/x" } }],
+    ["kind lạ", { effectZh: "效果", zhSource: { kind: "capture" } }],
+  ]) {
+    const bad = make(over);
+    await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /advisor:an-phuc-binh-tam/, label);
   }
 });

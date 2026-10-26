@@ -8,7 +8,9 @@ kiểm facet, và phải KHÔNG có trong facet).
 
 Dòng dạng object có thể mang hiệu ứng: `effect` (chữ Hán nguồn), `effectViet`
 (bản dịch đã duyệt) và `effectVersion` (mốc số liệu nguồn) — đủ cả ba hoặc
-không có trường nào, để hồ sơ bản Việt và bản zh không lệch nhau.
+không có trường nào, để hồ sơ bản Việt và bản zh không lệch nhau. `effectVietVersion` (tùy chọn,
+chỉ đi kèm bộ ba trên) là mốc của riêng chữ Việt khi `effectViet` chép từ client Global thay vì
+dịch từ `effect`: bản Việt hiện mốc này, bản zh vẫn hiện `effectVersion` của chữ Hán nguồn.
 
 `sourceNames`: tên Hán nguồn (phồn thể, biến thể chữ) của chính binh thư đó, để
 trang đội khớp ô nguồn với hồ sơ bằng tên Hán thay vì bằng bản dịch.
@@ -103,6 +105,10 @@ def build_books_dict(han_viet_map: dict, facet_books: list, ledger: dict | None 
         effect = {key: row[key].strip() for key in _EFFECT_KEYS if isinstance(row.get(key), str) and row[key].strip()}
         if effect and len(effect) != len(_EFFECT_KEYS):
             raise ValueError(f"[fail-loud] binh thư {where} thiếu một phần hiệu ứng: cần đủ {', '.join(_EFFECT_KEYS)}")
+        if "effectVietVersion" in row:
+            if not effect or not isinstance(row["effectVietVersion"], str) or not row["effectVietVersion"].strip():
+                raise ValueError(f"[fail-loud] binh thư {where}: effectVietVersion cần chuỗi và đủ bộ hiệu ứng")
+            effect["effectVietVersion"] = row["effectVietVersion"].strip()
         rec = {"id": book_id, "chinese": chinese, "viet": viet}
         missing: set = set()
         hv = hanviet.to_viet(chinese, missing)

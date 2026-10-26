@@ -7,7 +7,7 @@ const loads = new WeakMap();
 const HERO_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "faction", "stars", "cost", "stats", "troopApt", "selfTacticCn", "inheritTacticCn", "roleTag", "roleTagViet", "iconUrl", "isSP", "linkScore", "pending", "lookup"];
 const TACTIC_KEYS = ["id", "chinese", "hanViet", "viet", "aliases", "type", "quality", "effect", "effectViet", "target", "targetViet", "troopFit", "source", "sourceHeroCn", "iconUrl", "linkScore", "pending", "lookup"];
 const COMMON_KEYS = ["id", "nameVi", "aliasesVi", "aliasesZh", "conditions", "missingFields"];
-const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"];
+const HERO_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "variant", "selfTacticId", "inheritTacticId", "advisorId", "growth", "otherAptitudes", "categoryVi", "exclusiveTitleVi", "exclusiveTitleZh", "civil", "civilInnatePoints", "collectibleBonusVi", "redRulesVi", "flags", "usageVi", "usageZh", "cardPacks"];
 const CARD_PACK_KEYS = ["packVi", "packZh", "categoryVi", "categoryZh", "isCore", "coreRate", "nonCoreRate"];
 const TACTIC_LOOKUP_KEYS = ["conditions", "missingFields", "revisions", "activationRate", "cooldown", "maxUsers", "pointCost", "effectTypeVi", "exchangeConditionVi", "acquiredFromVi", "inheritedFromIds", "conflictsVi", "formerIds", "effectZhSource"];
 /** Nguồn chữ Hán hiệu ứng không đến từ SGSDeck; `null` = SGSDeck hoặc chưa có chữ Hán. */
@@ -81,7 +81,8 @@ function validateHero(record) {
   requireShape(`${owner}.lookup.otherAptitudes`, lookup.otherAptitudes, ["infantry", "navy"]);
   requireShape(`${owner}.lookup.civil`, lookup.civil, ["roleVi", "bonusVi", "specialtyVi", "tacticBonusVi"]);
   requireShape(`${owner}.lookup.flags`, lookup.flags, ["isCollectible", "isDynamicOpen", "isMusou", "isCO", "isSp"]);
-  if (!HERO_VARIANTS.has(lookup.variant) || ![lookup.selfTacticId, lookup.inheritTacticId, lookup.advisorId, lookup.categoryVi, lookup.exclusiveTitleVi, lookup.collectibleBonusVi, lookup.redRulesVi, lookup.usageVi, lookup.usageZh].every(isOptionalString)
+  if (!HERO_VARIANTS.has(lookup.variant) || ![lookup.selfTacticId, lookup.inheritTacticId, lookup.advisorId, lookup.categoryVi, lookup.exclusiveTitleVi, lookup.exclusiveTitleZh, lookup.collectibleBonusVi, lookup.redRulesVi, lookup.usageVi, lookup.usageZh].every(isOptionalString)
+    || (lookup.exclusiveTitleZh !== null && lookup.exclusiveTitleVi === null)
     || (lookup.usageVi === null) !== (lookup.usageZh === null)
     || !isOptionalNumber(lookup.civilInnatePoints) || !Object.values(lookup.growth).every(isOptionalNumber)
     || !Object.values(lookup.otherAptitudes).every(isOptionalString) || !Object.values(lookup.civil).every(isOptionalString)
@@ -174,9 +175,9 @@ function validateCatalogDocument(catalog) {
   const groups = [
     ["equipment", "equipment:", [...COMMON_KEYS, "qualityVi", "slotVi"]],
     ["specials", "equipment-special:", [...COMMON_KEYS, "tierVi", "slotVi", "descriptionVi", "acquisitionVi", "equipmentId", "exclusiveHeroId"]],
-    ["advisors", "advisor:", [...COMMON_KEYS, "elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds"]],
-    ["troopMods", "troop-mod:", [...COMMON_KEYS, "effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options"]],
-    ["buildings", "building:", [...COMMON_KEYS, "summaryVi", "mainCityOnly", "maxLevel", "levels"]],
+    ["advisors", "advisor:", [...COMMON_KEYS, "elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds", "nameZh", "effectZh", "usageZh", "zhSource"]],
+    ["troopMods", "troop-mod:", [...COMMON_KEYS, "effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options", "effectZh", "appliesToZh", "suggestedBuildZh", "zhSource"]],
+    ["buildings", "building:", [...COMMON_KEYS, "summaryVi", "mainCityOnly", "maxLevel", "levels", "summaryZh", "zhSource"]],
   ];
   for (const [key, prefix, keys] of groups) {
     if (!Array.isArray(catalog[key])) throw new Error(`lookup-catalog.json thiếu ${key}`);
@@ -194,36 +195,46 @@ function validateCatalogDocument(catalog) {
     }
   }
   for (const row of catalog.advisors) {
-    if (![row.elementVi, row.effectVi, row.usageVi].every(isOptionalString) || !isOptionalNumber(row.tacticPoints) || !isStringList(row.heroIds)) {
+    if (![row.elementVi, row.effectVi, row.usageVi, row.nameZh, row.effectZh, row.usageZh].every(isOptionalString) || !isOptionalNumber(row.tacticPoints) || !isStringList(row.heroIds)
+      || !isZhSource(row.zhSource, row.nameZh || row.effectZh)) {
       throw new Error(`${row.id} có scalar không hợp lệ`);
     }
   }
   for (const row of catalog.troopMods) {
-    if (![row.effectVi, row.appliesToVi, row.suggestedBuildVi].every(isOptionalString) || !isStringList(row.troopLimitVi) || !Array.isArray(row.options)) {
+    if (![row.effectVi, row.appliesToVi, row.suggestedBuildVi, row.effectZh, row.appliesToZh, row.suggestedBuildZh].every(isOptionalString) || !isStringList(row.troopLimitVi) || !Array.isArray(row.options)
+      || !isZhSource(row.zhSource, row.effectZh)) {
       throw new Error(`${row.id} có scalar không hợp lệ`);
     }
     requireRevisions(row.id, row.revisions);
     for (const option of row.options) {
-      requireShape(`${row.id}.options`, option, ["id", "tierVi", "nameVi", "descriptionVi", "convertsToVi"]);
+      requireShape(`${row.id}.options`, option, ["id", "tierVi", "nameVi", "descriptionVi", "convertsToVi", "nameZh", "descriptionZh", "zhSource"]);
       requireUniqueId(`${row.id}.options`, option, "troop-option:", allIds);
-      if (typeof option.nameVi !== "string" || ![option.tierVi, option.descriptionVi, option.convertsToVi].every(isOptionalString)) {
+      if (typeof option.nameVi !== "string" || ![option.tierVi, option.descriptionVi, option.convertsToVi, option.nameZh, option.descriptionZh].every(isOptionalString)
+        || !isZhSource(option.zhSource, option.nameZh || option.descriptionZh)) {
         throw new Error(`${row.id}.options có scalar không hợp lệ`);
       }
     }
   }
   for (const row of catalog.buildings) {
-    if (!isOptionalString(row.summaryVi) || typeof row.mainCityOnly !== "boolean" || !Number.isInteger(row.maxLevel) || !Array.isArray(row.levels)) {
+    if (![row.summaryVi, row.summaryZh].every(isOptionalString) || !isZhSource(row.zhSource, row.summaryZh) || typeof row.mainCityOnly !== "boolean" || !Number.isInteger(row.maxLevel) || !Array.isArray(row.levels)) {
       throw new Error(`${row.id} có scalar không hợp lệ`);
     }
     for (const level of row.levels) {
-      requireShape(`${row.id}.levels`, level, ["id", "level", "costs", "durationVi", "effectVi"]);
+      requireShape(`${row.id}.levels`, level, ["id", "level", "costs", "durationVi", "effectVi", "effectZh", "durationZh"]);
       requireUniqueId(`${row.id}.levels`, level, "building-level:", allIds);
       requireShape(`${row.id}.levels.costs`, level.costs, ["wood", "iron", "stone"]);
-      if (!Number.isInteger(level.level) || !Object.values(level.costs).every(isOptionalNumber) || ![level.durationVi, level.effectVi].every(isOptionalString)) {
+      if (!Number.isInteger(level.level) || !Object.values(level.costs).every(isOptionalNumber) || ![level.durationVi, level.effectVi, level.effectZh, level.durationZh].every(isOptionalString)) {
         throw new Error(`${row.id}.levels có scalar không hợp lệ`);
       }
     }
   }
+}
+
+/** `zhSource` có khi và chỉ khi hàng có chữ Hán chính, dạng `{kind: "source" | "translation"}`. */
+function isZhSource(value, mainText) {
+  if (!mainText) return value === null;
+  return value !== null && typeof value === "object" && !Array.isArray(value) && Object.keys(value).length === 1
+    && (value.kind === "source" || value.kind === "translation");
 }
 
 /** Shape của từng payload; tham chiếu chéo giữa các payload do `validateRelations` kiểm khi có đủ bộ. */
