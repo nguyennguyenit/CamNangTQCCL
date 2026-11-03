@@ -321,6 +321,17 @@ duyệt đều có CO: Đại Kiều, Tiểu Kiều, Tinh Thái; không bỏ ch�
 Nguồn đặt tên này trong ô chiến pháp; builder giữ nguyên `tacticSlotsRaw`,
 thêm `tacticSlotKinds` theo đúng vị trí và bản dịch trong `tacticSlotsVi`.
 UI tách dòng **Duyên phận**, không tạo nút chọn chiến pháp cho mục này.
+
+**Đính chính 2026-11-03:** fanpage chính thức VN gọi Kết Nghĩa Vườn Đào là Chiến Pháp
+Sự Kiện loại Chỉ Huy (Tra cứu đã có chiến pháp này, `tactic:dao-vien-ket-nghia`), và
+trong dữ liệu Recommended nó chỉ nằm ở ô chiến pháp của 5 đội PK-S27, nên đúng ra là
+`kind: "tactic"`, không phải duyên phận. Việc đổi `kind` trong
+`pipeline/recommended-identity-map.json` chưa áp dụng vì làm stale mọi receipt review
+bản dịch (file là nguồn glossary). Người dùng chọn để nguyên (2026-11-03) cho tới lần
+review lại toàn bộ kế tiếp. Không sửa bằng cơ chế chấp nhận receipt cũ một phần trừ khi
+có thiết kế riêng: debate 2026-11-03 cho thấy mục bị ảnh hưởng gồm cả ngữ cảnh Tra cứu
+(`attributes.exchangeCondition`), ≥ 4 vị trí, và phải có quy tắc rút claim tường minh
+(`tests/test_site_localization.py` chặn bỏ sót claim).
 Phân loại hiển thị không sửa bằng chứng nguồn hay quyết định xét trùng.
 
 Người dùng đã cung cấp ảnh tiếng Việt **Đồng Lòng Hợp Sức** và yêu cầu xử lý

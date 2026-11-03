@@ -2431,6 +2431,16 @@
       "selfTacticId": "tactic:dieu-thu-minh-thach",
       "inheritTacticId": "tactic:cuong-cong"
     },
+    "hero:ha-thi": {
+      "faction": "Hán",
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      }
+    },
     "hero:hac-chieu": {
       "growth": {
         "luc": 1.85,
@@ -4205,7 +4215,5 @@
       "Vu Cát"
     ]
   },
-  "retired": [
-    "hero:ha-thi"
-  ]
+  "retired": []
 }

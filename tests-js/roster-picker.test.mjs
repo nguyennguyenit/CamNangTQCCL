@@ -45,7 +45,7 @@ test("2. chiến pháp policy inventory: không có INNATE/Tự mang; 29 mục s
   const noQuality = filterCatalog(inventory, { kind: "tactics", quality: "other" }, "inventory");
   assert.ok(noQuality.length > 0 && noQuality.every((item) => rawById.get(item.id).quality === null));
   // Lọc loại + nguồn + bậc.
-  assert.equal(filterCatalog(inventory, { kind: "tactics", type: "ACTIVE", source: "INHERITANCE", quality: "S" }, "inventory").length, 36);
+  assert.equal(filterCatalog(inventory, { kind: "tactics", type: "ACTIVE", source: "INHERITANCE", quality: "S" }, "inventory").length, 37);
 });
 
 test("2b. policy editor: Vô Song Thượng Tướng (Tự mang) chọn được; INNATE có trong danh mục", () => {
@@ -71,19 +71,19 @@ test("2c. binh thư policy editor: tìm và chọn được, ID book:<slug> kh�
   assert.equal(inventory.some((item) => item.type === "books"), false);
 });
 
-test("3. chọn tất cả 36 mục đang lọc: thêm đủ 36, món đã có không nhân đôi", () => {
+test("3. chọn tất cả 37 mục đang lọc: thêm đủ 37, món đã có không nhân đôi", () => {
   const filtered = filterCatalog(inventory, { kind: "tactics", type: "ACTIVE", source: "INHERITANCE", quality: "S" }, "inventory");
-  assert.equal(filtered.length, 36);
+  assert.equal(filtered.length, 37);
   let state = createInitialRosterScanState();
   state = addPicked(state, filtered.slice(0, 3));
   assert.equal(state.ownedTactics.length, 3);
   state = addPicked(state, filtered);
-  assert.equal(state.ownedTactics.length, 36);
+  assert.equal(state.ownedTactics.length, 37);
   assert.deepEqual(state.ownedTactics.map((item) => item.name).sort(), filtered.map((item) => item.name).sort());
-  assert.equal(new Set(state.ownedTactics.map((item) => item.name)).size, 36);
+  assert.equal(new Set(state.ownedTactics.map((item) => item.name)).size, 37);
   assert.equal(state.ownedHeroes.length, 0);
   assert.equal(state.confirmed, false);
-  assert.equal(pickedItems(state, filtered).length, 36);
+  assert.equal(pickedItems(state, filtered).length, 37);
 });
 
 test("4. bỏ chọn tất cả chỉ gỡ món đang lọc", () => {
@@ -132,12 +132,12 @@ test("pickerTree: một hàng có nhãn, trạng thái đã chọn và giới h�
 });
 
 /* ---------- 6. Khách chọn tất cả rồi đăng nhập + đồng ý gộp: đủ 36 owned trên cloud ---------- */
-test("6. khách chọn tất cả 36 rồi đăng nhập, đồng ý gộp: 36 owned trên cloud, ID suy từ tên", async () => {
+test("6. khách chọn tất cả 37 rồi đăng nhập, đồng ý gộp: 37 owned trên cloud, ID suy từ tên", async () => {
   const resolve = createRosterIdResolver({ heroesDict, tacticsDict });
   const filtered = filterCatalog(inventory, { kind: "tactics", type: "ACTIVE", source: "INHERITANCE", quality: "S" }, "inventory");
   // Kho khách lưu local dưới dạng nối tiếp (đúng như `saveState`), không có canonicalId.
   const local = serializeRosterScanState(addPicked(createInitialRosterScanState(), filtered));
-  assert.equal(local.ownedTactics.length, 36);
+  assert.equal(local.ownedTactics.length, 37);
   const server = await createRosterServer({ userId: "u-alice" });
   const sync = createRosterSync({
     storage: memoryStorage(),
@@ -156,7 +156,7 @@ test("6. khách chọn tất cả 36 rồi đăng nhập, đồng ý gộp: 36 o
   assert.deepEqual(merged.localOnly.tactics, []);
   await sync.syncNow();
   const owned = server.live("owned");
-  assert.equal(owned.length, 36);
+  assert.equal(owned.length, 37);
   assert.deepEqual(owned.map((row) => row.data.item).sort(), ids(filtered).sort());
   assert.deepEqual(toScanState(sync.state(), "main").ownedTactics.map((item) => item.name).sort(), filtered.map((item) => item.name).sort());
 });
