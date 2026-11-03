@@ -120,3 +120,7 @@ Người dùng cho phép không giới hạn lượt tra nguồn ngoài cho ch�
 - 2026-10-18: theo người dùng, bỏ toàn bộ 9 mục chưa có dữ liệu client (chỉ có ở SGSDeck) và bỏ tướng Hà Thị. Danh mục còn 407 chiến pháp, 251 tướng; SP Tào Tháo còn nhưng chưa có chiến pháp tự mang/kế thừa.
 - 2026-10-18: giữ SP Tào Tháo theo người dùng (bản Trung có tướng này); hai ô chiến pháp tự mang/kế thừa để trống vì Thừa Thiên Tĩnh Thế, Tàng Khí Đãi Thì đã bỏ.
 - 2026-10-18 (research): SP曹操 có ở bản Trung — bài Zhihu 2026 "sp曹操…传承战法 藏器待時" (zhuanlan.zhihu.com/p/1996634983041876988, chỉ đọc được tiêu đề/đoạn trích, trang trả 403) và bài 2026-08 về đội 拒马弓 SP曹操/卢植/SP貂蝉; SGSDeck (TW) có đủ hiệu ứng 承天靖世 (tự mang) và 藏器待時 (kế thừa). Khôi phục hai mục với nội dung SGSDeck và ghi chú "chưa có ở client Global"; SP Tào Tháo nối lại hai liên kết. **Phương án từ nguồn.**
+
+## Đính chính 2026-11-03
+
+Kết luận 2026-10-18 (bỏ Hà Thị, Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu) và kết luận `桃園結義` = duyên phận bị thay thế bởi nguồn chính thức VN: fanpage "Tam Quốc Chí - Chiến Lược" (bài tổng quát Hán Diễm Trường Minh, khoảng 28/10/2026) công bố Hà Thị (phe Hán, Cung A) cùng hai chiến pháp của nàng, và Kết Nghĩa Vườn Đào là Chiến Pháp Sự Kiện loại Chỉ Huy. Hà Thị và ba chiến pháp đã được khôi phục trong Tra cứu; xem `docs/project-changelog.md` mục 2026-11-03.
