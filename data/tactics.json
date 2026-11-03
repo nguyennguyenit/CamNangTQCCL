@@ -12878,6 +12878,61 @@
   },
   {
     "aliases": [
+      "桃園結義",
+      "桃园结义"
+    ],
+    "chinese": "桃園結義",
+    "effect": "每回合有 20%→40% 機率（受統率影響，每個效果獨立判定）執行以下效果：\n我軍魅力最高的武將治療我軍單體（治療率 18%→36%，受智力影響）；\n我軍統率最高的武將對敵軍智力最低的武將造成謀略傷害（傷害率 23%→46%，受統率影響）；\n我軍武力最高的武將對敵軍統率最低的武將造成兵刃傷害（傷害率 23%→46%），此戰法的傷害率受我軍溢出治療總量影響，觸發後重置累積進度",
+    "effectViet": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được phán xét độc lập) thực hiện các hiệu quả sau:\nVõ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng);\nVõ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng);\nVõ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi tổng lượng Trị Liệu dư ra của quân ta, sau khi kích hoạt sẽ cài lại tiến độ tích lũy",
+    "hanViet": "Đào Viên Kết Nghĩa",
+    "iconUrl": null,
+    "id": "tactic:dao-vien-ket-nghia",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1,
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp Sự Kiện loại Chỉ Huy của mùa Hán Diễm Trường Minh."
+        }
+      ],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Chỉ huy",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": "Đào Viên Kết Nghĩa",
+      "formerIds": [],
+      "inheritedFromIds": [],
+      "maxUsers": 1,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "S",
+    "source": "EVENT",
+    "sourceHeroCn": null,
+    "target": "我軍群體 3 人",
+    "targetViet": "Quân ta và quân địch",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "COMMAND",
+    "viet": "Kết Nghĩa Vườn Đào"
+  },
+  {
+    "aliases": [
       "鬥智",
       "斗智"
     ],
@@ -13432,6 +13487,61 @@
     ],
     "type": "INTERNAL",
     "viet": "Dưỡng Mã Hữu Đạo"
+  },
+  {
+    "aliases": [
+      "帷內擅權",
+      "帷内擅权"
+    ],
+    "chinese": "帷內擅權",
+    "effect": "自身獲得 5% 攻心，可疊加，持續至戰鬥結束；並對敵軍群體（2 人）造成謀略傷害（傷害率 64%→128%，受智力影響），若目標武力高於自身，則額外造成謀略傷害（傷害率 49%→98%，受智力影響）",
+    "effectViet": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; Và gây sát thương Mưu Lược cho nhóm quân địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
+    "hanViet": "Duy Nội Thiện Quyền",
+    "iconUrl": null,
+    "id": "tactic:duy-noi-thien-quyen",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.7,
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp tự mang của Hà Thị (Võ Tướng toàn mùa giải, phe Hán từ bản cập nhật 4/11/2026)."
+        }
+      ],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Mưu lược nhóm",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [],
+      "maxUsers": 1,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "S",
+    "source": "INNATE",
+    "sourceHeroCn": null,
+    "target": "敵軍群體 3 人",
+    "targetViet": "Nhóm quân địch (2 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Duy Nội Thiện Quyền"
   },
   {
     "aliases": [
@@ -18258,6 +18368,65 @@
     ],
     "type": "ACTIVE",
     "viet": "Thả Lính Cướp Đoạt"
+  },
+  {
+    "aliases": [
+      "絕計折謀",
+      "绝计折谋"
+    ],
+    "chinese": "絕計折謀",
+    "effect": "對隨機敵軍武將造成謀略傷害（傷害率 118%→236%，受智力影響），並使其進入計窮狀態，持續 1 回合",
+    "effectViet": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và thi triển trạng thái Kế Tận, duy trì 1 hiệp",
+    "hanViet": "Tuyệt Kế Chiết Mưu",
+    "iconUrl": null,
+    "id": "tactic:tuyet-ke-chiet-muu",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [
+        "Hà Thị"
+      ],
+      "activationRate": 0.4,
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp kế thừa từ Hà Thị (Võ Tướng toàn mùa giải, phe Hán từ bản cập nhật 4/11/2026)."
+        }
+      ],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Mưu lược đơn",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:ha-thi"
+      ],
+      "maxUsers": 1,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "S",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": "敵軍單體",
+    "targetViet": "Một quân địch",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Tuyệt Kế Chiết Mưu"
   },
   {
     "aliases": [

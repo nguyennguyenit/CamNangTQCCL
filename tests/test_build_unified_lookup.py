@@ -277,8 +277,8 @@ class BuildUnifiedLookupTest(unittest.TestCase):
             )
             self.assertEqual(dien_vi["cardPacks"][0]["packZh"], "名將")
             self.assertEqual(sum(row["lookup"]["usageVi"] is not None for row in heroes), 94)
-            # 126 tướng có gói thẻ trong guide; Hà Thị (không có ở client Global) đã bị bỏ.
-            self.assertEqual(sum(bool(row["lookup"]["cardPacks"]) for row in heroes), 125)
+            # 126 tướng có gói thẻ trong guide (gồm Hà Thị, được khôi phục theo nguồn chính thức VN).
+            self.assertEqual(sum(bool(row["lookup"]["cardPacks"]) for row in heroes), 126)
             for row in heroes:
                 self.assertEqual(row["lookup"]["usageVi"] is None, row["lookup"]["usageZh"] is None, row["id"])
             ledger = {
@@ -739,7 +739,7 @@ class ClientTacticCaptureTest(unittest.TestCase):
         entry.update(overrides)
         return entry
 
-    def _build(self, tactics, baseline_zh=True, **extra):
+    def _build(self, tactics, baseline_zh=True, retire_heroes=(), **extra):
         if baseline_zh:
             retired = extra.get("retired", {})
             defaults = {owner: entry for owner, entry in self._baseline_zh_effects().items() if owner not in retired}
@@ -759,7 +759,8 @@ class ClientTacticCaptureTest(unittest.TestCase):
             kept = {key: value for key, value in override.items() if key not in ("selfTacticId", "inheritTacticId")}
             if kept:
                 overrides[owner] = kept
-        heroes["overrides"] = overrides
+        heroes["overrides"] = {owner: value for owner, value in overrides.items() if owner not in retire_heroes}
+        heroes["retired"] = [*heroes["retired"], *retire_heroes]
         heroes_path = self.directory / "client-heroes.json"
         heroes_path.write_text(json.dumps(heroes, ensure_ascii=False), encoding="utf-8")
         output = self.directory / "candidate"
@@ -803,10 +804,10 @@ class ClientTacticCaptureTest(unittest.TestCase):
             self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": mod["options"][:11]}})
 
     def test_retired_hero_and_removed_tactics_leave_no_links(self):
-        output = self._build({}, retired={"tactic:tuyet-ke-chiet-muu": None, "tactic:duy-noi-thien-quyen": None})
+        output = self._build({}, retire_heroes=("hero:ha-thi",), retired={"tactic:tuyet-ke-chiet-muu": None, "tactic:duy-noi-thien-quyen": None})
         heroes = self._rows(output, "heroes-dict.json")
         tactics = self._rows(output, "tactics.json")
-        self.assertNotIn("hero:ha-thi", heroes)  # retired trong lookup-client-heroes.json
+        self.assertNotIn("hero:ha-thi", heroes)  # retired (truyền vào bản sao file client)
         self.assertNotIn("tactic:tuyet-ke-chiet-muu", tactics)
         self.assertFalse([row["id"] for row in tactics.values() if "hero:ha-thi" in row["lookup"]["inheritedFromIds"]])
 

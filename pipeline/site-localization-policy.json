@@ -813,7 +813,7 @@
     "src/layouts/SiteLayout.astro": "d2f5f5ea16b10b5db92677e736c1bc2c1f90e2378a764d8ae53967453da6c3fd",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "9b1a0b06acb68961197a5271ee5b0a46805a69c8ec6f319f641a139529f892a4",
-    "src/lib/lookup-item-pages.ts": "f97a87b62d081f7c7370b998875caa74272a4f706446511148a3cf9ce3b85575",
+    "src/lib/lookup-item-pages.ts": "d3e824868ef3beb790181f8e457c7f148300ce5f6e3a2d5a896ad3e11df70bc5",
     "src/lib/lookup-pages.ts": "770a2517dffd8b6e89ccc2f9d51f0aea98ef0019298251685d8205733c841c50",
     "src/lib/official-links.ts": "af85bc97844e2dbf44449c4bf333811a622500d037514fbb6f04445037707eca",
     "src/lib/root-static-artifacts.ts": "eedec4f6ca8233ad10ad9637cf9989fd006164b80732fad1473be5786f9f8596",

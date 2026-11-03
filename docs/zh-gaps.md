@@ -3,19 +3,19 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 725 / 938 mục.
+Tổng: 729 / 942 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
-| Tướng | 220 | 251 |
-| Chiến pháp | 409 | 409 |
+| Tướng | 221 | 252 |
+| Chiến pháp | 412 | 412 |
 | Trang bị | 0 | 114 |
 | Quân sư | 39 | 39 |
 | Cải tạo binh chủng | 16 | 16 |
 | Công trình | 41 | 41 |
 | Binh thư | 0 | 68 |
 
-## Tướng (heroes): 220 / 251
+## Tướng (heroes): 221 / 252
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -135,6 +135,7 @@ Tổng: 725 / 938 mục.
 | hero:dong-tap | Đổng Tập | roleTagViet |
 | hero:duong-tu | Dương Tu | roleTagViet |
 | hero:gia-cat-khac | Gia Cát Khác | roleTagViet |
+| hero:ha-thi | Hà Thị | faction, roleTagViet |
 | hero:han-duong | Hàn Đương | roleTagViet |
 | hero:han-toai | Hàn Toại | roleTagViet |
 | hero:ho-xa-nhi | Hồ Xa Nhi | roleTagViet |
@@ -240,7 +241,7 @@ Tổng: 725 / 938 mục.
 | hero:ve-thanh | Vệ Thành | roleTagViet |
 | hero:xa-tru | Xa Trụ | roleTagViet |
 
-## Chiến pháp (tactics): 409 / 409
+## Chiến pháp (tactics): 412 / 412
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -496,6 +497,7 @@ Tổng: 725 / 938 mục.
 | tactic:cuu-doc | Rượu Độc | effectTypeVi, conflictsVi, revisions (3) |
 | tactic:dam-tam | Tâm Sự | target |
 | tactic:dan-duong-binh | Lính Đan Dương | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
+| tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | effectTypeVi, exchangeConditionVi, conditions (2) |
 | tactic:dau-tri | Đấu Trí | target, effectTypeVi |
 | tactic:di-hoa-tiep-moc | Lập Lờ Đánh Tráo | acquiredFromVi, conflictsVi |
 | tactic:di-qua-dich-chung | Lấy Ít Đánh Nhiều | acquiredFromVi, conflictsVi |
@@ -508,6 +510,7 @@ Tổng: 725 / 938 mục.
 | tactic:dong-chien-than-tien | Đi Đầu Cùng Chiến | conflictsVi |
 | tactic:duong-binh-thien-nhat | Dưỡng Binh Thiên Nhật | target |
 | tactic:duong-ma-huu-dao | Dưỡng Mã Hữu Đạo | target |
+| tactic:duy-noi-thien-quyen | Duy Nội Thiện Quyền | effectTypeVi, conditions (2) |
 | tactic:gian-chinh | Giản Chính | target |
 | tactic:hau-phat-che-nhan | Hậu Phát Chế Nhân | target, effectTypeVi, acquiredFromVi |
 | tactic:ho-hau | Hổ Hầu | acquiredFromVi, conflictsVi |
@@ -612,6 +615,7 @@ Tổng: 725 / 938 mục.
 | tactic:tu-du | Tự Lành | target |
 | tactic:tu-thach-thanh-kim | Biến Đá Thành Vàng | acquiredFromVi, conflictsVi |
 | tactic:tung-binh-kiep-luoc | Thả Lính Cướp Đoạt | target, effectTypeVi, acquiredFromVi |
+| tactic:tuyet-ke-chiet-muu | Tuyệt Kế Chiết Mưu | effectTypeVi, acquiredFromVi, conditions (2) |
 | tactic:uy-phong-lam-lam | Uy Phong Lẫm Liệt | target, acquiredFromVi |
 | tactic:uy-vo-tinh-chieu | Uy Tín Dũng Võ | acquiredFromVi, conflictsVi |
 | tactic:uyen-nhien-nan-trac | Vực Sâu Khó Dò | acquiredFromVi, conflictsVi |

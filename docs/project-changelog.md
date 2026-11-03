@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)
+
+### Changed
+- Fanpage chính thức "Tam Quốc Chí - Chiến Lược" (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026) công bố Hà Thị (phe Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C), Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu và Chiến Pháp Sự Kiện loại Chỉ Huy Kết Nghĩa Vườn Đào. Quyết định 2026-10-15/18 (bỏ Hà Thị, hai chiến pháp của nàng và `tactic:dao-vien-ket-nghia` vì "không có ở client Việt Nam" / "là duyên phận") bị thay thế.
+- `pipeline/lookup-client-heroes.json`: bỏ `hero:ha-thi` khỏi `retired`; `overrides` đặt faction Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C (cost 4 trùng giá trị build nên không ghi). Chỉ số/tăng trưởng giữ của SGSDeck; chưa có chân dung (`iconUrl` null).
+- `pipeline/lookup-client-tactics.json`: bỏ ba mã khỏi `retired`; thêm `tactics{}` với chữ Việt nguyên văn từ ảnh fanpage (`quality: null` giữ S của SGSDeck, `troopFit` đủ 5 binh chủng), `tacticNotes` ghi nguồn fanpage VN và rằng chưa có ở client 24.526, `zhEffects` kind `translation`. `tactic:dao-vien-ket-nghia` đổi tên hiển thị thành Kết Nghĩa Vườn Đào (loại COMMAND, tên cũ Đào Viên Kết Nghĩa thành alias).
+- Promotion `lookup-261103-ha-thi-rebase` (generation `lookup:b00f2d16cadd`); số liệu: 252 tướng, 412 chiến pháp (trước 251/409); ledger slug cấp lại đúng slug đã dành (`ha-thi`, `duy-noi-thien-quyen`, `tuyet-ke-chiet-muu`, `dao-vien-ket-nghia`), 942 mã, +4 route Tra cứu mỗi ngôn ngữ.
+- `src/lib/lookup-item-pages.ts` (`snippet`): đoạn mô tả meta ngắn kết thúc bằng dấu hai chấm giờ cũng được thay bằng "…" (hiệu ứng Kết Nghĩa Vườn Đào mở đầu bằng "…các hiệu quả sau:"); re-pin hash trong `pipeline/site-localization-policy.json`.
+- Test: `tests/test_build_unified_lookup.py` (số tướng có gói thẻ 126, test tướng bị bỏ dùng `retire_heroes`), `tests-js/astro-dist-contract.test.mjs` (+4 route Tra cứu mỗi ngôn ngữ), `tests-js/roster-picker.test.mjs` (chiến pháp chủ động kế thừa phẩm S: 36 → 37 vì Tuyệt Kế Chiết Mưu).
+
+### Chưa làm
+- `桃園結義` trong `pipeline/recommended-identity-map.json` vẫn `kind: "bond"`: file này là nguồn glossary của gate bản dịch, đổi nó làm stale `glossaryDigest` của cả 5668 receipt review độc lập. Người dùng chọn để nguyên tới lần review lại toàn bộ kế tiếp; 5 đội PK-S27 vẫn hiện dòng Duyên phận.
+
 ## 2026-10-22 (Đội cộng đồng công khai)
 
 ### Added
@@ -154,7 +167,7 @@ Issue #21 và #23. Hợp đồng dữ liệu: [roster-sync.md](roster-sync.md). 
 ### Changed
 - Cải tạo binh chủng (16 binh chủng, 192 lựa chọn) chỉ giữ một bản client: tên, hướng dẫn mùa, lựa chọn và cấp theo màn Sân Luyện Binh › Binh chủng Xem; bỏ lịch sử bản SGSDeck. Cấp "Cơ bản" đổi thành "Sơ cấp" theo client. 123 lựa chọn giữ mã cũ, 69 lựa chọn mới theo client thay 69 lựa chọn của đợt cũ.
 - 5 chiến pháp có bản `Thác-` bán ở Thương nhân › Mùa giải (Đoạt Hồn Hiệp Phách, Dưỡng Sức Đợi Chiến, Thuyền Cỏ Mượn Tên, Cắt Xương Trị Độc, Sĩ Biệt Tam Nhật): cùng hiệu ứng nên thêm tên khác `Thác-…` và ghi chú mùa vào mục gốc. Ghi chú Tinh/Chuyển nêu quy tắc tên đã thử trong client: chọn Chuyển ở cải tạo đặc biệt thì Chiến Pháp hiện `Chuyển • …`, còn lại `Tinh • …`.
-- Gộp 18 cặp mã chiến pháp trùng thành một mã (`retired` trong client file). Bỏ `tactic:dao-vien-ket-nghia` vì là duyên phận, không phải chiến pháp; bỏ 7 chiến pháp chỉ có ở SGSDeck (Thiên Lý Quỹ Lương, Đoan Trang Trì Trọng, Duy Nội Thiện Quyền, Khiên Chế, Thùy Huệ Vạn Vật, Tuyệt Kế Chiết Mưu, Vạn Quân Thủ Tướng) và tướng Hà Thị (`retired` trong `pipeline/lookup-client-heroes.json`). Giữ SP Tào Tháo cùng Thừa Thiên Tĩnh Thế / Tàng Khí Đãi Thì vì bản Trung có (SGSDeck TW, bài 2026 về SP曹操 truyền thừa 藏器待時); hai mục ghi chú "chưa có ở client Global, nội dung theo bản Trung".
+- Gộp 18 cặp mã chiến pháp trùng thành một mã (`retired` trong client file). Bỏ `tactic:dao-vien-ket-nghia` vì là duyên phận, không phải chiến pháp (đã đảo ngược 2026-11-03, xem mục đầu file); bỏ 7 chiến pháp chỉ có ở SGSDeck (Thiên Lý Quỹ Lương, Đoan Trang Trì Trọng, Duy Nội Thiện Quyền, Khiên Chế, Thùy Huệ Vạn Vật, Tuyệt Kế Chiết Mưu, Vạn Quân Thủ Tướng) và tướng Hà Thị (`retired` trong `pipeline/lookup-client-heroes.json`). Giữ SP Tào Tháo cùng Thừa Thiên Tĩnh Thế / Tàng Khí Đãi Thì vì bản Trung có (SGSDeck TW, bài 2026 về SP曹操 truyền thừa 藏器待時); hai mục ghi chú "chưa có ở client Global, nội dung theo bản Trung".
 - Phẩm chiến pháp lấy theo màu tên trên thẻ tướng client (cam S, tím A, xanh B, xanh nhạt C). 8 mục ghi sai được sửa về A.
 - Tách 6 chỗ chữ dính số trong mô tả client ("giảm10%", "2hiệp"…).
 

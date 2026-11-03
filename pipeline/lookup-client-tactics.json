@@ -1276,6 +1276,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:dao-vien-ket-nghia": {
+      "nameVi": "Kết Nghĩa Vườn Đào",
+      "quality": null,
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Quân ta và quân địch",
+      "effectTypeVi": "Chỉ huy",
+      "effectVi": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được phán xét độc lập) thực hiện các hiệu quả sau:\nVõ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng);\nVõ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng);\nVõ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi tổng lượng Trị Liệu dư ra của quân ta, sau khi kích hoạt sẽ cài lại tiến độ tích lũy",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:dao-xuat-nhu-dinh": {
       "nameVi": "Xuất Đao Như Sấm",
       "quality": "S",
@@ -1776,6 +1794,24 @@
       "effectVi": "Khi chiến đấu, bản thân nhận được 10%→20% Trí Lực, 10%→20% Thống Soái và Tiến Công Trước, nhưng không thể gây sát thương; Mỗi hiệp có 17.5%→35% xác suất (bị ảnh hưởng bởi Trí Lực) giúp nhóm quân ta (1-2 người) nhận được 1 hiệp 10%→20% Né Tránh (bị ảnh hưởng bởi Trí Lực)",
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Trận trảm Hạ Hầu Uyên — Hoàng Trung (Thục) hoặc Pháp Chính (Thục) hoặc Hạ Hầu Uyên (Ngụy): cần 3 thẻ"
+    },
+    "tactic:duy-noi-thien-quyen": {
+      "nameVi": "Duy Nội Thiện Quyền",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.7,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Nhóm quân địch (2 người)",
+      "effectTypeVi": "Mưu lược nhóm",
+      "effectVi": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; Và gây sát thương Mưu Lược cho nhóm quân địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
     },
     "tactic:gan-da": {
       "nameVi": "Gan Dạ",
@@ -6659,6 +6695,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tuyet-ke-chiet-muu": {
+      "nameVi": "Tuyệt Kế Chiết Mưu",
+      "quality": null,
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Mưu lược đơn",
+      "effectVi": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và thi triển trạng thái Kế Tận, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tuyet-ky-cap-dao": {
       "nameVi": "Tuyệt Kỳ Cấp Đạo",
       "quality": "S",
@@ -7726,10 +7780,8 @@
   },
   "retired": {
     "tactic:am-trieu-dung-dong": "tactic:am-trieu-hung-dung",
-    "tactic:dao-vien-ket-nghia": null,
     "tactic:doan-binh-tuong-kien": "tactic:doan-binh-tuong-tiep",
     "tactic:doan-trang-tri-trong": null,
-    "tactic:duy-noi-thien-quyen": null,
     "tactic:gio-tap-mua-sa": "tactic:tat-phong-sau-vu",
     "tactic:ho-gia-thap-bat-phach": "tactic:ho-gia-du-am",
     "tactic:khac-tuan-hoa-nhat": "tactic:khac-tuan-hoach-nhat",
@@ -7746,7 +7798,6 @@
     "tactic:thuy-hue-van-vat": null,
     "tactic:tram-doc": "tactic:cuu-doc",
     "tactic:tu-si-tien-phong": "tactic:tien-dang-tu-si",
-    "tactic:tuyet-ke-chiet-muu": null,
     "tactic:ung-thi": "tactic:ung-thi-lang-co",
     "tactic:van-quan-doat-su": "tactic:van-quan-doat-suy",
     "tactic:van-quan-thu-tuong": null,
@@ -9075,6 +9126,45 @@
           "textVi": "Mùa Binh Diễn Xuân Thu: Sảnh Chính › Thương nhân › Mùa giải bán Thác-Sĩ Biệt Tam Nhật (Chiến Pháp mùa giải, cùng hiệu ứng với bản này); xung đột với chiến pháp cùng tên khác trong đội và bị xóa khi kết thúc mùa giải."
         }
       ]
+    },
+    "tactic:duy-noi-thien-quyen": {
+      "aliases": [],
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp tự mang của Hà Thị (Võ Tướng toàn mùa giải, phe Hán từ bản cập nhật 4/11/2026)."
+        }
+      ]
+    },
+    "tactic:tuyet-ke-chiet-muu": {
+      "aliases": [],
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp kế thừa từ Hà Thị (Võ Tướng toàn mùa giải, phe Hán từ bản cập nhật 4/11/2026)."
+        }
+      ]
+    },
+    "tactic:dao-vien-ket-nghia": {
+      "aliases": [],
+      "conditions": [
+        {
+          "kind": "requirement",
+          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+        },
+        {
+          "kind": "requirement",
+          "textVi": "Chiến Pháp Sự Kiện loại Chỉ Huy của mùa Hán Diễm Trường Minh."
+        }
+      ]
     }
   },
   "zhEffects": {
@@ -9162,6 +9252,13 @@
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
       }
     },
+    "tactic:dao-vien-ket-nghia": {
+      "text": "每回合有 20%→40% 機率（受統率影響，每個效果獨立判定）執行以下效果：\n我軍魅力最高的武將治療我軍單體（治療率 18%→36%，受智力影響）；\n我軍統率最高的武將對敵軍智力最低的武將造成謀略傷害（傷害率 23%→46%，受統率影響）；\n我軍武力最高的武將對敵軍統率最低的武將造成兵刃傷害（傷害率 23%→46%），此戰法的傷害率受我軍溢出治療總量影響，觸發後重置累積進度",
+      "viSha256": "4adb8a55b9f877036220f7f2f3e014b1668786c047cc4fab57d0a7c19063c072",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:dau-tri": {
       "text": "準備1回合，對敵軍群體（2人）造成謀略傷害（傷害率77.5%→155%）",
       "viSha256": "7e265a5a7e6b840701ce9c182141f7cb069ef39e10ff2a15b5e24dada54d6a93",
@@ -9198,6 +9295,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:duy-noi-thien-quyen": {
+      "text": "自身獲得 5% 攻心，可疊加，持續至戰鬥結束；並對敵軍群體（2 人）造成謀略傷害（傷害率 64%→128%，受智力影響），若目標武力高於自身，則額外造成謀略傷害（傷害率 49%→98%，受智力影響）",
+      "viSha256": "643c382f9c46f66c6df331339038909cf1fd04d1a4b463f9c68df275b8c7fc2f",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:gan-da": {
@@ -9549,6 +9653,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:tuyet-ke-chiet-muu": {
+      "text": "對隨機敵軍武將造成謀略傷害（傷害率 118%→236%，受智力影響），並使其進入計窮狀態，持續 1 回合",
+      "viSha256": "f4f531cff821e171f357ab421dff2eb1a235a4a82bb8c1f1a874c16edce73478",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:vo-song-thuong-tuong": {

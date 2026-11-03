@@ -1,6 +1,6 @@
 {
   "booksSha256": "dce33c56e109442dd5ef093b50e1d77dfcf3b993f109d845f32961288926dfaa",
-  "generationId": "lookup:9da6c2241824894af9dc208cce44f88ba3b8bab86f28a6bab94142e3b548caa1",
+  "generationId": "lookup:b00f2d16cadd90a4fc2fa546cef7af25c1ac4cde7cafbaae71f67e90891335c4",
   "handles": {
     "advisors": {
       "advisor:an-nhan-doat-quyen": "an-nhan-doat-quyen",
@@ -330,6 +330,7 @@
       "hero:ha-hau-an": "ha-hau-an",
       "hero:ha-hau-don": "ha-hau-don",
       "hero:ha-hau-uyen": "ha-hau-uyen",
+      "hero:ha-thi": "ha-thi",
       "hero:ha-tien": "ha-tien",
       "hero:hac-chieu": "hac-chieu",
       "hero:ham-trach": "ham-trach",
@@ -598,6 +599,7 @@
       "tactic:dang-phong-ham-tran": "dang-phong-ham-tran",
       "tactic:danh-bai-quan-dich": "danh-bai-quan-dich",
       "tactic:danh-dau-thang-do": "danh-dau-thang-do",
+      "tactic:dao-vien-ket-nghia": "dao-vien-ket-nghia",
       "tactic:dao-xuat-nhu-dinh": "dao-xuat-nhu-dinh",
       "tactic:dau-tri": "dau-tri",
       "tactic:di-hoa-tiep-moc": "di-hoa-tiep-moc",
@@ -626,6 +628,7 @@
       "tactic:duong-phong-thoi-quyet": "duong-phong-thoi-quyet",
       "tactic:duong-suc-chong-dich": "duong-suc-chong-dich",
       "tactic:duong-suc-doi-chien": "duong-suc-doi-chien",
+      "tactic:duy-noi-thien-quyen": "duy-noi-thien-quyen",
       "tactic:gan-da": "gan-da",
       "tactic:giai-phien-ve": "giai-phien-ve",
       "tactic:giam-thong-chan-quan": "giam-thong-chan-quan",
@@ -907,6 +910,7 @@
       "tactic:tuong-mon-ho-nu": "tuong-mon-ho-nu",
       "tactic:tuu-tri-nhuc-lam": "tuu-tri-nhuc-lam",
       "tactic:tuyet-dia-phan-kich": "tuyet-dia-phan-kich",
+      "tactic:tuyet-ke-chiet-muu": "tuyet-ke-chiet-muu",
       "tactic:tuyet-ky-cap-dao": "tuyet-ky-cap-dao",
       "tactic:ung-thi-lang-co": "ung-thi-lang-co",
       "tactic:uy-chan-hoa-ha": "uy-chan-hoa-ha",
@@ -955,22 +959,18 @@
       "troop-mod:vo-duong-phi-quan": "vo-duong-phi-quan"
     }
   },
-  "handlesSha256": "700af1ff84f7edfe500df7204f2cb9c72999f37ca124629b99d2d108925b9e06",
+  "handlesSha256": "982c418bb7fa493d9ffedfdf089ccb3c6a3bb6c169eb830294c52139e384fd73",
   "note": "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết.",
   "retired": {
     "advisors": {},
     "books": {},
     "buildings": {},
     "equipment": {},
-    "heroes": {
-      "hero:ha-thi": "ha-thi"
-    },
+    "heroes": {},
     "tactics": {
       "tactic:am-trieu-dung-dong": "am-trieu-dung-dong",
-      "tactic:dao-vien-ket-nghia": "dao-vien-ket-nghia",
       "tactic:doan-binh-tuong-kien": "doan-binh-tuong-kien",
       "tactic:doan-trang-tri-trong": "doan-trang-tri-trong",
-      "tactic:duy-noi-thien-quyen": "duy-noi-thien-quyen",
       "tactic:gio-tap-mua-sa": "gio-tap-mua-sa",
       "tactic:ho-gia-thap-bat-phach": "ho-gia-thap-bat-phach",
       "tactic:khac-tuan-hoa-nhat": "khac-tuan-hoa-nhat",
@@ -987,7 +987,6 @@
       "tactic:thuy-hue-van-vat": "thuy-hue-van-vat",
       "tactic:tram-doc": "tram-doc",
       "tactic:tu-si-tien-phong": "tu-si-tien-phong",
-      "tactic:tuyet-ke-chiet-muu": "tuyet-ke-chiet-muu",
       "tactic:ung-thi": "ung-thi",
       "tactic:van-quan-doat-su": "van-quan-doat-su",
       "tactic:van-quan-thu-tuong": "van-quan-thu-tuong",

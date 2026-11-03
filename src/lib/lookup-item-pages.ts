@@ -32,7 +32,7 @@ const SNIPPET_CHARS = 150;
 /** Một đoạn chữ gọn cho mô tả meta: gộp khoảng trắng, cắt ở ranh giới từ, thêm "…" khi bị cắt. */
 function snippet(value: unknown, limit = SNIPPET_CHARS): string {
   const text = String(value ?? '').replace(/\s+/gu, ' ').trim();
-  if (text.length <= limit) return text;
+  if (text.length <= limit) return /[:：]$/u.test(text) ? `${text.replace(/[\s:：]+$/u, '')}…` : text;
   const cut = text.slice(0, limit);
   const space = cut.lastIndexOf(' ');
   return `${(space > limit * 0.6 ? cut.slice(0, space) : cut).replace(/[\s,;:.，；：。]+$/u, '')}…`;
