@@ -780,6 +780,67 @@ def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     return 0
 
 
+def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, out=print) -> int:
+    """Move the frozen ledger to a successor publication without moving any surviving URL.
+
+    Rows kept by the successor keep their frozen handle. Rows the source dropped leave the
+    ledger (their pages no longer exist). Only rows new to the successor receive a name-derived
+    handle; one that would share a route segment with a kept row gets the ASCII part of its
+    `sourceConfigId` appended instead. Legacy and Khai hoang handles never change.
+    """
+    publication = read_publication(generation_root)
+    teams_bytes, teams = load_teams(teams_path)
+    khaihoang_bytes, khaihoang_teams = load_khaihoang(khaihoang_path)
+    existing = json.loads(Path(ledger_path).read_bytes())
+    frozen = _ledger_handles(existing)
+    if existing["legacyTeamsSha256"] != "sha256:" + sha256_hex(teams_bytes):
+        raise TeamRouteHandleError("rebind only moves Recommended rows; the legacy teams changed, review them first")
+    if existing["khaihoangSha256"] != "sha256:" + sha256_hex(khaihoang_bytes):
+        raise TeamRouteHandleError("rebind only moves Recommended rows; Khai hoang changed, review it first")
+    derived, _stats = build_recommended_handles(publication.records, load_faction_labels(display_map_path))
+    by_id = {record["sourceConfigId"]: record for record in publication.records}
+    kept = {source_config_id: handle for source_config_id, handle in frozen["recommended"].items() if source_config_id in by_id}
+    dropped = sorted(set(frozen["recommended"]) - set(by_id))
+
+    def segment(source_config_id, handle):
+        return f"{season_code(by_id[source_config_id])}-{handle}" if source_config_id in by_id else None
+
+    # A dropped row's handle is free again: a new row of the same name in that season is the same
+    # team re-listed by the source and keeps the URL readers already know.
+    taken = {segment(source_config_id, handle) for source_config_id, handle in kept.items()}
+    recommended = dict(kept)
+    added = []
+    for source_config_id in sorted(set(by_id) - set(kept)):
+        handle = derived[source_config_id]
+        if segment(source_config_id, handle) in taken:
+            season = season_code(by_id[source_config_id])
+            suffix = slug(ascii_part(strip_season_prefix(source_config_id, _season_tokens(by_id[source_config_id]))))
+            handle = _drop_season_prefix(f"{handle}-{suffix}" if suffix else handle, season)
+        if segment(source_config_id, handle) in taken:
+            raise TeamRouteHandleError(f"new Recommended row {source_config_id} has no free handle (tried {handle!r})")
+        taken.add(segment(source_config_id, handle))
+        recommended[source_config_id] = handle
+        added.append(source_config_id)
+    ledger = build_ledger(publication.generation_id, teams_bytes, khaihoang_bytes, recommended, frozen["legacy"], frozen["khaihoang"])
+    validate_ledger(
+        ledger,
+        generation_id=publication.generation_id,
+        records=publication.records,
+        teams_bytes=teams_bytes,
+        teams=teams,
+        khaihoang_bytes=khaihoang_bytes,
+        khaihoang_teams=khaihoang_teams,
+    )
+    path = Path(ledger_path)
+    temporary = path.with_name(f"{path.name}.tmp")
+    temporary.write_bytes(ledger_bytes(ledger))
+    os.replace(temporary, path)
+    out(f"rebound {path} to {publication.generation_id}: kept {len(kept)}, added {len(added)}, dropped {len(dropped)} Recommended handles")
+    for source_config_id in dropped:
+        out(f"  dropped {source_config_id}: {frozen['recommended'][source_config_id]}")
+    return 0
+
+
 def check_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, diagnose=False, out=print) -> int:
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
@@ -817,6 +878,7 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python3 -m pipeline.team_route_handles", description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true", help="generate the ledger from the selected publication; refuse to reassign an existing ledger")
+    mode.add_argument("--rebind", action="store_true", help="move the frozen ledger to a successor publication: keep surviving handles, add new rows, drop removed rows")
     mode.add_argument("--check", action="store_true", help="validate the frozen ledger without deriving handles from display names")
     parser.add_argument("--generation-root", type=Path, default=DEFAULT_GENERATION_ROOT, help="Recommended root holding current.json and the generation directory")
     parser.add_argument("--teams", type=Path, default=DEFAULT_TEAMS_PATH, help="legacy teams artifact")
@@ -836,6 +898,14 @@ def main(argv=None) -> int:
             return 1
         args.khaihoang = DEFAULT_KHAIHOANG_PATH
     try:
+        if args.rebind:
+            return rebind_ledger(
+                generation_root=args.generation_root,
+                teams_path=args.teams,
+                khaihoang_path=args.khaihoang,
+                ledger_path=args.ledger,
+                display_map_path=args.display_map,
+            )
         if args.write:
             return write_ledger(
                 generation_root=args.generation_root,

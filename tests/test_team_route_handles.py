@@ -652,6 +652,50 @@ class LedgerCliTest(LedgerFixture):
         self.assertEqual(code, 1)
         self.assertTrue(err.strip())
 
+    def test_rebind_moves_the_ledger_to_a_successor_generation_without_moving_a_kept_url(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        frozen = json.loads(self.ledger_path.read_bytes())
+        self.assertEqual(frozen["handles"]["recommended"]["s1-alpha-plain"], "doi-a")
+
+        successor_id = "fedcba9876543210" * 4
+        successor = [
+            self.records[0],
+            self.records[1],
+            {**self.records[2], "displayNameVi": "Đội Alpha Mới"},  # kept, renamed by the source
+            {**self.records[3], "displayNameVi": "Đội Z"},  # kept, renamed: its frozen `doi-a` is not re-derived
+            recommended_row("s1-dup-new", "Đội A", tier=3),  # new; name-derived `doi-a` collides with the kept row
+            recommended_row("s3-new", "Đội Mới", season="PK-S3"),  # new; free name-derived handle
+        ]  # `s2-solo` is dropped by the source
+        write_publication(self.generation_root, successor, generation_id=successor_id)
+
+        code, _, _ = run_cli(self.argv("--check"))
+        self.assertEqual(code, 1, "the frozen ledger must not pass against a successor generation")
+
+        code, out, err = run_cli(self.argv("--rebind"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("kept 4, added 2, dropped 1", out)
+        rebound = json.loads(self.ledger_path.read_bytes())
+        self.assertEqual(rebound["generationId"], successor_id)
+        handles = rebound["handles"]["recommended"]
+        old = frozen["handles"]["recommended"]
+        for source_config_id in ("s1-wu-dudu-gong", "s1-wu-dudu-zhuanyou", "s1-alpha", "s1-alpha-plain"):
+            self.assertEqual(handles[source_config_id], old[source_config_id], source_config_id)
+        self.assertEqual(handles["s1-alpha"], "doi-a-vuong-di")  # not the name-derived `doi-alpha-moi`
+        self.assertEqual(handles["s1-alpha-plain"], "doi-a")  # not the name-derived `doi-z`
+        self.assertEqual(handles["s3-new"], "doi-moi")
+        self.assertNotIn("s2-solo", handles)
+        self.assertEqual(handles["s1-dup-new"], "doi-a-dup-new")  # suffixed from its sourceConfigId, not `doi-a`
+        self.assertEqual(set(handles), {row["sourceConfigId"] for row in successor})
+        self.assertEqual(rebound["handles"]["legacy"], frozen["handles"]["legacy"])
+        self.assertEqual(rebound["handles"]["khaihoang"], frozen["handles"]["khaihoang"])
+
+        code, out, err = run_cli(self.argv("--check"))
+        self.assertEqual(code, 0, err)
+        self.assertIn(successor_id, out)
+        again = self.ledger_path.read_bytes()
+        self.assertEqual(run_cli(self.argv("--rebind"))[0], 0)
+        self.assertEqual(self.ledger_path.read_bytes(), again)
+
 
 class KhaiHoangOfflineContracts(LedgerFixture):
     """Offline gate for Khai hoang identity: ledger v2, injected source and frozen handles."""
@@ -862,7 +906,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(self.ledger["generationId"], self.publication.generation_id)
         self.assertEqual(self.ledger["legacyTeamsSha256"], "sha256:" + hashlib.sha256(self.teams_bytes).hexdigest())
         self.assertEqual(self.ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
-        self.assertEqual(len(self.ledger["handles"]["recommended"]), 1366)
+        self.assertEqual(len(self.ledger["handles"]["recommended"]), 1640)
         self.assertEqual(len(self.ledger["handles"]["legacy"]), 166)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 17)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
@@ -892,11 +936,17 @@ class PinnedLedgerTest(unittest.TestCase):
                 self.assertTrue(is_routable_identifier(handle))
                 self.assertNotEqual(handle, "")
 
-    def test_committed_ledger_is_exactly_what_the_current_inputs_generate(self):
-        recommended, stats = build_recommended_handles(self.publication.records, self.labels)
-        legacy, legacy_stats = build_legacy_handles(self.teams)
+    def test_committed_ledger_covers_exactly_the_generation_and_current_sources(self):
+        # After `--rebind` the Recommended handles are NOT what the current names would derive: kept rows keep
+        # their frozen handle (even if the source renamed them). The ledger must still cover exactly the
+        # generation's rows, each with a unique route segment.
+        recommended = self.ledger["handles"]["recommended"]
+        self.assertEqual(set(recommended), {row["sourceConfigId"] for row in self.publication.records})
+        self.assertEqual(len(recommended), 1640)
+        segments = [f"{season_code(row)}-{recommended[row['sourceConfigId']]}" for row in self.publication.records]
+        self.assertEqual(len(set(segments)), len(segments))
         khaihoang, khaihoang_stats = build_khaihoang_handles(self.khaihoang_teams)
-        self.assertEqual(recommended, self.ledger["handles"]["recommended"])
+        legacy, legacy_stats = build_legacy_handles(self.teams)
         self.assertEqual(khaihoang, self.ledger["handles"]["khaihoang"])
         # Legacy handles are frozen at first publication: a later team-name correction may derive a different
         # slug, but the published URL keeps its ledger entry (`--write` refuses to reassign). The ledger must
@@ -908,16 +958,6 @@ class PinnedLedgerTest(unittest.TestCase):
             with self.subTest(team_id=team_id):
                 self.assertTrue(is_routable_identifier(handle))
         self.assertEqual(khaihoang_stats, {"keys": 17, "distinctHandles": 17})
-
-        self.assertEqual(stats["keys"], 1366)
-        self.assertEqual(stats["groupKeys"], 1264)
-        self.assertEqual(stats["collisionGroups"], 83)
-        self.assertEqual(stats["collisionRows"], 185)
-        self.assertEqual(stats["taggedRows"], 166)
-        self.assertEqual(stats["distinctHandles"], 638)
-        self.assertEqual(stats["distinctSegments"], 1366)
-        self.assertEqual(stats["averageSegmentLength"], 22.83)
-        self.assertEqual(stats["maxSegmentLength"], 55)
         self.assertEqual(legacy_stats["keys"], 166)
         self.assertEqual(legacy_stats["collisionGroups"], 14)
 
@@ -932,7 +972,10 @@ class PinnedLedgerTest(unittest.TestCase):
         code, out, err = run_cli(["--check", "--diagnose"])
         self.assertEqual(code, 0, err)
         self.assertEqual(DEFAULT_LEDGER_PATH.read_bytes(), before)
-        self.assertIn("0 recommended rows differ", out)
+        self.assertIn("matches generation " + self.publication.generation_id, out)
+        self.assertIn("recommended handles: 1640; legacy handles: 166; Khai hoang handles: 17", out)
+        # Diagnostics are informational after a rebind: they are printed, never gated on.
+        self.assertIn("name-derived diagnostics:", out)
 
     def test_real_publication_copy_survives_a_collision_dissolving_translation(self):
         with tempfile.TemporaryDirectory() as workspace:
