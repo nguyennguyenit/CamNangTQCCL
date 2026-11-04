@@ -1018,14 +1018,14 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
   // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang,
-  // 938 trang riêng mục Tra cứu (251 tướng, 409 chiến pháp sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  // 958 trang riêng mục Tra cứu (251 tướng, 409 chiến pháp, 59 quân sư sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
-  assert.equal(lookupRoutes.entries.length, 938);
+  assert.equal(lookupRoutes.entries.length, 958);
   // + trang mùa Đội chuẩn: mỗi mùa cũ có đội một trang, hai ngôn ngữ (mùa hiện tại và mùa 0 đội không có).
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
   assert.ok(seasonPageList.length > 10);
-  assert.equal(locations.length, 5016 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 5056 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -1143,7 +1143,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 938 trang riêng mục Tra cứu).
+  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 958 trang riêng mục Tra cứu).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
@@ -1157,8 +1157,8 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(catalog.recommended.length, 1366);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
-  assert.equal(lookupRoutes.entries.length, 938);
-  assert.equal(locations.length, 5016 + 2 * seasonPageList.length);
+  assert.equal(lookupRoutes.entries.length, 958);
+  assert.equal(locations.length, 5056 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -1993,7 +1993,7 @@ test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường h�
   }
 });
 
-test("Tra cứu: mọi trang riêng (938 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+test("Tra cứu: mọi trang riêng (958 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
   const origin = new URL(await configuredSite()).origin;
   const routes = await lookupDetailRoutes();
   const titles = new Set();

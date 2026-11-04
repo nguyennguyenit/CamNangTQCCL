@@ -75,21 +75,23 @@ function describe(group: LookupGroup, item: Json, locale: SiteLocale): string {
       ? `${name}（装备${detail ? `，${detail}` : ''}）：${exclusive ? `${exclusive} 个专属特技，` : ''}可锻造的通用特技。`
       : `${name} — trang bị${detail ? ` ${detail}` : ''}: ${exclusive ? `${exclusive} đặc kỹ độc quyền, ` : ''}đặc kỹ chung có thể rèn.`;
   }
+  // Chữ Hán catalog chỉ vào meta khi là chữ nguồn (`zhSource.kind === 'source'`); bản dịch chỉ hiện trên trang kèm cờ.
+  const sourceZh = (value: unknown) => (zh && record.zhSource?.kind === 'source' ? String(value ?? '').trim() : '');
   if (group === 'advisors') {
     const element = shown(record.elementVi);
     const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
     return zh
-      ? `${name}（军师技能${element ? `，${element}系` : ''}${points === null ? '' : `，${points} 战法点`}）：携带此技能的武将。`
+      ? `${name}（军师技能${element ? `，${element}系` : ''}${points === null ? '' : `，${points} 战法点`}）${tail(snippet(currentEffect(sourceZh(record.effectZh)), 110), '：', '：携带此技能的武将。')}`
       : `${name} — kỹ năng quân sư${element ? ` hệ ${element}` : ''}${points === null ? '' : `, ${points} điểm chiến pháp`}${tail(snippet(currentEffect(record.effectVi), 110), ':', '.')}`;
   }
   if (group === 'troop-mods') {
     return zh
-      ? `${name}（兵种进阶）：进阶选项树与推荐路线。`
+      ? `${name}（兵种进阶）${tail(snippet(sourceZh(record.appliesToZh) || currentEffect(sourceZh(record.effectZh)), 120), '：', '：进阶选项树与推荐路线。')}`
       : `${name} — cải tạo binh chủng${tail(snippet(record.appliesToVi || currentEffect(record.effectVi), 120), ':', '.')}`;
   }
   const max = Number.isFinite(Number(record.maxLevel)) ? Number(record.maxLevel) : null;
   return zh
-    ? `${name}（建筑${max === null ? '' : `，最高 ${max} 级`}）：各等级效果与资源消耗。`
+    ? `${name}（建筑${max === null ? '' : `，最高 ${max} 级`}）：${snippet(sourceZh(record.summaryZh), 120) || '各等级效果与资源消耗。'}`
     : `${name} — công trình${max === null ? '' : `, cấp tối đa ${max}`}: ${snippet(record.summaryVi, 120) || 'hiệu quả và tài nguyên theo từng cấp.'}`;
 }
 
@@ -151,8 +153,8 @@ export async function lookupItemPage(id: string, locale: SiteLocale, site: URL |
     const description = describe(group, item, locale);
     const groupHref = localePath(lookupGroupPath(group) as string, locale);
     // Tên chữ Hán chỉ ở bản Việt và chỉ khi trang có hiện nó (binh thư bản Việt không hiện chữ Hán, chỉ là khoá tìm);
-    // bản Trung không hiện tên Việt nên không khai tên thay thế.
-    const other = locale === 'zh' || group === 'books' ? null : lookupDisplayName(item.record, item.nameVi, 'zh');
+    // bản Trung không hiện tên Việt nên không khai tên thay thế. Tên dịch `nameZh` (chưa đối chiếu, bản Việt không hiện) không khai.
+    const other = locale === 'zh' || group === 'books' ? null : lookupDisplayName({ ...item.record, nameZh: null }, item.nameVi, 'zh');
     return {
       title: `${name} — ${groupLabel} — ${section} — ${siteName}`,
       description,

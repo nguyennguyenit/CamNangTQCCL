@@ -4695,6 +4695,21 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tang-khi-dai-thi": {
+      "nameVi": "Tàng Khí Đợi Thời",
+      "quality": null,
+      "type": "PASSIVE",
+      "activationRate": 1,
+      "troopFit": [
+        "Khiên binh",
+        "Khí giới"
+      ],
+      "targetVi": null,
+      "effectTypeVi": null,
+      "effectVi": "Chiến đấu 2 hiệp đầu, bản thân chịu sát thương từ Tấn Công Thường giảm 10%→20% (chịu ảnh hưởng Thống Soái); Từ hiệp 3 trở đi, xác suất phát động Chiến Pháp Chủ Động tự mang của bản thân tăng 4%→8% (chịu ảnh hưởng Võ Lực) và khi gây ra sát thương có 15%→30% xác suất (chịu ảnh hưởng Võ Lực) kèm theo 10%→20% Phá Trận (chịu ảnh hưởng Võ Lực)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tat-phong-sau-vu": {
       "nameVi": "Gió Táp Mưa Sa",
       "quality": "S",
@@ -5509,6 +5524,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong khi chiến đấu, mỗi hiệp khiến sát thương bản thân gây ra tăng 5.5%→11%, được cộng dồn đến khi kết thúc chiến đấu",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:thua-thien-tinh-the": {
+      "nameVi": "Thừa Thiên Tĩnh Thế",
+      "quality": null,
+      "type": "COMMAND",
+      "activationRate": 1,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": null,
+      "effectTypeVi": null,
+      "effectVi": "Trong chiến đấu, mỗi đầu hiệp có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn toàn thể quân địch (khiến 1 Chiến Pháp của mục tiêu vô hiệu, ngoại trừ Pháp Trận), duy trì 1 hiệp; Mỗi cuối hiệp gây sát thương Mưu Lược cho quân địch (2-3 người) (tỷ lệ sát thương 5%→10% + 5%→10%* số lần Uy Chấn, chịu ảnh hưởng độ chênh lệch Thống Soái, bỏ qua Phòng Ngự); Khi quân ta chịu sát thương cao hơn 6% Binh Lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng Thống Soái) Uy Chấn ngẫu nhiên quân địch; Khi bản thân là Tướng Chính, 3 hiệp chiến đấu đầu, quân ta chịu sát thương Mưu Lược có 17.5%→35% xác suất bị giảm theo thuộc tính Thống Soái",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -9003,24 +9036,6 @@
     }
   },
   "tacticNotes": {
-    "tactic:thua-thien-tinh-the": {
-      "aliases": [],
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); SP Tào Tháo tự mang."
-        }
-      ]
-    },
-    "tactic:tang-khi-dai-thi": {
-      "aliases": [],
-      "conditions": [
-        {
-          "kind": "requirement",
-          "textVi": "Chưa có ở client Global (bản Việt Nam): nội dung theo bản Trung (SGSDeck, client TW); kế thừa từ SP Tào Tháo."
-        }
-      ]
-    },
     "tactic:doat-hon-hiep-phach": {
       "aliases": [
         "Thác-Đoạt Hồn Hiệp Phách"
@@ -9564,6 +9579,3192 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    }
+  },
+  "equipment": {
+    "equipment:bach-tich-dao": {
+      "nameVi": "Đao Bách Tịch"
+    },
+    "equipment:bach-vu-phien": {
+      "nameVi": "Quạt Bạch Vũ"
+    },
+    "equipment:bat-bao-da-minh-khai": {
+      "nameVi": "Áo giáp Bát Bảo Dạ"
+    },
+    "equipment:cam-dieu-cuu": {
+      "nameVi": "Áo Lông Cẩm Điêu"
+    },
+    "equipment:chu-thu-am-phu": {
+      "nameVi": "Chu Sách Âm Phù"
+    },
+    "equipment:co-dinh-dao": {
+      "nameVi": "Đao Cổ Đĩnh"
+    },
+    "equipment:cu-xi-dao": {
+      "nameVi": "Đao răng cưa"
+    },
+    "equipment:cuu-tiet-truong": {
+      "nameVi": "Trượng Cửu Tiết"
+    },
+    "equipment:dan-cung": {
+      "nameVi": "Cung gỗ Đàn"
+    },
+    "equipment:di-kinh": {
+      "nameVi": "Kinh Dịch"
+    },
+    "equipment:dieu-kim-kiem": {
+      "nameVi": "Kiếm Điêu Kim"
+    },
+    "equipment:dong-ho-phi-cung": {
+      "nameVi": "Cung Đông Hồ Phi"
+    },
+    "equipment:duong-do-co-cung": {
+      "nameVi": "Cung Dưỡng Do Cơ"
+    },
+    "equipment:hac-quang-khai": {
+      "nameVi": "Áo giáp Hắc Quang"
+    },
+    "equipment:hanh-thuong-bach-y": {
+      "nameVi": "Áo Trắng Hành Thương"
+    },
+    "equipment:hoa-thi-bich": {
+      "nameVi": "Hòa Thị Bích"
+    },
+    "equipment:hoang-phieu-ma": {
+      "nameVi": "Ngựa Hoàng Phiêu"
+    },
+    "equipment:huyen-thiet-lien-hoan-giap": {
+      "nameVi": "Giáp Liên Hoàn sắt đen"
+    },
+    "equipment:kim-ma-soc": {
+      "nameVi": "Giáo dài Kim Mã"
+    },
+    "equipment:kim-ty-nhuyen-giap": {
+      "nameVi": "Giáp Mềm Sợi Vàng"
+    },
+    "equipment:la-y-huong-nang": {
+      "nameVi": "Túi thơm La Kỳ."
+    },
+    "equipment:linh-nhi": {
+      "nameVi": "Chuông Gió Lông Vũ"
+    },
+    "equipment:luong-kim-long-lan-giap": {
+      "nameVi": "Giáp Lượng Kim Long Lân"
+    },
+    "equipment:luu-kim-khoi": {
+      "nameVi": "Mũ Mạ Vàng"
+    },
+    "equipment:ngan-long-giap": {
+      "nameVi": "Giáp Ngân Long"
+    },
+    "equipment:nguy-cong-tu-binh-phap": {
+      "nameVi": "Binh pháp Ngụy Công Tử."
+    },
+    "equipment:nguyet-nha-kich": {
+      "nameVi": "Kích Nguyệt Nha"
+    },
+    "equipment:phu-ky-giac": {
+      "nameVi": "Ly Phụ Kỷ"
+    },
+    "equipment:phung-si-hoang-kim-giap": {
+      "nameVi": "Giáp Hoàng Kim Cánh Phượng"
+    },
+    "equipment:phuong-thien-hoach-kich": {
+      "nameVi": "Kích Phương Thiên Họa"
+    },
+    "equipment:quyen-mao-xich-tho": {
+      "nameVi": "Ngựa Xích Thố lông xoăn"
+    },
+    "equipment:song-thiet-kich": {
+      "nameVi": "Kích Song Thiết"
+    },
+    "equipment:tam-luoc": {
+      "nameVi": "Tam lược.."
+    },
+    "equipment:thac-kim-bac-son-lo": {
+      "nameVi": "Lò Bác Sơn nạm vàng"
+    },
+    "equipment:thai-binh-yeu-thuat": {
+      "nameVi": "Thái Bình Yêu Thuật"
+    },
+    "equipment:thanh-cong-kiem": {
+      "nameVi": "Kiếm Thanh Cang"
+    },
+    "equipment:thanh-dong-bac-son-lo": {
+      "nameVi": "Lò Bác Sơn đồng thau"
+    },
+    "equipment:thanh-long-yen-nguyet-dao": {
+      "nameVi": "Đao Thanh Long Yển Nguyệt"
+    },
+    "equipment:thao-thiet-van-dinh": {
+      "nameVi": "Đỉnh Thao Thiết"
+    },
+    "equipment:that-tinh-bao-dao": {
+      "nameVi": "Bảo Đao Thất Tinh"
+    },
+    "equipment:thi-kinh": {
+      "nameVi": "Kinh Thi"
+    },
+    "equipment:thiet-tich-xa-mau": {
+      "nameVi": "Giáo Thiết Tích Xà"
+    },
+    "equipment:thon-thien-ky-lan-giap": {
+      "nameVi": "Giáp Thôn Thiên Kỳ Lân"
+    },
+    "equipment:thu-dien-lien-hoan-khai": {
+      "nameVi": "Giáp Liên Hoàn mặt thú"
+    },
+    "equipment:thuong-quan-thu": {
+      "nameVi": "Thương Quân Sách"
+    },
+    "equipment:ton-ban-binh-phap": {
+      "nameVi": "Binh pháp Tôn Tẫn"
+    },
+    "equipment:ton-tu-binh-phap": {
+      "nameVi": "Binh pháp Tôn Tử"
+    },
+    "equipment:tram-kim-thuong": {
+      "nameVi": "Trầm Kim Thương"
+    },
+    "equipment:truong-bat-xa-mau": {
+      "nameVi": "Giáo Trượng Bát Xà"
+    },
+    "equipment:truong-sinh-kinh": {
+      "nameVi": "Kính Trường Sinh"
+    },
+    "equipment:tu-kim-toan-nghe-giap": {
+      "nameVi": "Giáp Toan Nghê Tử Kim"
+    },
+    "equipment:tu-luan-xa": {
+      "nameVi": "Xe Bốn Bánh"
+    },
+    "equipment:tu-trieu-dao": {
+      "nameVi": "Đao Tư Triệu"
+    },
+    "equipment:tung-sat": {
+      "nameVi": "Đàn Tụng Sắt"
+    },
+    "equipment:uyen-thien-ma": {
+      "nameVi": "Ngựa Uyên Thiên"
+    },
+    "equipment:van-tu-phi": {
+      "nameVi": "Áo Khoác Văn Tú"
+    },
+    "equipment:vien-thi-gia-pho": {
+      "nameVi": "Gia Phả Viên Thị"
+    },
+    "equipment:xich-dong-giap": {
+      "nameVi": "Giáp đồng đỏ"
+    },
+    "equipment:xich-tho-ma": {
+      "nameVi": "Xích Thố"
+    },
+    "equipment:y-thien-kiem": {
+      "nameVi": "Kiếm Ỷ Thiên"
+    }
+  },
+  "specials": {
+    "equipment-special:bao-tao": {
+      "nameVi": "Nóng Nảy",
+      "descriptionVi": "Tăng 3% sát thương gây ra"
+    },
+    "equipment-special:chieu-liet": {
+      "nameVi": "Chiêu Liệt",
+      "descriptionVi": "Thư Hùng Song Cổ Kiếm chuyên dụng, khi Lưu Bị trang bị, tấn công thường trong chiến đấu có 12% xác suất khiến mục tiêu Giao Binh Khí (không thể tiến hành tấn công thường), duy trì 1 hiệp"
+    },
+    "equipment-special:chuc-phuc": {
+      "nameVi": "Chúc Phúc",
+      "descriptionVi": "Khi bị tấn công thường, giảm 10 điểm sát thương"
+    },
+    "equipment-special:chuoc-liet": {
+      "nameVi": "Chước Liệt",
+      "descriptionVi": "Giáp Liên Hoàn Sắt Đen chuyên dùng, ở hiệp đầu, bản thân nhận được hiệu quả Phản Kích (tỉ lệ sát thương 125%), hiệu quả này có hiệu lực tối đa 2 lần"
+    },
+    "equipment-special:co-muu": {
+      "nameVi": "Cơ Mưu",
+      "descriptionVi": "Trạng thái xấu do bản thân thi triển có 6% tỷ lệ biến thành trạng thái không thể xóa"
+    },
+    "equipment-special:cu-khuu": {
+      "nameVi": "Củ Khứu"
+    },
+    "equipment-special:cung-than": {
+      "nameVi": "Cung Thần",
+      "descriptionVi": "Cung Dưỡng Do Cơ chuyên dụng, khi Hoàng Trung trang bị, chiến đấu 2 hiệp đầu bản thân nhận trạng thái Ắt Trúng (bỏ qua trạng thái Né Tránh và Chống cự đánh trúng mục tiêu)"
+    },
+    "equipment-special:cuong-nghi": {
+      "nameVi": "Cương Nghị",
+      "descriptionVi": "Có 1% xác suất không bị trạng thái xấu ảnh hưởng"
+    },
+    "equipment-special:cuong-the": {
+      "nameVi": "Cương Thể",
+      "descriptionVi": "Giảm 3% sát thương phải chịu"
+    },
+    "equipment-special:dam-luoc": {
+      "nameVi": "Đảm Lược",
+      "descriptionVi": "Kiếm Thanh Cang chuyên dụng, khi Triệu Vân trang bị, tăng 5% Tỉ Lệ Hội Tâm và Làm Phản"
+    },
+    "equipment-special:dao-cuong": {
+      "nameVi": "Đạo Cương",
+      "descriptionVi": "Thái Bình Yêu Thuật chuyên dụng, khi mặc vào cho Trương Giác, thuộc tính thống soái của Quân Khăn Vàng và tiên nhân của quân ta sẽ tăng 6% thuộc tính trí lực của chính mình"
+    },
+    "equipment-special:dot-tien": {
+      "nameVi": "Đột Tiến",
+      "descriptionVi": "Tuyệt Ảnh chuyên dụng, chiến đấu 2 hiệp đầu bản thân nhận 25 điểm Võ Lực"
+    },
+    "equipment-special:giai-nhan": {
+      "nameVi": "Giai nhân",
+      "descriptionVi": "Áo Lông Cẩm Điêu chuyên dụng, khi trang bị cho Điêu Thuyền, mỗi hiệp đều có 25% xác suất phục hồi lượng binh lực nhất định (tỉ lệ phục hồi 100%)"
+    },
+    "equipment-special:gian-hung": {
+      "nameVi": "Gian Hùng",
+      "descriptionVi": "Kiếm Ỷ Thiên chuyên dụng, Khi trang bị cho Tào Tháo, trong hiệp chiến đấu đầu tiên, nhóm quân ta (2-3 người) trước khi hành động nhận trạng thái quan sát kỹ, sau khi hành động, quan sát kỹ sẽ biến mất"
+    },
+    "equipment-special:hanh-vu": {
+      "nameVi": "Hành Vũ",
+      "descriptionVi": "Thái Bình Thanh Lĩnh Đạo chuyên dụng, khi mang vào cho Vu Cát, hiệp duy trì của Hưng Vân Bố Vũ sẽ tăng thêm 1-2 hiệp"
+    },
+    "equipment-special:hien-minh": {
+      "nameVi": "Hiền Minh",
+      "descriptionVi": "Riêng của Kiếm Trảm Xà. Ở hiệp 3, sẽ tịnh hóa 1 Võ Tướng ngẫu nhiên của quân ta"
+    },
+    "equipment-special:ho-chu": {
+      "nameVi": "Hộ Chủ",
+      "descriptionVi": "Đích Lô chuyên dụng, chiến đấu 2 hiệp đầu bản thân nhận 25 điểm Thống Soái"
+    },
+    "equipment-special:ho-tri": {
+      "nameVi": "Hổ Trì",
+      "descriptionVi": "Giáo Trượng Bát Xà chuyên dụng, khi trang bị cho Trương Bào, hiệp đầu sẽ tăng cao 15% xác suất phát động chiến pháp tự mang"
+    },
+    "equipment-special:hoa-phuc": {
+      "nameVi": "Hoa Phục",
+      "descriptionVi": "Áo Khoác Văn Tú chuyên dụng, khi dùng cho Cam Ninh, tăng cao 12% sát thương hội tâm"
+    },
+    "equipment-special:hung-liet": {
+      "nameVi": "Hùng Liệt",
+      "descriptionVi": "Giáo Trượng Bát Xà chuyên dụng, khi Trương Phi chuẩn bị, chiến đấu 2 hiệp đầu bản thân nhận trạng thái Phá trận (khi gây ra sát thương bỏ qua Thống Soái và Trí Lực của mục tiêu)"
+    },
+    "equipment-special:hung-su": {
+      "nameVi": "Hưng Sư",
+      "descriptionVi": "Lục Trầm Thương chuyên dụng, khi Khương Duy trang bị, tăng cho bản thân Võ Lực, giá trị tương đương 10% thuộc tính Trí Lực của bản thân"
+    },
+    "equipment-special:hung-tai": {
+      "nameVi": "Hùng Tài",
+      "descriptionVi": "Đao Cổ Đĩnh chuyên dụng, khi Tôn Kiên, Tôn Sách, Tôn Quyền trang bị, chiến đấu hiệp đầu bản thân nhận 70% tấn công nhóm (khi tấn công thường gây sát thương cho Võ Tướng khác cùng đội quân với mục tiêu)"
+    },
+    "equipment-special:hung-tu": {
+      "nameVi": "Hùng Tư",
+      "descriptionVi": "Tăng 8 điểm Trí Lực"
+    },
+    "equipment-special:huyen-dieu": {
+      "nameVi": "Huyền Diệu",
+      "descriptionVi": "Thanh Lãn Y chuyên dùng, khi Tả Từ trang bị, sau khi bản thân Tránh thành công có 60% xác suất Trị Liệu 1 quân phe ta (Tỷ lệ Trị Liệu 50%)"
+    },
+    "equipment-special:kieu-co": {
+      "nameVi": "Kiêu Cơ",
+      "descriptionVi": "Hương Tuyết Trâm chuyên dùng, khi Tôn Thượng Hương trang bị, trong chiến đấu, 10%-50% thuộc tính Mị Lực của bản thân chuyển thành Thống Soái và Tốc Độ"
+    },
+    "equipment-special:kieu-trang": {
+      "nameVi": "Kiều Trang",
+      "descriptionVi": "Hành Thương Bạch Y chuyên dùng, khi Lữ Mông trang bị, xác suất gây Khống Chế của Chiến Pháp mang theo tăng 6%, ở hiệp thứ 2 sẽ khiến nhóm quân địch (1-2 người) ở vào trạng thái Bị Tập Kích"
+    },
+    "equipment-special:ky-dao": {
+      "nameVi": "Cầu nguyện",
+      "descriptionVi": "Khi được Trị Liệu, tăng 8% hiệu ứng Trị Liệu"
+    },
+    "equipment-special:ky-mon": {
+      "nameVi": "Kỳ Môn",
+      "descriptionVi": "Độn Giáp Thiên Thư chuyên dụng, khi mang lên người Tả Từ, khi tiên nhân quân ta nhận được né tránh của Kim Đơn Mật Thuật, sẽ nhận thêm 10% né tránh"
+    },
+    "equipment-special:ky-toan": {
+      "nameVi": "Kỳ Toán",
+      "descriptionVi": "Dành cho Tàm Tùng Cẩm Y, khi trang bị Pháp Chính, tỉ lệ phát động và xác suất phán đoán hiệu quả thành công của Chiến Pháp tự mang tăng 3%"
+    },
+    "equipment-special:linh-dong": {
+      "nameVi": "Linh Động",
+      "descriptionVi": "Giáp mềm sợi vàng chuyên dụng, chiến đấu hiệp đầu bản thân nhận 1 lần chống đỡ"
+    },
+    "equipment-special:long-tuong": {
+      "nameVi": "Long Tương",
+      "descriptionVi": "Đao Thanh Long Yển Nguyệt chuyên dùng, khi Quan Hưng trang bị, sẽ đánh dấu mục tiêu gây sát thương cho Tướng Chính quân ta lần đầu, sát thương do bản thân gây ra cho mục tiêu này sẽ tăng 10%"
+    },
+    "equipment-special:man-luc": {
+      "nameVi": "Man Lực",
+      "descriptionVi": "Tăng 8 điểm Võ Lực"
+    },
+    "equipment-special:minh-luoc": {
+      "nameVi": "Minh Lược",
+      "descriptionVi": "Quạt Hắc Vũ chuyên dụng, khi Tư Mã Ý trang bị, chiến đấu hiệp thứ 4, bản thân nhận 7% Công Tâm hoặc Kỳ Mưu, duy trì đến khi kết thúc chiến đấu"
+    },
+    "equipment-special:muu-cong": {
+      "nameVi": "Mưu Công",
+      "descriptionVi": "Binh pháp Tôn Tử chuyên dụng, khi bắt đầu chiến đấu hiệp thứ 3, gây cho một tướng quân địch hiệu ứng Kế Tận (không thể phát động Chiến Pháp chủ động), duy trì 1 hiệp"
+    },
+    "equipment-special:nghich-lan": {
+      "nameVi": "Nghịch Lân",
+      "descriptionVi": "Dành riêng cho Giáp Vảy Rồng vàng sáng, khi bị sát thương, có 3% xác suất nhận 10% Hội Tâm, duy trì 2 hiệp, được cộng dồn 2 lần"
+    },
+    "equipment-special:ngung-than": {
+      "nameVi": "Ngưng Thần",
+      "descriptionVi": "Tăng 2% xác suất Hội Tâm ( khi kích hoạt, sát thương Binh Đao tăng 100%)"
+    },
+    "equipment-special:nhac-tau": {
+      "nameVi": "Tấu nhạc",
+      "descriptionVi": "Đàn Tụng Sắt chuyên dụng, khi dùng cho Chu Du, tăng cao 3% xác suất phát động chiến pháp chủ động"
+    },
+    "equipment-special:pha-the": {
+      "nameVi": "Phá Thế",
+      "descriptionVi": "Xích Thố chuyên dụng, khi Quan Vũ trang bị, chiến đấu 2 hiệp đầu, Thống Soái của bản thân tăng 15%"
+    },
+    "equipment-special:phan-gian": {
+      "nameVi": "Phản Gián",
+      "descriptionVi": "Mạnh Đức Tân Thư chuyên dụng, khi bắt đầu chiến đấu hiệp thứ 3 hiệp, gây cho một quân địch hiệu ứng Hỗn loạn (tấn công và Chiến Pháp sẽ không phân biệt khi lựa chọn mục tiêu), duy trì 1 hiệp"
+    },
+    "equipment-special:phong-thanh": {
+      "nameVi": "Phong Thanh",
+      "descriptionVi": "Riêng của Chuông Gió Lông Vũ. Ở hiệp đầu, sau khi tấn công thường sẽ khiến Võ Tướng ngẫu nhiên của quân địch bước vào trạng thái Cấm Trị Liệu, duy trì 1 hiệp"
+    },
+    "equipment-special:phu-nguy": {
+      "nameVi": "Phù Nguy",
+      "descriptionVi": "Hiệu quả hồi phục do bản thân tạo ra tăng 6%"
+    },
+    "equipment-special:quat-cuong": {
+      "nameVi": "Quật Cường",
+      "descriptionVi": "Tăng 8 điểm Thống Soái"
+    },
+    "equipment-special:tan-tat": {
+      "nameVi": "Nhanh chóng",
+      "descriptionVi": "Tăng 8 điểm Tốc Độ"
+    },
+    "equipment-special:te-phong": {
+      "nameVi": "Xé Gió",
+      "descriptionVi": "Tăng 8 điểm Võ Lực"
+    },
+    "equipment-special:te-the": {
+      "nameVi": "Tế Thế",
+      "descriptionVi": "Thanh Nang Thư chuyên dụng, khi mang vào cho Hoa Đà, số lượng mục tiêu mà chiến pháp tự mang phóng ra có 20% xác suất biến thành toàn thể quân ta"
+    },
+    "equipment-special:thach-phu": {
+      "nameVi": "Thạch Phu",
+      "descriptionVi": "Tăng 8 điểm Thống Soái"
+    },
+    "equipment-special:than-toan": {
+      "nameVi": "Thần Toán",
+      "descriptionVi": "Quạt Bạch Vũ chuyên dụng, khi trang bị cho Gia Cát Lượng, chiến đấu hiệp đầu, sát thương công kích mưu lược mà một nhóm quân ta chịu phải giảm đi 7% (chịu ảnh hưởng trí lực)"
+    },
+    "equipment-special:than-uy": {
+      "nameVi": "Thần Uy",
+      "descriptionVi": "Trầm Kim Thương chuyên dụng, khi Mã Siêu trang bị, Võ Lực bản thân tăng 18 điểm (chịu ảnh hưởng Tốc Độ)"
+    },
+    "equipment-special:than-y": {
+      "nameVi": "Thần Y",
+      "descriptionVi": "Ngân Tiêm Đao chuyên dụng, khi Hoa Đà trang bị, chiến đấu hiệp thứ 5-8, bản thân nhận hiệu quả Cấp Cứu (Tỷ lệ Trị Liệu 30%, chịu ảnh hưởng Trí Lực)"
+    },
+    "equipment-special:thien-co": {
+      "nameVi": "Thiên Cơ",
+      "descriptionVi": "Xe Bốn Bánh chuyên dụng, khi trang bị cho Gia Cát Lượng, xác suất phát động chiến pháp mang theo tăng 4%"
+    },
+    "equipment-special:thien-cong": {
+      "nameVi": "Thiên Công",
+      "descriptionVi": "Trượng Cửu Tiết chuyên dụng, khi trang bị cho Trương Giác, khi phát động chiến pháp tự mang sẽ có 70% xác suất thêm một lần công kích mưu lược"
+    },
+    "equipment-special:tinh-nhue": {
+      "nameVi": "Tinh Nhuệ",
+      "descriptionVi": "Huyền Giáp chuyên dụng. Giảm 5% sát thương Binh Đao bản thân phải chịu"
+    },
+    "equipment-special:tinh-than": {
+      "nameVi": "Tinh Thần",
+      "descriptionVi": "Giảm 5% sát thương Mưu Lược phải chịu"
+    },
+    "equipment-special:trung-thanh": {
+      "nameVi": "Trung Thành",
+      "descriptionVi": "Khi Binh Lực thấp hơn 30%, tăng 10 điểm Thống Soái, Tốc độ"
+    },
+    "equipment-special:truong-kien": {
+      "nameVi": "Trường Kiện",
+      "descriptionVi": "Thanh Nang Thư chuyên dụng, chiến đấu hiệp đầu toàn thể quân ta nhận hiệu ứng Cấp cứu, mỗi lần nhận phải sát thương sẽ hồi phục Binh Lực nhất định (tỷ lệ Trị Liệu 10%, bị Trí Lực ảnh hưởng)"
+    },
+    "equipment-special:u-anh": {
+      "nameVi": "U Ảnh",
+      "descriptionVi": "Tăng 8 điểm Tốc Độ"
+    },
+    "equipment-special:ung-nha": {
+      "nameVi": "Ung Nhã",
+      "descriptionVi": "Thâm Y chuyên dụng, Tốc Độ bản thân giảm 20%, Trí Lực tăng 3%"
+    },
+    "equipment-special:vien-tro": {
+      "nameVi": "Viện Trợ",
+      "descriptionVi": "Áo giáp Bát Bảo Dạ chuyên dụng, chiến đấu hiệp đầu bản thân sẽ Cứu Viện tất cả quân Đồng Minh"
+    },
+    "equipment-special:vinh-quang": {
+      "nameVi": "Vinh Quang",
+      "descriptionVi": "Giáp Hoàng Kim Cánh Phượng chuyên dụng, khi nhận phải sát thương Mưu Lược có 4% xác suất miễn sát thương lần này"
+    },
+    "equipment-special:vo-song": {
+      "nameVi": "Vô Song",
+      "descriptionVi": "Kích Phương Thiên Họa chuyên dụng, khi Lữ Bố trang bị, chiến đấu hiệp đầu bản thân nhận trạng thái Liên kích"
+    },
+    "equipment-special:vo-thanh": {
+      "nameVi": "Võ Thánh",
+      "descriptionVi": "Đao Thanh Long Yển Nguyệt chuyên dụng, khi Quan Vũ trang bị, tăng 5% xác suất phát động Chiến Pháp tự mang theo"
+    },
+    "equipment-special:vong-toc": {
+      "nameVi": "Vọng Tộc",
+      "descriptionVi": "Riêng của Gia Phả Viên Thị. Khi Viên Thuật trang bị, xác suất nhận được Ngọc Tỉ ở hiệp đầu tăng lên 65%"
+    },
+    "equipment-special:vuong-dao": {
+      "nameVi": "Vương Đạo",
+      "descriptionVi": "Hòa Thị Bích chuyên dụng, chiến đấu 2 hiệp đầu, tăng cho bản thân 20% xác suất Hội Tâm (khi kích hoạt sát thương Binh Đao tăng 100%) và Kỳ Mưu (khi kích hoạt, sát thương Mưu Lược tăng 100%)"
+    },
+    "equipment-special:xuat-ky": {
+      "nameVi": "Xuất Kỳ",
+      "descriptionVi": "Trảo Hoàng Phi Điện chuyên dụng, chiến đấu 2 hiệp đầu bản thân nhận 25 điểm Trí Lực"
+    },
+    "equipment-special:xung-tran": {
+      "nameVi": "Xung Phong",
+      "descriptionVi": "Khi lần đầu gây ra sát thương khiến mục tiêu tổn thất Binh Lực (lượng tổn thất tương đương 280% Tốc độ)"
+    },
+    "equipment-special:yeu-khi": {
+      "nameVi": "Yêu khí",
+      "descriptionVi": "Sau khi tấn công thường, hồi phục Binh Lực của bản thân (tỷ lệ hồi phục 10%)"
+    }
+  },
+  "buildings": {
+    "building:bat-tran-do": {
+      "nameVi": "Trận bát quái",
+      "summaryVi": "Giảm sát thương mưu lược và binh đao đội quân đồng minh phải chịu trong phạm vi thành"
+    },
+    "building:binh-chien-muu": {
+      "nameVi": "Binh chiến-Mưu",
+      "summaryVi": "Tăng Mưu Lược đội quân trong thành"
+    },
+    "building:binh-chien-phong": {
+      "nameVi": "Binh chiến-Phòng",
+      "summaryVi": "Tăng tỷ lệ Thống Soái đội quân thành này"
+    },
+    "building:binh-chien-toc": {
+      "nameVi": "Binh chiến-Nhanh",
+      "summaryVi": "Tăng tốc độ đội quân thành này"
+    },
+    "building:binh-chien-vo": {
+      "nameVi": "Binh chiến-Võ",
+      "summaryVi": "Tăng Võ Lực đội quân thành này"
+    },
+    "building:cong-su-dinh": {
+      "nameVi": "Doanh trại công sự"
+    },
+    "building:cong-trinh-dinh": {
+      "nameVi": "Trại Công Trình"
+    },
+    "building:cung-binh-dinh": {
+      "nameVi": "Trại Lính Cung",
+      "summaryVi": "Tăng thuộc tính Lính Cung; đầy cấp: khi trấn thủ, hiệp đầu Lính Cung tấn công 1-2 mục tiêu"
+    },
+    "building:cuu-cung-do": {
+      "nameVi": "Cửu Cung Đồ",
+      "summaryVi": "Tăng sát thương mưu lược và binh đao đội quân đồng minh gây ra trong phạm vi thành"
+    },
+    "building:da-thiet-dai": {
+      "nameVi": "Bệ lò rèn"
+    },
+    "building:dan-cu": {
+      "nameVi": "Dân Cư"
+    },
+    "building:diem-tuong-dai": {
+      "nameVi": "Đài Điểm Tướng"
+    },
+    "building:dien-vo-truong": {
+      "nameVi": "Diễn Võ Trường"
+    },
+    "building:hiep-luc-ngo": {
+      "nameVi": "Hợp lực-Ngô"
+    },
+    "building:hiep-luc-nguy": {
+      "nameVi": "Hợp lực-Ngụy"
+    },
+    "building:hiep-luc-quan": {
+      "nameVi": "Hợp lực-Quần"
+    },
+    "building:hiep-luc-thuc": {
+      "nameVi": "Hợp lực-Thục"
+    },
+    "building:khi-gioi-dinh": {
+      "nameVi": "Trại Xe",
+      "summaryVi": "Tăng điểm công thành đội Xe; cấp tối đa: tốc độ di chuyển đội Xe +25"
+    },
+    "building:ky-binh-dinh": {
+      "nameVi": "Trại Lính Kỵ",
+      "summaryVi": "Tăng tốc độ di chuyển Lính Kỵ; cấp tối đa: hiệp đầu tốc độ toàn thể Lính Kỵ +20"
+    },
+    "building:my-binh-dinh": {
+      "nameVi": "Trại Lính Khiên",
+      "summaryVi": "Giảm sát thương Lính Khiên phải nhận; đầy cấp: hiệp 5 nhóm Lính Khiên (2 người) hồi Binh Lực"
+    },
+    "building:nong-truong": {
+      "nameVi": "Nông trại"
+    },
+    "building:phat-moc-truong": {
+      "nameVi": "Xưởng gỗ"
+    },
+    "building:phong-hoa-dai": {
+      "nameVi": "Phong Hỏa Đài",
+      "summaryVi": "Tăng phạm vi Tầm nhìn của thành"
+    },
+    "building:quan-co-dinh": {
+      "nameVi": "Lều cơ mật"
+    },
+    "building:quan-dinh": {
+      "nameVi": "Quân Doanh"
+    },
+    "building:quan-xa": {
+      "nameVi": "Quân Xá"
+    },
+    "building:si-khi-dan": {
+      "nameVi": "Sĩ Khí Đàn",
+      "summaryVi": "Tăng giới hạn Sĩ Khí của đội quân thành này"
+    },
+    "building:suy-linh-dan": {
+      "nameVi": "Soái Lệnh Đàn"
+    },
+    "building:tam-phong-dai": {
+      "nameVi": "Đài thăm hỏi"
+    },
+    "building:tap-thi": {
+      "nameVi": "Chợ"
+    },
+    "building:thai-thach-xu": {
+      "nameVi": "Điểm nhặt đá"
+    },
+    "building:thang-kho": {
+      "nameVi": "Kho"
+    },
+    "building:thanh-phong-quan": {
+      "nameVi": "Quân Thủ Thành",
+      "summaryVi": "Thành có Quân Thủ Thành; tăng Binh Lực Quân Thủ Thành"
+    },
+    "building:thanh-tuong": {
+      "nameVi": "Tường thành"
+    },
+    "building:thiet-tuong-pho": {
+      "nameVi": "Tiệm lò rèn"
+    },
+    "building:thuong-binh-dinh": {
+      "nameVi": "Trại Lính Thương",
+      "summaryVi": "Tăng sát thương Lính Thương; đầy cấp: hiệp 3 một Lính thương nhận phá trận"
+    },
+    "building:trung-binh-xu": {
+      "nameVi": "Nơi Chiêu Binh"
+    },
+    "building:tuan-ma-truong": {
+      "nameVi": "Trại Luyện Ngựa"
+    },
+    "building:vien-khau-dan": {
+      "nameVi": "Đàn Tế Trời",
+      "summaryVi": "Tăng giới hạn Điểm Danh Tiếng"
+    }
+  },
+  "advisors": {
+    "advisor:an-nhan-doat-quyen": {
+      "nameVi": "Ẩn Nhẫn Đoạt Quyền",
+      "elementVi": "Hỏa",
+      "tacticPoints": 15,
+      "effectVi": "Động Viên: Khi giao chiến với đội quân người chơi, Tướng Chính tăng 8 điểm Trí Lực và 5% Công Tâm (bị Độ Thuần Thục ảnh hưởng, tối đa tăng 15% Công Tâm), mỗi khi thắng quân địch có Binh Lực trên 15000, buff Trí Lực tăng 1 điểm (giới hạn 30 điểm, mùa giải kết thúc đặt lại), hiệu quả duy trì 30 phút, sau khi rút lui lập tức kết thúc",
+      "heroIds": [
+        "hero:tu-ma-y"
+      ]
+    },
+    "advisor:an-phuc-binh-tam": {
+      "nameVi": "Ân Phục Binh Tâm",
+      "elementVi": "Phong",
+      "tacticPoints": 12,
+      "effectVi": "Bị Động: Khi số lượng Quân Sư loại Phong đã bổ nhiệm không quá 3 người (nếu vượt quá 3 người, hiệu ứng vẫn tính theo 3 người), mỗi khi có 1 Đội quân bổ nhiệm Quân Sư loại Phong, tốc độ chiêu binh ngoài thành của tất cả các đội quân sẽ tăng 3% (bị ảnh hưởng bởi Độ Thuần Thục, tối đa tăng 4.5%). Động Viên: Khiến hiệu quả tốc độ chiêu binh bị động của bản thân tăng 100% (chịu ảnh hưởng Độ Thuần Thục, tăng nhiều nhất 200%), duy trì 2 giờ (Sau khi Lỗ Túc giải nhiệm Quân Sư thì hiệu quả này lập tức kết thúc). (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:lo-tuc"
+      ]
+    },
+    "advisor:bach-ma-tuong-quan": {
+      "nameVi": "Bạch Mã Tướng Quân",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Bị Động: Giúp Triệu Vân trong đội quân nhận buff: Thống Soái, tốc độ tăng 20 điểm và độ ăn ý Lính Cung +1, Võ Lực, Trí Lực giảm 15 điểm và độ ăn ý Lính Thương -1. Xung phong: Nếu đội quân hiện tại đã ra trận Triệu Vân, thì khi giao chiến với đội quân người chơi, đội quân phe ta 4 hiệp đầu tỉ lệ phát động Chiến Pháp Chủ Động tăng 5% (bị ảnh hưởng bởi độ thuần thục, tối đa tăng 10%)",
+      "heroIds": [
+        "hero:cong-ton-toan"
+      ]
+    },
+    "advisor:binh-quy-than-toc": {
+      "nameVi": "Binh Quý Thần Tốc",
+      "elementVi": "Hỏa",
+      "tacticPoints": 12,
+      "effectVi": "Bị Động: Tất cả đội quân Lính Kỵ phe ta, khi tốc độ hành quân cao hơn 50 điểm, mỗi 10 điểm tốc độ hành quân (Độ Thuần Thục ảnh hưởng, ít nhất 5 điểm tốc độ hành quân) sẽ giúp thuộc tính cao nhất của Tướng Chính phe ta tăng thêm 1 điểm (giới hạn 25 điểm). Xung phong: Dành cho Lính Kỵ, chiến đấu hiệp thứ 3, 1 đơn vị ngẫu nhiên phe ta nhận trạng thái Phá Trận, duy trì 1 hiệp",
+      "heroIds": [
+        "hero:truong-lieu"
+      ]
+    },
+    "advisor:cam-pham-du-hiep": {
+      "nameVi": "Du Hiệp Cẩm Phàm",
+      "elementVi": "Lâm",
+      "tacticPoints": 10,
+      "effectVi": "Xung phong: Chọn mảnh đất phát động tấn công và nhận buff: Khi giao chiến với đội quân người chơi trong 3 ô gần đường sông sẽ tăng 25 điểm Sĩ Khí, và phe ta mỗi khi gây ra 10 điểm Sát Thương thì nhận được 20 Lương Thực (bị ảnh hưởng bởi độ thuần thục, tối đa nhận 40 Lương Thực), mỗi ngày giới hạn 40 vạn (sau khi đến chưa phát sinh chiến đấu thì hoàn trả 80% tài nguyên tiêu hao trừ thể lực ra)",
+      "heroIds": [
+        "hero:cam-ninh"
+      ]
+    },
+    "advisor:chan-phan-ngang-duong": {
+      "nameVi": "Chấn Phấn Ngang Dương",
+      "elementVi": "Lâm",
+      "tacticPoints": 14,
+      "effectVi": "Dưỡng Sức: Hành quân đến điểm mục tiêu, khi đến điểm mục tiêu sẽ hồi 25 điểm Sĩ Khí (bị ảnh hưởng bởi độ thuần thục, tối đa hồi 50 điểm)",
+      "heroIds": [
+        "hero:hoang-phu-tung"
+      ]
+    },
+    "advisor:chiem-tinh-boc-quai": {
+      "nameVi": "Chiêm Tinh Bói Quẻ",
+      "elementVi": "Sơn",
+      "tacticPoints": 8,
+      "effectVi": "Động Viên: Khiến đội quân nhận buff ngẫu nhiên, nếu trong phạm vi 2 ô xung quanh có núi hoặc nước, thì có xác suất nhận được buff quẻ đặc biệt, duy trì 10 phút (Độ thuần thục ảnh hưởng, tối đa duy trì 30 phút)",
+      "heroIds": [
+        "hero:ta-tu"
+      ]
+    },
+    "advisor:chien-y-ngang-duong": {
+      "nameVi": "Chiến Ý Ngang Dương",
+      "elementVi": "Lâm",
+      "tacticPoints": 18,
+      "effectVi": "Bị Động: Khi đội hiện tại nhận Chiến Công sẽ nhận thêm Điểm Chiến Ý, khi tất cả Điểm Chiến Ý đạt 100 kích hoạt Kỹ Năng Quân Sư sẽ xóa tất cả Điểm Chiến Ý và giảm 30% tiêu hao kích hoạt (chịu sự ảnh hưởng của Độ Thuần Thục, nhiều nhất giảm 50%). Động Viên: Võ Tướng đội lập tức được xóa bỏ trạng thái Trọng Thương, khôi phục 100% thương binh và nhận 3000 binh lực. (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:chu-thai"
+      ]
+    },
+    "advisor:dan-cung-phuc-xa": {
+      "nameVi": "Dẫn Cung Phục Xạ",
+      "elementVi": "Hỏa",
+      "tacticPoints": 8,
+      "effectVi": "Từ Xa: Dành cho Lính Cung, chọn mảnh đất không phải của bản thân trong 2 ô, sau 15 giây chuẩn bị, sẽ lần lượt giao chiến với đội quân người chơi trên mảnh đất này. Nếu đội quân phe địch là Lính Khiên, sẽ chịu hiệu quả xấu khi vào chiến đấu: Ở hiệp đầu, sát thương toàn thể phe ta gây ra giảm 5% (bị độ thuần thục ảnh hưởng, thấp nhất giảm 0%)",
+      "heroIds": [
+        "hero:han-duong"
+      ]
+    },
+    "advisor:dan-ky-trung-tran": {
+      "nameVi": "Đơn Kỵ Xung Trận",
+      "elementVi": "Phong",
+      "tacticPoints": 8,
+      "effectVi": "Động Viên, Binh Pháp: Chọn mảnh đất trong 4 ô không phải vị trí bản thân, sau khi chuẩn bị 15 giây, xung phong nhanh đến mảnh đất mục tiêu, trong quá trình này sẽ bỏ qua cản trở và không xảy ra giao chiến. Sau khi xung phong tốc độ hành quân của đội quân tăng 20% (Chịu ảnh hưởng của độ thuần thục, tối đa tăng 40%), Thể Lực tiêu tốn giảm 40%, trong thời gian này không thể chủ động rút lui, 3 phút sau trở về chỗ cũ",
+      "heroIds": [
+        "hero:trieu-van"
+      ]
+    },
+    "advisor:dang-giap-ngu-dich": {
+      "nameVi": "Giáp Mây Chống Địch",
+      "elementVi": "Lâm",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Dành cho Lính Khiên, tiêu hao 3000 Gỗ chế tạo Giáp Mây Đơn Giản cho đội: Giúp sát thương binh đao đội quân phe ta phải chịu giảm 8% (bị ảnh hưởng bởi độ thuần thục, tối đa giảm 12%), tốc độ hành quân của đội quân giảm 10%, khi ở trạng thái Đốt Cháy sẽ tổn thất thêm Binh Lực (tỷ lệ sát thương 300%) và thiêu hủy Giáp Mây Đơn Giản này; Lính Giáp Mây không thể dùng kỹ năng quân sư này, sau khi rút lui sẽ lập tức kết thúc hiệu quả",
+      "heroIds": [
+        "hero:ngot-dot-cot"
+      ]
+    },
+    "advisor:dinh-quan-ky-tap": {
+      "nameVi": "Định Quân Kỳ Tập",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Từ Xa: Dành cho Lính Cung, chọn mảnh đất không phải của bản thân trong 3 ô (không phải mảnh đất kiến trúc hoặc mảnh đất kiến trúc phù hợp quy tắc nối đất), sau 15 giây chuẩn bị, sẽ lần lượt giao chiến với đội quân người chơi trên mảnh đất này và nhận buff chiến đấu: Hiệp đầu, trước khi hành động, toàn thể quân ta sẽ gây cho 1 đơn vị ngẫu nhiên của phe địch 50% sát thương (loại sát thương chịu mục cao hơn giữa Võ Lực và Trí Lực của Tướng Chính, tỉ lệ sát thương chịu ảnh hưởng của độ thuần thục, tối đa 75%); Nếu Tướng Chính quân ta là phe Thục, tỉ lệ sát thương tăng thêm 10%; Nếu sau khi thi triển mà chưa xảy ra giao chiến, sẽ hoàn trả 80% Điểm Kế Lược và Sách Lực tiêu hao",
+      "heroIds": [
+        "hero:hoang-trung"
+      ]
+    },
+    "advisor:hanh-tat-nhu-phi": {
+      "nameVi": "Hành Tật Như Phi",
+      "elementVi": "Phong",
+      "tacticPoints": 9,
+      "effectVi": "Động Viên: Tốc Độ hành quân của đội quân tăng 20% (bị Độ thuần thục ảnh hưởng, tối đa tăng 40%), duy trì 2 giờ",
+      "heroIds": [
+        "hero:ho-xa-nhi"
+      ]
+    },
+    "advisor:hoanh-trung-bao-liem": {
+      "nameVi": "Sưu Cao Thuế Nặng",
+      "elementVi": "Lâm",
+      "tacticPoints": 14,
+      "effectVi": "Binh Pháp: Lập tức chiêu mộ cho đội quân 6000 Binh Lực, mỗi 1 Binh Lực tiêu hao 40 Lương Thực (bị ảnh hưởng bởi độ thuần thục, tối thiểu tiêu hao 25 Lương Thực). (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:dong-trac"
+      ]
+    },
+    "advisor:hong-nhan-hoac-tam": {
+      "nameVi": "Hồng Nhan Hoặc Tâm",
+      "elementVi": "Hỏa",
+      "tacticPoints": 12,
+      "effectVi": "Bị Động: Đổi Chiến Pháp tự mang của Lữ Bố trong đội thành Vô Song Phi Tướng. Xung phong: Khi lần sau giao chiến với đội quân người chơi, tỉ lệ phát động Chiến Pháp tự mang của Lữ Bố trong đội tăng 10% (Độ Thuần Thục ảnh hưởng, tối đa tăng 20%)",
+      "heroIds": [
+        "hero:dieu-thuyen"
+      ]
+    },
+    "advisor:ke-luoc-van-dan": {
+      "nameVi": "Kế Lược Vạn Dân",
+      "elementVi": "Hỏa",
+      "tacticPoints": 20,
+      "effectVi": "Động Viên: Sau khi phát động, khiến đội quân nhận được trạng thái Cướp Đoạt trong 2 giờ: Khi công chiếm thành công lãnh địa phe địch, nhận ngay 20 giờ sản lượng tài nguyên của mảnh đất này (bị độ thuần thục ảnh hưởng, tối đa nhận 30 giờ sản lượng), đồng thời khiến mảnh đất này vào trạng thái Bị Cướp: Sản lượng tài nguyên giảm 80%, duy trì 10 giờ (Trạng thái Cướp Đoạt của Quân Hiệp Khách không thể hiệu lực)",
+      "heroIds": [
+        "hero:ly-nho"
+      ]
+    },
+    "advisor:ky-binh-dot-tap": {
+      "nameVi": "Kỳ Binh Đột Kích",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Xung phong: Lính Kỵ chuyên dùng, phát động Hành Quân đến mảnh Đất mục tiêu và nhận tăng ích chiến đấu với đội quân người chơi: Hiệp đầu, toàn thể phe ta lần lượt gây 20% Sát Thương Binh Đao cho 1 kẻ địch ngẫu nhiên (sát thương chịu sự ảnh hưởng của tốc độ và độ thuần thục bản thân, tối đa gây ra 40%)",
+      "heroIds": [
+        "hero:ly-quyet"
+      ]
+    },
+    "advisor:ky-cong-xao-nghe": {
+      "nameVi": "Kì Công Xảo Nghệ",
+      "elementVi": "Lâm",
+      "tacticPoints": 18,
+      "effectVi": "Binh Pháp: Xây dựng một đội quân Cơ Quan Thú tồn tại trong 1 giờ, có điểm công thành là 60 (chịu ảnh hưởng từ Độ Thuần Thục, tối đa tăng lên 660), cùng một thời điểm chỉ có thể tồn tại một đội quân Cơ Quan Thú",
+      "heroIds": [
+        "hero:hoang-nguyet-anh"
+      ]
+    },
+    "advisor:ky-phong-dao-vu": {
+      "nameVi": "Kỳ Phong Đảo Vũ",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Từ Xa, Động Viên: Chọn mảnh đất trong 3 ô, sau khi chuẩn bị 1 phút, triệu hồi Mây Mưa trong phạm vi bán kính 1 ô của mảnh đất mục tiêu: Dập tắt mảnh đất đang cháy và có 50% xác suất để lại vũng nước (mảnh đất mục tiêu và mảnh đất lương thực 100% nhận vũng nước), duy trì 3 giờ; Khi mảnh đất vũng nước xảy ra giao chiến, sát thương Đốt Cháy hai phe địch và ta gây ra giảm 5%, sát thương Thủy Công tăng 5%; đồng thời mảnh đất lương thực Lv4 trở lên của bản thân trong phạm vi có 50% xác suất (độ thuần thục ảnh hưởng, tối đa 100%) vĩnh viễn tăng cấp mảnh đất (không vượt quá Lv8), sau khi đổi quyền sở hữu đất sẽ quay về cấp cũ; Mỗi người chơi được tăng tối đa 7 mảnh đất lương thực (Điểm Thế Lực không tăng)",
+      "heroIds": [
+        "hero:vu-cat"
+      ]
+    },
+    "advisor:lam-dich-che-bien": {
+      "nameVi": "Gặp Địch Ứng Biến",
+      "elementVi": "Hỏa",
+      "tacticPoints": 9,
+      "effectVi": "Xung phong: Trận tiếp theo khi chiến đấu với đội người chơi, số lượng lính tử trận của đội quân phe ta giảm 30% (bị ảnh hưởng bởi Độ Thuần Thục, tối đa giảm 60%), và khi chiến bại, Phó Tướng sẽ không vì Tướng Chính tử trận mà tổn thất thêm Binh Lực. (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:quach-gia"
+      ]
+    },
+    "advisor:minh-the-thu-ngu": {
+      "nameVi": "Bảo Vệ Lời Thề",
+      "elementVi": "Sơn",
+      "tacticPoints": 12,
+      "effectVi": "Dưỡng Sức: Dành cho Lính Khiên, sau khi đến đích sẽ vào trạng thái Trấn Thủ và nhận được buff chiến đấu: Khi chiến đấu với đội quân người chơi, ở hiệp đầu, toàn thể phe ta nhận được 10% Cấp Cứu (bị Độ thuần thục ảnh hưởng, tối đa 20%), và cứ duy trì trấn thủ nửa giờ, tỉ lệ trị liệu sẽ tăng 5% (tối đa tăng 2 lần); nếu Chủ Tướng quân ta là phe Ngụy, thì tỉ lệ trị liệu tăng thêm 5%",
+      "heroIds": [
+        "hero:tao-nhan"
+      ]
+    },
+    "advisor:nghiem-tran-thu-ngu": {
+      "nameVi": "Nghiêm Trận Thủ Ngự",
+      "elementVi": "Sơn",
+      "tacticPoints": 5,
+      "effectVi": "Động Viên, Binh Pháp: Trấn thủ trên Thành trì phe ta và từ từ hồi phục Độ Bền Thành Trì này (mỗi 5 phút hồi phục 100 Độ Bền, bị ảnh hưởng bởi độ thuần thục, tối đa hồi 200), duy trì 1 giờ, cùng một Thành Trì tối đa tồn tại 5 đội quân tiến hành hồi phục Độ Bền, đồng thời đội quân nhận hiệu ứng Lũy Địch: Khi chiến đấu bắt đầu khiến cá thể quân địch ngẫu nhiên rơi vào trạng thái Cấm Trị Liệu, duy trì 2 hiệp",
+      "heroIds": [
+        "hero:hac-chieu"
+      ]
+    },
+    "advisor:nguy-phuc-am-do": {
+      "nameVi": "Ngụy Phục Ám Độ",
+      "elementVi": "Lâm",
+      "tacticPoints": 12,
+      "effectVi": "Động Viên, Binh Pháp: Ngụy trang đội quân thành hình thái bình thường của binh chủng cùng loại, duy trì 2 giờ, khi chiến đấu đội quân người chơi vào lần sau sẽ kết thúc ngụy trang và khiến toàn thể phe địch vào trạng thái Bị Tập Kích ở hiệp đầu (hành động chậm lại) (lượng tiêu hao Điểm Kế Lược bị Độ thuần thục ảnh hưởng, tối thiểu tiêu hao 4 điểm)",
+      "heroIds": [
+        "hero:lu-mong"
+      ]
+    },
+    "advisor:nhan-tam-dac-chung": {
+      "nameVi": "Nhân Tâm Đắc Chúng",
+      "elementVi": "Sơn",
+      "tacticPoints": 8,
+      "effectVi": "Từ Xa, Chi Viện: Chọn mảnh đất trong vòng 2 ô, thi triển hiệu quả Chi Viện duy trì 30 phút cho tối đa 5 đội quân Đồng Minh dừng trên ô đất đó: Mỗi Võ Tướng sẽ nhận 350 Phàn Thành Hương Dũng, khi chịu sát thương trong chiến đấu với đội quân người chơi, Phàn Thành Hương Dũng sẽ chống đỡ 50% lượng sát thương (sau khi giao chiến với người chơi 3 trận sẽ mất hiệu lực); Khi đội quân Đồng Minh được chi viện nhận chiến công, sẽ tặng cho Chủ Công 10% Chiến Công (Độ Thuần Thục ảnh hưởng, tối đa tặng 20% Chiến Công), mỗi ngày tối đa có thể nhận 15000 Chiến Công",
+      "heroIds": [
+        "hero:luu-bi"
+      ]
+    },
+    "advisor:nhan-than-chi-le": {
+      "nameVi": "Nhân Thân Chi Lễ",
+      "elementVi": "Lâm",
+      "tacticPoints": 12,
+      "effectVi": "Động Viên: Sử dụng đối với mảnh đất không vượt quá cấp 10 Minh Hữu (ngoại trừ Mô Đồng), lập tức nhận được 50 giờ (ảnh hưởng bởi độ thuần thục, tối đa nhận 100 giờ) buff sản lượng cơ bản của mảnh đất này, và giúp sản lượng mảnh đất này tăng 50%, duy trì 3 giờ. (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:ton-thuong-huong"
+      ]
+    },
+    "advisor:qua-cam-nhac-chien": {
+      "nameVi": "Chiến Đấu Quả Cảm",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Giúp tiêu hao thể lực lệnh hành quân, trấn thủ của đội quân giảm thành 2 điểm, và tốc độ hành quân tăng 20%, duy trì 15 phút (bị Độ Thuần Thục ảnh hưởng, tối đa duy trì 30 phút)",
+      "heroIds": [
+        "hero:nhac-tien"
+      ]
+    },
+    "advisor:tat-chien-dot-tap": {
+      "nameVi": "Cấp Chiến Đột Tập",
+      "elementVi": "Phong",
+      "tacticPoints": 12,
+      "effectVi": "Động Viên: Đội quân nhận trạng thái Đột Kích Nhanh: 3 trận đấu kế tiếp với đội quân người chơi sẽ kết thúc vào hiệp thứ 5, 4 hiệp đầu sát thương toàn quân ta phải chịu tăng 25% (Độ Thuần Thục ảnh hưởng, tối thiểu tăng 10%)",
+      "heroIds": [
+        "hero:ha-hau-uyen"
+      ]
+    },
+    "advisor:thach-binh-bat-tran": {
+      "nameVi": "Thạch Binh Bát Trận",
+      "elementVi": "Sơn",
+      "tacticPoints": 30,
+      "effectVi": "Binh Pháp: Chọn mảnh Đất trong phạm vi 3 ô, sau khi chuẩn bị 1 phút sẽ bày Thạch Binh Bát Trận (Khi bày trận thất bại không tiêu hao Điểm Kế Lược và Sách Lực): Tốc độ hành quân của đội quân địch rơi vào Thạch Binh Bát Trận sẽ giảm 50% (chịu ảnh hưởng Độ Thuần Thục, giảm nhiều nhất 80%); Sau khi chuẩn bị tiếp 5 phút, khiến đội quân địch trong Thạch Binh Bát Trận nhận thêm trạng thái Không Thể Rút Lui duy trì 10 phút (Cùng 1 mảnh Đất trong 12h chỉ có thể bị Thạch Binh Bát Trận ảnh hưởng 1 lần)",
+      "heroIds": [
+        "hero:gia-cat-luong"
+      ]
+    },
+    "advisor:thien-chien-vo-tien": {
+      "nameVi": "Thiện Chiến Vô Tiền",
+      "elementVi": "Hỏa",
+      "tacticPoints": 15,
+      "effectVi": "Động Viên: Khi giao chiến với đội quân người chơi, Võ Lực Tướng Chính tăng 6 điểm (bị ảnh hưởng bởi độ thuần thục, tối đa nhờ độ thuần thục tăng 15 điểm), mỗi khi thắng đội quân có Binh Lực trên 15000 tăng thêm 5 điểm (Tướng Chính phe Quần Hùng là 6 điểm, giới hạn 20 điểm); Mỗi khi tăng thêm 5 điểm Võ Lực, khi mùa giải này thi triển Võ Lực tăng 1 điểm (giới hạn 40 điểm, mùa giải kết thúc đặt lại), hiệu quả kéo dài 10 phút, sau khi rút lui lập tức kết thúc",
+      "heroIds": [
+        "hero:lu-bo"
+      ]
+    },
+    "advisor:thiet-ky-truong-khu": {
+      "nameVi": "Thiết Kỵ Tiến Nhanh",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Tốc độ hành quân của đội quân tăng 20% (bị ảnh hưởng bởi độ thuần thục, tối đa tăng 40%), duy trì 2 giờ; khi cách điểm đích 15 ô, tốc độ hành quân tăng thêm 20%",
+      "heroIds": [
+        "hero:ma-dang"
+      ]
+    },
+    "advisor:thong-quan-tai-chien": {
+      "nameVi": "Thống Quân Tái Chiến",
+      "elementVi": "Lâm",
+      "tacticPoints": 12,
+      "effectVi": "Động Viên: Khôi phục toàn bộ Võ Tướng đội của mình 15 điểm Thể Lực (chịu ảnh hưởng Độ Thuần Thục, nhiều nhất khôi phục 30 điểm). (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:truong-luong"
+      ]
+    },
+    "advisor:thuong-tuong-uy-danh": {
+      "nameVi": "Thượng Tướng Uy Danh",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Xung phong: Giúp đội quân nhận được trạng thái Vô Song Thượng Tướng: Khi lần sau giao chiến với đội quân người chơi, giúp tướng tài trong đội tăng 10% toàn thuộc tính (bị Độ Thuần Thục ảnh hưởng, tối đa tăng 20%)",
+      "heroIds": [
+        "hero:phan-phung"
+      ]
+    },
+    "advisor:tich-quyen-tay-luong": {
+      "nameVi": "Quét Qua Tây Lương",
+      "elementVi": "Phong",
+      "tacticPoints": 5,
+      "effectVi": "Động Viên: Tiêu hao 30 Điểm Thể Lực tiến hành 1 lần càn quét đối với Đất từ Lv.8 trở xuống, kinh nghiệm nhận được tăng cao 100% (chịu ảnh hưởng Độ Thuần Thục, nhiều nhất tăng 150%), một lần Kỹ Năng Quân Sư nhiều nhất có hiệu lực 3 trận đấu",
+      "heroIds": [
+        "hero:ma-sieu"
+      ]
+    },
+    "advisor:tien-phong-tiet-kich": {
+      "nameVi": "Tiên Phong Vây Đánh",
+      "elementVi": "Hỏa",
+      "tacticPoints": 12,
+      "effectVi": "Động Viên: Lính Thương chuyên dụng, nhận tăng ích khi giao chiến với đội của người chơi đang hành quân: Hiệp đầu, toàn thể quân ta trước khi hành động sẽ gây cho cá thể quân địch ngẫu nhiên 60% sát thương (loại sát thương chịu mục cao hơn giữa Võ Lực và Trí Lực của Tướng Chính, tỷ lệ sát thương chịu ảnh hưởng Độ Thuần Thục, nhiều nhất 90%); Nếu Tướng Chính quân ta là Phe Quần, thì tỷ lệ sát thương tăng thêm 10%, duy trì 5 giờ (sau khi Rút Lui lập tức kết thúc)",
+      "heroIds": [
+        "hero:nhan-luong"
+      ]
+    },
+    "advisor:trac-le-phan-phat": {
+      "nameVi": "Phấn Khởi Hào Hứng",
+      "elementVi": "Lâm",
+      "tacticPoints": 15,
+      "effectVi": "Dưỡng Sức: Hành quân đến điểm mục tiêu, khi đến điểm mục tiêu sẽ hồi 25 điểm Sĩ Khí (bị ảnh hưởng bởi độ thuần thục, tối đa hồi 50 điểm), và khi Sĩ Khí thấp hơn 75/50/25 điểm, lượng hồi phục Sĩ Khí tăng thêm 15/30/45 điểm",
+      "heroIds": [
+        "hero:van-suu"
+      ]
+    },
+    "advisor:tu-ngo-ky-muu": {
+      "nameVi": "Tử Ngọ Kỳ Mưu",
+      "elementVi": "Phong",
+      "tacticPoints": 8,
+      "effectVi": "Binh Pháp: Chọn mảnh đất có thể hành quân trong phạm vi 4 ô, Đột Kích đến mảnh Đất đó, trong quá trình sẽ không phát sinh giao chiến. Sau khi đến Đất mục tiêu nhận trạng thái Đột Kích duy trì 60 phút: Hiệp đầu giao chiến với người chơi, tỷ lệ phát động Chiến Pháp Chủ Động/Đột Kích toàn quân ta tăng 6% (Độ Thuần Thục ảnh hưởng, cao nhất 12%), đồng thời đội ngũ sẽ rơi vào trạng thái Kiệt Sức duy trì 60 phút (Độ Thuần Thục ảnh hưởng, tối thiểu duy trì 30 phút): Thời gian công chiếm Đất của đội tăng 25 phút (Sau khi rút lui sẽ xóa)",
+      "heroIds": [
+        "hero:nguy-dien"
+      ]
+    },
+    "advisor:uy-chan-ha-soc": {
+      "nameVi": "Uy Chấn Hà Sóc",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Bị Động: Tốc Độ, Võ Lực của Văn Xú trong đội quân tăng 40 điểm. Xung phong: Chiến Pháp tự mang của Văn Xú trong đội có 70% xác suất (Độ Thuần Thục ảnh hưởng, tối đa 100%) hiệu lực thêm 1 lần với 1 quân địch ngẫu nhiên",
+      "heroIds": [
+        "hero:vien-thieu"
+      ]
+    },
+    "advisor:uy-chan-tay-tho": {
+      "nameVi": "Uy Chấn Tây Thổ",
+      "elementVi": "Lâm",
+      "tacticPoints": 13,
+      "effectVi": "Động Viên: Giúp tất cả Võ Tướng trong đội quân hồi phục 15 điểm Thể Lực (bị ảnh hưởng bởi Độ Thuần Thục, tối đa hồi phục 30), đồng thời khiến tốc độ hồi Thể Lực của họ tăng 50%, duy trì 1 giờ (hiệu quả này lập tức kết thúc sau khi Chung Hội giải nhiệm Quân Sư). (Mỗi ngày giới hạn sử dụng 2 lần)",
+      "heroIds": [
+        "hero:chung-hoi"
+      ]
+    },
+    "advisor:xich-de-du-liet": {
+      "nameVi": "Xích Đế Dư Liệt",
+      "elementVi": "Hỏa",
+      "tacticPoints": 12,
+      "effectVi": "Xung phong: Dành cho Lính Kỵ, đội quân nhận buff khi chiến đấu với người chơi: Hiệp đầu, Tướng Chính phe ta thi triển hiệu quả Đốt Cháy cho nhóm quân địch (2 người) (tỉ lệ sát thương 50%, Trí Lực và Độ Thuần Thục của Tướng Chính quân ta ảnh hưởng, tối đa 75%), duy trì 2 hiệp, cứ hành quân 1 ô sẽ tăng 1% tỉ lệ sát thương, tối đa tăng 20% tỉ lệ sát thương; Nếu Tướng Chính quân ta là Man Tộc, thì tỉ lệ sát thương tăng thêm 20%",
+      "heroIds": [
+        "hero:chuc-dung-phu-nhan"
+      ]
+    }
+  },
+  "newAdvisors": {
+    "advisor:ba-vuong-thao-nghich": {
+      "nameVi": "Bá Vương Thảo Nghịch",
+      "elementVi": "Hỏa",
+      "tacticPoints": 8,
+      "effectVi": "Binh Pháp: Khiến quân địch trong phạm vi 3 ô có thể chọn chủ động giao chiến với phe ta, lần giao chiến này có thể hòa tối đa liên tục 3 lần đồng thời bỏ qua quan hệ khắc chế binh chủng và hiệu quả Cửu Cung Bát Quái; khi kết thúc chiến đấu, phe ta nhận được thêm 10% chiến công (bị Độ thuần thục ảnh hưởng, tối đa nhận được thêm 20%), phe địch nhận được thêm 5% chiến công, duy trì 10 phút (chưa xảy ra chiến đấu sẽ hoàn trả 80% tài nguyên tiêu hao ngoài Thể Lực)",
+      "heroIds": [
+        "hero:ton-sach"
+      ]
+    },
+    "advisor:bach-ma-thay-chu": {
+      "nameVi": "Bạch Mã Thay Chủ",
+      "elementVi": "Phong",
+      "tacticPoints": 10,
+      "effectVi": "Binh Pháp: Chọn một đội quân khác của mình, sau khi đợi 30 phút (bị ảnh hưởng bởi Độ Thuần Thục, tối thiểu 15 phút), đội quân hiện tại và đội quân được chọn sẽ trao đổi vị trí và Sĩ Khí (nếu thi triển thất bại sẽ hoàn trả 80% tài nguyên tiêu hao, trừ Thể Lực)",
+      "heroIds": [
+        "hero:bang-thong"
+      ]
+    },
+    "advisor:chi-bay-tran": {
+      "nameVi": "Chí Bẩy Trận",
+      "elementVi": "Sơn",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Lính Khiên chuyên dùng, sau khi dùng sẽ vào trạng thái Ý Chí Xông Trận kéo dài 30 phút: Trong 4 hiệp đầu chiến đấu, Tướng Chính nhận sát thương giảm 8% (Độ Thuần Thục ảnh hưởng, tối đa giảm 16%), nếu hòa sẽ vào trạng thái Kềm Chế (đội quân địch và ta không thể dùng Lệnh Rút Lui). Trong thời gian Kềm Chế, nếu đội quân ta giao chiến với đội quân địch bị kềm chế và nhận được Chiến Công, bản thân sẽ nhận 30% Chiến Công chia sẻ (Sau khi Rút Lui sẽ lập tức kết thúc)",
+      "heroIds": [
+        "hero:cao-thuan"
+      ]
+    },
+    "advisor:chu-nghich-binh-phan": {
+      "nameVi": "Chu Nghịch Bình Phản",
+      "elementVi": "Hỏa",
+      "tacticPoints": 4,
+      "effectVi": "Động Viên: Tiến hành 1 lần càn quét đối với mảnh đất bản thân hoặc Đồng Minh, trong chiến đấu càn quét toàn bộ phe ta miễn nhiễm Hỗn Loạn và nhận 10% sát thương gây ra tăng và hiệu quả sát thương phải chịu giảm (ảnh hưởng bởi độ thuần thục, tối đa nhận 20%), và sau mỗi trận chiến đấu kết thúc lập tức hồi phục tất cả thương binh, 1 lần kỹ năng quân sư tối đa có hiệu lực 3 trận chiến đấu",
+      "heroIds": [
+        "hero:ma-dai"
+      ]
+    },
+    "advisor:don-doc-tham-nhap": {
+      "nameVi": "Đơn Độc Thâm Nhập",
+      "elementVi": "Lâm",
+      "tacticPoints": 12,
+      "effectVi": "Dưỡng Sức: Hành quân đến đích, sau khi đến đích sẽ hồi phục 25 điểm Sĩ Khí; nếu sau khi đến đích, trong phạm vi 1 ô xung quanh không có đội quân đồng minh đang dừng lại (kể cả điểm đến), sẽ hồi phục thêm 20 điểm Sĩ Khí (bị Độ Thuần Thục ảnh hưởng, tối đa hồi phục thêm 40 điểm), đồng thời khiến toàn bộ phe ta tăng Võ Lực 20, duy trì 15 phút",
+      "heroIds": [
+        "hero:tu-hoang"
+      ]
+    },
+    "advisor:don-quan-doi-chien": {
+      "nameVi": "Đón Quân Đợi Chiến",
+      "elementVi": "Lâm",
+      "tacticPoints": 3,
+      "effectVi": "Động Viên: Tiêu hao 3 Sách Thư để thực hiện 1 lần Đồn Điền bỏ qua khoảng cách, có 50% xác suất (Ảnh hưởng bởi Độ Thuần Thục, tối đa 100% xác suất) làm tăng thu lợi Đồn Điền 1 cấp. Không quá mảnh đất thu lợi 10 cấp (Không vượt quá sản lượng ô đất cấp 10)",
+      "heroIds": [
+        "hero:dang-ngai"
+      ]
+    },
+    "advisor:hieu-lenh-thien-ha": {
+      "nameVi": "Hiệu Lệnh Thiên Hạ",
+      "elementVi": "Hỏa",
+      "tacticPoints": 8,
+      "effectVi": "Thống Lĩnh: Sau khi phát động Công Thành đối với kiến trúc không trung lập sẽ bắt đầu giai đoạn chuẩn bị 10 phút, trong 8 phút đầu của giai đoạn chuẩn bị, các đội quân đồng đội trong phạm vi 5 ô quanh đó có thể chọn hưởng ứng (tối đa hưởng ứng 5 đội), sau khi hưởng ứng, đội quân sẽ hành quân đến để hình thành Quân Đoàn cùng đội quân của Tào Tháo. Sau khi thời gian chuẩn bị kết thúc, Quân Đoàn sẽ phát động xung phong về phía kiến trúc mục tiêu (không tiêu hao Thể Lực). Trong quá trình xung phong, nếu xảy ra giao chiến, sát thương gây ra của các đội quân trong Quân Đoàn sẽ tăng thêm 3%, đồng thời người phát động sẽ nhận thêm 5% Chiến Công từ các người chơi khác trong Quân Đoàn (chịu ảnh hưởng bởi Độ Thuần Thục, tối đa 15%), giới hạn tối đa mỗi ngày 10000 Chiến Công",
+      "heroIds": [
+        "hero:tao-thao"
+      ]
+    },
+    "advisor:ho-ve-than-uy": {
+      "nameVi": "Hổ Vệ Thần Uy",
+      "elementVi": "Sơn",
+      "tacticPoints": 10,
+      "effectVi": "Dưỡng Sức: Sau khi phát động vào trạng thái Trấn Thủ, và giúp bản thân nhận trạng thái Hổ Vệ: Khi vào chiến đấu, sát thương Tướng Chính phải chịu giảm 10%, sát thương Phó Tướng gây ra tăng 5% (bị ảnh hưởng bởi Độ Thuần Thục, tối đa tăng 10%), duy trì 3 hiệp",
+      "heroIds": [
+        "hero:hua-chu"
+      ]
+    },
+    "advisor:ke-hoach-chu-toan": {
+      "nameVi": "Kế Hoạch Chu Toàn",
+      "elementVi": "Phong",
+      "tacticPoints": 5,
+      "effectVi": "Động Viên: Sau khi dùng tiến hành công chiếm đối với mảnh đất trung lập (ngoại trừ Mô Đồng), công chiếm lần này bỏ qua giai đoạn hòa (sau khi liên tục bỏ qua 3 lần hòa đội quân sẽ rút lui), nếu đội quân thành công chiếm lĩnh mảnh đất, thì giúp mảnh đất này tăng 50% (bị Độ Thuần Thục ảnh hưởng, tối đa tăng 100%) sản lượng tài nguyên, duy trì 24 giờ; Nếu đội quân khi công chiếm chiến bại, thì hoàn trả 30% (bị Độ Thuần Thục ảnh hưởng, tối đa tăng 50%) tài nguyên chiêu binh của số lượng lính tử vong tương ứng",
+      "heroIds": [
+        "hero:tran-cung"
+      ]
+    },
+    "advisor:ky-hoa-sach-toan": {
+      "nameVi": "Ký Họa Sách Toán",
+      "elementVi": "Sơn",
+      "tacticPoints": 10,
+      "effectVi": "Dưỡng Sức: Sau khi đến điểm mục tiêu sẽ vào trạng thái trấn thủ và nhận buff chiến đấu: Khi chiến đấu với đội quân người chơi, ở hiệp 3, sát thương toàn thể phe ta phải chịu giảm 5% (bị độ thuần thục ảnh hưởng, tối đa 10%); sau khi chiến bại sẽ trở lại điểm điều động có thể chiêu binh, sẽ tự động tiêu hao tài nguyên chiêu mộ đầy binh lực cho đội quân",
+      "heroIds": [
+        "hero:sp-phap-chinh"
+      ]
+    },
+    "advisor:lao-thang-phia-truoc": {
+      "nameVi": "Lao Thẳng Phía Trước",
+      "elementVi": "Sơn",
+      "tacticPoints": 11,
+      "effectVi": "Dưỡng Sức: Sau khi đến điểm mục tiêu sẽ vào trạng thái Trấn Thủ và nhận buff chiến đấu: Khi giao chiến với đội quân người chơi, hiệp đầu Chủ Tướng phe ta gây ra 50% sát thương đối với Chủ Tướng phe địch (loại sát thương là một chỉ số cao hơn trong Võ Lực và Trí Lực của Chủ Tướng, tỉ lệ sát thương bị ảnh hưởng bởi độ thuần thục, tối đa 100%); đồng thời khi Binh Lực Chủ Tướng quân địch trong chiến đấu thấp hơn 5% Binh Lực tối đa sẽ bị trực tiếp Trảm Sát (bị Độ Thuần Thục ảnh hưởng, tối đa Trảm Sát 10% Binh Lực tối đa), sau chiến đấu khi tổng Binh Lực bản thân đội quân bao gồm cả thương binh lần đầu thấp hơn 65%, hiệu quả Trảm Sát mất hiệu lực",
+      "heroIds": [
+        "hero:sp-hoang-trung"
+      ]
+    },
+    "advisor:sung-vinh-ai-dai": {
+      "nameVi": "Sủng Vinh Ái Đãi",
+      "elementVi": "Sơn",
+      "tacticPoints": 10,
+      "effectVi": "Dưỡng Sức: Sau khi đến điểm mục tiêu sẽ vào trạng thái Trấn Thủ và nhận buff chiến đấu: Khi chiến đấu với đội quân người chơi, hiệp số chẵn trị liệu cá thể ngẫu nhiên phe ta (tỉ lệ Trị Liệu 50%, bị ảnh hưởng bởi độ thuần thục, tối đa 100%); đồng thời sau khi chiến bại quay về điểm điều động có thể chiêu binh, sẽ tự động tiêu hao tài nguyên chiêu đầy Binh Lực cho đội quân",
+      "heroIds": [
+        "hero:sp-bo-luyen-su"
+      ]
+    },
+    "advisor:tap-dia-doat-thanh": {
+      "nameVi": "Tập Địa Đoạt Thành",
+      "elementVi": "Hỏa",
+      "tacticPoints": 7,
+      "effectVi": "Động Viên: Sau khi dùng điểm công thành của đội quân tăng 15% (bị Độ Thuần Thục ảnh hưởng, tối đa tăng 30%), duy trì 1 giờ",
+      "heroIds": [
+        "hero:truong-yen"
+      ]
+    },
+    "advisor:tay-luong-phi-hung": {
+      "nameVi": "Tây Lương Phi Hùng",
+      "elementVi": "Sơn",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Dành riêng cho Kỵ, tiêu hao 3000 Lương Thực để huấn luyện Quân thành Lính Kỵ Phi Hùng: Khi Tướng Chính quân ta hành động mỗi hiệp, có 20% xác suất (bị ảnh hưởng bởi Độ Thuần Thục, tối đa 40% xác suất) gây cho nhóm địch (2 người) Sát thương mưu lược (TL Sát thương 10%, bị ảnh hưởng bởi tổng lượng trị liệu toàn quân ta nhận được, sau khi kích hoạt sẽ cài lại tiến độ tích lũy), duy trì 30 phút, sau khi rút lui sẽ lập tức kết thúc hiệu ứng này, Phi Hùng Quân không thể dùng kỹ năng Quân Sư này",
+      "heroIds": [
+        "hero:sp-dong-trac"
+      ]
+    },
+    "advisor:thien-cong-tuong-quan": {
+      "nameVi": "Thiên Công Tướng Quân",
+      "elementVi": "Hỏa",
+      "tacticPoints": 4,
+      "effectVi": "Từ Xa: Tiêu hao 1 Sách Thư và giao chiến từ xa với Tặc Khấu không dưới Lv.8 trong phạm vi 4 ô (giao chiến này bỏ qua giai đoạn hòa; nếu liên tiếp bỏ qua 3 lần hòa, đội quân sẽ rút lui), nếu thắng sẽ bổ xung 500 Binh Lực cho đội quân hiện tại (Ảnh hưởng bởi Độ Thuần Thục, tối đa 1000 Binh Lực) (Không xảy ra chiến đấu thì hoàn trả 80% tài nguyên tiêu hao ngoài Thể Lực)",
+      "heroIds": [
+        "hero:truong-giac"
+      ]
+    },
+    "advisor:tich-lich-xa-tran": {
+      "nameVi": "Tích Lịch Xa Trận",
+      "elementVi": "Hỏa",
+      "tacticPoints": 8,
+      "effectVi": "Động Viên: Sau khi dùng, Điểm Công Thành của đội quân tăng 15% (bị Độ thuần thục ảnh hưởng, tối đa tăng 30%), khi giao chiến với quân phòng thủ thành, toàn thể nhận được 500 Hương Dũng, duy trì 1 giờ",
+      "heroIds": [
+        "hero:sp-luu-diep"
+      ]
+    },
+    "advisor:tiet-nghia-da-muu": {
+      "nameVi": "Tiết Nghĩa Đa Mưu",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Xung phong: Thực hiện 1 lần Công Thành với 0 Điểm Công Thành lên kiến trúc không phải trung lập (có thể dùng đất nối của Minh Hữu), và trong 3 hiệp đầu toàn quân ta giảm 5% sát thương phải chịu từ Võ Tướng nam (ảnh hưởng bởi Độ Thuần Thục, giảm tối đa 10%)",
+      "heroIds": [
+        "hero:vuong-di"
+      ]
+    },
+    "advisor:tinh-khien-kich-nghich": {
+      "nameVi": "Tình Khiên Kích Nghịch",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Bị Động: Trong đội quân, Lữ Bố đổi Chiến Pháp tự mang thành Bạch Môn Nghịch Chiến. Dưỡng Sức: Đóng quân tại ô mục tiêu, Lữ Bố trong đội quân nhận sát thương giảm 6% (chịu ảnh hưởng bởi độ thuần thục, tối đa giảm 12%)",
+      "heroIds": [
+        "hero:sp-dieu-thuyen"
+      ]
+    },
+    "advisor:vo-kien-bat-ham": {
+      "nameVi": "Vô Kiên Bất Hãm",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Động Viên: Thời gian Công Thành của đội quân hiện tại giảm 15 giây (bị ảnh hưởng bởi Độ Thuần Thục, giảm tối đa 30 giây), duy trì 30 phút",
+      "heroIds": [
+        "hero:sp-nhac-tien"
+      ]
+    },
+    "advisor:vo-thanh-duong-uy": {
+      "nameVi": "Võ Thánh Dương Uy",
+      "elementVi": "Hỏa",
+      "tacticPoints": 10,
+      "effectVi": "Bị Động: Trong đội quân, Ăn Ý lính Khiên của Quan Vũ tăng lên S. Xung phong: Khi chiến đấu với Đội quân của người chơi, lần đầu tiên Quan Vũ thi triển Chiến Pháp tự mang trong đội quân sẽ có 50% xác suất (bị ảnh hưởng bởi Độ Thuần Thục, tối đa 100% xác suất) bỏ qua thời gian chuẩn bị của 1 hiệp",
+      "heroIds": [
+        "hero:quan-hung"
+      ]
+    }
+  },
+  "zhTexts": {
+    "advisor:an-nhan-doat-quyen": {
+      "effectZh": {
+        "text": "動員：與玩家部隊戰鬥時，主將提升 8 點智力和 5% 攻心（受熟練度影響，至多提升 15% 攻心），每戰勝兵力大於 15000 的部隊智力加成提升 1 點（上限 30 點，賽季結束重置），效果持續 30 分鐘，撤退後立即結束。",
+        "viSha256": "88d7a39a3843a0b86698e8a319fdfa22346274759ce667c631f5f8dcb67bb6c1"
+      }
+    },
+    "advisor:an-phuc-binh-tam": {
+      "effectZh": {
+        "text": "被動：已任命的風類軍師不多於 3 名時（超過 3 名仍按 3 名計算），每有 1 支任命風類軍師的部隊，所有部隊的城外徵兵速度提升 3%（受熟練度影響，至多提升 4.5%）。\n動員：使得自身被動的徵兵加速效果提升 100%（受熟練度影響，至多提升 200%），持續 2 小時（魯肅卸任軍師後效果立刻結束）。（每日限定使用 2 次）",
+        "viSha256": "0dca4aa7c56f15be38db7452ee275625ea7ec3fada3863a9b102c27b2ef15ea3"
+      }
+    },
+    "advisor:ba-vuong-thao-nghich": {
+      "nameZh": {
+        "text": "霸王讨逆",
+        "viSha256": "8a3e42d8c0cc93f838d6ae161212964bfa7bb8970eaabbba11f2b3dd3462127f",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E9%9C%B8%E7%8E%8B%E8%AE%A8%E9%80%86-47/"
+      },
+      "effectZh": {
+        "text": "兵法：使 3 格範圍內的敵方部隊可選擇主動與我方交戰，此次交戰至多可連續戰平 3 次，並無視兵種剋制關係與九宮八卦效果；戰鬥結束時，我方額外獲得 10% 戰功（受熟練度影響，至多額外獲得 20%），敵方額外獲得 5% 戰功，持續 10 分鐘（未發生戰鬥將返還 80% 除體力外的消耗資源）",
+        "viSha256": "9c4d7e490f383d23bb28b537d111c82ae10f65576e80acd4eda15359e2a54ed2"
+      }
+    },
+    "advisor:bach-ma-thay-chu": {
+      "nameZh": {
+        "text": "白马替主",
+        "viSha256": "5eb42131e595be451a58d74cb534e4c6df7bd5efcc31b9ed5339f5609ce471f7",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E7%99%BD%E9%A9%AC%E6%9B%BF%E4%B8%BB-61/"
+      },
+      "effectZh": {
+        "text": "兵法：選擇我方另一支部隊，等待 30 分鐘後（受熟練度影響，至少 15 分鐘），當前部隊與所選部隊交換位置與士氣（施放失敗將返還 80% 除體力外的消耗資源）",
+        "viSha256": "baf32de02e02ce7436365d6a5a3597c3138822ab4a9d955a568194ebccc3a8d2"
+      }
+    },
+    "advisor:bach-ma-tuong-quan": {
+      "effectZh": {
+        "text": "被動：使得部隊內趙雲獲得增益：統率、速度提升 20 點且弓兵適性 +1，武力、智力下降 15 點且槍兵適性 -1。\n衝鋒：若所在隊伍有趙雲，則與玩家部隊交戰時，我方部隊前 4 回合主動戰法發動率提升 5%（受熟練度影響，至多提升 10%）。",
+        "viSha256": "c7ab536dbebaeead79e30279dddcb3bb51405599ea632298ca30ffc249bae0cd"
+      }
+    },
+    "advisor:binh-quy-than-toc": {
+      "effectZh": {
+        "text": "被動：我方所有騎兵部隊行軍速度高於 50 點時，每 10 點（受熟練度影響，最低 5 點）行軍速度將使我方主將最高屬性額外提升 1 點（上限 25 點）。\n衝鋒：騎兵專屬，戰鬥第 3 回合我方隨機單體獲得破陣狀態，持續 1 回合。",
+        "viSha256": "16e57fac3b7d5a7e8b5911a6e41286c28265b090b0a1fd2810c2bf8e3e9fd23e"
+      }
+    },
+    "advisor:cam-pham-du-hiep": {
+      "effectZh": {
+        "text": "衝鋒：選擇地塊發起進攻且獲得增益：在河道附近 3 格內與玩家部隊交戰時獲得 25 點士氣提升，且我方每造成 10 點傷害可獲得 20 糧食（受熟練度影響，至多 40 糧食），每日上限 40 萬（到達後未發生戰鬥則返還 80% 除體力外的消耗資源）。",
+        "viSha256": "e9c090d051e2862f7a39b06fe93c7ed306f42c1495c302d9e1b1284b0f25362d"
+      }
+    },
+    "advisor:chan-phan-ngang-duong": {
+      "effectZh": {
+        "text": "向目的地行軍，到達目的地後恢復 25 點士氣（受熟練度影響，至多恢復 50 點）。",
+        "viSha256": "9e461cbe2c0f79e3bd676488810cce73196424de8e337b69f33e3da6260bf192"
+      }
+    },
+    "advisor:chi-bay-tran": {
+      "nameZh": {
+        "text": "陷阵之志",
+        "viSha256": "b6a4a2a5f173707dd552bca13fd7a5776ce5a459263a265ea42615a13e55f173",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E9%99%B7%E9%98%B5%E4%B9%8B%E5%BF%97-38/"
+      },
+      "effectZh": {
+        "text": "動員：盾兵專屬，使用後進入持續 30 分鐘的衝陣之志狀態：戰鬥前 4 回合，主將受到傷害降低 8%（受熟練度影響，至多降低 16%），若戰平則進入牽制狀態（敵我部隊均無法使用撤退指令）。牽制期間，若我方部隊與被牽制的敵方部隊交戰並獲得戰功，自身將獲得 30% 分享戰功（撤退後立即結束）",
+        "viSha256": "b8c61d03abd739420221f8220cdde89e28c2d4d9f44c523859a3f3fae9975eda"
+      }
+    },
+    "advisor:chiem-tinh-boc-quai": {
+      "effectZh": {
+        "text": "動員：使部隊獲得隨機增益，若部隊附近 2 格範圍內有山或水，則有概率獲得特殊卦象增益，持續 10 分鐘（受熟練度影響，至多持續 30 分鐘）。",
+        "viSha256": "ed9e2b7376b2909ea5718b36a89490a922c614ac1d44f197d99182d6be147af7"
+      }
+    },
+    "advisor:chien-y-ngang-duong": {
+      "effectZh": {
+        "text": "被動：所在部隊獲得戰功時將額外獲得戰意值，戰意值達到 100 時釋放軍師技將清除全部戰意值並降低 30% 釋放消耗（受熟練度影響，至多降低 50%）。\n動員：部隊武將立即移除重傷狀態、恢復 100% 傷兵並獲得 3000 兵力。（每日限定使用 2 次）",
+        "viSha256": "c866336585b8ecd90cb322554059d6e73dd214cef01a213b559144955b38d9e9"
+      }
+    },
+    "advisor:chu-nghich-binh-phan": {
+      "nameZh": {
+        "text": "诛逆平叛",
+        "viSha256": "b148e1d28ade081185df056fe86c6f42befbfabfa82a3e7a8a7f8113d427548f",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%AF%9B%E9%80%86%E5%B9%B3%E5%8F%9B-46/"
+      },
+      "effectZh": {
+        "text": "動員：對自身或盟友地塊進行 1 次掃蕩，掃蕩戰鬥中我方全體免疫混亂，並獲得 10% 造成傷害提升與受到傷害降低效果（受熟練度影響，至多 20%），且每場戰鬥結束後立即恢復所有傷兵，1 次軍師技至多生效 3 場戰鬥",
+        "viSha256": "c67d6142bf2587cf3a8326cf0802ac89ae110ced07b23335ff138a2e460036e1"
+      }
+    },
+    "advisor:dan-cung-phuc-xa": {
+      "effectZh": {
+        "text": "弓兵專屬，選擇 2 格內非自身所在地塊，準備 15 秒後，與該地塊上的玩家部隊依次發生交戰，若敵方部隊為盾兵，則進入戰鬥時獲得減益：首回合我方全體造成傷害降低 5%（受熟練度影響，至少降低 0%）。\n注：無法選中免戰建築釋放。",
+        "viSha256": "28a1eac3c68c84a87544f99c16f805029a117105c0ddce1e84e87a6bd3108205"
+      }
+    },
+    "advisor:dan-ky-trung-tran": {
+      "effectZh": {
+        "text": "選擇 4 格內的非自身所在地塊，準備 15 秒後快速衝鋒到目標地塊，過程中無視阻擋且不發生交戰，3 分鐘後返回原地，期間無法主動撤退。衝鋒後部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），體力消耗降低 40%。",
+        "viSha256": "3db22763a5266d4ffb65b8216650c8dc367246f535e6bb12c914baba95ce0ca2"
+      }
+    },
+    "advisor:dang-giap-ngu-dich": {
+      "effectZh": {
+        "text": "盾兵專屬，消耗 3000 木材為隊伍打造簡易藤甲：使我方部隊受到的兵刃傷害降低 8%（受熟練度影響，至多降低 12%），隊伍行軍速度降低 10%，處於灼燒時額外損失兵力（傷害率 300%），並燒毀該簡易藤甲。藤甲兵無法使用該軍師技；撤退後效果立刻結束。",
+        "viSha256": "eb195b0243e73cbe89c0bf85478e76d865c044a20189adad8bdf56e376c5d779"
+      }
+    },
+    "advisor:dinh-quan-ky-tap": {
+      "effectZh": {
+        "text": "遠程：弓兵專屬，選擇 3 格內非自身所在地塊（非建築地塊或符合連地規則的建築地塊），準備 15 秒後，與該地塊上的玩家部隊依次發生交戰並獲得戰鬥增益：首回合行動前，我軍全體對敵軍隨機單體造成 50% 傷害（傷害類型受主將武力和智力中較高一項影響，傷害率受熟練度影響，至多 75%）；若我軍主將為蜀陣營，則傷害率額外提升 10%；若釋放後未發生交戰，返還 80% 計略點和策力消耗。",
+        "viSha256": "6ab6ca609b9d13356fa985b6e23f34762d24337892481e952037d29a8142c890"
+      }
+    },
+    "advisor:don-doc-tham-nhap": {
+      "nameZh": {
+        "text": "孤军深入",
+        "viSha256": "c51aaafc23da1ea3e3d8cbc65a82b071e82f10797a62415451573cf6e785054d",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%AD%A4%E5%86%9B%E6%B7%B1%E5%85%A5-26/"
+      },
+      "effectZh": {
+        "text": "蓄勢：向目的地行軍，到達後恢復 25 點士氣；若到達後周圍 1 格範圍內（含目的地）沒有停留的同盟部隊，則額外恢復 20 點士氣（受熟練度影響，至多額外恢復 40 點），並使我方全體武力提升 20 點，持續 15 分鐘",
+        "viSha256": "673604359cd1d2183856ce4f9e3c9531885cf0ed87bec0be2b981f8d48ccaede"
+      }
+    },
+    "advisor:don-quan-doi-chien": {
+      "nameZh": {
+        "text": "屯兵待战",
+        "viSha256": "3c1a82c507c0c0183ef08c493056cd2d617559cdb336130b6a366450bff958fe",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%B1%AF%E5%85%B5%E5%BE%85%E6%88%98-63/"
+      },
+      "effectZh": {
+        "text": "動員：消耗 3 策書進行 1 次無視距離的屯田，有 50% 機率（受熟練度影響，至多 100% 機率）使屯田收益提升 1 級。收益不超過 10 級地塊的產量",
+        "viSha256": "afb72385d69c8effb8c361c6946f070ec10c98ba90528249adb5a9599b396a22"
+      }
+    },
+    "advisor:hanh-tat-nhu-phi": {
+      "effectZh": {
+        "text": "動員：部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時。",
+        "viSha256": "da41ab0c4f90b5fa1bae51fd28902a49cfbefe73bbb01f0f39fc24dbcde09dc9"
+      }
+    },
+    "advisor:hieu-lenh-thien-ha": {
+      "nameZh": {
+        "text": "号令天下",
+        "viSha256": "06355ebce4458e534e897b8bcab72311585d4baecb6bc7880edb3eb10ad1e83c",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%8F%B7%E4%BB%A4%E5%A4%A9%E4%B8%8B-62/"
+      },
+      "effectZh": {
+        "text": "統領：對非中立建築發起攻城後開始 10 分鐘的準備階段，準備階段前 8 分鐘內，周圍 5 格範圍內的同盟部隊可選擇響應（至多響應 5 支），響應後部隊將行軍前往與曹操部隊組成軍團。準備時間結束後，軍團將向目標建築發起衝鋒（不消耗體力）。衝鋒過程中若發生交戰，軍團內部隊造成的傷害提升 3%，且發起者額外獲得軍團內其他玩家 5% 戰功（受熟練度影響，至多 15%），每日上限 10000 戰功",
+        "viSha256": "b31978f1288afbf89d90f297c5f9ba38b1dee8d9da3564b3e1cdbdc64d0aeeaf"
+      }
+    },
+    "advisor:ho-ve-than-uy": {
+      "nameZh": {
+        "text": "虎卫神威",
+        "viSha256": "d19e56074ba23031a8fd2a7d3d8d0e56670509befb07f972e78979e3ce172fba",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%99%8E%E5%8D%AB%E7%A5%9E%E5%A8%81-53/"
+      },
+      "effectZh": {
+        "text": "蓄勢：發動後進入駐守狀態，並使自身獲得虎衛狀態：進入戰鬥時，主將受到傷害降低 10%，副將造成傷害提升 5%（受熟練度影響，至多提升 10%），持續 3 回合",
+        "viSha256": "8a803d2eb603912d1d3388fde4c580b1ea0c4ee51851fda428bbccf66ee40690"
+      }
+    },
+    "advisor:hoanh-trung-bao-liem": {
+      "effectZh": {
+        "text": "兵法：為部隊立即徵召 6000 兵力，每 1 兵力消耗 40 糧食（受熟練度影響，至少消耗 25 糧食）。（每日限定使用 2 次）",
+        "viSha256": "ddd7ec66bf2c1a6c59d1fa881f710ee98610f7f2a5218e578ea6387992820ac7"
+      }
+    },
+    "advisor:hong-nhan-hoac-tam": {
+      "effectZh": {
+        "text": "被動：將部隊內呂布自帶戰法替換為無雙飛將。\n衝鋒：下次與玩家部隊交戰時，部隊內呂布自帶戰法發動率提升 10%（受熟練度影響，至多提升 20%）。",
+        "viSha256": "a99b25f59ebbf9681803b52849c247cefaf2dbf88bb48904be2e4662a731465d"
+      }
+    },
+    "advisor:ke-hoach-chu-toan": {
+      "nameZh": {
+        "text": "计出万全",
+        "viSha256": "a7fb713993f25941b592cc33009184b6f74f812d4e9725889d6157eabbf860da",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%AE%A1%E5%87%BA%E4%B8%87%E5%85%A8-52/"
+      },
+      "effectZh": {
+        "text": "動員：使用後對中立地塊（銅礦除外）進行攻佔，此次攻佔跳過戰平階段（連續跳過 3 次戰平後部隊將撤退）；若部隊成功佔領地塊，則使該地塊資源產量提升 50%（受熟練度影響，至多提升 100%），持續 24 小時；若部隊攻佔時戰敗，則返還陣亡兵力對應徵兵資源的 30%（受熟練度影響，至多 50%）",
+        "viSha256": "d39b27444952b765e85d51b476db441e76c83eec2ea8d69203fd1bf295895759"
+      }
+    },
+    "advisor:ke-luoc-van-dan": {
+      "effectZh": {
+        "text": "動員：發動後使部隊獲得持續 2 小時的掠奪狀態：成功攻佔敵方領地時，立即獲得該地塊 20 小時資源產量的資源（受熟練度影響，至多獲得 30 小時產量），並使該地塊進入遭掠狀態：資源產量降低 80%，持續 10 小時（俠客軍的掠奪狀態無法生效）。",
+        "viSha256": "44e1e34ae7ae2cb221931e0c3ed8d0849d2dddd41c9f29d825938733d20c35e2"
+      }
+    },
+    "advisor:ky-binh-dot-tap": {
+      "effectZh": {
+        "text": "衝鋒：騎兵專屬，向目的地發起行軍並獲得與玩家部隊戰鬥增益：首回合，我方全體各自對隨機敵方單體造成 20% 兵刃傷害（受自身速度與熟練度影響，至多造成 40%）。",
+        "viSha256": "178397c47ff62f6f466ee0040dd95c53d7c7ef634627446c3f3c2bd4240c4393"
+      }
+    },
+    "advisor:ky-cong-xao-nghe": {
+      "effectZh": {
+        "text": "兵法：建造一支存在 1 小時的機關獸部隊，攻城值為 60 點（受熟練度影響，至多提高至 660 點），同一時間只能存在一支機關獸部隊。",
+        "viSha256": "f2387e0461c830c36dc857b1b5b05f07844eee368ba863e4a5f276c6709daa7e"
+      }
+    },
+    "advisor:ky-hoa-sach-toan": {
+      "nameZh": {
+        "text": "奇画策算",
+        "viSha256": "828b1d2d95a33e0e67c99901ed39b02724299924e2bc0a16c2df80af3d55e854",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%A5%87%E7%94%BB%E7%AD%96%E7%AE%97-50/"
+      },
+      "effectZh": {
+        "text": "蓄勢：到達目標點後進入駐守狀態並獲得戰鬥增益：與玩家部隊戰鬥時，第 3 回合我方全體受到傷害降低 5%（受熟練度影響，至多 10%）；戰敗後返回可徵兵的調動點時，將自動消耗資源為部隊徵滿兵力",
+        "viSha256": "9507dedc45d328460c86c1cd7bb117a030c9da1cac9f9ee7ac498df59fd666a3"
+      }
+    },
+    "advisor:ky-phong-dao-vu": {
+      "effectZh": {
+        "text": "遠程、動員：選擇 3 格內地塊，準備 1 分鐘後在目標地塊半徑 1 格內召喚雲雨：澆滅燃燒地塊並有 50% 概率留下水窪（目標地塊與糧食地塊 100% 獲得水窪），持續 3 小時；水窪地塊發生交戰時敵我雙方造成的灼燒傷害降低 5%，水攻傷害提升 5%；同時範圍內自身 4 級以上糧食地塊有 50% 概率（受熟練度影響，至多 100%）永久提升地塊等級（不超過 8 級），地塊易主後恢復原等級；每名玩家至多提升 7 塊糧食地塊（勢力值不增加）。",
+        "viSha256": "029c1801e0a1a1c168aef721ad9de81c449f761c28b78c1da36e04f98a8f88a1"
+      }
+    },
+    "advisor:lam-dich-che-bien": {
+      "effectZh": {
+        "text": "衝鋒：下一場與玩家部隊戰鬥時，我方部隊死兵數減少 30%（受熟練度影響，至多減少 60%），且戰敗時，副將不會因主將死亡額外損失兵力。（每日限定使用 2 次）",
+        "viSha256": "05d157b0ccd87ffdc99cb53b8690879b433a1df8c1b325dfb6be1a60494b969f"
+      }
+    },
+    "advisor:lao-thang-phia-truoc": {
+      "nameZh": {
+        "text": "蓄锐摧锋",
+        "viSha256": "0077cc67769a81981054379c6a569123aaffedd6a435d89ed0e1843ac88c1164",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%93%84%E9%94%90%E6%91%A7%E9%94%8B-51/"
+      },
+      "effectZh": {
+        "text": "蓄勢：到達目標點後進入駐守狀態並獲得戰鬥增益：與玩家部隊交戰時，首回合我方主將對敵方主將造成 50% 傷害（傷害類型為主將武力與智力中較高的一項，傷害率受熟練度影響，至多 100%）；且戰鬥中敵方主將兵力低於最大兵力的 5% 時將被直接斬殺（受熟練度影響，至多斬殺最大兵力的 10%）；戰鬥後部隊含傷兵的總兵力首次低於 65% 時，斬殺效果失效",
+        "viSha256": "cec98431c7325c27ae811cc8ef8aefd520ea38df10e48180655d7b10e89704ba"
+      }
+    },
+    "advisor:minh-the-thu-ngu": {
+      "effectZh": {
+        "text": "蓄勢：盾兵專屬，到達目的地後進入駐守狀態並獲得戰鬥增益：與玩家部隊戰鬥時，首回合我方全體獲得 10% 急救（受熟練度影響，至多 20%），且每持續駐守半小時治療率提升 5%（最多提升 2 次）；若我軍主將為魏陣營，則治療率額外提升 5%。",
+        "viSha256": "8d5ff0d41297113539c48b0245f8869935c8a513cac6eeac05e093aa9ac85e44"
+      }
+    },
+    "advisor:nghiem-tran-thu-ngu": {
+      "effectZh": {
+        "text": "動員、兵法：駐守在友方城池上並緩慢恢復該城池耐久（每 5 分鐘恢復 100 耐久，受熟練度影響，至多恢復 200），持續 1 小時，同一城池至多存在 5 支部隊進行耐久恢復；同時部隊獲得壘敵效果：戰鬥開始時使敵軍隨機單體陷入禁療狀態，持續 2 回合。",
+        "viSha256": "1f6ee1aeb4a27b1ce292ed0f2cfcc7fed635fbe7c3c172fc726684e705cda84e"
+      }
+    },
+    "advisor:nguy-phuc-am-do": {
+      "effectZh": {
+        "text": "動員、兵法：將部隊偽裝為同一兵種的常規形態，持續 2 小時，下次與玩家部隊戰鬥時結束偽裝並使敵方全體首回合處於遇襲狀態（行動滯後）（計略點消耗量受熟練度影響，至少消耗 4 點）。",
+        "viSha256": "33c87ccf1246d2ddff6fec6b803c2293aa1e6cb24f7b2d1d034a3177e54c68c0"
+      }
+    },
+    "advisor:nhan-tam-dac-chung": {
+      "effectZh": {
+        "text": "選擇 2 格內的地塊，對該地塊停留的至多 5 支同盟部隊施加持續 30 分鐘的援助效果：每名武將獲得 350 樊城鄉勇，與玩家部隊戰鬥受到傷害時，將由樊城鄉勇抵擋其中 50% 傷害（與玩家部隊戰鬥 3 場後失效）；受到援助的同盟部隊獲得戰功時，將贈予主公 10% 戰功（受熟練度影響，至多贈予 20% 戰功），每日至多可獲取 15000 戰功。",
+        "viSha256": "8fa27681e9248a04b502b85833d298c0174f98c871038b6fcff06ca29b20714d"
+      }
+    },
+    "advisor:nhan-than-chi-le": {
+      "effectZh": {
+        "text": "動員：對不超過 10 級的盟友地塊（除銅礦外）使用，立即獲得該地塊 50 小時（受熟練度影響，至多 100 小時）基礎產量的資源，並使該地塊產量提升 50%，持續 3 小時。（每日限定使用 2 次）",
+        "viSha256": "11b23b79c07617cc400bfdf5cb4303eefce510e0a662ac2306f37da903719434"
+      }
+    },
+    "advisor:qua-cam-nhac-chien": {
+      "effectZh": {
+        "text": "動員：使部隊行軍、駐守指令的體力消耗降低為 2 點，且行軍速度提升 20%，持續 15 分鐘（受熟練度影響，至多持續 30 分鐘）。",
+        "viSha256": "a59ec8df6349e22528d8453f5cf9fb1e77e82c3ceb592561532ac37c37222e96"
+      }
+    },
+    "advisor:sung-vinh-ai-dai": {
+      "nameZh": {
+        "text": "宠荣爱待",
+        "viSha256": "c5fc9bb8624bc1c0ef90a3c4e4f8d2fda45818ef8092f371815fb15a6f16f225",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%AE%A0%E8%8D%A3%E7%88%B1%E5%BE%85-54/"
+      },
+      "effectZh": {
+        "text": "蓄勢：到達目標點後進入駐守狀態並獲得戰鬥增益：與玩家部隊戰鬥時，偶數回合治療我方隨機單體（治療率 50%，受熟練度影響，至多 100%）；且戰敗後返回可徵兵的調動點時，將自動消耗資源為部隊徵滿兵力",
+        "viSha256": "1da68c237a3db0362380166ce33aaa27569ef1f45a93e57df859ecfafd476113"
+      }
+    },
+    "advisor:tap-dia-doat-thanh": {
+      "nameZh": {
+        "text": "袭地夺城",
+        "viSha256": "d06487f6b4c70ae7850f5d0273cd3e368abbca142d32cfffd330c7461895e6da",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%A2%AD%E5%9C%B0%E5%A4%BA%E5%9F%8E-36/"
+      },
+      "effectZh": {
+        "text": "動員：使用後部隊攻城值提升 15%（受熟練度影響，至多提升 30%），持續 1 小時",
+        "viSha256": "e98b040d7c4574da2715ae72178d765494bcdf6ed7b6d848564f51f02f9fb9d2"
+      }
+    },
+    "advisor:tat-chien-dot-tap": {
+      "effectZh": {
+        "text": "動員：部隊獲得疾戰突襲狀態：接下來 3 場與玩家部隊的戰鬥將在第 5 回合結束，前 4 回合我軍全體受到傷害提升 25%（受熟練度影響，至少提升 10%）。",
+        "viSha256": "676bfd66a1abc6181d8887e227c005f4a38c7b1c0057da55cc220c9390a97736"
+      }
+    },
+    "advisor:tay-luong-phi-hung": {
+      "nameZh": {
+        "text": "西凉飞熊",
+        "viSha256": "0201bb317063f5bdd08bdc9d9e272d683ad9f8da7d3de44e1be19f323fc956e1",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%A5%BF%E5%87%89%E9%A3%9E%E7%86%8A-58/"
+      },
+      "effectZh": {
+        "text": "動員：騎兵專屬，消耗 3000 糧食將部隊訓練為飛熊騎兵：我軍主將每回合行動時，有 20% 機率（受熟練度影響，至多 40% 機率）對敵軍群體（2 人）造成謀略傷害（傷害率 10%，受我軍全體累計受到的治療量影響，觸發後重置累計進度），持續 30 分鐘，撤退後立即結束此效果；飛熊軍無法使用此軍師技",
+        "viSha256": "07dcd28040c9e65274962198b956cdaf73e0c1b08902a7f081b3a6de08be3d22"
+      }
+    },
+    "advisor:thach-binh-bat-tran": {
+      "effectZh": {
+        "text": "兵法：選擇 3 格內的地塊，準備 1 分鐘後布下石兵八陣（佈陣失敗時不消耗計略點與策力）：進入石兵八陣的敵方部隊行軍速度降低 50%（受熟練度影響，至多降低 80%）；繼續準備 5 分鐘後，額外使處於石兵八陣內的敵方部隊獲得持續 10 分鐘的不可撤退狀態（同一地塊 12 小時內只可被石兵八陣影響 1 次）。",
+        "viSha256": "7d81cd2c0f14651c8d6ed744bd8e91be7df7c6eddf29135d17f6fdbfe6415394"
+      }
+    },
+    "advisor:thien-chien-vo-tien": {
+      "effectZh": {
+        "text": "動員：與玩家部隊戰鬥時，主將武力提升 6 點（受熟練度影響，至多因熟練度提升 15 點），每戰勝兵力大於 15000 的部隊額外提升 5 點（群雄陣營主將為 6 點，上限 20 點）；且每額外提升 5 點武力，本賽季釋放時武力提升 1 點（上限 40 點，賽季結束重置），效果持續 10 分鐘，撤退後立即結束。",
+        "viSha256": "6258bb0b57298ab7c7326eaec8ab97524eb69ff1472fb752a641577544532ebd"
+      }
+    },
+    "advisor:thien-cong-tuong-quan": {
+      "nameZh": {
+        "text": "天公将军",
+        "viSha256": "85af0b7b5ae86342c0fb80dd535df38767a0ea379dc826e5418c3e2f57a139c4",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E5%A4%A9%E5%85%AC%E5%B0%86%E5%86%9B-14/"
+      },
+      "effectZh": {
+        "text": "遠程：消耗 1 策書，與 4 格範圍內不低於 Lv.8 的賊寇進行遠程交戰（此次交戰跳過戰平階段；若連續跳過 3 次戰平，部隊將撤退），若獲勝則為當前部隊補充 500 兵力（受熟練度影響，至多 1000 兵力）（未發生戰鬥則返還 80% 除體力外的消耗資源）",
+        "viSha256": "259de3ebffb7e3665882ab2cc843dde24247e0d4c068be27fce19e2669bc60a6"
+      }
+    },
+    "advisor:thiet-ky-truong-khu": {
+      "effectZh": {
+        "text": "部隊行軍速度提升 20%（受熟練度影響，至多提升 40%），持續 2 小時；距離目的地 15 格內時，行軍速度額外提升 20%。",
+        "viSha256": "dc6cedf89ae490a47df1cc3fe2471c23c164d9b3fecf96cb3efbdd256bcbbc88"
+      }
+    },
+    "advisor:thong-quan-tai-chien": {
+      "effectZh": {
+        "text": "動員：為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點）。（每日限定使用 2 次）",
+        "viSha256": "393854f67b3b71f448eecc835735bc1cfc3f5b0bdf88dd001fd46cabb7f88963"
+      }
+    },
+    "advisor:thuong-tuong-uy-danh": {
+      "effectZh": {
+        "text": "使部隊獲得無雙上將狀態：下次與玩家部隊交戰時，使得隊伍內的良將提升 10% 全屬性（受熟練度影響，至多提升 20%）。",
+        "viSha256": "b53051340ee2521797c5496fa35a7d5ff94d4a8feff4c30a7e9af6ee5ada3089"
+      }
+    },
+    "advisor:tich-lich-xa-tran": {
+      "nameZh": {
+        "text": "霹雳车阵",
+        "viSha256": "0b037fb1308c45f0fb208d9f14213cf295690ff0f8202eca39df1a3437a53d8e",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E9%9C%B9%E9%9B%B3%E8%BD%A6%E9%98%B5-37/"
+      },
+      "effectZh": {
+        "text": "動員：使用後部隊攻城值提升 15%（受熟練度影響，至多提升 30%），與城池守軍交戰時，全體獲得 500 鄉勇，持續 1 小時",
+        "viSha256": "4f0ce1a64a7596c76d3e68b752e240a7c86a47487e2635c9756e03be473e2832"
+      }
+    },
+    "advisor:tich-quyen-tay-luong": {
+      "effectZh": {
+        "text": "動員：消耗 30 點體力對 8 級（含）以下地塊進行 1 次掃蕩，獲得的經驗提高 100%（受熟練度影響，至多提升 150%），1 次軍師技至多生效 3 場戰鬥。",
+        "viSha256": "3adfa6e1219aa5d0f80fa277c6fcc5e80c0e5798f9234913deec866929d75662"
+      }
+    },
+    "advisor:tien-phong-tiet-kich": {
+      "effectZh": {
+        "text": "動員：槍兵專屬，與行軍中的玩家部隊交戰時獲得戰鬥增益：首回合我軍全體行動前對敵方隨機單體造成 60% 傷害（傷害類型受主將武力和智力中較高的一項，傷害率受熟練度影響，至多 90%）；若我軍主將為群陣營，則傷害率額外提升 10%，持續 5 小時或回到調動點後效果清除。",
+        "viSha256": "ea2c5bf3d98b85819b5fecaff4c6682259817ca3d1e340d2a4819275753fc1a3"
+      }
+    },
+    "advisor:tiet-nghia-da-muu": {
+      "nameZh": {
+        "text": "节义多谋",
+        "viSha256": "f0051faa5351ec9ef27f397b6d34ac901df5da6ca7da87e09f94f128925ee191",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E8%8A%82%E4%B9%89%E5%A4%9A%E8%B0%8B-64/"
+      },
+      "effectZh": {
+        "text": "衝鋒：對非中立建築發起 1 次攻城值為 0 的攻城（可使用盟友的連地），且前 3 回合我軍全體受到男性武將的傷害降低 5%（受熟練度影響，至多降低 10%）",
+        "viSha256": "f0353f972aae45225530cc2487c88465351b2298f86f61ea3c12374b8cd8aa4e"
+      }
+    },
+    "advisor:tinh-khien-kich-nghich": {
+      "nameZh": {
+        "text": "情牵戟逆",
+        "viSha256": "0addf50bae36304601157e6e5fa6f8317dc8476391d0a3812b1ab473939caf0a",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E6%83%85%E7%89%B5%E6%88%9F%E9%80%86-56/"
+      },
+      "effectZh": {
+        "text": "被動：將部隊內呂布的自帶戰法替換為白門逆戰。蓄勢：駐守於目標地塊，部隊內呂布受到傷害降低 6%（受熟練度影響，至多降低 12%）",
+        "viSha256": "ae96f6fa128ec82408b59f01afe7dbc6bf72fe3f9ab4e9dfacd8ecc6ba5f5c67"
+      }
+    },
+    "advisor:trac-le-phan-phat": {
+      "effectZh": {
+        "text": "蓄勢：朝目的地行軍，到達後恢復 25 點士氣（受熟練度影響，至多恢復 50 點），且士氣低於 75/50/25 點時，士氣恢復量額外提升 15/30/45 點。",
+        "viSha256": "4fa343f5949d6630cfff60cff54704ea9d6b08504885117b390ebda47179bfe6"
+      }
+    },
+    "advisor:tu-ngo-ky-muu": {
+      "effectZh": {
+        "text": "兵法：選擇 4 格內可行軍到達地塊，突襲至該地塊，中途不發生交戰。到達目的地後獲得持續 60 分鐘的突襲狀態：與玩家交戰首回合，我軍全體主動/突擊戰法發動率提升 6%（受熟練度影響，至多 12%）；同時部隊進入持續 60 分鐘（受熟練度影響，至少持續 30 分鐘）的疲乏狀態：部隊攻佔地塊時間增加 25 分鐘（撤退後清除）。",
+        "viSha256": "914b134cfbd1883f45986236885c10e1daf284a7773a5b9fcd61bad56ebe7e36"
+      }
+    },
+    "advisor:uy-chan-ha-soc": {
+      "effectZh": {
+        "text": "被動：部隊內文醜的速度、武力提升 40 點。\n衝鋒：部隊內文醜的自帶戰法有 70% 概率（受熟練度影響，至多 100%）額外對隨機敵方單體生效 1 次。",
+        "viSha256": "d7cabd146b07e3636a3966223ff2a0e40fb4882070ae06bd964599d027f55677"
+      }
+    },
+    "advisor:uy-chan-tay-tho": {
+      "effectZh": {
+        "text": "動員：為所在部隊全體武將恢復 15 點體力（受熟練度影響，至多恢復 30 點），並使其體力恢復速度提升 50%，持續 1 小時（鍾會卸任軍師後效果立即結束）。（每日限定使用 2 次）",
+        "viSha256": "7be339fe5eae07625e8d1bc8c156b18d862ce6842d0142c20a80325ed10d10a7"
+      }
+    },
+    "advisor:vo-kien-bat-ham": {
+      "nameZh": {
+        "text": "无坚不陷",
+        "viSha256": "3fec094b9a2b64afde816c43f4f6c11007d940c972db325269bb853f37132a64",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E6%97%A0%E5%9D%9A%E4%B8%8D%E9%99%B7-60/"
+      },
+      "effectZh": {
+        "text": "動員：當前部隊的攻城時間減少 15 秒（受熟練度影響，至多減少 30 秒），持續 30 分鐘",
+        "viSha256": "35c63862a7664a14eed3e2defb8f38be29bf5d8d0759c3508d26f077455c86ed"
+      }
+    },
+    "advisor:vo-thanh-duong-uy": {
+      "nameZh": {
+        "text": "武圣扬威",
+        "viSha256": "d351f4e03f5c52eed6290562796b7541a5e0de070bc29e4b0ae5dead57d33aec",
+        "ref": "https://sanzhan.slgsim.com/zh-hans/advisors/%E6%AD%A6%E5%9C%A3%E6%89%AC%E5%A8%81-57/"
+      },
+      "effectZh": {
+        "text": "被動：部隊內關羽的盾兵適性提升至 S。衝鋒：與玩家部隊戰鬥時，部隊內關羽首次發動自帶戰法有 50% 機率（受熟練度影響，至多 100% 機率）跳過 1 回合準備時間",
+        "viSha256": "247697ea2269f6abaf106600f3022818cdd89933d98312e799309b150de092aa"
+      }
+    },
+    "advisor:xich-de-du-liet": {
+      "effectZh": {
+        "text": "騎兵專屬，釋放後行軍過程中，部隊獲得與玩家部隊戰鬥增益：首回合我軍主將向敵軍群體（2 人）施加灼燒效果（傷害率 50%，受我軍主將智力和熟練度影響，至多 75%），持續 2 回合；每行軍一格提升 1% 傷害率，最多提升 20% 傷害率；若我軍主將為蠻族，則傷害率額外提升 20%。",
+        "viSha256": "cf894e833dd59d1338e004e1d26196955c0fe05fdb7601b6e5eaefef79180f50"
+      }
+    },
+    "building:bat-tran-do": {
+      "summaryZh": {
+        "text": "降低城池範圍內同盟部隊受到的謀略與兵刃傷害",
+        "viSha256": "047ea923877240a4a9830fcbeae4acd48fce7a753e8e3077a64574458d129a6c"
+      }
+    },
+    "building:binh-chien-muu": {
+      "summaryZh": {
+        "text": "提升本城部隊智力",
+        "viSha256": "b2bced541072651da40f46b656f9e648b9017ba51408ce2efb4173a70f9c9ce0"
+      }
+    },
+    "building:binh-chien-phong": {
+      "summaryZh": {
+        "text": "提升本城部隊統率",
+        "viSha256": "1bc7adb0af46a7dcc56f2ad8a97399eded09e1987ae2606d4c530610ba4a143e"
+      }
+    },
+    "building:binh-chien-toc": {
+      "summaryZh": {
+        "text": "提升本城部隊速度",
+        "viSha256": "01e4101a184af07fe46bd350d2d5a53afe38ee560f86fd8ce4dc285f941e193b"
+      }
+    },
+    "building:binh-chien-vo": {
+      "summaryZh": {
+        "text": "提升本城部隊武力",
+        "viSha256": "377686b99c6bc74cf4a9ea16eb24a19d96e3b341986eb4514515eff34f16cf07"
+      }
+    },
+    "building:cung-binh-dinh": {
+      "summaryZh": {
+        "text": "提升弓兵屬性；滿級：駐守時，首回合弓兵攻擊 1~2 個目標",
+        "viSha256": "52cd5aeab62d81c4d3283f90a1ee9d913d5f370f58f14a581af9dcf9eaad71e3"
+      }
+    },
+    "building:cuu-cung-do": {
+      "summaryZh": {
+        "text": "提升城池範圍內同盟部隊造成的謀略與兵刃傷害",
+        "viSha256": "416416f7dfaf78420569ee53d23c6bab897e446b956c7c56c459652539714bc7"
+      }
+    },
+    "building:khi-gioi-dinh": {
+      "summaryZh": {
+        "text": "提升器械部隊攻城值；滿級：器械部隊行軍速度 +25",
+        "viSha256": "38e6e808a9c6528d9140ecf55a0649446fe5359596c66a7d458b5e74462a97b1"
+      }
+    },
+    "building:ky-binh-dinh": {
+      "summaryZh": {
+        "text": "提升騎兵行軍速度；滿級：首回合騎兵全體速度 +20",
+        "viSha256": "96c2daed10174aef20a75c8929baa235f50fb235ec2062efac3bd0ba971e4e89"
+      }
+    },
+    "building:my-binh-dinh": {
+      "summaryZh": {
+        "text": "降低盾兵受到的傷害；滿級：第 5 回合盾兵群體（2 人）恢復兵力",
+        "viSha256": "a21f0e3ea4dae7e0ab82e640b2522073358793c7498443b978f6a94ce9bc3747"
+      }
+    },
+    "building:phong-hoa-dai": {
+      "summaryZh": {
+        "text": "提升城池的視野範圍",
+        "viSha256": "d6d8a35a73bb24f17adc28681097cb9946f0d88db741e6a3f010b04f73f694c0"
+      }
+    },
+    "building:si-khi-dan": {
+      "summaryZh": {
+        "text": "提升本城部隊士氣上限",
+        "viSha256": "134ad48be46986742ab1f4873c36c60f9b2b44d0c6116409bedbe5ef07679195"
+      }
+    },
+    "building:thanh-phong-quan": {
+      "summaryZh": {
+        "text": "城池擁有城防軍；提升城防軍兵力",
+        "viSha256": "bba3dac5e35f05d5dbbdca91a4c36ab3ae2be6be168e5ea88cfa92df1e77873e"
+      }
+    },
+    "building:thuong-binh-dinh": {
+      "summaryZh": {
+        "text": "提升槍兵傷害；滿級：第 3 回合槍兵單體獲得破陣",
+        "viSha256": "be08bf36c6bcd5d7c578e6390443f8718ecaffc1a2c7e999fa4b7e3c53b47fdc"
+      }
+    },
+    "building:vien-khau-dan": {
+      "summaryZh": {
+        "text": "提升名望上限",
+        "viSha256": "a83e364eb84dea86355a51b538db920bae55f35b5fe71db3cb2d32869a107cce"
+      }
+    },
+    "troop-mod:bach-ma-nghia-tong": {
+      "effectZh": {
+        "text": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高 50%，我軍全體戰鬥前 2 回合獲得先攻（優先行動）並提高 10% 主動戰法發動率",
+        "viSha256": "ebf127070efe374f7b5125bb8301c61d4ef1b761efc8814614fc195f7fba7101"
+      }
+    },
+    "troop-mod:bach-nhi-binh": {
+      "effectZh": {
+        "text": "將槍兵進階為攻無不破的白毦兵：我軍全體獲得 12% 攻心，且普通攻擊後有 45% 機率對攻擊目標再次發起一次謀略攻擊（傷害率 110%，受智力影響）",
+        "viSha256": "ba21ed827512a6b824cfb43aa702344d00fc1f58fb33d2568e440bfc35926122"
+      }
+    },
+    "troop-mod:cam-pham-quan": {
+      "effectZh": {
+        "text": "將弓兵進階為氣蓋千夫的錦帆軍：部隊普通攻擊時，有 45% 機率使目標進入潰逃狀態（傷害率 64%，受武力影響），持續 2 回合；若目標已經潰逃則造成兵刃攻擊（傷害率 110%）並恢復傷害量 30% 的兵力；若甘寧統領，觸發機率受最高屬性影響，並提高友軍 6% 會心",
+        "viSha256": "06191dcf1551c9340144da3290178063059e5a3c73970564b06007c3a6739c33"
+      }
+    },
+    "troop-mod:dai-kich-si": {
+      "effectZh": {
+        "text": "將槍兵進階為橫衝直撞的大戟士：我軍全體武力提高 14 點，進行普通攻擊時，有 35% 機率對敵軍單體造成兵刃傷害（傷害率 122%）",
+        "viSha256": "61419d14063d164cec2bbbd6177cfdbe7ca496a45c26eeb93ee31d057423a7d9"
+      }
+    },
+    "troop-mod:dan-duong-binh": {
+      "effectZh": {
+        "text": "將盾兵進階為勇猛無畏的丹陽兵：我軍全體統率提升 36 點，且每回合開始前，根據上一回合我軍全體造成的兵刃傷害獲得一定比例丹陽兵，可疊加（我軍受到謀略傷害時，將消耗丹陽兵抵擋其中 36% 謀略傷害，丹陽兵數量每回合衰減 10%）；若陶謙統領，則抵擋比例額外提升 4%",
+        "viSha256": "bfc072023df6fd7845ec28f7ba41ab0992782bd3beeadda1d2467332fe316c96"
+      }
+    },
+    "troop-mod:dang-giap-binh": {
+      "effectZh": {
+        "text": "將盾兵進階為刀槍不入的藤甲兵：我軍全體受到兵刃傷害降低 24%（受統率影響），但處於灼燒狀態時每回合額外損失兵力（傷害率 300%）",
+        "viSha256": "a2d5027340d7656e09075ea306433047ebc6bd97e0528842d5cca58a4e9524c8"
+      }
+    },
+    "troop-mod:giai-phien-ve": {
+      "effectZh": {
+        "text": "將槍兵進階為戰無不勝的解煩衛：戰鬥中，我軍全體速度提高 36 點，且我軍速度最快的武將普通攻擊後，有 30% 機率對敵軍單體造成一次傷害（傷害率 36%，受武力或智力較高一項影響，並附加該武將 40% 速度屬性的傷害），未觸發則為我軍單體恢復一定兵力（治療率 72%，受武力或智力較高一項影響）；若韓當統領，則基礎傷害率額外提高 36%",
+        "viSha256": "ab13c230dfb8e0d93bc1a604ea5e9127b2dcde2e5503aec8a407e68a111d0b76"
+      }
+    },
+    "troop-mod:ham-tran-doanh": {
+      "effectZh": {
+        "text": "將盾兵進階為無往不利的陷陣營：我軍全體武力、統率提高 22 點，戰鬥前 3 回合獲得急救狀態，受到傷害時有 40% 機率獲得治療（治療率 60%，受智力影響）",
+        "viSha256": "b25357c7d12bc9cf634074a6e767c44fabebd22373d9d8f55eff516014bbf776"
+      }
+    },
+    "troop-mod:ho-bao-ky": {
+      "effectZh": {
+        "text": "將騎兵進階為天下驍銳的虎豹騎：我軍全體提高 40 點武力，戰鬥前 3 回合，我軍全體突擊戰法發動率提高 10%",
+        "viSha256": "5f58a9e9706024efffc46d4f0d29d961e394bce0069a0d74eacdd7f33080d349"
+      }
+    },
+    "troop-mod:ho-ve-quan": {
+      "effectZh": {
+        "text": "將盾兵進階為善固疆場的虎衛軍：戰鬥中，我軍主將即將受到普攻時，副將提高 12 點武力，最多提高 5 次，並會分別對攻擊者造成兵刃傷害（傷害率 72%，受各自損失兵力影響，最多提高 40%），每回合最多觸發 1 次；若典韋或許褚統領，自身統率提高 50",
+        "viSha256": "fab15aaa4063b169073b542889b9b2605a19619dcdc24f4ccfec8bea476a2c00"
+      }
+    },
+    "troop-mod:phi-hung-quan": {
+      "effectZh": {
+        "text": "將騎兵進階為勇不可擋的飛熊軍：我軍全體受到的治療效果提升 16%，我軍主將每回合行動時，有 60% 機率對敵軍群體（2 人）造成謀略傷害（傷害率 64%，受我軍全體累計造成的治療量影響，觸發後重置累計進度）；若董卓統領，則受到的治療效果額外提升 4%",
+        "viSha256": "c04125d1a2a13eff2ea7492e6296379a5b119d7a1f3870dfdf2c3fe6f8adafd4"
+      }
+    },
+    "troop-mod:tay-luong-thiet-ky": {
+      "effectZh": {
+        "text": "將騎兵進階為橫行天下的西涼鐵騎：戰鬥前 3 回合，提高我軍全體 25% 會心機率（觸發時兵刃傷害提高 100%）",
+        "viSha256": "5e2a0676204779d9b8d5e42c8cf156ff03a82f21e80b021a95497ed97f661481"
+      }
+    },
+    "troop-mod:thanh-chau-binh": {
+      "effectZh": {
+        "text": "將槍兵進階為沖堅毀銳的青州兵：戰鬥前 2 回合，使我軍群體（2 人）受到普通攻擊時對攻擊者進行一次反擊（傷害率 72%），第 3 回合開始時依次為我軍全體恢復兵力，優先完全恢復我軍兵力最低單體，再恢復我軍其他單體（總治療率 180%，受武力影響，額外受敵軍造成傷害影響）；若曹操統領，治療額外受統率影響",
+        "viSha256": "01d4de99f21868788199aae9ef183506abe52a786056bcb69fddad942ca9be21"
+      }
+    },
+    "troop-mod:tien-dang-tu-si": {
+      "effectZh": {
+        "text": "將弓兵進階為悍不畏死的先登死士：戰鬥中，我軍全體免疫遇襲狀態，且受到傷害時有 60% 機率（受攜帶者統率影響）觸發以下效果：若兵力百分比低於攻擊者則偷取其 21 點統率（受攜帶者統率影響），否則降低其 3% 主動戰法發動率，持續 2 回合，可疊加 4 次",
+        "viSha256": "5f6eb9a82c26d189b1a535e00b3de3a7357cb3a24bcd623b64a7b02cbe00f64a"
+      }
+    },
+    "troop-mod:tuong-binh": {
+      "effectZh": {
+        "text": "將騎兵進階為橫行無忌的象兵：部隊基礎攻城值提高 25% 但行軍速度降低 50%，受到傷害的 50% 將延後於 3 回合內逐步結算，且結算傷害降低 20%；自身處於灼燒狀態時，獲得 50% 群攻及混亂狀態；若統領為蠻族，部隊每多 1 名蠻族武將，結算的傷害額外降低 10%",
+        "viSha256": "2e49a9056cbf4f0de521267b3ce909ad23ec47322afbec88e6fe6965754af21b"
+      }
+    },
+    "troop-mod:vo-duong-phi-quan": {
+      "effectZh": {
+        "text": "將弓兵進階為矢不虛發的無當飛軍：我軍全體統率、速度提高 22 點，首回合對敵軍群體（2 人）施加中毒狀態，每回合持續造成傷害（傷害率 80%，受智力影響），持續 3 回合",
+        "viSha256": "d8336c1d1f8717655c641ca6a9ed9c50c2681eb410d2cb5428ab0444889b56b7"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:cung-cong": {
+      "nameZh": {
+        "text": "彎弓",
+        "viSha256": "6baddb3246e63413f56ecd7306ca3ccec0b8cd05050a2fff9e6d4e85deb16a12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者弓兵兵種適性提升1級",
+        "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "取消回合限制，但發動率提升效果降低7%",
+        "viSha256": "6e813473cc8ef0d952997d9124386d12ec0adbee36b64f0e7c2ba9e119afe645"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:khong-so": {
+      "nameZh": {
+        "text": "無懼",
+        "viSha256": "71c8cd4a832adbb74d26886f8e74b99d678c0983231d80d3afc628ea098f0bac"
+      },
+      "descriptionZh": {
+        "text": "我軍被計窮時有25%機率免疫",
+        "viSha256": "8b5af19ed9cee76eb54d266a66222abfea2a943134b10f0d4e0a3c87001cdd26"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:linh-quang-intermediate": {
+      "descriptionZh": {
+        "text": "主動戰法發動率額外提升3%",
+        "viSha256": "d3843964ae39cd2cd3dc2bfa18d85287f11f03f5e51cdb0d98fc9485a8ba1a04"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:nhe-chan": {
+      "nameZh": {
+        "text": "輕足",
+        "viSha256": "6d8b6f8f6c531ebc8508bfe5dd9976264ce0bbf2db5e55d2021f58b87e661aed"
+      },
+      "descriptionZh": {
+        "text": "行軍速度額外提高25%",
+        "viSha256": "26d6675f3026e787face3e4b8a90d1d601284eb04023c8daa85cd44a8ae6c5a7"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點智力",
+        "viSha256": "8fd113ce274fd376e388bb2bbf373421a4fc07a93efd8d76c821e79906538e80"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點武力",
+        "viSha256": "187538a4cb321328acbe1312155057e040d3c0720640cf2acf56965621e7ae2f"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tat-tri": {
+      "nameZh": {
+        "text": "疾馳",
+        "viSha256": "b63060ade350cea0b6e0211b48fb6f197c04e0ad357a136440bf09452a7897a5"
+      },
+      "descriptionZh": {
+        "text": "發動率提升受速度影響",
+        "viSha256": "7c67df1d625a0d2bd87617b92acc822074986465bb82500f3c662edaa834c655"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:than-hanh-basic": {
+      "descriptionZh": {
+        "text": "我軍全體獲得14點速度",
+        "viSha256": "48edc726ec00bfabcf793de5aa184120b2da7f51fc853701810bce64dadf8671"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tinh-tam-advanced": {
+      "descriptionZh": {
+        "text": "回合結束時，若本回合自身未發動主動戰法，則下回合主動戰法發動率提高10%",
+        "viSha256": "a8c59bd074a659c39678b0ebdb45a9553b5c0994e47e588c52101007ab5b7aa3"
+      }
+    },
+    "troop-option:bach-ma-nghia-tong:tram-tran": {
+      "nameZh": {
+        "text": "百戰",
+        "viSha256": "6c3f2cf634aa4be371b7c24bde9ca91da340317c1dc14cc9e4b3c89e5dd72a00"
+      },
+      "descriptionZh": {
+        "text": "我軍全體獲得5%減傷",
+        "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:bach-nhi-binh:but-dao-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體普攻轉化為謀略傷害，但傷害率改為75%",
+        "viSha256": "492354eb90fd46588e72c042ba29e7dda5b8923193bc6a38c66cde50c711fdc3"
+      }
+    },
+    "troop-option:bach-nhi-binh:chua-lanh": {
+      "nameZh": {
+        "text": "治癒",
+        "viSha256": "9fb5fa5cc1d3ff8bce6701d20a0f89d336b8c8d8bba9c58b6609d8d28be64e39"
+      },
+      "descriptionZh": {
+        "text": "未生效則為我軍單體回復一定兵力（治療率36%，受智力影響）",
+        "viSha256": "cc868d8f564a6f41cd9b183162c6321d337d92eb2202684db8b0dac22d038545"
+      }
+    },
+    "troop-option:bach-nhi-binh:chuyen-cung": {
+      "nameZh": {
+        "text": "轉·彎弓",
+        "viSha256": "e2e26a524ea07cc46ac3c8be0efbe54e4776d9719968c95f9654583ad5157f4a"
+      },
+      "descriptionZh": {
+        "text": "將弓兵進階為勇猛無畏的白毦兵",
+        "viSha256": "d061bd14f8594647467fd7c188e079dcb5126a664cf07cc113a419bfb8a7f19b"
+      }
+    },
+    "troop-option:bach-nhi-binh:cong-tam-basic": {
+      "descriptionZh": {
+        "text": "攻心效果額外提升3%",
+        "viSha256": "b8962fdc7f811be8c71437bf75f6ec4bec34771af9dd70064a1340693cb51a34"
+      }
+    },
+    "troop-option:bach-nhi-binh:dac-thuong": {
+      "nameZh": {
+        "text": "持槍",
+        "viSha256": "d011c869366f4c7e9bcc6851ab8bd65dbeab75cae63820c816e445c8e6a51c12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者槍兵兵種適性提升1級",
+        "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
+      }
+    },
+    "troop-option:bach-nhi-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:bach-nhi-binh:luong-nghi-intermediate": {
+      "descriptionZh": {
+        "text": "進行普通攻擊後，下回合主動戰法傷害提高15%。發動主動戰法後，下回合普通攻擊傷害提高15%",
+        "viSha256": "817306370dd17f8e7ec52ab6c1d650ea502d06067c905f8a95b9f284d58636b3"
+      }
+    },
+    "troop-option:bach-nhi-binh:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率額外增加20%",
+        "viSha256": "1a60fdcb052a5f2e8c9271726d7b343786c5a9d2b6cd64d871ad72a73bac1e45"
+      }
+    },
+    "troop-option:bach-nhi-binh:sach-tap-intermediate": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:bach-nhi-binh:tap-tri-special": {
+      "descriptionZh": {
+        "text": "獲得14點智力",
+        "viSha256": "dbfb52481d3003c09763db41183458c04a49f4be598208394a2c0fe1f9d4f114"
+      }
+    },
+    "troop-option:bach-nhi-binh:thanh-thao": {
+      "nameZh": {
+        "text": "熟練",
+        "viSha256": "c2d6d2c7e21da41029840c1825cc049290ee83016b99a13fffc1000468a9aa47"
+      },
+      "descriptionZh": {
+        "text": "觸發機率額外提高10%",
+        "viSha256": "3314d8039e3d8d446e34386ab4cc43cd96a0f9f1feb346d7f5be548a78b0ec00"
+      }
+    },
+    "troop-option:bach-nhi-binh:tuong-uy-intermediate": {
+      "descriptionZh": {
+        "text": "改為僅我軍主將有機率發起，同時觸發機率提升35%",
+        "viSha256": "cfd7869d85f64adb709754369af319223c2ac15f50d732b4ba5bf3113d7c8277"
+      }
+    },
+    "troop-option:cam-pham-quan:cap-cuu": {
+      "nameZh": {
+        "text": "救護",
+        "viSha256": "d1df53fc43aa04a2c1252caf3ee486db8cabb15cdeeaaf40aa0a459b24af50cd"
+      },
+      "descriptionZh": {
+        "text": "若目標已潰逃，造成兵刃傷害並恢復傷害量的兵力，回復目標改為我軍兵力最低單體",
+        "viSha256": "37d7b181dd947191ff45d1ab36bafb95fccd834dacc1d842fac888d4dd656124"
+      }
+    },
+    "troop-option:cam-pham-quan:chua-tri": {
+      "nameZh": {
+        "text": "醫治",
+        "viSha256": "0eefee3723133c76f9e1d1f24d94a500573208f5650d8c92901d61a9dd4e4037"
+      },
+      "descriptionZh": {
+        "text": "若目標已潰逃，造成兵刃傷害並恢復傷害量的兵力提高40%",
+        "viSha256": "f0b9b23f0254dc7aaad58d9ebf741b4bccebf75eae52ff6e8243b598a9943f77"
+      }
+    },
+    "troop-option:cam-pham-quan:cung-cong": {
+      "nameZh": {
+        "text": "彎弓",
+        "viSha256": "6baddb3246e63413f56ecd7306ca3ccec0b8cd05050a2fff9e6d4e85deb16a12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者弓兵兵種適性提升1級",
+        "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
+      }
+    },
+    "troop-option:cam-pham-quan:de-doa": {
+      "nameZh": {
+        "text": "威嚇",
+        "viSha256": "78d91a3abcb8cfa2658003edd790ee163bcd919606597bd84f59ff4c6c4dd418"
+      },
+      "descriptionZh": {
+        "text": "戰鬥首回合對敵軍主將施加潰逃狀態（傷害率64%，持續2回合）",
+        "viSha256": "a4b98826519f1a6f5bc23c56eceb02c213fb98729f33f8cfed2955be850889c9"
+      }
+    },
+    "troop-option:cam-pham-quan:dinh-khieu-advanced": {
+      "descriptionZh": {
+        "text": "若目標已潰逃，45%機率使目標進入叛逃狀態（傷害率55%，受武力或智力最高一項影響，無視防禦），持續1回合",
+        "viSha256": "fa14f152c100eaf69e8e4bd6560afd90de6af94d5ac9e581f2df4fb9c8d1ef44"
+      }
+    },
+    "troop-option:cam-pham-quan:dung-vo-basic": {
+      "descriptionZh": {
+        "text": "若目標已潰逃，造成的兵刃傷害提高20%",
+        "viSha256": "653b1676dee1d839373d3625cfe79c5bc126fd30c236da0f613f267a622e9189"
+      }
+    },
+    "troop-option:cam-pham-quan:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:cam-pham-quan:muu-luoc-basic": {
+      "descriptionZh": {
+        "text": "對已潰逃目標，由造成兵刃傷害改為造成謀略傷害",
+        "viSha256": "b51613afb51e11f1f3ae944b5f3d3ecf7fdd636d81b28bf83eda7a43fcb5a19d"
+      }
+    },
+    "troop-option:cam-pham-quan:ngan-chan": {
+      "nameZh": {
+        "text": "招架",
+        "viSha256": "b6573ef6496f97065bfa182db31ab17dec4e1824880a80f504c4216fc738f9d2"
+      },
+      "descriptionZh": {
+        "text": "受到處於持續傷害狀態的武將的傷害降低10%",
+        "viSha256": "c9ef7ef571eb967faf835eb0e1bcfafd0b96ee0f652ebeecdde8cee4938eb362"
+      }
+    },
+    "troop-option:cam-pham-quan:san-nguy": {
+      "nameZh": {
+        "text": "趁危",
+        "viSha256": "4c14a245168ba80ceac60e65398d52b26a438a8f6436b4f055456eb9d761b9a4"
+      },
+      "descriptionZh": {
+        "text": "對處於持續性狀態的武將造成的傷害提升10%",
+        "viSha256": "80ede9ae6ed7cb3df739d459dcc72871bd939749ae6c6c5340f1fc443cd057c3"
+      }
+    },
+    "troop-option:cam-pham-quan:than-xa-special": {
+      "descriptionZh": {
+        "text": "觸發機率提高5%",
+        "viSha256": "f9f42e1db41b071f804c187746c846047bc3323c3c0cd6bb065a10c29934d1f8"
+      }
+    },
+    "troop-option:cam-pham-quan:tri-thu-special": {
+      "descriptionZh": {
+        "text": "錦帆軍施加的潰逃效果改為謀略傷害，受智力影響",
+        "viSha256": "df33e466e6ab3254c4e5482bcaea207b14264cb18ebcfdf58341719a0c238bd7"
+      }
+    },
+    "troop-option:dai-kich-si:chua-lanh": {
+      "nameZh": {
+        "text": "治癒",
+        "viSha256": "9fb5fa5cc1d3ff8bce6701d20a0f89d336b8c8d8bba9c58b6609d8d28be64e39"
+      },
+      "descriptionZh": {
+        "text": "未生效則為我軍單體回復一定兵力（治療率36%，受武力影響）",
+        "viSha256": "c05e559b07624c530f987d8cdfeb2bc11f39416463dea04a1ae046d69a633d17"
+      }
+    },
+    "troop-option:dai-kich-si:dac-thuong": {
+      "nameZh": {
+        "text": "持槍",
+        "viSha256": "d011c869366f4c7e9bcc6851ab8bd65dbeab75cae63820c816e445c8e6a51c12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者槍兵兵種適性提升1級",
+        "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
+      }
+    },
+    "troop-option:dai-kich-si:ho-bac-intermediate": {
+      "descriptionZh": {
+        "text": "目標改為敵軍群體2人但傷害率下降62%",
+        "viSha256": "2503be30e264afe2c9ae2b8b148508a90735e0eded16be17dec7d3346bea3756"
+      }
+    },
+    "troop-option:dai-kich-si:kham-hu-intermediate": {
+      "descriptionZh": {
+        "text": "目標將隨機鎖定對方兵力最低或統率最低武將",
+        "viSha256": "8d9a955876d5ef3855ad27b1468b496246580fecf87119b632c4da56ed6e8f1c"
+      }
+    },
+    "troop-option:dai-kich-si:lam-phan": {
+      "nameZh": {
+        "text": "倒戈",
+        "viSha256": "6256f1fa960d10ed57b1a6d29e6a0ca2b9868623f40dbbf255f5fbf73718ef79"
+      },
+      "descriptionZh": {
+        "text": "獲得15%倒戈",
+        "viSha256": "696fd9549b40956fb18a1305a66343294202e70f07b40947213fada20c8844f2"
+      }
+    },
+    "troop-option:dai-kich-si:lien-kich-special": {
+      "descriptionZh": {
+        "text": "獲得15%連擊",
+        "viSha256": "20ee03f2684aa334ef26a110a37c5a3d6b0348e403735625994561167660dd70"
+      }
+    },
+    "troop-option:dai-kich-si:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率額外提高11%",
+        "viSha256": "f1e37cf00fd6eee17a159648fa982bf207f6c0b8ffc1905f972144fce7fabbcf"
+      }
+    },
+    "troop-option:dai-kich-si:pha-tran-advanced": {
+      "descriptionZh": {
+        "text": "大戟士造成的兵刃傷害附帶25%破陣效果",
+        "viSha256": "fdfb5a77973e18e70523ee9a0699f37c18fc3191701141a06f3375c8053c5045"
+      }
+    },
+    "troop-option:dai-kich-si:sach-tap-advanced": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:dai-kich-si:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "武力額外提高6點",
+        "viSha256": "b6720ad88cf60dd6a4dc77df91cc3fde86fd926ce739a333105874257d4c67bc"
+      }
+    },
+    "troop-option:dai-kich-si:thanh-thao": {
+      "nameZh": {
+        "text": "熟練",
+        "viSha256": "c2d6d2c7e21da41029840c1825cc049290ee83016b99a13fffc1000468a9aa47"
+      },
+      "descriptionZh": {
+        "text": "觸發機率額外提高5%",
+        "viSha256": "000268ce52553eb405206538cee064692032ca40e543858e38a3e5311b1f5bd4"
+      }
+    },
+    "troop-option:dai-kich-si:tuong-uy-intermediate": {
+      "descriptionZh": {
+        "text": "改為僅我軍主將有機率發起，同時觸發機率提升25%",
+        "viSha256": "d4cd163366b94617d73917f1f8e200abf493dd800eaa36025795eae1a8b4eaf9"
+      }
+    },
+    "troop-option:dan-duong-binh:ban-thach-intermediate": {
+      "descriptionZh": {
+        "text": "丹陽兵抵擋傷害的比例提升36%",
+        "viSha256": "5feb8436695e64f2baae567a32cecc48e0001a8b7e549c752668d1af1b853770"
+      }
+    },
+    "troop-option:dan-duong-binh:chinh-quan-intermediate": {
+      "descriptionZh": {
+        "text": "獲得的丹陽兵不再每回合衰減，且額外獲得25%",
+        "viSha256": "63a06d40062669a2252d835220a66026e6d0bc29955b181cea1429bbb3266c16"
+      }
+    },
+    "troop-option:dan-duong-binh:chuyen-thuong": {
+      "nameZh": {
+        "text": "轉·持槍",
+        "viSha256": "9c09ab4dd8d60235e82b3766ca1ca764909c5a63870219591fced20b0697301c"
+      },
+      "descriptionZh": {
+        "text": "將槍兵進階為勇猛無畏的丹陽兵",
+        "viSha256": "0c9c01ac4cf5a7d023806a5edad8d96eb92f5f76dc41cef7b1c73165e0c9a544"
+      }
+    },
+    "troop-option:dan-duong-binh:cuong-than-basic": {
+      "descriptionZh": {
+        "text": "統率額外提升8點",
+        "viSha256": "b1e27c4ed594bbc0fcdf745da6033c9003cd9e895b245079bd66b9166327026e"
+      }
+    },
+    "troop-option:dan-duong-binh:de-khang-special": {
+      "descriptionZh": {
+        "text": "我軍受到的兵種剋制效果減半",
+        "viSha256": "47404a6971ef507dbfd417b709f9b000adabbf2a4d344de4c0e7eef0c68cda43"
+      }
+    },
+    "troop-option:dan-duong-binh:hau-phat-intermediate": {
+      "descriptionZh": {
+        "text": "我軍武將行動後對隨機敵軍單體造成傷害",
+        "viSha256": "7ea95d3e7510b7acc3d525458ea7ffeb82a1e006dff087553d333e95766d832d"
+      }
+    },
+    "troop-option:dan-duong-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:dan-duong-binh:mo-quan-advanced": {
+      "descriptionZh": {
+        "text": "丹陽兵可抵擋任意種類傷害",
+        "viSha256": "27f7c987b0da96ae51f77b6b6451108cc3fc2f8689b62606426d8083bddda4a2"
+      }
+    },
+    "troop-option:dan-duong-binh:nang-khien": {
+      "nameZh": {
+        "text": "舉盾",
+        "viSha256": "b303c76a2e9c120f0f59281c2850aa2b9b30a2ef2dbc6613dba5611ee3c3ff86"
+      },
+      "descriptionZh": {
+        "text": "攜帶者盾兵兵種適性提升1級",
+        "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
+      }
+    },
+    "troop-option:dan-duong-binh:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "由提升統率改為提升智力",
+        "viSha256": "b31bc5cab79f3fdee1b46d91093e8beef545d798184be6545d888757f8f469c7"
+      }
+    },
+    "troop-option:dan-duong-binh:tap-vo-basic": {
+      "descriptionZh": {
+        "text": "由提升統率改為提升武力",
+        "viSha256": "e970a154144e85f35b6c712c33b7756f247faa5712842a8b41d3e63359fad58a"
+      }
+    },
+    "troop-option:dan-duong-binh:thiep-lap-advanced": {
+      "descriptionZh": {
+        "text": "造成的任意種類傷害均可獲得丹陽兵",
+        "viSha256": "f5ea8df7d0aceb579b68635702b9337db87f94bf89a969cd00123dc03bf9de0c"
+      }
+    },
+    "troop-option:dang-giap-binh:bo-qua": {
+      "nameZh": {
+        "text": "無視",
+        "viSha256": "cab7a5a356d89f0fd94029b0b576b5c11062f2df14ec2cfeff878eee52ad70a7"
+      },
+      "descriptionZh": {
+        "text": "逐步結算的傷害降低20%（進行象兵、重裝、遲鈍改造後可選）",
+        "viSha256": "553742b57c81093b04106c4120b48e574c61d789440ed17cb18fa5fddb62e4ee"
+      }
+    },
+    "troop-option:dang-giap-binh:cham-chap": {
+      "nameZh": {
+        "text": "遲鈍",
+        "viSha256": "a1427bbdb2c67395f340f4a2b58aa6a801dda471dfc0948b4eda71ddc49cb095"
+      },
+      "descriptionZh": {
+        "text": "將受到傷害的50%延後於3回合內逐步結算，自身灼燒時，獲得50%群攻及混亂（進行象兵、重裝改造後可選）",
+        "viSha256": "6ec8277b2030d17e5d225b9771b46ccdf23abb2c63a206419f1e7cad6ec5ffea"
+      }
+    },
+    "troop-option:dang-giap-binh:chong-do": {
+      "nameZh": {
+        "text": "抵禦",
+        "viSha256": "4ba920e5163405403f26b4c44be9f4385d18af69761eeab678e24887e740981d"
+      },
+      "descriptionZh": {
+        "text": "戰鬥前2回合，主將受到兵刃傷害時，有50%機率獲得1次抵禦（每回合最多觸發2次）",
+        "viSha256": "02a0a0dba8a92e6999c66f1e3281385f9cf976b699a4ad9db0c759373abd46a7"
+      }
+    },
+    "troop-option:dang-giap-binh:chuyen-tuong": {
+      "nameZh": {
+        "text": "轉·象兵",
+        "viSha256": "51d0d7eddd728ea368785b7b80f171663fd41934b8d8ac641a55cd3270c257c5"
+      },
+      "descriptionZh": {
+        "text": "將騎兵進階為刀槍不入、橫行無忌的藤甲象",
+        "viSha256": "24f425887d62b42503c4544211ff10a7cceb7079448a9172c2e56607146210c8"
+      }
+    },
+    "troop-option:dang-giap-binh:giap-may": {
+      "nameZh": {
+        "text": "藤甲",
+        "viSha256": "59489cf1228dc6bbb1d14e89ac0f86b3fc6ca793ad6f6bbc6563f2ddbdbea3ad"
+      },
+      "descriptionZh": {
+        "text": "兵刃傷害降低效果提高8%",
+        "viSha256": "0846fe308e09fe3fd0ce661b235608e6262c812dc521f0b967d8c532ee46c40b"
+      }
+    },
+    "troop-option:dang-giap-binh:hung-chu-basic": {
+      "descriptionZh": {
+        "text": "副將可觸發主將效果，且提高3%戰鬥屬性",
+        "viSha256": "c39fb454121585fce6be1f62c5a95f2be53aaf76efc21ae6cebc49591399742c"
+      }
+    },
+    "troop-option:dang-giap-binh:mien-dich": {
+      "nameZh": {
+        "text": "免疫",
+        "viSha256": "c0cd179fd821e9043e7b2b7aef3d4c5ff709d3f9aac186cb43e977c51d799e41"
+      },
+      "descriptionZh": {
+        "text": "我軍全體受到屬性降低效果時，有25%機率免疫",
+        "viSha256": "f19d6f972e1f22022e1a2e89bb7fc583a06ed54e41f8034f749e7e22a1874741"
+      }
+    },
+    "troop-option:dang-giap-binh:nang-khien": {
+      "nameZh": {
+        "text": "舉盾",
+        "viSha256": "b303c76a2e9c120f0f59281c2850aa2b9b30a2ef2dbc6613dba5611ee3c3ff86"
+      },
+      "descriptionZh": {
+        "text": "攜帶者盾兵兵種適性提升1級",
+        "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
+      }
+    },
+    "troop-option:dang-giap-binh:nhan-nai-special": {
+      "descriptionZh": {
+        "text": "灼燒狀態損失的兵力受統率影響降低",
+        "viSha256": "e2e15bcd565ea8d4b02991ad1e272ec55f8d09b54be8694bf898041f1941d4b5"
+      }
+    },
+    "troop-option:dang-giap-binh:ran-chac": {
+      "nameZh": {
+        "text": "堅韌",
+        "viSha256": "687fa60f22e78925bc2215f65585f8bccb6d8c15857da643586c64d448831dec"
+      },
+      "descriptionZh": {
+        "text": "受到兵刃傷害後，該武將本回合受到的兵刃傷害降低3%，回合結束時重置",
+        "viSha256": "510b739a1996a6b8343738800ce42c64fe6fd1c2a7ced7e53bf66a463c3c4537"
+      }
+    },
+    "troop-option:dang-giap-binh:tinh-hoa-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體受到持續傷害效果時，有25%淨化自身",
+        "viSha256": "68dacf2e987960a7c93e082e690877eff63828f38a694198816cafb8cce4f167"
+      }
+    },
+    "troop-option:dang-giap-binh:trong-trang-basic": {
+      "descriptionZh": {
+        "text": "部隊基礎攻城值提高25%但行軍速度降低50%（進行象兵改造後可選）",
+        "viSha256": "a7da3e50707017dc789a5ddd2d0def30cc9e5abf48f6a65b7a7174566d2e6c8f"
+      }
+    },
+    "troop-option:giai-phien-ve:cap-cuu": {
+      "nameZh": {
+        "text": "救護",
+        "viSha256": "d1df53fc43aa04a2c1252caf3ee486db8cabb15cdeeaaf40aa0a459b24af50cd"
+      },
+      "descriptionZh": {
+        "text": "治療目標鎖定為我軍兵力最低單體",
+        "viSha256": "7e03465998384a591207500c4f4bff4242940c6e450ad9e75cef14c14826cea2"
+      }
+    },
+    "troop-option:giai-phien-ve:chuyen-ky": {
+      "nameZh": {
+        "text": "轉·騎術",
+        "viSha256": "5f77ab3891c76b2edd425c1415a472f7280f1f63636f537dcf262e0709b98094"
+      },
+      "descriptionZh": {
+        "text": "將騎兵進階為戰無不勝的解煩衛",
+        "viSha256": "67ea0a04da5bdd88c363425ae6c2ef8a63336dd280a952dc05006a886974e16b"
+      }
+    },
+    "troop-option:giai-phien-ve:dac-thuong": {
+      "nameZh": {
+        "text": "持槍",
+        "viSha256": "d011c869366f4c7e9bcc6851ab8bd65dbeab75cae63820c816e445c8e6a51c12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者槍兵兵種適性提升1級",
+        "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
+      }
+    },
+    "troop-option:giai-phien-ve:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:giai-phien-ve:kham-hu-intermediate": {
+      "descriptionZh": {
+        "text": "根據傷害類型，傷害目標鎖定敵軍統率最低或智力最低單體",
+        "viSha256": "f82a1fd49165468002dcebba2428ea187183182b96a97e164b56e9606f6df329"
+      }
+    },
+    "troop-option:giai-phien-ve:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率提高6%",
+        "viSha256": "4329eac6670c99af7ab3d0c93133b7e37bd80aaaf7d6e51bde5f2b519cb2c021"
+      }
+    },
+    "troop-option:giai-phien-ve:quan-tam-advanced": {
+      "descriptionZh": {
+        "text": "改為必定觸發回復效果，額外判定傷害效果",
+        "viSha256": "c8b09710bccedb056e3d7b8fa96f54a22a729ccad3f071a9849c4b2db1781c3c"
+      }
+    },
+    "troop-option:giai-phien-ve:sach-tap-advanced": {
+      "descriptionZh": {
+        "text": "由普通攻擊後改為發動主動戰法後",
+        "viSha256": "a07c783ce1e854a06ec072a9e276dac283df614f9aca414a18f6e4df68fee323"
+      }
+    },
+    "troop-option:giai-phien-ve:tinh-nghien-special": {
+      "descriptionZh": {
+        "text": "傷害觸發機率受攜帶者最高屬性影響",
+        "viSha256": "2a3ab98399c12e8908128fb770e67743301e7f3628787e088128c53f8166ddcf"
+      }
+    },
+    "troop-option:giai-phien-ve:tram-tran": {
+      "nameZh": {
+        "text": "百戰",
+        "viSha256": "6c3f2cf634aa4be371b7c24bde9ca91da340317c1dc14cc9e4b3c89e5dd72a00"
+      },
+      "descriptionZh": {
+        "text": "我軍全體獲得5%減傷",
+        "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:giai-phien-ve:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "改為我軍智力最高武將觸發",
+        "viSha256": "e48c0c8758f3262f2c1343bd3f32ba713378a0806b54a1a11b13b6856f407909"
+      }
+    },
+    "troop-option:giai-phien-ve:vo-khoi-basic": {
+      "descriptionZh": {
+        "text": "改為我軍武力最高武將觸發",
+        "viSha256": "2d7f2ea9b7e4596640d0cdf3bf7d2f6919d0d4d72799afa679cc918ff6d30e80"
+      }
+    },
+    "troop-option:ham-tran-doanh:cap-cuu-advanced": {
+      "descriptionZh": {
+        "text": "戰鬥中，我軍每損失5000總兵力，受到的急救效果提高25%",
+        "viSha256": "04a9907ba1e1c9a1ff6b8a9958814ec6829b2fd4bff94002d4747eac7eb059a0"
+      }
+    },
+    "troop-option:ham-tran-doanh:chong-do": {
+      "nameZh": {
+        "text": "抵禦",
+        "viSha256": "4ba920e5163405403f26b4c44be9f4385d18af69761eeab678e24887e740981d"
+      },
+      "descriptionZh": {
+        "text": "觸發急救時，有20%機率獲得1層抵禦",
+        "viSha256": "ea7d8d69ac027b7a784288bf6ee41b445d5dfd3d2342e332f1ac3affe5dbe9a7"
+      }
+    },
+    "troop-option:ham-tran-doanh:cuong-than-basic": {
+      "descriptionZh": {
+        "text": "改為獲得智力與統率",
+        "viSha256": "c4719ea1152942bded2ff6bc1f00308648dfd7c0f7f78fd043a91e4b8c20f13e"
+      }
+    },
+    "troop-option:ham-tran-doanh:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "改為前4回合獲得急救狀態",
+        "viSha256": "acc4d135c54ab96a7cec6587e566ecdf50b7b06d33475a36d8301c181f115d8f"
+      }
+    },
+    "troop-option:ham-tran-doanh:dan-quan": {
+      "nameZh": {
+        "text": "統軍",
+        "viSha256": "bb865be7b8ffb3b48f454b25e64a224f394a2ed504bafa3c479646b623edf60c"
+      },
+      "descriptionZh": {
+        "text": "急救觸發機率額外受攜帶者統率影響",
+        "viSha256": "b3fbb768b43803faa83af7275eb9b604a19bab96e7521b5778b337bf321e4556"
+      }
+    },
+    "troop-option:ham-tran-doanh:doat-chi-advanced": {
+      "descriptionZh": {
+        "text": "觸發急救時，有25%機率偷取傷害來源5點戰鬥屬性，可疊加，持續2回合",
+        "viSha256": "ab3d88e5e6d2297768f75b2007ffd8d9452bc5c95870a70ec1c6d8942c98f49d"
+      }
+    },
+    "troop-option:ham-tran-doanh:giai-tru": {
+      "nameZh": {
+        "text": "驅散",
+        "viSha256": "09e801841d50c9b8f87fe1e7facb94387d96f162a51ade3f1e52744a159b5a21"
+      },
+      "descriptionZh": {
+        "text": "觸發急救時，有20%機率驅散自身負面狀態",
+        "viSha256": "3713bd26dc4553ed610bda874c4f9053832fbefa4227f30dfd775755bb0fd474"
+      }
+    },
+    "troop-option:ham-tran-doanh:kiem-tu-basic": {
+      "descriptionZh": {
+        "text": "武力與統率額外提高11點",
+        "viSha256": "70affabfbe9e295fc309fc45ddcb32f8ebb3a1f7e6d81f55c86ffa02a0f544cc"
+      }
+    },
+    "troop-option:ham-tran-doanh:muu-cong-special": {
+      "descriptionZh": {
+        "text": "急救觸發機率額外受攜帶者智力影響",
+        "viSha256": "e88fe4c5f5c68836451653f4be28185af8700088f59742743262128efbb236d2"
+      }
+    },
+    "troop-option:ham-tran-doanh:nang-khien": {
+      "nameZh": {
+        "text": "舉盾",
+        "viSha256": "b303c76a2e9c120f0f59281c2850aa2b9b30a2ef2dbc6613dba5611ee3c3ff86"
+      },
+      "descriptionZh": {
+        "text": "攜帶者盾兵兵種適性提升1級",
+        "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
+      }
+    },
+    "troop-option:ham-tran-doanh:nghi-ngoi": {
+      "nameZh": {
+        "text": "休整",
+        "viSha256": "3586f2669e8054b716d7cd3e9d113ae38eb9b9492078efcd88d604656cc2840f"
+      },
+      "descriptionZh": {
+        "text": "額外獲得休整狀態（治療率60%）",
+        "viSha256": "065bce726b1eb4eee8b9af18c5fc753d0417f18a1301680b671ee89567fcce7a"
+      }
+    },
+    "troop-option:ham-tran-doanh:tri-lieu-basic": {
+      "descriptionZh": {
+        "text": "治療率額外提升40%",
+        "viSha256": "714d04a140eb0eb9528cffc4c2fa0e4ccf4221e1d570af3de37ba97bc6e266e0"
+      }
+    },
+    "troop-option:ho-bao-ky:chong-do": {
+      "nameZh": {
+        "text": "抵禦",
+        "viSha256": "4ba920e5163405403f26b4c44be9f4385d18af69761eeab678e24887e740981d"
+      },
+      "descriptionZh": {
+        "text": "發動突擊戰法後，有15%機率獲得1層抵禦，持續1回合",
+        "viSha256": "c0fd7fea93da1779852c42c2afb58c4d4eab0ea3ef08e88b556a9eb044a792ea"
+      }
+    },
+    "troop-option:ho-bao-ky:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "生效回合變為前3~4回合",
+        "viSha256": "e9d6c0214bdf0ff4b3c325cf44021742ca49f3d2483e5c62868a9e1a27b325b0"
+      }
+    },
+    "troop-option:ho-bao-ky:dien-ich-intermediate": {
+      "descriptionZh": {
+        "text": "獲得增益效果有15%機率延長1回合",
+        "viSha256": "d72533ee834646d7045d9ca8ae479667645eb1be7087ef195acafa284afe1875"
+      }
+    },
+    "troop-option:ho-bao-ky:gianh-cong": {
+      "nameZh": {
+        "text": "搶攻",
+        "viSha256": "0de39191fc79cbc1090ba0b5c28b6c3986941794efee63000a24a5272f1d0972"
+      },
+      "descriptionZh": {
+        "text": "突擊戰法發動率額外提高2%",
+        "viSha256": "55beea119262af44920eac5b6598d0fdad13eef295d71fb82c67ab68ecd5fc52"
+      }
+    },
+    "troop-option:ho-bao-ky:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:ho-bao-ky:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "提高的突擊戰法發動率受攜帶者智力影響",
+        "viSha256": "395b04dea3e703ea9d3bef2ea851ade02fd2c9871b608ae36580a73fa9a2f15d"
+      }
+    },
+    "troop-option:ho-bao-ky:tap-tri-special": {
+      "descriptionZh": {
+        "text": "獲得武力改為獲得智力",
+        "viSha256": "d5851bbeeea128887cb0a80badac30a574484e92dde213251775f0165f169c87"
+      }
+    },
+    "troop-option:ho-bao-ky:than-hanh-special": {
+      "descriptionZh": {
+        "text": "額外獲得40點速度",
+        "viSha256": "82cb86609c9546392ff391b78b0646237a6eba7273038b56d8a3b83e8b9a88d7"
+      }
+    },
+    "troop-option:ho-bao-ky:thao-luyen": {
+      "nameZh": {
+        "text": "操演",
+        "viSha256": "20588c9827d8957035126d3b7dc3391f3fe137984bcb3c3219400ee05552387b"
+      },
+      "descriptionZh": {
+        "text": "提高的突擊戰法發動率受攜帶者武力影響",
+        "viSha256": "793f3438e3ed9f659107259e59dce71fd7fb402f25e22a83040b05fa15b3a352"
+      }
+    },
+    "troop-option:ho-bao-ky:tri-ke-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體普攻轉化為謀略傷害",
+        "viSha256": "11bab44bbc437c9d204e353d1f527024da667a54d57c7c935f7ad3898db3b616"
+      }
+    },
+    "troop-option:ho-bao-ky:trong-sang-advanced": {
+      "descriptionZh": {
+        "text": "發動突擊戰法後，有15%機率對目標隨機造成以下效果之一（震懾、計窮、繳械、混亂、虛弱、禁療、破壞）",
+        "viSha256": "c116b80b0d12c016cf1419811afe3c22b085672c1e975c363192dfa2d79e4bcb"
+      }
+    },
+    "troop-option:ho-bao-ky:xung-phong-basic": {
+      "descriptionZh": {
+        "text": "突擊戰法傷害提高10%（受武力和智力較高一項影響）",
+        "viSha256": "9a34cbc7555b0b4fe98a0cc6cb4125b89dd2c8db91313a96db8b36aeea7f4086"
+      }
+    },
+    "troop-option:ho-ve-quan:cong-tam-intermediate": {
+      "descriptionZh": {
+        "text": "虎衛軍屬性提升效果達5層時，獲得15%攻心",
+        "viSha256": "74fb89193d17723edf4b0534889ee8f4e56d19c868f2edcffbb69247578ec17b"
+      }
+    },
+    "troop-option:ho-ve-quan:dong-long": {
+      "nameZh": {
+        "text": "眾志",
+        "viSha256": "8ecfc084df4c6143520cd4eb69d16a72dbca9e3e2a363a67beb6588868836574"
+      },
+      "descriptionZh": {
+        "text": "觸發條件改為我軍全體即將受到普攻時",
+        "viSha256": "39d6f2ea19daee74d6db4dd1e42f79b7943ac8df507b9ca2731d927ce5a30719"
+      }
+    },
+    "troop-option:ho-ve-quan:dot-pha-basic": {
+      "descriptionZh": {
+        "text": "傷害影響上限提升20%",
+        "viSha256": "78cfab0352e125963fbad2dd24499e5d75105a6b38b5f031f9a44c69ee369867"
+      }
+    },
+    "troop-option:ho-ve-quan:lam-phan": {
+      "nameZh": {
+        "text": "倒戈",
+        "viSha256": "6256f1fa960d10ed57b1a6d29e6a0ca2b9868623f40dbbf255f5fbf73718ef79"
+      },
+      "descriptionZh": {
+        "text": "虎衛軍屬性提升效果達5層時，獲得15%倒戈",
+        "viSha256": "8c96d6a41d0edadd6a8682f21f43b2d749b365c2595c44ccdfd931dd9aadb03f"
+      }
+    },
+    "troop-option:ho-ve-quan:muu-luoc-special": {
+      "descriptionZh": {
+        "text": "虎衛軍造成的傷害改為謀略傷害",
+        "viSha256": "76f3a9b25e08a8f7a9d3317585fa58b5cf89b31684c10b1d85800317eabc1516"
+      }
+    },
+    "troop-option:ho-ve-quan:nang-khien": {
+      "nameZh": {
+        "text": "舉盾",
+        "viSha256": "b303c76a2e9c120f0f59281c2850aa2b9b30a2ef2dbc6613dba5611ee3c3ff86"
+      },
+      "descriptionZh": {
+        "text": "攜帶者盾兵兵種適性提升1級",
+        "viSha256": "45046dabb27c0ad2c8a548f7b89b507770bf5e36b628712b0076fc9e212435b5"
+      }
+    },
+    "troop-option:ho-ve-quan:tai-dien-advanced": {
+      "descriptionZh": {
+        "text": "每回合觸發次數改為2次",
+        "viSha256": "f26947fd24763bdb120605e27982f777929a2c54cad6f23089ac5e22c25ab624"
+      }
+    },
+    "troop-option:ho-ve-quan:tap-tri-basic": {
+      "descriptionZh": {
+        "text": "由武力提升改為智力提升",
+        "viSha256": "005c1cc187f78071ea00a7f3789ab3a033b9c03562f1015c780375ba19a7bef8"
+      }
+    },
+    "troop-option:ho-ve-quan:thien-chien-basic": {
+      "descriptionZh": {
+        "text": "傷害率提升36%",
+        "viSha256": "c21936428fa7d604645691731cf5bf81829e6a37315d66203b3924e93114245e"
+      }
+    },
+    "troop-option:ho-ve-quan:tri-tuyet-advanced": {
+      "descriptionZh": {
+        "text": "觸發武將由副將改為智力最高副將，傷害目標改為敵軍全體",
+        "viSha256": "6ed844a9751af4fa7106542d0b9b22a25fa598213fd6774f0ebf66e4c725544f"
+      }
+    },
+    "troop-option:ho-ve-quan:truy-duoi": {
+      "nameZh": {
+        "text": "窮追",
+        "viSha256": "43ecc28d3e52e491f369a4a2296eb86751983b0191345b3859fb795084cd85da"
+      },
+      "descriptionZh": {
+        "text": "傷害率額外受目標損失兵力影響",
+        "viSha256": "616c5bdf89a1885bf5b880a89c396a07494b116210091e1b2ad825cff5e0a046"
+      }
+    },
+    "troop-option:ho-ve-quan:vo-khoi-advanced": {
+      "descriptionZh": {
+        "text": "觸發武將由副將改為武力最高副將，傷害目標改為敵軍全體",
+        "viSha256": "0d62a3685d778fdf3d868be4f1080976a19c0bd0cd293c7e0f3cc1e997c2e335"
+      }
+    },
+    "troop-option:phi-hung-quan:chuyen-cung": {
+      "nameZh": {
+        "text": "轉·彎弓",
+        "viSha256": "e2e26a524ea07cc46ac3c8be0efbe54e4776d9719968c95f9654583ad5157f4a"
+      },
+      "descriptionZh": {
+        "text": "將弓兵進階為勇不可擋的飛熊軍",
+        "viSha256": "237b7266a2b29ed6e87d16ce78de14ee885a6abac2182b81b3e17da3818972fb"
+      }
+    },
+    "troop-option:phi-hung-quan:du-uy-advanced": {
+      "descriptionZh": {
+        "text": "由重置全部累計進度，改為重置50%累計進度",
+        "viSha256": "28755e9b4450ccc57584a2adf9285eb148ba4cd98138ec17b7b07c1f94d02f0e"
+      }
+    },
+    "troop-option:phi-hung-quan:giap-cung": {
+      "nameZh": {
+        "text": "披堅",
+        "viSha256": "7c36cea57ccd13cc0308cd01c73c92698c2aa3f61e1268e04b528c3e3a881b8c"
+      },
+      "descriptionZh": {
+        "text": "傷害率改為受我軍累計減免傷害量影響",
+        "viSha256": "c96d832307386748105d2bc51ad009775af425b8500fca81fb9278180abbc4c2"
+      }
+    },
+    "troop-option:phi-hung-quan:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:phi-hung-quan:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "飛熊軍的傷害率額外提升12%",
+        "viSha256": "6ab6a43992f5b2562202361800abd5d8f4a5fe04844e4d8fe3ad3c2ffb78721c"
+      }
+    },
+    "troop-option:phi-hung-quan:pho-thuong": {
+      "nameZh": {
+        "text": "扶傷",
+        "viSha256": "3da44efcdce3a7ebaa052b1f76814768cc0c967cf2d60b77fb53d81855471d7f"
+      },
+      "descriptionZh": {
+        "text": "觸發飛熊軍傷害後，為我軍兵力最低單體恢復傷害量40%的兵力",
+        "viSha256": "3e4bb5dc26e6e25eb8d557abc6941d0526f9afdf80b1fa62fb34c736abb62b02"
+      }
+    },
+    "troop-option:phi-hung-quan:quan-luc-advanced": {
+      "descriptionZh": {
+        "text": "影響傷害量的目標由我軍改為戰場全體",
+        "viSha256": "69cbc233b71d85757cb5f73d8c70c31e353a5d9caf2ece1a01a1636ffb99953e"
+      }
+    },
+    "troop-option:phi-hung-quan:tai-sinh-basic": {
+      "descriptionZh": {
+        "text": "飛熊軍的治療效果額外提升8%",
+        "viSha256": "1ca94ad7a37af6412cf2edb07792c785b36debf1235dc1420f0b35fd0727da98"
+      }
+    },
+    "troop-option:phi-hung-quan:tap-tri-special": {
+      "descriptionZh": {
+        "text": "造成傷害的武將行動時獲得2%智力，可疊加",
+        "viSha256": "1523f21efafc2f7965c820e7730760d31c9db46f2e07726a48a246323917b96f"
+      }
+    },
+    "troop-option:phi-hung-quan:te-chung-intermediate": {
+      "descriptionZh": {
+        "text": "敵軍受到治療時，有30%機率同時治療我軍隨機單體（每回合最多觸發3次）",
+        "viSha256": "108af6e42cf4b7eb9182f76482f0829bfd488a8b10f5259b1f57d579643d5c76"
+      }
+    },
+    "troop-option:phi-hung-quan:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "觸發武將由主將改為智力最高武將",
+        "viSha256": "4a4cbac0a172a0334f43f445f83a789397f58d0926727ce74dda3358b4962a83"
+      }
+    },
+    "troop-option:phi-hung-quan:trut-xuong": {
+      "nameZh": {
+        "text": "傾瀉",
+        "viSha256": "f64b1b792898ae1789a9e5dd9a8d7f25ec12bdf25d20525e2d52ae8d5d48a0a4"
+      },
+      "descriptionZh": {
+        "text": "傷害目標改為敵軍群體（2~3人）",
+        "viSha256": "3158315f75e09c50fcf12723ba4ed7c189526a0a4df4368a67498fc7d4332ffb"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:at-trung": {
+      "nameZh": {
+        "text": "必中",
+        "viSha256": "c0e98d605ad854540f7c177d399f3e1cee3c24bc0b837381c66445f96f9f5332"
+      },
+      "descriptionZh": {
+        "text": "會心/奇謀傷害有15%機率無視抵禦與規避效果",
+        "viSha256": "f56a0ca9d334dfe76cf8aa6dcb005ae859b4c362c83170870501448f665d3e7e"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "會心/奇謀提升取消回合限制，但提升效果降低15%",
+        "viSha256": "8f3aa54fbd5c83ea16044483eb7f0b7e280b3e72a7966ba4171b67a9e35aea78"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:cuu-vien-advanced": {
+      "descriptionZh": {
+        "text": "造成會心/奇謀傷害時，為我軍兵力最低單體恢復傷害量的35%",
+        "viSha256": "300e9389577098582af8f952c868dcf49673c877385de5f991628dfb1bc37c88"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:ky-muu-special": {
+      "descriptionZh": {
+        "text": "改為獲得奇謀",
+        "viSha256": "e981f6263f6ba46704460d96442918eece0e2f98ef87adb1350b0a237736cb0a"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:linh-ngo-intermediate": {
+      "descriptionZh": {
+        "text": "會心/奇謀額外提升3%",
+        "viSha256": "87301779b8c7ba6bfe55153a8ff8517a5c3cccace9ef3ee2593ee68fac5b4902"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:loan-tran-special": {
+      "descriptionZh": {
+        "text": "首回合敵軍全體進入遇襲狀態",
+        "viSha256": "1c67f2fdfc7cbf57e1e380d9ee533a69d8b03b3ac6443b7d367f7e9a345d22ef"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "獲得的會心/奇謀受智力影響",
+        "viSha256": "9354b16e2dc8db9ba4be143309db8389f6ee3991a9305e2188b8fc9bc0913756"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:tap-tri-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體獲得15智力",
+        "viSha256": "a9f07eb5ceb2fcde2dd7134160e4964996e75ed2cf1d87f1899c6963660481b8"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:tat-tri": {
+      "nameZh": {
+        "text": "飛馳",
+        "viSha256": "b63060ade350cea0b6e0211b48fb6f197c04e0ad357a136440bf09452a7897a5"
+      },
+      "descriptionZh": {
+        "text": "獲得的會心/奇謀受速度影響",
+        "viSha256": "ca23f1f75b6a17f648143ef88fac28927c27067a9caaff36799b05e71d780205"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:thao-luyen": {
+      "nameZh": {
+        "text": "操演",
+        "viSha256": "20588c9827d8957035126d3b7dc3391f3fe137984bcb3c3219400ee05552387b"
+      },
+      "descriptionZh": {
+        "text": "獲得的會心/奇謀受武力影響",
+        "viSha256": "a7773fdf40e5ca3ba4b55d5e753eac9e4ffad221829debde25899be72a2f648c"
+      }
+    },
+    "troop-option:tay-luong-thiet-ky:vo-luc-intermediate": {
+      "descriptionZh": {
+        "text": "我軍全體獲得15武力",
+        "viSha256": "1276732952023e758ba18dea330e682483c30aa4a27501df4c654e18c7d75f22"
+      }
+    },
+    "troop-option:thanh-chau-binh:bat-khuat-intermediate": {
+      "descriptionZh": {
+        "text": "第5回合額外觸發1次治療（總治療率120%，受武力或智力影響，額外受敵軍造成傷害影響）",
+        "viSha256": "35080816499fb76c0ca50e1d7b4f5fbfa5631752f56d2439507a8a9bcda3850e"
+      }
+    },
+    "troop-option:thanh-chau-binh:chua-tri": {
+      "nameZh": {
+        "text": "醫治",
+        "viSha256": "0eefee3723133c76f9e1d1f24d94a500573208f5650d8c92901d61a9dd4e4037"
+      },
+      "descriptionZh": {
+        "text": "總治療率提高60%",
+        "viSha256": "d76bf40cda8538ecc0ab1178c7581bec7a4db4c153339490f2ef63f8917539cf"
+      }
+    },
+    "troop-option:thanh-chau-binh:dac-thuong": {
+      "nameZh": {
+        "text": "持槍",
+        "viSha256": "d011c869366f4c7e9bcc6851ab8bd65dbeab75cae63820c816e445c8e6a51c12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者槍兵兵種適性提升1級",
+        "viSha256": "a5afc7d791df8c58f48ba9e0c0f9d1963acb4e13e660f3bf948284c765808714"
+      }
+    },
+    "troop-option:thanh-chau-binh:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:thanh-chau-binh:muu-cong-intermediate": {
+      "descriptionZh": {
+        "text": "反擊傷害受智力影響",
+        "viSha256": "06b1fdda9c62932bd8fd67a2f43296b416cd8d19f62467edb09ad0ef92e66327"
+      }
+    },
+    "troop-option:thanh-chau-binh:muu-luoc-special": {
+      "descriptionZh": {
+        "text": "反擊改為謀略傷害",
+        "viSha256": "4ced966ad39375f29009829e709063e7795f1eff06715210a54069c45ef1d967"
+      }
+    },
+    "troop-option:thanh-chau-binh:quan-hung-basic": {
+      "descriptionZh": {
+        "text": "改為我軍群體（2~3人）獲得反擊",
+        "viSha256": "5ab39adfa4666fd10879b09dd93e36e81ba430345394f1fc4d345a7693c27ef0"
+      }
+    },
+    "troop-option:thanh-chau-binh:tap-tri": {
+      "nameZh": {
+        "text": "謀攻",
+        "viSha256": "c97590b65cfb0da5c1e42054f7467c4abcf0be64df8d06bc18570496e0ab8627"
+      },
+      "descriptionZh": {
+        "text": "反擊傷害受智力影響",
+        "viSha256": "840ba8145ea4bed678e4d493a9950084c9ec57177a7e935e6c3e95080e3e6e1a"
+      }
+    },
+    "troop-option:thanh-chau-binh:thao-luyen": {
+      "nameZh": {
+        "text": "操演",
+        "viSha256": "20588c9827d8957035126d3b7dc3391f3fe137984bcb3c3219400ee05552387b"
+      },
+      "descriptionZh": {
+        "text": "反擊傷害受武力影響",
+        "viSha256": "d8bb4d79b50f720eebe8c5b34d1069d0121a0e1509372490c7e8983d6d7e7688"
+      }
+    },
+    "troop-option:thanh-chau-binh:thien-chien-special": {
+      "descriptionZh": {
+        "text": "反擊傷害率提高36%",
+        "viSha256": "7ac9d8a0e4cc7f6dd3c6ffbaf391dfa2720df5dcf0de1f49835ae784869a0de6"
+      }
+    },
+    "troop-option:thanh-chau-binh:tien-co-advanced": {
+      "descriptionZh": {
+        "text": "戰鬥前2回合開始時，攜帶者對所有處於控制狀態的敵軍造成傷害（傷害率100%，受武力或智力更高一項影響）",
+        "viSha256": "293882e9a85977381e9ebf52bb7934f24cc2a9c7a6ed077c15bd4f7871ff8928"
+      }
+    },
+    "troop-option:thanh-chau-binh:vong-vo": {
+      "nameZh": {
+        "text": "迂迴",
+        "viSha256": "3a4a65c2a5339a54151b2d6c1919b78e5cb568aff8b8245db2866e80d672a682"
+      },
+      "descriptionZh": {
+        "text": "額外獲得36%規避效果",
+        "viSha256": "752da7bb8da9fb59f91374cecc6bcfb58ceeb98dca196290bd257526bbb4db50"
+      }
+    },
+    "troop-option:tien-dang-tu-si:chuyen-khien": {
+      "nameZh": {
+        "text": "轉·舉盾",
+        "viSha256": "be722c4421b9590dc72dac7fd129305de337100ad9f42fbe0a688569d00c67aa"
+      },
+      "descriptionZh": {
+        "text": "將盾兵進階為悍不畏死的先登死士",
+        "viSha256": "48a893504c6ec97fa06ef7584e806ea5f4792c67b4ba5496cd3e9508341c4c55"
+      }
+    },
+    "troop-option:tien-dang-tu-si:cung-cong": {
+      "nameZh": {
+        "text": "彎弓",
+        "viSha256": "6baddb3246e63413f56ecd7306ca3ccec0b8cd05050a2fff9e6d4e85deb16a12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者弓兵兵種適性提升1級",
+        "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
+      }
+    },
+    "troop-option:tien-dang-tu-si:cuu-chien-advanced": {
+      "descriptionZh": {
+        "text": "額外延長1回合",
+        "viSha256": "d5f9177ab55866ac94509ec4950e4767f23a572973920bae4f4b38a1bf98ce11"
+      }
+    },
+    "troop-option:tien-dang-tu-si:de-khang-special": {
+      "descriptionZh": {
+        "text": "我軍受到的兵種剋制效果減半",
+        "viSha256": "d8d777213a6bd52e29c0b02017843b647716e7d254ee664919a9785c2b55958a"
+      }
+    },
+    "troop-option:tien-dang-tu-si:diep-gia-advanced": {
+      "descriptionZh": {
+        "text": "最大疊加次數+1",
+        "viSha256": "0e6dd8eeb4fa988e9f736f8a5de843853ac824731af7bd1656520a5766317756"
+      }
+    },
+    "troop-option:tien-dang-tu-si:doat-chi-intermediate": {
+      "descriptionZh": {
+        "text": "會額外根據傷害類型偷取武力或智力，但偷取效果下降11點",
+        "viSha256": "445812063b00dadaf4b77d4126432a1a848beaa70f06eea3520e349222fb6837"
+      }
+    },
+    "troop-option:tien-dang-tu-si:hao-doat-intermediate": {
+      "descriptionZh": {
+        "text": "每次可額外偷取7點統率",
+        "viSha256": "1f167664f3ebf2b15d7894f9d0b8d6e6115c83ee649c52a264c3384fcdb743e7"
+      }
+    },
+    "troop-option:tien-dang-tu-si:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:tien-dang-tu-si:muu-cong-basic": {
+      "descriptionZh": {
+        "text": "改為受攜帶者智力影響",
+        "viSha256": "16c84af1b96abd5c48c0feca081766d4b7d1070d367c5457a3283136181cae84"
+      }
+    },
+    "troop-option:tien-dang-tu-si:thao-luyen": {
+      "nameZh": {
+        "text": "操演",
+        "viSha256": "20588c9827d8957035126d3b7dc3391f3fe137984bcb3c3219400ee05552387b"
+      },
+      "descriptionZh": {
+        "text": "改為受攜帶者武力影響",
+        "viSha256": "2678e5b3eace7027df1800e188c70cb35020844dd85b61ceadcda830ef65b885"
+      }
+    },
+    "troop-option:tien-dang-tu-si:tram-tran": {
+      "nameZh": {
+        "text": "百戰",
+        "viSha256": "6c3f2cf634aa4be371b7c24bde9ca91da340317c1dc14cc9e4b3c89e5dd72a00"
+      },
+      "descriptionZh": {
+        "text": "我軍全體獲得5%減傷",
+        "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:tien-dang-tu-si:uc-the-basic": {
+      "descriptionZh": {
+        "text": "可同時降低突擊戰法發動率，但每次降低效果下降1%",
+        "viSha256": "e18acbf13f46ab1696ef36a98ec46044b417bba245e535d0525686a27830a665"
+      }
+    },
+    "troop-option:tuong-binh:bao-no-intermediate": {
+      "descriptionZh": {
+        "text": "自身灼燒時，額外獲得50%群攻",
+        "viSha256": "2419471f7acf2479f35e3d966ca2e63900f2ce5c6a83e3fcc09278a62fc9a8a4"
+      }
+    },
+    "troop-option:tuong-binh:bi-thao-advanced": {
+      "descriptionZh": {
+        "text": "逐步結算的傷害改為延後4回合",
+        "viSha256": "0bcfd104dc8c25fe83071c7b354852fbfb491bc144a91e615340c2a5f5c261a1"
+      }
+    },
+    "troop-option:tuong-binh:kien-dinh-intermediate": {
+      "descriptionZh": {
+        "text": "攜帶者免疫混亂狀態",
+        "viSha256": "d5720f9330a5f8ea6d79e24236f9351551e743eba645bcab9296663f5335c02f"
+      }
+    },
+    "troop-option:tuong-binh:ky-thuat-special": {
+      "descriptionZh": {
+        "text": "攜帶者騎兵兵種適性提升1級",
+        "viSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052"
+      }
+    },
+    "troop-option:tuong-binh:lam-diu": {
+      "nameZh": {
+        "text": "緩和",
+        "viSha256": "005fe60b14de6d29f4e39675b831edec1e6cfcee1cf1d695957b513b56ff763b"
+      },
+      "descriptionZh": {
+        "text": "結算傷害額外降低30%",
+        "viSha256": "2f8ead805dd02adf181a35e823ff769121d496a4ec91f3217e08d67ebd292c98"
+      }
+    },
+    "troop-option:tuong-binh:mac-giap": {
+      "nameZh": {
+        "text": "披甲",
+        "viSha256": "d5f6ee3aee66b3b40235b3b2b37a675af8858d2a17bb6cd585c40622ec542f7c"
+      },
+      "descriptionZh": {
+        "text": "額外延後結算25%受到的傷害",
+        "viSha256": "a4b40fc0dfef2cec062c199a29649a7fa711fb79b4a0867c95bb588a653d9ff1"
+      }
+    },
+    "troop-option:tuong-binh:man-toc-special": {
+      "descriptionZh": {
+        "text": "攜帶者獲得蠻族標籤",
+        "viSha256": "312d00d02bcd53fb4829746fc5a10523e0b8551cd9d4ddf5d86d1800cefafb5d"
+      }
+    },
+    "troop-option:tuong-binh:nang-ne": {
+      "nameZh": {
+        "text": "厚重",
+        "viSha256": "398a9a58c1a2427fcfdc1f37f3cc1e7627e95072088f709e0da8f6eae1a21c11"
+      },
+      "descriptionZh": {
+        "text": "部隊不會被拒馬阻擋",
+        "viSha256": "25d207282256eb16517b4f0ae0b47c2b03b90f5e9945a5504e409e88d48c7754"
+      }
+    },
+    "troop-option:tuong-binh:ngu-dich-advanced": {
+      "descriptionZh": {
+        "text": "部隊受到持續傷害降低25%",
+        "viSha256": "9fb227294b2f498a8dafc6378e36a529f878cce034d8c08101ee8f6bc4cfd6b5"
+      }
+    },
+    "troop-option:tuong-binh:tat-hanh-special": {
+      "descriptionZh": {
+        "text": "不再降低行軍速度",
+        "viSha256": "154ba813e70b9debc79e05b1f84406c401576e3669b7cbccf3e7a3f3297e39cf"
+      }
+    },
+    "troop-option:tuong-binh:toc-chien-intermediate": {
+      "descriptionZh": {
+        "text": "戰鬥將在第七回合結束",
+        "viSha256": "270836e87eaa2dd00290da40d52306a4ad2a534ece84f407e1d75fe07213595f"
+      }
+    },
+    "troop-option:tuong-binh:tu-duong-advanced": {
+      "descriptionZh": {
+        "text": "戰平後立刻恢復所有傷兵",
+        "viSha256": "1d9c113e0a9dc03a376191ebb14612b3e4bf61de312a3ae099bc0c5f44448cf2"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:bao-cat": {
+      "nameZh": {
+        "text": "沙暴",
+        "viSha256": "29833a81df002bf688514ad9f8f666a0247c79697af9fcf184b3e476008b7140"
+      },
+      "descriptionZh": {
+        "text": "額外施加沙暴狀態，但傷害率下降15%",
+        "viSha256": "98fad5a781c2fe9b9ae93359adf5df776b6cf2ce7d28fcbafa3bff918cfb60d4"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:chuyen-khien": {
+      "nameZh": {
+        "text": "轉·舉盾",
+        "viSha256": "be722c4421b9590dc72dac7fd129305de337100ad9f42fbe0a688569d00c67aa"
+      },
+      "descriptionZh": {
+        "text": "將盾兵進階為矢不虛發的無當飛軍",
+        "viSha256": "b69fd583b26594b5f0d117826ea3e379c8548ec24b720ed86ac529880ff29775"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:cung-cong": {
+      "nameZh": {
+        "text": "彎弓",
+        "viSha256": "6baddb3246e63413f56ecd7306ca3ccec0b8cd05050a2fff9e6d4e85deb16a12"
+      },
+      "descriptionZh": {
+        "text": "攜帶者弓兵兵種適性提升1級",
+        "viSha256": "8d2302450d60427c1834c3e55fe630430b4954fdb88427984b6d70b216e34ea5"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:cuu-chien-intermediate": {
+      "descriptionZh": {
+        "text": "持續回合改為4回合",
+        "viSha256": "26234f8fcc337f9383601812f3b07c2a677133f830d732e18c4fb44f5d3721bd"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:doat-hon-advanced": {
+      "descriptionZh": {
+        "text": "對存在持續性狀態的武將造成傷害時，恢復我軍兵力最低（5%*目標存在的負面狀態數量）傷害量",
+        "viSha256": "eb96c59fa9926babc419856145e5975e237d445c746f3a493562b0a9a76e5ab9"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:huong-dung-advanced": {
+      "descriptionZh": {
+        "text": "我軍全體獲得150鄉勇（該鄉勇在部隊受到傷害時，抵擋其中50%傷害。當前總兵力≥最大兵力的65%時生效）",
+        "viSha256": "ad59209fd9019e9801c758806ff2782bbabf9203fb5410cb2af0681f0239e3a9"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:kiem-tu-special": {
+      "descriptionZh": {
+        "text": "統率和速度額外提升11點",
+        "viSha256": "e8c45805e32f60e3f4a8031d2aa98c60ad740980f207381262910a7ede33f53b"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:mui-dinh": {
+      "nameZh": {
+        "text": "未定",
+        "viSha256": "599ca7e54354cbcb9197135eb269868bbefede40af78d8179e4946d2a1d6fcaa"
+      },
+      "descriptionZh": {
+        "text": "目標在無當飛軍施加傷害期間，造成的傷害降低（5%*存在的負面狀態數量）",
+        "viSha256": "60aded3ee973529dab6b9bbb9b9bfc2447edeb6e40403bf3fae1fb905e6f9c84"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:pha-dich-basic": {
+      "descriptionZh": {
+        "text": "傷害率提高40%",
+        "viSha256": "d5206fbe1a0633dc029724149c9b7a065176a39a2b1ab99291b98f5ccd918452"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:pha-quan-intermediate": {
+      "descriptionZh": {
+        "text": "我軍造成的持續傷害效果無視40%防禦屬性",
+        "viSha256": "4bff8bf306f7cd727c8b4b60a1b44063d6271fad60d6e62d69b4459c75f2cc02"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:tram-tran": {
+      "nameZh": {
+        "text": "百戰",
+        "viSha256": "6c3f2cf634aa4be371b7c24bde9ca91da340317c1dc14cc9e4b3c89e5dd72a00"
+      },
+      "descriptionZh": {
+        "text": "我軍全體獲得5%減傷",
+        "viSha256": "6581bd2276e76caa333dab6f30cb3912406536b9d22eec0484a751119e5a77f6"
+      }
+    },
+    "troop-option:vo-duong-phi-quan:tri-tuyet-basic": {
+      "descriptionZh": {
+        "text": "改為我軍智力最高武將施加",
+        "viSha256": "09bcbad65462e96f4d7f26d907c6a8411b40255abe96f24a439de9aae30b152d"
       }
     }
   }

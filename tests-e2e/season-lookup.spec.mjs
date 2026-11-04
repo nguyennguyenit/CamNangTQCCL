@@ -80,7 +80,7 @@ async function controlledBundle(page, data = null) {
       selfTacticId: null, inheritTacticId: null, advisorId: null,
       growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
       otherAptitudes: { infantry: null, navy: null },
-      categoryVi: null, exclusiveTitleVi: null,
+      categoryVi: null, exclusiveTitleVi: null, exclusiveTitleZh: null,
       civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
       civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
       usageVi: null, usageZh: null, cardPacks: [],

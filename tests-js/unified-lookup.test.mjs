@@ -10,7 +10,8 @@ import {
   searchLookupGroup,
   retiredLookupRedirect,
 } from "../js/unified-lookup.js";
-import { effectVersions, lookupProfile } from "../js/lookup-detail.js";
+import { effectVersions, lookupProfile, zhSafeValue } from "../js/lookup-detail.js";
+import { withLocale } from "../js/i18n.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
 import { bookSourceAliases } from "../js/lookup-ids.js";
 import { readFile } from "node:fs/promises";
@@ -421,6 +422,34 @@ function fieldByKey(profile, key) {
 function relationByKey(profile, key) {
   return profile.relations.find((relation) => relation.key === key);
 }
+
+test("zhSafeValue bản zh: không phân biệt hoa thường; nhãn ghép và danh sách chỉ dịch khi mọi phần đều dịch được", () => {
+  assert.equal(zhSafeValue("Phá Trận", "zh"), "破阵");
+  assert.equal(zhSafeValue("Hỗn loạn / Thiêu đốt", "zh"), "混乱 / 灼烧");
+  assert.equal(zhSafeValue("Hỗn loạn / Chữ chưa dịch", "zh"), null);
+  assert.equal(zhSafeValue(["Khiên binh", "Cung binh"], "zh"), "盾兵、弓兵");
+  assert.equal(zhSafeValue(["Khiên binh", "Chữ chưa dịch"], "zh"), null);
+  assert.equal(zhSafeValue("Phá Trận", "vi"), "Phá Trận");
+});
+
+test("hồ sơ chiến pháp bản zh: điều kiện đổi và cách nhận ghép từ tên Hán; một tên không tra được thì ẩn ô và đánh dấu thiếu", () => {
+  const heroes = [hero("hero:luc-ton", "Lục Tốn", { chinese: "陸遜" }), hero("hero:sp-luu-diep", "SP Lưu Diệp", { chinese: "SP 劉曄" }), hero("hero:luu-diep", "Lưu Diệp", { chinese: "劉曄" })];
+  const event = (id, exchange) => tactic(id, "Sự kiện", { source: "EVENT", sourceHeroCn: null, lookup: { exchangeConditionVi: exchange, acquiredFromVi: ["Bát Trận Đồ"] } });
+  const tactics = [
+    event("tactic:a", "Sự kiện Bát Trận Đồ — Lục Tốn (Ngô): cần 1 thẻ; tướng 5 sao phe Ngô: cần 2 thẻ"),
+    event("tactic:b", "Sự kiện Bát Trận Đồ — Tướng Không Có (Ngô): cần 1 thẻ"),
+    tactic("tactic:c", "Tự mang", { source: "INNATE", sourceHeroCn: null, lookup: { acquiredFromVi: ["Lưu Diệp & SP Lưu Diệp"] } }),
+  ];
+  const built = buildLookupCorpus({ heroes, tactics, catalog: CATALOG, books: BOOKS });
+  const zh = (id) => withLocale("zh", () => lookupProfile(built, id));
+  const ok = zh("tactic:a");
+  assert.equal(fieldByKey(ok, "exchangeConditionVi").textVi, "八陣圖事件：陸遜（吴）需 1 张；吴阵营 5 星武将需 2 张");
+  assert.equal(fieldByKey(ok, "acquiredFromVi").textVi, "八陣圖");
+  const unknown = zh("tactic:b");
+  assert.equal(fieldByKey(unknown, "exchangeConditionVi"), undefined);
+  assert.equal(unknown.viOnly, true);
+  assert.equal(fieldByKey(zh("tactic:c"), "acquiredFromVi").textVi, "劉曄、SP 劉曄");
+});
 
 test("ID lạ không dựng hồ sơ", () => {
   assert.equal(profileFor("hero:khong-ton-tai"), null);
