@@ -1377,7 +1377,7 @@ test.describe("Gợi ý đội", () => {
     await expect(heroPanel).toContainText("Tướng thử nghiệm");
   });
 
-  test("8. bảng chọn nhanh: lọc chiến pháp, Chọn tất cả 36 thêm đủ vào kho, Bỏ chọn tất cả gỡ đúng tập đang lọc; thẻ đọc ảnh vẫn có khi đã cấu hình AI", async ({ page }) => {
+  test("8. bảng chọn nhanh: lọc chiến pháp, Chọn tất cả 37 thêm đủ vào kho, Bỏ chọn tất cả gỡ đúng tập đang lọc; thẻ đọc ảnh vẫn có khi đã cấu hình AI", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
     await page.goto("/goi-y-doi-tu-kho/");
@@ -1395,20 +1395,20 @@ test.describe("Gợi ý đội", () => {
     await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
     // Nguồn "Tự mang"/INNATE không có trong kho: bộ lọc không mời chọn.
     await expect(picker.getByLabel("Nguồn", { exact: true }).locator("option", { hasText: "Tự mang" })).toHaveCount(0);
-    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+    await expect(picker.locator(".roster-picker-count")).toHaveText("37 mục · đã chọn 0");
 
     // Số trên nút đếm đúng tập đang lọc.
-    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
-    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 36");
-    await expect(section.locator(".roster-scan-count").nth(1)).toHaveText("36 chiến pháp đã đọc");
-    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Chiến pháp đã đọc" }) }).locator(".roster-panel-count")).toContainText("36 chiến pháp");
-    expect((await stored()).ownedTactics).toHaveLength(36);
+    await picker.getByRole("button", { name: /^Chọn tất cả 37 mục/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("37 mục · đã chọn 37");
+    await expect(section.locator(".roster-scan-count").nth(1)).toHaveText("37 chiến pháp đã đọc");
+    await expect(section.locator(".roster-review-panel").filter({ has: page.locator("h3", { hasText: "Chiến pháp đã đọc" }) }).locator(".roster-panel-count")).toContainText("37 chiến pháp");
+    expect((await stored()).ownedTactics).toHaveLength(37);
     // Bấm lại không nhân đôi; bỏ chọn một món rồi chọn lại.
     await picker.locator(".roster-picker-item").first().click();
-    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 35");
-    expect((await stored()).ownedTactics).toHaveLength(35);
-    await picker.getByRole("button", { name: /^Chọn tất cả 36 mục/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("37 mục · đã chọn 36");
     expect((await stored()).ownedTactics).toHaveLength(36);
+    await picker.getByRole("button", { name: /^Chọn tất cả 37 mục/ }).click();
+    expect((await stored()).ownedTactics).toHaveLength(37);
 
     // Bỏ chọn chỉ gỡ món đang lọc: thêm một tướng ngoài bộ lọc trước.
     await picker.locator(".roster-seg-option", { hasText: "Tướng" }).click();
@@ -1418,8 +1418,8 @@ test.describe("Gợi ý đội", () => {
     await picker.getByLabel("Loại", { exact: true }).selectOption("ACTIVE");
     await picker.getByLabel("Nguồn", { exact: true }).selectOption("INHERITANCE");
     await picker.getByLabel("Phẩm", { exact: true }).selectOption("S");
-    await picker.getByRole("button", { name: /^Bỏ chọn tất cả, 36 mục đã chọn/ }).click();
-    await expect(picker.locator(".roster-picker-count")).toHaveText("36 mục · đã chọn 0");
+    await picker.getByRole("button", { name: /^Bỏ chọn tất cả, 37 mục đã chọn/ }).click();
+    await expect(picker.locator(".roster-picker-count")).toHaveText("37 mục · đã chọn 0");
     const after = await stored();
     expect(after.ownedTactics).toHaveLength(0);
     expect(after.ownedHeroes).toHaveLength(1);

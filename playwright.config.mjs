@@ -21,7 +21,8 @@ export default defineConfig({
     command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${astroPort}`,
     url: `http://127.0.0.1:${astroPort}`,
     reuseExistingServer: false,
-    timeout: 30_000,
+    // Lệnh trên chạy cả `astro build` (~30 s trên runner CI) trước khi preview lắng nghe.
+    timeout: 120_000,
   },
   projects: [
     {
