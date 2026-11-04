@@ -1,0 +1,39 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-70",
+ "reviewerSession": "reviewer:DcReviewI70-2026-11-04",
+ "items": [
+  {
+   "entityId": "troop-mod:giai-phien-ve",
+   "fieldPath": "appliesToVi",
+   "inputFingerprint": "3b99fb929410e093d29971778b6a050199ee2c5cb5299174d28f0e55c3486a87",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e81619cf4ef16f043c4a37d9842fcbfcfdee0457833ea069ae4de793b4793060",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-mod:giai-phien-ve",
+   "fieldPath": "conditions.scenarioVi",
+   "inputFingerprint": "a130383ab04609e4261c92b6bffaa55c3617d9385e797fe5343b6ce387176883",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "950eb51e3a32414315c52bcc305c33338d5b8ff83319a511ae43a4acde23e9bf",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-mod:giai-phien-ve",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "3b4cb8b94762337e5c3609630ba230d61a16dad99aa1a4febcb3c740ef8ffe79",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ab13c230dfb8e0d93bc1a604ea5e9127b2dcde2e5503aec8a407e68a111d0b76",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-mod:giai-phien-ve",
+   "fieldPath": "suggestedBuildVi",
+   "inputFingerprint": "8753aa000e4d2e4372177248f3fc2f73ac54c950f8fa63ad93c27b287c7bc78e",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "eb88bd086093e9e1395399205b4e5fbcd268491dc6818466fa448b857f3e5216",
+   "verdict": "accepted"
+  }
+ ]
+}

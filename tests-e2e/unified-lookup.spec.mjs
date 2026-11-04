@@ -1209,9 +1209,10 @@ test.describe('danh sách + chi tiết của bốn nhóm catalog', () => {
     // Tên và hướng dẫn theo client Global (tên cũ "Đan Dương Binh" thành tên khác).
     await expect(selectedItem(page)).toContainText('Lính Đan Dương');
     await expect(panel(page).locator('.lookup-option-card')).toHaveCount(12);
-    // Lộ trình gợi ý (SGSDeck) ghi "Chuyển·Cầm Thương", lựa chọn client tên "Chuyển.Thương": chỉ 3 lựa chọn khớp tên.
-    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(3);
-    await expect(panel(page).locator('.lookup-option-card.is-suggested .badge-suggest')).toHaveCount(3);
+    // Lộ trình gợi ý ghi theo tên lựa chọn của client từ glossary 2026-11-03 ("Chuyển.Thương" thay "Chuyển·Cầm Thương"):
+    // cả 4 lựa chọn trong lộ trình đều khớp tên nên đều được đánh dấu.
+    await expect(panel(page).locator('.lookup-option-card.is-suggested')).toHaveCount(4);
+    await expect(panel(page).locator('.lookup-option-card.is-suggested .badge-suggest')).toHaveCount(4);
     await expect(panel(page).locator('[data-effect-tab]')).toHaveCount(0);
     await expect(panel(page).locator('.lookup-effect-text:not([hidden])')).toHaveCount(1);
     // Mục không có gợi ý build thì không đánh dấu và không có thanh gợi ý.

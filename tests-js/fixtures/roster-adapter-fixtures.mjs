@@ -100,7 +100,7 @@ export function withUsage(usage, heroName, tactics) {
 }
 
 export const FIXTURE_IDS = {
-  unresolvedSlot: "s28-wutugu-huangma", // pk-s28, ô 御敵屏障 không có trong từ điển chiến pháp
+  unresolvedSlot: "s28-0617-wu-05", // pk-s28, ô 守望相助 không có trong từ điển chiến pháp
   troopRules: "team-1imndp3", // pk-s24, khiên; Lưu Bị mang Phi Hùng Quân (kỵ) + Phong Thi Trận ở cấu hình khác
   troopKy: "team-831163", // pk-s24, kỵ, đã có Phi Hùng Quân
   unitMissing: "team-epoddo", // pk-s24, thiếu unitTypesRaw

@@ -350,7 +350,7 @@ async function verifyMyTeamsSourceIndex(distPath, expectedKeys, website) {
   return index;
 }
 
-/** Payload lưu đội của một trang chi tiết: JSON hợp lệ, đúng họ, đúng bộ biến thể, `contentHash` khớp chỉ mục, không mang id. */
+/** Payload lưu đội của một trang chi tiết: JSON hợp lệ, đúng họ, đúng bộ biến thể, `contentHash` khớp chỉ mục, không mang id, có `unresolved`. */
 function verifyTeamSavePayload(page, path, { kind, items }, index) {
   const raw = page.match(MY_TEAMS_PAYLOAD)?.[1];
   if (raw === undefined) return false;
@@ -374,6 +374,7 @@ function verifyTeamSavePayload(page, path, { kind, items }, index) {
       throw new Error(`Team detail page save payload differs from the source index: ${path} (${key})`);
     }
     if (Object.hasOwn(item.draft, "id")) throw new Error(`Team detail page save payload must not carry a team id: ${path}`);
+    if (!Array.isArray(item.unresolved)) throw new Error(`Team detail page save payload must list its unresolved items: ${path} (${key})`);
   }
   return true;
 }

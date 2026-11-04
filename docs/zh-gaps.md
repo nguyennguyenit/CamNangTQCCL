@@ -3,12 +3,12 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 110 / 962 mục.
+Tổng: 109 / 962 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
 | Tướng | 0 | 252 |
-| Chiến pháp | 110 | 412 |
+| Chiến pháp | 109 | 412 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
@@ -19,7 +19,7 @@ Tổng: 110 / 962 mục.
 
 Không có mục nào thiếu.
 
-## Chiến pháp (tactics): 110 / 412
+## Chiến pháp (tactics): 109 / 412
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -39,12 +39,12 @@ Không có mục nào thiếu.
 | tactic:giang-dong-tieu-ba-vuong | Giang Đông Tiểu Bá Vương | revisions (2) |
 | tactic:hoang-thien-thai-binh | Hoàng Thiên Thái Bình | revisions (2) |
 | tactic:ham-tran-doanh | Hãm Trận Doanh | revisions (2) |
-| tactic:ham-tran-dot-tap | Tập Kích Trận Địa | revisions (5) |
+| tactic:ham-tran-dot-tap | Tập Kích Trận Địa | revisions (4) |
 | tactic:hinh-nhat-tran | Hình Nhất Trận | revisions (3) |
 | tactic:hoa-si-nguyen-lieu | Lửa Lan Khắp Chốn | revisions (2) |
 | tactic:hoa-thieu-lien-doanh | Hỏa Thiêu Liên Doanh | revisions (4) |
 | tactic:hoa-than-anh-phong | Hỏa Thần Anh Phong | revisions (3) |
-| tactic:ho-gia-du-am | Tiếng Sáo Dư Âm | revisions (5) |
+| tactic:ho-gia-du-am | Tiếng Sáo Dư Âm | revisions (4) |
 | tactic:ho-bao-ky | Hổ Báo Kỵ | revisions (3) |
 | tactic:ho-si | Hổ Dại | revisions (3) |
 | tactic:kim-thanh-thang-tri | Thành Trì Vững Chắc | revisions (2) |
@@ -56,7 +56,7 @@ Không có mục nào thiếu.
 | tactic:lam-chien-tien-dang | Lâm Chiến Tiên Đăng | revisions (3) |
 | tactic:linh-thanh-chau | Lính Thanh Châu | revisions (3) |
 | tactic:loa-y-huyet-chien | Lõa Y Huyết Chiến | revisions (3) |
-| tactic:luy-the-lap-danh | Công Danh Nhiều Đời | revisions (4) |
+| tactic:luy-the-lap-danh | Công Danh Nhiều Đời | revisions (3) |
 | tactic:nam-man-cu-khoi | Nam Man Cự Khôi | revisions (4) |
 | tactic:ngu-loi-oanh-dinh | Ngũ Lôi Oanh Đỉnh | revisions (2) |
 | tactic:nguy-thu-tuong-gian | Ngụy Thư Tương Gian | revisions (3) |
@@ -94,23 +94,22 @@ Không có mục nào thiếu.
 | tactic:dang-phong-ham-tran | Đăng Phong Hãm Trận | revisions (3) |
 | tactic:dai-kich-si | Đại Kích Sĩ | revisions (4) |
 | tactic:doc-hanh-pho-dau | Độc Hành Phó Đấu | revisions (2) |
-| tactic:nhan-hanh-tran | Nhạn Hành Trận | acquiredFromVi |
 | tactic:duong-suc-doi-chien | Dưỡng Sức Đợi Chiến | conditions (1) |
+| tactic:chung-vong-so-quy | Đích Đến Cuối Cùng | acquiredFromVi |
 | tactic:cuu-doc | Rượu Độc | revisions (3) |
 | tactic:dan-duong-binh | Lính Đan Dương | revisions (2) |
 | tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | effectTypeVi, exchangeConditionVi, conditions (2) |
 | tactic:duy-noi-thien-quyen | Duy Nội Thiện Quyền | conditions (2) |
-| tactic:huy-binh-muu-thang | Huy Binh Mưu Thắng | conflictsVi |
 | tactic:huy-quan-ket-tran | Huy Quân Kết Trận | exchangeConditionVi |
 | tactic:kien-cuong-chi-hoa | Hoa Kiên Cường | acquiredFromVi |
 | tactic:lac-loi | Lạc Lôi | target |
-| tactic:minh-sat-thu-hao | Minh Sát Thu Hào | acquiredFromVi |
 | tactic:ngoc-co-hoa-mao | Ngọc Cơ Hoa Mạo | acquiredFromVi |
 | tactic:phuc-my-phan-cong | Phục Khiên Phản Kích | acquiredFromVi |
 | tactic:quy-than-chi-nu | Quỷ Thần Chi Nữ | acquiredFromVi |
 | tactic:quyen-tiem-cuu-dinh | Quyền Tiếm Cửu Đỉnh | acquiredFromVi |
 | tactic:so-trang-trich-kich | Sơ Trang Chiến Kích | revisions (2) |
 | tactic:thau-thien-xung-de | Thụ Thiền Xưng Đế | acquiredFromVi |
+| tactic:thua-thien-tinh-the | Thừa Thiên Tĩnh Thế | effectTypeVi |
 | tactic:thuan-khiet-chi-hoa | Hoa Thuần Khiết | acquiredFromVi |
 | tactic:tien-dang-tu-si | Tử Sĩ Tiên Phong | revisions (2) |
 | tactic:toa-dieu-kinh-ngao | Tọa Điếu Kình Ngao | acquiredFromVi |

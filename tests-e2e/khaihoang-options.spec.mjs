@@ -796,8 +796,9 @@ test("localized notes never render source Chinese characters", async ({ page, re
   await page.goto(detailPath(handles, chuThai.id));
   const body = page.locator("#team-detail-body");
   await expect(body).toBeVisible();
+  // Bản dịch 2026-11-03 đặt tên Hán-Việt cho chiến pháp nguồn 疾風豪雨 (chưa có trong từ điển).
   await expect(body.locator(".kh-build-note")).toContainText(
-    "Phương án thay Kích Kỳ Nọa Quy bằng chiến pháp có tên gốc mang nghĩa “gió mạnh, mưa lớn” (chưa xác nhận tên Việt)",
+    "Phương án thay Kích Kỳ Nọa Quy bằng Tật Phong Hào Vũ (chưa xác nhận tên Việt)",
   );
   await expect(body).not.toContainText(HAN);
 

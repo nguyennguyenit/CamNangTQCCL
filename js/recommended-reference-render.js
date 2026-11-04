@@ -231,6 +231,28 @@ const lookupItem=(cls,href,children)=>href
 const holderLabel=(holder,{legacy=false}={})=>legacy ? text(holder?.name) : holderName(holder || {});
 
 /**
+ * Chiến pháp trước cấp 20 (bố cục 开荒 chia giai đoạn): một ô riêng đặt trước danh sách chiến pháp sau cấp 20,
+ * link Tra cứu như các chiến pháp khác. Bản ghi không có trường này thì không dựng gì.
+ */
+function beforeLevel20Block(holder,links) {
+  const raw=holder.tacticBeforeLevel20Raw;
+  if (typeof raw !== 'string' || !raw.trim()) return null;
+  const vi=holder.tacticBeforeLevel20Vi;
+  const slot=localizedSlot(raw,vi);
+  if (!slot.value) return null;
+  const bond=holder.tacticBeforeLevel20Kind === 'bond';
+  const value=bond || slot.value === unavailable() ? slot.value : formatModifiedTactic(tacticDisplayName(slot.value,raw));
+  return t('div',{class:'detail-hero-block detail-hero-before-block'},[
+    t('span',{class:'detail-hero-label'},L('Trước cấp 20','20级前')),
+    t('ul',{class:'detail-hero-books'},[t('li',{},lookupItem(
+      'detail-hero-books-item',
+      bond ? null : lookupHref(links,'tactic',raw,vi),
+      [t('span',{class:'detail-hero-books-vi'},value)],
+    ))]),
+  ]);
+}
+
+/**
  * Một thẻ tướng của trang chi tiết (artboard TeamDetail): đầu thẻ vai trò + chỉ số, tên, chiến pháp có số
  * thứ tự, duyên phận, binh thư. Chiến pháp / binh thư có hồ sơ Tra cứu thì là link. Chỉ một ngôn ngữ mỗi
  * trang: bản vi không kèm chữ Hán, bản zh không kèm tên Việt. Ghi chú tướng không nằm trong thẻ mà gom xuống
@@ -284,6 +306,7 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
       ...(legacy ? [text(holder.name)] : holderNameNodes(holder)),
       isMain ? t('span',{class:'badge role main-holder',title:mainLabel,'aria-label':mainLabel},L('C','主')) : null,
     ]),
+    beforeLevel20Block(holder,links),
     block(L('Chiến pháp','战法'),tacticList,'detail-hero-tactics-block'),
     bonds.length ? t('div',{class:'detail-hero-block detail-hero-bonds'},[
       t('span',{class:'detail-hero-label'},L('Duyên phận','缘分')),

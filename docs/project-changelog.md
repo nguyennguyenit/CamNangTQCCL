@@ -1,5 +1,26 @@
 # Project Changelog
 
+## 2026-11-03 (Đội chuẩn: refresh SGSDeck, PK-S27 Hán Diễm Trường Minh, 開荒 theo cấp, duyệt lại toàn bộ bản dịch)
+
+### Changed
+- Crawl lại toàn bộ SGSDeck Recommended (inventory `sha256:cae5742a…`, 1721 trang). Generation Đội chuẩn `a25cd18b…`: 1640 cấu hình (trước 1366). PK-S27 Hán Diễm Trường Minh 115 交戰 + 13 開荒 (trước 76); PK-S28 177 + 15 (trước 93, nguồn gỡ 49 và thêm 133); PK-S20 119 (trước chưa thu thập; nguồn đổi tên 奇兵八陣 → 奇門八陣, hiển thị Kỳ Môn Bát Trận); PK-S26 thêm 開荒 dạng mới; các mùa cũ có chỉnh nội dung (PK-S24, PK-S26, PK-S19 +4, OG). Mùa mặc định vẫn OG Binh Diễn Xuân Thu theo SGSDeck.
+- `pipeline/sgsdeck_recommended.py` theo markup mới: tướng ở `<ul aria-label="陣容">`, phe/điểm lấy từ trang chi tiết (`陣營：`, `來源評分`), thứ tự tướng danh sách/chi tiết luôn đối chiếu, nhãn hàng thẻ tướng là danh sách đóng (nhãn lạ làm trang nguồn bị chặn; `特技`, `替代` biết nhưng chưa đọc). Trước đó parser cũ trả phe/điểm `null` và bỏ qua đối chiếu tướng mà không báo.
+- 開荒 theo cấp 「20 級前 / 20 級後」 (31 cấu hình, 93 tướng): trường tuỳ chọn `tacticBeforeLevel20Raw` + `tacticBeforeLevel20Vi`/`Kind`; trang chi tiết hiện dòng "Trước cấp 20" (zh `20级前`), thẻ/bảng/dedup/đối chiếu kho không đổi.
+- Glossary: 164 tên đội mới, 3 tướng, 22 chiến pháp (10 tên chưa có trong từ điển dùng Hán-Việt theo quyết định người dùng: Thủ Vọng Tương Trợ, Giám Thời Thẩm Thế, Hành Ách Trận, Bản Thuẫn Hổ Thuẫn và 6 tên viết tắt phiên âm nguyên chữ), 60 mẫu cộng điểm; nhãn phe `漢` → Hán (bộ lọc Phe trước hiện "Nội dung tiếng Việt chưa sẵn sàng"); `桃園結義` → `kind: "tactic"`; binh thư `順天應時` → Thuận Thiên Thuận Tời, `以退為進` → Dĩ Thoái Vi Tiến (không còn trỏ Dĩ Trực Báo Oán), cập nhật tên Hán `以治擊亂`/`顺天应时`/`出奇制胜`, thêm Chia Lời, Tinh Thần Sảng Khoái.
+- Bản dịch: 745 khối ghi chú mới; duyệt độc lập lại toàn bộ 6291 vị trí (2694 site + 3597 Tra cứu) theo glossary mới (`sha256:b3fc9a85…`) qua các vòng 8–12, receipt 114 batch `doi-chuan-261103-*` thay toàn bộ receipt cũ (output reviewer cũ không còn batch nào trỏ tới đã xoá). Quy tắc tên/thuật ngữ thống nhất ghi ở `plans/reports/translation-review-261103-doi-chuan-resolutions.md`. Tra cứu: sửa chữ ledger (tên tướng, Kế cùng, Kháng cự, Suy nhược, chức quan, danh hiệu trùng tên chiến pháp viết hoa như `tactics.json`…; trường `effectTypeVi`/`exchangeConditionVi`/`targetViet` và binh chủng theo đúng chữ client Global), promote `lookup-261104-doi-chuan-merge-main2` (`lookup:0c5bfb46…`, dựng trên client Global 24.535 catalog + zh của `main`; `nameVi` lựa chọn cải tạo trong ledger giữ tên Hán-Việt nguồn vì builder dùng nó để giữ mã lựa chọn, tên hiển thị lấy từ client). Khai hoang: 碰瓷 → "cảm tử" theo identity map. Policy `site-vi-261103-doi-chuan-sgsdeck`.
+- `pipeline.team_route_handles --rebind`: chuyển ledger sang generation kế tiếp, giữ handle của 1320 hàng còn lại (kể cả 36 hàng PK-S28 nguồn đổi tên), cấp handle cho 320 hàng mới, bỏ 46 hàng PK-S28 nguồn đã gỡ: 46 URL đó trả 404. Segment của hàng đã gỡ không được cấp lại: 5 hàng mới trùng tên và mùa với hàng đã gỡ nhận hậu tố từ `sourceConfigId` (`pk-s28-cau-quan-thuong-0617-hun-13`, `pk-s28-vinh-quang-thuong-0617-wei-12`, `pk-s28-ton-quyen-ngo-thuong-0617-wu-20`, `pk-s28-tam-the-luc-kh-sanshi-lu`, `pk-s28-thuc-ky-kh-shu-qi`), nên không URL cũ nào trỏ sang đội khác. Rebind đọc mùa của hàng đã gỡ từ generation mà ledger đang ghim, nên chạy trước `site_localization prune`.
+
+### Fixed (sau review PR #46)
+- Lưu đội từ trang chi tiết: payload `#team-save-payload` mang `unresolved` của bộ chuyển lúc build (Đội chuẩn, Đội khác, Khai hoang), nên dòng ghi chú bị bỏ vì vượt trần 2000 B không còn mất im lặng (vd `/doi-chuan/pk-s27-cu-ma-cung/`: 2 mục, thông báo lưu báo số mục). `scripts/verify-astro-dist.mjs` từ chối payload thiếu trường này.
+- `fromRecommended`: chiến pháp trước cấp 20 (`tacticBeforeLevel20*`) ghi vào `notes.general` dạng `<tướng>: Trước cấp 20: <chiến pháp>` (kind `bond` bỏ như ô bond) và vào hash nguồn (`before20`, `before20Kind`), nên `contentHash` của 31 cấu hình có trường này đổi một lần.
+- `--rebind` không còn cấp lại segment của hàng đã gỡ cho hàng mới (trước đó 5 URL PK-S28 bị chuyển sang đội khác); xem dòng ledger ở trên.
+- E2E theo dữ liệu mới: mùa rỗng của Độ phủ kho dùng `pk-s21`, ghi chú Khai hoang theo bản dịch Tật Phong Hào Vũ, test ô bond đổi thành kiểm 桃園結義 là chiến pháp (generation không còn ô bond), số lựa chọn cải tạo được gợi ý theo glossary mới.
+
+### Chưa làm
+- `替代` (chiến pháp thay thế từng tướng) và `特技` (đặc kỹ trang bị) trên SGSDeck chưa vào schema.
+- `pipeline/recommended-identity-map.json` còn `藏器待時` → "Tàng Khí Đãi Thì" (từ điển: Tàng Khí Đợi Thời): chữ này đã nằm trong generation `a25cd18b…` (`tacticSlotsVi`), sửa map là phải dựng và publish generation mới.
+- Ledger route không lưu danh sách segment đã gỡ: segment chỉ được giữ ở lần `--rebind` gỡ hàng của nó.
+
 ## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)
 
 ### Changed

@@ -1293,14 +1293,15 @@ test.describe("Gợi ý đội", () => {
     await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="complete"]')).toHaveText(String(t0.complete.length + 1));
   });
 
-  test("Độ phủ kho: mùa không có đội (pk-s20) hiện trạng thái rỗng", async ({ page }) => {
+  test("Độ phủ kho: mùa không có đội (pk-s21) hiện trạng thái rỗng", async ({ page }) => {
+    // pk-s20 có Đội chuẩn từ generation 2026-11-03; pk-s21 vẫn 0 cấu hình (như tests-js/roster-coverage.test.mjs).
     const fixture = conflictFixture();
     await stubTurnstile(page);
     await seed(page, { "tqccl.rosterRecommend.scanState.v1": fixture.state() });
-    await page.goto("/goi-y-doi-tu-kho/?season=pk-s20");
+    await page.goto("/goi-y-doi-tu-kho/?season=pk-s21");
     await waitForBoot(page);
     const section = page.locator("#section-roster-recommend");
-    await expect(section.getByLabel("Mùa bạn đang chơi")).toHaveValue("pk-s20");
+    await expect(section.getByLabel("Mùa bạn đang chơi")).toHaveValue("pk-s21");
     await section.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
     const coverage = section.locator(".roster-coverage-section");
     await expect(coverage.locator(".roster-coverage-empty")).toContainText("chưa có Đội chuẩn nào");

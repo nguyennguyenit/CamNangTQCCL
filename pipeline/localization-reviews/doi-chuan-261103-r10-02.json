@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "batchId": "doi-chuan-261103-r10-02",
+  "reviewerSession": "reviewer:DcReviewJ02-2026-11-04",
+  "items": [
+    {
+      "entityId": "hero:luu-bieu",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "97f6d914e560782756120d0ffe9ae039405a93a64086d5be2143c845ca120829",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "7365a0d52ccbc58d04f0abab23f9757e6b6a7843ffeffb67f1ec95a223cc8eb8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:luu-diep",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "0e3dc49ef6440027aef21394d51bf414e3ab6ba42d21e6f7a7543cf4b6b8e346",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:luu-phong",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "c4c2e5a0e124434ca9b29e8362b55efb82f4492cd7ad292b55063254bcf266d6",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-dien",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "f92371c4ee96d672fd4579dd61c73000ac190fa142605be6f89453bc8e6f6e55",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-nghiem",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "4a0e280162ed74f05eb987cd205a8c00911f86ab40462eb18b1221e7cedbc6b0",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "7365a0d52ccbc58d04f0abab23f9757e6b6a7843ffeffb67f1ec95a223cc8eb8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-nho",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "1e4f53434e6934a1be6f7ab0920958f217bb1ce187132c08639c8c9096137744",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-nho",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "a5f733aeba8b018042f001eca261daa121dcb7d95998398c3d5cbc7ddba7bf97",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "9a943d80da6185aa6c40e9dfba836ee6f6c8129562aae7e2f10069517c4491ce",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-nho",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "6fc1bc4d1c50219ec3308c4e44c7010d7ffeed2e948452aa0bfadf289e41bc48",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "96bdec4c7c32bbc711822e85d6f99d4ea5b1a8675c1c514c8a3b6271657b66f5",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ly-quyet",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "fbe087bc324cddec5e052984b7b046238d632ec092e9e6f96bc749304a58defb",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-dai",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "19a57455506234b685df6dcbb3deac2c4cb091b9b328b2e8e31e39abc994fef0",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-dai",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "9d981e983568cf57eb7c8018045a0c74cc23b776621d138119238c4280a4932c",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "c2feb5e703e11d555c15f1c84ea74366199635b7897c17293bd7421ee1b3bb9c",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-dang",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "57ba646f2a35ec1566a4f41eb821561967dd933ee2cb0d8fafcdd6ed65074c9c",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-dang",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "3be5f1ea8c3942830ce4c5ca4808bff43216a21dbfe7b9701ace29e1e7244ca9",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df46c27abc3e45078ec9dff350bbcc56d040d7115d06925891c3411d2c38d311",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-dang",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "60101c13719e913e95cd8b552a802d6aa4827344af455ee619eb63128d27447d",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "c2feb5e703e11d555c15f1c84ea74366199635b7897c17293bd7421ee1b3bb9c",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-luong",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "81aba780d09daf1c5961999012c672ea474d6096d421071320d066cdfd8abe1f",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-quan",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "df4dace3284a9e8b6188a9c587f77c90fe3c877f499026b87ea358e8ff9e55fa",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "7365a0d52ccbc58d04f0abab23f9757e6b6a7843ffeffb67f1ec95a223cc8eb8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-sieu",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "99380ea5a2904b622feb33687adc7b68510815d760fc1f34b03b44195f87d717",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-sieu",
+      "fieldPath": "lookup.exclusiveTitleVi",
+      "inputFingerprint": "02e4784fcd48dfbc34d8eb11063c864d757b66b62df8404fe06b556c1bc5af50",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "7feea5f5d15e7bb09d525f150b12174f83ccfad9d39c87539c869f8e5581bf50",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-sieu",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "d3ac721ed950c0c02764ba27cd01ef5fe6399bca9b3e042a444932ece664cdbb",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "70d900888a143f46d6e16f5241a8e040b14c19d656d7eeb686ed2def7da40a43",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-sieu",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "fa6095300458f82907f64be3fba4061d1190fd3f9de7ca962d7700e1a503ca95",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "3f8847d2e1602de5999ee571f5cdaec4cc7a789ca9690d8d8083db651a32ab90",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-tac",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "6140f17738384ae1ef6d746bb96b225e05e88ddd749708d680060a8d7424ed35",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-thiet",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "7aa18dceb4001b73d86fabf79a48500782650c81847e7fd03d626dd4eaa74472",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "7365a0d52ccbc58d04f0abab23f9757e6b6a7843ffeffb67f1ec95a223cc8eb8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-trung",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "6a01743dd4c298c9df176a94e734f28d15eed0a5782e9fa876fdf14a7449d4c2",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-trung",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "00fb2536891ead3abc7c80e3b0afeac71c5e8c2cd057bf34829f414128f735f7",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "5f1f3b8a148680b62480381d87a7133055680b21ac71160d1d40ba02c32d7d68",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-van-loc",
+      "fieldPath": "lookup.categoryVi",
+      "inputFingerprint": "51c03e80c615d3eead909fe6bd4f6808ba875f6cd3d60c78b5b849a09fbd5f8d",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "df438a8b4a8f90823d8316b672a008cbc254d83070a7e3520e00297ef0ef1b69",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-van-loc",
+      "fieldPath": "lookup.usageVi",
+      "inputFingerprint": "2f0534d21941dfb3e1bfa936cbba92d52cd0be1b49262000357dfffc9ed2c392",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "cc6d7a53041178bd224f14d3bcd4fe30d2912f3369922262ff89fe5444b2a005",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "hero:ma-van-loc",
+      "fieldPath": "roleTagViet",
+      "inputFingerprint": "d4e9ef57f1ca0ea41b7c3464180a56c832d94f07a652c823060d782071471798",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "3f8847d2e1602de5999ee571f5cdaec4cc7a789ca9690d8d8083db651a32ab90",
+      "verdict": "accepted"
+    }
+  ]
+}

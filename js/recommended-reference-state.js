@@ -136,6 +136,7 @@ function holderTerms(holder) {
     holder.displayNameVi,holder.nameRaw,holder.roleRaw,holder.statFocusVi,holder.statFocusRaw,holder.notesRaw,
     ...(holder.tacticSlotsRaw || []),...(holder.tacticSlotsVi || []),
     ...(holder.tacticSlotsVi || []).map((vi,index)=>tacticDisplayName(vi,holder.tacticSlotsRaw?.[index])),
+    holder.tacticBeforeLevel20Raw,holder.tacticBeforeLevel20Vi,
     ...(holder.bookSlotsRaw || []),...(holder.bookSlotsVi || []),
     ...(holder.alternatives || []),
   ];

@@ -1,21 +1,37 @@
 {
-  "note": "Actual rendered streaming chunks; scripts, layout skeleton, navigation, footer and decorative SVG omitted. Original source hashes recorded, not fixture hashes.",
+  "note": "Actual rendered streaming chunks; scripts, inline styles and decorative SVG omitted. Original source hashes recorded, not fixture hashes. Recaptured 2026-11-03 after the SGSDeck markup change (list cards without score/faction prefix, detail score under 來源評分, 開荒 level-phase rows).",
   "sources": [
     {
       "key": "list",
-      "url": "https://sgsdeck.com/recommended",
+      "url": "https://sgsdeck.com/recommended?season=og-%E5%85%B5%E6%BC%94%E6%98%A5%E7%A7%8B&category=%E4%BA%A4%E6%88%B0",
       "path": "list.html",
-      "sha256": "3316ca6cd031df133724d5f833edb37a86f2f1b30a4784155688386aa31b8880",
-      "fetchedAt": "2026-09-12T06:07:25.799676+00:00",
-      "bytes": 146077
+      "sha256": "4cb61a63ba1573815b53f17318d311e01e0ab73bd031ceaf3e2c3897e3194982",
+      "fetchedAt": "2026-11-03T00:41:32.203718+00:00",
+      "bytes": 148444
     },
     {
       "key": "detail-sample",
       "url": "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b",
       "path": "detail-sample.html",
-      "sha256": "b78f04e704a65a2aa99fac4748b65b2d19ec6158f27ec7f3a1f06af0b6b03d59",
-      "fetchedAt": "2026-09-12T06:07:26.275373+00:00",
-      "bytes": 79174
+      "sha256": "1c6473d5799df2ac0d710ac5bd0028dcf467aa3df4abd292274ea439ef7e1ba6",
+      "fetchedAt": "2026-11-03T00:41:33.184899+00:00",
+      "bytes": 108019
+    },
+    {
+      "key": "detail-level-phases",
+      "url": "https://sgsdeck.com/recommended/s28-kh-sanshi-lu",
+      "path": "detail-level-phases.html",
+      "sha256": "b3711c512b61a9cc6ded148eb8fb48671a875ab8a023e50dc56a75f64a3e76aa",
+      "fetchedAt": "2026-11-03T00:42:00.760524+00:00",
+      "bytes": 106593
+    },
+    {
+      "key": "source-season-picker",
+      "url": "https://sgsdeck.com/recommended",
+      "path": "source-season-picker.html",
+      "sha256": "6af4ca89390fb39b05104c33fb53b565b336d6428db91c548661d9a6510e94c9",
+      "fetchedAt": "2026-11-03",
+      "bytes": 172436
     }
   ]
 }

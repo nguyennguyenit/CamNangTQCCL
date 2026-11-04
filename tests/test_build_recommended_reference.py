@@ -179,6 +179,57 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         self.assertEqual(detail["heroes"], holders)
         self.assertNotIn("displayNameVi", holders[0])
 
+    def test_tactic_before_level_20_is_projected_only_when_present_and_stays_display_derived(self):
+        mapping = build_display_mapping([
+            {"kind": "tactic", "stableId": "tactic:1", "aliases": ["盛氣淩敵"],
+             "displayNameVi": "Thịnh Khí Lăng Địch", "reviewStatus": "reviewed", "evidenceRef": "tactics.json#1"},
+            {"kind": "tactic", "stableId": "tactic:2", "aliases": ["當鋒摧決"],
+             "displayNameVi": "Đương Phong Thôi Quyết", "reviewStatus": "reviewed", "evidenceRef": "tactics.json#2"},
+        ])
+        phased = {"roleRaw": "主將", "nameRaw": "未知", "tacticSlotsRaw": ["當鋒摧決", ""],
+                  "tacticBeforeLevel20Raw": "盛氣淩敵", "bookSlotsRaw": []}
+        plain = {"roleRaw": "副將 1", "nameRaw": "未知", "tacticSlotsRaw": ["當鋒摧決", ""], "bookSlotsRaw": []}
+        detail = {"sourceConfigId": "a", "nameZh": "隊伍", "heroes": [phased, plain], "alternativeHoldersRaw": [dict(phased)]}
+        shared, names = {}, {}
+        row = localize_rows([detail], mapping, names, shared)[0]
+        main, second = row["heroes"]
+        self.assertEqual(main["tacticBeforeLevel20Raw"], "盛氣淩敵")
+        self.assertEqual(main["tacticBeforeLevel20Vi"], "Thịnh Khí Lăng Địch")
+        self.assertEqual(main["tacticBeforeLevel20Kind"], "tactic")
+        self.assertEqual(main["tacticSlotsVi"], ["Đương Phong Thôi Quyết", None])
+        for key in ("tacticBeforeLevel20Raw", "tacticBeforeLevel20Vi", "tacticBeforeLevel20Kind"):
+            self.assertNotIn(key, second)
+        self.assertEqual(row["alternativeHoldersRaw"][0]["tacticBeforeLevel20Vi"], "Thịnh Khí Lăng Địch")
+        self.assertNotIn("tacticBeforeLevel20Vi", phased)
+        # Vi/Kind là sidecar hiển thị: bỏ khỏi bản chiếu nguồn, còn trường Raw thì nằm trong hợp đồng nguồn.
+        raw = raw_source_record(row)
+        self.assertEqual(raw["heroes"][0], phased)
+        self.assertEqual(raw["heroes"][1], plain)
+
+    def test_tactic_before_level_20_must_be_a_non_empty_string(self):
+        scope_key = "s-" + "4" * 64
+
+        def inputs(value):
+            holder = {"roleRaw": "主將", "nameRaw": "未知", "tacticSlotsRaw": ["a", "b"], "bookSlotsRaw": [],
+                      "tacticBeforeLevel20Raw": value}
+            record = {"sourceConfigId": "a", "safeScopeKey": scope_key, "sourceScopeId": "s|交戰", "sourceSeasonId": "s",
+                      "sourceSeasonLabel": "S", "sourceCategoryId": "交戰", "tierRaw": "T1", "tierOrder": 2, "value": None,
+                      "listIndex": 0, "heroes": [holder]}
+            return {
+                "inventory": {"inventoryHash": "a", "seasonOptions": [{"sourceSeasonId": "s", "label": "S", "status": "available"}],
+                              "scopes": [{"safeScopeKey": scope_key, "sourceScopeId": "s|交戰", "sourceSeasonId": "s",
+                                          "sourceCategoryId": "交戰", "state": "complete"}]},
+                "records": [copy.deepcopy(record)], "details": {scope_key: [copy.deepcopy(record)]},
+                "otherTeams": [], "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1,
+            }
+
+        for bad in ("", "  ", None, 3, ["盛氣淩敵"]):
+            with tempfile.TemporaryDirectory() as folder:
+                with self.assertRaisesRegex(ValueError, "tacticBeforeLevel20Raw"):
+                    _publish(inputs(bad), Path(folder))
+        with tempfile.TemporaryDirectory() as folder:
+            self.assertIn("generationId", _publish(inputs("盛氣淩敵"), Path(folder)))
+
     def test_bond_in_source_tactic_slot_is_classified_without_rewriting_evidence(self):
         mapping = build_display_mapping([
             {"kind": "bond", "aliases": ["桃園結義"], "displayNameVi": "Kết Nghĩa Vườn Đào",

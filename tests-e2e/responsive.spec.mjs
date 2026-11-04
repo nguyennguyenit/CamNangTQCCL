@@ -22,6 +22,8 @@ test('footer 821–1440px: khối thương hiệu không đè cột link đầu'
 });
 
 test('nút Đăng nhập header: từ 821px có chữ và viền đỏ dải, ≤820px chỉ còn icon', async ({ page }) => {
+  // 30 lần tải trang (2 giao diện × 3 đường dẫn × 5 bề rộng, gồm /doi-chuan/ 1640 cấu hình): máy CI chậm vượt ngân sách 30 s.
+  test.slow();
   const state = (button) => button.evaluate((node) => {
     const label = node.querySelector('.cm-auth-label');
     const brandText = document.querySelector('.site-header .brand-text');

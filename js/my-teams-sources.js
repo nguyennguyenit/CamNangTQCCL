@@ -4,8 +4,8 @@
 //   - `unresolved`: tên chưa đối chiếu được hoặc phương án thay bị bỏ vì vượt trần (không có gì mất âm thầm);
 //   - `defaultGroup`: hậu tố nhóm mặc định (`khai-hoang` | `ghep-team`).
 // `ids` là bộ tra của `createLookupIdResolver` (js/lookup-ids.js): `{hero, tactic, book}(raw, vi) → id | null`.
-// Mã hash nguồn chỉ tính trên trường THÔ (tên gốc, phương án thay, cộng điểm, chủ tướng/binh chủng theo giai đoạn, ghi chú
-// nguồn), không tính bản dịch Việt và chỉnh sửa của người dùng.
+// Mã hash nguồn chỉ tính trên trường THÔ (tên gốc, phương án thay, cộng điểm, chủ tướng/binh chủng theo giai đoạn, chiến pháp
+// trước cấp 20, ghi chú nguồn), không tính bản dịch Việt và chỉnh sửa của người dùng.
 
 import { heroSlotAlternatives } from "./hero-identity.js";
 import { escapedBytes, stripControl, TEAM_LIMITS } from "./my-teams-model.js";
@@ -96,6 +96,30 @@ function capAlternatives(primary, alternatives, unresolved, at) {
 /** Văn bản nối dòng cho `notes.general`. */
 const block = (items) => lines(items).join("\n");
 
+/**
+ * `notes.general` của Đội chuẩn có trần `notesField` byte; ghi chú nguồn dài hơn (vd cấu hình có nhiều khối chủ sở hữu)
+ * không được làm đội không lưu được. Giữ các dòng đầu vừa trần; từ dòng không vừa trở đi được báo vào `unresolved`
+ * (`over-limit`, kèm nguyên văn). Dòng đầu quá dài thì cắt theo ký tự và thêm "…" (không cắt im lặng: có mục unresolved).
+ */
+function fitNotes(items, unresolved) {
+  const kept = [];
+  let full = false;
+  for (const item of lines(items)) {
+    if (!full && escapedBytes([...kept, item].join("\n")) <= TEAM_LIMITS.notesField) {
+      kept.push(item);
+      continue;
+    }
+    full = true;
+    unresolved.push({ field: "notes.general", rawName: item, reason: "over-limit" });
+    if (!kept.length) {
+      let cut = Array.from(item);
+      while (cut.length && escapedBytes(`${cut.join("")}…`) > TEAM_LIMITS.notesField) cut = cut.slice(0, -1);
+      kept.push(`${cut.join("")}…`);
+    }
+  }
+  return kept.join("\n");
+}
+
 /** Đưa chữ vào trường có trần byte; vượt trần thì chuyển sang `notes.general` (không cắt im lặng). */
 function fitOrMove(value, max, overflow) {
   const text = clean(value);
@@ -113,6 +137,8 @@ export function recommendedRawFields(record) {
     state: item?.slotState ?? "",
     tactics: item?.tacticSlotsRaw ?? [],
     kinds: item?.tacticSlotKinds ?? [],
+    before20: item?.tacticBeforeLevel20Raw ?? "",
+    before20Kind: item?.tacticBeforeLevel20Kind ?? "",
     books: item?.bookSlotsRaw ?? [],
     stat: item?.statFocusRaw ?? "",
     note: item?.notesRaw ?? "",
@@ -188,6 +214,20 @@ function recommendedHero(holder, ids, unresolved, index, overflow) {
 
 const holderLabel = (holder) => clean(holder?.displayNameVi) || clean(holder?.nameRaw);
 
+/**
+ * Chiến pháp trước cấp 20 của từng tướng (`tacticBeforeLevel20*`) thành chữ có nhãn như build "Trước cấp 20" của Khai hoang:
+ * ô có cấu trúc là bộ sau cấp 20, nên giai đoạn trước chỉ ghi vào `notes.general`. Kind `bond` bỏ như ô bond.
+ */
+function recommendedBeforeLevel20(record) {
+  return (record.heroes || [])
+    .slice(0, TEAM_LIMITS.maxHeroes)
+    .filter((holder) => holder?.slotState !== "source-empty" && holder?.tacticBeforeLevel20Kind !== "bond")
+    .map((holder) => {
+      const tactic = clean(holder.tacticBeforeLevel20Vi) || clean(holder.tacticBeforeLevel20Raw);
+      return tactic ? `${holderLabel(holder)}: Trước cấp 20: ${tactic}` : null;
+    });
+}
+
 /** Ghi chú đội gom theo chủ sở hữu (`displayNotes.blocks`); thiếu khối thì dùng `notesRaw`. */
 function recommendedNotes(record) {
   const blocks = record.displayNotes?.blocks;
@@ -212,8 +252,8 @@ function recommendedNotes(record) {
 
 /**
  * Một cấu hình Đội chuẩn → đội nháp. Ô bond bị bỏ (ô chiến pháp tương ứng để trống), ô `source-empty` giữ là ô trống, vị trí
- * ô giữ nguyên. Cấu hình thay thế của nguồn (`alternativeHoldersRaw`: cả bộ tướng khác) ghi thành chữ vào `notes.general`
- * vì nguồn không có phương án thay ở cấp tướng/chiến pháp.
+ * ô giữ nguyên. Cấu hình thay thế của nguồn (`alternativeHoldersRaw`: cả bộ tướng khác) và chiến pháp trước cấp 20 ghi thành
+ * chữ vào `notes.general` vì nguồn không có phương án thay ở cấp tướng/chiến pháp và đội chỉ có ô của một giai đoạn.
  */
 export function fromRecommended(record, ids, { id, seasonId, contentHash } = {}) {
   const unresolved = [];
@@ -228,7 +268,7 @@ export function fromRecommended(record, ids, { id, seasonId, contentHash } = {})
     replacesTeamId: null,
     heroes,
     notes: {
-      general: block([...recommendedNotes(record), ...overflow]),
+      general: fitNotes([...recommendedNotes(record), ...recommendedBeforeLevel20(record), ...overflow], unresolved),
       strengths: "",
       goodAgainst: joined(counters.good),
       avoid: joined(counters.avoid),

@@ -5,8 +5,8 @@
         "桃園結義"
       ],
       "displayNameVi": "Kết Nghĩa Vườn Đào",
-      "evidenceRef": "user-confirmed:桃園結義=Kết Nghĩa Vườn Đào",
-      "kind": "bond",
+      "evidenceRef": "tactics.json#252 (id tactic:dao-vien-ket-nghia); docs/season-team-data.md Đính chính 2026-11-03",
+      "kind": "tactic",
       "reviewStatus": "translation-reviewed"
     },
     {
@@ -22,8 +22,8 @@
       "aliases": [
         "以退為進"
       ],
-      "displayNameVi": "Dĩ Trực Báo Oán",
-      "evidenceRef": "user-confirmed:以退為進=Dĩ Trực Báo Oán",
+      "displayNameVi": "Dĩ Thoái Vi Tiến",
+      "evidenceRef": "user-policy:2026-11-03:han-viet-for-unnamed",
       "kind": "book",
       "reviewStatus": "translation-reviewed"
     },
@@ -40,8 +40,8 @@
       "aliases": [
         "分利"
       ],
-      "displayNameVi": "Chia lời",
-      "evidenceRef": "user-confirmed:分利=Chia lời",
+      "displayNameVi": "Chia Lời",
+      "evidenceRef": "books-dict.json#4 (id book:chia-loi)",
       "kind": "book",
       "reviewStatus": "translation-reviewed"
     },
@@ -67,8 +67,8 @@
       "aliases": [
         "順天應時"
       ],
-      "displayNameVi": "Thuận Thiên Ứng Thời",
-      "evidenceRef": "user-confirmed:順天應時=Thuận Thiên Ứng Thời",
+      "displayNameVi": "Thuận Thiên Thuận Tời",
+      "evidenceRef": "books-dict.json#44 (id book:thuan-thien-thuan-toi, chinese 顺天应时)",
       "kind": "book",
       "reviewStatus": "translation-reviewed"
     },
@@ -127,10 +127,10 @@
     {
       "aliases": [
         "Lấy Võ Dẹp Loạn",
-        "以武止戈"
+        "以治击乱"
       ],
       "displayNameVi": "Lấy Võ Dẹp Loạn",
-      "evidenceRef": "books-dict.json#29",
+      "evidenceRef": "books-dict.json#30",
       "kind": "book",
       "reviewStatus": "reviewed",
       "stableId": "book:1a19c8cd94d14cb12b2b6753",
@@ -540,10 +540,10 @@
     {
       "aliases": [
         "Thuận Thiên Thuận Tời",
-        "顺应天时"
+        "顺天应时"
       ],
       "displayNameVi": "Thuận Thiên Thuận Tời",
-      "evidenceRef": "books-dict.json#43",
+      "evidenceRef": "books-dict.json#44",
       "kind": "book",
       "reviewStatus": "reviewed",
       "stableId": "book:61a50f3fc663049047bc1fce",
@@ -1027,10 +1027,10 @@
     {
       "aliases": [
         "Đánh Bất Ngờ Thắng",
-        "出其不意"
+        "出奇制胜"
       ],
       "displayNameVi": "Đánh Bất Ngờ Thắng",
-      "evidenceRef": "books-dict.json#61",
+      "evidenceRef": "books-dict.json#63",
       "kind": "book",
       "reviewStatus": "reviewed",
       "stableId": "book:a608c3a5e036b6527224fa05",
@@ -1557,7 +1557,8 @@
     },
     {
       "aliases": [
-        "無雙 星彩"
+        "無雙 星彩",
+        "無雙星彩"
       ],
       "displayNameVi": "CO Vô Song Tinh Thái",
       "evidenceRef": "user-confirmed:無雙 星彩=CO Vô Song Tinh Thái",
@@ -13372,6 +13373,1741 @@
       "evidenceRef": "translation-review:2026-09-13:batch-14",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "姜夏恪"
+      ],
+      "displayNameVi": "Khương Hạ Khác",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "姜太蔡（平民開荒）"
+      ],
+      "displayNameVi": "Khương Thái Thái (Bình Dân Khai Hoang)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "左太恪"
+      ],
+      "displayNameVi": "Tả Thái Khác",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "法克馬"
+      ],
+      "displayNameVi": "Pháp Khắc Mã",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "群弓開荒"
+      ],
+      "displayNameVi": "Quần Cung Khai Hoang",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "菜刀隊（夏太黃）"
+      ],
+      "displayNameVi": "Thái Đao Đội (Hạ Thái Hoàng)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP朱儁核彈弓"
+      ],
+      "displayNameVi": "SP Chu Tuấn Hạt Nhân Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "袁術核彈弓"
+      ],
+      "displayNameVi": "Viên Thuật Hạt Nhân Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "挫銳香香吳騎"
+      ],
+      "displayNameVi": "Tỏa Nhuệ Hương Hương Ngô Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "碰瓷香香吳騎"
+      ],
+      "displayNameVi": "Hương Hương Ngô Kỵ cảm tử",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP諸葛新蜀智"
+      ],
+      "displayNameVi": "SP Gia Cát Tân Thục Trí",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "五謀弓"
+      ],
+      "displayNameVi": "Ngũ Mưu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "五謀騎"
+      ],
+      "displayNameVi": "Ngũ Mưu Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "內戰皇馬槍"
+      ],
+      "displayNameVi": "Nội Chiến Hoàng Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "打地皇馬槍"
+      ],
+      "displayNameVi": "Đả Địa Hoàng Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "法官盾"
+      ],
+      "displayNameVi": "Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "王異騎"
+      ],
+      "displayNameVi": "Vương Dị Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "老諸葛新蜀智"
+      ],
+      "displayNameVi": "Lão Gia Cát Tân Thục Trí",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "臥薪嘗膽皇馬槍"
+      ],
+      "displayNameVi": "Ngọa Tân Thường Đảm Hoàng Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀攸五謀騎"
+      ],
+      "displayNameVi": "Tuân Du Ngũ Mưu Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "通用皇馬槍"
+      ],
+      "displayNameVi": "Thông Dụng Hoàng Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP周瑜肉弓"
+      ],
+      "displayNameVi": "SP Chu Du Nhục Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP荀彧神火弓"
+      ],
+      "displayNameVi": "SP Tuân Úc Thần Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP荀彧點火弓"
+      ],
+      "displayNameVi": "SP Tuân Úc Điểm Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "乘勝長驅點火弓"
+      ],
+      "displayNameVi": "Thừa Thắng Trường Khu Điểm Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "兗州三勢關"
+      ],
+      "displayNameVi": "Duyện Châu Tam Thế Quan",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "叔侄盾"
+      ],
+      "displayNameVi": "Thúc Điệt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "圓夢弓"
+      ],
+      "displayNameVi": "Viên Mộng Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "撫輯軍民北伐盾"
+      ],
+      "displayNameVi": "Phủ Tập Quân Dân Bắc Phạt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "曹真飛熊軍"
+      ],
+      "displayNameVi": "Tào Chân Phi Hùng Quân",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒北伐盾"
+      ],
+      "displayNameVi": "Võ Phong Bắc Phạt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍周瑜呂布"
+      ],
+      "displayNameVi": "Tiềm Long Chu Du Lữ Bố",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍慷慨弓"
+      ],
+      "displayNameVi": "Tiềm Long Khảng Khái Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍貂"
+      ],
+      "displayNameVi": "Tiềm Long Điêu",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "瑜亮弓"
+      ],
+      "displayNameVi": "Du Lượng Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈神火弓"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt Thần Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈麒麟弓"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt Kỳ Lân Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈點火弓"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt Điểm Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "老周瑜神火弓"
+      ],
+      "displayNameVi": "Lão Chu Du Thần Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "老周瑜肉弓"
+      ],
+      "displayNameVi": "Lão Chu Du Nhục Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "老諸葛點火弓"
+      ],
+      "displayNameVi": "Lão Gia Cát Điểm Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "臥薪嘗膽孫權吳騎"
+      ],
+      "displayNameVi": "Ngọa Tân Thường Đảm Tôn Quyền Ngô Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀攸五謀弓"
+      ],
+      "displayNameVi": "Tuân Du Ngũ Mưu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "蓄勢太尉盾"
+      ],
+      "displayNameVi": "Súc Thế Thái Úy Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "點火弓"
+      ],
+      "displayNameVi": "Điểm Hỏa Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢張角法正"
+      ],
+      "displayNameVi": "Tam Thế Trương Giác Pháp Chính",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "二袁（孝公共存版）"
+      ],
+      "displayNameVi": "Nhị Viên (bản cùng tồn Hiếu Công)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "低配馬超"
+      ],
+      "displayNameVi": "Mã Siêu cấu hình thấp",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "八門金鎖溫侯弓"
+      ],
+      "displayNameVi": "Bát Môn Kim Tỏa Ôn Hầu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "劉司馬飛熊騎"
+      ],
+      "displayNameVi": "Lưu Tư Mã Phi Hùng Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "司馬郝昭太尉盾"
+      ],
+      "displayNameVi": "Tư Mã Hác Chiêu Thái Úy Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "吳弓"
+      ],
+      "displayNameVi": "Ngô Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "周瑜嘟嘟（大白共存版）"
+      ],
+      "displayNameVi": "Chu Du Đô Đốc (bản cùng tồn Đại Bạch)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "太白麒麟弓"
+      ],
+      "displayNameVi": "Thái Bạch Kỳ Lân Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "慷慨弓（孝公程普版）"
+      ],
+      "displayNameVi": "Khảng Khái Cung (bản Trình Phổ của Hiếu Công)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "抬棺弓"
+      ],
+      "displayNameVi": "Đài Quan Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "抵禦弓"
+      ],
+      "displayNameVi": "Đề Ngự Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "朱儁群弓"
+      ],
+      "displayNameVi": "Chu Tuấn Quần Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "核彈張曹操版"
+      ],
+      "displayNameVi": "Hạt Nhân Trương bản Tào Tháo",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武峰袁馬槍"
+      ],
+      "displayNameVi": "Vũ Phong Viên Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武峰貂馬槍"
+      ],
+      "displayNameVi": "Vũ Phong Điêu Mã Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒SP馬超槍"
+      ],
+      "displayNameVi": "Võ Phong SP Mã Siêu Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒龐德"
+      ],
+      "displayNameVi": "Võ Phong Bàng Đức",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "法刀"
+      ],
+      "displayNameVi": "Pháp Đao",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "法敦敦（孝公共存版）"
+      ],
+      "displayNameVi": "Pháp Đôn Đôn (bản cùng tồn Hiếu Công)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "程昱五謀騎"
+      ],
+      "displayNameVi": "Trình Dục Ngũ Mưu Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "群弓（大白共存版）"
+      ],
+      "displayNameVi": "Quần Cung (bản cùng tồn Đại Bạch)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈閉月弓"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt Bế Nguyệt Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈閉月盾"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt Bế Nguyệt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心蜀智 SP 諸葛版（大恐龍共存版）"
+      ],
+      "displayNameVi": "Nghĩa Tâm Thục Trí bản SP Gia Cát (bản cùng tồn Đại Khủng Long)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心蜀智（大恐龍共存版）"
+      ],
+      "displayNameVi": "Nghĩa Tâm Thục Trí (bản cùng tồn Đại Khủng Long)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "臥薪嘗膽溫侯弓"
+      ],
+      "displayNameVi": "Ngọa Tân Thường Đảm Ôn Hầu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀攸五謀（大恐龍共存版）"
+      ],
+      "displayNameVi": "Tuân Du Ngũ Mưu (bản cùng tồn Đại Khủng Long)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "袁術爆發弓"
+      ],
+      "displayNameVi": "Viên Thuật Bạo Phát Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "賈太尉"
+      ],
+      "displayNameVi": "Giả Thái Úy",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "關關張（大白共存版）"
+      ],
+      "displayNameVi": "Quan Quan Trương (bản cùng tồn Đại Bạch)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP關羽洞察槍"
+      ],
+      "displayNameVi": "SP Quan Vũ Động Sát Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢張角飛熊騎"
+      ],
+      "displayNameVi": "Tam Thế Trương Giác Phi Hùng Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "太史慈鼠標弓"
+      ],
+      "displayNameVi": "Thái Sử Từ Thử Tiêu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "奇門連環槍"
+      ],
+      "displayNameVi": "Kỳ Môn Liên Hoàn Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "孫權鼠標弓"
+      ],
+      "displayNameVi": "Tôn Quyền Thử Tiêu Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "張角飛熊"
+      ],
+      "displayNameVi": "Trương Giác Phi Hùng",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "控制型溫侯弓"
+      ],
+      "displayNameVi": "Ôn Hầu Cung kiểu khống chế",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "暴力騎"
+      ],
+      "displayNameVi": "Bạo Lực Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍象"
+      ],
+      "displayNameVi": "Tiềm Long Tượng",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "關羽洞察槍"
+      ],
+      "displayNameVi": "Quan Vũ Động Sát Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢呂呂夏黃"
+      ],
+      "displayNameVi": "Tam Thế Lữ Lữ Hạ Hoàng",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢呂呂太黃"
+      ],
+      "displayNameVi": "Tam Thế Lữ Lữ Thái Hoàng",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢呂郭周"
+      ],
+      "displayNameVi": "Tam Thế Lữ Quách Chu",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "張角群弓"
+      ],
+      "displayNameVi": "Trương Giác Quần Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "張角骨頭盾"
+      ],
+      "displayNameVi": "Trương Giác Cốt Đầu Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "虛弱盾劉魏張"
+      ],
+      "displayNameVi": "Hư Nhược Thuẫn Lưu Ngụy Trương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "虛弱盾劉魏關"
+      ],
+      "displayNameVi": "Hư Nhược Thuẫn Lưu Ngụy Quan",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "鋒矢張角盾"
+      ],
+      "displayNameVi": "Phong Thỉ Trương Giác Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "魏延洞察槍"
+      ],
+      "displayNameVi": "Ngụy Diên Động Sát Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢弓"
+      ],
+      "displayNameVi": "Tam Thế Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "固傷弓"
+      ],
+      "displayNameVi": "Cố Thương Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "摩卡弓"
+      ],
+      "displayNameVi": "Ma Ca Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒呂妹"
+      ],
+      "displayNameVi": "Võ Phong Lữ Muội",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒華雄"
+      ],
+      "displayNameVi": "Võ Phong Hoa Hùng",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "降維弓"
+      ],
+      "displayNameVi": "Giáng Duy Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "馬法恪"
+      ],
+      "displayNameVi": "Mã Pháp Khác",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "核彈袁術"
+      ],
+      "displayNameVi": "Hạt Nhân Viên Thuật",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "核彈朱儁"
+      ],
+      "displayNameVi": "Hạt Nhân Chu Tuấn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "碰瓷呂（秋石天梯版）"
+      ],
+      "displayNameVi": "Lữ cảm tử (bản thang xếp hạng Thu Thạch)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "馬岱法關盾（小幫手首發版）"
+      ],
+      "displayNameVi": "Mã Đại Pháp Quan Thuẫn (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "五謀臣（阿焰共存版）"
+      ],
+      "displayNameVi": "Ngũ Mưu Thần (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "拒馬弓（阿焰共存版）"
+      ],
+      "displayNameVi": "Cự Mã Cung (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "皇馬槍（阿焰共存版）"
+      ],
+      "displayNameVi": "Hoàng Mã Thương (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "皇馬弓（小幫手首發版）"
+      ],
+      "displayNameVi": "Hoàng Mã Cung (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "內戰皇馬槍（小幫手首發版）"
+      ],
+      "displayNameVi": "Nội Chiến Hoàng Mã Thương (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "劉備法關盾（小幫手首發版）"
+      ],
+      "displayNameVi": "Lưu Bị Pháp Quan Thuẫn (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "五謀騎（小幫手首發版）"
+      ],
+      "displayNameVi": "Ngũ Mưu Kỵ (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍陸遜"
+      ],
+      "displayNameVi": "Tiềm Long Lục Tốn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "劉備法官盾"
+      ],
+      "displayNameVi": "Lưu Bị Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀彧女王盾"
+      ],
+      "displayNameVi": "Tuân Úc Nữ Vương Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀攸五謀"
+      ],
+      "displayNameVi": "Tuân Du Ngũ Mưu",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "蜀智盾"
+      ],
+      "displayNameVi": "Thục Trí Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "諸葛法官盾"
+      ],
+      "displayNameVi": "Gia Cát Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "馬岱法官盾"
+      ],
+      "displayNameVi": "Mã Đại Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "嘟統弓（小幫手首發版）"
+      ],
+      "displayNameVi": "Đô Thống Cung (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "程普嘟嘟弓"
+      ],
+      "displayNameVi": "Trình Phổ Đô Đốc Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀彧太威盾"
+      ],
+      "displayNameVi": "Tuân Úc Thái Úy Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "北伐盾（小幫手首發版）"
+      ],
+      "displayNameVi": "Bắc Phạt Thuẫn (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "左呂槍（小幫手首發版）"
+      ],
+      "displayNameVi": "Tả Lữ Thương (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "控制槍"
+      ],
+      "displayNameVi": "Khống Chế Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "閉月盾（小幫手首發版）"
+      ],
+      "displayNameVi": "Bế Nguyệt Thuẫn (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "麒麟弓（小幫手首發版）"
+      ],
+      "displayNameVi": "Kỳ Lân Cung (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "吳騎（詩人共存版）"
+      ],
+      "displayNameVi": "Ngô Kỵ (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "太尉盾（詩人共存版）"
+      ],
+      "displayNameVi": "Thái Úy Thuẫn (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "太尉盾（阿焰共存版）"
+      ],
+      "displayNameVi": "Thái Úy Thuẫn (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "權騎"
+      ],
+      "displayNameVi": "Quyền Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "漢室弓（詩人共存版）"
+      ],
+      "displayNameVi": "Hán Thất Cung (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "皇馬（詩人共存版）"
+      ],
+      "displayNameVi": "Hoàng Mã (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "群弓（小幫手首發版）"
+      ],
+      "displayNameVi": "Quần Cung (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "群弓（詩人共存版）"
+      ],
+      "displayNameVi": "Quần Cung (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "荀攸五謀（詩人共存版）"
+      ],
+      "displayNameVi": "Tuân Du Ngũ Mưu (bản cùng tồn Thi Nhân)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "關關張（小幫手首發版）"
+      ],
+      "displayNameVi": "Quan Quan Trương (bản đầu tiên của Tiểu Bang Thủ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "北伐槍（阿焰共存版）"
+      ],
+      "displayNameVi": "Bắc Phạt Thương (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "甘寧漢弓"
+      ],
+      "displayNameVi": "Cam Ninh Hán Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "傳子弓"
+      ],
+      "displayNameVi": "Truyền Tử Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "桃園盾（阿焰共存版）"
+      ],
+      "displayNameVi": "Đào Viên Thuẫn (bản cùng tồn A Diễm)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒關羽盾"
+      ],
+      "displayNameVi": "Võ Phong Quan Vũ Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "神火弓（呂蒙版）"
+      ],
+      "displayNameVi": "Thần Hỏa Cung (bản Lữ Mông)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "神火弓（程普版）"
+      ],
+      "displayNameVi": "Thần Hỏa Cung (bản Trình Phổ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "形一肉弓（程普版）"
+      ],
+      "displayNameVi": "Hình Nhất Nhục Cung (bản Trình Phổ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "新都督"
+      ],
+      "displayNameVi": "Tân Đô Đốc",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "新都督（呂蒙版）"
+      ],
+      "displayNameVi": "Tân Đô Đốc (bản Lữ Mông)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "新都督（程普版）"
+      ],
+      "displayNameVi": "Tân Đô Đốc (bản Trình Phổ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "曹真太尉盾"
+      ],
+      "displayNameVi": "Tào Chân Thái Úy Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "老都督"
+      ],
+      "displayNameVi": "Lão Đô Đốc",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "香囊蜀槍"
+      ],
+      "displayNameVi": "Hương Nang Thục Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "五雷閉月盾"
+      ],
+      "displayNameVi": "Ngũ Lôi Bế Nguyệt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "肉遼騎"
+      ],
+      "displayNameVi": "Nhục Liêu Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "陸遜吳槍（呂蒙版）"
+      ],
+      "displayNameVi": "Lục Tốn Ngô Thương (bản Lữ Mông)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "陸遜吳槍（程普版）"
+      ],
+      "displayNameVi": "Lục Tốn Ngô Thương (bản Trình Phổ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "陸遜肉弓（程普版）"
+      ],
+      "displayNameVi": "Lục Tốn Nhục Cung (bản Trình Phổ)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "骨盾"
+      ],
+      "displayNameVi": "Cốt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "蒙寵弓"
+      ],
+      "displayNameVi": "Mông Sủng Cung",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒趙雲"
+      ],
+      "displayNameVi": "Võ Phong Triệu Vân",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "嚇豹騎"
+      ],
+      "displayNameVi": "Hách Báo Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "太玄槍"
+      ],
+      "displayNameVi": "Thái Huyền Thương",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "嚇狗騎"
+      ],
+      "displayNameVi": "Hách Cẩu Kỵ",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "核彈張（曹操）"
+      ],
+      "displayNameVi": "Hạt Nhân Trương (Tào Tháo)",
+      "evidenceRef": "translation-review:2026-11-03:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "龐德"
+      ],
+      "displayNameVi": "Bàng Đức",
+      "evidenceRef": "data/heroes-dict.json#41 (龐德 → Bàng Đức)",
+      "kind": "hero",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP 劉曄"
+      ],
+      "displayNameVi": "SP Lưu Diệp",
+      "evidenceRef": "data/heroes-dict.json#176 (SP 劉曄 → SP Lưu Diệp)",
+      "kind": "hero",
+      "reviewStatus": "translation-reviewed",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "曹真"
+      ],
+      "displayNameVi": "Tào Chân",
+      "evidenceRef": "data/heroes-dict.json#236 (曹真 → Tào Chân)",
+      "kind": "hero",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "止戈為武"
+      ],
+      "displayNameVi": "Chỉ Qua Vi Vũ",
+      "evidenceRef": "tactics.json#242",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "義心昭烈"
+      ],
+      "displayNameVi": "Nghĩa Tâm Chiêu Liệt",
+      "evidenceRef": "tactics.json#96",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "絕計折謀"
+      ],
+      "displayNameVi": "Tuyệt Kế Chiết Mưu",
+      "evidenceRef": "tactics.json#370",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "藏器待時"
+      ],
+      "displayNameVi": "Tàng Khí Đãi Thì",
+      "evidenceRef": "tactics.json#328",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "夢中弒臣"
+      ],
+      "displayNameVi": "Mộng Trung Thí Thần",
+      "evidenceRef": "tactics.json#94",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "丹陽兵"
+      ],
+      "displayNameVi": "Lính Đan Dương",
+      "evidenceRef": "tactics.json#251",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "眾望所歸"
+      ],
+      "displayNameVi": "Đích Đến Cuối Cùng",
+      "evidenceRef": "tactics.json#246",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "韜心惑敵"
+      ],
+      "displayNameVi": "Che Giấu Tâm Tư",
+      "evidenceRef": "tactics.json#337",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "禦敵屏障"
+      ],
+      "displayNameVi": "Ngự Địch Bình Chướng",
+      "evidenceRef": "tactics.json#216",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "橫掃"
+      ],
+      "displayNameVi": "Quét Sạch",
+      "evidenceRef": "tactics.json#271",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "濟貧好施"
+      ],
+      "displayNameVi": "Cách Hay Cứu Trợ",
+      "evidenceRef": "tactics.json#174",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "臨鋒決敵"
+      ],
+      "displayNameVi": "Lâm Phong Quyết Địch",
+      "evidenceRef": "tactics.json#214",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "兵行詭道"
+      ],
+      "displayNameVi": "Binh Hành Quỷ Đạo",
+      "evidenceRef": "books-dict.json#0 (sourceNames 兵行詭道)",
+      "kind": "book",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "守望相助"
+      ],
+      "displayNameVi": "Thủ Vọng Tương Trợ",
+      "evidenceRef": "user-confirmed:2026-11-03:守望相助=Thủ Vọng Tương Trợ",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "鑑時審勢"
+      ],
+      "displayNameVi": "Giám Thời Thẩm Thế",
+      "evidenceRef": "user-confirmed:2026-11-03:鑑時審勢=Giám Thời Thẩm Thế",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "衡軛陣"
+      ],
+      "displayNameVi": "Hành Ách Trận",
+      "evidenceRef": "user-confirmed:2026-11-03:衡軛陣=Hành Ách Trận",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "板楯虎盾"
+      ],
+      "displayNameVi": "Bản Thuẫn Hổ Thuẫn",
+      "evidenceRef": "user-confirmed:2026-11-03:板楯虎盾=Bản Thuẫn Hổ Thuẫn",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "焚營"
+      ],
+      "displayNameVi": "Phần Doanh",
+      "evidenceRef": "user-confirmed:2026-11-03:焚營=Phần Doanh",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "千里"
+      ],
+      "displayNameVi": "Thiên Lý",
+      "evidenceRef": "user-confirmed:2026-11-03:千里=Thiên Lý",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "鬼神"
+      ],
+      "displayNameVi": "Quỷ Thần",
+      "evidenceRef": "user-confirmed:2026-11-03:鬼神=Quỷ Thần",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "錦帆"
+      ],
+      "displayNameVi": "Cẩm Phàm",
+      "evidenceRef": "user-confirmed:2026-11-03:錦帆=Cẩm Phàm",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "陷陣"
+      ],
+      "displayNameVi": "Hãm Trận",
+      "evidenceRef": "user-confirmed:2026-11-03:陷陣=Hãm Trận",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "絕道"
+      ],
+      "displayNameVi": "Tuyệt Đạo",
+      "evidenceRef": "user-confirmed:2026-11-03:絕道=Tuyệt Đạo",
+      "kind": "tactic",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "Chia Lời",
+        "分利"
+      ],
+      "displayNameVi": "Chia Lời",
+      "evidenceRef": "books-dict.json#4",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:7d3ec98633029945138b0568",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh Thần Sảng Khoái",
+        "神清气净"
+      ],
+      "displayNameVi": "Tinh Thần Sảng Khoái",
+      "evidenceRef": "books-dict.json#51",
+      "kind": "book",
+      "reviewStatus": "reviewed",
+      "stableId": "book:54889d39343755d53ee8344d",
+      "variant": null
     }
   ],
   "evidenceInputs": {
@@ -13379,7 +15115,7 @@
     "heroes-dict.json": "sha256:8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
     "tactics.json": "sha256:f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834"
   },
-  "mappingHash": "sha256:f751637829ba52258e40cc5e8e64129fff1a6fd7775bb121c262cd41081945b7",
+  "mappingHash": "sha256:e03ca0669accef0ecc24df011b304c8525227503604ec37fbf17b57909e0f4e2",
   "schemaVersion": 1,
   "sourceAliasMethod": "Exact source raw alias; macOS Foundation Traditional-Simplified transform matched one reviewed curated Chinese alias without collision.",
   "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5"

@@ -85,10 +85,17 @@ class _Tally:
 def _tactic_slots(holder, name_field):
     """Ô chiến pháp thật: ô có `tacticSlotKinds` là `bond` (duyên phận) không phải chiến pháp — cùng quy tắc
     với `js/recommended-reference-render.js` (tách riêng và gắn nhãn "Duyên phận"). `name_field` là trường
-    tên của chính họ đó (Đội chuẩn: bản Việt, Đội khác: bản nguồn) — không trộn hai không gian tên."""
+    tên của chính họ đó (Đội chuẩn: bản Việt, Đội khác: bản nguồn) — không trộn hai không gian tên.
+    Chiến pháp trước cấp 20 (`tacticBeforeLevel20*`, chỉ Đội chuẩn có bố cục chia giai đoạn) cũng là chiến pháp
+    đội dùng và hiện trên trang chi tiết, nên được đếm; `_count_items` giữ mỗi tên một lần mỗi đội."""
     names = holder.get(name_field) or []
     kinds = holder.get("tacticSlotKinds") or []
-    return [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+    slots = [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+    before_field = {"tacticSlotsVi": "tacticBeforeLevel20Vi", "tacticSlotsRaw": "tacticBeforeLevel20Raw"}.get(name_field)
+    before = holder.get(before_field) if before_field else None
+    if before and holder.get("tacticBeforeLevel20Kind", "tactic") == "tactic":
+        return [before, *slots]
+    return slots
 
 
 def _stat_focus(holder, name_field):

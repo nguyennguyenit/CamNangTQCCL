@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r10-00",
+ "reviewerSession": "reviewer:DcReviewJ00-2026-11-04",
+ "items": [
+  {
+   "entityId": "data:data/khaihoang.json:teams[10].variants[0]",
+   "fieldPath": "teams[10].variants[0].note",
+   "inputFingerprint": "583c1eecb28d50158497a83afcd5e871e51f2bbfe4ade374465c54576e13c9b7",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3535da7da5106a886280f4dc051e67c665f5236842af57762fbecd12c0a7000c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
+   "fieldPath": "teams[12].heroes[2].buildNote",
+   "inputFingerprint": "b3d1b26384a5506752f85b7de1f7d96bb2e43e3afbb55afd17b75b3d5a6a7bf7",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6ea2fd38a094928b78f66e508d6123ea3dc7da2fcaa720772fac42f2da53cbe6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[12].heroes[2]",
+   "fieldPath": "teams[12].heroes[2].note",
+   "inputFingerprint": "bd1a22ceea2b628d3cecefadfe686da4d3092249a0c60b8e0579c6291f1a702a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "84a2676764ecdb387837ba3f30ff6622d38d0022dd39a153ee03af89dd6ef6a7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[14]",
+   "fieldPath": "teams[14].buildNote",
+   "inputFingerprint": "7679aa0dd224fce3fe5e224ba0bffefe038776ba8fcfe6a5ad8bb793ddf8b2a7",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "fac862d59e546f759d5854c49fadaeea65687401a54c97497c85601afa6cd653",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[14]",
+   "fieldPath": "teams[14].context",
+   "inputFingerprint": "f3e45edff253bfb7b27c8fe8913a64101cb97e33408aef801e592a3f33902586",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0169651f536a2d93354dd13b071fe473bf93c47919b3036cee94a60a0c1a9803",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[14]",
+   "fieldPath": "teams[14].note",
+   "inputFingerprint": "cb3a64dc46a104c40521ec3fe526c84c1e34bb357e59d6a4b2cccf4d1324312b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5259947a501a085ba77585814828fd3a85f5392bead43406bc06e4cecfb3a87d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[15].guide.transitions[2]",
+   "fieldPath": "teams[15].guide.transitions[2].target",
+   "inputFingerprint": "65bd83ef38b8b5935032c13d8ce004b3df22c2443e36045c9569b6c74df27fa4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "991e5d2b292f7e03f25e59cb223c35a0ae10bb59ced441eff9c0654b3b3a9583",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[1].variants[0]",
+   "fieldPath": "teams[1].variants[0].note",
+   "inputFingerprint": "be0406d31437c3560d37029d2933eab4507bf085700f095affe89486eb975c9b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7b38a08b9c3e442a2bed1e180fa48134f0f50297e3eeee0c4eee141526b2b665",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/khaihoang.json:teams[4].guide",
+   "fieldPath": "teams[4].guide.overview",
+   "inputFingerprint": "4f9ec45bfbcd2ff590350048e5deabcc21f36526cbafa53f95e2e097ec903216",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "1b6d63ff0996afd93d612f8509a3ca830b20df6c7c9e41b14a7e39f8c43cc8cd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[160]",
+   "fieldPath": "[160].notes",
+   "inputFingerprint": "8ea0e308e043a3628789c58200f9c11a8448f7ef1d70f11a914c649a60c6e0a3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c052ced4eff6b8e4640c2b3e7149435f1f625dbb3c67b8166e911c3c3a162bf5",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[161]",
+   "fieldPath": "[161].notes",
+   "inputFingerprint": "a4a325dae9c26d681c3793e4193e498d162f699c582ace0a2cc462ec3b5a7d6c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0b0c017abe9155b86f3d2b46e74b179b90928c03b0d9fcba305385d263cedd47",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[162]",
+   "fieldPath": "[162].notes",
+   "inputFingerprint": "5e18762c05135ae3927a5f6fc5e9c7cb3e9fb592a1709bfde0b9cd6db5b7def5",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "449f7e9233cc798159b48701da939e2cb3f0118ce2e7ed70221e8bc1f3a4f1c6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[163]",
+   "fieldPath": "[163].notes",
+   "inputFingerprint": "6239d0e739fd57b58e0369d6e95242e2d1e1f4312ac5a8fb8e24e49edd09150e",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6de42d117ea37c07e9ea0654e6cc2c4d06a2f71096d45516099e93b56e02b5c0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[164]",
+   "fieldPath": "[164].notes",
+   "inputFingerprint": "432dc151df6220d4d781c674b9339f31fae9179c5188be7489ba7e15b2d6e668",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5857dac9e8f1c363cd7318df89753f0080765cdde7d4aa05cb202c0ce127fc4d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "data:data/teams.json:[165]",
+   "fieldPath": "[165].notes",
+   "inputFingerprint": "5b8029cd6b679e084d85c65f0acbb6188b3236ee9e70ef054296aa9d62b13df1",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3a42cd04a6241b97e42e37d73bf818ca00474d0f13f844fdd69a067b2a0b3c6e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:og-兵演春秋",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "1a4d88aa5705e6f9af71b8137c11e3cd9f2ab8cf979a8dc627d8bcee861c4a1c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "950eb51e3a32414315c52bcc305c33338d5b8ff83319a511ae43a4acde23e9bf",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s10",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "18ab21a737aaaf974081f9f981568491a0e009c2c68e5a4e8c739cf7eabaeec2",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bf053630d28950ec515631ac6a307ee7afa89cb6dc937f6e9a99b75bcea5140a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s11",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "b8cb577bfc51c6a68199e5cb0db481ee338f89bd7a89e34b64c65b7d3f3668e4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "94a4a8b7c104f10925b417b700bb1ff01bd00eb800fa69f03de376b48644822a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s12",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "f15fd702cb774798d6ace16f127af94b373e97ada593bcd0311f0d37d76a16ab",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ac047df53c149b83c2a2f2d5bfbf18bc2a138be6d0ab2065209fbb57fd35b844",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s13",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "61e18497d594e4b9bd32c2ac84b57866e505cc30c999443c838b3fee9764cf0b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e28d6319d9a0fd7b167cba903a07c9c5d2d47fab60fc45e9d64a46806690b837",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s14",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "89e53e98a1bf0e5979ecfb973bf5c389926047ba3a127104bb8c29d34c54a4eb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3ca110b14b36a5807e457db42a6d7f0a70376defdfacb9f39dbf208b18bc557d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s15",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "f81f0cdc62d71bad4bf28e3fc2ca8420b1f41309fb1e342d9b9abe890b04869c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6cbec5149673eb3a94b09f7b02bc110245ccb4228107412669a8a81ddd11b0d9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s16",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "07989a380bc00ca12602a1edc437084ad7e0ae04b03759efefc2e808ff5040c3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "64fabe87f44bba5798bfd8d408a3d099de32259714d8b76096191984a66b0d5b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s17",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "ec2dd44d86f626518c2d6502064617b56fdd4b84238e259d627d14d56b865324",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2515a494a9d00acb48aaf124b588f9841dbb1f256dac25f8f2a2c523ec31a3b0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s18",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "4b37b24295ef203578f0da2b5150aaa9dced2bd96146bc870f5701e1268bd0de",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0cc8ff4cb55ec6d11d5aa8edc4fb5ded1738f9604a2a4a531ec095ee682128cc",
+   "verdict": "accepted"
+  }
+ ]
+}

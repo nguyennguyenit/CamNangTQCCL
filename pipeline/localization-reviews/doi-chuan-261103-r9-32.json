@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-32",
+ "reviewerSession": "reviewer:DcReviewI32-2026-11-04",
+ "items": [
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-032-嘟嘟弓周瑜",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f7892085b0e9b5fe3a27b0358ef670b235a9edf05c75f69458c8bac695b84f87",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c6be9f004341b5177e6502eae0f1210a6bd6e146abdfedf66aacabf372dc5839",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-033-嘟嘟弓sp周瑜",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "354e593b3bbc4ebc31fc5742c5c4272687014c57c0ee358f8260d66c6e0b8bcf",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b45e0a42d7ab6986976a75c84a5ef1b0728004cf587f250586365e28b9da30a1",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-034-孫權弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2ccd559f999393ed8641a300bb831c4edb0a992b85817b573ba69277a8d73116",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6333cb6ad06ea8f5dfba2b0742a67f4816a04a2206cbfb4130cb983bdbe2be2e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-035-蘇信孫權騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a5149fe2ce1d7c821d4f6c52f89733d47830fdc6fa84ad122bd4680578c05d7b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6de5855006816fc9eb7f659ce68463b28bd80efad08ea28955e8237863e1a8d0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-035-蘇信孫權騎",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "7c9cb3ccbc9e8e2912cc78788bf2dca71c1f9d28d85255146dd7eaa1b88801cb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "4110e29b67d73bf0c4b60f2d067e07578054253c4c638fbf87070bf98c4bf949",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-036-慷慨弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "858a3f64ab2274d811924a1d1adf35f513c1aae51c803d7bd8dc3fdc1b3622ad",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "37a0b823bfc4a2e361659c92b1b9af2ba3819630a034b0c594c8af6f108815a9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-037-陳翊神火弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "18d78fa214d118970cd7ad52a4d2b3ee774200d2dc74329e1cec5465a8b3989b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "75d646f0be3d9a4f7ec055e53a3c1922016a0a216d5c1afb9a09185c52c5b1e7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-037-陳翊神火弓",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "cf63f53e6821a0049f5a8451e51a2b25b281f846560102e696575edc68b7b60d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "aa40f21cbc783b9c883914177b893dabf34157ad901fd0191a91fb00a3ac0fad",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-037-陳翊神火弓",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "e835a9dea0b490bafadf4715a42bd4c1d7cdac7fb273951b2efca74a804327eb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "43eeaf123171e043647b0d14037ac9f9c0c903f6b23bf5c488d46b73b22befb2",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-038-蘇信神火弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ff2e2df077b67908c0a13f0f8aaed7db22c9b10d9424a86758d509b831dbef48",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b11eba5194b3aaf67809e9190fc0302df3312a0f21b57a860284958a1211965d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-038-蘇信神火弓",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "30862c4b92e3e65b8f8261cd58a2af23e3388c9bfcd8b02bf6ae886f3ecd34ac",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "aa40f21cbc783b9c883914177b893dabf34157ad901fd0191a91fb00a3ac0fad",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-038-蘇信神火弓",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "867433232055139e89ed79d32296d983b0951664e7d38eda55f2894e82e9054b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "1c91839b6f7ac926adfdaf258e01a214b6da63a431d990a5f428fa58054424b6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-039-吳騎-by大米",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2f56634f44c55e2d2613c1a861bcf3176275903c1dbeda65afd70f8721bddd05",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ffd345b32b9166e905c9b83b8663ccbcf2c181c30b91b3ba33d9bf1a5c3bf6ea",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-040-孫權吳騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "fbdff5da33683271b0a0544fb71a576117949372c19a31deeb1a0d9f4fe41dad",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bf7e79d62972ebdfc458488c4305bf539e1db3980d2c8d683291087bf7aa3b48",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-041-大小喬香",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "1fe7b0cc6cf09230a2b78f8573eaf99cff808c433785e9d4c13e0d3c4d17f338",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0261c67b0f13679228a7992d2a04b4091f0574a0ba5201520ce4ad1e34d39d9f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-041-大小喬香",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "fb1b91814e05bf79f2ac5fa1f97e7da15a126655b12d27ebc3083225f4eb4538",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f3cd1c93a2cebafa897592b9142f18f3157e52768e12875fed251d1dac8090e3",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-042-皇馬槍",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "6a97decb166f966d9c19a0cecec85ce7ec4c03710a9f1e1ec22a0ed7212c7476",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3c517a4735072fdd10a0c1e4020aeecaf1503465d3f2afe5387de92ff2aad285",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-042-皇馬槍",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "16ebc397db00108cbd74f053d05c7cd597fb4a24b7883b120de62bc46adb968c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "faaf83a0e8b22a7a9d3b7ac3ebf8ba3e58cb376e328efa87f342abb7dd8b4666",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-043-皇甫宏皇馬槍",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c2c462ef8be62e78f069915b83f20a6bbbb2f1305518b16a601b726fde4c01eb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "df9983fa1a97e34a513d5b0dccc0d5173415763f19f0a51e980e83a3d8ef1453",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-043-皇甫宏皇馬槍",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "7b163786d1cd2e1b218e90a3d8ec0aae7dcf44d05f929788a04173656affb8d7",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3b5a36bf5aab615039c43f0ed4f73282c3c8b2ba61cafbd5cee2a33c1e5862a9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-044-拒馬弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "73613028e2a7f882174a11e43e699ff8256be7b7f72597facd1a9c139c06a0e4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7f8044db2f989b0a8711fdc3620df3aec52b73527da9be80b391860d9c0dfdf4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-045-太師弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7bab7b8b6de4da1d1cf0484a19b19096eb0958e090a74038af316b0380e7c367",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "baf6751acacb81043f3a5e1f6c8ebfd140f8e5226ccd1ca38cee361c17e5d0bb",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-046-sp周瑜弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c9470a97adf86f1f86179f5d169265ded117ead33ddad4b3eb23eeb236b80c22",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f356625a03aaec3de5fc9c10d93da2264454b3e7fb2ec70f52f04cd1d55cd874",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-046-sp周瑜弓",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "f1bff98453310c8af9a572fb2a2f94c948ae83a44218cd6892dca4b42c406527",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2985b3bc7d2897b04a87b6dd83d8ef4ce4dc54881b774c9028e4804e7a1577a3",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-047-群弓-by大米",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "1ddfc97a48108269870e4fcf52ec4079bffcea155fa0169678be6ac7e6752eeb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "4c1ff22a802fb459693acae7af20a6837f8f7686221b72e9602e68f6dc7a4565",
+   "verdict": "accepted"
+  }
+ ]
+}

@@ -68,6 +68,8 @@ def raw_source_record(row):
         "displayNameVi",
         "tacticSlotsVi",
         "tacticSlotKinds",
+        "tacticBeforeLevel20Vi",
+        "tacticBeforeLevel20Kind",
         "bookSlotsVi",
         "statFocusVi",
         "statFocusKind",
@@ -301,6 +303,13 @@ def validate_generation_inputs(inputs):
         raise ValueError("Recommended detail scope inventory differs")
     if any(not isinstance(row, dict) or row.get("safeScopeKey") not in set(keys) for row in records):
         raise ValueError("Recommended index scope inventory differs")
+    for row in [*records, *(item for rows in details.values() for item in rows)]:
+        for field in ("heroes", "alternativeHoldersRaw"):
+            for holder in row.get(field) or []:
+                if isinstance(holder, dict) and "tacticBeforeLevel20Raw" in holder:
+                    value = holder["tacticBeforeLevel20Raw"]
+                    if not isinstance(value, str) or not value.strip():
+                        raise ValueError("Recommended tacticBeforeLevel20Raw must be a non-empty string")
     for name in ("legacyTeamsHash", "contentLinksHash"):
         if not re.fullmatch(r"sha256:[0-9a-f]{64}", str(inputs.get(name))):
             raise ValueError("Publication lineage hash is missing: " + name)
@@ -464,13 +473,19 @@ def _display_name(kind, raw, mapping, cache):
 def _localized_holder(holder, mapping, cache):
     tactics = holder.get("tacticSlotsRaw") or []
     tactic_kinds = [resolve_display_kind("tactic", raw, mapping) for raw in tactics]
-    return {
+    localized = {
         **holder,
         "displayNameVi": _display_name("hero", holder.get("nameRaw"), mapping, cache),
         "tacticSlotsVi": [_display_name(kind, raw, mapping, cache) for kind, raw in zip(tactic_kinds, tactics)],
         "tacticSlotKinds": tactic_kinds,
         "bookSlotsVi": [_display_name("book", raw, mapping, cache) for raw in holder.get("bookSlotsRaw") or []],
     }
+    before_level_20 = holder.get("tacticBeforeLevel20Raw")
+    if before_level_20 is not None:
+        kind = resolve_display_kind("tactic", before_level_20, mapping)
+        localized["tacticBeforeLevel20Vi"] = _display_name(kind, before_level_20, mapping, cache)
+        localized["tacticBeforeLevel20Kind"] = kind
+    return localized
 
 
 def _localized_holders(holders, mapping, cache, shared):

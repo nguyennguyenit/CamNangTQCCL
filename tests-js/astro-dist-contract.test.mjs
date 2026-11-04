@@ -252,7 +252,7 @@ async function configuredSite() {
 /** Hash nguồn cố định của fixture và payload lưu đội tối thiểu mà trang chi tiết nhúng (khớp chỉ mục nguồn của fixture). */
 const MY_TEAMS_HASH = "0123456789abcdef";
 const savePayloadHtml = (kind, key) =>
-  `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind, items: { "": { defaultGroup: "ghep-team", draft: { source: { kind, key, contentHash: MY_TEAMS_HASH } } } } })}</script>`;
+  `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind, items: { "": { defaultGroup: "ghep-team", draft: { source: { kind, key, contentHash: MY_TEAMS_HASH } }, unresolved: [] } } })}</script>`;
 
 async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } = {}) {
   const generationId = "1".repeat(64);
@@ -1017,7 +1017,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang,
+  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1640 Recommended, 166 legacy, 17 Khai hoang,
   // 962 trang riêng mục Tra cứu (252 tướng, 412 chiến pháp, 59 quân sư sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
   assert.equal(lookupRoutes.entries.length, 962);
@@ -1025,7 +1025,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
   assert.ok(seasonPageList.length > 10);
-  assert.equal(locations.length, 5064 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 5612 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -1154,11 +1154,11 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
     ...seasonPageList.map((page) => page.routePath),
   ];
   const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
-  assert.equal(catalog.recommended.length, 1366);
+  assert.equal(catalog.recommended.length, 1640);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
   assert.equal(lookupRoutes.entries.length, 962);
-  assert.equal(locations.length, 5064 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 5612 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -2069,16 +2069,18 @@ test("#15 dist verifier: my-teams-source-index.json và payload lưu đội ch�
   await writeFile(indexPath, validIndex);
   await verify();
 
-  // Payload của trang: hash lệch chỉ mục, thừa id, sai họ, thiếu biến thể đều bị từ chối; chữ `</script>` trong tên không phá thẻ.
+  // Payload của trang: hash lệch chỉ mục, thừa id, thiếu `unresolved`, sai họ, thiếu biến thể đều bị từ chối; chữ `</script>` trong tên không phá thẻ.
   const pagePath = join(distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
   const validPage = await readFile(pagePath, "utf8");
-  const payloadOf = (draft, extra = {}) => `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind: "legacy", items: { "": { defaultGroup: "ghep-team", draft } }, ...extra })}</script>`;
+  const payloadOf = (draft, extra = {}, item = { unresolved: [] }) => `<script type="application/json" id="team-save-payload">${jsonLd({ schema: 1, kind: "legacy", items: { "": { defaultGroup: "ghep-team", draft, ...item } }, ...extra })}</script>`;
   const swap = (payload) => writeFile(pagePath, validPage.replace(/<script type="application\/json" id="team-save-payload">[^<]*<\/script>/u, () => payload));
   const source = { kind: "legacy", key: LEGACY_TEAM_ID, contentHash: "0123456789abcdef" };
   await swap(payloadOf({ source: { ...source, contentHash: "fedcba9876543210" } }));
   await assert.rejects(verify(), /differs from the source index/i);
   await swap(payloadOf({ id: "team-abc", source }));
   await assert.rejects(verify(), /must not carry a team id/i);
+  await swap(payloadOf({ source }, {}, {}));
+  await assert.rejects(verify(), /must list its unresolved items/i);
   await swap(payloadOf({ source: { ...source, kind: "khaihoang" } }));
   await assert.rejects(verify(), /differs from the source index/i);
   await swap(payloadOf({ source }, { kind: "khaihoang" }));
@@ -2121,6 +2123,7 @@ test("#15 dist thật: payload lưu đội của mọi trang chi tiết parse đ
       for (const item of Object.values(payload.items)) {
         assert.equal(item.draft.source.contentHash, index[`${kind}:${item.draft.source.key}`], `${htmlPath}: hash lệch chỉ mục`);
         assert.ok(!("id" in item.draft));
+        assert.ok(Array.isArray(item.unresolved), `${htmlPath}: payload thiếu unresolved`);
       }
       if (kind === "khaihoang" && !htmlPath.startsWith("zh/") && Buffer.byteLength(html) > largestKhaiHoang.bytes) {
         largestKhaiHoang = { bytes: Buffer.byteLength(html), path: htmlPath };
@@ -2129,6 +2132,19 @@ test("#15 dist thật: payload lưu đội của mọi trang chi tiết parse đ
     }
   }
   assert.ok(checked >= 3000, `đã kiểm ${checked} trang`);
+
+  // s27-lp-juma-gong-ay: ghi chú nguồn vượt trần 2000 B, hai dòng cuối bị bỏ khỏi nháp phải nằm trong `unresolved` của payload
+  // (thông báo lưu báo "2 mục chưa đối chiếu"), không mất âm thầm.
+  const longNotes = catalog.recommended.find((entry) => entry.sourceConfigId === "s27-lp-juma-gong-ay");
+  assert.equal(longNotes?.routePath, "/doi-chuan/pk-s27-cu-ma-cung/");
+  for (const htmlPath of [longNotes.htmlPath, zhPath(longNotes.htmlPath)]) {
+    const payload = JSON.parse((await distText(htmlPath)).match(/<script type="application\/json" id="team-save-payload">([^<]*)<\/script>/u)[1]);
+    const { draft, unresolved } = payload.items[""];
+    assert.deepEqual(unresolved.map(({ field, reason }) => [field, reason]), [["notes.general", "over-limit"], ["notes.general", "over-limit"]], htmlPath);
+    assert.ok(unresolved[0].rawName.startsWith("SP Điêu Thuyền: Chiến pháp thứ hai"), htmlPath);
+    assert.ok(unresolved[1].rawName.startsWith("SP Đổng Trác có thể đổi thành SP Lư Thực"), htmlPath);
+    for (const item of unresolved) assert.ok(!draft.notes.general.includes(item.rawName), `${htmlPath}: dòng đã bỏ không nằm trong nháp`);
+  }
   // Kích thước HTML của trang Khai hoang nhiều biến thể nhất (ghi vào docs/roster-sync.md § Số đo).
   console.log(`# my-teams: trang Khai hoang lớn nhất ${largestKhaiHoang.path} = ${largestKhaiHoang.bytes} B`);
 });

@@ -71,6 +71,8 @@ def _observations(records):
                 yield "hero", holder.get("nameRaw"), holderKind, context
                 for raw in holder.get("tacticSlotsRaw") or []:
                     yield "tactic", raw, holderKind, context
+                if holder.get("tacticBeforeLevel20Raw"):
+                    yield "tactic", holder["tacticBeforeLevel20Raw"], holderKind, context
                 for raw in holder.get("bookSlotsRaw") or []:
                     yield "book", raw, holderKind, context
 

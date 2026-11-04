@@ -8,7 +8,9 @@ from pipeline import sgsdeck_recommended as source
 FIXTURES = Path(__file__).parent / "fixtures/sgsdeck-recommended"
 LIST = (FIXTURES / "list.html").read_text()
 DETAIL = (FIXTURES / "detail-sample.html").read_text()
+PHASED = (FIXTURES / "detail-level-phases.html").read_text()
 URL = "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"
+PHASED_URL = "https://sgsdeck.com/recommended/s28-kh-sanshi-lu"
 
 
 class RecommendedSourceTest(unittest.TestCase):
@@ -24,11 +26,12 @@ class RecommendedSourceTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             source.validate_source_url(URL + "?season=s1")
 
-    def test_pinned_list_keeps_all_25_source_scores_without_vn_mapping(self):
+    def test_pinned_list_keeps_all_25_configs_and_holders_without_vn_mapping(self):
         result = source.parse_recommended_list(LIST)
         self.assertEqual(result["expectedCount"], 25)
         self.assertEqual(len(result["records"]), 25)
-        self.assertEqual(result["records"][0]["value"], 113)
+        self.assertEqual(result["records"][0]["heroNames"], ["40Y 呂布", "王異", "SP 法正"])
+        self.assertNotIn("value", result["records"][0])
         self.assertEqual(result["sourceSeason"]["label"], "og-兵演春秋")
         self.assertNotIn("rulesetId", result)
 
@@ -36,8 +39,6 @@ class RecommendedSourceTest(unittest.TestCase):
         listing = source.parse_recommended_list(LIST)
         self.assertEqual([sum(row.get("tierRaw") == tier for row in listing["records"]) for tier in ["T0", "T0.5", "T1"]], [12, 1, 12])
         self.assertEqual(listing["records"][0].get("factionRaw"), "群")
-        changed = LIST.replace('title="來源評分，僅供同賽季內比較">113', 'title="來源評分，僅供同賽季內比較">97')
-        self.assertEqual(source.parse_recommended_list(changed)["records"][0]["tierRaw"], "T0")
         detail = source.parse_recommended_detail(DETAIL, URL)
         joined = source.join_recommended_evidence(listing, [detail])
         self.assertEqual(joined["records"][0]["tierRaw"], "T0")
@@ -95,9 +96,30 @@ class RecommendedSourceTest(unittest.TestCase):
         self.assertEqual(len({block["id"] for block in equal_blocks}), 5)
         self.assertEqual(len(raw["alternativeHoldersRaw"]), 1)
 
-    def test_missing_score_is_null_not_zero(self):
-        changed = LIST.replace('title="來源評分，僅供同賽季內比較">113', 'title="來源評分，僅供同賽季內比較">')
-        self.assertIsNone(source.parse_recommended_list(changed)["records"][0]["value"])
+    def test_missing_detail_score_is_null_not_zero(self):
+        changed = DETAIL.replace('<span class="tabular">113</span>', '<span class="tabular"></span>')
+        self.assertIsNone(source.parse_recommended_detail(changed, URL)["value"])
+
+    def test_level_phase_rows_keep_post_level_20_slots_and_the_early_tactic(self):
+        result = source.parse_recommended_detail(PHASED, PHASED_URL)
+        self.assertEqual(result["heroes"][0]["tacticSlotsRaw"], ["太平道法", "無當飛軍"])
+        self.assertEqual(result["heroes"][0]["tacticBeforeLevel20Raw"], "無當飛軍")
+        self.assertEqual(result["heroes"][1]["tacticBeforeLevel20Raw"], "三勢陣")
+        self.assertNotIn("tacticBeforeLevel20Raw", source.parse_recommended_detail(DETAIL, URL)["heroes"][0])
+
+    def test_unknown_or_broken_holder_rows_are_rejected_instead_of_dropped(self):
+        cases = [
+            ("unknown phase label", PHASED.replace(">20 級後<", ">30 級後<"), PHASED_URL),
+            ("phase rows mixed with numbered slots", PHASED.replace(">20 級前<", ">戰法 1<"), PHASED_URL),
+            ("unknown holder row", DETAIL.replace(">加點<", ">新欄位<"), URL),
+        ]
+        for name, html, url in cases:
+            with self.subTest(name), self.assertRaises(ValueError):
+                source.parse_recommended_detail(html, url)
+
+    def test_list_card_without_roster_is_rejected(self):
+        with self.assertRaises(ValueError):
+            source.parse_recommended_list(LIST.replace('aria-label="陣容"', 'aria-label="other"', 1))
 
     def test_streamed_holder_fields_and_unit_tags_keep_their_owner(self):
         result = source.parse_recommended_detail(DETAIL, URL)
@@ -137,7 +159,7 @@ class RecommendedSourceTest(unittest.TestCase):
         self.assertEqual(accepted["inventory"]["extracted"], 1)
         self.assertEqual(accepted["inventory"]["missingDetails"], 24)
         self.assertEqual(accepted["records"][0]["value"], 113)
-        for key, value in [("value", 105), ("nameZh", "other"), ("sourceSeason", {"label": "s1"})]:
+        for key, value in [("nameZh", "other"), ("sourceSeason", {"label": "s1"}), ("factionRaw", "魏"), ("heroes", [])]:
             other = copy.deepcopy(detail)
             other[key] = value
             with self.subTest(key=key), self.assertRaises(ValueError):

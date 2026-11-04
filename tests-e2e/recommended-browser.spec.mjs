@@ -287,32 +287,26 @@ for (const [sourceConfigId,codes] of [
   });
 }
 
-test('bond slots read as Duyên phận and never as selectable tactics',async({page,request})=>{
+test('桃園結義 reads as the tactic Kết Nghĩa Vườn Đào on card and detail, not as a Duyên phận slot',async({page,request})=>{
+  // Từ 2026-11-03 nguồn Đội chuẩn coi 桃園結義 là chiến pháp (trước là ô duyên phận); thế hệ đang ghim không còn ô bond nào,
+  // đường hiển thị ô bond chỉ còn được kiểm ở test đơn vị của bộ render.
   const {index}=await referenceData(request);
   const row=index.records.find(item=>item.sourceConfigId==='s27-han-hanshi-gong-1');
   const holderIndex=row.heroes.findIndex(hero=>hero.tacticSlotsRaw.includes('桃園結義'));
   expect(holderIndex).toBeGreaterThanOrEqual(0);
   const hero=row.heroes[holderIndex];
-  const bondIndex=hero.tacticSlotsRaw.indexOf('桃園結義');
-  expect(hero.tacticSlotKinds?.[bondIndex]).toBe('bond');
-  const tactics=hero.tacticSlotsRaw
-    .map((raw,slot)=>hero.tacticSlotsVi?.[slot] || raw || 'Chưa có dữ liệu')
-    .filter((_,slot)=>slot!==bondIndex);
-  const bond='Kết Nghĩa Vườn Đào';
+  expect(hero.tacticSlotKinds?.[hero.tacticSlotsRaw.indexOf('桃園結義')]).toBe('tactic');
+  const tactics=hero.tacticSlotsRaw.map((raw,slot)=>hero.tacticSlotsVi?.[slot] || raw || 'Chưa có dữ liệu');
+  expect(tactics).toContain('Kết Nghĩa Vườn Đào');
   await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
   const cardHolder=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${row.sourceConfigId}"] .reference-holder`).nth(holderIndex);
-  await expect(cardHolder.locator('.bonds .slot-label')).toHaveText('Duyên phận:');
-  await expect(cardHolder.locator('.bonds .t-bond')).toHaveText(bond);
-  await expect(cardHolder.locator('.bonds button')).toHaveCount(0);
   await expect(cardHolder.locator('.tactics .t-tactic')).toHaveText(tactics);
-  await expect(cardHolder.locator('.tactics')).not.toContainText(bond);
+  await expect(cardHolder.locator('.bonds')).toHaveCount(0);
   await page.goto(await recommendedPath(request,row.sourceConfigId));
   await expect(page.locator('#team-detail-body')).toBeVisible();
   const detailHolder=page.locator('#team-detail-body .reference-detail-holder').nth(holderIndex);
-  await expect(detailHolder.locator('.detail-hero-bonds .detail-hero-label')).toHaveText('Duyên phận');
-  await expect(detailHolder.locator('.detail-hero-bond-list .t-bond')).toHaveText(bond);
   await expect(detailHolder.locator('.detail-hero-tactics-vi')).toHaveText(tactics);
-  await expect(detailHolder.locator('.detail-hero-tactics-block')).not.toContainText(bond);
+  await expect(detailHolder.locator('.detail-hero-bonds')).toHaveCount(0);
 });
 
 test('compact cards keep complete source content, native links and non-navigating chips',async({page,request})=>{
@@ -913,7 +907,8 @@ test('?season=all stays usable on a 6x slower CPU',async({page,request})=>{
   await throttleCpu(page,6);
   await page.goto('/doi-chuan/?season=all');
   const section=page.locator('#section-team-chuan');
-  await expect(section.getByLabel('Mùa',{exact:true})).toHaveValue('all');
+  // Boot với 1640 cấu hình ở 6x: ~1,7 s trên máy dev, 5–7 s trên runner CI, nên ngân sách 5 s mặc định là ngưỡng nhiễu.
+  await expect(section.getByLabel('Mùa',{exact:true})).toHaveValue('all',{timeout:15_000});
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
   await expect(section.locator('.reference-team-card')).toHaveCount(PAGE);
 });
@@ -935,7 +930,7 @@ test('card view shows 60 teams at a time and "Xem thêm" appends the next 60 wit
   await expect(cards.first()).toHaveAttribute('data-kept','1');
   await expect(cards.nth(PAGE).locator('a[data-team-detail-link]').first()).toBeFocused();
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
-  // Đổi phạm vi (mùa) về lượt đầu.
+  // Đổi phạm vi (mùa) về lượt đầu; mỗi "Xem thêm" nối thêm tối đa một lượt tới khi hiện hết mùa.
   const season=section.getByLabel('Mùa',{exact:true});
   const values=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).filter(value=>value!=='all'));
   const counts=Object.fromEntries(values.map(value=>[value,index.records.filter(row=>row.sourceSeasonId===value).length]));
@@ -943,8 +938,11 @@ test('card view shows 60 teams at a time and "Xem thêm" appends the next 60 wit
   await season.selectOption(target);
   await expect(section.locator('.reference-count')).toHaveText(`${counts[target]} / ${counts[target]} đội`);
   await expect(cards).toHaveCount(PAGE);
-  await more.click();
-  await expect(cards).toHaveCount(counts[target]);
+  for (let shown=PAGE; shown<counts[target];) {
+    await more.click();
+    shown=Math.min(shown+PAGE,counts[target]);
+    await expect(cards).toHaveCount(shown);
+  }
   await expect(more).toHaveCount(0);
 });
 

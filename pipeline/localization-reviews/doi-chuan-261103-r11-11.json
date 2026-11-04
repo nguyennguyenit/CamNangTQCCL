@@ -1,0 +1,215 @@
+{
+  "schemaVersion": 1,
+  "batchId": "doi-chuan-261103-r11-11",
+  "reviewerSession": "reviewer:DcReviewK11-2026-11-04",
+  "items": [
+    {
+      "entityId": "troop-option:phi-hung-quan:te-chung-intermediate",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "bd9b701e4be1889caadfe9d368cfe06e7d4a53f3419a1a2ff6d0b92033f36280",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "108af6e42cf4b7eb9182f76482f0829bfd488a8b10f5259b1f57d579643d5c76",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:phi-hung-quan:te-chung-intermediate",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "bfbcd689a7100aa62beec173ad5a7f5f8ebfebf314405a5123986649c3084d15",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "785b61d8de1dad0e0ea461e97b9e5dedd43ba6da3bb4c8080574d154010f86f6",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:phi-hung-quan:tri-tuyet-basic",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "3e5ace24ee4386c36fdf12d4b7fd88076893896cf5914baf630bf186c21269c7",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "4a4cbac0a172a0334f43f445f83a789397f58d0926727ce74dda3358b4962a83",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:phi-hung-quan:tri-tuyet-basic",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "5bf5ac6b31e3a4952da5c4228ec841c749eed1d1123b38652fec0b272a5a8c48",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "503544e43b500c3c152df83c675be1c2ac3319a96084b709ab107b9f953bf121",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:cuu-chien-advanced",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "7c5478f3c68619d9208049186d7c0e40d8840ef7b337bdbc340d9d7b871bf5f8",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "8f3aa54fbd5c83ea16044483eb7f0b7e280b3e72a7966ba4171b67a9e35aea78",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:cuu-chien-advanced",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "0376ce70aeccfb6556933219615bb365e663082cd646586e5ad239d595dbfecb",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "a525e3df0e16ef087f4450177733405a0f0c278cb4a82ad4fd56675c7670a1f3",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:cuu-vien-advanced",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "dab3eda6a079f83a0c4ecc9b7c1d38d4e57f397f699fa74754391841172a7356",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "300e9389577098582af8f952c868dcf49673c877385de5f991628dfb1bc37c88",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:cuu-vien-advanced",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "09af5e4d595067855aeea049a97650eddf8e3e70080f378804e797861054ef73",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "156c551768e11823c4e271751ae863fddbf8e0ae30bc0b81294d80a1744e38a5",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:ky-muu-special",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "f7b787a2f93c91790672b17edef3464b7accd3940b4ad9345aa9b8617bf17193",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "e981f6263f6ba46704460d96442918eece0e2f98ef87adb1350b0a237736cb0a",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:ky-muu-special",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "6571e683321c548ee0175143c75222b5c722479ee299ec53c0b1054a607b09a3",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "01a252c66dc3efa844978e9e48198c3230542188bf65a89fcf251624ec781cab",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:ky-thuat-special",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "3c6803b4f3d427e3f6c53d18bf45b6dff3b1eaa8256da64b9ded5144513fb577",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:ky-thuat-special",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "79877d3cbff95cccf3e15797476c608f6a4ab71a4fccf05db395a40dcfdb34f9",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "0d093acf42adb0b3bebf8a74a0885c09e2562329ebfb374ee58ae6e73d5f2b1f",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:linh-ngo-intermediate",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "e3a23ae733ace23d6052b5c3d758abe3cff966b1a2f0ab27c640d0e0e8d37447",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "87301779b8c7ba6bfe55153a8ff8517a5c3cccace9ef3ee2593ee68fac5b4902",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:linh-ngo-intermediate",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "7bb7d9d73b18c223ae2a2be5584504f0a0ee34b81972b7d0e1b135bcb649b976",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "39610b46256cffb3ba6166cf31bd48f9db1712a797d04155fe43e04398835b52",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:loan-tran-special",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "7daf3c285fc0017b94f29ec518903d459296b6bd35246ab6e94feb3bcbe2f840",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "1c67f2fdfc7cbf57e1e380d9ee533a69d8b03b3ac6443b7d367f7e9a345d22ef",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:loan-tran-special",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "3bda03e220a47f2be8d2d706662c404784161917585746e69885f7eb7b91f9fa",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "4c2f93c5f35286d7349ba81140c5e56b2aa398d9cde9283b46bfd9ca25f392d7",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:muu-cong-basic",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "b98b0852aa69c9452913fcc0013aaddae36728123a6778ac5f1b5f02bd33e034",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "9354b16e2dc8db9ba4be143309db8389f6ee3991a9305e2188b8fc9bc0913756",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:muu-cong-basic",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "7cc29ac4e6c0876d858c6adad41012f5de8ac2453927892fb6a0e638b190e94a",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "ab23c221ef128a1b5f995295e4435ddf9588a44a9af188a36b3ccce54937aac8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:phi-tri-basic",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "2bc022f011cb7e5fa3cf73a01046dc24c5b885b73a1d9c869bc864a93bd487f6",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "ca23f1f75b6a17f648143ef88fac28927c27067a9caaff36799b05e71d780205",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:phi-tri-basic",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "f2c63fd08ed714e14c10306aa2f80a6505ed56aee0ef800fb77ae1167116d2bc",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "b1323891127d95ea894bb3f602aa65f8f79bc2901f0ebb59b144defdc9ce2d70",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:tap-tri-intermediate",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "fe294fe642106a3685ac861058309ec4add433a51bfe1cf4437275fbad730cc6",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "a9f07eb5ceb2fcde2dd7134160e4964996e75ed2cf1d87f1899c6963660481b8",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:tap-tri-intermediate",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "62ee091b956aeac44e735e50777ec19492b20b11f84a3350a4a60df743850d5a",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "ff1a86aae6992415c08ef2225abfee55371483f0f88498519ed5056a3a2a03a4",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:tat-trung-advanced",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "3386ce0b4eeeee2cadd0c7aca08ca5ce1a07361bde21eb8194f0e088ed241964",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "f56a0ca9d334dfe76cf8aa6dcb005ae859b4c362c83170870501448f665d3e7e",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:tat-trung-advanced",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "6aa232ecf631350d5cf971a13b55cda510246e26a8a4c8cd1602c9f90a7642ae",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "9166f24646a7e2a65160316fbbf5f4276375bd686a7cafbaa227bc14c97af0c6",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:thao-dien-basic",
+      "fieldPath": "descriptionVi",
+      "inputFingerprint": "05eb6f68f71cb00548a5ea5a4e645b43c8d1c4570e5b6065591a07624d92f3a2",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "a7773fdf40e5ca3ba4b55d5e753eac9e4ffad221829debde25899be72a2f648c",
+      "verdict": "accepted"
+    },
+    {
+      "entityId": "troop-option:tay-luong-thiet-ky:thao-dien-basic",
+      "fieldPath": "nameVi",
+      "inputFingerprint": "2b134d6dbed989dabb830b5e242910d4eadad3791aaa19a05a6428ffd4eeb50f",
+      "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+      "textSha256": "772de0c8eef42956e678ff19a921464b3638154db1f2d6af844e3cdd76b07870",
+      "verdict": "accepted"
+    }
+  ]
+}

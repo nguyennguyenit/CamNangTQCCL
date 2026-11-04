@@ -40,7 +40,7 @@
       "nameVi": "Bạch Mã Tướng Quân",
       "nameZh": null,
       "tacticPoints": 10,
-      "usageVi": "Kỹ quân sư độc quyền của Triệu Vân, thường phối hợp với đội hình cung Thiên Thủy / thương Thục.",
+      "usageVi": "Kỹ quân sư độc quyền của Triệu Vân, thường phối hợp với hệ Thiên Thủy Cung / Thục Thương.",
       "usageZh": "趙雲專屬軍師技，常見搭配天水弓 / 蜀槍體系。",
       "zhSource": {
         "kind": "translation"
@@ -900,7 +900,7 @@
       "nameVi": "Bảo Vệ Lời Thề",
       "nameZh": null,
       "tacticPoints": 12,
-      "usageVi": "Tăng ích đồn trú dùng để phòng thủ, xung đột với các hiệu quả cấp cứu khác (như Hãm Trận Doanh). Dùng để thủ 89. Lưu ý: Nguồn không giải thích “89” chỉ đối tượng nào; chưa đủ căn cứ hiểu là cấp 8 và 9 hay một địa điểm cụ thể.",
+      "usageVi": "Tăng ích đồn trú dùng để phòng thủ, xung đột với các hiệu quả cấp cứu khác (như Hãm Trận Doanh). Dùng để thủ 89.",
       "usageZh": "駐守增益防守用，與其他急救效果（如陷陣營）衝突。守 89 用。",
       "zhSource": {
         "kind": "translation"
@@ -3447,7 +3447,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng gỗ +1500/giờ; mở khóa quan phụ trách gỗ.",
+          "effectVi": "Sản lượng gỗ +1500/giờ, Quan Gỗ",
           "effectZh": "木材產量+1500/小時，木材官",
           "id": "building-level:phat-moc-truong:10",
           "level": 10
@@ -4012,7 +4012,7 @@
       "maxLevel": 5,
       "missingFields": [],
       "nameVi": "Trại Công Trình",
-      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Doanh Quân Cơ/Doanh Công Sự)",
+      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Quân Cơ Dinh/Công Sự Dinh)",
       "summaryZh": "提升戰略建築（軍機營/工事營）建造等級上限",
       "zhSource": {
         "kind": "source"
@@ -4434,7 +4434,7 @@
           },
           "durationVi": null,
           "durationZh": null,
-          "effectVi": "Thống ngự +10, độ bền thành trì +100",
+          "effectVi": "Giới hạn chi phí (COST) +10, độ bền thành trì +100",
           "effectZh": "COST+10，城池耐久+100",
           "id": "building-level:quan-vuong-dien:1",
           "level": 1
@@ -4981,7 +4981,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng tiền đồng +1000/giờ; mở khóa Quan thuế vụ.",
+          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan thuế vụ",
           "effectZh": "銅幣產量+1000/小時，稅務官",
           "id": "building-level:dan-cu:10",
           "level": 10
@@ -5111,7 +5111,7 @@
           },
           "durationVi": "64 giờ",
           "durationZh": "64小時",
-          "effectVi": "Sản lượng đồng tiền +2500/giờ, mỗi lần thu thuế nhận thêm +2000 đồng tiền. Mở khóa: Điện Quân Vương cấp 4",
+          "effectVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Điện Quân Vương cấp 4",
           "effectZh": "銅幣產量+2500/小時，每次稅收獲得銅幣+2000解鎖：君王殿4級",
           "id": "building-level:dan-cu:20",
           "level": 20
@@ -6901,7 +6901,7 @@
           },
           "durationVi": "2 giờ",
           "durationZh": "2小時",
-          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần. Nguồn còn ghi “sứ giả tìm kiếm” nhưng không nêu rõ hiệu ứng liên quan.",
+          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần, Sứ giả tìm kiếm",
           "effectZh": "每日可尋訪4次，尋訪使",
           "id": "building-level:tam-phong-dai:1",
           "level": 1
@@ -7058,7 +7058,7 @@
           },
           "durationVi": "5 giờ",
           "durationZh": "5小時",
-          "effectVi": "Kinh nghiệm luyện binh của võ tướng: 80000; Sứ giả luyện binh. Lưu ý: Nguồn chỉ liệt kê Sứ giả luyện binh, chưa xác nhận cấp 1 mở khóa chức danh này hay chức danh có tác dụng gì.",
+          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ giả luyện binh",
           "effectZh": "武將練兵經驗80000，練兵使",
           "id": "building-level:dien-vo-truong:1",
           "level": 1
@@ -9597,7 +9597,7 @@
         "沉重"
       ],
       "conditions": [],
-      "descriptionVi": "Tăng 15 điểm thống soái, giảm 5 điểm tốc độ",
+      "descriptionVi": "Tăng 15 điểm thống suất, giảm 5 điểm tốc độ",
       "equipmentId": null,
       "exclusiveHeroId": null,
       "id": "equipment-special:tram-trong",
@@ -9654,7 +9654,7 @@
         "活力"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Thôn Thiên Kỳ Lân Giáp, tăng 5% thống soái",
+      "descriptionVi": "Dành riêng cho Thôn Thiên Kỳ Lân Giáp, tăng 5% thống suất",
       "equipmentId": "equipment:thon-thien-ky-lan-giap",
       "exclusiveHeroId": null,
       "id": "equipment-special:hoat-luc",
@@ -9692,7 +9692,7 @@
         "擐甲"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Khôi Lưu Kim; khi Tư Mã Ý trang bị, trong 4 lượt đầu của trận chiến, sát thương phải chịu giảm 4%",
+      "descriptionVi": "Dành riêng cho Lưu Kim Khôi; khi Tư Mã Ý trang bị, trong 4 lượt đầu của trận chiến, sát thương phải chịu giảm 4%",
       "equipmentId": "equipment:luu-kim-khoi",
       "exclusiveHeroId": "hero:tu-ma-y",
       "id": "equipment-special:hoan-giap",
@@ -9710,7 +9710,7 @@
         "長慮"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Nữ Y Cân Quắc; khi Tư Mã Ý trang bị, tăng 10% sát thương kỳ mưu, đồng thời hiệu quả công tâm bản thân nhận được tăng 30%",
+      "descriptionVi": "Dành riêng cho Cân Quắc Nữ Y; khi Tư Mã Ý trang bị, tăng 10% sát thương kỳ mưu, đồng thời hiệu quả công tâm bản thân nhận được tăng 30%",
       "equipmentId": "equipment:can-quac-nu-y",
       "exclusiveHeroId": "hero:tu-ma-y",
       "id": "equipment-special:truong-lu",
@@ -10262,7 +10262,7 @@
         "周旋"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hồi phục binh lực theo sát thương binh khí ở mức 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
+      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
       "equipmentId": "equipment:tu-kim-toan-nghe-giap",
       "exclusiveHeroId": null,
       "id": "equipment-special:chu-toan",
@@ -10512,7 +10512,7 @@
         "奇襲"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Điêu Cung Trường Tiễn; khi Hạ Hầu Uyên trang bị, chiến pháp vốn có gây thêm 1 lần sát thương binh khí lên một đơn vị quân địch đã ở trạng thái kỹ cùng (tỷ lệ sát thương 30%)",
+      "descriptionVi": "Dành riêng cho Điêu Cung Trường Tiễn; khi Hạ Hầu Uyên trang bị, chiến pháp vốn có gây thêm 1 lần sát thương binh khí lên một đơn vị quân địch đã ở trạng thái Kế cùng (tỷ lệ sát thương 30%)",
       "equipmentId": null,
       "exclusiveHeroId": "hero:ha-hau-uyen",
       "id": "equipment-special:ky-tap",
@@ -10587,7 +10587,7 @@
         "平衡"
       ],
       "conditions": [],
-      "descriptionVi": "Tăng 3 điểm võ lực, trí lực, thống soái và tốc độ",
+      "descriptionVi": "Tăng 3 điểm võ lực, trí lực, thống suất và tốc độ",
       "equipmentId": null,
       "exclusiveHeroId": null,
       "id": "equipment-special:binh-hanh",
@@ -10642,7 +10642,7 @@
         "忍讓"
       ],
       "conditions": [],
-      "descriptionVi": "Khi chịu tấn công thường, tăng 3 điểm thống soái, kéo dài 1 lượt, cộng dồn tối đa 3 lần",
+      "descriptionVi": "Khi chịu tấn công thường, tăng 3 điểm thống suất, kéo dài 1 lượt, cộng dồn tối đa 3 lần",
       "equipmentId": null,
       "exclusiveHeroId": null,
       "id": "equipment-special:nhan-nhuong",
@@ -10679,7 +10679,7 @@
         "躲閃"
       ],
       "conditions": [],
-      "descriptionVi": "Mỗi lượt có 4% xác suất nhận 1 lần chống đỡ",
+      "descriptionVi": "Mỗi lượt có 4% xác suất nhận 1 lần kháng cự",
       "equipmentId": null,
       "exclusiveHeroId": null,
       "id": "equipment-special:doa-thiem",
@@ -11142,7 +11142,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Chuyển·Cầm Thương】+【Tập Võ】+【Chỉnh Quân】+【Mộ Quân】→ Ngô Nữ Đan Dương Thương; giúp Đan Dương Binh phát huy hiệu lực khi đối đầu mọi loại đội hình, phạm vi áp dụng rộng hơn",
+      "suggestedBuildVi": "【Chuyển.Thương】+【Tập Võ】+【Chỉnh Quân】+【Mộ Quân】→ Ngô Nữ Đan Dương Thương; giúp Lính Đan Dương phát huy hiệu lực khi đối đầu mọi loại đội hình, phạm vi áp dụng rộng hơn",
       "suggestedBuildZh": "【轉·持槍】+【習武】+【整軍】+【募軍】→ 吳女丹陽槍；讓丹陽兵在面對各類型陣容時都可生效，適用面更廣",
       "troopLimitVi": [
         "Khiên binh"
@@ -11318,7 +11318,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Kháng cự】+【Ức thế】+【Đoạt chí】+【Cộng dồn】→ Cung Quần Lữ Bố 40Y; khuếch đại hiệu ứng bất lợi gây lên quân địch, phạm vi phối hợp khá rộng, còn có thể chuyển sang binh chủng khiên để khám phá đội hình áp dụng mới",
+      "suggestedBuildVi": "【Kháng Cự】+【Ức Thế】+【Đoạt Chí】+【Cộng Dồn】→ 40Y Lữ Bố Quần Cung; khuếch đại hiệu ứng bất lợi gây lên quân địch, phạm vi phối hợp khá rộng, còn có thể chuyển sang khiên binh để khám phá đội hình áp dụng mới",
       "suggestedBuildZh": "【抵抗】+【抑勢】+【奪志】+【疊加】→ 40Y呂布群弓；擴大對敵軍造成的減益效果，搭配面較廣，還可轉盾兵探索新的適用陣容",
       "troopLimitVi": [
         "Cung binh"
@@ -11332,7 +11332,7 @@
       "aliasesZh": [
         "大戟士"
       ],
-      "appliesToVi": "Các đội hình như Trương-Quan-Hoàng, Thương Hoàng Mã",
+      "appliesToVi": "Các đội hình như Trương Quan Hoàng, Hoàng Mã Thương",
       "appliesToZh": "張關黃、皇馬槍等陣容",
       "conditions": [
         {
@@ -11492,7 +11492,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Liên kích】+【Thuần thục】+【Khám hư】+【Phá trận】→ Trương-Quan-Hoàng; tăng tỷ lệ sát thương, giúp thương binh bùng nổ sát thương binh khí mạnh hơn",
+      "suggestedBuildVi": "【Liên Kích】+【Thành Thạo】+【Khám Hư】+【Phá trận】→ Trương Quan Hoàng; tăng tỷ lệ sát thương, giúp thương binh bùng nổ sát thương binh khí mạnh hơn",
       "suggestedBuildZh": "【連擊】+【熟練】+【勘虛】+【破陣】→ 張關黃；增強傷害率，兵刃爆發的槍兵更強",
       "troopLimitVi": [
         "Thương binh"
@@ -11506,7 +11506,7 @@
       "aliasesZh": [
         "無當飛軍"
       ],
-      "appliesToVi": "Các đội hình như Cung Quần, Khiên Tam Tiên",
+      "appliesToVi": "Các đội hình như Quần Cung, Tam Tiên Thuẫn",
       "appliesToZh": "群弓、三仙盾等陣容",
       "conditions": [
         {
@@ -11666,7 +11666,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Kiêm tu】+【Phá địch】+【Phá quân】+【Chưa định】→ Cung Quần; tăng tỷ lệ sát thương, giúp đội hình có sát thương bùng nổ cao hơn",
+      "suggestedBuildVi": "【Kiêm Tu】+【Phá Địch】+【Phá Quân】+【Mùi Định】→ Quần Cung; tăng tỷ lệ sát thương, giúp đội hình có sát thương bùng nổ cao hơn",
       "suggestedBuildZh": "【兼修】+【破敵】+【破軍】+【未定】→ 群弓；提高傷害率，讓隊伍爆發輸出更高",
       "troopLimitVi": [
         "Cung binh"
@@ -11680,7 +11680,7 @@
       "aliasesZh": [
         "白毦兵"
       ],
-      "appliesToVi": "Các đội hình như Cung Thục Trí, Đội Đô Đốc",
+      "appliesToVi": "Các đội hình như Thục Trí Cung, Đội Đô Đốc",
       "appliesToZh": "蜀智弓、都督隊等陣容",
       "conditions": [
         {
@@ -11840,7 +11840,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Chuyển · Loan Cung】+【Thục Luyện】+【Lưỡng Nghi】+【Bút Đao】; khuếch đại năng lực gây sát thương, đồng thời hỗ trợ chuyển thành cung binh, giúp đội hình thử nghiệm cách phối hợp binh chủng mới",
+      "suggestedBuildVi": "【Chuyển.Cung】+【Thành Thạo】+【Lưỡng Nghi】+【Bút Đao】; khuếch đại năng lực gây sát thương, đồng thời hỗ trợ chuyển thành cung binh, giúp đội hình thử nghiệm cách phối hợp binh chủng mới",
       "suggestedBuildZh": "【轉·彎弓】+【熟練】+【兩儀】+【筆刀】；放大輸出能力，並支持轉為弓兵，讓陣容嘗試新的兵種搭配",
       "troopLimitVi": [
         "Thương binh"
@@ -12190,7 +12190,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Nhẫn Nại】+【Đằng Giáp】+【Kiên Nhẫn】+【Tịnh Hóa】→ Đằng Giáp Pháp Quan Thuẫn; tăng đáng kể khả năng ứng phó với thiêu đốt và hiệu quả giảm sát thương, bù đắp nhược điểm sợ thiêu đốt của Đằng Giáp Binh",
+      "suggestedBuildVi": "【Nhẫn Nại】+【Giáp Mây】+【Rắn Chắc】+【Tịnh Hoá】→ Đằng Giáp Pháp Quan Thuẫn; tăng đáng kể khả năng ứng phó với thiêu đốt và hiệu quả giảm sát thương, bù đắp nhược điểm sợ thiêu đốt của Lính Giáp Mây",
       "suggestedBuildZh": "【忍耐】+【藤甲】+【堅韌】+【淨化】→ 藤甲法關盾；顯著提高應對灼燒的能力和減傷效果，彌補了藤甲兵怕灼燒的缺點",
       "troopLimitVi": [
         "Khiên binh"
@@ -12206,7 +12206,7 @@
       "aliasesZh": [
         "虎衛軍"
       ],
-      "appliesToVi": "Hạch Đạn Trương, Đôn Đôn Thuẫn, v.v.",
+      "appliesToVi": "Hạt Nhân Trương, Đôn Đôn Thuẫn, v.v.",
       "appliesToZh": "核彈張、惇惇盾等",
       "conditions": [
         {
@@ -12366,7 +12366,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Chúng Chí】+【Thiện Chiến】+【Cùng Truy】+【Võ Khôi】→ Hạch Đạn Trương; mở rộng phạm vi phán định của chiến pháp và phản kích nhiều kẻ địch hơn, phù hợp với đội hình sát thương binh lấy phó tướng làm hạt nhân gây sát thương",
+      "suggestedBuildVi": "【Đồng Lòng】+【Thiện Chiến】+【Truy Đuổi】+【Võ Khôi】→ Hạt Nhân Trương; mở rộng phạm vi phán định của chiến pháp và phản kích nhiều kẻ địch hơn, phù hợp với đội hình binh đao lấy phó tướng làm hạt nhân gây sát thương",
       "suggestedBuildZh": "【眾志】+【善戰】+【窮追】+【武魁】→ 核彈張；擴大戰法判定範圍，並反擊更多敵人，適合以副將為輸出核心的兵刃陣容",
       "troopLimitVi": [
         "Khiên binh"
@@ -12888,7 +12888,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Tinh nghiên】+【Phá địch】+【Khám hư】+【Quân tâm】→ Hoàng Mã Thương; tăng sát thương và hiệu quả hồi phục, giúp đội hình ổn định hơn",
+      "suggestedBuildVi": "【Tinh Nghiên】+【Phá Địch】+【Khám Hư】+【Quân Tâm】→ Hoàng Mã Thương; tăng sát thương và hiệu quả hồi phục, giúp đội hình ổn định hơn",
       "suggestedBuildZh": "【精研】+【破敵】+【勘虛】+【軍心】→ 皇馬槍；提高傷害和回復效果，陣容更穩定",
       "troopLimitVi": [
         "Thương binh"
@@ -13252,7 +13252,7 @@
       "aliasesZh": [
         "陷陣營"
       ],
-      "appliesToVi": "Hạch Đạn Trương, Đào Viên Thuẫn, v.v.",
+      "appliesToVi": "Hạt Nhân Trương, Đào Viên Thuẫn, v.v.",
       "appliesToZh": "核彈張、桃園盾等",
       "conditions": [
         {
@@ -13412,7 +13412,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Thống Quân】+【Kiêm Tu】+【Khu Tán】+【Đoạt Chí】→ Đào Viên Thuẫn; tăng tỷ lệ trị liệu và thuộc tính, bảo đảm hiệu quả trạng thái binh lực của đội ngũ trong các hiệp đầu trận",
+      "suggestedBuildVi": "【Dẫn Quân】+【Kiêm Tu】+【Giải Trừ】+【Đoạt Chí】→ Đào Viên Thuẫn; tăng tỷ lệ trị liệu và thuộc tính, bảo đảm hiệu quả trạng thái binh lực của đội ngũ trong các hiệp đầu trận",
       "suggestedBuildZh": "【統軍】+【兼修】+【驅散】+【奪志】→ 桃園盾；提高治療率和屬性，在戰鬥前期回合有效保證隊伍的兵力狀態",
       "troopLimitVi": [
         "Khiên binh"
@@ -13428,7 +13428,7 @@
       "aliasesZh": [
         "青州兵"
       ],
-      "appliesToVi": "Các đội hình như Quan Quan Trương, Thương Bắc Phạt",
+      "appliesToVi": "Các đội hình như Quan Quan Trương, Bắc Phạt Thương",
       "appliesToZh": "關關張、北伐槍等陣容",
       "conditions": [
         {
@@ -13588,7 +13588,7 @@
         }
       ],
       "revisions": [],
-      "suggestedBuildVi": "【Thiện Chiến】+【Y Trị】+【Bất Khuất】+【Vu Hồi】→ Thương Bắc Phạt; tăng sát thương phản kích, lượng trị liệu và hiệu quả né tránh, nâng cao toàn diện hiệu quả chiến pháp",
+      "suggestedBuildVi": "【Thiện Chiến】+【Chữa Trị】+【Bất Khuất】+【Vòng Vo】→ Bắc Phạt Thương; tăng sát thương phản kích, lượng trị liệu và hiệu quả né tránh, nâng cao toàn diện hiệu quả chiến pháp",
       "suggestedBuildZh": "【善戰】+【醫治】+【不屈】+【迂迴】→ 北伐槍；增加反擊傷害、治療量和規避效果，戰法效果全面提升",
       "troopLimitVi": [
         "Thương binh"

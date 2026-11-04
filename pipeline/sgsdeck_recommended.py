@@ -144,13 +144,19 @@ def parse_recommended_list(html, requested_scope=None):
         title = next(link.walk("h3"), None)
         if title is None:
             continue
-        score = next((node.text for node in link.walk("span") if node.attrs.get("title", "").startswith("來源評分")), "")
-        heroes = [node.text for node in link.walk("span") if "rounded-full" in node.attrs.get("class", "")]
-        if len(heroes) > 3 and len(heroes) % 3:
+        # Thẻ danh sách 2026-11 không còn điểm; điểm chỉ lấy từ trang chi tiết.
+        rosters = [node for node in link.walk("ul") if node.attrs.get("aria-label") == "陣容"]
+        if len(rosters) != 1:
+            raise ValueError("Recommended list holder structure changed")
+        heroes = [node.text for node in rosters[0].walk("li")]
+        if len(heroes) < 2 or (len(heroes) > 3 and len(heroes) % 3):
             raise ValueError("Recommended list alternative holder structure changed")
         hero_sets = [heroes[index:index + 3] for index in range(0, len(heroes), 3)]
+        factions = [node.text for node in link.walk("p") if node.text]
+        if len(factions) > 1:
+            raise ValueError("Recommended list faction structure changed")
         url = validate_source_url(urljoin("https://sgsdeck.com", href))
-        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "value": _number(score), "heroNames": hero_sets[0] if hero_sets else [], "alternativeHeroSetsRaw": hero_sets[1:], "tierRaw": tiers.get(href), "factionRaw": next((node.text.removeprefix("陣營：").strip() for node in link.walk("p") if node.text.startswith("陣營：")), None)})
+        records.append({"sourceConfigId": href.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title.text, "heroNames": hero_sets[0], "alternativeHeroSetsRaw": hero_sets[1:], "tierRaw": tiers.get(href), "factionRaw": factions[0] if factions else None})
     if len(records) != int(count.group(1)) or len({row["sourceConfigId"] for row in records}) != len(records):
         raise ValueError("Recommended list count or identity changed")
     result = {"expectedCount": int(count.group(1)) if count else 0, "sourceSeason": {"label": season}, "sourceCategoryId": category, "records": records}
@@ -168,6 +174,49 @@ def _field(card, label):
         if children and children[0].tag == "span" and children[0].text == label:
             return children[1:]
     return []
+
+
+# Nhãn hàng trong thẻ tướng. 特技 (trang bị) và 替代 (chiến pháp thay thế từng tướng)
+# chưa thuộc schema nên không đọc; nhãn lạ làm trang nguồn bị chặn thay vì rơi im lặng.
+HOLDER_ROW_LABELS = {"戰法 1", "戰法 2", "兵書", "加點"}
+HOLDER_ROW_LABELS_NOT_CAPTURED = {"特技", "替代"}
+# Layout 開荒 theo cấp: 「20 級前」 một chiến pháp, rồi 「20 級後」 và một hàng không nhãn
+# là hai ô chiến pháp sau cấp 20.
+PHASE_ROW_LABELS = ("20 級前", "20 級後", "")
+
+
+def _holder_rows(card):
+    rows = []
+    for node in card.walk("div"):
+        children = [child for child in node.children if isinstance(child, Node)]
+        if (len(children) > 1 and children[0].tag == "span"
+                and "text-text-muted" in children[0].attrs.get("class", "").split()):
+            rows.append((children[0].text, children[1:]))
+    return rows
+
+
+def _tactic_text(nodes):
+    return re.sub(r"\[[A-Z]\]", "", "".join(node.text for node in nodes)).strip()
+
+
+def _holder_tactics(card):
+    """Two source tactic slots plus the optional pre-level-20 tactic of the 開荒 layout."""
+    rows = [(label, nodes) for label, nodes in _holder_rows(card) if not re.fullmatch(r"主將|副將 \d+", label)]
+    labels = [label for label, _ in rows]
+    for label in labels:
+        if label not in HOLDER_ROW_LABELS and label not in HOLDER_ROW_LABELS_NOT_CAPTURED and label not in PHASE_ROW_LABELS:
+            raise ValueError("Recommended holder row label is unsupported: " + repr(label))
+    if not any(label in PHASE_ROW_LABELS for label in labels):
+        return [_tactic_text(_field(card, f"戰法 {index}")) for index in (1, 2)], None
+    start = labels.index(PHASE_ROW_LABELS[0]) if PHASE_ROW_LABELS[0] in labels else -1
+    phased = rows[start:start + len(PHASE_ROW_LABELS)] if start >= 0 else []
+    if ([label for label, _ in phased] != list(PHASE_ROW_LABELS)
+            or sum(label in PHASE_ROW_LABELS for label in labels) != len(PHASE_ROW_LABELS)
+            or "戰法 1" in labels or "戰法 2" in labels
+            or any(len([button for node in nodes for button in node.walk("button")]) != 1 for _, nodes in phased)):
+        raise ValueError("Recommended holder level-phase structure changed")
+    before, after, continued = (_tactic_text(nodes) for _, nodes in phased)
+    return [after, continued], before
 
 
 def _recommended_holder_cards(root):
@@ -210,7 +259,13 @@ def _parse_recommended_detail_root(root, url):
     if len(canonical) != 1 or unquote(canonical[0]) != unquote(url) or not title:
         raise ValueError("Recommended detail identity mismatch")
     header = next((node for node in root.walk("header") if next(node.walk("h1"), None)), Node())
-    score = next((node.text for node in header.walk("span") if "font-mono" in node.attrs.get("class", "")), "")
+    score_labels = [node for node in header.walk("span") if node.attrs.get("title", "").startswith("資料來源的評分")]
+    if len(score_labels) > 1:
+        raise ValueError("Recommended detail score structure changed")
+    score = next((node.text for label_node in score_labels for node in label_node.walk("span") if "tabular" in node.attrs.get("class", "").split()), "")
+    factions = [node.text.removeprefix("陣營：").strip() for node in header.walk("span") if node.text.startswith("陣營：")]
+    if len(factions) > 1 or any(not faction for faction in factions):
+        raise ValueError("Recommended detail faction structure changed")
     label = next((node.text.split(" · ")[0] for node in header.walk("span") if " · " in node.text), "")
     if label.startswith("OG-"):
         label = "og-" + label[3:]
@@ -221,12 +276,17 @@ def _parse_recommended_detail_root(root, url):
     heroes = []
     cards = _recommended_holder_cards(root)
     for card in cards:
+        tactics, before_level_20 = _holder_tactics(card)
         hero = next((node.text for node in card.walk("p") if "text-xl" in node.attrs.get("class", "")), "")
-        tactics = [re.sub(r"\[[A-Z]\]", "", "".join(node.text for node in _field(card, f"戰法 {index}"))).strip() for index in (1, 2)]
         books = [book.text for node in _field(card, "兵書") for book in node.walk("button")]
         role = next((node.text for node in card.walk("span") if re.fullmatch(r"主將|副將 \d+", node.text)), "")
         notes = "\n".join(node.text for node in card.walk("p") if "text-xl" not in node.attrs.get("class", ""))
-        heroes.append({"roleRaw": role, "nameRaw": hero, "tacticSlotsRaw": tactics, "bookSlotsRaw": books, "statFocusRaw": "".join(node.text for node in _field(card, "加點")), "notesRaw": notes})
+        holder = {"roleRaw": role, "nameRaw": hero, "tacticSlotsRaw": tactics, "bookSlotsRaw": books, "statFocusRaw": "".join(node.text for node in _field(card, "加點")), "notesRaw": notes}
+        if before_level_20 is not None:
+            if not before_level_20:
+                raise ValueError("Recommended detail slot structure changed")
+            holder["tacticBeforeLevel20Raw"] = before_level_20
+        heroes.append(holder)
     expected_roles = ["主將"] + [f"副將 {index}" for index in range(1, len(heroes))]
     if len(heroes) < 2 or [hero["roleRaw"] for hero in heroes] != expected_roles:
         raise ValueError("Recommended detail must preserve source holder order")
@@ -241,7 +301,7 @@ def _parse_recommended_detail_root(root, url):
                        "bookSlotsRaw": ["", "", ""], "statFocusRaw": "", "notesRaw": "",
                        "slotState": "source-empty"})
     unit_types = [node.text[1:] for node in root.walk("span") if node.text in {"#弓", "#騎", "#盾", "#槍", "#器械"}]
-    return {"sourceConfigId": url.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title, "value": _number(score), "sourceSeason": {"label": label}, "heroes": heroes, "alternativeHoldersRaw": alternatives, "unitTypesRaw": unit_types, "notesRaw": "\n".join(node.text for node in root.walk("p") if "text-xl" not in node.attrs.get("class", ""))}
+    return {"sourceConfigId": url.rsplit("/", 1)[-1], "sourceUrl": url, "nameZh": title, "value": _number(score), "factionRaw": factions[0] if factions else None, "sourceSeason": {"label": label}, "heroes": heroes, "alternativeHoldersRaw": alternatives, "unitTypesRaw": unit_types, "notesRaw": "\n".join(node.text for node in root.walk("p") if "text-xl" not in node.attrs.get("class", ""))}
 
 
 def parse_recommended_detail(html, url):
@@ -266,9 +326,12 @@ def join_recommended_evidence(listing, details):
         if identifier in seen or row is None:
             raise ValueError("Duplicate or unlisted Recommended detail")
         seen.add(identifier)
-        if any(detail[key] != row[key] for key in ["sourceUrl", "nameZh", "value"]) or detail["sourceSeason"] != listing["sourceSeason"]:
+        if any(detail[key] != row[key] for key in ["sourceUrl", "nameZh"]) or detail["sourceSeason"] != listing["sourceSeason"]:
             raise ValueError("Recommended list/detail mismatch")
-        if row["heroNames"] and row["heroNames"] != [hero["nameRaw"] for hero in detail["heroes"] if hero["nameRaw"]]:
+        if row["heroNames"] != [hero["nameRaw"] for hero in detail["heroes"] if hero["nameRaw"]]:
             raise ValueError("Recommended holder mismatch")
-    details = [{**detail, "tierRaw": by_id[detail["sourceConfigId"]].get("tierRaw"), "factionRaw": by_id[detail["sourceConfigId"]].get("factionRaw")} for detail in details]
+        if row["factionRaw"] and detail["factionRaw"] and row["factionRaw"] != detail["factionRaw"]:
+            raise ValueError("Recommended list/detail faction mismatch")
+    # Điểm và phe lấy từ trang chi tiết (thẻ danh sách không còn điểm, phe có thể vắng).
+    details = [{**detail, "tierRaw": by_id[detail["sourceConfigId"]].get("tierRaw"), "factionRaw": detail["factionRaw"] or by_id[detail["sourceConfigId"]].get("factionRaw")} for detail in details]
     return {"schemaVersion": 1, "provider": "sgsdeck", "inventory": {"expected": listing["expectedCount"], "extracted": len(details), "missingDetails": listing["expectedCount"] - len(details)}, "sourceSeason": listing["sourceSeason"], "records": details}

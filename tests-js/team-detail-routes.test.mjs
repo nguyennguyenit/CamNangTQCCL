@@ -368,7 +368,7 @@ test('a custom project root must supply the ledger that belongs to it',async t=>
   const setup=await fixture();
   t.after(()=>rm(setup.root,{recursive:true,force:true}));
   const defaultCatalog=await teamDetailCatalog();
-  assert.equal(defaultCatalog.recommended.length,1366);
+  assert.equal(defaultCatalog.recommended.length,1640);
 
   // Reusing the worktree ledger for a foreign root fails loudly instead of emitting foreign routes.
   const worktreeLedger=new URL('../pipeline/team-route-handles.json',import.meta.url).pathname;
@@ -390,8 +390,8 @@ test('a custom project root must supply the ledger that belongs to it',async t=>
   assert.equal(custom.generationId,setup.generationId);
   const cached=await teamDetailCatalog();
   assert.equal(cached.generationId,defaultCatalog.generationId);
-  assert.equal(cached.recommended.length,1366);
-  assert.equal(cached.htmlPaths.length,1549);
+  assert.equal(cached.recommended.length,1640);
+  assert.equal(cached.htmlPaths.length,1823);
 });
 
 test('worktree publication yields the real route inventory and pins the real originals',async()=>{
@@ -407,7 +407,7 @@ test('worktree publication yields the real route inventory and pins the real ori
   assert.equal(catalog.legacy.length,teams.length);
   assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId).sort(),teams.map(team=>team.id).sort());
   assert.equal(catalog.recommended.length,Object.keys(ledger.handles.recommended).length);
-  assert.equal(catalog.recommended.length,1366);
+  assert.equal(catalog.recommended.length,1640);
   assert.equal(catalog.legacy.length,166);
   assert.equal(new Set(catalog.recommended.map(entry=>entry.sourceConfigId)).size,catalog.recommended.length);
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
@@ -460,7 +460,7 @@ test('worktree publication yields the real route inventory and pins the real ori
     catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
     catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
   );
-  assert.equal(catalog.htmlPaths.length,1366+166+17);
+  assert.equal(catalog.htmlPaths.length,1640+166+17);
 });
 
 test('Khai hoang route contract: an injected source yields the emitted routes and pins',async t=>{
