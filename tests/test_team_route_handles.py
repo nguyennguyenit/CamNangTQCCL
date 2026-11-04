@@ -696,6 +696,43 @@ class LedgerCliTest(LedgerFixture):
         self.assertEqual(run_cli(self.argv("--rebind"))[0], 0)
         self.assertEqual(self.ledger_path.read_bytes(), again)
 
+    def test_rebind_never_hands_a_dropped_rows_url_to_a_new_row(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        frozen = json.loads(self.ledger_path.read_bytes())
+        self.assertEqual(frozen["handles"]["recommended"]["s2-solo"], "doi-b")  # URL /doi-chuan/pk-s2-doi-b/
+
+        successor_id = "fedcba9876543210" * 4
+        successor = [
+            *[row for row in self.records if row["sourceConfigId"] != "s2-solo"],  # `s2-solo` is dropped by the source
+            recommended_row("s2-solo-relisted", "Đội B", season="PK-S2"),  # new, same name and season as the dropped row
+            recommended_row("s3-doi-b", "Đội B", season="PK-S3"),  # new, same name in another season
+        ]
+        write_publication(self.generation_root, successor, generation_id=successor_id)
+
+        code, out, err = run_cli(self.argv("--rebind"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("kept 4, added 2, dropped 1", out)
+        handles = json.loads(self.ledger_path.read_bytes())["handles"]["recommended"]
+        self.assertNotIn("s2-solo", handles)
+        self.assertEqual(handles["s2-solo-relisted"], "doi-b-solo-relisted")  # `pk-s2-doi-b` stays retired (404)
+        self.assertEqual(handles["s3-doi-b"], "doi-b")  # `pk-s3-doi-b` never existed: the plain handle is free
+        self.assertEqual(run_cli(self.argv("--check"))[0], 0)
+
+    def test_rebind_refuses_without_the_generation_the_ledger_pins(self):
+        # The dropped rows' seasons only live in the pinned generation; once pruned, rebind cannot know which
+        # URLs to retire and must stop instead of guessing.
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        frozen_bytes = self.ledger_path.read_bytes()
+        successor_id = "fedcba9876543210" * 4
+        write_publication(self.generation_root, self.records[:-1], generation_id=successor_id)
+        shutil.rmtree(self.generation_root / FIXTURE_GENERATION_ID)
+
+        code, _, err = run_cli(self.argv("--rebind"))
+        self.assertEqual(code, 1)
+        self.assertIn(FIXTURE_GENERATION_ID, err)
+        self.assertIn("prune", err)
+        self.assertEqual(self.ledger_path.read_bytes(), frozen_bytes)
+
 
 class KhaiHoangOfflineContracts(LedgerFixture):
     """Offline gate for Khai hoang identity: ledger v2, injected source and frozen handles."""

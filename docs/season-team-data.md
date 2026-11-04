@@ -263,6 +263,8 @@ python3 -m pipeline.site_localization build --root . --stage all --output .cache
 python3 -m pipeline.site_localization check --root . --stage all --candidate .cache/site-localization-candidate
 python3 -m pipeline.site_localization publish --root . --candidate .cache/site-localization-candidate
 python3 -m pipeline.site_localization check --root . --stage public
+python3 -m pipeline.team_route_handles --rebind
+python3 -m pipeline.team_route_handles --check
 python3 -m pipeline.site_localization prune --root .
 git add -A src/data/recommended-reference
 python3 -m unittest tests.test_build_recommended_reference
@@ -280,11 +282,16 @@ tại); repo chỉ track generation đang pin, generation cũ vẫn còn trong l
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
 trang 404 nằm ở [deployment guide](deployment-guide.md). Publish generation mới
-chạy `python3 -m pipeline.team_route_handles --rebind` trước `npm run build`: hàng
-còn trong successor giữ nguyên handle (kể cả khi nguồn đổi tên), hàng mới nhận
-handle suy từ tên Việt (trùng segment với hàng giữ thì thêm phần ASCII của
-`sourceConfigId`), hàng nguồn đã gỡ rời ledger và trang của nó trả 404. Legacy/Khai
-hoang không đổi; `--check` sau đó phải đạt.
+chạy `python3 -m pipeline.team_route_handles --rebind` trước `prune` và `npm run build`:
+hàng còn trong successor giữ nguyên handle (kể cả khi nguồn đổi tên), hàng nguồn
+đã gỡ rời ledger và trang của nó trả 404, hàng mới nhận handle suy từ tên Việt.
+Segment của hàng đã gỡ không được cấp lại: hàng mới trùng segment với hàng giữ
+**hoặc hàng đã gỡ** thì thêm phần ASCII của `sourceConfigId`, nên một URL đã
+công bố không bao giờ trỏ sang đội khác. Mùa của hàng đã gỡ chỉ có trong
+generation mà ledger đang ghim, nên `--rebind` dừng nếu generation đó đã bị
+`prune` (khôi phục nó từ git rồi chạy lại). Ledger không lưu danh sách segment
+đã gỡ: segment chỉ bị giữ ở lần rebind gỡ hàng của nó. Legacy/Khai hoang không
+đổi; `--check` sau đó phải đạt.
 
 Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
 Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,

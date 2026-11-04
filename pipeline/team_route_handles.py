@@ -12,6 +12,7 @@ is v2 (adding `khaihoangSha256` and `handles.khaihoang`), while the Recommended 
 and index payloads stay v1.
 
     python3 -m pipeline.team_route_handles --write
+    python3 -m pipeline.team_route_handles --rebind   # successor publication, before `site_localization prune`
     python3 -m pipeline.team_route_handles --check
 """
 
@@ -611,17 +612,32 @@ def read_publication(root_dir) -> Publication:
         or not HEX64.fullmatch(str(current.get("manifestSha256")))
     ):
         raise TeamRouteHandleError("Invalid Recommended current selector")
-    generation = root / current["generationId"]
+    publication = _read_generation(root, current["generationId"], current["manifestSha256"])
+    if current_path.read_bytes() != current_bytes:
+        raise TeamRouteHandleError("Recommended current changed during snapshot")
+    return publication
+
+
+def _read_generation(root: Path, generation_id: str, manifest_sha256: str | None) -> Publication:
+    """Read one generation directory under the resolved `root`, refusing any checksum or inventory drift.
+
+    `manifest_sha256` is the selector's pin; `None` reads a generation no selector pins any more (the
+    predecessor `--rebind` needs before `prune`), whose manifest is then trusted only for its own identity
+    and file hashes.
+    """
+    if not HEX64.fullmatch(str(generation_id)):
+        raise TeamRouteHandleError(f"Invalid Recommended generation id: {generation_id!r}")
+    generation = root / generation_id
     if generation.is_symlink() or not generation.is_dir() or not _inside(generation.resolve(), root):
-        raise TeamRouteHandleError("Invalid Recommended generation directory")
+        raise TeamRouteHandleError(f"Invalid Recommended generation directory: {generation_id}")
     manifest_bytes = _regular_file(generation / "manifest.json", generation)
-    if sha256_hex(manifest_bytes) != current["manifestSha256"]:
+    if manifest_sha256 is not None and sha256_hex(manifest_bytes) != manifest_sha256:
         raise TeamRouteHandleError("Recommended manifest hash mismatch")
     manifest = json.loads(manifest_bytes)
     if (
         not isinstance(manifest, dict)
         or manifest.get("schemaVersion") != PUBLICATION_SCHEMA_VERSION
-        or manifest.get("generationId") != current["generationId"]
+        or manifest.get("generationId") != generation_id
         or manifest.get("dedupKeyVersion") != 1
     ):
         raise TeamRouteHandleError("Recommended manifest identity mismatch")
@@ -645,14 +661,12 @@ def read_publication(root_dir) -> Publication:
         if not isinstance(item, dict) or len(data) != item.get("bytes") or sha256_hex(data) != item.get("sha256"):
             raise TeamRouteHandleError(f"Recommended artifact hash mismatch: {name}")
         files[name] = data
-    if current_path.read_bytes() != current_bytes:
-        raise TeamRouteHandleError("Recommended current changed during snapshot")
     index = json.loads(files["index.json"])
     if not isinstance(index, dict) or index.get("schemaVersion") != PUBLICATION_SCHEMA_VERSION or not isinstance(index.get("records"), list):
         raise TeamRouteHandleError("Unsupported Recommended index payload")
     return Publication(
-        generation_id=current["generationId"],
-        manifest_sha256=current["manifestSha256"],
+        generation_id=generation_id,
+        manifest_sha256=sha256_hex(manifest_bytes),
         manifest=manifest,
         records=tuple(index["records"]),
         files=files,
@@ -780,13 +794,40 @@ def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     return 0
 
 
+def _retired_segments(generation_root, frozen_generation_id: str, publication: Publication, handles: dict, dropped) -> set[str]:
+    """Route segments of the rows the successor dropped, read from the generation the frozen ledger pins.
+
+    The ledger stores handles only; a segment also needs the row's season, which only that generation
+    holds. `--rebind` therefore runs while it is still on disk (before `site_localization prune`).
+    """
+    if not dropped:
+        return set()
+    root = Path(generation_root).resolve()
+    if frozen_generation_id == publication.generation_id:
+        raise TeamRouteHandleError(f"the ledger pins {frozen_generation_id} but holds rows it does not publish: {', '.join(dropped[:5])}")
+    if not (root / str(frozen_generation_id)).is_dir():
+        raise TeamRouteHandleError(
+            f"rebind needs the generation the ledger pins ({frozen_generation_id}) under {root} to retire the URLs of "
+            f"{len(dropped)} dropped rows; run it before `site_localization prune` (or restore that generation from git)"
+        )
+    previous = {record["sourceConfigId"]: record for record in _read_generation(root, frozen_generation_id, None).records}
+    missing = [source_config_id for source_config_id in dropped if source_config_id not in previous]
+    if missing:
+        raise TeamRouteHandleError(f"ledger rows missing from the generation it pins: {', '.join(missing[:5])}")
+    return {f"{season_code(previous[source_config_id])}-{handles[source_config_id]}" for source_config_id in dropped}
+
+
 def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, out=print) -> int:
     """Move the frozen ledger to a successor publication without moving any surviving URL.
 
     Rows kept by the successor keep their frozen handle. Rows the source dropped leave the
-    ledger (their pages no longer exist). Only rows new to the successor receive a name-derived
-    handle; one that would share a route segment with a kept row gets the ASCII part of its
-    `sourceConfigId` appended instead. Legacy and Khai hoang handles never change.
+    ledger (their pages no longer exist and answer 404), and their route segments stay retired:
+    a published URL never starts pointing at a different team. Only rows new to the successor
+    receive a name-derived handle; one that would share a route segment with a kept or a dropped
+    row gets the ASCII part of its `sourceConfigId` appended instead. Legacy and Khai hoang
+    handles never change. The dropped rows' seasons come from the generation the frozen ledger
+    pins, so it must still be under `generation_root`. The ledger keeps no list of retired
+    segments, so a segment is retired for the rebind that drops its row, not for later ones.
     """
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
@@ -801,13 +842,15 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
     by_id = {record["sourceConfigId"]: record for record in publication.records}
     kept = {source_config_id: handle for source_config_id, handle in frozen["recommended"].items() if source_config_id in by_id}
     dropped = sorted(set(frozen["recommended"]) - set(by_id))
+    retired = _retired_segments(generation_root, existing["generationId"], publication, frozen["recommended"], dropped)
 
     def segment(source_config_id, handle):
-        return f"{season_code(by_id[source_config_id])}-{handle}" if source_config_id in by_id else None
+        return f"{season_code(by_id[source_config_id])}-{handle}"
 
-    # A dropped row's handle is free again: a new row of the same name in that season is the same
-    # team re-listed by the source and keeps the URL readers already know.
-    taken = {segment(source_config_id, handle) for source_config_id, handle in kept.items()}
+    # A dropped row's URL is retired, not free: readers and search engines may still hold it, and a new
+    # row of the same name is not provably the same team (the source also re-lists other categories under
+    # the same name), so it gets a suffixed handle rather than inheriting a URL that meant another team.
+    taken = {segment(source_config_id, handle) for source_config_id, handle in kept.items()} | retired
     recommended = dict(kept)
     added = []
     for source_config_id in sorted(set(by_id) - set(kept)):
