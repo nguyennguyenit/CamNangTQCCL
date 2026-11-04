@@ -9,6 +9,7 @@
 - Promotion `lookup-ha-thi-rebase-261104` (generation `lookup:637b859d3f17`, sau khi rebase lên client Global 24.535 catalog + zh): 252 tướng, 412 chiến pháp (trước 251/409); ledger slug cấp lại đúng slug đã dành (`ha-thi`, `duy-noi-thien-quyen`, `tuyet-ke-chiet-muu`, `dao-vien-ket-nghia`), 962 mã, +4 route Tra cứu mỗi ngôn ngữ. Recommended publish lại (generation `000e37a48af8`), re-pin `pipeline/team-route-handles.json`.
 - `src/lib/lookup-item-pages.ts` (`snippet`): đoạn mô tả meta ngắn kết thúc bằng dấu hai chấm giờ cũng được thay bằng "…" (hiệu ứng Kết Nghĩa Vườn Đào mở đầu bằng "…các hiệu quả sau:"); re-pin hash trong `pipeline/site-localization-policy.json`.
 - Test: `tests/test_build_unified_lookup.py` (số tướng có gói thẻ 126, test tướng bị bỏ dùng `retire_heroes`), `tests-js/astro-dist-contract.test.mjs` (+4 route Tra cứu mỗi ngôn ngữ), `tests-js/roster-picker.test.mjs` và `tests-e2e/beta-tools.spec.mjs` (chiến pháp chủ động kế thừa phẩm S: 36 → 37 vì Tuyệt Kế Chiết Mưu).
+- `playwright.config.mjs`: `webServer.timeout` 30 s → 120 s. Lệnh webServer chạy lại `astro build` (~28,5 s trên runner) trước preview nên gate E2E hết giờ trước khi chạy test (fail trên `main` từ 2026-11-02).
 
 ### Chưa làm
 - `桃園結義` trong `pipeline/recommended-identity-map.json` vẫn `kind: "bond"`: file này là nguồn glossary của gate bản dịch, đổi nó làm stale `glossaryDigest` của cả 5668 receipt review độc lập. Người dùng chọn để nguyên tới lần review lại toàn bộ kế tiếp; 5 đội PK-S27 vẫn hiện dòng Duyên phận.
