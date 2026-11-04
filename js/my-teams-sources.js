@@ -96,6 +96,30 @@ function capAlternatives(primary, alternatives, unresolved, at) {
 /** Văn bản nối dòng cho `notes.general`. */
 const block = (items) => lines(items).join("\n");
 
+/**
+ * `notes.general` của Đội chuẩn có trần `notesField` byte; ghi chú nguồn dài hơn (vd cấu hình có nhiều khối chủ sở hữu)
+ * không được làm đội không lưu được. Giữ các dòng đầu vừa trần; từ dòng không vừa trở đi được báo vào `unresolved`
+ * (`over-limit`, kèm nguyên văn). Dòng đầu quá dài thì cắt theo ký tự và thêm "…" (không cắt im lặng: có mục unresolved).
+ */
+function fitNotes(items, unresolved) {
+  const kept = [];
+  let full = false;
+  for (const item of lines(items)) {
+    if (!full && escapedBytes([...kept, item].join("\n")) <= TEAM_LIMITS.notesField) {
+      kept.push(item);
+      continue;
+    }
+    full = true;
+    unresolved.push({ field: "notes.general", rawName: item, reason: "over-limit" });
+    if (!kept.length) {
+      let cut = Array.from(item);
+      while (cut.length && escapedBytes(`${cut.join("")}…`) > TEAM_LIMITS.notesField) cut = cut.slice(0, -1);
+      kept.push(`${cut.join("")}…`);
+    }
+  }
+  return kept.join("\n");
+}
+
 /** Đưa chữ vào trường có trần byte; vượt trần thì chuyển sang `notes.general` (không cắt im lặng). */
 function fitOrMove(value, max, overflow) {
   const text = clean(value);
@@ -228,7 +252,7 @@ export function fromRecommended(record, ids, { id, seasonId, contentHash } = {})
     replacesTeamId: null,
     heroes,
     notes: {
-      general: block([...recommendedNotes(record), ...overflow]),
+      general: fitNotes([...recommendedNotes(record), ...overflow], unresolved),
       strengths: "",
       goodAgainst: joined(counters.good),
       avoid: joined(counters.avoid),

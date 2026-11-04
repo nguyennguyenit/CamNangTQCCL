@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { validateTeam } from "../js/my-teams-model.js";
+import { escapedBytes, TEAM_LIMITS, validateTeam } from "../js/my-teams-model.js";
 import {
   fromAnalyze,
   fromKhaiHoang,
@@ -36,8 +36,10 @@ const bookId = (name) => ids.book(null, name);
 const valid = (draft) => assert.deepEqual(validateTeam(draft), { ok: true, errors: [] });
 
 test("#7 fromRecommended: bond bị bỏ, binh thư đúng ID, vị trí ô giữ nguyên", async () => {
-  // s27-han-hanshi-gong-1: tướng đầu có ô thứ hai là bond (桃園結義), cả ba tướng có binh thư.
+  // s27-han-hanshi-gong-1: tướng đầu có ô thứ hai 桃園結義. Từ 2026-11-03 nguồn Đội chuẩn coi nó là chiến pháp (Kết Nghĩa Vườn Đào),
+  // và thế hệ đang ghim không còn ô bond nào, nên đánh dấu ô này là bond (biến đổi thử của bản ghi thật) để kiểm đường bỏ bond.
   const record = recommendedById("s27-han-hanshi-gong-1");
+  record.heroes[0].tacticSlotKinds = ["tactic", "bond"];
   const { draft, source, unresolved, defaultGroup } = fromRecommended(record, ids, { id: "team-a" });
   assert.equal(draft.id, "team-a");
   assert.equal(defaultGroup, "ghep-team");
@@ -211,6 +213,7 @@ test("#10/#11 fromRosterEntry (đội cũ): khớp thẻ đang hiện, SP Lữ M
 test("#10 fromRosterEntry (đội mùa): ô bond đứng trước chiến pháp, chiến pháp đã chọn đúng ô, món bù vào userAlternatives", async () => {
   // Bản ghi thật; đưa bond lên ô đầu của tướng đầu (biến đổi thử) để engine đánh số lại ô (bỏ bond).
   const record = recommendedById("s27-han-hanshi-gong-1");
+  record.heroes[0].tacticSlotKinds = ["tactic", "bond"]; // thế hệ đang ghim không còn bond thật: đánh dấu thử ô 桃園結義
   for (const key of ["tacticSlotsRaw", "tacticSlotKinds", "tacticSlotsVi"]) record.heroes[0][key].reverse();
   const candidates = buildSeasonCandidates([record], record.sourceSeasonId, { heroesDict, tacticsDict });
   const [team] = candidates.teams;
@@ -341,4 +344,25 @@ test("mọi nguồn thật chuyển được thành đội hợp lệ, Worker nh
   assert.ok(checked >= 1600, `đã kiểm ${checked} nguồn`);
   const record = recommendedById("s27-han-hanshi-gong-1");
   assert.equal(fromRecommended(record, ids, { id: "team-keep" }).draft.id, "team-keep");
+});
+
+test("fromRecommended: ghi chú nguồn vượt trần 2000 B được cắt theo dòng, phần bỏ nằm ở unresolved, đội vẫn lưu được", async () => {
+  // s27-lp-juma-gong-ay (thế hệ 2026-11): 5 khối ghi chú, 2171 B > notesField.
+  const record = recommendedById("s27-lp-juma-gong-ay");
+  const result = fromRecommended(record, ids, { id: "team-long-notes" });
+  valid(result.draft);
+  assert.equal((await workerCheck(result.draft)).ok, true);
+  const dropped = result.unresolved.filter((item) => item.field === "notes.general" && item.reason === "over-limit");
+  assert.ok(dropped.length >= 1);
+  for (const item of dropped) assert.ok(!result.draft.notes.general.includes(item.rawName));
+  assert.ok(escapedBytes(result.draft.notes.general) <= TEAM_LIMITS.notesField);
+
+  // Một dòng duy nhất dài hơn trần: cắt theo ký tự, thêm "…", vẫn hợp lệ và có mục unresolved.
+  const single = structuredClone(record);
+  single.displayNotes = { blocks: [{ owner: "team", textRaw: "字".repeat(1000), textVi: "Dài ".repeat(700) }] };
+  single.alternativeHoldersRaw = [];
+  const cut = fromRecommended(single, ids, { id: "team-one-line" });
+  valid(cut.draft);
+  assert.ok(cut.draft.notes.general.endsWith("…"));
+  assert.equal(cut.unresolved.filter((item) => item.field === "notes.general").length, 1);
 });
