@@ -299,7 +299,7 @@ Tổng: 729 / 942 mục.
 | tactic:hoanh-tao-thien-quan | Hoành Tảo Thiên Quân | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:huyet-dao-tranh-gianh | Huyết Đao Tranh Giành | exchangeConditionVi, conflictsVi |
 | tactic:ham-tran-doanh | Hãm Trận Doanh | acquiredFromVi, conflictsVi, revisions (2) |
-| tactic:ham-tran-dot-tap | Tập Kích Trận Địa | acquiredFromVi, conflictsVi, revisions (5) |
+| tactic:ham-tran-dot-tap | Tập Kích Trận Địa | acquiredFromVi, conflictsVi, revisions (4) |
 | tactic:han-thien-si-dia | Lửa Cháy Ngùn Ngụt | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:hinh-co-quan-luoc | Hình Cơ Quân Lược | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:hinh-nhat-tran | Hình Nhất Trận | acquiredFromVi, conflictsVi, revisions (3) |
@@ -307,7 +307,7 @@ Tổng: 729 / 942 mục.
 | tactic:hoa-si-nguyen-lieu | Lửa Lan Khắp Chốn | effectTypeVi, exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (2) |
 | tactic:hoa-thieu-lien-doanh | Hỏa Thiêu Liên Doanh | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
 | tactic:hoa-than-anh-phong | Hỏa Thần Anh Phong | acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:ho-gia-du-am | Tiếng Sáo Dư Âm | acquiredFromVi, conflictsVi, revisions (5) |
+| tactic:ho-gia-du-am | Tiếng Sáo Dư Âm | acquiredFromVi, conflictsVi, revisions (4) |
 | tactic:ho-bao-ky | Hổ Báo Kỵ | acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:ho-cu-ung-duong | Hổ Cứ Ưng Dương | exchangeConditionVi, acquiredFromVi, conflictsVi |
 | tactic:ho-si | Hổ Dại | acquiredFromVi, conflictsVi, revisions (3) |
@@ -334,7 +334,7 @@ Tổng: 729 / 942 mục.
 | tactic:linh-giap-may | Lính Giáp Mây | acquiredFromVi, conflictsVi |
 | tactic:linh-thanh-chau | Lính Thanh Châu | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:loa-y-huyet-chien | Lõa Y Huyết Chiến | exchangeConditionVi, acquiredFromVi, conflictsVi, revisions (3) |
-| tactic:luy-the-lap-danh | Công Danh Nhiều Đời | effectTypeVi, acquiredFromVi, conflictsVi, revisions (4) |
+| tactic:luy-the-lap-danh | Công Danh Nhiều Đời | effectTypeVi, acquiredFromVi, conflictsVi, revisions (3) |
 | tactic:lap-lo-danh-trao | Ám Độ Trần Thương | acquiredFromVi, conflictsVi |
 | tactic:lua-duoi-gio-bay | Lửa Đuổi Gió Bay | effectTypeVi, acquiredFromVi, conflictsVi |
 | tactic:mau-gianh-loi-the | Mau Giành Lợi Thế | effectTypeVi, acquiredFromVi, conflictsVi |

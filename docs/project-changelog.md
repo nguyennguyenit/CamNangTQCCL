@@ -1,5 +1,18 @@
 # Project Changelog
 
+## 2026-11-03 (Đội chuẩn: refresh SGSDeck, PK-S27 Hán Diễm Trường Minh, 開荒 theo cấp, duyệt lại toàn bộ bản dịch)
+
+### Changed
+- Crawl lại toàn bộ SGSDeck Recommended (inventory `sha256:cae5742a…`, 1721 trang). Generation Đội chuẩn `43a4bb32…`: 1640 cấu hình (trước 1366). PK-S27 Hán Diễm Trường Minh 115 交戰 + 13 開荒 (trước 76); PK-S28 177 + 15 (trước 93, nguồn gỡ 49 và thêm 133); PK-S20 119 (trước chưa thu thập; nguồn đổi tên 奇兵八陣 → 奇門八陣, hiển thị Kỳ Môn Bát Trận); PK-S26 thêm 開荒 dạng mới; các mùa cũ có chỉnh nội dung (PK-S24, PK-S26, PK-S19 +4, OG). Mùa mặc định vẫn OG Binh Diễn Xuân Thu theo SGSDeck.
+- `pipeline/sgsdeck_recommended.py` theo markup mới: tướng ở `<ul aria-label="陣容">`, phe/điểm lấy từ trang chi tiết (`陣營：`, `來源評分`), thứ tự tướng danh sách/chi tiết luôn đối chiếu, nhãn hàng thẻ tướng là danh sách đóng (nhãn lạ làm trang nguồn bị chặn; `特技`, `替代` biết nhưng chưa đọc). Trước đó parser cũ trả phe/điểm `null` và bỏ qua đối chiếu tướng mà không báo.
+- 開荒 theo cấp 「20 級前 / 20 級後」 (31 cấu hình, 93 tướng): trường tuỳ chọn `tacticBeforeLevel20Raw` + `tacticBeforeLevel20Vi`/`Kind`; trang chi tiết hiện dòng "Trước cấp 20" (zh `20级前`), thẻ/bảng/dedup/đối chiếu kho không đổi.
+- Glossary: 164 tên đội mới, 3 tướng, 22 chiến pháp (10 tên chưa có trong từ điển dùng Hán-Việt theo quyết định người dùng: Thủ Vọng Tương Trợ, Giám Thời Thẩm Thế, Hành Ách Trận, Bản Thuẫn Hổ Thuẫn và 6 tên viết tắt phiên âm nguyên chữ), 60 mẫu cộng điểm; nhãn phe `漢` → Hán (bộ lọc Phe trước hiện "Nội dung tiếng Việt chưa sẵn sàng"); `桃園結義` → `kind: "tactic"`; binh thư `順天應時` → Thuận Thiên Thuận Tời, `以退為進` → Dĩ Thoái Vi Tiến (không còn trỏ Dĩ Trực Báo Oán), cập nhật tên Hán `以治擊亂`/`顺天应时`/`出奇制胜`, thêm Chia Lời, Tinh Thần Sảng Khoái.
+- Bản dịch: 745 khối ghi chú mới; duyệt độc lập lại toàn bộ 6291 vị trí (2694 site + 3597 Tra cứu) theo glossary mới (`sha256:b3fc9a85…`) qua các vòng 8–10, receipt 101 batch `doi-chuan-261103-*` thay toàn bộ receipt cũ (output reviewer cũ không còn batch nào trỏ tới đã xoá). Quy tắc tên/thuật ngữ thống nhất ghi ở `plans/reports/translation-review-261103-doi-chuan-resolutions.md`. Tra cứu: sửa chữ ledger (tên tướng, Kế cùng, Kháng cự, Suy nhược, chức quan, danh hiệu trùng tên chiến pháp viết hoa như `tactics.json`…; trường `effectTypeVi`/`exchangeConditionVi`/`targetViet` và binh chủng theo đúng chữ client Global), promote `lookup-261104-doi-chuan-review2` (`lookup:6366174a…`). Khai hoang: 碰瓷 → "cảm tử" theo identity map. Policy `site-vi-261103-doi-chuan-sgsdeck`.
+- `pipeline.team_route_handles --rebind`: chuyển ledger sang generation kế tiếp, giữ handle của 1320 hàng còn lại (kể cả 36 hàng PK-S28 nguồn đổi tên), cấp handle cho 320 hàng mới, bỏ 46 hàng PK-S28 nguồn đã gỡ (các URL đó trả 404).
+
+### Chưa làm
+- `替代` (chiến pháp thay thế từng tướng) và `特技` (đặc kỹ trang bị) trên SGSDeck chưa vào schema.
+
 ## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)
 
 ### Changed

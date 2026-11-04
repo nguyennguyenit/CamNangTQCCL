@@ -120,6 +120,22 @@ là lưu trang chọn mùa đã render (trình duyệt) rồi đóng băng inven
 được đọc lại, không tải lại (không còn cờ `--resume`). Scope chỉ được xuất bản
 khi có trạng thái `complete`, `empty-category` hoặc `uncollected-season`.
 
+Markup SGSDeck đổi tháng 11/2026 (parser đã theo): thẻ danh sách liệt kê tướng
+trong `<ul aria-label="陣容"><li>`, không còn điểm và không còn tiền tố `陣營：`;
+điểm (`來源評分 <span class="tabular">`) và phe (`陣營：`) lấy từ trang chi tiết,
+phe hai trang phải khớp khi cả hai có. Thứ tự tướng danh sách/chi tiết luôn được
+đối chiếu. Nhãn hàng trong thẻ tướng là danh sách đóng: `戰法 1/2`, `兵書`, `加點`,
+layout 開荒 `20 級前 / 20 級後 / (không nhãn)`; `特技` (đặc kỹ trang bị) và `替代`
+(chiến pháp thay thế từng tướng) được biết nhưng chưa đọc. Nhãn lạ làm trang nguồn bị chặn
+(`Recommended holder row label is unsupported`) thay vì rơi im lặng.
+
+Layout 開荒 theo cấp: mỗi tướng có đúng ba hàng một chiến pháp. `tacticSlotsRaw` là
+hai chiến pháp sau cấp 20 đúng như nguồn (hàng `20 級後` và hàng không nhãn), trường
+tuỳ chọn `tacticBeforeLevel20Raw` là chiến pháp trước cấp 20. Trường chỉ có khi nguồn
+có hàng giai đoạn; dữ liệu cũ không được gán nghĩa "sau cấp 20". Builder thêm
+`tacticBeforeLevel20Vi`/`tacticBeforeLevel20Kind`, trang chi tiết hiện dòng
+"Trước cấp 20" (zh `20级前`); thẻ, bảng, dedup và đối chiếu kho chỉ dùng hai ô.
+
 ```bash
 python3 -m pipeline.crawl_sgsdeck_recommended \
   --cache .cache/sgsdeck-recommended --freeze-inventory <picker.html>
@@ -264,8 +280,11 @@ tại); repo chỉ track generation đang pin, generation cũ vẫn còn trong l
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
 trang 404 nằm ở [deployment guide](deployment-guide.md). Publish generation mới
-phải rebind `generationId` của `pipeline/team-route-handles.json` sang successor
-trước `npm run build`; handle không được sinh lại.
+chạy `python3 -m pipeline.team_route_handles --rebind` trước `npm run build`: hàng
+còn trong successor giữ nguyên handle (kể cả khi nguồn đổi tên), hàng mới nhận
+handle suy từ tên Việt (trùng segment với hàng giữ thì thêm phần ASCII của
+`sourceConfigId`), hàng nguồn đã gỡ rời ledger và trang của nó trả 404. Legacy/Khai
+hoang không đổi; `--check` sau đó phải đạt.
 
 Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
 Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,
@@ -317,22 +336,12 @@ Tên tướng đầy đủ vẫn giữ tiền tố trong dữ liệu; renderer t
 tag dùng kiểu cũ trên thẻ đội, chi tiết và tướng thay thế. Ba tên Vô Song đã
 duyệt đều có CO: Đại Kiều, Tiểu Kiều, Tinh Thái; không bỏ chữ “Vô Song”.
 
-`桃園結義` được duyệt là **Kết Nghĩa Vườn Đào**, loại `bond` (duyên phận).
-Nguồn đặt tên này trong ô chiến pháp; builder giữ nguyên `tacticSlotsRaw`,
-thêm `tacticSlotKinds` theo đúng vị trí và bản dịch trong `tacticSlotsVi`.
-UI tách dòng **Duyên phận**, không tạo nút chọn chiến pháp cho mục này.
-
-**Đính chính 2026-11-03:** fanpage chính thức VN gọi Kết Nghĩa Vườn Đào là Chiến Pháp
-Sự Kiện loại Chỉ Huy (Tra cứu đã có chiến pháp này, `tactic:dao-vien-ket-nghia`), và
-trong dữ liệu Recommended nó chỉ nằm ở ô chiến pháp của 5 đội PK-S27, nên đúng ra là
-`kind: "tactic"`, không phải duyên phận. Việc đổi `kind` trong
-`pipeline/recommended-identity-map.json` chưa áp dụng vì làm stale mọi receipt review
-bản dịch (file là nguồn glossary). Người dùng chọn để nguyên (2026-11-03) cho tới lần
-review lại toàn bộ kế tiếp. Không sửa bằng cơ chế chấp nhận receipt cũ một phần trừ khi
-có thiết kế riêng: debate 2026-11-03 cho thấy mục bị ảnh hưởng gồm cả ngữ cảnh Tra cứu
-(`attributes.exchangeCondition`), ≥ 4 vị trí, và phải có quy tắc rút claim tường minh
-(`tests/test_site_localization.py` chặn bỏ sót claim).
-Phân loại hiển thị không sửa bằng chứng nguồn hay quyết định xét trùng.
+`桃園結義` là **Kết Nghĩa Vườn Đào**, loại `tactic` (Chiến Pháp Sự Kiện loại Chỉ Huy
+theo fanpage chính thức VN, Tra cứu `tactic:dao-vien-ket-nghia`); trước 2026-11-03
+map ghi `bond` (duyên phận). Đổi áp dụng trong lần duyệt lại toàn bộ 2026-11-03
+cùng lượt refresh SGSDeck, nên 5 đội PK-S27 không còn dòng Duyên phận. Builder vẫn
+giữ `tacticSlotKinds` theo vị trí; renderer chỉ tách dòng **Duyên phận** cho mục có
+`kind: "bond"`. Phân loại hiển thị không sửa bằng chứng nguồn hay quyết định xét trùng.
 
 Người dùng đã cung cấp ảnh tiếng Việt **Đồng Lòng Hợp Sức** và yêu cầu xử lý
 11 ô Recommended ngày 2026-09-14. Alias `戮力上心` được duyệt cho **hiển thị**
