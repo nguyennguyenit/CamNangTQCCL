@@ -5,13 +5,14 @@ chiến pháp, phát qua đúng bộ manifest/hash, kèm provenance hash của h
 
 Khóa nối là **so khớp chính xác theo từng nguồn**, không nối ID danh tính:
 
-- Đội chuẩn (`index.json`, `heroes[].tacticSlotsRaw` chữ Hán) ↔ `chinese`/`aliases[]` của `data/tactics.json`,
-  chỉ bỏ khoảng trắng.
+- Đội chuẩn (`index.json`, `heroes[].tacticSlotsRaw` và `heroes[].tacticBeforeLevel20Raw` chữ Hán) ↔
+  `chinese`/`aliases[]` của `data/tactics.json`, chỉ bỏ khoảng trắng.
 - Đội khác (`other-teams.json`, `holders[].tacticSlotsRaw` tên Việt) ↔ `viet`/`hanViet` (bỏ khoảng trắng hai đầu).
 - Tướng mang chiến pháp nối như `hero_summaries` (chữ Hán ↔ `heroes-dict`, tên Việt ↔ `hanViet`); ô tướng không
   khớp vẫn đếm cho chiến pháp nhưng không có tướng mang.
 
-Chỉ đếm ô chiến pháp thật (bỏ ô duyên phận) của `heroes`/`holders` chính. Mỗi đội đếm một chiến pháp một lần,
+Chỉ đếm ô chiến pháp thật (bỏ ô duyên phận) của `heroes`/`holders` chính, kể cả chiến pháp trước cấp 20 của Đội chuẩn
+(`_tactic_slots` của `hero_summaries`, kind `bond` bị bỏ như ô duyên phận). Mỗi đội đếm một chiến pháp một lần,
 ở vị trí đầu tiên mang nó. Số liệu trả **ID** (tướng, chiến pháp) để trang tự lấy tên theo ngôn ngữ từ kho Tra cứu.
 """
 from __future__ import annotations
@@ -168,6 +169,8 @@ def build_tactic_summaries(*, tactic_catalog_bytes, hero_catalog_bytes, records,
         "provenance": {
             "tacticCatalogSha256": "sha256:" + hashlib.sha256(bytes(tactic_catalog_bytes)).hexdigest(),
             "heroCatalogSha256": "sha256:" + hashlib.sha256(bytes(hero_catalog_bytes)).hexdigest(),
+            # Chuỗi mô tả nằm trong payload đã phát của generation đang ghim: sửa là phải publish generation mới.
+            # Phép nối thực tế còn gồm `heroes[].tacticBeforeLevel20Raw` (xem docstring module).
             "recommendedJoin": "heroes[].tacticSlotsRaw ↔ chinese|aliases (bỏ khoảng trắng)",
             "otherJoin": "holders[].tacticSlotsRaw ↔ viet|hanViet (bỏ khoảng trắng hai đầu)",
             "unmatchedSlots": unmatched,
