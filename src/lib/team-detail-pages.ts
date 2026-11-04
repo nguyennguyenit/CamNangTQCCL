@@ -218,6 +218,7 @@ function recordLookupLinks(record: Record<string, unknown> | null, resolve: Look
     for (let index = 0; index < Math.max(raw.length, vi.length); index += 1) {
       if (kinds[index] !== 'bond') add('tactic', raw[index], vi[index]);
     }
+    if (holder?.tacticBeforeLevel20Kind !== 'bond') add('tactic', holder?.tacticBeforeLevel20Raw, holder?.tacticBeforeLevel20Vi);
     const booksRaw = strings(holder?.bookSlotsRaw);
     const booksVi = strings(holder?.bookSlotsVi);
     for (let index = 0; index < Math.max(booksRaw.length, booksVi.length); index += 1) add('book', booksRaw[index], booksVi[index]);

@@ -198,6 +198,21 @@ class SlotKindTest(unittest.TestCase):
         self.assertEqual([item["name"] for item in liu["tactics"]], ["Chiến pháp Thật", "Kết Nghĩa Vườn Đào"])
         self.assertEqual(liu["statFocus"], {"teams": 1, "items": [{"name": "Toàn Thống", "teams": 1}]})
 
+    def test_tactic_before_level_20_counts_once_per_team_and_bond_kind_is_skipped(self):
+        record = index_record("a", ["劉備", "", ""], tactics=("Chiến pháp Thật", "Chiến pháp Hai"))
+        record["heroes"][0].update(tacticBeforeLevel20Vi="Chiến pháp Trước", tacticBeforeLevel20Kind="tactic")
+        repeated = index_record("b", ["劉備", "", ""], tactics=("Chiến pháp Thật", "Chiến pháp Hai"))
+        repeated["heroes"][0].update(tacticBeforeLevel20Vi="Chiến pháp Thật", tacticBeforeLevel20Kind="tactic")
+        bond = index_record("c", ["劉備", "", ""], tactics=("Chiến pháp Thật", "Chiến pháp Hai"))
+        bond["heroes"][0].update(tacticBeforeLevel20Vi="Kết Nghĩa Vườn Đào", tacticBeforeLevel20Kind="bond")
+        payload = build_hero_summaries(
+            catalog_bytes=json.dumps(CATALOG, ensure_ascii=False).encode(),
+            records=[record, repeated, bond],
+            other_records=[],
+        )
+        counts = {item["name"]: item["teams"] for item in payload["summaries"]["hero:luu-bi"]["tactics"]}
+        self.assertEqual(counts, {"Chiến pháp Thật": 3, "Chiến pháp Hai": 3, "Chiến pháp Trước": 1})
+
 
 class ValidationTest(unittest.TestCase):
     def setUp(self):
@@ -285,7 +300,12 @@ class ValidationTest(unittest.TestCase):
             """Ô `bond` là duyên phận, không phải chiến pháp (thiếu kinds ⇒ mặc định `tactic`)."""
             names = holder.get("tacticSlotsVi") or holder.get("tacticSlotsRaw") or []
             kinds = holder.get("tacticSlotKinds") or []
-            return [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+            slots = [name for index, name in enumerate(names) if (kinds[index] if index < len(kinds) else "tactic") == "tactic"]
+            # 開荒 chia giai đoạn: chiến pháp «trước cấp 20» cũng là chiến pháp đội dùng, đếm một lần mỗi đội (hàm `add` khử trùng).
+            before = holder.get("tacticBeforeLevel20Vi") or holder.get("tacticBeforeLevel20Raw")
+            if before and holder.get("tacticBeforeLevel20Kind", "tactic") == "tactic":
+                slots = [before, *slots]
+            return slots
 
         def stat_focus(holder):
             """`statFocusKind = note` là lưu ý, không phải hướng điểm."""

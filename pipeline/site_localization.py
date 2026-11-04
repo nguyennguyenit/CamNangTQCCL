@@ -148,6 +148,8 @@ HOLDER_DERIVED = frozenset(
         "displayNameVi",
         "statFocusKind",
         "statFocusVi",
+        "tacticBeforeLevel20Kind",
+        "tacticBeforeLevel20Vi",
         "tacticSlotKinds",
         "tacticSlotsVi",
     }
@@ -206,6 +208,7 @@ CANONICAL_DATA_FIELDS = {
     "statFocusRaw",
     "tactic",
     "tacticBefore",
+    "tacticBeforeLevel20Raw",
     "tacticSlotsRaw",
     "tactics",
     "tacticsAfter",
@@ -346,6 +349,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:coexist/counts-clean", "verdict", "không trùng", "js/render.js", "seasonCoexistGroup", "data", "authored-vi"),
     ("ui:coexist/counts-duplicate", "verdict", "`có trùng: ${counts.duplicates.join(\", \")}`", "js/render.js", "seasonCoexistGroup", "data", "authored-vi"),
     ("ui:coexist/level-title", "title", "'Cấp độ đội'", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
+    ("ui:recommended/tactic-before-level-20", "label", "'Trước cấp 20'", "js/recommended-reference-render.js", "beforeLevel20Block", "data", "authored-vi", "L('Trước cấp 20','20级前')"),
     ("ui:coexist/refit-line", "refitLine", "`Cải tạo: ${team.unitTacticEffects}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/advisor-line", "advisorLine", "`QS: ${hero.advisorSkill}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/books-missing", "emptyLabel", "'Chưa ghi'", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
@@ -1857,6 +1861,7 @@ def recommended_display_locations(pack):
         "nameRaw": "canonical",
         "roleRaw": "canonical",
         "statFocusRaw": "canonical",
+        "tacticBeforeLevel20Raw": "canonical",
     }
     holder_lists = {
         "bookSlotsRaw": "canonical",
