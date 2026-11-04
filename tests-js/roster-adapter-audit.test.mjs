@@ -58,36 +58,36 @@ const run = (season, roster, extra = {}) => recommendRoster({
 
 // ---- Lỗi 7: ô chưa đối chiếu ---------------------------------------------------------------
 
-test("s28-wutugu-huangma: ô 御敵屏障 giữ tên Việt dự phòng, không rơi khỏi đội", () => {
+test("s28-0617-wu-05: ô 守望相助 giữ tên Việt dự phòng, không rơi khỏi đội", () => {
   const season = seasonFrom("pk-s28", [FIXTURE_IDS.unresolvedSlot]);
   const [team] = season.teams;
   assert.equal(team.id, FIXTURE_IDS.unresolvedSlot);
   const slot = team.heroes[1].tactics[1];
-  assert.deepEqual({ name: slot.name, unresolved: slot.unresolved, raw: slot.raw }, { name: "Ngự Địch Bình Chướng", unresolved: true, raw: "御敵屏障" });
+  assert.deepEqual({ name: slot.name, unresolved: slot.unresolved, raw: slot.raw }, { name: "Thủ Vọng Tương Trợ", unresolved: true, raw: "守望相助" });
   assert.deepEqual(team.conditionalTactics, []);
   // Ô chưa đối chiếu không là nguồn món bù.
-  assert.equal([...season.usage.values()].some((c) => c.has("Ngự Địch Bình Chướng")), false);
+  assert.equal([...season.usage.values()].some((c) => c.has("Thủ Vọng Tương Trợ")), false);
 });
 
-test("s28-wutugu-huangma: đủ kho vẫn không báo 'xây ngay' khi còn ô chưa đối chiếu", () => {
+test("s28-0617-wu-05: đủ kho vẫn không báo 'xây ngay' khi còn ô chưa đối chiếu", () => {
   const season = seasonFrom("pk-s28", [FIXTURE_IDS.unresolvedSlot]);
   const result = run(season, rosterOf(season.teams));
   const [entry] = result.portfolioTeams;
   assert.equal(entry.team.id, FIXTURE_IDS.unresolvedSlot);
   assert.equal(entry.status, "unreconciled");
-  assert.deepEqual(entry.unresolvedTactics, ["Ngự Địch Bình Chướng"]);
-  assert.ok(entry.selectedTactics.includes("Ngự Địch Bình Chướng"));
-  assert.ok(entry.tacticSelections.some((s) => s.unresolved === true && s.selectedTactic === "Ngự Địch Bình Chướng"));
+  assert.deepEqual(entry.unresolvedTactics, ["Thủ Vọng Tương Trợ"]);
+  assert.ok(entry.selectedTactics.includes("Thủ Vọng Tương Trợ"));
+  assert.ok(entry.tacticSelections.some((s) => s.unresolved === true && s.selectedTactic === "Thủ Vọng Tương Trợ"));
   assert.notEqual(entry.status, "build-now");
 });
 
 test("ô chưa đối chiếu không khóa tài nguyên của đội khác", () => {
   const season = seasonFrom("pk-s28", [FIXTURE_IDS.unresolvedSlot]);
-  const other = { id: "other", name: "Other", heroes: [{ name: "Tướng Lạ", tactics: [{ name: "Ngự Địch Bình Chướng", alternatives: [] }] }] };
+  const other = { id: "other", name: "Other", heroes: [{ name: "Tướng Lạ", tactics: [{ name: "Thủ Vọng Tương Trợ", alternatives: [] }] }] };
   const roster = rosterOf(season.teams);
   const result = recommendRoster({
     seasonTeams: [...season.teams, other], seasonTier: [...season.teamTier, { teamId: "other", rankings: [{ tier: "T0" }] }],
-    ownedHeroes: [...roster.ownedHeroes, "Tướng Lạ"], ownedTactics: [...roster.ownedTactics, "Ngự Địch Bình Chướng"], tacticsDict,
+    ownedHeroes: [...roster.ownedHeroes, "Tướng Lạ"], ownedTactics: [...roster.ownedTactics, "Thủ Vọng Tương Trợ"], tacticsDict,
   });
   assert.deepEqual(result.portfolioTeams.map((e) => e.team.id).sort(), ["other", FIXTURE_IDS.unresolvedSlot].sort());
 });
@@ -396,6 +396,8 @@ test("canonicalTacticId của tên trong từ điển khớp khóa luật", () =
   assert.ok(tacticRules.has(canonicalTacticId("Phi Hùng Quân")));
   assert.equal(tacticRules.get(canonicalTacticId("Ngư Lân Trận")).kind, "formation");
   assert.equal(tacticRules.get(canonicalTacticId("Phi Hùng Quân")).kind, "troop");
+  // Mã thật `tactic:dan-duong-binh` hiển thị "Lính Đan Dương": gọi theo tên vẫn phải chịu luật binh chủng.
+  assert.equal(tacticRules.get(canonicalTacticId("Lính Đan Dương")).kind, "troop");
   assert.equal(tacticRules.has(canonicalTacticId("Mê Hoặc")), false);
 });
 

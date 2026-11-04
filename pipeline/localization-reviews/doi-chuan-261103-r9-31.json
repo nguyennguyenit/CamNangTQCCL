@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-31",
+ "reviewerSession": "reviewer:DcReviewI31-2026-11-04",
+ "items": [
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-016-西風騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "9e99cb73d381293e5a3793f408db7a7f4a097cd696ac0130e91d79dd453c7fd8",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "21d590951c0f1aa840caabcca18f92480ca8e6272e13903ee8dd2d269cfa830b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-017-馬嬋等風熊",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b37d5c5f22327f4a8e521d81034d160f7e8824f26572c315fbd7a5916d03f45c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8fa7c67737ccf1b2025b897f85c8d95dc4383c95cedad67d19c703a9aa0b7c35",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-017-馬嬋等風熊",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "8cd651d96d8905640fb28edd671a8de6ba4291d0898b042503d33c040a7feacb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d00be92e4a0522efc6013bf482d9d33b521d8067ee540787ea9df0ad4590db7e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-018-網紅槍",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "af1ef24106edf8384482783d9bb52872b320edb9806cb345ce75d71846a6ea0c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "eb049eb32711b4fa0d8431eb9c2b4f9d7817e2bf7a59d4fd6f266e1fdb6cd261",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-019-關關張-by大米",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "86c7511bdbd580a5acb9f2f61a13e0959b0430d2e0a6caac5f6fa0f3dfc09447",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ab2bb63304bf1cb9cc4fd6656b40e4d685db9e111b3ae418ad144f2ff7acd1af",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-020-陳翊盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0a3362ce7cbc57989ef5951b465182283226a379302fa392e98fe3fb5f90445f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3aaedf5e129e8dcc56692b620fd914df43ead09e9eea25c3b9b574aace413cb4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-020-陳翊盾",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "9be5008e44b26a48845a51dbd05210a0385c160aafb79dde2ba07e62931ed19d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "53f98974a9cdc5da50c91c49e8a87134c36fa096c444ef5c35261dc53a5f2c8a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-021-陳翊槍",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3f0a0c8ad1f199d2f2fe57c7ca5e4d568152e409d41782c5b716d438e8bf41a6",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c3feca86cb3ff71146e191e300554365a9c429fbe75d4cc98932710ec6088775",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-021-陳翊槍",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "8b1e93f0124754756b38713e200c4af5da3c145083239e5f0e0fd72890833ada",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "53f98974a9cdc5da50c91c49e8a87134c36fa096c444ef5c35261dc53a5f2c8a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-022-北伐槍",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f22bf57560b05f97f68f3185a23544819897670330f6e418115503ab82094f03",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6652df0728d0b4b0fac38811e94762a6243f97c0e09bb7bcb727ed2db0ad2aa9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-023-太尉盾-by大米",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b462fd5cb01ec2bbdac927740b96f5f81b44e56d3c84709e8f693e9bf39d5386",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b919250ba893b997c20b317b04561cf3b6b65e5e85f5ad81bbb286d43232ab78",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-024-蕭芷太尉盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "fdca5f251769dc30f08b915f64f3890969ffb96a72c53e44963b53e5780a109f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "328d4e1c4b2c61eece7129769d41ad04d59d8d856ff8b2bb6d78591589023f1a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-024-蕭芷太尉盾",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "2c9ffb50396d05c13712491b4ce249c1e47f9e2a1a4a77a928794e98f657de7c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7c2e07e03266fb21c10978990cef62311f66829f49db9df6f9152f6be4dc194a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-025-女王盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "aff6fd8377a2156ab016c205893e012fb6fbc8387a81d306f74e4261eecdf95a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3483127698e729ee533113a1beec566fda1acff3fbed7d604e64aa47bcaa4cba",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-025-女王盾",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "d1cf08313f090c6d98220649c3e8c22bbe6e53a4493d404b46a7510a09b2d2e2",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "9f50b4fbb08b5fe288978afe524cf261238aa54cdc2c41d87511fa17c349a878",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-026-富貴騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4ae9ac548dcf1208636e00522faf6c1b5cb55f12b5f067c79b2287031280bd91",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "dc518af83cdfd7928fc5495b79cee039a75ced794bcb578aa7a9934231b3f11a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-027-周劭富貴騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b2b244f2880c0285c730a7ad291d51060fab20cb6e537533070ac79af2965f4d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "98711c70280cae63b60db854df3eb792b632e7b5922cbb04617f903ed7fa85e9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-027-周劭富貴騎",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "cc010297610d4dca5b3e6a46e06f7a7627da6d5d2186f3f6841c0ecb0b36af28",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bd5215f41d96645534a4d48d4ddac54c53dba1404569e6b9a639596b904a1aa6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-028-沈姮富貴騎",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bb8675b4f9725a67feef53697e20427ed9980f6bc1d69b365774286cfae39344",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ad1a9c62ca8261d082073d0aa19253702c7bd6b38279bdda9bad0182b6484f9f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-028-沈姮富貴騎",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "07c1d1eabf4a3650d2e37e00b5d007bc9fb2ea52f84949b7ceb0f211a87ace7d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "96571eaae785bf450f65d9ee85130f9dca4821ef313c06c991923915835ee748",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-029-楊琪五謀臣",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c71d732280d4b4731f2b7664ab11561d77f89c747c16af55f761cb7e61ffce3a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f700104079699ecc69188c960d738a547a0b667bee3f531aec4c2688394cbbe0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-029-楊琪五謀臣",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "b32e88bf14fcd7b3b4793b20521dd68cf4b088a42ef15340b6b0858d5f017bda",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "561292886690c01a8c99cc90049ea29f18eccfe0aec46d5daabb895a17722b11",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-030-山河盾-by大米",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f15208acd197b135b017bddd99515d73e6e84dfcf7d27f7f5901fe818fda6f5f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e196077a19ae3a73a9b5ed5c754536edc79184b713bc9d2417108610f7af4d10",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-030-山河盾-by大米",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "a2247d1e3096809faff7abea109e6ff367eaae64c975832520be12c16171a256",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "445e521c86eb03af6b23ae7047b3ee595d1d9874e7d9ceb1027b436e271d7c24",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-031-惇惇盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "85199058702924b3218dcc488fe467f6546daaddb8f54b47ae646810ce22bc14",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "1935dc0ca9cbbfcee9a28f67e104e6d2b8b5dc43fe262be9d763f01749b54966",
+   "verdict": "accepted"
+  }
+ ]
+}

@@ -1,0 +1,215 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-62",
+ "reviewerSession": "reviewer:DcReviewI62-2026-11-04",
+ "items": [
+  {
+   "entityId": "tactic:phong-thanh-hac-le",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "92616a0c9534f8abf520fec2e7e982a8c0be86931f1c9c89d2e57b7c6ffb81be",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2eebc33265db4a08f699e2b6a00a3aaa9e2d86b32a655269d667b0d8ccf66192",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thanh-hac-le",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "8c1fa47ad4367a1f2d18b95b29bf83d25756e326b928755c6748c205c60f23b9",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "34946ce7537d3b5a60b5283f8541540d7323f11d1e90402223e0ae0b3e1add4d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thi-tran",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "a5fb859b994b14c503b2e36985fc0af741faa2eccb70ba17ce35108f72fa1208",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "47e370fbce28ef21a139178f4717dd5f90928cf5b0f75c14e780e2a2d4cf3092",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thi-tran",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "13c4d3345b44c042ab649b3e2441f821a118aa2ad5105a5a7028ecf261a08887",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8593dbf08e3c3480453d9d945d3189164615c55a8362114488a292e217f3c484",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thi-tran",
+   "fieldPath": "lookup.conflictsVi",
+   "inputFingerprint": "4e7023e97a5db5ae2459fc7d81b02d3513033202010a30e3ce10468833f89fa0",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5b3c9ba441e5afddc3ff22debcee6838fad74cf319b1c1af904c22b8a34cc0a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thi-tran",
+   "fieldPath": "lookup.effectTypeVi",
+   "inputFingerprint": "d74bb837d53dd2eb53233e757ccc300b75db3c4d9e58e9c1b84dd70a8276a80c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7f547c9123d4a16e08ca361fba27868a580bf784ffde19ed746e738f6b147fae",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-thi-tran",
+   "fieldPath": "targetViet",
+   "inputFingerprint": "da90fbb3961058f70701a7b23bbef7e786c4e044e3a5732bb638b1b6dd303dd8",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6620d4e439dce8837ff199fb0b37a2abd11d9c5f2e522ae3bddcdff47f84d63e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-tro-hoa-the",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "64026ae3bbb520d81935b6798cbd3e07896376e948691c19d2eaec5e866db3f1",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7edf0d08d0992388986a7ac46879e662a48f2bde643a66eb561e055e59e7311e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-tro-hoa-the",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "0aee73a905e1eff9bcc859acf69b5c7a9e7043034d93e01fb7c234caff14351f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "1d84e4529105ad430338cd2b09157c058eef3efc03a3cc1a5a553bd3afc7e332",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-tro-hoa-the",
+   "fieldPath": "lookup.conflictsVi",
+   "inputFingerprint": "827aa5be14188b6c9f1fc3f1bd8d5e0600c627a4284b0bc1464de0dda6e2a1dc",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5b3c9ba441e5afddc3ff22debcee6838fad74cf319b1c1af904c22b8a34cc0a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-tro-hoa-the",
+   "fieldPath": "lookup.effectTypeVi",
+   "inputFingerprint": "1f8ca4401498401ad229d47de608550515a7137fd09f945c7880995a57bdfec1",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e302811323306aa1e6ce7deb70865e3f2d89b8f214f40089fcb5d808fe1a3436",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phong-tro-hoa-the",
+   "fieldPath": "targetViet",
+   "inputFingerprint": "cc1b343963cc7df75b9d6e6456f127a2b432f3e55a0647571b2da34006ec3fa0",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8b49c0266423c33fa47e207ee0e4d9a4ece54bd5bbaff3b0f778f7195f18cd11",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-menh-tu-lap",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "ce4fa26f920fc953f5c629ab16fbfe8330c9830c1ef57ab18477f581b003c1be",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "a8123ac24be8dc2f764c361ed21175c98b4bd79b903a4e2a76a413f7108f6b05",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-menh-tu-lap",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "490b386df0f02651c56a35dc2c656c742886a057de32620653bb75df63ad0296",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "51d9d0a52749b73031c1176458c4fbd8dddd0fb7c2a10e9d00501971a568c629",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-menh-tu-lap",
+   "fieldPath": "lookup.conflictsVi",
+   "inputFingerprint": "7a30f9772fb92169f9f1985aa1562148512f894710a892404beee082187702c6",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5b3c9ba441e5afddc3ff22debcee6838fad74cf319b1c1af904c22b8a34cc0a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-menh-tu-lap",
+   "fieldPath": "lookup.effectTypeVi",
+   "inputFingerprint": "21691765d1545cbd8a86fc46439a2988733c36ee4b5034b755358007824f67a4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7f547c9123d4a16e08ca361fba27868a580bf784ffde19ed746e738f6b147fae",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-menh-tu-lap",
+   "fieldPath": "targetViet",
+   "inputFingerprint": "9fe1283e192ccc879928f361c52950f609bc2c8a7b538f2305f8232f3a973950",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8ac87c87e8a461f4d246f5b613aaa738fb7d79aa938bcf0bc8fbcc1023c17f12",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-nguy-dinh-khuynh",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "e42f08595e4d9b3ecff0dd3febc0078b70b1dd4ba40041318c408ee07372815d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "328161b0404cb79ae3ab15e6b3bff09b12f976da03115c10c366fd4f0b535e13",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-nguy-dinh-khuynh",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "d60afe0bf9e6e50c3937117dcce799ed0a33c0ad32bc9f318510362bcb38bda8",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "085fc6787531a2a3e6d92a4745951a2fd8429fc872320c37c79477c012898bad",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-nguy-dinh-khuynh",
+   "fieldPath": "lookup.conflictsVi",
+   "inputFingerprint": "6a20e445da65b8b93b718c5f759fbcf2ed843e8cb1f58e1245fbcd3f72c6f462",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5b3c9ba441e5afddc3ff22debcee6838fad74cf319b1c1af904c22b8a34cc0a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-nguy-dinh-khuynh",
+   "fieldPath": "lookup.effectTypeVi",
+   "inputFingerprint": "91abca901e96f0b3f79271021447b23c83c43d7a9e81e4fc5f9f75f89393ce8a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7f547c9123d4a16e08ca361fba27868a580bf784ffde19ed746e738f6b147fae",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phu-nguy-dinh-khuynh",
+   "fieldPath": "targetViet",
+   "inputFingerprint": "2cd000d8ba8eb5d2b4b7fbc53ea257f9149d565960933f10d1acd34eac51bc9f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6620d4e439dce8837ff199fb0b37a2abd11d9c5f2e522ae3bddcdff47f84d63e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phuc-boi-thau-dich",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "c0523020d19f18c8cddb993a515caac0327eb546dfbf18110bc9f0dedb45d21c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5c0c28ecea69a155b5dcc6a62839581a70ed9a9c43d3123b330babc7e83b86f7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phuc-boi-thau-dich",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "cccaea670a0ec5dcd6aa6d8309e175e03c258b0ec352f051b632d5e5f61ad373",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "74cd2bc069b5f6d5d917d141e7301d2a139db91860ddcf3c7fddfcf88375dfdd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phuc-my-phan-cong",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "2e23d611eb0c2670c46623345071309e0fe84df7a31957d15655132d15fc10e6",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ce095fc87c93444369f52721678a035c0315c1366da81143fe5d4ea46b2e73f6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:phuc-my-phan-cong",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "788008eaecdcd4c35b00c712045b9eaccf672591fffcf9d920f7faafd63a41bc",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6599657b9f23cc7282678e03d3c8da41a64fabfda69932505fc5d4050d004d29",
+   "verdict": "accepted"
+  }
+ ]
+}

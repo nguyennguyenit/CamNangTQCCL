@@ -1017,7 +1017,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1366 Recommended, 166 legacy, 17 Khai hoang,
+  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1640 Recommended, 166 legacy, 17 Khai hoang,
   // 942 trang riêng mục Tra cứu (252 tướng, 412 chiến pháp sau đợt theo client Global) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
   assert.equal(lookupRoutes.entries.length, 942);
@@ -1025,7 +1025,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
   assert.ok(seasonPageList.length > 10);
-  assert.equal(locations.length, 5024 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 5572 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -1154,11 +1154,11 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
     ...seasonPageList.map((page) => page.routePath),
   ];
   const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
-  assert.equal(catalog.recommended.length, 1366);
+  assert.equal(catalog.recommended.length, 1640);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 17);
   assert.equal(lookupRoutes.entries.length, 942);
-  assert.equal(locations.length, 5024 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 5572 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],

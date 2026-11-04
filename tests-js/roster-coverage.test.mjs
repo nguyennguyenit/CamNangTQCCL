@@ -95,8 +95,8 @@ test("8. thứ tự tier theo SOURCE_TIER_ORDER; tier lạ xếp cuối", () => 
   assert.deepEqual(cover(teams, { heroes: ["A"] }).tiers.map((entry) => entry.tier), ["T0", "T1.5", "T2", "FUNC", "ZZ"]);
 });
 
-test("9. mùa 0 đội (pk-s20): cấu trúc rỗng, không ném lỗi", () => {
-  const empty = seasonFrom("pk-s20");
+test("9. mùa 0 đội (pk-s21): cấu trúc rỗng, không ném lỗi", () => {
+  const empty = seasonFrom("pk-s21");
   assert.equal(empty.teams.length, 0);
   const coverage = buildRosterCoverage({ seasonTeams: empty.teams, seasonTier: empty.teamTier, ownedHeroes: ["Tào Tháo"], ownedTactics: [] });
   assert.deepEqual(coverage.tiers, []);

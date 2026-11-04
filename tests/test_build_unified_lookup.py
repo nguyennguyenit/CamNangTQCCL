@@ -796,9 +796,16 @@ class ClientTacticCaptureTest(unittest.TestCase):
         self.assertIn(before["nameVi"], row["aliasesVi"])
         self.assertEqual([item["tierVi"] for item in row["options"]], ["Đặc biệt"] * 3 + ["Sơ cấp"] * 3 + ["Trung cấp"] * 3 + ["Cao cấp"] * 3)
         old_by_name = {item["nameVi"].lower(): item["id"] for item in before["options"]}
-        kept = row["options"][1]  # "Nâng Khiên" khác tên bản cũ ("Giơ khiên") -> mã mới; "Kháng Cự" trùng -> giữ mã
-        self.assertEqual(row["options"][2]["id"], old_by_name["kháng cự"])
-        self.assertEqual(kept["id"], "troop-option:dan-duong-binh:nang-khien")
+        # Mọi tùy chọn client trùng tên bản nền (SGSDeck 2026-11) giữ mã bản nền, kể cả "Nâng Khiên" (mã nền `cu-my-special`) và "Chuyển.Thương".
+        for item in row["options"]:
+            self.assertEqual(item["id"], old_by_name[item["nameVi"].lower()])
+        self.assertEqual(row["options"][1]["id"], "troop-option:dan-duong-binh:cu-my-special")
+        # Tên khác bản nền -> mã mới theo tên client.
+        renamed = [mod["options"][0], {**mod["options"][1], "nameVi": "Giơ Khiên"}, *mod["options"][2:]]
+        output2 = self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": renamed}})
+        row2 = {row["id"]: row for row in json.loads((output2 / "lookup-catalog.json").read_bytes())["troopMods"]}["troop-mod:dan-duong-binh"]
+        self.assertEqual(row2["options"][1]["id"], "troop-option:dan-duong-binh:gio-khien")
+        self.assertEqual(row2["options"][2]["id"], old_by_name["kháng cự"])
         self.assertEqual(row["options"][0]["convertsToVi"], "Thương binh")
         with self.assertRaisesRegex(ValueError, "client troop mod is invalid"):
             self._build({}, troopMods={"troop-mod:dan-duong-binh": {**mod, "options": mod["options"][:11]}})

@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-30",
+ "reviewerSession": "reviewer:DcReviewI30-2026-11-04",
+ "items": [
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-tianshui-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7acf8d4361ee8cf771d927a6789a283abc2eb04a2d46662b8e5f299c5f870e05",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "23d11a15ec320de8a6b12a86f559d84685c36d42eedd3793b97de999785a13dc",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wei-fa-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b267f179ef3cc8a3e08219128fd3d368a34c09317929c56cc2988855224d5211",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ac9fca99b18a094c40df5df79b5ce79a2cd4e986e0014cc61f53da2bdf57d526",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wei-fa-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e9e3d462ef3537a7fe2209f9c16aaca88031272ed2a79e98c15db2824ae614ac",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d9df1312a177d214c3e73002c4cebe0dfc1e49ee38a89c8b2dfdaee998e15bad",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wenhou-gong-mix",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "cc5a6b47263353ae4155bdb151be24bf393732c47df48232e6485050ce26a6f1",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ee608004de8b4acda2e54baabd40946555bb380408e984a5a1e040b4db7151d7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wenhou-gong-qun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c707c7419baf66696442d21040188f0a06167c59097eca43e72242c0f0e3bc68",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5374262f2c28b110659943b4bd0e4247dd1131cf7386d95e13087b62221ff873",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wu-mou-chen",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "736f4945354ca31aeb89a671d6b58689309eeba0397ace30607be4a612997097",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ab63d73e9f41c7909c72797ddcd599705a0615ef0ba3d7442b08ba29cb4906fd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wu-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "65a903cbcc61b79d272947e7995126a19a061613a61973cf12370b18e53d7a17",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "42bf49feaa39122c4401aabc3b26e86aa60b20cf7be9671e649b4791f66eea5a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-wufeng-zhen",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5fcbfec603572fd7ff522db50cba9741eda575a6bdb39d79d35105995f62e708",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8214cd59c46ccc1fac5de9cf5e616298aaf4aea3628af39ca3c6e91f1764714a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-xianren-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e950029ad87640781c4de63217842a385b417fb860685f0c92e1a9c38e91b048",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7cd27d9ff37eaf53a7d24e97e959c2b51467f4ab8b5d4f08141099da940f918c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-xingyi-taiwei",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5e3020c59edb6191cee2658717c4c12d96ded3bf79559ed7eb4ab1eb9daa247a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e27d5735c8103337b4fc5a91ef94ff573197e21c1fd7bd499ebe8574b8cc0d30",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-yuan-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5e9eb0f5ad73bc5d363a64399c576b63b2db658ac0078d2d5997a5bad725d952",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2f48c44f99e0abaf88d54f9f7e073197a8931d8aa5badde958d682d38a048775",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-zhangjiao-qun-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d24d1244d6f3c3fd5cbf07a551055004fce89d75558217de3bcec47ca5f3e4a4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "da5d8ba4b02c58678a215f44fe323a65eb4fab125023f64f3943866f1fa899d0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/s26-zhaoyun-wufeng",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ffecb8212ec46872d2097c20c063910fe3936504b2dee2e7f4e7d95e89af79f5",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c1271987357a688963776752f7019a4205dda1a61f1f6eb8bceb903b0084d1a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-009-盛氣蜀弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "666151f9412f72459a8b46193109ab1f71ffc0786eaa4d21aecb948aba60df40",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ca09258fb5d0022a37e35ebcb29f8dd304273751ea5c2577bfb777c4720a0e34",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-010-周劭蜀弓",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "9f8ceaae2af51c914d67511b27c16e7965f675a14ed0e135ddcdaf8dced39c89",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "9e69e1e9602b6df792b2a0991eab18baf2e34b7de5decd3d609208958fd62efd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-010-周劭蜀弓",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "80706cb67bbcb0dedac731221bf360df7ae274f854f61c0b35e34a8d896b95ef",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bd5215f41d96645534a4d48d4ddac54c53dba1404569e6b9a639596b904a1aa6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-011-法關盾馬岱",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ac7a7231836326d377d2e65b4a0e45c91be40b5cdf408f79006b9c97369a26ca",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "443c551af1c52e0a39bf061044b1b24651ef5677ed2a27a0284549ee1420a968",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-011-法關盾馬岱",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "f7830447663e056a0ea7285477a153766545d3c02726fdd6231ceb2e65fbafad",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "01013e2d1e50485fc01b8048b7626b62a2b6229249a6a4bff00fea161ff47f1a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-012-法關盾劉備",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3e3bd871a18d4cedcd90b6b3a86122cf597e671bae415aee092611727cad9116",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "fe7b16ceefa8d11bb53c2cf0baa1a0214f370eed9754f393ac86ef5d3a9aea90",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-012-法關盾劉備",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "57b68bab48d0fe5dbc08b78655bdecab6406174f19f2412368ee34459f04f824",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "01013e2d1e50485fc01b8048b7626b62a2b6229249a6a4bff00fea161ff47f1a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-013-關星盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c5becf89196847fa72cb208169f00cdf72af52f22ace824a0835d325d5e79825",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c2ff62ed761c2937a14ebb63e28d181f6289a675f118ea3ed8d0b785bdf4def5",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-013-關星盾",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "b1f02fea53c857c2e201ee29dc1f58197dc3cba9d9b81a4353e245c3fc8daa77",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c317336e60f8b7b9e177ce22a04b1bb1faef0183755e2303aa6463fb6c68f186",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-014-皇甫法關盾",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0f9e1e64dc73d125d393cf03c726fa677ae3bac5e0cd2374f1cb485d74a10628",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "306b920759c39e5f0acf5bb51c8d552a484e71c417a0c30168ea3f500935840e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-014-皇甫法關盾",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "a40733b7b8731434b2143da4294fd8edca7e0ad1e1159d561d2c52538118a99f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "be39107f347462c72b0f20808ee457c37b01cbf9522a7ad177ff1dfaa6a6e8c9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-d8a6775f7da6a8a36c1ecbb6975b9c6ae83dbc569021f014dc3f0692e044bec5/yxms-015-等風熊",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "cb768a3537000665d6756eae5e71134e4f0eeb2a6631876d332ceaf7cc3adc4c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "71d1382679f38032f2b5872770cb3a62e474840cfe54c387fbf8dad46ec1ede3",
+   "verdict": "accepted"
+  }
+ ]
+}

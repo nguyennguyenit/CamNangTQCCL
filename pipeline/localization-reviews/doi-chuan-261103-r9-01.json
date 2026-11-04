@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-01",
+ "reviewerSession": "reviewer:DcReviewI01-2026-11-04",
+ "items": [
+  {
+   "entityId": "recommended-season:pk-s19",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "5ddd5e9d63748dfb7669ede1ea05da3050d73cd2bb41eb334f8e8013940d46d3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "4207e0a047441ffc341391d245da9ac574905ab9623d6dcff10c6a3986271116",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s20",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "24f1889f4040ddcb7b952466e002e33f3553f1d86bedc515f1f589813d164fe6",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "377a56ba6d457b753696dc5a02959704a5db1111bd595e7d9589e0f5a38fb634",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s21",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "581bf022d2a653543b044957c1757aee4a9498eabfb0a89ac9ce9322fc4c7eda",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "54d1d8bf4d1c89894ca8b4ba5b9a49f00f3fbd233666446eacdf1a906cdf4b7a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s22",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "63a337fe3a89bb63f2ae3eea052be16834b9775f2ca57b5ec30cdae740921a2a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "10fb0fc0f916d702908926af3996b43235ae59c7a6453f10bfaaa500cee16461",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s23",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "ef5148a5f920daf07489e302524ae76783a84ed761a3742a81baf303e3b3f53a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "511b1d94321618bce5dc61f173ba691626b02dfb92750de972723dc988dc4d96",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s24",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "91c2028f3657c0f51c2c9ddc34e1446eff3e8cfdafe345dd6650e6d38c3f8115",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "8a3e42d8c0cc93f838d6ae161212964bfa7bb8970eaabbba11f2b3dd3462127f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s25",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "de69522470ea7f433c21f5ddbd0ccd72b65b625d25ee805ebf7d68c3c9757a03",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "a071942f04c8f12aff5373aca56632a8532d74a84e0ac82f95f7a95ff8b27d94",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s26",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "5686460b3c95814f1e6f2cfd1421eeacb22a21d2182f429e455bb904a33b76a5",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "267798eeb5706d9aaaa0c7f6c23f436aa01d97524ed53d06808ff613a42ebeba",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s27",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "a6101b35f66c22188381ba256b6fbcc886356057128c37db8b19327e38c70e69",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bc6b148be65d1034317be629730def95508e4c5475ba041e4b9b128fdb2dbafb",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s28",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "e5d61ac695f8c82047329da1892fdfc3b7f0f1e0005a1c684e112920921c8ed9",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f2e65172d7036d48a7c0f1b4a6254d8a74e9b9ae77cdc79c9fb70c167288f1e1",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s4",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "a51c568a1c4275e128ee7f7ac86d651b21b872b3760243f91496d90f834de01f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0d17bea3f3fde80b8a4ee19081a888c1a1824b7c2fbd924846e2f7155a4027bc",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s5",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "5c9e41b5f65f264fe42a07b25037408f56c7db3e147d8a6ef4e00ce517ba525b",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5083b17520cd35ac868a4bd389b71584b824a9e8e0580261433d08ba6724ef9c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s6",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "d2cdafb127d4c8a7849028f2c9aea42f262504662905eff8965de7f8f9d10112",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "95291f809f57385a2e863c0466d0c592cac06472b9c4acac3f42731ccdacc15a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s7",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "20015d05c3285f0661be7f4f116e467ed1f4bd383fb15211e71da8a05cfba71a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "212232061d00f42cb1574f5024afe3e391e4844aaa6e0d655da8442e0c82355d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s8",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "b2c3eddce63c42bf4f679a910ba1db5c55d268d0354b284b69da93533dfc1837",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "57a383a22c502b65c22417c8b86f189fc53462421a5fbe9beabf09c32f7540f2",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:pk-s9",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "88ca3608dfe45195ff1d7731dd462733e87659ecf9b772a8ce9855ea4fedd849",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "181e8bfe3912909b5b2c688b5f3cae0e0a7d56939c9749eef01e1d647fd6e106",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:s1",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "72a6647e1e3fea61caa4fbce7218f29304e8ef16c26192458cceb420bceaf233",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "160402183bfd21082b8fb7eadc2ef354ec546d9a40668670eadef529bca9956f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:s2",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "9bda286a33b5407219dca4f46cc309a6f3468159baeb7f8e5e84f4bb5bf17486",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f475b0097f4b51277b69125ac960cf56b259e8c1f14bab67694cc18d2865a6b4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended-season:s3",
+   "fieldPath": "displayNameVi",
+   "inputFingerprint": "443d3c6eb278ce1134010317dfc07015d4f7d5b5eac63fd380998a527ef7151f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "212232061d00f42cb1574f5024afe3e391e4844aaa6e0d655da8442e0c82355d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-diyu-fugui-1",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "091ff18a151eac45f31115b6b75643aea7a367feab9bca675f342f03236c7ac6",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e2be0f7733d9d3bea2ab8b43a6eb5a3241cb97a18c3ee0f093dded70da44c6b7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-diyu-fugui-2",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "be7ae3745c685e217c19e02ee32c7042f3ef67e99b484ee4e04141312379ceba",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "20c60fa6e01482642224d88a6dd1dda9c036da6ff0e22e19d74798b33839d7dc",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-fugui-qi-baiban",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "62ed8d9f005a0fdc9f9e251e0ce3546ad0e60cbe305fc2423892899a2fe30b2e",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d2fd7eb34a20b23a09c2281cf9077c00b3b61d7ea3c3943801344ef7b607d579",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-fugui-qi-lingdong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "23bb2d569834dcb69e378688876eb9041ef87910c7f515e0039577d310427c15",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e2be0f7733d9d3bea2ab8b43a6eb5a3241cb97a18c3ee0f093dded70da44c6b7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-gou-ma",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "07c375279791e9fe18f140379bb10c8a7d08768b69714f277dee17192aaad873",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6e7fd68185d46dae8216bd65a58f265e2032b273014742ae0ed10bbc0360af5b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-005259f0d7164ff8203fea7a8bc876711e8c2b7e2ad1aa43e8980d4ea5835ac5/s23-gou-ma",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "6b63f8ab7340c4c78fb93e6b0fc605b6710112aa05633be2400df8772e823e2a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5a345fb07d268f16d60c8fbe201e5022c362720e0678b3823e1f859a7a7d1655",
+   "verdict": "accepted"
+  }
+ ]
+}

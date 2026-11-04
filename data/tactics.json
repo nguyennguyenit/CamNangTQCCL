@@ -375,7 +375,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chờ bổ sung (theo nguồn)."
+          "textVi": "Chờ bổ sung."
         }
       ]
     },
@@ -562,7 +562,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Phòng ngự / Tước vũ khí / Kế cùng",
+      "conflictsVi": "Kháng cự / Tước vũ khí / Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "effectZhSource": null,
@@ -656,7 +656,7 @@
       ],
       "activationRate": 0.75,
       "conditions": [],
-      "conflictsVi": "Gánh thay / Hỗn loạn / Kiệt kế / Suy nhược / Cấm trị liệu",
+      "conflictsVi": "Gánh thay / Hỗn loạn / Kế cùng / Suy nhược / Cấm trị liệu",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "effectZhSource": null,
@@ -677,13 +677,13 @@
           "effectiveDate": "2020-01-08",
           "isCurrent": false,
           "labelVi": "Bản 2020-01-08",
-          "textVi": "Chọn 1 đơn vị địch để gánh thay bản thân 12.5%→25% sát thương (chịu ảnh hưởng của trí lực). Nếu mục tiêu có vũ lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái hỗn loạn (đòn đánh và chiến pháp chọn mục tiêu không phân biệt); nếu có trí lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái kiệt kế (không thể phát động chiến pháp chủ động); nếu không, mục tiêu rơi vào trạng thái suy nhược (không thể gây sát thương) và cấm trị liệu (không thể hồi binh lực), kéo dài 1 lượt (xác suất phát động 40%→75%) / Chú thích: Tỷ lệ phát động được tăng từ 40%→60% lên 40%→75%; sát thương gánh thay nay chịu ảnh hưởng của trí lực, còn giá trị cơ bản giảm từ 17.5%→35% xuống 12.5%→25%"
+          "textVi": "Chọn 1 đơn vị địch để gánh thay bản thân 12.5%→25% sát thương (chịu ảnh hưởng của trí lực). Nếu mục tiêu có vũ lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái hỗn loạn (đòn đánh và chiến pháp chọn mục tiêu không phân biệt); nếu có trí lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái Kế cùng (không thể phát động chiến pháp chủ động); nếu không, mục tiêu rơi vào trạng thái suy nhược (không thể gây sát thương) và cấm trị liệu (không thể hồi binh lực), kéo dài 1 lượt (xác suất phát động 40%→75%) / Chú thích: Tỷ lệ phát động được tăng từ 40%→60% lên 40%→75%; sát thương gánh thay nay chịu ảnh hưởng của trí lực, còn giá trị cơ bản giảm từ 17.5%→35% xuống 12.5%→25%"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Chọn 1 đơn vị địch để gánh thay bản thân 17.5%→35% sát thương. Nếu mục tiêu có vũ lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái hỗn loạn (đòn đánh và chiến pháp chọn mục tiêu không phân biệt); nếu có trí lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái kiệt kế (không thể phát động chiến pháp chủ động); nếu không, mục tiêu rơi vào trạng thái suy nhược (không thể gây sát thương) và cấm trị liệu (không thể hồi binh lực), kéo dài 1 lượt (xác suất phát động 40%→60%)"
+          "textVi": "Chọn 1 đơn vị địch để gánh thay bản thân 17.5%→35% sát thương. Nếu mục tiêu có vũ lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái hỗn loạn (đòn đánh và chiến pháp chọn mục tiêu không phân biệt); nếu có trí lực cao nhất trong quân địch, mục tiêu rơi vào trạng thái Kế cùng (không thể phát động chiến pháp chủ động); nếu không, mục tiêu rơi vào trạng thái suy nhược (không thể gây sát thương) và cấm trị liệu (không thể hồi binh lực), kéo dài 1 lượt (xác suất phát động 40%→60%)"
         }
       ]
     },
@@ -1397,7 +1397,7 @@
           "effectiveDate": "2023-09-13",
           "isCurrent": false,
           "labelVi": "Bản 2023-09-13",
-          "textVi": "\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% tỷ lệ hút máu từ sát thương binh khí.\n\n"
+          "textVi": "\nTrong chiến đấu, tăng 25%→50% xác suất Hội tâm và 10%→20% sát thương Hội tâm của bản thân; khi bản thân là chủ tướng, tăng cho nhóm quân đồng minh (2 người) 2.5%→5% xác suất Hội tâm, 5%→10% sát thương Hội tâm và 5%→10% hút máu binh khí.\n\n"
         },
         {
           "effectiveDate": "2020-01-08",
@@ -1409,7 +1409,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNguồn ghi: Chờ bổ sung."
+          "textVi": "\nChờ bổ sung."
         }
       ]
     },
@@ -1881,7 +1881,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 54%→108%, chịu ảnh hưởng của Trí lực), đồng thời trong 2 lần chịu sát thương kế tiếp có 25%→40% xác suất Chống Đỡ, có thể miễn nhiễm sát thương"
+          "textVi": "Trị liệu một nhóm quân ta (2 người, tỷ lệ trị liệu 54%→108%, chịu ảnh hưởng của Trí lực), đồng thời trong 2 lần chịu sát thương kế tiếp có 25%→40% xác suất Kháng cự, có thể miễn nhiễm sát thương"
         }
       ]
     },
@@ -2789,13 +2789,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNguồn chỉ có ký hiệu “→”, không có nội dung mô tả"
-        },
-        {
-          "effectiveDate": null,
-          "isCurrent": false,
-          "labelVi": "Bản gốc",
-          "textVi": "."
+          "textVi": "\n→"
         }
       ]
     },
@@ -3260,7 +3254,7 @@
           "effectiveDate": "2021-01-13",
           "isCurrent": false,
           "labelVi": "Bản 2021-01-13",
-          "textVi": "\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực). Đồng thời, có 50% xác suất tăng 13%→26% sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị đồng minh gây ra, và giảm 13%→26% sát thương binh khí và sát thương mưu lược họ phải chịu (chịu ảnh hưởng của trí lực); các hiệu ứng được xét độc lập, kéo dài 2 lượt.\n\n"
+          "textVi": "\nTrị liệu cho nhóm quân ta (2 người, tỷ lệ trị liệu 61%→122%, chịu ảnh hưởng của trí lực). Đồng thời, có 50% xác suất khiến sát thương binh khí và sát thương mưu lược do bản thân cùng 1 đơn vị đồng minh gây ra tăng, đồng thời sát thương binh khí và sát thương mưu lược phải chịu giảm 13%→26% (chịu ảnh hưởng của trí lực); các hiệu ứng được xét độc lập, kéo dài 2 lượt.\n\n"
         },
         {
           "effectiveDate": "2020-01-08",
@@ -3272,13 +3266,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung"
-        },
-        {
-          "effectiveDate": null,
-          "isCurrent": false,
-          "labelVi": "Bản gốc",
-          "textVi": "."
+          "textVi": "\nChờ bổ sung"
         }
       ]
     },
@@ -3445,13 +3433,13 @@
           "effectiveDate": "2023-02-22",
           "isCurrent": false,
           "labelVi": "Bản 2023-02-22",
-          "textVi": "Trong chiến đấu, mỗi lượt chọn 1 đơn vị địch; mọi đòn tấn công do bản thân phát động đều khóa mục tiêu đó và sát thương gây cho mục tiêu tăng 16.5%→33% (chịu ảnh hưởng của vũ lực); nếu đánh bại mục tiêu, bản thân nhận trạng thái Phá trận (khi gây sát thương sẽ bỏ qua thống lĩnh và trí lực của mục tiêu), kéo dài đến khi trận chiến kết thúc"
+          "textVi": "Trong chiến đấu, mỗi lượt chọn 1 đơn vị địch; mọi đòn tấn công do bản thân phát động đều khóa mục tiêu đó và sát thương gây cho mục tiêu tăng 16.5%→33% (chịu ảnh hưởng của vũ lực); nếu đánh bại mục tiêu, bản thân nhận trạng thái Phá trận (khi gây sát thương sẽ bỏ qua thống suất và trí lực của mục tiêu), kéo dài đến khi trận chiến kết thúc"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Trong chiến đấu, mỗi lượt chọn 1 đơn vị địch; mọi đòn tấn công do bản thân phát động đều khóa mục tiêu đó và sát thương gây cho mục tiêu tăng 16.5%→33%; nếu đánh bại mục tiêu, bản thân nhận trạng thái Phá trận (khi gây sát thương sẽ bỏ qua thống lĩnh và trí lực của mục tiêu), kéo dài đến khi trận chiến kết thúc"
+          "textVi": "Trong chiến đấu, mỗi lượt chọn 1 đơn vị địch; mọi đòn tấn công do bản thân phát động đều khóa mục tiêu đó và sát thương gây cho mục tiêu tăng 16.5%→33%; nếu đánh bại mục tiêu, bản thân nhận trạng thái Phá trận (khi gây sát thương sẽ bỏ qua thống suất và trí lực của mục tiêu), kéo dài đến khi trận chiến kết thúc"
         }
       ]
     },
@@ -3532,7 +3520,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Hưu chỉnh",
+      "conflictsVi": "Nghỉ dưỡng",
       "cooldown": null,
       "effectTypeVi": "Trị liệu",
       "effectZhSource": null,
@@ -3985,7 +3973,7 @@
       ],
       "activationRate": 0.5,
       "conditions": [],
-      "conflictsVi": "Hỗn loạn / Chống đỡ",
+      "conflictsVi": "Hỗn loạn / Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "effectZhSource": null,
@@ -4597,13 +4585,13 @@
           "effectiveDate": "2020-07-29",
           "isCurrent": false,
           "labelVi": "Bản 2020-07-29",
-          "textVi": "Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất.\n\n"
+          "textVi": "Nâng cấp Lính Thương thành Lính Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 28% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 15%→30% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Nâng cấp quân thuộc binh chủng Thương thành quân Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất."
+          "textVi": "Nâng cấp Lính Thương thành Lính Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 25% xác suất tăng 15%→30% sát thương lần này, đồng thời giảm 11%→22% sát thương do mục tiêu bị tấn công gây ra trong lần kế tiếp; nếu Tào Tháo thống lĩnh, hiệu ứng giảm sát thương gây ra chịu ảnh hưởng của Thống suất."
         }
       ]
     },
@@ -4633,7 +4621,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Quyết chiến cởi giáp"
+        "Cởi trần quyết đấu"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -4658,7 +4646,7 @@
           "effectiveDate": "2020-06-03",
           "isCurrent": false,
           "labelVi": "Bản 2020-06-03",
-          "textVi": "\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% Đảo Giáo, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%.\n\n"
+          "textVi": "\nTrong chiến đấu không thể phát động chiến pháp chủ động; trong 3 hiệp đầu trận, nhận 45%→90% Liên Kích và 5%→10% hút máu binh khí, đồng thời khiến Thống suất của bản thân và 1 đơn vị địch giảm 40%.\n\n"
         },
         {
           "effectiveDate": null,
@@ -4728,13 +4716,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNguồn ghi “Chờ bổ sung”, chưa cung cấp nội dung"
-        },
-        {
-          "effectiveDate": null,
-          "isCurrent": false,
-          "labelVi": "Bản gốc",
-          "textVi": "."
+          "textVi": "\nChờ bổ sung"
         }
       ]
     },
@@ -5479,7 +5461,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Lã Bố"
+        "Lữ Bố"
       ],
       "activationRate": 0.3,
       "conditions": [],
@@ -5733,8 +5715,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Phạt. Lưu ý: Giá trị nguồn được chọn ghi “Phạt”, nhưng trường võ tướng nguồn trong cùng bản ghi lại ghi Tôn Quyền. Danh tính của “Phạt” chưa được làm rõ trong nguồn",
-        "chưa xác định trường nào có thẩm quyền để giải quyết mâu thuẫn này."
+        "Phạt"
       ],
       "activationRate": 0.45,
       "conditions": [],
@@ -5928,7 +5909,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Tôn Sách, Văn Xú"
+        "Tôn Sách, Văn Sửu"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -6111,7 +6092,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Cẩm Phàm Quần Tập"
+        "Cẩm Phàm Tuần Tập"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -6136,7 +6117,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNâng cấp cung binh thành Cẩm Phàm Quân với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh."
+          "textVi": "\nNâng cấp cung binh thành Quân Cẩm Phàm với khí thế át nghìn quân: khi bộ đội tấn công thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan Tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Võ lực), kéo dài 2 hiệp; nếu mục tiêu đã Tan Tác thì gây một đòn tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội Tâm cho quân đồng minh."
         }
       ]
     },
@@ -6462,7 +6443,7 @@
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [
-        "Trương Bao",
+        "Trương Bào",
         "Quan Hưng"
       ],
       "activationRate": 1,
@@ -6514,7 +6495,7 @@
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [
-        "Lữ Linh Khởi"
+        "Lữ Linh Ỷ"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -6561,7 +6542,7 @@
     "lookup": {
       "acquiredFromVi": [
         "Tả Từ",
-        "Vu Cát"
+        "Vũ Cát"
       ],
       "activationRate": 0.5,
       "conditions": [],
@@ -6820,7 +6801,7 @@
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [
-        "Lã Bố"
+        "Lữ Bố"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -7224,7 +7205,7 @@
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [
-        "Trương Bao"
+        "Trương Bào"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -7406,13 +7387,13 @@
           "effectiveDate": "2020-02-19",
           "isCurrent": false,
           "labelVi": "Bản 2020-02-19",
-          "textVi": "\nChú thích: Tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Mạc Trắc”.\n\n"
+          "textVi": "\nChú thích: Tên chiến pháp được đổi từ “Doanh Mưu Loạn Vũ” thành “Thần Cơ Khó Đoán”.\n\n"
         },
         {
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "\nNguồn ghi: “Chờ bổ sung”."
+          "textVi": "\nChờ bổ sung."
         }
       ]
     },
@@ -7561,7 +7542,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Gây sát thương mưu lược lên quân địch đang có trạng thái bất lợi (tỷ lệ sát thương 48%→96%, chịu ảnh hưởng của trí lực), sau đó gây trạng thái cấm trị và phản loạn lên nhóm quân địch (2 người) (tỷ lệ sát thương 37%→74%, chịu ảnh hưởng bởi chỉ số cao hơn giữa vũ lực và trí lực, bỏ qua phòng ngự), kéo dài 2 lượt"
+          "textVi": "Gây sát thương mưu lược lên quân địch đang có trạng thái bất lợi (tỷ lệ sát thương 48%→96%, chịu ảnh hưởng của trí lực), sau đó gây trạng thái cấm trị liệu và phản loạn lên nhóm quân địch (2 người) (tỷ lệ sát thương 37%→74%, chịu ảnh hưởng bởi chỉ số cao hơn giữa vũ lực và trí lực, bỏ qua phòng ngự), kéo dài 2 lượt"
         }
       ]
     },
@@ -8571,7 +8552,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Viện hộ / Hưu dưỡng",
+      "conflictsVi": "Viện hộ / Nghỉ dưỡng",
       "cooldown": null,
       "effectTypeVi": "Khống chế",
       "effectZhSource": null,
@@ -8752,7 +8733,7 @@
     "lookup": {
       "acquiredFromVi": [
         "Hạ Hầu Đôn",
-        "Lữ Linh Khỉ"
+        "Lữ Linh Ỷ"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -9387,7 +9368,7 @@
       ],
       "activationRate": 0.35,
       "conditions": [],
-      "conflictsVi": "Cạn kế / Tước vũ khí",
+      "conflictsVi": "Kế cùng / Tước vũ khí",
       "cooldown": null,
       "effectTypeVi": "Binh đao nhóm",
       "effectZhSource": null,
@@ -9975,7 +9956,7 @@
       ],
       "activationRate": 0.35,
       "conditions": [],
-      "conflictsVi": "Thiêu Đốt / Trúng Độc / Hội Tẩu",
+      "conflictsVi": "Thiêu Đốt / Trúng Độc / Tan tác",
       "cooldown": null,
       "effectTypeVi": "Mưu Lược nhóm",
       "effectZhSource": null,
@@ -10041,7 +10022,7 @@
           "effectiveDate": null,
           "isCurrent": false,
           "labelVi": "Bản gốc",
-          "textVi": "Ở lượt 2 và 4 của trận đấu, tấn công toàn bộ quân địch bằng binh khí (tỷ lệ sát thương 52%→104%); nếu mục tiêu đang chịu trạng thái tước vũ khí, khiến thống lĩnh của mục tiêu giảm thêm 25%→50%, kéo dài 2 lượt; khi bản thân là chủ tướng, hiệu ứng giảm thống lĩnh còn có tác dụng thêm với mục tiêu đang chịu trạng thái kế cùng."
+          "textVi": "Ở lượt 2 và 4 của trận đấu, tấn công toàn bộ quân địch bằng binh khí (tỷ lệ sát thương 52%→104%); nếu mục tiêu đang chịu trạng thái tước vũ khí, khiến thống suất của mục tiêu giảm thêm 25%→50%, kéo dài 2 lượt; khi bản thân là chủ tướng, hiệu ứng giảm thống suất còn có tác dụng thêm với mục tiêu đang chịu trạng thái kế cùng."
         }
       ]
     },
@@ -11281,7 +11262,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "SP Lư Thực"
+        "SP Lô Thực"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -12071,7 +12052,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Quách Dĩ"
+        "Quách Tỷ"
       ],
       "activationRate": 0.45,
       "conditions": [],
@@ -12580,7 +12561,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Vu Cát cầu mưa"
+        "Vũ Cát cầu mưa"
       ],
       "activationRate": 0.4,
       "conditions": [],
@@ -13929,7 +13910,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Kháng cự. Lưu ý: Nguồn chưa có văn bản riêng xác nhận mục xung đột này hoặc xác nhận “Kháng cự” có đồng nghĩa với “Chống đỡ” trong mô tả hiệu ứng hay không.",
+      "conflictsVi": "Kháng cự",
       "cooldown": null,
       "effectTypeVi": "Tăng ích",
       "effectZhSource": null,
@@ -14947,7 +14928,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Trần Vũ"
+        "Trần Võ"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -15132,7 +15113,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Lã Phạm"
+        "Lữ Phạm"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -16419,7 +16400,7 @@
     ],
     "chinese": "藏器待時",
     "effect": "戰鬥前兩回合，自身受到普通攻擊傷害降低10%→20%（受統帥影響）；第三回合起，自身自帶主動戰法發動率提升4%→8%（受武力影響）且造成傷害時有15%→30%機率（受武力影響）附帶10%→20%破陣（受武力影響）",
-    "effectViet": "Trong 2 lượt đầu của trận đấu, sát thương từ đòn đánh thường mà bản thân phải chịu giảm 10%→20% (chịu ảnh hưởng của thống soái). Từ lượt 3, tỷ lệ phát động chiến pháp chủ động vốn có của bản thân tăng 4%→8% (chịu ảnh hưởng của vũ lực), đồng thời khi gây sát thương có 15%→30% xác suất (chịu ảnh hưởng của vũ lực) kèm theo 10%→20% phá trận (chịu ảnh hưởng của vũ lực).",
+    "effectViet": "Trong 2 lượt đầu của trận đấu, sát thương từ đòn đánh thường mà bản thân phải chịu giảm 10%→20% (chịu ảnh hưởng của thống suất). Từ lượt 3, tỷ lệ phát động chiến pháp chủ động vốn có của bản thân tăng 4%→8% (chịu ảnh hưởng của vũ lực), đồng thời khi gây sát thương có 15%→30% xác suất (chịu ảnh hưởng của vũ lực) kèm theo 10%→20% phá trận (chịu ảnh hưởng của vũ lực).",
     "hanViet": "Tàng Khí Đãi Thì",
     "iconUrl": null,
     "id": "tactic:tang-khi-dai-thi",
@@ -17304,7 +17285,7 @@
     ],
     "chinese": "承天靖世",
     "effect": "戰鬥中，每回合開始有6%→12%機率（受統帥影響）威懾敵軍全體（使目標一個戰法失效，除陣法外），持續一回合；每回合結束時對敵軍（2～3人）造成謀略傷害（傷害率5%→10%+5%→10%*威懾次數，受統帥影響，無視防禦）；我軍收到高於最大兵力6%的傷害時，有6%→12%概率（受統帥影響）威懾隨機敵軍；自身為主將時，戰鬥前三回合我軍受到謀略傷害有17.5%→35%機率可被統帥屬性降低。",
-    "effectViet": "Trong chiến đấu, đầu mỗi lượt có 6%→12% xác suất (chịu ảnh hưởng của thống soái) uy hiếp toàn thể quân địch (khiến một chiến pháp của mục tiêu mất hiệu lực, ngoại trừ trận pháp), duy trì 1 lượt; cuối mỗi lượt gây sát thương mưu lược lên quân địch (2～3 người) (tỷ lệ sát thương 5%→10% + 5%→10% × số lần uy hiếp, chịu ảnh hưởng của thống soái, bỏ qua phòng thủ). Khi quân ta chịu sát thương cao hơn 6% binh lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng của thống soái) uy hiếp một quân địch ngẫu nhiên. Khi bản thân là chủ tướng, trong 3 lượt đầu của trận đấu, sát thương mưu lược quân ta phải chịu có 17.5%→35% xác suất được giảm bởi thuộc tính thống soái.",
+    "effectViet": "Trong chiến đấu, đầu mỗi lượt có 6%→12% xác suất (chịu ảnh hưởng của thống suất) uy hiếp toàn thể quân địch (khiến một chiến pháp của mục tiêu mất hiệu lực, ngoại trừ trận pháp), duy trì 1 lượt; cuối mỗi lượt gây sát thương mưu lược lên quân địch (2～3 người) (tỷ lệ sát thương 5%→10% + 5%→10% × số lần uy hiếp, chịu ảnh hưởng của thống suất, bỏ qua phòng thủ). Khi quân ta chịu sát thương cao hơn 6% binh lực tối đa, có 6%→12% xác suất (chịu ảnh hưởng của thống suất) uy hiếp một quân địch ngẫu nhiên. Khi bản thân là chủ tướng, trong 3 lượt đầu của trận đấu, sát thương mưu lược quân ta phải chịu có 17.5%→35% xác suất được giảm bởi thuộc tính thống suất.",
     "hanViet": "Thừa Thiên Tĩnh Thế",
     "iconUrl": null,
     "id": "tactic:thua-thien-tinh-the",
@@ -17320,7 +17301,7 @@
       ],
       "conflictsVi": "Không",
       "cooldown": null,
-      "effectTypeVi": "Bất lợi + mưu lược quần thể",
+      "effectTypeVi": "Giảm ích + mưu lược quần thể",
       "effectZhSource": null,
       "exchangeConditionVi": null,
       "formerIds": [],
@@ -18335,7 +18316,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Lý Thôi"
+        "Lý Quyết"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -18538,7 +18519,7 @@
       ],
       "activationRate": 1,
       "conditions": [],
-      "conflictsVi": "Tước vũ khí / Kỹ cùng",
+      "conflictsVi": "Tước vũ khí / Kế cùng",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
       "effectZhSource": null,
@@ -18585,7 +18566,7 @@
       ],
       "activationRate": 0.6,
       "conditions": [],
-      "conflictsVi": "Bị Tập Kích / Phá Hoại / Cấm Trị Liệu / Kiệt Kế / Tước Vũ Khí",
+      "conflictsVi": "Bị Tập Kích / Phá Hoại / Cấm Trị Liệu / Kế cùng / Tước Vũ Khí",
       "cooldown": null,
       "effectTypeVi": "Giảm ích",
       "effectZhSource": null,

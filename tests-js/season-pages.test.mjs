@@ -58,8 +58,11 @@ test("3. số đội mỗi trang bằng số dòng index.json của mùa (không
     const expected = rows.filter((row) => row.sourceSeasonId === page.sourceSeasonId).length;
     assert.equal(page.count, expected, page.slug);
   }
-  const advertised = pages.filter((page) => registry.seasonOptions.find((item) => item.sourceSeasonId === page.sourceSeasonId).advertisedCountRaw !== page.count);
-  assert.ok(advertised.length >= 1, "pk-s19 quảng cáo 88 nhưng có 84: trang phải theo dòng thật");
+  // Thế hệ 2026-11 không còn mùa nào quảng cáo sai số đội, nên cho một mùa quảng cáo lệch (bản sao registry): trang vẫn theo dòng thật.
+  const target = pages.find((page) => page.sourceSeasonId === "pk-s19");
+  const skewed = { ...registry, seasonOptions: registry.seasonOptions.map((item) => (item.sourceSeasonId === "pk-s19" ? { ...item, advertisedCountRaw: target.count + 4 } : item)) };
+  const skewedPage = seasonPageCatalog(skewed, catalog).pages.find((page) => page.sourceSeasonId === "pk-s19");
+  assert.equal(skewedPage.count, target.count);
 });
 
 test("4. không slug mùa nào trùng slug đội", async () => {

@@ -1,0 +1,207 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r9-20",
+ "reviewerSession": "reviewer:DcReviewI20-2026-11-04",
+ "items": [
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-taoyuan-shield-huijun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "00c7aecf0f2b1eb342e9bd6b3474a55a35f0eadbeae4755d68ae1ed73507f795",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e5911de9692cce58ce0cfc07c32b89d90bdf3c8961cb59c9e231f81fc4d71974",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-taoyuan-shield-huijun",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "23ff9a87bb2a95918945142a39c45b6c78a38cd8209945380c3763aa4db0225c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "159dbeaf93418d99ab8f208b9e67a88f113b8bb18fe4cb9dd2844efa0190b0b6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-taoyuan-shield-huijun",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "35d45299151dbbaaa648fea4a7d7076cd429a83dff09aed5b9d5d229eb768a05",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "eed5d12351d9aa0b396ef24dcdf229c2bcf7ad7f2bab50a50420e9680813c84a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-taoyuan-shield-huijun",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "cdad7bc96dae85096cc93ed011825edf433c41567fae025a2c0406fc021306b4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0a69d7ead7507539988945bbf996b8e50cf607b36a95358b6ddb036bc53dca82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wumou-bow-baimaobing",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5785c5f176ce3d667f835dc43d3e59a1d0c17d75dfce50db0ddd31fb920a465d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f943df009d19d4789828588265d96f5792a901fd922d6a10c2cc13408b7932ef",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wumou-bow-baimaobing",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "efe9aadf8d69cbc14d5254ab21496001dafc3811e925bb22161f51e253f11556",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "de8e397264ed96f921adfa1ebee7b40efe570ee56c333140eed4ccfe4998cc45",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wumou-bow-baimaobing",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "4063d833b096e1d01465b1e222be65d3e9ddae7694b68527c13fc0dd658f2cc5",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bb68493b3b23e5f4c4cf42c7e4297b6dd7ee1baacd359b9586528377dca4d299",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wumou-bow-baimaobing",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "f5096dbd8c300081727a286c8988008072e5cac0a97f560581516ff17db5c942",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b2d7f9942b44652c08895c45694a9c53b57d2ed48816e132cbd43cb47a2287d7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wunv-cavalry-hubaoqi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "67fe3c61ff11c29fef1e0d05d9758bc1502c586c7cb8575af62eebfdbce1621c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7ec222aa652bca2aac12629a93da1f5691482debc299bc5a885dc3cf0bc10fc3",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wunv-cavalry-hubaoqi",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "3589b074d657559f073dff2351958d83e6ac7dd95cd3db27b679efcd8945f4cd",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ebace35969865b525d9f42bf1c79ab36d2197b82f2b1706b60ae7c4349120a6a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wunv-cavalry-hubaoqi",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "fd300a985b540bee79a76cc298d48a3e11dd330b4aba43db5837b858298ebaf4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0e57bcd9ad800c30babff2bd0fe10506f6c4ff9bfdda66e6ac3e3e0b561134b9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-wunv-cavalry-hubaoqi",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "d3ae352f77a71d93975558fce61787fcbe7bd1acae70e7a44285b2e9aee39218",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "f3a0cf636d04dba959faab88be1e168ebcf767c459cee52125bd0ae6c9707c76",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-xuyou-spmachao-cavalry",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ce3708804281e16933e5e0eab01790da12522e0bb09a11108418b4e4a03b13e9",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e8e9378be11b5d9c84789410b811311eec6eded7b1f89f5ea9fcdb52c4203d77",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-xuyou-spmachao-cavalry",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "3e918b586837335a2cd88a6af351dcadde15c21a8db5465e6aa7913315ffc8cf",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e23b1f8c11639b88b22141ae06b16f427a5867e09cf3cd15e6b8e9d800fc76bd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-xuyou-spmachao-cavalry",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "ebb33fec27c2502b8bf144aaa12de3ec50a7652af2241e373d35109ea69112e7",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "519a6e72829ab2cb044ab935b225f688215c00a43164afabcd15f90dad1bff6e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-xuyou-spmachao-cavalry",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "d26ef2d702c36b36f348198f8bb4b56ebfe54c130c062926d3dc737fc76d9aeb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ecc0d680f811cb4fff7d53d88ee3db1ecb8fa8d5b0e1de0bbbed10a3fd916c11",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangfei-nuke-bow",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "feb24c44745f7e225b48edb122450714bb33949d9964d645ebbc3d3666f7562a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bb764e2b509e20f62ccc15437ab67776f120893f561472b0838f3fe84a0b459c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangfei-nuke-bow",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "03fe1b156b57cfaf42ce257022cdd94e32b76e4a6a597147af16599a0fb2393a",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2dab454f7c58d2cbe2178af5f05bb0365dd70c7e3a72a813b9066bc4d6810323",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangfei-nuke-bow",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "aa6909c45dcabc365da1dbcc06c13a385109df9897cdfe68a016780ff96fdfd8",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "7174ae34a0c37428e0f755108fc3de9e5e05e579597fd043972463301a47da48",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangfei-nuke-bow",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "26f474f712da594a0ea1b190817849b61e876f164bfc05c1dbea8253cbf1e8ef",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "6010d175a10bb49928606ff2a7ea2c04ac17edc911b9ea812baee6d8e3fa5777",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangjiao-yuji-cavalry",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4866115a1d444c66c02e558ad1f5537ce5b41d2c1a41e5b910f0e280e58f328d",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "fe7d4d0f3b4264907b9373756ad86148053fcdd74241de665432319ca16fb4db",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangjiao-yuji-cavalry",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "9f9ecb15cfffec0f7a60bf0fed7fcbcf33ff6ac8e8d81a47728052f349b784b3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "a3f0c51105879650ccd99f837b8f5113fc89691da7a871b8da2a38a82135d49d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangjiao-yuji-cavalry",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "28af3b29c943e28088f6e0b23c91069451c0c5fbd9d8c5acf8cf8133b9747373",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "13ac7dc9ae8f4592bd1a3fb0a064697df0e1f760c56655dc4cc8cb57ca5fdc88",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-zhangjiao-yuji-cavalry",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "ca7719c10d4135c64a1ba1b54a7f133418c3563c4f3f3066d856a9943c68bec3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b74bacff92cabbaf6f02b6240c22852f69c1d6256500e3ce0aa2834b7506f790",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-c450a7e2cc263bca9eca5df1e7a0c4fec94f0f0f6ca6f33e952b8e0b758775b4/s16-bamen-shu-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "96871ef6d3d2a5cf8ea47930ac82743486c283bc93c08cd73d55d95ce51a7364",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "4e34de25408530886c722831f2685de19015699fd66caa7f01250e51cb3688c0",
+   "verdict": "accepted"
+  }
+ ]
+}

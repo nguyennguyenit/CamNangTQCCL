@@ -59,9 +59,9 @@ class SiteLocalizationTest(unittest.TestCase):
         self.assertEqual(report["unknownLocations"], 0)
         self.assertEqual(report["unknownLocationDetails"], [])
         self.assertEqual(report["duplicateLocations"], 0)
-        self.assertEqual(report["capturedSourcePack"]["records"], 1366)
-        self.assertEqual(report["capturedSourcePack"]["noteBlocks"], 1967)
-        self.assertEqual(report["translation"]["recommendedObligations"], 1967)
+        self.assertEqual(report["capturedSourcePack"]["records"], 1640)
+        self.assertEqual(report["capturedSourcePack"]["noteBlocks"], 2590)
+        self.assertEqual(report["translation"]["recommendedObligations"], 2590)
         self.assertEqual(report["translation"]["lookupReviewObligations"], 3597)
         self.assertGreater(report["translation"]["expectedObligations"], 5470)
         self.assertEqual(report["translation"]["missing"], 0)
@@ -69,7 +69,7 @@ class SiteLocalizationTest(unittest.TestCase):
         site_keys = {(item["entityId"], item["fieldPath"]) for item in obligations}
         lookup = json.loads((ROOT / "pipeline/lookup-translations.json").read_bytes())
         lookup_keys = {(item["entityId"], item["fieldPath"]) for item in lookup["entries"]}
-        self.assertEqual(len(site_keys), 2071)
+        self.assertEqual(len(site_keys), 2694)
         self.assertEqual(len(lookup_keys), 3597)
         self.assertTrue(site_keys.isdisjoint(lookup_keys))
         self.assertEqual(len(site_keys | lookup_keys), report["translation"]["expectedObligations"])
@@ -235,8 +235,8 @@ class SiteLocalizationTest(unittest.TestCase):
             }))
             report = check(root, policy=self.policy)
             self.assertEqual(report["exitCode"], 1)
-            self.assertEqual(report["coverage"]["expected"], 5668)
-            self.assertEqual(report["coverage"]["translated"], 5564)
+            self.assertEqual(report["coverage"]["expected"], 6291)
+            self.assertEqual(report["coverage"]["translated"], 6187)
             self.assertEqual(report["coverage"]["missing"], 104)
             self.assertTrue(any("coverage does not match" in item["reason"] for item in report["problems"]))
 
