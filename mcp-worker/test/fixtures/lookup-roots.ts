@@ -126,7 +126,7 @@ export function withLookupIdentity(dictionaries: {
       conditions: [], missingFields: [], revisions: [], variant: "base",
       selfTacticId: tactics[0]?.id ?? null, inheritTacticId: tactics[1]?.id ?? null, advisorId,
       growth: { luc: null, tri: null, thong: null, toc: null, chinh: null, mi: null },
-      otherAptitudes: { infantry: null, navy: null }, categoryVi: null, exclusiveTitleVi: null,
+      otherAptitudes: { infantry: null, navy: null }, categoryVi: null, exclusiveTitleVi: null, exclusiveTitleZh: null,
       civil: { roleVi: null, bonusVi: null, specialtyVi: null, tacticBonusVi: null },
       civilInnatePoints: null, collectibleBonusVi: null, redRulesVi: null,
       usageVi: null, usageZh: null, cardPacks: [],
@@ -148,22 +148,24 @@ export function withLookupIdentity(dictionaries: {
       advisors: [{
         ...common(advisorId, "Cố Vấn A"),
         elementVi: null, effectVi: null, usageVi: null, tacticPoints: null,
+        nameZh: null, effectZh: null, usageZh: null, zhSource: null,
         heroIds: heroes.map((hero) => hero.id),
       }],
       troopMods: [{
         ...common("troop-mod:ky-binh", "Kỵ Binh"),
         effectVi: null, appliesToVi: null, suggestedBuildVi: null, troopLimitVi: [], revisions: [],
+        effectZh: null, appliesToZh: null, suggestedBuildZh: null, zhSource: null,
         options: [{
           id: "troop-option:ky-binh:tang-cong", tierVi: null, nameVi: "Tăng công",
-          descriptionVi: null, convertsToVi: null,
+          descriptionVi: null, convertsToVi: null, nameZh: null, descriptionZh: null, zhSource: null,
         }],
       }],
       buildings: [{
         ...common("building:doanh-trai", "Doanh Trại"),
-        summaryVi: null, mainCityOnly: false, maxLevel: 1,
+        summaryVi: null, summaryZh: null, zhSource: null, mainCityOnly: false, maxLevel: 1,
         levels: [{
           id: "building-level:doanh-trai:1", level: 1,
-          costs: { wood: 100, iron: null, stone: null }, durationVi: "5 phút", effectVi: null,
+          costs: { wood: 100, iron: null, stone: null }, durationVi: "5 phút", effectVi: null, effectZh: null, durationZh: null,
         }],
       }],
     },

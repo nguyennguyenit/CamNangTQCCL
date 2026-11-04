@@ -40,7 +40,7 @@ Lượt đọc trực tiếp: trang `recommended?season=pk-s27&category=交戰`,
 
 ## Conclusion
 
-Đội chuẩn đã cập nhật toàn kho theo SGSDeck ngày 2026-11-03 (generation `43a4bb32…`, 1640 cấu hình). Mốc SGSDeck PK-S27 đã xác minh (bản TW); chưa có mốc SGSDeck đã xác minh cho bản VN của kịch bản.
+Đội chuẩn đã cập nhật toàn kho theo SGSDeck ngày 2026-11-03 (generation `a25cd18b…`, 1640 cấu hình). Mốc SGSDeck PK-S27 đã xác minh (bản TW); chưa có mốc SGSDeck đã xác minh cho bản VN của kịch bản.
 
 ## Limits and Unresolved Questions
 

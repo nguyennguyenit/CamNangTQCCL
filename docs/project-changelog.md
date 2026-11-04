@@ -3,11 +3,11 @@
 ## 2026-11-03 (Đội chuẩn: refresh SGSDeck, PK-S27 Hán Diễm Trường Minh, 開荒 theo cấp, duyệt lại toàn bộ bản dịch)
 
 ### Changed
-- Crawl lại toàn bộ SGSDeck Recommended (inventory `sha256:cae5742a…`, 1721 trang). Generation Đội chuẩn `43a4bb32…`: 1640 cấu hình (trước 1366). PK-S27 Hán Diễm Trường Minh 115 交戰 + 13 開荒 (trước 76); PK-S28 177 + 15 (trước 93, nguồn gỡ 49 và thêm 133); PK-S20 119 (trước chưa thu thập; nguồn đổi tên 奇兵八陣 → 奇門八陣, hiển thị Kỳ Môn Bát Trận); PK-S26 thêm 開荒 dạng mới; các mùa cũ có chỉnh nội dung (PK-S24, PK-S26, PK-S19 +4, OG). Mùa mặc định vẫn OG Binh Diễn Xuân Thu theo SGSDeck.
+- Crawl lại toàn bộ SGSDeck Recommended (inventory `sha256:cae5742a…`, 1721 trang). Generation Đội chuẩn `a25cd18b…`: 1640 cấu hình (trước 1366). PK-S27 Hán Diễm Trường Minh 115 交戰 + 13 開荒 (trước 76); PK-S28 177 + 15 (trước 93, nguồn gỡ 49 và thêm 133); PK-S20 119 (trước chưa thu thập; nguồn đổi tên 奇兵八陣 → 奇門八陣, hiển thị Kỳ Môn Bát Trận); PK-S26 thêm 開荒 dạng mới; các mùa cũ có chỉnh nội dung (PK-S24, PK-S26, PK-S19 +4, OG). Mùa mặc định vẫn OG Binh Diễn Xuân Thu theo SGSDeck.
 - `pipeline/sgsdeck_recommended.py` theo markup mới: tướng ở `<ul aria-label="陣容">`, phe/điểm lấy từ trang chi tiết (`陣營：`, `來源評分`), thứ tự tướng danh sách/chi tiết luôn đối chiếu, nhãn hàng thẻ tướng là danh sách đóng (nhãn lạ làm trang nguồn bị chặn; `特技`, `替代` biết nhưng chưa đọc). Trước đó parser cũ trả phe/điểm `null` và bỏ qua đối chiếu tướng mà không báo.
 - 開荒 theo cấp 「20 級前 / 20 級後」 (31 cấu hình, 93 tướng): trường tuỳ chọn `tacticBeforeLevel20Raw` + `tacticBeforeLevel20Vi`/`Kind`; trang chi tiết hiện dòng "Trước cấp 20" (zh `20级前`), thẻ/bảng/dedup/đối chiếu kho không đổi.
 - Glossary: 164 tên đội mới, 3 tướng, 22 chiến pháp (10 tên chưa có trong từ điển dùng Hán-Việt theo quyết định người dùng: Thủ Vọng Tương Trợ, Giám Thời Thẩm Thế, Hành Ách Trận, Bản Thuẫn Hổ Thuẫn và 6 tên viết tắt phiên âm nguyên chữ), 60 mẫu cộng điểm; nhãn phe `漢` → Hán (bộ lọc Phe trước hiện "Nội dung tiếng Việt chưa sẵn sàng"); `桃園結義` → `kind: "tactic"`; binh thư `順天應時` → Thuận Thiên Thuận Tời, `以退為進` → Dĩ Thoái Vi Tiến (không còn trỏ Dĩ Trực Báo Oán), cập nhật tên Hán `以治擊亂`/`顺天应时`/`出奇制胜`, thêm Chia Lời, Tinh Thần Sảng Khoái.
-- Bản dịch: 745 khối ghi chú mới; duyệt độc lập lại toàn bộ 6291 vị trí (2694 site + 3597 Tra cứu) theo glossary mới (`sha256:b3fc9a85…`) qua các vòng 8–10, receipt 101 batch `doi-chuan-261103-*` thay toàn bộ receipt cũ (output reviewer cũ không còn batch nào trỏ tới đã xoá). Quy tắc tên/thuật ngữ thống nhất ghi ở `plans/reports/translation-review-261103-doi-chuan-resolutions.md`. Tra cứu: sửa chữ ledger (tên tướng, Kế cùng, Kháng cự, Suy nhược, chức quan, danh hiệu trùng tên chiến pháp viết hoa như `tactics.json`…; trường `effectTypeVi`/`exchangeConditionVi`/`targetViet` và binh chủng theo đúng chữ client Global), promote `lookup-261104-doi-chuan-review2` (`lookup:6366174a…`). Khai hoang: 碰瓷 → "cảm tử" theo identity map. Policy `site-vi-261103-doi-chuan-sgsdeck`.
+- Bản dịch: 745 khối ghi chú mới; duyệt độc lập lại toàn bộ 6291 vị trí (2694 site + 3597 Tra cứu) theo glossary mới (`sha256:b3fc9a85…`) qua các vòng 8–12, receipt 114 batch `doi-chuan-261103-*` thay toàn bộ receipt cũ (output reviewer cũ không còn batch nào trỏ tới đã xoá). Quy tắc tên/thuật ngữ thống nhất ghi ở `plans/reports/translation-review-261103-doi-chuan-resolutions.md`. Tra cứu: sửa chữ ledger (tên tướng, Kế cùng, Kháng cự, Suy nhược, chức quan, danh hiệu trùng tên chiến pháp viết hoa như `tactics.json`…; trường `effectTypeVi`/`exchangeConditionVi`/`targetViet` và binh chủng theo đúng chữ client Global), promote `lookup-261104-doi-chuan-merge-main2` (`lookup:0c5bfb46…`, dựng trên client Global 24.535 catalog + zh của `main`; `nameVi` lựa chọn cải tạo trong ledger giữ tên Hán-Việt nguồn vì builder dùng nó để giữ mã lựa chọn, tên hiển thị lấy từ client). Khai hoang: 碰瓷 → "cảm tử" theo identity map. Policy `site-vi-261103-doi-chuan-sgsdeck`.
 - `pipeline.team_route_handles --rebind`: chuyển ledger sang generation kế tiếp, giữ handle của 1320 hàng còn lại (kể cả 36 hàng PK-S28 nguồn đổi tên), cấp handle cho 320 hàng mới, bỏ 46 hàng PK-S28 nguồn đã gỡ (các URL đó trả 404).
 
 ### Chưa làm
@@ -19,12 +19,49 @@
 - Fanpage chính thức "Tam Quốc Chí - Chiến Lược" (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026) công bố Hà Thị (phe Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C), Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu và Chiến Pháp Sự Kiện loại Chỉ Huy Kết Nghĩa Vườn Đào. Quyết định 2026-10-15/18 (bỏ Hà Thị, hai chiến pháp của nàng và `tactic:dao-vien-ket-nghia` vì "không có ở client Việt Nam" / "là duyên phận") bị thay thế.
 - `pipeline/lookup-client-heroes.json`: bỏ `hero:ha-thi` khỏi `retired`; `overrides` đặt faction Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C (cost 4 trùng giá trị build nên không ghi). Chỉ số/tăng trưởng giữ của SGSDeck; chưa có chân dung (`iconUrl` null).
 - `pipeline/lookup-client-tactics.json`: bỏ ba mã khỏi `retired`; thêm `tactics{}` với chữ Việt nguyên văn từ ảnh fanpage (`quality: null` giữ S của SGSDeck, `troopFit` đủ 5 binh chủng), `tacticNotes` ghi nguồn fanpage VN và rằng chưa có ở client 24.526, `zhEffects` kind `translation`. `tactic:dao-vien-ket-nghia` đổi tên hiển thị thành Kết Nghĩa Vườn Đào (loại COMMAND, tên cũ Đào Viên Kết Nghĩa thành alias).
-- Promotion `lookup-261103-ha-thi-rebase` (generation `lookup:b00f2d16cadd`); số liệu: 252 tướng, 412 chiến pháp (trước 251/409); ledger slug cấp lại đúng slug đã dành (`ha-thi`, `duy-noi-thien-quyen`, `tuyet-ke-chiet-muu`, `dao-vien-ket-nghia`), 942 mã, +4 route Tra cứu mỗi ngôn ngữ.
+- Promotion `lookup-ha-thi-rebase-261104` (generation `lookup:637b859d3f17`, sau khi rebase lên client Global 24.535 catalog + zh): 252 tướng, 412 chiến pháp (trước 251/409); ledger slug cấp lại đúng slug đã dành (`ha-thi`, `duy-noi-thien-quyen`, `tuyet-ke-chiet-muu`, `dao-vien-ket-nghia`), 962 mã, +4 route Tra cứu mỗi ngôn ngữ. Recommended publish lại (generation `000e37a48af8`), re-pin `pipeline/team-route-handles.json`.
 - `src/lib/lookup-item-pages.ts` (`snippet`): đoạn mô tả meta ngắn kết thúc bằng dấu hai chấm giờ cũng được thay bằng "…" (hiệu ứng Kết Nghĩa Vườn Đào mở đầu bằng "…các hiệu quả sau:"); re-pin hash trong `pipeline/site-localization-policy.json`.
-- Test: `tests/test_build_unified_lookup.py` (số tướng có gói thẻ 126, test tướng bị bỏ dùng `retire_heroes`), `tests-js/astro-dist-contract.test.mjs` (+4 route Tra cứu mỗi ngôn ngữ), `tests-js/roster-picker.test.mjs` (chiến pháp chủ động kế thừa phẩm S: 36 → 37 vì Tuyệt Kế Chiết Mưu).
+- Test: `tests/test_build_unified_lookup.py` (số tướng có gói thẻ 126, test tướng bị bỏ dùng `retire_heroes`), `tests-js/astro-dist-contract.test.mjs` (+4 route Tra cứu mỗi ngôn ngữ), `tests-js/roster-picker.test.mjs` và `tests-e2e/beta-tools.spec.mjs` (chiến pháp chủ động kế thừa phẩm S: 36 → 37 vì Tuyệt Kế Chiết Mưu).
+- `playwright.config.mjs`: `webServer.timeout` 30 s → 120 s. Lệnh webServer chạy lại `astro build` (~28,5 s trên runner) trước preview nên gate E2E hết giờ trước khi chạy test (fail trên `main` từ 2026-11-02).
 
 ### Chưa làm
 - `桃園結義` trong `pipeline/recommended-identity-map.json` vẫn `kind: "bond"`: file này là nguồn glossary của gate bản dịch, đổi nó làm stale `glossaryDigest` của cả 5668 receipt review độc lập. Người dùng chọn để nguyên tới lần review lại toàn bộ kế tiếp; 5 đội PK-S27 vẫn hiện dòng Duyên phận.
+
+## 2026-10-26 (SP Tào Tháo theo thông báo Global)
+
+### Changed
+- SP Tào Tháo lấy dữ liệu từ ảnh thông báo "Võ Tướng Mới & Chiến Pháp" của bản Global: phe **Hán** (trước là Quần theo SGSDeck TW), COST 7 và thích tính Kỵ S/Khiên A/Cung S/Thương A/Xe B (đã khớp).
+- Thừa Thiên Tĩnh Thế (Chỉ huy) và Tàng Khí Đợi Thời (Bị động, chuyên Khiên/Xe; tên cũ Tàng Khí Đãi Thì) dùng chữ hiệu ứng Global thay bản dịch từ nguồn Trung; bỏ ghi chú "Chưa có ở client Global". Phẩm, Mục tiêu và Buff không có trong thông báo nên giữ nguyên: mục `tactics{}` của client nay nhận `targetVi`/`effectTypeVi` = `null`.
+
+### Added
+- Phe Hán trên giao diện: màu `--f-han` (sáng/tối) cho badge, chip, thẻ tướng Tra cứu và ấn phe Soi đội; nhãn zh 汉; bộ lọc phe ở công cụ chọn tướng (roster).
+- Chân dung SP Tào Tháo (`public/heroes/sp-tao-thao.webp`, 300×300) cắt từ tranh trong ảnh thông báo, khai qua `portraits` của `pipeline/lookup-client-heroes.json`; trước đó tướng này không có chân dung.
+
+## 2026-10-22 (Bản zh: chữ Hán cho Quân sư, Công trình, Cải tạo binh chủng, nhãn chiến pháp và tướng)
+
+### Added
+- Catalog công khai trường zh: quân sư `nameZh`/`effectZh`/`usageZh`, cải tạo `effectZh`/`appliesToZh`/`suggestedBuildZh`, lựa chọn `nameZh`/`descriptionZh`, công trình `summaryZh`, cấp công trình `effectZh`/`durationZh`, kèm `zhSource` (`source` = SGSDeck TW, `translation` = bản dịch). Tướng thêm `lookup.exclusiveTitleZh`. MCP trả các trường này.
+- `zhTexts` trong `pipeline/lookup-client-tactics.json`: 282 mục khóa bằng `viSha256` của chữ Việt client (20 quân sư chỉ có ở client: tên + hiệu ứng; hiệu ứng 39 quân sư có sẵn; 15 tóm tắt công trình; 16 hiệu ứng cải tạo; 69 lựa chọn cải tạo mới và mô tả 123 lựa chọn giữ mã, ghép với bảng lựa chọn chữ Hán SGSDeck cùng binh chủng, số theo client). 20 tên quân sư là tên game lấy nguyên văn từ sanzhan.slgsim.com (khóa `ref`, chỉ vào ledger); hiệu ứng là bản dịch. Bản zh gắn cờ "中文译自越南语，未经核对" (cả ở thẻ danh sách quân sư); bản dịch không vào meta/JSON-LD.
+- Client thay chữ Việt thì chữ Hán nguồn đi kèm (bản TW, số liệu có thể khác Global) bị bỏ: hiệu ứng quân sư, tóm tắt công trình, mô tả lựa chọn giữ mã (chỉ giữ tên). Trước đó 11 lựa chọn và khoảng 8 quân sư hiện số khác nhau giữa vi và zh (vd Tây Lương Thiết Kỵ 15 Võ Lực / 40武力). Chuỗi chữ Hán nguồn chứa ghi chú biên tập (`待補全`, `待補充`) không còn được công khai.
+- Tên sự kiện chữ Hán (16 sự kiện, đối chiếu sgsdeck.com) cho "Điều kiện đổi"/"Cách nhận" của chiến pháp sự kiện; 5 trạng thái xung đột (抵御, 穷追, 遇袭, 捕获, 看破). Bằng chứng: `plans/reports/261023-zh-quan-su-su-kien-trang-thai.md`.
+- Bản zh dịch nhãn chiến pháp chỉ có chữ Việt client (dạng hiệu ứng, mục tiêu, trạng thái xung đột, mùa) bằng bộ giá trị đóng; ghép "Cách nhận" và "Điều kiện đổi" từ tên Hán của võ tướng/sự kiện nguồn; vai trò tướng dùng `roleTag` nguồn.
+
+### Changed
+- Báo cáo zh-gaps: 745 → 109 / 958 mục thiếu chữ; Tướng, Quân sư, Cải tạo binh chủng, Công trình về 0. Còn lại là chiến pháp: lịch sử phiên bản chỉ có chữ Việt, ghi chú mùa, và 17 mục có nhãn/sự kiện chưa đối chiếu được chữ Hán (sự kiện liên động Đài Loan, Huy Quân Kết Trận, tướng chưa có trong kho như SP Lư Thực; không đoán tên riêng).
+
+## 2026-10-22 (Binh thư, trang bị, tuyệt kỹ, quân sư, công trình theo client Global 24.535)
+
+### Changed
+- Binh thư: `effectViet` của 67/68 mục thay bằng chữ thẻ Thượng Thư Đài client 24.535 (`pipeline/books-han-viet-map.json`), sửa 4 số lệch nguồn Trung: Binh Hành Quỷ Đạo 75%→65%, Tam Quân Chi Chúng 25%→30%, Đánh Bất Ngờ Thắng 50%→55%, Đánh Giá Tình Hình +3%→+5%. Trường mới `effectVietVersion` ("Global 24.535") là mốc của riêng chữ Việt; trang Việt hiện mốc này, trang zh vẫn hiện `effect`/`effectVersion` của nguồn Trung. MCP `tqccl_get_entity` trả thêm trường này. Tên binh thư giữ nguyên (tên nằm trong facet đội và quyết định slug).
+- `pipeline/lookup-client-tactics.json` thêm `equipment`, `specials`, `buildings`: tên client làm tên hiển thị (tên cũ thành `aliasesVi`) cho 60 trang bị, 66 tuyệt kỹ (kèm mô tả client) và 39 công trình; `summaryVi` điền cho 15 công trình còn trống, giữ mô tả cũ có mốc Lv10/Lv20.
+- Quân sư: 39 mục có sẵn lấy tên, hệ, Điểm Kế Lược, mô tả và tướng mang theo Minh Giám › Quân sư; tên Hán-Việt cũ thành `aliasesVi` (vd Hoành Trưng Bạo Liễm → Sưu Cao Thuế Nặng). Lệch đã sửa: điểm Trương Liêu 10→12, Vu Cát 15→10, Đổng Trác 13→14, Chung Hội 15→13, Chu Thái 20→18, Quách Gia 10→9, Lý Nho 12→20, Hoàng Nguyệt Anh 20→18; hệ Đổng Trác Sơn→Lâm, Viên Thiệu Hỏa→Phong; Tư Mã Ý +5→+8 Trí Lực; nối tướng cho Thống Quân Tái Chiến (Trương Lương), Chấn Phấn Ngang Dương (Hoàng Phổ Tung), Thượng Tướng Uy Danh (Phan Phụng).
+
+### Fixed
+- `building:my-binh-dinh` (盾兵營) là Trại Lính Khiên, không phải "My Binh Dinh"; `building:trung-binh-xu` (徵兵處) hiện là Nơi Chiêu Binh. Slug cũ giữ nguyên.
+
+### Added
+- `newAdvisors`: 20 quân sư chỉ có ở client (Hiệu Lệnh Thiên Hạ của Tào Tháo, Bá Vương Thảo Nghịch của Tôn Sách, Tây Lương Phi Hùng của SP Đổng Trác…), mỗi mục một trang `/tra-cuu/quan-su/<slug>/`; Tra cứu nay 958 mục. Hồ sơ tướng trỏ ngược quân sư qua `lookup.advisorId` cho cả 59 kỹ năng.
+- Báo cáo đối chiếu: `plans/reports/261022-client-binh-thu-trang-bi-cong-trinh.md`.
 
 ## 2026-10-22 (Đội cộng đồng công khai)
 

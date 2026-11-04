@@ -192,13 +192,13 @@ describe("tqccl_recommend_teams output", () => {
   });
 
   it("marks a slot that cannot be reconciled with the dictionary as 'chưa đối chiếu', never build-now", async () => {
-    const [team] = seasonTeams("pk-s28", ["s28-wutugu-huangma"]);
+    const [team] = seasonTeams("pk-s28", ["s28-fugui-qi"]);
     const body = await confirmed(ctx, rosterOfTeams([team]));
     const output = await handleRecommendTeams(ctx, { ...body, sourceSeasonId: "pk-s28" });
-    const entry = output.portfolioTeams.find((item) => item.teamId === "s28-wutugu-huangma");
+    const entry = output.portfolioTeams.find((item) => item.teamId === "s28-fugui-qi");
     expect(entry?.status).toBe("unreconciled");
     expect(entry?.unresolvedLabel).toBe("chưa đối chiếu");
-    expect(entry?.unresolvedTactics).toContain("Ngự Địch Bình Chướng");
+    expect(entry?.unresolvedTactics).toContain("Giám Thời Thẩm Thế");
   });
 
   it("reports blocked teams with per-slot substitutes and explicit status", async () => {

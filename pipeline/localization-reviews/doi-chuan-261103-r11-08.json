@@ -1,0 +1,215 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261103-r11-08",
+ "reviewerSession": "reviewer:DcReviewK08-2026-11-04",
+ "items": [
+  {
+   "entityId": "troop-option:ham-tran-doanh:khu-tan-intermediate",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "9e989cf75030ef209e32f74800fd972621da8e39910e53d8a92cd5d6c4f6904f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "3713bd26dc4553ed610bda874c4f9053832fbefa4227f30dfd775755bb0fd474",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:khu-tan-intermediate",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "560044161f25f6c512188a92019b652fa312f2df0806cf5c43ee14b7728cc537",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ad464cb8e81a3831d6a3be7112e985d1122c92dd19e4f6bc6d8b09c04c4c8118",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:kiem-tu-basic",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "b3cd7584c1a9bdd8fa73ce12e35093983bb168afd6ca2daeaf41fa073971624c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "70affabfbe9e295fc309fc45ddcb32f8ebb3a1f7e6d81f55c86ffa02a0f544cc",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:kiem-tu-basic",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "4b928aded05ec411aea1a597206f422b02b4e001cd8171de3ec91e65069646d3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "2497595ac70d787ab9f4510115fe5fe43da7de294919dd3f4e28568ee56cee98",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:muu-cong-special",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "33dbf443f1c543351bf9866e9766f61c4a018f8952f4ec1dfc75d5e899807d7c",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e88fe4c5f5c68836451653f4be28185af8700088f59742743262128efbb236d2",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:muu-cong-special",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "c90a7028f85e096a36a609fd1b11deb158f5cdd220fcda3592f5852c9ead8e65",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ab23c221ef128a1b5f995295e4435ddf9588a44a9af188a36b3ccce54937aac8",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:thong-quan-special",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "2a7f4731b045d29ed05e0db8326160f30d89ee4f6caa8b5dc8bf1f2d6da86469",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "b3fbb768b43803faa83af7275eb9b604a19bab96e7521b5778b337bf321e4556",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:thong-quan-special",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "302ce6ef96aeb6f8479ef32ac37c49c28cb2769f2668ef85c65bce4d7152bfde",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "fd1b696eae057360d57bb2dbf4e81e0dac472c22fe290f1e66035986d5c5443f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:tri-lieu-basic",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "92d357fd9eaaad58285e4d9f1d9be229ef036e0b030cf4221e9d93400df27a64",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "714d04a140eb0eb9528cffc4c2fa0e4ccf4221e1d570af3de37ba97bc6e266e0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ham-tran-doanh:tri-lieu-basic",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "ac487d5f2150a0b32fa5dd7f37cfad27303b1e97ab66607be3a2f54445e01476",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "1322683b8997d3bd61827a05741f7be062d9b7b0fb1d2047993012ba25bd8954",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:cuu-chien-intermediate",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "98f4db20fe8de1411c823e6ce0d0f120f00b399e5df44276e460cab5b7980b54",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "e9d6c0214bdf0ff4b3c325cf44021742ca49f3d2483e5c62868a9e1a27b325b0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:cuu-chien-intermediate",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "20dc15dd4161dd400d18a2830b5dac5148bc2f75adf6a34a481236a9233673e3",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "a525e3df0e16ef087f4450177733405a0f0c278cb4a82ad4fd56675c7670a1f3",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:de-ngu-advanced",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "6e56f5c58dbaf2bb49a936df3340304916906557a9336c4ef5c64e0a8c8ee7e9",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "c0fd7fea93da1779852c42c2afb58c4d4eab0ea3ef08e88b556a9eb044a792ea",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:de-ngu-advanced",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "4eb7bd65e6e6b96ee40143170525a1ceb486fef10906959fe972575a2287e452",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "5621a553867f1cfc282c713bc9bf6f854764e9745e13974e85b31c578e49e786",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:dien-ich-intermediate",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "792d38cbc218c68d4e7c6138b95c32dec988f3871babd9cf9f4f9ca8009f5e89",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d72533ee834646d7045d9ca8ae479667645eb1be7087ef195acafa284afe1875",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:dien-ich-intermediate",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "063df4d0a52a15da1bb9c032be4f6f2534cb03db67e79c2093d55d9641ac2fbb",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0564eb73dd4e8e650cf1847bbc93ab9b98b827f1f7d1deaf8f94696c7bcb94dd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:ky-thuat-special",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "9afc08166b81a5a403d6988bdfd3f7c2be6ba6b61fb180f379076e98d260e829",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d219f30e92e154d3f9d47f415f493ff75777f4332163b28d242fae8d4e45a052",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:ky-thuat-special",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "fc273320903d43916794d3db48c7c5dbb3c2d3efcb015e0be9cc6292d71bf868",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "0d093acf42adb0b3bebf8a74a0885c09e2562329ebfb374ee58ae6e73d5f2b1f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:muu-cong-basic",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "c7ebd9a42c42dfb32d2f172bd4f1ed2b11518f4aba5756958d6c2b5c9c87eae4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "395b04dea3e703ea9d3bef2ea851ade02fd2c9871b608ae36580a73fa9a2f15d",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:muu-cong-basic",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "ce30f6df447efc43e42df49ec3cba84e62c2e089c27fbe8623e18ac0cb7d19f8",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ab23c221ef128a1b5f995295e4435ddf9588a44a9af188a36b3ccce54937aac8",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:tap-tri-special",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "5c583a3a7da018d45ef0f0ef8184a3cc9430d82746c98912af8ed70a0617e98e",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "d5851bbeeea128887cb0a80badac30a574484e92dde213251775f0165f169c87",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:tap-tri-special",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "f29844c82273126859adf2e0b0f14c9cf5fae6ca075b3d267d75eb1a0a2d7e8f",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "ff1a86aae6992415c08ef2225abfee55371483f0f88498519ed5056a3a2a03a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:than-hanh-special",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "da74bdef7847e08847d575b5e16c0fb4301a0059b1f7f70858251777d18680dc",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "82cb86609c9546392ff391b78b0646237a6eba7273038b56d8a3b83e8b9a88d7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:than-hanh-special",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "c80ac22acbd006e9b263024faa253c5059bc474a1486c293949bf52e7a112b4e",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "bd1e6ddacec7a68ec98b9d46b1d99dc8f28dd794a5703b1e08defd545724a082",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:thao-dien-basic",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "c3ae9e35ce034faf07b45a5cceeb2280784649f2c9a5d53bc3fac74f5a2099b4",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "793f3438e3ed9f659107259e59dce71fd7fb402f25e22a83040b05fa15b3a352",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:ho-bao-ky:thao-dien-basic",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "2e554cb2eef787f5749affa7d55f8c3916d6c5854beeab1a7e4cba8d670c62cd",
+   "glossaryDigest": "sha256:b3fc9a85dfea259e29cf20e21a1d60af383f7b326092b8011cd93a03278e8ae9",
+   "textSha256": "772de0c8eef42956e678ff19a921464b3638154db1f2d6af844e3cdd76b07870",
+   "verdict": "accepted"
+  }
+ ]
+}
