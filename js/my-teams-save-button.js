@@ -21,7 +21,8 @@ const draftIds = new Map();
 
 /**
  * Hàm dựng cho trang có payload nhúng (`#team-save-payload`): đọc biến thể LÚC GỌI từ `?variant` của URL hiện tại.
- * Biến thể không có trong payload là lỗi, không rơi về bản mặc định (nút sẽ lưu nhầm bản).
+ * Biến thể không có trong payload là lỗi, không rơi về bản mặc định (nút sẽ lưu nhầm bản). Mỗi mục payload mang `unresolved`
+ * do build tính (ghi chú bị bỏ vì vượt trần, tên chưa đối chiếu) để thông báo lưu báo đúng số mục.
  */
 export function embeddedBuilder({ doc = document, location = globalThis.location } = {}) {
   return async () => {
@@ -32,7 +33,7 @@ export function embeddedBuilder({ doc = document, location = globalThis.location
     const variant = payload?.kind === "khaihoang" ? new URL(location.href).searchParams.get("variant") ?? "" : "";
     const item = payload?.items?.[variant];
     if (!item?.draft) throw new Error("unknown-variant");
-    return { draft: structuredClone(item.draft), defaultGroup: item.defaultGroup, unresolved: item.unresolved ?? [] };
+    return { draft: structuredClone(item.draft), defaultGroup: item.defaultGroup, unresolved: item.unresolved };
   };
 }
 

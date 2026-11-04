@@ -271,6 +271,12 @@ test("#12 sourceHash: không đổi theo bản dịch Việt; đổi theo tên g
   heroNote.heroes[2].notesRaw = "新備註";
   assert.notEqual(recommendedSourceHash(heroNote), hash, "ghi chú nguồn của tướng");
 
+  // Chiến pháp trước cấp 20 là trường nguồn: đổi thì hash đổi (s28-kh-sanshi-lu, tướng thứ hai mang 三勢陣 trước cấp 20).
+  const beforeBase = recommendedById("s28-kh-sanshi-lu");
+  const before20 = structuredClone(beforeBase);
+  before20.heroes[1].tacticBeforeLevel20Raw = "盛氣凌敵";
+  assert.notEqual(recommendedSourceHash(before20), recommendedSourceHash(beforeBase), "chỉ đổi chiến pháp trước cấp 20");
+
   // Không phụ thuộc thứ tự khóa; deterministic.
   assert.equal(sourceHash({ a: 1, b: [2, { c: 3, d: 4 }] }), sourceHash({ b: [2, { d: 4, c: 3 }], a: 1 }));
   assert.match(sourceHash({}), /^[0-9a-f]{16}$/u);
@@ -365,4 +371,23 @@ test("fromRecommended: ghi chú nguồn vượt trần 2000 B được cắt the
   valid(cut.draft);
   assert.ok(cut.draft.notes.general.endsWith("…"));
   assert.equal(cut.unresolved.filter((item) => item.field === "notes.general").length, 1);
+});
+
+test("fromRecommended: chiến pháp trước cấp 20 không nằm trong hai ô chính được ghi vào notes.general", async () => {
+  // s28-kh-sanshi-lu: Trương Xuân Hoa (tướng thứ hai) mang 三勢陣 trước cấp 20, hai ô chính là 奪魂挾魄 + 杯蛇鬼車.
+  const record = recommendedById("s28-kh-sanshi-lu");
+  const holder = record.heroes[1];
+  assert.equal(holder.tacticBeforeLevel20Raw, "三勢陣");
+  assert.ok(!holder.tacticSlotsRaw.includes(holder.tacticBeforeLevel20Raw), "chiến pháp trước cấp 20 không có ô chính");
+  const { draft, unresolved } = fromRecommended(record, ids, { id: "team-before-20" });
+  const line = `${holder.displayNameVi}: Trước cấp 20: ${holder.tacticBeforeLevel20Vi}`;
+  assert.ok(draft.notes.general.split("\n").includes(line), "notes.general có dòng chiến pháp trước cấp 20 của tướng thứ hai");
+  assert.deepEqual(unresolved, []);
+  valid(draft);
+  assert.equal((await workerCheck(draft)).ok, true);
+
+  // Kind `bond` bị bỏ như ô bond (biến đổi thử: thế hệ đang ghim không có chiến pháp trước cấp 20 kiểu bond).
+  const bond = structuredClone(record);
+  bond.heroes[1].tacticBeforeLevel20Kind = "bond";
+  assert.ok(!fromRecommended(bond, ids, { id: "team-before-20-bond" }).draft.notes.general.split("\n").includes(line));
 });

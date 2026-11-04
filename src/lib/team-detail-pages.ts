@@ -168,10 +168,22 @@ export async function recommendedDetailPlainText(entry: RecommendedRouteEntry, l
 
 const strings = (value: unknown): unknown[] => (Array.isArray(value) ? value : []);
 
-/** Một đội nháp có thể lưu: `draft` chưa có `id` (id sinh một lần ở trình duyệt lúc bấm lưu) và `defaultGroup` là hậu tố nhóm mặc định. */
+/** Mục nguồn không vào được đội nháp (`unresolved` của js/my-teams-sources.js): tên chưa đối chiếu hoặc dòng bị bỏ vì vượt trần. */
+export interface TeamSaveUnresolved {
+  field: string;
+  rawName: string;
+  /** `unresolved` | `over-limit` (bộ chuyển là JS nên TS chỉ suy được `string`). */
+  reason: string;
+}
+
+/**
+ * Một đội nháp có thể lưu: `draft` chưa có `id` (id sinh một lần ở trình duyệt lúc bấm lưu), `defaultGroup` là hậu tố nhóm
+ * mặc định, `unresolved` là các mục nguồn không vào được nháp (thông báo lưu báo số mục, không có gì mất âm thầm).
+ */
 export interface TeamSaveItem {
   defaultGroup: string;
   draft: Record<string, unknown>;
+  unresolved: TeamSaveUnresolved[];
 }
 
 /**
@@ -187,9 +199,9 @@ export interface TeamSavePayload {
 /** Id giữ chỗ khi chuyển nguồn lúc build: payload không mang id (mỗi lần lưu của người dùng tự sinh id riêng). */
 const BUILD_DRAFT_ID = 'team-build';
 
-function saveItem(result: { draft: Record<string, unknown>; defaultGroup: string }): TeamSaveItem {
+function saveItem(result: { draft: Record<string, unknown>; defaultGroup: string; unresolved: TeamSaveUnresolved[] }): TeamSaveItem {
   const { id: _id, ...draft } = result.draft;
-  return { defaultGroup: result.defaultGroup, draft };
+  return { defaultGroup: result.defaultGroup, draft, unresolved: result.unresolved };
 }
 
 function khaiHoangSavePayload(team: Record<string, any> | undefined, ids: LookupIdResolver): TeamSavePayload {
