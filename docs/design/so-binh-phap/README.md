@@ -7,7 +7,7 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | Canvas gốc | <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> (riêng tư — cần quyền của chủ canvas) |
 | Phiên bản chụp | `1791204736-147d` (Soi đội chụp lại từ site, ảnh chiến báo thật sau `e346ac4`/`2bdee17`, thêm `AnalyzeSides`; thiết kế lại 3 công cụ Chiêu mộ · Soi đội · Gợi ý kho — 14 artboard; thêm thiết kế khu Quản trị — 12 artboard `Admin*`; 47 artboard dựng từ site thật, thêm Tra cứu mục lục + Binh thư, 19 artboard Tra cứu thay header/footer theo site — xem mục "Artboard dựng từ site thật"; thêm Chi tiết đội mobile, mọi link chi tiết đội trên mobile trỏ sang bản mobile; thêm Tra cứu trang bị/quân sư/cải tạo binh chủng/công trình mobile + màn chi tiết; cột mobile rộng 4 artboard; canvas chia cột: desktop bên trái, mobile bên phải, cùng dải theo nhóm; thẻ tướng ưu tiên ảnh chân dung; thêm hồ sơ tướng mobile, hồ sơ chiến pháp mobile; thêm Tra cứu: trang bị, quân sư, cải tạo binh chủng, công trình, hồ sơ chiến pháp; Logo — 5 phương án) |
 | Ngày chụp | 2026-09-29 |
-| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 93 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 90 ảnh chuẩn `screens/*.png` |
+| Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 111 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (stylesheet, font, logo mà các artboard dựng từ site thật tham chiếu) + 90 ảnh chuẩn `screens/*.png` |
 | Ảnh chuẩn | Chụp lại 2026-09-29 bằng `scripts/design-capture.mjs` (90 artboard) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **17 artboard mới (chi tiết đội mobile, 4 nhóm Tra cứu, hồ sơ chiến pháp, hồ sơ tướng/chiến pháp mobile, 4 nhóm Tra cứu mobile + chi tiết, Logo) chưa đối chiếu với canvas** |
 
 ## Quy ước
@@ -71,6 +71,17 @@ Theo yêu cầu "đồng bộ mockup với repo, trừ Tra cứu": các artboard
 Code đã làm theo thiết kế công cụ ngày 29/09 rồi đi xa hơn (commit `e346ac4`, `2bdee17`), nên 8 artboard `Analyze`, `AnalyzeSides` (mới: ảnh có hai phe → "2 · Chọn phe"), `AnalyzeReview`, `AnalyzeResult` (+ `…Mobile`) được **chụp lại từ trang thật** bằng `scripts/design-canvas/capture-analyze.mjs`: Turnstile và Worker được giả lập, lượt đọc mẫu khớp **ảnh chiến báo thật** do người dùng cung cấp (bản client Trung: Gia Cát Khác · Thái Sử Từ · Tả Từ thắng Đinh Phụng · Trần Võ · Đổng Tập; asset canvas `bb96d6d2…`), cố ý chép sai một dòng (速乘其力) để có ô Không chắc; đối chiếu ở mùa PK-S26 (đội "Chư Thái Tả" khớp trọn). Stylesheet `27571042…`.
 
 Công cụ dựng artboard từ site nằm ở `scripts/design-canvas/` (chụp DOM, đổi link sang artboard, asset `/_blob`, kiểm tra qua shim); thư mục làm việc `.cache/design-canvas/` (gitignore).
+
+## Đội cộng đồng · quản trị Người dùng/Nhật ký — chụp theo code (2026-10-22)
+
+18 artboard (9 màn × desktop/mobile, canvas bản `1792668192-0861`) **chụp từ trang thật** của các tính năng có sau ngày vẽ canvas, xếp thành hai dải ở cuối canvas:
+
+- **Đội cộng đồng** (`/doi-cong-dong/`, commit `1a239fc`): `DoiCongDong` (danh sách, mùa/sắp xếp/lọc 3 tướng), `DoiCongDongDetail` (`?id=`: bảng tướng × chiến pháp, phân tích, bình chọn, chiến báo, bình luận), `DoiCongDongNew` (`?new=1`: AI đã điền nháp, một ô chưa tra được, cảnh báo đội cùng 3 tướng), `DoiCongDongMine` (`?mine=1`: chờ duyệt / bị từ chối kèm lý do / đã duyệt), `BanNotice` (thông báo tài khoản bị khoá ở header, `?error=ACCOUNT_BANNED`, commit `23e0b17`).
+- **Quản trị**: `AdminTeams` (`#doi-cong-dong`, root: khối Mùa đang mở, 3 đội chờ duyệt, đội đầu mở "Xem phân tích"), `AdminUsers` (`#nguoi-dung`), `AdminUserBan` (chi tiết người dùng + hộp thoại Khoá tài khoản), `AdminAudit` (`#nhat-ky`).
+
+Cách dựng: `node scripts/design-canvas/capture-community.mjs` (mock `/api/**` bằng `tests-e2e/helpers/community-mock.mjs`; đội mẫu lấy tướng + chiến pháp thật của Đội khác) rồi `build-community-boards.mjs <stylesheet> <ảnh mẫu> <bảng ảnh>`. Canvas không tải ảnh ngoài nên chân dung tướng (`iconUrl` từ xa và `/heroes/*.webp`) được tải lên canvas, bảng đổi nằm ở `.cache/design-canvas/boards/image-map-community.json`; ảnh đội và ảnh tải lên dùng ảnh chiến báo mẫu `bb96d6d2…`. Hộp thoại mở bằng `showModal()` không có top layer trong artboard nên được vẽ lại thành nền mờ + hộp đặt cố định. Chiều cao lấy số lớn hơn giữa lúc chụp (ảnh mock 1×1) và lúc dựng qua shim (ảnh mẫu thật). Stylesheet `84802a07…`. Chưa có bản zh và chưa chụp `screens/*.png` cho 18 artboard này.
+
+Điều thấy khi chụp (của site, chưa sửa): trang `/doi-cong-dong/` có hai tiêu đề "Đội cộng đồng" liền nhau (h1 tĩnh + h2 do JS thêm); thẻ đội không có ảnh hiện chữ "null" (`js/community-teams.js` truyền `null` vào `card.append`; server bắt buộc 1–3 ảnh nên hiếm gặp); nút đóng "×" của thông báo bị khoá rơi xuống dòng riêng ở desktop.
 
 ## Token & component
 

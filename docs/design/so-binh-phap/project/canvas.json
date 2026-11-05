@@ -740,6 +740,150 @@
       "w": 390,
       "h": 2135,
       "is_interactive": true
+    },
+    "DoiCongDong.dc.html": {
+      "title": "Đội cộng đồng — danh sách",
+      "x": 0,
+      "y": 83384,
+      "w": 1440,
+      "h": 2361,
+      "is_interactive": true
+    },
+    "DoiCongDongDetail.dc.html": {
+      "title": "Đội cộng đồng — chi tiết đội",
+      "x": 1520,
+      "y": 83384,
+      "w": 1440,
+      "h": 3361,
+      "is_interactive": true
+    },
+    "DoiCongDongNew.dc.html": {
+      "title": "Đội cộng đồng — đăng đội",
+      "x": 3040,
+      "y": 83384,
+      "w": 1440,
+      "h": 3405,
+      "is_interactive": true
+    },
+    "DoiCongDongMine.dc.html": {
+      "title": "Đội cộng đồng — đội của tôi",
+      "x": 0,
+      "y": 86909,
+      "w": 1440,
+      "h": 1852,
+      "is_interactive": true
+    },
+    "BanNotice.dc.html": {
+      "title": "Thông báo tài khoản bị khoá",
+      "x": 1520,
+      "y": 86909,
+      "w": 1440,
+      "h": 1720,
+      "is_interactive": true
+    },
+    "DoiCongDongMobile.dc.html": {
+      "title": "Đội cộng đồng — danh sách (mobile)",
+      "x": 5120,
+      "y": 83384,
+      "w": 390,
+      "h": 4633,
+      "is_interactive": true
+    },
+    "DoiCongDongDetailMobile.dc.html": {
+      "title": "Đội cộng đồng — chi tiết đội (mobile)",
+      "x": 5590,
+      "y": 83384,
+      "w": 390,
+      "h": 4063,
+      "is_interactive": true
+    },
+    "DoiCongDongNewMobile.dc.html": {
+      "title": "Đội cộng đồng — đăng đội (mobile)",
+      "x": 6060,
+      "y": 83384,
+      "w": 390,
+      "h": 4698,
+      "is_interactive": true
+    },
+    "DoiCongDongMineMobile.dc.html": {
+      "title": "Đội cộng đồng — đội của tôi (mobile)",
+      "x": 6530,
+      "y": 83384,
+      "w": 390,
+      "h": 3296,
+      "is_interactive": true
+    },
+    "BanNoticeMobile.dc.html": {
+      "title": "Thông báo tài khoản bị khoá (mobile)",
+      "x": 7000,
+      "y": 83384,
+      "w": 390,
+      "h": 3223,
+      "is_interactive": true
+    },
+    "AdminTeams.dc.html": {
+      "title": "Quản trị — đội cộng đồng",
+      "x": 0,
+      "y": 89181,
+      "w": 1440,
+      "h": 2575,
+      "is_interactive": true
+    },
+    "AdminUsers.dc.html": {
+      "title": "Quản trị — người dùng",
+      "x": 1520,
+      "y": 89181,
+      "w": 1440,
+      "h": 1837,
+      "is_interactive": true
+    },
+    "AdminUserBan.dc.html": {
+      "title": "Quản trị — khoá tài khoản",
+      "x": 3040,
+      "y": 89181,
+      "w": 1440,
+      "h": 1586,
+      "is_interactive": true
+    },
+    "AdminAudit.dc.html": {
+      "title": "Quản trị — nhật ký",
+      "x": 0,
+      "y": 91876,
+      "w": 1440,
+      "h": 1780,
+      "is_interactive": true
+    },
+    "AdminTeamsMobile.dc.html": {
+      "title": "Quản trị — đội cộng đồng (mobile)",
+      "x": 5120,
+      "y": 89181,
+      "w": 390,
+      "h": 4695,
+      "is_interactive": true
+    },
+    "AdminUsersMobile.dc.html": {
+      "title": "Quản trị — người dùng (mobile)",
+      "x": 5590,
+      "y": 89181,
+      "w": 390,
+      "h": 2986,
+      "is_interactive": true
+    },
+    "AdminUserBanMobile.dc.html": {
+      "title": "Quản trị — khoá tài khoản (mobile)",
+      "x": 6060,
+      "y": 89181,
+      "w": 390,
+      "h": 2515,
+      "is_interactive": true
+    },
+    "AdminAuditMobile.dc.html": {
+      "title": "Quản trị — nhật ký (mobile)",
+      "x": 6530,
+      "y": 89181,
+      "w": 390,
+      "h": 2711,
+      "is_interactive": true
     }
   },
   "cover": "LookupTacticProfile.dc.html",
@@ -863,6 +1007,22 @@
       "w": 240,
       "x": 5120,
       "y": -320
+    },
+    "communityteamsrow": {
+      "x": 0,
+      "y": 83104,
+      "text": "Đội cộng đồng (/doi-cong-dong/) · thông báo tài khoản bị khoá",
+      "kind": "title1",
+      "maxW": 7400,
+      "w": 240
+    },
+    "adminnewrow": {
+      "x": 0,
+      "y": 88901,
+      "text": "Quản trị · Đội cộng đồng · Người dùng · Nhật ký",
+      "kind": "title1",
+      "maxW": 7400,
+      "w": 240
     }
   },
   "order": [
@@ -958,7 +1118,25 @@
     "RosterResult.dc.html",
     "RosterResultMobile.dc.html",
     "AnalyzeSides.dc.html",
-    "AnalyzeSidesMobile.dc.html"
+    "AnalyzeSidesMobile.dc.html",
+    "DoiCongDong.dc.html",
+    "DoiCongDongDetail.dc.html",
+    "DoiCongDongNew.dc.html",
+    "DoiCongDongMine.dc.html",
+    "BanNotice.dc.html",
+    "DoiCongDongMobile.dc.html",
+    "DoiCongDongDetailMobile.dc.html",
+    "DoiCongDongNewMobile.dc.html",
+    "DoiCongDongMineMobile.dc.html",
+    "BanNoticeMobile.dc.html",
+    "AdminTeams.dc.html",
+    "AdminUsers.dc.html",
+    "AdminUserBan.dc.html",
+    "AdminAudit.dc.html",
+    "AdminTeamsMobile.dc.html",
+    "AdminUsersMobile.dc.html",
+    "AdminUserBanMobile.dc.html",
+    "AdminAuditMobile.dc.html"
   ],
   "pages": [],
   "title": "Cẩm Nang TQCCL — Redesign"

@@ -27,7 +27,8 @@ const server = createServer(async (q, r) => {
       throw new Error('missing blob');
     }
     const file = p === '/support.js' ? SUPPORT : join(boardsDir, p);
-    r.writeHead(200, { 'content-type': extname(file) === '.js' ? 'text/javascript' : 'text/html; charset=utf-8' }).end(await readFile(file));
+    const body = await readFile(file);
+    r.writeHead(200, { 'content-type': extname(file) === '.js' ? 'text/javascript' : 'text/html; charset=utf-8' }).end(body);
   } catch { r.writeHead(404).end(); }
 });
 await new Promise((d) => server.listen(0, '127.0.0.1', d));
