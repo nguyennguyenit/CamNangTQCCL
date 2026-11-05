@@ -15,11 +15,14 @@ function defaultStorage() {
   }
 }
 
-/** Cất đội nháp (thay mục cũ). Trả `false` khi storage vắng, đầy hoặc bị chặn; không ném. */
-export function stashPendingSave(draft, { storage = defaultStorage(), now = Date.now } = {}) {
+/**
+ * Cất đội nháp (thay mục cũ) kèm `unresolved` của bộ chuyển nguồn, để toast sau OAuth báo đúng những gì không vào đội.
+ * Trả `false` khi storage vắng, đầy hoặc bị chặn; không ném.
+ */
+export function stashPendingSave(draft, { unresolved = [], storage = defaultStorage(), now = Date.now } = {}) {
   try {
     if (!storage) return false;
-    storage.setItem(PENDING_KEY, JSON.stringify({ draft, createdAt: now() }));
+    storage.setItem(PENDING_KEY, JSON.stringify({ draft, unresolved: Array.isArray(unresolved) ? unresolved : [], createdAt: now() }));
     return true;
   } catch {
     return false;
@@ -45,6 +48,17 @@ export function peekPendingSave({ storage = defaultStorage(), now = Date.now } =
     return draft;
   } catch {
     return null;
+  }
+}
+
+/** `unresolved` cất cùng bản lưu dở còn hạn; không có bản lưu dở hay mục cũ không có trường thì `[]`. */
+export function peekPendingUnresolved({ storage = defaultStorage(), now = Date.now } = {}) {
+  if (!peekPendingSave({ storage, now })) return [];
+  try {
+    const unresolved = JSON.parse(storage.getItem(PENDING_KEY)).unresolved;
+    return Array.isArray(unresolved) ? unresolved : [];
+  } catch {
+    return [];
   }
 }
 

@@ -9,7 +9,7 @@
 
 import { loadSession, signIn, describeError } from "./community-api.js";
 import { L, localePath } from "./i18n.js";
-import { completePendingSave, peekPendingSave, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
+import { completePendingSave, peekPendingSave, peekPendingUnresolved, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
 import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, openDialog, showToast } from "./my-teams-ui.js";
 import { el } from "./render.js";
 
@@ -50,11 +50,27 @@ async function prepare(build) {
 
 const openTeamsHref = () => localePath("/doi-cua-toi/");
 
+/**
+ * Phần nhắc của toast lưu theo `unresolved` của bộ chuyển nguồn. Hai loại khác nhau về việc người dùng làm được gì:
+ *  - `unresolved` (tên chưa đối chiếu): ô vẫn nằm trong đội với tên gốc, sửa được trong Đội của tôi;
+ *  - `over-limit` (dòng ghi chú, phương án thay vượt trần byte): KHÔNG có trong đội đã lưu, chỉ còn ở trang nguồn.
+ * Không có gì để báo thì trả chuỗi rỗng.
+ */
+export function unresolvedNotice(unresolved) {
+  const items = Array.isArray(unresolved) ? unresolved : [];
+  const names = items.filter((item) => item?.reason !== "over-limit").length;
+  const notes = items.filter((item) => item?.reason === "over-limit" && item.field === "notes.general").length;
+  const others = items.filter((item) => item?.reason === "over-limit" && item.field !== "notes.general").length;
+  return [
+    names ? L(` Có ${names} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${names} 项未能匹配，可在“我的阵容”中修改。`) : "",
+    notes ? L(` ${notes} dòng ghi chú vượt giới hạn dung lượng nên không được lưu, bản đầy đủ vẫn ở trang nguồn.`, ` ${notes} 行备注超出容量上限，未被保存，完整内容仍在来源页面。`) : "",
+    others ? L(` ${others} phương án thay vượt giới hạn nên không được lưu.`, ` ${others} 个替代方案超出上限，未被保存。`) : "",
+  ].join("");
+}
+
 function successToast(team, unresolved) {
-  const left = unresolved?.length ?? 0;
-  const note = left ? L(` Có ${left} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${left} 项未能匹配，可在“我的阵容”中修改。`) : "";
   showToast({
-    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`)}${note}`,
+    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`)}${unresolvedNotice(unresolved)}`,
     href: openTeamsHref(),
     linkLabel: L("Mở Đội của tôi", "打开我的阵容"),
   });
@@ -125,7 +141,7 @@ async function onSave(build) {
   const user = await loadSession({ probe: true });
   if (!user) {
     // Rời trang sang Google: cất nháp (đã có id) để trang quay lại lưu đúng một lần, vào hộp chính theo nhóm mặc định của nguồn.
-    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` });
+    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` }, { unresolved: prep.unresolved });
     await signIn();
     return;
   }
@@ -182,6 +198,7 @@ export async function resumePendingSave() {
 async function attemptPending() {
   const draft = peekPendingSave();
   if (!draft) return;
+  const unresolved = peekPendingUnresolved();
   try {
     if (!(await loadSession({ probe: true }))) return;
     const api = await myTeamsApi({ dialog: true });
@@ -189,7 +206,7 @@ async function attemptPending() {
     const result = await api.saveTeam(draft, { boxId: MAIN_BOX });
     if (completePendingSave(result)) {
       draftIds.delete(`${draft.source.kind}:${draft.source.key}`);
-      successToast(result.team);
+      successToast(result.team, unresolved);
       return;
     }
     showToast({ kind: "error", message: describeFailure(result), actionLabel: L("Lưu lại", "重新保存"), onAction: attemptPending });
