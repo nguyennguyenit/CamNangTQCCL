@@ -130,7 +130,7 @@ Trước deploy:
 - ghi base commit, scoped-source digest và `dist/` digest;
 - xác nhận `js/config.js` trỏ đúng Worker URL và Turnstile public site key;
 - chạy local HTTP/routed-HTTPS exposure probe và full gate;
-- xác nhận `.github/workflows/mcp-worker.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt (workflow chạy trên pull request và hằng tuần trên `main`, không chạy khi push; với commit đẩy thẳng `main`, tự chạy `npm run check:repository` local); workflow này không deploy Pages;
+- xác nhận `.github/workflows/mcp-gate.yml` là workflow CI duy nhất và full `npm run check:repository` credential-free đã đạt (workflow chạy trên pull request và hằng tuần trên `main`, không chạy khi push; với commit đẩy thẳng `main`, tự chạy `npm run check:repository` local); workflow này không deploy. Push lên `main` chạm đầu vào site thì `pages-deploy.yml` tự deploy production, nên release cần ủy quyền riêng phải đi qua nhánh/PR chứ không push thẳng `main` trước khi được duyệt;
 - xác nhận `worker/wrangler.toml` `ALLOWED_ORIGINS` chứa đủ ba origin exact của site (`https://tqccl.com`, `https://www.tqccl.com`, `https://tqccl.pages.dev`).
 
 ### Preview, promotion và canary
@@ -182,11 +182,11 @@ npm run check
 npm run check:repository
 ```
 
-Production dùng `ASSETS` private binding với `run_worker_first: true`; bundle gồm manifest và sáu JSON, đi cùng code trong một Worker version. Workflow production chỉ chạy bằng manual dispatch từ `main` khi checkbox production bật và full SHA 40 ký tự khớp `HEAD`, `GITHUB_SHA` lẫn current `origin/main`. Đây là cơ chế owner-approved cho repo private khi required-reviewer environment không khả dụng. Candidate được thêm ở `0%`, kiểm qua Version Override và exact runtime version header trước khi trở thành version duy nhất ở `100%`.
+Production dùng `ASSETS` private binding với `run_worker_first: true`; bundle gồm manifest và sáu JSON, đi cùng code trong một Worker version. Workflow `mcp-release.yml` release tự động mỗi khi push lên `main` chạm đầu vào Worker (không có người duyệt; gate phạm vi Worker rồi canary/promote), còn manual dispatch từ `main` với checkbox production và full SHA 40 ký tự khớp `HEAD`, `GITHUB_SHA` lẫn current `origin/main` dùng cho bootstrap, rehearsal rollback hay release lại. Chi tiết paths và gate ở [Research MCP server](mcp-research-server.md#production-release). Candidate được thêm ở `0%`, kiểm qua Version Override và exact runtime version header trước khi trở thành version duy nhất ở `100%`.
 
 Nếu live inventory xác nhận Worker chưa có deployment, lần chạy đầu phải bật manual input `bootstrap_first_release` và giữ `rehearse_rollback: false`. Read-only preflight dừng trước mutation nếu Worker đã có deployment. Nhánh one-time tạo Worker/version đầu bằng `wrangler deploy`, truyền bearer qua secret file tạm mode `0600`, áp dụng Custom Domain, rồi controller read-back đúng candidate duy nhất ở `100%` và xác minh production; nếu verify fail thì mở incident vì chưa có prior để rollback. Sau đó bắt buộc chạy lần hai với `bootstrap_first_release: false` và `rehearse_rollback: true`; nhánh normal dùng `wrangler versions upload` để chứng minh `100/0`, promotion, exact prior rollback, code/data identity và re-promotion. Không dùng bootstrap để ghi đè Worker đã hoạt động.
 
-Live verifier lấy bearer từ `TQCCL_MCP_BEARER_CURRENT`; Cloudflare control-plane verifier lấy token chỉ đọc từ environment. Không đặt secret trong argv/query/artifact. Sau Custom Domain trigger, workflow poll public `/healthz` tối đa 120 giây để hấp thụ DNS/TLS propagation trước khi đọc prior identity. Một scheduler dùng chung giãn tối thiểu `1.100 ms` giữa mọi request `/mcp` trong candidate/production/rollback verification để không tự va edge `10/10`. Controller re-read exact deployment trước promote và rollback: nếu current drift khỏi deployment do run sở hữu thì mở incident, không overwrite release khác. Mỗi mùa khoảng ba tháng tạo một reviewed code+data Worker version; GoClaw URL/bearer/tool contract không đổi.
+Live verifier lấy bearer từ `TQCCL_MCP_BEARER_CURRENT`; Cloudflare control-plane verifier lấy token chỉ đọc từ environment. Không đặt secret trong argv/query/artifact. Sau Custom Domain trigger, workflow poll public `/healthz` tối đa 120 giây để hấp thụ DNS/TLS propagation trước khi đọc prior identity. Một scheduler dùng chung giãn tối thiểu `1.100 ms` giữa mọi request `/mcp` trong candidate/production/rollback verification để không tự va edge `10/10`. Controller re-read exact deployment trước promote và rollback: nếu current drift khỏi deployment do run sở hữu thì mở incident, không overwrite release khác. Mỗi push chạm dữ liệu hoặc code của Worker tạo một Worker version mới (tag = SHA của commit); GoClaw URL/bearer/tool contract không đổi.
 
 Edge rate rule trên Cloudflare Free dùng `10 request/10 giây` cho `/mcp`; limiter trong Worker vẫn là `60 request/60 giây`. Không đổi edge threshold sang chu kỳ 60 giây nếu zone chưa nâng gói vì cấu hình đó không được Free hỗ trợ.
 
@@ -265,7 +265,7 @@ Rollout do chủ dự án thực hiện (cần quyền Cloudflare); tài liệu 
 
 1. `cd community-worker && npm run db:migrate:remote`. `0011_roster.sql` chỉ thêm bảng `roster_records` và ba index, không sửa bảng đang chạy; nếu `0008`–`0010` của Đội cộng đồng chưa áp, wrangler áp theo thứ tự tên file. Ghi bookmark trước khi migrate: `npx wrangler d1 time-travel info tqccl-community`.
 2. `cd community-worker && npm run deploy`. Kiểm: `GET https://tqccl.com/api/roster` không đăng nhập → `401`; đăng nhập rồi gọi → `200` với `records: []`.
-3. Deploy Pages (push `main`, rồi chạy tay `pages-deploy.yml`; xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)). Kiểm trên production:
+3. Deploy Pages (push `main` tự chạy `pages-deploy.yml`; xem [Community Worker](community-worker.md#triển-khai-và-rollback-1)). Kiểm trên production:
    - `/goi-y-doi-tu-kho/`: khách chạy như cũ, không có request `/api/roster`; công cụ dùng được cả khi Worker AI chưa cấu hình (chỉ ẩn đọc ảnh và giải thích AI).
    - Đăng nhập: hỏi gộp kho local vào hộp `main` lần đầu, rồi đồng bộ; máy thứ hai thấy cùng kho.
    - `/doi-cua-toi/` và `/zh/doi-cua-toi/` có `noindex` và không nằm trong `sitemap.xml`; `/my-teams-source-index.json` trả JSON (1 601 mục ở bản build hiện tại).

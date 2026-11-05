@@ -1,10 +1,28 @@
 # Build lại site tĩnh và deploy lên Cloudflare Pages (project direct upload `tqccl`).
-# Kích hoạt: community-worker gửi repository_dispatch "site-publish" khi nội dung công khai đổi (bài viết blog xuất bản/gỡ/sửa;
-# đội cộng đồng được duyệt/xoá, khoá/mở khoá/xoá tài khoản), lịch hằng ngày (schedule), hoặc chạy tay (workflow_dispatch). Luôn build từ nhánh main.
+# Kích hoạt: push lên main chạm đầu vào của site (paths-ignore loại docs, plan, Worker riêng và test);
+# community-worker gửi repository_dispatch "site-publish" khi nội dung công khai đổi (bài viết blog xuất bản/gỡ/sửa;
+# đội cộng đồng được duyệt/xoá, khoá/mở khoá/xoá tài khoản); lịch hằng ngày (schedule); hoặc chạy tay (workflow_dispatch).
+# Luôn build tip của nhánh main.
 # Secret bắt buộc: CLOUDFLARE_PAGES_API_TOKEN (quyền Account › Cloudflare Pages › Edit).
 name: Pages deploy
 
 on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "docs/**"
+      - "plans/**"
+      - "**/*.md"
+      - ".agents/**"
+      - ".claude/**"
+      - ".githooks/**"
+      - "agent-knowledge/**"
+      - "mcp-worker/**"
+      - "worker/**"
+      - "tests/**"
+      - "tests-js/**"
+      - "tests-e2e/**"
+      - ".github/workflows/mcp-*.yml"
   repository_dispatch:
     types: [site-publish]
   workflow_dispatch:
@@ -23,6 +41,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     env:
       CLOUDFLARE_ACCOUNT_ID: e2ab96bb7fa53e5ad848286816d344a5
       # Astro đọc bài viết đã xuất bản lúc build (src/lib/blog-posts.ts).

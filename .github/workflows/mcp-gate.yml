@@ -1,0 +1,89 @@
+# Gate đầy đủ credential-free (check:repository: Worker, Astro build/e2e, Python, Vision Worker, dry-run).
+# Chạy trên pull request chạm đầu vào của site hoặc MCP, hằng tuần trên main, hoặc chạy tay. Không deploy.
+# Release MCP production nằm ở mcp-release.yml; deploy site nằm ở pages-deploy.yml.
+name: MCP gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "agent-knowledge/**"
+      - ".node-version"
+      - ".github/workflows/mcp-gate.yml"
+      - ".github/workflows/mcp-release.yml"
+      - ".github/workflows/mcp-edge-security-monitor.yml"
+      - "data/**"
+      - "pipeline/**"
+      - "js/**"
+      - "css/**"
+      - "public/**"
+      - "mcp-worker/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.config.*"
+      - "scripts/**"
+      - "astro.config.*"
+      - "src/**"
+      - "tsconfig.json"
+      - "tests/**"
+      - "tests-e2e/**"
+      - "tests-js/**"
+      - "worker/**"
+      - "docs/zh-gaps.md"
+  schedule:
+    - cron: "23 3 * * 1"
+
+permissions:
+  contents: read
+
+# Push mới lên cùng nhánh PR thay run cũ; schedule/dispatch trên main dùng group riêng theo ref.
+concurrency:
+  group: mcp-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  credential-free-release-gate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            mcp-worker/package-lock.json
+            worker/package-lock.json
+      - run: npm ci
+      - run: npm ci
+        working-directory: worker
+      - run: npm ci
+        working-directory: mcp-worker
+      - run: npx playwright install --with-deps chromium
+      - name: Build immutable Worker assets
+        run: npm run --silent build:worker-assets > "${RUNNER_TEMP}/worker-release-evidence.json"
+        working-directory: mcp-worker
+      - run: npm run check:repository
+        working-directory: mcp-worker
+      - name: Upload Playwright failure traces
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-failures-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: test-results/
+      - uses: actions/upload-artifact@v7
+        with:
+          name: tqccl-mcp-release-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 30
+          path: |
+            ${{ runner.temp }}/worker-release-evidence.json
+            mcp-worker/.worker-assets/

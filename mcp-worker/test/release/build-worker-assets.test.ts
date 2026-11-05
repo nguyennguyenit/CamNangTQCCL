@@ -343,9 +343,10 @@ describe("buildWorkerAssets", () => {
     const packageJson = JSON.parse(
       await readFile(new URL("mcp-worker/package.json", repositoryRoot), "utf8"),
     );
-    const workflow = await readFile(
-      new URL(".github/workflows/mcp-worker.yml", repositoryRoot),
-      "utf8",
+    const workflows = await Promise.all(
+      ["mcp-gate.yml", "mcp-release.yml"].map(name =>
+        readFile(new URL(`.github/workflows/${name}`, repositoryRoot), "utf8"),
+      ),
     );
 
     expect(packageJson.private).toBe(true);
@@ -353,8 +354,10 @@ describe("buildWorkerAssets", () => {
       "build-worker-assets.ts",
     );
     expect(packageJson.scripts["build:data-release"]).toBeUndefined();
-    expect(workflow).toContain("npm run --silent build:worker-assets");
-    expect(workflow).not.toContain("build:data-release");
+    for (const workflow of workflows) {
+      expect(workflow).toContain("npm run --silent build:worker-assets");
+      expect(workflow).not.toContain("build:data-release");
+    }
   });
 
   it("nhận website-display như source-only và không emit vào Worker assets", async () => {

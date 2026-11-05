@@ -138,7 +138,7 @@ Chuẩn dự án ưu tiên YAGNI, KISS, DRY; thay đổi nhỏ, test được v�
 - HTTP giữ thứ tự guard rẻ → đắt, server/transport theo request và chỉ đọc allowlisted Worker Static Assets qua `DataSource`.
 - Release phải build deterministic manifest + sáu JSON từ exact Git tree sạch, verify candidate `0%` bằng Version Override, rồi promote duy nhất `100%` dưới expected-current guard.
 - Bearer và Cloudflare token chỉ đi qua managed environment ở đúng step tiêu thụ; không argv/query/log/artifact. Gate phải từ chối file secret tạm chưa dọn.
-- `npm run check` không được gọi live deploy. `.github/workflows/mcp-worker.yml` là browser CI owner duy nhất; `npm run check:repository` phải bao phủ MCP, Astro build/dist/`npm run verify`/E2E, JS, Python, Vision Worker và Wrangler dry-run.
+- `npm run check` không được gọi live deploy. `.github/workflows/mcp-gate.yml` là browser CI owner duy nhất; `npm run check:repository` phải bao phủ MCP, Astro build/dist/`npm run verify`/E2E, JS, Python, Vision Worker và Wrangler dry-run. `.github/workflows/mcp-release.yml` chỉ chạy gate phạm vi Worker (`npm run check`, `test:worker`, `deploy:dry-run`) trước release; `push.paths` của nó phải phủ mọi đầu vào Worker (test `workflow-release-contract` giữ điều này).
 - MCP core coverage (`src/data`, `src/domain`, `src/research`) phải đạt statements/lines/functions 80% và branches 70%; không hạ threshold để né regression.
 
 ## Quy ước tên và tài liệu
