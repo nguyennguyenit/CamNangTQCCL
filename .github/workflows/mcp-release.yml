@@ -1,6 +1,45 @@
-name: MCP worker
+# Release Research MCP Worker lên production.
+# Kích hoạt: push lên main chạm đầu vào của Worker (paths bên dưới), hoặc chạy tay (workflow_dispatch) với
+# exact SHA của main cho bootstrap, rehearsal rollback hay release lại.
+# Gate trước khi upload chỉ gồm kiểm tra của Worker (check, Workerd runtime, Wrangler dry-run); gate đầy đủ
+# của repository (Astro e2e, Python, Vision Worker) chạy trên pull request và hằng tuần ở mcp-gate.yml.
+# Root npm ci vẫn cần: tsconfig gốc extends astro/tsconfigs và test publication chạy route catalog của site.
+# Paths phải chứa mọi đầu vào của Worker: closure js/ trong mcp-worker/workflow-source-manifest.json,
+# data/ (trừ data/sgsdeck mà builder loại bỏ), agent-knowledge/ và các publication root của
+# repositoryPublicationRoots(); test/release/workflow-release-contract.test.ts giữ điều này.
+name: MCP release
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "data/**"
+      - "!data/sgsdeck/**"
+      - "mcp-worker/**"
+      - "!mcp-worker/test/**"
+      - "!mcp-worker/**/*.md"
+      - "agent-knowledge/**"
+      - "src/data/recommended-reference/**"
+      - "pipeline/team-route-handles.json"
+      - "pipeline/lookup-route-handles.json"
+      - ".node-version"
+      - ".github/workflows/mcp-release.yml"
+      - "js/analyze-map.js"
+      - "js/filters.js"
+      - "js/hanviet.js"
+      - "js/hero-identity.js"
+      - "js/i18n.js"
+      - "js/lookup-data.js"
+      - "js/lookup-detail-ledger.js"
+      - "js/lookup-field-labels.js"
+      - "js/lookup-ids.js"
+      - "js/lookup-innate-holders.js"
+      - "js/match-dict.js"
+      - "js/roster-scan-state.js"
+      - "js/roster-season-candidates.js"
+      - "js/season-context.js"
+      - "js/team-recommend-engine.js"
+      - "js/website-display.js"
   workflow_dispatch:
     inputs:
       production_sha:
@@ -22,96 +61,34 @@ on:
         required: true
         type: boolean
         default: false
-  pull_request:
-    paths:
-      - "agent-knowledge/**"
-      - ".node-version"
-      - ".github/workflows/mcp-worker.yml"
-      - ".github/workflows/mcp-edge-security-monitor.yml"
-      - "data/**"
-      - "pipeline/**"
-      - "js/**"
-      - "css/**"
-      - "public/**"
-      - "mcp-worker/**"
-      - "package.json"
-      - "package-lock.json"
-      - "playwright.config.*"
-      - "scripts/**"
-      - "astro.config.*"
-      - "src/**"
-      - "tsconfig.json"
-      - "tests/**"
-      - "tests-e2e/**"
-      - "tests-js/**"
-      - "worker/**"
-      - "docs/zh-gaps.md"
-  schedule:
-    - cron: "23 3 * * 1"
 
 permissions:
   contents: read
 
 jobs:
-  credential-free-release-gate:
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-      - uses: actions/setup-node@v7
-        with:
-          node-version-file: .node-version
-          cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            mcp-worker/package-lock.json
-            worker/package-lock.json
-      - run: npm ci
-      - run: npm ci
-        working-directory: worker
-      - run: npm ci
-        working-directory: mcp-worker
-      - run: npx playwright install --with-deps chromium
-      - name: Build immutable Worker assets
-        run: npm run --silent build:worker-assets > "${RUNNER_TEMP}/worker-release-evidence.json"
-        working-directory: mcp-worker
-      - run: npm run check:repository
-        working-directory: mcp-worker
-      - name: Upload Playwright failure traces
-        if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: playwright-failures-${{ github.sha }}
-          if-no-files-found: ignore
-          retention-days: 7
-          path: test-results/
-      - uses: actions/upload-artifact@v7
-        with:
-          name: tqccl-mcp-release-${{ github.sha }}
-          if-no-files-found: error
-          retention-days: 30
-          path: |
-            ${{ runner.temp }}/worker-release-evidence.json
-            mcp-worker/.worker-assets/
-
   production-release:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.confirm_production == true
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.confirm_production == true))
     runs-on: ubuntu-24.04
+    # Đo ~5 phút; để rộng vì kill giữa canary/promote để lại deployment hai version.
+    timeout-minutes: 20
     permissions:
+      actions: read
       contents: read
+    # Release tuần tự, không bao giờ huỷ giữa chừng; GitHub giữ tối đa một run đang chờ (bản mới nhất).
     concurrency:
       group: tqccl-mcp-production-release
       cancel-in-progress: false
+    env:
+      # Push không có inputs; script preflight/release chỉ nhận đúng "true" hoặc "false".
+      TQCCL_FIRST_RELEASE_BOOTSTRAP: ${{ inputs.bootstrap_first_release || false }}
+      TQCCL_REHEARSE_ROLLBACK: ${{ inputs.rehearse_rollback || false }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: ${{ github.sha }}
       - name: Verify manual exact-SHA approval
+        if: github.event_name == 'workflow_dispatch'
         shell: bash
         env:
           TQCCL_APPROVED_SHA: ${{ inputs.production_sha }}
@@ -121,55 +98,81 @@ jobs:
           test "$TQCCL_APPROVED_SHA" = "$GITHUB_SHA"
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           test "$TQCCL_APPROVED_SHA" = "$(git rev-parse origin/main)"
-          if [[ "${{ inputs.bootstrap_first_release }}" == "true" ]]; then
-            test "${{ inputs.rehearse_rollback }}" = "false"
+          if [[ "$TQCCL_FIRST_RELEASE_BOOTSTRAP" == "true" ]]; then
+            test "$TQCCL_REHEARSE_ROLLBACK" = "false"
           fi
-      - uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-      - uses: actions/setup-node@v7
+      # Một push mới hơn chạm đầu vào Worker đang chờ trong concurrency group sẽ release tip; run này bỏ qua
+      # thay vì release SHA cũ. Push mới hơn không chạm đầu vào Worker không tạo run, nên SHA này vẫn release.
+      # Không đọc được API thì vẫn release: run chờ sau đó chỉ release lại.
+      - name: Select release target
+        id: tip
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          newer=0
+          if [[ "$GITHUB_EVENT_NAME" == "push" ]]; then
+            newer="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/mcp-release.yml/runs?branch=main&event=push&per_page=50" \
+              --jq "[.workflow_runs[] | select(.run_number > $GITHUB_RUN_NUMBER and .status != \"completed\")] | length")" || newer=0
+          fi
+          if [[ "$newer" =~ ^[1-9][0-9]*$ ]]; then
+            echo "::notice::Có $newer run MCP release mới hơn đang chờ; run đó release tip của main, bỏ qua $GITHUB_SHA."
+            echo "release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.tip.outputs.release == 'true'
+        uses: actions/setup-node@v7
         with:
           node-version-file: .node-version
           cache: npm
           cache-dependency-path: |
             package-lock.json
             mcp-worker/package-lock.json
-            worker/package-lock.json
-      - run: npm ci
-      - run: npm ci
-        working-directory: worker
-      - run: npm ci
+      - if: steps.tip.outputs.release == 'true'
+        run: npm ci
+      - if: steps.tip.outputs.release == 'true'
+        run: npm ci
         working-directory: mcp-worker
-      - run: npx playwright install --with-deps chromium
       - name: Build exact-SHA Worker assets
+        if: steps.tip.outputs.release == 'true'
         run: npm run --silent build:worker-assets > "${RUNNER_TEMP}/worker-release-evidence.json"
         working-directory: mcp-worker
       - name: Verify exact-SHA Worker asset evidence
+        if: steps.tip.outputs.release == 'true'
         run: npm run verify:worker-assets -- "${RUNNER_TEMP}/worker-release-evidence.json"
         working-directory: mcp-worker
+      - name: Run Worker gate
+        if: steps.tip.outputs.release == 'true'
+        run: npm run check
+        working-directory: mcp-worker
       - name: Run Workerd runtime gates
+        if: steps.tip.outputs.release == 'true'
         run: npm run test:worker
         working-directory: mcp-worker
-      - name: Run credential-free repository gate and Wrangler dry-run
-        run: npm run check:repository
+      - name: Run Wrangler dry-run
+        if: steps.tip.outputs.release == 'true'
+        run: npm run deploy:dry-run
         working-directory: mcp-worker
       - name: Verify live edge control
+        if: steps.tip.outputs.release == 'true'
         env:
           CLOUDFLARE_ZONE_ID: ${{ vars.CLOUDFLARE_ZONE_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_READ_API_TOKEN }}
         run: node --import tsx scripts/verify-control-plane.ts --live
         working-directory: mcp-worker
       - name: Preflight Worker deployment state
+        if: steps.tip.outputs.release == 'true'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           TQCCL_WORKER_NAME: ${{ vars.TQCCL_WORKER_NAME }}
-          TQCCL_FIRST_RELEASE_BOOTSTRAP: ${{ inputs.bootstrap_first_release }}
           TQCCL_WORKER_DEPLOY_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
         run: npm run preflight:worker-release
         working-directory: mcp-worker
       - name: Bootstrap first Worker version
         id: bootstrap_upload
-        if: inputs.bootstrap_first_release
+        if: steps.tip.outputs.release == 'true' && env.TQCCL_FIRST_RELEASE_BOOTSTRAP == 'true'
         shell: bash
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
@@ -188,7 +191,7 @@ jobs:
         working-directory: mcp-worker
       - name: Upload immutable Worker version
         id: version_upload
-        if: ${{ !inputs.bootstrap_first_release }}
+        if: steps.tip.outputs.release == 'true' && env.TQCCL_FIRST_RELEASE_BOOTSTRAP != 'true'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
@@ -198,12 +201,14 @@ jobs:
           npm run read:worker-version-upload -- "$WRANGLER_OUTPUT_FILE_PATH" version-upload
         working-directory: mcp-worker
       - name: Apply Worker Custom Domain
+        if: steps.tip.outputs.release == 'true'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
         run: npx wrangler triggers deploy
         working-directory: mcp-worker
       - name: Wait for Worker Custom Domain readiness
+        if: steps.tip.outputs.release == 'true'
         env:
           TQCCL_MCP_ENDPOINT: ${{ vars.TQCCL_MCP_ENDPOINT }}
         run: |
@@ -225,13 +230,12 @@ jobs:
           echo "Worker Custom Domain chưa sẵn sàng sau 120 giây." >&2
           exit 1
       - name: Verify candidate, promote, and verify production
+        if: steps.tip.outputs.release == 'true'
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           TQCCL_WORKER_NAME: ${{ vars.TQCCL_WORKER_NAME }}
           TQCCL_MCP_ENDPOINT: ${{ vars.TQCCL_MCP_ENDPOINT }}
           TQCCL_RELEASE_RUN_ID: github-${{ github.run_id }}-${{ github.run_attempt }}
-          TQCCL_FIRST_RELEASE_BOOTSTRAP: ${{ inputs.bootstrap_first_release }}
-          TQCCL_REHEARSE_ROLLBACK: ${{ inputs.rehearse_rollback }}
           TQCCL_DEPLOYMENT_EVIDENCE_PATH: ${{ runner.temp }}/worker-deployment-evidence.json
           TQCCL_WORKER_DEPLOY_API_TOKEN: ${{ secrets.TQCCL_WORKER_DEPLOY_API_TOKEN }}
           TQCCL_MCP_BEARER_CURRENT: ${{ secrets.TQCCL_MCP_BEARER_CURRENT }}
@@ -242,7 +246,7 @@ jobs:
             "test/fixtures/release-verification.json"
         working-directory: mcp-worker
       - uses: actions/upload-artifact@v7
-        if: always()
+        if: always() && steps.tip.outputs.release == 'true'
         with:
           name: tqccl-mcp-production-${{ github.sha }}
           if-no-files-found: error

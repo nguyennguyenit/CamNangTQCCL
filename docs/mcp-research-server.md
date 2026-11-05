@@ -65,7 +65,7 @@ npm run check
 npm run check:repository
 ```
 
-Workflow `mcp-worker.yml` chạy `check:repository` credential-free trên pull request và theo lịch hằng tuần trên `main`, không chạy khi push; push thẳng `main` được hook `.githooks/pre-push` kiểm local (README "Pre-push hook").
+Workflow `mcp-gate.yml` chạy `check:repository` credential-free trên pull request và theo lịch hằng tuần trên `main`, không chạy khi push; push thẳng `main` được hook `.githooks/pre-push` kiểm local (README "Pre-push hook"). Release production nằm ở `mcp-release.yml` (mục Production release).
 
 `check:repository` từ chối release credential trong environment rồi chạy MCP, Astro, root JS, Python fallback, Vision Worker và Wrangler dry-run. Trong clean checkout, phải chạy `npm run build:worker-assets` trước gate vì dry-run cần thư mục asset đã tạo.
 
@@ -134,7 +134,12 @@ tạo asset giả hoặc bỏ guard để chạy dry-run.
 
 ## Production release
 
-Workflow `.github/workflows/mcp-worker.yml` chỉ vào job production khi manual dispatch từ `main`, checkbox production được bật và `production_sha` là full SHA 40 ký tự khớp `HEAD`, `GITHUB_SHA` lẫn current `origin/main`. Repo giữ private; owner đã chấp thuận cơ chế manual exact-SHA thay cho required-reviewer environment không khả dụng ở GitHub plan hiện tại. Release dùng một concurrency group với `cancel-in-progress: false`. Credential không được đặt ở job level: repository gate không có secret, token chỉ-read chỉ ở edge-control step và deploy token chỉ được cấp cho preflight, upload, Custom Domain trigger và deployment controller. MCP bearer ở release step; riêng bootstrap đầu tiên còn cấp bearer cho upload step để đóng gói secret vào version chưa có secret kế thừa.
+Workflow `.github/workflows/mcp-release.yml` release production theo hai đường, đều chỉ từ `main`:
+
+- **Push** chạm đầu vào Worker: `data/**` (trừ `data/sgsdeck/**` mà builder loại bỏ), `mcp-worker/**` (trừ `test/` và `*.md`), `agent-knowledge/**`, publication root (`src/data/recommended-reference/**`, `pipeline/team-route-handles.json`, `pipeline/lookup-route-handles.json`), `.node-version` và đúng các file `js/` trong closure của `workflow-source-manifest.json`. Test `test/release/workflow-release-contract.test.ts` (chạy trong `npm run check`) fail khi manifest thêm đầu vào mà `paths` chưa có. Bước "Select release target" bỏ qua run (notice, không fail) khi một push mới hơn đã có run đang chờ trong concurrency group, vì run đó release tip; đọc API lỗi thì vẫn release.
+- **Manual dispatch** cho bootstrap, rehearsal rollback hoặc release lại: checkbox production bật và `production_sha` là full SHA 40 ký tự khớp `HEAD`, `GITHUB_SHA` lẫn current `origin/main`.
+
+Không có người duyệt: production được bảo vệ bằng gate trước upload (`build:worker-assets` + `verify:worker-assets`, `npm run check`, `test:worker`, `deploy:dry-run`, verify edge control live, preflight) và canary/promote/rollback của controller. Gate đầy đủ của repository (Astro e2e, Python, Vision Worker) không chạy khi push mà chạy trên pull request và hằng tuần ở `mcp-gate.yml`. Release dùng một concurrency group với `cancel-in-progress: false` và `timeout-minutes: 20`; không bao giờ huỷ tay giữa canary/promote vì deployment hai version còn lại làm preflight của mọi release sau dừng (`DeploymentOwnershipError`). Credential không được đặt ở job level: gate không có secret, token chỉ-read chỉ ở edge-control step và deploy token chỉ được cấp cho preflight, upload, Custom Domain trigger và deployment controller. MCP bearer ở release step; riêng bootstrap đầu tiên còn cấp bearer cho upload step để đóng gói secret vào version chưa có secret kế thừa.
 
 Cloudflare Create Deployment không có conditional/ETag precondition. Vì vậy deploy token phải dành riêng cho workflow và không được mutation từ dashboard, Wrangler hay token khác trong cửa sổ release. Controller re-read ngay trước mỗi POST, gắn run ID trong deployment message, reconcile response bị mất rồi read-back; observed drift luôn mở incident. Đây là serialization + ownership protocol vận hành, không phải CAS nguyên tử do Cloudflare cung cấp.
 

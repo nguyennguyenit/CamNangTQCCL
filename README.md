@@ -81,7 +81,7 @@ Playwright cần Chromium cài một lần bằng `npx playwright install chromi
 
 ### Pre-push hook
 
-CI (`.github/workflows/mcp-worker.yml`) chạy `check:repository` đầy đủ trên mọi pull request, không chạy khi push thẳng `main`, và quét `main` mỗi thứ Hai 03:23 UTC. Hook local thay chốt chặn đó cho các lần push thẳng. Bật một lần cho mỗi clone:
+CI (`.github/workflows/mcp-gate.yml`) chạy `check:repository` đầy đủ trên mọi pull request, không chạy khi push thẳng `main`, và quét `main` mỗi thứ Hai 03:23 UTC. Push lên `main` deploy production ngay: `pages-deploy.yml` deploy site khi push chạm đầu vào site, `mcp-release.yml` release Research MCP khi push chạm đầu vào Worker (xem [Research MCP server](docs/mcp-research-server.md#production-release)). Hook local thay chốt chặn đầy đủ cho các lần push thẳng. Bật một lần cho mỗi clone:
 
 ```bash
 git config core.hooksPath .githooks
