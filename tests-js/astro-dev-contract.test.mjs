@@ -257,7 +257,7 @@ test("Astro preview serves exact built assets with browser MIME types", async (t
   const astroBin = new URL("../node_modules/.bin/astro", import.meta.url).pathname;
   const child = spawn(
     astroBin,
-    // `--ignore-lock`: Astro 7.4 tự đẩy preview chạy nền khi phát hiện AI agent; SIGTERM khi đó không tắt được server.
+    // `--ignore-lock`: từ Astro 7.2, preview tự chạy nền khi phát hiện AI agent; SIGTERM khi đó không tắt được server.
     ["preview", "--ignore-lock", "--host", "127.0.0.1", "--port", String(port)],
     {
       cwd: projectRoot,

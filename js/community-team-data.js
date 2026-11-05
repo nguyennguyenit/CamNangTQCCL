@@ -50,6 +50,8 @@ export function recordLabel(record, locale = currentLocale()) {
 /**
  * Bộ tra tên theo id cho một locale. Id lạ (không có trong từ điển) hiện thô để không mất thông tin.
  * Chiến pháp đổi id (`formerIds`) được dẫn về id hiện hành qua `createTacticIdResolver`.
+ * @param {{heroes?: unknown[], tactics?: unknown[], books?: unknown[]}} [dictionaries] từ điển JSON đã parse.
+ * @param {string} [locale]
  */
 export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}, locale = currentLocale()) {
   const indexes = Object.freeze({
