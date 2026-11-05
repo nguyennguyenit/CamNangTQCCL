@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Trang tĩnh /doi-cong-dong/<id>/ (vi + zh), SEO, sitemap, verifier, redirect ?id="
-status: pending
+status: completed
 priority: P1
 effort: "1.5d"
 dependencies: [1, 2]

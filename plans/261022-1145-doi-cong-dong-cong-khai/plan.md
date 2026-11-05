@@ -1,7 +1,7 @@
 ---
 title: "Đội cộng đồng công khai: lối vào menu/landing và trang tĩnh index được cho từng đội"
 description: "Thêm Đội cộng đồng vào menu và landing (publish lại bản dịch), Worker có export công khai + dispatch site-publish, site sinh trang tĩnh /doi-cong-dong/<id>/ (vi + zh) có SEO, sitemap, verifier và redirect ?id=."
-status: in-progress
+status: completed
 priority: P1
 effort: 3d
 branch: feat/doi-cong-dong-cong-khai  # PR A: feat/doi-cong-dong-worker (#32)
@@ -56,23 +56,23 @@ Khối liệt kê đội nổi bật trên landing; bộ lọc URL theo binh/lo�
 
 | # | Nội dung | Effort | Phụ thuộc | Trạng thái |
 |---|---|---|---|---|
-| 1 | [Lối vào menu + thẻ landing, publish lại bản dịch](./phase-01-loi-vao-localization.md) | 3h | — | pending |
-| 2 | [Worker: export công khai + dispatch `site-publish`](./phase-02-worker-export-dispatch.md) | 5h | — | pending |
-| 3 | [Trang tĩnh, SEO, sitemap, verifier, redirect `?id=`](./phase-03-trang-tinh-seo.md) | 1.5d | 1, 2 | pending |
-| 4 | [Docs, cổng kiểm, triển khai, smoke](./phase-04-docs-trien-khai.md) | 3h | 1, 2, 3 | pending |
+| 1 | [Lối vào menu + thẻ landing, publish lại bản dịch](./phase-01-loi-vao-localization.md) | 3h | — | completed |
+| 2 | [Worker: export công khai + dispatch `site-publish`](./phase-02-worker-export-dispatch.md) | 5h | — | completed |
+| 3 | [Trang tĩnh, SEO, sitemap, verifier, redirect `?id=`](./phase-03-trang-tinh-seo.md) | 1.5d | 1, 2 | completed |
+| 4 | [Docs, cổng kiểm, triển khai, smoke](./phase-04-docs-trien-khai.md) | 3h | 1, 2, 3 | completed |
 
 Phụ thuộc: 1 và 2 song song được (file rời nhau: Phase 1 sở hữu `SiteLayout.astro`, `Landing.astro`, `css/styles.css`, policy + file publish, `tests-e2e/landing.spec.mjs`; Phase 2 sở hữu `community-worker/**`, `.github/workflows/pages-deploy.yml`). Phase 3 cần schema export của Phase 2 và chạy sau Phase 1 vì cùng sửa `css/styles.css`. Phase 4 cần cả ba và phụ thuộc mềm vào phase 7 (remote) của plan 261021-0628.
 
 ## Xong khi
 
-- [ ] `cd community-worker && npm test && npm run typecheck` exit 0, gồm test export (lọc pending/rejected/đang xoá/user bị khoá/user đang xoá, ban hết hạn vẫn hiện, mùa đóng vẫn có, không lộ `author.image`/`rejectReason`/email, route không bị `:id` nuốt) và test dispatch (đúng 1 lần ở 5 điểm, 0 lần ở reject/mùa/đổi vai trò/gọi lại, lỗi dispatch không rollback).
-- [ ] `grep -rn "blog-publish" community-worker/src community-worker/test community-worker/wrangler.jsonc .github` → 0 dòng; `pages-deploy.yml` có `types: [site-publish]` và `schedule`.
-- [ ] `python3 -m pipeline.site_localization check --root . --stage public` và `python3 -m pipeline.team_route_handles --check` exit 0 sau khi sửa menu/landing.
-- [ ] `npm run test:node`, `npm run build`, `npm run verify`, `npm run test:dist`, `npm run test:e2e` exit 0 trong worktree.
-- [ ] Build tích hợp với API giả 10 đội: 20 file trang đội, danh sách không `noindex` + có canonical, sitemap đúng 10 URL đội + cặp danh sách, 0 `hreflang` trên trang đội, không có `<img src=x` từ tiêu đề XSS.
-- [ ] Production: `curl -s https://tqccl-community.nguyennlt-ncc.workers.dev/api/community-teams/export` trả `"schemaVersion":1`; `tqccl.com/` và `/zh/` có link Đội cộng đồng (`grep -o … | wc -l` ≥ 2 mỗi trang).
-- [ ] Production: duyệt một đội → run `repository_dispatch` mới success → trang bản gốc 200 có canonical đúng, `WebPage` + `FAQPage`, bản kia canonical về bản gốc, sitemap có URL; gỡ đội → run mới → 404 và sitemap không còn URL; `?id=<id>` chuyển sang URL tĩnh.
-- [ ] Docs `community-worker.md`, `system-architecture.md`, `deployment-guide.md`, `codebase-summary.md`, `project-changelog.md` cập nhật.
+- [x] `cd community-worker && npm test && npm run typecheck` exit 0, gồm test export (lọc pending/rejected/đang xoá/user bị khoá/user đang xoá, ban hết hạn vẫn hiện, mùa đóng vẫn có, không lộ `author.image`/`rejectReason`/email, route không bị `:id` nuốt) và test dispatch (đúng 1 lần ở 5 điểm, 0 lần ở reject/mùa/đổi vai trò/gọi lại, lỗi dispatch không rollback).
+- [x] `grep -rn "blog-publish" community-worker/src community-worker/test community-worker/wrangler.jsonc .github` → 0 dòng; `pages-deploy.yml` có `types: [site-publish]` và `schedule`.
+- [x] `python3 -m pipeline.site_localization check --root . --stage public` và `python3 -m pipeline.team_route_handles --check` exit 0 sau khi sửa menu/landing.
+- [x] `npm run test:node`, `npm run build`, `npm run verify`, `npm run test:dist`, `npm run test:e2e` exit 0 trong worktree.
+- [x] Build tích hợp với API giả 10 đội: 20 file trang đội, danh sách không `noindex` + có canonical, sitemap đúng 10 URL đội + cặp danh sách, 0 `hreflang` trên trang đội, không có `<img src=x` từ tiêu đề XSS.
+- [x] Production: `curl -s https://tqccl-community.nguyennlt-ncc.workers.dev/api/community-teams/export` trả `"schemaVersion":1`; `tqccl.com/` và `/zh/` có link Đội cộng đồng (`grep -o … | wc -l` ≥ 2 mỗi trang).
+- [x] Production: duyệt một đội → run `repository_dispatch` mới success → trang bản gốc 200 có canonical đúng, `WebPage` + `FAQPage`, bản kia canonical về bản gốc, sitemap có URL; gỡ đội → run mới → 404 và sitemap không còn URL; `?id=<id>` chuyển sang URL tĩnh.
+- [x] Docs `community-worker.md`, `system-architecture.md`, `deployment-guide.md`, `codebase-summary.md`, `project-changelog.md` cập nhật.
 
 ## Dừng và hỏi chỉ khi
 
@@ -119,3 +119,13 @@ Phụ thuộc: 1 và 2 song song được (file rời nhau: Phase 1 sở hữu `
 - Decision deltas checked: 10 (menu/landing + publish localization; trang tĩnh vi/zh lúc build; SEO + canonical/`alternates={false}`/sitemap một URL; ngưỡng 10 id duy nhất; live widgets + pageKey/`sharedPool`; export trước `:id` + schema; `site-publish` + 5 điểm + `schedule`; redirect `?id=` có điều kiện + link tĩnh; loader fail-closed + `jsonLd()`/escape; ngoài phạm vi).
 - Reconciled stale references: 4 (tiền đề "chưa có mùa" → mùa đã mở, 0 đội hiển thị; "đếm file" → đếm id duy nhất; `alternates={false}` chỉ bản gương → cả hai bản; Red Team #1 "không sửa SiteLayout" của plan cũ → đảo theo quyết định user, kèm chuỗi publish).
 - Unresolved contradictions: 0
+
+## Kết quả triển khai và smoke (2026-11-05)
+
+- Merge: PR A #32 (Worker), PR B #43 (site); sự cố Stage A lọt `main` đã revert ở #41. Worker release ghi ở #40 (`/api/community-teams/export` 200).
+- Lịch `pages-deploy` chạy hằng ngày, success từ 2026-10-30.
+- Smoke `[SMOKE]` trên production (tài khoản root): đội `a867163f-189e-49cc-8446-822413921ba6`.
+  - Đăng (`POST /api/community-teams` 201 `pending`) → duyệt (`approve` 200, `deploy: {ok: true, status: 204}`) → run `repository_dispatch` `42018452596` success (~1m40s).
+  - `/doi-cong-dong/<id>/` 200: canonical về chính nó, JSON-LD `WebPage` + `BreadcrumbList` + `FAQPage`, không hreflang, không robots; `/zh/…/<id>/` 200, canonical về bản vi, không JSON-LD. Sitemap có đúng 1 URL (bản vi), danh sách `/doi-cong-dong/` có link, vẫn `noindex` (1 đội < 10). `?id=<id>` chuyển sang URL tĩnh (HEAD 200 → `location.replace`); vote/bình luận/chiến báo gắn live.
+  - Xoá (`DELETE` 200 `{ok: true}`) → run `repository_dispatch` `42018792445` success. Bản zh và bản vi ở các edge CDG/FRA/SJC trả 404; sitemap 0 URL; export `items: []`; `GET /api/community-teams/<id>` và ảnh 404.
+- Còn mở: edge Cloudflare SIN vẫn trả bản vi cũ 200 với header `age` ~8700 s (cache lúc trang còn tồn tại) dù `_headers` đặt `/doi-cong-dong/*` là `public, max-age=0, must-revalidate`, kể cả sau run `workflow_dispatch` `42024307744`. Nghi có cache rule ở zone `tqccl.com`; cần purge `https://tqccl.com/doi-cong-dong/a867163f-189e-49cc-8446-822413921ba6/` và kiểm lại cache rule để đội bị gỡ không còn được phục vụ ở edge.

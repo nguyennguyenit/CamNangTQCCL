@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Docs, toàn bộ cổng kiểm, triển khai và smoke production"
-status: pending
+status: completed
 priority: P1
 effort: "3h"
 dependencies: [1, 2, 3]
@@ -82,11 +82,11 @@ Sau triển khai: các `curl`/`gh run list` ở bước 4, 6–10 với kỳ v�
 - Đội thử `[SMOKE]` public vài phút trên production; bước 9 phải xoá ngay sau khi kiểm, kể cả khi bước 8 thất bại.
 
 ## Checklist
-- [ ] Docs 5 file cập nhật; `blog-publish` chỉ còn trong changelog lịch sử
-- [ ] Bảng cổng xanh trong worktree
-- [ ] Worker deploy + export 200 (đã hỏi)
-- [ ] Merge + push `main` (đã hỏi)
-- [ ] `gh workflow run` success (đã hỏi)
-- [ ] Smoke tĩnh vi/zh
-- [ ] Smoke duyệt → 200 + JSON-LD; gỡ → 404
-- [ ] Run `schedule` đầu tiên quan sát được
+- [x] Docs 5 file cập nhật; `blog-publish` chỉ còn trong changelog lịch sử
+- [x] Bảng cổng xanh trong worktree
+- [x] Worker deploy + export 200 (đã hỏi)
+- [x] Merge + push `main` (đã hỏi)
+- [x] `gh workflow run` success (đã hỏi)
+- [x] Smoke tĩnh vi/zh
+- [x] Smoke duyệt → 200 + JSON-LD; gỡ → 404
+- [x] Run `schedule` đầu tiên quan sát được

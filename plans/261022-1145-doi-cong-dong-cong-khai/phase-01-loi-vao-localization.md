@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Lối vào menu + thẻ landing, publish lại bản dịch"
-status: pending
+status: completed
 priority: P1
 effort: "3h"
 dependencies: []
