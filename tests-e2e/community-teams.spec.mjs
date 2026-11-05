@@ -61,6 +61,26 @@ test("danh sách: đổi sắp xếp gọi sort=top, lọc tướng gọi heroes
   await expect(page.getByRole("button", { name: "Xem thêm" })).toBeHidden();
 });
 
+test("danh sách: một tiêu đề trang (h1), thẻ là h2; đội không ảnh không có chữ \"null\"", async ({ page }) => {
+  await mockCommunityApi(page, {
+    teams: { seasons: SEASONS, list: () => ({ items: [teamItem("t1", { imageCount: 0 }), teamItem("t2")], nextCursor: null }) },
+  });
+  for (const [path, title] of [["/doi-cong-dong/", "Đội cộng đồng"], ["/zh/doi-cong-dong/", "社区阵容"]]) {
+    await page.goto(path);
+    const cards = page.locator(".cm-team-card");
+    await expect(cards).toHaveCount(2);
+    const section = page.locator(".cm-team-page");
+    await expect(section.getByRole("heading", { name: title, exact: true })).toHaveCount(1);
+    await expect(section.getByRole("heading", { level: 1 })).toHaveText(title);
+    await expect(section.locator(".cm-team-heading")).toHaveCount(0);
+    await expect(cards.first().getByRole("heading", { level: 2 })).toHaveText("Đội t1");
+    await expect(cards.first().locator("img.cm-team-thumb")).toHaveCount(0);
+    expect(await cards.first().evaluate((card) => [...card.childNodes].filter((node) => node.nodeType === Node.TEXT_NODE).map((node) => node.textContent))).toEqual([]);
+    await expect(cards.first()).not.toContainText("null");
+    await expect(cards.nth(1).locator("img.cm-team-thumb")).toHaveCount(1);
+  }
+});
+
 test("không có mùa mở: ghi chú 'Chưa mở mùa' và không có tab Đăng đội", async ({ page }) => {
   await mockCommunityApi(page, { teams: { seasons: { open: null, seasons: [] } } });
   await page.goto("/doi-cong-dong/");

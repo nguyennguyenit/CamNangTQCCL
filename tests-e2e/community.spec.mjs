@@ -721,7 +721,12 @@ test("đăng nhập bị chặn: thông báo lấy lý do từ /api/ban-notice, 
   expect(url.searchParams.has("error_description")).toBe(false);
   expect(url.searchParams.get("keep")).toBe("1");
   expect(url.hash).toBe("#oauth-x");
-  await page.getByRole("button", { name: "Đóng thông báo" }).click();
+  // Desktop: nút × cùng hàng với chữ, nằm ở góc phải, không rơi xuống dòng riêng.
+  const close = page.getByRole("button", { name: "Đóng thông báo" });
+  const [textBox, closeBox] = [await notice.boundingBox(), await close.boundingBox()];
+  expect(closeBox.y).toBeLessThan(textBox.y + textBox.height);
+  expect(closeBox.x).toBeGreaterThanOrEqual(textBox.x + textBox.width);
+  await close.click();
   await expect(notice).toHaveCount(0);
 });
 

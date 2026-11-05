@@ -163,15 +163,16 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     return el('div', { class: 'cm-team-heroes' }, team.heroes.map((id) => heroNode(id)));
   }
 
-  function teamCard(team, { showSeason = false, extra = null } = {}) {
-    const card = el('li', { class: 'cm-team-card', dataset: { teamId: team.id } });
+  // `headingTag`: danh sách đặt thẻ ngay dưới h1 của trang (h2); "Đội của tôi" có h2 riêng nên thẻ là h3.
+  function teamCard(team, { showSeason = false, extra = null, headingTag = 'h3' } = {}) {
     const title = teamLink(team, team.title, 'cm-team-card-title');
-    card.append(
+    // `el` bỏ qua con null; `Element.append(null)` sẽ in chữ "null" cho đội không có ảnh.
+    return el('li', { class: 'cm-team-card', dataset: { teamId: team.id } }, [
       team.imageCount > 0
         ? el('img', { class: 'cm-team-thumb', src: imageUrl(team.id, 0), alt: '', loading: 'lazy', decoding: 'async' })
         : null,
       el('div', { class: 'cm-team-card-body' }, [
-        el('h3', { class: 'cm-team-card-heading' }, title),
+        el(headingTag, { class: 'cm-team-card-heading' }, title),
         heroRow(team),
         el('p', { class: 'cm-team-meta' }, [
           el('span', { class: 'cm-team-troop' }, troopLabel(team.troop)),
@@ -187,8 +188,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         ]),
         el('p', { class: 'cm-team-author' }, [avatar(team.author), el('span', {}, displayName(team.author))]),
       ]),
-    );
-    return card;
+    ]);
   }
 
   /* ---------- Danh sách ---------- */
@@ -226,7 +226,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     getLexicon().catch(() => {});
 
     const renderItems = (focusFrom = null) => {
-      grid.replaceChildren(...state.items.map((team) => teamCard(team, { showSeason: state.season === 'all' })));
+      grid.replaceChildren(...state.items.map((team) => teamCard(team, { showSeason: state.season === 'all', headingTag: 'h2' })));
       empty.hidden = state.items.length > 0;
       more.hidden = !state.cursor;
       if (focusFrom !== null) {
@@ -300,7 +300,6 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     const field = (id, label, control) => el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: id }, label), control]);
     view.append(
       nav('list', { canPost: Boolean(open) }),
-      heading(L('Đội cộng đồng', '社区阵容')),
       open
         ? el('p', { class: 'scope-note' }, L(`Mùa đang mở: ${seasonLabel(open, locale)}.`, `进行中的赛季：${seasonLabel(open, locale)}。`))
         : el('p', { class: 'cm-notice', role: 'note' }, L('Chưa mở mùa. Hiện chưa nhận đội mới.', '赛季尚未开放，暂不接受新阵容。')),
@@ -678,7 +677,8 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     } finally {
       if (isCurrent()) {
         mount.removeAttribute('aria-busy');
-        if (!first) view.querySelector('.cm-team-heading')?.focus?.();
+        // Danh sách không có h2 riêng: tiêu đề là h1 tĩnh của trang (CommunityTeamsHub.astro).
+        if (!first) (view.querySelector('.cm-team-heading') ?? document.getElementById('cm-team-title'))?.focus?.();
         first = false;
       }
     }
