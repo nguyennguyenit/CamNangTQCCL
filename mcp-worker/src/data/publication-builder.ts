@@ -196,7 +196,7 @@ export const khaiHoangRoutePath = (segment: string) => `/khai-hoang/${encodeURIC
 
 function parseLedger(bytes: Uint8Array): Ledger {
   const raw = obj(parseJson(bytes, "team route handle ledger"), "team route handle ledger");
-  if (raw.schemaVersion !== 2) fail("team route handle ledger schemaVersion must be 2");
+  if (raw.schemaVersion !== 3) fail("team route handle ledger schemaVersion must be 3");
   const sha = /^sha256:[0-9a-f]{64}$/u;
   if (typeof raw.generationId !== "string" || !raw.generationId) fail("team route handle ledger needs a generationId");
   if (typeof raw.legacyTeamsSha256 !== "string" || !sha.test(raw.legacyTeamsSha256)) fail("ledger legacyTeamsSha256 is invalid");

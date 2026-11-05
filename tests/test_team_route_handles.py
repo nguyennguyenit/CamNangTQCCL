@@ -409,6 +409,8 @@ class LedgerFixture(unittest.TestCase):
             recommended,
             legacy,
             khaihoang,
+            {row["sourceConfigId"]: season_code(row) for row in self.records},
+            {},
         )
 
     def validate(self, ledger, *, khaihoang_bytes=None, khaihoang_teams=None):
@@ -443,8 +445,13 @@ class LedgerValidatorTest(LedgerFixture):
         self.assertEqual(ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
         self.assertEqual(
             set(ledger),
-            {"schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles"},
+            {
+                "schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles",
+                "recommendedSeasons", "retiredRecommended",
+            },
         )
+        self.assertEqual(ledger["recommendedSeasons"], {**{row["sourceConfigId"]: "pk-s1" for row in self.records}, "s2-solo": "pk-s2"})
+        self.assertEqual(ledger["retiredRecommended"], {})
 
     def test_missing_recommended_key_fails(self):
         ledger = self.generated_ledger()
@@ -522,6 +529,21 @@ class LedgerValidatorTest(LedgerFixture):
             self.validate(ledger)
         self.assertIn("season code", str(error.exception))
 
+    def test_recorded_season_that_differs_from_the_row_fails(self):
+        ledger = self.generated_ledger()
+        ledger["recommendedSeasons"]["s2-solo"] = "pk-s1"
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("recommendedSeasons['s2-solo']", str(error.exception))
+
+    def test_retired_segment_held_by_a_live_row_fails(self):
+        ledger = self.generated_ledger()
+        ledger["retiredRecommended"] = {"pk-s2-doi-b": "s2-old", "pk-s9-ghost": "s9-ghost"}
+        with self.assertRaises(TeamRouteHandleError) as error:
+            self.validate(ledger)
+        self.assertIn("'pk-s2-doi-b' of s2-solo is retired", str(error.exception))
+        self.assertNotIn("pk-s9-ghost", str(error.exception))
+
     def test_ledger_shape_is_enforced(self):
         ledger = self.generated_ledger()
         for broken in (
@@ -529,7 +551,7 @@ class LedgerValidatorTest(LedgerFixture):
             {key: value for key, value in ledger.items() if key != "khaihoangSha256"},
             {**ledger, "extra": 1},
             {**ledger, "schemaVersion": PUBLICATION_SCHEMA_VERSION},
-            {**ledger, "schemaVersion": 3},
+            {**ledger, "schemaVersion": 2},
             {**ledger, "khaihoangSha256": None},
             {**ledger, "handles": {"recommended": ledger["handles"]["recommended"]}},
             {**ledger, "handles": {"recommended": ledger["handles"]["recommended"], "legacy": ledger["handles"]["legacy"]}},
@@ -544,6 +566,17 @@ class LedgerValidatorTest(LedgerFixture):
             },
             {**ledger, "handles": {"recommended": [], "legacy": ledger["handles"]["legacy"], "khaihoang": ledger["handles"]["khaihoang"]}},
             {**ledger, "handles": {"recommended": ledger["handles"]["recommended"], "legacy": ledger["handles"]["legacy"], "khaihoang": []}},
+            {key: value for key, value in ledger.items() if key != "recommendedSeasons"},
+            {key: value for key, value in ledger.items() if key != "retiredRecommended"},
+            {**ledger, "recommendedSeasons": []},
+            {**ledger, "recommendedSeasons": {**ledger["recommendedSeasons"], "s2-solo": "PK-S2"}},
+            {**ledger, "recommendedSeasons": {**ledger["recommendedSeasons"], "s2-solo": 2}},
+            {**ledger, "recommendedSeasons": {k: v for k, v in ledger["recommendedSeasons"].items() if k != "s2-solo"}},
+            {**ledger, "recommendedSeasons": {**ledger["recommendedSeasons"], "s9-ghost": "pk-s9"}},
+            {**ledger, "retiredRecommended": []},
+            {**ledger, "retiredRecommended": {"pk-s9/ghost": "s9-ghost"}},
+            {**ledger, "retiredRecommended": {"pk-s9-ghost": ""}},
+            {**ledger, "retiredRecommended": {"pk-s9-ghost": 9}},
         ):
             with self.subTest(broken=sorted(broken)):
                 with self.assertRaises(TeamRouteHandleError):
@@ -688,6 +721,8 @@ class LedgerCliTest(LedgerFixture):
         self.assertEqual(set(handles), {row["sourceConfigId"] for row in successor})
         self.assertEqual(rebound["handles"]["legacy"], frozen["handles"]["legacy"])
         self.assertEqual(rebound["handles"]["khaihoang"], frozen["handles"]["khaihoang"])
+        self.assertEqual(rebound["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+        self.assertEqual(rebound["recommendedSeasons"]["s3-new"], "pk-s3")
 
         code, out, err = run_cli(self.argv("--check"))
         self.assertEqual(code, 0, err)
@@ -712,30 +747,129 @@ class LedgerCliTest(LedgerFixture):
         code, out, err = run_cli(self.argv("--rebind"))
         self.assertEqual(code, 0, err)
         self.assertIn("kept 4, added 2, dropped 1", out)
-        handles = json.loads(self.ledger_path.read_bytes())["handles"]["recommended"]
+        rebound = json.loads(self.ledger_path.read_bytes())
+        handles = rebound["handles"]["recommended"]
+        self.assertEqual(rebound["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
         self.assertNotIn("s2-solo", handles)
         self.assertEqual(handles["s2-solo-relisted"], "doi-b-solo-relisted")  # `pk-s2-doi-b` stays retired (404)
         self.assertEqual(handles["s3-doi-b"], "doi-b")  # `pk-s3-doi-b` never existed: the plain handle is free
         self.assertEqual(run_cli(self.argv("--check"))[0], 0)
 
-    def test_rebind_refuses_without_the_generation_the_ledger_pins(self):
-        # The dropped rows' seasons only live in the pinned generation; once pruned, rebind cannot know which
-        # URLs to retire and must stop instead of guessing.
+    def publish(self, records, number):
+        """Publish `records` as successor generation `number` and select it."""
+        generation_id = format(number, "064x")
+        write_publication(self.generation_root, records, generation_id=generation_id)
+        return generation_id
+
+    def rebind(self):
+        code, out, err = run_cli(self.argv("--rebind"))
+        self.assertEqual(code, 0, err)
+        code, _, err = run_cli(self.argv("--check"))
+        self.assertEqual(code, 0, err)
+        return json.loads(self.ledger_path.read_bytes()), out
+
+    def test_rebind_needs_no_earlier_generation(self):
+        # The ledger records every live row's season, so the generation it pins may already be pruned.
         self.assertEqual(run_cli(self.argv("--write"))[0], 0)
-        frozen_bytes = self.ledger_path.read_bytes()
-        successor_id = "fedcba9876543210" * 4
-        write_publication(self.generation_root, self.records[:-1], generation_id=successor_id)
+        self.publish(self.records[:-1], 1)  # `s2-solo` is dropped by the source
         shutil.rmtree(self.generation_root / FIXTURE_GENERATION_ID)
 
-        code, _, err = run_cli(self.argv("--rebind"))
+        ledger, out = self.rebind()
+        self.assertIn("dropped 1", out)
+        self.assertIn("dropped s2-solo: pk-s2-doi-b", out)
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+        self.assertNotIn("s2-solo", ledger["recommendedSeasons"])
+
+    def test_tombstones_survive_later_rebinds(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        others = list(self.records[:-1])
+        self.publish(others, 1)  # drops `s2-solo`: /doi-chuan/pk-s2-doi-b/ answers 404 from now on
+        self.rebind()
+
+        # A later successor drops nothing; a new row with the dropped row's name and season still cannot take it.
+        self.publish([*others, recommended_row("s2-relisted", "Đội B", season="PK-S2")], 2)
+        ledger, out = self.rebind()
+        self.assertIn("dropped 0", out)
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+        self.assertEqual(ledger["handles"]["recommended"]["s2-relisted"], "doi-b-relisted")
+
+        self.publish([*others, recommended_row("s2-relisted", "Đội B", season="PK-S2")], 3)
+        again, _ = self.rebind()
+        self.assertEqual(again["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+        self.assertEqual(again["handles"], ledger["handles"])
+
+    def test_a_returning_id_never_regains_a_retired_url(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        others, solo = list(self.records[:-1]), self.records[-1]
+        self.publish(others, 1)
+        self.rebind()
+
+        self.publish([*others, solo], 2)  # back in the same season: a new row, suffixed from its id
+        ledger, _ = self.rebind()
+        self.assertEqual(ledger["handles"]["recommended"]["s2-solo"], "doi-b-solo")
+
+        self.publish(others, 3)
+        ledger, _ = self.rebind()
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo", "pk-s2-doi-b-solo": "s2-solo"})
+
+        self.publish([*others, solo], 4)  # name-derived and id-suffixed handles are both retired
+        ledger, _ = self.rebind()
+        self.assertEqual(ledger["handles"]["recommended"]["s2-solo"], "doi-b-2")
+        self.assertEqual(len(ledger["retiredRecommended"]), 2)
+
+    def test_a_kept_row_that_changes_season_retires_its_old_url(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        others, solo = list(self.records[:-1]), self.records[-1]
+        self.publish([*others, {**solo, "sourceSeasonCode": "PK-S3"}], 1)
+        ledger, out = self.rebind()
+        self.assertIn("kept 4, added 1, dropped 0, moved season 1", out)
+        self.assertIn("moved season s2-solo: pk-s2-doi-b -> pk-s3-doi-b", out)
+        self.assertEqual(ledger["recommendedSeasons"]["s2-solo"], "pk-s3")
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+
+        self.publish([*others, solo], 2)  # back to its first season: that URL stays retired
+        ledger, out = self.rebind()
+        self.assertIn("moved season s2-solo: pk-s3-doi-b -> pk-s2-doi-b-solo", out)
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo", "pk-s3-doi-b": "s2-solo"})
+
+    def test_check_fails_when_a_tombstone_is_published(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        ledger = json.loads(self.ledger_path.read_bytes())
+        ledger["retiredRecommended"] = {"pk-s2-doi-b": "s2-old"}
+        self.ledger_path.write_bytes(ledger_bytes(ledger))
+        code, _, err = run_cli(self.argv("--check"))
         self.assertEqual(code, 1)
-        self.assertIn(FIXTURE_GENERATION_ID, err)
-        self.assertIn("prune", err)
-        self.assertEqual(self.ledger_path.read_bytes(), frozen_bytes)
+        self.assertIn("'pk-s2-doi-b' of s2-solo is retired", err)
+
+    def test_check_fails_when_recorded_seasons_drift(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        frozen = json.loads(self.ledger_path.read_bytes())
+        for seasons, expected in (
+            ({**frozen["recommendedSeasons"], "s2-solo": "pk-s1"}, "is not its season 'pk-s2'"),
+            ({key: value for key, value in frozen["recommendedSeasons"].items() if key != "s2-solo"}, "must cover exactly"),
+        ):
+            with self.subTest(expected=expected):
+                self.ledger_path.write_bytes(ledger_bytes({**frozen, "recommendedSeasons": seasons}))
+                code, _, err = run_cli(self.argv("--check"))
+                self.assertEqual(code, 1)
+                self.assertIn(expected, err)
+
+    def test_write_refuses_a_ledger_that_holds_tombstones(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        ledger = json.loads(self.ledger_path.read_bytes())
+        ledger["retiredRecommended"] = {"pk-s9-ghost": "s9-ghost"}
+        self.ledger_path.write_bytes(ledger_bytes(ledger))
+        self.assertEqual(run_cli(self.argv("--check"))[0], 0)
+        before = self.ledger_path.read_bytes()
+
+        code, _, err = run_cli(self.argv("--write"))
+        self.assertEqual(code, 1)
+        self.assertIn("refusing to reassign", err)
+        self.assertEqual(self.ledger_path.read_bytes(), before)
 
 
 class KhaiHoangOfflineContracts(LedgerFixture):
-    """Offline gate for Khai hoang identity: ledger v2, injected source and frozen handles."""
+    """Offline gate for Khai hoang identity: ledger v3, injected source and frozen handles."""
 
     def test_handles_start_as_the_ascii_slug_of_the_current_title(self):
         handles, stats = build_khaihoang_handles(KHAIHOANG_TEAMS)
@@ -746,7 +880,7 @@ class KhaiHoangOfflineContracts(LedgerFixture):
             "gia-cat-khac-sp-ma-sieu-phap-chinh",
         )
 
-    def test_ledger_v2_pins_the_khaihoang_source_while_the_publication_stays_v1(self):
+    def test_ledger_pins_the_khaihoang_source_while_the_publication_stays_v1(self):
         ledger = self.generated_ledger()
         self.validate(ledger)
         self.assertEqual(ledger["schemaVersion"], LEDGER_SCHEMA_VERSION)
@@ -937,7 +1071,10 @@ class PinnedLedgerTest(unittest.TestCase):
     def test_committed_ledger_has_the_documented_shape_and_counts(self):
         self.assertEqual(
             set(self.ledger),
-            {"schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles"},
+            {
+                "schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles",
+                "recommendedSeasons", "retiredRecommended",
+            },
         )
         self.assertEqual(self.ledger["schemaVersion"], LEDGER_SCHEMA_VERSION)
         self.assertEqual(self.ledger["generationId"], self.publication.generation_id)
@@ -949,6 +1086,12 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
         self.assertEqual(len(self.ledger["handles"]["recommended"]), len(self.publication.records))
         self.assertEqual(len(self.ledger["handles"]["legacy"]), len(self.teams))
+        self.assertEqual(set(self.ledger["recommendedSeasons"]), set(self.ledger["handles"]["recommended"]))
+        # The rebind to this generation dropped 46 PK-S28 rows; their URLs stay retired for good.
+        retired = self.ledger["retiredRecommended"]
+        self.assertEqual(len(retired), 46)
+        self.assertTrue(all(segment.startswith("pk-s28-") for segment in retired))
+        self.assertFalse(set(retired.values()) & set(self.ledger["handles"]["recommended"]))
 
     def test_committed_khaihoang_handles_cover_every_team_once_and_stay_routable(self):
         handles = self.ledger["handles"]["khaihoang"]

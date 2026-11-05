@@ -817,7 +817,7 @@
     "src/lib/lookup-pages.ts": "770a2517dffd8b6e89ccc2f9d51f0aea98ef0019298251685d8205733c841c50",
     "src/lib/official-links.ts": "af85bc97844e2dbf44449c4bf333811a622500d037514fbb6f04445037707eca",
     "src/lib/root-static-artifacts.ts": "eedec4f6ca8233ad10ad9637cf9989fd006164b80732fad1473be5786f9f8596",
-    "src/lib/team-detail-routes.ts": "38b3d686ca344a8b0800f0b877842b81f6c7219db43feb1acc1d1dcb95386b4b",
+    "src/lib/team-detail-routes.ts": "2a707eccfd0cb11f50fa23d78e18980ad7e893aab05b4c4e5bd3fa0f826c4fdf",
     "src/pages/cung-ton/index.astro": "061ca1d1f2cec3065d1111103758c5e602cb0f1a1d7bc42cbe3629093dab4292",
     "src/pages/doi-chuan/[team].astro": "f9bcab8ed57a0a9c3c53b2171b2a37fd2e4c623065e6119b8fb7f366e073612e",
     "src/pages/doi-chuan/index.astro": "cb880c3af9bb631a57696af648bc2d6699bc6a543454be0e1c18e88ef493253f",

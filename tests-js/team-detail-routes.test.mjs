@@ -110,6 +110,11 @@ async function fixture({
   await writeFile(join(root,'recommended','current.json'),bytes({schemaVersion:1,generationId,manifestSha256:hash(manifest)}));
 
   const defaultHandles=frozenHandles(recommendedIds,teamRows,khaiHoangTeams);
+  // v3 bookkeeping the catalog never reads: each Recommended row's season and the retired segments.
+  const recommendedSeasons=Object.fromEntries(records.map(row=>[
+    row.sourceConfigId,
+    String(row.sourceSeasonCode).toLowerCase().replace(/[^a-z0-9]/g,'-'),
+  ]));
   /** Writes an alternative ledger in the same root and returns its path. */
   const alternativeLedger=async(overrides={},name='alternative-ledger.json')=>{
     const handles=overrides.handles === undefined
@@ -119,12 +124,14 @@ async function fixture({
         : {...defaultHandles,...overrides.handles};
     const path=join(root,name);
     await writeFile(path,bytes({
-      schemaVersion:overrides.schemaVersion ?? 2,
+      schemaVersion:overrides.schemaVersion ?? 3,
       generationId:overrides.generationId ?? generationId,
       legacyTeamsSha256:overrides.legacyTeamsSha256 ?? `sha256:${hash(teamsBytes)}`,
       khaihoangSha256:overrides.khaihoangSha256 ?? `sha256:${hash(khaiHoangBytes)}`,
       note:'Handle URL đã review; gán một lần, không suy lại từ displayNameVi.',
       handles,
+      recommendedSeasons,
+      retiredRecommended:overrides.retiredRecommended ?? {},
     }));
     return path;
   };
@@ -259,9 +266,13 @@ test('the frozen ledger must still describe the selected publication',async t=>{
     return true;
   });
 
+  // Tombstones only keep `--rebind` from handing a retired URL out again; they never become routes.
+  const tombstoned=await setup.alternativeLedger({retiredRecommended:{'pk-s24-doi-da-go':'team-gone'}},'tombstoned.json');
+  assert.deepEqual((await build(setup,tombstoned)).htmlPaths,(await build(setup)).htmlPaths);
+
   const malformed=[
     ['schema-v1',{schemaVersion:1}],
-    ['schema-v3',{schemaVersion:3}],
+    ['schema-v2',{schemaVersion:2}],
     ['blank-generation',{generationId:''}],
     ['bad-teams-hash',{legacyTeamsSha256:'not-a-digest'}],
     ['bad-khaihoang-hash',{khaihoangSha256:'not-a-digest'}],
@@ -442,7 +453,7 @@ test('worktree publication yields the real route inventory and pins the real ori
   }
 
   // Khai hoang identity is pinned here and its pages ship in the same emitted inventory.
-  assert.equal(ledger.schemaVersion,2);
+  assert.equal(ledger.schemaVersion,3);
   assert.equal(catalog.khaiHoangSha256,`sha256:${hash(khaiHoangBytes)}`);
   assert.equal(catalog.khaiHoang.length,khaiHoangTeams.length);
   assert.equal(catalog.khaiHoang.length,17);
@@ -487,13 +498,13 @@ test('Khai hoang route contract: an injected source yields the emitted routes an
   );
 });
 
-test('Khai hoang route contract: a v2 ledger reads the v1 Recommended publication',async t=>{
+test('Khai hoang route contract: a v3 ledger reads the v1 Recommended publication',async t=>{
   const setup=await fixture();
   t.after(()=>rm(setup.root,{recursive:true,force:true}));
   const catalog=await build(setup);
   const ledger=JSON.parse(await readFile(setup.handlesPath,'utf8'));
 
-  assert.equal(ledger.schemaVersion,2);
+  assert.equal(ledger.schemaVersion,3);
   assert.equal(ledger.khaihoangSha256,`sha256:${hash(await readFile(setup.khaiHoangPath))}`);
   assert.deepEqual(Object.keys(ledger.handles).sort(),['khaihoang','legacy','recommended']);
   assert.equal(catalog.generationId,setup.generationId);
@@ -605,7 +616,7 @@ test('Khai hoang route contract: the frozen ledger and the raw data assemble the
   const khaiHoangTeams=JSON.parse(khaiHoangBytes.toString()).teams;
 
   // The wire shape Python writes and TypeScript reads: one ledger schema, one source hash key.
-  assert.equal(ledger.schemaVersion,2);
+  assert.equal(ledger.schemaVersion,3);
   assert.match(ledger.khaihoangSha256,/^sha256:[0-9a-f]{64}$/);
   assert.deepEqual(Object.keys(ledger.handles).sort(),['khaihoang','legacy','recommended']);
 

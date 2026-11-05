@@ -340,7 +340,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   const khaiHoangBytes = jsonBytes({ teams: [{ id: KHAIHOANG_TEAM_ID, title: KHAIHOANG_TITLE }] });
   await writeFile(join(projectDir, "data", "khaihoang.json"), khaiHoangBytes);
   const ledger = {
-    schemaVersion: 2,
+    schemaVersion: 3,
     generationId,
     legacyTeamsSha256: `sha256:${sha256(teamsBytes)}`,
     khaihoangSha256: `sha256:${sha256(khaiHoangBytes)}`,
@@ -350,6 +350,8 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
       legacy: { [LEGACY_TEAM_ID]: LEGACY_HANDLE },
       khaihoang: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
     },
+    recommendedSeasons: {},
+    retiredRecommended: {},
   };
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(ledger));
   // robots.txt is a static public artifact; the sitemap is derived from the same frozen catalog.
