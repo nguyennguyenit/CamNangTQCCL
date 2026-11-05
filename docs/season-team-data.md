@@ -282,16 +282,22 @@ tại); repo chỉ track generation đang pin, generation cũ vẫn còn trong l
 
 Publication đã chọn cũng là inventory của route chi tiết đội; phần route tĩnh và
 trang 404 nằm ở [deployment guide](deployment-guide.md). Publish generation mới
-chạy `python3 -m pipeline.team_route_handles --rebind` trước `prune` và `npm run build`:
-hàng còn trong successor giữ nguyên handle (kể cả khi nguồn đổi tên), hàng nguồn
-đã gỡ rời ledger và trang của nó trả 404, hàng mới nhận handle suy từ tên Việt.
-Segment của hàng đã gỡ không được cấp lại: hàng mới trùng segment với hàng giữ
-**hoặc hàng đã gỡ** thì thêm phần ASCII của `sourceConfigId`, nên một URL đã
-công bố không bao giờ trỏ sang đội khác. Mùa của hàng đã gỡ chỉ có trong
-generation mà ledger đang ghim, nên `--rebind` dừng nếu generation đó đã bị
-`prune` (khôi phục nó từ git rồi chạy lại). Ledger không lưu danh sách segment
-đã gỡ: segment chỉ bị giữ ở lần rebind gỡ hàng của nó. Legacy/Khai hoang không
-đổi; `--check` sau đó phải đạt.
+chạy `python3 -m pipeline.team_route_handles --rebind` trước `npm run build`;
+rebind chỉ đọc ledger và generation đang chọn, nên chạy trước hay sau `prune`
+đều được. Ledger v3 ghi mùa của mỗi hàng đang công bố (`recommendedSeasons`) và
+mọi segment `<mùa>-<handle>` đã ngừng công bố (`retiredRecommended`: segment →
+`sourceConfigId` từng giữ nó, chỉ để truy vết). Hàng còn trong successor ở cùng
+mùa giữ nguyên handle (kể cả khi nguồn đổi tên). Hàng nguồn đã gỡ rời ledger,
+trang của nó trả 404 và segment thành tombstone vĩnh viễn. Hàng đổi mùa bỏ
+segment cũ y như hàng gỡ (rebind in `moved season`) rồi nhận handle như hàng mới.
+Hàng mới, kể cả id từng bị gỡ nay quay lại, nhận handle suy từ tên Việt; segment
+đó đang sống hoặc đã là tombstone thì thêm phần ASCII của `sourceConfigId`, vẫn
+trùng thì dùng handle suy từ tên kèm `-2`, `-3`… Tombstone không bao giờ được
+cấp lại, kể cả cho chính id từng giữ nó (id SGSDeck không bảo đảm danh tính đội),
+nên một URL đã công bố không bao giờ trỏ sang đội khác. Legacy/Khai hoang không
+đổi; `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
+segment đang sống). `--write` chỉ dựng ledger lần đầu (`retiredRecommended`
+rỗng) nên từ chối ledger đã có tombstone.
 
 Tên mùa và nhãn bộ lọc dùng chung từ `pipeline/recommended-display-map.json`.
 Phe, loại binh và nguồn tái sử dụng thuật ngữ trên main. Toàn bộ 29 mùa nguồn,
