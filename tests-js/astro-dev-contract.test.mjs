@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { createHash } from "node:crypto";
-import { cp, mkdir, mkdtemp, readFile, symlink, writeFile } from "node:fs/promises";
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from "node:fs/promises";
 import { createServer } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -35,7 +35,7 @@ async function waitForServer(url, process, output) {
 }
 
 async function waitForExit(process, output) {
-  if (process.exitCode !== null) return process.exitCode;
+  if (process.exitCode !== null || process.signalCode !== null) return process.exitCode;
   return new Promise((resolve, reject) => {
     process.once("error", reject);
     process.once("exit", resolve);
@@ -45,38 +45,19 @@ async function waitForExit(process, output) {
   });
 }
 
-async function serverIsReachable(url) {
+/**
+ * Dừng server foreground (`--ignore-lock`) mà test đã spawn: chờ chính process thoát, không dựa vào HTTP probe.
+ * SIGTERM không đủ trong 5 s thì SIGKILL; vẫn không thoát thì ném lỗi để caller không xoá fixture dưới server còn sống.
+ */
+async function stopServer(child, output) {
+  if (child.exitCode !== null || child.signalCode !== null) return;
+  child.kill("SIGTERM");
   try {
-    await fetch(url, { signal: AbortSignal.timeout(250) });
-    return true;
+    await waitForExit(child, output);
   } catch {
-    return false;
+    child.kill("SIGKILL");
+    await waitForExit(child, output);
   }
-}
-
-async function waitForServerStop(url, output) {
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    if (!(await serverIsReachable(url))) return;
-    await new Promise((resolve) => setTimeout(resolve, 25));
-  }
-  throw new Error(`Timed out waiting for server shutdown:\n${output.join("")}`);
-}
-
-async function stopManagedDevServer({ astroBin, cwd, url, child, output }) {
-  if (child.exitCode === null) child.kill("SIGTERM");
-  if (!(await serverIsReachable(url))) return;
-
-  const stopOutput = [];
-  const stopper = spawn(astroBin, ["dev", "stop"], {
-    cwd,
-    env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
-    stdio: ["ignore", "pipe", "pipe"],
-  });
-  stopper.stdout.on("data", (chunk) => stopOutput.push(chunk.toString()));
-  stopper.stderr.on("data", (chunk) => stopOutput.push(chunk.toString()));
-  const exitCode = await waitForExit(stopper, stopOutput);
-  assert.equal(exitCode, 0, `Astro dev stop failed:\n${stopOutput.join("")}`);
-  await waitForServerStop(url, [...output, ...stopOutput]);
 }
 
 test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON bytes", async (t) => {
@@ -122,7 +103,8 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
   const port = await availablePort();
   const output = [];
   const astroBin = new URL("../node_modules/.bin/astro", import.meta.url).pathname;
-  const child = spawn(astroBin, ["dev", "--host", "127.0.0.1", "--port", String(port)], {
+  // `--ignore-lock`: từ Astro 7.2, dev tự chạy nền khi phát hiện AI agent; giữ foreground để test sở hữu process.
+  const child = spawn(astroBin, ["dev", "--ignore-lock", "--host", "127.0.0.1", "--port", String(port)], {
     cwd: fixtureRoot,
     env: { ...process.env, ASTRO_TELEMETRY_DISABLED: "1" },
     stdio: ["ignore", "pipe", "pipe"],
@@ -130,18 +112,9 @@ test("Astro dev preserves module resolution, MIME types, refresh, and exact JSON
   child.stdout.on("data", (chunk) => output.push(chunk.toString()));
   child.stderr.on("data", (chunk) => output.push(chunk.toString()));
   t.after(async () => {
-    try {
-      await stopManagedDevServer({
-        astroBin,
-        cwd: fixtureRoot,
-        url: `http://127.0.0.1:${port}`,
-        child,
-        output,
-      });
-    } finally {
-      await import("node:fs/promises").then(({ rm }) =>
-        rm(fixtureRoot, { recursive: true, force: true }));
-    }
+    // Xoá fixture chỉ khi server đã thoát hẳn.
+    await stopServer(child, output);
+    await rm(fixtureRoot, { recursive: true, force: true });
   });
 
   const baseUrl = `http://127.0.0.1:${port}`;
@@ -267,10 +240,7 @@ test("Astro preview serves exact built assets with browser MIME types", async (t
   );
   child.stdout.on("data", (chunk) => output.push(chunk.toString()));
   child.stderr.on("data", (chunk) => output.push(chunk.toString()));
-  t.after(async () => {
-    if (child.exitCode === null) child.kill("SIGTERM");
-    await waitForExit(child, output);
-  });
+  t.after(() => stopServer(child, output));
 
   const baseUrl = `http://127.0.0.1:${port}`;
   await waitForServer(baseUrl, child, output);
