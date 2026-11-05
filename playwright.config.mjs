@@ -18,7 +18,8 @@ export default defineConfig({
     launchOptions: { args: ["--host-resolver-rules=MAP challenges.cloudflare.com ~NOTFOUND"] },
   },
   webServer: {
-    command: `npm run build && npm run preview -- --host 127.0.0.1 --port ${astroPort}`,
+    // `--ignore-lock`: giữ preview ở foreground (Astro 7.4 tự chạy nền khi phát hiện AI agent) để Playwright quản lý vòng đời.
+    command: `npm run build && npm run preview -- --ignore-lock --host 127.0.0.1 --port ${astroPort}`,
     url: `http://127.0.0.1:${astroPort}`,
     reuseExistingServer: false,
     // Lệnh trên chạy cả `astro build` (~30 s trên runner CI) trước khi preview lắng nghe.
