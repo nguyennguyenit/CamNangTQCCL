@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Worker: endpoint export công khai + dispatch site-publish"
-status: pending
+status: completed
 priority: P1
 effort: "5h"
 dependencies: []
