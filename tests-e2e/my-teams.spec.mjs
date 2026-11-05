@@ -91,6 +91,29 @@ test.describe("2–3 · lưu dở qua OAuth", () => {
     expect(liveTeams(mock.server)).toHaveLength(1);
     expect(await page.evaluate((key) => sessionStorage.getItem(key), PENDING_KEY)).toBeNull();
   });
+
+  test("ghi chú vượt trần: toast báo dòng không được lưu, cả khi lưu thẳng lẫn sau OAuth", async ({ page, request }) => {
+    // s27-lp-juma-gong-ay (Cự Mã Cung): ghi chú nguồn > 2000 B, bộ chuyển bỏ các dòng cuối (`over-limit`).
+    const id = "s27-lp-juma-gong-ay";
+    const dropped = fromRecommended(recommendedById(id), ids, { id: "x" }).unresolved.filter((item) => item.field === "notes.general").length;
+    expect(dropped).toBeGreaterThan(0);
+    const notice = `${dropped} dòng ghi chú vượt giới hạn dung lượng nên không được lưu`;
+    const path = `/doi-chuan/${encodeURIComponent((await routes(request)).r[id])}/`;
+
+    const mock = await mockRoster(page, { signedIn: false });
+    await page.goto(path);
+    await saveButton(page).click();
+    const toast = page.locator(".mt-toast[data-kind='success']");
+    await expect(toast).toContainText("Đã lưu");
+    await expect(toast).toContainText(notice);
+    await expect.poll(() => liveTeams(mock.server).length).toBe(1);
+
+    const signedIn = await mockRoster(page);
+    await page.goto(path);
+    await saveFromDialog(page);
+    await expect(page.locator(".mt-toast").last()).toContainText(notice);
+    expect(liveTeams(signedIn.server)).toHaveLength(1);
+  });
 });
 
 test.describe("4–7 · lưu từ trang nguồn", () => {

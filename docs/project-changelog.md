@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-05 (Đội của tôi: toast báo đúng ghi chú bị bỏ khi lưu)
+
+### Fixed
+- Toast "Đã lưu" gộp mọi mục `unresolved` thành "N mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi", kể cả dòng ghi chú bị bỏ vì vượt trần 2000 B (vd `/doi-chuan/pk-s27-cu-ma-cung/`), vốn không có trong đội đã lưu nên không sửa được. Nay `unresolvedNotice` (`js/my-teams-save-button.js`) báo riêng: tên chưa đối chiếu (sửa được), dòng ghi chú và phương án thay vượt trần (không được lưu, bản đầy đủ ở trang nguồn).
+- Lưu khi chưa đăng nhập (qua OAuth) mất hẳn thông báo này: bản lưu dở chỉ cất `draft`. Nay `stashPendingSave` cất kèm `unresolved`, toast sau OAuth báo như lưu thẳng.
+
 ## 2026-11-05 (Ledger route Đội chuẩn v3: URL đã gỡ không bao giờ cấp lại)
 
 ### Changed

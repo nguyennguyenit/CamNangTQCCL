@@ -287,3 +287,17 @@ test("M4 sau OAuth: lưu lại cùng nguồn dùng lại draft.id đang chờ n�
   stashPendingSave(draft, { storage, now: () => NOW });
   assert.equal(pendingIdForSource(key, { storage, now: () => NOW + PENDING_TTL_MS + 1 }), null, "hết hạn thì không dùng lại");
 });
+
+test("pending: unresolved của bộ chuyển đi cùng bản lưu dở qua OAuth; hết hạn hoặc mục cũ không có trường thì rỗng", async () => {
+  const { peekPendingUnresolved } = await import("../js/my-teams-pending.js");
+  const storage = memoryStorage();
+  // s27-lp-juma-gong-ay: ghi chú vượt trần 2000 B, bộ chuyển báo các dòng bị bỏ là `over-limit`.
+  const { draft, unresolved } = fromRecommended(recommendedById("s27-lp-juma-gong-ay"), ids, { id: "team-long" });
+  assert.ok(unresolved.some((item) => item.reason === "over-limit" && item.field === "notes.general"));
+  stashPendingSave(draft, { unresolved, storage, now: () => NOW });
+  assert.deepEqual(peekPendingUnresolved({ storage, now: () => NOW + 1000 }), unresolved);
+  assert.deepEqual(peekPendingUnresolved({ storage, now: () => NOW + PENDING_TTL_MS + 1 }), []);
+
+  storage.setItem(PENDING_KEY, JSON.stringify({ draft, createdAt: NOW }));
+  assert.deepEqual(peekPendingUnresolved({ storage, now: () => NOW }), []);
+});
