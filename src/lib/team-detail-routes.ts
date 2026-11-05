@@ -129,7 +129,7 @@ interface TeamRouteHandleLedger {
   khaiHoang: Record<string, string>;
 }
 
-const LEDGER_SCHEMA_VERSION = 2;
+const LEDGER_SCHEMA_VERSION = 3;
 const SHA256_DIGEST = /^sha256:[0-9a-f]{64}$/;
 
 const plainObject = (value: unknown): value is Record<string, unknown> => (
