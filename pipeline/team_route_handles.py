@@ -2,17 +2,22 @@
 team pages.
 
 `--write` derives the initial ledger once from the pinned generation and refuses to reassign an
-existing ledger, so a later `displayNameVi` translation can never move a published URL. `--check`
-only validates the frozen ledger (publication integrity, generation/hash pin, exact key sets,
-routability, season-prefix rule and final-segment uniqueness) and never rebuilds assignments from
+existing ledger, so a later `displayNameVi` translation can never move a published URL. `--rebind`
+moves the frozen ledger to a successor publication from the ledger alone: no earlier generation is
+read, so it may run before or after `site_localization prune`. `--check` only validates the frozen
+ledger (publication integrity, generation/hash pin, exact key sets, routability, season-prefix rule,
+final-segment uniqueness, recorded seasons and retired segments) and never rebuilds assignments from
 the current display names or titles.
 
 The ledger schema version is independent of the Recommended publication schema version: the ledger
-is v2 (adding `khaihoangSha256` and `handles.khaihoang`), while the Recommended selector, manifest
-and index payloads stay v1.
+is v3, while the Recommended selector, manifest and index payloads stay v1. v3 keeps, next to the
+handles, the season of every live Recommended row (`recommendedSeasons`, so a dropped row's route
+segment is known without its generation) and every route segment a Recommended row ever gave up
+(`retiredRecommended`: segment -> the `sourceConfigId` that held it). A retired segment is a
+tombstone forever: it is never handed out again, not even to the id that held it.
 
     python3 -m pipeline.team_route_handles --write
-    python3 -m pipeline.team_route_handles --rebind   # successor publication, before `site_localization prune`
+    python3 -m pipeline.team_route_handles --rebind   # successor publication
     python3 -m pipeline.team_route_handles --check
 """
 
@@ -32,7 +37,7 @@ from pathlib import Path
 from pipeline.common import sha256_hex
 
 PUBLICATION_SCHEMA_VERSION = 1
-LEDGER_SCHEMA_VERSION = 2
+LEDGER_SCHEMA_VERSION = 3
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LEDGER_PATH = REPO_ROOT / "pipeline" / "team-route-handles.json"
 DEFAULT_GENERATION_ROOT = REPO_ROOT / "src" / "data" / "recommended-reference"
@@ -41,7 +46,16 @@ DEFAULT_KHAIHOANG_PATH = REPO_ROOT / "data" / "khaihoang.json"
 DEFAULT_DISPLAY_MAP_PATH = REPO_ROOT / "pipeline" / "recommended-display-map.json"
 
 LEDGER_NOTE = "Handle URL đã review; gán một lần, không suy lại từ displayNameVi."
-LEDGER_KEYS = ("schemaVersion", "generationId", "legacyTeamsSha256", "khaihoangSha256", "note", "handles")
+LEDGER_KEYS = (
+    "schemaVersion",
+    "generationId",
+    "legacyTeamsSha256",
+    "khaihoangSha256",
+    "note",
+    "handles",
+    "recommendedSeasons",
+    "retiredRecommended",
+)
 HANDLE_GROUPS = ("recommended", "legacy", "khaihoang")
 
 HEX64 = re.compile(r"[0-9a-f]{64}")
@@ -57,6 +71,7 @@ LEGACY_ID_SUFFIX = re.compile(r"(\d+)$")
 ASCII_PART = re.compile(r"[^A-Za-z0-9-]")
 NON_SLUG = re.compile(r"[^a-z0-9]+")
 NON_SEASON_CHAR = re.compile(r"[^a-z0-9]")
+SEASON_SEGMENT = re.compile(r"[a-z0-9-]+")
 TRAILING_PARENTHETICAL = re.compile(r"\s*[\(（]([^()（）]*)[\)）]\s*$")
 PARENTHETICAL_SEPARATOR = re.compile(r"[,，]")
 
@@ -407,6 +422,8 @@ def build_ledger(
     recommended: dict,
     legacy: dict,
     khaihoang: dict,
+    recommended_seasons: dict,
+    retired_recommended: dict,
 ) -> dict:
     return {
         "schemaVersion": LEDGER_SCHEMA_VERSION,
@@ -415,6 +432,8 @@ def build_ledger(
         "khaihoangSha256": "sha256:" + sha256_hex(khaihoang_bytes),
         "note": LEDGER_NOTE,
         "handles": {"recommended": dict(recommended), "legacy": dict(legacy), "khaihoang": dict(khaihoang)},
+        "recommendedSeasons": dict(recommended_seasons),
+        "retiredRecommended": dict(retired_recommended),
     }
 
 
@@ -443,6 +462,28 @@ def _ledger_handles(ledger: dict) -> dict:
     for group in HANDLE_GROUPS:
         if not isinstance(handles[group], dict):
             raise TeamRouteHandleError(f"Ledger handles.{group} must be an object")
+    seasons = ledger["recommendedSeasons"]
+    if not isinstance(seasons, dict):
+        raise TeamRouteHandleError("Ledger recommendedSeasons must be an object")
+    for source_config_id, season in seasons.items():
+        if not isinstance(season, str) or not SEASON_SEGMENT.fullmatch(season):
+            raise TeamRouteHandleError(f"Ledger recommendedSeasons[{source_config_id!r}] {season!r} is not a season code")
+    if set(seasons) != set(handles["recommended"]):
+        missing = sorted(set(handles["recommended"]) - set(seasons))
+        extra = sorted(set(seasons) - set(handles["recommended"]))
+        raise TeamRouteHandleError(
+            "Ledger recommendedSeasons must cover exactly handles.recommended "
+            f"(missing: {', '.join(missing[:DIAGNOSTIC_LIMIT]) or 'none'}; "
+            f"extra: {', '.join(extra[:DIAGNOSTIC_LIMIT]) or 'none'})"
+        )
+    retired = ledger["retiredRecommended"]
+    if not isinstance(retired, dict):
+        raise TeamRouteHandleError("Ledger retiredRecommended must be an object")
+    for segment, source_config_id in retired.items():
+        if not is_routable_identifier(segment):
+            raise TeamRouteHandleError(f"Ledger retiredRecommended segment {segment!r} is not routable")
+        if not isinstance(source_config_id, str) or not source_config_id:
+            raise TeamRouteHandleError(f"Ledger retiredRecommended[{segment!r}] must name the sourceConfigId that held it")
     return handles
 
 
@@ -494,9 +535,11 @@ def validate_ledger(
     khaihoang_bytes: bytes,
     khaihoang_teams,
 ) -> None:
-    """Gate the frozen ledger: pin, exact key sets, routability, season prefix and uniqueness."""
+    """Gate the frozen ledger: pin, exact key sets, routability, season prefix, uniqueness, the recorded
+    season of every Recommended row and the retired segments no live row may hold."""
     handles = _ledger_handles(ledger)
     recommended, legacy, khaihoang = handles["recommended"], handles["legacy"], handles["khaihoang"]
+    seasons, retired = ledger["recommendedSeasons"], ledger["retiredRecommended"]
     problems = []
 
     if ledger["generationId"] != generation_id:
@@ -534,12 +577,21 @@ def validate_ledger(
         if not is_routable_identifier(handle):
             problems.append(f"Recommended handle {handle!r} for {source_config_id} is not routable")
         season = season_code(record)
+        if seasons.get(source_config_id) != season:
+            problems.append(
+                f"ledger recommendedSeasons[{source_config_id!r}] {seasons.get(source_config_id)!r} is not its season {season!r}"
+            )
         if handle == season or handle.startswith(season + "-"):
             problems.append(f"Recommended handle {handle!r} for {source_config_id} repeats its season code {season!r}")
         segments[f"{season}-{handle}"].append(source_config_id)
     for segment, ids in sorted(segments.items()):
         if len(ids) > 1:
             problems.append(f"Recommended route segment {segment!r} is shared by {', '.join(sorted(ids))}")
+        if segment in retired:
+            problems.append(
+                f"Recommended route segment {segment!r} of {', '.join(sorted(ids))} is retired "
+                f"(last held by {retired[segment]}) and can never be published again"
+            )
 
     team_ids = []
     for team in teams:
@@ -618,20 +670,16 @@ def read_publication(root_dir) -> Publication:
     return publication
 
 
-def _read_generation(root: Path, generation_id: str, manifest_sha256: str | None) -> Publication:
-    """Read one generation directory under the resolved `root`, refusing any checksum or inventory drift.
-
-    `manifest_sha256` is the selector's pin; `None` reads a generation no selector pins any more (the
-    predecessor `--rebind` needs before `prune`), whose manifest is then trusted only for its own identity
-    and file hashes.
-    """
+def _read_generation(root: Path, generation_id: str, manifest_sha256: str) -> Publication:
+    """Read the generation directory the selector pins under the resolved `root`, refusing any checksum
+    or inventory drift."""
     if not HEX64.fullmatch(str(generation_id)):
         raise TeamRouteHandleError(f"Invalid Recommended generation id: {generation_id!r}")
     generation = root / generation_id
     if generation.is_symlink() or not generation.is_dir() or not _inside(generation.resolve(), root):
         raise TeamRouteHandleError(f"Invalid Recommended generation directory: {generation_id}")
     manifest_bytes = _regular_file(generation / "manifest.json", generation)
-    if manifest_sha256 is not None and sha256_hex(manifest_bytes) != manifest_sha256:
+    if sha256_hex(manifest_bytes) != manifest_sha256:
         raise TeamRouteHandleError("Recommended manifest hash mismatch")
     manifest = json.loads(manifest_bytes)
     if (
@@ -758,7 +806,8 @@ def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     recommended, stats = build_recommended_handles(publication.records, labels)
     legacy, legacy_stats = build_legacy_handles(teams)
     khaihoang, khaihoang_stats = build_khaihoang_handles(khaihoang_teams)
-    ledger = build_ledger(publication.generation_id, teams_bytes, khaihoang_bytes, recommended, legacy, khaihoang)
+    seasons = {record["sourceConfigId"]: season_code(record) for record in publication.records}
+    ledger = build_ledger(publication.generation_id, teams_bytes, khaihoang_bytes, recommended, legacy, khaihoang, seasons, {})
     validate_ledger(
         ledger,
         generation_id=publication.generation_id,
@@ -794,40 +843,18 @@ def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     return 0
 
 
-def _retired_segments(generation_root, frozen_generation_id: str, publication: Publication, handles: dict, dropped) -> set[str]:
-    """Route segments of the rows the successor dropped, read from the generation the frozen ledger pins.
-
-    The ledger stores handles only; a segment also needs the row's season, which only that generation
-    holds. `--rebind` therefore runs while it is still on disk (before `site_localization prune`).
-    """
-    if not dropped:
-        return set()
-    root = Path(generation_root).resolve()
-    if frozen_generation_id == publication.generation_id:
-        raise TeamRouteHandleError(f"the ledger pins {frozen_generation_id} but holds rows it does not publish: {', '.join(dropped[:5])}")
-    if not (root / str(frozen_generation_id)).is_dir():
-        raise TeamRouteHandleError(
-            f"rebind needs the generation the ledger pins ({frozen_generation_id}) under {root} to retire the URLs of "
-            f"{len(dropped)} dropped rows; run it before `site_localization prune` (or restore that generation from git)"
-        )
-    previous = {record["sourceConfigId"]: record for record in _read_generation(root, frozen_generation_id, None).records}
-    missing = [source_config_id for source_config_id in dropped if source_config_id not in previous]
-    if missing:
-        raise TeamRouteHandleError(f"ledger rows missing from the generation it pins: {', '.join(missing[:5])}")
-    return {f"{season_code(previous[source_config_id])}-{handles[source_config_id]}" for source_config_id in dropped}
-
-
 def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, out=print) -> int:
     """Move the frozen ledger to a successor publication without moving any surviving URL.
 
-    Rows kept by the successor keep their frozen handle. Rows the source dropped leave the
-    ledger (their pages no longer exist and answer 404), and their route segments stay retired:
-    a published URL never starts pointing at a different team. Only rows new to the successor
-    receive a name-derived handle; one that would share a route segment with a kept or a dropped
-    row gets the ASCII part of its `sourceConfigId` appended instead. Legacy and Khai hoang
-    handles never change. The dropped rows' seasons come from the generation the frozen ledger
-    pins, so it must still be under `generation_root`. The ledger keeps no list of retired
-    segments, so a segment is retired for the rebind that drops its row, not for later ones.
+    Everything comes from the ledger and the successor; no earlier generation is read. A row kept by
+    the successor in the season the ledger records keeps its frozen handle. A row the source dropped
+    leaves the ledger (its page no longer exists and answers 404) and its route segment becomes a
+    tombstone in `retiredRecommended`; a kept row whose season changed gives up its old segment the
+    same way and is assigned like a new row. Tombstones are append-only and never handed out again,
+    not even to the id that held them: the source's ids carry no identity guarantee, so a returning
+    id is a new row. A new row takes its name-derived handle unless that segment is live or retired,
+    then the ASCII part of its `sourceConfigId` appended, then the name-derived handle with `-2`,
+    `-3`, ... Legacy and Khai hoang handles never change.
     """
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
@@ -840,31 +867,66 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
         raise TeamRouteHandleError("rebind only moves Recommended rows; Khai hoang changed, review it first")
     derived, _stats = build_recommended_handles(publication.records, load_faction_labels(display_map_path))
     by_id = {record["sourceConfigId"]: record for record in publication.records}
-    kept = {source_config_id: handle for source_config_id, handle in frozen["recommended"].items() if source_config_id in by_id}
-    dropped = sorted(set(frozen["recommended"]) - set(by_id))
-    retired = _retired_segments(generation_root, existing["generationId"], publication, frozen["recommended"], dropped)
+    seasons = {source_config_id: season_code(record) for source_config_id, record in by_id.items()}
+    frozen_handles, frozen_seasons = frozen["recommended"], existing["recommendedSeasons"]
 
-    def segment(source_config_id, handle):
-        return f"{season_code(by_id[source_config_id])}-{handle}"
+    def old_segment(source_config_id):
+        return f"{frozen_seasons[source_config_id]}-{frozen_handles[source_config_id]}"
 
-    # A dropped row's URL is retired, not free: readers and search engines may still hold it, and a new
-    # row of the same name is not provably the same team (the source also re-lists other categories under
-    # the same name), so it gets a suffixed handle rather than inheriting a URL that meant another team.
-    taken = {segment(source_config_id, handle) for source_config_id, handle in kept.items()} | retired
+    dropped = sorted(set(frozen_handles) - set(by_id))
+    moved = sorted(
+        source_config_id
+        for source_config_id in frozen_handles
+        if source_config_id in by_id and seasons[source_config_id] != frozen_seasons[source_config_id]
+    )
+    kept = {
+        source_config_id: handle
+        for source_config_id, handle in frozen_handles.items()
+        if source_config_id in by_id and seasons[source_config_id] == frozen_seasons[source_config_id]
+    }
+
+    # A segment that stops being published is retired, not free: readers and search engines may still hold
+    # it, and no later row is provably the same team (the source renames, re-lists and re-uses ids), so it
+    # never points at another page.
+    retired = dict(existing["retiredRecommended"])
+    newly_retired = []
+    for source_config_id in sorted([*dropped, *moved]):
+        segment = old_segment(source_config_id)
+        holder = retired.get(segment)
+        if holder is not None and holder != source_config_id:
+            raise TeamRouteHandleError(
+                f"route segment {segment!r} of {source_config_id} is already retired for {holder}; the ledger "
+                "published a retired segment"
+            )
+        retired[segment] = source_config_id
+        newly_retired.append(segment)
+
+    taken = {f"{seasons[source_config_id]}-{handle}" for source_config_id, handle in kept.items()} | set(retired)
     recommended = dict(kept)
     added = []
     for source_config_id in sorted(set(by_id) - set(kept)):
-        handle = derived[source_config_id]
-        if segment(source_config_id, handle) in taken:
-            season = season_code(by_id[source_config_id])
+        season, base = seasons[source_config_id], derived[source_config_id]
+        handle = base
+        if f"{season}-{handle}" in taken:
             suffix = slug(ascii_part(strip_season_prefix(source_config_id, _season_tokens(by_id[source_config_id]))))
-            handle = _drop_season_prefix(f"{handle}-{suffix}" if suffix else handle, season)
-        if segment(source_config_id, handle) in taken:
-            raise TeamRouteHandleError(f"new Recommended row {source_config_id} has no free handle (tried {handle!r})")
-        taken.add(segment(source_config_id, handle))
+            handle = _drop_season_prefix(f"{base}-{suffix}" if suffix else base, season)
+        number = 1
+        while f"{season}-{handle}" in taken:
+            number += 1
+            handle = f"{base}-{number}"
+        taken.add(f"{season}-{handle}")
         recommended[source_config_id] = handle
         added.append(source_config_id)
-    ledger = build_ledger(publication.generation_id, teams_bytes, khaihoang_bytes, recommended, frozen["legacy"], frozen["khaihoang"])
+    ledger = build_ledger(
+        publication.generation_id,
+        teams_bytes,
+        khaihoang_bytes,
+        recommended,
+        frozen["legacy"],
+        frozen["khaihoang"],
+        seasons,
+        retired,
+    )
     validate_ledger(
         ledger,
         generation_id=publication.generation_id,
@@ -878,9 +940,18 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
     temporary = path.with_name(f"{path.name}.tmp")
     temporary.write_bytes(ledger_bytes(ledger))
     os.replace(temporary, path)
-    out(f"rebound {path} to {publication.generation_id}: kept {len(kept)}, added {len(added)}, dropped {len(dropped)} Recommended handles")
+    out(
+        f"rebound {path} to {publication.generation_id}: kept {len(kept)}, added {len(added)}, dropped {len(dropped)}, "
+        f"moved season {len(moved)} Recommended handles; retired {len(newly_retired)} route segments "
+        f"({len(retired)} tombstones)"
+    )
     for source_config_id in dropped:
-        out(f"  dropped {source_config_id}: {frozen['recommended'][source_config_id]}")
+        out(f"  dropped {source_config_id}: {old_segment(source_config_id)}")
+    for source_config_id in moved:
+        out(
+            f"  moved season {source_config_id}: {old_segment(source_config_id)} -> "
+            f"{seasons[source_config_id]}-{recommended[source_config_id]}"
+        )
     return 0
 
 
@@ -901,7 +972,8 @@ def check_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     out(f"ledger {ledger_path} matches generation {publication.generation_id}")
     out(
         f"recommended handles: {len(ledger['handles']['recommended'])}; legacy handles: "
-        f"{len(ledger['handles']['legacy'])}; Khai hoang handles: {len(ledger['handles']['khaihoang'])}"
+        f"{len(ledger['handles']['legacy'])}; Khai hoang handles: {len(ledger['handles']['khaihoang'])}; "
+        f"retired Recommended segments: {len(ledger['retiredRecommended'])}"
     )
     if diagnose:
         recommended, stats = build_recommended_handles(publication.records, load_faction_labels(display_map_path))
@@ -921,7 +993,12 @@ def main(argv=None) -> int:
     parser = argparse.ArgumentParser(prog="python3 -m pipeline.team_route_handles", description=__doc__)
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true", help="generate the ledger from the selected publication; refuse to reassign an existing ledger")
-    mode.add_argument("--rebind", action="store_true", help="move the frozen ledger to a successor publication: keep surviving handles, add new rows, drop removed rows")
+    mode.add_argument(
+        "--rebind",
+        action="store_true",
+        help="move the frozen ledger to a successor publication: keep surviving handles, add new rows, "
+        "drop removed rows and retire their route segments for good",
+    )
     mode.add_argument("--check", action="store_true", help="validate the frozen ledger without deriving handles from display names")
     parser.add_argument("--generation-root", type=Path, default=DEFAULT_GENERATION_ROOT, help="Recommended root holding current.json and the generation directory")
     parser.add_argument("--teams", type=Path, default=DEFAULT_TEAMS_PATH, help="legacy teams artifact")
