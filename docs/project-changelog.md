@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-06 (Soi đội: mỗi tên một ô ở tab duyệt mẫu)
+
+### Fixed
+- `/quan-tri/#soi-doi`: bảng so mẫu hiện tướng, từng chiến pháp, binh thư mỗi tên một ô (`.adm-scan-name`) thay vì nối bằng ` · `, nên tên có sẵn dấu `•` như `Chuyển • Lính Đan Dương` không còn trông như hai chiến pháp. Bỏ `lang="zh-Hans"` ở cột AI đọc vì bản game Việt chép chữ Việt.
+
+### Không làm
+- Thử thêm vào prompt `analyzeTeamImage` câu nhắc giữ đủ dấu tiếng Việt và tiền tố `Tinh •`/`Chuyển •`. `eval:vision` trên `battle-vi-1` (`deepseek-v4.1-flash`, effort off, 3 lượt mỗi bản): dòng chiến pháp chép đúng nguyên văn 26/54 → 25/54, ID chiến pháp khớp 24/27 → 19/27; `battle-simplified-1` không đổi. Không cải thiện nên bỏ, prompt giữ nguyên.
+
 ## 2026-11-05 (Đội của tôi: toast báo đúng ghi chú bị bỏ khi lưu)
 
 ### Fixed

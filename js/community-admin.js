@@ -682,22 +682,28 @@ function scanStatsTable(rows) {
   );
 }
 
-/** Bảng so AI đọc (tên Hán) với đội xác nhận (ID), theo thứ tự ô. */
+/** Mỗi tên (tướng, từng chiến pháp, binh thư) một ô riêng: tên có sẵn dấu `•`/`·` không bị hiểu nhầm thành hai mục. */
+function scanNameList(hero, rest) {
+  const names = [hero, ...rest].filter(Boolean);
+  if (names.length === 0) return '—';
+  return el('div', { class: 'adm-scan-names' }, names.map((name, index) => (
+    el('span', { class: index === 0 && hero ? 'adm-scan-name is-hero' : 'adm-scan-name' }, String(name))
+  )));
+}
+
+/** Bảng so AI đọc (chữ in) với đội xác nhận (ID), theo thứ tự ô. */
 function scanCompareTable(sample) {
   const ai = Array.isArray(sample.aiRead?.heroes) ? sample.aiRead.heroes : [];
   const confirmed = Array.isArray(sample.confirmed?.heroes) ? sample.confirmed.heroes : [];
+  const list = (value) => (Array.isArray(value) ? value : []);
   return adminTable(
     [L('Tướng', '武将'), L('AI đọc', 'AI 识别'), L('Đội xác nhận', '队伍确认')],
     confirmed.map((entry, index) => {
       const read = ai[index];
-      const readText = read
-        ? [read.nameCn, ...(Array.isArray(read.tacticsCn) ? read.tacticsCn : []), ...(Array.isArray(read.booksCn) ? read.booksCn : [])].filter(Boolean).join(' · ')
-        : '—';
-      const confirmedText = [entry.hero, ...(Array.isArray(entry.tactics) ? entry.tactics : []), entry.book].filter(Boolean).join(' · ');
       return el('tr', {}, [
         el('td', {}, String(index + 1)),
-        el('td', { lang: 'zh-Hans' }, readText),
-        el('td', {}, confirmedText),
+        el('td', {}, read ? scanNameList(read.nameCn, [...list(read.tacticsCn), ...list(read.booksCn)]) : '—'),
+        el('td', {}, scanNameList(entry.hero, [...list(entry.tactics), entry.book])),
       ]);
     }),
   );
