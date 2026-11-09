@@ -1,0 +1,4 @@
+# Local run leftovers if someone points TQCCL_VERIFY_HOME here.
+# Evidence lives under /tmp/tqccl-verify/evidence/ by default and must survive cleanup.
+.run/
+evidence/

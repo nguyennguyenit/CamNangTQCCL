@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Wrapper so agents can put this directory on PATH as `control-tqccl`.
+set -euo pipefail
+exec node "$(cd "$(dirname "$0")" && pwd)/control-tqccl.mjs" "$@"
