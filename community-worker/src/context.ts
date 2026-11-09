@@ -1,7 +1,7 @@
 // Kiểu Hono dùng chung + phụ thuộc có thể thay khi test (phiên, fetch, đồng hồ, id).
 
 import type { Context } from "hono";
-import { toSessionUser, type SessionUser, type SessionUserRow } from "./auth";
+import { takeSessionSetCookies, toSessionUser, type SessionUser, type SessionUserRow } from "./auth";
 import { isAdminEmail, type Env } from "./env";
 import { ApiError } from "./http";
 
@@ -40,7 +40,9 @@ export async function currentUser(c: Ctx): Promise<SessionUser | null> {
   if (user === undefined) {
     const deps = c.get("deps");
     const now = deps.now();
-    user = toSessionUser(await deps.getUser(c.env, c.req.raw.headers), now);
+    const headers = c.req.raw.headers;
+    user = toSessionUser(await deps.getUser(c.env, headers), now);
+    for (const cookie of takeSessionSetCookies(headers)) c.header("Set-Cookie", cookie, { append: true });
     c.set("user", user);
     if (user && (user.lastSeenAt === null || now - user.lastSeenAt > LAST_SEEN_THROTTLE_MS)) {
       c.executionCtx.waitUntil(

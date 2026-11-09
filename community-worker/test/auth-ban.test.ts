@@ -1,8 +1,8 @@
 // Better Auth thật (dialect D1 trên fake D1) + Google giả lập: chặn đăng nhập tài khoản bị khoá/đang xoá.
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createApp } from "../src/app";
-import { createAuth } from "../src/auth";
+import { createAuth, SESSION_COOKIE_CACHE_MAX_AGE_SEC } from "../src/auth";
 import { PERMANENT_BAN_UNTIL, signBanNotice } from "../src/moderation";
 import { createHarness, ORIGIN, type ApiJson, type Harness } from "./fakes";
 
@@ -22,6 +22,14 @@ function cookieHeader(res: Response): string {
   return res.headers
     .getSetCookie()
     .map((c) => c.split(";")[0])
+    .join("; ");
+}
+
+/** Bỏ cookie cache để test đường đọc DB (khoá/vai trò có hiệu lực ngay). */
+function withoutSessionData(cookie: string): string {
+  return cookie
+    .split(/;\s*/u)
+    .filter((part) => !part.includes("session_data"))
     .join("; ");
 }
 
@@ -213,6 +221,8 @@ describe("phiên cũ với cookie thật qua getSessionUser mặc định", () =
     expect(login.cookie).toContain("session_token");
     const id = login.user?.id as string;
     // Không ghi đè getUser: đi qua getSessionUser thật -> currentUser -> toSessionUser.
+    // Bỏ session_data để đọc DB mỗi request (cookieCache trì hoãn khoá, test riêng bên dưới).
+    const cookie = withoutSessionData(login.cookie);
     const app = createApp();
     const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
     const ctx = { waitUntil: () => {}, passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
@@ -221,7 +231,7 @@ describe("phiên cũ với cookie thật qua getSessionUser mặc định", () =
         "/api/comments",
         {
           method: "POST",
-          headers: { origin: ORIGIN, "content-type": "application/json", cookie: login.cookie },
+          headers: { origin: ORIGIN, "content-type": "application/json", cookie },
           body: JSON.stringify({ page: "/doi-chuan/s18-abc/", lang: "vi", body: "xin chào" }),
         },
         env,
@@ -244,14 +254,71 @@ describe("phiên cũ với cookie thật qua getSessionUser mặc định", () =
     expect((await call()).status).toBe(401);
   });
 
+  it("cookieCache: khoá/xoá phiên chưa có hiệu lực tới khi hết maxAge", async () => {
+    const h = createHarness();
+    const login = await googleLogin(h);
+    expect(login.cookie).toContain("session_data");
+    const id = login.user?.id as string;
+    const app = createApp();
+    const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
+    const ctx = { waitUntil: () => {}, passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const me = () => app.request("/api/me", { headers: { origin: ORIGIN, cookie: login.cookie } }, env, ctx);
+    const userOf = async () => (await (await me()).json<ApiJson>()).user;
+
+    expect((await userOf())?.id).toBe(id);
+
+    h.sqlite.prepare('update "user" set banned_until = ? where id = ?').run(Date.now() + 60_000, id);
+    h.sqlite.prepare('delete from session where "userId" = ?').run(id);
+    expect((await userOf())?.id).toBe(id);
+
+    const now = Date.now();
+    const spy = vi.spyOn(Date, "now").mockReturnValue(now + (SESSION_COOKIE_CACHE_MAX_AGE_SEC + 1) * 1000);
+    try {
+      expect(await userOf()).toBeNull();
+    } finally {
+      spy.mockRestore();
+    }
+  });
+
+  it("cookieCache: /api/me không đọc bảng session; thiếu session_data thì Set-Cookie làm mới", async () => {
+    const h = createHarness();
+    const login = await googleLogin(h);
+    expect(login.cookie).toContain("session_data");
+    const app = createApp();
+    const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
+    const ctx = { waitUntil: () => {}, passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const orig = env.DB.prepare.bind(env.DB);
+    let sessionSelects = 0;
+    env.DB.prepare = ((sql: string) => {
+      if (/from\s+"session"/iu.test(sql)) sessionSelects++;
+      return orig(sql);
+    }) as typeof env.DB.prepare;
+
+    const cached = await app.request("/api/me", { headers: { origin: ORIGIN, cookie: login.cookie } }, env, ctx);
+    expect(cached.status).toBe(200);
+    expect((await cached.json<ApiJson>()).user.email).toBe(EMAIL);
+    expect(sessionSelects).toBe(0);
+
+    const refreshed = await app.request(
+      "/api/me",
+      { headers: { origin: ORIGIN, cookie: withoutSessionData(login.cookie) } },
+      env,
+      ctx,
+    );
+    expect(refreshed.status).toBe(200);
+    expect(sessionSelects).toBeGreaterThan(0);
+    expect(refreshed.headers.getSetCookie().join("; ")).toContain("session_data");
+  });
+
   it("vai trò đọc lại mỗi request: cấp/thu moderator và root từ ADMIN_EMAILS có hiệu lực ngay", async () => {
     const h = createHarness();
     const login = await googleLogin(h);
     const id = login.user?.id as string;
     const app = createApp();
     const ctx = { waitUntil: () => {}, passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const cookie = withoutSessionData(login.cookie);
     const call = (path: string, env: Record<string, unknown> = {}) =>
-      app.request(path, { headers: { origin: ORIGIN, cookie: login.cookie } }, { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret", ...env }, ctx);
+      app.request(path, { headers: { origin: ORIGIN, cookie } }, { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret", ...env }, ctx);
     const roleOf = async (env?: Record<string, unknown>) => (await (await call("/api/me", env)).json<ApiJson>()).user.role;
 
     expect((await call("/api/admin/counts")).status).toBe(403);
