@@ -7,25 +7,12 @@ import { APIError } from "better-auth/api";
 import { siteOrigin, trustedOrigins, type Env } from "./env";
 import { BAN_NOTICE_TTL_MS, isBlocked, signBanNotice } from "./moderation";
 
-/** Cookie cache TTL (giây). Phiên bị thu hồi/user bị khoá vẫn có hiệu lực tới hết cửa sổ này. */
-export const SESSION_COOKIE_CACHE_MAX_AGE_SEC = 5 * 60;
-
 const SESSION_TOKEN_COOKIE_RE = /(?:^|;\s*)(?:__Secure-)?better-auth\.session_token=/u;
-
-const pendingSetCookies = new WeakMap<Headers, string[]>();
 
 /** Có cookie phiên Better Auth (`better-auth.session_token`, có hoặc không tiền tố `__Secure-`). */
 export function hasSessionCookie(headers: Headers): boolean {
   const cookie = headers.get("cookie");
   return cookie != null && SESSION_TOKEN_COOKIE_RE.test(cookie);
-}
-
-/** Lấy `Set-Cookie` mà `getSession` muốn ghi (làm mới `session_data`); gọi một lần sau `getSessionUser`. */
-export function takeSessionSetCookies(headers: Headers): string[] {
-  const cookies = pendingSetCookies.get(headers);
-  if (!cookies) return [];
-  pendingSetCookies.delete(headers);
-  return cookies;
 }
 
 function buildAuth(env: Env, origin: string) {
@@ -52,13 +39,6 @@ function buildAuth(env: Env, origin: string) {
         ban_reason: { type: "string", required: false, input: false },
         deleting_at: { type: "number", required: false, input: false },
         last_seen_at: { type: "number", required: false, input: false },
-      },
-    },
-    session: {
-      cookieCache: {
-        enabled: true,
-        maxAge: SESSION_COOKIE_CACHE_MAX_AGE_SEC,
-        strategy: "compact",
       },
     },
     databaseHooks: {
@@ -98,6 +78,10 @@ function buildAuth(env: Env, origin: string) {
       useSecureCookies: origin.startsWith("https://"),
       // Pages Function chuyển tiếp nguyên header gốc, gồm cf-connecting-ip của client.
       ipAddress: { ipAddressHeaders: ["cf-connecting-ip"] },
+      // Tắt kiểm schema lúc chạy: mỗi instance mới introspect D1 ~21 câu (sqlite_master + pragma_table_info),
+      // vượt trần 10 ms CPU gói Free. Schema do migration quản; test/auth-session.test.ts gọi explicitSchemaCheck
+      // trên migration thật để bắt lệch schema ở CI.
+      database: { validateSchema: false },
     },
   });
 }
@@ -142,12 +126,7 @@ export interface SessionUserRow {
 /** Đọc phiên từ cookie; không cookie / không có / hết hạn -> null. Trả dòng thô, không quyết định khoá. */
 export async function getSessionUser(env: Env, headers: Headers): Promise<SessionUserRow | null> {
   if (!hasSessionCookie(headers)) return null;
-  const { headers: outHeaders, response: session } = await createAuth(env).api.getSession({
-    headers,
-    returnHeaders: true,
-  });
-  const setCookies = outHeaders.getSetCookie();
-  if (setCookies.length) pendingSetCookies.set(headers, setCookies);
+  const session = await createAuth(env).api.getSession({ headers });
   if (!session) return null;
   const u = session.user as typeof session.user & Partial<Omit<SessionUserRow, "id" | "name" | "email" | "image">>;
   return {
