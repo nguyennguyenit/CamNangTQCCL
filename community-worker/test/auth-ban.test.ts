@@ -30,9 +30,11 @@ interface LoginOptions {
   extraBody?: Record<string, unknown>;
   /** Chạy ngay sau khi hook session.create.before đọc trạng thái khoá (giả lập race). */
   afterHookRead?: () => void;
+  /** Tài khoản Google khác mặc định (EMAIL), để có nhiều user thật trên cùng D1. */
+  email?: string;
 }
 
-async function googleLogin(h: Harness, { extraBody = {}, afterHookRead }: LoginOptions = {}): Promise<Login> {
+async function googleLogin(h: Harness, { extraBody = {}, afterHookRead, email = EMAIL }: LoginOptions = {}): Promise<Login> {
   const db = h.env.DB;
   const hookedDb = afterHookRead
     ? ({
@@ -63,8 +65,8 @@ async function googleLogin(h: Harness, { extraBody = {}, afterHookRead }: LoginO
   if (!google) throw new Error("google provider missing");
   google.validateAuthorizationCode = async () => ({ accessToken: "fake-access", tokenType: "Bearer" });
   google.getUserInfo = async () => ({
-    user: { id: "google-newbie", name: "Newbie", email: EMAIL, emailVerified: true, image: null },
-    data: { sub: "google-newbie" },
+    user: { id: `google-${email}`, name: "Newbie", email, emailVerified: true, image: null },
+    data: { sub: `google-${email}` },
   });
 
   const start = await auth.handler(
@@ -79,7 +81,7 @@ async function googleLogin(h: Harness, { extraBody = {}, afterHookRead }: LoginO
   const cb = await auth.handler(
     new Request(`${ORIGIN}/api/auth/callback/google?code=abc&state=${state}`, { headers: { cookie: cookieHeader(start) } }),
   );
-  const user = h.sqlite.prepare('select * from "user" where email = ?').get(EMAIL) as Record<string, unknown> | undefined;
+  const user = h.sqlite.prepare('select * from "user" where email = ?').get(email) as Record<string, unknown> | undefined;
   const sessions = user ? Number((h.sqlite.prepare('select count(*) n from session where "userId" = ?').get(user.id as string) as { n: number }).n) : 0;
   return { status: cb.status, cookie: cookieHeader(cb), auth, location: new URL(cb.headers.get("location") ?? "", ORIGIN), sessions, user: user ?? null };
 }
@@ -211,6 +213,8 @@ describe("phiên cũ với cookie thật qua getSessionUser mặc định", () =
     const h = createHarness();
     const login = await googleLogin(h);
     expect(login.cookie).toContain("session_token");
+    // Không bật cookieCache: không có snapshot session_data, mọi request đọc lại D1.
+    expect(login.cookie).not.toContain("session_data");
     const id = login.user?.id as string;
     // Không ghi đè getUser: đi qua getSessionUser thật -> currentUser -> toSessionUser.
     const app = createApp();
@@ -267,6 +271,84 @@ describe("phiên cũ với cookie thật qua getSessionUser mặc định", () =
     h.sqlite.prepare('update "user" set role = ? where id = ?').run("user", id);
     expect((await call("/api/admin/counts")).status).toBe(403);
     expect(await roleOf()).toBe("user");
+  });
+
+  it("last_seen_at: 3 lần /api/me liên tiếp ghi đúng 1 lần; quá 10 phút ghi thêm đúng 1 lần", async () => {
+    const h = createHarness();
+    const login = await googleLogin(h);
+    const clock = { now: Date.now() };
+    const app = createApp({ now: () => clock.now });
+    const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
+    const pending: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => pending.push(p), passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const orig = env.DB.prepare.bind(env.DB);
+    let updates = 0;
+    env.DB.prepare = ((sql: string) => {
+      if (/update\s+"user"\s+set\s+last_seen_at/iu.test(sql)) updates++;
+      return orig(sql);
+    }) as typeof env.DB.prepare;
+    const me = async () => {
+      const res = await app.request("/api/me", { headers: { origin: ORIGIN, cookie: login.cookie } }, env, ctx);
+      expect((await res.json<ApiJson>()).user.email).toBe(EMAIL);
+      await Promise.all(pending.splice(0));
+    };
+
+    for (let i = 0; i < 3; i++) await me();
+    expect(updates).toBe(1);
+
+    clock.now += 10 * 60_000 + 1;
+    await me();
+    await me();
+    expect(updates).toBe(2);
+  });
+
+  it("ngân sách D1: không introspect schema; mỗi /api/me đã đăng nhập tối đa 3 câu", async () => {
+    const h = createHarness();
+    const login = await googleLogin(h);
+    const app = createApp();
+    const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
+    const pending: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => pending.push(p), passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const orig = env.DB.prepare.bind(env.DB);
+    const queries: string[] = [];
+    env.DB.prepare = ((sql: string) => {
+      queries.push(sql);
+      return orig(sql);
+    }) as typeof env.DB.prepare;
+    const me = async () => {
+      queries.length = 0;
+      const res = await app.request("/api/me", { headers: { origin: ORIGIN, cookie: login.cookie } }, env, ctx);
+      expect((await res.json<ApiJson>()).user.email).toBe(EMAIL);
+      await Promise.all(pending.splice(0));
+      return [...queries];
+    };
+
+    for (const run of [await me(), await me()]) {
+      expect(run.filter((sql) => /pragma_table_info|sqlite_master/iu.test(sql))).toEqual([]);
+      expect(run.length).toBeLessThanOrEqual(3);
+    }
+  });
+
+  it("instance dùng chung: hai user song song không lẫn danh tính; hạ quyền trên cùng env có hiệu lực ngay", async () => {
+    const h = createHarness();
+    const a = await googleLogin(h);
+    const b = await googleLogin(h, { email: "second@example.com" });
+    h.sqlite.prepare('update "user" set role = ? where id = ?').run("moderator", b.user?.id as string);
+    const app = createApp();
+    const env = { ...h.env, GOOGLE_CLIENT_ID: "test-client", GOOGLE_CLIENT_SECRET: "test-secret" };
+    const ctx = { waitUntil: () => {}, passThroughOnException: () => {}, props: {} } as unknown as ExecutionContext;
+    const me = async (cookie: string) => (await (await app.request("/api/me", { headers: { origin: ORIGIN, cookie } }, env, ctx)).json<ApiJson>()).user;
+
+    const results = await Promise.all([me(a.cookie), me(b.cookie), me(a.cookie), me(b.cookie)]);
+    expect(results.map((u) => [u.email, u.role])).toEqual([
+      [EMAIL, "user"],
+      ["second@example.com", "moderator"],
+      [EMAIL, "user"],
+      ["second@example.com", "moderator"],
+    ]);
+
+    h.sqlite.prepare('update "user" set role = ? where id = ?').run("user", b.user?.id as string);
+    expect((await me(b.cookie)).role).toBe("user");
   });
 });
 
