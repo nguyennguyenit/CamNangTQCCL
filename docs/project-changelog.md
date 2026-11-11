@@ -8,6 +8,15 @@
 ### Không làm
 - Thử thêm vào prompt `analyzeTeamImage` câu nhắc giữ đủ dấu tiếng Việt và tiền tố `Tinh •`/`Chuyển •`. `eval:vision` trên `battle-vi-1` (`deepseek-v4.1-flash`, effort off, 3 lượt mỗi bản): dòng chiến pháp chép đúng nguyên văn 26/54 → 25/54, ID chiến pháp khớp 24/27 → 19/27; `battle-simplified-1` không đổi. Không cải thiện nên bỏ, prompt giữ nguyên.
 
+## 2026-11-06 (CI/CD: push `main` tự deploy site và tự release Research MCP)
+
+### Changed
+- `pages-deploy.yml` chạy thêm khi push lên `main` chạm đầu vào site (`paths-ignore` bỏ `docs/`, `plans/`, `*.md`, `mcp-worker/`, `agent-knowledge/`, `worker/`, thư mục test, workflow MCP); giữ `site-publish`, lịch 03:17 và chạy tay; `timeout-minutes: 10`.
+- `mcp-worker.yml` tách thành `mcp-gate.yml` (gate `check:repository` đầy đủ trên pull request, hằng tuần, chạy tay; push mới cùng nhánh huỷ run cũ; `timeout-minutes: 40`) và `mcp-release.yml` (release production khi push lên `main` chạm đầu vào Worker, hoặc dispatch exact-SHA như trước cho bootstrap/rehearsal). Release chỉ chạy gate phạm vi Worker (`check`, `test:worker`, `deploy:dry-run`) thay vì `check:repository` (~13 phút Astro e2e/Python/Vision Worker), không cài Playwright, Python, Vision Worker; bỏ qua run (notice) khi đã có push mới hơn chờ release; `timeout-minutes: 20`; `cancel-in-progress: false` giữ nguyên. Không còn bước dán SHA cho release thường.
+- `mcp-edge-security-monitor.yml` bỏ `environment: mcp-production-observe` (không rule, không secret/variable; private Free không có environment), thêm `timeout-minutes: 5`.
+- `test/release/workflow-release-contract.test.ts` kiểm `push.paths` của `mcp-release.yml` phủ entrypoints/semanticFiles/buildInputs của `workflow-source-manifest.json`, `data/`, `agent-knowledge/` và publication root, đồng thời loại `data/sgsdeck/`, `mcp-worker/test/`; mọi bước sau chọn target đều gate theo target.
+- Docs: README, `deployment-guide.md`, `deployment.md`, `mcp-research-server.md`, `community-worker.md`, `system-architecture.md`, `code-standards.md`, `codebase-summary.md` theo luồng mới (bỏ "push `main` không tự deploy Pages", "mỗi mùa một reviewed version").
+
 ## 2026-11-05 (Đội của tôi: toast báo đúng ghi chú bị bỏ khi lưu)
 
 ### Fixed

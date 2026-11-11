@@ -63,14 +63,21 @@ Project deploy is split into three surfaces:
 
 ## Deploy Commands
 
-Static site uses Cloudflare Pages direct upload from a verified, clean `main` checkout.
+Static site deploys through `.github/workflows/pages-deploy.yml`: automatically on
+every push to `main` that touches a site input (`paths-ignore` drops docs, plans,
+the separate Workers and tests), on the community-worker `site-publish` dispatch,
+daily at 03:17 (UTC+7), or by manual dispatch. It builds the tip of `main`, runs
+`npm run verify`, then `wrangler pages deploy dist --project-name tqccl --branch main --commit-hash <sha>`.
 Follow the preview and production checks in [the deployment guide](deployment-guide.md).
-After verification, upload `dist/` with `wrangler pages deploy dist --project-name tqccl --branch main --commit-hash <verified-sha>`.
 
-Research MCP production deploys only through the manual exact-SHA workflow in
-`.github/workflows/mcp-worker.yml`. The credential-free release gate runs on
-pull requests and weekly on `main` (not on every push; direct pushes are gated by
-the local `.githooks/pre-push` hook) and never deploys production.
+Research MCP production releases through `.github/workflows/mcp-release.yml`:
+automatically on every push to `main` that touches a Worker input (Worker-scoped
+gate, then canary/promote/rollback), or by the manual exact-SHA dispatch for
+bootstrap and rollback rehearsal. Per-release evidence is the
+`tqccl-mcp-production-<sha>` artifact (90 days); this record only tracks
+bootstrap, incidents and rollback targets. The full credential-free repository
+gate runs in `.github/workflows/mcp-gate.yml` on pull requests and weekly on
+`main` and never deploys.
 
 Worker deploy:
 

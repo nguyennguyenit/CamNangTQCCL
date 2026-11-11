@@ -14485,8 +14485,9 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-dialog .adm-actions { justify-content: flex-end; }
 
-.cm-auth-notice { display: flex; align-items: flex-start; gap: var(--space-6); color: var(--ink); font: var(--type-small); }
-.cm-auth-notice p { margin: 0; overflow-wrap: anywhere; }
+/* `.cm-auth-menu` xếp cột; thông báo xếp hàng để nút đóng nằm góc phải, cùng dòng đầu với chữ. */
+.cm-auth-notice { display: flex; flex-direction: row; align-items: flex-start; gap: var(--space-6); color: var(--ink); font: var(--type-small); }
+.cm-auth-notice p { flex: 1 1 auto; min-width: 0; margin: 0; overflow-wrap: anywhere; }
 .cm-auth-notice-close { flex: none; padding: 0 var(--space-6); border: 0; background: none; color: var(--muted); font: var(--type-body); line-height: var(--leading-solid); cursor: pointer; }
 .cm-auth-notice-close:hover, .cm-auth-notice-close:focus-visible { color: var(--ink); }
 
@@ -15197,7 +15198,7 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-team-tab.is-active { border-color: var(--accent-ink); background-color: var(--accent-soft); color: var(--accent-ink); }
 
 .cm-team-heading { margin: 0; color: var(--ink); font: var(--type-list-title); }
-.cm-team-heading:focus { outline: none; }
+.cm-team-heading:focus, .cm-team-page > .detail-title:focus { outline: none; }
 
 .cm-team-filters { display: flex; flex-wrap: wrap; align-items: flex-end; gap: var(--space-12); }
 .cm-team-filter-heroes { display: flex; flex-wrap: wrap; gap: var(--space-8); margin: 0; padding: 0; border: 0; }
