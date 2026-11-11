@@ -3634,6 +3634,51 @@ body[data-page-section="team-khac"] .layout {
   margin: 0;
 }
 
+/* Thanh kho của Đội chuẩn: tóm tắt "ráp được X / Y đội" và nút lọc/sắp theo kho, hoặc một dòng dẫn khi máy
+   chưa có kho. JavaScript chỉ hiện thanh này sau khi đọc được kho của người xem. */
+.reference-roster-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+  min-width: 0;
+}
+
+.reference-roster-summary,
+.reference-roster-hint {
+  margin: 0;
+}
+
+.reference-roster-summary {
+  color: var(--ink);
+  font: var(--type-note);
+}
+
+.reference-roster-hint {
+  color: var(--muted);
+  font: var(--type-note);
+}
+
+.reference-roster-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6);
+}
+
+/* Badge kho trên thẻ và hàng bảng: nền theo trạng thái, chữ giữ màu mực để đủ tương phản ở cả hai theme. */
+.roster-stock-badge {
+  align-self: flex-start;
+  margin-top: var(--space-4);
+}
+
+.roster-stock-badge.is-ready {
+  background: var(--good-bg);
+}
+
+.roster-stock-badge.is-missing {
+  background: var(--warn-bg);
+}
+
 /* Vùng kết quả là container: lưới gọn đổi số cột theo bề rộng thật (còn/không còn sidebar). */
 .reference-view {
   min-width: 0;

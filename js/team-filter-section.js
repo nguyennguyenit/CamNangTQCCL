@@ -130,6 +130,7 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
 
 import { SOURCE_TIER_ORDER, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
 import { bindTacticTags, coexistTeamCard, groupRowsByTier, recommendedListTrees, referenceRowKey, teamItemTree, tierOf, tierSectionTree } from './recommended-reference-render.js';
+import { decorateCoverageBadges, rosterControlNodes, rosterHintNode, rosterSummaryNode } from './roster-list-badges.js';
 import { treeToDom } from './view-tree.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
@@ -212,6 +213,10 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
   // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
   let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
+  // Kho của người xem (chỉ Đội chuẩn): `undefined` = chưa biết, `null` = máy chưa có kho, hàm = mùa → độ phủ kho
+  // (`buildListCoverage`). `coverage` là độ phủ của mùa đang xem; `null` khi không gắn badge được.
+  let rosterSource, coverage=null, updated=false;
+  const rosterBar=el('div',{class:'reference-roster-bar',hidden:''});
   const openFacets=new Set();
   const title=referenceSectionTitle(family);
   const headText=treeToDom(referenceHeadTextTree(title,family));
@@ -231,7 +236,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   const more=el('div',{class:'lookup-more-row reference-more'});
   const empty=el('p',{class:'empty reference-empty'});
   const clear=el('button',{type:'button',class:'clear-btn',onClick:()=>{
-    onQuery({q:null,faction:null,unit:null,tier:null,subcategory:null,source:null});
+    onQuery({q:null,faction:null,unit:null,tier:null,subcategory:null,source:null,kho:null});
     // Xóa lọc làm nút này bị vô hiệu và cây lọc dựng lại: trả focus về ô tìm kiếm, không thả về BODY.
     searchInput.focus({preventScroll:true});
   }},L('Xóa lọc','清除筛选'));
@@ -266,7 +271,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
       el('div',{class:'reference-view-toggle',role:'group','aria-label':L('Kiểu hiển thị','显示方式')},viewButtons),
     ]),
     filters,
-    el('div',{class:'reference-results-body'},[notice,view,more,empty]),
+    el('div',{class:'reference-results-body'},[rosterBar,notice,view,more,empty]),
   ]);
   // A5: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc", như menu thả ở header.
   // Desktop luôn hiện sidebar và nút này bị ẩn (`getClientRects` rỗng) nên Escape không đụng tới.
@@ -331,7 +336,30 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   /** Lọc đang bật = chip đã chọn + từ khóa tìm; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
   function activeFilterCount() {
     const facets=Object.values(state.filters || {}).reduce((total,values)=>total + (Array.isArray(values) ? values.length : 0),0);
-    return facets + (state.query ? 1 : 0);
+    return facets + (state.query ? 1 : 0) + (coverage && state.rosterFilter ? 1 : 0);
+  }
+
+  /** Thanh kho phía trên danh sách: tóm tắt + nút lọc/sắp khi có kho, một dòng dẫn khi máy chưa có kho. */
+  function paintRosterBar() {
+    if (family!=='recommended' || rosterSource===undefined || (rosterSource && !coverage)) {
+      rosterBar.hidden=true;
+      rosterBar.removeAttribute('data-state');
+      rosterBar.replaceChildren();
+      return;
+    }
+    rosterBar.hidden=false;
+    if (!coverage) {
+      rosterBar.replaceChildren(rosterHintNode());
+      rosterBar.dataset.state='empty';
+      return;
+    }
+    const focused=rosterBar.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
+    rosterBar.replaceChildren(
+      rosterSummaryNode(coverage.summary),
+      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,onChange:onQuery}),
+    );
+    rosterBar.dataset.state='ready';
+    if (focused) rosterBar.querySelector(`[data-focus-key="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
   }
 
   const facetChip=(key,selected,value,count)=>{
@@ -423,12 +451,15 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const mode=currentView();
     const prerendered=view.dataset.ssrSignature;
     view.removeAttribute('data-ssr-signature');
-    if (prerendered!==undefined && prerendered===referenceViewSignature(state,mode,safeReturnUrl(location.href),shown)) {
+    // Đang lọc/sắp theo kho thì danh sách khác bản dựng sẵn: không nhận lại DOM đó.
+    const rosterOrdered=Boolean(coverage && (state.rosterFilter || state.rosterSort));
+    if (!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,safeReturnUrl(location.href),shown)) {
       // Đúng danh sách đã dựng sẵn: giữ nguyên node, chỉ gắn sự kiện "tìm chiến pháp" (không nháy, không nhân đôi).
       bindTacticTags(view,value=>onQuery({q:value}));
     } else {
       view.replaceChildren(...recommendedListTrees(filteredRows,{family,mode,limit:shown,labels:viewLabels,hrefFor,mountId:mount.id}).map(toNode));
     }
+    decorateCoverageBadges(view,coverage?.byConfigId);
     renderMore();
     empty.textContent=emptyText;
     empty.hidden=filteredRows.length>0;
@@ -471,19 +502,28 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
       container(view).append(...nodes);
       first=nodes[0];
     }
+    decorateCoverageBadges(view,coverage?.byConfigId);
     renderMore();
     focusItem(first);
   }
 
-  function render() {
+  /** `keepSameList`: danh sách sau khi tính lại vẫn đúng các đội đang hiện thì giữ nguyên node, chỉ gắn lại badge
+   *  (kho tới sau lần vẽ đầu không được thay thẻ dựng sẵn hay làm mất trạng thái mở/đóng của thẻ). */
+  function render({keepSameList=false}={}) {
     if (searchInput.value!==state.query) searchInput.value=state.query || '';
     renderSeasonOptions();
     const labels=registry.displayLabels || {};
     const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}},labels);
     currentScopeRows=scopeRows;
+    // Độ phủ kho của mùa đang xem; mùa không có đội nào tính được (tổng 0) thì coi như không có độ phủ.
+    const seasonCoverage=family==='recommended' && typeof rosterSource==='function' ? rosterSource(state.season) : null;
+    coverage=seasonCoverage?.summary.total ? seasonCoverage : null;
+    paintRosterBar();
     renderFacets(scopeRows);
-    const filtered=projectRecommendedRows(rows,state,labels);
-    const key=JSON.stringify([state.season ?? null,state.query || '',state.filters || {},currentView()]);
+    const filtered=projectRecommendedRows(rows,state,labels,coverage?.byConfigId);
+    const rosterOrder=coverage && (state.rosterFilter || state.rosterSort) ? [state.rosterFilter ?? null,state.rosterSort ?? null] : null;
+    const key=JSON.stringify([state.season ?? null,state.query || '',state.filters || {},currentView(),rosterOrder]);
+    const sameList=keepSameList && key===listKey && filtered.length===filteredRows.length && filtered.every((row,index)=>row===filteredRows[index]);
     if (key!==listKey) { listKey=key; shown=PAGE_SIZE; }
     count.replaceChildren(el('strong',{},String(filtered.length)),L(` / ${scopeRows.length} đội`,` / ${scopeRows.length} 队`));
     // Mùa chưa thu thập đánh dấu trên từng phạm vi của mùa đó; danh sách luôn gộp mọi danh mục.
@@ -495,10 +535,13 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     filteredRows=filtered;
     viewLabels=labels;
     emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính chưa rõ trong phạm vi này.','此范围内没有属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
-    renderView();
+    if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
+    else renderView();
   }
   return {
-    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;render();},
+    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;render();},
+    /** Trao kho của người xem: `null` = máy chưa có kho; hàm `seasonId => độ phủ` = có kho. Vẽ lại nếu danh sách đã dựng. */
+    setRoster(source){rosterSource=source;if (updated) render({keepSameList:true});},
     focus(){heading.focus();},
     setSearch(value){onQuery({q:value || null});},
     setFiltersExpanded,
