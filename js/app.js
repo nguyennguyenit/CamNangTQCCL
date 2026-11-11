@@ -524,7 +524,8 @@ async function main() {
     // Badge kho của Đội chuẩn: kho đọc từ máy (khách: kho local; đã đăng nhập: cache cloud của chính người đó), không
     // chặn boot. Từ điển tướng/chiến pháp chỉ tải khi máy có kho; độ phủ tính theo từng mùa và nhớ lại.
     const rosterSection = pageSection === 'team-chuan' && recommendedModel ? sections['team-chuan'] : null;
-    if (rosterSection?.setRoster) {
+    const loadRosterSource = () => {
+      if (!rosterSection?.setRoster) return;
       (async () => {
         const user = await loadSession({ probe: false });
         const roster = readOwnedRoster(localStore(), { userId: user?.id ?? null });
@@ -542,7 +543,8 @@ async function main() {
         console.error(error);
         rosterSection.setRoster(undefined);
       });
-    }
+    };
+    loadRosterSource();
     const refresh = () => {
       if (detailMount) detailMount.hidden = !new URL(location.href).searchParams.has('config') && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
@@ -585,7 +587,8 @@ async function main() {
       refresh();
       restoreReturnState();
     });
-    window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
+    // Trang trả về từ bfcache: kho có thể đã đổi (nhập thêm ở Gợi ý đội, đăng xuất) nên đọc lại trước khi khôi phục vị trí.
+    window.addEventListener('pageshow', event => { if (event.persisted) { loadRosterSource(); restoreReturnState(); } });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
     // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.

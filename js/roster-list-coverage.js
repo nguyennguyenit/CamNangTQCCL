@@ -4,11 +4,32 @@
 // Module không có chữ hiển thị và không đụng DOM.
 import { ROSTER_SCAN_STORAGE_KEY, deserializeRosterScanState } from "./roster-scan-state.js";
 import { CLOUD_STORAGE_KEY, MAIN_BOX_ID, normalizeCloudState, toScanState } from "./roster-cloud-store.js";
-import { buildSeasonCandidates } from "./roster-season-candidates.js";
+import { applyTacticOverrides, buildSeasonCandidates } from "./roster-season-candidates.js";
 import { buildRosterCoverage } from "./roster-coverage.js";
 import { createTacticIdResolver } from "./lookup-ids.js";
 
 const hasItems = (scan) => Boolean(scan?.ownedHeroes?.length || scan?.ownedTactics?.length);
+
+/** Kho ở dạng trả ra: tướng, chiến pháp, và món bù người dùng đã chọn cho từng ô (như Gợi ý đội dùng). */
+const rosterOf = (scan, source) => ({
+  ownedHeroes: scan.ownedHeroes,
+  ownedTactics: scan.ownedTactics,
+  tacticOverrides: scan.tacticOverrides || [],
+  source,
+});
+
+/** Tên Việt của từ điển → tên Hán gốc (`chinese`); dòng thiếu một trong hai bị bỏ. */
+function chineseNames(dict) {
+  const names = new Map();
+  for (const row of dict || []) if (row?.viet && row?.chinese && !names.has(row.viet)) names.set(row.viet, row.chinese);
+  return names;
+}
+
+/** Tên Hán của một món thiếu; ô tướng "A/B" đổi từng phần. Không tra đủ thì `null` (caller giữ tên gốc). */
+function chineseNameOf(name, names) {
+  const parts = String(name).split("/").map((part) => names.get(part.trim()));
+  return parts.every(Boolean) ? parts.join("/") : null;
+}
 
 function readJson(storage, key) {
   const raw = storage.getItem(key);
@@ -24,7 +45,7 @@ function readJson(storage, key) {
  *
  * @param {Pick<Storage, "getItem">|null} storage
  * @param {{userId?: string|null}} [options]
- * @returns {{ownedHeroes: object[], ownedTactics: object[], source: "local"|"cloud"}|null}
+ * @returns {{ownedHeroes: object[], ownedTactics: object[], tacticOverrides: object[], source: "local"|"cloud"}|null}
  */
 export function readOwnedRoster(storage, { userId = null } = {}) {
   if (!storage) return null;
@@ -32,12 +53,12 @@ export function readOwnedRoster(storage, { userId = null } = {}) {
     if (userId) {
       const state = normalizeCloudState(readJson(storage, CLOUD_STORAGE_KEY), userId);
       const scan = state ? toScanState(state, MAIN_BOX_ID) : null;
-      return hasItems(scan) ? { ownedHeroes: scan.ownedHeroes, ownedTactics: scan.ownedTactics, source: "cloud" } : null;
+      return hasItems(scan) ? rosterOf(scan, "cloud") : null;
     }
     const raw = storage.getItem(ROSTER_SCAN_STORAGE_KEY);
     if (typeof raw !== "string" || !raw) return null;
     const scan = deserializeRosterScanState(JSON.parse(raw));
-    return hasItems(scan) ? { ownedHeroes: scan.ownedHeroes, ownedTactics: scan.ownedTactics, source: "local" } : null;
+    return hasItems(scan) ? rosterOf(scan, "local") : null;
   } catch {
     return null;
   }
@@ -52,23 +73,30 @@ export function readOwnedRoster(storage, { userId = null } = {}) {
  * @param {string} input.seasonId
  * @param {object[]} input.heroesDict
  * @param {object[]} input.tacticsDict
- * @param {{ownedHeroes: Array, ownedTactics: Array}|null} input.roster kết quả `readOwnedRoster`
- * @returns {{byConfigId: Map<string, {missingCount: number, missing: Array<{kind: "hero"|"tactic", name: string, unresolved?: true}>}>, summary: {complete: number, total: number}}}
+ * @param {{ownedHeroes: Array, ownedTactics: Array, tacticOverrides?: Array}|null} input.roster kết quả `readOwnedRoster`;
+ *   món bù trong `tacticOverrides` được tính như ở khối Độ phủ kho (ô có món bù trong kho là đủ)
+ * @returns {{byConfigId: Map<string, {missingCount: number, missing: Array<{kind: "hero"|"tactic", name: string, nameZh?: string, unresolved?: true}>}>, summary: {complete: number, total: number}}}
+ *   `nameZh` là tên Hán của từ điển cho bản zh (vắng mặt khi không tra được)
  */
 export function buildListCoverage({ records = [], seasonId, heroesDict = [], tacticsDict = [], roster = null } = {}) {
   const byConfigId = new Map();
   if (!roster || !seasonId) return { byConfigId, summary: { complete: 0, total: 0 } };
   const season = buildSeasonCandidates(records, seasonId, { heroesDict, tacticsDict });
   const coverage = buildRosterCoverage({
-    seasonTeams: season.teams,
+    seasonTeams: applyTacticOverrides(season.teams, roster.tacticOverrides),
     seasonTier: season.teamTier,
     ownedHeroes: roster.ownedHeroes,
     ownedTactics: roster.ownedTactics,
     tacticIdOf: createTacticIdResolver(tacticsDict),
   });
+  const zhNames = { hero: chineseNames(heroesDict), tactic: chineseNames(tacticsDict) };
+  const withChinese = (item) => {
+    const nameZh = item.unresolved ? null : chineseNameOf(item.name, zhNames[item.kind]);
+    return nameZh ? { ...item, nameZh } : item;
+  };
   let complete = 0;
   for (const entry of coverage.teams) {
-    byConfigId.set(entry.team.id, { missingCount: entry.missingCount, missing: entry.missing });
+    byConfigId.set(entry.team.id, { missingCount: entry.missingCount, missing: entry.missing.map(withChinese) });
     if (entry.missingCount === 0) complete++;
   }
   return { byConfigId, summary: { complete, total: byConfigId.size } };

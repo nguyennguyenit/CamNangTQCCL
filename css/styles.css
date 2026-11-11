@@ -3644,6 +3644,11 @@ body[data-page-section="team-khac"] .layout {
   min-width: 0;
 }
 
+/* `display: flex` ở trên thắng `[hidden]` của trình duyệt; thanh ẩn phải biến mất hẳn, không chiếm một khoảng `gap`. */
+.reference-roster-bar[hidden] {
+  display: none;
+}
+
 .reference-roster-summary,
 .reference-roster-hint {
   margin: 0;

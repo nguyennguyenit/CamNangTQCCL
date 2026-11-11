@@ -4,6 +4,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { buildListCoverage, readOwnedRoster } from "../js/roster-list-coverage.js";
 import { buildRosterCoverage } from "../js/roster-coverage.js";
+import { applyTacticOverrides } from "../js/roster-season-candidates.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
 import { createRosterIdResolver } from "../js/roster-id-resolve.js";
 import { ROSTER_SCAN_STORAGE_KEY, createInitialRosterScanState, serializeRosterScanState } from "../js/roster-scan-state.js";
@@ -14,10 +15,11 @@ const SEASON = "og-兵演春秋";
 const { records, heroesDict, tacticsDict } = realData();
 
 const storageOf = (entries = {}) => ({ getItem: (key) => (Object.hasOwn(entries, key) ? entries[key] : null) });
-const scanOf = ({ heroes = [], tactics = [] } = {}) => ({
+const scanOf = ({ heroes = [], tactics = [], overrides = [] } = {}) => ({
   ...createInitialRosterScanState(),
   ownedHeroes: heroes.map((name) => ({ name, confidence: "manual" })),
   ownedTactics: tactics.map((name) => ({ name, confidence: "manual" })),
+  tacticOverrides: overrides,
 });
 const localBlob = (inventory) => JSON.stringify(serializeRosterScanState(scanOf(inventory)));
 const cloudBlob = (userId, inventory) => {
@@ -97,7 +99,7 @@ test("buildListCoverage: số ráp được khớp tổng 'Ráp đủ' của kh�
   assert.equal(coverage.summary.complete, complete);
   for (const entry of block.teams) {
     assert.equal(coverage.byConfigId.get(entry.team.id).missingCount, entry.missingCount);
-    assert.deepEqual(coverage.byConfigId.get(entry.team.id).missing, entry.missing);
+    assert.deepEqual(coverage.byConfigId.get(entry.team.id).missing.map(({ nameZh: _zh, ...item }) => item), entry.missing);
   }
 });
 
@@ -105,4 +107,52 @@ test("buildListCoverage: thiếu kho hoặc thiếu từ điển trả cấu tr�
   const empty = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster: null });
   assert.equal(empty.byConfigId.size, 0);
   assert.deepEqual(empty.summary, { complete: 0, total: 0 });
+});
+
+/** Kho đủ mọi món của một đội trừ một chiến pháp, kèm món bù người dùng đã chọn cho đúng ô đó (như ở Gợi ý đội). */
+function substituteFixture() {
+  const season = seasonFrom(SEASON);
+  const team = season.teams.find((item) => item.heroes[0].tactics.some((tactic) => !tactic.unresolved));
+  const slotIndex = team.heroes[0].tactics.findIndex((tactic) => !tactic.unresolved);
+  const original = team.heroes[0].tactics[slotIndex].name;
+  const roster = rosterOf([team], { skipTactics: [original] });
+  const substitute = tacticsDict.map((tactic) => tactic.viet).find((name) => name && name !== original && !roster.ownedTactics.includes(name));
+  roster.ownedTactics.push(substitute);
+  return { season, team, roster, overrides: [{ teamId: team.id, heroIndex: 0, slotIndex, tactic: substitute }] };
+}
+
+test("readOwnedRoster: trả cả món bù đã chọn (tacticOverrides) của kho local và kho cloud", () => {
+  const overrides = [{ teamId: "og-bingyan-40y-lvbu-b", heroIndex: 0, slotIndex: 0, tactic: "Phong Thiên" }];
+  const local = readOwnedRoster(storageOf({ [ROSTER_SCAN_STORAGE_KEY]: localBlob({ heroes: ["Tào Tháo"], tactics: ["Phong Thiên"], overrides }) }));
+  assert.deepEqual(local.tacticOverrides, overrides);
+  const cloud = readOwnedRoster(
+    storageOf({ [CLOUD_STORAGE_KEY]: cloudBlob("u-alice", { heroes: ["Tào Tháo"], tactics: ["Phong Thiên"], overrides }) }),
+    { userId: "u-alice" },
+  );
+  assert.deepEqual(cloud.tacticOverrides, overrides);
+});
+
+test("buildListCoverage: món bù đã chọn được tính như ở khối Độ phủ kho (đội thành ráp được)", () => {
+  const { season, team, roster, overrides } = substituteFixture();
+  const without = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster });
+  assert.equal(without.byConfigId.get(team.id).missingCount, 1);
+  const withSubstitute = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster: { ...roster, tacticOverrides: overrides } });
+  assert.equal(withSubstitute.byConfigId.get(team.id).missingCount, 0);
+  const block = buildRosterCoverage({
+    seasonTeams: applyTacticOverrides(season.teams, overrides),
+    seasonTier: season.teamTier,
+    ownedHeroes: roster.ownedHeroes,
+    ownedTactics: roster.ownedTactics,
+    tacticIdOf: createTacticIdResolver(tacticsDict),
+  });
+  assert.equal(withSubstitute.summary.complete, block.tiers.reduce((sum, tier) => sum + tier.complete.length, 0));
+});
+
+test("buildListCoverage: món thiếu mang tên Hán của từ điển (nameZh) để bản zh không lẫn tên Việt", () => {
+  const coverage = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster: { ownedHeroes: [], ownedTactics: [] } });
+  const items = [...coverage.byConfigId.values()].flatMap((entry) => entry.missing).filter((item) => !item.unresolved);
+  const hero = items.find((item) => item.kind === "hero" && !item.name.includes("/"));
+  const tactic = items.find((item) => item.kind === "tactic");
+  assert.equal(hero.nameZh, heroesDict.find((row) => row.viet === hero.name).chinese);
+  assert.equal(tactic.nameZh, tacticsDict.find((row) => row.viet === tactic.name).chinese);
 });

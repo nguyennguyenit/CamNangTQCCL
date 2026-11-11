@@ -2,13 +2,12 @@
 // việc: nếu máy có kho (khách: kho local; đã đăng nhập: cache cloud của chính người đó) thì tải dữ liệu cần thiết,
 // gắn badge "Ráp được / Thiếu N món" lên các thẻ đã dựng sẵn và thêm dòng tóm tắt. Máy chưa có kho: không tải gì,
 // trang giữ nguyên.
-import { currentLocale } from "./i18n.js";
 import { loadSession } from "./community-api.js";
 import { createLookupPayloadLoader } from "./lookup-data.js";
-import { loadRecommendedReference, setTacticDisplayName, setZhNameResolver } from "./recommended-reference-state.js";
+import { loadRecommendedReference, setTacticDisplayName } from "./recommended-reference-state.js";
 import { buildListCoverage, readOwnedRoster } from "./roster-list-coverage.js";
 import { decorateCoverageBadges, rosterSummaryNode } from "./roster-list-badges.js";
-import { createByteLoader, loadRawNameResolver, readTacticDisplayTable } from "./website-display.js";
+import { createByteLoader, readTacticDisplayTable } from "./website-display.js";
 
 function storage() {
   try {
@@ -33,19 +32,17 @@ async function initSeasonPageRosterBadges() {
     if (!response.ok) throw new Error(`/data/recommended/${path}: ${response.status}`);
     return response.arrayBuffer();
   };
-  const [model, heroesDict, tacticsDict, rawNames] = await Promise.all([
+  const [model, heroesDict, tacticsDict] = await Promise.all([
     loadRecommendedReference(JSON.parse(pinNode.textContent), loadRecommendedBytes),
     loadLookupPayload("heroes-dict.json"),
     loadLookupPayload("tactics.json"),
-    // Tên Hán gốc chỉ cần cho bản zh (tên món thiếu trong title của badge); lỗi thì tên lùi về bản gốc.
-    currentLocale() === "zh" ? loadRawNameResolver(loadBytes).catch(() => null) : null,
   ]);
-  if (rawNames) setZhNameResolver(rawNames);
+  // Bản vi: tên chiến pháp hiện theo tên game VN hiện hành (bảng nhúng lúc build). Bản zh dùng `nameZh` của độ phủ.
   setTacticDisplayName(readTacticDisplayTable());
 
   // Mùa của trang lấy từ chính các thẻ đã dựng: mọi thẻ của trang thuộc cùng một mùa nguồn.
   const records = model.index.records;
-  const firstKey = section.querySelector("[data-source-config-id]")?.dataset.sourceConfigId;
+  const firstKey = section.querySelector('[data-source-config-id]:not([data-source-config-id=""])')?.dataset.sourceConfigId;
   const seasonId = records.find((record) => record.sourceConfigId === firstKey)?.sourceSeasonId;
   if (!seasonId) return;
   const coverage = buildListCoverage({ records, seasonId, heroesDict, tacticsDict, roster });

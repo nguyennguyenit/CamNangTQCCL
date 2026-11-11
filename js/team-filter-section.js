@@ -216,6 +216,8 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   // Kho của người xem (chỉ Đội chuẩn): `undefined` = chưa biết, `null` = máy chưa có kho, hàm = mùa → độ phủ kho
   // (`buildListCoverage`). `coverage` là độ phủ của mùa đang xem; `null` khi không gắn badge được.
   let rosterSource, coverage=null, updated=false;
+  // Trạng thái mở/đóng vừa khôi phục khi quay lại từ trang chi tiết; dùng lại nếu kho tới sau và làm danh sách dựng lại.
+  let restoredDisclosures=null;
   const rosterBar=el('div',{class:'reference-roster-bar',hidden:''});
   const openFacets=new Set();
   const title=referenceSectionTitle(family);
@@ -516,7 +518,11 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}},labels);
     currentScopeRows=scopeRows;
     // Độ phủ kho của mùa đang xem; mùa không có đội nào tính được (tổng 0) thì coi như không có độ phủ.
-    const seasonCoverage=family==='recommended' && typeof rosterSource==='function' ? rosterSource(state.season) : null;
+    // Lỗi khi tính độ phủ (dữ liệu mùa lạ) không được làm hỏng cả lượt vẽ: coi như mùa đó không có độ phủ.
+    let seasonCoverage=null;
+    if (family==='recommended' && typeof rosterSource==='function') {
+      try { seasonCoverage=rosterSource(state.season); } catch (error) { console.error(error); }
+    }
     coverage=seasonCoverage?.summary.total ? seasonCoverage : null;
     paintRosterBar();
     renderFacets(scopeRows);
@@ -539,9 +545,17 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     else renderView();
   }
   return {
-    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;render();},
+    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();},
     /** Trao kho của người xem: `null` = máy chưa có kho; hàm `seasonId => độ phủ` = có kho. Vẽ lại nếu danh sách đã dựng. */
-    setRoster(source){rosterSource=source;if (updated) render({keepSameList:true});},
+    setRoster(source){
+      rosterSource=source;
+      if (!updated) return;
+      const previousKey=listKey;
+      render({keepSameList:true});
+      // Kho tới sau khi trang đã khôi phục vị trí quay lại và làm danh sách đổi (đang lọc/sắp theo kho): khôi phục lại
+      // trên danh sách mới để thẻ vừa mở vẫn được dựng tới và nhận focus.
+      if (listKey!==previousKey && restoredDisclosures) applyDisclosures(restoredDisclosures);
+    },
     focus(){heading.focus();},
     setSearch(value){onQuery({q:value || null});},
     setFiltersExpanded,
@@ -554,6 +568,12 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
       };
     },
     setDisclosureState(disclosures={}){
+      restoredDisclosures=disclosures;
+      applyDisclosures(disclosures);
+    },
+  };
+
+  function applyDisclosures(disclosures={}) {
       setFiltersExpanded(disclosures.filters);
       // Thẻ đã mở chi tiết nằm sau các lượt đầu: dựng đủ lượt tới nó để focus và mốc cuộn còn đúng chỗ.
       const target=disclosures.target ? filteredRows.findIndex(row=>referenceRowKey(row)===disclosures.target) : -1;
@@ -567,6 +587,5 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
         if (details) details.open=open.has(card.dataset.referenceKey);
       }
       if (target>=0) focusItem([...view.querySelectorAll('[data-reference-key]')].find(node=>node.dataset.referenceKey===disclosures.target),{preventScroll:true});
-    },
-  };
+  }
 }

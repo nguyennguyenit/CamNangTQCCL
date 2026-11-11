@@ -172,6 +172,33 @@ test.describe("Đội chuẩn: badge kho", () => {
   }
 });
 
+test("quay lại từ trang chi tiết khi đang sắp theo kho: giữ thứ tự theo kho và trả focus về đúng thẻ", async ({ page }) => {
+  const roster = rosterFor(SEASON, READY_TEAMS);
+  await seedRoster(page, roster);
+  await page.goto("/doi-chuan/?xep=de-rap");
+  await waitForCoverage(page);
+  const cards = section(page).locator(".reference-team-card");
+  // Thẻ thứ ba của bậc đầu: vị trí của nó phụ thuộc thứ tự sắp theo kho, không trùng thứ tự mặc định.
+  const target = cards.nth(2);
+  const key = await target.getAttribute("data-reference-key");
+  const order = await cards.evaluateAll((nodes) => nodes.map((node) => node.dataset.referenceKey));
+  await target.locator("a[data-team-detail-link]").first().evaluate((node) => node.click());
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  await page.goBack();
+  await expect(page).toHaveURL(/[?&]xep=de-rap/);
+  await waitForCoverage(page);
+  expect(await cards.evaluateAll((nodes) => nodes.map((node) => node.dataset.referenceKey))).toEqual(order);
+  await expect(section(page).locator(`.reference-team-card[data-reference-key="${key}"] a[data-team-detail-link]`).first()).toBeFocused();
+});
+
+test("thanh kho ẩn không chiếm chỗ: Đội khác không có thanh kho hiển thị", async ({ page }) => {
+  await page.goto("/doi-khac/");
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  const hidden = page.locator("#section-team-khac .reference-roster-bar");
+  await expect(hidden).toBeHidden();
+  expect(await hidden.evaluate((node) => getComputedStyle(node).display)).toBe("none");
+});
+
 test("trang mùa cũ: có kho thì thẻ có badge và dòng tóm tắt; chưa có kho thì trang giữ nguyên", async ({ page }) => {
   const season = buildSeasonCandidates(records, OLD_SEASON, dicts);
   const target = season.teams[0];

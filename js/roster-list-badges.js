@@ -26,10 +26,13 @@ function node(tag, attrs = {}, children = []) {
   return element;
 }
 
-/** Tên một món thiếu theo ngôn ngữ trang: bản vi dùng tên game VN hiện hành, bản zh dùng tên Hán (không tra được thì giữ tên gốc). */
+/**
+ * Tên một món thiếu theo ngôn ngữ trang: bản vi dùng tên game VN hiện hành; bản zh dùng tên Hán của từ điển
+ * (`nameZh`), rồi mới tới bộ tra tên của trang; chỉ ô chưa đối chiếu được mới còn tên gốc của nguồn.
+ */
 function missingItemText(item) {
   const vi = item.kind === "tactic" ? tacticDisplayName(item.name) : item.name;
-  const name = sourceName(vi) || sourceName(item.name) || vi;
+  const name = L(vi, item.nameZh || sourceName(item.name) || item.name);
   if (item.kind === "hero") return L(`tướng ${name}`, `武将${name}`);
   return item.unresolved
     ? L(`chiến pháp ${name} (chưa đối chiếu)`, `战法${name}（尚未核对）`)
@@ -64,7 +67,7 @@ export function decorateCoverageBadges(root, byConfigId) {
 
 /** Dòng tóm tắt "ráp được X / Y đội của mùa". */
 export function rosterSummaryNode(summary) {
-  return node("p", { class: "reference-roster-summary", role: "status" }, [
+  return node("p", { class: "reference-roster-summary" }, [
     L("Kho của bạn ráp được ", "你的库存可组建 "),
     node("strong", {}, `${summary.complete} / ${summary.total}`),
     L(" đội của mùa này.", " 支本赛季阵容。"),
