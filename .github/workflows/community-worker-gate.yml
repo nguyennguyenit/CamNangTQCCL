@@ -1,0 +1,56 @@
+# Gate của community-worker (Better Auth + D1): typecheck + vitest trên D1 giả chạy migration thật.
+# Production tắt kiểm schema lúc chạy của Better Auth (advanced.database.validateSchema: false), nên lệch
+# giữa migrations/ và schema Better Auth chỉ được bắt ở đây (test/auth-session.test.ts → explicitSchemaCheck).
+# Không deploy: Worker deploy tay bằng `npm run deploy` trong community-worker/.
+name: Community worker gate
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "community-worker/**"
+      # Test import trực tiếp shared/ai-config, shared/ai-models và worker/src/model.
+      - "shared/**"
+      - "worker/src/**"
+      # Root tsconfig (vitest transform shared/) + lockfile gốc được cài trong job.
+      - "tsconfig.json"
+      - "package-lock.json"
+      - ".node-version"
+      - ".github/workflows/community-worker-gate.yml"
+  push:
+    branches: [main]
+    paths:
+      - "community-worker/**"
+      - "shared/**"
+      - "worker/src/**"
+      - ".github/workflows/community-worker-gate.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: community-worker-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: community-worker
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .node-version
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            community-worker/package-lock.json
+      # Root: vitest đọc tsconfig.json gốc (extends astro/tsconfigs/strict) khi transform shared/ và worker/src/.
+      - run: npm ci
+        working-directory: .
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
