@@ -81,6 +81,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:an-hau-dac-chung": {
+      "nameVi": "Ân Hậu Đắc Chúng",
+      "quality": "A",
+      "type": "BURST",
+      "activationRate": 0.5,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân ta",
+      "effectTypeVi": "Trị liệu",
+      "effectVi": "Sau khi Tấn công thường, Trị Liệu Võ Tướng quân ta ngẫu nhiên (tỷ lệ Trị Liệu 54%→108%, bị Trí Lực ảnh hưởng)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:an-ui-quan-dan": {
       "nameVi": "An Ủi Quân Dân",
       "quality": "S",
@@ -390,6 +408,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Binh đao đơn",
       "effectVi": "Gây cho cá thể quân địch 1 lần tấn công Binh Đao (tỷ lệ sát thương 110%→220%), và có 15%→30% xác suất phóng trạng thái Chấn Động, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:be-canh-tu-an": {
+      "nameVi": "Bế Cảnh Tự An",
+      "quality": "A",
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể địch (2 người)",
+      "effectTypeVi": "Giảm ích",
+      "effectVi": "Chiến đấu 4 hiệp đầu, khiến sát thương gây ra của Tập thể quân địch (2 người) giảm 12.5%→25%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -733,6 +769,24 @@
       "effectTypeVi": "Tăng ích",
       "effectVi": "Trong hiệp chiến đấu số lẻ, làm giảm 15%→30% sát thương bản thân phải chịu (Bị ảnh hưởng bởi thuộc tính cao nhất của bản thân); Trong hiệp số chẵn, tăng 15→30 điểm Thống Soái và Trí Lực bản thân (Bị ảnh hưởng bởi thuộc tính cao nhất của bản thân)",
       "maxUsers": 1,
+      "exchangeConditionVi": null
+    },
+    "tactic:chinh-van": {
+      "nameVi": "Chính Vận",
+      "quality": "B",
+      "type": "INTERNAL",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Nội chính",
+      "effectVi": "Bản thân Chính Trị, Mị Lực tăng 5→10",
+      "maxUsers": null,
       "exchangeConditionVi": null
     },
     "tactic:cho-doi-xuat-phat": {
@@ -1288,9 +1342,9 @@
         "Thương binh",
         "Khí giới"
       ],
-      "targetVi": "Quân ta và quân địch",
-      "effectTypeVi": "Chỉ huy",
-      "effectVi": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được phán xét độc lập) thực hiện các hiệu quả sau:\nVõ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng);\nVõ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng);\nVõ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi tổng lượng Trị Liệu dư ra của quân ta, sau khi kích hoạt sẽ cài lại tiến độ tích lũy",
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được xét độc lập) thực hiện các hiệu quả sau: Võ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng); Võ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng); Võ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi lượng Trị Liệu tràn ra tích lũy của quân ta, sau khi kích hoạt sẽ tái lập lại tiến độ tích lũy",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -1418,6 +1472,24 @@
       "effectTypeVi": "Khống chế",
       "effectVi": "Khiến 1 cá thể có binh lực cao nhất quân địch chế giễu toàn thể quân ta, và khiến sát thương mà hắn chịu phải tăng 20%, có thể cộng dồn, duy trì 2 hiệp (Xác suất phát động 25%→50%)",
       "maxUsers": 1,
+      "exchangeConditionVi": null
+    },
+    "tactic:dinh-quan-an-dan": {
+      "nameVi": "Định Quân An Dân",
+      "quality": "A",
+      "type": "COMMAND",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân ta",
+      "effectTypeVi": "Trị liệu",
+      "effectVi": "Trong chiến đấu, mỗi hiệp Trị Liệu Võ Tướng quân ta ngẫu nhiên (tỷ lệ Trị Liệu 43%→86%, bị Thống Soái ảnh hưởng)",
+      "maxUsers": null,
       "exchangeConditionVi": null
     },
     "tactic:dinh-quan-tram-tuong": {
@@ -1797,7 +1869,7 @@
     },
     "tactic:duy-noi-thien-quyen": {
       "nameVi": "Duy Nội Thiện Quyền",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.7,
       "troopFit": [
@@ -1807,9 +1879,9 @@
         "Thương binh",
         "Khí giới"
       ],
-      "targetVi": "Nhóm quân địch (2 người)",
-      "effectTypeVi": "Mưu lược nhóm",
-      "effectVi": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; Và gây sát thương Mưu Lược cho nhóm quân địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
+      "targetVi": "Tập thể địch (2 người)",
+      "effectTypeVi": "Mưu Lược nhóm",
+      "effectVi": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; và gây sát thương Mưu Lược cho nhóm địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3581,7 +3653,7 @@
       ],
       "targetVi": "Tập thể địch (2 người)",
       "effectTypeVi": "Binh đao nhóm",
-      "effectVi": "Chuẩn bị 1 hiệp, gây cho một nhóm quân địch (2 người) 1 lần tấn công binh đao (tỷ lệ sát thương 100%→200%), sau đó khiến bản thân sát thương Binh Đao gây ra tăng 12.5%→25%, sát thương Binh Đao phải chịu giảm (12.5%→25%, bị Võ Lực ảnh hưởng), duy trì 2 hiệp",
+      "effectVi": "Gây ra một lần sát thương binh đao lên Nhóm quân địch (2 người) (TL Sát thương 100%→200%), sau đó bản thân tăng sát thương binh đao gây ra 12.5%→25%, giảm sát thương binh đao phải chịu (12.5%→25%, ảnh hưởng bởi Võ Lực), duy trì 2 hiệp; Chiến Pháp này sau khi phát động sẽ vào 1 hiệp CD",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -3972,6 +4044,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:o-sao-di-han": {
+      "nameVi": "Ô Sào Di Hận",
+      "quality": "A",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể địch (3 người)",
+      "effectTypeVi": "Binh đao nhóm",
+      "effectVi": "Gây sát thương Binh Đao cho toàn bộ quân địch (tỷ lệ sát thương 30%→60%, bị Binh Lực tổn thất của bản thân ảnh hưởng)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:oat-khoang-tinh-thong": {
       "nameVi": "Tinh Thông Đào Mỏ",
       "quality": "B",
@@ -4113,6 +4203,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "Khiến Võ Lực, Tốc Độ của bản thân tăng 12.5→25 điểm",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:phan-tien": {
+      "nameVi": "Phấn Tiến",
+      "quality": "B",
+      "type": "ACTIVE",
+      "activationRate": 0.3,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khiến sát thương bản thân gây ra tăng 10%→20%, duy trì 1 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -5085,7 +5193,7 @@
       "nameVi": "Thập Diện Mai Phục",
       "quality": "S",
       "type": "ACTIVE",
-      "activationRate": 0.35,
+      "activationRate": 0.4,
       "troopFit": [
         "Kỵ binh",
         "Khiên binh",
@@ -5472,6 +5580,24 @@
       "effectVi": "Sau khi Tấn Công Thường, gây ra 3 lần sát thương Binh Đao lên một đơn vị quân địch (tỷ lệ sát thương 33%→66%, chọn mục tiêu độc lập mỗi lần), nếu Võ Lực của mục tiêu thấp hơn bản thân thì khiến nó giảm 10%→20% sát thương gây ra (bị ảnh hưởng bởi Võ Lực), duy trì 1 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": "Sự kiện Tôn Sách bị thích sát — Tôn Sách (Ngô): cần 1 thẻ; Trình Phổ (Ngô): cần 1 thẻ"
+    },
+    "tactic:thu-chinh-xuat-phong": {
+      "nameVi": "Thủ Chính Xuất Phong",
+      "quality": "A",
+      "type": "PASSIVE",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Sát thương tấn công thường bản thân tăng 15%→30% (chịu ảnh hưởng bởi Võ Lực)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
     },
     "tactic:thu-khoi-dao-lac": {
       "nameVi": "Thủ Khởi Đao Lạc",
@@ -5860,6 +5986,24 @@
       "targetVi": "Một quân địch",
       "effectTypeVi": "Mưu Lược đơn",
       "effectVi": "Sau khi tấn công thường, sẽ gây thêm cho mục tiêu tấn công 1 lần tấn công Mưu Lược (tỉ lệ sát thương 72.5%→145%, bị Trí Lực ảnh hưởng), đồng thời giúp xác suất dùng Chiến Pháp Chủ Động của bản thân tăng 7.5%→15%, duy trì 1 hiệp",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:tien-tri-nhan-chu": {
+      "nameVi": "Tiên Tri Nhận Chủ",
+      "quality": "A",
+      "type": "ACTIVE",
+      "activationRate": 0.4,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể địch (3 người)",
+      "effectTypeVi": "Mưu Lược nhóm",
+      "effectVi": "Bản thân Trí Lực tăng 5%→10%, duy trì 1 hiệp, và gây sát thương Mưu Lược cho toàn thể quân địch (tỷ lệ sát thương 33%→66%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6410,6 +6554,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:tri-dinh": {
+      "nameVi": "Trí Định",
+      "quality": "B",
+      "type": "PASSIVE",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tôi",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Trí Lực và Thống Soái bản thân tăng 10→20",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:tri-ke": {
       "nameVi": "Trí Kế",
       "quality": "S",
@@ -6690,7 +6852,7 @@
       ],
       "targetVi": "Tập thể địch (2 người)",
       "effectTypeVi": "Binh đao nhóm",
-      "effectVi": "Gây cho một nhóm quân địch (2 người) sát thương binh đao (tỉ lệ sát thương 64%→128%) và hiệu quả Hổ Cáu: 1 hiệp sau sẽ nhận thêm sát thương binh đao (tỉ lệ sát thương 10%→20%, khi mỗi lần mục tiêu chịu phải sát thương, tỉ lệ sát thương tăng 15%→30%, tối đa chồng lên 3 lần), nếu trong thời gian mục tiêu có hiệu ứng Hổ cáu chịu 3 lần sát thương, lập tức tổng kết hiệu ứng Hổ cáu và gây thêm 1 hiệp Chấn động, và khiến chính mình gây ra Sát thương binh đao tăng 4%→8% (hiệu ứng tăng sát thương binh đao có thể chồng lên)",
+      "effectVi": "Gây sát thương binh đao cho nhóm địch quân (2 người) (tỷ lệ sát thương 64%→128%) và áp dụng hiệu ứng Hổ Cáu: Trong 1 hiệp tiếp theo, mục tiêu chịu thêm sát thương binh đao (tỷ lệ sát thương 10%→20%, khi mục tiêu chịu sát thương thì tỷ lệ sát thương tăng thêm 15%→30%, có thể cộng dồn tối đa 3 lần). Khi cộng dồn đủ 3 lần, lập tức kích hoạt hiệu ứng Hổ Cáu và gây Chấn Động trong 1 hiệp, đồng thời tăng sát thương binh đao do bản thân gây ra thêm 4%→8% (có thể cộng dồn); Bắt đầu từ hiệp thứ 3, sau mỗi lần kỹ năng này phát động, tỷ lệ phát động tăng thêm 4%→8%",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6730,7 +6892,7 @@
     },
     "tactic:tuyet-ke-chiet-muu": {
       "nameVi": "Tuyệt Kế Chiết Mưu",
-      "quality": null,
+      "quality": "S",
       "type": "ACTIVE",
       "activationRate": 0.4,
       "troopFit": [
@@ -6741,8 +6903,8 @@
         "Khí giới"
       ],
       "targetVi": "Một quân địch",
-      "effectTypeVi": "Mưu lược đơn",
-      "effectVi": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và thi triển trạng thái Kế Tận, duy trì 1 hiệp",
+      "effectTypeVi": "Mưu Lược đơn",
+      "effectVi": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và áp dụng trạng thái Kế Tận, duy trì 1 hiệp",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -6779,6 +6941,24 @@
       "targetVi": "Tôi",
       "effectTypeVi": "Tăng ích",
       "effectVi": "4 hiệp đầu, mỗi hiệp sẽ có 80% xác suất khiến bản thân nhận 3.5%→7% Công Tâm hoặc 3.5%→7% Kỳ Mưu (mỗi loại hiệu quả nhiều nhất cộng dồn 2 lần); Từ hiệp thứ 5 trở đi, mỗi hiệp tạo sát thương Mưu Lược cho 1-2 cá thể quân địch (tỷ lệ sát thương 77%→154%, chịu ảnh hưởng Trí Lực); Khi bản thân là Tướng Chính, nhận 8%→16% Kỳ Mưu",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
+    "tactic:uong-han-di-truu": {
+      "nameVi": "Uống Hận Di Trừu",
+      "quality": "A",
+      "type": "ACTIVE",
+      "activationRate": 0.5,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Một quân địch",
+      "effectTypeVi": "Binh đao đơn",
+      "effectVi": "Gây sát thương Binh Đao cho Võ Tướng Võ Lực cao nhất quân địch (tỷ lệ sát thương 84%→168%)",
       "maxUsers": null,
       "exchangeConditionVi": null
     },
@@ -7241,8 +7421,14 @@
     }
   },
   "newTactics": {
+    "tactic:an-hau-dac-chung": {
+      "nameZh": "恩厚得眾"
+    },
     "tactic:ap-che-so": {
       "nameZh": "初級壓制"
+    },
+    "tactic:be-canh-tu-an": {
+      "nameZh": "閉境自安"
     },
     "tactic:cap-cuu-so": {
       "nameZh": "初級急救"
@@ -7253,8 +7439,14 @@
     "tactic:chi-diep-phu-to": {
       "nameZh": "枝葉扶蘇"
     },
+    "tactic:chinh-van": {
+      "nameZh": "政運"
+    },
     "tactic:co-vu-so": {
       "nameZh": "初級鼓舞"
+    },
+    "tactic:dinh-quan-an-dan": {
+      "nameZh": "定軍安民"
     },
     "tactic:dung-vo": {
       "nameZh": "勇武"
@@ -7271,8 +7463,20 @@
     "tactic:lam-loan-so": {
       "nameZh": "初級擾亂"
     },
+    "tactic:o-sao-di-han": {
+      "nameZh": "烏巢遺恨"
+    },
+    "tactic:phan-tien": {
+      "nameZh": "奮進"
+    },
     "tactic:thien-van": {
       "nameZh": "天運"
+    },
+    "tactic:thu-chinh-xuat-phong": {
+      "nameZh": "守正出鋒"
+    },
+    "tactic:tien-tri-nhan-chu": {
+      "nameZh": "先知認主"
     },
     "tactic:tinh-bach-ma-nghia-tong": {
       "nameZh": "精·白馬義從",
@@ -7809,6 +8013,12 @@
     },
     "tactic:tran-ap-khan-vang": {
       "nameZh": "鎮壓黃巾"
+    },
+    "tactic:tri-dinh": {
+      "nameZh": "智定"
+    },
+    "tactic:uong-han-di-truu": {
+      "nameZh": "飲恨遺讎"
     }
   },
   "retired": {
@@ -9147,7 +9357,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -9160,7 +9370,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -9173,7 +9383,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -9183,6 +9393,13 @@
     }
   },
   "zhEffects": {
+    "tactic:an-hau-dac-chung": {
+      "text": "普通攻擊後，治療隨機我軍單體（治療率54%→108%，受智力影響）",
+      "viSha256": "414a19474a6680ab1ff232fb4066ec379e0200faa3056ac491398c83a9ffa68e",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:ap-che": {
       "text": "使敵軍群體（2人）造成傷害降低7.5%→15%，持續2回合",
       "viSha256": "1b8b627785a5d213c554d055c895badef2a37ab2ec541c7a86913411841c1aac",
@@ -9204,6 +9421,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:be-canh-tu-an": {
+      "text": "戰鬥前4回合，使敵軍群體（2人）造成的傷害降低12.5%→25%",
+      "viSha256": "f42b5df0119ef0c70204be2dc90a66614029339a896c5098bffda82cc278e0c0",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:cap-cuu-so": {
@@ -9234,6 +9458,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:chinh-van": {
+      "text": "自身政治、魅力提高5→10點",
+      "viSha256": "40edd58f830e2583cb0b78af1625cb5e3e91b4b6e48b4f3b44f435c7496f398b",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:chu-tuong": {
@@ -9269,7 +9500,7 @@
     },
     "tactic:dao-vien-ket-nghia": {
       "text": "每回合有 20%→40% 機率（受統率影響，每個效果獨立判定）執行以下效果：\n我軍魅力最高的武將治療我軍單體（治療率 18%→36%，受智力影響）；\n我軍統率最高的武將對敵軍智力最低的武將造成謀略傷害（傷害率 23%→46%，受統率影響）；\n我軍武力最高的武將對敵軍統率最低的武將造成兵刃傷害（傷害率 23%→46%），此戰法的傷害率受我軍溢出治療總量影響，觸發後重置累積進度",
-      "viSha256": "4adb8a55b9f877036220f7f2f3e014b1668786c047cc4fab57d0a7c19063c072",
+      "viSha256": "d9ed62da1be9ecb800443c200a96c69e9b25c552e4dc8613dae340f342609e04",
       "source": {
         "kind": "translation"
       }
@@ -9287,6 +9518,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:dinh-quan-an-dan": {
+      "text": "戰鬥中，每回合治療隨機我軍單體（治療率43%→86%，受統率影響）",
+      "viSha256": "8f8ee1192c081cd6e0567be984a0a257a7318fc3bba7504a775f794cf35c9259",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:doc-khi": {
@@ -9314,7 +9552,7 @@
     },
     "tactic:duy-noi-thien-quyen": {
       "text": "自身獲得 5% 攻心，可疊加，持續至戰鬥結束；並對敵軍群體（2 人）造成謀略傷害（傷害率 64%→128%，受智力影響），若目標武力高於自身，則額外造成謀略傷害（傷害率 49%→98%，受智力影響）",
-      "viSha256": "643c382f9c46f66c6df331339038909cf1fd04d1a4b463f9c68df275b8c7fc2f",
+      "viSha256": "2bd3414e9a07e1c19c3b56fb1dd5293d1decd0185cc503fe7f08bb917857bcae",
       "source": {
         "kind": "translation"
       }
@@ -9417,6 +9655,13 @@
         "kind": "translation"
       }
     },
+    "tactic:o-sao-di-han": {
+      "text": "對敵軍全體造成兵刃傷害（傷害率30%→60%，受自身損失兵力影響）",
+      "viSha256": "eaeccc6fa718c86ff824f890811ab62b7bb69a92055e128d031b83d6c77c064b",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:oat-khoang-tinh-thong": {
       "text": "武將委任為治鐵官時，鐵礦屯田收益提升1% → 2%",
       "viSha256": "0a254a4dc270c2cffdb2455aecd07d14dbe8ce987ba17610aff96cf3a4cf5e7a",
@@ -9447,6 +9692,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:phan-tien": {
+      "text": "使自身造成的傷害提高10%→20%，持續1回合",
+      "viSha256": "cf571f85a201cc0878d845fc78a09a63c1208e3aeef03d1238f0692c9521e239",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:phat-moc-tinh-thong": {
@@ -9504,12 +9756,26 @@
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
       }
     },
+    "tactic:thu-chinh-xuat-phong": {
+      "text": "自身普通攻擊造成的傷害提高15%→30%（受武力影響）",
+      "viSha256": "cf60c094ddd93593c98bd2b39530baaa4356f05c523920ccd2b594b61473e803",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:thuc-pha": {
       "text": "解除敵軍單體的增益效果，并降低其9→18點智力，持續2回合",
       "viSha256": "50399d388ca7b9ed35b2b66b464c18827e5a78c3199870957eeae4f576ea3660",
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:tien-tri-nhan-chu": {
+      "text": "使自身智力提高5%→10%，持續1回合，並對敵軍全體造成謀略傷害（傷害率33%→66%）",
+      "viSha256": "279fb5f70703a4d097991208490203b10b679fda886e3ecbdf99796c248829e0",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:tinh-bach-ma-nghia-tong": {
@@ -9662,6 +9928,13 @@
         "kind": "translation"
       }
     },
+    "tactic:tri-dinh": {
+      "text": "自身智力和統率提高10→20點",
+      "viSha256": "663db88b3ec9841ec1ed27d0e4d1c8aaa8d4c4acf0fbce7e90f6eddb6d40d3f0",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:truy-thuong": {
       "text": "普通攻擊之後，對攻擊目標造成禁療（無法恢復兵力），持續2回合（發動率25%→40%）",
       "viSha256": "78c04aa0b715767682b5415ad374c4d0385079195b903def7f0e472ba7703777",
@@ -9672,7 +9945,14 @@
     },
     "tactic:tuyet-ke-chiet-muu": {
       "text": "對隨機敵軍武將造成謀略傷害（傷害率 118%→236%，受智力影響），並使其進入計窮狀態，持續 1 回合",
-      "viSha256": "f4f531cff821e171f357ab421dff2eb1a235a4a82bb8c1f1a874c16edce73478",
+      "viSha256": "e0a5fe3098664e1e4b581b56c72144387633a2ddf5eb33006ad90157b0bd54ac",
+      "source": {
+        "kind": "translation"
+      }
+    },
+    "tactic:uong-han-di-truu": {
+      "text": "對敵軍武力最高的武將造成兵刃傷害（傷害率84%→168%）",
+      "viSha256": "e8c035edc9bd971c9782a579581c26bebb9e31b241409a59871454ea6b4035bd",
       "source": {
         "kind": "translation"
       }

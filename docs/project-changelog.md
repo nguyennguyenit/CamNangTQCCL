@@ -1,5 +1,25 @@
 # Project Changelog
 
+## 2026-11-12 (Tra cứu: đối chiếu client 24.547 cho mùa PK-S27 — phe Hán, Hà Thị, tướng Hán mới, điều chỉnh cân bằng; issue #70)
+
+### Added
+- `heroNotes{id: {conditions}}` trong `pipeline/lookup-client-heroes.json`: ghi chú mùa cho tướng (đã có hoặc tướng client), nối vào `lookup.conditions`, ledger `clientCapture.seasonNote`; mục rỗng, mã lạ hoặc thừa khóa làm build dừng. Test `test_hero_note_appends_season_condition_to_existing_and_client_heroes`.
+- 11 tướng Hán chụp ở Thượng Thư Đài + Minh Giám (client 24.547): Trương Doãn, Thuần Vu Quỳnh, Bảo Tín, Hứa Cống, Lưu Ngu, Lưu Đại, Lưu Chương (Tướng Tài 4★), Khổng Trụ, Trương Mạc, Trương Dương (3★), Nguỵ Du (2★, alias "Ngụy Du"). Chỉ số, tăng trưởng, ăn ý, vai trò lấy từ client; chân dung cắt từ trang chi tiết Minh Giám. Chữ Hán tên tướng là phiên âm ngược, khớp danh sách tướng Hán mới của bản CN (17173, 12/1/2026).
+- 10 chiến pháp tự mang/kế thừa của các tướng trên (`newTactics`, chữ Việt nguyên văn đầy cấp ở Thượng Thư Đài; phẩm theo chữ cái trên trang chi tiết tướng). `nameZh` là phiên âm ngược chưa xác minh, `zhEffects` kind `translation`. Nguỵ Du mang Áp Chế-Sơ có sẵn.
+- Chân dung Hà Thị (`public/heroes/ha-thi.webp`).
+
+### Changed
+- Phe Hán theo Minh Giám (lọc Hán, 38 mục) cho 25 tướng đang ghi Quần (Đổng Trác, SP Đổng Trác, Viên Thiệu, Hoa Đà, Điêu Thuyền, SP Điêu Thuyền, Thái Ung, Thái Văn Cơ, Trương Nhượng, Chu Tuấn, SP Chu Tuấn, Hoàng Phủ Tung, SP Hoàng Phủ Tung, Lô Thực, SP Lô Thực, Khổng Dung, Trương Nhậm, Lưu Biểu, Đào Khiêm, Hà Tiến, Đinh Nguyên, Vương Doãn, Lưu Do, Đổng Thừa; 40Y Lữ Bố theo thẻ sở hữu) và Trần Lâm (Ngụy). Mỗi tướng có ghi chú mùa "phe Hán, trước mùa này là phe Quần/Ngụy"; 15 tướng có trong Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi ghi thêm cách chuyển về Quần, 9 tướng Phò Tá Hán Thất (Lữ Bố, Tào Tháo, Tôn Kiên, Giả Hủ, Lưu Bị, Công Tôn Toản, Viên Thuật, SP Viên Thiệu, SP Tuân Úc) giữ phe gốc và ghi cách chuyển sang Hán.
+- Hà Thị: bỏ ghi đè ăn ý (Cung A theo fanpage); client ghi Cung B, trùng SGSDeck. Tăng trưởng Trí 1.03 → 1.66.
+- Trình Dục: tăng trưởng Thống Soái 1.36 → 1.67. Thập Diện Mai Phục: xác suất 35% → 40%.
+- Chữ Việt theo client: Con Gái Tướng Môn (viết lại cả đoạn, thêm "Bắt đầu từ hiệp thứ 3, sau mỗi lần kỹ năng này phát động, tỷ lệ phát động tăng thêm 4%→8%"), Khiêu Chiến Quần Hùng (bỏ "Chuẩn bị 1 hiệp", thêm "sau khi phát động sẽ vào 1 hiệp CD"), Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu (phẩm S, Buff/Mục tiêu theo client), Kết Nghĩa Vườn Đào (Mục tiêu Tập thể quân ta (3 người), Buff Tăng ích).
+- Ngày nguồn trong `tacticNotes` của ba chiến pháp trên: "khoảng 28/10/2026" → bài fanpage 26/10/2026, kèm mốc đối chiếu client 24.547.
+- Promote `issue70-pk-s27-client` (`lookup:453023488b98`): 263 tướng, 422 chiến pháp; ledger slug +21 mã (983); Recommended publish lại (generation `433b7c3c…`), re-pin `pipeline/team-route-handles.json`; `docs/zh-gaps.md` sinh lại.
+
+### Chưa làm
+- Tên chữ Hán của 10 chiến pháp mới và các trường client không hiện (xung đột của Tuyệt Kế Chiết Mưu là Kế Tận nhưng `tactics{}` chưa có khóa `conflictsVi`).
+- Phe Hán chỉ trong PK-S27 hay giữ lâu dài: client không ghi. Hết mùa cần xem lại `faction` và `heroNotes`.
+
 ## 2026-11-11 (community-worker: giảm CPU kiểm phiên, mục tiêu dưới 10 ms)
 
 ### Fixed
@@ -69,7 +89,7 @@
 ## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)
 
 ### Changed
-- Fanpage chính thức "Tam Quốc Chí - Chiến Lược" (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026) công bố Hà Thị (phe Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C), Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu và Chiến Pháp Sự Kiện loại Chỉ Huy Kết Nghĩa Vườn Đào. Quyết định 2026-10-15/18 (bỏ Hà Thị, hai chiến pháp của nàng và `tactic:dao-vien-ket-nghia` vì "không có ở client Việt Nam" / "là duyên phận") bị thay thế.
+- Fanpage chính thức "Tam Quốc Chí - Chiến Lược" ([bài tổng quát cốt truyện Hán Diễm Trường Minh](https://www.facebook.com/tamquocchi.chienluoc/posts/pfbid0ZvCxZgcu7EENxaUmov4npKwhQ69Hit3dpwFXs12FrpZSb5AnCbk2aafTFXaJmekSl), 26/10/2026 14:00) công bố Hà Thị (phe Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C), Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu và Chiến Pháp Sự Kiện loại Chỉ Huy Kết Nghĩa Vườn Đào. Quyết định 2026-10-15/18 (bỏ Hà Thị, hai chiến pháp của nàng và `tactic:dao-vien-ket-nghia` vì "không có ở client Việt Nam" / "là duyên phận") bị thay thế.
 - `pipeline/lookup-client-heroes.json`: bỏ `hero:ha-thi` khỏi `retired`; `overrides` đặt faction Hán, ăn ý Kỵ C, Khiên C, Cung A, Thương C, Xe C (cost 4 trùng giá trị build nên không ghi). Chỉ số/tăng trưởng giữ của SGSDeck; chưa có chân dung (`iconUrl` null).
 - `pipeline/lookup-client-tactics.json`: bỏ ba mã khỏi `retired`; thêm `tactics{}` với chữ Việt nguyên văn từ ảnh fanpage (`quality: null` giữ S của SGSDeck, `troopFit` đủ 5 binh chủng), `tacticNotes` ghi nguồn fanpage VN và rằng chưa có ở client 24.526, `zhEffects` kind `translation`. `tactic:dao-vien-ket-nghia` đổi tên hiển thị thành Kết Nghĩa Vườn Đào (loại COMMAND, tên cũ Đào Viên Kết Nghĩa thành alias).
 - Promotion `lookup-ha-thi-rebase-261104` (generation `lookup:637b859d3f17`, sau khi rebase lên client Global 24.535 catalog + zh): 252 tướng, 412 chiến pháp (trước 251/409); ledger slug cấp lại đúng slug đã dành (`ha-thi`, `duy-noi-thien-quyen`, `tuyet-ke-chiet-muu`, `dao-vien-ket-nghia`), 962 mã, +4 route Tra cứu mỗi ngôn ngữ. Recommended publish lại (generation `000e37a48af8`), re-pin `pipeline/team-route-handles.json`.

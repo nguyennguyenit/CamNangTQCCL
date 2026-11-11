@@ -123,4 +123,4 @@ Người dùng cho phép không giới hạn lượt tra nguồn ngoài cho ch�
 
 ## Đính chính 2026-11-03
 
-Kết luận 2026-10-18 (bỏ Hà Thị, Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu) và kết luận `桃園結義` = duyên phận bị thay thế bởi nguồn chính thức VN: fanpage "Tam Quốc Chí - Chiến Lược" (bài tổng quát Hán Diễm Trường Minh, khoảng 28/10/2026) công bố Hà Thị (phe Hán, Cung A) cùng hai chiến pháp của nàng, và Kết Nghĩa Vườn Đào là Chiến Pháp Sự Kiện loại Chỉ Huy. Hà Thị và ba chiến pháp đã được khôi phục trong Tra cứu; xem `docs/project-changelog.md` mục 2026-11-03.
+Kết luận 2026-10-18 (bỏ Hà Thị, Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu) và kết luận `桃園結義` = duyên phận bị thay thế bởi nguồn chính thức VN: fanpage "Tam Quốc Chí - Chiến Lược" ([bài tổng quát Hán Diễm Trường Minh](https://www.facebook.com/tamquocchi.chienluoc/posts/pfbid0ZvCxZgcu7EENxaUmov4npKwhQ69Hit3dpwFXs12FrpZSb5AnCbk2aafTFXaJmekSl), 26/10/2026 14:00) công bố Hà Thị (phe Hán, Cung A) cùng hai chiến pháp của nàng, và Kết Nghĩa Vườn Đào là Chiến Pháp Sự Kiện loại Chỉ Huy. Hà Thị và ba chiến pháp đã được khôi phục trong Tra cứu; xem `docs/project-changelog.md` mục 2026-11-03.

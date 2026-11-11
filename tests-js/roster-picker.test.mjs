@@ -30,14 +30,14 @@ test("1. tướng Ngụy + 5★ + cost 6: đúng tập con, cost so dạng số"
   assert.deepEqual(got.map((item) => item.name).sort(), expected.map((hero) => hero.viet).sort());
 });
 
-test("2. chiến pháp policy inventory: không có INNATE/Tự mang; 29 mục source null nằm trong Khác", () => {
+test("2. chiến pháp policy inventory: không có INNATE/Tự mang; 39 mục source null nằm trong Khác", () => {
   const all = filterCatalog(inventory, { kind: "tactics" }, "inventory");
   const rawById = new Map(tacticsDict.map((row) => [row.id, row]));
   for (const item of all) assert.ok(!["INNATE", "Tự mang"].includes(rawById.get(item.id).source), item.id);
   assert.ok(!ids(all).includes("tactic:vo-song-thuong-tuong"));
   assert.equal(all.length, tacticsDict.filter((row) => row.source !== "INNATE" && row.source !== "Tự mang").length);
   const other = filterCatalog(inventory, { kind: "tactics", source: "other" }, "inventory");
-  assert.equal(other.length, 29);
+  assert.equal(other.length, 39);
   assert.ok(other.every((item) => rawById.get(item.id).source === null));
   // Chọn INNATE trực tiếp trong bộ lọc cũng không ra gì.
   assert.equal(filterCatalog(inventory, { kind: "tactics", source: "INNATE" }, "inventory").length, 0);

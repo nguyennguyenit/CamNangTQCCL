@@ -570,7 +570,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
         hero.update(overrides)
         return hero
 
-    def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None):
+    def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None, hero_notes=None):
         # Ghim GOLDEN_HERO_DELTAS theo client: fixture mang đúng các `stats` đã duyệt của 7 tướng đó.
         client = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())
         real = client["overrides"]
@@ -581,7 +581,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Võ Tướng > Minh Giám", "capturedAt": "2026-10-15"},
             "heroes": list(heroes), "portraits": portraits or {}, "overrides": overrides or {}, "roleTags": role_tags or {}, "aliases": aliases or {},
-            "retired": client["retired"],
+            "retired": client["retired"], "heroNotes": hero_notes or {},
         }
         path = self.directory / "client.json"
         path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
@@ -690,6 +690,20 @@ class ClientHeroSupplementTest(unittest.TestCase):
         hero = next(item for item in json.loads((cleared / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
         self.assertIsNone(hero["lookup"]["selfTacticId"])
 
+    def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
+        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần."}]}
+        output = self._build(heroes=[self._hero()], hero_notes={"hero:ha-hau-don": note, "hero:tao-ngang": note})
+        rows = {item["id"]: item for item in json.loads((output / "heroes-dict.json").read_bytes())}
+        for owner in ("hero:ha-hau-don", "hero:tao-ngang"):
+            self.assertEqual(rows[owner]["lookup"]["conditions"][-1], note["conditions"][0])
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["entityId"] == "hero:ha-hau-don" and item["fieldPath"] == "clientCapture.seasonNote" for item in ledger))
+        for bad in ({"hero:khong-co": note}, {"hero:ha-hau-don": {"conditions": []}}, {"hero:ha-hau-don": {**note, "aliases": []}}):
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "hero note is invalid"):
+                self._build(hero_notes=bad)
+        with self.assertRaisesRegex(ValueError, "condition shape"):
+            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [{"kind": "mùa", "textVi": "x"}]}})
+
     def test_role_tags_only_fill_empty_tags(self):
         with self.assertRaisesRegex(ValueError, "existing tag"):
             self._build(role_tags={"hero:ha-hau-don": {"roleTag": "戰", "roleTagViet": "Chiến"}})
@@ -768,6 +782,8 @@ class ClientTacticCaptureTest(unittest.TestCase):
             if kept:
                 overrides[owner] = kept
         heroes["overrides"] = {owner: value for owner, value in overrides.items() if owner not in retire_heroes}
+        for key in ("portraits", "heroNotes"):
+            heroes[key] = {owner: value for owner, value in heroes.get(key, {}).items() if owner not in retire_heroes}
         heroes["retired"] = [*heroes["retired"], *retire_heroes]
         heroes_path = self.directory / "client-heroes.json"
         heroes_path.write_text(json.dumps(heroes, ensure_ascii=False), encoding="utf-8")

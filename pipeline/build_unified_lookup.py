@@ -800,8 +800,9 @@ def _validate_client_document(document):
     if (
         not isinstance(document, dict)
         or not {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases"} <= set(document)
-        <= {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases", "retired"}
+        <= {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases", "retired", "heroNotes"}
         or not _string_list(document.get("retired", []))
+        or not isinstance(document.get("heroNotes", {}), dict)
         or type(document["schemaVersion"]) is not int
         or document["schemaVersion"] != 1
         or not isinstance(document["source"], dict)
@@ -860,7 +861,7 @@ def _apply_client_heroes(document, heroes, tactics, identity):
     # Tướng không có ở client Global (chỉ có ở SGSDeck) bị bỏ khỏi danh mục; mọi tham chiếu phải đã gỡ trước.
     for owner in sorted(set(document.get("retired", []))):
         gone = next((row for row in heroes if row["id"] == owner), None)
-        if gone is None or any(owner in document[key] for key in ("portraits", "overrides", "roleTags", "aliases")):
+        if gone is None or any(owner in document.get(key, {}) for key in ("portraits", "overrides", "roleTags", "aliases", "heroNotes")):
             raise ValueError(f"client retired hero is invalid: {owner}")
         heroes.remove(gone)
         for row in tactics:
@@ -1052,6 +1053,15 @@ def _apply_client_heroes(document, heroes, tactics, identity):
                     tactic_by_id[previous]["lookup"]["inheritedFromIds"].remove(owner)
                 if values is not None and owner not in tactic_by_id[values]["lookup"]["inheritedFromIds"]:
                     tactic_by_id[values]["lookup"]["inheritedFromIds"].append(owner)
+
+    # Ghi chú mùa cho tướng (vd đổi phe trong mùa Hán Diễm Trường Minh): áp sau khi thêm tướng client nên nhận mọi mã.
+    for owner, entry in sorted(document.get("heroNotes", {}).items()):
+        row = hero_by_id.get(owner)
+        if row is None or not isinstance(entry, dict) or set(entry) != {"conditions"} or not entry["conditions"]:
+            raise ValueError(f"client hero note is invalid: {owner}")
+        _validate_conditions(entry["conditions"], owner)
+        row["lookup"]["conditions"] = [*row["lookup"]["conditions"], *(dict(item) for item in entry["conditions"])]
+        record(owner, "clientCapture.seasonNote", entry, "Season note captured from the Global client.")
     return ledger
 
 

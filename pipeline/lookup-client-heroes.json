@@ -10,6 +10,44 @@
   },
   "heroes": [
     {
+      "id": "hero:bao-tin",
+      "viet": "Bảo Tín",
+      "chinese": "鮑信",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "67",
+        "tri": "81",
+        "thong": "77",
+        "toc": "52",
+        "chinh": "73",
+        "mi": "78"
+      },
+      "growth": {
+        "luc": 1.33,
+        "tri": 1.53,
+        "thong": 1.47,
+        "toc": 1.11,
+        "chinh": 1.41,
+        "mi": 1.11
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "S",
+        "thuong": "B",
+        "khiGioi": "A"
+      },
+      "roleTag": "謀",
+      "roleTagViet": "Mưu lược",
+      "selfTacticVi": "Tiên Tri Nhận Chủ",
+      "portrait": "/heroes/bao-tin.webp"
+    },
+    {
       "id": "hero:bien-hy",
       "viet": "Biện Hỷ",
       "chinese": "卞喜",
@@ -204,7 +242,7 @@
       "viet": "Đào Khiêm",
       "chinese": "陶謙",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 3,
       "cost": "4",
       "isSP": false,
@@ -242,7 +280,7 @@
       "viet": "Đinh Nguyên",
       "chinese": "丁原",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 3,
       "cost": "3",
       "isSP": false,
@@ -356,7 +394,7 @@
       "viet": "Đổng Thừa",
       "chinese": "董承",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 2,
       "cost": "5",
       "isSP": false,
@@ -508,7 +546,7 @@
       "viet": "Hà Tiến",
       "chinese": "何進",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 3,
       "cost": "3",
       "isSP": false,
@@ -662,7 +700,7 @@
       "aliasesVi": [
         "Hoàng Phổ Tung"
       ],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 4,
       "cost": "5",
       "isSP": false,
@@ -694,6 +732,44 @@
       "roleTagViet": "Phòng thủ",
       "selfTacticVi": "Hậu Phát Chế Nhân",
       "portrait": "/heroes/hoang-phu-tung.webp"
+    },
+    {
+      "id": "hero:hua-cong",
+      "viet": "Hứa Cống",
+      "chinese": "許貢",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "66",
+        "tri": "64",
+        "thong": "44",
+        "toc": "27",
+        "chinh": "64",
+        "mi": "30"
+      },
+      "growth": {
+        "luc": 1.31,
+        "tri": 1.28,
+        "thong": 1.0,
+        "toc": 0.76,
+        "chinh": 1.28,
+        "mi": 0.43
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Uống Hận Di Trừu",
+      "portrait": "/heroes/hua-cong.webp"
     },
     {
       "id": "hero:huong-lang",
@@ -772,6 +848,44 @@
       "portrait": "/heroes/huong-sung.webp"
     },
     {
+      "id": "hero:khong-tru",
+      "viet": "Khổng Trụ",
+      "chinese": "孔伷",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "16",
+        "tri": "68",
+        "thong": "26",
+        "toc": "17",
+        "chinh": "78",
+        "mi": "29"
+      },
+      "growth": {
+        "luc": 0.18,
+        "tri": 0.78,
+        "thong": 0.3,
+        "toc": 0.2,
+        "chinh": 0.9,
+        "mi": 0.33
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "政",
+      "roleTagViet": "Nội chính",
+      "selfTacticVi": "Chính Vận",
+      "portrait": "/heroes/khong-tru.webp"
+    },
+    {
       "id": "hero:lu-kien",
       "viet": "Lữ Kiền",
       "chinese": "呂虔",
@@ -848,11 +962,87 @@
       "portrait": "/heroes/luu-ba.webp"
     },
     {
+      "id": "hero:luu-chuong",
+      "viet": "Lưu Chương",
+      "chinese": "劉璋",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "5",
+        "tri": "34",
+        "thong": "31",
+        "toc": "16",
+        "chinh": "38",
+        "mi": "55"
+      },
+      "growth": {
+        "luc": 0.44,
+        "tri": 0.86,
+        "thong": 0.81,
+        "toc": 0.6,
+        "chinh": 0.91,
+        "mi": 0.79
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Bế Cảnh Tự An",
+      "portrait": "/heroes/luu-chuong.webp"
+    },
+    {
+      "id": "hero:luu-dai",
+      "viet": "Lưu Đại",
+      "chinese": "劉岱",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "65",
+        "tri": "32",
+        "thong": "53",
+        "toc": "37",
+        "chinh": "54",
+        "mi": "35"
+      },
+      "growth": {
+        "luc": 1.3,
+        "tri": 0.83,
+        "thong": 1.13,
+        "toc": 0.9,
+        "chinh": 1.14,
+        "mi": 0.5
+      },
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "S",
+        "khiGioi": "B"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Thủ Chính Xuất Phong",
+      "portrait": "/heroes/luu-dai.webp"
+    },
+    {
       "id": "hero:luu-do",
       "viet": "Lưu Do",
       "chinese": "劉繇",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 3,
       "cost": "3",
       "isSP": false,
@@ -884,6 +1074,44 @@
       "roleTagViet": "Nội chính",
       "selfTacticVi": "Tinh Thông Làm Ruộng",
       "portrait": "/heroes/luu-do.webp"
+    },
+    {
+      "id": "hero:luu-ngu",
+      "viet": "Lưu Ngu",
+      "chinese": "劉虞",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "4",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "33",
+        "tri": "70",
+        "thong": "55",
+        "toc": "14",
+        "chinh": "78",
+        "mi": "70"
+      },
+      "growth": {
+        "luc": 0.84,
+        "tri": 1.37,
+        "thong": 1.16,
+        "toc": 0.57,
+        "chinh": 1.48,
+        "mi": 1.0
+      },
+      "troopApt": {
+        "ky": "A",
+        "thuan": "B",
+        "cung": "C",
+        "thuong": "B",
+        "khiGioi": "B"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Ân Hậu Đắc Chúng",
+      "portrait": "/heroes/luu-ngu.webp"
     },
     {
       "id": "hero:luu-thien",
@@ -1112,6 +1340,46 @@
       "roleTagViet": "Phòng thủ",
       "selfTacticVi": "Chốt Đuôi",
       "portrait": "/heroes/ngu-phien.webp"
+    },
+    {
+      "id": "hero:nguy-du",
+      "viet": "Nguỵ Du",
+      "chinese": "魏攸",
+      "aliasesVi": [
+        "Ngụy Du"
+      ],
+      "faction": "Hán",
+      "stars": 2,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "29",
+        "tri": "74",
+        "thong": "46",
+        "toc": "52",
+        "chinh": "74",
+        "mi": "14"
+      },
+      "growth": {
+        "luc": 0.27,
+        "tri": 0.68,
+        "thong": 0.42,
+        "toc": 0.48,
+        "chinh": 0.68,
+        "mi": 0.13
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Áp Chế-Sơ",
+      "portrait": "/heroes/nguy-du.webp"
     },
     {
       "id": "hero:phan-phung",
@@ -1416,6 +1684,44 @@
       "roleTagViet": "Vũ lực",
       "selfTacticVi": "Gan Dạ",
       "portrait": "/heroes/tao-ngang.webp"
+    },
+    {
+      "id": "hero:thuan-vu-quynh",
+      "viet": "Thuần Vu Quỳnh",
+      "chinese": "淳于瓊",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "66",
+        "tri": "29",
+        "thong": "72",
+        "toc": "59",
+        "chinh": "29",
+        "mi": "24"
+      },
+      "growth": {
+        "luc": 1.31,
+        "tri": 0.78,
+        "thong": 1.4,
+        "toc": 1.21,
+        "chinh": 0.78,
+        "mi": 0.34
+      },
+      "troopApt": {
+        "ky": "S",
+        "thuan": "C",
+        "cung": "C",
+        "thuong": "A",
+        "khiGioi": "B"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Ô Sào Di Hận",
+      "portrait": "/heroes/thuan-vu-quynh.webp"
     },
     {
       "id": "hero:tieu-chu",
@@ -1724,6 +2030,82 @@
       "portrait": "/heroes/truong-bao-khan-vang.webp"
     },
     {
+      "id": "hero:truong-doan",
+      "viet": "Trương Doãn",
+      "chinese": "張允",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 4,
+      "cost": "5",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "67",
+        "tri": "42",
+        "thong": "72",
+        "toc": "31",
+        "chinh": "56",
+        "mi": "35"
+      },
+      "growth": {
+        "luc": 1.33,
+        "tri": 0.97,
+        "thong": 1.4,
+        "toc": 0.81,
+        "chinh": 1.17,
+        "mi": 0.5
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "S",
+        "thuong": "C",
+        "khiGioi": "A"
+      },
+      "roleTag": "輔",
+      "roleTagViet": "Phụ trợ",
+      "selfTacticVi": "Định Quân An Dân",
+      "portrait": "/heroes/truong-doan.webp"
+    },
+    {
+      "id": "hero:truong-duong",
+      "viet": "Trương Dương",
+      "chinese": "張楊",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "70",
+        "tri": "66",
+        "thong": "72",
+        "toc": "20",
+        "chinh": "58",
+        "mi": "10"
+      },
+      "growth": {
+        "luc": 0.8,
+        "tri": 0.76,
+        "thong": 0.83,
+        "toc": 0.23,
+        "chinh": 0.67,
+        "mi": 0.11
+      },
+      "troopApt": {
+        "ky": "A",
+        "thuan": "C",
+        "cung": "B",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Phấn Tiến",
+      "portrait": "/heroes/truong-duong.webp"
+    },
+    {
       "id": "hero:truong-luong",
       "viet": "Trương Lương",
       "chinese": "張梁",
@@ -1760,6 +2142,44 @@
       "roleTagViet": "Khăn Vàng / Vũ lực",
       "selfTacticVi": "Nhất Cử Tiêm Diệt",
       "portrait": "/heroes/truong-luong.webp"
+    },
+    {
+      "id": "hero:truong-mac",
+      "viet": "Trương Mạc",
+      "chinese": "張邈",
+      "aliasesVi": [],
+      "faction": "Hán",
+      "stars": 3,
+      "cost": "3",
+      "isSP": false,
+      "variant": "base",
+      "stats": {
+        "luc": "53",
+        "tri": "71",
+        "thong": "52",
+        "toc": "18",
+        "chinh": "74",
+        "mi": "12"
+      },
+      "growth": {
+        "luc": 0.61,
+        "tri": 0.82,
+        "thong": 0.6,
+        "toc": 0.21,
+        "chinh": 0.85,
+        "mi": 0.14
+      },
+      "troopApt": {
+        "ky": "C",
+        "thuan": "C",
+        "cung": "A",
+        "thuong": "C",
+        "khiGioi": "C"
+      },
+      "roleTag": "武",
+      "roleTagViet": "Vũ lực",
+      "selfTacticVi": "Trí Định",
+      "portrait": "/heroes/truong-mac.webp"
     },
     {
       "id": "hero:tu-si",
@@ -1844,7 +2264,7 @@
       "viet": "Vương Doãn",
       "chinese": "王允",
       "aliasesVi": [],
-      "faction": "Quần",
+      "faction": "Hán",
       "stars": 3,
       "cost": "3",
       "isSP": false,
@@ -1938,6 +2358,7 @@
     "hero:gia-cat-canh": "/heroes/gia-cat-canh.webp",
     "hero:gia-cat-khac": "/heroes/gia-cat-khac.webp",
     "hero:gian-ung": "/heroes/gian-ung.webp",
+    "hero:ha-thi": "/heroes/ha-thi.webp",
     "hero:han-duong": "/heroes/han-duong.webp",
     "hero:han-toai": "/heroes/han-toai.webp",
     "hero:ho-xa-nhi": "/heroes/ho-xa-nhi.webp",
@@ -2024,7 +2445,8 @@
         "toc": 1.41,
         "chinh": 0.08,
         "mi": 0.58
-      }
+      },
+      "faction": "Hán"
     },
     "hero:bang-thong": {
       "growth": {
@@ -2035,6 +2457,9 @@
         "chinh": 1.16,
         "mi": 0.13
       }
+    },
+    "hero:bao-tin": {
+      "inheritTacticId": "tactic:tien-tri-nhan-chu"
     },
     "hero:bo-luyen-su": {
       "inheritTacticId": "tactic:xuat-ky-bat-y"
@@ -2127,7 +2552,8 @@
         "mi": 0.44
       },
       "selfTacticId": "tactic:tran-ap-khan-vang",
-      "inheritTacticId": "tactic:thanh-dong-kich-tay"
+      "inheritTacticId": "tactic:thanh-dong-kich-tay",
+      "faction": "Hán"
     },
     "hero:chung-do": {
       "cost": "5",
@@ -2252,7 +2678,8 @@
         "toc": 1.32,
         "chinh": 0.8,
         "mi": 1.32
-      }
+      },
+      "faction": "Hán"
     },
     "hero:dinh-phung": {
       "troopApt": {
@@ -2349,6 +2776,9 @@
         "mi": 0.51
       }
     },
+    "hero:dong-trac": {
+      "faction": "Hán"
+    },
     "hero:duong-tu": {
       "cost": "6",
       "troopApt": {
@@ -2433,12 +2863,13 @@
     },
     "hero:ha-thi": {
       "faction": "Hán",
-      "troopApt": {
-        "ky": "C",
-        "thuan": "C",
-        "cung": "A",
-        "thuong": "C",
-        "khiGioi": "C"
+      "growth": {
+        "luc": 0.06,
+        "tri": 1.66,
+        "thong": 0.82,
+        "toc": 1.02,
+        "chinh": 1.32,
+        "mi": 1.21
       }
     },
     "hero:hac-chieu": {
@@ -2527,6 +2958,9 @@
         "mi": 0.43
       }
     },
+    "hero:hoa-da": {
+      "faction": "Hán"
+    },
     "hero:hoang-phu-tung": {
       "inheritTacticId": "tactic:hau-phat-che-nhan"
     },
@@ -2554,6 +2988,9 @@
         "chinh": 1.03,
         "mi": 1.05
       }
+    },
+    "hero:hua-cong": {
+      "inheritTacticId": "tactic:uong-han-di-truu"
     },
     "hero:hua-du": {
       "growth": {
@@ -2589,7 +3026,11 @@
         "chinh": 1.22,
         "mi": 0.95
       },
-      "inheritTacticId": "tactic:khiem-nhuong"
+      "inheritTacticId": "tactic:khiem-nhuong",
+      "faction": "Hán"
+    },
+    "hero:khong-tru": {
+      "inheritTacticId": "tactic:chinh-van"
     },
     "hero:ky-linh": {
       "troopApt": {
@@ -2666,7 +3107,8 @@
         "mi": 1.03
       },
       "selfTacticId": "tactic:ngu-coc-phong-dang",
-      "inheritTacticId": "tactic:ngu-coc-phong-dang"
+      "inheritTacticId": "tactic:ngu-coc-phong-dang",
+      "faction": "Hán"
     },
     "hero:lu-linh-y": {
       "stats": {
@@ -2738,7 +3180,14 @@
         "mi": 1.97
       },
       "inheritTacticId": "tactic:yen-ky-tuc-co",
-      "selfTacticId": "tactic:tranh-phan-doat-mieu"
+      "selfTacticId": "tactic:tranh-phan-doat-mieu",
+      "faction": "Hán"
+    },
+    "hero:luu-chuong": {
+      "inheritTacticId": "tactic:be-canh-tu-an"
+    },
+    "hero:luu-dai": {
+      "inheritTacticId": "tactic:thu-chinh-xuat-phong"
     },
     "hero:luu-diep": {
       "troopApt": {
@@ -2756,6 +3205,9 @@
         "chinh": 0.55,
         "mi": 0.44
       }
+    },
+    "hero:luu-ngu": {
+      "inheritTacticId": "tactic:an-hau-dac-chung"
     },
     "hero:luu-phong": {
       "troopApt": {
@@ -3288,7 +3740,20 @@
         "toc": 1.01,
         "chinh": 0.43,
         "mi": 0.44
-      }
+      },
+      "faction": "Hán"
+    },
+    "hero:sp-dieu-thuyen": {
+      "faction": "Hán"
+    },
+    "hero:sp-dong-trac": {
+      "faction": "Hán"
+    },
+    "hero:sp-hoang-phu-tung": {
+      "faction": "Hán"
+    },
+    "hero:sp-lo-thuc": {
+      "faction": "Hán"
     },
     "hero:sp-lu-mong": {
       "growth": {
@@ -3438,7 +3903,11 @@
         "mi": 1.24
       },
       "inheritTacticId": "tactic:kinh-thuat-chinh-yeu",
-      "selfTacticId": "tactic:hieu-tri-luong-moc"
+      "selfTacticId": "tactic:hieu-tri-luong-moc",
+      "faction": "Hán"
+    },
+    "hero:thai-van-co": {
+      "faction": "Hán"
     },
     "hero:tham-phoi": {
       "troopApt": {
@@ -3464,6 +3933,9 @@
         "chinh": 1.0,
         "mi": 0.94
       }
+    },
+    "hero:thuan-vu-quynh": {
+      "inheritTacticId": "tactic:o-sao-di-han"
     },
     "hero:tieu-kieu": {
       "growth": {
@@ -3540,7 +4012,8 @@
         "mi": 0.87
       },
       "inheritTacticId": "tactic:lac-loi",
-      "selfTacticId": "tactic:thac-qua-luy-luy"
+      "selfTacticId": "tactic:thac-qua-luy-luy",
+      "faction": "Hán"
     },
     "hero:tran-quan": {
       "growth": {
@@ -3580,6 +4053,16 @@
       },
       "inheritTacticId": "tactic:lu-giang-thuong-giap"
     },
+    "hero:trinh-duc": {
+      "growth": {
+        "luc": 0.41,
+        "tri": 2.32,
+        "thong": 1.67,
+        "toc": 0.59,
+        "chinh": 1.3,
+        "mi": 0.96
+      }
+    },
     "hero:truong-bao-khan-vang": {
       "inheritTacticId": "tactic:yeu-thuat"
     },
@@ -3594,6 +4077,12 @@
       },
       "selfTacticId": "tactic:cong-huan-khac-cu",
       "inheritTacticId": "tactic:binh-phong"
+    },
+    "hero:truong-doan": {
+      "inheritTacticId": "tactic:dinh-quan-an-dan"
+    },
+    "hero:truong-duong": {
+      "inheritTacticId": "tactic:phan-tien"
     },
     "hero:truong-hoanh": {
       "growth": {
@@ -3647,6 +4136,9 @@
     "hero:truong-luong": {
       "inheritTacticId": "tactic:nhat-cu-tiem-diet"
     },
+    "hero:truong-mac": {
+      "inheritTacticId": "tactic:tri-dinh"
+    },
     "hero:truong-man-thanh": {
       "troopApt": {
         "ky": "B",
@@ -3697,7 +4189,11 @@
         "chinh": 0.44,
         "mi": 0.51
       },
-      "inheritTacticId": "tactic:lac-phuong"
+      "inheritTacticId": "tactic:lac-phuong",
+      "faction": "Hán"
+    },
+    "hero:truong-nhuong": {
+      "faction": "Hán"
     },
     "hero:truong-tu": {
       "troopApt": {
@@ -3888,6 +4384,9 @@
         "chinh": 0.9,
         "mi": 0.53
       }
+    },
+    "hero:vien-thieu": {
+      "faction": "Hán"
     },
     "hero:vuong-lang": {
       "troopApt": {
@@ -4215,5 +4714,287 @@
       "Vu Cát"
     ]
   },
-  "retired": []
+  "retired": [],
+  "heroNotes": {
+    "hero:40y-lu-bo": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:chu-tuan": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:cong-ton-toan": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:dao-khiem": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:dieu-thuyen": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:dinh-nguyen": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:dong-thua": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:dong-trac": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:gia-hu": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:ha-tien": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:hoa-da": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:hoang-phu-tung": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:khong-dung": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:lo-thuc": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:lu-bo": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:luu-bi": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:luu-bieu": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:luu-do": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:sp-chu-tuan": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-dieu-thuyen": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-dong-trac": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-hoang-phu-tung": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-lo-thuc": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-tuan-uc": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:sp-vien-thieu": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:tao-thao": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:thai-ung": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    },
+    "hero:thai-van-co": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:ton-kien": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:tran-lam": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Ngụy."
+        }
+      ]
+    },
+    "hero:truong-nham": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:truong-nhuong": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:vien-thieu": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:vien-thuat": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ)."
+        }
+      ]
+    },
+    "hero:vuong-doan": {
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần."
+        }
+      ]
+    }
+  }
 }
