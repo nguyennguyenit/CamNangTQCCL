@@ -1257,6 +1257,9 @@ test.describe("Gợi ý đội", () => {
     await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="complete"]')).toHaveText(String(t0.complete.length));
     await expect(coverage.locator('tr[data-tier="T0"] td[data-kind="missingOne"]')).toHaveText(String(t0.missingOne.length));
     await expect(coverage.locator(".roster-coverage-progress li")).toHaveCount(2);
+    // Chưa mở ô nào: vùng chi tiết phải rỗng, không được hiện chữ "null".
+    await expect(coverage.locator(".roster-coverage-body")).toBeEmpty();
+    await expect(coverage).not.toContainText("null");
 
     // Ô "ráp đủ" T0: cả hai đội của issue đều có khi đứng riêng.
     await coverage.locator('tr[data-tier="T0"] td[data-kind="complete"] button').click();
