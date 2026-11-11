@@ -3,23 +3,59 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 109 / 962 mục.
+Tổng: 144 / 983 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
-| Tướng | 0 | 252 |
-| Chiến pháp | 109 | 412 |
+| Tướng | 35 | 263 |
+| Chiến pháp | 109 | 422 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
 | Công trình | 0 | 41 |
 | Binh thư | 0 | 68 |
 
-## Tướng (heroes): 0 / 252
+## Tướng (heroes): 35 / 263
 
-Không có mục nào thiếu.
+| Mã | Tên | Phần thiếu |
+|---|---|---|
+| hero:sp-chu-tuan | SP Chu Tuấn | conditions (1) |
+| hero:sp-tuan-uc | SP Tuân Úc | conditions (1) |
+| hero:sp-vien-thieu | SP Viên Thiệu | conditions (1) |
+| hero:cong-ton-toan | Công Tôn Toản | conditions (1) |
+| hero:luu-bi | Lưu Bị | conditions (1) |
+| hero:hoa-da | Hoa Đà | conditions (1) |
+| hero:lu-bo | Lữ Bố | conditions (1) |
+| hero:ton-kien | Tôn Kiên | conditions (1) |
+| hero:truong-nhuong | Trương Nhượng | conditions (1) |
+| hero:tao-thao | Tào Tháo | conditions (1) |
+| hero:dong-trac | Đổng Trác | conditions (1) |
+| hero:thai-van-co | Thái Văn Cơ | conditions (1) |
+| hero:thai-ung | Thái Ung | conditions (1) |
+| hero:vien-thuat | Viên Thuật | conditions (1) |
+| hero:vien-thieu | Viên Thiệu | conditions (1) |
+| hero:dieu-thuyen | Điêu Thuyền | conditions (1) |
+| hero:gia-hu | Giả Hủ | conditions (1) |
+| hero:40y-lu-bo | 40Y Lữ Bố | conditions (1) |
+| hero:chu-tuan | Chu Tuấn | conditions (1) |
+| hero:khong-dung | Khổng Dung | conditions (1) |
+| hero:lo-thuc | Lô Thực | conditions (1) |
+| hero:luu-bieu | Lưu Biểu | conditions (1) |
+| hero:sp-dieu-thuyen | SP Điêu Thuyền | conditions (1) |
+| hero:sp-dong-trac | SP Đổng Trác | conditions (1) |
+| hero:sp-hoang-phu-tung | SP Hoàng Phủ Tung | conditions (1) |
+| hero:sp-lo-thuc | SP Lô Thực | conditions (1) |
+| hero:tran-lam | Trần Lâm | conditions (1) |
+| hero:truong-nham | Trương Nhậm | conditions (1) |
+| hero:dao-khiem | Đào Khiêm | conditions (1) |
+| hero:dinh-nguyen | Đinh Nguyên | conditions (1) |
+| hero:dong-thua | Đổng Thừa | conditions (1) |
+| hero:ha-tien | Hà Tiến | conditions (1) |
+| hero:hoang-phu-tung | Hoàng Phủ Tung | conditions (1) |
+| hero:luu-do | Lưu Do | conditions (1) |
+| hero:vuong-doan | Vương Doãn | conditions (1) |
 
-## Chiến pháp (tactics): 109 / 412
+## Chiến pháp (tactics): 109 / 422
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -98,7 +134,7 @@ Không có mục nào thiếu.
 | tactic:chung-vong-so-quy | Đích Đến Cuối Cùng | acquiredFromVi |
 | tactic:cuu-doc | Rượu Độc | revisions (3) |
 | tactic:dan-duong-binh | Lính Đan Dương | revisions (2) |
-| tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | effectTypeVi, exchangeConditionVi, conditions (2) |
+| tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | exchangeConditionVi, conditions (2) |
 | tactic:duy-noi-thien-quyen | Duy Nội Thiện Quyền | conditions (2) |
 | tactic:huy-quan-ket-tran | Huy Quân Kết Trận | exchangeConditionVi |
 | tactic:kien-cuong-chi-hoa | Hoa Kiên Cường | acquiredFromVi |
