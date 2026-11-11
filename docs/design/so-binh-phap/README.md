@@ -5,7 +5,7 @@ Bản chụp mã nguồn canvas Design dùng làm chuẩn thị giác cho đợt
 | | |
 |---|---|
 | Canvas | <https://claude.ai/artifact/3DCaKGmErusaPbwg7B9SQu> (riêng tư — cần quyền của chủ canvas). Dựng lại 2026-11-11 ở tổ chức claude.ai hiện tại từ chính bản chụp này, vì canvas cũ <https://claude.ai/artifact/JshDEV8qspJo6VJ6rgiB71> nằm ở tổ chức khác — xem mục "Canvas mới và 28 artboard thiết kế mới" |
-| Phiên bản chụp | `1794418812-0f54` (canvas mới: 111 artboard của bản cũ `1792668192-0861` + 28 artboard thiết kế mới; lịch sử bản cũ: Soi đội chụp lại từ site, thiết kế lại 3 công cụ, khu Quản trị, 47 artboard dựng từ site thật, Tra cứu, Logo — xem các mục dưới) |
+| Phiên bản chụp | `1794421053-4100` (canvas mới: 111 artboard của bản cũ `1792668192-0861` + 28 artboard thiết kế mới; lịch sử bản cũ: Soi đội chụp lại từ site, thiết kế lại 3 công cụ, khu Quản trị, 47 artboard dựng từ site thật, Tra cứu, Logo — xem các mục dưới) |
 | Ngày chụp | 2026-11-11 |
 | Nội dung | `project/canvas.json` (vị trí, kích thước, tiêu đề artboard) + 139 artboard `project/*.dc.html` + `project/support.js` (shim tự viết, xem dưới) + `project/_blob/` (62 asset: stylesheet, font, logo, ảnh chiến báo mẫu, chân dung tướng — tên file là id asset của canvas mới) + 136 ảnh chuẩn `screens/*.png` (3 artboard `Dir*` không chụp) |
 | Ảnh chuẩn | Chụp lại 2026-11-11 bằng `scripts/design-capture.mjs` (136 artboard, đủ cả 18 artboard Đội cộng đồng/quản trị trước đây chưa có ảnh và 28 artboard mới) · đối chiếu gần nhất 2026-09-24 với canvas bản `1790202333-0a0d`; **các artboard thêm sau ngày đó chưa đối chiếu shim với runtime canvas** |
