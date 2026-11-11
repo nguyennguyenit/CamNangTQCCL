@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-11 (community-worker: kiểm phiên dưới 10 ms CPU)
+
+### Fixed
+- Worker `tqccl-community` (gói Free, trần 10 ms CPU) vượt hạn trên `/api/me`, `/api/comments`, `/api/roster` (error 1102). Nguyên nhân chính: mỗi request dựng lại Better Auth và mỗi instance mới chạy kiểm schema lúc chạy (~21 câu introspect D1). Nay `createAuth` giữ một instance mỗi isolate (WeakMap theo `env` + origin), bỏ `getSession` khi request không có cookie phiên, và tắt `advanced.database.validateSchema`; `test/auth-session.test.ts` gọi `explicitSchemaCheck` trên migration thật để bắt lệch schema ở CI.
+
+### Không làm
+- `session.cookieCache` của Better Auth: không giảm CPU đo được so với đọc D1 khi đã tái sử dụng instance, nhưng làm khoá, thu hồi phiên và hạ quyền chậm tới hết `maxAge`, và khiến throttle `last_seen_at` đọc snapshot cũ nên ghi D1 lặp lại.
+
 ## 2026-11-06 (Soi đội: mỗi tên một ô ở tab duyệt mẫu)
 
 ### Fixed
