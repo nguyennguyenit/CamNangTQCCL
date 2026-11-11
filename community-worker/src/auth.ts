@@ -1,4 +1,4 @@
-// Better Auth (Google) trên D1 — dựng instance theo từng request từ env.
+// Better Auth (Google) trên D1 — một instance mỗi isolate (WeakMap theo env + origin).
 // Request tới qua proxy same-origin của Pages; baseURL = origin site trình duyệt đang dùng (trong allowlist)
 // để callback OAuth và cookie phiên quay về đúng domain (tqccl.com, www.tqccl.com, tqccl.pages.dev).
 
@@ -7,7 +7,15 @@ import { APIError } from "better-auth/api";
 import { siteOrigin, trustedOrigins, type Env } from "./env";
 import { BAN_NOTICE_TTL_MS, isBlocked, signBanNotice } from "./moderation";
 
-export function createAuth(env: Env, origin = siteOrigin(env)) {
+const SESSION_TOKEN_COOKIE_RE = /(?:^|;\s*)(?:__Secure-)?better-auth\.session_token=/u;
+
+/** Có cookie phiên Better Auth (`better-auth.session_token`, có hoặc không tiền tố `__Secure-`). */
+export function hasSessionCookie(headers: Headers): boolean {
+  const cookie = headers.get("cookie");
+  return cookie != null && SESSION_TOKEN_COOKIE_RE.test(cookie);
+}
+
+function buildAuth(env: Env, origin: string) {
   return betterAuth({
     appName: "Cẩm Nang TQCCL",
     baseURL: origin,
@@ -70,8 +78,28 @@ export function createAuth(env: Env, origin = siteOrigin(env)) {
       useSecureCookies: origin.startsWith("https://"),
       // Pages Function chuyển tiếp nguyên header gốc, gồm cf-connecting-ip của client.
       ipAddress: { ipAddressHeaders: ["cf-connecting-ip"] },
+      // Tắt kiểm schema lúc chạy: mỗi instance mới introspect D1 ~21 câu (sqlite_master + pragma_table_info),
+      // vượt trần 10 ms CPU gói Free. Schema do migration quản; test/auth-session.test.ts gọi explicitSchemaCheck
+      // trên migration thật để bắt lệch schema ở CI.
+      database: { validateSchema: false },
     },
   });
+}
+
+type AuthInstance = ReturnType<typeof buildAuth>;
+const authByEnv = new WeakMap<object, Map<string, AuthInstance>>();
+
+export function createAuth(env: Env, origin = siteOrigin(env)) {
+  let byOrigin = authByEnv.get(env);
+  if (!byOrigin) {
+    byOrigin = new Map();
+    authByEnv.set(env, byOrigin);
+  }
+  const cached = byOrigin.get(origin);
+  if (cached) return cached;
+  const auth = buildAuth(env, origin);
+  byOrigin.set(origin, auth);
+  return auth;
 }
 
 export interface SessionUser {
@@ -95,8 +123,9 @@ export interface SessionUserRow {
   last_seen_at: number | null;
 }
 
-/** Đọc phiên từ cookie; không có/hết hạn -> null. Trả dòng thô, không quyết định khoá. */
+/** Đọc phiên từ cookie; không cookie / không có / hết hạn -> null. Trả dòng thô, không quyết định khoá. */
 export async function getSessionUser(env: Env, headers: Headers): Promise<SessionUserRow | null> {
+  if (!hasSessionCookie(headers)) return null;
   const session = await createAuth(env).api.getSession({ headers });
   if (!session) return null;
   const u = session.user as typeof session.user & Partial<Omit<SessionUserRow, "id" | "name" | "email" | "image">>;

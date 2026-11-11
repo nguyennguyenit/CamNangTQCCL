@@ -17,6 +17,18 @@
 - Người đã đăng nhập chỉ thấy badge sau khi mở Gợi ý đội một lần trên máy đó (nơi tạo cache kho tài khoản); trang danh sách không tự đồng bộ kho.
 - `node scripts/design-tokens.mjs --check` còn 4 lỗi có sẵn từ trước (`--f-han`, `--f-han-select`, hai `font-weight: 600` của khối Độ phủ kho); không thuộc thay đổi này.
 
+## 2026-11-11 (community-worker: giảm CPU kiểm phiên, mục tiêu dưới 10 ms)
+
+### Fixed
+- Worker `tqccl-community` (gói Free, trần 10 ms CPU) vượt hạn trên `/api/me`, `/api/comments`, `/api/roster` (error 1102). Nguyên nhân chính: mỗi request dựng lại Better Auth và mỗi instance mới chạy kiểm schema lúc chạy (~21 câu introspect D1). Nay `createAuth` giữ một instance mỗi isolate (WeakMap theo `env` + origin), bỏ `getSession` khi request không có cookie phiên, và tắt `advanced.database.validateSchema`. Chưa đo CPU trên Workers; kiểm sau deploy qua Observability.
+
+### Added
+- Workflow `community-worker-gate.yml`: typecheck + vitest của `community-worker/` trên PR chạm Worker (trước đây không có CI nào chạy). `test/auth-session.test.ts` gọi `explicitSchemaCheck` trên migration thật, thay cho kiểm schema lúc chạy đã tắt.
+
+### Không làm
+- `session.cookieCache` của Better Auth: đo cục bộ (Better Auth thật, D1 giả) CPU gần như bằng đọc D1 khi đã tái sử dụng instance, nhưng làm khoá, thu hồi phiên và hạ quyền chậm tới hết `maxAge`, và khiến throttle `last_seen_at` đọc snapshot cũ nên ghi D1 lặp lại.
+
+
 ## 2026-11-06 (Soi đội: mỗi tên một ô ở tab duyệt mẫu)
 
 ### Fixed
