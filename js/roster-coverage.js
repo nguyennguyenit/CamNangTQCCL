@@ -63,7 +63,13 @@ function slotsOf(team, idOf) {
   return slots;
 }
 
+/** Ô còn thiếu ở dạng công khai: loại món, tên hiển thị, và cờ `unresolved` cho ô chưa đối chiếu được. */
+const missingItem = (slot) => ({ kind: slot.kind, name: slot.name, ...(slot.unresolved ? { unresolved: true } : {}) });
+
 /**
+ * `teams` liệt kê MỌI đội theo thứ tự đầu vào kèm số món thiếu (`missingCount`) và từng món thiếu theo thứ tự ô;
+ * `tiers[].complete` là các đội `missingCount === 0`, `tiers[].missingOne` là các đội `missingCount === 1`.
+ *
  * @param {object} input
  * @param {object[]} input.seasonTeams Đội của mùa (`buildSeasonCandidates`, có thể đã `applyTacticOverrides`).
  * @param {object[]|Map} input.seasonTier Bảng bậc `[{teamId, rankings:[{tier}]}]`.
@@ -85,6 +91,7 @@ export function buildRosterCoverage({
   const tacticSet = new Set((ownedTactics || []).map((item) => ownedTacticId(item, tacticIdOf)));
   const byTeam = tierIndex(seasonTier);
   const groups = new Map();
+  const teams = [];
   const seasonHeroes = new Set();
   const seasonTactics = new Set();
 
@@ -101,16 +108,16 @@ export function buildRosterCoverage({
     if (!groups.has(tier)) groups.set(tier, { tier, total: 0, complete: [], missingOne: [] });
     const entry = groups.get(tier);
     entry.total++;
-    if (missing.length === 0) entry.complete.push(team);
-    else if (missing.length === 1) {
-      const [slot] = missing;
-      entry.missingOne.push({ team, missing: { kind: slot.kind, name: slot.name, ...(slot.unresolved ? { unresolved: true } : {}) } });
-    }
+    const missingItems = missing.map(missingItem);
+    teams.push({ team, tier, missingCount: missingItems.length, missing: missingItems });
+    if (missingItems.length === 0) entry.complete.push(team);
+    else if (missingItems.length === 1) entry.missingOne.push({ team, missing: missingItems[0] });
   }
 
   const count = (set, owned) => [...set].filter((id) => owned.has(id)).length;
   return {
     tiers: [...groups.values()].sort((a, b) => tierOrder(a.tier) - tierOrder(b.tier) || a.tier.localeCompare(b.tier)),
+    teams,
     progress: {
       heroes: { owned: count(seasonHeroes, heroSet), total: seasonHeroes.size },
       tactics: { owned: count(seasonTactics, tacticSet), total: seasonTactics.size },
