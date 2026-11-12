@@ -712,9 +712,30 @@ export function openAiPanel(panel, { actions }) {
 
   addButton.addEventListener('click', () => openEditor(null));
   for (const node of saveButtons) node.addEventListener('click', save);
-  // Đổi qua lại mốc hẹp: vẽ lại phần Tính năng theo đúng chế độ (thẻ thu gọn hay thẻ mở + đầu cột).
+  // Đổi qua lại mốc hẹp (xoay máy, kéo cửa sổ): vẽ lại phần Tính năng theo đúng chế độ (thẻ thu gọn hay thẻ mở + đầu
+  // cột) rồi trả focus về đúng ô/nút đang dùng — theo id, hoặc nhóm + mắt xích + `data-action`; phần tử không còn ở
+  // chế độ mới (nút thu gọn, thẻ tóm tắt) thì về đầu thẻ nhóm. Sang chế độ hẹp thì mở sẵn nhóm đang có focus.
   narrow.addEventListener('change', () => {
-    if (items.length || Object.keys(groups).length) paintGroups();
+    if (!Object.keys(groups).length) return;
+    const active = document.activeElement;
+    const inFeatures = Boolean(active) && (groupsNode.contains(active) || summaryList.contains(active));
+    if (!inFeatures) {
+      paintGroups();
+      return;
+    }
+    const groupId = active.closest('[data-group]')?.dataset.group
+      ?? active.getAttribute('aria-controls')?.replace(/^cm-ai-group-/, '');
+    const link = active.closest('[data-link]')?.dataset.link;
+    const action = active.dataset.action;
+    const selector = active.id && !active.id.endsWith('-title') && groupsNode.contains(active) ? `#${CSS.escape(active.id)}`
+      : action && groupId ? `[data-group="${groupId}"]${link ? ` [data-link="${link}"]` : ''} [data-action="${action}"]`
+        : null;
+    if (groupId && narrow.matches) expanded.add(groupId);
+    paintGroups();
+    const target = (selector && groupsNode.querySelector(selector))
+      ?? groupsNode.querySelector(`[data-group="${groupId}"] [data-action="toggle-group"]`)
+      ?? groupsNode.querySelector(`#cm-ai-group-${groupId}-title`);
+    target?.focus();
   });
 
   actions.append(saveButtons[0]);

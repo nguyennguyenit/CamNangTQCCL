@@ -228,3 +228,32 @@ test("Người dùng: bảng có vai trò, trạng thái + dòng hạn khoá, đ
   await expect(panel.getByRole("button", { name: "Tải thêm" })).toBeVisible();
   expect(statuses).toEqual(["active"]);
 });
+
+test("mobile 390: danh sách, chi tiết, hộp thoại khoá Người dùng và Nhật ký không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.clock.setFixedTime(NOW);
+  await mockCommunityApi(page, { user: ADMIN, users: USER_ROWS() });
+  await routeAuditPages(page);
+  const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+
+  await page.goto("/quan-tri/#nguoi-dung");
+  const panel = page.getByRole("region", { name: "Người dùng", exact: true });
+  await expect(panel.locator(".adm-user")).toHaveCount(6);
+  expect(await noOverflow()).toBe(true);
+
+  await panel.locator(".adm-user-open", { hasText: "Lưu Bị" }).click();
+  await expect(panel.getByRole("button", { name: "Khoá…", exact: true })).toBeVisible();
+  expect(await noOverflow()).toBe(true);
+
+  await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Khoá tài khoản" });
+  await expect(dialog.getByRole("radio", { name: "1 ngày" })).toBeChecked();
+  expect(await noOverflow()).toBe(true);
+  expect(await dialog.evaluate((node) => node.getBoundingClientRect().right <= window.innerWidth)).toBe(true);
+  await dialog.getByRole("button", { name: "Huỷ" }).click();
+  await expect(dialog).toBeHidden();
+
+  await page.goto("/quan-tri/#nhat-ky");
+  await expect(page.getByRole("region", { name: "Nhật ký", exact: true }).locator(".adm-audit-day").first()).toBeVisible();
+  expect(await noOverflow()).toBe(true);
+});

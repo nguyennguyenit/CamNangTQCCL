@@ -27,7 +27,8 @@ const PENDING_SAMPLE = {
   ] },
   confirmed: { heroes: [
     { hero: "hero:gia-cat-khac", tactics: ["tactic:vo-phong-tran", "tactic:thinh-khi-linh-dich"], book: "book:binh-hanh-quy-dao" },
-    { hero: "hero:thai-su-tu", tactics: ["tactic:thoi-phong-doan-nhan", "tactic:vo-duong-phi-quan"], book: null },
+    // Ô A lưu id cũ `tactic:pha-phong-doan-nhan` (lookup.formerIds của Thôi Phong Đoạn Nhẫn): cùng chiến pháp AI đọc.
+    { hero: "hero:thai-su-tu", tactics: ["tactic:pha-phong-doan-nhan", "tactic:vo-duong-phi-quan"], book: null },
     { hero: "hero:khong-co-that", tactics: [null, "tactic:thoi-co-chien-thang"], book: "book:khong-co-that" },
   ] },
 };
@@ -75,25 +76,29 @@ test("Soi đội: đội xác nhận hiện tên tiếng Việt theo id, id lạ
   await expect(first).not.toContainText("hero:");
   await expect(rows.nth(0).getByRole("cell").nth(0).getByRole("listitem")).toHaveText(["诸葛恪", "武锋阵", "盛气凌敌", "兵行诡道"]);
 
-  // 3 dòng chiến pháp: cột AI đọc bỏ dòng tự mang như Soi đội; ô A không đổi thì không "đã sửa", ô B đổi id thì có.
+  // 3 dòng chiến pháp: cột AI đọc bỏ dòng tự mang như Soi đội; ô A không đổi thì không "đã sửa" (kể cả khi mẫu lưu
+  // id cũ trong formerIds — hiện tên hiện hành), ô B đổi id thì có.
   await expect(rows.nth(1).getByRole("cell").nth(0).getByRole("listitem")).toHaveText(["太史慈", "摧锋断刃", "速乘其利"]);
   const second = rows.nth(1).getByRole("cell").nth(1);
   await expect(second.getByRole("listitem")).toHaveText(["Thái Sử Từ", "Thôi Phong Đoạn Nhẫn", "Vô Đương Phi Quân đã sửa"]);
   await expect(second.locator(".is-edited")).toHaveCount(1);
   await expect(rows.nth(0).locator(".is-edited")).toHaveCount(0);
 
-  // Id lạ: giữ id + nhãn "chưa tra được" (title giải thích); ô hợp lệ cùng hàng vẫn ra tên. Ô AI đọc không rõ
-  // (骁军定北 không có trong dữ liệu) mà người dùng để trống thì không tính là sửa.
+  // Id lạ: giữ id + nhãn "chưa tra được" (title giải thích); ô hợp lệ cùng hàng vẫn ra tên. Ô tướng id lạ khác tướng AI
+  // đọc chắc (左慈) vẫn là ô đã sửa như cột "% ô sửa". Ô AI đọc không rõ (骁军定北 không có trong dữ liệu) mà người
+  // dùng để trống thì không tính là sửa; binh thư AI không chép thì không tính.
   const third = rows.nth(2).getByRole("cell").nth(1);
   const unknown = third.locator(".is-unresolved");
   await expect(unknown).toHaveCount(2);
   await expect(unknown.first()).toContainText("hero:khong-co-that");
   await expect(unknown.first()).toContainText("chưa tra được");
   await expect(unknown.first()).toHaveAttribute("title", /Không tra được tên/);
+  await expect(unknown.first()).toHaveText("hero:khong-co-that chưa tra được đã sửa");
+  await expect(unknown.first()).toHaveClass(/is-edited/);
   await expect(third.getByRole("listitem").nth(1)).toHaveText("Để trống");
   await expect(third).toContainText("Thời Cơ Chiến Thắng");
   await expect(third).toContainText("book:khong-co-that");
-  await expect(third.locator(".is-edited")).toHaveCount(0);
+  await expect(third.locator(".is-edited")).toHaveCount(1);
   await expect(rows.nth(2).getByRole("rowheader")).toHaveText("Tướng 3");
 
   // Bảng tỷ lệ: phần trăm theo locale, số căn phải; dòng số ảnh chờ duyệt lấy từ /api/admin/counts.
@@ -101,6 +106,19 @@ test("Soi đội: đội xác nhận hiện tên tiếng Việt theo id, id lạ
   await expect(stats.locator("tbody tr").first()).toContainText("6,8%");
   await expect(stats.locator("tbody tr").nth(1)).toContainText("1.412");
   await expect(panel.getByText("4 ảnh chờ duyệt")).toBeVisible();
+});
+
+test("Soi đội mobile 390: bảng tỷ lệ và bảng đối chiếu xếp dọc, không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockCommunityApi(page, { user: ADMIN });
+  await mockScan(page);
+  await page.goto("/quan-tri/#soi-doi");
+  const panel = page.getByRole("region", { name: "Soi đội", exact: true });
+  const sample = panel.locator('.adm-scan-sample[data-sample-id="s1"]');
+  await expect(sample.locator("tbody > tr").nth(2).getByRole("rowheader")).toBeVisible();
+  await expect(sample.locator(".is-unresolved").first()).toBeVisible();
+  await expect(panel.getByRole("group", { name: "Trạng thái" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });
 
 test("Soi đội: bộ lọc Trạng thái là nhóm nút chọn một, đổi nhóm thì tải đúng trạng thái", async ({ page }) => {
@@ -216,4 +234,30 @@ test("AI mobile: thẻ nhóm thu gọn được, lỗi ở nhóm đang thu thì 
   await expect(panel.locator("#cm-ai-battleReport-budget")).toHaveAttribute("aria-invalid", "true");
   expect(calls.some((call) => call.method === "PUT")).toBe(false);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test("AI: qua mốc 680px khi đang ở một ô của chuỗi thì focus giữ đúng ô sau khi vẽ lại", async ({ page }) => {
+  await mockCommunityApi(page, { user: ADMIN, aiConfig: structuredClone(AI_CONFIG) });
+  await page.goto("/quan-tri/#ai");
+  const panel = page.getByRole("region", { name: "AI", exact: true });
+  const budget = panel.locator("#cm-ai-battleReport-budget");
+  await budget.focus();
+
+  // Desktop → hẹp: nhóm Đọc ảnh chiến báo (mặc định thu ở mobile) được mở sẵn, focus vẫn ở ô Trần tổng.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(panel.locator('[data-group="battleReport"] [data-action="toggle-group"]')).toHaveAttribute("aria-expanded", "true");
+  await expect(panel.locator("#cm-ai-battleReport-budget")).toBeFocused();
+
+  // Hẹp → desktop với focus ở nút Bỏ của mắt xích: vẽ lại vẫn focus nút đó.
+  const remove = panel.locator('[data-group="teamScan"] [data-link="1"] [data-action="remove"]');
+  await remove.focus();
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect(panel.locator(".adm-ai-chain-head").first()).toBeVisible();
+  await expect(panel.locator('[data-group="teamScan"] [data-link="1"] [data-action="remove"]')).toBeFocused();
+
+  // Nút thu gọn không còn ở desktop: focus về tiêu đề nhóm.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await panel.locator('[data-group="rosterRecommend"] [data-action="toggle-group"]').focus();
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await expect(panel.locator("#cm-ai-group-rosterRecommend-title")).toBeFocused();
 });

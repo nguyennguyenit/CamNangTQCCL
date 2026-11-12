@@ -158,3 +158,20 @@ test("/zh/quan-tri/: khu đội cộng đồng hiện chữ Trung (dòng tổng,
   await expect(panel.locator(".adm-season-label")).toHaveText("第一赛季");
   await expect(panel.getByRole("form", { name: "开启新赛季" })).toBeVisible();
 });
+
+test("mobile 390: danh sách đội chờ duyệt (kể cả vùng phân tích đang mở) không tràn ngang", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockCommunityApi(page, {
+    user: MODERATOR,
+    teams: { seasons: SEASONS, admin: [adminTeam("t1"), adminTeam("t2")], details: (id) => teamDetail(id) },
+  });
+  await page.goto("/quan-tri/#doi-cong-dong");
+  const panel = panelOf(page);
+  const teams = panel.getByRole("list", { name: "Đội chờ duyệt" }).locator(".adm-team");
+  await expect(teams).toHaveCount(2);
+  const noOverflow = () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
+  expect(await noOverflow()).toBe(true);
+  await teams.first().getByRole("button", { name: "Xem phân tích" }).click();
+  await expect(teams.first().getByText("Mở đầu bằng khống chế.")).toBeVisible();
+  expect(await noOverflow()).toBe(true);
+});

@@ -62,15 +62,30 @@ function scanStatsTable(rows) {
 const list = (value) => (Array.isArray(value) ? value : []);
 
 /**
+ * Bản ghi từ điển của một id; chiến pháp đổi id (`lookup.formerIds`) được `tacticRecord` dẫn về bản ghi hiện hành.
+ * `lexicon` null hoặc id lạ → null.
+ */
+function recordOf(lexicon, kind, id) {
+  if (!lexicon || id == null) return null;
+  if (kind === 'hero') return lexicon.heroRecord(id) ?? null;
+  if (kind === 'tactic') return lexicon.tacticRecord(id) ?? null;
+  return lexicon.indexes.books.byId.get(id) ?? null;
+}
+
+/**
  * Ô xác nhận "đã sửa" theo đúng quy tắc đếm `edited` của `readStats` (cột "% ô sửa"): ô AI có chép (không trống)
  * mà id cuối khác id AI đưa chắc ban đầu — ô AI đọc không chắc / không rõ được người dùng điền cũng tính.
+ * Hai id trỏ cùng một bản ghi (id cũ trong `formerIds` ↔ id hiện hành) là cùng một ô, không tính sửa.
  * @param {{state: string, id: string|null}|undefined} initialCell ô ban đầu của `draftFromRead`
  * @param {string|null|undefined} finalId id người dùng xác nhận (null = để trống)
+ * @param {(a: string, b: string) => boolean} [sameEntity] hai id khác chữ có cùng bản ghi không
  */
-export function scanCellEdited(initialCell, finalId) {
+export function scanCellEdited(initialCell, finalId, sameEntity = () => false) {
   if (!initialCell || initialCell.state === 'empty') return false;
   const initialId = initialCell.state === 'sure' ? initialCell.id : null;
-  return initialId !== (finalId || null);
+  const confirmedId = finalId || null;
+  if (initialId === confirmedId) return false;
+  return !(initialId && confirmedId && sameEntity(initialId, confirmedId));
 }
 
 /**
@@ -78,13 +93,8 @@ export function scanCellEdited(initialCell, finalId) {
  * `lexicon` null (từ điển không tải được) hoặc id lạ → `record` null, `label` là id thô.
  */
 export function scanNameResolver(lexicon, locale = currentLocale()) {
-  const records = {
-    hero: (id) => lexicon?.heroRecord(id) ?? null,
-    tactic: (id) => lexicon?.tacticRecord(id) ?? null,
-    book: (id) => lexicon?.indexes.books.byId.get(id) ?? null,
-  };
   return (kind, id) => {
-    const record = records[kind](id);
+    const record = recordOf(lexicon, kind, id);
     const label = record ? recordLabel(record, locale) : '';
     return label ? { label, record } : { label: String(id), record: null };
   };
@@ -105,7 +115,9 @@ function confirmedChip(resolve, kind, id, edited, { hero = false } = {}) {
   const classes = ['adm-scan-chip'];
   if (hero) classes.push('is-hero');
   if (!record) {
+    // Id lạ vẫn có thể là ô đã sửa (AI đọc chắc một tướng khác): giữ cờ để khớp cột "% ô sửa".
     classes.push('is-unresolved');
+    if (edited) classes.push('is-edited');
     return el('li', {
       class: classes.join(' '),
       title: L('Không tra được tên của id này trong dữ liệu.', '数据中查不到此 ID 的名称。'),
@@ -115,6 +127,7 @@ function confirmedChip(resolve, kind, id, edited, { hero = false } = {}) {
       // Khoảng trắng giữa id và nhãn chỉ cho chữ đọc ra (flex bỏ qua nút chữ chỉ có khoảng trắng).
       ' ',
       el('span', { class: 'adm-scan-flag' }, [glyph('warning', 14), L('chưa tra được', '未能识别')]),
+      ...editedFlag(edited),
     ]);
   }
   if (edited) classes.push('is-edited');
@@ -167,13 +180,16 @@ export function scanCompareTable(sample, lexicon) {
     el('tbody', {}, confirmed.map((entry, index) => {
       const member = initial?.heroes[index] ?? null;
       const tactics = list(entry?.tactics);
-      const edited = (cell, id) => Boolean(member) && scanCellEdited(cell, id);
+      const edited = (kind, cell, id) => Boolean(member) && scanCellEdited(cell, id, (a, b) => {
+        const record = recordOf(lexicon, kind, a);
+        return Boolean(record) && record === recordOf(lexicon, kind, b);
+      });
       // Binh thư: hiện khi người dùng chọn, hoặc khi AI có chép mà người dùng bỏ trống (để thấy ô bị xoá).
       const showBook = Boolean(entry?.book) || (member != null && member.book.state !== 'empty');
       const userChips = [
-        confirmedChip(resolve, 'hero', entry?.hero ?? null, edited(member?.hero, entry?.hero), { hero: true }),
-        ...[0, 1].map((slot) => confirmedChip(resolve, 'tactic', tactics[slot] ?? null, edited(member?.tactics[slot], tactics[slot]))),
-        showBook ? confirmedChip(resolve, 'book', entry?.book ?? null, edited(member?.book, entry?.book)) : null,
+        confirmedChip(resolve, 'hero', entry?.hero ?? null, edited('hero', member?.hero, entry?.hero), { hero: true }),
+        ...[0, 1].map((slot) => confirmedChip(resolve, 'tactic', tactics[slot] ?? null, edited('tactic', member?.tactics[slot], tactics[slot]))),
+        showBook ? confirmedChip(resolve, 'book', entry?.book ?? null, edited('book', member?.book, entry?.book)) : null,
       ].filter(Boolean);
       return el('tr', {}, [
         el('th', { scope: 'row' }, [el('span', { class: 'adm-scan-row-word' }, `${L('Tướng', '武将')} `), String(index + 1)]),
@@ -316,7 +332,8 @@ export function openScanPanel(panel, { head, counts }) {
   // Hai dòng trạng thái: lỗi tải bảng tỷ lệ báo trong thẻ tỷ lệ, thao tác mẫu báo trong khối "Ảnh người dùng gửi".
   const statsStatus = adminIconStatus();
   const status = adminIconStatus();
-  const lexiconReady = loadLexicon();
+  // Từ điển nạp một lần cho cả khu; lần trước lỗi (trả null) thì lần tải trang mẫu sau thử nạp lại.
+  let lexiconReady = loadLexicon();
   let lexicon = null;
   // Thiếu từ điển là tình trạng của cả khu: báo một lần ở dòng riêng, không đè thông báo Duyệt / Từ chối.
   const dictNote = el('p', { class: 'cm-notice', hidden: '' }, L(
@@ -380,6 +397,7 @@ export function openScanPanel(panel, { head, counts }) {
     fetchPage: async (cursor) => {
       const params = new URLSearchParams({ status: filter.value });
       if (cursor) params.set('cursor', cursor);
+      lexiconReady = lexiconReady.then((loaded) => loaded ?? loadLexicon());
       const [body, loaded] = await Promise.all([api(`/api/admin/scan-samples?${params}`), lexiconReady]);
       lexicon = loaded;
       dictNote.hidden = Boolean(loaded);
