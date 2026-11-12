@@ -23,7 +23,10 @@ const KIND_NOUN = {
   books: () => L("binh thư", "兵书"),
 };
 
-/** Nhãn bộ lọc, cùng chữ với bảng chọn cũ (`FILTER_LABELS` của js/roster-picker.js). */
+/**
+ * Nhãn bộ lọc, cùng chữ với bảng chọn cũ (`FILTER_LABELS` của js/roster-picker.js). Không import thẳng: file đó bị ghim
+ * hash trong pipeline/site-localization-policy.json, thêm `export` làm `site_localization check` đỏ.
+ */
 const FILTER_LABELS = {
   faction: () => L("Thế lực", "势力"),
   stars: () => L("Số sao", "星级"),
@@ -63,7 +66,11 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
     if (!filterToggle) return;
     const count = activeCount();
     // `replaceChildren(null)` chèn chữ "null": chỉ truyền nút thật.
-    filterToggle.replaceChildren(...[L("Bộ lọc", "筛选"), count ? el("span", { class: "fchip-count" }, String(count)) : null].filter(Boolean));
+    filterToggle.replaceChildren(...[
+      L("Bộ lọc", "筛选"),
+      count ? el("span", { class: "fchip-count", "aria-hidden": "true" }, String(count)) : null,
+      count ? el("span", { class: "visually-hidden" }, L(` (${count} đang bật)`, `（已启用 ${count} 项）`)) : null,
+    ].filter(Boolean));
   };
   function paintFilters() {
     filterPanel.replaceChildren(...Object.entries(choices).map(([name, options]) => el("div", { class: "mt-picker-filter", role: "group", "aria-label": FILTER_LABELS[name]() }, [

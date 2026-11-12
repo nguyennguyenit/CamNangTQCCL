@@ -189,6 +189,7 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
             // Bảng chọn của ô này đang mở giữ mảng lựa chọn riêng: đóng bảng để không còn hiện món vừa bỏ.
             if (open?.key === key) open = null;
             paintHeroes();
+            heroesSlot.querySelector(`[data-picker-key="${key}"]`)?.focus();
           } }, L("Bỏ", "清除")) : null,
         ]),
       ]),
@@ -347,7 +348,9 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
   /* ---------- Trường của đội ---------- */
 
   const groupSelect = el("select", { class: "ana-input", id: nextId("mt-group") }, groups.map((group) => el("option", { value: group.id }, groupLabel(group))));
-  groupSelect.value = groups.some((group) => group.id === draft.groupId) ? draft.groupId : groups[0]?.id ?? "";
+  // Nhóm của đội không còn: về Ghép Team của hộp (như danh sách và lúc lưu), thiếu nữa thì nhóm đầu tiên.
+  const fallbackGroup = groups.find((group) => /~ghep-team$/u.test(group.id)) ?? groups[0];
+  groupSelect.value = groups.some((group) => group.id === draft.groupId) ? draft.groupId : fallbackGroup?.id ?? "";
   draft.groupId = groupSelect.value || draft.groupId;
   const kicker = el("span", { class: "mt-kicker" });
   const paintKicker = () => {

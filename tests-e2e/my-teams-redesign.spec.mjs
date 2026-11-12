@@ -237,11 +237,64 @@ test.describe("không mất bản soạn", () => {
     await expect(page.locator("dialog.mt-dialog")).toHaveCount(0);
     await expect(nameField(page)).toHaveValue("Bản soạn C");
 
-    await page.locator("form.mt-editor").getByRole("button", { name: "Hủy", exact: true }).click();
+    // Bỏ thay đổi: mở hộp thoại tạo; tạo xong thì sang hộp mới, trình soạn đóng.
+    await page.getByRole("button", { name: "Tạo hộp", exact: true }).click();
+    await discardBox(page).getByRole("button", { name: "Bỏ thay đổi" }).click();
+    await page.locator("#mt-prompt-input").fill("Hộp mới");
+    await page.locator("dialog.mt-dialog").getByRole("button", { name: "Tạo hộp", exact: true }).click();
+    await expect(page.locator("#mt-box")).toHaveValue(/^box-/u);
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+
+    // Không thay đổi: mở hộp thoại tạo luôn.
+    await page.locator("#mt-box").selectOption("main");
     await card(page, "team-c").getByRole("button", { name: "Sửa", exact: true }).click();
     await page.getByRole("button", { name: "Tạo hộp", exact: true }).click();
     await expect(page.locator("dialog.mt-dialog")).toBeVisible();
     await expect(confirmBox(page)).toHaveCount(0);
+  });
+
+  test("Xóa hộp khi đang sửa có thay đổi: hỏi trước, Hủy giữ hộp và bản soạn; Bỏ thay đổi rồi xác nhận thì về Hộp chính", async ({ page }) => {
+    const mock = await open(page, { boxes: ["main", "box-phu"], teams: [{ draft: draftOf("team-phu"), options: { boxId: "box-phu", groupId: "box-phu~ghep-team" } }] });
+    await page.locator("#mt-box").selectOption("box-phu");
+    await card(page, "team-phu").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn hộp phụ");
+    await page.getByRole("button", { name: "Xóa hộp" }).click();
+    await expect(discardBox(page)).toBeVisible();
+    await discardBox(page).getByRole("button", { name: "Hủy" }).click();
+    await expect(confirmBox(page)).toHaveCount(0);
+    await expect(page.locator("#mt-box")).toHaveValue("box-phu");
+    await expect(nameField(page)).toHaveValue("Bản soạn hộp phụ");
+    expect(mock.server.live("box").map((row) => row.id).sort()).toEqual(["box-phu", "main"]);
+
+    await page.getByRole("button", { name: "Xóa hộp" }).click();
+    await discardBox(page).getByRole("button", { name: "Bỏ thay đổi" }).click();
+    await confirmBox(page).filter({ hasText: "mất 1 đội" }).getByRole("button", { name: "Xóa hộp" }).click();
+    await expect(page.locator("#mt-box")).toHaveValue("main");
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect.poll(() => mock.server.live("box").map((row) => row.id)).toEqual(["main"]);
+  });
+
+  test("bấm Sửa trên thẻ của đội vừa bị xóa ở máy khác: không mở trình soạn, thẻ biến mất, không lỗi", async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    const mock = await open(page, { teams: [{ draft: draftOf("team-con") }, { draft: draftOf("team-mat") }] });
+    // Đang sửa (không đổi gì): đồng bộ nền không vẽ lại danh sách, nên thẻ của đội bị xóa vẫn còn trên trang.
+    await card(page, "team-con").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toBeVisible();
+    const at = Date.now();
+    const iso = new Date(at).toISOString();
+    await mock.server.seed({ kind: "team", id: "team-mat", updatedAt: at, deleted: true, data: { id: "team-mat", boxId: "main", updatedAt: iso, deletedAt: iso } });
+    const pulls = mock.calls.filter((call) => call.method === "GET" && call.path === "/api/roster").length;
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    await expect.poll(() => mock.calls.filter((call) => call.method === "GET" && call.path === "/api/roster").length).toBeGreaterThan(pulls);
+    await page.waitForTimeout(300);
+    await expect(card(page, "team-mat")).toBeVisible();
+
+    await card(page, "team-mat").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(card(page, "team-mat")).toHaveCount(0);
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(card(page, "team-con")).toBeVisible();
+    expect(errors).toEqual([]);
   });
 
   test("xóa nhóm đang chứa đội đang sửa: trình soạn còn, lưu thì đội vào Ghép Team (không ghi id nhóm đã xóa)", async ({ page }) => {
@@ -320,7 +373,7 @@ test.describe("trình soạn và bảng chọn", () => {
     // Bộ lọc gọn: thu gọn sẵn, mở ra là hàng chip; chọn "Bị động" thì mọi kết quả là chiến pháp bị động.
     const toggle = picker.locator(".mt-picker-filter-toggle");
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
-    await expect(toggle).toHaveText("Bộ lọc");
+    await expect(toggle).toHaveAccessibleName("Bộ lọc");
     await expect(picker.locator(".mt-picker-filters")).toBeHidden();
     const before = await picker.locator(".mt-picker-hint").textContent();
     await toggle.click();
@@ -328,7 +381,8 @@ test.describe("trình soạn và bảng chọn", () => {
     const passive = picker.getByRole("group", { name: "Loại" }).getByRole("button", { name: "Bị động" });
     await passive.click();
     await expect(passive).toHaveAttribute("aria-pressed", "true");
-    await expect(toggle).toHaveText("Bộ lọc1");
+    await expect(toggle).toHaveAccessibleName("Bộ lọc (1 đang bật)");
+    await expect(toggle.locator(".fchip-count")).toHaveText("1");
     await expect(picker.locator(".mt-picker-hint")).not.toHaveText(before ?? "");
     await expect(picker.getByRole("group", { name: "Thế lực" })).toHaveCount(0);
 
@@ -336,6 +390,7 @@ test.describe("trình soạn và bảng chọn", () => {
     await form.locator(".mt-edit-hero").first().locator(".mt-slot").nth(2).locator(".mt-slot-actions").getByRole("button", { name: /^Bỏ/ }).click();
     await expect(form.locator(".mt-picker")).toHaveCount(0);
     await expect(form.locator(".mt-edit-hero").first().locator(".mt-slot").nth(2).locator(".mt-slot-empty")).toBeVisible();
+    await expect(form.locator('[data-picker-key="0-t0"]')).toBeFocused();
   });
 });
 

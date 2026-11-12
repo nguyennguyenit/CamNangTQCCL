@@ -16233,6 +16233,20 @@ body[data-page-section="roster-recommend"] .layout {
 .mt-moi .mt-editor-sum { display: flex; align-items: center; gap: var(--space-8); margin: 0; color: var(--warn); font: var(--type-small); }
 .mt-moi .mt-editor-sum[hidden] { display: none; }
 .mt-moi .mt-conflict-slot:empty { display: none; }
+/* Vùng báo trạng thái luôn trong cây truy cập; rỗng thì thu về 1px, không chiếm khoảng cách của lưới trang. */
+.mt-moi .mt-status:empty { position: absolute; width: var(--space-1); height: var(--space-1); overflow: hidden; clip-path: inset(50%); }
+.mt-moi .mt-picker .fchip-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--control-24);
+  height: var(--control-24);
+  padding: 0 var(--space-6);
+  border-radius: var(--radius-999);
+  background-color: var(--select);
+  color: var(--select-ink);
+  font: var(--type-badge);
+}
 .mt-moi .mt-editor-actions { display: flex; gap: var(--space-8); margin-left: auto; }
 
 /* ---------- Thêm nhóm, riêng tư ---------- */

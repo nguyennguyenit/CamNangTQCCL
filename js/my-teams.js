@@ -77,12 +77,12 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
   let lexicon;
   let sourceIndex = null;
 
-  const status = el("p", { class: "mt-status", role: "status", "aria-live": "polite", hidden: "" });
+  // Vùng báo luôn có trong DOM (không bật `hidden` cùng lúc đặt chữ, để trình đọc màn hình nghe được); rỗng thì CSS thu gọn.
+  const status = el("p", { class: "mt-status", role: "status", "aria-live": "polite" });
   const errorBox = el("p", { class: "mt-alert", role: "alert", hidden: "" });
   const body = el("div", { class: "mt-body" });
   const say = (message) => {
     status.textContent = message;
-    status.hidden = !message;
   };
   const fail = (result) => {
     errorBox.textContent = describeFailure(result);
@@ -201,7 +201,14 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     },
     onEdit: async (team) => {
       if (view.editing === team.id) return;
-      if (await leaveEditorOk()) openEditor(team);
+      if (!(await leaveEditorOk())) return;
+      // Thẻ được vẽ từ lần trước: lấy bản đội mới nhất (có thể vừa đổi hoặc bị xóa ở máy khác trong lúc hỏi lại).
+      const fresh = api.snapshot().teams.find((candidate) => candidate.id === team.id);
+      if (!fresh) {
+        paint();
+        return;
+      }
+      openEditor(fresh);
     },
     onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。")).then((result) => {
       if (!result.ok) paint();
@@ -395,7 +402,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       },
     });
     paint();
-    view.editor.querySelector("input")?.focus();
+    view.editor?.querySelector("input")?.focus();
   }
 
   /* ---------- Khởi động ---------- */
