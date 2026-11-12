@@ -16032,7 +16032,14 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 .cm-team-detail-page .cm-stat-value { font: var(--type-cm-stat); }
 .cm-team-detail-page .cm-opponents { display: grid; gap: var(--space-8); padding: var(--space-14) var(--space-18); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
 .cm-team-detail-page .cm-opponent { min-height: var(--control-40); border-top: var(--border-hair) dashed var(--line-2); }
-.cm-team-detail-page .cm-report { padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
+/* Thẻ chiến báo: ảnh trái (khi có), bên phải dòng kết quả + người gửi, hai đội, ghi chú. */
+.cm-team-detail-page .cm-report { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: var(--size-col-200) minmax(0, 1fr); column-gap: var(--space-16); }
+.cm-team-detail-page .cm-report-image-link { grid-column: 1; grid-row: 1 / span 2; align-self: start; overflow: hidden; border-radius: var(--radius-10); }
+.cm-team-detail-page .cm-report-image { display: block; width: 100%; max-height: none; aspect-ratio: 16 / 9; border-radius: 0; object-fit: cover; }
+.cm-team-detail-page .cm-report > .cm-report-meta { grid-column: -2; grid-row: 1; margin: 0; }
+.cm-team-detail-page .cm-report > .cm-report-summary { grid-column: -2; grid-row: 2; }
+.cm-team-detail-page .cm-title-count { color: var(--muted); font: var(--type-strong); }
 .cm-team-detail-page .cm-report-flow { padding: var(--space-20); border-radius: var(--radius-12); background-color: var(--panel-2); }
 .cm-team-detail-page .cm-comment-form { padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
 .cm-team-detail-page .cm-comment-form .ana-btn.primary { border-color: var(--accent); background-color: var(--accent); color: var(--on-accent); }
@@ -16416,6 +16423,10 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
   .cm-team-analysis-item { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
   .cm-team-detail-page .cm-stats { grid-template-columns: minmax(0, 1fr); }
   .cm-team-detail-page .cm-stat-grid { grid-template-columns: 1fr 1fr; }
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: minmax(0, 1fr); }
+  .cm-team-detail-page .cm-report-image-link { grid-row: 3; }
+  .cm-team-detail-page .cm-report > .cm-report-meta,
+  .cm-team-detail-page .cm-report > .cm-report-summary { grid-column: 1; }
   /* Mobile: "Ảnh đội" là một khối như các khối khác, không đóng thẻ. */
   .cm-team-photos { padding: 0; border: 0; background-color: transparent; }
   .cm-team-photos .cm-team-aside-title { font: var(--type-cm-section-title); }

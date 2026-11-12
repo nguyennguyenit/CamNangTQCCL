@@ -7,7 +7,7 @@
 import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { PROJECT_DIR } from '../../design-artboards.mjs';
-import { SAMPLES, teamItem } from '../community-samples.mjs';
+import { REPORTS, SAMPLES, teamItem } from '../community-samples.mjs';
 import { MOCK_STATES } from '../moi-mock-states.mjs';
 
 /** Danh sách như artboard: điểm theo công thức trang (lên − xuống + 2 × người thắng), số ảnh khác nhau, một đội không ảnh. */
@@ -25,12 +25,14 @@ function listMock() {
   return { state: 'dang-nhap', teams: { ...base.teams, list: { items: listItems(), nextCursor: 'c2' } } };
 }
 
-/** Mock chi tiết: thêm số liệu chiến báo + đối thủ thường gặp như artboard. */
+/** Mock chi tiết: chiến báo có ảnh, số liệu chiến báo + đối thủ thường gặp như artboard. */
 function detailMock() {
   const base = MOCK_STATES['dang-nhap']();
   return {
     state: 'dang-nhap',
     teams: { ...base.teams, list: { items: listItems(), nextCursor: null } },
+    // Chiến báo có ảnh như artboard (route ảnh mẫu của compare-moi phục vụ `/api/reports/<id>/image`).
+    reports: REPORTS.map((report) => ({ ...report, imageUrl: `/api/reports/${report.id}/image` })),
     stats: {
       total: 14,
       wins: 10,

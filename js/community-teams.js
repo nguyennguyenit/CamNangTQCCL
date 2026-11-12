@@ -10,7 +10,7 @@ import { api, describeError, liveStatus, loadSession, signInPrompt, unavailableN
 import { mountComments } from './community-comments.js';
 import { mountReports } from './community-reports.js';
 import { listTeamCard, mineTally, mineTeamCard, statusBadge } from './community-team-cards.js';
-import { createTeamLexicon, datalistOptions, loadTeamBooks, loadTeamDictionaries, seasonLabel, tacticName } from './community-team-data.js';
+import { createTeamLexicon, datalistOptions, heroNameResolver, loadTeamBooks, loadTeamDictionaries, seasonLabel, tacticName } from './community-team-data.js';
 import { detailLayout, similarCard } from './community-team-detail.js';
 import { mountTeamForm } from './community-team-form.js';
 import { mergePage, modeFromSearch, staticTeamPath } from './community-team-state.js';
@@ -536,8 +536,10 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       after.append(widgets);
       const pageKey = `/doi-cong-dong/${team.id}/`;
       try {
-        const reports = mountReports(widgets, { pageKey, lang: locale, user, sharedPool: true, archived: !team.seasonOpen });
-        const comments = mountComments(widgets, { pageKey, lang: locale, user, sharedPool: true });
+        // Tên tướng chiến báo theo từ điển (tên Việt / chữ Hán theo trang); từ điển chỉ nạp khi có chiến báo để hiện.
+        const heroNames = () => getLexicon().then(heroNameResolver);
+        const reports = mountReports(widgets, { pageKey, lang: locale, user, sharedPool: true, archived: !team.seasonOpen, heroNames });
+        const comments = mountComments(widgets, { pageKey, lang: locale, user, sharedPool: true, count: team.commentCount });
         await Promise.all([reports.load(), comments.load()]);
       } catch {
         widgets.replaceChildren(unavailableNotice());

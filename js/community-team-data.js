@@ -1,7 +1,7 @@
 // Dữ liệu tên cho trang Đội cộng đồng: nạp từ điển tướng/chiến pháp (đã xác minh sha256 qua manifest Tra cứu),
 // nhãn theo locale, chỉ mục id và datalist. Server chỉ lưu id nên mọi tên hiển thị đi qua đây.
 
-import { createEntityIndex } from './analyze-map.js';
+import { classifyName, createEntityIndex } from './analyze-map.js';
 import { L, currentLocale } from './i18n.js';
 import { heroPortrait } from './hero-portrait.js';
 import { createLookupPayloadLoader } from './lookup-data.js';
@@ -119,6 +119,24 @@ export function heroBadge(lexicon, id) {
       : null,
     el('span', { class: 'cm-team-hero-name' }, lexicon ? lexicon.heroName(id) : String(id)),
   ]);
+}
+
+/**
+ * Đổi tên tướng đã lưu dạng chữ (chiến báo: chữ Hán AI đọc hoặc chữ người gửi gõ) sang tên hiển thị theo locale
+ * bằng chỉ mục từ điển có sẵn (`classifyName`: khớp chữ Hán/bí danh rồi so gần đúng). Chỉ đổi khi khớp chắc;
+ * tên không tra được giữ nguyên chữ gốc.
+ */
+export function heroNameResolver(lexicon) {
+  const cache = new Map();
+  return (raw) => {
+    const text = String(raw ?? '').trim();
+    if (!text || !lexicon) return text;
+    if (!cache.has(text)) {
+      const cell = classifyName(text, lexicon.indexes.heroes);
+      cache.set(text, cell.state === 'sure' ? lexicon.heroName(cell.id) : text);
+    }
+    return cache.get(text);
+  };
 }
 
 /** Tên chiến pháp theo locale; `lexicon` null → id thô. */

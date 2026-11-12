@@ -672,7 +672,7 @@ test("E4: chủ xem đội pending → không gọi HEAD, ở lại ?id=t1", asy
   expect(methods).toEqual([]);
 });
 
-test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, không nạp từ điển, link tương tự trỏ URL tĩnh", async ({ page }) => {
+test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, tên tướng chiến báo tiếng Việt, link tương tự trỏ URL tĩnh", async ({ page }) => {
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));
   const calls = await mockCommunityApi(page, {
@@ -697,18 +697,25 @@ test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, không nạp t�
   expect(calls.find((call) => call.method === "PUT" && call.path === "/api/community-teams/t1/vote").body).toEqual({ value: 1 });
 
   const comments = page.locator(".cm-comments");
+  // Tiêu đề "Bình luận" kèm số bình luận của đội (commentCount 4), tăng khi đăng.
+  await expect(comments.locator(".cm-title-count")).toHaveText("4");
   await comments.getByLabel("Viết bình luận").fill("Bình luận từ trang tĩnh.");
   await comments.getByRole("button", { name: "Gửi bình luận" }).click();
   await expect(comments.locator(".cm-comment").first()).toContainText("Bình luận từ trang tĩnh.");
   expect(calls.find((call) => call.method === "POST" && call.path === "/api/comments").body).toEqual({
     page: "/doi-cong-dong/t1/", lang: "vi", body: "Bình luận từ trang tĩnh.",
   });
+  await expect(comments.locator(".cm-title-count")).toHaveText("5");
   await expect(page.locator(".cm-reports")).toContainText("Chiến báo");
+  // Tên tướng chiến báo (lưu chữ Hán) hiện theo tên Việt: từ điển chỉ nạp vì có chiến báo để hiện.
+  await expect(page.locator(".cm-report .cm-report-sides")).toContainText("Lưu Bị");
+  await expect(page.locator(".cm-report .cm-report-sides")).toContainText("Tào Tháo");
+  await expect(page.locator(".cm-report .cm-report-sides")).not.toContainText("刘备");
 
-  // Chi tiết đã có trong HTML tĩnh: không dựng lại bảng/nav SPA, không nạp từ điển tên.
+  // Chi tiết đã có trong HTML tĩnh: không dựng lại bảng/nav SPA.
   await expect(page.locator(".cm-team-view .cm-team-table")).toHaveCount(0);
   await expect(page.locator(".cm-team-view .cm-team-tab")).toHaveCount(0);
-  expect(requests.filter((url) => url.includes("heroes-dict"))).toEqual([]);
+  expect(requests.filter((url) => url.includes("heroes-dict")).length).toBeGreaterThan(0);
 
   const similar = page.locator(".cm-team-similar-list a");
   await expect(similar).toHaveCount(1);

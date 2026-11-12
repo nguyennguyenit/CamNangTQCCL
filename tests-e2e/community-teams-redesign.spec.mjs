@@ -214,3 +214,53 @@ test("/zh/doi-cong-dong/: đầu trang, thanh lọc, thẻ và form đều có c
   await expect(page.getByRole("group", { name: "兵种" }).getByRole("radio")).toHaveCount(5);
   await expect(page.getByRole("button", { name: "提交审核" })).toBeVisible();
 });
+
+/** HTML tối thiểu của trang đội tĩnh (preview e2e không có trang đội thật). */
+const staticTeamHtml = (id, lang = "vi") => `<!doctype html><html lang="${lang === "zh" ? "zh-Hans" : "vi"}"><head><meta charset="utf-8"><title>Đội ${id}</title></head><body><main>`
+  + `<article data-team-static><h1>Đội ${id}</h1></article>`
+  + `<div id="community-teams" class="cm-team-root" data-team-id="${id}"></div>`
+  + `<script type="module" src="/js/community-teams.js"></script></main></body></html>`;
+const routeStaticTeam = (page, path, lang = "vi") => page.route(`**${path}`, (route) => route.fulfill({
+  status: 200, contentType: "text/html; charset=utf-8", body: route.request().method() === "HEAD" ? "" : staticTeamHtml("t1", lang),
+}));
+const REPORT = {
+  id: "r1", result: "win", allyHeroes: ["刘备", "关羽", "张飞"], enemyHeroes: ["曹操", "不存在的人"], note: "Thắng sát nút", season: null, lang: "vi",
+  imageUrl: null, createdAt: "2026-10-12T08:00:00.000Z", author: PLAYER,
+};
+const STATS = { total: 3, wins: 2, losses: 1, draws: 0, winRate: 2 / 3, topOpponents: [{ heroes: ["曹操", "夏侯惇"], count: 2, wins: 1 }] };
+
+test("trang đội: tên tướng chiến báo + đối thủ thường gặp theo tên Việt (tên lạ giữ chữ gốc), bản zh hiện chữ Hán theo từ điển", async ({ page }) => {
+  await mockCommunityApi(page, { reports: [REPORT], stats: STATS, teams: { seasons: SEASONS, details: (id) => teamDetail(id) } });
+  await routeStaticTeam(page, "/doi-cong-dong/t1/");
+  await page.goto("/doi-cong-dong/t1/");
+  const report = page.locator(".cm-report").first();
+  await expect(report.locator(".cm-report-sides")).toContainText("Lưu Bị · Quan Vũ · Trương Phi");
+  await expect(report.locator(".cm-report-sides")).toContainText("Tào Tháo · 不存在的人");
+  await expect(page.locator(".cm-opponent-heroes").first()).toHaveText("Tào Tháo · Hạ Hầu Đôn");
+
+  await routeStaticTeam(page, "/zh/doi-cong-dong/t1/", "zh");
+  await page.goto("/zh/doi-cong-dong/t1/");
+  await expect(page.locator(".cm-report .cm-report-sides").first()).toContainText("曹操");
+  await expect(page.locator(".cm-report .cm-report-sides").first()).not.toContainText("Tào Tháo");
+});
+
+test("trang đội: không có chiến báo thì không nạp từ điển tên; tiêu đề Bình luận kèm số và giảm khi xoá", async ({ page }) => {
+  const requests = [];
+  page.on("request", (request) => requests.push(request.url()));
+  const comments = [{ id: "c1", body: "Bình luận của tôi", lang: "vi", createdAt: "2026-10-12T08:00:00.000Z", author: PLAYER, canDelete: true }];
+  await mockCommunityApi(page, { user: PLAYER, comments, teams: { seasons: SEASONS, details: (id) => teamDetail(id, { commentCount: 1 }) } });
+  await routeStaticTeam(page, "/doi-cong-dong/t1/");
+  // Mock dùng chung chưa có DELETE bình luận: route đăng ký sau được xét trước.
+  await page.route("**/api/comments/c1", (route) => (route.request().method() === "DELETE"
+    ? route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) })
+    : route.fallback()));
+  page.on("dialog", (dialog) => dialog.accept());
+  await page.goto("/doi-cong-dong/t1/");
+  const block = page.locator(".cm-comments");
+  await expect(block.getByRole("heading", { level: 2 })).toHaveText("Bình luận 1");
+  await expect(page.locator(".cm-reports")).toContainText("Chưa có chiến báo nào");
+  await block.getByRole("button", { name: "Xoá" }).click();
+  await expect(block.locator(".cm-comment")).toHaveCount(0);
+  await expect(block.locator(".cm-title-count")).toHaveText("0");
+  expect(requests.filter((url) => url.includes("heroes-dict"))).toEqual([]);
+});

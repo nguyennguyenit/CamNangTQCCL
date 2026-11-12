@@ -22,29 +22,36 @@ import {
 const RESULTS = ['win', 'loss', 'draw'];
 const NOTE_MAX_LENGTH = 500;
 
-function heroLine(names) {
+/** Tên hiển thị mặc định: giữ nguyên chữ đã lưu (chữ Hán AI đọc hoặc chữ người gửi gõ). */
+const keepName = (name) => name;
+
+/** Dòng tên tướng "A · B · C"; `nameOf` đổi từng tên sang tên hiển thị (trang đội: tên Việt theo từ điển). */
+function heroLine(names, nameOf = keepName) {
   const list = Array.isArray(names) ? names.filter((name) => typeof name === 'string' && name.trim()) : [];
-  return list.length ? list.join(' · ') : '—';
+  return list.length ? list.map((name) => nameOf(name.trim())).join(' · ') : '—';
 }
+
+/** Có tên tướng nào cần tra không (chiến báo / đối thủ thường gặp). */
+const hasNames = (groups) => groups.some((names) => Array.isArray(names) && names.some((name) => typeof name === 'string' && name.trim()));
 
 /**
  * Tóm tắt một chiến báo: kết quả, đội ta vs đối thủ, ghi chú. Dùng chung cho trang đội, hub và quản trị;
- * `caption` (quản trị) là dòng chú thích đặt cạnh nhãn kết quả.
+ * `caption` (quản trị) là dòng chú thích đặt cạnh nhãn kết quả; `nameOf` đổi tên tướng sang tên hiển thị.
  */
-export function reportSummary(report, { caption = null } = {}) {
+export function reportSummary(report, { caption = null, nameOf = keepName } = {}) {
   const result = RESULTS.includes(report?.result) ? report.result : null;
   const pill = el('span', { class: 'cm-result', dataset: { result: result || 'unknown' } }, resultLabel(result));
   return el('div', { class: 'cm-report-summary' }, [
     caption ? el('div', { class: 'cm-report-verdict' }, [pill, el('span', { class: 'cm-report-caption' }, caption)]) : pill,
     el('dl', { class: 'cm-report-sides' }, [
-      el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes))]),
-      el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes))]),
+      el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes, nameOf))]),
+      el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes, nameOf))]),
     ]),
     report?.note ? el('p', { class: 'cm-report-note' }, String(report.note)) : null,
   ]);
 }
 
-function statsPanel(stats) {
+function statsPanel(stats, nameOf = keepName) {
   const total = Number(stats?.total) || 0;
   if (!total) {
     return el('p', { class: 'scope-note cm-empty' }, L(
@@ -80,7 +87,7 @@ function statsPanel(stats) {
             const count = Number(opponent?.count) || 0;
             const opponentWins = Number(opponent?.wins) || 0;
             return el('li', { class: 'cm-opponent' }, [
-              el('span', { class: 'cm-opponent-heroes' }, heroLine(opponent?.heroes)),
+              el('span', { class: 'cm-opponent-heroes' }, heroLine(opponent?.heroes, nameOf)),
               el('span', { class: 'cm-opponent-count' }, L(
                 `${formatNumber(count)} trận · thắng ${formatNumber(opponentWins)}`,
                 `${formatNumber(count)} 场 · 胜 ${formatNumber(opponentWins)}`,
@@ -92,10 +99,10 @@ function statsPanel(stats) {
   ]);
 }
 
-function reportItem(report, { tagged = false } = {}) {
+function reportItem(report, { tagged = false, nameOf = keepName } = {}) {
   const imageUrl = typeof report.imageUrl === 'string' && report.imageUrl.startsWith('/api/') ? report.imageUrl : null;
   return el('li', { class: 'cm-report' }, [
-    reportSummary(report),
+    reportSummary(report, { nameOf }),
     imageUrl
       ? el('a', { class: 'cm-report-image-link', href: imageUrl, target: '_blank', rel: 'noopener' }, [
           el('img', { class: 'cm-report-image', src: imageUrl, alt: L('Ảnh kết quả trận', '战斗结果截图'), loading: 'lazy', decoding: 'async' }),
@@ -278,22 +285,30 @@ function submitFlow({ pageKey, lang }) {
  * Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi.
  * `sharedPool` (đội cộng đồng): không lọc theo `lang`, mỗi chiến báo kèm nhãn `[VI]`/`[ZH]`.
  * `archived` (mùa đã đóng): thay luồng gửi bằng ghi chú lưu trữ.
+ * `heroNames` (tuỳ chọn): `() => Promise<(tên) => tên hiển thị>` — chỉ gọi khi có tên tướng để hiện; lỗi thì giữ tên gốc.
  */
-export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false }) {
+export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false, heroNames = null }) {
   const titleId = 'cm-reports-title';
   const statsBox = el('div', { class: 'cm-stats-box' });
   const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Chiến báo đã duyệt', '已审核战报') });
   const status = liveStatus();
   const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm chiến báo', '查看更多战报'));
   let cursor = null;
+  let namer = null;
+  /** Bộ đổi tên tướng (nạp một lần, chỉ khi có tên để hiện). */
+  const nameOfFor = async (groups) => {
+    if (!heroNames || !hasNames(groups)) return keepName;
+    namer ??= Promise.resolve().then(heroNames).then((fn) => (typeof fn === 'function' ? fn : keepName), () => keepName);
+    return namer;
+  };
 
   const loadList = async () => {
     const params = new URLSearchParams({ page: pageKey, lang });
     if (cursor) params.set('cursor', cursor);
     const body = await api(`/api/reports?${params}`);
-    for (const report of Array.isArray(body?.items) ? body.items : []) {
-      if (sharedPool || report?.lang === lang) list.append(reportItem(report, { tagged: sharedPool }));
-    }
+    const items = (Array.isArray(body?.items) ? body.items : []).filter((report) => sharedPool || report?.lang === lang);
+    const nameOf = await nameOfFor(items.flatMap((report) => [report?.allyHeroes, report?.enemyHeroes]));
+    for (const report of items) list.append(reportItem(report, { tagged: sharedPool, nameOf }));
     list.hidden = list.childElementCount === 0;
     cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
     moreButton.hidden = !cursor;
@@ -301,7 +316,8 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
 
   const load = async () => {
     const [stats] = await Promise.all([api(`/api/reports/stats?${new URLSearchParams({ page: pageKey })}`), loadList()]);
-    statsBox.replaceChildren(statsPanel(stats));
+    const opponents = Array.isArray(stats?.topOpponents) ? stats.topOpponents : [];
+    statsBox.replaceChildren(statsPanel(stats, await nameOfFor(opponents.map((opponent) => opponent?.heroes))));
   };
 
   moreButton.addEventListener('click', async () => {
