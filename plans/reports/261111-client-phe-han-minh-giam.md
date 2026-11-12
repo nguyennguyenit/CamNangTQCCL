@@ -181,7 +181,26 @@ Không mã nào dưới đây có trong `data/tactics.json` (tra tên Việt và
 | Trí Định | Bị động | Tăng ích | Tôi | 100% | Không | Trương Mạc / Trương Mạc | Trí Lực và Thống Soái bản thân tăng 10→20 |
 | Phấn Tiến | Chủ động | Tăng ích | Tôi | 30% | Không | Trương Dương / Trương Dương | Khiến sát thương bản thân gây ra tăng 10%→20%, duy trì 1 hiệp |
 
-Phẩm chiến pháp đọc ở chữ cái trên trang chi tiết tướng (S/A/B/C). Thích hợp: cả 5 binh chủng cho mọi mục. Tên chữ Hán của 10 chiến pháp mới: chưa có (client không hiện; bản CN cũng chưa tìm thấy trên `sanzhan.slgsim.com`).
+Phẩm chiến pháp đọc ở chữ cái trên trang chi tiết tướng (S/A/B/C). Thích hợp: cả 5 binh chủng cho mọi mục.
+
+### Chữ Hán tên 10 chiến pháp mới (đối chiếu 2026-11-13)
+
+Client Việt không hiện chữ Hán; bản TW (`sanzhan.slgsim.com/zh-hant/tactics/`) chưa có các chiến pháp này. Bản Đại Lục (`sanzhan.slgsim.com/zh-hans/`, host đã duyệt của `zhEffects`) có đủ, khớp tướng mang và số đầy cấp. `nameZh` ghi dạng phồn thể của tên giản thể đó. Hai tên phiên âm ngược trước đây sai và đã sửa.
+
+| Mã | Tên client | Giản thể (sanzhan) | `nameZh` | Đối chiếu |
+|---|---|---|---|---|
+| `tactic:an-hau-dac-chung` | Ân Hậu Đắc Chúng | 恩厚得众 (20870) | 恩厚得眾 | khớp |
+| `tactic:be-canh-tu-an` | Bế Cảnh Tự An | 闭境自安 (20865) | 閉境自安 | khớp |
+| `tactic:chinh-van` | Chính Vận | 政运 (trang 孔伷) | 政運 | khớp |
+| `tactic:dinh-quan-an-dan` | Định Quân An Dân | 定军安民 (20871) | 定軍安民 | khớp |
+| `tactic:o-sao-di-han` | Ô Sào Di Hận | 乌巢遗恨 (20867) | 烏巢遺恨 | khớp |
+| `tactic:phan-tien` | Phấn Tiến | 奋进 (trang 张杨) | 奮進 | khớp |
+| `tactic:thu-chinh-xuat-phong` | Thủ Chính Xuất Phong | 守正出锋 (20866) | 守正出鋒 | khớp |
+| `tactic:tien-tri-nhan-chu` | Tiên Tri Nhận Chủ | 识主先知 (20864; 鲍信, 66%) | 識主先知 | **sửa** từ 先知認主 |
+| `tactic:tri-dinh` | Trí Định | 智定 (trang 张邈) | 智定 | khớp |
+| `tactic:uong-han-di-truu` | Uống Hận Di Trừu | 饮恨遗仇 (20872; 许贡, 168%) | 飲恨遺仇 | **sửa** từ 飲恨遺讎 |
+
+Số trong ngoặc là mã trang `sanzhan.slgsim.com/zh-hans/tactics/<tên>-<mã>/`. Hiệu ứng chữ Hán vẫn là `zhEffects` kind `translation`: trang sanzhan chỉ có mức đầy cấp, không đủ `x→y` để thành `source`.
 
 ### Kết Nghĩa Vườn Đào (Thượng Thư Đài, 2026-11-12)
 
@@ -204,4 +223,6 @@ SGSDeck: chưa có mốc SGSDeck đã xác minh (không dùng cho phe).
 
 ## Đã áp dụng (2026-11-12, nhánh `fix/issue-70-pk-s27-client`)
 
-Promote `issue70-pk-s27-client` (`lookup:453023488b98`), xem changelog 2026-11-12. `faction: "Hán"` cho 26 tướng + `heroNotes` (ghi phe trước mùa, cách chuyển ở Hán Thất); Hà Thị (Cung B của SGSDeck, tăng trưởng Trí 1.66, chân dung), Trình Dục, mục 2–5 và Kết Nghĩa Vườn Đào theo client; 11 tướng + 10 chiến pháp mới. Còn mở: chữ Hán của chiến pháp mới (phiên âm ngược), xung đột Kế Tận của Tuyệt Kế Chiết Mưu (`tactics{}` chưa có khóa này), phạm vi thời gian của phe Hán.
+Promote `issue70-pk-s27-client` (`lookup:453023488b98`), xem changelog 2026-11-12. `faction: "Hán"` cho 26 tướng + `heroNotes` (ghi phe trước mùa, cách chuyển ở Hán Thất); Hà Thị (Cung B của SGSDeck, tăng trưởng Trí 1.66, chân dung), Trình Dục, mục 2–5 và Kết Nghĩa Vườn Đào theo client; 11 tướng + 10 chiến pháp mới.
+
+Sửa sau review PR #71 (2026-11-13): `heroNotes` có `textZh` (bản dịch, gắn cờ "dịch, chưa đối chiếu") nên bản zh không mất ghi chú mùa của 35 tướng; chữ Hán 10 chiến pháp mới đối chiếu sanzhan (sửa 2 tên). Còn mở, theo dõi bằng issue riêng: xung đột Kế Tận và hồi chiêu (`tactics{}` chưa có khóa `conflictsVi`/`cooldown`), phạm vi thời gian của phe Hán, nguồn theo từng bản ghi cho phần chụp 24.547.

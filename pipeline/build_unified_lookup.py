@@ -1055,13 +1055,19 @@ def _apply_client_heroes(document, heroes, tactics, identity):
                     tactic_by_id[values]["lookup"]["inheritedFromIds"].append(owner)
 
     # Ghi chú mùa cho tướng (vd đổi phe trong mùa Hán Diễm Trường Minh): áp sau khi thêm tướng client nên nhận mọi mã.
+    # Mỗi dòng bắt buộc có `textZh` (bản dịch đã duyệt) để bản zh không mất ghi chú; giao diện gắn cờ "dịch, chưa đối chiếu".
     for owner, entry in sorted(document.get("heroNotes", {}).items()):
         row = hero_by_id.get(owner)
-        if row is None or not isinstance(entry, dict) or set(entry) != {"conditions"} or not entry["conditions"]:
+        if (
+            row is None or not isinstance(entry, dict) or set(entry) != {"conditions"} or not isinstance(entry["conditions"], list)
+            or not entry["conditions"] or any(not isinstance(item, dict) or "textZh" not in item for item in entry["conditions"])
+        ):
             raise ValueError(f"client hero note is invalid: {owner}")
-        _validate_conditions(entry["conditions"], owner)
+        _validate_conditions(entry["conditions"], owner, zh=True)
+        for item in entry["conditions"]:
+            _zh_effect_text(item["textZh"], owner)
         row["lookup"]["conditions"] = [*row["lookup"]["conditions"], *(dict(item) for item in entry["conditions"])]
-        record(owner, "clientCapture.seasonNote", entry, "Season note captured from the Global client.")
+        record(owner, "clientCapture.seasonNote", entry, "Season note captured from the Global client; textZh is a reviewed translation.")
     return ledger
 
 
@@ -1911,11 +1917,16 @@ def _walk_vi(value, path=""):
         raise ValueError(f"non-finite number: {path}")
 
 
-def _validate_conditions(rows, owner):
+def _validate_conditions(rows, owner, *, zh=False):
+    """`zh=True` (chỉ ghi chú mùa của tướng) cho phép thêm `textZh`: chữ Hán dịch từ `textVi`, phải có chữ Hán."""
     if not isinstance(rows, list):
         raise ValueError(f"conditions must be an array: {owner}")
     for row in rows:
-        if set(row) != {"kind", "textVi"} or row["kind"] not in {"season", "scenario", "requirement"} or not isinstance(row["textVi"], str):
+        keys = {"kind", "textVi", "textZh"} if zh and isinstance(row, dict) and "textZh" in row else {"kind", "textVi"}
+        if (
+            not isinstance(row, dict) or set(row) != keys or row["kind"] not in {"season", "scenario", "requirement"} or not isinstance(row["textVi"], str)
+            or ("textZh" in keys and (not isinstance(row["textZh"], str) or not re.search(r"[\u3400-\u9fff]", row["textZh"])))
+        ):
             raise ValueError(f"condition shape is invalid: {owner}")
 
 
@@ -2011,7 +2022,7 @@ def _validate_payloads(heroes, tactics, catalog):
             or not _string_list(lookup["missingFields"])
         ):
             raise ValueError(f"hero scalar type is invalid: {row['id']}")
-        _validate_conditions(lookup["conditions"], row["id"])
+        _validate_conditions(lookup["conditions"], row["id"], zh=True)
         _validate_revisions(lookup["revisions"], row["id"])
         if lookup["selfTacticId"] is not None and lookup["selfTacticId"] not in tactic_ids:
             raise ValueError(f"dangling self tactic: {row['id']}")

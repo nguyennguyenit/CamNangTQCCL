@@ -691,18 +691,22 @@ class ClientHeroSupplementTest(unittest.TestCase):
         self.assertIsNone(hero["lookup"]["selfTacticId"])
 
     def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
-        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần."}]}
+        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần.", "textZh": "新賽季：漢陣營，本賽季前為群雄陣營。"}]}
         output = self._build(heroes=[self._hero()], hero_notes={"hero:ha-hau-don": note, "hero:tao-ngang": note})
         rows = {item["id"]: item for item in json.loads((output / "heroes-dict.json").read_bytes())}
         for owner in ("hero:ha-hau-don", "hero:tao-ngang"):
             self.assertEqual(rows[owner]["lookup"]["conditions"][-1], note["conditions"][0])
         ledger = json.loads((output / "ledger.json").read_bytes())
         self.assertTrue(any(item["entityId"] == "hero:ha-hau-don" and item["fieldPath"] == "clientCapture.seasonNote" for item in ledger))
-        for bad in ({"hero:khong-co": note}, {"hero:ha-hau-don": {"conditions": []}}, {"hero:ha-hau-don": {**note, "aliases": []}}):
+        vi_only = {"conditions": [{"kind": "season", "textVi": "Mùa mới."}]}
+        for bad in ({"hero:khong-co": note}, {"hero:ha-hau-don": {"conditions": []}}, {"hero:ha-hau-don": {**note, "aliases": []}}, {"hero:ha-hau-don": vi_only}):
             with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "hero note is invalid"):
                 self._build(hero_notes=bad)
-        with self.assertRaisesRegex(ValueError, "condition shape"):
-            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [{"kind": "mùa", "textVi": "x"}]}})
+        for row in ({"kind": "mùa", "textVi": "x", "textZh": "賽季"}, {"kind": "season", "textVi": "x", "textZh": "no han"}):
+            with self.subTest(row=row), self.assertRaisesRegex(ValueError, "condition shape"):
+                self._build(hero_notes={"hero:ha-hau-don": {"conditions": [row]}})
+        with self.assertRaisesRegex(ValueError, "zhEffects.text is invalid"):
+            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [{"kind": "season", "textVi": "x", "textZh": "<b>賽季</b>"}]}})
 
     def test_role_tags_only_fill_empty_tags(self):
         with self.assertRaisesRegex(ValueError, "existing tag"):
