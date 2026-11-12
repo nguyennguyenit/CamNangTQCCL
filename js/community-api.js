@@ -224,15 +224,22 @@ let sessionPromise = null;
  * `probe: false` (header trên trang thường): chỉ hỏi server khi trình duyệt từng đăng nhập,
  * để khách vãng lai không tốn một lượt gọi API mỗi trang. Trang cộng đồng luôn `probe: true`.
  * `fresh: true` bỏ kết quả đã nhớ và hỏi lại: trang trả về từ bfcache có thể giữ phiên của tài khoản đã đăng xuất
- * hoặc đã đổi ở tab khác.
+ * hoặc đã đổi ở tab khác. Lượt hỏi bị lượt `fresh` thay thế vẫn trả kết quả cho người gọi nó, nhưng không ghi hint và
+ * không phát `SESSION_EVENT` (kết quả cũ về muộn không được đè phiên mới).
  */
 export function loadSession({ probe = true, fresh = false } = {}) {
+  const replaced = fresh && sessionPromise !== null;
   if (fresh) sessionPromise = null;
   if (sessionPromise) return sessionPromise;
-  if (!probe && !readHint()) return Promise.resolve(null);
+  if (!probe && !readHint()) {
+    // Hint đã mất (đăng xuất ở tab khác) trong khi trang còn nhớ một phiên: báo header về trạng thái khách.
+    if (replaced) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
+    return Promise.resolve(null);
+  }
   const pending = api('/api/me').then(
     (body) => {
       const user = body?.user && typeof body.user === 'object' ? body.user : null;
+      if (sessionPromise !== pending) return user;
       writeHint(user ? '1' : null);
       document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user } }));
       return user;
