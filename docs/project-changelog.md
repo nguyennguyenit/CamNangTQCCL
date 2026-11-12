@@ -18,7 +18,11 @@
 - Chưa dựng.
 
 ### Bài viết + Đội chuẩn có kho
-- Chưa dựng.
+- Changed: thẻ Đội chuẩn có kho hiện tên món thiếu ngay trên thẻ ("**Thiếu:** tướng …, chiến pháp …") dưới badge "Ráp được / Thiếu N món" có icon, theo artboard `MainKho` (+ Mobile); trước đây tên món chỉ nằm trong `title` nên màn hình cảm ứng và trình đọc màn hình không đọc được (issue #69 mục 1). Có ở cả Thẻ / Thẻ gọn / Bảng và trang mùa cũ; `title` giữ làm gợi ý khi rê chuột.
+- Changed: thanh kho `/doi-chuan/` thành khung thẻ: câu "ráp được X / Y", thanh đo `role="meter"` (ráp được / thiếu 1–2 món), chú giải ba mức, nguồn kho "Theo kho đã lưu trên máy này: N tướng · M chiến pháp. Sửa kho" (kho tài khoản ghi rõ), nhãn "Lọc và sắp theo kho", số đội trên nút "Ráp được" / "Thiếu tối đa 2", ghi chú khi đang sắp "Dễ ráp nhất". Máy chưa có kho: khung viền đứt có biểu tượng kho, dòng dẫn sang Gợi ý đội và nút "Nhập kho". `buildListCoverage` trả thêm trong `summary` số đội `near` (thiếu 1–2 món), `far` (thiếu từ 3 món) và `roster` (cỡ kho đã đọc); `rosterSummaryNode` vẽ cả khối khi có các trường đó (`{ line: true }` cho trang mùa cũ giữ một câu), `rosterHintNode` trả fragment ba phần tử; `js/team-filter-section.js` không đổi.
+- Changed: trang bài viết `/bai-viet/<slug>/` (và `/zh/`) dựng theo artboard `BaiVietDetail` (+ Mobile): kicker "Bài viết · <chủ đề đầu>", tiêu đề serif lớn, dòng meta có phút đọc, chip chủ đề + link bản dịch, ảnh bìa 21:9, hộp Tóm tắt, mục lục ở cột phụ dính có số thứ tự (desktop ≥1100px) hoặc khối mở/đóng sau Tóm tắt (mobile), thân bài (h2 có vạch, trích dẫn có dấu “, bảng trong khung cuộn ngang có tên và tiêu đề hàng), FAQ dạng thẻ mở/đóng, khối "Trong cẩm nang" chọn mục theo chủ đề bài (số đội tính lúc build), bài liên quan hai cột. SEO giữ nguyên (canonical, hreflang, BlogPosting, BreadcrumbList, FAQPage).
+- Added: `js/blog-toc-current.js` đánh dấu mục đang đọc trong mục lục (`aria-current="location"`); `src/lib/blog-guide-link.ts`; `src/components/blog/BlogRelatedCard.astro`; bảng Markdown bài viết đổi căn lề cột sang class (không còn `style` nội tuyến).
+- Added: token `type.bai-viet-*` (14), `type.kho-summary`, `size.bai-viet-page|col|side|crumb`, `size.kho-meter`; component `the-doi-kho`, `bai-viet-chi-tiet` (sau neo `components.the-doi`). `scripts/design-canvas/bai-viet-fixture.mjs` chạy dev server có bài viết mẫu (API `/api/posts` cục bộ) cho so ảnh và e2e; không ghi vào dữ liệu thật.
 
 ## 2026-11-11 (Đội chuẩn: badge kho trên danh sách; sửa chữ "null" ở Độ phủ kho)
 
