@@ -12,7 +12,12 @@
 - Chưa dựng.
 
 ### Quản trị
-- Chưa dựng.
+- Changed: 12 artboard khu `/quan-tri/` dựng vào site (`AdminTeamsMoi`, `AdminAnalyze`, `AdminAIFeatures`, `AdminUsersMoi`, `AdminUserBanMoi`, `AdminAuditMoi` + Mobile); CSS trong khối `moi:quan-tri`, component mới sau neo `trinh-soan-bai`.
+- Changed: Nhật ký nhóm theo ngày ("Hôm nay · 11 thg 11, 2026", "Hôm qua · …", ngày khác) theo múi giờ của người xem, bảng Giờ / Hành động · Đối tượng / Người làm / Kết quả; "Tải thêm" nối vào nhóm ngày đang có, không lặp đầu nhóm.
+- Changed: hộp thoại Khoá tài khoản chọn thời hạn bằng thẻ radio, hiện "Tự mở khoá lúc … nếu khoá ngay bây giờ" theo thời hạn đang chọn, nút xác nhận đổi nhãn "Khoá 1 ngày / 7 ngày / 30 ngày / vĩnh viễn"; request vẫn `{duration, reason}`. Khu Người dùng dạng bảng, lọc trạng thái bằng chip (`status=banned|deleting|…`), dòng đếm không đoán tổng khi còn trang sau.
+- Changed: Soi đội hiện tên tiếng Việt (bản zh: chữ Hán) cho tướng/chiến pháp/binh thư của đội xác nhận thay id thô, tra bằng từ điển Đội cộng đồng có sẵn; id không tra được hiện id kèm "chưa tra được"; nhãn "đã sửa" khi ô khác ô AI đọc (cùng quy tắc với cột "% ô sửa", bỏ dòng chiến pháp tự mang), "Để trống" cho ô bỏ trống.
+- Changed: khu AI có thẻ tóm tắt Tính năng (Chạy được / Báo lỗi suy từ cấu hình), dòng nối mắt xích, cảnh báo nhà cung cấp đang tắt, câu "Có thay đổi chưa lưu" và nút Lưu ở đầu + cuối khu. Đội cộng đồng: bộ lọc trạng thái dạng nhóm nút `aria-pressed`, thẻ mùa đang mở + form mở mùa, "Xem/Ẩn phân tích" có `aria-expanded`.
+- Tests: `tests-e2e/admin-nguoi-dung-moi.spec.mjs`, `admin-soi-doi-ai-moi.spec.mjs`, `admin-doi-cong-dong-moi.spec.mjs`.
 
 ### Đội của tôi
 - Chưa dựng.

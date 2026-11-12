@@ -461,7 +461,7 @@ test("quản trị: 409 not_pending làm mới hàng; lọc trạng thái gọi 
   await expect(panel.getByRole("status").filter({ hasText: "không còn chờ duyệt" })).toBeVisible();
   await expect(panel.locator(".adm-team")).toHaveCount(1);
 
-  await panel.getByLabel("Trạng thái").selectOption("approved");
+  await panel.getByRole("group", { name: "Trạng thái" }).getByRole("button", { name: "Đã duyệt" }).click();
   await expect.poll(() => calls.some((call) => call.path === "/api/admin/community-teams" && call.search.get("status") === "approved")).toBe(true);
   await expect(panel.locator(".adm-team")).toHaveCount(1);
   await expect(panel.locator(".adm-team").first()).toContainText("Đội t3");
@@ -481,7 +481,7 @@ test("quản trị: gỡ đội đã duyệt cần lý do, gọi DELETE {reason}
   });
   await page.goto("/quan-tri/#doi-cong-dong");
   const panel = page.getByRole("region", { name: "Đội cộng đồng", exact: true });
-  await panel.getByLabel("Trạng thái").selectOption("approved");
+  await panel.getByRole("group", { name: "Trạng thái" }).getByRole("button", { name: "Đã duyệt" }).click();
   const rows = panel.locator(".adm-team");
   await expect(rows).toHaveCount(2);
   await rows.first().getByRole("button", { name: "Gỡ đội" }).click();
@@ -516,7 +516,7 @@ test("quản trị: lọc 'Đang xoá dở' liệt kê đội xoá dở, Thử x
   });
   await page.goto("/quan-tri/#doi-cong-dong");
   const panel = page.getByRole("region", { name: "Đội cộng đồng", exact: true });
-  await panel.getByLabel("Trạng thái").selectOption("deleting");
+  await panel.getByRole("group", { name: "Trạng thái" }).getByRole("button", { name: "Đang xoá dở" }).click();
   await expect.poll(() => calls.some((call) => call.path === "/api/admin/community-teams" && call.search.get("status") === "deleting")).toBe(true);
   const row = panel.locator(".adm-team").first();
   await expect(row).toContainText("Đội t5");

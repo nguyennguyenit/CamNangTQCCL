@@ -111,7 +111,7 @@ Quy tắc chống xung đột (để 4 PR gộp theo thứ tự bất kỳ): m�
 
 - **Đội cộng đồng** (`DoiCongDongMoi`, `DoiCongDongDetailMoi`, `DoiCongDongNewMoi`, `DoiCongDongMineMoi`, `BanNoticeMoi` + Mobile): chưa dựng · neo `components.chip-chon-mot` · khối CSS `/* moi:doi-cong-dong:start */` · cặp `moi-pairs/doi-cong-dong.mjs`
 
-- **Quản trị** (`AdminTeamsMoi`, `AdminAnalyze`, `AdminAIFeatures`, `AdminUsersMoi`, `AdminUserBanMoi`, `AdminAuditMoi` + Mobile): chưa dựng · neo `components.trinh-soan-bai` · khối CSS `/* moi:quan-tri:start */` · cặp `moi-pairs/quan-tri.mjs`
+- **Quản trị** (`AdminTeamsMoi`, `AdminAnalyze`, `AdminAIFeatures`, `AdminUsersMoi`, `AdminUserBanMoi`, `AdminAuditMoi` + Mobile): đã dựng 2026-11-13 (nhánh `feat/thiet-ke-moi-quan-tri`) — Nhật ký nhóm theo ngày theo múi giờ người xem, Người dùng dạng bảng + chip trạng thái, hộp thoại Khoá có dòng ngày hết khoá và nhãn nút theo thời hạn, Soi đội hiện tên tiếng Việt (id không tra được hiện id + "chưa tra được"), AI có thẻ tóm tắt Tính năng, Đội cộng đồng có bộ lọc nút và phân tích gập mở; JS tách `js/community-admin-{audit,dialogs,scan,ai}.js` · neo `components.trinh-soan-bai` (sau neo: `nhat-ky-theo-ngay`, `bang-nguoi-dung`, `ho-so-nguoi-dung`, `hop-thoai-khoa`, `doi-cho-duyet`, `doi-chieu-soi-doi`, `ty-le-soi-doi`, `nut-chon-trang-thai`, `chuoi-failover-ai`) · khối CSS `/* moi:quan-tri:start */` (ba mốc con theo khu) · cặp `moi-pairs/quan-tri.mjs` (gộp `moi-pairs/quan-tri/*.mjs`, 12 cặp)
 
 - **Đội của tôi** (`DoiCuaToi` + Mobile): chưa dựng · neo `components.hop-xac-nhan` · khối CSS `/* moi:doi-cua-toi:start */` · cặp `moi-pairs/doi-cua-toi.mjs`
 

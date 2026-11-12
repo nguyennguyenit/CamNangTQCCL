@@ -418,13 +418,13 @@ test("admin cấu hình AI: thêm nhà cung cấp + model tự thêm, chuỗi ri
   await expect(section("battleReport")).toContainText("Chưa cấu hình");
   await expect(section("teamScan")).toContainText("Chạy được");
 
-  // Trần tổng nhỏ hơn timeout -> chặn trước khi gửi.
+  // Trần tổng nhỏ hơn timeout -> chặn trước khi gửi. Khu có hai nút Lưu (đầu khu và thanh cuối), cùng một thao tác.
   await section("battleReport").getByLabel("Trần tổng (giây)").fill("10");
-  await panel.getByRole("button", { name: "Lưu", exact: true }).click();
+  await panel.getByRole("button", { name: "Lưu", exact: true }).first().click();
   await expect(panel.getByRole("status")).toContainText("trần tổng phải là số giây nguyên");
   expect(calls.some((call) => call.method === "PUT")).toBe(false);
   await section("battleReport").getByLabel("Trần tổng (giây)").fill("45");
-  await panel.getByRole("button", { name: "Lưu", exact: true }).click();
+  await panel.getByRole("button", { name: "Lưu", exact: true }).first().click();
 
   const zenId = expect.any(String);
   await expect.poll(() => calls.find((call) => call.method === "PUT")?.body).toEqual({
@@ -533,8 +533,12 @@ test("root: khu Người dùng liệt kê, lọc có debounce, dòng đủ thôn
   await panel.getByLabel("Vai trò").selectOption("moderator");
   await expect(rows).toHaveCount(1);
   await panel.getByLabel("Vai trò").selectOption("");
-  await panel.getByLabel("Trạng thái", { exact: true }).selectOption("banned");
+  const states = panel.getByRole("group", { name: "Trạng thái" });
+  await states.getByRole("button", { name: "Đang bị khoá" }).click();
   await expect(rows).toHaveCount(2);
+  await expect(states.getByRole("button", { name: "Đang bị khoá" })).toHaveAttribute("aria-pressed", "true");
+  await expect(states.getByRole("button", { name: "Tất cả" })).toHaveAttribute("aria-pressed", "false");
+  expect(calls.filter((call) => call.path === "/api/admin/users").at(-1).search.get("status")).toBe("banned");
 });
 
 test("root: khoá người dùng bắt buộc lý do, gửi {duration, reason}, rồi mở khoá", async ({ page }) => {
@@ -550,14 +554,15 @@ test("root: khoá người dùng bắt buộc lý do, gửi {duration, reason}, 
 
   await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Khoá tài khoản" });
-  await expect(dialog.getByLabel("Thời hạn").locator("option")).toHaveText(["1 ngày", "7 ngày", "30 ngày", "Vĩnh viễn"]);
-  await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+  await expect(dialog.getByRole("radio")).toHaveCount(4);
+  await expect(dialog.getByRole("radio", { name: "1 ngày" })).toBeChecked();
+  await dialog.getByRole("button", { name: "Khoá 1 ngày" }).click();
   await expect(dialog.getByRole("alert")).toContainText("lý do");
   expect(calls.some((call) => call.path === "/api/admin/users/u1/ban")).toBe(false);
 
-  await dialog.getByLabel("Thời hạn").selectOption("7d");
+  await dialog.getByRole("radio", { name: "7 ngày" }).check();
   await dialog.getByLabel("Lý do").fill("Spam liên tục");
-  await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+  await dialog.getByRole("button", { name: "Khoá 7 ngày" }).click();
   await expect.poll(() => calls.find((call) => call.path === "/api/admin/users/u1/ban")?.body).toEqual({ duration: "7d", reason: "Spam liên tục" });
   await expect(dialog).toBeHidden();
   await expect(panel.getByText("Đã khoá tài khoản.")).toBeVisible();
@@ -650,7 +655,7 @@ test("kiểm duyệt viên: không thao tác trên KDV khác, root; không đè 
     await panel.getByRole("button", { name: "Khoá…", exact: true }).click();
     const dialog = page.getByRole("dialog", { name: "Khoá tài khoản" });
     await dialog.getByLabel("Lý do").fill(reason);
-    await dialog.getByRole("button", { name: "Khoá", exact: true }).click();
+    await dialog.getByRole("button", { name: "Khoá 1 ngày" }).click();
     await expect(dialog.getByRole("alert")).toHaveText(message);
     await dialog.getByRole("button", { name: "Huỷ" }).click();
   }
@@ -684,8 +689,10 @@ test("/zh/quan-tri/: nhãn tiếng Trung cho khu Người dùng và danh tính",
   await expect(nav.getByRole("link", { name: "用户" })).toHaveAttribute("aria-current", "page");
   const panel = page.getByRole("region", { name: "用户", exact: true });
   await expect(panel.getByLabel("搜索")).toBeVisible();
-  const tops = await Promise.all(["搜索", "角色", "状态"].map(async (name) => (await panel.getByLabel(name, { exact: true }).boundingBox()).y));
+  // Tìm kiếm và Vai trò cùng hàng; chip Trạng thái xuống hàng riêng như artboard.
+  const tops = await Promise.all(["搜索", "角色"].map(async (name) => (await panel.getByLabel(name, { exact: true }).boundingBox()).y));
   expect(Math.max(...tops) - Math.min(...tops)).toBeLessThan(2);
+  await expect(panel.getByRole("group", { name: "状态" }).getByRole("button", { name: "已封禁" })).toBeVisible();
   await expect(panel.getByLabel("角色")).toBeVisible();
   await expect(panel.locator(".adm-user").first()).toContainText("x***@example.com");
 });
