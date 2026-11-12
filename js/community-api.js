@@ -228,12 +228,11 @@ let sessionPromise = null;
  * không phát `SESSION_EVENT` (kết quả cũ về muộn không được đè phiên mới).
  */
 export function loadSession({ probe = true, fresh = false } = {}) {
-  const replaced = fresh && sessionPromise !== null;
   if (fresh) sessionPromise = null;
   if (sessionPromise) return sessionPromise;
   if (!probe && !readHint()) {
-    // Hint đã mất (đăng xuất ở tab khác) trong khi trang còn nhớ một phiên: báo header về trạng thái khách.
-    if (replaced) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
+    // Hint đã mất (đăng xuất ở tab khác): header có thể còn hiện phiên cũ (kể cả khi lượt hỏi trước đó lỗi), báo về khách.
+    if (fresh) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
     return Promise.resolve(null);
   }
   const pending = api('/api/me').then(

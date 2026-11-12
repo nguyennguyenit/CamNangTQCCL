@@ -16,8 +16,8 @@ document.addEventListener("community:session", (event) => events.push(event.deta
 
 /** `/api/me` giả: mỗi lượt gọi chờ đến khi test trả lời, để điều khiển thứ tự hoàn tất. */
 const pending = [];
-globalThis.fetch = () => new Promise((resolve) => {
-  pending.push((user) => resolve(new Response(JSON.stringify({ user }), { headers: { "content-type": "application/json" } })));
+globalThis.fetch = () => new Promise((resolve, reject) => {
+  pending.push((user, error) => (error ? reject(error) : resolve(new Response(JSON.stringify({ user }), { headers: { "content-type": "application/json" } }))));
 });
 const settle = () => new Promise((resolve) => setTimeout(resolve, 0));
 
@@ -45,5 +45,17 @@ test("fresh khi hint đã mất (đăng xuất ở tab khác): trả null, khôn
   events.length = 0;
   assert.equal(await loadSession({ probe: false, fresh: true }), null);
   assert.equal(pending.length, 0);
+  assert.deepEqual(events, [null]);
+});
+
+test("lượt fresh lỗi mạng rồi đăng xuất ở tab khác: lượt fresh sau vẫn báo header về khách", async () => {
+  store.set(HINT_KEY, "1");
+  events.length = 0;
+  const failing = loadSession({ probe: false, fresh: true });
+  assert.equal(pending.length, 1);
+  pending.shift()(undefined, new TypeError("network"));
+  await assert.rejects(failing);
+  store.delete(HINT_KEY);
+  assert.equal(await loadSession({ probe: false, fresh: true }), null);
   assert.deepEqual(events, [null]);
 });
