@@ -176,3 +176,57 @@ test("12. kho lưu tên Hán-Việt cũ của chiến pháp ra cùng id với en
   });
   assert.ok(result.portfolioTeams.some((entry) => entry.team.id === target.id));
 });
+
+/* ---------- `teams`: số món thiếu của từng đội (danh sách Đội chuẩn dùng để gắn badge) ---------- */
+
+const entryOf = (coverage, id) => coverage.teams.find((entry) => entry.team.id === id);
+
+test("13. teams: đội đủ kho có missingCount 0 và missing rỗng", () => {
+  const t = team("t", "T0", [["Tào Tháo", ["Phong Thiên"]]]);
+  const entry = entryOf(cover([t], { heroes: ["Tào Tháo"], tactics: ["Phong Thiên"] }), "t");
+  assert.equal(entry.tier, "T0");
+  assert.equal(entry.missingCount, 0);
+  assert.deepEqual(entry.missing, []);
+});
+
+test("14. teams: thiếu 1 tướng và 2 chiến pháp ghi đủ 3 món theo thứ tự ô", () => {
+  const t = team("t", "T1", [["Tào Tháo", ["Phong Thiên"]], ["Lưu Bị", ["Hỏa Công", "Thủy Công"]]]);
+  const entry = entryOf(cover([t], { heroes: ["Tào Tháo"], tactics: ["Phong Thiên"] }), "t");
+  assert.equal(entry.missingCount, 3);
+  assert.deepEqual(entry.missing, [
+    { kind: "hero", name: "Lưu Bị" },
+    { kind: "tactic", name: "Hỏa Công" },
+    { kind: "tactic", name: "Thủy Công" },
+  ]);
+});
+
+test("15. teams: ô unresolved luôn tính thiếu và mang cờ unresolved", () => {
+  const t = team("t", "T0", [["Tào Tháo", [{ name: "Chữ lạ", alternatives: [], unresolved: true, raw: "未知" }]]]);
+  const entry = entryOf(cover([t], { heroes: ["Tào Tháo"], tactics: ["Chữ lạ"] }), "t");
+  assert.equal(entry.missingCount, 1);
+  assert.deepEqual(entry.missing, [{ kind: "tactic", name: "Chữ lạ", unresolved: true }]);
+});
+
+test("16. teams khớp tiers: missingCount 0 ≡ complete, missingCount 1 ≡ missingOne; giữ thứ tự đầu vào", () => {
+  const list = [
+    team("a", "T0", [["Tào Tháo", ["Phong Thiên"]]]),
+    team("b", "T1", [["Tào Tháo", []], ["Lưu Bị", []]]),
+    team("c", "T0", [["Lưu Bị", ["Hỏa Công"]]]),
+    team("d", "", [["Tào Tháo", []]]),
+  ];
+  const coverage = cover(list, { heroes: ["Tào Tháo"], tactics: ["Phong Thiên"] });
+  assert.deepEqual(coverage.teams.map((entry) => entry.team.id), ["a", "b", "c", "d"]);
+  const byCount = (count) => coverage.teams.filter((entry) => entry.missingCount === count).map((entry) => entry.team.id).sort();
+  assert.deepEqual(byCount(0), coverage.tiers.flatMap((entry) => ids(entry.complete)).sort());
+  assert.deepEqual(byCount(1), coverage.tiers.flatMap((entry) => ids(entry.missingOne)).sort());
+  assert.deepEqual(entryOf(coverage, "b").missing, [group(coverage, "T1").missingOne[0].missing]);
+});
+
+test("17. teams: kho rỗng thì mọi đội thiếu đúng số ô có tên", () => {
+  const list = [
+    team("a", "T0", [["Tào Tháo", ["Phong Thiên", "Hỏa Công"]], ["Lưu Bị", []]]),
+    team("b", "T0", [["Tôn Quyền", []]]),
+  ];
+  const coverage = cover(list);
+  assert.deepEqual(coverage.teams.map((entry) => entry.missingCount), [4, 1]);
+});

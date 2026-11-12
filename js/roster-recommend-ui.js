@@ -1343,18 +1343,17 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       const paint = () => {
         const open = coverageOpen && coverage.tiers.find((entry) => entry.tier === coverageOpen.tier);
         const rows = open ? (coverageOpen.kind === "complete" ? open.complete.map((team) => [team, null]) : open.missingOne.map((item) => [item.team, item.missing])) : [];
-        body.replaceChildren(
-          open
-            ? el("div", { class: "roster-coverage-detail", role: "region", "aria-label": L(`Danh sách đội ${tierText(open.tier)}`, `${tierText(open.tier)} 队伍列表`) }, [
+        // `replaceChildren` đổi đối số không phải Node thành chữ (null → "null"), nên chưa mở ô nào thì không truyền gì.
+        body.replaceChildren(...(open
+          ? [el("div", { class: "roster-coverage-detail", role: "region", "aria-label": L(`Danh sách đội ${tierText(open.tier)}`, `${tierText(open.tier)} 队伍列表`) }, [
               el("h3", { class: "roster-coverage-detail-title" }, coverageOpen.kind === "complete"
                 ? L(`${tierText(open.tier)} · Ráp đủ khi đứng riêng`, `${tierText(open.tier)} · 单独可组建`)
                 : L(`${tierText(open.tier)} · Thiếu đúng 1 món`, `${tierText(open.tier)} · 恰好缺 1 件`)),
               rows.length
                 ? el("ul", { class: "roster-coverage-list" }, rows.map(([team, missing]) => detailRow(team, missing)))
                 : el("p", { class: "roster-empty" }, L("Không có đội nào.", "暂无队伍。")),
-            ])
-            : null,
-        );
+            ])]
+          : []));
       };
       const cell = (tier, kind, count) => {
         const active = coverageOpen?.tier === tier && coverageOpen.kind === kind;

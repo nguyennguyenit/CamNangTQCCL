@@ -20,6 +20,25 @@
 - Tên chữ Hán của 10 chiến pháp mới và các trường client không hiện (xung đột của Tuyệt Kế Chiết Mưu là Kế Tận nhưng `tactics{}` chưa có khóa `conflictsVi`).
 - Phe Hán chỉ trong PK-S27 hay giữ lâu dài: client không ghi. Hết mùa cần xem lại `faction` và `heroNotes`.
 
+## 2026-11-11 (Đội chuẩn: badge kho trên danh sách; sửa chữ "null" ở Độ phủ kho)
+
+### Added
+- Danh sách `/doi-chuan/` và trang mùa cũ gắn badge "Ráp được / Thiếu N món" theo kho đã lưu trên máy, kèm dòng tóm tắt "ráp được X / Y đội của mùa" (#62). `/doi-chuan/` có lọc `?kho=rap-duoc|thieu-2` và sắp `?xep=de-rap` (trong từng bậc). Máy chưa có kho: không badge, một dòng dẫn sang Gợi ý đội.
+- `js/roster-list-coverage.js` (đọc kho trên máy, tính số món thiếu theo `sourceConfigId`), `js/roster-list-badges.js` (hiển thị), `js/season-page-roster-badges.js` (entry trang mùa cũ). `buildRosterCoverage` trả thêm `teams` (mọi đội kèm `missingCount` và món thiếu); `tiers`/`progress`/`unmapped` giữ nguyên.
+
+### Changed
+- `projectRecommendedRows` nhận tham số thứ tư tùy chọn (độ phủ kho); không truyền thì kết quả như cũ. `readRecommendedQuery` trả thêm `rosterFilter`/`rosterSort`; tham số `sort` cũ vẫn bị gỡ.
+- Badge gắn lên DOM đã dựng thay vì đổi cây view, nên danh sách dựng sẵn lúc build không đổi. Trang mùa cũ có thêm một thẻ script module.
+
+### Fixed
+- Khối "Độ phủ kho" của Gợi ý đội hiện chữ `null` khi chưa mở ô nào (#59): `replaceChildren(null)` đổi `null` thành text node.
+- Phạm vi "Tất cả" (`?season=all`) của `/doi-chuan/` mất badge, tóm tắt và nút lọc/sắp theo kho: `buildListCoverage` nay tính từng mùa rồi gộp; tóm tắt ghi "đội của mọi mùa".
+- Trang trả về từ bfcache (danh sách `/doi-chuan/` và trang mùa cũ) gỡ badge cũ, hỏi lại phiên (`loadSession({fresh: true})`) và đọc lại kho, nên đổi tài khoản/đăng xuất/xoá kho ở tab khác không còn để lại badge của kho trước.
+
+### Ghi chú
+- Người đã đăng nhập chỉ thấy badge sau khi mở Gợi ý đội một lần trên máy đó (nơi tạo cache kho tài khoản); trang danh sách không tự đồng bộ kho.
+- `node scripts/design-tokens.mjs --check` còn 4 lỗi có sẵn từ trước (`--f-han`, `--f-han-select`, hai `font-weight: 600` của khối Độ phủ kho); không thuộc thay đổi này.
+
 ## 2026-11-11 (community-worker: giảm CPU kiểm phiên, mục tiêu dưới 10 ms)
 
 ### Fixed
@@ -31,6 +50,7 @@
 ### Không làm
 - `session.cookieCache` của Better Auth: đo cục bộ (Better Auth thật, D1 giả) CPU gần như bằng đọc D1 khi đã tái sử dụng instance, nhưng làm khoá, thu hồi phiên và hạ quyền chậm tới hết `maxAge`, và khiến throttle `last_seen_at` đọc snapshot cũ nên ghi D1 lặp lại.
 
+
 ## 2026-11-06 (Soi đội: mỗi tên một ô ở tab duyệt mẫu)
 
 ### Fixed
@@ -38,6 +58,7 @@
 
 ### Không làm
 - Thử thêm vào prompt `analyzeTeamImage` câu nhắc giữ đủ dấu tiếng Việt và tiền tố `Tinh •`/`Chuyển •`. `eval:vision` trên `battle-vi-1` (`deepseek-v4.1-flash`, effort off, 3 lượt mỗi bản): dòng chiến pháp chép đúng nguyên văn 26/54 → 25/54, ID chiến pháp khớp 24/27 → 19/27; `battle-simplified-1` không đổi. Không cải thiện nên bỏ, prompt giữ nguyên.
+
 
 ## 2026-11-06 (CI/CD: push `main` tự deploy site và tự release Research MCP)
 
