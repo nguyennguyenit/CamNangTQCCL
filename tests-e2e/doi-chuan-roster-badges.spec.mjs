@@ -48,6 +48,9 @@ const bar = (page) => section(page).locator(".reference-roster-bar");
 const card = (page, configId) => section(page).locator(`[data-reference-key="${configId}"]`);
 const badge = (locator) => locator.locator(".roster-stock-badge");
 const waitForCoverage = (page) => expect(bar(page)).toHaveAttribute("data-state", "ready");
+/** Nút lọc kèm số đội ("Ráp được 4", "Thiếu tối đa 2 10" — artboard MainKho). */
+const READY_CHIP = /^Ráp được \d+$/;
+const NEAR_CHIP = /^Thiếu tối đa 2 \d+$/;
 const noHorizontalOverflow = (page) => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth);
 
 test.describe("Đội chuẩn: badge kho", () => {
@@ -56,7 +59,7 @@ test.describe("Đội chuẩn: badge kho", () => {
   // Đội còn thiếu ít món nhất (nhưng chưa đủ) của mùa: dùng để kiểm chữ "Thiếu N món".
   const missingTeam = [...expected.byConfigId].filter(([, entry]) => entry.missingCount > 0).sort((a, b) => a[1].missingCount - b[1].missingCount)[0];
 
-  test("có kho: đội đủ hiện Ráp được, đội thiếu hiện đúng số món và tên món trong title", async ({ page }) => {
+  test("có kho: đội đủ hiện Ráp được, đội thiếu hiện đúng số món, tên món hiện trên thẻ và trong title", async ({ page }) => {
     await seedRoster(page, roster);
     await page.goto("/doi-chuan/");
     await waitForCoverage(page);
@@ -67,6 +70,8 @@ test.describe("Đội chuẩn: badge kho", () => {
     const [missingId, entry] = missingTeam;
     await expect(badge(card(page, missingId))).toHaveText(`Thiếu ${entry.missingCount} món`);
     await expect(badge(card(page, missingId))).toHaveAttribute("title", /Thiếu: /);
+    await expect(card(page, missingId).locator(".roster-stock-missing")).toHaveText(/^Thiếu: (tướng|chiến pháp) /);
+    await expect(card(page, READY_TEAMS[0]).locator(".roster-stock-missing")).toHaveCount(0);
   });
 
   test("tóm tắt bằng tổng Ráp đủ của khối Độ phủ kho ở Gợi ý đội với cùng kho", async ({ page }) => {
@@ -89,19 +94,19 @@ test.describe("Đội chuẩn: badge kho", () => {
     await seedRoster(page, roster);
     await page.goto("/doi-chuan/");
     await waitForCoverage(page);
-    await bar(page).getByRole("button", { name: "Ráp được", exact: true }).click();
+    await bar(page).getByRole("button", { name: READY_CHIP }).click();
     await expect(page).toHaveURL(/[?&]kho=rap-duoc/);
     const check = async () => {
       await waitForCoverage(page);
       await expect(section(page).locator("[data-reference-key]")).toHaveCount(expected.summary.complete);
       await expect(section(page).locator('.roster-stock-badge[data-missing-count="0"]')).toHaveCount(expected.summary.complete);
-      await expect(bar(page).getByRole("button", { name: "Ráp được", exact: true })).toHaveAttribute("aria-pressed", "true");
+      await expect(bar(page).getByRole("button", { name: READY_CHIP })).toHaveAttribute("aria-pressed", "true");
     };
     await check();
     await page.reload();
     await check();
 
-    await bar(page).getByRole("button", { name: "Thiếu tối đa 2", exact: true }).click();
+    await bar(page).getByRole("button", { name: NEAR_CHIP }).click();
     await expect(page).toHaveURL(/[?&]kho=thieu-2/);
     const near = [...expected.byConfigId.values()].filter((entry) => entry.missingCount <= 2).length;
     await expect(section(page).locator("[data-reference-key]")).toHaveCount(near);
@@ -142,7 +147,8 @@ test.describe("Đội chuẩn: badge kho", () => {
     page.on("request", (request) => requests.push(request.url()));
     await page.goto("/doi-chuan/?kho=rap-duoc&xep=de-rap");
     await expect(bar(page)).toHaveAttribute("data-state", "empty");
-    await expect(bar(page).locator('a[href="/goi-y-doi-tu-kho/"]')).toBeVisible();
+    await expect(bar(page).locator('.reference-roster-hint a[href="/goi-y-doi-tu-kho/"]')).toBeVisible();
+    await expect(bar(page).getByRole("link", { name: "Nhập kho" })).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
     await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
     await expect(bar(page).getByRole("button")).toHaveCount(0);
     await expect(section(page).locator("[data-reference-key]")).toHaveCount(records.filter((record) => record.sourceSeasonId === SEASON).length);
@@ -231,7 +237,7 @@ test("phạm vi Tất cả: có badge và tóm tắt gộp mọi mùa", async ({
   await expect(bar(page).locator(".reference-roster-summary")).toContainText(`${expected.summary.complete} / ${expected.summary.total}`);
   await expect(bar(page).locator(".reference-roster-summary")).toContainText("mọi mùa");
   expect(await section(page).locator(".roster-stock-badge").count()).toBeGreaterThan(0);
-  await bar(page).getByRole("button", { name: "Ráp được", exact: true }).click();
+  await bar(page).getByRole("button", { name: READY_CHIP }).click();
   await expect(page).toHaveURL(/[?&]kho=rap-duoc/);
   await expect(section(page).locator("[data-reference-key]")).toHaveCount(expected.summary.complete);
 });

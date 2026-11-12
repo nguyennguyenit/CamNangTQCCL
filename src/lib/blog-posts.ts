@@ -206,9 +206,60 @@ function safeImageSrc(src: unknown): string | null {
   }
 }
 
+type HastNode = { type: string; tagName?: string; value?: string; properties?: HastProps; children?: HastNode[] };
+
+const hastText = (node: HastNode): string =>
+  node.type === 'text' ? node.value ?? '' : (node.children ?? []).map(hastText).join('');
+
+/** Căn lề cột GFM (`style="text-align: …"`) đổi thành class `bv-align-<lề>`: trang không dùng style nội tuyến. */
+function alignedCell(cell: HastNode, rowHeader: boolean): HastNode {
+  const { style, className, ...rest } = cell.properties ?? {};
+  const align = typeof style === 'string' ? /text-align:\s*(left|right|center)/u.exec(style)?.[1] : null;
+  const classes = [...(Array.isArray(className) ? className : []), ...(align ? [`bv-align-${align}`] : [])];
+  return {
+    ...cell,
+    tagName: rowHeader ? 'th' : cell.tagName,
+    properties: { ...rest, ...(rowHeader ? { scope: 'row' } : {}), ...(classes.length ? { className: classes } : {}) },
+  };
+}
+
+/**
+ * Bảng Markdown → khung cuộn ngang có tên (`role=region`, `tabindex=0` để cuộn bằng bàn phím), ô đầu mỗi hàng thân bảng
+ * là tiêu đề hàng (`th scope=row`) — artboard BaiVietDetail `.bvd-table-wrap`. Tên vùng là chữ của hàng tiêu đề.
+ */
+function tableFrame(table: HastNode): HastNode {
+  const section = (part: HastNode): HastNode => ({
+    ...part,
+    children: (part.children ?? []).map((row) => {
+      if (row.type !== 'element') return row;
+      let first = part.tagName === 'tbody';
+      return {
+        ...row,
+        children: (row.children ?? []).map((cell) => {
+          if (cell.type !== 'element') return cell;
+          const header = first && cell.tagName === 'td';
+          first = false;
+          return alignedCell(cell, header);
+        }),
+      };
+    }),
+  });
+  const parts = (table.children ?? []).map((part) => (part.type === 'element' ? section(part) : part));
+  const head = parts.find((part) => part.tagName === 'thead');
+  const label = head
+    ? (head.children ?? []).flatMap((row) => (row.children ?? []).filter((cell) => cell.type === 'element').map((cell) => hastText(cell).trim())).filter(Boolean).join(' · ')
+    : '';
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: { className: ['bv-table-wrap'], role: 'region', tabIndex: 0, ...(label ? { ariaLabel: label } : {}) },
+    children: [{ ...table, children: parts }],
+  };
+}
+
 /**
  * Markdown → HTML an toàn. HTML thô và comment bị bỏ; heading cấp 1 hạ xuống cấp 2 (trang đã có h1);
- * heading nhận id; link ngoài mở tab mới với `rel` an toàn; ảnh lười tải.
+ * heading nhận id; link ngoài mở tab mới với `rel` an toàn; ảnh lười tải; bảng nằm trong khung cuộn ngang có tên.
  */
 export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN }: { siteOrigin?: string } = {}): RenderedMarkdown {
   const headings: BlogHeading[] = [];
@@ -254,6 +305,12 @@ export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN 
                 ctx.setProperty(node, 'rel', EXTERNAL_REL.split(' '));
                 if (!target.href.startsWith('mailto:')) ctx.setProperty(node, 'target', '_blank');
               }
+            },
+          },
+          {
+            filter: ['table'],
+            visit(node) {
+              return tableFrame(node as unknown as HastNode) as never;
             },
           },
           {

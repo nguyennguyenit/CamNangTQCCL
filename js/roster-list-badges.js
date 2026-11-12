@@ -1,5 +1,6 @@
-// Phần hiển thị của badge kho trên danh sách Đội chuẩn (#62): badge "Ráp được / Thiếu N món" gắn lên thẻ và hàng
-// bảng ĐÃ dựng (theo `data-reference-key`), dòng tóm tắt, nút lọc/sắp theo kho, và dòng dẫn khi máy chưa có kho.
+// Phần hiển thị của badge kho trên danh sách Đội chuẩn (#62): badge "Ráp được / Thiếu N món" kèm dòng "Thiếu: …" gắn
+// lên thẻ và hàng bảng ĐÃ dựng (theo `data-reference-key`), thanh kho (tóm tắt, thanh đo, chú giải, nút lọc/sắp theo kho),
+// và khối dẫn khi máy chưa có kho — theo artboard MainKho / MainKhoMobile.
 // Gắn lên DOM có sẵn thay vì đổi cây view, nên danh sách dựng sẵn lúc build và danh sách khi chưa có kho giữ nguyên.
 // Số liệu do `js/roster-list-coverage.js` tính; module này chỉ vẽ.
 import { L, localePath } from "./i18n.js";
@@ -12,6 +13,9 @@ import {
 } from "./recommended-reference-state.js";
 
 const BADGE_CLASS = "roster-stock-badge";
+/** Khối badge + dòng món thiếu gắn vào thẻ/hàng; gỡ cả khối khi vẽ lại. */
+const COVERAGE_CLASS = "roster-stock-cov";
+const SVG_NS = "http://www.w3.org/2000/svg";
 
 function node(tag, attrs = {}, children = []) {
   const element = document.createElement(tag);
@@ -26,6 +30,27 @@ function node(tag, attrs = {}, children = []) {
   return element;
 }
 
+/** Biểu tượng nét (trang trí, `aria-hidden`): `paths` là các thuộc tính `d`. */
+function strokeIcon(paths, size) {
+  const svg = document.createElementNS(SVG_NS, "svg");
+  for (const [key, value] of Object.entries({
+    "aria-hidden": "true", width: size, height: size, viewBox: "0 0 24 24", fill: "none",
+    stroke: "currentColor", "stroke-width": "1.8", "stroke-linecap": "round", "stroke-linejoin": "round",
+  })) svg.setAttribute(key, String(value));
+  for (const d of paths) {
+    const path = document.createElementNS(SVG_NS, "path");
+    path.setAttribute("d", d);
+    svg.append(path);
+  }
+  return svg;
+}
+
+const ICON_READY = ["M5 12l5 5L20 7"];
+const ICON_MISSING = ["M12 3.5l9 15.5H3z", "M12 10v4", "M12 16.8v.2"];
+const ICON_SORT = ["M7 4v16", "M3 16l4 4 4-4", "M14 6h7", "M14 12h5", "M14 18h3"];
+const ICON_STOCK = ["M4 4h16a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z", "M5 9v10h14V9", "M10 13h4"];
+const ICON_ARROW = ["M5 12h14", "M13 6l6 6-6 6"];
+
 /**
  * Tên một món thiếu theo ngôn ngữ trang: bản vi dùng tên game VN hiện hành; bản zh dùng tên Hán của từ điển
  * (`nameZh`), rồi mới tới bộ tra tên của trang; chỉ ô chưa đối chiếu được mới còn tên gốc của nguồn.
@@ -39,15 +64,26 @@ function missingItemText(item) {
     : L(`chiến pháp ${name}`, `战法${name}`);
 }
 
-/** Badge của một đội: `entry` là `{missingCount, missing}` của `buildListCoverage`. */
+/**
+ * Badge của một đội kèm danh sách món thiếu hiện ngay trên thẻ (artboard MainKho `.kb-cov`): `entry` là
+ * `{missingCount, missing}` của `buildListCoverage`. Danh sách là chữ thường trên thẻ — xem được trên màn hình cảm ứng
+ * và trình đọc màn hình đọc theo thứ tự (badge rồi "Thiếu: …"); `title` của badge chỉ còn là gợi ý khi rê chuột.
+ */
 export function coverageBadgeNode(entry) {
   const ready = entry.missingCount === 0;
   const list = entry.missing.map(missingItemText).join(L(", ", "、"));
-  return node("span", {
+  const badge = node("span", {
     class: `badge ${BADGE_CLASS} ${ready ? "is-ready" : "is-missing"}`,
     dataset: { missingCount: String(entry.missingCount) },
     title: ready ? L("Kho của bạn có đủ tướng và chiến pháp của đội này", "你的库存已有该阵容的全部武将和战法") : L(`Thiếu: ${list}`, `缺少：${list}`),
-  }, ready ? L("Ráp được", "可组建") : L(`Thiếu ${entry.missingCount} món`, `缺 ${entry.missingCount} 件`));
+  }, [
+    strokeIcon(ready ? ICON_READY : ICON_MISSING, 13),
+    ready ? L("Ráp được", "可组建") : L(`Thiếu ${entry.missingCount} món`, `缺 ${entry.missingCount} 件`),
+  ]);
+  return node("div", { class: COVERAGE_CLASS }, [
+    badge,
+    ready ? null : node("p", { class: "roster-stock-missing" }, [node("b", {}, L("Thiếu:", "缺少：")), ` ${list}`]),
+  ]);
 }
 
 /**
@@ -57,7 +93,7 @@ export function coverageBadgeNode(entry) {
 export function decorateCoverageBadges(root, byConfigId) {
   if (!root) return;
   for (const item of root.querySelectorAll("[data-reference-key]")) {
-    for (const old of item.querySelectorAll(`.${BADGE_CLASS}`)) old.remove();
+    for (const old of item.querySelectorAll(`.${COVERAGE_CLASS}`)) old.remove();
     const entry = byConfigId?.get(item.dataset.sourceConfigId || item.dataset.referenceKey);
     if (!entry) continue;
     const host = item.querySelector(".reference-card-title, .reference-table-team");
@@ -65,8 +101,8 @@ export function decorateCoverageBadges(root, byConfigId) {
   }
 }
 
-/** Dòng tóm tắt "ráp được X / Y đội của mùa" (`allSeasons`: phạm vi "Tất cả", đếm đội của mọi mùa). */
-export function rosterSummaryNode(summary, { allSeasons = false } = {}) {
+/** Câu "Kho của bạn ráp được X / Y đội của mùa" (`allSeasons`: phạm vi "Tất cả", đếm đội của mọi mùa). */
+function summaryLine(summary, allSeasons) {
   return node("p", { class: "reference-roster-summary" }, [
     L("Kho của bạn ráp được ", "你的库存可组建 "),
     node("strong", {}, `${summary.complete} / ${summary.total}`),
@@ -74,30 +110,114 @@ export function rosterSummaryNode(summary, { allSeasons = false } = {}) {
   ]);
 }
 
-/** Dòng dẫn khi máy chưa có kho: không có badge, chỉ một link sang Gợi ý đội. */
-export function rosterHintNode() {
-  return node("p", { class: "reference-roster-hint" }, [
-    L("Nhập kho ở ", "在"),
-    node("a", { href: localePath("/goi-y-doi-tu-kho/") }, L("Gợi ý đội", "武将库配队")),
-    L(" để xem đội nào ráp được.", "中录入库存，即可查看哪些阵容可组建。"),
-  ]);
+const percent = (part, total) => `${total ? Math.round((part / total) * 1000) / 10 : 0}%`;
+
+/**
+ * Số đội trên hai nút lọc ("Ráp được 4", "Thiếu tối đa 2 10") của cụm nút nằm cạnh khối tóm tắt trong cùng thanh kho.
+ * Thanh kho vẽ khối tóm tắt và cụm nút bằng hai lời gọi liền nhau (`js/team-filter-section.js`, `paintRosterBar`), nên
+ * khối tóm tắt điền số sau khi cả hai đã vào DOM (microtask ngay sau lượt vẽ đồng bộ).
+ */
+function fillControlCounts(block, summary) {
+  queueMicrotask(() => {
+    const controls = block.parentElement?.querySelector(".reference-roster-controls");
+    if (!controls) return;
+    const counts = { "kho:rap-duoc": summary.complete, "kho:thieu-2": summary.complete + summary.near };
+    for (const [key, count] of Object.entries(counts)) {
+      const chip = controls.querySelector(`[data-focus-key="${key}"]`);
+      if (!chip) continue;
+      chip.querySelector(".fchip-count")?.remove();
+      // Dấu cách đầu số: tên truy cập của nút đọc "Ráp được 4", không dính "Ráp được4" (flex item bỏ khoảng trắng đầu dòng).
+      chip.append(node("span", { class: "fchip-count" }, ` ${count}`));
+    }
+  });
 }
 
 /**
- * Nút lọc và sắp theo kho. `filter` là giá trị `kho` đang bật (`null` = không lọc), `sort` là giá trị `xep`.
- * `onChange({kho, xep})` nhận phần thay đổi để ghi lên query; bấm lại nút đang bật thì tắt.
+ * Tóm tắt kho. `summary` của `buildListCoverage` có đủ ba mức và cỡ kho thì vẽ khối của artboard MainKho: câu ráp được,
+ * thanh đo hai đoạn (`role=meter`: ráp được, thiếu 1–2 món), chú giải ba mức và nguồn kho + link "Sửa kho"; `line: true`
+ * (trang mùa cũ) hoặc `summary` chỉ có `complete/total` thì chỉ một câu.
+ */
+export function rosterSummaryNode(summary, { allSeasons = false, line = false } = {}) {
+  const detailed = !line && Number.isFinite(summary.near) && Number.isFinite(summary.far);
+  if (!detailed) return summaryLine(summary, allSeasons);
+  const { complete, near, far, total, roster } = summary;
+  const meter = node("div", {
+    class: "roster-meter",
+    role: "meter",
+    "aria-label": L("Độ phủ kho", "库存覆盖"),
+    "aria-valuemin": "0",
+    "aria-valuemax": String(total),
+    "aria-valuenow": String(complete),
+    "aria-valuetext": L(`${complete} trên ${total} đội ráp được`, `${total} 支中可组建 ${complete} 支`),
+  }, [node("span", { class: "roster-meter-ready" }), node("span", { class: "roster-meter-near" })]);
+  meter.children[0].style.width = percent(complete, total);
+  meter.children[1].style.width = percent(near, total);
+  const swatch = (band) => node("i", { class: `roster-swatch is-${band}`, "aria-hidden": "true" });
+  const source = roster
+    ? node("p", { class: "roster-source" }, [
+      roster.source === "cloud"
+        ? L(`Theo kho tài khoản (bản lưu trên máy này): ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据账号库存（本机缓存）：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`)
+        : L(`Theo kho đã lưu trên máy này: ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据本机保存的库存：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`),
+      node("a", { href: localePath("/goi-y-doi-tu-kho/") }, L("Sửa kho", "编辑库存")),
+    ])
+    : null;
+  const block = node("div", { class: "roster-summary-block" }, [
+    summaryLine(summary, allSeasons),
+    meter,
+    node("p", { class: "roster-legend" }, [
+      node("span", {}, [swatch("ready"), L(`${complete} ráp được`, `${complete} 支可组建`)]),
+      node("span", {}, [swatch("near"), L(`${near} thiếu 1–2 món`, `${near} 支缺 1–2 件`)]),
+      node("span", {}, [swatch("far"), L(`${far} thiếu từ 3 món`, `${far} 支缺 3 件以上`)]),
+    ]),
+    source,
+  ]);
+  fillControlCounts(block, summary);
+  return block;
+}
+
+/**
+ * Khối dẫn khi máy chưa có kho (artboard MainKho "Chưa có kho"): biểu tượng kho, một dòng dẫn sang Gợi ý đội và nút
+ * "Nhập kho"; không có badge. Trả fragment ba phần tử để thanh kho xếp chúng thành ba cột.
+ */
+export function rosterHintNode() {
+  const href = localePath("/goi-y-doi-tu-kho/");
+  const fragment = document.createDocumentFragment();
+  fragment.append(
+    node("span", { class: "roster-empty-icon", "aria-hidden": "true" }, strokeIcon(ICON_STOCK, 20)),
+    node("p", { class: "reference-roster-hint" }, [
+      L("Nhập kho ở ", "在"),
+      node("a", { href }, L("Gợi ý đội", "武将库配队")),
+      L(" để xem đội nào ráp được. Kho chỉ đọc trên máy này, không cần đăng nhập.", "中录入库存，即可查看哪些阵容可组建。库存只在本机读取，无需登录。"),
+    ]),
+    node("a", { class: "roster-empty-cta", href }, [L("Nhập kho", "录入库存"), strokeIcon(ICON_ARROW, 16)]),
+  );
+  return fragment;
+}
+
+/**
+ * Nút lọc và sắp theo kho, kèm nhãn "Lọc và sắp theo kho", vạch ngăn và ghi chú khi đang sắp. `filter` là giá trị `kho`
+ * đang bật (`null` = không lọc), `sort` là giá trị `xep`. `onChange({kho, xep})` nhận phần thay đổi để ghi lên query;
+ * bấm lại nút đang bật thì tắt. Số đội trên hai nút lọc do khối tóm tắt cạnh bên điền (`rosterSummaryNode`).
  */
 export function rosterControlNodes({ filter = null, sort = null, onChange }) {
-  const chip = (label, active, change, focusKey) => node("button", {
+  const chip = (label, active, change, focusKey, icon = null) => node("button", {
     type: "button",
     class: `fchip roster-chip${active ? " on" : ""}`,
     "aria-pressed": String(active),
     dataset: { focusKey },
     onClick: () => onChange(change),
-  }, [node("span", { class: "fchip-check", "aria-hidden": "true" }), node("span", { class: "fchip-label" }, label)]);
+  }, [
+    node("span", { class: "fchip-check", "aria-hidden": "true" }),
+    icon ? strokeIcon(icon, 15) : null,
+    node("span", { class: "fchip-label" }, label),
+  ]);
+  const sorted = sort === ROSTER_SORT_EASIEST;
   return node("div", { class: "reference-roster-controls", role: "group", "aria-label": L("Lọc và sắp theo kho", "按库存筛选和排序") }, [
+    node("span", { class: "roster-controls-label", "aria-hidden": "true" }, L("Lọc và sắp theo kho", "按库存筛选和排序")),
     chip(L("Ráp được", "可组建"), filter === ROSTER_FILTER_READY, { kho: filter === ROSTER_FILTER_READY ? null : ROSTER_FILTER_READY }, "kho:rap-duoc"),
     chip(L("Thiếu tối đa 2", "最多缺 2 件"), filter === ROSTER_FILTER_NEAR, { kho: filter === ROSTER_FILTER_NEAR ? null : ROSTER_FILTER_NEAR }, "kho:thieu-2"),
-    chip(L("Dễ ráp nhất", "最易组建"), sort === ROSTER_SORT_EASIEST, { xep: sort === ROSTER_SORT_EASIEST ? null : ROSTER_SORT_EASIEST }, "xep:de-rap"),
+    node("span", { class: "roster-controls-sep", "aria-hidden": "true" }),
+    chip(L("Dễ ráp nhất", "最易组建"), sorted, { xep: sorted ? null : ROSTER_SORT_EASIEST }, "xep:de-rap", ICON_SORT),
+    sorted ? node("p", { class: "roster-sorted-note" }, L("Sắp theo số món thiếu, giữ khối theo bậc.", "按缺少件数排序，保留分级区块。")) : null,
   ]);
 }

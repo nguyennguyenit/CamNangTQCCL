@@ -1,8 +1,10 @@
 ---
-// Trang một bài viết. Thứ tự nội dung phục vụ cả người đọc lẫn máy trả lời (AEO/GEO):
-// breadcrumb → tiêu đề + tác giả + ngày → hộp tóm tắt → mục lục → thân bài → FAQ → bài liên quan.
+// Trang một bài viết theo artboard BaiVietDetail / BaiVietDetailMobile (component `bai-viet-chi-tiet` trong tokens.json).
+// Thứ tự nội dung phục vụ cả người đọc lẫn máy trả lời (AEO/GEO): breadcrumb → tiêu đề + tác giả + ngày → hộp tóm tắt
+// → mục lục → thân bài → FAQ → bài liên quan. Desktop (≥1100px) đặt mục lục + khối "Trong cẩm nang" ở cột phụ dính;
+// dưới đó mục lục là khối mở/đóng ngay sau Tóm tắt (bản cột phụ ẩn bằng CSS nên trình đọc màn hình chỉ gặp một bản).
 import SiteLayout from '../../layouts/SiteLayout.astro';
-import BlogPostCard from './BlogPostCard.astro';
+import BlogRelatedCard from './BlogRelatedCard.astro';
 import {
   blogIndexPath,
   jsonLd,
@@ -12,6 +14,7 @@ import {
   type RenderedBlogPost,
 } from '../../lib/blog-posts.ts';
 import { articleJsonLd, blogCopy, breadcrumbJsonLd, faqJsonLd, formatPostDate, postImage } from '../../lib/blog-seo.ts';
+import { blogGuideLink } from '../../lib/blog-guide-link.ts';
 import { localePath } from '../../../js/i18n.js';
 import { otherLocale } from '../../lib/locale-routes';
 
@@ -41,6 +44,10 @@ const structured = [
 const image = postImage(post, site);
 /** Câu trả lời FAQ là văn bản thuần; dòng trống tách đoạn. */
 const faqItems = post.faq.map((entry) => ({ q: entry.q, paragraphs: entry.a.split(/\n{2,}/u) }));
+const guide = await blogGuideLink(post);
+/** Kicker "Bài viết · <chủ đề đầu>": bài không có trường thể loại nên lấy chủ đề đầu tiên (nếu có). */
+const kicker = [copy.blogName, post.tags[0]].filter(Boolean).join(' · ');
+const showToc = post.headings.length > 1;
 ---
 <SiteLayout
   title={copy.articleTitle(post.title)}
@@ -68,92 +75,134 @@ const faqItems = post.faq.map((entry) => ({ q: entry.q, paragraphs: entry.a.spli
     {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
 
-  <nav class="blog-breadcrumb" aria-label={copy.breadcrumbLabel}>
-    <ol>
-      <li><a href={localePath('/', locale)}>{copy.home}</a></li>
-      <li><a href={indexPath}>{copy.blogName}</a></li>
-      <li><span aria-current="page">{post.title}</span></li>
-    </ol>
-  </nav>
+  <div class="bv-page">
+    <nav class="bv-crumbs" aria-label={copy.breadcrumbLabel}>
+      <ol>
+        <li><a href={localePath('/', locale)}>{copy.home}</a></li>
+        <li><a href={indexPath}>{copy.blogName}</a></li>
+        <li><span aria-current="page">{post.title}</span></li>
+      </ol>
+    </nav>
 
-  <article class="blog-article" aria-labelledby="blog-article-title">
-    <header class="blog-article-head">
-      <h1 id="blog-article-title" class="detail-title">{post.title}</h1>
-      <p class="blog-card-meta">
-        <span>{copy.author}: <span class="blog-author">{post.author.name}</span></span>
-        <span aria-hidden="true">·</span>
-        <span>{copy.published} <time datetime={post.publishedAt}>{formatPostDate(post.publishedAt, locale)}</time></span>
-        {updated && (
-          <>
+    <div class="bv-grid">
+      <article class="bv-article" aria-labelledby="blog-article-title">
+        <header class="bv-head">
+          <p class="bv-kicker">{kicker}</p>
+          <h1 id="blog-article-title" class="bv-title">{post.title}</h1>
+          <p class="bv-meta">
+            <span>{copy.author}: <span class="bv-author">{post.author.name}</span></span>
             <span aria-hidden="true">·</span>
-            <span>{copy.updated} <time datetime={post.updatedAt}>{formatPostDate(post.updatedAt, locale)}</time></span>
-          </>
+            <span>{copy.published} <time datetime={post.publishedAt}>{formatPostDate(post.publishedAt, locale)}</time></span>
+            {updated && (
+              <>
+                <span aria-hidden="true">·</span>
+                <span>{copy.updated} <time datetime={post.updatedAt}>{formatPostDate(post.updatedAt, locale)}</time></span>
+              </>
+            )}
+            <span aria-hidden="true">·</span>
+            <span class="bv-read">
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 7 12 12 15 14"></polyline></svg>
+              {copy.readingTime(post.readingMinutes)}
+            </span>
+          </p>
+          {(post.tags.length > 0 || translation) && (
+            <div class="bv-head-row">
+              {post.tags.length > 0 && (
+                <ul class="bv-tags" aria-label={copy.tags}>
+                  {post.tags.map((tag) => <li class="bv-tag">{tag}</li>)}
+                </ul>
+              )}
+              {translation && (
+                <a class="bv-translation" href={translation.path} hreflang={copy.translationLang} lang={copy.translationLang}>{copy.translation}</a>
+              )}
+            </div>
+          )}
+        </header>
+
+        {post.coverImage && (
+          <figure class="bv-cover"><img src={post.coverImage} alt="" decoding="async" /></figure>
         )}
-        <span aria-hidden="true">·</span>
-        <span>{copy.readingTime(post.readingMinutes)}</span>
-      </p>
-      {post.tags.length > 0 && (
-        <ul class="blog-tags" aria-label={copy.tags}>
-          {post.tags.map((tag) => <li class="blog-tag">{tag}</li>)}
-        </ul>
-      )}
-      {translation && (
-        <p class="blog-translation">
-          <a href={translation.path} hreflang={copy.translationLang} lang={copy.translationLang}>{copy.translation}</a>
-        </p>
-      )}
-    </header>
 
-    {post.coverImage && (
-      <img class="blog-cover" src={post.coverImage} alt="" decoding="async" />
-    )}
+        <aside id="blog-summary" class="bv-summary" aria-label={copy.summary}>
+          <p class="bv-label">{copy.summary}</p>
+          <p>{post.description}</p>
+        </aside>
 
-    <aside id="blog-summary" class="blog-summary" aria-label={copy.summary}>
-      <p class="blog-summary-label">{copy.summary}</p>
-      <p>{post.description}</p>
-    </aside>
+        {showToc && (
+          <details class="bv-toc-mobile" open>
+            <summary>
+              <span class="bv-label">{copy.toc}</span>
+              <span class="bv-toc-count">{copy.tocCount(post.headings.length)}</span>
+              <span class="bv-chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+            </summary>
+            <nav aria-label={copy.toc}>
+              <ol class="bv-toc-list">
+                {post.headings.map((heading, index) => (
+                  <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`} aria-current={index === 0 ? 'location' : undefined}>{heading.text}</a></li>
+                ))}
+              </ol>
+            </nav>
+          </details>
+        )}
 
-    {post.headings.length > 1 && (
-      <nav id="blog-toc" class="blog-toc" aria-label={copy.toc}>
-        <p class="blog-summary-label">{copy.toc}</p>
-        <ol>
-          {post.headings.map((heading) => (
-            <li class:list={[heading.depth === 3 && 'blog-toc-sub']}><a href={`#${heading.id}`}>{heading.text}</a></li>
-          ))}
-        </ol>
-      </nav>
-    )}
+        <div id="blog-body" class="bv-body">
+          <Fragment set:html={post.html} />
+        </div>
 
-    <div id="blog-body" class="blog-body">
-      <Fragment set:html={post.html} />
+        {post.faq.length > 0 && (
+          <section id="blog-faq" class="bv-faq" aria-labelledby="blog-faq-title">
+            <h2 id="blog-faq-title">{copy.faq}</h2>
+            {faqItems.map((entry, index) => (
+              <details class="bv-faq-item" open={index === 0}>
+                <summary>
+                  {entry.q}
+                  <span class="bv-chevron" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></span>
+                </summary>
+                {entry.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+              </details>
+            ))}
+          </section>
+        )}
+      </article>
+
+      <aside class="bv-side" aria-label={copy.sideNav}>
+        {showToc && (
+          <nav id="blog-toc" class="bv-toc" aria-label={copy.toc}>
+            <p class="bv-label">{copy.toc}</p>
+            <ol class="bv-toc-list">
+              {post.headings.map((heading, index) => (
+                <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`} aria-current={index === 0 ? 'location' : undefined}>{heading.text}</a></li>
+              ))}
+            </ol>
+          </nav>
+        )}
+        <div class="bv-guide">
+          <p class="bv-label">{copy.guide}</p>
+          <p class="bv-guide-text">{guide.text}</p>
+          <a class="bv-guide-link" href={guide.href}>
+            {guide.label}
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>
+          </a>
+        </div>
+      </aside>
     </div>
 
-    {post.faq.length > 0 && (
-      <section id="blog-faq" class="blog-faq" aria-labelledby="blog-faq-title">
-        <h2 id="blog-faq-title">{copy.faq}</h2>
-        {faqItems.map((entry) => (
-          <details class="blog-faq-item">
-            <summary>{entry.q}</summary>
-            {entry.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-          </details>
-        ))}
+    {related.length > 0 && (
+      <section id="blog-related" class="bv-related" aria-labelledby="blog-related-title">
+        <h2 id="blog-related-title">{copy.related}</h2>
+        <div class="bv-related-grid">
+          {related.map((other) => <BlogRelatedCard post={other} />)}
+        </div>
       </section>
     )}
-  </article>
 
-  {related.length > 0 && (
-    <section id="blog-related" class="blog-related" aria-labelledby="blog-related-title">
-      <h2 id="blog-related-title">{copy.related}</h2>
-      <div class="blog-list">
-        {related.map((other) => <BlogPostCard post={other} headingLevel={3} />)}
-      </div>
-    </section>
-  )}
+    <nav class="bv-back" aria-label={copy.backLabel}>
+      <a href={indexPath}>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
+        {copy.back}
+      </a>
+    </nav>
+  </div>
 
-  <nav class="detail-back-row" aria-label={copy.backLabel}>
-    <a class="detail-link detail-back-link" href={indexPath}>
-      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {copy.back}
-    </a>
-  </nav>
+  <script is:inline type="module" slot="scripts" src="/js/blog-toc-current.js"></script>
 </SiteLayout>

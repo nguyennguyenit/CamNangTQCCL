@@ -137,3 +137,14 @@ test("markdown demotes h1, gives headings unique ids and lists h2/h3 for the tab
   ]);
   assert.match(html, /<h4 id="sau">Sâu<\/h4>/u);
 });
+
+test("markdown tables sit in a named, keyboard-scrollable frame with row headers and class-based alignment", () => {
+  const { html } = renderBlogMarkdown("| Đội | Điểm |\n| --- | ---: |\n| [Lữ Bố](https://evil.example/x) | 9 |\n| Tả Từ | 8 |\n");
+  assert.match(html, /^<div class="bv-table-wrap" role="region" tabindex="0" aria-label="Đội · Điểm"><table>/u);
+  assert.match(html, /<th scope="row"><a href="https:\/\/evil\.example\/x" rel="[^"]+" target="_blank">Lữ Bố<\/a><\/th>/u);
+  assert.match(html, /<th scope="row">Tả Từ<\/th>/u);
+  assert.match(html, /<td class="bv-align-right">9<\/td>/u);
+  assert.match(html, /<th class="bv-align-right">Điểm<\/th>/u);
+  assert.doesNotMatch(html, /style=/u);
+  assert.equal(html.match(/bv-table-wrap/gu).length, 1);
+});
