@@ -15918,7 +15918,7 @@ body[data-page-section="roster-recommend"] .layout {
   cursor: pointer;
 }
 .mt-moi .mt-boxfield select:focus-visible { outline: none; }
-.mt-moi .mt-boxfield svg { position: absolute; top: 50%; right: var(--space-14); margin-top: calc(var(--space-8) - var(--space-16)); color: var(--muted); pointer-events: none; }
+.mt-moi .mt-boxfield svg { position: absolute; top: 50%; right: var(--space-14); color: var(--muted); transform: translateY(-50%); pointer-events: none; }
 .mt-moi .mt-boxinfo { min-width: 0; }
 .mt-moi .mt-boxinfo p { margin: 0; }
 .mt-moi .mt-boxinfo-main { display: flex; align-items: center; gap: var(--space-8); color: var(--ink-body); font: var(--type-book-line); }
@@ -15991,7 +15991,7 @@ body[data-page-section="roster-recommend"] .layout {
   background-color: var(--panel);
   scroll-margin-top: var(--space-96);
 }
-.mt-moi .mt-team-head { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: flex-start; gap: var(--space-16); }
+.mt-moi .mt-team-head { display: flex; flex-wrap: nowrap; justify-content: space-between; align-items: center; gap: var(--space-16); }
 .mt-moi .mt-team-title { min-width: 0; }
 .mt-moi .mt-team-name { margin: 0; font: var(--type-mt-team-name); overflow-wrap: anywhere; }
 .mt-moi .mt-team-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); margin: var(--space-4) 0 0; color: var(--muted); font: var(--type-small); }
@@ -16012,14 +16012,13 @@ body[data-page-section="roster-recommend"] .layout {
   align-items: center;
   gap: var(--space-6);
   min-height: var(--control-44);
-  margin: calc(var(--space-8) - var(--space-16)) calc(var(--space-10) - var(--space-20)) 0 0;
-  padding: 0 var(--space-10);
+  padding: 0 0 0 var(--space-10);
   border-radius: var(--radius-10);
   font: var(--type-control);
   text-decoration: none;
   white-space: nowrap;
 }
-.mt-moi .mt-source-link:hover { background-color: var(--accent-soft); }
+.mt-moi .mt-source-link:hover { text-decoration: underline; }
 .mt-moi .mt-source-note { padding-top: var(--space-4); color: var(--muted); font: var(--type-meta); white-space: nowrap; }
 .mt-moi .mt-badges { display: flex; flex-wrap: wrap; gap: var(--space-6); }
 .mt-moi .mt-saved { display: flex; align-items: center; gap: var(--space-6); margin: 0; color: var(--good); font: var(--type-header-action); }
@@ -16081,7 +16080,7 @@ body[data-page-section="roster-recommend"] .layout {
   border-radius: var(--radius-12);
   background-color: var(--panel-3);
 }
-.mt-moi .mt-legend { display: flex; align-items: center; gap: var(--space-10); margin-left: calc(var(--space-6) - var(--space-12)); padding: 0 var(--space-6); font: var(--type-strong); font-weight: var(--weight-regular); }
+.mt-moi .mt-legend { display: flex; align-items: center; gap: var(--space-10); padding: 0 var(--space-6); font: var(--type-strong); font-weight: var(--weight-regular); }
 .mt-moi .mt-legend-n { color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
 .mt-moi .mt-legend-name { font-weight: var(--weight-bold); }
 .mt-moi .mt-edit-hero-grid { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: var(--space-18); }
@@ -16178,6 +16177,13 @@ body[data-page-section="roster-recommend"] .layout {
   background-color: var(--panel);
   box-shadow: var(--shadow-pop);
 }
+.mt-moi .mt-picker-top { display: flex; align-items: center; gap: var(--space-8); }
+.mt-moi .mt-picker-top .mt-picker-search { flex: 1 1 auto; min-width: 0; }
+.mt-moi .mt-picker-filter-toggle { flex: none; }
+.mt-moi .mt-picker-filters { display: flex; flex-direction: column; gap: var(--space-8); padding: var(--space-8) 0; border-top: var(--border-hair) solid var(--line-2); border-bottom: var(--border-hair) solid var(--line-2); }
+.mt-moi .mt-picker-filters[hidden] { display: none; }
+.mt-moi .mt-picker-filter { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
+.mt-moi .mt-picker-filter-label { min-width: var(--size-col-80); color: var(--muted); font: var(--type-field-caps); letter-spacing: var(--type-field-caps-spacing); text-transform: uppercase; }
 .mt-moi .mt-picker-search {
   display: flex;
   align-items: center;
@@ -16292,8 +16298,8 @@ body[data-page-section="roster-recommend"] .layout {
   .mt-moi .mt-group-tools { width: 100%; margin-left: 0; }
   .mt-moi .mt-btn-sm { min-height: var(--control-44); }
   .mt-moi .mt-team { padding: var(--space-14); }
-  .mt-moi .mt-team-head { flex-direction: column; gap: var(--space-2); }
-  .mt-moi .mt-source-link { margin: 0 0 0 calc(var(--space-10) - var(--space-20)); }
+  .mt-moi .mt-team-head { flex-direction: column; align-items: flex-start; gap: var(--space-2); }
+  .mt-moi .mt-source-link { padding: 0; }
   .mt-moi .mt-table-wrap { border: none; border-radius: 0; }
   .mt-moi .mt-table,
   .mt-moi .mt-table tbody,
@@ -16332,8 +16338,8 @@ body[data-page-section="roster-recommend"] .layout {
   }
   .mt-moi .mt-edit-hero-sum::-webkit-details-marker { display: none; }
   .mt-moi .mt-edit-hero-sum .mt-legend-name { font: var(--type-strong); font-weight: var(--weight-bold); }
-  .mt-moi .mt-sum-chev { position: absolute; top: 50%; right: var(--space-14); display: flex; margin-top: calc(var(--space-9) - var(--space-18)); color: var(--muted); }
-  .mt-moi .mt-edit-hero-compact[open] .mt-sum-chev { transform: rotate(180deg); }
+  .mt-moi .mt-sum-chev { position: absolute; top: 50%; right: var(--space-14); display: flex; color: var(--muted); transform: translateY(-50%); }
+  .mt-moi .mt-edit-hero-compact[open] .mt-sum-chev { transform: translateY(-50%) rotate(180deg); }
   .mt-moi .mt-fs { min-width: 0; margin: 0; padding: 0 var(--space-12) var(--space-12); border: none; }
   .mt-moi .mt-edit-hero-grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-14); }
   .mt-moi .mt-col-free { padding-top: var(--space-12); padding-left: 0; border-top: var(--border-hair) dashed var(--line); border-left: none; }

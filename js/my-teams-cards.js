@@ -86,6 +86,8 @@ export function teamCard(team, ctx, deps) {
   const hasStock = ctx.owned.size > 0;
   // Hộp chưa có kho thì không gắn nhãn "chưa có trong kho" cho mọi món (nhãn vô nghĩa và gây nhiễu).
   const missing = hasStock ? missingItems(team, ctx.owned) : [];
+  // "Ráp được" chỉ khi đội đủ dữ liệu để đối chiếu: mọi tướng đã đối chiếu và mọi ô chiến pháp có món chính.
+  const complete = team.heroes.length > 0 && team.heroes.every((hero) => hero.slotState === "ok" && hero.tactics.every((slot) => Boolean(slot.primary)));
   const isMissing = (type, heroIndex, slotIndex) => missing.some((item) => item.type === type && item.heroIndex === heroIndex && (slotIndex === undefined || item.slotIndex === slotIndex));
   const dups = ctx.warnings.filter((warning) => warning.a === team.id || warning.b === team.id);
   const replaced = team.replacesTeamId ? ctx.teams.find((other) => other.id === team.replacesTeamId) : null;
@@ -102,7 +104,7 @@ export function teamCard(team, ctx, deps) {
   const otherName = (warning) => ctx.teams.find((candidate) => candidate.id === (warning.a === team.id ? warning.b : warning.a))?.name ?? "?";
   const badges = [
     hasStock && missing.length ? pill("warn", "warn", L(`Thiếu ${missing.length} món trong kho`, `库中缺 ${missing.length} 项`), { className: "mt-badge-short" }) : null,
-    hasStock && !missing.length ? pill("good", "check", L("Ráp được", "可组成"), { className: "mt-badge-ready" }) : null,
+    hasStock && !missing.length && complete ? pill("good", "check", L("Ráp được", "可组成"), { className: "mt-badge-ready" }) : null,
     deps.updated(team) ? pill("warn", "refresh", L("Bản gốc đã cập nhật", "原版已更新"), { className: "mt-badge-updated" }) : null,
     replaced ? pill("neutral", "swap", L(`Thay thế cho “${replaced.name}”`, `替换“${replaced.name}”`), { className: "mt-badge-replaces" }) : null,
     dups.length === 1 ? pill("accent", "copy", L(`Trùng với “${otherName(dups[0])}”`, `与“${otherName(dups[0])}”重复`), { className: "mt-badge-dup", href: "#mt-dups" }) : null,
@@ -130,7 +132,8 @@ export function teamCard(team, ctx, deps) {
         : team.source.kind === "analyze" ? el("span", { class: "mt-source-note" }, L("Từ Soi đội · không có bản gốc", "来自截图识阵 · 无原版")) : null,
     ]),
     badges.length ? el("div", { class: "mt-badges" }, badges) : null,
-    ctx.saved ? el("p", { class: "mt-saved", role: "status" }, [mtIcon("check", 15), L("Đã lưu thay đổi.", "已保存更改。")]) : null,
+    // Câu báo cho trình đọc màn hình đi qua vùng `role=status` chung của trang; dòng này chỉ để nhìn.
+    ctx.saved ? el("p", { class: "mt-saved" }, [mtIcon("check", 15), L("Đã lưu thay đổi.", "已保存更改。")]) : null,
     teamTable(team, nameOf, isMissing),
     ...["general", "strengths", "goodAgainst", "avoid"].filter((key) => team.notes[key]).map((key) =>
       el("p", { class: "mt-note" }, [el("strong", {}, `${NOTE_LABELS()[key]}: `), team.notes[key]])),

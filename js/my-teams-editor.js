@@ -87,6 +87,10 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
   // Mobile (DoiCuaToiMobile): mỗi tướng là một `<details>` thu gọn được, tướng 1 mở sẵn; desktop là `<fieldset>` mở hẳn.
   const compact = globalThis.matchMedia?.(COMPACT_QUERY) ?? null;
   const expanded = new Set([0]);
+  /** Gỡ mọi listener ngoài form (matchMedia) khi trình soạn đóng: `dispose()` của kết quả. */
+  const lifetime = new AbortController();
+  const editorId = nextId("mt-editor");
+  const pickerId = (key) => `${editorId}-picker-${key}`;
 
   const showAlert = (message) => {
     alert.textContent = message;
@@ -105,6 +109,7 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
       key,
       picker: inlinePicker({
         ...options,
+        id: pickerId(key),
         catalog,
         owned,
         nameOf: nameOf(options.kind),
@@ -131,7 +136,7 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
   /** Hàng phương án (thay thế / binh thư): chip có nút bỏ + nút Thêm mở bảng chọn nhiều + đếm `n/max`. */
   function altsRow({ key, sub, emptyText, values, max, kind, label, addLabel }) {
     const nameFor = nameOf(kind);
-    const add = el("button", { type: "button", class: "mt-chip-add", "aria-label": addLabel, "aria-expanded": String(open?.key === key), dataset: { pickerKey: key }, onclick: () => togglePicker(key, { kind, values, max, label }) }, [mtIcon("plus", 14), L("Thêm", "添加")]);
+    const add = el("button", { type: "button", class: "mt-chip-add", "aria-label": addLabel, "aria-expanded": String(open?.key === key), "aria-controls": open?.key === key ? pickerId(key) : null, dataset: { pickerKey: key }, onclick: () => togglePicker(key, { kind, values, max, label }) }, [mtIcon("plus", 14), L("Thêm", "添加")]);
     return [
       el("div", { class: "mt-slot-alts" }, [
         sub ? el("span", { class: "mt-slot-sub" }, sub) : null,
@@ -144,6 +149,8 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
             "aria-label": L(`Bỏ ${nameFor(id)}`, `移除 ${nameFor(id)}`),
             onclick: () => {
               values.splice(values.indexOf(id), 1);
+              // Bảng chọn của chính hàng này đang mở: cập nhật trạng thái chọn trong bảng.
+              if (open?.key === key) open.picker.refresh();
               paintHeroes();
               heroesSlot.querySelector(`[data-picker-key="${key}"]`)?.focus();
             },
@@ -166,6 +173,7 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
       type: "button",
       class: "mt-mini",
       "aria-expanded": String(open?.key === key),
+      "aria-controls": open?.key === key ? pickerId(key) : null,
       "aria-label": L(`${value ? "Đổi" : "Chọn"} ${label.toLowerCase()}`, `${value ? "更换" : "选择"}${label}`),
       dataset: { pickerKey: key },
       onclick: () => togglePicker(key, { kind, values, max: 1, single: true, label: L(`Chọn ${label.toLowerCase()}`, `选择${label}`), commit: () => onPick(values[0] ?? null) }),
@@ -176,7 +184,12 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
         missing ? el("span", { class: "mt-miss" }, L("chưa có trong kho", "库中没有")) : null,
         el("span", { class: "mt-slot-actions" }, [
           pick,
-          value ? el("button", { type: "button", class: "mt-mini", "aria-label": L(`Bỏ ${label.toLowerCase()}`, `清除${label}`), onclick: () => { onPick(null); paintHeroes(); } }, L("Bỏ", "清除")) : null,
+          value ? el("button", { type: "button", class: "mt-mini", "aria-label": L(`Bỏ ${label.toLowerCase()}`, `清除${label}`), onclick: () => {
+            onPick(null);
+            // Bảng chọn của ô này đang mở giữ mảng lựa chọn riêng: đóng bảng để không còn hiện món vừa bỏ.
+            if (open?.key === key) open = null;
+            paintHeroes();
+          } }, L("Bỏ", "清除")) : null,
         ]),
       ]),
       pickerFor(key),
@@ -329,7 +342,7 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
   // Qua lại mốc mobile (xoay máy, đổi cỡ cửa sổ): dựng lại khung tướng theo kiểu của bề rộng mới.
   compact?.addEventListener?.("change", () => {
     if (heroesSlot.isConnected) paintHeroes();
-  });
+  }, { signal: lifetime.signal });
 
   /* ---------- Trường của đội ---------- */
 
@@ -453,5 +466,12 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
     submit();
   });
   cancelButton.addEventListener("click", () => onCancel());
-  return form;
+  // Bản chuẩn hóa ngay sau khi dựng xong (đã gán nhóm mặc định của ô chọn): so với bản đang soạn để biết có thay đổi
+  // chưa lưu (đổi hộp / tạo hộp / mở đội khác / xóa hộp phải hỏi lại).
+  const snapshotOf = () => JSON.stringify(normalizeTeam(structuredClone(draft)));
+  const baseline = snapshotOf();
+  return Object.assign(form, {
+    isDirty: () => snapshotOf() !== baseline,
+    dispose: () => lifetime.abort(),
+  });
 }

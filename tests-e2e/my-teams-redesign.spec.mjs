@@ -181,6 +181,164 @@ test.describe("xóa luôn hỏi lại trong trang", () => {
   });
 });
 
+test.describe("không mất bản soạn", () => {
+  const nameField = (page) => page.locator("form.mt-editor").getByLabel("Tên đội");
+  const discardBox = (page) => confirmBox(page).filter({ hasText: "Bỏ thay đổi chưa lưu?" });
+
+  test("đổi ô Hộp khi đang sửa: có thay đổi thì hỏi, Hủy giữ bản soạn và hộp; không thay đổi thì đổi luôn", async ({ page }) => {
+    await open(page, { boxes: ["main", "box-phu"], teams: [{ draft: draftOf("team-x") }] });
+    await card(page, "team-x").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Tên đang sửa");
+    await page.locator("#mt-box").selectOption("box-phu");
+    await expect(discardBox(page)).toBeVisible();
+    await discardBox(page).getByRole("button", { name: "Hủy" }).click();
+    await expect(page.locator("#mt-box")).toHaveValue("main");
+    await expect(nameField(page)).toHaveValue("Tên đang sửa");
+
+    await page.locator("#mt-box").selectOption("box-phu");
+    await discardBox(page).getByRole("button", { name: "Bỏ thay đổi" }).click();
+    await expect(page.locator("#mt-box")).toHaveValue("box-phu");
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+
+    // Không thay đổi: không hỏi.
+    await page.locator("#mt-box").selectOption("main");
+    await card(page, "team-x").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toBeVisible();
+    await page.locator("#mt-box").selectOption("box-phu");
+    await expect(page.locator("#mt-box")).toHaveValue("box-phu");
+    await expect(confirmBox(page)).toHaveCount(0);
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+  });
+
+  test("bấm Sửa đội khác khi đang sửa: có thay đổi thì hỏi, Hủy giữ bản soạn; không thay đổi thì mở luôn", async ({ page }) => {
+    await open(page, { teams: [{ draft: draftOf("team-a") }, { draft: draftOf("team-b") }] });
+    await card(page, "team-a").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn A");
+    await card(page, "team-b").getByRole("button", { name: "Sửa", exact: true }).click();
+    await discardBox(page).getByRole("button", { name: "Hủy" }).click();
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-a");
+    await expect(nameField(page)).toHaveValue("Bản soạn A");
+
+    await card(page, "team-b").getByRole("button", { name: "Sửa", exact: true }).click();
+    await discardBox(page).getByRole("button", { name: "Bỏ thay đổi" }).click();
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-b");
+
+    await card(page, "team-a").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-a");
+    await expect(confirmBox(page)).toHaveCount(0);
+  });
+
+  test("Tạo hộp khi đang sửa: có thay đổi thì hỏi, Hủy không mở hộp thoại tạo; không thay đổi thì mở luôn", async ({ page }) => {
+    await open(page, { teams: [{ draft: draftOf("team-c") }] });
+    await card(page, "team-c").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn C");
+    await page.getByRole("button", { name: "Tạo hộp", exact: true }).click();
+    await discardBox(page).getByRole("button", { name: "Hủy" }).click();
+    await expect(page.locator("dialog.mt-dialog")).toHaveCount(0);
+    await expect(nameField(page)).toHaveValue("Bản soạn C");
+
+    await page.locator("form.mt-editor").getByRole("button", { name: "Hủy", exact: true }).click();
+    await card(page, "team-c").getByRole("button", { name: "Sửa", exact: true }).click();
+    await page.getByRole("button", { name: "Tạo hộp", exact: true }).click();
+    await expect(page.locator("dialog.mt-dialog")).toBeVisible();
+    await expect(confirmBox(page)).toHaveCount(0);
+  });
+
+  test("xóa nhóm đang chứa đội đang sửa: trình soạn còn, lưu thì đội vào Ghép Team (không ghi id nhóm đã xóa)", async ({ page }) => {
+    const mock = await open(page, {
+      teams: [{ draft: draftOf("team-g"), options: { groupId: "grp-sap-xoa" } }],
+      groups: [{ id: "grp-sap-xoa", name: "Sắp xóa" }],
+    });
+    await card(page, "team-g").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Sửa xong");
+    await page.locator('.mt-group[data-group-id="grp-sap-xoa"]').getByRole("button", { name: "Xóa nhóm" }).click();
+    await confirmBox(page).getByRole("button", { name: "Xóa nhóm" }).click();
+    await expect(page.locator('[data-group-id="grp-sap-xoa"]')).toHaveCount(0);
+    await expect(nameField(page)).toHaveValue("Sửa xong");
+    await page.locator("form.mt-editor").getByRole("button", { name: "Lưu", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thay đổi.");
+    await expect.poll(() => mock.server.live("team")[0].data.name).toBe("Sửa xong");
+    expect(mock.server.live("team")[0].data.groupId).toBe("main~ghep-team");
+  });
+});
+
+test.describe("trình soạn và bảng chọn", () => {
+  test("mùa cũ ngoài seasons.json giữ nguyên khi lưu; câu báo đã lưu ở vùng status", async ({ page }) => {
+    const mock = await open(page, { teams: [{ draft: { ...draftOf("team-mua"), seasonId: "s0-mua-rat-cu" } }] });
+    await card(page, "team-mua").getByRole("button", { name: "Sửa", exact: true }).click();
+    const form = page.locator("form.mt-editor");
+    await expect(form.getByLabel("Mùa")).toHaveValue("s0-mua-rat-cu");
+    await form.getByLabel("Tên đội").fill("Đội mùa cũ");
+    await form.getByRole("button", { name: "Lưu", exact: true }).click();
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thay đổi.");
+    await expect(card(page, "team-mua").locator(".mt-saved")).toHaveText("Đã lưu thay đổi.");
+    await expect.poll(() => mock.server.live("team")[0].data.name).toBe("Đội mùa cũ");
+    expect(mock.server.live("team")[0].data.seasonId).toBe("s0-mua-rat-cu");
+  });
+
+  test("đội thiếu dữ liệu không có “Ráp được” dù đủ kho; binh thư không có nhãn kho; tướng/chiến pháp có", async ({ page }) => {
+    const full = draftOf("team-full");
+    const items = full.heroes.flatMap((hero) => [hero.hero, ...hero.tactics.map((slot) => slot.primary)]).filter(Boolean);
+    const partial = structuredClone({ ...full, id: "team-partial", name: "Thiếu ô" });
+    partial.heroes[2].tactics[1] = { primary: null, alternatives: [], rawName: "" };
+    await open(page, { teams: [{ draft: full }, { draft: partial }], owned: items });
+    await expect(card(page, "team-full").locator(".mt-badge-ready")).toHaveText("Ráp được");
+    await expect(card(page, "team-partial").locator(".mt-badge-ready, .mt-badge-short")).toHaveCount(0);
+
+    await card(page, "team-full").getByRole("button", { name: "Sửa", exact: true }).click();
+    const form = page.locator("form.mt-editor");
+    await form.locator('[data-picker-key="0-books"]').click();
+    const picker = form.locator(".mt-picker");
+    await expect(picker.locator(".mt-picker-opt").first()).toBeVisible();
+    await expect(picker.locator(".mt-miss, .mt-have")).toHaveCount(0);
+    await picker.getByRole("button", { name: "Xong", exact: true }).click();
+    await form.locator('[data-picker-key="0-t0"]').click();
+    // Chiến pháp: mỗi món có nhãn kho (có / chưa có).
+    await expect(form.locator(".mt-picker .mt-picker-opt").first().locator(".mt-miss, .mt-have")).toHaveCount(1);
+  });
+
+  test("bảng chọn: aria-controls, phím mũi tên, bộ lọc gọn (chip-loc), Bỏ khi bảng đang mở thì đóng bảng", async ({ page }) => {
+    await open(page, { teams: [{ draft: draftOf("team-loc") }] });
+    await card(page, "team-loc").getByRole("button", { name: "Sửa", exact: true }).click();
+    const form = page.locator("form.mt-editor");
+    const opener = form.locator('[data-picker-key="0-t0"]');
+    await opener.click();
+    const picker = form.locator(".mt-picker");
+    await expect(opener).toHaveAttribute("aria-controls", (await picker.getAttribute("id")) ?? "");
+    const search = picker.getByRole("searchbox", { name: "Tìm chiến pháp" });
+    await expect(search).toHaveAttribute("aria-controls", (await picker.locator(".mt-picker-list").getAttribute("id")) ?? "");
+    await expect(search).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(picker.locator(".mt-picker-opt").first()).toBeFocused();
+    await page.keyboard.press("ArrowDown");
+    await expect(picker.locator(".mt-picker-opt").nth(1)).toBeFocused();
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("ArrowUp");
+    await expect(search).toBeFocused();
+
+    // Bộ lọc gọn: thu gọn sẵn, mở ra là hàng chip; chọn "Bị động" thì mọi kết quả là chiến pháp bị động.
+    const toggle = picker.locator(".mt-picker-filter-toggle");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(toggle).toHaveText("Bộ lọc");
+    await expect(picker.locator(".mt-picker-filters")).toBeHidden();
+    const before = await picker.locator(".mt-picker-hint").textContent();
+    await toggle.click();
+    await expect(picker.locator(".mt-picker-filters")).toBeVisible();
+    const passive = picker.getByRole("group", { name: "Loại" }).getByRole("button", { name: "Bị động" });
+    await passive.click();
+    await expect(passive).toHaveAttribute("aria-pressed", "true");
+    await expect(toggle).toHaveText("Bộ lọc1");
+    await expect(picker.locator(".mt-picker-hint")).not.toHaveText(before ?? "");
+    await expect(picker.getByRole("group", { name: "Thế lực" })).toHaveCount(0);
+
+    // "Bỏ" món chính khi bảng của ô đó đang mở: bảng đóng, ô trống.
+    await form.locator(".mt-edit-hero").first().locator(".mt-slot").nth(2).locator(".mt-slot-actions").getByRole("button", { name: /^Bỏ/ }).click();
+    await expect(form.locator(".mt-picker")).toHaveCount(0);
+    await expect(form.locator(".mt-edit-hero").first().locator(".mt-slot").nth(2).locator(".mt-slot-empty")).toBeVisible();
+  });
+});
+
 test.describe("390px", () => {
   for (const locale of ["vi", "zh"]) {
     test(`không tràn ngang: khách, danh sách, trình soạn, bảng chọn, hộp xác nhận (${locale})`, async ({ page }) => {

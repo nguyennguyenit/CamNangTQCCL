@@ -125,6 +125,34 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     },
   });
 
+  /** Đóng trình soạn đang mở (gỡ listener của nó); không vẽ lại. */
+  function closeEditor() {
+    view.editor?.dispose();
+    view.editing = view.editor = null;
+  }
+
+  /**
+   * Trước thao tác sẽ đóng / thay trình soạn: bản soạn có thay đổi chưa lưu thì hỏi lại trong trang. Trả `true` khi được
+   * đi tiếp (không có trình soạn, chưa sửa gì, hoặc người dùng chọn bỏ thay đổi); `false` khi Hủy. Không tự đóng
+   * trình soạn: thao tác đóng nó khi thật sự xảy ra (đổi hộp, tạo / xóa hộp xong — `paint` đóng trình soạn của hộp khác).
+   */
+  async function discardOk() {
+    if (!view.editor?.isDirty()) return true;
+    return confirmInPage({
+      title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？"),
+      message: L("Đội đang sửa có thay đổi chưa lưu. Tiếp tục thì các thay đổi này mất.", "正在编辑的阵容有未保存的更改，继续将丢失这些更改。"),
+      confirmLabel: L("Bỏ thay đổi", "放弃更改"),
+      cancelLabel: L("Hủy", "取消"),
+    });
+  }
+
+  /** Như `discardOk`, rồi đóng trình soạn khi được đi tiếp (người gọi vẽ lại). */
+  async function leaveEditorOk() {
+    if (!(await discardOk())) return false;
+    closeEditor();
+    return true;
+  }
+
   /* ---------- Hộp thoại nhập tên (tạo / đổi tên hộp, nhóm) ---------- */
 
   function promptDialog({ title, label, value = "", confirmLabel, submit }) {
@@ -171,7 +199,10 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     get editable() {
       return lexicon.ready;
     },
-    onEdit: (team) => openEditor(team),
+    onEdit: async (team) => {
+      if (view.editing === team.id) return;
+      if (await leaveEditorOk()) openEditor(team);
+    },
     onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。")).then((result) => {
       if (!result.ok) paint();
     }),
@@ -205,16 +236,20 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const teamCounts = new Map();
     for (const team of snapshot.teams) teamCounts.set(team.boxId, (teamCounts.get(team.boxId) ?? 0) + 1);
     // Đội đang sửa đã bị xóa ở nơi khác: đóng trình soạn (không còn bản ghi để lưu vào).
-    if (view.editing && !teams.some((team) => team.id === view.editing)) view.editing = view.editor = null;
+    if (view.editing && !teams.some((team) => team.id === view.editing)) closeEditor();
 
     const bar = boxBar({ boxes, boxId: view.boxId, teamCounts, owned }, {
-      onSelect: (boxId) => {
+      onSelect: async (boxId) => {
+        // Hủy bỏ thay đổi: ô chọn trả về hộp đang xem, trình soạn giữ nguyên.
+        if (!(await leaveEditorOk())) {
+          body.querySelector("#mt-box").value = view.boxId;
+          return;
+        }
         view.boxId = boxId;
-        view.editing = view.editor = null;
         paint();
         focusLater("#mt-box");
       },
-      onCreate: () => promptDialog({
+      onCreate: async () => (await discardOk()) && promptDialog({
         title: L("Tạo hộp", "新建仓库"),
         label: L("Tên hộp", "仓库名称"),
         confirmLabel: L("Tạo hộp", "新建"),
@@ -240,16 +275,14 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         },
       }),
       onDelete: async () => {
+        if (!(await discardOk())) return;
         const done = await confirmDelete({
           title: L(`Xóa hộp “${boxLabel(box)}”?`, `删除仓库“${boxLabel(box)}”？`),
           message: L(`Xóa hộp sẽ mất ${teams.length} đội, các nhóm và kho của hộp này. Không hoàn tác được.`, `删除仓库将同时失去 ${teams.length} 个阵容及该仓库的分组和库存，且无法撤销。`),
           confirmLabel: L("Xóa hộp", "删除仓库"),
           operation: async () => {
             const result = await api.deleteBox(box.id);
-            if (result.ok) {
-              view.boxId = MAIN_BOX;
-              view.editing = view.editor = null;
-            }
+            if (result.ok) view.boxId = MAIN_BOX;
             return result;
           },
           success: L("Đã xóa hộp.", "已删除仓库。"),
@@ -315,7 +348,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     body.replaceChildren(...[
       bar,
       ...notices,
-      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在标准阵容、其他阵容、开荒、阵容推荐或阵容分析中点击“保存到我的阵容”即可添加。")) : null,
+      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。")) : null,
       ...sections,
       addGroup,
       privacyNote(),
@@ -329,7 +362,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const groups = snapshot.groups.filter((group) => group.boxId === team.boxId);
     clearMessages();
     const leave = (savedId = null) => {
-      view.editing = view.editor = null;
+      closeEditor();
       view.saved = savedId;
       paint();
       body.querySelector(`[data-team-id="${CSS.escape(team.id)}"] .mt-team-actions button`)?.focus();
@@ -344,8 +377,17 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       catalog: lexicon.catalog,
       owned: snapshot.owned.get(team.boxId) ?? new Set(),
       seasons,
-      save: (candidate) => api.saveTeam(candidate, { boxId: team.boxId, groupId: candidate.groupId }),
-      onSaved: () => leave(team.id),
+      save: (candidate) => {
+        // Nhóm đã chọn bị xóa trong lúc soạn (ở đây hoặc máy khác): lưu vào nhóm dự phòng Ghép Team của hộp,
+        // không ghi id nhóm không còn.
+        const live = api.snapshot().groups.some((group) => group.id === candidate.groupId && group.boxId === team.boxId);
+        const groupId = live ? candidate.groupId : `${team.boxId}~ghep-team`;
+        return api.saveTeam({ ...candidate, groupId }, { boxId: team.boxId, groupId });
+      },
+      onSaved: () => {
+        leave(team.id);
+        say(L("Đã lưu thay đổi.", "已保存更改。"));
+      },
       onCancel: () => leave(),
       onKeepServer: () => {
         say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。"));
