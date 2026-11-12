@@ -223,23 +223,34 @@ let sessionPromise = null;
  * Người dùng hiện tại (`{id,name,email,image,role}` | null); `role` là `root`, `moderator` hoặc `user`.
  * `probe: false` (header trên trang thường): chỉ hỏi server khi trình duyệt từng đăng nhập,
  * để khách vãng lai không tốn một lượt gọi API mỗi trang. Trang cộng đồng luôn `probe: true`.
+ * `fresh: true` bỏ kết quả đã nhớ và hỏi lại: trang trả về từ bfcache có thể giữ phiên của tài khoản đã đăng xuất
+ * hoặc đã đổi ở tab khác. Lượt hỏi bị lượt `fresh` thay thế vẫn trả kết quả cho người gọi nó, nhưng không ghi hint và
+ * không phát `SESSION_EVENT` (kết quả cũ về muộn không được đè phiên mới).
  */
-export function loadSession({ probe = true } = {}) {
+export function loadSession({ probe = true, fresh = false } = {}) {
+  if (fresh) sessionPromise = null;
   if (sessionPromise) return sessionPromise;
-  if (!probe && !readHint()) return Promise.resolve(null);
-  sessionPromise = api('/api/me').then(
+  if (!probe && !readHint()) {
+    // Hint đã mất (đăng xuất ở tab khác): header có thể còn hiện phiên cũ (kể cả khi lượt hỏi trước đó lỗi), báo về khách.
+    if (fresh) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
+    return Promise.resolve(null);
+  }
+  const pending = api('/api/me').then(
     (body) => {
       const user = body?.user && typeof body.user === 'object' ? body.user : null;
+      if (sessionPromise !== pending) return user;
       writeHint(user ? '1' : null);
       document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user } }));
       return user;
     },
     (error) => {
-      sessionPromise = null;
+      // Chỉ quên lượt hỏi đang nhớ: lượt cũ lỗi sau khi `fresh` đã mở lượt mới không được xoá lượt mới.
+      if (sessionPromise === pending) sessionPromise = null;
       throw error;
     },
   );
-  return sessionPromise;
+  sessionPromise = pending;
+  return pending;
 }
 
 /** URL trang hiện tại không còn `error`, `error_description` (lỗi đăng nhập cũ không được mang sang lượt sau). */

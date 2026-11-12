@@ -15,7 +15,9 @@ import { L, currentLocale, localePath } from "./i18n.js";
 import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
 import { resolveBrowseState, projectSeasonBrowse } from './season-context.js';
-import { loadRecommendedReference, referenceSectionState, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
+import { loadRecommendedReference, readRecommendedQuery, referenceSectionState, setZhNameResolver, setTacticDisplayName } from './recommended-reference-state.js';
+import { buildListCoverage, readOwnedRoster } from './roster-list-coverage.js';
+import { loadSession } from './community-api.js';
 import { writeStoredTeamView, canonicalTeamView, TEAM_VIEW_CARDS } from "./team-view.js";
 import {
   KHAIHOANG_TEAM_QUERY_KEY,
@@ -432,6 +434,21 @@ async function main() {
       sections['team-chuan']?.update(recommendedModel.index.records,referenceSectionState('recommended',location.href,registry,localStore()),registry);
       sections['team-khac']?.update(recommendedModel.other.records,referenceSectionState('other',location.href,registry,localStore()),registry);
       canonicaliseView();
+      canonicaliseRosterParams();
+    }
+    /** `kho`/`xep` chỉ thuộc Đội chuẩn, mỗi khóa một giá trị hợp lệ; giá trị lạ, lặp, hoặc nằm ở Đội khác bị gỡ (replaceState). */
+    function canonicaliseRosterParams() {
+      const url = new URL(location.href);
+      const query = pageSection === 'team-chuan' ? readRecommendedQuery(location.href) : {};
+      let changed = false;
+      for (const [key, value] of [['kho', query.rosterFilter], ['xep', query.rosterSort]]) {
+        const values = url.searchParams.getAll(key);
+        if (!values.length || (values.length === 1 && values[0] === value)) continue;
+        url.searchParams.delete(key);
+        if (value) url.searchParams.set(key, value);
+        changed = true;
+      }
+      if (changed) history.replaceState(history.state, '', url);
     }
     /** N5-3: `view` chỉ có nghĩa khi là `luoi` hoặc `bang`; `?view=the` (mặc định) và giá trị lạ/lặp bị bỏ
      *  khỏi URL để mọi đường link cùng nghĩa có cùng một hình dạng. Chạy sau khi render nên thông báo về giá
@@ -504,6 +521,36 @@ async function main() {
         ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。')
         : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。')));
     }
+    // Badge kho của Đội chuẩn: kho đọc từ máy (khách: kho local; đã đăng nhập: cache cloud của chính người đó), không
+    // chặn boot. Từ điển tướng/chiến pháp chỉ tải khi máy có kho; độ phủ tính theo từng mùa và nhớ lại.
+    // `fresh` (trang trả về từ bfcache): gỡ badge cũ ngay và hỏi lại phiên, vì tài khoản/kho có thể đã đổi ở tab khác.
+    const rosterSection = pageSection === 'team-chuan' && recommendedModel ? sections['team-chuan'] : null;
+    let rosterLoad = 0;
+    const loadRosterSource = ({ fresh = false } = {}) => {
+      if (!rosterSection?.setRoster) return;
+      const run = ++rosterLoad;
+      if (fresh) rosterSection.setRoster(undefined);
+      (async () => {
+        const user = await loadSession({ probe: false, fresh });
+        const roster = readOwnedRoster(localStore(), { userId: user?.id ?? null });
+        if (run !== rosterLoad) return;
+        if (!roster) { rosterSection.setRoster(null); return; }
+        const [heroesDict, tacticsDict] = await Promise.all([loadLookupPayload('heroes-dict.json'), loadLookupPayload('tactics.json')]);
+        if (run !== rosterLoad) return;
+        const bySeason = new Map();
+        rosterSection.setRoster(seasonId => {
+          if (!bySeason.has(seasonId)) {
+            bySeason.set(seasonId, buildListCoverage({ records: recommendedModel.index.records, seasonId, heroesDict, tacticsDict, roster }));
+          }
+          return bySeason.get(seasonId);
+        });
+      })().catch(error => {
+        // Lỗi phiên hoặc lỗi tải từ điển: danh sách giữ nguyên, không badge và không dòng dẫn sai.
+        console.error(error);
+        if (run === rosterLoad) rosterSection.setRoster(undefined);
+      });
+    };
+    loadRosterSource();
     const refresh = () => {
       if (detailMount) detailMount.hidden = !new URL(location.href).searchParams.has('config') && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
@@ -546,7 +593,8 @@ async function main() {
       refresh();
       restoreReturnState();
     });
-    window.addEventListener('pageshow', event => { if (event.persisted) restoreReturnState(); });
+    // Trang trả về từ bfcache: kho có thể đã đổi (nhập thêm ở Gợi ý đội, đăng xuất) nên đọc lại trước khi khôi phục vị trí.
+    window.addEventListener('pageshow', event => { if (event.persisted) { loadRosterSource({ fresh: true }); restoreReturnState(); } });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
     // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.

@@ -68,6 +68,17 @@ const REPEATABLE = ['faction','unit','tier','subcategory','source'];
 /** Selector cũ của bảng xếp hạng: bỏ khỏi query Team, không map sang điểm nguồn. */
 const RETIRED = ['stars','sort','point'];
 const SCALARS = ['season','q','detail','legacyTeam','legacyVariant'];
+/** Lọc theo kho (`kho=`): chỉ đội ráp được, hoặc đội thiếu tối đa 2 món. Chỉ có tác dụng khi danh sách có độ phủ kho. */
+export const ROSTER_FILTER_READY = 'rap-duoc';
+export const ROSTER_FILTER_NEAR = 'thieu-2';
+const ROSTER_FILTER_LIMIT = {[ROSTER_FILTER_READY]: 0, [ROSTER_FILTER_NEAR]: 2};
+/** Sắp theo kho (`xep=`): trong từng bậc, đội thiếu ít món đứng trước. Tên `sort` đã bỏ (RETIRED) nên không dùng lại. */
+export const ROSTER_SORT_EASIEST = 'de-rap';
+/** Giá trị đầu của `key` nếu nằm trong `allowed`; giá trị lạ coi như không có. */
+const allowedParam = (url, key, allowed) => {
+  const value = url.searchParams.getAll(key).filter(Boolean)[0];
+  return value && allowed.includes(value) ? value : null;
+};
 
 export function readRecommendedQuery(href, registry = {}) {
   const url = new URL(href);
@@ -93,6 +104,8 @@ export function readRecommendedQuery(href, registry = {}) {
     season: scalar.season || registry.defaultSourceSeasonId || 'all',
     query: scalar.q || '', detail: scalar.detail,
     legacyTeam: scalar.legacyTeam, legacyVariant: scalar.legacyVariant, view,
+    rosterFilter: allowedParam(url, 'kho', Object.keys(ROSTER_FILTER_LIMIT)),
+    rosterSort: allowedParam(url, 'xep', [ROSTER_SORT_EASIEST]),
     filters: Object.fromEntries(REPEATABLE.map(key=>[key,key === 'tier' && legacyTier ? [] : readFacet(url,key)])),
     notices,
   };
@@ -106,7 +119,9 @@ export function readRecommendedQuery(href, registry = {}) {
 export function referenceSectionState(family, href, registry, storage = null) {
   const state = readRecommendedQuery(href, registry);
   const resolved = {...state, view: resolveTeamView(state.view, storage)};
-  return family === 'other' && !new URL(href).searchParams.has('season') ? {...resolved, season: 'all'} : resolved;
+  // Lọc/sắp theo kho chỉ thuộc Đội chuẩn: Đội khác không có độ phủ kho.
+  if (family === 'other') return {...resolved, rosterFilter: null, rosterSort: null, ...(new URL(href).searchParams.has('season') ? {} : {season: 'all'})};
+  return resolved;
 }
 
 /** Facet lặp: giữ nguyên giá trị nguồn, bỏ trùng, không diễn giải. */
@@ -200,11 +215,30 @@ function fixedRank(a,b) {
   return score || (a.listIndex ?? 0) - (b.listIndex ?? 0) || String(a.sourceConfigId || a.legacyVariantId || a.legacyTeamId).localeCompare(String(b.sourceConfigId || b.legacyVariantId || b.legacyTeamId));
 }
 
-export function projectRecommendedRows(rows,state,labels) {
+/**
+ * `coverage` (tùy chọn) là `Map<sourceConfigId, {missingCount}>` của `buildListCoverage`. Vắng mặt thì `state.rosterFilter`
+ * và `state.rosterSort` không có tác dụng và kết quả y như trước. Có mặt: lọc theo số món thiếu (đội không có độ phủ bị
+ * loại khi đang lọc) và sắp trong từng bậc theo số món thiếu tăng dần (đội không có độ phủ đứng cuối bậc).
+ */
+export function projectRecommendedRows(rows,state,labels,coverage=null) {
   const query = normalizeText(state.query);
   const queryTerms=query.split(/\s+/).filter(Boolean);
+  const missingOf=row=>coverage?.get(row.sourceConfigId)?.missingCount ?? null;
+  const limit=coverage && state.rosterFilter ? ROSTER_FILTER_LIMIT[state.rosterFilter] : undefined;
+  const easiest=Boolean(coverage && state.rosterSort === ROSTER_SORT_EASIEST);
+  const rank=easiest ? (a,b)=>{
+    const tier=(a.tierOrder ?? 999) - (b.tierOrder ?? 999);
+    if (tier) return tier;
+    const [left,right]=[missingOf(a),missingOf(b)];
+    if (left !== right) return left === null ? 1 : right === null ? -1 : left - right;
+    return fixedRank(a,b);
+  } : fixedRank;
   return rows.filter(row => {
     if (!seasonMatches(row,state.season)) return false;
+    if (limit !== undefined) {
+      const missing=missingOf(row);
+      if (missing === null || missing > limit) return false;
+    }
     for (const key of REPEATABLE) {
       const selected = state.filters?.[key] || [];
       if (selected.length && !referenceFacetValues(row,key).some(value=>selected.includes(value))) return false;
@@ -212,7 +246,7 @@ export function projectRecommendedRows(rows,state,labels) {
     if (!queryTerms.length) return true;
     const blob=searchBlob(row,labels);
     return queryTerms.every(term=>blob.includes(term));
-  }).slice().sort(fixedRank);
+  }).slice().sort(rank);
 }
 
 function bytesToJson(bytes) { return JSON.parse(new TextDecoder().decode(bytes)); }

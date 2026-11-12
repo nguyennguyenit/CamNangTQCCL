@@ -72,4 +72,6 @@ const structured = lookupGroupJsonLd({
     </header>
     <div class="reference-view season-page-list" set:html={bodyHtml}></div>
   </section>
+  {/* Badge kho: chỉ tải dữ liệu và gắn badge khi máy người xem có kho; không có kho thì trang giữ nguyên. */}
+  <script is:inline type="module" src="/js/season-page-roster-badges.js"></script>
 </SiteLayout>

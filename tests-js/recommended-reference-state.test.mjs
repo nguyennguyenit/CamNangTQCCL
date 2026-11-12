@@ -151,3 +151,45 @@ test('legacy teams ignore source Tier selectors and never borrow historical tier
   assert.deepEqual(projectRecommendedRows(legacy,state),legacy);
   assert.deepEqual(projectRecommendedRows(legacy,{...state,filters:{tier:['T0']}}),[]);
 });
+
+// Lọc và sắp theo kho (`kho`, `xep`): chỉ có tác dụng khi danh sách được trao độ phủ kho.
+const stockRows = [
+  {sourceConfigId:'t0-far',sourceSeasonId:'s28',tierRaw:'T0',tierOrder:0,value:95,listIndex:0,heroes:[]},
+  {sourceConfigId:'t0-ready',sourceSeasonId:'s28',tierRaw:'T0',tierOrder:0,value:90,listIndex:1,heroes:[]},
+  {sourceConfigId:'t0-none',sourceSeasonId:'s28',tierRaw:'T0',tierOrder:0,value:85,listIndex:2,heroes:[]},
+  {sourceConfigId:'t1-near',sourceSeasonId:'s28',tierRaw:'T1',tierOrder:2,value:80,listIndex:3,heroes:[]},
+  {sourceConfigId:'t1-ready',sourceSeasonId:'s28',tierRaw:'T1',tierOrder:2,value:70,listIndex:4,heroes:[]},
+];
+const stockCoverage = new Map([
+  ['t0-far',{missingCount:5}],['t0-ready',{missingCount:0}],['t1-near',{missingCount:2}],['t1-ready',{missingCount:0}],
+]);
+const stockState = extra => ({season:'s28',query:'',filters:{},...extra});
+const stockIds = (state,coverage) => projectRecommendedRows(stockRows,state,{},coverage).map(row=>row.sourceConfigId);
+
+test('query đọc kho và xep hợp lệ, bỏ giá trị lạ, sort cũ vẫn bị gỡ', () => {
+  const state = readRecommendedQuery('https://x.test/doi-chuan/?kho=rap-duoc&xep=de-rap', {});
+  assert.equal(state.rosterFilter, 'rap-duoc');
+  assert.equal(state.rosterSort, 'de-rap');
+  assert.equal(readRecommendedQuery('https://x.test/doi-chuan/?kho=thieu-2', {}).rosterFilter, 'thieu-2');
+  const odd = readRecommendedQuery('https://x.test/doi-chuan/?kho=abc&xep=score&sort=score', {});
+  assert.equal(odd.rosterFilter, null);
+  assert.equal(odd.rosterSort, null);
+  assert.match(odd.notices.join(' '), /sắp xếp/);
+  const none = readRecommendedQuery('https://x.test/doi-chuan/', {});
+  assert.deepEqual([none.rosterFilter, none.rosterSort], [null, null]);
+});
+
+test('không trao độ phủ thì kho và xep không đổi danh sách', () => {
+  const plain = stockIds(stockState());
+  assert.deepEqual(stockIds(stockState({rosterFilter:'rap-duoc',rosterSort:'de-rap'})), plain);
+  assert.deepEqual(stockIds(stockState(), stockCoverage), plain);
+});
+
+test('kho=rap-duoc chỉ giữ đội thiếu 0; kho=thieu-2 giữ đội thiếu tối đa 2; đội không có độ phủ bị loại', () => {
+  assert.deepEqual(stockIds(stockState({rosterFilter:'rap-duoc'}), stockCoverage), ['t0-ready','t1-ready']);
+  assert.deepEqual(stockIds(stockState({rosterFilter:'thieu-2'}), stockCoverage), ['t0-ready','t1-near','t1-ready']);
+});
+
+test('xep=de-rap sắp trong từng bậc theo số món thiếu, đội không có độ phủ đứng cuối bậc', () => {
+  assert.deepEqual(stockIds(stockState({rosterSort:'de-rap'}), stockCoverage), ['t0-ready','t0-far','t0-none','t1-ready','t1-near']);
+});
