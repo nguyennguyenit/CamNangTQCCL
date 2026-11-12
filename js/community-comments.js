@@ -39,8 +39,9 @@ function commentItem(comment, { onDelete, tagged = false }) {
  * Khối bình luận. `user` null → mời đăng nhập thay cho ô nhập.
  * `sharedPool` (đội cộng đồng, kho chung vi/zh): không lọc theo `lang`, mỗi bình luận kèm nhãn `[VI]`/`[ZH]`;
  * bài mới vẫn gửi `lang` của trang.
- * `count` (tuỳ chọn, số bình luận đang hiện công khai — đội cộng đồng lấy `commentCount` của đội): hiện cạnh tiêu đề
- * "Bình luận 12" và cộng/trừ theo lượt đăng/xoá trong trang.
+ * `count` (tuỳ chọn): số bình luận do worker đếm cho trang (đội cộng đồng: `commentCount` của đội — đếm mọi bình
+ * luận của pageKey nên có thể gồm bình luận đã bị ẩn, không phải đúng số đang hiện); hiện cạnh tiêu đề "Bình luận 12"
+ * và cộng/trừ theo lượt đăng/xoá trong trang.
  * Trả về element section để trang gắn vào.
  */
 export function mountComments(container, { pageKey, lang, user, sharedPool = false, count = null }) {

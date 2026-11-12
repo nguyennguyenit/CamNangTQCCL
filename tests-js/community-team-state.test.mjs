@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { createEntityIndex, draftFromRead, emptyDraft, normalizeTeamRead, sureCell } from "../js/analyze-map.js";
-import { createTeamLexicon } from "../js/community-team-data.js";
+import { createTeamLexicon, heroNameResolver } from "../js/community-team-data.js";
 import {
   TROOPS,
   mergePage,
@@ -195,4 +195,18 @@ test("similarNotice: không cảnh báo khi 0, tiêu đề có số đội (N+ k
   assert.match(similarNotice(2, false, "zh").title, /2/);
   assert.match(similarNotice(2, false, "zh").title, /阵容/);
   assert.ok(similarNotice(1, false, "vi").text.length > 0);
+});
+
+test("heroNameResolver: chữ Hán chiến báo → tên Việt; phía đội ta ưu tiên bản SP của đội, đối thủ giữ bản tra thẳng; tên lạ giữ nguyên", async () => {
+  const { readFile } = await import("node:fs/promises");
+  const heroes = JSON.parse(await readFile(new URL("../data/heroes-dict.json", import.meta.url), "utf8"));
+  const lexicon = createTeamLexicon({ heroes, tactics: [] }, "vi");
+  const nameOf = heroNameResolver(lexicon, { preferIds: ["hero:sp-quan-vu", "hero:truong-phi"] });
+  assert.equal(nameOf("关羽", "ally"), "SP Quan Vũ");
+  assert.equal(nameOf("关羽", "enemy"), "Quan Vũ");
+  assert.equal(nameOf("张飞", "ally"), "Trương Phi");
+  assert.equal(nameOf("曹操", "ally"), "Tào Tháo");
+  assert.equal(nameOf("不存在的人", "ally"), "不存在的人");
+  assert.equal(heroNameResolver(lexicon)("关羽", "ally"), "Quan Vũ");
+  assert.equal(heroNameResolver(createTeamLexicon({ heroes, tactics: [] }, "zh"), { preferIds: ["hero:sp-quan-vu"] })("关羽", "ally"), "SP 關羽");
 });

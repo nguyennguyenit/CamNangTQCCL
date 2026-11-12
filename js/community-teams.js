@@ -537,7 +537,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       const pageKey = `/doi-cong-dong/${team.id}/`;
       try {
         // Tên tướng chiến báo theo từ điển (tên Việt / chữ Hán theo trang); từ điển chỉ nạp khi có chiến báo để hiện.
-        const heroNames = () => getLexicon().then(heroNameResolver);
+        const heroNames = () => getLexicon().then((value) => heroNameResolver(value, { preferIds: team.heroes }));
         const reports = mountReports(widgets, { pageKey, lang: locale, user, sharedPool: true, archived: !team.seasonOpen, heroNames });
         const comments = mountComments(widgets, { pageKey, lang: locale, user, sharedPool: true, count: team.commentCount });
         await Promise.all([reports.load(), comments.load()]);
@@ -551,8 +551,9 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   async function spaDetail(view, team, isCurrent) {
     view.classList.add('cm-team-detail-page');
     const layout = detailLayout(team, { names, locale, backHref: hrefFor({}) });
-    const back = layout.nodes[0].querySelector('a');
-    if (!isStatic) routeClicks(back, {});
+    // Trang tĩnh đã có link "Về danh sách" ngoài khung bị ẩn: bỏ link của khung SPA để chỉ còn một.
+    if (isStatic) layout.nodes.shift();
+    else routeClicks(layout.nodes[0].querySelector('a'), {});
     if (team.status === 'pending') {
       layout.notice.append(el('p', { class: 'cm-notice', role: 'note' }, L('Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.', '阵容正在等待审核；仅你和管理员可见。')));
     } else if (team.status === 'rejected') {
@@ -635,11 +636,14 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
     const paintTally = () => tallySlot.replaceChildren(mineTally(items));
     const forget = (team, cardNode) => {
+      // Nút mở hộp nằm trong thẻ bị gỡ: đưa focus sang tên thẻ kế tiếp (hoặc trước đó), hết thẻ thì về h2.
+      const neighbour = cardNode.nextElementSibling ?? cardNode.previousElementSibling;
       items = items.filter((item) => item.id !== team.id);
       cardNode.remove();
       empty.hidden = items.length > 0;
       paintTally();
       status.set(L('Đã xoá đội.', '阵容已删除。'), 'ok');
+      (neighbour?.querySelector('.cm-team-card-title') ?? view.querySelector('.cm-team-view-title'))?.focus();
     };
     const remove = (team) => api(`/api/community-teams/${encodeURIComponent(team.id)}`, { method: 'DELETE' });
 

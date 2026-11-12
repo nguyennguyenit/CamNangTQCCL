@@ -139,7 +139,14 @@ test("Đội của tôi: Escape đóng hộp không xoá; Xoá đội gỡ thẻ
   await page.getByRole("alertdialog").getByRole("button", { name: "Xoá đội" }).click();
   await expect(cards).toHaveCount(1);
   await expect(tally.locator("[data-status='pending'] .cm-team-tally-num")).toHaveText("0");
-  expect(calls.filter((call) => call.method === "DELETE").map((call) => call.path)).toEqual(["/api/community-teams/m1"]);
+  // Thẻ chứa nút mở bị gỡ: focus sang tên thẻ kế tiếp, không rơi về <body>.
+  await expect(cards.nth(0).locator(".cm-team-card-title")).toBeFocused();
+  await cards.nth(0).getByRole("button", { name: "Xoá" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Xoá đội" }).click();
+  await expect(cards).toHaveCount(0);
+  // Hết thẻ: focus về h2 "Đội của tôi".
+  await expect(page.getByRole("heading", { level: 2, name: "Đội của tôi" })).toBeFocused();
+  expect(calls.filter((call) => call.method === "DELETE").map((call) => call.path)).toEqual(["/api/community-teams/m1", "/api/community-teams/m2"]);
 });
 
 test.describe("thông báo khoá tài khoản", () => {
@@ -263,4 +270,55 @@ test("trang đội: không có chiến báo thì không nạp từ điển tên;
   await expect(block.locator(".cm-comment")).toHaveCount(0);
   await expect(block.locator(".cm-title-count")).toHaveText("0");
   expect(requests.filter((url) => url.includes("heroes-dict"))).toEqual([]);
+});
+
+test("đăng đội 390px: upload ảnh 2 lỗi — dòng trạng thái lỗi vẫn hiện và đọc được (role=status)", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS } });
+  let uploads = 0;
+  await page.route("**/api/community-teams/uploads", (route) => {
+    uploads += 1;
+    return uploads === 1
+      ? route.fallback()
+      : route.fulfill({ status: 413, contentType: "application/json", body: JSON.stringify({ error: { code: "payload_too_large", message: "x" } }) });
+  });
+  await page.goto("/doi-cong-dong/?new=1");
+  await page.locator("#cm-team-image-0").setInputFiles({ name: "team.png", mimeType: "image/png", buffer: PNG_1X1 });
+  await expect(page.getByRole("button", { name: "Đọc bằng AI" }).first()).toBeVisible();
+  await page.locator("#cm-team-image-1").setInputFiles({ name: "team.png", mimeType: "image/png", buffer: PNG_1X1 });
+  const status = page.locator(".cm-team-image-slot").nth(1).getByRole("status");
+  await expect(status).toBeVisible();
+  await expect(status).not.toHaveText("");
+  await expect(status).toHaveAttribute("data-kind", "error");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+});
+
+test("trang đội: phía đội ta ưu tiên bản SP của đội (cùng chữ Hán), đối thủ giữ bản tra thẳng", async ({ page }) => {
+  const sp = { ...REPORT, allyHeroes: ["关羽", "张飞"], enemyHeroes: ["关羽"] };
+  await mockCommunityApi(page, {
+    reports: [sp],
+    teams: { seasons: SEASONS, details: (id) => teamDetail(id, { heroes: ["hero:sp-quan-vu", "hero:truong-phi", "hero:tao-thao"] }) },
+  });
+  await routeStaticTeam(page, "/doi-cong-dong/t1/");
+  await page.goto("/doi-cong-dong/t1/");
+  const sides = page.locator(".cm-report .cm-report-sides");
+  await expect(sides.locator("div").first()).toContainText("SP Quan Vũ · Trương Phi");
+  await expect(sides.locator("div").nth(1)).toHaveText(/Đối thủ\s*Quan Vũ$/);
+});
+
+test("trang tĩnh: đội đổi sang chờ duyệt sau build — chỉ một link \"Về danh sách\"", async ({ page }) => {
+  await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS, details: (id) => teamDetail(id, { status: "pending" }) } });
+  await page.route("**/doi-cong-dong/t1/", (route) => route.fulfill({
+    status: 200,
+    contentType: "text/html; charset=utf-8",
+    body: '<!doctype html><html lang="vi"><head><meta charset="utf-8"><title>t1</title></head><body><main><div class="cm-team-detail-page">'
+      + '<nav class="cm-team-back"><a class="cm-team-back-link" href="/doi-cong-dong/">Về danh sách đội cộng đồng</a></nav>'
+      + '<article class="cm-team-detail cm-team-static" data-team-static><h1>Đội t1</h1></article>'
+      + '<div id="community-teams" class="cm-team-root" data-team-id="t1"></div></div>'
+      + '<script type="module" src="/js/community-teams.js"></script></main></body></html>',
+  }));
+  await page.goto("/doi-cong-dong/t1/");
+  await expect(page.getByText("Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Về danh sách đội cộng đồng" })).toHaveCount(1);
+  await expect(page.locator("h1:visible")).toHaveCount(1);
 });

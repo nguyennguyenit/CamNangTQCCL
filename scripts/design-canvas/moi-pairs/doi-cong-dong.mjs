@@ -69,13 +69,21 @@ async function fillTeamForm(page) {
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
+/** Ảnh tải lười (ảnh chiến báo dưới màn hình) không kịp hiện khi chụp cả trang: nạp ngay rồi chờ giải mã. */
+async function loadAllImages(page) {
+  await page.evaluate(async () => {
+    for (const image of document.querySelectorAll('img[loading="lazy"]')) image.loading = 'eager';
+    await Promise.all([...document.images].map((image) => image.decode().catch(() => {})));
+  });
+}
+
 const BAN_PATH = '/doi-cong-dong/?error=ACCOUNT_BANNED&error_description=tok';
 
 export default [
   { artboard: 'DoiCongDongMoi', path: '/doi-cong-dong/', width: 1440, ready: '.cm-team-card .cm-team-card-portrait img', mock: listMock() },
   { artboard: 'DoiCongDongMoiMobile', path: '/doi-cong-dong/', width: 390, ready: '.cm-team-card .cm-team-card-portrait img', mock: listMock() },
-  { artboard: 'DoiCongDongDetailMoi', path: '/doi-cong-dong/?id=t1', width: 1440, ready: '.cm-comments .cm-comment', mock: detailMock() },
-  { artboard: 'DoiCongDongDetailMoiMobile', path: '/doi-cong-dong/?id=t1', width: 390, ready: '.cm-comments .cm-comment', mock: detailMock() },
+  { artboard: 'DoiCongDongDetailMoi', path: '/doi-cong-dong/?id=t1', width: 1440, ready: '.cm-comments .cm-comment', mock: detailMock(), setup: loadAllImages },
+  { artboard: 'DoiCongDongDetailMoiMobile', path: '/doi-cong-dong/?id=t1', width: 390, ready: '.cm-comments .cm-comment', mock: detailMock(), setup: loadAllImages },
   { artboard: 'DoiCongDongNewMoi', path: '/doi-cong-dong/?new=1', width: 1440, ready: '.cm-team-form', mock: 'dang-nhap', setup: fillTeamForm },
   { artboard: 'DoiCongDongNewMoiMobile', path: '/doi-cong-dong/?new=1', width: 390, ready: '.cm-team-form', mock: 'dang-nhap', setup: fillTeamForm },
   { artboard: 'DoiCongDongMineMoi', path: '/doi-cong-dong/?mine=1', width: 1440, ready: '.cm-team-mine-card', mock: 'dang-nhap' },

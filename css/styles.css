@@ -16032,13 +16032,31 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 .cm-team-detail-page .cm-stat-value { font: var(--type-cm-stat); }
 .cm-team-detail-page .cm-opponents { display: grid; gap: var(--space-8); padding: var(--space-14) var(--space-18); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
 .cm-team-detail-page .cm-opponent { min-height: var(--control-40); border-top: var(--border-hair) dashed var(--line-2); }
-/* Thẻ chiến báo: ảnh trái (khi có), bên phải dòng kết quả + người gửi, hai đội, ghi chú. */
-.cm-team-detail-page .cm-report { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
-.cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: var(--size-col-200) minmax(0, 1fr); column-gap: var(--space-16); }
-.cm-team-detail-page .cm-report-image-link { grid-column: 1; grid-row: 1 / span 2; align-self: start; overflow: hidden; border-radius: var(--radius-10); }
+/* Thẻ chiến báo (artboard): ảnh trái khi có; hàng đầu nhãn Thắng/Thua rồi người gửi + giờ; dưới là hai đội, ghi chú.
+   `.cm-report-summary` thành `display: contents` để nhãn kết quả xếp cùng hàng với dòng người gửi. */
+.cm-team-detail-page .cm-report {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-8) var(--space-10);
+  padding: var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background-color: var(--panel);
+}
+.cm-team-detail-page .cm-report > .cm-report-summary { display: contents; }
+.cm-team-detail-page .cm-report .cm-result { grid-column: 1; grid-row: 1; justify-self: start; }
+.cm-team-detail-page .cm-report > .cm-report-meta { grid-column: 2; grid-row: 1; margin: 0; }
+.cm-team-detail-page .cm-report .cm-report-sides,
+.cm-team-detail-page .cm-report .cm-report-note { grid-column: 1 / -1; margin: 0; }
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: var(--size-col-200) auto minmax(0, 1fr); column-gap: var(--space-16); }
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-result { grid-column: 2; }
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) > .cm-report-meta { grid-column: 3; }
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-report-sides,
+.cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-report-note { grid-column: 2 / -1; }
+.cm-team-detail-page .cm-report-image-link { grid-column: 1; grid-row: 1 / span 3; align-self: start; overflow: hidden; border-radius: var(--radius-10); }
+.cm-team-detail-page .cm-report-sides > div { display: grid; grid-template-columns: var(--size-col-60) minmax(0, 1fr); gap: var(--space-8); }
 .cm-team-detail-page .cm-report-image { display: block; width: 100%; max-height: none; aspect-ratio: 16 / 9; border-radius: 0; object-fit: cover; }
-.cm-team-detail-page .cm-report > .cm-report-meta { grid-column: -2; grid-row: 1; margin: 0; }
-.cm-team-detail-page .cm-report > .cm-report-summary { grid-column: -2; grid-row: 2; }
 .cm-team-detail-page .cm-title-count { color: var(--muted); font: var(--type-strong); }
 .cm-team-detail-page .cm-report-flow { padding: var(--space-20); border-radius: var(--radius-12); background-color: var(--panel-2); }
 .cm-team-detail-page .cm-comment-form { padding: var(--space-16); border: var(--border-hair) solid var(--line); border-radius: var(--radius-14); background-color: var(--panel); }
@@ -16423,10 +16441,13 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
   .cm-team-analysis-item { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
   .cm-team-detail-page .cm-stats { grid-template-columns: minmax(0, 1fr); }
   .cm-team-detail-page .cm-stat-grid { grid-template-columns: 1fr 1fr; }
-  .cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: minmax(0, 1fr); }
-  .cm-team-detail-page .cm-report-image-link { grid-row: 3; }
-  .cm-team-detail-page .cm-report > .cm-report-meta,
-  .cm-team-detail-page .cm-report > .cm-report-summary { grid-column: 1; }
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) { grid-template-columns: auto minmax(0, 1fr); }
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-result { grid-column: 1; }
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) > .cm-report-meta { grid-column: 2; }
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-report-sides,
+  .cm-team-detail-page .cm-report:has(.cm-report-image-link) .cm-report-note,
+  .cm-team-detail-page .cm-report-image-link { grid-column: 1 / -1; }
+  .cm-team-detail-page .cm-report-image-link { grid-row: auto; }
   /* Mobile: "Ảnh đội" là một khối như các khối khác, không đóng thẻ. */
   .cm-team-photos { padding: 0; border: 0; background-color: transparent; }
   .cm-team-photos .cm-team-aside-title { font: var(--type-cm-section-title); }
@@ -16434,8 +16455,8 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
   .cm-team-form-card { padding: var(--space-16); }
   .cm-team-image-slot { flex-direction: row; align-items: flex-start; }
   .cm-team-image-slot[data-filled="false"] { flex-direction: column; }
-  .cm-team-image-slot[data-filled="false"] .cm-team-slot-body { display: none; }
-  .cm-team-image-slot[data-filled="false"]:first-child .cm-team-slot-body { display: flex; }
+  /* Ô ảnh 2/3 chưa có ảnh chỉ còn nút chọn, nhưng dòng trạng thái (đang tải, lỗi — vùng aria-live) luôn hiện. */
+  .cm-team-image-slot[data-filled="false"]:not(:first-child) .cm-team-slot-body > :not(.cm-team-slot-status) { display: none; }
   .cm-team-slot-thumb { flex: none; width: var(--size-col-120); }
   .cm-team-drop { flex-direction: row; justify-content: flex-start; aspect-ratio: auto; min-height: var(--control-56); text-align: left; }
   .cm-team-read-summary { grid-template-columns: minmax(0, 1fr); gap: var(--space-14); }

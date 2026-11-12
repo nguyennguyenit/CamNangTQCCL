@@ -25,10 +25,22 @@ const NOTE_MAX_LENGTH = 500;
 /** Tên hiển thị mặc định: giữ nguyên chữ đã lưu (chữ Hán AI đọc hoặc chữ người gửi gõ). */
 const keepName = (name) => name;
 
-/** Dòng tên tướng "A · B · C"; `nameOf` đổi từng tên sang tên hiển thị (trang đội: tên Việt theo từ điển). */
-function heroLine(names, nameOf = keepName) {
+/**
+ * Dòng tên tướng "A · B · C". Mỗi tên là một `span[data-hero-raw]` (kèm `data-hero-side`) để trang đổi sang tên
+ * hiển thị sau khi từ điển về (`applyHeroNames`); `nameOf(tên, phía)` đổi ngay nếu đã có bộ tra.
+ */
+function heroLine(names, nameOf = keepName, side = '') {
   const list = Array.isArray(names) ? names.filter((name) => typeof name === 'string' && name.trim()) : [];
-  return list.length ? list.map((name) => nameOf(name.trim())).join(' · ') : '—';
+  if (!list.length) return '—';
+  return list.flatMap((name, index) => [
+    index ? ' · ' : null,
+    el('span', { class: 'cm-hero-name', dataset: { heroRaw: name.trim(), heroSide: side } }, nameOf(name.trim(), side)),
+  ]).filter(Boolean);
+}
+
+/** Đổi mọi tên tướng đã vẽ trong `root` sang tên hiển thị. */
+function applyHeroNames(root, nameOf) {
+  for (const node of root.querySelectorAll('[data-hero-raw]')) node.textContent = nameOf(node.dataset.heroRaw, node.dataset.heroSide);
 }
 
 /** Có tên tướng nào cần tra không (chiến báo / đối thủ thường gặp). */
@@ -44,8 +56,8 @@ export function reportSummary(report, { caption = null, nameOf = keepName } = {}
   return el('div', { class: 'cm-report-summary' }, [
     caption ? el('div', { class: 'cm-report-verdict' }, [pill, el('span', { class: 'cm-report-caption' }, caption)]) : pill,
     el('dl', { class: 'cm-report-sides' }, [
-      el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes, nameOf))]),
-      el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes, nameOf))]),
+      el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes, nameOf, 'ally'))]),
+      el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes, nameOf, 'enemy'))]),
     ]),
     report?.note ? el('p', { class: 'cm-report-note' }, String(report.note)) : null,
   ]);
@@ -87,7 +99,7 @@ function statsPanel(stats, nameOf = keepName) {
             const count = Number(opponent?.count) || 0;
             const opponentWins = Number(opponent?.wins) || 0;
             return el('li', { class: 'cm-opponent' }, [
-              el('span', { class: 'cm-opponent-heroes' }, heroLine(opponent?.heroes, nameOf)),
+              el('span', { class: 'cm-opponent-heroes' }, heroLine(opponent?.heroes, nameOf, 'enemy')),
               el('span', { class: 'cm-opponent-count' }, L(
                 `${formatNumber(count)} trận · thắng ${formatNumber(opponentWins)}`,
                 `${formatNumber(count)} 场 · 胜 ${formatNumber(opponentWins)}`,
@@ -285,7 +297,8 @@ function submitFlow({ pageKey, lang }) {
  * Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi.
  * `sharedPool` (đội cộng đồng): không lọc theo `lang`, mỗi chiến báo kèm nhãn `[VI]`/`[ZH]`.
  * `archived` (mùa đã đóng): thay luồng gửi bằng ghi chú lưu trữ.
- * `heroNames` (tuỳ chọn): `() => Promise<(tên) => tên hiển thị>` — chỉ gọi khi có tên tướng để hiện; lỗi thì giữ tên gốc.
+ * `heroNames` (tuỳ chọn): `() => Promise<(tên, phía) => tên hiển thị>` — chỉ gọi khi có tên tướng để hiện. Danh sách
+ * vẽ ngay bằng tên gốc, tên được thay khi bộ tra về; lỗi thì giữ tên gốc.
  */
 export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false, heroNames = null }) {
   const titleId = 'cm-reports-title';
@@ -295,11 +308,19 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
   const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm chiến báo', '查看更多战报'));
   let cursor = null;
   let namer = null;
-  /** Bộ đổi tên tướng (nạp một lần, chỉ khi có tên để hiện). */
-  const nameOfFor = async (groups) => {
-    if (!heroNames || !hasNames(groups)) return keepName;
-    namer ??= Promise.resolve().then(heroNames).then((fn) => (typeof fn === 'function' ? fn : keepName), () => keepName);
-    return namer;
+  let nameOf = keepName;
+  let section = null;
+  /** Nạp bộ đổi tên (một lần, chỉ khi có tên để hiện) rồi thay tên đã vẽ; không chặn việc vẽ danh sách. */
+  const translate = (groups) => {
+    if (!heroNames || !hasNames(groups)) return;
+    namer ??= Promise.resolve().then(heroNames).then(
+      (fn) => (typeof fn === 'function' ? fn : keepName),
+      () => keepName,
+    ).then((fn) => {
+      nameOf = fn;
+      return fn;
+    });
+    namer.then((fn) => { if (section) applyHeroNames(section, fn); });
   };
 
   const loadList = async () => {
@@ -307,8 +328,8 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
     if (cursor) params.set('cursor', cursor);
     const body = await api(`/api/reports?${params}`);
     const items = (Array.isArray(body?.items) ? body.items : []).filter((report) => sharedPool || report?.lang === lang);
-    const nameOf = await nameOfFor(items.flatMap((report) => [report?.allyHeroes, report?.enemyHeroes]));
     for (const report of items) list.append(reportItem(report, { tagged: sharedPool, nameOf }));
+    translate(items.flatMap((report) => [report?.allyHeroes, report?.enemyHeroes]));
     list.hidden = list.childElementCount === 0;
     cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
     moreButton.hidden = !cursor;
@@ -317,7 +338,8 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
   const load = async () => {
     const [stats] = await Promise.all([api(`/api/reports/stats?${new URLSearchParams({ page: pageKey })}`), loadList()]);
     const opponents = Array.isArray(stats?.topOpponents) ? stats.topOpponents : [];
-    statsBox.replaceChildren(statsPanel(stats, await nameOfFor(opponents.map((opponent) => opponent?.heroes))));
+    statsBox.replaceChildren(statsPanel(stats, nameOf));
+    translate(opponents.map((opponent) => opponent?.heroes));
   };
 
   moreButton.addEventListener('click', async () => {
@@ -337,7 +359,7 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
     }
   });
 
-  const section = el('section', { class: 'cm-block cm-reports', 'aria-labelledby': titleId }, [
+  section = el('section', { class: 'cm-block cm-reports', 'aria-labelledby': titleId }, [
     el('h2', { id: titleId, class: 'cm-title' }, L('Chiến báo thực chiến', '实战战报')),
     el('p', { class: 'scope-note' }, L(
       'Kết quả trận thật do người chơi gửi, đã được quản trị viên duyệt.',
