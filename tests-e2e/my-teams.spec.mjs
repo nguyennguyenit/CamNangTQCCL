@@ -278,18 +278,22 @@ test.describe("8–9 · soạn đội", () => {
     // Bộ đếm byte cùng cách đếm với server: chữ Hán 3 B mỗi ký tự.
     const name = form.getByLabel("Tên đội");
     await name.fill("Đội 曹操");
-    await expect(name.locator("xpath=following-sibling::span[contains(@class,'mt-bytes')]")).toHaveText(`${new TextEncoder().encode("Đội 曹操").length} / 180 B`);
+    await expect(form.locator(`#${await name.getAttribute("aria-describedby")}`)).toHaveText(`${new TextEncoder().encode("Đội 曹操").length} / 180 byte`);
     await form.getByLabel("Ghi chú chung").fill("Ghi chú đã sửa");
 
-    // Chọn chiến pháp cho ô 1 của tướng 1 bằng bảng chọn policy editor (có cả chiến pháp tự mang).
+    // Chọn chiến pháp cho ô 1 của tướng 1 bằng bảng chọn tại chỗ (danh mục policy editor, có cả chiến pháp tự mang).
     const hero = form.locator(".mt-edit-hero").first();
-    await hero.locator(".mt-slot").nth(1).getByRole("button", { name: /Đổi|Chọn/ }).click();
-    const picker = page.locator("dialog.mt-picker-dialog");
+    const change = hero.locator('[data-picker-key="0-t0"]');
+    await change.click();
+    const picker = form.locator(".mt-picker");
     await expect(picker).toBeVisible();
-    await expect(picker.getByRole("radio")).toHaveCount(0);
-    await picker.getByLabel("Tìm trong danh mục").fill("Nhân Đức");
-    await picker.locator(".roster-picker-item").first().click();
-    await expect(picker).toBeHidden();
+    await expect(change).toHaveAttribute("aria-expanded", "true");
+    await picker.getByRole("searchbox", { name: "Tìm chiến pháp" }).fill("Nhân Đức");
+    await picker.locator(".mt-picker-opt").first().click();
+    await expect(picker.locator(".mt-picker-opt").first()).toHaveAttribute("aria-pressed", "true");
+    await picker.getByRole("button", { name: "Xong", exact: true }).click();
+    await expect(picker).toHaveCount(0);
+    await expect(hero.locator('[data-picker-key="0-t0"]')).toBeFocused();
 
     await form.getByRole("button", { name: "Lưu", exact: true }).click();
     await expect(page.locator("form.mt-editor")).toHaveCount(0);
@@ -502,10 +506,11 @@ test.describe("quản lý hộp, nhóm, đội", () => {
 
     await card(page, "team-grp").getByLabel(/Chuyển nhóm/).selectOption(groupId);
     await expect(page.locator(`[data-group-id="${groupId}"] .mt-team`)).toHaveCount(1);
-    expect(mock.server.live("team")[0].data.groupId).toBe(groupId);
+    // Ô chọn nhóm đổi giao diện ngay, bản ghi lên máy chủ sau một nhịp POST.
+    await expect.poll(() => mock.server.live("team")[0].data.groupId).toBe(groupId);
 
     await page.locator(`[data-group-id="${groupId}"]`).getByRole("button", { name: "Xóa nhóm" }).click();
-    const dialog = page.locator("dialog.mt-dialog");
+    const dialog = page.locator("dialog.hop-xac-nhan");
     await expect(dialog).toContainText("1 đội trong nhóm sẽ chuyển về Ghép Team");
     await dialog.getByRole("button", { name: "Xóa nhóm" }).click();
     await expect(page.locator(`[data-group-id="${groupId}"]`)).toHaveCount(0);
@@ -519,15 +524,15 @@ test.describe("quản lý hộp, nhóm, đội", () => {
     await page.getByRole("button", { name: "Đổi tên hộp" }).click();
     await page.locator("#mt-prompt-input").fill("Hộp B");
     await page.locator("dialog.mt-dialog").getByRole("button", { name: "Lưu tên" }).click();
-    await expect(page.locator("#mt-box option:checked")).toHaveText("Hộp B");
+    await expect(page.locator("#mt-box option:checked")).toHaveText("Hộp B · 1 đội");
 
     // Xóa đội: hủy thì còn, xác nhận thì mất.
     await card(page, "team-boxed").getByRole("button", { name: "Xóa", exact: true }).click();
-    await page.locator("dialog.mt-dialog").getByRole("button", { name: "Hủy" }).click();
+    await page.locator("dialog.hop-xac-nhan").getByRole("button", { name: "Hủy" }).click();
     await expect(card(page, "team-boxed")).toBeVisible();
 
     await page.getByRole("button", { name: "Xóa hộp" }).click();
-    const dialog = page.locator("dialog.mt-dialog");
+    const dialog = page.locator("dialog.hop-xac-nhan");
     await expect(dialog).toContainText("mất 1 đội");
     await dialog.getByRole("button", { name: "Xóa hộp" }).click();
     await expect(page.locator("#mt-box")).toHaveValue("main");
@@ -555,9 +560,9 @@ test.describe("14 · zh + mobile", () => {
     await card(page, "team-zh").getByRole("button", { name: "编辑", exact: true }).click();
     await expect(page.locator("form.mt-editor")).toBeVisible();
     expect(await overflow()).toBeLessThanOrEqual(0);
-    // Hộp thoại chọn món ở 390px.
-    await page.locator(".mt-edit-hero").first().locator(".mt-slot").first().getByRole("button").first().click();
-    await expect(page.locator("dialog.mt-picker-dialog")).toBeVisible();
+    // Bảng chọn món tại chỗ ở 390px (tướng 1 mở sẵn trong khung thu gọn được).
+    await page.locator(".mt-edit-hero").first().locator('[data-picker-key="0-hero"]').click();
+    await expect(page.locator(".mt-picker")).toBeVisible();
     expect(await overflow()).toBeLessThanOrEqual(0);
   });
 

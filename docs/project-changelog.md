@@ -15,7 +15,10 @@
 - Chưa dựng.
 
 ### Đội của tôi
-- Chưa dựng.
+- Changed: `/doi-cua-toi/` và `/zh/doi-cua-toi/` dựng theo artboard `DoiCuaToi` + `DoiCuaToiMobile` — kicker + khối "Thêm đội bằng nút Lưu vào đội của tôi" với lối vào 5 trang nguồn (HTML tĩnh), thanh hộp có số đội mỗi hộp và tình trạng kho ("Kho của hộp: n tướng · m chiến pháp" hoặc "Hộp này chưa có kho" + link Gợi ý đội), cảnh báo trùng có link tới từng thẻ, đầu nhóm có số đội, thẻ đội có dòng nguồn · mùa · hạng và viên Thiếu n món / Ráp được / Bản gốc đã cập nhật / Thay thế cho / Trùng với, thẻ mời đăng nhập cho khách.
+- Changed: trình soạn mở tại chỗ thay thẻ đội (các thẻ khác vẫn hiện), hai cột cấu trúc / chữ tự do, bảng chọn món mở ngay dưới ô thay hộp thoại (`js/my-teams-inline-picker.js`, Escape/Xong trả focus về nút đã mở), viên kho theo tướng và dòng tóm tắt món thiếu; ô Mùa thành danh sách chọn từ `seasons.json` đã pin (giá trị cũ ngoài danh sách vẫn giữ); mobile mỗi tướng là một khung thu gọn. Ô "Binh chủng / ghi chú" giữ chữ tự do, dữ liệu lưu không đổi.
+- Changed: xóa hộp, nhóm, đội dùng hộp xác nhận trong trang `confirmInPage` (`js/inline-confirm.js`) thay hộp thoại riêng; Hủy / Escape trả focus về nút Xóa, xóa xong focus sang ô chọn hộp hoặc tên nhóm, thao tác lỗi giữ hộp mở và nêu lý do.
+- Added: token `type.mt-*` (8), `size.mt-*` (7), `color.warn-ink` (sáng + tối); component `trang-doi-cua-toi`, `the-doi-cua-toi`, `trinh-soan-doi-cua-toi`; e2e `tests-e2e/my-teams-redesign.spec.mjs`.
 
 ### Bài viết + Đội chuẩn có kho
 - Chưa dựng.

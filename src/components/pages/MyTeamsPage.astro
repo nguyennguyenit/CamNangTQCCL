@@ -1,7 +1,9 @@
 ---
-// Trang Đội của tôi dùng chung cho bản Việt (`/doi-cua-toi/`) và bản Trung (`/zh/doi-cua-toi/`).
-// Bắt buộc đăng nhập; hộp/nhóm/đội và trình soạn do js/my-teams.js dựng trong `#my-teams`.
+// Trang Đội của tôi dùng chung cho bản Việt (`/doi-cua-toi/`) và bản Trung (`/zh/doi-cua-toi/`), artboard DoiCuaToi.
+// Bắt buộc đăng nhập; thanh hộp, nhóm, thẻ đội và trình soạn do js/my-teams.js dựng trong `#my-teams`. Đầu trang và
+// khối "Thêm đội từ đâu" là HTML tĩnh nên khách cũng thấy.
 import SiteLayout from '../../layouts/SiteLayout.astro';
+import { websiteDisplayPublicationSnapshot } from '../../lib/root-static-artifacts.ts';
 import { teamDetailCatalog } from '../../lib/team-detail-routes';
 import { pick } from '../../../js/i18n.js';
 import type { SiteLocale } from '../../lib/locale-routes';
@@ -12,6 +14,7 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const prefix = locale === 'zh' ? '/zh' : '';
 // Layout chỉ nhúng `{l}` cho `pageKind="detail"`; trang này tự nhúng đủ `{r, l, k}` để dựng link nguồn của mọi họ đội
 // (`js/my-teams.js` đăng ký bằng `setTeamRouteHandlesFromJSON`, như js/team-detail.js).
 const catalog = await teamDetailCatalog();
@@ -20,6 +23,26 @@ const routeTables = JSON.stringify({
   l: Object.fromEntries(catalog.legacy.map((entry) => [entry.legacyTeamId, entry.routeSegment])),
   k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
 }).replace(/</g, '\\u003c');
+// Danh mục mùa của generation đã pin (cùng `seasons.json` của Đội chuẩn): ô "Mùa" của trình soạn và nhãn mùa trên thẻ.
+// Bản vi `PK-S27 · Hán Diễm Trường Minh`; bản zh dùng tên chữ Hán gốc.
+const website = await websiteDisplayPublicationSnapshot();
+const registry = JSON.parse(Buffer.from(website.recommended.files['seasons.json']).toString('utf8'));
+const seasonOptions = (Array.isArray(registry?.seasonOptions) ? registry.seasonOptions : [])
+  .filter((option: { sourceSeasonId?: unknown }) => typeof option?.sourceSeasonId === 'string' && option.sourceSeasonId)
+  .map((option: { sourceSeasonId: string; displayCode?: string; displayNameVi?: string; nameRaw?: string }) => {
+    const name = locale === 'zh' ? option.nameRaw : option.displayNameVi;
+    return { id: option.sourceSeasonId, label: [option.displayCode, name].filter(Boolean).join(' · ') || option.sourceSeasonId };
+  });
+const seasonTable = JSON.stringify(seasonOptions).replace(/</g, '\\u003c');
+
+// Năm trang nguồn có nút "Lưu vào đội của tôi" (icon nét như artboard, trang trí).
+const sources = [
+  { href: `${prefix}/doi-chuan/`, label: t('Đội chuẩn', '推荐阵容'), paths: ['M5 21V4', 'M5 4h11l-2 4 2 4H5'] },
+  { href: `${prefix}/doi-khac/`, label: t('Đội khác', '其他阵容'), circle: true, paths: ['M2.5 20c1-3.5 3.6-5 6.5-5s5.5 1.5 6.5 5', 'M16 4.5a3.5 3.5 0 0 1 0 7', 'M18 15c2 .6 3.2 2.2 3.8 5'] },
+  { href: `${prefix}/khai-hoang/`, label: t('Khai hoang', '开荒'), paths: ['M12 3v4', 'M12 17v4', 'M3 12h4', 'M17 12h4', 'M6 6l2.5 2.5', 'M15.5 15.5L18 18', 'M18 6l-2.5 2.5', 'M8.5 15.5L6 18'] },
+  { href: `${prefix}/goi-y-doi-tu-kho/`, label: t('Gợi ý đội', '武将库配队'), rect: true, paths: ['M5 9v10h14V9', 'M10 13h4'] },
+  { href: `${prefix}/soi-doi-tu-anh/`, label: t('Soi đội', '截图识阵'), paths: ['M4 8V5a1 1 0 0 1 1-1h3', 'M16 4h3a1 1 0 0 1 1 1v3', 'M20 16v3a1 1 0 0 1-1 1h-3', 'M8 20H5a1 1 0 0 1-1-1v-3', 'M8 12h8'] },
+];
 ---
 <SiteLayout
   title={t('Đội của tôi — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '我的阵容 — 三国志战略版攻略手册')}
@@ -29,13 +52,38 @@ const routeTables = JSON.stringify({
   robots="noindex"
   locale={locale}
 >
-  <section class="mt-page" aria-labelledby="mt-title">
-    <h1 id="mt-title" class="detail-title">{t('Đội của tôi', '我的阵容')}</h1>
-    <p class="scope-note">{t('Đội bạn lưu từ Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội và Soi đội, đồng bộ theo tài khoản. Bản đã lưu là bản sao của riêng bạn: sửa tự do, không đổi khi nguồn cập nhật.', '你从标准阵容、其他阵容、开荒、阵容推荐和阵容分析保存的阵容，按账号同步。已保存的是你自己的副本：可随意修改，来源更新时不会改变。')}</p>
+  <section class="mt-page mt-moi" aria-labelledby="mt-title">
+    <div class="mt-head">
+      <div class="mt-head-text">
+        <span class="mt-kicker">{t('Tài khoản · Đồng bộ theo Google', '账号 · 通过 Google 同步')}</span>
+        <h1 id="mt-title" class="detail-title mt-title">{t('Đội của tôi', '我的阵容')}</h1>
+        <p class="scope-note mt-lead">{t('Đội bạn lưu từ Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội và Soi đội, đồng bộ theo tài khoản. Bản đã lưu là bản sao của riêng bạn: sửa tự do, không đổi khi nguồn cập nhật.', '你从标准阵容、其他阵容、开荒、阵容推荐和阵容分析保存的阵容，按账号同步。已保存的是你自己的副本：可随意修改，来源更新时不会改变。')}</p>
+      </div>
+      <aside class="mt-sources" aria-labelledby="mt-src-title">
+        <p class="mt-sources-title" id="mt-src-title">
+          {t('Thêm đội bằng nút ', '在以下页面的详情或结果中点击')}<strong>{t('“Lưu vào đội của tôi”', '“保存到我的阵容”')}</strong>{t(' ở trang chi tiết hoặc kết quả của:', '即可添加阵容：')}
+        </p>
+        <ul class="mt-src-list">
+          {sources.map((source) => (
+            <li>
+              <a class="mt-src-link" href={source.href}>
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  {source.circle && <circle cx="9" cy="8" r="3.5" />}
+                  {source.rect && <rect x="3" y="4" width="18" height="5" rx="1" />}
+                  {source.paths.map((d) => <path d={d} />)}
+                </svg>
+                <span>{source.label}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </div>
     <div id="my-teams" class="mt-root">
       <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。')}</p></noscript>
     </div>
     <script is:inline type="application/json" id="my-teams-routes" set:html={routeTables}></script>
+    <script is:inline type="application/json" id="my-teams-seasons" set:html={seasonTable}></script>
   </section>
   <script is:inline type="module" src="/js/my-teams.js" slot="scripts"></script>
 </SiteLayout>

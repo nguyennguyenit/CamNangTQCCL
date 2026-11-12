@@ -113,7 +113,7 @@ Quy tắc chống xung đột (để 4 PR gộp theo thứ tự bất kỳ): m�
 
 - **Quản trị** (`AdminTeamsMoi`, `AdminAnalyze`, `AdminAIFeatures`, `AdminUsersMoi`, `AdminUserBanMoi`, `AdminAuditMoi` + Mobile): chưa dựng · neo `components.trinh-soan-bai` · khối CSS `/* moi:quan-tri:start */` · cặp `moi-pairs/quan-tri.mjs`
 
-- **Đội của tôi** (`DoiCuaToi` + Mobile): chưa dựng · neo `components.hop-xac-nhan` · khối CSS `/* moi:doi-cua-toi:start */` · cặp `moi-pairs/doi-cua-toi.mjs`
+- **Đội của tôi** (`DoiCuaToi` + Mobile): đã dựng 2026-11-13 (nhánh `feat/thiet-ke-moi-doi-cua-toi`) — đầu trang có khối 5 trang nguồn, thanh hộp kèm tình trạng kho (có / chưa có kho), cảnh báo trùng có link tới thẻ, thẻ đội có viên Thiếu món / Ráp được / Thay thế / Trùng, trình soạn mở tại chỗ thay thẻ với bảng chọn món ngay dưới ô (mobile: mỗi tướng một khung thu gọn), thẻ mời đăng nhập cho khách; xóa hộp / nhóm / đội qua `confirmInPage`; ô "Binh chủng / ghi chú" giữ chữ tự do; ô Mùa chọn từ `seasons.json` đã pin; JS tách `js/my-teams-{cards,sections,icons,inline-picker}.js` · neo `components.hop-xac-nhan` (sau neo: `trang-doi-cua-toi`, `the-doi-cua-toi`, `trinh-soan-doi-cua-toi`) · khối CSS `/* moi:doi-cua-toi:start */` · cặp `moi-pairs/doi-cua-toi.mjs` (2 cặp; khách và hộp chưa có kho chụp riêng trong `plans/261113-0116-thiet-ke-moi/reports/visual/doi-cua-toi/`)
 
 - **Bài viết + Đội chuẩn có kho** (`BaiVietDetail`, `MainKho` + Mobile): chưa dựng · neo `components.the-doi` · khối CSS `/* moi:bai-viet-kho:start */` · cặp `moi-pairs/bai-viet-kho.mjs`
 
