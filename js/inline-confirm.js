@@ -8,6 +8,9 @@
 import { L } from "./i18n.js";
 import { el } from "./render.js";
 
+/** Thời gian đầu sau khi mở hộp bỏ qua bấm nền (cú bấm thứ hai của bấm đúp nút mở). */
+const BACKDROP_GRACE_MS = 300;
+
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 let sequence = 0;
@@ -114,9 +117,19 @@ export function confirmInPage({
       if (busy) event.preventDefault();
     });
 
-    // Thân hộp phủ kín `<dialog>` (padding 0): click trúng chính `<dialog>` là click vào nền.
+    // Thân hộp phủ kín `<dialog>` (padding 0): click trúng chính `<dialog>` là click vào nền. Chỉ đóng khi cả
+    // `pointerdown` lẫn `click` cùng trúng nền và hộp đã mở quá BACKDROP_GRACE_MS: bấm đúp nút mở làm cú bấm thứ
+    // hai rơi xuống `::backdrop` ngay sau khi hộp hiện, không được tính là bấm nền; kéo chọn chữ từ trong hộp ra
+    // nền cũng không đóng hộp.
+    let openedAt = Infinity;
+    let pressedBackdrop = false;
+    dialog.addEventListener("pointerdown", (event) => {
+      pressedBackdrop = event.target === dialog && performance.now() - openedAt >= BACKDROP_GRACE_MS;
+    });
     dialog.addEventListener("click", (event) => {
-      if (event.target === dialog && !busy) close();
+      const onBackdrop = event.target === dialog && pressedBackdrop;
+      pressedBackdrop = false;
+      if (onBackdrop && !busy) close();
     });
 
     // Tab vòng trong hộp (bổ sung cho `showModal`, vốn để Tab thoát ra thanh địa chỉ của trình duyệt).
@@ -144,6 +157,7 @@ export function confirmInPage({
     document.body.append(dialog);
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
+    openedAt = performance.now();
     cancel.focus();
   });
 }
