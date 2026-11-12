@@ -95,6 +95,28 @@ Canvas cũ nằm ở tổ chức claude.ai khác, phiên làm việc không đ�
 - Đề xuất khác code hiện tại (cần sửa code nếu theo): chip binh chủng thay select và hộp xác nhận xoá trong trang (đăng đội / đội của tôi); dòng ngày hết khoá và nhãn nút theo thời hạn (khoá tài khoản); nhật ký nhóm theo ngày; Soi đội hiện tên tiếng Việt thay id thô; danh sách món thiếu hiện ra trên thẻ Đội chuẩn (code chỉ để trong `title`).
 - Chiều cao là ước lượng lúc vẽ (chưa đo theo nội dung như các artboard cũ). Dữ liệu là mẫu.
 
+### Nền dùng chung khi dựng vào site (2026-11-13)
+
+Dựng theo 4 nhóm, mỗi nhóm một nhánh/PR cắt từ cùng một commit nền (issue #74). Khảo sát 28 artboard tìm mẫu dùng ở ≥ 2 nhóm; mẫu chỉ một nhóm dùng để nhóm đó tự làm.
+
+- **Chip chọn một** — component `chip-chon-mot` (`.chip-chon`, nhóm radio). Artboard vẽ ở `DoiCongDongNewMoi` (`.ccd-troop`, ô Binh chủng). Không dùng lại `chip-loc`: chip lọc là nút bật/tắt nhiều lựa chọn (`aria-pressed`, viên 999, nền panel-3), còn chip này chọn đúng một giá trị (góc 10, nền panel, chấm binh chủng có vòng `shadow.ring-select-ink` khi chọn). `DoiCuaToi` vẽ binh chủng là ô chữ tự do "Binh chủng / ghi chú", chưa vẽ chip.
+- **Hộp xác nhận trong trang** — component `hop-xac-nhan` + helper `js/inline-confirm.js` (`confirmInPage({ title, message, confirmLabel, danger, onConfirm })` → `Promise<boolean>`), thay `window.confirm`. Artboard vẽ ở `DoiCongDongMineMoi` (`.ccd-dialog`); `DoiCuaToi` ghi "Xóa hộp, nhóm hoặc đội luôn hỏi lại trước khi xóa". `<dialog>` + `showModal()`, `role="alertdialog"` có tiêu đề/mô tả, focus vào Huỷ, Tab vòng trong hộp, Escape/Huỷ/bấm nền trả focus về nút đã mở, thao tác lỗi hiện `role="alert"` và giữ hộp mở. Kiểm ở `tests-e2e/inline-confirm.spec.mjs`.
+- **Đầu nhóm theo ngày** ("Hôm nay · 11 thg 11, 2026") chỉ có ở `AdminAuditMoi` → nhóm Quản trị tự làm.
+- Token mới: `size.dialog-confirm`, `shadow.ring-select-ink`. Bổ sung `color.faction.han` / `han-select` (đã có trong CSS từ commit `20e2cbc` nhưng thiếu trong `tokens.json`, làm `--check` đỏ).
+- **So ảnh có mock:** `node scripts/design-canvas/compare-moi.mjs [--base <url>] [--only <nhóm>] [--pair '<json>'] [--theme dark]` (mặc định `--base http://127.0.0.1:4321` của `npm run preview`, ra `.cache/design-compare/moi/`). Chặn `/api/**` bằng `tests-e2e/helpers/community-mock.mjs` với trạng thái `khach` / `dang-nhap` / `quan-tri` (root) / `bi-khoa` (khoá có hạn) — `scripts/design-canvas/moi-mock-states.mjs`, dữ liệu mẫu ở `community-samples.mjs`; chụp fullPage đúng bề rộng artboard, DPR 1, ghép cạnh `screens/<Artboard>.png`; **exit 1 khi trang ở bề rộng ≤ 390 tràn ngang** (`scrollWidth > clientWidth`, in phần tử thò ra xa nhất). Hình dạng cặp ghi ở đầu file script.
+
+Quy tắc chống xung đột (để 4 PR gộp theo thứ tự bất kỳ): mỗi nhóm chỉ viết CSS giữa hai mốc `/* moi:<nhóm>:start */` … `/* moi:<nhóm>:end */` của mình trong `css/styles.css`; component riêng của nhóm chèn vào `tokens.json` `components` **ngay sau** mục neo của nhóm (nhiều component thì nối tiếp nhau sau neo); cặp so ảnh ở `scripts/design-canvas/moi-pairs/<nhóm>.mjs`; trong README chỉ sửa dòng tình trạng của nhóm mình bên dưới; trong `docs/project-changelog.md` chỉ sửa mục của nhóm mình ở bản ghi 2026-11-13 "Thiết kế mới". Token dùng chung mới (màu, thang) mà nhiều nhóm cần thì báo lại để thêm vào nền, không tự thêm ở hai nhánh.
+
+### Tình trạng dựng vào site
+
+- **Đội cộng đồng** (`DoiCongDongMoi`, `DoiCongDongDetailMoi`, `DoiCongDongNewMoi`, `DoiCongDongMineMoi`, `BanNoticeMoi` + Mobile): chưa dựng · neo `components.chip-chon-mot` · khối CSS `/* moi:doi-cong-dong:start */` · cặp `moi-pairs/doi-cong-dong.mjs`
+
+- **Quản trị** (`AdminTeamsMoi`, `AdminAnalyze`, `AdminAIFeatures`, `AdminUsersMoi`, `AdminUserBanMoi`, `AdminAuditMoi` + Mobile): chưa dựng · neo `components.trinh-soan-bai` · khối CSS `/* moi:quan-tri:start */` · cặp `moi-pairs/quan-tri.mjs`
+
+- **Đội của tôi** (`DoiCuaToi` + Mobile): chưa dựng · neo `components.hop-xac-nhan` · khối CSS `/* moi:doi-cua-toi:start */` · cặp `moi-pairs/doi-cua-toi.mjs`
+
+- **Bài viết + Đội chuẩn có kho** (`BaiVietDetail`, `MainKho` + Mobile): chưa dựng · neo `components.the-doi` · khối CSS `/* moi:bai-viet-kho:start */` · cặp `moi-pairs/bai-viet-kho.mjs`
+
 ## Token & component
 
 `tokens.json` là **golden master vi mô** (plan.md quyết định #15) và là nguồn duy nhất: màu sáng/tối/phe, font, vai trò chữ (`type`: size + line-height + weight + letter-spacing), thang `space`/`radius`/`control`/`shadow`/`border`/`z`/`motion`/`focus`, và **danh mục component** ở mục `components` (selector, cấu tạo, biến thể, trạng thái, bảng thuộc tính → token, artboard nguồn, phase sở hữu, phase dùng). Mỗi token ghi `source` (artboard, `renderVals`, StyleGuide hoặc CSS cũ). Không chép lại bảng giá trị ra tài liệu khác.

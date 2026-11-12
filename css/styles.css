@@ -300,6 +300,7 @@
   --size-col-220: 220px;
   --size-media-176: 176px;
   --size-media-116: 116px;
+  --size-dialog-confirm: 440px;
   --content-dot: "";
   --radius-2: 2px;
   --radius-3: 3px;
@@ -343,6 +344,7 @@
   --shadow-footer-edge: none;
   --shadow-selected: 0 10px 24px rgba(168, 32, 42, 0.12);
   --shadow-dock: 0 -6px 20px rgba(30, 27, 22, 0.06);
+  --shadow-ring-select-ink: 0 0 0 2px var(--select-ink);
   --focus-width: 2px;
   --focus-outline-offset: 2px;
   --border-hair: 1px;
@@ -897,6 +899,82 @@ main {
 .fchip.f-honhop.on, .fchip.f-honhop[aria-pressed="true"] { --chip-dot: var(--f-honhop-select); }
 .fchip.f-han.on, .fchip.f-han[aria-pressed="true"] { --chip-dot: var(--f-han-select); }
 
+/* ---------- Chip chọn một (component chip-chon-mot; artboard DoiCongDongNewMoi `.ccd-troop`) ----------
+   Nhóm radio: `fieldset.chip-chon-nhom > .chip-chon-hang > label.chip-chon > input[type=radio] + .chip-chon-mat`.
+   Input trong suốt phủ kín chip nên vùng bấm là cả chip; trạng thái và vòng focus vẽ trên `.chip-chon-mat`. */
+.chip-chon-nhom {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.chip-chon-hang {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.chip-chon {
+  position: relative;
+  display: inline-flex;
+}
+
+.chip-chon > input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.chip-chon-mat {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-8);
+  min-height: var(--control-44);
+  padding: 0 var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.chip-chon > input:hover + .chip-chon-mat { border-color: var(--accent); }
+
+.chip-chon > input:checked + .chip-chon-mat {
+  background: var(--select);
+  border-color: var(--select);
+  color: var(--select-ink);
+}
+
+.chip-chon > input:focus-visible + .chip-chon-mat {
+  outline: var(--focus-width) solid var(--focus-ring);
+  outline-offset: var(--focus-outline-offset);
+}
+
+.chip-chon > input:disabled { cursor: default; }
+.chip-chon > input:disabled + .chip-chon-mat { opacity: .55; }
+
+/* Chấm binh chủng 8px; Khí giới và giá trị lạ giữ mực 2 như artboard. */
+.chip-chon-cham {
+  display: inline-block;
+  flex: none;
+  width: var(--space-8);
+  height: var(--space-8);
+  border-radius: var(--radius-round);
+  background: var(--ink-2);
+}
+
+.chip-chon-cham[data-troop="cung"] { background: var(--cung); }
+.chip-chon-cham[data-troop="ky"] { background: var(--ky); }
+.chip-chon-cham[data-troop="thuan"] { background: var(--khien); }
+.chip-chon-cham[data-troop="thuong"] { background: var(--thuong); }
+.chip-chon > input:checked + .chip-chon-mat .chip-chon-cham { box-shadow: var(--shadow-ring-select-ink); }
+
 /* ---------- Nút ---------- */
 .ana-link-btn,
 a.ana-link-btn,
@@ -959,6 +1037,80 @@ a.lookup-more:hover {
   border-radius: var(--radius-10);
   color: var(--accent);
   font: var(--type-control);
+}
+
+/* ---------- Hộp xác nhận trong trang (component hop-xac-nhan, js/inline-confirm.js; artboard DoiCongDongMineMoi `.ccd-dialog`) ----------
+   `<dialog>` không padding: thân `.hop-xac-nhan-than` phủ kín nên click trúng chính `<dialog>` là click vào nền. */
+.hop-xac-nhan {
+  box-sizing: border-box;
+  width: min(var(--size-dialog-confirm), calc(100% - var(--space-32)));
+  max-width: none;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-16);
+  background-color: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-modal);
+  font: var(--type-body);
+}
+
+.hop-xac-nhan::backdrop { background-color: var(--overlay); }
+
+.hop-xac-nhan-than {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-14);
+  padding: var(--space-24);
+}
+
+.hop-xac-nhan-tieu-de {
+  margin: 0;
+  font: var(--type-dialog-title);
+  overflow-wrap: anywhere;
+}
+
+.hop-xac-nhan-mo-ta,
+.hop-xac-nhan-loi {
+  margin: 0;
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+}
+
+.hop-xac-nhan-mo-ta { color: var(--ink-body); }
+.hop-xac-nhan-loi { color: var(--avoid); }
+
+.hop-xac-nhan-nut {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-8);
+}
+
+/* Nút xác nhận nguy hiểm: nền `--avoid` như artboard; chữ `--on-fill` để theme tối (nền hồng sáng) vẫn đạt 4,5:1. */
+.ana-btn.hop-xac-nhan-xoa {
+  background: var(--avoid);
+  border-color: var(--avoid);
+  color: var(--on-fill);
+}
+
+.ana-btn.hop-xac-nhan-xoa:hover {
+  background: var(--accent-strong);
+  border-color: var(--accent-strong);
+  color: var(--on-accent);
+}
+
+/* Đang chạy thao tác: nút giữ focus (aria-disabled thay vì disabled) nên chỉ đổi con trỏ và độ đậm. */
+.hop-xac-nhan[aria-busy="true"] .hop-xac-nhan-nut .ana-btn {
+  opacity: .6;
+  cursor: progress;
+}
+
+@media (max-width: 680px) {
+  .hop-xac-nhan-than { padding: var(--space-20); }
+  .hop-xac-nhan-nut {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
 }
 
 /* ---------- Nút chiến pháp (tìm) ---------- */
@@ -4785,6 +4937,11 @@ body[data-page-section="team-khac"] .layout {
     padding-inline: var(--space-48);
   }
 }
+
+/* Khối CSS của nhóm "Bài viết + Đội chuẩn có kho: BaiVietDetail, MainKho" (28 artboard Thiết kế mới — README thiết kế, mục "Tình trạng dựng vào site"):
+   chỉ nhánh của nhóm này viết vào giữa hai mốc dưới, để 4 PR gộp theo thứ tự bất kỳ không xung đột. */
+/* moi:bai-viet-kho:start */
+/* moi:bai-viet-kho:end */
 
 /* ===== Trang chi tiết đội (Phase 6) ===== */
 /* Khung, panel điểm, thẻ tướng và ghi chú nguồn theo artboard TeamDetail.dc.html:36-117.
@@ -12956,7 +13113,7 @@ body[data-page-section="roster-recommend"] .layout {
 
 .roster-coverage-table th {
   color: var(--ink-2);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 
 .roster-coverage-table .roster-coverage-num {
@@ -12994,7 +13151,7 @@ body[data-page-section="roster-recommend"] .layout {
   margin: 0;
   color: var(--ink);
   font: var(--type-control);
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
 }
 
 .roster-coverage-list {
@@ -15069,6 +15226,11 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-posts-table .adm-table-title { font: var(--type-card-title-sm); }
 }
 
+/* Khối CSS của nhóm "Quản trị: AdminTeamsMoi, AdminAnalyze, AdminAIFeatures, AdminUsersMoi, AdminUserBanMoi, AdminAuditMoi" (28 artboard Thiết kế mới — README thiết kế, mục "Tình trạng dựng vào site"):
+   chỉ nhánh của nhóm này viết vào giữa hai mốc dưới, để 4 PR gộp theo thứ tự bất kỳ không xung đột. */
+/* moi:quan-tri:start */
+/* moi:quan-tri:end */
+
 /* ===== Nút ở footer + hộp thoại: Ủng hộ tác giả (QR, LandingDonate 260927) và Góp ý, sửa lỗi =====
    `<dialog>` native mở bằng showModal (js/modal-dialog.js); thân hộp thoại phủ kín dialog nên bấm nền = đóng. */
 .footer-actions {
@@ -15365,6 +15527,11 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-team-root [hidden],
 .cm-auth [hidden] { display: none; }
 
+/* Khối CSS của nhóm "Đội cộng đồng: DoiCongDongMoi, DoiCongDongDetailMoi, DoiCongDongNewMoi, DoiCongDongMineMoi, BanNoticeMoi" (28 artboard Thiết kế mới — README thiết kế, mục "Tình trạng dựng vào site"):
+   chỉ nhánh của nhóm này viết vào giữa hai mốc dưới, để 4 PR gộp theo thứ tự bất kỳ không xung đột. */
+/* moi:doi-cong-dong:start */
+/* moi:doi-cong-dong:end */
+
 /* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương vi ↔ zh, nhãn viết bằng ngôn ngữ đích. */
 .lang-switch {
   display: inline-flex;
@@ -15563,3 +15730,8 @@ body[data-page-section="roster-recommend"] .layout {
   .mt-field-inline { grid-template-columns: minmax(0, 1fr); }
   .mt-slot-label { min-width: 0; flex-basis: 100%; }
 }
+
+/* Khối CSS của nhóm "Đội của tôi: DoiCuaToi" (28 artboard Thiết kế mới — README thiết kế, mục "Tình trạng dựng vào site"):
+   chỉ nhánh của nhóm này viết vào giữa hai mốc dưới, để 4 PR gộp theo thứ tự bất kỳ không xung đột. */
+/* moi:doi-cua-toi:start */
+/* moi:doi-cua-toi:end */

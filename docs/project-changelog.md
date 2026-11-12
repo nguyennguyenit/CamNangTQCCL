@@ -1,5 +1,25 @@
 # Project Changelog
 
+## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
+
+### Nền dùng chung
+- Added: component `chip-chon-mot` (`.chip-chon`, nhóm radio chọn một giá trị, chấm binh chủng) và `hop-xac-nhan` (`.hop-xac-nhan`) kèm `js/inline-confirm.js` — hộp xác nhận trong trang thay `window.confirm`, có `role="alertdialog"`, focus vào Huỷ, Tab vòng trong hộp, Escape, lỗi giữ hộp mở. Chưa trang nào dùng; các nhóm tự chuyển.
+- Added: token `size.dialog-confirm`, `shadow.ring-select-ink`; `scripts/design-canvas/compare-moi.mjs` so ảnh artboard với trang thật có mock `/api/**` (khách / đăng nhập / quản trị root / bị khoá có hạn) và chặn tràn ngang ở 390px; cặp mỗi nhóm ở `scripts/design-canvas/moi-pairs/<nhóm>.mjs`. Dữ liệu mẫu Đội cộng đồng tách từ `capture-community.mjs` sang `community-samples.mjs`.
+- Added: 4 khối CSS rỗng `/* moi:<nhóm>:start */ … end` và neo `tokens.json` riêng cho từng nhóm (README thiết kế, mục "Tình trạng dựng vào site").
+- Fixed: `node scripts/design-tokens.mjs --check` đỏ từ trước — `--f-han`, `--f-han-select` có trong CSS nhưng thiếu `tokens.json` (thêm `color.faction.han`/`han-select`); hai `font-weight: 600` thô ở khối Độ phủ kho đổi sang `--weight-semibold`.
+
+### Đội cộng đồng
+- Chưa dựng.
+
+### Quản trị
+- Chưa dựng.
+
+### Đội của tôi
+- Chưa dựng.
+
+### Bài viết + Đội chuẩn có kho
+- Chưa dựng.
+
 ## 2026-11-11 (Đội chuẩn: badge kho trên danh sách; sửa chữ "null" ở Độ phủ kho)
 
 ### Added
