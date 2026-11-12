@@ -57,9 +57,15 @@ test("mockOptions: 4 trạng thái, ghi đè nông, tên lạ báo lỗi", () =>
   assert.throws(() => mockOptions("khac"), /mock không hợp lệ/);
 });
 
-test("khung chống xung đột: 4 nhóm có file cặp rỗng, khối CSS riêng và neo tokens riêng", async () => {
+test("khung chống xung đột: 4 nhóm có file cặp riêng (mọi cặp hợp lệ), khối CSS riêng và neo tokens riêng", async () => {
   assert.deepEqual([...GROUPS].sort(), ["bai-viet-kho", "doi-cong-dong", "doi-cua-toi", "quan-tri"]);
-  for (const group of GROUPS) assert.deepEqual(await loadPairs({ only: [group] }), [], `${group}.mjs bắt đầu rỗng`);
+  // File cặp bắt đầu rỗng ở nền; nhánh nhóm điền cặp của mình — mọi cặp phải đúng hình dạng và thuộc đúng nhóm.
+  for (const group of GROUPS) {
+    for (const pair of await loadPairs({ only: [group] })) {
+      assert.equal(pair.group, group);
+      assert.deepEqual(pairProblems(pair), [], `${group}.mjs: cặp ${pair.artboard} sai hình dạng`);
+    }
+  }
 
   const css = await readFile(new URL("css/styles.css", root), "utf8");
   const lines = css.split("\n");
