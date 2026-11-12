@@ -96,6 +96,10 @@ export interface TeamPageModel {
   names: TeamNames;
   /** Link Tra cứu của từng tướng (cùng thứ tự đội); tướng không có hồ sơ riêng là `null`. */
   heroPaths: (string | null)[];
+  /** Link Tra cứu của từng chiến pháp (cùng hình 3×2 với `team.tactics`); chiến pháp không có trang riêng là `null`. */
+  tacticPaths: (string | null)[][];
+  /** Dữ liệu chân dung của từng tướng (chữ Hán, tên Việt, ảnh) cho ô chân dung dựng lúc build; thiếu trong từ điển là `null`. */
+  heroPortraits: ({ chinese: string; nameVi: string; iconUrl: string | null } | null)[];
   /** `true` ở bản đúng ngôn ngữ văn bản người dùng: bản duy nhất được index và mang JSON-LD. */
   original: boolean;
   canonicalUrl: URL;
@@ -125,6 +129,16 @@ export async function communityTeamPageModel(team: CommunityTeam, locale: SiteLo
     const route = routes.byId.get(id);
     return route ? localePath(route.path, locale) : null;
   });
+  const tacticPaths = team.tactics.map((pair) => pair.map((id) => {
+    // Chiến pháp đổi id (`formerIds`) được dẫn về id hiện hành trước khi tra trang riêng.
+    const current = (lexicon.tacticRecord(id) as { id?: string } | null)?.id ?? id;
+    const route = routes.byId.get(current);
+    return route ? localePath(route.path, locale) : null;
+  }));
+  const heroPortraits = team.heroes.map((id) => {
+    const record = lexicon.heroRecord(id) as { chinese?: string; viet?: string; iconUrl?: string | null } | null;
+    return record ? { chinese: String(record.chinese ?? ''), nameVi: String(record.viet ?? ''), iconUrl: record.iconUrl ?? null } : null;
+  });
   const copy = teamPageCopy(team, names, locale);
   const canonicalPath = canonicalTeamPath(team);
   const original = locale === team.textLang;
@@ -136,6 +150,8 @@ export async function communityTeamPageModel(team: CommunityTeam, locale: SiteLo
     copy,
     names,
     heroPaths,
+    tacticPaths,
+    heroPortraits,
     original,
     canonicalUrl: new URL(canonicalPath, site),
     structured: original

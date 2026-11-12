@@ -8,7 +8,7 @@ import {
   mergePage,
   modeFromSearch,
   pickSide,
-  similarWarning,
+  similarNotice,
   staticTeamPath,
   teamPayloadFromDraft,
 } from "../js/community-team-state.js";
@@ -188,9 +188,11 @@ test("mergePage: nối trang sau và bỏ id đã có", () => {
   assert.deepEqual(first.map((item) => item.id), ["a", "b"]);
 });
 
-test("similarWarning: không cảnh báo khi 0, có số đội theo locale", () => {
-  assert.equal(similarWarning(0, "vi"), "");
-  assert.match(similarWarning(3, "vi"), /3 đội/);
-  assert.match(similarWarning(2, "zh"), /2/);
-  assert.match(similarWarning(2, "zh"), /阵容/);
+test("similarNotice: không cảnh báo khi 0, tiêu đề có số đội (N+ khi còn trang) theo locale", () => {
+  assert.equal(similarNotice(0, false, "vi"), null);
+  assert.match(similarNotice(3, false, "vi").title, /Đã có 3 đội cùng 3 tướng/);
+  assert.match(similarNotice(3, true, "vi").title, /3\+ đội/);
+  assert.match(similarNotice(2, false, "zh").title, /2/);
+  assert.match(similarNotice(2, false, "zh").title, /阵容/);
+  assert.ok(similarNotice(1, false, "vi").text.length > 0);
 });

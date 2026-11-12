@@ -3,7 +3,7 @@
 // `aria-expanded`, Escape đóng và trả focus về nút, bấm ra ngoài hoặc Tab ra khỏi menu thì đóng.
 
 import { L, localePath } from './i18n.js';
-import { el } from './render.js';
+import { el, icon, svgNode } from './render.js';
 import { createDropdownMenu } from './site-nav.js';
 import {
   SESSION_EVENT,
@@ -99,20 +99,42 @@ function render(mount, user) {
 
 const BAN_ERROR_CODES = new Set(['ACCOUNT_BANNED', 'ACCOUNT_UNAVAILABLE']);
 
-function banNoticeText(body) {
-  if (body?.deleting === true) return L('Tài khoản đang được xoá.', '账号正在删除中。');
+/**
+ * Nội dung thông báo (artboard BanNoticeMoi): dòng đậm nói thời hạn khoá ("đến <ngày giờ>" hoặc "vĩnh viễn"),
+ * dòng lý do nếu có. Tài khoản đang xoá chỉ có dòng đậm. `until` là ISO từ server hoặc `null` = vĩnh viễn.
+ */
+export function banNoticeContent(body) {
+  if (body?.deleting === true) return { title: L('Tài khoản đang được xoá.', '账号正在删除中。'), reason: '', banned: false };
   const until = typeof body?.until === 'string' ? formatDateTime(body.until) : '';
-  const head = until
+  const title = until
     ? L(`Tài khoản đã bị khoá đến ${until}.`, `账号已被封禁至 ${until}。`)
     : L('Tài khoản đã bị khoá vĩnh viễn.', '账号已被永久封禁。');
   const reason = typeof body?.reason === 'string' && body.reason.trim() ? body.reason.trim() : '';
-  return reason ? `${head} ${L('Lý do:', '理由：')} ${reason}` : head;
+  return { title, reason, banned: true };
 }
 
-function showLoginNotice(mount, text) {
+const noticeIcon = (paths, size) => icon(paths.map((d) => svgNode('path', { d })), { size });
+
+/** Hộp thông báo dưới nút đăng nhập: icon khoá | chữ (role=alert) + gợi ý + link quy tắc | nút đóng cùng hàng. */
+function showLoginNotice(mount, { title, reason = '', banned = false }) {
   if (currentMenu) return;
-  const close = el('button', { class: 'cm-auth-notice-close', type: 'button', 'aria-label': L('Đóng thông báo', '关闭提示') }, '×');
-  loginNotice = el('div', { class: 'cm-auth-menu cm-auth-notice' }, [el('p', { role: 'alert' }, text), close]);
+  const close = el('button', { class: 'cm-auth-notice-close', type: 'button', 'aria-label': L('Đóng thông báo', '关闭提示') },
+    noticeIcon(['M18 6L6 18', 'M6 6l12 12'], 18));
+  loginNotice = el('div', { class: 'cm-auth-menu cm-auth-notice' }, [
+    el('span', { class: 'cm-auth-notice-ico', 'aria-hidden': 'true' },
+      noticeIcon(['M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2z', 'M7 11V7a5 5 0 0 1 10 0v4'], 18)),
+    el('div', { class: 'cm-auth-notice-body' }, [
+      el('p', { class: 'cm-auth-notice-msg', role: 'alert' }, [
+        el('strong', { class: 'cm-auth-notice-title' }, title),
+        reason
+          ? el('span', { class: 'cm-auth-notice-text' }, [el('span', { class: 'cm-auth-notice-key' }, L('Lý do:', '理由：')), ` ${reason}`])
+          : null,
+      ]),
+      banned ? el('p', { class: 'cm-auth-notice-hint' }, L('Bạn vẫn đọc được cẩm nang khi chưa đăng nhập.', '未登录也可以继续阅读攻略手册。')) : null,
+      banned ? el('a', { class: 'cm-auth-notice-link', href: localePath('/quy-tac-cong-dong/') }, L('Xem Quy tắc cộng đồng', '查看社区规则')) : null,
+    ]),
+    close,
+  ]);
   close.addEventListener('click', () => {
     loginNotice?.remove();
     loginNotice = null;
@@ -126,16 +148,16 @@ async function handleBanRedirect(mount) {
   if (!BAN_ERROR_CODES.has(params.get('error') || '')) return;
   const token = params.get('error_description') || '';
   history.replaceState(history.state, '', urlWithoutAuthError().href);
-  let text = L('Không đăng nhập được. Thử lại sau.', '无法登录，请稍后再试。');
+  let content = { title: L('Không đăng nhập được. Thử lại sau.', '无法登录，请稍后再试。') };
   try {
     if (token) {
       const body = await api(`/api/ban-notice?token=${encodeURIComponent(token)}`);
-      if (typeof body?.deleting === 'boolean') text = banNoticeText(body);
+      if (typeof body?.deleting === 'boolean') content = banNoticeContent(body);
     }
   } catch {
     // Giữ câu cố định: không phân biệt lỗi để không lộ gì về token.
   }
-  showLoginNotice(mount, text);
+  showLoginNotice(mount, content);
 }
 
 export function initCommunityAuth(mount = document.getElementById('community-auth')) {

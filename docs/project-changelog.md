@@ -9,7 +9,12 @@
 - Fixed: `node scripts/design-tokens.mjs --check` đỏ từ trước — `--f-han`, `--f-han-select` có trong CSS nhưng thiếu `tokens.json` (thêm `color.faction.han`/`han-select`); hai `font-weight: 600` thô ở khối Độ phủ kho đổi sang `--weight-semibold`.
 
 ### Đội cộng đồng
-- Chưa dựng.
+- Changed: `/doi-cong-dong/` (và `/zh/`) dựng theo 10 artboard `DoiCongDongMoi`, `…DetailMoi`, `…NewMoi`, `…MineMoi`, `BanNoticeMoi` (+ Mobile). Đầu trang chung (nhãn mùa, một h1 "Đội cộng đồng", lời dẫn, nút "Đội của tôi"/"Đăng đội" hoặc tab); danh sách có thanh lọc (ô Mùa, sắp xếp Hot/Mới/Top dạng nhóm nút `aria-pressed` thay select, ô lọc tướng gập trên mobile) và lưới thẻ ảnh (thẻ không ảnh có trạng thái "Chưa có ảnh đội"); trang đội (tĩnh và `?id=`) hai cột: tên đội là h1 + bảng "Điểm cộng đồng", Đội hình (thẻ tướng, chiến pháp A/B dẫn sang Tra cứu), Phân tích, chiến báo + bình luận, cột Ảnh đội + Đội tương tự; chế độ `?id=` ẩn đầu trang danh sách để chỉ còn một h1.
+- Changed: form đăng đội ba bước (ảnh 1–3 đọc AI từng ảnh, khối tình trạng 9 ô kiểu Soi đội + nút nhảy tới ô cần chọn, thông tin đội) và cột "Gửi để duyệt" có danh sách kiểm tra; binh chủng chọn bằng chip radio (component `chip-chon-mot`) thay `<select id="cm-team-troop">`, giá trị gửi đi giữ mã API.
+- Changed: xoá đội (trang đội của chủ đội và "Đội của tôi") hỏi lại bằng hộp xác nhận trong trang `confirmInPage` thay `window.confirm`; lỗi xoá hiện trong hộp. "Đội của tôi" có thẻ ngang theo trạng thái, bảng "Tình trạng" và các bước duyệt.
+- Changed: thông báo đăng nhập bị chặn có dòng đậm "Tài khoản đã bị khoá đến <ngày giờ>." / "… vĩnh viễn." (từ `until` của `/api/ban-notice`), lý do, gợi ý, link Quy tắc cộng đồng, nút đóng cùng hàng.
+- Added: token `type.cm-card-title`/`cm-section-title`/`cm-stat`, `size.cm-*` (cột phải, ô ảnh, ô Mùa, hộp thông báo…), component `dau-trang-doi-cong-dong`, `the-doi-cong-dong`, `chi-tiet-doi-cong-dong`, `form-dang-doi`, `the-doi-cua-toi-cong-dong`, `thong-bao-khoa`; JS tách `community-team-ui.js`, `community-team-cards.js`, `community-team-detail.js`, `community-team-form-parts.js`; model trang đội thêm `tacticPaths`, `heroPortraits`. E2E mới `tests-e2e/community-teams-redesign.spec.mjs`.
+- Không vẽ dòng "Binh thư: Tác giả không ghi" của artboard: đội cộng đồng không lưu binh thư. Câu hỏi thường gặp (nguồn FAQPage JSON-LD) giữ trong khối gập cuối cột trái.
 
 ### Quản trị
 - Chưa dựng.
