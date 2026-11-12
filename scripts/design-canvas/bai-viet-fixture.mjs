@@ -3,7 +3,8 @@
 // build gọi `GET {COMMUNITY_API_ORIGIN}/api/posts` (src/lib/blog-posts.ts), nên module này dựng một API cục bộ trả bài
 // mẫu rồi chạy `astro dev` trỏ vào nó. Không ghi gì vào dữ liệu thật; bài mẫu chỉ sống trong tiến trình này.
 //
-//   node scripts/design-canvas/bai-viet-fixture.mjs [--port 4371]
+//   node scripts/design-canvas/bai-viet-fixture.mjs [--port 4371] [--no-watch]
+//     (Playwright tự chạy lệnh này ở cổng FIXTURE_PORT cho e2e bài viết — playwright.config.mjs)
 //     Chạy dev server có bài mẫu ở http://127.0.0.1:<port> (Ctrl+C để dừng). So ảnh nhóm bài viết + kho:
 //     node scripts/design-canvas/compare-moi.mjs --only bai-viet-kho --base http://127.0.0.1:<port>
 //
@@ -13,6 +14,8 @@ import { createServer } from 'node:http';
 import { fileURLToPath } from 'node:url';
 
 export const FIXTURE_SLUG = 'khai-hoang-khong-can-full-do';
+/** Cổng cố định của dev server bài mẫu trong Playwright (`playwright.config.mjs`, webServer thứ hai). */
+export const FIXTURE_PORT = 4175;
 export const FIXTURE_COVER = '/api/reports/bai-viet-mau/image';
 
 const BODY_VI = `Những ngày đầu mùa quyết định bạn lên thành chính cấp 7 sớm hay muộn. Đội khai hoang tốt không phải đội mạnh nhất trên giấy, mà là đội đánh được đất cấp 5–6 với hột tướng bạn đang có. Bài này dùng điểm từng mốc đất trong [mục Khai hoang](/khai-hoang/) để chọn đội, rồi chỉ ra quân thủ nên né.
@@ -185,14 +188,21 @@ export async function startPostsApi({ port = 0, host = '127.0.0.1' } = {}) {
 
 /**
  * Dev server Astro có bài mẫu: API cục bộ + `astro dev` (API lập trình, tắt dev toolbar để ảnh chụp sạch).
- * `COMMUNITY_API_ORIGIN` chỉ đặt trong tiến trình này. Trả `{ base, stop }`.
+ * `COMMUNITY_API_ORIGIN` chỉ đặt trong tiến trình này. `watch: false` tắt theo dõi file (Playwright chạy server này
+ * song song với `astro build` ghi vào cùng thư mục). Trả `{ base, stop }`.
  */
-export async function startFixtureSite({ port = 4371, host = '127.0.0.1' } = {}) {
+export async function startFixtureSite({ port = 4371, host = '127.0.0.1', watch = true } = {}) {
   const api = await startPostsApi({ host });
   process.env.COMMUNITY_API_ORIGIN = api.origin;
   const { dev } = await import('astro');
   const root = fileURLToPath(new URL('../../', import.meta.url));
-  const server = await dev({ root, logLevel: 'warn', server: { host, port }, devToolbar: { enabled: false } });
+  const server = await dev({
+    root,
+    logLevel: 'warn',
+    server: { host, port },
+    devToolbar: { enabled: false },
+    ...(watch ? {} : { vite: { server: { watch: null } } }),
+  });
   return {
     base: `http://${host}:${server.address.port}`,
     async stop() {
@@ -204,7 +214,7 @@ export async function startFixtureSite({ port = 4371, host = '127.0.0.1' } = {})
 
 if (import.meta.url === `file://${process.argv[1]}`) {
   const at = process.argv.indexOf('--port');
-  const site = await startFixtureSite({ port: at > 0 ? Number(process.argv[at + 1]) : 4371 });
+  const site = await startFixtureSite({ port: at > 0 ? Number(process.argv[at + 1]) : 4371, watch: !process.argv.includes('--no-watch') });
   console.log(`Bài viết mẫu: ${site.base}/bai-viet/${FIXTURE_SLUG}/ (Ctrl+C để dừng)`);
   const shutdown = () => site.stop().finally(() => process.exit(0));
   process.once('SIGINT', shutdown);

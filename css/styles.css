@@ -5184,6 +5184,23 @@ body[data-page-section="team-khac"] .layout {
   font-weight: var(--weight-semibold);
 }
 
+/* Kiểu Bảng: danh sách món thiếu ở hàng phụ ngay dưới hàng đội (ngoài `th scope=row`). Sọc nền tính theo hàng đội,
+   hàng phụ cùng nền và liền khối với hàng đội phía trên. */
+.reference-view .reference-table tbody:has(.roster-stock-missing-row) tr {
+  background: none;
+}
+
+.reference-view .reference-table tbody:has(.roster-stock-missing-row) tr:nth-child(even of [data-reference-key]),
+.reference-view .reference-table tbody:has(.roster-stock-missing-row) tr:nth-child(even of [data-reference-key]) + .roster-stock-missing-row {
+  background: var(--panel-3);
+}
+
+.reference-view .reference-table tbody .roster-stock-missing-row > td {
+  padding-top: 0;
+  padding-inline: var(--space-18);
+  border-top: none;
+}
+
 @media (max-width: 820px) {
   .reference-roster-bar {
     grid-template-columns: minmax(0, 1fr);
@@ -5213,6 +5230,19 @@ body[data-page-section="team-khac"] .layout {
 
   .roster-controls-sep {
     display: none;
+  }
+}
+
+/* Bảng thu gọn (≤900px) là các hàng lưới có viền trên: hàng phụ dính vào hàng đội phía trên. */
+@media (max-width: 900px) {
+  .reference-view .reference-table tbody tr.roster-stock-missing-row {
+    display: block;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .reference-view .reference-table tbody .roster-stock-missing-row > td {
+    padding: 0;
   }
 }
 
@@ -5860,9 +5890,13 @@ details[open] > summary .bv-chevron {
     align-items: start;
   }
 
+  /* Cột phụ dính không cao quá cửa sổ: mục lục dài cuộn trong cột thay vì bị cắt dưới mép màn hình. */
   .bv-side {
     position: sticky;
     top: var(--space-96);
+    max-height: calc(var(--size-viewport) - var(--space-96) - var(--space-24));
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .bv-toc {
@@ -5902,8 +5936,6 @@ details[open] > summary .bv-chevron {
 
   .bv-cover {
     aspect-ratio: 16 / 9;
-    margin-inline: calc(var(--space-16) - var(--space-32));
-    border-radius: 0;
   }
 
   .bv-summary {
@@ -5942,13 +5974,6 @@ details[open] > summary .bv-chevron {
     font: var(--type-landing-section-title-sm);
   }
 
-  .bv-table-wrap {
-    margin-inline: calc(var(--space-16) - var(--space-32));
-    border-right: none;
-    border-left: none;
-    border-radius: 0;
-  }
-
   .bv-table-wrap tbody th {
     min-width: var(--size-col-200);
   }
@@ -5963,6 +5988,21 @@ details[open] > summary .bv-chevron {
 
   .bv-related-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Ảnh bìa và bảng tràn sát mép màn hình như artboard mobile: chỉ khi lề trang chi tiết là space.16 (≤680px,
+   `main.layout:has(> .detail-content)`), để lề âm bằng đúng lề trang. */
+@media (max-width: 680px) {
+  .bv-cover,
+  .bv-table-wrap {
+    margin-inline: calc(var(--space-16) - var(--space-32));
+    border-radius: 0;
+  }
+
+  .bv-table-wrap {
+    border-right: none;
+    border-left: none;
   }
 }
 /* moi:bai-viet-kho:end */

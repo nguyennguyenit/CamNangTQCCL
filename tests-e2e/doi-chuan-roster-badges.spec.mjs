@@ -59,7 +59,7 @@ test.describe("Đội chuẩn: badge kho", () => {
   // Đội còn thiếu ít món nhất (nhưng chưa đủ) của mùa: dùng để kiểm chữ "Thiếu N món".
   const missingTeam = [...expected.byConfigId].filter(([, entry]) => entry.missingCount > 0).sort((a, b) => a[1].missingCount - b[1].missingCount)[0];
 
-  test("có kho: đội đủ hiện Ráp được, đội thiếu hiện đúng số món, tên món hiện trên thẻ và trong title", async ({ page }) => {
+  test("có kho: đội đủ hiện Ráp được, đội thiếu hiện đúng số món, tên món hiện trên thẻ (không lặp vào title)", async ({ page }) => {
     await seedRoster(page, roster);
     await page.goto("/doi-chuan/");
     await waitForCoverage(page);
@@ -69,7 +69,7 @@ test.describe("Đội chuẩn: badge kho", () => {
     }
     const [missingId, entry] = missingTeam;
     await expect(badge(card(page, missingId))).toHaveText(`Thiếu ${entry.missingCount} món`);
-    await expect(badge(card(page, missingId))).toHaveAttribute("title", /Thiếu: /);
+    await expect(badge(card(page, missingId))).not.toHaveAttribute("title");
     await expect(card(page, missingId).locator(".roster-stock-missing")).toHaveText(/^Thiếu: (tướng|chiến pháp) /);
     await expect(card(page, READY_TEAMS[0]).locator(".roster-stock-missing")).toHaveCount(0);
   });

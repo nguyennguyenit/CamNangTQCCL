@@ -137,8 +137,8 @@ const showToc = post.headings.length > 1;
             </summary>
             <nav aria-label={copy.toc}>
               <ol class="bv-toc-list">
-                {post.headings.map((heading, index) => (
-                  <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`} aria-current={index === 0 ? 'location' : undefined}>{heading.text}</a></li>
+                {post.headings.map((heading) => (
+                  <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`}>{heading.text}</a></li>
                 ))}
               </ol>
             </nav>
@@ -170,8 +170,8 @@ const showToc = post.headings.length > 1;
           <nav id="blog-toc" class="bv-toc" aria-label={copy.toc}>
             <p class="bv-label">{copy.toc}</p>
             <ol class="bv-toc-list">
-              {post.headings.map((heading, index) => (
-                <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`} aria-current={index === 0 ? 'location' : undefined}>{heading.text}</a></li>
+              {post.headings.map((heading) => (
+                <li class:list={[heading.depth === 3 && 'bv-toc-sub']}><a href={`#${heading.id}`}>{heading.text}</a></li>
               ))}
             </ol>
           </nav>
@@ -204,5 +204,5 @@ const showToc = post.headings.length > 1;
     </nav>
   </div>
 
-  <script is:inline type="module" slot="scripts" src="/js/blog-toc-current.js"></script>
+  <script is:inline type="module" slot="scripts" src="/js/blog-article.js"></script>
 </SiteLayout>

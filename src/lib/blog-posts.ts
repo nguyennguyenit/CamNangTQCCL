@@ -223,16 +223,38 @@ function alignedCell(cell: HastNode, rowHeader: boolean): HastNode {
   };
 }
 
+const elementsOf = (node: HastNode | undefined) => (node?.children ?? []).filter((child) => child.type === 'element');
+const NUMERIC_CELL = /^[\s\d.,%+\-–—/:]*$/u;
+
 /**
- * Bảng Markdown → khung cuộn ngang có tên (`role=region`, `tabindex=0` để cuộn bằng bàn phím), ô đầu mỗi hàng thân bảng
- * là tiêu đề hàng (`th scope=row`) — artboard BaiVietDetail `.bvd-table-wrap`. Tên vùng là chữ của hàng tiêu đề.
+ * Cột đầu là cột nhãn (mỗi hàng một tên riêng) thì ô đầu mỗi hàng là tiêu đề hàng. Markdown không có cú pháp đánh dấu
+ * tiêu đề hàng, nên đoán theo dữ liệu, chỉ khi chắc: ô tiêu đề cột đầu có chữ, cột không căn phải (cột số), mọi ô thân
+ * bảng của cột có chữ, không phải số và không trùng nhau. Không chắc thì giữ `td` (bảng vẫn đọc được theo cột).
+ */
+function firstColumnIsRowHeader(head: HastNode | undefined, body: HastNode | undefined): boolean {
+  const headCell = elementsOf(elementsOf(head)[0])[0];
+  if (!headCell || !hastText(headCell).trim()) return false;
+  if (typeof headCell.properties?.style === 'string' && /text-align:\s*right/u.test(headCell.properties.style)) return false;
+  const labels = elementsOf(body).map((row) => hastText(elementsOf(row)[0] ?? { type: 'text', value: '' }).trim());
+  if (!labels.length || labels.some((label) => !label || NUMERIC_CELL.test(label))) return false;
+  return new Set(labels.map((label) => label.toLocaleLowerCase('vi'))).size === labels.length;
+}
+
+/**
+ * Bảng Markdown → khung cuộn ngang có tên (`role=region`, `tabindex=0` để cuộn bằng bàn phím; `js/blog-article.js` bỏ
+ * hai thuộc tính đó khi bảng vừa khung) — artboard BaiVietDetail `.bvd-table-wrap`. Tên vùng là chữ của hàng tiêu đề.
+ * Ô đầu mỗi hàng thân bảng là tiêu đề hàng (`th scope=row`) khi cột đầu là cột nhãn (`firstColumnIsRowHeader`).
  */
 function tableFrame(table: HastNode): HastNode {
+  const rowHeaders = firstColumnIsRowHeader(
+    elementsOf(table).find((part) => part.tagName === 'thead'),
+    elementsOf(table).find((part) => part.tagName === 'tbody'),
+  );
   const section = (part: HastNode): HastNode => ({
     ...part,
     children: (part.children ?? []).map((row) => {
       if (row.type !== 'element') return row;
-      let first = part.tagName === 'tbody';
+      let first = rowHeaders && part.tagName === 'tbody';
       return {
         ...row,
         children: (row.children ?? []).map((cell) => {

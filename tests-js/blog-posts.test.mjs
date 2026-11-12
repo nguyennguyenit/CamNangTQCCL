@@ -148,3 +148,14 @@ test("markdown tables sit in a named, keyboard-scrollable frame with row headers
   assert.doesNotMatch(html, /style=/u);
   assert.equal(html.match(/bv-table-wrap/gu).length, 1);
 });
+
+test("markdown tables only promote the first column to row headers when it is a column of unique labels", () => {
+  const numeric = renderBlogMarkdown("| Mốc | Điểm |\n| --- | --- |\n| 4 | 9 |\n| 5 | 8 |\n").html;
+  assert.doesNotMatch(numeric, /scope="row"/u);
+  const repeated = renderBlogMarkdown("| Binh chủng | Đội |\n| --- | --- |\n| Cung | A |\n| Cung | B |\n").html;
+  assert.doesNotMatch(repeated, /scope="row"/u);
+  const blankHead = renderBlogMarkdown("|  | Điểm |\n| --- | --- |\n| Lữ Bố | 9 |\n").html;
+  assert.doesNotMatch(blankHead, /scope="row"/u);
+  const labels = renderBlogMarkdown("| Đội | Điểm |\n| --- | --- |\n| Lữ Bố | 9 |\n| Tả Từ | 8 |\n").html;
+  assert.equal(labels.match(/scope="row"/gu).length, 2);
+});
