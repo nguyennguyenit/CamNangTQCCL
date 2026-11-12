@@ -106,3 +106,25 @@ test("nút xác nhận nguy hiểm đạt tương phản chữ ở cả hai them
   await expect(page.getByRole("dialog", { name: "Xoá đội “Vũ Tung Úc”?" })).toBeVisible();
   await expect(page.locator(".hop-xac-nhan .ana-btn.primary")).toHaveText("Xoá đội");
 });
+
+test("bấm đúp nút mở không đóng hộp ngay; bấm nền (nhấn và thả trên nền) sau đó mới đóng và trả false", async ({ page }) => {
+  const opener = await mountOpener(page);
+  await opener.dblclick();
+  const dialog = page.getByRole("alertdialog");
+  await expect(dialog).toBeVisible();
+  // Đợi qua khoảng bỏ qua bấm nền rồi kiểm hộp vẫn mở.
+  await page.waitForTimeout(400);
+  await expect(dialog).toBeVisible();
+  // Nhấn trong hộp rồi thả ở nền (kéo chọn chữ) không đóng hộp.
+  const box = await dialog.locator(".hop-xac-nhan-tieu-de").boundingBox();
+  await page.mouse.move(box.x + 4, box.y + 4);
+  await page.mouse.down();
+  await page.mouse.move(5, 5);
+  await page.mouse.up();
+  await expect(dialog).toBeVisible();
+  // Bấm nền thật: đóng như Huỷ.
+  await page.mouse.click(5, 5);
+  await expect(page.locator("dialog.hop-xac-nhan")).toHaveCount(0);
+  await expect(opener).toBeFocused();
+  expect(await page.evaluate(() => [window.__confirmResults, window.__confirmRuns])).toEqual([[false], 0]);
+});
