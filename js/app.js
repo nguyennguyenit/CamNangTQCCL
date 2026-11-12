@@ -523,14 +523,20 @@ async function main() {
     }
     // Badge kho của Đội chuẩn: kho đọc từ máy (khách: kho local; đã đăng nhập: cache cloud của chính người đó), không
     // chặn boot. Từ điển tướng/chiến pháp chỉ tải khi máy có kho; độ phủ tính theo từng mùa và nhớ lại.
+    // `fresh` (trang trả về từ bfcache): gỡ badge cũ ngay và hỏi lại phiên, vì tài khoản/kho có thể đã đổi ở tab khác.
     const rosterSection = pageSection === 'team-chuan' && recommendedModel ? sections['team-chuan'] : null;
-    const loadRosterSource = () => {
+    let rosterLoad = 0;
+    const loadRosterSource = ({ fresh = false } = {}) => {
       if (!rosterSection?.setRoster) return;
+      const run = ++rosterLoad;
+      if (fresh) rosterSection.setRoster(undefined);
       (async () => {
-        const user = await loadSession({ probe: false });
+        const user = await loadSession({ probe: false, fresh });
         const roster = readOwnedRoster(localStore(), { userId: user?.id ?? null });
+        if (run !== rosterLoad) return;
         if (!roster) { rosterSection.setRoster(null); return; }
         const [heroesDict, tacticsDict] = await Promise.all([loadLookupPayload('heroes-dict.json'), loadLookupPayload('tactics.json')]);
+        if (run !== rosterLoad) return;
         const bySeason = new Map();
         rosterSection.setRoster(seasonId => {
           if (!bySeason.has(seasonId)) {
@@ -541,7 +547,7 @@ async function main() {
       })().catch(error => {
         // Lỗi phiên hoặc lỗi tải từ điển: danh sách giữ nguyên, không badge và không dòng dẫn sai.
         console.error(error);
-        rosterSection.setRoster(undefined);
+        if (run === rosterLoad) rosterSection.setRoster(undefined);
       });
     };
     loadRosterSource();
@@ -588,7 +594,7 @@ async function main() {
       restoreReturnState();
     });
     // Trang trả về từ bfcache: kho có thể đã đổi (nhập thêm ở Gợi ý đội, đăng xuất) nên đọc lại trước khi khôi phục vị trí.
-    window.addEventListener('pageshow', event => { if (event.persisted) { loadRosterSource(); restoreReturnState(); } });
+    window.addEventListener('pageshow', event => { if (event.persisted) { loadRosterSource({ fresh: true }); restoreReturnState(); } });
     // Scroll mới nhất phải vào snapshot trước khi rời trang bằng paste/copy URL.
     window.addEventListener('pagehide', rememberReturn);
     // Tên Hán nguồn của binh thư (phồn thể, tên cũ) do build nhúng từ bảng danh tính đã duyệt.

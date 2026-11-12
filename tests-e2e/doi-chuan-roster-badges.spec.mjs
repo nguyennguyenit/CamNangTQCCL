@@ -4,6 +4,8 @@ import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { buildSeasonCandidates } from "../js/roster-season-candidates.js";
 import { buildListCoverage } from "../js/roster-list-coverage.js";
+import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
+import { createRosterIdResolver } from "../js/roster-id-resolve.js";
 
 const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
 const { generationId } = read("src/data/recommended-reference/current.json");
@@ -214,4 +216,64 @@ test("trang mùa cũ: có kho thì thẻ có badge và dòng tóm tắt; chưa c
   const page24 = page.locator("#section-season-page");
   await expect(page24.locator(`[data-reference-key="${target.id}"] .roster-stock-badge`)).toHaveText("Ráp được");
   await expect(page24.locator(".reference-roster-summary")).toContainText(`${expected.summary.complete} / ${expected.summary.total}`);
+});
+
+/** Trang vừa trả về từ bfcache: giả lập `pageshow` với `persisted` (Playwright không giữ trang trong bfcache ổn định). */
+const firePersistedPageshow = (page) => page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })));
+
+test("phạm vi Tất cả: có badge và tóm tắt gộp mọi mùa", async ({ page }) => {
+  const roster = rosterFor(SEASON, READY_TEAMS);
+  const expected = expectedFor("all", roster);
+  expect(expected.summary.complete).toBeGreaterThan(0);
+  await seedRoster(page, roster);
+  await page.goto("/doi-chuan/?season=all");
+  await waitForCoverage(page);
+  await expect(bar(page).locator(".reference-roster-summary")).toContainText(`${expected.summary.complete} / ${expected.summary.total}`);
+  await expect(bar(page).locator(".reference-roster-summary")).toContainText("mọi mùa");
+  expect(await section(page).locator(".roster-stock-badge").count()).toBeGreaterThan(0);
+  await bar(page).getByRole("button", { name: "Ráp được", exact: true }).click();
+  await expect(page).toHaveURL(/[?&]kho=rap-duoc/);
+  await expect(section(page).locator("[data-reference-key]")).toHaveCount(expected.summary.complete);
+});
+
+test("trả về từ bfcache sau khi đổi tài khoản ở tab khác: hỏi lại phiên, gỡ badge của tài khoản cũ", async ({ page }) => {
+  const roster = rosterFor(SEASON, READY_TEAMS);
+  const resolve = createRosterIdResolver(dicts);
+  const { state } = mergeLocal(emptyCloudState("u-alice"), { ...roster, tacticOverrides: [] }, resolve, { now: 1_700_000_000_000 });
+  const cloud = JSON.stringify({ userId: state.userId, cursor: state.cursor, pulledKinds: state.pulledKinds, records: state.records, dirty: state.dirty, rejected: state.rejected });
+  let user = { id: "u-alice", name: "Alice", role: "user" };
+  await page.route("**/api/me", (route) => route.fulfill({ json: { user } }));
+  await page.addInitScript(([key, value]) => {
+    if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
+    localStorage.setItem("tqccl:community-session", "1");
+  }, [CLOUD_STORAGE_KEY, cloud]);
+  await page.goto("/doi-chuan/");
+  await waitForCoverage(page);
+  await expect(badge(card(page, READY_TEAMS[0]))).toHaveText("Ráp được");
+
+  user = { id: "u-bob", name: "Bob", role: "user" };
+  await firePersistedPageshow(page);
+  await expect(bar(page)).toHaveAttribute("data-state", "empty");
+  await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
+});
+
+test("trang mùa cũ trả về từ bfcache: vẽ lại không trùng tóm tắt, kho đã xoá thì gỡ badge", async ({ page }) => {
+  const season = buildSeasonCandidates(records, OLD_SEASON, dicts);
+  const target = season.teams[0];
+  await seedRoster(page, rosterFor(OLD_SEASON, [target.id]));
+  await page.goto(`/doi-chuan/${OLD_SEASON}/`);
+  const root = page.locator("#section-season-page");
+  await expect(root.locator(`[data-reference-key="${target.id}"] .roster-stock-badge`)).toHaveText("Ráp được");
+  const badges = await root.locator(".roster-stock-badge").count();
+
+  await firePersistedPageshow(page);
+  await firePersistedPageshow(page);
+  await expect(root.locator(`[data-reference-key="${target.id}"] .roster-stock-badge`)).toHaveText("Ráp được");
+  await expect(root.locator(".reference-roster-summary")).toHaveCount(1);
+  await expect(root.locator(".roster-stock-badge")).toHaveCount(badges);
+
+  await page.evaluate((key) => localStorage.removeItem(key), SCAN_KEY);
+  await firePersistedPageshow(page);
+  await expect(root.locator(".roster-stock-badge")).toHaveCount(0);
+  await expect(root.locator(".reference-roster-summary")).toHaveCount(0);
 });

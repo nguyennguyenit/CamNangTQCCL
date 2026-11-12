@@ -2,7 +2,7 @@
 // `sourceConfigId`. Fixture dùng bản ghi thật của generation đang pin, như test của khối Độ phủ kho.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { buildListCoverage, readOwnedRoster } from "../js/roster-list-coverage.js";
+import { ALL_SEASONS, buildListCoverage, readOwnedRoster } from "../js/roster-list-coverage.js";
 import { buildRosterCoverage } from "../js/roster-coverage.js";
 import { applyTacticOverrides } from "../js/roster-season-candidates.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
@@ -155,4 +155,23 @@ test("buildListCoverage: món thiếu mang tên Hán của từ điển (nameZh)
   const tactic = items.find((item) => item.kind === "tactic");
   assert.equal(hero.nameZh, heroesDict.find((row) => row.viet === hero.name).chinese);
   assert.equal(tactic.nameZh, tacticsDict.find((row) => row.viet === tactic.name).chinese);
+});
+
+test("buildListCoverage: phạm vi Tất cả gộp độ phủ của từng mùa, không mất mùa nào", () => {
+  const season = seasonFrom(SEASON);
+  const roster = rosterOf(season.teams.slice(0, 6));
+  const all = buildListCoverage({ records, seasonId: ALL_SEASONS, heroesDict, tacticsDict, roster });
+  const seasonIds = [...new Set(records.map((record) => record.sourceSeasonId))];
+  assert.ok(seasonIds.length > 1);
+  let complete = 0;
+  let total = 0;
+  for (const seasonId of seasonIds) {
+    const one = buildListCoverage({ records, seasonId, heroesDict, tacticsDict, roster });
+    complete += one.summary.complete;
+    total += one.summary.total;
+    for (const [id, entry] of one.byConfigId) assert.deepEqual(all.byConfigId.get(id), entry);
+  }
+  assert.ok(complete > 0);
+  assert.deepEqual(all.summary, { complete, total });
+  assert.equal(all.byConfigId.size, total);
 });

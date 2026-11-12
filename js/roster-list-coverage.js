@@ -64,9 +64,13 @@ export function readOwnedRoster(storage, { userId = null } = {}) {
   }
 }
 
+/** Phạm vi "Tất cả" của danh sách Đội chuẩn (`?season=all`). */
+export const ALL_SEASONS = "all";
+
 /**
- * Số món thiếu của từng đội Đội chuẩn thuộc mùa `seasonId`. Chỉ đội hạng mục Giao chiến đã đối chiếu đủ tướng mới có
- * mục (như khối Độ phủ kho); đội khác không có khóa trong `byConfigId` và danh sách không gắn badge cho chúng.
+ * Số món thiếu của từng đội Đội chuẩn thuộc mùa `seasonId` (hoặc mọi mùa khi `seasonId` là `ALL_SEASONS`). Chỉ đội hạng
+ * mục Giao chiến đã đối chiếu đủ tướng mới có mục (như khối Độ phủ kho); đội khác không có khóa trong `byConfigId` và
+ * danh sách không gắn badge cho chúng. Phạm vi "Tất cả" dựng đội từng mùa (`buildSeasonCandidates` lọc theo mùa) rồi gộp.
  *
  * @param {object} input
  * @param {object[]} input.records `index.json` của generation Đội chuẩn
@@ -81,23 +85,30 @@ export function readOwnedRoster(storage, { userId = null } = {}) {
 export function buildListCoverage({ records = [], seasonId, heroesDict = [], tacticsDict = [], roster = null } = {}) {
   const byConfigId = new Map();
   if (!roster || !seasonId) return { byConfigId, summary: { complete: 0, total: 0 } };
-  const season = buildSeasonCandidates(records, seasonId, { heroesDict, tacticsDict });
-  const coverage = buildRosterCoverage({
-    seasonTeams: applyTacticOverrides(season.teams, roster.tacticOverrides),
-    seasonTier: season.teamTier,
-    ownedHeroes: roster.ownedHeroes,
-    ownedTactics: roster.ownedTactics,
-    tacticIdOf: createTacticIdResolver(tacticsDict),
-  });
+  const seasonIds = seasonId === ALL_SEASONS
+    ? [...new Set((records || []).map((record) => record?.sourceSeasonId).filter(Boolean))]
+    : [seasonId];
+  const tacticIdOf = createTacticIdResolver(tacticsDict);
   const zhNames = { hero: chineseNames(heroesDict), tactic: chineseNames(tacticsDict) };
   const withChinese = (item) => {
     const nameZh = item.unresolved ? null : chineseNameOf(item.name, zhNames[item.kind]);
     return nameZh ? { ...item, nameZh } : item;
   };
   let complete = 0;
-  for (const entry of coverage.teams) {
-    byConfigId.set(entry.team.id, { missingCount: entry.missingCount, missing: entry.missing.map(withChinese) });
-    if (entry.missingCount === 0) complete++;
+  for (const id of seasonIds) {
+    const season = buildSeasonCandidates(records, id, { heroesDict, tacticsDict });
+    const coverage = buildRosterCoverage({
+      seasonTeams: applyTacticOverrides(season.teams, roster.tacticOverrides),
+      seasonTier: season.teamTier,
+      ownedHeroes: roster.ownedHeroes,
+      ownedTactics: roster.ownedTactics,
+      tacticIdOf,
+    });
+    for (const entry of coverage.teams) {
+      if (byConfigId.has(entry.team.id)) continue;
+      byConfigId.set(entry.team.id, { missingCount: entry.missingCount, missing: entry.missing.map(withChinese) });
+      if (entry.missingCount === 0) complete++;
+    }
   }
   return { byConfigId, summary: { complete, total: byConfigId.size } };
 }

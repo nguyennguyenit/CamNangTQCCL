@@ -12,6 +12,8 @@
 
 ### Fixed
 - Khối "Độ phủ kho" của Gợi ý đội hiện chữ `null` khi chưa mở ô nào (#59): `replaceChildren(null)` đổi `null` thành text node.
+- Phạm vi "Tất cả" (`?season=all`) của `/doi-chuan/` mất badge, tóm tắt và nút lọc/sắp theo kho: `buildListCoverage` nay tính từng mùa rồi gộp; tóm tắt ghi "đội của mọi mùa".
+- Trang trả về từ bfcache (danh sách `/doi-chuan/` và trang mùa cũ) gỡ badge cũ, hỏi lại phiên (`loadSession({fresh: true})`) và đọc lại kho, nên đổi tài khoản/đăng xuất/xoá kho ở tab khác không còn để lại badge của kho trước.
 
 ### Ghi chú
 - Người đã đăng nhập chỉ thấy badge sau khi mở Gợi ý đội một lần trên máy đó (nơi tạo cache kho tài khoản); trang danh sách không tự đồng bộ kho.

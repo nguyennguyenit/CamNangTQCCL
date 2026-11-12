@@ -65,12 +65,12 @@ export function decorateCoverageBadges(root, byConfigId) {
   }
 }
 
-/** Dòng tóm tắt "ráp được X / Y đội của mùa". */
-export function rosterSummaryNode(summary) {
+/** Dòng tóm tắt "ráp được X / Y đội của mùa" (`allSeasons`: phạm vi "Tất cả", đếm đội của mọi mùa). */
+export function rosterSummaryNode(summary, { allSeasons = false } = {}) {
   return node("p", { class: "reference-roster-summary" }, [
     L("Kho của bạn ráp được ", "你的库存可组建 "),
     node("strong", {}, `${summary.complete} / ${summary.total}`),
-    L(" đội của mùa này.", " 支本赛季阵容。"),
+    allSeasons ? L(" đội của mọi mùa.", " 支全部赛季阵容。") : L(" đội của mùa này.", " 支本赛季阵容。"),
   ]);
 }
 

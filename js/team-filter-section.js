@@ -357,7 +357,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     }
     const focused=rosterBar.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
     rosterBar.replaceChildren(
-      rosterSummaryNode(coverage.summary),
+      rosterSummaryNode(coverage.summary,{allSeasons:state.season==='all'}),
       rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,onChange:onQuery}),
     );
     rosterBar.dataset.state='ready';
