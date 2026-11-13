@@ -689,6 +689,9 @@ class ClientHeroSupplementTest(unittest.TestCase):
         cleared = self._build(overrides={"hero:ha-hau-don": {"selfTacticId": None}})
         hero = next(item for item in json.loads((cleared / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
         self.assertIsNone(hero["lookup"]["selfTacticId"])
+        # Chiến pháp client mới (không khai `source`) có tướng kế thừa thì phải khai INHERITANCE, không thì vào nhóm "Khác".
+        with self.assertRaisesRegex(ValueError, "source disagrees with inheriting heroes: tactic:cap-toc"):
+            self._build(overrides={"hero:dai-kieu": {"inheritTacticId": "tactic:cap-toc"}})
 
     def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
         note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần.", "textZh": "新賽季：漢陣營，本賽季前為群雄陣營。"}]}
@@ -707,6 +710,10 @@ class ClientHeroSupplementTest(unittest.TestCase):
                 self._build(hero_notes={"hero:ha-hau-don": {"conditions": [row]}})
         with self.assertRaisesRegex(ValueError, "zhEffects.text is invalid"):
             self._build(hero_notes={"hero:ha-hau-don": {"conditions": [{"kind": "season", "textVi": "x", "textZh": "<b>賽季</b>"}]}})
+        # Bản zh phải giữ mọi con số của bản Việt (vd chi phí "50K"), không được viết gọn thành "tài nguyên".
+        dropped = {"kind": "season", "textVi": "Cài lại tốn 50K Châu, chờ 1 giờ.", "textZh": "重新設定需消耗資源並等待 1 小時。"}
+        with self.assertRaisesRegex(ValueError, "must keep the numbers"):
+            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [dropped]}})
 
     def test_role_tags_only_fill_empty_tags(self):
         with self.assertRaisesRegex(ValueError, "existing tag"):
@@ -970,6 +977,14 @@ class ClientTacticCaptureTest(unittest.TestCase):
             self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "conditions": [{"kind": "mùa", "textVi": "x"}]}}, zhEffects={"tactic:ho-ve": zh})
         with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
             self._build({"tactic:ho-ve-x": entry}, newTactics={"tactic:ho-ve-x": {"nameZh": "護衛"}})
+
+    def test_new_client_tactic_source_must_match_inheriting_heroes(self):
+        entry = self._ho_ve()
+        zh = {"tactic:ho-ve": self._zh("分擔傷害", entry["effectVi"])}
+        output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "source": "EVENT"}}, zhEffects=zh)
+        self.assertEqual(self._rows(output, "tactics.json")["tactic:ho-ve"]["source"], "EVENT")
+        with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
+            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "source": "Khác"}}, zhEffects=zh)
 
     def test_every_zh_effect_kind_publishes_only_its_kind(self):
         entry = self._ho_ve()

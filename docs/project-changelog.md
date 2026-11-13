@@ -19,7 +19,9 @@
 ### Fixed (review PR #71, 2026-11-13)
 - Bản zh mất ghi chú mùa của 35 tướng (`docs/zh-gaps.md`: Tướng 0 → 35): `heroNotes` nay bắt buộc `textZh` mỗi dòng; điều kiện của tướng nhận khóa tùy chọn `textZh` (builder, `js/lookup-data.js`), hồ sơ zh hiện chữ Hán kèm cờ "Chữ Hán dịch từ tiếng Việt, chưa đối chiếu". `docs/zh-gaps.md`: Tướng về 0.
 - Chữ Hán 2 chiến pháp mới sai do phiên âm ngược: Tiên Tri Nhận Chủ 先知認主 → 識主先知, Uống Hận Di Trừu 飲恨遺讎 → 飲恨遺仇 (theo `sanzhan.slgsim.com/zh-hans`, khớp tướng mang và số đầy cấp); 8 tên còn lại khớp.
-- Merge `main` (generation Đội chuẩn của #68), promote lại `lookup-261113-pr71-zh-notes` (`lookup:e13c1d2e…`), Recommended publish lại (generation `87452285…`), re-pin `pipeline/team-route-handles.json`, hash nguồn `js/lookup-data.js`/`js/lookup-detail.js`/`js/lookup-profile.js` trong policy localization, `mcp-worker` workflow-build.
+- 10 chiến pháp mới của tướng Hán có `source = null` nên rơi vào nhóm "Khác" của bảng chọn kho (lọc "Truyền thừa" bỏ sót): `newTactics` nhận `source`, 10 mục khai `INHERITANCE`; builder dừng khi chiến pháp client mới có tướng truyền thừa mà không khai `INHERITANCE`.
+- Bản zh ghi chú mùa bỏ chi phí "50K Châu" (24 ghi chú): ghi đủ `50K「Châu」`; builder dừng khi `textZh` thiếu con số của `textVi`.
+- Merge `main` (generation Đội chuẩn của #68), promote lại (`lookup:95080781…`, transaction `lookup-261113-pr71-astra-b`), Recommended publish lại (generation `a92011d4…`), re-pin `pipeline/team-route-handles.json`, hash nguồn `js/lookup-data.js`/`js/lookup-detail.js`/`js/lookup-profile.js` trong policy localization, `mcp-worker` workflow-build.
 
 ### Chưa làm
 - Hồi chiêu và xung đột từ client (Khiêu Chiến Quần Hùng "1 hiệp CD", Tuyệt Kế Chiết Mưu xung đột Kế Tận): `tactics{}` chưa có khóa `cooldown`/`conflictsVi` (#75).

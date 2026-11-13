@@ -7422,13 +7422,15 @@
   },
   "newTactics": {
     "tactic:an-hau-dac-chung": {
-      "nameZh": "恩厚得眾"
+      "nameZh": "恩厚得眾",
+      "source": "INHERITANCE"
     },
     "tactic:ap-che-so": {
       "nameZh": "初級壓制"
     },
     "tactic:be-canh-tu-an": {
-      "nameZh": "閉境自安"
+      "nameZh": "閉境自安",
+      "source": "INHERITANCE"
     },
     "tactic:cap-cuu-so": {
       "nameZh": "初級急救"
@@ -7440,13 +7442,15 @@
       "nameZh": "枝葉扶蘇"
     },
     "tactic:chinh-van": {
-      "nameZh": "政運"
+      "nameZh": "政運",
+      "source": "INHERITANCE"
     },
     "tactic:co-vu-so": {
       "nameZh": "初級鼓舞"
     },
     "tactic:dinh-quan-an-dan": {
-      "nameZh": "定軍安民"
+      "nameZh": "定軍安民",
+      "source": "INHERITANCE"
     },
     "tactic:dung-vo": {
       "nameZh": "勇武"
@@ -7464,19 +7468,23 @@
       "nameZh": "初級擾亂"
     },
     "tactic:o-sao-di-han": {
-      "nameZh": "烏巢遺恨"
+      "nameZh": "烏巢遺恨",
+      "source": "INHERITANCE"
     },
     "tactic:phan-tien": {
-      "nameZh": "奮進"
+      "nameZh": "奮進",
+      "source": "INHERITANCE"
     },
     "tactic:thien-van": {
       "nameZh": "天運"
     },
     "tactic:thu-chinh-xuat-phong": {
-      "nameZh": "守正出鋒"
+      "nameZh": "守正出鋒",
+      "source": "INHERITANCE"
     },
     "tactic:tien-tri-nhan-chu": {
-      "nameZh": "識主先知"
+      "nameZh": "識主先知",
+      "source": "INHERITANCE"
     },
     "tactic:tinh-bach-ma-nghia-tong": {
       "nameZh": "精·白馬義從",
@@ -8015,10 +8023,12 @@
       "nameZh": "鎮壓黃巾"
     },
     "tactic:tri-dinh": {
-      "nameZh": "智定"
+      "nameZh": "智定",
+      "source": "INHERITANCE"
     },
     "tactic:uong-han-di-truu": {
-      "nameZh": "飲恨遺仇"
+      "nameZh": "飲恨遺仇",
+      "source": "INHERITANCE"
     }
   },
   "retired": {
