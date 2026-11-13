@@ -502,7 +502,8 @@ test.describe("quản lý hộp, nhóm, đội", () => {
 
     await card(page, "team-grp").getByLabel(/Chuyển nhóm/).selectOption(groupId);
     await expect(page.locator(`[data-group-id="${groupId}"] .mt-team`)).toHaveCount(1);
-    expect(mock.server.live("team")[0].data.groupId).toBe(groupId);
+    // Ô chọn nhóm đổi giao diện ngay, bản ghi lên máy chủ sau một nhịp POST.
+    await expect.poll(() => mock.server.live("team")[0].data.groupId).toBe(groupId);
 
     await page.locator(`[data-group-id="${groupId}"]`).getByRole("button", { name: "Xóa nhóm" }).click();
     const dialog = page.locator("dialog.mt-dialog");
