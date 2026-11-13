@@ -737,7 +737,8 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await page.addInitScript((state) => {
     localStorage.setItem("tqccl.rosterRecommend.scanState.v1", JSON.stringify(state));
   }, rosterState);
-  await page.goto("/goi-y-doi-tu-kho/");
+  // Mùa ít đội (OG, 25 đội) để kho dựng từ đội cũ chắc chắn còn chỗ trống cho đội cũ.
+  await page.goto(`/goi-y-doi-tu-kho/?season=${encodeURIComponent("og-兵演春秋")}`);
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   // Kho dựng từ đội cũ: đội cũ lấp chỗ trống sau đội của mùa và mang nhãn "Tham khảo – đội cũ".
@@ -752,7 +753,7 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await expect(page).toHaveURL(new RegExp(legacyRoute(selectedTeam.id)));
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("h1#team-detail-title")).toHaveText(selectedTeam.nickname || selectedTeam.name);
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", `/goi-y-doi-tu-kho/?season=${encodeURIComponent("og-兵演春秋")}`);
 });
 
 test("opening a season recommendation from the roster tool lands on its Đội chuẩn detail page", async ({ page }) => {

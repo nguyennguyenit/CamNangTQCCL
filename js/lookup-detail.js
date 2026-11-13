@@ -130,6 +130,23 @@ function localizedConditions(profile, rows) {
   return [];
 }
 const conditions = (rows) => (Array.isArray(rows) ? rows.map((row) => typeof row === "string" ? row : row?.textVi).filter(Boolean) : []);
+/**
+ * Điều kiện của tướng: dòng có `textZh` (ghi chú mùa, chữ Hán dịch từ tiếng Việt) hiện ở bản zh và bật
+ * `conditionsZhTranslated` để giao diện gắn cờ "dịch, chưa đối chiếu"; dòng khác theo bộ giá trị đóng như `localizedConditions`.
+ */
+function heroConditions(profile, rows) {
+  const list = Array.isArray(rows) ? rows.filter((row) => typeof row?.textVi === "string" && row.textVi) : [];
+  if (!ZH()) return list.map((row) => row.textVi);
+  const shown = [];
+  for (const row of list) {
+    const translated = typeof row.textZh === "string" && row.textZh ? row.textZh : null;
+    const value = translated ?? zhSafeValue(row.textVi);
+    if (value === null) profile.viOnly = true;
+    else shown.push(value);
+    if (translated) profile.conditionsZhTranslated = true;
+  }
+  return shown;
+}
 const unresolved = (key, labelVi) => ({ key, labelVi, resolved: false, targetId: null, targetGroup: null, titleVi: null, statusVi: L("Liên kết đang được cập nhật", "关联条目更新中") });
 const listText = (values, empty = lookupEmpty()) => Array.isArray(values) && values.length ? values.join(", ") : empty;
 const variantLabels = () => ({ base: L("Thường", "普通"), sp: "SP", co: "CO", "40y": "40Y" });
@@ -258,7 +275,7 @@ function innateHolders(corpus) {
 }
 
 function base(entry) {
-  return { id: entry.id, group: entry.group, titleVi: entryTitle(entry), fields: [], aptitudes: [], sections: [], relations: [], children: [], conditions: [], revisions: [], viOnly: false, zhTranslated: false };
+  return { id: entry.id, group: entry.group, titleVi: entryTitle(entry), fields: [], aptitudes: [], sections: [], relations: [], children: [], conditions: [], revisions: [], viOnly: false, zhTranslated: false, conditionsZhTranslated: false };
 }
 
 /** Tên chữ Hán của võ tướng theo tên Việt hiển thị trong dữ liệu (tên chính, Hán-Việt, bí danh không có chữ Hán). */
@@ -428,7 +445,7 @@ function heroProfile(corpus, entry) {
   profile.relations.push(relation(corpus, "selfTactic", L("Chiến pháp bản thân", "自带战法"), selfId, "tactics"));
   if (lookup.inheritTacticId || row.inheritTacticCn) profile.relations.push(relation(corpus, "inheritTactic", L("Chiến pháp truyền thừa", "传承战法"), inheritId, "tactics"));
   if (lookup.advisorId) profile.relations.push(relation(corpus, "advisor", L("Kỹ năng quân sư", "军师技"), lookup.advisorId, "advisors"));
-  profile.conditions = localizedConditions(profile, conditions(lookup.conditions));
+  profile.conditions = heroConditions(profile, lookup.conditions);
   profile.revisions = viOnlyList(profile, lookup.revisions ?? []);
   return profile;
 }

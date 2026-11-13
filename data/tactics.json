@@ -5643,7 +5643,7 @@
     ],
     "chinese": "搦戰群雄",
     "effect": "2020-04-01 更新（增強） / 註：受到兵刃傷害降低效果現在受武力影響 /  / 原始版本 / 待補充",
-    "effectViet": "Chuẩn bị 1 hiệp, gây cho một nhóm quân địch (2 người) 1 lần tấn công binh đao (tỷ lệ sát thương 100%→200%), sau đó khiến bản thân sát thương Binh Đao gây ra tăng 12.5%→25%, sát thương Binh Đao phải chịu giảm (12.5%→25%, bị Võ Lực ảnh hưởng), duy trì 2 hiệp",
+    "effectViet": "Gây ra một lần sát thương binh đao lên Nhóm quân địch (2 người) (TL Sát thương 100%→200%), sau đó bản thân tăng sát thương binh đao gây ra 12.5%→25%, giảm sát thương binh đao phải chịu (12.5%→25%, ảnh hưởng bởi Võ Lực), duy trì 2 hiệp; Chiến Pháp này sau khi phát động sẽ vào 1 hiệp CD",
     "hanViet": "Nạch Chiến Quần Hùng",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/18/447088214664793092.png",
     "id": "tactic:nach-chien-quan-hung",
@@ -5669,7 +5669,7 @@
           "effectiveDate": null,
           "isCurrent": true,
           "labelVi": "Bản hiện hành",
-          "textVi": "Chuẩn bị 1 hiệp, gây cho một nhóm quân địch (2 người) 1 lần tấn công binh đao (tỷ lệ sát thương 100%→200%), sau đó khiến bản thân sát thương Binh Đao gây ra tăng 12.5%→25%, sát thương Binh Đao phải chịu giảm (12.5%→25%, bị Võ Lực ảnh hưởng), duy trì 2 hiệp"
+          "textVi": "Gây ra một lần sát thương binh đao lên Nhóm quân địch (2 người) (TL Sát thương 100%→200%), sau đó bản thân tăng sát thương binh đao gây ra 12.5%→25%, giảm sát thương binh đao phải chịu (12.5%→25%, ảnh hưởng bởi Võ Lực), duy trì 2 hiệp; Chiến Pháp này sau khi phát động sẽ vào 1 hiệp CD"
         },
         {
           "effectiveDate": "2020-04-01",
@@ -7519,7 +7519,7 @@
       "acquiredFromVi": [
         "Trình Dục"
       ],
-      "activationRate": 0.35,
+      "activationRate": 0.4,
       "conditions": [],
       "conflictsVi": "Phản Loạn",
       "cooldown": null,
@@ -8876,7 +8876,7 @@
     ],
     "chinese": "將門虎女",
     "effect": "對敵2人造成兵刃傷害並施加「虎嗔」，3次受擊後結算震懾且自身傷害提升。",
-    "effectViet": "Gây cho một nhóm quân địch (2 người) sát thương binh đao (tỉ lệ sát thương 64%→128%) và hiệu quả Hổ Cáu: 1 hiệp sau sẽ nhận thêm sát thương binh đao (tỉ lệ sát thương 10%→20%, khi mỗi lần mục tiêu chịu phải sát thương, tỉ lệ sát thương tăng 15%→30%, tối đa chồng lên 3 lần), nếu trong thời gian mục tiêu có hiệu ứng Hổ cáu chịu 3 lần sát thương, lập tức tổng kết hiệu ứng Hổ cáu và gây thêm 1 hiệp Chấn động, và khiến chính mình gây ra Sát thương binh đao tăng 4%→8% (hiệu ứng tăng sát thương binh đao có thể chồng lên)",
+    "effectViet": "Gây sát thương binh đao cho nhóm địch quân (2 người) (tỷ lệ sát thương 64%→128%) và áp dụng hiệu ứng Hổ Cáu: Trong 1 hiệp tiếp theo, mục tiêu chịu thêm sát thương binh đao (tỷ lệ sát thương 10%→20%, khi mục tiêu chịu sát thương thì tỷ lệ sát thương tăng thêm 15%→30%, có thể cộng dồn tối đa 3 lần). Khi cộng dồn đủ 3 lần, lập tức kích hoạt hiệu ứng Hổ Cáu và gây Chấn Động trong 1 hiệp, đồng thời tăng sát thương binh đao do bản thân gây ra thêm 4%→8% (có thể cộng dồn); Bắt đầu từ hiệp thứ 3, sau mỗi lần kỹ năng này phát động, tỷ lệ phát động tăng thêm 4%→8%",
     "hanViet": "Tướng Môn Hổ Nữ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483703643689209862.png",
     "id": "tactic:tuong-mon-ho-nu",
@@ -12864,7 +12864,7 @@
     ],
     "chinese": "桃園結義",
     "effect": "每回合有 20%→40% 機率（受統率影響，每個效果獨立判定）執行以下效果：\n我軍魅力最高的武將治療我軍單體（治療率 18%→36%，受智力影響）；\n我軍統率最高的武將對敵軍智力最低的武將造成謀略傷害（傷害率 23%→46%，受統率影響）；\n我軍武力最高的武將對敵軍統率最低的武將造成兵刃傷害（傷害率 23%→46%），此戰法的傷害率受我軍溢出治療總量影響，觸發後重置累積進度",
-    "effectViet": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được phán xét độc lập) thực hiện các hiệu quả sau:\nVõ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng);\nVõ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng);\nVõ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi tổng lượng Trị Liệu dư ra của quân ta, sau khi kích hoạt sẽ cài lại tiến độ tích lũy",
+    "effectViet": "Mỗi hiệp có 20%→40% xác suất (chịu ảnh hưởng Thống Soái, mỗi hiệu quả được xét độc lập) thực hiện các hiệu quả sau: Võ Tướng Mị Lực cao nhất quân ta Trị Liệu cá thể quân ta (tỷ lệ Trị Liệu 18%→36%, bị Trí Lực ảnh hưởng); Võ Tướng Thống Soái cao nhất gây sát thương Mưu Lược cho Võ Tướng Trí Lực thấp nhất quân địch (tỷ lệ sát thương 23%→46%, bị Thống Soái ảnh hưởng); Võ Tướng Võ Lực cao nhất gây sát thương Binh Đao cho Võ Tướng Thống Soái thấp nhất quân địch (tỷ lệ sát thương 23%→46%), tỷ lệ sát thương của Chiến Pháp này bị ảnh hưởng bởi lượng Trị Liệu tràn ra tích lũy của quân ta, sau khi kích hoạt sẽ tái lập lại tiến độ tích lũy",
     "hanViet": "Đào Viên Kết Nghĩa",
     "iconUrl": null,
     "id": "tactic:dao-vien-ket-nghia",
@@ -12875,7 +12875,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -12884,7 +12884,7 @@
       ],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": "Chỉ huy",
+      "effectTypeVi": "Tăng ích",
       "effectZhSource": {
         "kind": "translation"
       },
@@ -12901,7 +12901,7 @@
     "source": "EVENT",
     "sourceHeroCn": null,
     "target": "我軍群體 3 人",
-    "targetViet": "Quân ta và quân địch",
+    "targetViet": "Tập thể quân ta (3 người)",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -13476,7 +13476,7 @@
     ],
     "chinese": "帷內擅權",
     "effect": "自身獲得 5% 攻心，可疊加，持續至戰鬥結束；並對敵軍群體（2 人）造成謀略傷害（傷害率 64%→128%，受智力影響），若目標武力高於自身，則額外造成謀略傷害（傷害率 49%→98%，受智力影響）",
-    "effectViet": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; Và gây sát thương Mưu Lược cho nhóm quân địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
+    "effectViet": "Bản thân nhận 5% Công Tâm, có thể cộng dồn, duy trì đến khi kết thúc chiến đấu; và gây sát thương Mưu Lược cho nhóm địch (2 người) (tỷ lệ sát thương 64%→128%, bị Trí Lực ảnh hưởng), nếu mục tiêu có Võ Lực cao hơn bản thân, sẽ gây thêm sát thương Mưu Lược (tỷ lệ sát thương 49%→98%, bị Trí Lực ảnh hưởng)",
     "hanViet": "Duy Nội Thiện Quyền",
     "iconUrl": null,
     "id": "tactic:duy-noi-thien-quyen",
@@ -13487,7 +13487,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -13496,7 +13496,7 @@
       ],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": "Mưu lược nhóm",
+      "effectTypeVi": "Mưu Lược nhóm",
       "effectZhSource": {
         "kind": "translation"
       },
@@ -13513,7 +13513,7 @@
     "source": "INNATE",
     "sourceHeroCn": null,
     "target": "敵軍群體 3 人",
-    "targetViet": "Nhóm quân địch (2 người)",
+    "targetViet": "Tập thể địch (2 người)",
     "troopFit": [
       "Kỵ binh",
       "Khiên binh",
@@ -18347,7 +18347,7 @@
     ],
     "chinese": "絕計折謀",
     "effect": "對隨機敵軍武將造成謀略傷害（傷害率 118%→236%，受智力影響），並使其進入計窮狀態，持續 1 回合",
-    "effectViet": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và thi triển trạng thái Kế Tận, duy trì 1 hiệp",
+    "effectViet": "Gây sát thương Mưu Lược cho Võ Tướng quân địch ngẫu nhiên (118%→236%, bị Trí Lực ảnh hưởng) và áp dụng trạng thái Kế Tận, duy trì 1 hiệp",
     "hanViet": "Tuyệt Kế Chiết Mưu",
     "iconUrl": null,
     "id": "tactic:tuyet-ke-chiet-muu",
@@ -18360,7 +18360,7 @@
       "conditions": [
         {
           "kind": "requirement",
-          "textVi": "Nội dung theo fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (bài tổng quát cốt truyện Hán Diễm Trường Minh, khoảng 28/10/2026); chưa có trong client 24.526."
+          "textVi": "Công bố ở bài tổng quát cốt truyện Hán Diễm Trường Minh trên fanpage chính thức Tam Quốc Chí - Chiến Lược Việt Nam (26/10/2026); đã đối chiếu client 24.547 (Thượng Thư Đài, 11/11/2026)."
         },
         {
           "kind": "requirement",
@@ -18369,7 +18369,7 @@
       ],
       "conflictsVi": null,
       "cooldown": null,
-      "effectTypeVi": "Mưu lược đơn",
+      "effectTypeVi": "Mưu Lược đơn",
       "effectZhSource": {
         "kind": "translation"
       },
@@ -18962,6 +18962,51 @@
   },
   {
     "aliases": [],
+    "chinese": "恩厚得眾",
+    "effect": "普通攻擊後，治療隨機我軍單體（治療率54%→108%，受智力影響）",
+    "effectViet": "Sau khi Tấn công thường, Trị Liệu Võ Tướng quân ta ngẫu nhiên (tỷ lệ Trị Liệu 54%→108%, bị Trí Lực ảnh hưởng)",
+    "hanViet": "Ân Hậu Đắc Chúng",
+    "iconUrl": null,
+    "id": "tactic:an-hau-dac-chung",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.5,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Trị liệu",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:luu-ngu"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Một quân ta",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "BURST",
+    "viet": "Ân Hậu Đắc Chúng"
+  },
+  {
+    "aliases": [],
     "chinese": "初級壓制",
     "effect": "使敵軍單體統率降低6→12點，持續2回合",
     "effectViet": "Khiến một quân địch Thống Soái giảm 6→12 điểm, duy trì 2 hiệp",
@@ -19002,6 +19047,51 @@
     ],
     "type": "ACTIVE",
     "viet": "Áp Chế-Sơ"
+  },
+  {
+    "aliases": [],
+    "chinese": "閉境自安",
+    "effect": "戰鬥前4回合，使敵軍群體（2人）造成的傷害降低12.5%→25%",
+    "effectViet": "Chiến đấu 4 hiệp đầu, khiến sát thương gây ra của Tập thể quân địch (2 người) giảm 12.5%→25%",
+    "hanViet": "Bế Cảnh Tự An",
+    "iconUrl": null,
+    "id": "tactic:be-canh-tu-an",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Giảm ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:luu-chuong"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tập thể địch (2 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "COMMAND",
+    "viet": "Bế Cảnh Tự An"
   },
   {
     "aliases": [],
@@ -19134,6 +19224,51 @@
   },
   {
     "aliases": [],
+    "chinese": "政運",
+    "effect": "自身政治、魅力提高5→10點",
+    "effectViet": "Bản thân Chính Trị, Mị Lực tăng 5→10",
+    "hanViet": "Chính Vận",
+    "iconUrl": null,
+    "id": "tactic:chinh-van",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Nội chính",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:khong-tru"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "B",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "INTERNAL",
+    "viet": "Chính Vận"
+  },
+  {
+    "aliases": [],
     "chinese": "初級鼓舞",
     "effect": "使我軍單體武力提升10→20點，持續2回合",
     "effectViet": "Khiến một quân ta Võ Lực tăng 10→20 điểm, duy trì 2 hiệp",
@@ -19174,6 +19309,51 @@
     ],
     "type": "ACTIVE",
     "viet": "Cổ Vũ-Sơ"
+  },
+  {
+    "aliases": [],
+    "chinese": "定軍安民",
+    "effect": "戰鬥中，每回合治療隨機我軍單體（治療率43%→86%，受統率影響）",
+    "effectViet": "Trong chiến đấu, mỗi hiệp Trị Liệu Võ Tướng quân ta ngẫu nhiên (tỷ lệ Trị Liệu 43%→86%, bị Thống Soái ảnh hưởng)",
+    "hanViet": "Định Quân An Dân",
+    "iconUrl": null,
+    "id": "tactic:dinh-quan-an-dan",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Trị liệu",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:truong-doan"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Một quân ta",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "COMMAND",
+    "viet": "Định Quân An Dân"
   },
   {
     "aliases": [],
@@ -19392,6 +19572,96 @@
   },
   {
     "aliases": [],
+    "chinese": "烏巢遺恨",
+    "effect": "對敵軍全體造成兵刃傷害（傷害率30%→60%，受自身損失兵力影響）",
+    "effectViet": "Gây sát thương Binh Đao cho toàn bộ quân địch (tỷ lệ sát thương 30%→60%, bị Binh Lực tổn thất của bản thân ảnh hưởng)",
+    "hanViet": "Ô Sào Di Hận",
+    "iconUrl": null,
+    "id": "tactic:o-sao-di-han",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.4,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Binh đao nhóm",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:thuan-vu-quynh"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tập thể địch (3 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Ô Sào Di Hận"
+  },
+  {
+    "aliases": [],
+    "chinese": "奮進",
+    "effect": "使自身造成的傷害提高10%→20%，持續1回合",
+    "effectViet": "Khiến sát thương bản thân gây ra tăng 10%→20%, duy trì 1 hiệp",
+    "hanViet": "Phấn Tiến",
+    "iconUrl": null,
+    "id": "tactic:phan-tien",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.3,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:truong-duong"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "B",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Phấn Tiến"
+  },
+  {
+    "aliases": [],
     "chinese": "天運",
     "effect": "提升武將8 → 16魅力",
     "effectViet": "Tăng 8→16 Mị Lực của Võ Tướng",
@@ -19432,6 +19702,96 @@
     ],
     "type": "INTERNAL",
     "viet": "Thiên Vận"
+  },
+  {
+    "aliases": [],
+    "chinese": "守正出鋒",
+    "effect": "自身普通攻擊造成的傷害提高15%→30%（受武力影響）",
+    "effectViet": "Sát thương tấn công thường bản thân tăng 15%→30% (chịu ảnh hưởng bởi Võ Lực)",
+    "hanViet": "Thủ Chính Xuất Phong",
+    "iconUrl": null,
+    "id": "tactic:thu-chinh-xuat-phong",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:luu-dai"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "PASSIVE",
+    "viet": "Thủ Chính Xuất Phong"
+  },
+  {
+    "aliases": [],
+    "chinese": "識主先知",
+    "effect": "使自身智力提高5%→10%，持續1回合，並對敵軍全體造成謀略傷害（傷害率33%→66%）",
+    "effectViet": "Bản thân Trí Lực tăng 5%→10%, duy trì 1 hiệp, và gây sát thương Mưu Lược cho toàn thể quân địch (tỷ lệ sát thương 33%→66%)",
+    "hanViet": "Tiên Tri Nhận Chủ",
+    "iconUrl": null,
+    "id": "tactic:tien-tri-nhan-chu",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.4,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Mưu Lược nhóm",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:bao-tin"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tập thể địch (3 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Tiên Tri Nhận Chủ"
   },
   {
     "aliases": [],
@@ -20600,5 +20960,95 @@
     ],
     "type": "COMMAND",
     "viet": "Trấn Áp Khăn Vàng"
+  },
+  {
+    "aliases": [],
+    "chinese": "智定",
+    "effect": "自身智力和統率提高10→20點",
+    "effectViet": "Trí Lực và Thống Soái bản thân tăng 10→20",
+    "hanViet": "Trí Định",
+    "iconUrl": null,
+    "id": "tactic:tri-dinh",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:truong-mac"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "B",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tôi",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "PASSIVE",
+    "viet": "Trí Định"
+  },
+  {
+    "aliases": [],
+    "chinese": "飲恨遺仇",
+    "effect": "對敵軍武力最高的武將造成兵刃傷害（傷害率84%→168%）",
+    "effectViet": "Gây sát thương Binh Đao cho Võ Tướng Võ Lực cao nhất quân địch (tỷ lệ sát thương 84%→168%)",
+    "hanViet": "Uống Hận Di Trừu",
+    "iconUrl": null,
+    "id": "tactic:uong-han-di-truu",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 0.5,
+      "conditions": [],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Binh đao đơn",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [
+        "hero:hua-cong"
+      ],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "A",
+    "source": "INHERITANCE",
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Một quân địch",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "ACTIVE",
+    "viet": "Uống Hận Di Trừu"
   }
 ]

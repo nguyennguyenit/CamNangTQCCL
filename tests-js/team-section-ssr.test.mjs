@@ -10,7 +10,7 @@ const parse = (bytes) => JSON.parse(Buffer.from(bytes).toString("utf8"));
 const keysOf = (html) => [...html.matchAll(/data-reference-key="([^"]*)"/gu)].map((match) => match[1]);
 const count = (html, pattern) => (html.match(pattern) ?? []).length;
 
-test("Đội chuẩn dựng sẵn: chỉ đội của mùa mặc định, tối đa một lượt đầu, mỗi đội có link chi tiết theo bản ngôn ngữ", async () => {
+test("Đội chuẩn dựng sẵn: đủ mọi đội của mùa mặc định, mỗi đội có link chi tiết theo bản ngôn ngữ", async () => {
   const website = await websiteDisplayPublicationSnapshot();
   const catalog = await teamDetailCatalog();
   const registry = parse(website.recommended.files["seasons.json"]);
@@ -20,8 +20,11 @@ test("Đội chuẩn dựng sẵn: chỉ đội của mùa mặc định, tối 
     const { html, source } = await teamSectionParts("team-chuan", locale);
     assert.equal(source, website.pin.sha256);
     const keys = keysOf(html);
-    // Mỗi đội xuất hiện đúng một lần ở thẻ (khóa nằm trên thẻ `article`); hàng đầu tiên là đội của mùa mặc định.
-    assert.ok(keys.length > 0 && keys.length <= 60, `${locale}: số đội dựng sẵn ${keys.length}`);
+    // Mỗi đội xuất hiện đúng một lần ở thẻ (khóa nằm trên thẻ `article`); dựng đủ mọi đội của mùa mặc định.
+    const expected = records.filter((row) => row.sourceSeasonId === registry.defaultSourceSeasonId).length;
+    assert.ok(expected > 0);
+    assert.equal(keys.length, expected, `${locale}: số đội dựng sẵn ${keys.length}`);
+    assert.equal(new Set(keys).size, expected);
     for (const key of keys) assert.equal(bySource.get(key)?.sourceSeasonId, registry.defaultSourceSeasonId, `${locale}: ${key} không thuộc mùa mặc định`);
     for (const key of keys) {
       const entry = catalog.recommended.find((candidate) => candidate.sourceConfigId === key);

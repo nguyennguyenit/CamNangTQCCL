@@ -39,6 +39,11 @@ test("2. chiến pháp policy inventory: không có INNATE/Tự mang; 29 mục s
   const other = filterCatalog(inventory, { kind: "tactics", source: "other" }, "inventory");
   assert.equal(other.length, 29);
   assert.ok(other.every((item) => rawById.get(item.id).source === null));
+  // Chiến pháp có tướng truyền thừa không bao giờ rơi vào "Khác" (vd 10 chiến pháp tướng Hán mới của client).
+  const inherited = tacticsDict.filter((row) => row.lookup.inheritedFromIds.length);
+  assert.ok(inherited.some((row) => row.id === "tactic:tien-tri-nhan-chu"));
+  for (const row of inherited) assert.ok(!ids(other).includes(row.id), row.id);
+  assert.ok(ids(filterCatalog(inventory, { kind: "tactics", source: "INHERITANCE" }, "inventory")).includes("tactic:uong-han-di-truu"));
   // Chọn INNATE trực tiếp trong bộ lọc cũng không ra gì.
   assert.equal(filterCatalog(inventory, { kind: "tactics", source: "INNATE" }, "inventory").length, 0);
   // quality null vào "Khác".

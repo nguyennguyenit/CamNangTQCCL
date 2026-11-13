@@ -11,7 +11,7 @@
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view, không `innerHTML`.
 
 import { t, iconTree, svgTree } from "./render.js";
-import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue, zhTranslatedNote } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue, zhTranslatedNote, zhTranslatedTextNote } from "./lookup-detail.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 import { portraitTree } from "./hero-portrait.js";
 import { lookupHref } from "./lookup-ids.js";
@@ -405,7 +405,10 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     if (!profile || !entryRow) return null;
     const header = dialogHeader(entryRow, profile, page);
     let body;
-    const conditions = listBlock(L("Điều kiện", "条件"), profile.conditions.map((text) => t("p", { class: "lookup-child-row" }, text)), "lookup-children");
+    // Ghi chú mùa của tướng ở bản zh là chữ dịch từ tiếng Việt: thêm cờ "dịch, chưa đối chiếu" ngay dưới các dòng điều kiện.
+    const conditionRows = profile.conditions.map((text) => t("p", { class: "lookup-child-row" }, text));
+    if (profile.conditionsZhTranslated && conditionRows.length) conditionRows.push(t("p", { class: "lookup-child-row" }, [t("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedTextNote())]));
+    const conditions = listBlock(L("Điều kiện", "条件"), conditionRows, "lookup-children");
     // Bản zh đã bỏ nội dung chỉ có chữ Việt: báo một dòng để người đọc biết hồ sơ chưa đầy đủ.
     const zhNote = profile.viOnly ? t("p", { class: "lookup-child-row lookup-zh-note" }, "部分说明暂无中文原文，未在此显示。") : null;
     if (entryRow.group === "tactics") {

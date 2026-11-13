@@ -30,6 +30,9 @@ CLIENT_HEROES_FILE = Path(__file__).with_name("lookup-client-heroes.json")
 PUBLIC_HEROES_DIR = Path(__file__).resolve().parents[1] / "public" / "heroes"
 CLIENT_PORTRAIT_PATTERN = re.compile(r"/heroes/([a-z0-9-]+)\.webp")
 CLIENT_SOURCE_KEYS = {"kind", "edition", "client", "version", "screen", "capturedAt"}
+NEW_TACTIC_SOURCES = {"INNATE", "INHERITANCE", "EVENT"}
+# Số trong ghi chú mùa (phiên bản, mùa, giới hạn, chi phí, thời gian) phải còn nguyên trong `textZh`.
+NOTE_NUMBER = re.compile(r"\d+(?:[.,]\d+)*K?")
 CLIENT_HERO_KEYS = {"id", "viet", "chinese", "aliasesVi", "faction", "stars", "cost", "isSP", "variant", "stats", "growth", "troopApt", "roleTag", "roleTagViet", "selfTacticVi", "portrait"}
 CLIENT_STAT_KEYS = ("luc", "tri", "thong", "toc", "chinh", "mi")
 CLIENT_APTITUDE_KEYS = ("ky", "thuan", "cung", "thuong", "khiGioi")
@@ -800,8 +803,9 @@ def _validate_client_document(document):
     if (
         not isinstance(document, dict)
         or not {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases"} <= set(document)
-        <= {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases", "retired"}
+        <= {"schemaVersion", "source", "heroes", "portraits", "overrides", "roleTags", "aliases", "retired", "heroNotes"}
         or not _string_list(document.get("retired", []))
+        or not isinstance(document.get("heroNotes", {}), dict)
         or type(document["schemaVersion"]) is not int
         or document["schemaVersion"] != 1
         or not isinstance(document["source"], dict)
@@ -860,7 +864,7 @@ def _apply_client_heroes(document, heroes, tactics, identity):
     # Tướng không có ở client Global (chỉ có ở SGSDeck) bị bỏ khỏi danh mục; mọi tham chiếu phải đã gỡ trước.
     for owner in sorted(set(document.get("retired", []))):
         gone = next((row for row in heroes if row["id"] == owner), None)
-        if gone is None or any(owner in document[key] for key in ("portraits", "overrides", "roleTags", "aliases")):
+        if gone is None or any(owner in document.get(key, {}) for key in ("portraits", "overrides", "roleTags", "aliases", "heroNotes")):
             raise ValueError(f"client retired hero is invalid: {owner}")
         heroes.remove(gone)
         for row in tactics:
@@ -1052,7 +1056,33 @@ def _apply_client_heroes(document, heroes, tactics, identity):
                     tactic_by_id[previous]["lookup"]["inheritedFromIds"].remove(owner)
                 if values is not None and owner not in tactic_by_id[values]["lookup"]["inheritedFromIds"]:
                     tactic_by_id[values]["lookup"]["inheritedFromIds"].append(owner)
+
+    # Ghi chú mùa cho tướng (vd đổi phe trong mùa Hán Diễm Trường Minh): áp sau khi thêm tướng client nên nhận mọi mã.
+    # Mỗi dòng bắt buộc có `textZh` (bản dịch đã duyệt) để bản zh không mất ghi chú; giao diện gắn cờ "dịch, chưa đối chiếu".
+    for owner, entry in sorted(document.get("heroNotes", {}).items()):
+        row = hero_by_id.get(owner)
+        if (
+            row is None or not isinstance(entry, dict) or set(entry) != {"conditions"} or not isinstance(entry["conditions"], list)
+            or not entry["conditions"] or any(not isinstance(item, dict) or "textZh" not in item for item in entry["conditions"])
+        ):
+            raise ValueError(f"client hero note is invalid: {owner}")
+        _validate_conditions(entry["conditions"], owner, zh=True)
+        for item in entry["conditions"]:
+            _zh_effect_text(item["textZh"], owner)
+            if sorted(NOTE_NUMBER.findall(item["textVi"])) != sorted(NOTE_NUMBER.findall(item["textZh"])):
+                raise ValueError(f"client hero note textZh must keep the numbers of textVi: {owner}")
+        row["lookup"]["conditions"] = [*row["lookup"]["conditions"], *(dict(item) for item in entry["conditions"])]
+        record(owner, "clientCapture.seasonNote", entry, "Season note captured from the Global client; textZh is a reviewed translation.")
     return ledger
+
+
+def _check_new_tactic_sources(document, tactics):
+    """Chiến pháp client mới có tướng truyền thừa (sau khi nối tướng client) phải khai `source: INHERITANCE`, không thì vào nhóm "Khác"."""
+    by_id = {row["id"]: row for row in tactics}
+    for owner in sorted(document.get("newTactics", {})):
+        row = by_id.get(owner)
+        if row is not None and row["lookup"]["inheritedFromIds"] and row["source"] != "INHERITANCE":
+            raise ValueError(f"client new tactic source disagrees with inheriting heroes: {owner}")
 
 
 def _validate_client_tactics_document(document):
@@ -1167,12 +1197,14 @@ def _apply_client_tactics(document, tactics):
             target[key] = value
 
     # Chiến pháp chỉ có ở client (kho chưa có mã): tạo hàng mới với tên chữ Hán; hiệu ứng chữ Hán đến từ `zhEffects`.
+    # `source` (tùy chọn, NEW_TACTIC_SOURCES) là nguồn chiến pháp đọc trên thẻ client (tự mang/kế thừa/sự kiện); thiếu thì `null` ("Khác").
     for owner, extra in sorted(document.get("newTactics", {}).items()):
         entry = document["tactics"].get(owner)
         if (
-            owner in by_id or not isinstance(extra, dict) or not {"nameZh"} <= set(extra) <= {"nameZh", "conditions", "aliases"}
+            owner in by_id or not isinstance(extra, dict) or not {"nameZh"} <= set(extra) <= {"nameZh", "conditions", "aliases", "source"}
             or not isinstance(entry, dict) or not isinstance(entry.get("nameVi"), str)
             or owner != canonical_id("tactic", entry["nameVi"])
+            or extra.get("source", "INNATE") not in NEW_TACTIC_SOURCES
         ):
             raise ValueError(f"client new tactic is invalid: {owner}")
         conditions = extra.get("conditions", [])
@@ -1184,14 +1216,17 @@ def _apply_client_tactics(document, tactics):
         row = {
             "id": owner, "chinese": name_zh, "hanViet": entry["nameVi"], "viet": entry["nameVi"], "aliases": list(aliases),
             "type": None, "quality": None, "effect": None, "effectViet": None, "target": None, "targetViet": None,
-            "troopFit": [], "source": None, "sourceHeroCn": None, "iconUrl": None, "linkScore": None, "pending": True,
+            "troopFit": [], "source": extra.get("source"), "sourceHeroCn": None, "iconUrl": None, "linkScore": None, "pending": True,
             "lookup": {"conditions": [dict(row) for row in conditions], "missingFields": [], "revisions": [], "activationRate": None, "cooldown": None,
                        "maxUsers": None, "pointCost": None, "effectTypeVi": None, "exchangeConditionVi": None,
                        "acquiredFromVi": [], "inheritedFromIds": [], "conflictsVi": None, "formerIds": [], "effectZhSource": None},
         }
         tactics.append(row)
         by_id[owner] = row
-        record(owner, "clientCapture.newTactic", {"nameZh": name_zh, "conditions": conditions, "aliases": aliases}, None)
+        captured = {"nameZh": name_zh, "conditions": conditions, "aliases": aliases}
+        if "source" in extra:
+            captured["source"] = extra["source"]
+        record(owner, "clientCapture.newTactic", captured, None)
 
     for owner, entry in sorted(document["tactics"].items()):
         if owner not in by_id or not isinstance(entry, dict) or set(entry) != CLIENT_TACTIC_KEYS:
@@ -1730,6 +1765,7 @@ def _build_model(capture):
     client_ledger += _apply_zh_effects(_json(capture["clientTactics"]), tactics, effect_origin)
     client_ledger += _apply_client_tactic_notes(_json(capture["clientTactics"]), tactics)
     client_ledger += _apply_client_heroes(_json(capture["clientHeroes"]), heroes, tactics, identity)
+    _check_new_tactic_sources(_json(capture["clientTactics"]), tactics)
 
     equipment = []
     for record in source_docs["equipment"]["records"]:
@@ -1901,11 +1937,16 @@ def _walk_vi(value, path=""):
         raise ValueError(f"non-finite number: {path}")
 
 
-def _validate_conditions(rows, owner):
+def _validate_conditions(rows, owner, *, zh=False):
+    """`zh=True` (chỉ ghi chú mùa của tướng) cho phép thêm `textZh`: chữ Hán dịch từ `textVi`, phải có chữ Hán."""
     if not isinstance(rows, list):
         raise ValueError(f"conditions must be an array: {owner}")
     for row in rows:
-        if set(row) != {"kind", "textVi"} or row["kind"] not in {"season", "scenario", "requirement"} or not isinstance(row["textVi"], str):
+        keys = {"kind", "textVi", "textZh"} if zh and isinstance(row, dict) and "textZh" in row else {"kind", "textVi"}
+        if (
+            not isinstance(row, dict) or set(row) != keys or row["kind"] not in {"season", "scenario", "requirement"} or not isinstance(row["textVi"], str)
+            or ("textZh" in keys and (not isinstance(row["textZh"], str) or not re.search(r"[\u3400-\u9fff]", row["textZh"])))
+        ):
             raise ValueError(f"condition shape is invalid: {owner}")
 
 
@@ -2001,7 +2042,7 @@ def _validate_payloads(heroes, tactics, catalog):
             or not _string_list(lookup["missingFields"])
         ):
             raise ValueError(f"hero scalar type is invalid: {row['id']}")
-        _validate_conditions(lookup["conditions"], row["id"])
+        _validate_conditions(lookup["conditions"], row["id"], zh=True)
         _validate_revisions(lookup["revisions"], row["id"])
         if lookup["selfTacticId"] is not None and lookup["selfTacticId"] not in tactic_ids:
             raise ValueError(f"dangling self tactic: {row['id']}")

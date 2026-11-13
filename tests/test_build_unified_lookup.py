@@ -570,7 +570,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
         hero.update(overrides)
         return hero
 
-    def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None):
+    def _build(self, *, heroes=(), portraits=None, overrides=None, role_tags=None, aliases=None, hero_notes=None):
         # Ghim GOLDEN_HERO_DELTAS theo client: fixture mang đúng các `stats` đã duyệt của 7 tướng đó.
         client = json.loads((ROOT / "pipeline" / "lookup-client-heroes.json").read_bytes())
         real = client["overrides"]
@@ -581,7 +581,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Võ Tướng > Minh Giám", "capturedAt": "2026-10-15"},
             "heroes": list(heroes), "portraits": portraits or {}, "overrides": overrides or {}, "roleTags": role_tags or {}, "aliases": aliases or {},
-            "retired": client["retired"],
+            "retired": client["retired"], "heroNotes": hero_notes or {},
         }
         path = self.directory / "client.json"
         path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
@@ -689,6 +689,31 @@ class ClientHeroSupplementTest(unittest.TestCase):
         cleared = self._build(overrides={"hero:ha-hau-don": {"selfTacticId": None}})
         hero = next(item for item in json.loads((cleared / "heroes-dict.json").read_bytes()) if item["id"] == "hero:ha-hau-don")
         self.assertIsNone(hero["lookup"]["selfTacticId"])
+        # Chiến pháp client mới (không khai `source`) có tướng kế thừa thì phải khai INHERITANCE, không thì vào nhóm "Khác".
+        with self.assertRaisesRegex(ValueError, "source disagrees with inheriting heroes: tactic:cap-toc"):
+            self._build(overrides={"hero:dai-kieu": {"inheritTacticId": "tactic:cap-toc"}})
+
+    def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
+        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần.", "textZh": "新賽季：漢陣營，本賽季前為群雄陣營。"}]}
+        output = self._build(heroes=[self._hero()], hero_notes={"hero:ha-hau-don": note, "hero:tao-ngang": note})
+        rows = {item["id"]: item for item in json.loads((output / "heroes-dict.json").read_bytes())}
+        for owner in ("hero:ha-hau-don", "hero:tao-ngang"):
+            self.assertEqual(rows[owner]["lookup"]["conditions"][-1], note["conditions"][0])
+        ledger = json.loads((output / "ledger.json").read_bytes())
+        self.assertTrue(any(item["entityId"] == "hero:ha-hau-don" and item["fieldPath"] == "clientCapture.seasonNote" for item in ledger))
+        vi_only = {"conditions": [{"kind": "season", "textVi": "Mùa mới."}]}
+        for bad in ({"hero:khong-co": note}, {"hero:ha-hau-don": {"conditions": []}}, {"hero:ha-hau-don": {**note, "aliases": []}}, {"hero:ha-hau-don": vi_only}):
+            with self.subTest(bad=bad), self.assertRaisesRegex(ValueError, "hero note is invalid"):
+                self._build(hero_notes=bad)
+        for row in ({"kind": "mùa", "textVi": "x", "textZh": "賽季"}, {"kind": "season", "textVi": "x", "textZh": "no han"}):
+            with self.subTest(row=row), self.assertRaisesRegex(ValueError, "condition shape"):
+                self._build(hero_notes={"hero:ha-hau-don": {"conditions": [row]}})
+        with self.assertRaisesRegex(ValueError, "zhEffects.text is invalid"):
+            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [{"kind": "season", "textVi": "x", "textZh": "<b>賽季</b>"}]}})
+        # Bản zh phải giữ mọi con số của bản Việt (vd chi phí "50K"), không được viết gọn thành "tài nguyên".
+        dropped = {"kind": "season", "textVi": "Cài lại tốn 50K Châu, chờ 1 giờ.", "textZh": "重新設定需消耗資源並等待 1 小時。"}
+        with self.assertRaisesRegex(ValueError, "must keep the numbers"):
+            self._build(hero_notes={"hero:ha-hau-don": {"conditions": [dropped]}})
 
     def test_role_tags_only_fill_empty_tags(self):
         with self.assertRaisesRegex(ValueError, "existing tag"):
@@ -768,6 +793,8 @@ class ClientTacticCaptureTest(unittest.TestCase):
             if kept:
                 overrides[owner] = kept
         heroes["overrides"] = {owner: value for owner, value in overrides.items() if owner not in retire_heroes}
+        for key in ("portraits", "heroNotes"):
+            heroes[key] = {owner: value for owner, value in heroes.get(key, {}).items() if owner not in retire_heroes}
         heroes["retired"] = [*heroes["retired"], *retire_heroes]
         heroes_path = self.directory / "client-heroes.json"
         heroes_path.write_text(json.dumps(heroes, ensure_ascii=False), encoding="utf-8")
@@ -950,6 +977,14 @@ class ClientTacticCaptureTest(unittest.TestCase):
             self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "conditions": [{"kind": "mùa", "textVi": "x"}]}}, zhEffects={"tactic:ho-ve": zh})
         with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
             self._build({"tactic:ho-ve-x": entry}, newTactics={"tactic:ho-ve-x": {"nameZh": "護衛"}})
+
+    def test_new_client_tactic_source_must_match_inheriting_heroes(self):
+        entry = self._ho_ve()
+        zh = {"tactic:ho-ve": self._zh("分擔傷害", entry["effectVi"])}
+        output = self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "source": "EVENT"}}, zhEffects=zh)
+        self.assertEqual(self._rows(output, "tactics.json")["tactic:ho-ve"]["source"], "EVENT")
+        with self.assertRaisesRegex(ValueError, "new tactic is invalid"):
+            self._build({"tactic:ho-ve": entry}, newTactics={"tactic:ho-ve": {"nameZh": "護衛", "source": "Khác"}}, zhEffects=zh)
 
     def test_every_zh_effect_kind_publishes_only_its_kind(self):
         entry = self._ho_ve()

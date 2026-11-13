@@ -1,5 +1,5 @@
 // Hàm thuần của trang Đội cộng đồng (không đụng DOM, không gọi mạng): kiểm form → body API, chọn phe
-// từ kết quả AI, đọc chế độ từ query, gộp trang danh sách, câu cảnh báo đội tương tự.
+// từ kết quả AI, đọc chế độ từ query, gộp trang danh sách, khối cảnh báo đội tương tự.
 
 import { localePath } from './i18n.js';
 
@@ -111,11 +111,15 @@ export function mergePage(items, next) {
   return merged;
 }
 
-/** Câu cảnh báo "đã có N đội cùng 3 tướng"; `''` khi chưa có đội nào. */
-export function similarWarning(count, locale) {
+/**
+ * Khối cảnh báo "đã có N đội cùng 3 tướng" của form đăng (tiêu đề + lời khuyên); `null` khi chưa có đội nào.
+ * `hasMore` = còn trang sau nên N là "N+".
+ */
+export function similarNotice(count, hasMore, locale) {
   const n = Number(count) || 0;
-  if (n <= 0) return '';
+  if (n <= 0) return null;
+  const shown = hasMore ? `${n}+` : String(n);
   return locale === 'zh'
-    ? `已有 ${n} 个相同三名武将的阵容。你仍可发布，但建议先看看是否重复。`
-    : `Đã có ${n} đội cùng 3 tướng. Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.`;
+    ? { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' }
+    : { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' };
 }

@@ -27,11 +27,15 @@ function requireShape(owner, value, keys) {
   if (!isPlainObject(value) || !keysEqual(value, keys)) throw new Error(`${owner} có shape không hợp lệ`);
 }
 
-function requireConditions(owner, rows) {
+/** `zh`: chỉ ghi chú mùa của tướng được kèm `textZh` (chữ Hán dịch từ `textVi`, cờ "dịch, chưa đối chiếu"). */
+function requireConditions(owner, rows, { zh = false } = {}) {
   if (!Array.isArray(rows)) throw new Error(`${owner}.conditions phải là mảng`);
   for (const row of rows) {
-    requireShape(`${owner}.conditions`, row, ["kind", "textVi"]);
-    if (!CONDITION_KINDS.has(row.kind) || typeof row.textVi !== "string") throw new Error(`${owner}.conditions không hợp lệ`);
+    const translated = zh && isPlainObject(row) && Object.hasOwn(row, "textZh");
+    requireShape(`${owner}.conditions`, row, translated ? ["kind", "textVi", "textZh"] : ["kind", "textVi"]);
+    if (!CONDITION_KINDS.has(row.kind) || typeof row.textVi !== "string" || (translated && (typeof row.textZh !== "string" || !/[\u3400-\u9fff]/u.test(row.textZh)))) {
+      throw new Error(`${owner}.conditions không hợp lệ`);
+    }
   }
 }
 
@@ -97,7 +101,7 @@ function validateHero(record) {
       throw new Error(`${owner}.lookup.cardPacks không hợp lệ`);
     }
   }
-  requireConditions(`${owner}.lookup`, lookup.conditions);
+  requireConditions(`${owner}.lookup`, lookup.conditions, { zh: true });
   requireRevisions(`${owner}.lookup`, lookup.revisions);
 }
 

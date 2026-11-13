@@ -2,7 +2,7 @@
 // `sourceConfigId`. Fixture dùng bản ghi thật của generation đang pin, như test của khối Độ phủ kho.
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { ALL_SEASONS, buildListCoverage, readOwnedRoster } from "../js/roster-list-coverage.js";
+import { ALL_SEASONS, NEAR_MISSING_LIMIT, buildListCoverage, readOwnedRoster } from "../js/roster-list-coverage.js";
 import { buildRosterCoverage } from "../js/roster-coverage.js";
 import { applyTacticOverrides } from "../js/roster-season-candidates.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
@@ -106,7 +106,7 @@ test("buildListCoverage: số ráp được khớp tổng 'Ráp đủ' của kh�
 test("buildListCoverage: thiếu kho hoặc thiếu từ điển trả cấu trúc rỗng", () => {
   const empty = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster: null });
   assert.equal(empty.byConfigId.size, 0);
-  assert.deepEqual(empty.summary, { complete: 0, total: 0 });
+  assert.deepEqual(empty.summary, { complete: 0, total: 0, near: 0, far: 0, roster: null });
 });
 
 /** Kho đủ mọi món của một đội trừ một chiến pháp, kèm món bù người dùng đã chọn cho đúng ô đó (như ở Gợi ý đội). */
@@ -165,13 +165,29 @@ test("buildListCoverage: phạm vi Tất cả gộp độ phủ của từng mù
   assert.ok(seasonIds.length > 1);
   let complete = 0;
   let total = 0;
+  let near = 0;
+  let far = 0;
   for (const seasonId of seasonIds) {
     const one = buildListCoverage({ records, seasonId, heroesDict, tacticsDict, roster });
     complete += one.summary.complete;
     total += one.summary.total;
+    near += one.summary.near;
+    far += one.summary.far;
     for (const [id, entry] of one.byConfigId) assert.deepEqual(all.byConfigId.get(id), entry);
   }
   assert.ok(complete > 0);
-  assert.deepEqual(all.summary, { complete, total });
+  assert.deepEqual(all.summary, { complete, total, near, far, roster: { heroes: roster.ownedHeroes.length, tactics: roster.ownedTactics.length, source: null } });
   assert.equal(all.byConfigId.size, total);
+});
+
+test("buildListCoverage: tóm tắt chia ba mức (ráp được, thiếu 1–2, thiếu từ 3) và ghi cỡ kho đã đọc", () => {
+  const season = seasonFrom(SEASON);
+  const roster = { ...rosterOf(season.teams.slice(0, 3)), source: "local" };
+  const coverage = buildListCoverage({ records, seasonId: SEASON, heroesDict, tacticsDict, roster });
+  const entries = [...coverage.byConfigId.values()];
+  assert.equal(coverage.summary.complete, entries.filter((entry) => entry.missingCount === 0).length);
+  assert.equal(coverage.summary.near, entries.filter((entry) => entry.missingCount > 0 && entry.missingCount <= NEAR_MISSING_LIMIT).length);
+  assert.equal(coverage.summary.far, entries.filter((entry) => entry.missingCount > NEAR_MISSING_LIMIT).length);
+  assert.equal(coverage.summary.complete + coverage.summary.near + coverage.summary.far, coverage.summary.total);
+  assert.deepEqual(coverage.summary.roster, { heroes: roster.ownedHeroes.length, tactics: roster.ownedTactics.length, source: "local" });
 });

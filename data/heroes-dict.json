@@ -236,7 +236,7 @@
     ],
     "chinese": "SP 朱儁",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "SP Chu Tuấn",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784810499345412101.png",
     "id": "hero:sp-chu-tuan",
@@ -292,7 +292,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -407,7 +413,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -523,7 +535,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -1464,7 +1482,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -2097,7 +2121,13 @@
       },
       "civilInnatePoints": 0,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -2157,7 +2187,7 @@
     ],
     "chinese": "華佗",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Hoa Đà",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977748787181570.png",
     "id": "hero:hoa-da",
@@ -2195,7 +2225,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -2586,7 +2622,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": "Thiên hạ vô song",
       "exclusiveTitleZh": "天下無雙",
       "flags": {
@@ -3633,7 +3675,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": "Giang Đông mãnh hổ",
       "exclusiveTitleZh": "江東猛虎",
       "flags": {
@@ -5043,7 +5091,7 @@
     ],
     "chinese": "張讓",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Trương Nhượng",
     "iconUrl": "https://cloud.lingxigames.com/2022/12/6/784811838985138181.png",
     "id": "hero:truong-nhuong",
@@ -5099,7 +5147,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -6012,7 +6066,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": "Ngụy Vũ huy tiên",
       "exclusiveTitleZh": "魏武揮鞭",
       "flags": {
@@ -7600,7 +7660,7 @@
         "chinh": 1.3,
         "luc": 0.41,
         "mi": 0.96,
-        "thong": 1.36,
+        "thong": 1.67,
         "toc": 0.59,
         "tri": 2.32
       },
@@ -7935,7 +7995,7 @@
     ],
     "chinese": "董卓",
     "cost": "7",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Đổng Trác",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977761902770180.png",
     "id": "hero:dong-trac",
@@ -7991,7 +8051,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -8235,7 +8301,7 @@
     ],
     "chinese": "蔡文姬",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Thái Văn Cơ",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977748527134729.png",
     "id": "hero:thai-van-co",
@@ -8291,7 +8357,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -8350,7 +8422,7 @@
     ],
     "chinese": "蔡邕",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Thái Ung",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/8/27/483687923940615686.png",
     "id": "hero:thai-ung",
@@ -8369,7 +8441,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -8467,7 +8545,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -8527,7 +8611,7 @@
     ],
     "chinese": "袁紹",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Viên Thiệu",
     "iconUrl": "https://cloud.lingxigames.com/2022/3/8/685821803988447240.png",
     "id": "hero:vien-thieu",
@@ -8565,7 +8649,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -8910,7 +9000,7 @@
     ],
     "chinese": "貂蟬",
     "cost": "4",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Điêu Thuyền",
     "iconUrl": "http://image.aligames.com/s/y9s/g/2020/5/15/445977750225827841.png",
     "id": "hero:dieu-thuyen",
@@ -8957,7 +9047,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -9046,7 +9142,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): có thể chuyển sang phe Hán ở Sảnh Chính › Hán Thất › Phò Tá Hán Thất (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": "Thần Cơ Khó Đoán",
       "exclusiveTitleZh": "神機莫測",
       "flags": {
@@ -11321,7 +11423,7 @@
     ],
     "chinese": "40Y 呂布",
     "cost": "7",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "40Y Lữ Bố",
     "iconUrl": "/heroes/40y-lu-bo.webp",
     "id": "hero:40y-lu-bo",
@@ -11340,7 +11442,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -11558,7 +11666,7 @@
     ],
     "chinese": "朱儁",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Chu Tuấn",
     "iconUrl": "/heroes/chu-tuan.webp",
     "id": "hero:chu-tuan",
@@ -11577,7 +11685,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -13027,7 +13141,7 @@
     "cost": "4",
     "faction": "Hán",
     "hanViet": "Hà Thị",
-    "iconUrl": null,
+    "iconUrl": "/heroes/ha-thi.webp",
     "id": "hero:ha-thi",
     "inheritTacticCn": "絕計折謀",
     "isSP": false,
@@ -13088,7 +13202,7 @@
         "mi": 1.21,
         "thong": 0.82,
         "toc": 1.02,
-        "tri": 1.03
+        "tri": 1.66
       },
       "inheritTacticId": "tactic:tuyet-ke-chiet-muu",
       "missingFields": [],
@@ -13117,7 +13231,7 @@
       "tri": "67"
     },
     "troopApt": {
-      "cung": "A",
+      "cung": "B",
       "khiGioi": "C",
       "ky": "C",
       "thuan": "C",
@@ -13447,7 +13561,7 @@
     ],
     "chinese": "孔融",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Khổng Dung",
     "iconUrl": "/heroes/khong-dung.webp",
     "id": "hero:khong-dung",
@@ -13466,7 +13580,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -13792,7 +13912,7 @@
     ],
     "chinese": "盧植",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Lô Thực",
     "iconUrl": "/heroes/lo-thuc.webp",
     "id": "hero:lo-thuc",
@@ -13811,7 +13931,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -13950,7 +14076,7 @@
     ],
     "chinese": "劉表",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Lưu Biểu",
     "iconUrl": "/heroes/luu-bieu.webp",
     "id": "hero:luu-bieu",
@@ -13969,7 +14095,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -16077,7 +16209,7 @@
     ],
     "chinese": "SP 貂蟬",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "SP Điêu Thuyền",
     "iconUrl": "/heroes/sp-dieu-thuyen.webp",
     "id": "hero:sp-dieu-thuyen",
@@ -16133,7 +16265,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -16193,7 +16331,7 @@
     ],
     "chinese": "SP 董卓",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "SP Đổng Trác",
     "iconUrl": "/heroes/sp-dong-trac.webp",
     "id": "hero:sp-dong-trac",
@@ -16249,7 +16387,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -16426,7 +16570,7 @@
     ],
     "chinese": "SP 皇甫嵩",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "SP Hoàng Phủ Tung",
     "iconUrl": "/heroes/sp-hoang-phu-tung.webp",
     "id": "hero:sp-hoang-phu-tung",
@@ -16482,7 +16626,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -16775,7 +16925,7 @@
     ],
     "chinese": "SP 盧植",
     "cost": "6",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "SP Lô Thực",
     "iconUrl": "/heroes/sp-lo-thuc.webp",
     "id": "hero:sp-lo-thuc",
@@ -16831,7 +16981,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -18337,7 +18493,7 @@
     ],
     "chinese": "陳琳",
     "cost": "5",
-    "faction": "Ngụy",
+    "faction": "Hán",
     "hanViet": "Trần Lâm",
     "iconUrl": "/heroes/tran-lam.webp",
     "id": "hero:tran-lam",
@@ -18356,7 +18512,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Ngụy.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為魏陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -18655,7 +18817,7 @@
     ],
     "chinese": "張任",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Trương Nhậm",
     "iconUrl": "/heroes/truong-nham.webp",
     "id": "hero:truong-nham",
@@ -18674,7 +18836,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -19298,6 +19466,97 @@
   },
   {
     "aliases": [
+      "鮑信"
+    ],
+    "chinese": "鮑信",
+    "cost": "5",
+    "faction": "Hán",
+    "hanViet": "Bảo Tín",
+    "iconUrl": "/heroes/bao-tin.webp",
+    "id": "hero:bao-tin",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 1.41,
+        "luc": 1.33,
+        "mi": 1.11,
+        "thong": 1.47,
+        "toc": 1.11,
+        "tri": 1.53
+      },
+      "inheritTacticId": "tactic:tien-tri-nhan-chu",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:tien-tri-nhan-chu",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "謀",
+    "roleTagViet": "Mưu lược",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "73",
+      "luc": "67",
+      "mi": "78",
+      "thong": "77",
+      "toc": "52",
+      "tri": "81"
+    },
+    "troopApt": {
+      "cung": "S",
+      "khiGioi": "A",
+      "ky": "C",
+      "thuan": "B",
+      "thuong": "B"
+    },
+    "viet": "Bảo Tín"
+  },
+  {
+    "aliases": [
       "卞喜"
     ],
     "chinese": "卞喜",
@@ -19757,7 +20016,7 @@
     ],
     "chinese": "陶謙",
     "cost": "4",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Đào Khiêm",
     "iconUrl": "/heroes/dao-khiem.webp",
     "id": "hero:dao-khiem",
@@ -19776,7 +20035,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -19848,7 +20113,7 @@
     ],
     "chinese": "丁原",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Đinh Nguyên",
     "iconUrl": "/heroes/dinh-nguyen.webp",
     "id": "hero:dinh-nguyen",
@@ -19867,7 +20132,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -20121,7 +20392,7 @@
     ],
     "chinese": "董承",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Đổng Thừa",
     "iconUrl": "/heroes/dong-thua.webp",
     "id": "hero:dong-thua",
@@ -20140,7 +20411,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -20485,7 +20762,7 @@
     ],
     "chinese": "何進",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Hà Tiến",
     "iconUrl": "/heroes/ha-tien.webp",
     "id": "hero:ha-tien",
@@ -20504,7 +20781,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -20850,7 +21133,7 @@
     ],
     "chinese": "皇甫嵩",
     "cost": "5",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Hoàng Phủ Tung",
     "iconUrl": "/heroes/hoang-phu-tung.webp",
     "id": "hero:hoang-phu-tung",
@@ -20869,7 +21152,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần. Trong mùa có thể chuyển về phe Quần ở Sảnh Chính › Hán Thất › Quần Hùng Tịnh Khởi (tối đa 3 tướng; cài lại tốn 50K Châu, chờ 1 giờ).",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。賽季內可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -20934,6 +21223,97 @@
       "thuong": "S"
     },
     "viet": "Hoàng Phủ Tung"
+  },
+  {
+    "aliases": [
+      "許貢"
+    ],
+    "chinese": "許貢",
+    "cost": "4",
+    "faction": "Hán",
+    "hanViet": "Hứa Cống",
+    "iconUrl": "/heroes/hua-cong.webp",
+    "id": "hero:hua-cong",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 1.28,
+        "luc": 1.31,
+        "mi": 0.43,
+        "thong": 1.0,
+        "toc": 0.76,
+        "tri": 1.28
+      },
+      "inheritTacticId": "tactic:uong-han-di-truu",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:uong-han-di-truu",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "64",
+      "luc": "66",
+      "mi": "30",
+      "thong": "44",
+      "toc": "27",
+      "tri": "64"
+    },
+    "troopApt": {
+      "cung": "A",
+      "khiGioi": "B",
+      "ky": "C",
+      "thuan": "C",
+      "thuong": "A"
+    },
+    "viet": "Hứa Cống"
   },
   {
     "aliases": [
@@ -21119,6 +21499,97 @@
   },
   {
     "aliases": [
+      "孔伷"
+    ],
+    "chinese": "孔伷",
+    "cost": "3",
+    "faction": "Hán",
+    "hanViet": "Khổng Trụ",
+    "iconUrl": "/heroes/khong-tru.webp",
+    "id": "hero:khong-tru",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.9,
+        "luc": 0.18,
+        "mi": 0.33,
+        "thong": 0.3,
+        "toc": 0.2,
+        "tri": 0.78
+      },
+      "inheritTacticId": "tactic:chinh-van",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:chinh-van",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "政",
+    "roleTagViet": "Nội chính",
+    "selfTacticCn": null,
+    "stars": 3,
+    "stats": {
+      "chinh": "78",
+      "luc": "16",
+      "mi": "29",
+      "thong": "26",
+      "toc": "17",
+      "tri": "68"
+    },
+    "troopApt": {
+      "cung": "B",
+      "khiGioi": "C",
+      "ky": "C",
+      "thuan": "C",
+      "thuong": "C"
+    },
+    "viet": "Khổng Trụ"
+  },
+  {
+    "aliases": [
       "呂虔"
     ],
     "chinese": "呂虔",
@@ -21301,11 +21772,193 @@
   },
   {
     "aliases": [
+      "劉璋"
+    ],
+    "chinese": "劉璋",
+    "cost": "3",
+    "faction": "Hán",
+    "hanViet": "Lưu Chương",
+    "iconUrl": "/heroes/luu-chuong.webp",
+    "id": "hero:luu-chuong",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.91,
+        "luc": 0.44,
+        "mi": 0.79,
+        "thong": 0.81,
+        "toc": 0.6,
+        "tri": 0.86
+      },
+      "inheritTacticId": "tactic:be-canh-tu-an",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:be-canh-tu-an",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "輔",
+    "roleTagViet": "Phụ trợ",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "38",
+      "luc": "5",
+      "mi": "55",
+      "thong": "31",
+      "toc": "16",
+      "tri": "34"
+    },
+    "troopApt": {
+      "cung": "C",
+      "khiGioi": "C",
+      "ky": "C",
+      "thuan": "B",
+      "thuong": "B"
+    },
+    "viet": "Lưu Chương"
+  },
+  {
+    "aliases": [
+      "劉岱"
+    ],
+    "chinese": "劉岱",
+    "cost": "4",
+    "faction": "Hán",
+    "hanViet": "Lưu Đại",
+    "iconUrl": "/heroes/luu-dai.webp",
+    "id": "hero:luu-dai",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 1.14,
+        "luc": 1.3,
+        "mi": 0.5,
+        "thong": 1.13,
+        "toc": 0.9,
+        "tri": 0.83
+      },
+      "inheritTacticId": "tactic:thu-chinh-xuat-phong",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:thu-chinh-xuat-phong",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "54",
+      "luc": "65",
+      "mi": "35",
+      "thong": "53",
+      "toc": "37",
+      "tri": "32"
+    },
+    "troopApt": {
+      "cung": "C",
+      "khiGioi": "B",
+      "ky": "A",
+      "thuan": "C",
+      "thuong": "S"
+    },
+    "viet": "Lưu Đại"
+  },
+  {
+    "aliases": [
       "劉繇"
     ],
     "chinese": "劉繇",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Lưu Do",
     "iconUrl": "/heroes/luu-do.webp",
     "id": "hero:luu-do",
@@ -21324,7 +21977,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {
@@ -21389,6 +22048,97 @@
       "thuong": "B"
     },
     "viet": "Lưu Do"
+  },
+  {
+    "aliases": [
+      "劉虞"
+    ],
+    "chinese": "劉虞",
+    "cost": "4",
+    "faction": "Hán",
+    "hanViet": "Lưu Ngu",
+    "iconUrl": "/heroes/luu-ngu.webp",
+    "id": "hero:luu-ngu",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 1.48,
+        "luc": 0.84,
+        "mi": 1.0,
+        "thong": 1.16,
+        "toc": 0.57,
+        "tri": 1.37
+      },
+      "inheritTacticId": "tactic:an-hau-dac-chung",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:an-hau-dac-chung",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "輔",
+    "roleTagViet": "Phụ trợ",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "78",
+      "luc": "33",
+      "mi": "70",
+      "thong": "55",
+      "toc": "14",
+      "tri": "70"
+    },
+    "troopApt": {
+      "cung": "C",
+      "khiGioi": "B",
+      "ky": "A",
+      "thuan": "B",
+      "thuong": "B"
+    },
+    "viet": "Lưu Ngu"
   },
   {
     "aliases": [
@@ -21935,6 +22685,98 @@
       "thuong": "C"
     },
     "viet": "Ngu Phiên"
+  },
+  {
+    "aliases": [
+      "Ngụy Du",
+      "魏攸"
+    ],
+    "chinese": "魏攸",
+    "cost": "3",
+    "faction": "Hán",
+    "hanViet": "Nguỵ Du",
+    "iconUrl": "/heroes/nguy-du.webp",
+    "id": "hero:nguy-du",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.68,
+        "luc": 0.27,
+        "mi": 0.13,
+        "thong": 0.42,
+        "toc": 0.48,
+        "tri": 0.68
+      },
+      "inheritTacticId": null,
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:ap-che-so",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "輔",
+    "roleTagViet": "Phụ trợ",
+    "selfTacticCn": null,
+    "stars": 2,
+    "stats": {
+      "chinh": "74",
+      "luc": "29",
+      "mi": "14",
+      "thong": "46",
+      "toc": "52",
+      "tri": "74"
+    },
+    "troopApt": {
+      "cung": "B",
+      "khiGioi": "C",
+      "ky": "C",
+      "thuan": "C",
+      "thuong": "C"
+    },
+    "viet": "Nguỵ Du"
   },
   {
     "aliases": [
@@ -22663,6 +23505,97 @@
       "thuong": "B"
     },
     "viet": "Tào Ngang"
+  },
+  {
+    "aliases": [
+      "淳于瓊"
+    ],
+    "chinese": "淳于瓊",
+    "cost": "5",
+    "faction": "Hán",
+    "hanViet": "Thuần Vu Quỳnh",
+    "iconUrl": "/heroes/thuan-vu-quynh.webp",
+    "id": "hero:thuan-vu-quynh",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.78,
+        "luc": 1.31,
+        "mi": 0.34,
+        "thong": 1.4,
+        "toc": 1.21,
+        "tri": 0.78
+      },
+      "inheritTacticId": "tactic:o-sao-di-han",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:o-sao-di-han",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "29",
+      "luc": "66",
+      "mi": "24",
+      "thong": "72",
+      "toc": "59",
+      "tri": "29"
+    },
+    "troopApt": {
+      "cung": "C",
+      "khiGioi": "B",
+      "ky": "S",
+      "thuan": "C",
+      "thuong": "A"
+    },
+    "viet": "Thuần Vu Quỳnh"
   },
   {
     "aliases": [
@@ -23396,6 +24329,188 @@
   },
   {
     "aliases": [
+      "張允"
+    ],
+    "chinese": "張允",
+    "cost": "5",
+    "faction": "Hán",
+    "hanViet": "Trương Doãn",
+    "iconUrl": "/heroes/truong-doan.webp",
+    "id": "hero:truong-doan",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 1.17,
+        "luc": 1.33,
+        "mi": 0.5,
+        "thong": 1.4,
+        "toc": 0.81,
+        "tri": 0.97
+      },
+      "inheritTacticId": "tactic:dinh-quan-an-dan",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:dinh-quan-an-dan",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "輔",
+    "roleTagViet": "Phụ trợ",
+    "selfTacticCn": null,
+    "stars": 4,
+    "stats": {
+      "chinh": "56",
+      "luc": "67",
+      "mi": "35",
+      "thong": "72",
+      "toc": "31",
+      "tri": "42"
+    },
+    "troopApt": {
+      "cung": "S",
+      "khiGioi": "A",
+      "ky": "C",
+      "thuan": "C",
+      "thuong": "C"
+    },
+    "viet": "Trương Doãn"
+  },
+  {
+    "aliases": [
+      "張楊"
+    ],
+    "chinese": "張楊",
+    "cost": "3",
+    "faction": "Hán",
+    "hanViet": "Trương Dương",
+    "iconUrl": "/heroes/truong-duong.webp",
+    "id": "hero:truong-duong",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.67,
+        "luc": 0.8,
+        "mi": 0.11,
+        "thong": 0.83,
+        "toc": 0.23,
+        "tri": 0.76
+      },
+      "inheritTacticId": "tactic:phan-tien",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:phan-tien",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
+    "selfTacticCn": null,
+    "stars": 3,
+    "stats": {
+      "chinh": "58",
+      "luc": "70",
+      "mi": "10",
+      "thong": "72",
+      "toc": "20",
+      "tri": "66"
+    },
+    "troopApt": {
+      "cung": "B",
+      "khiGioi": "C",
+      "ky": "A",
+      "thuan": "C",
+      "thuong": "C"
+    },
+    "viet": "Trương Dương"
+  },
+  {
+    "aliases": [
       "張梁"
     ],
     "chinese": "張梁",
@@ -23484,6 +24599,97 @@
       "thuong": "S"
     },
     "viet": "Trương Lương"
+  },
+  {
+    "aliases": [
+      "張邈"
+    ],
+    "chinese": "張邈",
+    "cost": "3",
+    "faction": "Hán",
+    "hanViet": "Trương Mạc",
+    "iconUrl": "/heroes/truong-mac.webp",
+    "id": "hero:truong-mac",
+    "inheritTacticCn": null,
+    "isSP": false,
+    "linkScore": null,
+    "lookup": {
+      "advisorId": null,
+      "cardPacks": [],
+      "categoryVi": null,
+      "civil": {
+        "bonusVi": null,
+        "roleVi": null,
+        "specialtyVi": null,
+        "tacticBonusVi": null
+      },
+      "civilInnatePoints": null,
+      "collectibleBonusVi": null,
+      "conditions": [],
+      "exclusiveTitleVi": null,
+      "exclusiveTitleZh": null,
+      "flags": {
+        "isCO": null,
+        "isCollectible": null,
+        "isDynamicOpen": null,
+        "isMusou": null,
+        "isSp": false
+      },
+      "growth": {
+        "chinh": 0.85,
+        "luc": 0.61,
+        "mi": 0.14,
+        "thong": 0.6,
+        "toc": 0.21,
+        "tri": 0.82
+      },
+      "inheritTacticId": "tactic:tri-dinh",
+      "missingFields": [
+        "adaptInfantry",
+        "adaptNavy",
+        "advisorSkillId",
+        "cardPacks",
+        "civil",
+        "civilInnatePoints",
+        "inheritedTacticName",
+        "isCO",
+        "isCollectible",
+        "isDynamicOpen",
+        "isMusou",
+        "usage"
+      ],
+      "otherAptitudes": {
+        "infantry": null,
+        "navy": null
+      },
+      "redRulesVi": null,
+      "revisions": [],
+      "selfTacticId": "tactic:tri-dinh",
+      "usageVi": null,
+      "usageZh": null,
+      "variant": "base"
+    },
+    "pending": false,
+    "roleTag": "武",
+    "roleTagViet": "Vũ lực",
+    "selfTacticCn": null,
+    "stars": 3,
+    "stats": {
+      "chinh": "74",
+      "luc": "53",
+      "mi": "12",
+      "thong": "52",
+      "toc": "18",
+      "tri": "71"
+    },
+    "troopApt": {
+      "cung": "A",
+      "khiGioi": "C",
+      "ky": "C",
+      "thuan": "C",
+      "thuong": "C"
+    },
+    "viet": "Trương Mạc"
   },
   {
     "aliases": [
@@ -23675,7 +24881,7 @@
     ],
     "chinese": "王允",
     "cost": "3",
-    "faction": "Quần",
+    "faction": "Hán",
     "hanViet": "Vương Doãn",
     "iconUrl": "/heroes/vuong-doan.webp",
     "id": "hero:vuong-doan",
@@ -23694,7 +24900,13 @@
       },
       "civilInnatePoints": null,
       "collectibleBonusVi": null,
-      "conditions": [],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán, trước mùa này là phe Quần.",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）：漢陣營，本賽季前為群雄陣營。"
+        }
+      ],
       "exclusiveTitleVi": null,
       "exclusiveTitleZh": null,
       "flags": {

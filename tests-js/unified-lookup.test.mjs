@@ -451,6 +451,17 @@ test("hồ sơ chiến pháp bản zh: điều kiện đổi và cách nhận gh
   assert.equal(fieldByKey(zh("tactic:c"), "acquiredFromVi").textVi, "劉曄、SP 劉曄");
 });
 
+test("hồ sơ tướng bản zh: ghi chú mùa có textZh hiện chữ Hán và bật cờ dịch; bản vi giữ chữ Việt", () => {
+  const note = { kind: "season", textVi: "Mùa Hán Diễm Trường Minh: phe Hán, trước mùa này là phe Quần.", textZh: "漢焰長明賽季：漢陣營，本賽季前為群雄陣營。" };
+  const built = buildLookupCorpus({ heroes: [hero("hero:dong-trac", "Đổng Trác", { lookup: { conditions: [note] } })], tactics: TACTIC_POOL, catalog: CATALOG, books: BOOKS });
+  const zh = withLocale("zh", () => lookupProfile(built, "hero:dong-trac"));
+  assert.deepEqual(zh.conditions, [note.textZh]);
+  assert.equal(zh.conditionsZhTranslated, true);
+  const vi = withLocale("vi", () => lookupProfile(built, "hero:dong-trac"));
+  assert.deepEqual(vi.conditions, [note.textVi]);
+  assert.equal(vi.conditionsZhTranslated, false);
+});
+
 test("ID lạ không dựng hồ sơ", () => {
   assert.equal(profileFor("hero:khong-ton-tai"), null);
   assert.equal(profileFor("https://evil.example/x.json"), null);

@@ -3,23 +3,23 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 109 / 962 mục.
+Tổng: 109 / 983 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
-| Tướng | 0 | 252 |
-| Chiến pháp | 109 | 412 |
+| Tướng | 0 | 263 |
+| Chiến pháp | 109 | 422 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
 | Công trình | 0 | 41 |
 | Binh thư | 0 | 68 |
 
-## Tướng (heroes): 0 / 252
+## Tướng (heroes): 0 / 263
 
 Không có mục nào thiếu.
 
-## Chiến pháp (tactics): 109 / 412
+## Chiến pháp (tactics): 109 / 422
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -98,7 +98,7 @@ Không có mục nào thiếu.
 | tactic:chung-vong-so-quy | Đích Đến Cuối Cùng | acquiredFromVi |
 | tactic:cuu-doc | Rượu Độc | revisions (3) |
 | tactic:dan-duong-binh | Lính Đan Dương | revisions (2) |
-| tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | effectTypeVi, exchangeConditionVi, conditions (2) |
+| tactic:dao-vien-ket-nghia | Kết Nghĩa Vườn Đào | exchangeConditionVi, conditions (2) |
 | tactic:duy-noi-thien-quyen | Duy Nội Thiện Quyền | conditions (2) |
 | tactic:huy-quan-ket-tran | Huy Quân Kết Trận | exchangeConditionVi |
 | tactic:kien-cuong-chi-hoa | Hoa Kiên Cường | acquiredFromVi |
