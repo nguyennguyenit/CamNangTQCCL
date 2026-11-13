@@ -7,6 +7,7 @@
 - Added: token `size.dialog-confirm`, `shadow.ring-select-ink`; `scripts/design-canvas/compare-moi.mjs` so ảnh artboard với trang thật có mock `/api/**` (khách / đăng nhập / quản trị root / bị khoá có hạn) và chặn tràn ngang ở 390px; cặp mỗi nhóm ở `scripts/design-canvas/moi-pairs/<nhóm>.mjs`. Dữ liệu mẫu Đội cộng đồng tách từ `capture-community.mjs` sang `community-samples.mjs`.
 - Added: 4 khối CSS rỗng `/* moi:<nhóm>:start */ … end` và neo `tokens.json` riêng cho từng nhóm (README thiết kế, mục "Tình trạng dựng vào site").
 - Fixed: `node scripts/design-tokens.mjs --check` đỏ từ trước — `--f-han`, `--f-han-select` có trong CSS nhưng thiếu `tokens.json` (thêm `color.faction.han`/`han-select`); hai `font-weight: 600` thô ở khối Độ phủ kho đổi sang `--weight-semibold`.
+- Fixed: `hop-xac-nhan` — bấm đúp / chạm đúp nút mở không còn làm cú bấm thứ hai trúng nút Xoá (hay Huỷ) của hộp vừa hiện: bỏ qua cú bấm chuột có `detail > 1` và cú chạm trong 300 ms đầu; bàn phím không bị chặn. Bấm nền vẫn cần nhấn và thả trên nền sau 300 ms.
 
 ### Đội cộng đồng
 - Chưa dựng.
