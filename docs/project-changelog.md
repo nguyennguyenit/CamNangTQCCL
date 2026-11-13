@@ -27,6 +27,7 @@
 - Hồi chiêu và xung đột từ client (Khiêu Chiến Quần Hùng "1 hiệp CD", Tuyệt Kế Chiết Mưu xung đột Kế Tận): `tactics{}` chưa có khóa `cooldown`/`conflictsVi` (#75).
 - Phe Hán chỉ trong PK-S27 hay giữ lâu dài: client không ghi. Hết mùa cần xem lại `faction` và `heroNotes` (#76).
 - Nguồn chụp theo từng bản ghi: header `source` của hai file client vẫn ghi 24.526, phần 24.535/24.547 chỉ truy được qua report (#77).
+- Đối chiếu chữ Hán ghi chú mùa: tên tiền tệ "Châu" (đang giữ `50K「Châu」`), 群雄並起, 輔佐漢室 (#87).
 
 ## 2026-11-11 (Đội chuẩn: badge kho trên danh sách; sửa chữ "null" ở Độ phủ kho)
 
