@@ -128,3 +128,65 @@ test("bấm đúp nút mở không đóng hộp ngay; bấm nền (nhấn và th
   await expect(opener).toBeFocused();
   expect(await page.evaluate(() => [window.__confirmResults, window.__confirmRuns])).toEqual([[false], 0]);
 });
+
+/** Đo chỗ nút Xoá của hộp hiện ra rồi đặt nút mở đúng chỗ đó: cú bấm/chạm thứ hai rơi trúng nút Xoá. */
+async function placeOpenerUnderConfirm(page, opener) {
+  await opener.click();
+  const target = await page.getByRole("alertdialog").getByRole("button", { name: "Xoá đội" }).boundingBox();
+  await page.keyboard.press("Escape");
+  await expect(page.locator("dialog.hop-xac-nhan")).toHaveCount(0);
+  await opener.evaluate((node, box) => {
+    Object.assign(node.style, {
+      position: "fixed", left: `${box.x}px`, top: `${box.y}px`, width: `${box.width}px`, height: `${box.height}px`, zIndex: 10,
+    });
+  }, target);
+  return { x: target.x + target.width / 2, y: target.y + target.height / 2 };
+}
+
+/** Sau cú bấm đúp: hộp vẫn mở, chưa chạy thao tác; bấm Xoá thật lúc đó thì xoá. */
+async function expectStillOpenThenConfirm(page) {
+  const dialog = page.getByRole("alertdialog");
+  await expect(dialog).toBeVisible();
+  await page.waitForTimeout(400);
+  await expect(dialog).toBeVisible();
+  expect(await page.evaluate(() => [window.__confirmResults, window.__confirmRuns])).toEqual([[false], 0]);
+  await dialog.getByRole("button", { name: "Xoá đội" }).click();
+  await expect(page.locator("dialog.hop-xac-nhan")).toHaveCount(0);
+  expect(await page.evaluate(() => [window.__confirmResults, window.__confirmRuns])).toEqual([[false, true], 1]);
+}
+
+for (const viewport of [{ width: 1280, height: 800 }, { width: 390, height: 844 }]) {
+  test(`bấm đúp nút mở nằm ngay dưới nút Xoá của hộp không xoá (${viewport.width}px)`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    const opener = await mountOpener(page);
+    await placeOpenerUnderConfirm(page, opener);
+    await opener.dblclick();
+    await expectStillOpenThenConfirm(page);
+  });
+}
+
+test("chạm đúp nút mở nằm ngay dưới nút Xoá của hộp không xoá (màn hình cảm ứng 390px)", async ({ browser, baseURL }) => {
+  const context = await browser.newContext({ baseURL, hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  try {
+    const opener = await mountOpener(page);
+    const point = await placeOpenerUnderConfirm(page, opener);
+    await page.touchscreen.tap(point.x, point.y);
+    await page.touchscreen.tap(point.x, point.y);
+    await expectStillOpenThenConfirm(page);
+  } finally {
+    await context.close();
+  }
+});
+
+test("Enter trên nút Xoá ngay khi mở vẫn xác nhận", async ({ page }) => {
+  const opener = await mountOpener(page);
+  await opener.focus();
+  await page.keyboard.press("Enter");
+  const dialog = page.getByRole("alertdialog");
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await expect(page.locator("dialog.hop-xac-nhan")).toHaveCount(0);
+  expect(await page.evaluate(() => window.__confirmRuns)).toBe(1);
+});
