@@ -17,6 +17,7 @@ import { mergePage, modeFromSearch, staticTeamPath } from './community-team-stat
 import { teamIcon } from './community-team-ui.js';
 import { activatePortraits, heroPortrait } from './hero-portrait.js';
 import { confirmInPage } from './inline-confirm.js';
+import { lookupItemPath } from './lookup-ids.js';
 import { el } from './render.js';
 
 const SORTS = [
@@ -90,6 +91,23 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     tactic(id) {
       const node = el('span', { class: 'cm-team-tactic', dataset: { tacticId: id } }, tacticName(lexicon, id));
       if (!lexicon) whenLexicon((value) => { node.textContent = tacticName(value, id); });
+      return node;
+    },
+    /**
+     * Phần tử dẫn sang trang riêng Tra cứu như trang tĩnh: `build(href)` dựng `<a>` khi từ điển có mục (chiến pháp đổi
+     * id được dẫn về id hiện hành) và mục có trang riêng, `build(null)` dựng bản không link; dựng lại khi từ điển về.
+     */
+    lookup(kind, id, build) {
+      const hrefOf = (value) => {
+        const record = kind === 'hero' ? value?.heroRecord(id) : value?.tacticRecord(id);
+        const path = record ? lookupItemPath(String(record.id ?? id)) : null;
+        return path ? localePath(path) : null;
+      };
+      const node = build(hrefOf(lexicon));
+      if (!lexicon) whenLexicon((value) => {
+        const href = hrefOf(value);
+        if (href && node.parentNode) node.replaceWith(build(href));
+      });
       return node;
     },
   };

@@ -57,24 +57,33 @@ function detailHead(team, locale) {
   return { head, side };
 }
 
-/** Thẻ một tướng trong "Đội hình": chân dung, vai trò, tên (h3), hai chiến pháp A/B. */
+/** Thẻ một tướng trong "Đội hình": chân dung, vai trò, tên (h3), hai chiến pháp A/B; tên và chiến pháp dẫn sang Tra cứu như trang tĩnh. */
 function heroCard(team, index, names) {
   const heroId = team.heroes[index];
+  const heroName = names.lookup('hero', heroId, (href) => (href
+    ? el('a', { class: 'cm-team-hero-card-link', href }, names.hero(heroId, 'cm-team-hero-card-label'))
+    : names.hero(heroId, 'cm-team-hero-card-label')));
   return el('li', { class: 'cm-team-hero-card' }, [
     el('div', { class: 'cm-team-hero-card-id' }, [
       names.portrait(heroId, 'cm-team-hero-card-portrait'),
       el('div', { class: 'cm-team-hero-card-text' }, [
         el('span', { class: 'cm-team-caps' }, heroRole(index)),
-        el('h3', { class: 'cm-team-hero-card-name', dataset: { heroId } }, names.hero(heroId, 'cm-team-hero-card-label')),
+        el('h3', { class: 'cm-team-hero-card-name', dataset: { heroId } }, heroName),
       ]),
     ]),
     el('div', { class: 'cm-team-hero-card-tactics' }, [
       el('span', { class: 'cm-team-caps' }, L('Chiến pháp', '战法')),
       el('ol', { class: 'cm-team-tactic-list' }, (team.tactics?.[index] || []).map((tacticId, position) => el('li', {}, [
-        el('span', { class: 'cm-team-tactic-link', dataset: { tacticId } }, [
-          el('span', { class: 'cm-team-tactic-slot', 'aria-hidden': 'true' }, position ? 'B' : 'A'),
-          el('span', { class: 'cm-team-tactic-name' }, names.tactic(tacticId)),
-        ]),
+        names.lookup('tactic', tacticId, (href) => {
+          const parts = [
+            el('span', { class: 'cm-team-tactic-slot', 'aria-hidden': 'true' }, position ? 'B' : 'A'),
+            el('span', { class: 'cm-team-tactic-name' }, names.tactic(tacticId)),
+          ];
+          if (!href) return el('span', { class: 'cm-team-tactic-link', dataset: { tacticId } }, parts);
+          const go = teamIcon('arrowRight', 14);
+          go?.classList.add('cm-team-tactic-go');
+          return el('a', { class: 'cm-team-tactic-link', href, dataset: { tacticId }, title: L('Mở trong Tra cứu', '在查询中打开') }, [...parts, go]);
+        }),
       ]))),
     ]),
   ]);
