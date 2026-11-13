@@ -8,8 +8,11 @@
 import { L } from "./i18n.js";
 import { el } from "./render.js";
 
-/** Thời gian đầu sau khi mở hộp bỏ qua bấm nền (cú bấm thứ hai của bấm đúp nút mở). */
-const BACKDROP_GRACE_MS = 300;
+/**
+ * Thời gian đầu sau khi mở hộp bỏ qua bấm nền và chạm vào hai nút: cú bấm thứ hai của bấm đúp (hoặc chạm đúp) nút mở
+ * rơi vào hộp vừa hiện, có thể trúng nút Xoá nằm ngay dưới con trỏ.
+ */
+const OPEN_GRACE_MS = 300;
 
 const FOCUSABLE = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
@@ -75,12 +78,18 @@ export function confirmInPage({
       else dialog.removeAttribute("aria-busy");
     };
 
-    cancel.addEventListener("click", () => {
-      if (!busy) close();
+    // Cú bấm thứ hai của bấm đúp nút mở rơi vào hộp vừa hiện, có thể trúng nút ngay dưới con trỏ: chuột đánh số cú bấm
+    // liên tiếp (`detail > 1`, theo khoảng bấm đúp của hệ điều hành); chạm đúp không chắc được đánh số nên chạm trong
+    // OPEN_GRACE_MS đầu cũng bỏ qua. Enter / Space trên nút có `detail === 0` nên bàn phím không bị chặn.
+    const fromDoubleClick = (event) =>
+      event.detail > 1 || (event.pointerType === "touch" && performance.now() - openedAt < OPEN_GRACE_MS);
+
+    cancel.addEventListener("click", (event) => {
+      if (!busy && !fromDoubleClick(event)) close();
     });
 
-    confirm.addEventListener("click", async () => {
-      if (busy) return;
+    confirm.addEventListener("click", async (event) => {
+      if (busy || fromDoubleClick(event)) return;
       if (!onConfirm) {
         confirmed = true;
         close();
@@ -118,13 +127,13 @@ export function confirmInPage({
     });
 
     // Thân hộp phủ kín `<dialog>` (padding 0): click trúng chính `<dialog>` là click vào nền. Chỉ đóng khi cả
-    // `pointerdown` lẫn `click` cùng trúng nền và hộp đã mở quá BACKDROP_GRACE_MS: bấm đúp nút mở làm cú bấm thứ
+    // `pointerdown` lẫn `click` cùng trúng nền và hộp đã mở quá OPEN_GRACE_MS: bấm đúp nút mở làm cú bấm thứ
     // hai rơi xuống `::backdrop` ngay sau khi hộp hiện, không được tính là bấm nền; kéo chọn chữ từ trong hộp ra
     // nền cũng không đóng hộp.
     let openedAt = Infinity;
     let pressedBackdrop = false;
     dialog.addEventListener("pointerdown", (event) => {
-      pressedBackdrop = event.target === dialog && performance.now() - openedAt >= BACKDROP_GRACE_MS;
+      pressedBackdrop = event.target === dialog && performance.now() - openedAt >= OPEN_GRACE_MS;
     });
     dialog.addEventListener("click", (event) => {
       const onBackdrop = event.target === dialog && pressedBackdrop;
