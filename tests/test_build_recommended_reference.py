@@ -8,6 +8,7 @@ from pathlib import Path
 from pipeline.build_recommended_reference import (
     _validated_display_notes,
     _validated_raw_display_notes,
+    apply_default_season,
     apply_display_map,
     build_generation,
     canonical_object_hash,
@@ -373,6 +374,32 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         inputs, _, _ = self._display_inputs()
         with self.assertRaisesRegex(ValueError, "missing seasons: pk-s01"):
             apply_display_map(inputs, self._loaded(self._display_map(seasons=[payload["seasons"][0]])))
+
+    def test_default_season_file_chooses_published_default(self):
+        def choose(inputs, payload):
+            with tempfile.TemporaryDirectory() as folder:
+                path = Path(folder) / "default-season.json"
+                path.write_text(json.dumps(payload, ensure_ascii=False))
+                return apply_default_season(inputs, path)
+
+        valid = {"schemaVersion": 1, "defaultSourceSeasonId": "pk-s28", "evidenceRef": "user-decision:fixture"}
+        inputs, _, _ = self._display_inputs()
+        inputs["inventory"]["seasonOptions"].insert(
+            0, {"sourceSeasonId": "og-x", "nameRaw": "兵演", "label": "OG", "status": "available", "advertisedCountRaw": 5})
+        choose(inputs, valid)
+        with tempfile.TemporaryDirectory() as folder:
+            generation = _publish(inputs, Path(folder))["generationId"]
+            published = json.loads((Path(folder) / generation / "seasons.json").read_text())
+        self.assertEqual(published["defaultSourceSeasonId"], "pk-s28")
+
+        for label, payload, message in (
+            ("uncollected", {**valid, "defaultSourceSeasonId": "pk-s01"}, "not available"),
+            ("unknown", {**valid, "defaultSourceSeasonId": "pk-s99"}, "not available"),
+            ("no evidence", {**valid, "evidenceRef": " "}, "evidence"),
+            ("extra key", {**valid, "note": "x"}, "Unsupported"),
+        ):
+            with self.subTest(label), self.assertRaisesRegex(ValueError, message):
+                choose(self._display_inputs()[0], payload)
 
     def test_display_notes_require_reviewed_vietnamese_text(self):
         row = {"heroes": [], "alternativeHoldersRaw": []}

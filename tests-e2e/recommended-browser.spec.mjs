@@ -76,6 +76,7 @@ test('season scope changes stay on the browser; a retired category key is stripp
   await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   await expect(page).not.toHaveURL(/category=/);
+  await revealAll(section);
   await expect(section.locator('.reference-team-card')).toHaveCount(inDefault.length);
   await expect(section.getByLabel('Danh mục nguồn')).toHaveCount(0);
   const season=section.getByLabel('Mùa',{exact:true});
@@ -176,9 +177,11 @@ test('localized facet chips filter with raw values, show scoped counts and keep 
     expect(await chip.textContent()).not.toMatch(/[\u3400-\u9fff]/);
     await expect(chip).toHaveAttribute('title',raw);
   }
+  await revealAll(section);
   const matching=await section.locator(`.reference-team-card[data-faction="${raw}"]`).count();
   expect(matching).toBe(scoped);
   await chip.click();
+  await revealAll(section);
   expect(await page.evaluate(()=>new URL(location.href).searchParams.get('faction'))).toBe(raw);
   await expect(section.locator('.reference-team-card')).toHaveCount(matching);
   await expect(section.locator(`.reference-team-card[data-faction="${raw}"]`)).toHaveCount(matching);
@@ -548,10 +551,12 @@ test('Thẻ/Bảng remembers the choice, keeps filters and lets the URL win over
   expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBeNull();
   // Đổi chế độ giữ nguyên bộ lọc đang bật và không thêm bước lịch sử.
   const historyBefore=await page.evaluate(()=>history.length);
+  const unfiltered=await section.locator('.reference-team-card').count();
   await page.locator('#section-team-chuan').getByLabel('Tìm Đội chuẩn').fill('Lữ Bố');
+  await expect(section.locator('.reference-team-card')).not.toHaveCount(unfiltered);
   const filtered=await section.locator('.reference-team-card').count();
   expect(filtered).toBeGreaterThan(0);
-  expect(filtered).toBeLessThan(25);
+  expect(filtered).toBeLessThan(unfiltered);
   await section.locator('.view-btn[data-view="bang"]').click();
   await expect(page).toHaveURL(/view=bang/);
   await expect(page).toHaveURL(/q=L/);
@@ -700,6 +705,8 @@ test('same-document season history re-renders the same records on Back and Forwa
   expect(target,{message:'cần một mùa khác mùa mặc định có đội để kiểm lịch sử'}).toBeTruthy();
 
   await page.goto('/doi-chuan/');
+  // Baseline lấy sau khi client nhận DOM: thân dựng sẵn có đủ đội của mùa, client hiện theo lượt 60.
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   const baseline={ids:await renderedKeys(),season:await season.inputValue()};
   expect(baseline.ids.length).toBeGreaterThan(0);
@@ -893,6 +900,8 @@ const PAGE=60;
 /** Bấm "Xem thêm" tới khi danh sách hiện hết. */
 const revealAll=async section=>{
   const more=section.getByRole('button',{name:'Xem thêm'});
+  // Thân dựng sẵn có thể đủ mọi đội mà chưa có nút; chờ client nhận DOM (dựng lại theo lượt) rồi mới đếm nút.
+  await expect(section.page().locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('[data-reference-key]').first()).toBeVisible();
   while (await more.count()) await more.click();
 };
@@ -1006,22 +1015,28 @@ test('source Tier chips retain ranking and URL across cards, compact view, table
   page.on('pageerror',error=>errors.push(error.message));
   await page.goto('/doi-chuan/');
   const section=page.locator('#section-team-chuan');
+  await revealAll(section);
   await expect(section.locator('.reference-team-card')).toHaveCount(scoped.length);
   await section.locator('[data-focus-key="tier:T1"]').click();
   await section.locator('[data-focus-key="tier:T0"]').click();
+  await revealAll(section);
   await expect(section.locator('.reference-team-card')).toHaveCount(expected.length);
   const ids=await section.locator('.reference-team-card').evaluateAll(nodes=>nodes.map(node=>node.dataset.referenceKey));
   expect(ids).toEqual(expected.map(row=>row.sourceConfigId));
   expect(await section.locator('.badge.tier').allTextContents()).toEqual(expected.map(row=>row.tierRaw));
   await page.reload();
+  await revealAll(section);
   await expect(section.locator('.reference-team-card')).toHaveCount(expected.length);
   await section.locator('[data-view="luoi"]').click();
+  await revealAll(section);
   await expect(section.locator('.badge.tier')).toHaveCount(expected.length);
   await section.locator('[data-view="bang"]').click();
+  await revealAll(section);
   await expect(section.locator('tbody .badge.tier')).toHaveCount(expected.length);
   expect(await section.locator('tbody tr').evaluateAll(nodes=>nodes.map(node=>node.dataset.referenceKey))).toEqual(ids);
   await page.screenshot({path:test.info().outputPath('source-tier-table.png')});
   await section.getByRole('button',{name:'Xóa lọc',exact:true}).click();
+  await revealAll(section);
   await expect(section.locator('tbody tr')).toHaveCount(scoped.length);
   expect(new URL(page.url()).searchParams.has('tier')).toBe(false);
   await page.goto('/zh/doi-chuan/?tier=T0');
@@ -1038,13 +1053,14 @@ test('recommended teams form source Tier sections in every view and regroup afte
   const section=page.locator('#section-team-chuan');
   for (const mode of ['the','luoi','bang']) {
     await section.locator(`[data-view="${mode}"]`).click();
+    await revealAll(section);
     const groups=section.locator('.reference-tier-section');
     await expect(groups).toHaveCount(tiers.length);
     expect(await groups.evaluateAll(nodes=>nodes.map(node=>node.dataset.tier))).toEqual(tiers);
     for (const tier of tiers) {
       const group=section.locator(`.reference-tier-section[data-tier="${tier}"]`);
       const expected=rows.filter(row=>(row.tierRaw || 'unranked')===tier);
-      await expect(group.locator('h2')).toHaveText(`${tier} · ${expected.length} đội`);
+      await expect(group.locator('h2')).toHaveText(`${tier==='unranked' ? 'Chưa xếp hạng' : tier} · ${expected.length} đội`);
       expect(await group.locator('[data-reference-key]').evaluateAll(nodes=>nodes.map(node=>node.dataset.referenceKey))).toEqual(expected.map(row=>row.sourceConfigId));
     }
   }
@@ -1052,6 +1068,7 @@ test('recommended teams form source Tier sections in every view and regroup afte
   await expect(section.locator('.reference-tier-section')).toHaveCount(1);
   await expect(section.locator('.reference-tier-section')).toHaveAttribute('data-tier','T1');
   await section.getByRole('button',{name:'Xóa lọc',exact:true}).click();
+  await revealAll(section);
   await expect(section.locator('.reference-tier-section')).toHaveCount(tiers.length);
   await page.setViewportSize({width:375,height:812});
   await section.locator('[data-view="the"]').click();
@@ -1066,16 +1083,16 @@ test('the ongoing source season is marked independently of the selected season',
   await page.goto('/doi-chuan/');
   const season=page.getByRole('combobox',{name:'Mùa',exact:true});
   const status=page.locator('.reference-season-status');
-  await expect(season).toHaveValue('og-兵演春秋');
+  await expect(season).toHaveValue('pk-s27');
   await expect(status).toBeVisible();
   await expect(status).toHaveText('Đang diễn ra');
-  await expect(season.locator('option[value="og-兵演春秋"]')).toContainText('Binh Diễn Xuân Thu (25) · Hiện tại');
+  await expect(season.locator('option[value="pk-s27"]')).toContainText('Hán Diễm Trường Minh (128) · Hiện tại');
   await season.selectOption('pk-s28');
   await expect(status).toBeHidden();
   await expect(season.locator('option[value="pk-s28"]')).not.toContainText('Hiện tại');
   await season.selectOption('all');
   await expect(status).toBeHidden();
-  await season.selectOption('og-兵演春秋');
+  await season.selectOption('pk-s27');
   await expect(status).toBeVisible();
   await page.setViewportSize({width:375,height:812});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
