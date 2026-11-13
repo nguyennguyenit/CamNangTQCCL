@@ -13,9 +13,9 @@ const { records } = read(`src/data/recommended-reference/${generationId}/index.j
 const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
 
 const SCAN_KEY = "tqccl.rosterRecommend.scanState.v1";
-const SEASON = "og-兵演春秋";
+// `/doi-chuan/` không có `?season=` mở mùa mặc định của generation đang pin.
+const SEASON = read(`src/data/recommended-reference/${generationId}/seasons.json`).defaultSourceSeasonId;
 const OLD_SEASON = "pk-s24";
-const READY_TEAMS = ["og-bingyan-40y-lvbu-b", "og-bingyan-wunv-cavalry-hubaoqi"];
 
 /** Kho có đúng tướng và chiến pháp (đã đối chiếu) của các đội `configIds` thuộc mùa `seasonId`. */
 function rosterFor(seasonId, configIds) {
@@ -37,6 +37,13 @@ function rosterFor(seasonId, configIds) {
   };
 }
 const expectedFor = (seasonId, roster) => buildListCoverage({ records, seasonId, ...dicts, roster });
+
+/** Hai đội đầu của mùa mà kho gồm đúng tướng + chiến pháp của chính đội đó ráp đủ (không vướng chiến pháp chưa đối chiếu). */
+const READY_TEAMS = records
+  .filter((record) => record.sourceSeasonId === SEASON)
+  .map((record) => record.sourceConfigId)
+  .filter((id) => expectedFor(SEASON, rosterFor(SEASON, [id])).byConfigId.get(id)?.missingCount === 0)
+  .slice(0, 2);
 
 /** Ghi kho local trước khi trang chạy; chỉ ghi khi khóa còn trống để tải lại không đè dữ liệu. */
 const seedRoster = (page, roster) => page.addInitScript(([key, value]) => {
@@ -145,7 +152,8 @@ test.describe("Đội chuẩn: badge kho", () => {
     await expect(bar(page).locator('a[href="/goi-y-doi-tu-kho/"]')).toBeVisible();
     await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
     await expect(bar(page).getByRole("button")).toHaveCount(0);
-    await expect(section(page).locator("[data-reference-key]")).toHaveCount(records.filter((record) => record.sourceSeasonId === SEASON).length);
+    // Lượt đầu (tối đa 60 đội) giữ nguyên thứ tự và số lượng như không có `kho`/`xep`.
+    await expect(section(page).locator("[data-reference-key]")).toHaveCount(Math.min(60, records.filter((record) => record.sourceSeasonId === SEASON).length));
     for (const count of dictionaryRequests(requests)) expect(count).toBeLessThanOrEqual(1);
   });
 

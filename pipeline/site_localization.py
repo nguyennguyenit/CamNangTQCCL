@@ -17,6 +17,7 @@ from pathlib import Path, PurePosixPath
 
 from pipeline.build_recommended_reference import (
     _validated_raw_display_notes,
+    apply_default_season,
     apply_display_map,
     build_generation,
     inputs_from_cache,
@@ -2068,6 +2069,7 @@ def compile_candidate(root, output, *, stage):
             policy["artifacts"]["receipts"],
             "pipeline/lookup-translations.json",
             "pipeline/recommended-display-map.json",
+            "pipeline/recommended-default-season.json",
             "pipeline/recommended-content-links.json",
             IDENTITY_MAP_PATH,
             OTHER_LEDGER_PATH,
@@ -2075,6 +2077,7 @@ def compile_candidate(root, output, *, stage):
     }
     inputs["localizationInputsHash"] = "sha256:" + sha256_hex(canonical_json_bytes(input_hashes))
     apply_display_map(inputs, display)
+    apply_default_season(inputs, _repo_member(root, "pipeline/recommended-default-season.json"))
     output.mkdir(parents=True, exist_ok=True)
     lookup_root = output / "lookup"
     lookup_manifest = build_lookup_candidate(

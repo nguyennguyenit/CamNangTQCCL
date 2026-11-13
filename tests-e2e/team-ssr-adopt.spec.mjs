@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 // Trang danh sách đội dựng sẵn: khi trạng thái đầu của trình duyệt khớp mặc định thì nhận lại đúng các node đó
 // (không nháy, không nhân đôi); lệch mặc định (URL khác, kiểu hiển thị khác) thì thay như cũ.
@@ -22,6 +23,14 @@ async function bootWithProbe(page, url, selector, beforeRelease = null) {
   return prerendered;
 }
 
+const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+const { generationId } = read("src/data/recommended-reference/current.json");
+const defaultSeason = read(`src/data/recommended-reference/${generationId}/seasons.json`).defaultSourceSeasonId;
+const defaultSeasonTeams = read(`src/data/recommended-reference/${generationId}/index.json`).records
+  .filter((row) => row.sourceSeasonId === defaultSeason).length;
+// Thân dựng sẵn của /doi-chuan/ có đủ đội của mùa mặc định; client hiện theo lượt 60, nên chỉ nhận lại node khi mùa ≤ 60 đội.
+const PAGE_SIZE = 60;
+
 const survivors = (page) => page.evaluate(() => window.__ssrNodes.filter((node) => node.isConnected).length);
 
 for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"]]) {
@@ -33,8 +42,15 @@ for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"]]) {
       ["/khai-hoang/", ".kh-card"],
     ]) {
       const prerendered = await bootWithProbe(page, `${prefix}${path}`, selector);
-      expect(await survivors(page), `${path}: node dựng sẵn bị thay`).toBe(prerendered);
-      await expect(page.locator(selector), `${path}: nhân đôi thẻ`).toHaveCount(prerendered);
+      if (path === "/doi-chuan/" && defaultSeasonTeams > PAGE_SIZE) {
+        // Mùa mặc định quá một lượt: chữ ký lệch nên client dựng lại lượt đầu, không để thẻ dựng sẵn lẫn vào.
+        expect(prerendered, `${path}: SSR phải đủ đội của mùa mặc định`).toBe(defaultSeasonTeams);
+        expect(await survivors(page), `${path}: còn node dựng sẵn sau khi dựng lại`).toBe(0);
+        await expect(page.locator(selector), `${path}: lượt đầu`).toHaveCount(PAGE_SIZE);
+      } else {
+        expect(await survivors(page), `${path}: node dựng sẵn bị thay`).toBe(prerendered);
+        await expect(page.locator(selector), `${path}: nhân đôi thẻ`).toHaveCount(prerendered);
+      }
       await expect(page.locator("h1"), path).toHaveCount(1);
       await page.unroute("**/js/app.js");
     }

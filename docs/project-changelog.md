@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-11-13 (Đội chuẩn: mùa mặc định là PK-S27 Hán Diễm Trường Minh)
+
+### Changed
+- Mùa mặc định của Đội chuẩn đổi từ OG Binh Diễn Xuân Thu (25 đội) sang PK-S27 Hán Diễm Trường Minh (128 đội). Trước đây builder tự lấy mùa `available` đầu tiên theo thứ tự SGSDeck, nên mùa mặc định luôn là OG. Nay mùa mặc định do file biên tập `pipeline/recommended-default-season.json` chọn (`schemaVersion`, `defaultSourceSeasonId`, `evidenceRef`). `apply_default_season` báo lỗi nếu mùa trong file không có ở nguồn hoặc chưa `available`. `site_localization build` và CLI `build_recommended_reference` đều áp file này; hash của file nằm trong `localizationInputsHash`.
+- File để riêng, không gộp vào `recommended-display-map.json`: display map là nguồn glossary, sửa nó làm stale mọi receipt dịch.
+- Generation Đội chuẩn mới là `aa8ff6a8…` (thay `362096e8…`, đã prune). Re-pin `data/website-display.json` và `pipeline/team-route-handles.json`: giữ 1640 handle, không đổi route đội.
+- `/doi-chuan/` dựng sẵn đủ 128 đội PK-S27. Chip "Hiện tại" / "Đang diễn ra" chuyển sang PK-S27; OG có trang mùa riêng `/doi-chuan/og/`. `public/_redirects` đổi 301 từ `/doi-chuan/og/` sang `/doi-chuan/pk-s27/` (vi + zh). Playbook MCP đọc mùa mặc định từ publication nên đổi theo.
+- Hệ quả của việc mùa mặc định có trên 60 đội: thân dựng sẵn của `/doi-chuan/` có đủ 128 đội, nhưng client chỉ hiện lượt đầu 60 đội nên chữ ký SSR lệch. Vì vậy client dựng lại danh sách thay vì nhận lại node, đúng hợp đồng ghi ở `season-pages` 6b. `team-ssr-adopt` kiểm cả hai nhánh. Việc nhận lại đủ danh sách dựng sẵn theo dõi ở #88, và phải xong trước khi đổi mặc định sang PK-S28 (192 đội). Nhãn "mùa cũ" đang gắn sai cho mùa mới hơn mặc định: #89.
+- Test không còn ghim OG là mùa mặc định: `season-pages`, `team-section-ssr` và e2e badge kho đọc mùa mặc định từ generation đang pin.
+
 ## 2026-11-12 (Tra cứu: đối chiếu client 24.547 cho mùa PK-S27 — phe Hán, Hà Thị, tướng Hán mới, điều chỉnh cân bằng; issue #70)
 
 ### Added

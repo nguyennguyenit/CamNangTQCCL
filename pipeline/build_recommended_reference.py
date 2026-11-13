@@ -386,7 +386,10 @@ def public_scope(scope):
 def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes):
     inventory = inputs["inventory"]
     records = [public_record(row) for row in sorted(inputs.get("records", []), key=_rank)]
-    seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": next((x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None), "seasonOptions": inventory.get("seasonOptions", []), "scopes": [public_scope(scope) for scope in inventory["scopes"]]}
+    # Mùa mặc định do apply_default_season chọn; input chưa qua bước đó lấy mùa available đầu tiên.
+    default_season = inventory.get("defaultSourceSeasonId") or next(
+        (x["sourceSeasonId"] for x in inventory.get("seasonOptions", []) if x.get("status") == "available"), None)
+    seasons = {"schemaVersion": SCHEMA_VERSION, "defaultSourceSeasonId": default_season, "seasonOptions": inventory.get("seasonOptions", []), "scopes": [public_scope(scope) for scope in inventory["scopes"]]}
     if inventory.get("displayLabels") is not None:
         seasons["displayLabels"] = inventory["displayLabels"]
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
@@ -637,6 +640,23 @@ def apply_display_map(inputs, display):
 
 
 DISPLAY_MAP_PATH = Path(__file__).resolve().parent / "recommended-display-map.json"
+DEFAULT_SEASON_PATH = Path(__file__).resolve().parent / "recommended-default-season.json"
+
+
+def apply_default_season(inputs, path):
+    """Đặt mùa mặc định của publication theo lựa chọn biên tập; mùa đó phải có đội ở nguồn."""
+    choice = json.loads(Path(path).read_bytes())
+    if choice.get("schemaVersion") != 1 or set(choice) != {"schemaVersion", "defaultSourceSeasonId", "evidenceRef"}:
+        raise ValueError("Unsupported Recommended default season file")
+    if not isinstance(choice["evidenceRef"], str) or not choice["evidenceRef"].strip():
+        raise ValueError("Recommended default season evidence is missing")
+    season = choice["defaultSourceSeasonId"]
+    inventory = inputs["inventory"]
+    option = next((item for item in inventory.get("seasonOptions", []) if item.get("sourceSeasonId") == season), None)
+    if option is None or option.get("status") != "available":
+        raise ValueError("Recommended default season is not available in source inventory: " + str(season))
+    inputs["inventory"] = {**inventory, "defaultSourceSeasonId": season}
+    return inputs
 
 
 def inputs_from_cache(cache, identity_map=None, other_ledger=None, display_map=None):
@@ -773,6 +793,7 @@ def main():
     parser.add_argument("--catalog", type=Path, required=True)
     parser.add_argument("--tactic-catalog", type=Path, required=True)
     parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
+    parser.add_argument("--default-season", type=Path, default=DEFAULT_SEASON_PATH)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     teams_bytes = args.teams.read_bytes()
@@ -785,6 +806,7 @@ def main():
         inputs = inputs_from_cache(args.cache, args.identity_map, ledger_bytes, args.display_map)
     else:
         parser.error("use --input with --other-ledger or all of --cache, --identity-map and --other-ledger")
+    apply_default_season(inputs, args.default_season)
     build_generation(
         inputs,
         args.output,

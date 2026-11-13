@@ -188,6 +188,13 @@ Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `/data/recommended/<generationId>/`; HTML pin generation đó nên một trang đang
 mở không trộn hai lần cập nhật.
 
+Mùa mặc định (`defaultSourceSeasonId` trong `seasons.json`) do biên tập chọn trong
+[`pipeline/recommended-default-season.json`](../pipeline/recommended-default-season.json),
+không theo thứ tự mùa của SGSDeck. Builder dừng nếu mùa đó không có ở nguồn hoặc chưa
+`available`. Đổi mùa mặc định: sửa file, chạy lại chuỗi `site_localization build → check →
+publish` bên dưới, rồi `team_route_handles --rebind` và `lookup_route_handles --write` (redirect
+301 cho trang mùa của mùa mới hiện tại). File không thuộc glossary nên không làm stale receipt dịch.
+
 Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
 duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)
 là ledger liên kết nội dung đã review và hiện có `entries` rỗng. Mỗi entry phải đủ

@@ -92,23 +92,25 @@ test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện
   const before = seasonPageCatalog(registry, catalog);
   const switched = withDefault(registry, "pk-s24");
   const after = seasonPageCatalog(switched, catalog);
+  const current = registry.defaultSourceSeasonId;
+  const currentSlug = registry.seasonOptions.find((item) => item.sourceSeasonId === current).displayCode.toLowerCase();
+  assert.notEqual(current, "pk-s24");
   assert.ok(!after.pages.some((page) => page.slug === "pk-s24"));
-  assert.ok(after.pages.some((page) => page.slug === "og"), "OG thành mùa cũ nên có trang");
-  assert.ok(before.pages.some((page) => page.slug === "pk-s24") && !before.pages.some((page) => page.slug === "og"));
+  assert.ok(after.pages.some((page) => page.slug === currentSlug), "mùa hiện tại thành mùa cũ nên có trang");
+  assert.ok(before.pages.some((page) => page.slug === "pk-s24") && !before.pages.some((page) => page.slug === currentSlug));
   assert.deepEqual(seasonRedirectRules(after), [
     { from: "/doi-chuan/pk-s24/", to: "/doi-chuan/", status: 301 },
     { from: "/zh/doi-chuan/pk-s24/", to: "/zh/doi-chuan/", status: 301 },
   ]);
-  const og = registry.defaultSourceSeasonId;
-  assert.equal(isOldSeason(og, registry.defaultSourceSeasonId), false);
-  assert.equal(isOldSeason(og, "pk-s24"), true);
+  assert.equal(isOldSeason(current, registry.defaultSourceSeasonId), false);
+  assert.equal(isOldSeason(current, "pk-s24"), true);
   assert.equal(isOldSeason("pk-s24", "pk-s24"), false);
   assert.equal(isOldSeason(null, "pk-s24"), false);
   // Chip "Hiện tại" của ô chọn mùa theo registry, không theo hằng số.
   const option = (id) => registry.seasonOptions.find((item) => item.sourceSeasonId === id);
   assert.match(seasonOptionText(option("pk-s24"), "pk-s24"), /Hiện tại/u);
-  assert.doesNotMatch(seasonOptionText(option(og), "pk-s24"), /Hiện tại/u);
-  assert.match(seasonOptionText(option(og), og), /Hiện tại/u);
+  assert.doesNotMatch(seasonOptionText(option(current), "pk-s24"), /Hiện tại/u);
+  assert.match(seasonOptionText(option(current), current), /Hiện tại/u);
   const client = await readFile(new URL("../js/team-filter-section.js", import.meta.url), "utf8");
   assert.doesNotMatch(client, /CURRENT_SOURCE_SEASON_ID|og-兵演春秋/u);
 });
@@ -128,6 +130,8 @@ test("6b. mùa mặc định có hơn 60 đội: /doi-chuan/ không JS liệt k�
     assert.doesNotMatch(html, new RegExp(`data-ssr-signature="[^"]*,60\\]"`, "u"));
   }
   // Mùa mặc định ≤ 60 đội: dấu danh sách giữ nguyên `PAGE_SIZE` để client tiếp tục nhận lại DOM.
-  const small = recommendedSectionTrees({ family: "recommended", rows, registry, locale: "vi" }).map((tree) => treeToHtml(tree)).join("");
+  const smallId = registry.seasonOptions.map((item) => item.sourceSeasonId)
+    .find((id) => { const n = rows.filter((row) => row.sourceSeasonId === id).length; return n > 0 && n <= 60; });
+  const small = recommendedSectionTrees({ family: "recommended", rows, registry: withDefault(registry, smallId), locale: "vi" }).map((tree) => treeToHtml(tree)).join("");
   assert.match(small, /data-ssr-signature="[^"]*,60\]"/u);
 });
