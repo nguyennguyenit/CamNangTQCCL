@@ -4,7 +4,9 @@ import copy
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
+import pipeline.build_recommended_reference as builder
 from pipeline.build_recommended_reference import (
     _validated_display_notes,
     _validated_raw_display_notes,
@@ -400,6 +402,29 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         ):
             with self.subTest(label), self.assertRaisesRegex(ValueError, message):
                 choose(self._display_inputs()[0], payload)
+
+    def test_cli_applies_default_season_for_input_and_cache_sources(self):
+        inputs, _, _ = self._display_inputs()
+        inputs["inventory"]["seasonOptions"].insert(
+            0, {"sourceSeasonId": "og-x", "nameRaw": "兵演", "label": "OG", "status": "available", "advertisedCountRaw": 5})
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            for name in ("teams", "links", "catalog", "tactics", "ledger"):
+                (root / name).write_text("{}")
+            (root / "inputs.json").write_text(json.dumps(inputs, ensure_ascii=False))
+            (root / "default.json").write_text(json.dumps(
+                {"schemaVersion": 1, "defaultSourceSeasonId": "pk-s28", "evidenceRef": "user-decision:fixture"}))
+            common = ["--teams", str(root / "teams"), "--content-links", str(root / "links"), "--catalog", str(root / "catalog"),
+                      "--tactic-catalog", str(root / "tactics"), "--other-ledger", str(root / "ledger"),
+                      "--default-season", str(root / "default.json"), "--output", str(root / "out")]
+            for label, source in (("input", ["--input", str(root / "inputs.json")]),
+                                  ("cache", ["--cache", str(root), "--identity-map", str(root / "teams")])):
+                with self.subTest(label), \
+                        mock.patch.object(builder, "inputs_from_cache", return_value=copy.deepcopy(inputs)), \
+                        mock.patch.object(builder, "build_generation") as build, \
+                        mock.patch("sys.argv", ["build_recommended_reference", *source, *common]):
+                    builder.main()
+                    self.assertEqual(build.call_args.args[0]["inventory"]["defaultSourceSeasonId"], "pk-s28")
 
     def test_display_notes_require_reviewed_vietnamese_text(self):
         row = {"heroes": [], "alternativeHoldersRaw": []}

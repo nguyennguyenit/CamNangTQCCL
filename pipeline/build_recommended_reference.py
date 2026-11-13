@@ -804,9 +804,9 @@ def main():
         inputs = json.loads(args.input.read_text())
     elif args.cache and args.identity_map and ledger_bytes is not None:
         inputs = inputs_from_cache(args.cache, args.identity_map, ledger_bytes, args.display_map)
-        apply_default_season(inputs, args.default_season)
     else:
         parser.error("use --input with --other-ledger or all of --cache, --identity-map and --other-ledger")
+    apply_default_season(inputs, args.default_season)
     build_generation(
         inputs,
         args.output,
