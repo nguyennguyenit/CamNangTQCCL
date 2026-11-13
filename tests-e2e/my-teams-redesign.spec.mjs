@@ -314,6 +314,41 @@ test.describe("không mất bản soạn", () => {
     await expect.poll(() => mock.server.live("team")[0].data.name).toBe("Sửa xong");
     expect(mock.server.live("team")[0].data.groupId).toBe("main~ghep-team");
   });
+
+  test("lưu chậm: bấm Sửa đội khác trong lúc chờ không mở trình soạn mới; lưu xong không đóng nhầm bản soạn khác", async ({ page }) => {
+    const mock = await open(page, { teams: [{ draft: draftOf("team-a") }, { draft: draftOf("team-b") }] });
+    // Giữ POST /api/roster cho tới khi test nhả: mô phỏng mạng chậm lúc Lưu.
+    let release;
+    const held = new Promise((resolve) => (release = resolve));
+    let holding = true;
+    await page.route("**/api/roster", async (route) => {
+      if (holding && route.request().method() === "POST") await held;
+      await route.fallback();
+    });
+    await card(page, "team-a").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("A đang lưu");
+    const posting = page.waitForRequest((request) => request.method() === "POST" && new URL(request.url()).pathname === "/api/roster");
+    await page.locator("form.mt-editor").getByRole("button", { name: "Lưu", exact: true }).click();
+    await posting;
+
+    await card(page, "team-b").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.");
+    await expect(confirmBox(page)).toHaveCount(0);
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-a");
+
+    holding = false;
+    release();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thay đổi.");
+    await expect.poll(() => mock.server.live("team").find((row) => row.id === "team-a")?.data.name).toBe("A đang lưu");
+
+    // Sau khi lưu xong mới mở B: bản soạn của B còn nguyên.
+    await card(page, "team-b").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("B đang soạn");
+    await page.waitForTimeout(300);
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-b");
+    await expect(nameField(page)).toHaveValue("B đang soạn");
+  });
 });
 
 test.describe("trình soạn và bảng chọn", () => {

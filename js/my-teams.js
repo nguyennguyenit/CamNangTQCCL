@@ -135,8 +135,13 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
    * Trước thao tác sẽ đóng / thay trình soạn: bản soạn có thay đổi chưa lưu thì hỏi lại trong trang. Trả `true` khi được
    * đi tiếp (không có trình soạn, chưa sửa gì, hoặc người dùng chọn bỏ thay đổi); `false` khi Hủy. Không tự đóng
    * trình soạn: thao tác đóng nó khi thật sự xảy ra (đổi hộp, tạo / xóa hộp xong — `paint` đóng trình soạn của hộp khác).
+   * Đang chờ Lưu thì không cho đi tiếp: kết quả lưu (kể cả lỗi / xung đột) phải hiện trên trình soạn đó.
    */
   async function discardOk() {
+    if (view.editor?.isSaving()) {
+      say(L("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.", "正在保存当前编辑的阵容，请保存完成后再试。"));
+      return false;
+    }
     if (!view.editor?.isDirty()) return true;
     return confirmInPage({
       title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？"),
@@ -368,7 +373,10 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const snapshot = api.snapshot();
     const groups = snapshot.groups.filter((group) => group.boxId === team.boxId);
     clearMessages();
+    let editor = null;
+    // Chỉ đóng trình soạn của chính đội này: lời gọi muộn (lưu xong sau khi trình soạn đã đóng) không đụng trình soạn khác.
     const leave = (savedId = null) => {
+      if (view.editor !== editor) return;
       closeEditor();
       view.saved = savedId;
       paint();
@@ -376,7 +384,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     };
     view.saved = null;
     view.editing = team.id;
-    view.editor = createTeamEditor({
+    editor = view.editor = createTeamEditor({
       team,
       teams: snapshot.teams.filter((other) => other.boxId === team.boxId),
       groups: groups.length ? groups : defaultGroupsOf(team.boxId),
@@ -392,11 +400,13 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         return api.saveTeam({ ...candidate, groupId }, { boxId: team.boxId, groupId });
       },
       onSaved: () => {
+        if (view.editor !== editor) return;
         leave(team.id);
         say(L("Đã lưu thay đổi.", "已保存更改。"));
       },
       onCancel: () => leave(),
       onKeepServer: () => {
+        if (view.editor !== editor) return;
         say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。"));
         leave();
       },

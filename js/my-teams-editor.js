@@ -417,6 +417,8 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
 
   /* ---------- Lưu ---------- */
 
+  let saving = false;
+
   async function submit() {
     showAlert("");
     conflictSlot.replaceChildren();
@@ -427,12 +429,14 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
       return;
     }
     saveButton.disabled = true;
+    saving = true;
     let result;
     try {
       result = await save(candidate);
     } catch {
       result = { ok: false, pending: true, code: "network" };
     }
+    saving = false;
     saveButton.disabled = false;
     if (result.ok) {
       onSaved(result.team);
@@ -475,6 +479,8 @@ export function createTeamEditor({ team, teams, groups, names, catalog, owned = 
   const baseline = snapshotOf();
   return Object.assign(form, {
     isDirty: () => snapshotOf() !== baseline,
+    /** Đang chờ kết quả Lưu: chưa được đóng trình soạn (kết quả, kể cả lỗi / xung đột, phải hiện trên chính nó). */
+    isSaving: () => saving,
     dispose: () => lifetime.abort(),
   });
 }
