@@ -1,9 +1,12 @@
 ---
 // Trang tĩnh một đội cộng đồng `/doi-cong-dong/<id>/` (vi) và `/zh/doi-cong-dong/<id>/` (zh), dựng lúc build từ export của Worker.
+// Bố cục theo artboard DoiCongDongDetailMoi (cùng class với khung SPA trong js/community-team-detail.js): đầu trang
+// (tên đội h1 + meta | bảng điểm do JS gắn), cột trái Đội hình + Phân tích + câu hỏi thường gặp, cột phải Ảnh đội
+// (+ Đội tương tự do JS gắn), rồi chiến báo + bình luận trong mount `#community-teams[data-team-id]`.
 // Bản đúng ngôn ngữ văn bản người dùng (`textLang`) tự canonical và mang JSON-LD; bản còn lại canonical về bản đó.
 // Cả hai bản tắt hreflang (`alternates={false}`): chúng không phải cặp dịch của nhau mà là hai khung UI cho một nội dung.
-// Vote/bình luận/chiến báo/trạng thái mùa tải live qua js/community-teams.js (mount `#community-teams[data-team-id]`).
-// Chữ người dùng chỉ đi qua biểu thức Astro (tự escape); JSON-LD qua `jsonLd()`.
+// Vote/bình luận/chiến báo/trạng thái mùa tải live qua js/community-teams.js.
+// Chữ người dùng chỉ đi qua biểu thức Astro (tự escape); JSON-LD qua `jsonLd()`; ô chân dung qua `treeToHtml` (escape sẵn).
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { jsonLd } from '../../lib/blog-posts.ts';
 import { formatPostDate } from '../../lib/blog-seo.ts';
@@ -11,6 +14,8 @@ import { communityTeamPageModel, metaText, teamAuthorName } from '../../lib/comm
 import type { CommunityTeam } from '../../lib/community-teams.ts';
 import { HREFLANG, type SiteLocale } from '../../lib/locale-routes';
 import { seasonLabel, troopLabel } from '../../../js/community-team-data.js';
+import { portraitTree } from '../../../js/hero-portrait.js';
+import { treeToHtml } from '../../../js/view-tree.js';
 import { localePath, pick, withLocale } from '../../../js/i18n.js';
 
 interface Props {
@@ -27,6 +32,31 @@ const listPath = localePath('/doi-cong-dong/', locale);
 const troop = withLocale(locale, () => troopLabel(team.troop)) as string;
 const season = seasonLabel(team.season, locale) as string;
 const images = Array.from({ length: team.imageCount }, (_, position) => position);
+const roles = [t('Chủ tướng', '主将'), t('Phó tướng 1', '副将 1'), t('Phó tướng 2', '副将 2')];
+const analysisLabels: [keyof CommunityTeam['analysis'], string][] = [
+  ['playstyle', t('Lối chơi', '打法')],
+  ['strengths', t('Điểm mạnh', '优点')],
+  ['weaknesses', t('Điểm yếu', '缺点')],
+  ['counters', t('Khắc chế', '克制')],
+  ['counteredBy', t('Bị khắc chế bởi', '被克制于')],
+  ['substitutes', t('Thay thế', '替补')],
+];
+const analysis = analysisLabels.filter(([key]) => typeof team.analysis[key] === 'string' && team.analysis[key]!.trim());
+const langTitle = team.textLang === 'zh' ? t('Viết bằng tiếng Trung', '以中文撰写') : t('Viết bằng tiếng Việt', '以越南语撰写');
+// `portraitTree` là JS có tham số mặc định nên TS chỉ suy ra phần có giá trị mặc định; khai kiểu đủ ở đây.
+type PortraitOptions = { chinese: string; nameVi: string; iconUrl: string | null; className: string; alt: string };
+const portraitOf = portraitTree as unknown as (options: PortraitOptions) => Parameters<typeof treeToHtml>[0];
+const portraitHtml = (index: number) => {
+  const data = model.heroPortraits[index];
+  return treeToHtml(portraitOf({
+    chinese: data?.chinese ?? '',
+    nameVi: data?.nameVi ?? model.names.heroes[index],
+    iconUrl: data?.iconUrl ?? null,
+    className: 'cm-team-hero-card-portrait',
+    alt: '',
+  }));
+};
+const initial = (authorName.trim()[0] ?? '?').toUpperCase();
 ---
 <SiteLayout
   title={metaText(model.copy.title)}
@@ -44,71 +74,139 @@ const images = Array.from({ length: team.imageCount }, (_, position) => position
     {model.structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
 
-  <p class="cm-team-static-back"><a class="cm-link" href={listPath}>{t('← Về danh sách đội cộng đồng', '← 返回社区阵容列表')}</a></p>
+  <div class="cm-team-detail-page">
+    <nav class="cm-team-back" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+      <a class="cm-team-back-link" href={listPath}>
+        <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
+        {t('Về danh sách đội cộng đồng', '返回社区阵容列表')}
+      </a>
+    </nav>
 
-  <article class="cm-page cm-team-static" data-team-static aria-labelledby="cm-team-static-title">
-    <h1 id="cm-team-static-title" class="detail-title" lang={textLang}>{team.title}</h1>
-    <p class="cm-team-meta">
-      <span class="cm-team-season">{season}</span>
-      <span class="cm-team-troop">{troop}</span>
-      <span class="cm-lang-tag" data-lang={team.textLang}>[{team.textLang.toUpperCase()}]</span>
-      <span class="cm-team-author-name">{t('Tác giả', '作者')}: {authorName}</span>
-      <time class="cm-time" datetime={team.approvedAt}>{formatPostDate(team.approvedAt, locale)}</time>
-    </p>
-
-    {images.length > 0 && (
-      <div class="cm-team-images">
-        {images.map((position) => (
-          <a class="cm-team-image-link" href={`/api/community-teams/${team.id}/images/${position}`} target="_blank" rel="noopener">
-            <img
-              class="cm-team-image"
-              src={`/api/community-teams/${team.id}/images/${position}`}
-              alt={t(`Ảnh ${position + 1} của đội`, `阵容图片 ${position + 1}`)}
-              loading="lazy"
-              decoding="async"
-            />
-            <span class="visually-hidden">{t('(mở tab mới)', '（在新标签页打开）')}</span>
-          </a>
-        ))}
-      </div>
-    )}
-
-    <table class="cm-team-table">
-      <caption class="visually-hidden">{t('Tướng và chiến pháp', '武将与战法')}</caption>
-      <thead>
-        <tr>
-          <th scope="col">{t('Tướng', '武将')}</th>
-          <th scope="col">{t('Chiến pháp 1', '战法 1')}</th>
-          <th scope="col">{t('Chiến pháp 2', '战法 2')}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {team.heroes.map((heroId, index) => (
-          <tr>
-            <th scope="row" data-hero-id={heroId}>
-              {model.heroPaths[index]
-                ? <a class="cm-link" href={model.heroPaths[index]}>{model.names.heroes[index]}</a>
-                : model.names.heroes[index]}
-            </th>
-            {model.names.tactics[index]!.map((name, position) => <td data-tactic-id={team.tactics[index]![position]}>{name}</td>)}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-
-    <section class="cm-team-faq" aria-labelledby="cm-team-faq-title">
-      <h2 id="cm-team-faq-title" class="cm-title">{t('Câu hỏi thường gặp', '常见问题')}</h2>
-      {model.copy.faq.map((entry) => (
-        <div class="cm-team-faq-item" data-faq={entry.key}>
-          <h3 class="cm-subtitle">{entry.q}</h3>
-          <p class="cm-team-text" lang={entry.key === 'lineup' ? undefined : textLang}>{entry.a}</p>
+    <article class="cm-team-detail cm-team-static" data-team-static aria-labelledby="cm-team-static-title">
+      <header class="cm-team-detail-head">
+        <div class="cm-team-detail-id">
+          <p class="cm-team-kicker">{t(`Đội cộng đồng · ${season}`, `社区阵容 · ${season}`)}</p>
+          <h1 id="cm-team-static-title" class="cm-team-detail-title" lang={textLang}>{team.title}</h1>
+          <p class="cm-team-detail-meta cm-team-meta">
+            <span class="cm-team-troop-pill"><i class="cm-team-troop-dot" aria-hidden="true" data-troop={team.troop}></i>{troop}</span>
+            <abbr class="cm-lang-tag cm-team-lang" data-lang={team.textLang} title={langTitle}>{team.textLang.toUpperCase()}</abbr>
+            <span class="cm-team-detail-author">
+              <span class="cm-avatar cm-avatar-fallback" aria-hidden="true">{initial}</span>
+              <span class="cm-team-author-name">{t('Tác giả: ', '作者：')}<strong>{authorName}</strong></span>
+            </span>
+            <span class="cm-team-detail-date">{t('Duyệt lúc ', '审核于 ')}<time class="cm-time" datetime={team.approvedAt}>{formatPostDate(team.approvedAt, locale)}</time></span>
+          </p>
         </div>
-      ))}
-    </section>
-  </article>
+        <div class="cm-team-detail-side" data-cm-team-side hidden></div>
+      </header>
 
-  <div id="community-teams" class="cm-team-root" data-team-id={team.id}>
-    <noscript><p class="scope-note">{t('Bình chọn, bình luận và chiến báo cần JavaScript.', '投票、评论和战报需要启用 JavaScript。')}</p></noscript>
+      <div class="cm-team-detail-main">
+        <section class="cm-team-lineup-section" aria-labelledby="cm-team-lineup-title">
+          <div class="cm-team-section-head">
+            <h2 id="cm-team-lineup-title" class="cm-team-section-title">{t('Đội hình', '阵容')}</h2>
+            <p class="cm-team-section-note">{t('Tướng đứng đầu bài đăng là chủ tướng', '排在首位的武将为主将')}</p>
+          </div>
+          <ol class="cm-team-hero-cards">
+            {team.heroes.map((heroId, index) => (
+              <li class="cm-team-hero-card">
+                <div class="cm-team-hero-card-id">
+                  <Fragment set:html={portraitHtml(index)} />
+                  <div class="cm-team-hero-card-text">
+                    <span class="cm-team-caps">{roles[index]}</span>
+                    <h3 class="cm-team-hero-card-name" data-hero-id={heroId}>
+                      {model.heroPaths[index]
+                        ? <a class="cm-team-hero-card-link" href={model.heroPaths[index]}>{model.names.heroes[index]}</a>
+                        : model.names.heroes[index]}
+                    </h3>
+                  </div>
+                </div>
+                <div class="cm-team-hero-card-tactics">
+                  <span class="cm-team-caps">{t('Chiến pháp', '战法')}</span>
+                  <ol class="cm-team-tactic-list">
+                    {model.names.tactics[index]!.map((name, position) => {
+                      const href = model.tacticPaths[index]?.[position];
+                      const slot = position ? 'B' : 'A';
+                      return (
+                        <li>
+                          {href
+                            ? <a class="cm-team-tactic-link" href={href} data-tactic-id={team.tactics[index]![position]} title={t('Mở trong Tra cứu', '在查询中打开')}><span class="cm-team-tactic-slot" aria-hidden="true">{slot}</span><span class="cm-team-tactic-name">{name}</span><svg class="cm-team-tactic-go" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg></a>
+                            : <span class="cm-team-tactic-link" data-tactic-id={team.tactics[index]![position]}><span class="cm-team-tactic-slot" aria-hidden="true">{slot}</span><span class="cm-team-tactic-name">{name}</span></span>}
+                        </li>
+                      );
+                    })}
+                  </ol>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {analysis.length > 0 && (
+          <section class="cm-team-analysis-section" aria-labelledby="cm-team-analysis-title">
+            <div class="cm-team-section-head">
+              <h2 id="cm-team-analysis-title" class="cm-team-section-title">{t('Phân tích của tác giả', '作者分析')}</h2>
+              <p class="cm-team-section-note"><abbr class="cm-lang-tag cm-team-lang" data-lang={team.textLang} title={langTitle}>{team.textLang.toUpperCase()}</abbr>{langTitle}</p>
+            </div>
+            <dl class="cm-team-analysis">
+              {analysis.map(([key, label]) => (
+                <div class="cm-team-analysis-item">
+                  <dt>{label}</dt>
+                  <dd class="cm-team-text" lang={textLang}>{team.analysis[key]}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+        )}
+
+        <details class="cm-team-faq">
+          <summary class="cm-team-faq-summary">
+            <h2 id="cm-team-faq-title" class="cm-team-faq-title">{t('Câu hỏi thường gặp', '常见问题')}</h2>
+          </summary>
+          {model.copy.faq.map((entry) => (
+            <div class="cm-team-faq-item" data-faq={entry.key}>
+              <h3 class="cm-team-faq-q">{entry.q}</h3>
+              <p class="cm-team-text" lang={entry.key === 'lineup' ? undefined : textLang}>{entry.a}</p>
+            </div>
+          ))}
+        </details>
+      </div>
+
+      <aside class="cm-team-detail-aside" aria-label={t('Ảnh và đội liên quan', '图片与相关阵容')}>
+        <section class="cm-team-aside-card cm-team-photos" aria-labelledby="cm-team-photos-title">
+          <div class="cm-team-aside-head">
+            <h2 id="cm-team-photos-title" class="cm-team-aside-title">{t('Ảnh đội', '阵容图片')}</h2>
+            <span class="cm-team-aside-count">{t(`${images.length} ảnh`, `${images.length} 张`)}</span>
+          </div>
+          {images.length > 0 ? (
+            <div class="cm-team-images">
+              {images.map((position) => (
+                <a class="cm-team-image-link" href={`/api/community-teams/${team.id}/images/${position}`} target="_blank" rel="noopener">
+                  <img
+                    class="cm-team-image"
+                    src={`/api/community-teams/${team.id}/images/${position}`}
+                    alt={t(`Ảnh ${position + 1} của đội`, `阵容图片 ${position + 1}`)}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <span class="cm-team-image-open" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path></svg></span>
+                  <span class="visually-hidden">{t('(mở tab mới)', '（在新标签页打开）')}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div class="cm-team-card-media" data-empty="true">
+              <span class="cm-team-media-empty-title">{t('Chưa có ảnh đội', '暂无阵容图片')}</span>
+              <span class="cm-team-media-empty-hint">{t('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看')}</span>
+            </div>
+          )}
+          {images.length > 0 && <p class="cm-team-aside-note">{t('Bấm để mở ảnh gốc trong tab mới. Tác giả đăng 1–3 ảnh đội hình khi gửi bài.', '点击在新标签页打开原图。作者发布时上传 1–3 张阵容图。')}</p>}
+        </section>
+      </aside>
+    </article>
+
+    <div id="community-teams" class="cm-team-root cm-team-detail-after" data-team-id={team.id}>
+      <noscript><p class="scope-note">{t('Bình chọn, bình luận và chiến báo cần JavaScript.', '投票、评论和战报需要启用 JavaScript。')}</p></noscript>
+    </div>
   </div>
   <script is:inline type="module" src="/js/community-teams.js" slot="scripts"></script>
 </SiteLayout>

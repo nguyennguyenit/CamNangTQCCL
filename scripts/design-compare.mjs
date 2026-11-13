@@ -103,7 +103,7 @@ async function openBrowser() {
   return chromium.launch();
 }
 
-async function newContext(browser, { theme, width, height = 900 }) {
+export async function newContext(browser, { theme, width, height = 900 }) {
   const context = await browser.newContext({ viewport: { width, height }, deviceScaleFactor: 1 });
   // Mỗi lần tải trang là một lần đo sạch: bỏ lựa chọn giao diện trang tự ghi (localStorage, trừ `theme`)
   // và snapshot quay lại (sessionStorage) để probe sau không đo nhầm trạng thái do probe trước để lại.
@@ -126,7 +126,7 @@ async function waitAttached(page, selector, timeout = 20_000) {
 }
 
 /** Theme đã áp + font đã tải + vẽ xong một frame — dùng chung cho ảnh chụp và probe. */
-async function pageSettled(page, theme, timeout = 20_000) {
+export async function pageSettled(page, theme, timeout = 20_000) {
   if (theme === 'dark') await page.waitForSelector('html[data-theme="dark"]', { timeout });
   await page.evaluate(async () => {
     await document.fonts.ready;
@@ -141,7 +141,7 @@ async function readyPage(page, selector, { theme, timeout = 20_000 } = {}) {
 }
 
 /** Đóng server HTTP đã phục vụ trang so ảnh; keep-alive phải bị cắt thì tiến trình mới thoát. */
-async function closeServer(server) {
+export async function closeServer(server) {
   if (!server) return;
   server.closeAllConnections?.();
   await new Promise((done) => server.close(done));
@@ -151,7 +151,7 @@ async function closeServer(server) {
  * Ảnh ghép: artboard (trái) cạnh localhost (phải).
  * `clip` cắt theo đỉnh ảnh (`{y, height}`) hoặc theo đáy (`{bottom}` — footer, chiều cao hai ảnh khác nhau).
  */
-function compositeHtml({ artboard, width, clip }) {
+export function compositeHtml({ artboard, width, clip }) {
   const frameStyle = clip
     ? (clip.bottom ? `height:${clip.bottom}px;display:flex;align-items:flex-end` : `height:${clip.height}px`)
     : '';

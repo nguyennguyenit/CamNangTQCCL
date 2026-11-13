@@ -1,7 +1,7 @@
 // Bình luận dưới trang chi tiết đội. Chỉ hiện bình luận cùng `lang` với trang (vi/zh không trộn).
 // Nội dung người dùng luôn là text node (`el`), không bao giờ qua innerHTML.
 
-import { L } from './i18n.js';
+import { L, formatNumber } from './i18n.js';
 import { el } from './render.js';
 import {
   COMMENT_MAX_LENGTH,
@@ -39,15 +39,30 @@ function commentItem(comment, { onDelete, tagged = false }) {
  * Khối bình luận. `user` null → mời đăng nhập thay cho ô nhập.
  * `sharedPool` (đội cộng đồng, kho chung vi/zh): không lọc theo `lang`, mỗi bình luận kèm nhãn `[VI]`/`[ZH]`;
  * bài mới vẫn gửi `lang` của trang.
+ * `count` (tuỳ chọn): số bình luận do worker đếm cho trang (đội cộng đồng: `commentCount` của đội — đếm mọi bình
+ * luận của pageKey nên có thể gồm bình luận đã bị ẩn, không phải đúng số đang hiện); hiện cạnh tiêu đề "Bình luận 12"
+ * và cộng/trừ theo lượt đăng/xoá trong trang. Nạp xong trang cuối thì số lấy theo danh sách đang hiện (không còn
+ * "Bình luận 3" trên dòng "Chưa có bình luận nào"); còn trang sau thì không nhỏ hơn số đã hiện.
  * Trả về element section để trang gắn vào.
  */
-export function mountComments(container, { pageKey, lang, user, sharedPool = false }) {
+export function mountComments(container, { pageKey, lang, user, sharedPool = false, count = null }) {
   const titleId = 'cm-comments-title';
   const list = el('ol', { class: 'cm-comment-list', 'aria-labelledby': titleId });
   const empty = el('p', { class: 'scope-note cm-empty' }, L('Chưa có bình luận nào. Hãy là người đầu tiên!', '还没有评论，来发表第一条吧！'));
   const status = liveStatus();
   const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm bình luận', '查看更多评论'));
   let cursor = null;
+  let total = Number.isFinite(Number(count)) && count !== null ? Math.max(0, Number(count)) : null;
+  const countNode = total === null ? null : el('span', { class: 'cm-title-count' });
+  const paintCount = () => {
+    if (countNode) countNode.textContent = formatNumber(total);
+  };
+  const bump = (delta) => {
+    if (total === null) return;
+    total = Math.max(0, total + delta);
+    paintCount();
+  };
+  paintCount();
 
   const refreshEmpty = () => {
     empty.hidden = list.childElementCount > 0;
@@ -60,6 +75,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
       await api(`/api/comments/${encodeURIComponent(comment.id)}`, { method: 'DELETE' });
       const next = item.nextElementSibling || item.previousElementSibling;
       item.remove();
+      bump(-1);
       refreshEmpty();
       status.set(L('Đã xoá bình luận.', '评论已删除。'));
       (next?.querySelector('button, a') || textarea || moreButton).focus?.();
@@ -84,6 +100,10 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
     append(Array.isArray(body?.items) ? body.items : []);
     cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
     moreButton.hidden = !cursor;
+    if (total !== null) {
+      total = cursor ? Math.max(total, list.childElementCount) : list.childElementCount;
+      paintCount();
+    }
   };
 
   moreButton.addEventListener('click', async () => {
@@ -146,6 +166,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
         const created = await api('/api/comments', { method: 'POST', json: { page: pageKey, lang, body } });
         const comment = { ...created, lang: created?.lang || lang, author: created?.author || user, canDelete: created?.canDelete ?? true };
         list.prepend(commentItem(comment, { onDelete, tagged: sharedPool }));
+        bump(1);
         refreshEmpty();
         textarea.value = '';
         updateCounter();
@@ -162,7 +183,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
   }
 
   const section = el('section', { class: 'cm-block cm-comments', 'aria-labelledby': titleId }, [
-    el('h2', { id: titleId, class: 'cm-title' }, L('Bình luận', '评论')),
+    el('h2', { id: titleId, class: 'cm-title' }, countNode ? [L('Bình luận', '评论'), ' ', countNode] : L('Bình luận', '评论')),
     composer,
     status,
     list,

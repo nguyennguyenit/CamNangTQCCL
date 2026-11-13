@@ -1,7 +1,8 @@
 // Dữ liệu tên cho trang Đội cộng đồng: nạp từ điển tướng/chiến pháp (đã xác minh sha256 qua manifest Tra cứu),
 // nhãn theo locale, chỉ mục id và datalist. Server chỉ lưu id nên mọi tên hiển thị đi qua đây.
 
-import { createEntityIndex } from './analyze-map.js';
+import { classifyName, createEntityIndex } from './analyze-map.js';
+import { heroFamilyId } from './hero-identity.js';
 import { L, currentLocale } from './i18n.js';
 import { heroPortrait } from './hero-portrait.js';
 import { createLookupPayloadLoader } from './lookup-data.js';
@@ -119,6 +120,48 @@ export function heroBadge(lexicon, id) {
       : null,
     el('span', { class: 'cm-team-hero-name' }, lexicon ? lexicon.heroName(id) : String(id)),
   ]);
+}
+
+/** Gốc tướng (bỏ tiền tố SP/CO/40Y) của một id trong từ điển; id lạ → `null`. */
+function familyOf(lexicon, id) {
+  const viet = lexicon.heroRecord(id)?.viet;
+  try {
+    return viet ? heroFamilyId(viet) : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Đổi tên tướng đã lưu dạng chữ (chiến báo: chữ Hán AI đọc hoặc chữ người gửi gõ) sang tên hiển thị theo locale
+ * bằng chỉ mục từ điển có sẵn (`classifyName`: khớp chữ Hán/bí danh rồi so gần đúng). Chỉ đổi khi khớp chắc;
+ * tên không tra được giữ nguyên chữ gốc.
+ *
+ * `preferIds` (tướng của đội, vd. `team.heroes`): ảnh chiến báo không phân biệt bản SP với bản thường (cùng chữ Hán),
+ * nên tên phía "đội ta" (`side === 'ally'`) khớp bản thường mà đội có bản cùng gốc thì lấy id của đội.
+ * Phía đối thủ giữ kết quả tra thẳng.
+ */
+export function heroNameResolver(lexicon, { preferIds = [] } = {}) {
+  const cache = new Map();
+  const preferred = new Map();
+  if (lexicon) {
+    for (const id of preferIds) {
+      const family = familyOf(lexicon, id);
+      if (family && !preferred.has(family)) preferred.set(family, id);
+    }
+  }
+  return (raw, side = '') => {
+    const text = String(raw ?? '').trim();
+    if (!text || !lexicon) return text;
+    const key = `${side === 'ally' ? 'ally' : 'other'}\u0000${text}`;
+    if (!cache.has(key)) {
+      const cell = classifyName(text, lexicon.indexes.heroes);
+      let id = cell.state === 'sure' ? cell.id : null;
+      if (id && side === 'ally') id = preferred.get(familyOf(lexicon, id)) ?? id;
+      cache.set(key, id ? lexicon.heroName(id) : text);
+    }
+    return cache.get(key);
+  };
 }
 
 /** Tên chiến pháp theo locale; `lexicon` null → id thô. */

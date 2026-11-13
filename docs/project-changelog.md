@@ -1,5 +1,33 @@
 # Project Changelog
 
+## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
+
+### Nền dùng chung
+- Added: component `chip-chon-mot` (`.chip-chon`, nhóm radio chọn một giá trị, chấm binh chủng) và `hop-xac-nhan` (`.hop-xac-nhan`) kèm `js/inline-confirm.js` — hộp xác nhận trong trang thay `window.confirm`, có `role="alertdialog"`, focus vào Huỷ, Tab vòng trong hộp, Escape, lỗi giữ hộp mở. Chưa trang nào dùng; các nhóm tự chuyển.
+- Added: token `size.dialog-confirm`, `shadow.ring-select-ink`; `scripts/design-canvas/compare-moi.mjs` so ảnh artboard với trang thật có mock `/api/**` (khách / đăng nhập / quản trị root / bị khoá có hạn) và chặn tràn ngang ở 390px; cặp mỗi nhóm ở `scripts/design-canvas/moi-pairs/<nhóm>.mjs`. Dữ liệu mẫu Đội cộng đồng tách từ `capture-community.mjs` sang `community-samples.mjs`.
+- Added: 4 khối CSS rỗng `/* moi:<nhóm>:start */ … end` và neo `tokens.json` riêng cho từng nhóm (README thiết kế, mục "Tình trạng dựng vào site").
+- Fixed: `node scripts/design-tokens.mjs --check` đỏ từ trước — `--f-han`, `--f-han-select` có trong CSS nhưng thiếu `tokens.json` (thêm `color.faction.han`/`han-select`); hai `font-weight: 600` thô ở khối Độ phủ kho đổi sang `--weight-semibold`.
+- Fixed: `hop-xac-nhan` — bấm đúp / chạm đúp nút mở không còn làm cú bấm thứ hai trúng nút Xoá (hay Huỷ) của hộp vừa hiện: bỏ qua cú bấm chuột có `detail > 1` và cú chạm trong 300 ms đầu; bàn phím không bị chặn. Bấm nền vẫn cần nhấn và thả trên nền sau 300 ms.
+
+### Đội cộng đồng
+- Changed: `/doi-cong-dong/` (và `/zh/`) dựng theo 10 artboard `DoiCongDongMoi`, `…DetailMoi`, `…NewMoi`, `…MineMoi`, `BanNoticeMoi` (+ Mobile). Đầu trang chung (nhãn mùa, một h1 "Đội cộng đồng", lời dẫn, nút "Đội của tôi"/"Đăng đội" hoặc tab); danh sách có thanh lọc (ô Mùa, sắp xếp Hot/Mới/Top dạng nhóm nút `aria-pressed` thay select, ô lọc tướng gập trên mobile) và lưới thẻ ảnh (thẻ không ảnh có trạng thái "Chưa có ảnh đội"); trang đội (tĩnh và `?id=`) hai cột: tên đội là h1 + bảng "Điểm cộng đồng", Đội hình (thẻ tướng, chiến pháp A/B dẫn sang Tra cứu), Phân tích, chiến báo + bình luận, cột Ảnh đội + Đội tương tự; chế độ `?id=` ẩn đầu trang danh sách để chỉ còn một h1.
+- Changed: form đăng đội ba bước (ảnh 1–3 đọc AI từng ảnh, khối tình trạng 9 ô kiểu Soi đội + nút nhảy tới ô cần chọn, thông tin đội) và cột "Gửi để duyệt" có danh sách kiểm tra; binh chủng chọn bằng chip radio (component `chip-chon-mot`) thay `<select id="cm-team-troop">`, giá trị gửi đi giữ mã API.
+- Changed: xoá đội (trang đội của chủ đội và "Đội của tôi") hỏi lại bằng hộp xác nhận trong trang `confirmInPage` thay `window.confirm`; lỗi xoá hiện trong hộp. "Đội của tôi" có thẻ ngang theo trạng thái, bảng "Tình trạng" và các bước duyệt.
+- Changed: khối chiến báo trên trang đội hiện tên tướng (chiến báo, đối thủ thường gặp) theo từ điển — tên Việt ở bản vi, chữ Hán ở bản zh, tên không tra được giữ chữ gốc; từ điển chỉ nạp khi có chiến báo để hiện. Tiêu đề "Bình luận" kèm số bình luận của đội, cộng/trừ khi đăng/xoá. `mountReports({ heroNames })`, `mountComments({ count })`, `heroNameResolver` trong `community-team-data.js`; trang khác dùng hai component không truyền thì giữ như cũ.
+- Changed: thông báo đăng nhập bị chặn có dòng đậm "Tài khoản đã bị khoá đến <ngày giờ>." / "… vĩnh viễn." (từ `until` của `/api/ban-notice`), lý do, gợi ý, link Quy tắc cộng đồng, nút đóng cùng hàng.
+- Added: token `type.cm-card-title`/`cm-section-title`/`cm-stat`, `size.cm-*` (cột phải, ô ảnh, ô Mùa, hộp thông báo…), component `dau-trang-doi-cong-dong`, `the-doi-cong-dong`, `chi-tiet-doi-cong-dong`, `form-dang-doi`, `the-doi-cua-toi-cong-dong`, `thong-bao-khoa`; JS tách `community-team-ui.js`, `community-team-cards.js`, `community-team-detail.js`, `community-team-form-parts.js`; model trang đội thêm `tacticPaths`, `heroPortraits`. E2E mới `tests-e2e/community-teams-redesign.spec.mjs`.
+- Không vẽ dòng "Binh thư: Tác giả không ghi" của artboard: đội cộng đồng không lưu binh thư. Câu hỏi thường gặp (nguồn FAQPage JSON-LD) giữ trong khối gập cuối cột trái.
+- Fixed: trang đội `?id=` (đội chờ duyệt / chưa có trang tĩnh) dẫn tên tướng và chiến pháp A/B sang Tra cứu như trang tĩnh (trước đây chỉ là chữ). Tiêu đề "Bình luận" lấy theo danh sách đang hiện khi đã nạp hết — số của worker đếm cả bình luận đã ẩn nên từng hiện "Bình luận 3" trên dòng "Chưa có bình luận nào".
+
+### Quản trị
+- Chưa dựng.
+
+### Đội của tôi
+- Chưa dựng.
+
+### Bài viết + Đội chuẩn có kho
+- Chưa dựng.
+
 ## 2026-11-13 (Đội chuẩn: mùa mặc định là PK-S27 Hán Diễm Trường Minh)
 
 ### Changed

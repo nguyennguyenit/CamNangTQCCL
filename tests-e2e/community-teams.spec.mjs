@@ -40,12 +40,15 @@ test("danh sách: đổi sắp xếp gọi sort=top, lọc tướng gọi heroes
   await expect(cards.first()).toContainText("Tào Tháo");
   await expect(cards.first().locator("img.cm-team-thumb")).toHaveAttribute("src", "/api/community-teams/t1/images/0");
   await expect(cards.first().locator("img.cm-team-thumb")).toHaveAttribute("loading", "lazy");
-  await expect(cards.first()).toContainText("[VI]");
+  // Nhãn ngôn ngữ "VI" (ô mono, `title` nói rõ ngôn ngữ) thay "[VI]".
+  await expect(cards.first().locator(".cm-lang-tag")).toHaveText("VI");
   const listCalls = () => calls.filter((call) => call.method === "GET" && call.path === "/api/community-teams");
   expect(listCalls()[0].search.get("season")).toBe("s1");
   expect(listCalls()[0].search.get("sort")).toBe("hot");
 
-  await page.getByLabel("Sắp xếp").selectOption("top");
+  // Sắp xếp là nhóm nút bật (aria-pressed) thay select.
+  await page.getByRole("group", { name: "Sắp xếp" }).getByRole("button", { name: "Top" }).click();
+  await expect(page.getByRole("button", { name: "Top" })).toHaveAttribute("aria-pressed", "true");
   await expect.poll(() => listCalls().some((call) => call.search.get("sort") === "top")).toBe(true);
 
   await page.getByLabel("Lọc theo tướng 1").fill("Tào Tháo");
@@ -100,7 +103,7 @@ test("/zh/doi-cong-dong/: tên tướng và chiến pháp tiếng Trung, [VI] tr
   await expect(detail).toContainText("關羽");
   await expect(detail).toContainText("兵鋒"); // tactic:binh-phong
   await expect(detail).not.toContainText("Tào Tháo");
-  await expect(detail.locator(".cm-team-analysis .cm-lang-tag").first()).toHaveText("[VI]");
+  await expect(detail.locator(".cm-team-analysis .cm-lang-tag").first()).toHaveText("VI");
   await expect(detail.locator(".cm-team-text").first()).toContainText("Mở đầu bằng khống chế.");
   // Kho dùng chung vi/zh: bình luận và chiến báo tiếng Việt vẫn hiện ở bản zh, kèm nhãn.
   const comment = page.locator(".cm-comment");
@@ -122,15 +125,15 @@ test("chi tiết mùa mở: vote gửi PUT {value:1} và cập nhật số; bấ
   });
   await page.goto("/doi-cong-dong/?id=t1");
   const up = page.locator("button[data-vote='up']");
-  await expect(up).toHaveText("▲ 3");
+  await expect(up).toHaveText("3");
   await expect(up).toBeEnabled();
   await up.click();
-  await expect(up).toHaveText("▲ 4");
+  await expect(up).toHaveText("4");
   await expect(up).toHaveAttribute("aria-pressed", "true");
   const vote = calls.find((call) => call.method === "PUT" && call.path === "/api/community-teams/t1/vote");
   expect(vote.body).toEqual({ value: 1 });
   await up.click();
-  await expect(up).toHaveText("▲ 3");
+  await expect(up).toHaveText("3");
   expect(calls.filter((call) => call.method === "PUT").at(-1).body).toEqual({ value: 0 });
   // Mùa mở: có form chiến báo.
   await expect(page.locator(".cm-reports")).toContainText("Chiến báo");
@@ -220,7 +223,7 @@ test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận,
   await expect(page.locator(".cm-team-similar-warning")).toContainText("1 đội");
 
   await page.locator("#cm-team-title-input").fill("Đội Tào Quan Trương");
-  await page.locator("#cm-team-troop").selectOption("ky");
+  await page.getByRole("group", { name: "Binh chủng" }).getByRole("radio", { name: "Kỵ" }).check();
   await page.locator("#cm-team-playstyle").fill("Mở đầu bằng khống chế rồi dồn sát thương.");
   await page.getByRole("button", { name: "Gửi để duyệt" }).click();
   await expect(page.getByText("Còn ô chưa chắc chắn: hãy chọn gợi ý hoặc sửa lại tên.")).toBeVisible();
@@ -270,7 +273,7 @@ test("đăng đội: AI trả 503 → thông báo theo mã, nhập tay vẫn g�
     }
   }
   await page.locator("#cm-team-title-input").fill("Đội nhập tay");
-  await page.locator("#cm-team-troop").selectOption("cung");
+  await page.getByRole("group", { name: "Binh chủng" }).getByRole("radio", { name: "Cung" }).check();
   await page.locator("#cm-team-playstyle").fill("Nhập tay vì AI đang bận.");
   await page.getByRole("button", { name: "Gửi để duyệt" }).click();
   await expect.poll(() => calls.find((call) => call.method === "POST" && call.path === "/api/community-teams")?.body.heroes).toEqual(HEROES);
@@ -309,7 +312,7 @@ test("đăng đội: server trả invalid_title → thông báo theo mã và foc
     }
   }
   await page.locator("#cm-team-title-input").fill("Đội hợp lệ phía client");
-  await page.locator("#cm-team-troop").selectOption("cung");
+  await page.getByRole("group", { name: "Binh chủng" }).getByRole("radio", { name: "Cung" }).check();
   await page.locator("#cm-team-playstyle").fill("Nhập tay đủ dài để qua kiểm client.");
   await page.getByRole("button", { name: "Gửi để duyệt" }).click();
   await expect(page.getByText("Hãy nhập tiêu đề (tối đa 80 ký tự).")).toBeVisible();
@@ -332,7 +335,6 @@ test("Của tôi: trạng thái + lý do từ chối, xoá trả has_evidence hi
         : { body: { ok: true } }),
     },
   });
-  page.on("dialog", (dialog) => dialog.accept());
   await page.goto("/doi-cong-dong/?mine=1");
   const cards = page.locator(".cm-team-card");
   await expect(cards).toHaveCount(3);
@@ -340,10 +342,16 @@ test("Của tôi: trạng thái + lý do từ chối, xoá trả has_evidence hi
   await expect(cards.nth(1)).toContainText("Bị từ chối");
   await expect(cards.nth(1)).toContainText("Ảnh không rõ");
 
+  // Xoá hỏi lại trong hộp xác nhận; lỗi hiện ngay trong hộp, hộp giữ mở.
   await cards.nth(2).getByRole("button", { name: "Xoá" }).click();
-  await expect(page.getByText("Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.")).toBeVisible();
+  const dialog = page.getByRole("alertdialog", { name: "Xoá đội “Đội m3”?" });
+  await dialog.getByRole("button", { name: "Xoá đội" }).click();
+  await expect(dialog.getByRole("alert")).toHaveText("Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.");
+  await dialog.getByRole("button", { name: "Huỷ" }).click();
+  await expect(dialog).toHaveCount(0);
   await expect(cards).toHaveCount(3);
   await cards.nth(1).getByRole("button", { name: "Xoá" }).click();
+  await page.getByRole("alertdialog").getByRole("button", { name: "Xoá đội" }).click();
   await expect(cards).toHaveCount(2);
 });
 
@@ -385,7 +393,6 @@ test("của tôi: đội xoá dở hiện trạng thái + Thử xoá tiếp; 502
       },
     },
   });
-  page.on("dialog", (dialog) => dialog.accept());
   await page.goto("/doi-cong-dong/?mine=1");
   const cards = page.locator(".cm-team-card");
   await expect(cards).toHaveCount(2);
@@ -665,7 +672,7 @@ test("E4: chủ xem đội pending → không gọi HEAD, ở lại ?id=t1", asy
   expect(methods).toEqual([]);
 });
 
-test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, không nạp từ điển, link tương tự trỏ URL tĩnh", async ({ page }) => {
+test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, tên tướng chiến báo tiếng Việt, link tương tự trỏ URL tĩnh", async ({ page }) => {
   const requests = [];
   page.on("request", (request) => requests.push(request.url()));
   const calls = await mockCommunityApi(page, {
@@ -684,24 +691,33 @@ test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, không nạp t�
   await expect(page).toHaveURL(/\/doi-cong-dong\/t1\/$/);
   await expect(page.locator("[data-team-static]")).toBeVisible();
   const up = page.locator("button[data-vote='up']");
-  await expect(up).toHaveText("▲ 3");
+  await expect(up).toHaveText("3");
   await up.click();
-  await expect(up).toHaveText("▲ 4");
+  await expect(up).toHaveText("4");
   expect(calls.find((call) => call.method === "PUT" && call.path === "/api/community-teams/t1/vote").body).toEqual({ value: 1 });
 
   const comments = page.locator(".cm-comments");
+  // Tiêu đề "Bình luận" kèm số: worker đếm 4 (commentCount, gồm cả bình luận đã ẩn), danh sách nạp hết còn 1 nên tiêu
+  // đề theo số đang hiện; tăng khi đăng.
+  await expect(comments.locator(".cm-comment")).toHaveCount(1);
+  await expect(comments.locator(".cm-title-count")).toHaveText("1");
   await comments.getByLabel("Viết bình luận").fill("Bình luận từ trang tĩnh.");
   await comments.getByRole("button", { name: "Gửi bình luận" }).click();
   await expect(comments.locator(".cm-comment").first()).toContainText("Bình luận từ trang tĩnh.");
   expect(calls.find((call) => call.method === "POST" && call.path === "/api/comments").body).toEqual({
     page: "/doi-cong-dong/t1/", lang: "vi", body: "Bình luận từ trang tĩnh.",
   });
+  await expect(comments.locator(".cm-title-count")).toHaveText("2");
   await expect(page.locator(".cm-reports")).toContainText("Chiến báo");
+  // Tên tướng chiến báo (lưu chữ Hán) hiện theo tên Việt: từ điển chỉ nạp vì có chiến báo để hiện.
+  await expect(page.locator(".cm-report .cm-report-sides")).toContainText("Lưu Bị");
+  await expect(page.locator(".cm-report .cm-report-sides")).toContainText("Tào Tháo");
+  await expect(page.locator(".cm-report .cm-report-sides")).not.toContainText("刘备");
 
-  // Chi tiết đã có trong HTML tĩnh: không dựng lại bảng/nav SPA, không nạp từ điển tên.
+  // Chi tiết đã có trong HTML tĩnh: không dựng lại bảng/nav SPA.
   await expect(page.locator(".cm-team-view .cm-team-table")).toHaveCount(0);
   await expect(page.locator(".cm-team-view .cm-team-tab")).toHaveCount(0);
-  expect(requests.filter((url) => url.includes("heroes-dict"))).toEqual([]);
+  expect(requests.filter((url) => url.includes("heroes-dict")).length).toBeGreaterThan(0);
 
   const similar = page.locator(".cm-team-similar-list a");
   await expect(similar).toHaveCount(1);
