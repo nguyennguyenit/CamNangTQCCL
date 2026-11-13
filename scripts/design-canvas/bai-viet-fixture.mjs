@@ -10,8 +10,9 @@
 //
 // Nội dung bài mẫu theo artboard BaiVietDetail (đội, chiến pháp, quân thủ lấy từ mục Khai hoang, tên theo bản game VN).
 // Ảnh bìa trỏ `/api/reports/<id>/image`: compare-moi và e2e chặn đường dẫn này bằng ảnh chiến báo mẫu của canvas.
+import { realpathSync } from 'node:fs';
 import { createServer } from 'node:http';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 export const FIXTURE_SLUG = 'khai-hoang-khong-can-full-do';
 /** Cổng cố định của dev server bài mẫu trong Playwright (`playwright.config.mjs`, webServer thứ hai). */
@@ -212,7 +213,10 @@ export async function startFixtureSite({ port = 4371, host = '127.0.0.1', watch 
   };
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+// So bằng URL của đường dẫn thật: `import.meta.url` đã mã hoá phần trăm (dấu cách, chữ có dấu) và đi qua symlink
+// (`/tmp` → `/private/tmp`), còn `argv[1]` là đường dẫn thô. Lệch thì script thoát êm và webServer của Playwright chờ mãi.
+const invokedPath = process.argv[1] ? pathToFileURL(realpathSync(process.argv[1])).href : '';
+if (import.meta.url === invokedPath) {
   const at = process.argv.indexOf('--port');
   const site = await startFixtureSite({ port: at > 0 ? Number(process.argv[at + 1]) : 4371, watch: !process.argv.includes('--no-watch') });
   console.log(`Bài viết mẫu: ${site.base}/bai-viet/${FIXTURE_SLUG}/ (Ctrl+C để dừng)`);
