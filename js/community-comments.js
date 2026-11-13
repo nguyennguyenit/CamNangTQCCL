@@ -41,7 +41,8 @@ function commentItem(comment, { onDelete, tagged = false }) {
  * bài mới vẫn gửi `lang` của trang.
  * `count` (tuỳ chọn): số bình luận do worker đếm cho trang (đội cộng đồng: `commentCount` của đội — đếm mọi bình
  * luận của pageKey nên có thể gồm bình luận đã bị ẩn, không phải đúng số đang hiện); hiện cạnh tiêu đề "Bình luận 12"
- * và cộng/trừ theo lượt đăng/xoá trong trang.
+ * và cộng/trừ theo lượt đăng/xoá trong trang. Nạp xong trang cuối thì số lấy theo danh sách đang hiện (không còn
+ * "Bình luận 3" trên dòng "Chưa có bình luận nào"); còn trang sau thì không nhỏ hơn số đã hiện.
  * Trả về element section để trang gắn vào.
  */
 export function mountComments(container, { pageKey, lang, user, sharedPool = false, count = null }) {
@@ -99,6 +100,10 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
     append(Array.isArray(body?.items) ? body.items : []);
     cursor = typeof body?.nextCursor === 'string' && body.nextCursor ? body.nextCursor : null;
     moreButton.hidden = !cursor;
+    if (total !== null) {
+      total = cursor ? Math.max(total, list.childElementCount) : list.childElementCount;
+      paintCount();
+    }
   };
 
   moreButton.addEventListener('click', async () => {

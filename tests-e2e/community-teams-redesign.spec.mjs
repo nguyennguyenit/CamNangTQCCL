@@ -272,6 +272,32 @@ test("trang đội: không có chiến báo thì không nạp từ điển tên;
   expect(requests.filter((url) => url.includes("heroes-dict"))).toEqual([]);
 });
 
+test("chi tiết ?id=: tên tướng và chiến pháp A/B dẫn sang Tra cứu như trang tĩnh (cả /zh/)", async ({ page }) => {
+  await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS, details: (id) => teamDetail(id) } });
+  for (const [prefix, heroName] of [["", "Tào Tháo"], ["/zh", "曹操"]]) {
+    await page.goto(`${prefix}/doi-cong-dong/?id=t1`);
+    const lineup = page.locator(".cm-team-lineup-section");
+    await expect(lineup.locator("a.cm-team-hero-card-link")).toHaveCount(3);
+    await expect(lineup.locator("a.cm-team-hero-card-link").first()).toHaveText(heroName);
+    await expect(lineup.locator("a.cm-team-hero-card-link").first()).toHaveAttribute("href", `${prefix}/tra-cuu/tuong/tao-thao/`);
+    const tactics = lineup.locator("a.cm-team-tactic-link");
+    await expect(tactics).toHaveCount(6);
+    await expect(tactics.first()).toHaveAttribute("href", `${prefix}/tra-cuu/chien-phap/binh-phong/`);
+    await expect(tactics.last()).toHaveAttribute("href", `${prefix}/tra-cuu/chien-phap/bach-ke-da-muu/`);
+    await expect(tactics.first().locator(".cm-team-tactic-go")).toHaveCount(1);
+  }
+});
+
+test("tiêu đề Bình luận theo danh sách đang hiện khi worker đếm cả bình luận đã ẩn", async ({ page }) => {
+  // Worker đếm mọi bình luận của trang (kể cả của người bị khoá / ẩn), danh sách thì lọc: nạp hết mà rỗng thì là 0.
+  await mockCommunityApi(page, { user: PLAYER, comments: [], teams: { seasons: SEASONS, details: (id) => teamDetail(id, { commentCount: 3 }) } });
+  await routeStaticTeam(page, "/doi-cong-dong/t1/");
+  await page.goto("/doi-cong-dong/t1/");
+  const block = page.locator(".cm-comments");
+  await expect(block.getByText("Chưa có bình luận nào. Hãy là người đầu tiên!")).toBeVisible();
+  await expect(block.getByRole("heading", { level: 2 })).toHaveText("Bình luận 0");
+});
+
 test("đăng đội 390px: upload ảnh 2 lỗi — dòng trạng thái lỗi vẫn hiện và đọc được (role=status)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS } });

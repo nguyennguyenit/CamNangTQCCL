@@ -17,6 +17,7 @@
 - Changed: thông báo đăng nhập bị chặn có dòng đậm "Tài khoản đã bị khoá đến <ngày giờ>." / "… vĩnh viễn." (từ `until` của `/api/ban-notice`), lý do, gợi ý, link Quy tắc cộng đồng, nút đóng cùng hàng.
 - Added: token `type.cm-card-title`/`cm-section-title`/`cm-stat`, `size.cm-*` (cột phải, ô ảnh, ô Mùa, hộp thông báo…), component `dau-trang-doi-cong-dong`, `the-doi-cong-dong`, `chi-tiet-doi-cong-dong`, `form-dang-doi`, `the-doi-cua-toi-cong-dong`, `thong-bao-khoa`; JS tách `community-team-ui.js`, `community-team-cards.js`, `community-team-detail.js`, `community-team-form-parts.js`; model trang đội thêm `tacticPaths`, `heroPortraits`. E2E mới `tests-e2e/community-teams-redesign.spec.mjs`.
 - Không vẽ dòng "Binh thư: Tác giả không ghi" của artboard: đội cộng đồng không lưu binh thư. Câu hỏi thường gặp (nguồn FAQPage JSON-LD) giữ trong khối gập cuối cột trái.
+- Fixed: trang đội `?id=` (đội chờ duyệt / chưa có trang tĩnh) dẫn tên tướng và chiến pháp A/B sang Tra cứu như trang tĩnh (trước đây chỉ là chữ). Tiêu đề "Bình luận" lấy theo danh sách đang hiện khi đã nạp hết — số của worker đếm cả bình luận đã ẩn nên từng hiện "Bình luận 3" trên dòng "Chưa có bình luận nào".
 
 ### Quản trị
 - Chưa dựng.

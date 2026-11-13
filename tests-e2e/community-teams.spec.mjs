@@ -697,15 +697,17 @@ test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, tên tướng ch
   expect(calls.find((call) => call.method === "PUT" && call.path === "/api/community-teams/t1/vote").body).toEqual({ value: 1 });
 
   const comments = page.locator(".cm-comments");
-  // Tiêu đề "Bình luận" kèm số bình luận của đội (commentCount 4), tăng khi đăng.
-  await expect(comments.locator(".cm-title-count")).toHaveText("4");
+  // Tiêu đề "Bình luận" kèm số: worker đếm 4 (commentCount, gồm cả bình luận đã ẩn), danh sách nạp hết còn 1 nên tiêu
+  // đề theo số đang hiện; tăng khi đăng.
+  await expect(comments.locator(".cm-comment")).toHaveCount(1);
+  await expect(comments.locator(".cm-title-count")).toHaveText("1");
   await comments.getByLabel("Viết bình luận").fill("Bình luận từ trang tĩnh.");
   await comments.getByRole("button", { name: "Gửi bình luận" }).click();
   await expect(comments.locator(".cm-comment").first()).toContainText("Bình luận từ trang tĩnh.");
   expect(calls.find((call) => call.method === "POST" && call.path === "/api/comments").body).toEqual({
     page: "/doi-cong-dong/t1/", lang: "vi", body: "Bình luận từ trang tĩnh.",
   });
-  await expect(comments.locator(".cm-title-count")).toHaveText("5");
+  await expect(comments.locator(".cm-title-count")).toHaveText("2");
   await expect(page.locator(".cm-reports")).toContainText("Chiến báo");
   // Tên tướng chiến báo (lưu chữ Hán) hiện theo tên Việt: từ điển chỉ nạp vì có chiến báo để hiện.
   await expect(page.locator(".cm-report .cm-report-sides")).toContainText("Lưu Bị");
