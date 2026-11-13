@@ -7,6 +7,7 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { buildSeasonCandidates } from "../js/roster-season-candidates.js";
+import { projectRecommendedRows } from "../js/recommended-reference-state.js";
 import { buildListCoverage } from "../js/roster-list-coverage.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
 import { createRosterIdResolver } from "../js/roster-id-resolve.js";
@@ -17,9 +18,10 @@ const { generationId } = read("src/data/recommended-reference/current.json");
 const { records } = read(`src/data/recommended-reference/${generationId}/index.json`);
 const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
 const SCAN_KEY = "tqccl.rosterRecommend.scanState.v1";
-const SEASON = "og-兵演春秋";
+// `/doi-chuan/` không có `?season=` mở mùa mặc định của generation đang pin (PK-S27 từ #90; trước đó OG).
+const seasons = read(`src/data/recommended-reference/${generationId}/seasons.json`);
+const SEASON = seasons.defaultSourceSeasonId;
 const OLD_SEASON = "pk-s24";
-const READY_TEAMS = ["og-bingyan-40y-lvbu-b", "og-bingyan-wunv-cavalry-hubaoqi"];
 
 function rosterFor(configIds, seasonId = SEASON) {
   const { teams } = buildSeasonCandidates(records.filter((record) => configIds.includes(record.sourceConfigId)), seasonId, dicts);
@@ -40,10 +42,18 @@ const seedLocal = (page, roster) => page.addInitScript(([key, value]) => {
   if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
 }, [SCAN_KEY, JSON.stringify(roster)]);
 
+const expectedFor = (roster) => buildListCoverage({ records, seasonId: SEASON, ...dicts, roster });
+/** Hai đội đầu của mùa mà kho gồm đúng tướng + chiến pháp của chính đội đó ráp đủ (không vướng chiến pháp chưa đối chiếu). */
+const READY_TEAMS = records
+  .filter((record) => record.sourceSeasonId === SEASON)
+  .map((record) => record.sourceConfigId)
+  .filter((id) => expectedFor(rosterFor([id])).byConfigId.get(id)?.missingCount === 0)
+  .slice(0, 2);
 const roster = rosterFor(READY_TEAMS);
-const expected = buildListCoverage({ records, seasonId: SEASON, ...dicts, roster });
-// Đội thiếu nhiều món nhất: danh sách dài nhất, dễ tràn nhất.
-const [missingId, entry] = [...expected.byConfigId].sort((a, b) => b[1].missingCount - a[1].missingCount)[0];
+const expected = expectedFor(roster);
+// Đội thiếu nhiều món nhất trong lượt thẻ dựng sẵn đầu (tối đa 60 đội, theo thứ tự mặc định): danh sách dài nhất, dễ tràn nhất.
+const firstBatch = new Set(projectRecommendedRows(records, { season: SEASON, query: "", filters: {} }, seasons.displayLabels).slice(0, 60).map((row) => row.sourceConfigId));
+const [missingId, entry] = [...expected.byConfigId].filter(([id]) => firstBatch.has(id)).sort((a, b) => b[1].missingCount - a[1].missingCount)[0];
 const itemsOf = (text, prefix, separator) => text.slice(prefix.length).split(separator);
 
 test.describe("Đội chuẩn có kho ở 390px: món thiếu trên thẻ", () => {
