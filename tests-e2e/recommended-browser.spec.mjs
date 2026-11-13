@@ -1079,20 +1079,25 @@ test('recommended teams form source Tier sections in every view and regroup afte
   await expect(page.locator('.reference-tier-section')).toHaveCount(0);
 });
 
-test('the ongoing source season is marked independently of the selected season',async({page})=>{
+test('the ongoing source season is marked independently of the selected season',async({page,request})=>{
+  const {seasons,index}=await referenceData(request);
+  const current=seasons.defaultSourceSeasonId;
+  const option=seasons.seasonOptions.find(item=>item.sourceSeasonId===current);
+  const other=seasons.seasonOptions.find(item=>item.sourceSeasonId!==current&&index.records.some(row=>row.sourceSeasonId===item.sourceSeasonId)).sourceSeasonId;
+  const count=index.records.filter(row=>row.sourceSeasonId===current).length;
   await page.goto('/doi-chuan/');
   const season=page.getByRole('combobox',{name:'Mùa',exact:true});
   const status=page.locator('.reference-season-status');
-  await expect(season).toHaveValue('pk-s27');
+  await expect(season).toHaveValue(current);
   await expect(status).toBeVisible();
   await expect(status).toHaveText('Đang diễn ra');
-  await expect(season.locator('option[value="pk-s27"]')).toContainText('Hán Diễm Trường Minh (128) · Hiện tại');
-  await season.selectOption('pk-s28');
+  await expect(season.locator(`option[value="${current}"]`)).toContainText(`${option.displayNameVi} (${count}) · Hiện tại`);
+  await season.selectOption(other);
   await expect(status).toBeHidden();
-  await expect(season.locator('option[value="pk-s28"]')).not.toContainText('Hiện tại');
+  await expect(season.locator(`option[value="${other}"]`)).not.toContainText('Hiện tại');
   await season.selectOption('all');
   await expect(status).toBeHidden();
-  await season.selectOption('pk-s27');
+  await season.selectOption(current);
   await expect(status).toBeVisible();
   await page.setViewportSize({width:375,height:812});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
