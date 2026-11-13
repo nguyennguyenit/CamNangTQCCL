@@ -206,9 +206,82 @@ function safeImageSrc(src: unknown): string | null {
   }
 }
 
+type HastNode = { type: string; tagName?: string; value?: string; properties?: HastProps; children?: HastNode[] };
+
+const hastText = (node: HastNode): string =>
+  node.type === 'text' ? node.value ?? '' : (node.children ?? []).map(hastText).join('');
+
+/** Căn lề cột GFM (`style="text-align: …"`) đổi thành class `bv-align-<lề>`: trang không dùng style nội tuyến. */
+function alignedCell(cell: HastNode, rowHeader: boolean): HastNode {
+  const { style, className, ...rest } = cell.properties ?? {};
+  const align = typeof style === 'string' ? /text-align:\s*(left|right|center)/u.exec(style)?.[1] : null;
+  const classes = [...(Array.isArray(className) ? className : []), ...(align ? [`bv-align-${align}`] : [])];
+  return {
+    ...cell,
+    tagName: rowHeader ? 'th' : cell.tagName,
+    properties: { ...rest, ...(rowHeader ? { scope: 'row' } : {}), ...(classes.length ? { className: classes } : {}) },
+  };
+}
+
+const elementsOf = (node: HastNode | undefined) => (node?.children ?? []).filter((child) => child.type === 'element');
+const NUMERIC_CELL = /^[\s\d.,%+\-–—/:]*$/u;
+
+/**
+ * Cột đầu là cột nhãn (mỗi hàng một tên riêng) thì ô đầu mỗi hàng là tiêu đề hàng. Markdown không có cú pháp đánh dấu
+ * tiêu đề hàng, nên đoán theo dữ liệu, chỉ khi chắc: ô tiêu đề cột đầu có chữ, cột không căn phải (cột số), mọi ô thân
+ * bảng của cột có chữ, không phải số và không trùng nhau. Không chắc thì giữ `td` (bảng vẫn đọc được theo cột).
+ */
+function firstColumnIsRowHeader(head: HastNode | undefined, body: HastNode | undefined): boolean {
+  const headCell = elementsOf(elementsOf(head)[0])[0];
+  if (!headCell || !hastText(headCell).trim()) return false;
+  if (typeof headCell.properties?.style === 'string' && /text-align:\s*right/u.test(headCell.properties.style)) return false;
+  const labels = elementsOf(body).map((row) => hastText(elementsOf(row)[0] ?? { type: 'text', value: '' }).trim());
+  if (!labels.length || labels.some((label) => !label || NUMERIC_CELL.test(label))) return false;
+  return new Set(labels.map((label) => label.toLocaleLowerCase('vi'))).size === labels.length;
+}
+
+/**
+ * Bảng Markdown → khung cuộn ngang có tên (`role=region`, `tabindex=0` để cuộn bằng bàn phím; `js/blog-article.js` bỏ
+ * hai thuộc tính đó khi bảng vừa khung) — artboard BaiVietDetail `.bvd-table-wrap`. Tên vùng là chữ của hàng tiêu đề.
+ * Ô đầu mỗi hàng thân bảng là tiêu đề hàng (`th scope=row`) khi cột đầu là cột nhãn (`firstColumnIsRowHeader`).
+ */
+function tableFrame(table: HastNode): HastNode {
+  const rowHeaders = firstColumnIsRowHeader(
+    elementsOf(table).find((part) => part.tagName === 'thead'),
+    elementsOf(table).find((part) => part.tagName === 'tbody'),
+  );
+  const section = (part: HastNode): HastNode => ({
+    ...part,
+    children: (part.children ?? []).map((row) => {
+      if (row.type !== 'element') return row;
+      let first = rowHeaders && part.tagName === 'tbody';
+      return {
+        ...row,
+        children: (row.children ?? []).map((cell) => {
+          if (cell.type !== 'element') return cell;
+          const header = first && cell.tagName === 'td';
+          first = false;
+          return alignedCell(cell, header);
+        }),
+      };
+    }),
+  });
+  const parts = (table.children ?? []).map((part) => (part.type === 'element' ? section(part) : part));
+  const head = parts.find((part) => part.tagName === 'thead');
+  const label = head
+    ? (head.children ?? []).flatMap((row) => (row.children ?? []).filter((cell) => cell.type === 'element').map((cell) => hastText(cell).trim())).filter(Boolean).join(' · ')
+    : '';
+  return {
+    type: 'element',
+    tagName: 'div',
+    properties: { className: ['bv-table-wrap'], role: 'region', tabIndex: 0, ...(label ? { ariaLabel: label } : {}) },
+    children: [{ ...table, children: parts }],
+  };
+}
+
 /**
  * Markdown → HTML an toàn. HTML thô và comment bị bỏ; heading cấp 1 hạ xuống cấp 2 (trang đã có h1);
- * heading nhận id; link ngoài mở tab mới với `rel` an toàn; ảnh lười tải.
+ * heading nhận id; link ngoài mở tab mới với `rel` an toàn; ảnh lười tải; bảng nằm trong khung cuộn ngang có tên.
  */
 export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN }: { siteOrigin?: string } = {}): RenderedMarkdown {
   const headings: BlogHeading[] = [];
@@ -254,6 +327,12 @@ export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN 
                 ctx.setProperty(node, 'rel', EXTERNAL_REL.split(' '));
                 if (!target.href.startsWith('mailto:')) ctx.setProperty(node, 'target', '_blank');
               }
+            },
+          },
+          {
+            filter: ['table'],
+            visit(node) {
+              return tableFrame(node as unknown as HastNode) as never;
             },
           },
           {

@@ -1,0 +1,27 @@
+---
+// Thẻ "Bài viết liên quan" của trang bài viết chi tiết (artboard BaiVietDetail `.bvd-card`): tiêu đề là link, ngày đăng
+// + phút đọc, mô tả, chip chủ đề. Danh sách bài viết dùng thẻ riêng (`BlogPostCard`).
+import type { RenderedBlogPost } from '../../lib/blog-posts.ts';
+import { blogCopy, formatPostDate } from '../../lib/blog-seo.ts';
+
+interface Props {
+  post: RenderedBlogPost;
+}
+
+const { post } = Astro.props;
+const copy = blogCopy(post.lang);
+---
+<article class="bv-card">
+  <h3 class="bv-card-title"><a href={post.path}>{post.title}</a></h3>
+  <p class="bv-card-meta">
+    <time datetime={post.publishedAt}>{formatPostDate(post.publishedAt, post.lang)}</time>
+    <span aria-hidden="true">·</span>
+    <span>{copy.readingTime(post.readingMinutes)}</span>
+  </p>
+  <p class="bv-card-desc">{post.description}</p>
+  {post.tags.length > 0 && (
+    <ul class="bv-tags" aria-label={copy.tags}>
+      {post.tags.map((tag) => <li class="bv-tag">{tag}</li>)}
+    </ul>
+  )}
+</article>

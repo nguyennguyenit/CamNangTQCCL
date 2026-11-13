@@ -64,6 +64,9 @@ export function readOwnedRoster(storage, { userId = null } = {}) {
   }
 }
 
+/** Số món thiếu tối đa vẫn tính là "gần ráp được" — cùng ngưỡng với lọc `kho=thieu-2`. */
+export const NEAR_MISSING_LIMIT = 2;
+
 /** Phạm vi "Tất cả" của danh sách Đội chuẩn (`?season=all`). */
 export const ALL_SEASONS = "all";
 
@@ -79,12 +82,14 @@ export const ALL_SEASONS = "all";
  * @param {object[]} input.tacticsDict
  * @param {{ownedHeroes: Array, ownedTactics: Array, tacticOverrides?: Array}|null} input.roster kết quả `readOwnedRoster`;
  *   món bù trong `tacticOverrides` được tính như ở khối Độ phủ kho (ô có món bù trong kho là đủ)
- * @returns {{byConfigId: Map<string, {missingCount: number, missing: Array<{kind: "hero"|"tactic", name: string, nameZh?: string, unresolved?: true}>}>, summary: {complete: number, total: number}}}
- *   `nameZh` là tên Hán của từ điển cho bản zh (vắng mặt khi không tra được)
+ * @returns {{byConfigId: Map<string, {missingCount: number, missing: Array<{kind: "hero"|"tactic", name: string, nameZh?: string, unresolved?: true}>}>, summary: {complete: number, total: number, near: number, far: number, roster: {heroes: number, tactics: number, source: "local"|"cloud"|null}|null}}}
+ *   `nameZh` là tên Hán của từ điển cho bản zh (vắng mặt khi không tra được). `summary`: `complete` đội ráp được,
+ *   `near` đội thiếu 1–2 món, `far` đội thiếu từ 3 món (chú giải + số trên nút lọc của thanh kho), `roster` cỡ kho đã đọc
+ *   ("Theo kho đã lưu trên máy này: N tướng · M chiến pháp"), `null` khi không có kho
  */
 export function buildListCoverage({ records = [], seasonId, heroesDict = [], tacticsDict = [], roster = null } = {}) {
   const byConfigId = new Map();
-  if (!roster || !seasonId) return { byConfigId, summary: { complete: 0, total: 0 } };
+  if (!roster || !seasonId) return { byConfigId, summary: { complete: 0, total: 0, near: 0, far: 0, roster: null } };
   const seasonIds = seasonId === ALL_SEASONS
     ? [...new Set((records || []).map((record) => record?.sourceSeasonId).filter(Boolean))]
     : [seasonId];
@@ -95,6 +100,8 @@ export function buildListCoverage({ records = [], seasonId, heroesDict = [], tac
     return nameZh ? { ...item, nameZh } : item;
   };
   let complete = 0;
+  let near = 0;
+  let far = 0;
   for (const id of seasonIds) {
     const season = buildSeasonCandidates(records, id, { heroesDict, tacticsDict });
     const coverage = buildRosterCoverage({
@@ -108,7 +115,10 @@ export function buildListCoverage({ records = [], seasonId, heroesDict = [], tac
       if (byConfigId.has(entry.team.id)) continue;
       byConfigId.set(entry.team.id, { missingCount: entry.missingCount, missing: entry.missing.map(withChinese) });
       if (entry.missingCount === 0) complete++;
+      else if (entry.missingCount <= NEAR_MISSING_LIMIT) near++;
+      else far++;
     }
   }
-  return { byConfigId, summary: { complete, total: byConfigId.size } };
+  const size = { heroes: roster.ownedHeroes?.length ?? 0, tactics: roster.ownedTactics?.length ?? 0, source: roster.source ?? null };
+  return { byConfigId, summary: { complete, total: byConfigId.size, near, far, roster: size } };
 }

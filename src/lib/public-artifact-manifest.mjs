@@ -19,6 +19,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "analyze-state"),
   entry("js", "analyze"),
   entry("js", "app"),
+  entry("js", "blog-article"),
   entry("js", "community-admin"),
   entry("js", "community-admin-ai"),
   entry("js", "community-admin-audit"),

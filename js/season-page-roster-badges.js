@@ -73,7 +73,7 @@ async function paintSeasonPageRosterBadges({ fresh = false } = {}) {
   if (!coverage.summary.total) return;
   clearRosterDecorations(section);
   decorateCoverageBadges(section, coverage.byConfigId);
-  section.querySelector(".reference-head-text")?.append(rosterSummaryNode(coverage.summary));
+  section.querySelector(".reference-head-text")?.append(rosterSummaryNode(coverage.summary, { line: true }));
 }
 
 const paint = (options) => paintSeasonPageRosterBadges(options).catch((error) => console.error(error));
