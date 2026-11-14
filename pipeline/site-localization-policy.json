@@ -761,7 +761,7 @@
   ],
   "sourceFiles": {
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
-    "data/khaihoang.json": "47f2273b262d76be0bb12da14d332923447e1f8db0a06de713c614770f7244ad",
+    "data/khaihoang.json": "0ba556d11a27ec771d404ddc9d61096449134950e4813ce2fbafcce97779b43b",
     "data/season-content-links.json": "1dd183dc85a9a833336c76a79626d6c176fc9447fe746f11184c437054d8b3aa",
     "data/teams.json": "bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
