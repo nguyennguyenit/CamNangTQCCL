@@ -18,13 +18,18 @@ const expectedGuideHeroReferences = [
 
 // Reviewed phase-1 migration table: the 30 retired `displayNote` owners, each recorded as the
 // destination field of its sentences. `null` means the field must be absent rather than empty, and
-// the pair must reproduce the retired value sentence for sentence (59 sentences in total).
+// the pair must reproduce the retired value sentence for sentence (69 sentences in total).
 const noteMigration = [
   ["teams[0].variants[0]", "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.", "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản."],
   ["teams[0].variants[1]", "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.", null],
   ["teams[0].heroes[2]", "Sau cấp 20 để Pháp Chính làm chủ tướng.", null],
+  ["teams[1].heroes[0]", "Sau cấp 20 nên dùng Tam Thế Trận (khuyến nghị); Tiềm Long Trận vẫn dùng được. Tam Thế Trận giúp chiến pháp của Quan Ngân Bình phát động ổn định hơn nhưng làm Gia Cát Khác nhận Chống Đỡ ít thường xuyên hơn; vẫn khuyến nghị vì độ ổn định.", null],
+  ["teams[1].heroes[1]", "Sau cấp 20 chiến pháp thứ hai dùng Gió Táp Mưa Sa hoặc Dùng Nước Đẩy Cầu đều được.", null],
+  ["teams[1].heroes[2]", "Sau cấp 20 Nhạc Tiến dùng Nhanh Chân Tranh Đất, Văn Võ Song Toàn hoặc Lính Thanh Châu đều được; trước cấp 20 giữ Nhanh Chân Tranh Đất.", null],
   ["teams[1].variants[0]", "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
+  ["teams[2].heroes[0]", "Trước cấp 20 dùng Vô Đương Phi Quân hoặc Hoành Tảo Thiên Quân đều được.", null],
   ["teams[2].variants[0]", "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.", null],
+  ["teams[2].variants[1]", "Chỉ dùng được ở mùa có Thôi Phong Đoạn Nhẫn. Trước cấp 20 Khương Duy dùng Hoành Tảo Thiên Quân hoặc Vô Đương Phi Quân đều được; sau cấp 20 Khương Duy đổi sang Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió hoặc Thượng Binh Phạt Mưu, Gia Cát Khác mang Vô Đương Phi Quân, Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn. Cấu hình mặc định ở trên vẫn giữ nguyên.", null],
   ["teams[2].heroes[2]", "Sau cấp 20 để Gia Cát Khác làm chủ tướng.", null],
   ["teams[3]", null, "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao."],
   ["teams[3].variants[0]", "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.", null],
@@ -40,7 +45,7 @@ const noteMigration = [
   ["teams[11].variants[1]", "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.", null],
   ["teams[11].heroes[0]", "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ.", null],
   ["teams[11].heroes[1]", "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn.", "Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."],
-  ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
+  ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng, không thêm Cắt Xương Trị Độc. Thực chiến: đội cấp 24–25 với bộ chiến pháp này đã thắng thủ quân cấp 6 (15K) hai lần.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
   ["teams[12].heroes[2]", "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái.", null],
   ["teams[13].heroes[0]", "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh.", null],
   ["teams[14]", "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20.", "Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản."],
@@ -80,7 +85,7 @@ test("curated options are complete for each declared phase and preserve the rost
           populated++;
           assert.equal(skills.length, phase === "Before" ? 1 : 2, key);
           assert.equal(hero[`unitType${phase}`], variant.unitType, key);
-          for (const name of skills) {
+          for (const name of skills.flatMap((skill) => skill.split("/"))) {
             const tactic = tactics.find((t) => t.id === tacticId(name));
             assert.ok(tactic, `${key}: unknown ${name}`);
             assert.notEqual(tactic.type, "Nội chính", key);
@@ -206,7 +211,7 @@ test("every retired display note keeps its sentences in exactly one owner field"
     sentences += [build, opening].filter(Boolean).join(" ").split(/(?<=\.)\s+/)
       .filter((sentence) => sentence.trim()).length;
   }
-  assert.equal(sentences, 59);
+  assert.equal(sentences, 69);
 });
 
 test("the retired displayNote field is gone from the whole document", () => {

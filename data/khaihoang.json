@@ -144,20 +144,22 @@
           "unitTypeAfter": "Thương",
           "tacticsAfter": [
             "Thịnh Khí Linh Địch",
-            "Tiềm Long Trận"
+            "Tam Thế Trận/Tiềm Long Trận"
           ],
-          "note": ""
+          "note": "Sau cấp 20 nên dùng Tam Thế Trận (khuyến nghị); Tiềm Long Trận vẫn dùng được. Tam Thế Trận giúp chiến pháp của Quan Ngân Bình phát động ổn định hơn nhưng làm Gia Cát Khác nhận Chống Đỡ ít thường xuyên hơn; vẫn khuyến nghị vì độ ổn định.",
+          "buildNote": "Sau cấp 20 nên dùng Tam Thế Trận (khuyến nghị); Tiềm Long Trận vẫn dùng được. Tam Thế Trận giúp chiến pháp của Quan Ngân Bình phát động ổn định hơn nhưng làm Gia Cát Khác nhận Chống Đỡ ít thường xuyên hơn; vẫn khuyến nghị vì độ ổn định."
         },
         {
           "name": "Quan Ngân Bình",
           "unitTypeBefore": "Thương",
-          "tacticBefore": "Hoành Tào Thiên Quân",
+          "tacticBefore": "Hoành Tảo Thiên Quân",
           "unitTypeAfter": "Thương",
           "tacticsAfter": [
-            "Cứ Thủy Đoạn Kiều",
-            "Hoành Tào Thiên Quân"
+            "Hoành Tảo Thiên Quân",
+            "Gió Táp Mưa Sa/Dùng Nước Đẩy Cầu"
           ],
-          "note": ""
+          "note": "Sau cấp 20 chiến pháp thứ hai dùng Gió Táp Mưa Sa hoặc Dùng Nước Đẩy Cầu đều được.",
+          "buildNote": "Sau cấp 20 chiến pháp thứ hai dùng Gió Táp Mưa Sa hoặc Dùng Nước Đẩy Cầu đều được."
         },
         {
           "name": "Nhạc Tiến",
@@ -166,9 +168,10 @@
           "unitTypeAfter": "Thương",
           "tacticsAfter": [
             "Nhanh Chân Tranh Đất",
-            "Lính Thanh Châu"
+            "Văn Võ Song Toàn/Lính Thanh Châu"
           ],
-          "note": ""
+          "note": "Sau cấp 20 Nhạc Tiến dùng Nhanh Chân Tranh Đất, Văn Võ Song Toàn hoặc Lính Thanh Châu đều được; trước cấp 20 giữ Nhanh Chân Tranh Đất.",
+          "buildNote": "Sau cấp 20 Nhạc Tiến dùng Nhanh Chân Tranh Đất, Văn Võ Song Toàn hoặc Lính Thanh Châu đều được; trước cấp 20 giữ Nhanh Chân Tranh Đất."
         }
       ],
       "title": "Gia Cát Khác · Quan Ngân Bình · Nhạc Tiến",
@@ -209,7 +212,7 @@
               "tacticBefore": "Hoành Tảo Thiên Quân",
               "unitTypeAfter": "Thương",
               "tacticsAfter": [
-                "Cứ Thủy Đoạn Kiều",
+                "Dùng Nước Đẩy Cầu",
                 "Lính Thanh Châu"
               ]
             },
@@ -238,13 +241,14 @@
         {
           "name": "Khương Duy",
           "unitTypeBefore": "Cung",
-          "tacticBefore": "Vô Đương Phi Quân",
+          "tacticBefore": "Vô Đương Phi Quân/Hoành Tảo Thiên Quân",
           "unitTypeAfter": "Cung",
           "tacticsAfter": [
             "Vô Đương Phi Quân",
             "Thời Cơ Chiến Thắng"
           ],
-          "note": ""
+          "note": "Trước cấp 20 dùng Vô Đương Phi Quân hoặc Hoành Tảo Thiên Quân đều được.",
+          "buildNote": "Trước cấp 20 dùng Vô Đương Phi Quân hoặc Hoành Tảo Thiên Quân đều được."
         },
         {
           "name": "Hạ Hầu Uyên",
@@ -324,6 +328,48 @@
           "buildNote": "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.",
           "commanderBefore": "Khương Duy",
           "commanderAfter": "Gia Cát Khác"
+        },
+        {
+          "id": "tham-khao-thoi-phong",
+          "label": "Tham khảo · Thôi Phong Đoạn Nhẫn",
+          "displayLabel": "Thôi Phong Đoạn Nhẫn (Hạ Hầu Uyên)",
+          "region": "Tham khảo đội hình khai hoang",
+          "period": "Trước và sau cấp 20 · chỉ mùa có Thôi Phong Đoạn Nhẫn",
+          "unitType": "Cung",
+          "heroes": [
+            {
+              "name": "Khương Duy",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Hoành Tảo Thiên Quân/Vô Đương Phi Quân",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Đoạt Hồn Hiệp Phách",
+                "Sợ Bóng Sợ Gió/Thượng Binh Phạt Mưu"
+              ]
+            },
+            {
+              "name": "Hạ Hầu Uyên",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Lõa Y Huyết Chiến",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Lõa Y Huyết Chiến",
+                "Thôi Phong Đoạn Nhẫn"
+              ]
+            },
+            {
+              "name": "Gia Cát Khác",
+              "unitTypeBefore": "Cung",
+              "tacticBefore": "Thịnh Khí Linh Địch",
+              "unitTypeAfter": "Cung",
+              "tacticsAfter": [
+                "Thịnh Khí Linh Địch",
+                "Vô Đương Phi Quân"
+              ]
+            }
+          ],
+          "note": "Chỉ dùng được ở mùa có Thôi Phong Đoạn Nhẫn. Trước cấp 20 Khương Duy dùng Hoành Tảo Thiên Quân hoặc Vô Đương Phi Quân đều được; sau cấp 20 Khương Duy đổi sang Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió hoặc Thượng Binh Phạt Mưu, Gia Cát Khác mang Vô Đương Phi Quân, Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn. Cấu hình mặc định ở trên vẫn giữ nguyên.",
+          "buildNote": "Chỉ dùng được ở mùa có Thôi Phong Đoạn Nhẫn. Trước cấp 20 Khương Duy dùng Hoành Tảo Thiên Quân hoặc Vô Đương Phi Quân đều được; sau cấp 20 Khương Duy đổi sang Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió hoặc Thượng Binh Phạt Mưu, Gia Cát Khác mang Vô Đương Phi Quân, Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn. Cấu hình mặc định ở trên vẫn giữ nguyên."
         }
       ]
     },
@@ -838,7 +884,7 @@
           "tacticBefore": "Hoành Tào Thiên Quân",
           "unitTypeAfter": "Kỵ",
           "tacticsAfter": [
-            "Cứ Thủy Đoạn Kiều",
+            "Dùng Nước Đẩy Cầu",
             "Hoành Tào Thiên Quân"
           ],
           "note": ""
@@ -875,7 +921,7 @@
           "tacticBefore": "Hoành Tào Thiên Quân",
           "unitTypeAfter": "Thương",
           "tacticsAfter": [
-            "Cứ Thủy Đoạn Kiều",
+            "Dùng Nước Đẩy Cầu",
             "Hoành Tào Thiên Quân"
           ],
           "note": ""
@@ -928,7 +974,7 @@
               "unitTypeAfter": "Thương",
               "tacticsAfter": [
                 "Hoành Tảo Thiên Quân",
-                "Cứ Thủy Đoạn Kiều"
+                "Dùng Nước Đẩy Cầu"
               ]
             },
             {
@@ -997,8 +1043,8 @@
             "Vô Đương Phi Quân",
             "Thời Cơ Chiến Thắng"
           ],
-          "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi.",
-          "buildNote": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực.",
+          "note": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng, không thêm Cắt Xương Trị Độc. Thực chiến: đội cấp 24–25 với bộ chiến pháp này đã thắng thủ quân cấp 6 (15K) hai lần. Build tham khảo CN/KR và cộng đồng Hoa ngữ; đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi.",
+          "buildNote": "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng, không thêm Cắt Xương Trị Độc. Thực chiến: đội cấp 24–25 với bộ chiến pháp này đã thắng thủ quân cấp 6 (15K) hai lần.",
           "openingNote": "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."
         }
       ],
