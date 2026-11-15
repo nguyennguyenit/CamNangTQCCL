@@ -4,6 +4,7 @@
 
 - Fixed (#104): `createRawNameResolver` (`js/website-display.js`) index thêm `aliases` của từ điển ở lượt hai, sau `viet`/`hanViet` của mọi mục, nên alias chỉ lấp chỗ trống và không đè tên chính. "SP Lô Trực" (alias của SP Lô Thực) ra `SP 盧植` ở bản zh thay vì `—`. Không đổi dữ liệu, ledger, URL. Test: `tests-js/website-display.test.mjs` (alias không đè tên chính), `tests-js/team-view-trees.test.mjs` khoá thứ tự thẻ Khai hoang theo `recommendedOrder` 1-2-3. `js/website-display.js` bị ghim hash và kích hoạt release MCP: integrator ghim lại hash và publish generation.
 - Fixed (#89, phần còn lại): lead khối "Các mùa khác" của `/doi-chuan/` (`SectionPage.astro`) không còn gọi mùa mới hơn mùa mặc định (ví dụ PK-S28) là "mùa cũ": vi "các mùa khác", zh 其他赛季. Nhãn "mùa cũ" ở trang mùa/trang đội giữ nguyên. Không test nào khoá câu cũ.
+- Added (#97): UI quản lý token API cá nhân trên Theo dõi chiêu mộ (cherry-pick `adac1f8` từ `nguyennguyenit/recruit-token-ui`, khớp hợp đồng `/api/tokens` của `docs/community-worker.md`): mục menu ⋯ "Token API cho công cụ" (`js/recruit-tokens.js`, chỉ khi đã đăng nhập) tạo token (tên + hạn), hiện token một lần + Sao chép, liệt kê, thu hồi hai bước; vi + zh. `js/community-api.js` thêm câu cho `token_limit` (trần 10 token). `js/recruit-tracker.js` bị ghim hash trong `pipeline/site-localization-policy.json`: integrator ghim lại hash (cùng `js/website-display.js` của #104) và publish generation theo `docs/deployment-guide.md`.
 
 ## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
 

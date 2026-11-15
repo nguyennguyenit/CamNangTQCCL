@@ -94,6 +94,8 @@ function codeMessage(code) {
     case 'invalid_timeout':
     case 'invalid_budget':
       return L('Timeout mỗi lượt phải từ 5 đến 120 giây; trần tổng không nhỏ hơn timeout và không quá 180 giây.', '单次超时须为 5–120 秒；总时限不小于单次超时且不超过 180 秒。');
+    case 'token_limit':
+      return L('Đã đủ 10 token còn hiệu lực. Hãy thu hồi bớt token cũ rồi tạo lại.', '有效令牌已达 10 个上限，请先撤销旧令牌再创建。');
     case 'invalid_target':
       return L('Không thể thao tác trên chính mình.', '不能对自己执行此操作。');
     case 'invalid_duration':

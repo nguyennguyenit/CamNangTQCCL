@@ -3,6 +3,7 @@ import { createDropdownMenu } from "./site-nav.js";
 import { L } from "./i18n.js";
 import { describeError, googleIcon } from "./community-api.js";
 import { createRecruitSync } from "./recruit-sync.js";
+import { createTokenPanel } from "./recruit-tokens.js";
 import {
   DAILY_BANNER_ID,
   DAILY_PULL_LIMIT,
@@ -741,10 +742,26 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   accountMenu.button.classList.add("rt-account-toggle");
   accountMenu.panel.id = "rt-account-actions";
   accountMenu.button.setAttribute("aria-controls", "rt-account-actions");
+  // Token API chỉ có nghĩa khi đã đăng nhập (token ghi vào tracker đồng bộ của tài khoản site); paintSync bật/tắt.
+  const tokenMenuItem = menuItem(L("Token API cho công cụ", "工具用 API 令牌"), () => openTokenDialog(accountMenu.button));
+  tokenMenuItem.hidden = true;
   accountMenu.panel.append(
     menuItem(L("Đổi tên", "重命名"), () => renameActiveAccount()),
+    tokenMenuItem,
     menuItem(L("Xóa tài khoản", "删除账号"), () => deleteActiveAccount(), "rt-menu-danger"),
   );
+
+  function openTokenDialog(opener) {
+    dialog.className = "footer-dialog rt-dialog rt-dialog-wide";
+    dialog.replaceChildren(createTokenPanel({ closeIcon }));
+    dialogOpener = opener;
+    if (typeof dialog.showModal === "function") {
+      if (!dialog.open) dialog.showModal();
+    } else {
+      dialog.setAttribute("open", "");
+    }
+    dialog.querySelector("#rt-token-name")?.focus();
+  }
   const addAccountButton = el("button", {
     class: "rt-btn rt-add-account",
     type: "button",
@@ -1050,6 +1067,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     syncChip.dataset.status = syncStatus;
     syncText.textContent = SYNC_TEXT[syncStatus] || SYNC_TEXT.guest;
     syncSignIn.hidden = syncStatus !== "guest";
+    tokenMenuItem.hidden = syncStatus === "guest";
     // Đã đăng nhập và đồng bộ: dữ liệu không còn chỉ nằm trong trình duyệt này.
     notice.hidden = syncStatus === "synced" || syncStatus === "syncing";
   }
