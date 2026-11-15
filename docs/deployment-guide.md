@@ -281,6 +281,22 @@ Test Worker chạy trên D1 giả (`node:sqlite` áp migration thật) và smoke
 - **Worker về version known-good**: `/api/roster` biến mất; client mới báo lỗi đồng bộ và giữ kho cloud cache ở chế độ chỉ đọc; Đội của tôi không lưu được.
 - **D1**: không xóa bảng khi rollback. Code cũ không đọc bảng mới; xóa bảng là thao tác phá hủy, chỉ làm khi có quyết định riêng. Time Travel ghi đè mọi ghi sau bookmark, chỉ dùng khi dữ liệu sai nghiêm trọng.
 
+## Token API cá nhân (`api_tokens`, `POST /api/recruit/pulls`)
+
+Thêm bảng D1 `api_tokens`, route `/api/tokens` (cookie) và `POST /api/recruit/pulls` (Bearer) để tool ngoài trình duyệt ghi lượt quay vào Theo dõi chiêu mộ (hợp đồng ở [community-worker.md](community-worker.md#token-api-cá-nhân-ghi-theo-dõi-chiêu-mộ-từ-tool)). Không đổi Pages.
+
+### Thứ tự release
+
+1. Ghi bookmark: `cd community-worker && npx wrangler d1 time-travel info tqccl-community`.
+2. `npm run db:migrate:remote`. `0012_api_tokens.sql` chỉ thêm bảng `api_tokens` + một index, không sửa bảng đang chạy.
+3. `npm run deploy`. Kiểm: `curl -i -X POST https://tqccl.com/api/recruit/pulls -H "Authorization: Bearer x" -H "Content-Type: application/json" -d "{}"` → `401 invalid_token` (không phải 403 `forbidden_origin` hay 404).
+4. Đăng nhập trên tqccl.com, tạo token bằng lệnh DevTools ở community-worker.md, gửi một lượt thử cho một tài khoản tracker rồi tải lại trang Theo dõi chiêu mộ: dòng mới hiện trong Nhật ký. Xoá dòng thử trên UI nếu không muốn giữ (gửi lại cùng `key` sẽ không ghi lại).
+
+### Rollback
+
+- **Worker về version known-good**: `/api/tokens` và `/api/recruit/pulls` biến mất (404); event đã ghi vẫn là bản ghi `recruit_records` bình thường.
+- **D1**: để nguyên bảng `api_tokens` (Worker cũ không đọc). Muốn vô hiệu mọi token ngay mà không rollback: `npx wrangler d1 execute tqccl-community --remote --command "update api_tokens set revoked_at = unixepoch() * 1000 where revoked_at is null"`.
+
 ## Publish lại bản dịch hiển thị
 
 Mọi thay đổi chữ UI hoặc file trong `sourceFiles` của `pipeline/site-localization-policy.json` đều phải đi qua chuỗi

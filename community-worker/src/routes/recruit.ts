@@ -5,6 +5,7 @@ import { Hono } from "hono";
 import { requireUser, type AppEnv } from "../context";
 import { ApiError } from "../http";
 import { consumeRateLimit } from "../ratelimit";
+import { requireToken } from "../tokens";
 import { readJson } from "../validate";
 
 export const RECRUIT_KINDS = ["account", "banner", "event"] as const;
@@ -143,4 +144,177 @@ recruit.post("/api/recruit", async (c) => {
     for (const res of results) accepted += res.meta.changes ?? 0;
   }
   return c.json({ accepted, cursor: await maxRev(db, user.id) });
+});
+
+// ---- Ghi lượt quay từ tool ngoài (token API, `POST /api/recruit/pulls`) ----
+// Server dựng event schema v2 giống `recordDaily*` của js/recruit-tracker-store.js: mỗi lượt một event `pulls: 1`.
+
+export const RECRUIT_DAILY_BANNER_ID = "danh-tuong-pk";
+/** Số lượt rẻ (miễn phí + nửa giá) mỗi ngày của gói ngày — khớp DAILY_PULL_LIMIT phía client. */
+export const RECRUIT_DAILY_PULL_LIMIT = 4;
+export const RECRUIT_DEFAULT_TIME_ZONE = "Asia/Ho_Chi_Minh";
+/** Phân loại 5★ của tracker (giá trị tiếng Việt lưu trong kho), khớp VALUE_CLASSES của js/recruit-tracker.js. */
+const VALUE_CLASSES = ["Chưa phân loại", "Chủ lực", "Dùng đội", "Tình huống", "Nội chính", "Vật liệu"];
+const PULL_KEY_RE = /^[A-Za-z0-9_-]{8,64}$/u;
+const HERO_MAX = 40;
+const ACCOUNT_NAME_MAX = 100;
+
+interface PullInput {
+  key: string;
+  at: number;
+  fiveStar: boolean;
+  hero: string;
+  heroValueClass: string;
+}
+
+const badPulls = (message: string) => new ApiError(400, "invalid_pulls", message);
+const normalizeName = (value: string) => value.trim().normalize("NFC");
+
+function parseTimeZone(value: unknown): Intl.DateTimeFormat {
+  const timeZone = value === undefined || value === null || value === "" ? RECRUIT_DEFAULT_TIME_ZONE : value;
+  if (typeof timeZone !== "string") throw new ApiError(400, "invalid_timeZone", "timeZone phải là tên IANA");
+  try {
+    return new Intl.DateTimeFormat("en-CA", { timeZone, year: "numeric", month: "2-digit", day: "2-digit" });
+  } catch {
+    throw new ApiError(400, "invalid_timeZone", "timeZone phải là tên IANA, vd Asia/Ho_Chi_Minh");
+  }
+}
+
+/** `YYYY-MM-DD` của mốc `ms` theo múi giờ của formatter. */
+function localDate(format: Intl.DateTimeFormat, ms: number): string {
+  const parts = Object.fromEntries(format.formatToParts(ms).map((p) => [p.type, p.value]));
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
+
+function parsePull(value: unknown, index: number): PullInput {
+  const at = `pulls[${index}]`;
+  if (!isPlainObject(value)) throw badPulls(`${at} phải là object`);
+  const { key, fiveStar, hero, heroValueClass } = value;
+  if (typeof key !== "string" || !PULL_KEY_RE.test(key)) throw badPulls(`${at}.key phải gồm 8–64 ký tự A-Z a-z 0-9 _ -`);
+  const ms = typeof value.at === "string" ? Date.parse(value.at) : NaN;
+  if (!Number.isFinite(ms) || ms < 0) throw badPulls(`${at}.at phải là thời điểm ISO 8601`);
+  if (typeof fiveStar !== "boolean") throw badPulls(`${at}.fiveStar phải là boolean`);
+  if (!fiveStar) return { key, at: ms, fiveStar, hero: "", heroValueClass: "" };
+  const name = typeof hero === "string" ? hero.trim() : "";
+  if (!name || Array.from(name).length > HERO_MAX) throw badPulls(`${at}.hero bắt buộc với lượt 5★, 1–${HERO_MAX} ký tự`);
+  const valueClass = heroValueClass === undefined || heroValueClass === "" ? VALUE_CLASSES[0] : heroValueClass;
+  if (typeof valueClass !== "string" || !VALUE_CLASSES.includes(valueClass)) {
+    throw badPulls(`${at}.heroValueClass phải là một trong: ${VALUE_CLASSES.join(", ")}`);
+  }
+  return { key, at: ms, fiveStar, hero: name, heroValueClass: valueClass };
+}
+
+function parsePulls(value: unknown): PullInput[] {
+  if (!Array.isArray(value) || value.length < 1 || value.length > RECRUIT_DAILY_PULL_LIMIT) {
+    throw badPulls(`pulls phải là mảng 1–${RECRUIT_DAILY_PULL_LIMIT} lượt`);
+  }
+  const pulls = value.map(parsePull);
+  if (new Set(pulls.map((p) => p.key)).size !== pulls.length) throw badPulls("key trùng trong cùng lô");
+  return pulls;
+}
+
+/** Tài khoản tracker còn sống có tên khớp chính xác (trim + NFC); không có -> 404, nhiều -> 409. */
+async function findAccountId(db: D1Database, userId: string, accountName: string): Promise<string> {
+  const { results } = await db
+    .prepare("select id, payload from recruit_records where user_id = ? and kind = 'account'")
+    .bind(userId)
+    .all<{ id: string; payload: string }>();
+  const matches = results.filter((r) => {
+    const data = JSON.parse(r.payload) as { name?: unknown; deletedAt?: unknown };
+    return !data.deletedAt && typeof data.name === "string" && normalizeName(data.name) === accountName;
+  });
+  if (!matches.length) throw new ApiError(404, "account_not_found", "Không có tài khoản tracker trùng tên");
+  if (matches.length > 1) throw new ApiError(409, "account_ambiguous", "Nhiều tài khoản tracker trùng tên; đổi tên cho khác nhau");
+  return matches[0].id;
+}
+
+/** Số lượt rẻ đã ghi (event còn sống, miss/fiveStar) của tài khoản trên gói ngày, theo từng ngày. */
+async function dailyUsed(db: D1Database, userId: string, accountId: string, dates: string[]): Promise<Map<string, number>> {
+  const { results } = await db
+    .prepare(
+      "select json_extract(payload, '$.date') as date, sum(json_extract(payload, '$.pulls')) as n from recruit_records " +
+        "where user_id = ? and kind = 'event' and json_extract(payload, '$.accountId') = ? and json_extract(payload, '$.bannerId') = ? " +
+        "and json_extract(payload, '$.result') in ('miss', 'fiveStar') and coalesce(json_extract(payload, '$.deletedAt'), '') = '' " +
+        "and json_extract(payload, '$.date') in (select value from json_each(?)) group by 1",
+    )
+    .bind(userId, accountId, RECRUIT_DAILY_BANNER_ID, JSON.stringify(dates))
+    .all<{ date: string; n: number }>();
+  return new Map(results.map((r) => [r.date, Number(r.n) || 0]));
+}
+
+recruit.post("/api/recruit/pulls", async (c) => {
+  const { userId } = await requireToken(c, "recruit:write");
+  const input = await readJson(c.req.raw);
+  if (typeof input.accountName !== "string" || !normalizeName(input.accountName) || input.accountName.length > ACCOUNT_NAME_MAX) {
+    throw new ApiError(400, "invalid_accountName", `accountName phải dài 1–${ACCOUNT_NAME_MAX} ký tự`);
+  }
+  if (input.banner !== RECRUIT_DAILY_BANNER_ID) {
+    throw new ApiError(400, "invalid_banner", `Chỉ hỗ trợ banner "${RECRUIT_DAILY_BANNER_ID}"`);
+  }
+  const format = parseTimeZone(input.timeZone);
+  const pulls = parsePulls(input.pulls);
+  const db = c.env.DB;
+  const now = c.get("deps").now();
+  await consumeRateLimit(db, "recruit_token_push", userId, now);
+  const accountId = await findAccountId(db, userId, normalizeName(input.accountName));
+
+  // Lượt cùng `at` (hoặc lùi) trong lô được đẩy +1 ms để thứ tự occurredAt giữ đúng thứ tự gửi.
+  let previous = -1;
+  const events = pulls.map((p) => {
+    const occurred = Math.max(p.at, previous + 1);
+    previous = occurred;
+    return { pull: p, id: `evt_ext_${p.key}`, date: localDate(format, occurred), occurred };
+  });
+  const { results: existing } = await db
+    .prepare("select id from recruit_records where user_id = ? and kind = 'event' and id in (select value from json_each(?))")
+    .bind(userId, JSON.stringify(events.map((e) => e.id)))
+    .all<{ id: string }>();
+  const seen = new Set(existing.map((r) => r.id));
+  const fresh = events.filter((e) => !seen.has(e.id));
+
+  const dates = [...new Set(events.map((e) => e.date))];
+  const used = await dailyUsed(db, userId, accountId, dates);
+  for (const e of fresh) used.set(e.date, (used.get(e.date) ?? 0) + 1);
+  for (const [date, n] of used) {
+    if (n > RECRUIT_DAILY_PULL_LIMIT) {
+      throw new ApiError(409, "daily_limit", `Ngày ${date} vượt ${RECRUIT_DAILY_PULL_LIMIT} lượt rẻ của gói ngày; không ghi lượt nào`);
+    }
+  }
+
+  const updatedAt = new Date(now).toISOString();
+  const records: RecruitRecord[] = fresh.map(({ pull: p, id, date, occurred }) => {
+    const occurredAt = new Date(occurred).toISOString();
+    const data = {
+      id,
+      accountId,
+      bannerId: RECRUIT_DAILY_BANNER_ID,
+      date,
+      drawKind: "daily",
+      pulls: 1,
+      result: p.fiveStar ? "fiveStar" : "miss",
+      heroName: p.hero,
+      heroValueClass: p.heroValueClass,
+      note: "",
+      occurredAt,
+      createdAt: occurredAt,
+      updatedAt,
+      deletedAt: "",
+    };
+    return { kind: "event", id, updatedAt: now, payload: JSON.stringify(data) };
+  });
+  let accepted = 0;
+  if (records.length) {
+    await enforceQuota(db, userId, records);
+    const upsert = db.prepare(UPSERT);
+    const results = await db.batch(records.map((r) => upsert.bind(userId, r.kind, r.id, r.updatedAt, userId, r.payload)));
+    for (const res of results) accepted += res.meta.changes ?? 0;
+  }
+  const lastDate = events[events.length - 1].date;
+  return c.json({
+    accepted,
+    duplicates: events.length - fresh.length,
+    events: events.map((e) => ({ key: e.pull.key, id: e.id, date: e.date, duplicate: seen.has(e.id) })),
+    daily: { date: lastDate, used: used.get(lastDate) ?? 0, limit: RECRUIT_DAILY_PULL_LIMIT },
+    cursor: await maxRev(db, userId),
+  });
 });
