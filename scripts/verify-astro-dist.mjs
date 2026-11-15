@@ -57,6 +57,8 @@ export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
   Object.freeze({ sourcePath: "public/fonts", outputPath: "fonts" }),
   // Chân dung tướng tự lưu (client Global, không có URL từ xa): `/heroes/<slug>.webp` — xem docs/unified-lookup.md.
   Object.freeze({ sourcePath: "public/heroes", outputPath: "heroes" }),
+  // Ảnh báo cáo trận của nhật ký thực chiến Khai hoang (`fieldLog.phases[].battles[].images[].url`).
+  Object.freeze({ sourcePath: "public/khai-hoang-log", outputPath: "khai-hoang-log" }),
 ]);
 
 

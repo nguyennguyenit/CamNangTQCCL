@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-15 (Khai hoang: nhật ký thực chiến Lục Tốn · Tả Từ · Trương Xuân Hoa)
+
+- Added: trường `teams[].fieldLog` (chỉ đội `luc-ton-ta-tu-truong-xuan-hoa`; thuộc bộ ba như `guide`, không thuộc `variants[]`): `account`, `region`, `note`, `phases[]` (đất 4 / 5 / 6 theo cấp tướng; mỗi trận có thủ quân, binh trước–sau, thương binh, EXP, chiến pháp phát động/diệt/cứu viện, `images[]`) và `recommendations[]` (`id` + `note` vi). Số liệu thật của tài khoản HLxThanos (Ba Thục), mẫu nhỏ, không phải xếp hạng meta. Trang `/khai-hoang/<handle>/` và `/zh/` dựng khối "Nhật ký thực chiến" sau Hướng dẫn: 3 giai đoạn, thư viện ảnh báo cáo (lazy-load, chú thích, bấm mở ảnh gốc tab mới) và 5 khuyến nghị ít chết lính, mỗi số kèm cỡ mẫu n. Bản zh dựng câu từ trường có cấu trúc, khuyến nghị có bản zh trong `js/render.js`; tên tướng thủ chưa có chữ Hán trong từ điển bị lược thay vì hiện "—".
+- Added: 5 ảnh báo cáo trận 1296×728 WebP (cắt thanh tiêu đề cửa sổ, giữ nguyên tên người chơi/liên minh) ở `public/khai-hoang-log/`.
+- Changed: ghi chú log đất 4 từ `openingNote` chuyển thành giai đoạn 1 của `fieldLog`; `openingNote` về nguyên văn. `pipeline/site_localization.py` thêm `account` vào trường miễn phân loại; ghim lại hash `data/khaihoang.json`, `js/render.js`, publish generation mới và rebind sổ route.
+- Thứ tự merge: PR #93 sửa `data/khaihoang.json` cùng #95/#96 — merge lần lượt rồi rebase, chạy lại ghim hash + publish generation + `team_route_handles --rebind`.
+
 ## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
 
 ### Nền dùng chung

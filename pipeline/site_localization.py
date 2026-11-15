@@ -246,6 +246,7 @@ AUTHORED_VI_DATA_FIELDS = {
     "warning",
 }
 EXEMPT_DATA_FIELDS = {
+    "account",
     "contentFingerprint",
     "dataset",
     "format",

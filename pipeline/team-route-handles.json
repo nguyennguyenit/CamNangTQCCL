@@ -1,5 +1,5 @@
 {
-  "generationId": "32e8b2a5e3104c15f655eeac4394f23433a32333a39a43d58e3e5f3c8a5101a8",
+  "generationId": "4dfeee518b3924b1cc404f6534b0f818645634db2a1f9aec75b68bf84ad5f329",
   "handles": {
     "khaihoang": {
       "chu-thai-truong-phi-truong-xuan-hoa": "chu-thai-truong-phi-truong-xuan-hoa",
@@ -1831,7 +1831,7 @@
       "yxms-067-張關蔡": "truong-quan-thai"
     }
   },
-  "khaihoangSha256": "sha256:0ba556d11a27ec771d404ddc9d61096449134950e4813ce2fbafcce97779b43b",
+  "khaihoangSha256": "sha256:d57f57e2dbc6998af7109a49a3953c66a91e067f7b351ba74b663f9414b187ad",
   "legacyTeamsSha256": "sha256:bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
   "recommendedSeasons": {
