@@ -267,3 +267,41 @@ test("researched opening builds retain their observed stage-specific commanders 
     assert.deepEqual(build.tacticsAfter, tacticsAfter, hero);
   }
 });
+
+test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field log with real, internally consistent numbers", async () => {
+  const { existsSync } = await import("node:fs");
+  const team = data.teams.find((item) => item.id === "luc-ton-ta-tu-truong-xuan-hoa");
+  const log = team.fieldLog;
+  assert.equal(log.account, "HLxThanos");
+  assert.match(log.note, /1 tài khoản.*mẫu nhỏ.*tham khảo/);
+  assert.deepEqual(log.phases.map((phase) => [phase.landLevel, phase.heroLevelMin, phase.heroLevelMax]), [[4, 8, 10], [5, 20, 20], [6, 28, 28]]);
+  assert.deepEqual(log.phases.map((phase) => phase.battles.length), [3, 2, 1]);
+  const heroNames = new Set(team.heroes.map((hero) => hero.name));
+  const images = [];
+  for (const phase of log.phases) for (const battle of phase.battles) {
+    assert.equal(battle.won, true, battle.id);
+    assert.equal(battle.defenders.length > 0 && battle.defenders.every((item) => item.hero && item.unitType), true, battle.id);
+    if (battle.troopsAfter !== undefined) {
+      assert.ok(battle.troopsAfter < battle.troopsBefore, battle.id);
+      assert.ok(battle.wounded <= battle.troopsBefore - battle.troopsAfter, battle.id);
+    }
+    for (const skill of battle.skills || []) assert.ok(heroNames.has(skill.hero), `${battle.id}: ${skill.hero}`);
+    images.push(...(battle.images || []));
+  }
+  // Reported figures, copied from the in-game battle reports.
+  const battle = (id) => log.phases.flatMap((phase) => phase.battles).find((item) => item.id === id);
+  assert.deepEqual([battle("p1-thu-cung").lost, battle("p1-thu-cung").wounded, battle("p1-lang-thao").lost, battle("p1-quach-di").lost], [178, 59, 483, 436]);
+  assert.deepEqual([battle("p2-891-1449").troopsBefore, battle("p2-891-1449").troopsAfter, battle("p2-891-1449").wounded, battle("p2-891-1449").exp], [6000, 5630, 172, 15243]);
+  assert.deepEqual([battle("p2-899-1444").troopsAfter, battle("p2-899-1444").wounded, battle("p2-899-1444").exp], [5006, 469, 14775]);
+  assert.deepEqual([battle("p3-914-1450").troopsBefore, battle("p3-914-1450").troopsAfter, battle("p3-914-1450").wounded, battle("p3-914-1450").exp], [5992, 4891, 367, 26610]);
+  // Screenshots exist on disk with web-friendly, title-bar-free dimensions.
+  assert.equal(images.length, 5);
+  for (const image of images) {
+    assert.match(image.url, /^\/khai-hoang-log\/[a-z0-9-]+\.webp$/);
+    assert.ok(existsSync(new URL(`../public${image.url}`, import.meta.url)), image.url);
+    assert.deepEqual([image.width, image.height], [1296, 728]);
+  }
+  assert.deepEqual(log.recommendations.map((item) => item.id), ["dat4-som", "dat5-cho-20", "dat6-28", "bo-sung-binh", "cong-diem"]);
+  assert.equal(log.recommendations.every((item) => item.note.trim()), true);
+  for (const variant of team.variants) assert.equal(Object.hasOwn(variant, "fieldLog"), false);
+});

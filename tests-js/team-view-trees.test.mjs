@@ -179,3 +179,33 @@ for (const locale of ["vi", "zh"]) {
     assert.match(picked, new RegExp(`aria-pressed="true"[^>]*data-variant="${variant.id}"`));
   });
 }
+
+for (const locale of ["vi", "zh"]) {
+  test(`Khai hoang (${locale}): nhật ký thực chiến có 3 giai đoạn, ảnh lazy-load có chú thích và khuyến nghị`, () => {
+    const team = khaihoang.teams.find((item) => item.id === "luc-ton-ta-tu-truong-xuan-hoa");
+    const run = locale === "zh" ? zhOnly : (fn) => fn();
+    const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
+    assertPlain(detail);
+    const html = treeToHtml(h("div", {}, detail));
+    const text = textOf(detail);
+    assert.equal((html.match(/class="kh-fieldlog-phase"/g) || []).length, 3);
+    assert.equal((html.match(/class="kh-fieldlog-shot"/g) || []).length, 5);
+    assert.equal((html.match(/<img [^>]*loading="lazy"[^>]*decoding="async"[^>]*>/g) || []).length, 5);
+    assert.match(html, /<img src="\/khai-hoang-log\/luc-ton-dat5-891-1449-ket-qua\.webp" alt="[^"]+" width="1296" height="728"/);
+    assert.match(html, /<a class="kh-fieldlog-shot-link" href="\/khai-hoang-log\/[^"]+" target="_blank" rel="noopener"/);
+    assert.equal((html.match(/<figcaption>/g) || []).length, 5);
+    assert.equal((html.match(/data-recommendation="/g) || []).length, 5);
+    for (const value of ["HLxThanos", "15.243", "5630", "26.610", "4.891"].map((value) => (locale === "zh" ? value.replace(".", ",") : value))) {
+      if (value === "5630") assert.ok(text.includes(locale === "zh" ? "5,630" : "5.630"), value);
+      else assert.ok(text.includes(value), `${locale}: ${value}`);
+    }
+    if (locale === "vi") {
+      for (const name of ["Lục Tốn", "Tả Từ", "Trương Xuân Hoa", "Đới Lăng", "Lạc Thống"]) assert.ok(text.includes(name), name);
+      assert.ok(text.includes("mẫu nhỏ — tham khảo"));
+      assert.ok(!text.includes("Trinh sát"));
+    } else {
+      assert.ok(text.includes("陸遜") && text.includes("張春華"));
+      assert.doesNotMatch(text.slice(text.indexOf("实战日志")), /[ạảãàáâấầẩẫậắằẳẵặêếềểễệôốồổỗộơớờởỡợưứừửữự]/i);
+    }
+  });
+}

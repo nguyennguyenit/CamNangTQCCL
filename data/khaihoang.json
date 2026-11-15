@@ -421,7 +421,275 @@
       "commanderAfter": "Lục Tốn",
       "context": "Tam Thế Lục · Cung · có bản Nhật Global. Cấu hình mặc định theo nhánh Thịnh Khí.",
       "note": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; chưa đủ căn cứ xếp hạng meta Binh Diễn Xuân Thu hiện tại.",
-      "openingNote": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao."
+      "openingNote": "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao.",
+      "fieldLog": {
+        "account": "HLxThanos",
+        "region": "Ba Thục",
+        "unitType": "Cung",
+        "note": "Từ log 1 tài khoản (HLxThanos), mẫu nhỏ — tham khảo, không phải xếp hạng meta. Kết quả phụ thuộc hột tướng, trang bị và thủ quân.",
+        "phases": [
+          {
+            "id": "p1-dat4",
+            "period": "14/11/2026",
+            "heroLevelMin": 8,
+            "heroLevelMax": 10,
+            "landLevel": 4,
+            "note": "Ba trận thắng đất cấp 4; ảnh báo cáo trận đã hết hạn trong game nên chỉ lưu số liệu chữ. Trận thủ Cung hao ít nhất; hai trận gặp thủ Kỵ mất nhiều hơn.",
+            "battles": [
+              {
+                "id": "p1-thu-cung",
+                "heroLevel": 8,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Lạc Thống",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Từ Thịnh",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Tưởng Khâm",
+                    "unitType": "Cung"
+                  }
+                ],
+                "defenderLevel": 15,
+                "garrisonPerHero": 1800,
+                "troopsBefore": 2400,
+                "lost": 178,
+                "wounded": 59
+              },
+              {
+                "id": "p1-lang-thao",
+                "heroLevel": 9,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Lăng Tháo",
+                    "unitType": "Kỵ"
+                  }
+                ],
+                "lost": 483
+              },
+              {
+                "id": "p1-quach-di",
+                "heroLevel": 10,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Quách Dĩ",
+                    "unitType": "Kỵ"
+                  }
+                ],
+                "lost": 436
+              }
+            ]
+          },
+          {
+            "id": "p2-dat5",
+            "period": "15/11/2026",
+            "heroLevelMin": 20,
+            "heroLevelMax": 20,
+            "landLevel": 5,
+            "note": "Hai trận thắng đất cấp 5 khi tướng cấp 20. Trước đó, các trận thắng đất cấp 5 ở tướng cấp 18–19 (n=3) hao nhiều hơn rõ rệt: 10–22% binh chết.",
+            "battles": [
+              {
+                "id": "p2-891-1449",
+                "x": 891,
+                "y": 1449,
+                "heroLevel": 20,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Đới Lăng",
+                    "unitType": "Kỵ"
+                  },
+                  {
+                    "hero": "Tào Chương",
+                    "unitType": "Kỵ"
+                  },
+                  {
+                    "hero": "Tào Chân",
+                    "unitType": "Kỵ"
+                  }
+                ],
+                "defenderLevel": 27,
+                "garrisonPerHero": 3000,
+                "troopsBefore": 6000,
+                "troopsAfter": 5630,
+                "wounded": 172,
+                "exp": 15243,
+                "levelTo": 21,
+                "skills": [
+                  {
+                    "hero": "Lục Tốn",
+                    "tactic": "Hỏa Thiêu Liên Doanh",
+                    "fired": 2,
+                    "kills": 4921
+                  },
+                  {
+                    "hero": "Trương Xuân Hoa",
+                    "tactic": "Trầm Đoạn Cơ Mưu",
+                    "fired": 1,
+                    "kills": 826
+                  }
+                ],
+                "images": [
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat5-891-1449-ket-qua.webp",
+                    "kind": "summary",
+                    "width": 1296,
+                    "height": 728
+                  },
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat5-891-1449-thong-ke.webp",
+                    "kind": "stats",
+                    "width": 1296,
+                    "height": 728
+                  }
+                ]
+              },
+              {
+                "id": "p2-899-1444",
+                "x": 899,
+                "y": 1444,
+                "heroLevel": 20,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Phan Chương",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Hàn Đương",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Tưởng Khâm",
+                    "unitType": "Cung"
+                  }
+                ],
+                "defenderLevel": 27,
+                "garrisonPerHero": 3000,
+                "troopsBefore": 6000,
+                "troopsAfter": 5006,
+                "wounded": 469,
+                "exp": 14775,
+                "skills": [
+                  {
+                    "hero": "Lục Tốn",
+                    "tactic": "Hỏa Thiêu Liên Doanh",
+                    "fired": 3,
+                    "kills": 5376
+                  }
+                ],
+                "images": [
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat5-899-1444-ket-qua.webp",
+                    "kind": "summary",
+                    "width": 1296,
+                    "height": 728
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "p3-dat6",
+            "period": "15/11/2026",
+            "heroLevelMin": 28,
+            "heroLevelMax": 28,
+            "landLevel": 6,
+            "note": "Một trận thắng mỏ Đá cấp 6; chỉ có một mẫu nên chưa kết luận được gì ngoài mức hao của trận này.",
+            "battles": [
+              {
+                "id": "p3-914-1450",
+                "x": 914,
+                "y": 1450,
+                "heroLevel": 28,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Lạc Thống",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Tưởng Khâm",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Hàn Đương",
+                    "unitType": "Cung"
+                  }
+                ],
+                "defenderLevel": 30,
+                "garrisonPerHero": 5000,
+                "troopsBefore": 5992,
+                "troopsAfter": 4891,
+                "wounded": 367,
+                "exp": 26610,
+                "skills": [
+                  {
+                    "hero": "Lục Tốn",
+                    "tactic": "Hỏa Thiêu Liên Doanh",
+                    "fired": 4,
+                    "kills": 6688
+                  },
+                  {
+                    "hero": "Trương Xuân Hoa",
+                    "tactic": "Trầm Đoạn Cơ Mưu",
+                    "fired": 3,
+                    "kills": 3698
+                  },
+                  {
+                    "hero": "Tả Từ",
+                    "tactic": "Kim Đơn Mật Thuật",
+                    "fired": 1,
+                    "rescued": 1131
+                  }
+                ],
+                "images": [
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat6-914-1450-ket-qua.webp",
+                    "kind": "summary",
+                    "width": 1296,
+                    "height": 728
+                  },
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat6-914-1450-thong-ke.webp",
+                    "kind": "stats",
+                    "width": 1296,
+                    "height": 728
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "recommendations": [
+          {
+            "id": "dat4-som",
+            "note": "Đất 4 đánh được từ tướng cấp khoảng 8 với đội đầy 2.400 binh; trước cấp khoảng 15 ưu tiên đất thủ Cung hoặc Thương, để đất thủ Kỵ sau. Số liệu: tướng dưới cấp 18 hao trung bình 2,1% binh chết (n=3, tối đa 3,2%), tướng cấp 20 trở lên khoảng 0–1,2%; ở cấp 8–10 thủ Cung mất 178 binh (n=1), thủ Kỵ mất 483 và 436 (n=2), gấp khoảng 2,5 lần."
+          },
+          {
+            "id": "dat5-cho-20",
+            "note": "Đất 5: chờ tướng cấp 20 thay vì đánh từ cấp 18–19 (cấp 18–19 hao trung bình 15,6%, n=3, tối đa 21,7%; cấp 20–25 khoảng 5%). Ở cấp 20–25 ưu tiên đất có chủ tướng thủ Thương, rồi Khiên, rồi Kỵ, cuối cùng Cung (hao trung bình theo binh chủng chủ tướng thủ: Thương 1,4% n=5 · Khiên 4,6% n=1 · Kỵ 5,0% n=8, tối đa 13,9% · Cung 7,1% n=2). Từ cấp 26 đánh thoải mái: mọi loại 1,6–2,9% (n=21)."
+          },
+          {
+            "id": "dat6-28",
+            "note": "Đất 6: chỉ đánh khi tướng cấp 28 trở lên và đầy binh. Mẫu duy nhất hao 12,2% (n=1, thủ Cung cấp 30, 15K), nên mỗi lượt chỉ lấy mỏ cần thiết, ví dụ 1 mỏ Đá 6 cho Đồn Điền."
+          },
+          {
+            "id": "bo-sung-binh",
+            "note": "Luôn bổ sung đầy binh trước trận: trận 5.400 binh hao 21,7% (n=1), trong khi cùng mốc tướng, trận 6.000 binh hao ít hơn."
+          },
+          {
+            "id": "cong-diem",
+            "note": "Cộng điểm: Lục Tốn và Tả Từ dồn Trí; Trương Xuân Hoa giữ Tốc cao hơn Tốc Lục Tốn nhân 1,2 để ra đòn trước, còn lại dồn Trí (log: Tốc Trương Xuân Hoa 82,5 so với Lục Tốn 59,9)."
+          }
+        ]
+      }
     },
     {
       "id": "ha-hau-uyen-thai-su-tu-hoang-nguyet-anh",
