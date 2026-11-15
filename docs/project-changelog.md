@@ -7,6 +7,14 @@
 - Migration `0012_community_season_catalog.sql`: gỡ unique index "một mùa mở" và cột `closed_at`, chuyển `binh-dien-xuan-thu` → `og-兵演春秋` (đội + chiến báo). Rollback chạy tay `rollback/0013_restore_community_season_open.sql`. Thứ tự triển khai: deploy Worker → kiểm `tqccl.com/api/community-seasons` → migrate → merge.
 - Fixed: chiến báo trên trang đội cộng đồng lấy mùa của đội ngay trong câu `insert … select` (trước đây bind giá trị đọc ở preflight).
 
+## 2026-11-15 (Token API cá nhân cho Theo dõi chiêu mộ)
+
+- Added: bảng D1 `api_tokens` (migration `0014_api_tokens.sql`; `0012` đã thuộc catalog mùa, `0013` thuộc rollback; chỉ lưu SHA-256 của token, cascade khi xoá user). Route `GET/POST /api/tokens`, `DELETE /api/tokens/:id` (cookie): mọi user đăng nhập tạo token `tqccl_pat_…` scope `recruit:write`, hạn 30/90/365 ngày hoặc không hạn (mặc định 90), tối đa 10 token còn hiệu lực; token thô chỉ trả một lần.
+- Added: `POST /api/recruit/pulls` (Bearer, không cần Origin/cookie) cho tool như `tqkh`: nhận `{accountName, banner: "danh-tuong-pk", timeZone?, pulls}` (1–4 lượt), dựng event schema v2 `pulls: 1` ghi LWW vào `recruit_records`; chống trùng theo `key` (`evt_ext_<key>`), chặn vượt 4 lượt rẻ/ngày/tài khoản (409, không ghi gì), ngày theo `timeZone` IANA mặc định `Asia/Ho_Chi_Minh`, chỉ lưu tên tướng cho lượt 5★. Rate `recruit_token_push` 120/giờ, `token_create` 20/ngày.
+- Changed: middleware `/api/*` miễn kiểm Origin chỉ cho `/api/recruit/pulls` khi có Bearer và không có cookie phiên.
+- Tests: `community-worker/test/tokens.test.ts`, `test/recruit-pulls.test.ts`.
+- Chưa làm: UI quản lý token trên trang Theo dõi chiêu mộ (cần ghim lại hash `js/recruit-tracker.js` + publish generation); client `tqkh` và skill `quay-tuong` gọi endpoint mới.
+
 ## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
 
 ### Nền dùng chung
