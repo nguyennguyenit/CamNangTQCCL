@@ -1,5 +1,5 @@
 {
-  "generationId": "7bdbc5be2a49b1eae1eec342cf53288987dd4ff85275e30b12dff43c5269146a",
+  "generationId": "6a1badbedfd1f434b6552ac517a2726653bfb287bcd3e323399404c4e3a6c9a1",
   "handles": {
     "khaihoang": {
       "chu-thai-truong-phi-truong-xuan-hoa": "chu-thai-truong-phi-truong-xuan-hoa",
@@ -14,6 +14,7 @@
       "quan-ngan-binh-nhac-tien-thai-van-co": "quan-ngan-binh-nhac-tien-thai-van-co",
       "sp-chu-tuan-ha-hau-uyen-gia-cat-khac": "sp-chu-tuan-ha-hau-uyen-gia-cat-khac",
       "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac": "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
+      "sp-lo-truc-ha-hau-uyen-tran-cung": "sp-lo-truc-ha-hau-uyen-tran-cung",
       "sp-lo-truc-thai-su-tu-truong-xuan-hoa": "sp-lo-truc-thai-su-tu-truong-xuan-hoa",
       "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa": "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
       "thai-van-co-khuong-duy-thai-su-tu": "thai-van-co-khuong-duy-thai-su-tu",
@@ -1831,7 +1832,7 @@
       "yxms-067-張關蔡": "truong-quan-thai"
     }
   },
-  "khaihoangSha256": "sha256:abdb915287052ae09529e56d79e48abc5e6fc208d56474a560439498eb5962c0",
+  "khaihoangSha256": "sha256:61d48c938851d6af50531d8b77eb5990f0a42fc8f68a6d2c20009858647bde7d",
   "legacyTeamsSha256": "sha256:bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
   "recommendedSeasons": {

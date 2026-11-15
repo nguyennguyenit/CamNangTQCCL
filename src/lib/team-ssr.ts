@@ -135,7 +135,7 @@ async function khaiHoangDetailTrees(entry: KhaiHoangRouteEntry, locale: SiteLoca
   if (matches.length !== 1) throw new Error(`Khai hoang team must resolve to exactly one record: ${entry.khaiHoangTeamId}`);
   const [team] = matches;
   const options: Json = { variantId: '', locale };
-  return { body: inertUntilBound(khaihoangDetailTrees(team, options)) as Tree[], badges: detailBadges({ unitType: team.unitType ? [team.unitType] : [] }, null, { locale }) as Tree[] };
+  return { body: inertUntilBound(khaihoangDetailTrees(team, options)) as Tree[], badges: detailBadges({ unitType: team.unitType ? [team.unitType] : [], khaihoangRecommended: team.recommended === true }, null, { locale }) as Tree[] };
 }
 
 /** Thân + huy hiệu trang chi tiết Khai hoang ở cấu hình mặc định. */

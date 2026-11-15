@@ -135,6 +135,8 @@
     },
     {
       "id": "gia-cat-khac-quan-ngan-binh-nhac-tien",
+      "recommended": true,
+      "recommendedOrder": 5,
       "unitType": "Thương",
       "heroes": [
         {
@@ -236,6 +238,8 @@
     },
     {
       "id": "khuong-duy-ha-hau-uyen-gia-cat-khac",
+      "recommended": true,
+      "recommendedOrder": 4,
       "unitType": "Cung",
       "heroes": [
         {
@@ -778,16 +782,18 @@
     },
     {
       "id": "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
+      "recommended": true,
+      "recommendedOrder": 7,
       "unitType": "Cung",
       "heroes": [
         {
           "name": "SP Viên Thiệu",
           "unitTypeBefore": "Cung",
-          "tacticBefore": "Hoành Tào Thiên Quân",
+          "tacticBefore": "Hoành Tảo Thiên Quân",
           "unitTypeAfter": "Cung",
           "tacticsAfter": [
-            "Nằm Gai Nếm Mật",
-            "Hoành Tào Thiên Quân"
+            "Hoành Tảo Thiên Quân",
+            "Gió Táp Mưa Sa/Nằm Gai Nếm Mật"
           ],
           "note": ""
         },
@@ -798,18 +804,19 @@
           "unitTypeAfter": "Cung",
           "tacticsAfter": [
             "Lõa Y Huyết Chiến",
-            "Mau Giành Lợi Thế"
+            "Thôi Phong Đoạn Nhẫn/Mau Giành Lợi Thế"
           ],
-          "note": ""
+          "note": "Sau cấp 20 chiến pháp thứ hai dùng Thôi Phong Đoạn Nhẫn hoặc Mau Giành Lợi Thế; Thôi Phong Đoạn Nhẫn chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.",
+          "buildNote": "Sau cấp 20 chiến pháp thứ hai dùng Thôi Phong Đoạn Nhẫn hoặc Mau Giành Lợi Thế; Thôi Phong Đoạn Nhẫn chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn."
         },
         {
           "name": "Trương Xuân Hoa",
           "unitTypeBefore": "Cung",
-          "tacticBefore": "Thịnh Khí Linh Địch",
+          "tacticBefore": "Vô Đương Phi Quân/Thịnh Khí Linh Địch",
           "unitTypeAfter": "Cung",
           "tacticsAfter": [
-            "Thịnh Khí Linh Địch",
-            "Vô Đương Phi Quân"
+            "Vô Đương Phi Quân",
+            "Thịnh Khí Linh Địch"
           ],
           "note": ""
         }
@@ -865,27 +872,29 @@
     },
     {
       "id": "khuong-duy-quan-ngan-binh-thai-van-co",
+      "recommended": true,
+      "recommendedOrder": 6,
       "unitType": "Kỵ",
       "heroes": [
         {
           "name": "Khương Duy",
           "unitTypeBefore": "Kỵ",
-          "tacticBefore": "Sợ Bóng Sợ Gió",
+          "tacticBefore": "Thượng Binh Phạt Mưu/Sợ Bóng Sợ Gió",
           "unitTypeAfter": "Kỵ",
           "tacticsAfter": [
             "Đoạt Hồn Hiệp Phách",
-            "Sợ Bóng Sợ Gió"
+            "Sợ Bóng Sợ Gió/Thượng Binh Phạt Mưu"
           ],
           "note": ""
         },
         {
           "name": "Quan Ngân Bình",
           "unitTypeBefore": "Kỵ",
-          "tacticBefore": "Hoành Tào Thiên Quân",
+          "tacticBefore": "Hoành Tảo Thiên Quân",
           "unitTypeAfter": "Kỵ",
           "tacticsAfter": [
-            "Dùng Nước Đẩy Cầu",
-            "Hoành Tào Thiên Quân"
+            "Hoành Tảo Thiên Quân",
+            "Gió Táp Mưa Sa/Dùng Nước Đẩy Cầu"
           ],
           "note": ""
         },
@@ -896,7 +905,7 @@
           "unitTypeAfter": "Kỵ",
           "tacticsAfter": [
             "Thịnh Khí Linh Địch",
-            "Tạm Lánh Sóng Gió"
+            "Tạm Lánh Sóng Gió/Bát Môn Kim Tỏa Trận"
           ],
           "note": ""
         }
@@ -1007,6 +1016,8 @@
     },
     {
       "id": "gia-cat-khac-thai-su-tu-ta-tu",
+      "recommended": true,
+      "recommendedOrder": 3,
       "unitType": "Cung",
       "heroes": [
         {
@@ -1182,6 +1193,8 @@
     },
     {
       "id": "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
+      "recommended": true,
+      "recommendedOrder": 2,
       "unitType": "Thương",
       "heroes": [
         {
@@ -1311,6 +1324,56 @@
         "defenders":{"land4":[{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lăng Tháo","unitType":"Kỵ"},{"hero":"Chu Hoàn","unitType":"Thương"},{"hero":"Quách Dĩ","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trương Dực","unitType":"Khiên"},{"hero":"Tào Chương","unitType":"Khiên"}],"land5":[{"hero":"Phan Chương","unitType":"Thương"},{"hero":"Tào Chân","unitType":"Kỵ"},{"hero":"Trương Lương","unitType":"Thương"},{"hero":"Lý Thôi","unitType":"Kỵ"},{"hero":"Hoàng Quyền","unitType":"Cung"},{"hero":"Tưởng Khâm","unitType":"Cung"},{"hero":"Trần Vũ","unitType":"Khiên"},{"hero":"Trần Kiểu","unitType":"Khiên"}],"warning":"Tào Chương Khiên, Hoàng Quyền Cung và Trần Kiểu Khiên nên tránh: dễ gây hỗn loạn, hao binh khó kiểm soát. Càng về cuối danh sách càng khó."},
         "splitTeams":{"teams":[{"target":"Các đội Khiên (khuyến nghị Trần Kiểu)","note":"Hạ Hầu Uyên (Lõa Y / Bách Kỵ) + Hoàng Nguyệt Anh (Hổ Báo) + Lý Điển (Phong Thi)."},{"target":"Các đội Thương","note":"Gia Cát Khác (Thịnh Khí / Lâm Cơ) + SP Chu Tuấn (Yên Trục Phong Phi / Phần Trại) + Hoàng Nguyệt Anh."}]},
         "transitions":[{"target":"Uyên Kỵ","steps":[{"mainCityLevel":7,"trainHeroes":["Quách Gia"],"note":"Luyện tiếp Tào Tháo và chuyển ở thành chính cấp 8."}]},{"target":"Hạch Bạo Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Chu Thái"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Quần Cung","steps":[{"mainCityLevel":7,"trainHeroes":["SP Viên Thiệu","Tự Thụ"],"note":"Chuyển khi đủ thống ngự."}]},{"target":"Chuyển trần","steps":[{"timing":"48 giờ","note":"Tháo chiến pháp để tích thống ngự."}]}]
+      }
+    },
+    {
+      "id": "sp-lo-truc-ha-hau-uyen-tran-cung",
+      "recommended": true,
+      "recommendedOrder": 1,
+      "unitType": "Cung",
+      "heroes": [
+        {
+          "name": "SP Lô Trực",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Tiềm Long Trận",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Tiềm Long Trận",
+            "Thịnh Khí Linh Địch"
+          ],
+          "note": ""
+        },
+        {
+          "name": "Hạ Hầu Uyên",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Thôi Phong Đoạn Nhẫn",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Thôi Phong Đoạn Nhẫn",
+            "Lõa Y Huyết Chiến"
+          ],
+          "note": "Dùng Thôi Phong Đoạn Nhẫn ngay từ trước cấp 20 nên chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.",
+          "buildNote": "Dùng Thôi Phong Đoạn Nhẫn ngay từ trước cấp 20 nên chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn."
+        },
+        {
+          "name": "Trần Cung",
+          "unitTypeBefore": "Cung",
+          "tacticBefore": "Vô Đương Phi Quân",
+          "unitTypeAfter": "Cung",
+          "tacticsAfter": [
+            "Vô Đương Phi Quân",
+            "Thượng Binh Phạt Mưu"
+          ],
+          "note": ""
+        }
+      ],
+      "title": "SP Lô Trực · Hạ Hầu Uyên · Trần Cung",
+      "guide": {
+        "transitions": [
+          {"target": "Đại Hán Cung"},
+          {"target": "40th Lữ Điêu"},
+          {"target": "Lô Cung"}
+        ]
       }
     }
   ],

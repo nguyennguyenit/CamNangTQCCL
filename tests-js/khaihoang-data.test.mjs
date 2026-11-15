@@ -18,7 +18,7 @@ const expectedGuideHeroReferences = [
 
 // Reviewed phase-1 migration table: the 30 retired `displayNote` owners, each recorded as the
 // destination field of its sentences. `null` means the field must be absent rather than empty, and
-// the pair must reproduce the retired value sentence for sentence (69 sentences in total).
+// the pair must reproduce the retired value sentence for sentence (71 sentences in total).
 const noteMigration = [
   ["teams[0].variants[0]", "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.", "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản."],
   ["teams[0].variants[1]", "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.", null],
@@ -40,6 +40,7 @@ const noteMigration = [
   ["teams[5].variants[0]", "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.", null],
   ["teams[7].variants[0]", "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.", null],
   ["teams[8].variants[0]", "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.", null],
+  ["teams[8].heroes[1]", "Sau cấp 20 chiến pháp thứ hai dùng Thôi Phong Đoạn Nhẫn hoặc Mau Giành Lợi Thế; Thôi Phong Đoạn Nhẫn chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.", null],
   ["teams[10].variants[0]", "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
   ["teams[11].variants[0]", "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6.", "Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh."],
   ["teams[11].variants[1]", "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.", null],
@@ -47,6 +48,7 @@ const noteMigration = [
   ["teams[11].heroes[1]", "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn.", "Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."],
   ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng, không thêm Cắt Xương Trị Độc. Thực chiến: đội cấp 24–25 với bộ chiến pháp này đã thắng thủ quân cấp 6 (15K) hai lần.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
   ["teams[12].heroes[2]", "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái.", null],
+  ["teams[17].heroes[1]", "Dùng Thôi Phong Đoạn Nhẫn ngay từ trước cấp 20 nên chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.", null],
   ["teams[13].heroes[0]", "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh.", null],
   ["teams[14]", "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20.", "Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản."],
   ["teams[14].heroes[0]", "Cộng Thống Soái.", null],
@@ -211,7 +213,7 @@ test("every retired display note keeps its sentences in exactly one owner field"
     sentences += [build, opening].filter(Boolean).join(" ").split(/(?<=\.)\s+/)
       .filter((sentence) => sentence.trim()).length;
   }
-  assert.equal(sentences, 69);
+  assert.equal(sentences, 71);
 });
 
 test("the retired displayNote field is gone from the whole document", () => {
@@ -270,5 +272,23 @@ test("researched opening builds retain their observed stage-specific commanders 
     assert.equal(build.tacticBefore, tacticBefore, hero);
     assert.equal(build.unitTypeAfter, "Cung", hero);
     assert.deepEqual(build.tacticsAfter, tacticsAfter, hero);
+  }
+});
+
+test("official recommended teams carry the Tiến cử flag and an explicit image order", () => {
+  const officialOrder = [
+    "sp-lo-truc-ha-hau-uyen-tran-cung",
+    "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
+    "gia-cat-khac-thai-su-tu-ta-tu",
+    "khuong-duy-ha-hau-uyen-gia-cat-khac",
+    "gia-cat-khac-quan-ngan-binh-nhac-tien",
+    "khuong-duy-quan-ngan-binh-thai-van-co",
+    "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
+  ];
+  const flagged = data.teams.filter((team) => team.recommended === true);
+  assert.deepEqual(flagged.sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((team) => team.id), officialOrder);
+  flagged.forEach((team, index) => assert.equal(team.recommendedOrder, index + 1, team.id));
+  for (const team of data.teams.filter((item) => item.recommended !== true)) {
+    assert.equal(Object.hasOwn(team, "recommendedOrder"), false, team.id);
   }
 });

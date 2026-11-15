@@ -165,6 +165,7 @@ for (const locale of ["vi", "zh"]) {
     assert.match(html, new RegExp(`href="/khai-hoang/${team.id}/"`));
     // Mọi đội của dữ liệu đều có thẻ.
     assert.equal((html.match(/class="team-card reference-team-card kh-card"/g) || []).length, khaihoang.teams.length);
+    assert.equal((html.match(/class="badge badge-band kh-recommended"/g) || []).length, khaihoang.teams.filter((item) => item.recommended === true).length);
 
     const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
     assert.ok(Array.isArray(detail));
