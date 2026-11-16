@@ -8,6 +8,16 @@
 - Đổi identity map làm glossary digest đổi (`sha256:e00b61a0…`), nên duyệt độc lập lại toàn bộ 6409 vị trí (2812 site + 3597 Tra cứu): 16 batch `doi-chuan-261117-r1-*`, mỗi batch một reviewer. Vòng 1 chấp nhận 6397, từ chối 12. Sửa 7 mục: "nhiều tiên công" (2), đội tốc độ trung bình *khắc chế* Quán Quân Thương / SP Quan Vũ (2), "CO Vô Song Tinh Thái", tùy chọn cải tạo 飛馳 = "Tật Trì" (2). 5 mục bị từ chối nhầm, vì reviewer áp tên client, trong khi ghi chú dùng identity map (Hãn Thiên Sí Địa) và tên client "SP Lô Trực" ở Đội khác. 12 mục được duyệt lại ở batch `r2-000` và chấp nhận hết. Output review cũ `doi-chuan-261116-*` bị thay như lần refresh trước; Git giữ lịch sử.
 - `pipeline/recommended-other-teams.json` ghim lại hash identity map. Generation Đội chuẩn mới publish lại, ledger route rebind.
 
+## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
+
+- Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
+- Added: `POST /api/tokens` xoá token của chính user đã thu hồi/hết hạn quá 30 ngày (#105 mục 3); không cron, không migration, token còn hiệu lực không bị ảnh hưởng. Test thêm ở `test/tokens.test.ts`.
+
+## 2026-11-16 (Ép LF cho working tree, gate community-worker thêm client store, issue #100/#105)
+
+- Fixed: `.gitattributes` thêm `* text=auto eol=lf` — checkout Windows (`core.autocrlf=true`) không còn tạo file CRLF làm lệch digest pipeline/MCP. `*.csv -text` và rule `coexist-binh-dien-xuan-thu.csv` đặt sau để vẫn thắng; `git add --renormalize .` không đổi file nào khác (ba CSV snapshot CRLF được giữ nguyên byte nhờ `*.csv -text`). Clone Windows cũ: xem `docs/deployment-guide.md` (Prerequisite).
+- Fixed: `community-worker-gate.yml` (pull_request và push) thêm `js/recruit-tracker-store.js` và `js/i18n.js` vào `paths` — `community-worker/test/recruit-pulls.test.ts` import trực tiếp hai file này.
+
 ## 2026-11-16 (Đội chuẩn: refresh SGSDeck, thêm 41 cấu hình bản chính thức máy chủ Đài Loan, duyệt lại toàn bộ bản dịch)
 
 ### Changed
