@@ -11,7 +11,7 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
 - API key của ít nhất một nhà cung cấp AI OpenAI-compatible đọc được ảnh (vd DeepSeek platform.deepseek.com, số dư trả trước; hoặc OpenCode Zen), nhập ở tab **AI** của `/quan-tri/` rồi gán vào chuỗi của từng tính năng — không đặt trong env.
 - Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
-- Windows: `.gitattributes` ép mọi file văn bản checkout bằng LF (`* text=auto eol=lf`) dù `core.autocrlf=true`, vì pipeline/MCP băm byte working tree nên CRLF làm lệch digest đã ghim (từng ghim nhầm hash CRLF của `data/khaihoang.json`). `*.csv` giữ `-text` (snapshot có CRLF thật). Clone Windows cũ cần làm mới working tree sau khi kéo rule này: `git add --renormalize .` rồi `git status` (hoặc `git rm --cached -r . && git reset --hard` khi không còn thay đổi chưa commit).
+- Windows: `.gitattributes` ép mọi file văn bản checkout bằng LF (`* text=auto eol=lf`) dù `core.autocrlf=true`, vì pipeline/MCP băm byte working tree nên CRLF làm lệch digest đã ghim (từng ghim nhầm hash CRLF của `data/khaihoang.json`). `*.csv` giữ `-text` (snapshot có CRLF thật). Clone Windows cũ vẫn còn file CRLF trên đĩa sau khi kéo rule này (`git add --renormalize .` chỉ sửa index, không viết lại file): commit hoặc `git stash` thay đổi local, rồi `git rm --cached -r -q . && git reset --hard` để checkout lại toàn bộ bằng LF; hoặc clone mới.
 
 ## Preview và test local
 
