@@ -87,7 +87,7 @@ test("5. registry rỗng cho 0 trang, không ném lỗi", async () => {
   }
 });
 
-test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện tại mất trang + 301 từ slug của nó, nhãn mùa cũ đổi theo, client không còn hằng số", async () => {
+test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện tại mất trang + 301 từ slug của nó, nhãn mùa cũ theo thứ tự registry, client không còn hằng số", async () => {
   const { registry, catalog } = await data();
   const before = seasonPageCatalog(registry, catalog);
   const switched = withDefault(registry, "pk-s24");
@@ -102,10 +102,13 @@ test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện
     { from: "/doi-chuan/pk-s24/", to: "/doi-chuan/", status: 301 },
     { from: "/zh/doi-chuan/pk-s24/", to: "/zh/doi-chuan/", status: 301 },
   ]);
-  assert.equal(isOldSeason(current, registry.defaultSourceSeasonId), false);
-  assert.equal(isOldSeason(current, "pk-s24"), true);
-  assert.equal(isOldSeason("pk-s24", "pk-s24"), false);
-  assert.equal(isOldSeason(null, "pk-s24"), false);
+  const order = before.seasonOrder;
+  assert.equal(isOldSeason(current, registry.defaultSourceSeasonId, order), false);
+  // Mặc định đổi sang PK-S24: PK-S27 (mùa hiện tại trước đó) giờ mới hơn mặc định nên không nhãn, PK-S20 thì có.
+  assert.equal(isOldSeason(current, "pk-s24", order), false);
+  assert.equal(isOldSeason("pk-s20", "pk-s24", order), true);
+  assert.equal(isOldSeason("pk-s24", "pk-s24", order), false);
+  assert.equal(isOldSeason(null, "pk-s24", order), false);
   // Chip "Hiện tại" của ô chọn mùa theo registry, không theo hằng số.
   const option = (id) => registry.seasonOptions.find((item) => item.sourceSeasonId === id);
   assert.match(seasonOptionText(option("pk-s24"), "pk-s24"), /Hiện tại/u);
@@ -134,4 +137,29 @@ test("6b. mùa mặc định có hơn 60 đội: /doi-chuan/ không JS liệt k�
     .find((id) => { const n = rows.filter((row) => row.sourceSeasonId === id).length; return n > 0 && n <= 60; });
   const small = recommendedSectionTrees({ family: "recommended", rows, registry: withDefault(registry, smallId), locale: "vi" }).map((tree) => treeToHtml(tree)).join("");
   assert.match(small, /data-ssr-signature="[^"]*,60\]"/u);
+});
+
+test("6c. nhãn mùa cũ chỉ cho mùa cũ hơn mùa mặc định theo thứ tự registry (#89)", async () => {
+  const { registry, catalog } = await data();
+  const order = seasonPageCatalog(registry, catalog).seasonOrder;
+  // Thứ tự nguồn là mới nhất trước và liền mạch: PK-S28 đứng trước PK-S27, PK-S27 trước PK-S26.
+  assert.ok(order.indexOf("pk-s28") >= 0 && order.indexOf("pk-s28") < order.indexOf("pk-s27") && order.indexOf("pk-s27") < order.indexOf("pk-s26"));
+  // Mùa mới hơn mặc định: không nhãn.
+  assert.equal(isOldSeason("pk-s28", "pk-s27", order), false);
+  // Mùa cũ hơn mặc định: có nhãn.
+  assert.equal(isOldSeason("pk-s26", "pk-s27", order), true);
+  assert.equal(isOldSeason("s1", "pk-s27", order), true);
+  // Chính mùa mặc định: không nhãn.
+  assert.equal(isOldSeason("pk-s27", "pk-s27", order), false);
+  // Không rõ mùa / mặc định / vị trí: không nhãn (thận trọng).
+  assert.equal(isOldSeason("pk-s999", "pk-s27", order), false);
+  assert.equal(isOldSeason("pk-s26", "pk-s999", order), false);
+  assert.equal(isOldSeason("pk-s26", null, order), false);
+  assert.equal(isOldSeason(undefined, "pk-s27", order), false);
+  assert.equal(isOldSeason("pk-s26", "pk-s27", []), false);
+  // Cờ `older` của trang mùa theo cùng hàm: với mặc định PK-S27, PK-S28 không có nhãn, PK-S26 có.
+  const result = seasonPageCatalog(withDefault(registry, "pk-s27"), catalog);
+  assert.equal(result.pages.find((page) => page.sourceSeasonId === "pk-s28").older, false);
+  assert.equal(result.pages.find((page) => page.sourceSeasonId === "pk-s26").older, true);
+  assert.equal(result.pages.every((page) => page.older === (order.indexOf(page.sourceSeasonId) > order.indexOf("pk-s27"))), true);
 });

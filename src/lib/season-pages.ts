@@ -34,14 +34,18 @@ export interface SeasonPage extends SeasonSummary {
   routePath: string;
   /** File dist bản Việt; bản zh nằm dưới `zh/`. */
   htmlPath: string;
+  /** Mùa cũ hơn mùa hiện tại (`isOldSeason`): chỉ mùa này mang nhãn "mùa cũ"; mùa mới hơn mùa hiện tại không có nhãn. */
+  older: boolean;
 }
 
 export interface SeasonPageCatalog {
   defaultSourceSeasonId: string | null;
   /** Mùa hiện tại (không có trang riêng); `null` khi registry rỗng. */
   current: SeasonSummary | null;
-  /** Mùa cũ có đội, theo thứ tự registry. */
+  /** Mùa không phải mùa hiện tại có đội, theo thứ tự registry. */
   pages: SeasonPage[];
+  /** Mã mọi mùa của registry (kể cả mùa 0 đội), mới nhất trước: thứ tự `seasonOptions` của nguồn. */
+  seasonOrder: string[];
 }
 
 export interface SeasonRedirectRule {
@@ -52,9 +56,21 @@ export interface SeasonRedirectRule {
 
 const text = (value: unknown) => (typeof value === 'string' && value.trim() ? value.trim() : null);
 
-/** Mùa cũ: đội thuộc một mùa khác mùa mặc định của registry. Đội không rõ mùa không bị coi là mùa cũ. */
-export function isOldSeason(sourceSeasonId: string | null | undefined, defaultSourceSeasonId: string | null | undefined) {
-  return Boolean(sourceSeasonId) && Boolean(defaultSourceSeasonId) && sourceSeasonId !== defaultSourceSeasonId;
+/**
+ * Mùa cũ: mùa đứng SAU mùa mặc định trong `seasonOrder`. `seasonOptions` của nguồn xếp mới nhất trước (OG, PK-S28,
+ * PK-S27 … PK-S4, S3, S2, S1; `sourceOrder` 0..n liền mạch), nên chỉ số lớn hơn = cũ hơn. Mùa mặc định và mùa mới hơn
+ * nó (PK-S28 khi mặc định là PK-S27) không có nhãn. Mùa không rõ, mặc định không rõ hoặc không có trong thứ tự cũng không
+ * có nhãn (thận trọng: không đoán).
+ */
+export function isOldSeason(
+  sourceSeasonId: string | null | undefined,
+  defaultSourceSeasonId: string | null | undefined,
+  seasonOrder: readonly string[],
+) {
+  if (!sourceSeasonId || !defaultSourceSeasonId || sourceSeasonId === defaultSourceSeasonId) return false;
+  const season = seasonOrder.indexOf(sourceSeasonId);
+  const current = seasonOrder.indexOf(defaultSourceSeasonId);
+  return season >= 0 && current >= 0 && season > current;
 }
 
 /**
@@ -72,6 +88,11 @@ export function seasonPageCatalog(
   const counts = new Map<string, number>();
   for (const entry of catalog.recommended) {
     if (entry.sourceSeasonId) counts.set(entry.sourceSeasonId, (counts.get(entry.sourceSeasonId) ?? 0) + 1);
+  }
+  const seasonOrder: string[] = [];
+  for (const option of options) {
+    const id = text(option?.sourceSeasonId);
+    if (id && !seasonOrder.includes(id)) seasonOrder.push(id);
   }
   const summaries: SeasonSummary[] = [];
   const seen = new Set<string>();
@@ -101,8 +122,10 @@ export function seasonPageCatalog(
   const current = summaries.find((summary) => summary.sourceSeasonId === defaultSourceSeasonId) ?? null;
   const pages = summaries
     .filter((summary) => summary.sourceSeasonId !== defaultSourceSeasonId && summary.count > 0)
-    .map((summary) => ({ ...summary, routePath: `/doi-chuan/${summary.slug}/`, htmlPath: `doi-chuan/${summary.slug}/index.html` }));
-  return { defaultSourceSeasonId, current, pages };
+    .map((summary) => ({ ...summary, routePath: `/doi-chuan/${summary.slug}/`, htmlPath: `doi-chuan/${summary.slug}/index.html`,
+      older: isOldSeason(summary.sourceSeasonId, defaultSourceSeasonId, seasonOrder),
+    }));
+  return { defaultSourceSeasonId, current, pages, seasonOrder };
 }
 
 /** 301 của slug mùa hiện tại về trang danh sách (vi + zh): URL đã index của mùa vừa thành mùa mặc định không bị 404. */

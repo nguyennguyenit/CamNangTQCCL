@@ -265,7 +265,7 @@ export interface RecommendedDetailProps {
   lookupLinks: TeamLookupLinks;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
-  /** Đội thuộc mùa cũ (khác `defaultSourceSeasonId` của registry): dòng phụ có nhãn "mùa cũ". */
+  /** Đội thuộc mùa cũ hơn `defaultSourceSeasonId` theo thứ tự registry: dòng phụ có nhãn "mùa cũ" (mùa mới hơn không có nhãn). */
   oldSeason: boolean;
   savePayload: TeamSavePayload;
 }
@@ -281,7 +281,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
   const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
   const links = await heroLinkBuilder(locale);
-  const { defaultSourceSeasonId } = await seasonPages();
+  const { defaultSourceSeasonId, seasonOrder } = await seasonPages();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
     locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
@@ -309,7 +309,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
       ...catalogPins(catalog),
       lookupLinks: recordLookupLinks(record, resolveLookupId),
       heroes,
-      oldSeason: isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId),
+      oldSeason: isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId, seasonOrder),
       savePayload: {
         schema: 1,
         kind: 'recommended',
