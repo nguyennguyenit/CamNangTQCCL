@@ -1,0 +1,451 @@
+{
+ "schemaVersion": 1,
+ "note": "Thuật ngữ cố định khi dịch zh -> ja. `source` là URL Nhật đã thấy thuật ngữ (chỉ để truy vết nội bộ) hoặc `unverified`.",
+ "terms": [
+  {
+   "zh": [
+    "兵刃傷害",
+    "兵刃伤害"
+   ],
+   "ja": "兵刃ダメージ",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "謀略傷害",
+    "谋略伤害"
+   ],
+   "ja": "計略ダメージ",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "傷害",
+    "伤害"
+   ],
+   "ja": "ダメージ",
+   "source": "unverified",
+   "note": "複合語の「傷害率」は「ダメージ率」"
+  },
+  {
+   "zh": [
+    "統率",
+    "统率"
+   ],
+   "ja": "統率",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "智力",
+    "知力"
+   ],
+   "ja": "知力",
+   "source": "https://sangokushi-shinsen.com/sonsaku/",
+   "note": "繁体字の智力も日本版の表記は知力"
+  },
+  {
+   "zh": [
+    "武力"
+   ],
+   "ja": "武力",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "速度"
+   ],
+   "ja": "速度",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "主將",
+    "主将"
+   ],
+   "ja": "主将",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "副將",
+    "副将"
+   ],
+   "ja": "副将",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "兵力"
+   ],
+   "ja": "兵力",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "回合"
+   ],
+   "ja": "ターン",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "發動機率",
+    "发动几率",
+    "發動率"
+   ],
+   "ja": "発動確率",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "治療率",
+    "治疗率"
+   ],
+   "ja": "回復率",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "受到傷害",
+    "受到伤害"
+   ],
+   "ja": "被ダメージ",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "造成傷害",
+    "造成伤害"
+   ],
+   "ja": "与ダメージ",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "我軍",
+    "我军"
+   ],
+   "ja": "自軍",
+   "source": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  {
+   "zh": [
+    "敵軍",
+    "敌军"
+   ],
+   "ja": "敵軍",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "單體",
+    "单体"
+   ],
+   "ja": "単体",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "群體",
+    "群体"
+   ],
+   "ja": "群体",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "全體",
+    "全体"
+   ],
+   "ja": "全体",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "普通攻擊",
+    "普通攻击"
+   ],
+   "ja": "通常攻撃",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "主動戰法",
+    "主动战法"
+   ],
+   "ja": "アクティブ戦法",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "被動戰法",
+    "被动战法"
+   ],
+   "ja": "パッシブ戦法",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "指揮戰法",
+    "指挥战法"
+   ],
+   "ja": "指揮戦法",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "追擊戰法",
+    "追击战法"
+   ],
+   "ja": "追撃戦法",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "突擊戰法",
+    "突击战法"
+   ],
+   "ja": "突撃戦法",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "混亂",
+    "混乱"
+   ],
+   "ja": "混乱",
+   "source": "https://sangokushi-shinsen.com/confusion/"
+  },
+  {
+   "zh": [
+    "洞察"
+   ],
+   "ja": "洞察",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "連擊",
+    "连击"
+   ],
+   "ja": "連撃",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "先攻"
+   ],
+   "ja": "先攻",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "必中"
+   ],
+   "ja": "必中",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "破陣",
+    "破阵"
+   ],
+   "ja": "破陣",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "虛弱",
+    "虚弱"
+   ],
+   "ja": "虚弱",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "規避",
+    "规避"
+   ],
+   "ja": "回避",
+   "source": "https://sangokushi-shinsen.com/s-sen/",
+   "note": "日本版は「回避（規避）」と併記"
+  },
+  {
+   "zh": [
+    "潰逃",
+    "溃逃"
+   ],
+   "ja": "潰走",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "恐慌"
+   ],
+   "ja": "恐慌",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "燃燒",
+    "燃烧"
+   ],
+   "ja": "燃焼",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "挑釁",
+    "挑衅"
+   ],
+   "ja": "挑発",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "怯戰",
+    "怯战"
+   ],
+   "ja": "封印",
+   "source": "https://sangokushi-shinsen.com/s-sen/",
+   "note": "通常攻撃を封じる状態。日本版の表記は封印"
+  },
+  {
+   "zh": [
+    "震懾",
+    "震慑"
+   ],
+   "ja": "威圧",
+   "source": "unverified",
+   "note": "日本版の正式名は未確認。要レビュー"
+  },
+  {
+   "zh": [
+    "計窮",
+    "计穷"
+   ],
+   "ja": "計窮",
+   "source": "unverified",
+   "note": "日本版の正式名は未確認。要レビュー"
+  },
+  {
+   "zh": [
+    "猶豫",
+    "犹豫"
+   ],
+   "ja": "迷い",
+   "source": "unverified",
+   "note": "日本版の正式名は未確認。要レビュー"
+  },
+  {
+   "zh": [
+    "暴擊",
+    "暴击"
+   ],
+   "ja": "会心",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "削弱",
+    "弱化"
+   ],
+   "ja": "弱体",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "持續",
+    "持续"
+   ],
+   "ja": "持続",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "士氣",
+    "士气"
+   ],
+   "ja": "士気",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "熟練度",
+    "熟练度"
+   ],
+   "ja": "熟練度",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "騎兵",
+    "骑兵"
+   ],
+   "ja": "騎兵",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "盾兵"
+   ],
+   "ja": "盾兵",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "弓兵"
+   ],
+   "ja": "弓兵",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "槍兵",
+    "枪兵"
+   ],
+   "ja": "槍兵",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "器械"
+   ],
+   "ja": "器械",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "戰鬥中",
+    "战斗中"
+   ],
+   "ja": "戦闘中",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "戰法",
+    "战法"
+   ],
+   "ja": "戦法",
+   "source": "https://sangokushi-shinsen.com/s-sen/"
+  },
+  {
+   "zh": [
+    "軍師",
+    "军师"
+   ],
+   "ja": "軍師",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "兵書",
+    "兵书"
+   ],
+   "ja": "兵法書",
+   "source": "https://sangokushi-shinsen.com/heihousyo-master/"
+  }
+ ]
+}

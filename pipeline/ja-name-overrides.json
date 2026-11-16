@@ -1,0 +1,3523 @@
+{
+ "names": {
+  "advisor:ba-vuong-thao-nghich": {
+   "confidence": "high",
+   "nameJa": "覇王討逆",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  "advisor:bach-ma-thay-chu": {
+   "confidence": "medium",
+   "nameJa": "白馬替主",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:binh-quy-than-toc": {
+   "confidence": "medium",
+   "nameJa": "兵貴神速",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  "advisor:cam-pham-du-hiep": {
+   "confidence": "medium",
+   "nameJa": "錦帆遊侠",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:chien-y-ngang-duong": {
+   "confidence": "medium",
+   "nameJa": "戦意昂揚",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:dinh-quan-ky-tap": {
+   "confidence": "medium",
+   "nameJa": "定軍奇襲",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:ho-ve-than-uy": {
+   "confidence": "high",
+   "nameJa": "虎衛神威",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyo-tyo/"
+  },
+  "advisor:nhan-than-chi-le": {
+   "confidence": "medium",
+   "nameJa": "姻親之礼",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kousonsan/"
+  },
+  "advisor:tap-dia-doat-thanh": {
+   "confidence": "medium",
+   "nameJa": "襲地奪城",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:tay-luong-phi-hung": {
+   "confidence": "medium",
+   "nameJa": "西涼飛熊",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:thach-binh-bat-tran": {
+   "confidence": "medium",
+   "nameJa": "石兵八陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:thien-cong-tuong-quan": {
+   "confidence": "medium",
+   "nameJa": "天公将軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "advisor:tiet-nghia-da-muu": {
+   "confidence": "medium",
+   "nameJa": "節義多謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "book:bach-chien": {
+   "confidence": "medium",
+   "nameJa": "百戦錬磨",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:biet-cach-phong-thu": {
+   "confidence": "medium",
+   "nameJa": "守備采配",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:binh-hanh-quy-dao": {
+   "confidence": "medium",
+   "nameJa": "兵行詭道",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:bo-tran-cho-doi": {
+   "confidence": "medium",
+   "nameJa": "臨戦態勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:cam-binh-khi": {
+   "confidence": "high",
+   "nameJa": "執鋭",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:chia-nho-danh-nhanh": {
+   "confidence": "medium",
+   "nameJa": "機動防御",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:chien-dau-truong-ky": {
+   "confidence": "medium",
+   "nameJa": "久戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:cuong-nhu": {
+   "confidence": "medium",
+   "nameJa": "柔能制剛",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:cuu-chu": {
+   "confidence": "medium",
+   "nameJa": "親衛",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:cuu-vien": {
+   "confidence": "medium",
+   "nameJa": "救援馳参",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:dan-quan": {
+   "confidence": "high",
+   "nameJa": "統軍",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "book:danh-bat-ngo-thang": {
+   "confidence": "medium",
+   "nameJa": "奇策勝利",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:danh-gia-tinh-hinh": {
+   "confidence": "medium",
+   "nameJa": "時勢判断",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:danh-pha-vong-vay": {
+   "confidence": "high",
+   "nameJa": "疾戦突囲",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:danh-sau-trung-truoc": {
+   "confidence": "high",
+   "nameJa": "後発先至",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:danh-vao-cho-hiem": {
+   "confidence": "high",
+   "nameJa": "攻其不備",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:di-truc-bao-oan": {
+   "confidence": "medium",
+   "nameJa": "以直報怨",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:dieu-toan": {
+   "confidence": "high",
+   "nameJa": "妙算",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-beginner/"
+  },
+  "book:gap-dich-khong-loan": {
+   "confidence": "high",
+   "nameJa": "臨敵不乱",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:gia-nai-truoc-dich": {
+   "confidence": "medium",
+   "nameJa": "能鷹隠爪",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:giap-sat": {
+   "alts": [
+    "鉄兜"
+   ],
+   "confidence": "high",
+   "nameJa": "鉄甲",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:giau-dao": {
+   "confidence": "medium",
+   "nameJa": "笑裏蔵刀",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:hanh-dong-theo-thoi": {
+   "confidence": "medium",
+   "nameJa": "当機立断",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:hop-bien": {
+   "confidence": "medium",
+   "nameJa": "応変",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:ke-sach-du-dich": {
+   "confidence": "high",
+   "nameJa": "誘敵之策",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khai-hap": {
+   "confidence": "medium",
+   "nameJa": "開闔",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khep-ho": {
+   "confidence": "high",
+   "nameJa": "掩虚",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khich-le-long-quan": {
+   "confidence": "high",
+   "nameJa": "励軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khong-chien-ma-thang": {
+   "confidence": "medium",
+   "nameJa": "不戦屈敵",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khong-chien-se-chet": {
+   "confidence": "medium",
+   "nameJa": "死中求活",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:khong-lo-tai-nang": {
+   "confidence": "high",
+   "nameJa": "大謀不謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "book:ky-chinh-tuong-sinh": {
+   "confidence": "medium",
+   "nameJa": "奇正剛柔",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:lay-vo-dep-loan": {
+   "confidence": "high",
+   "nameJa": "以治撃乱",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:lien-mach-mot-hoi": {
+   "confidence": "medium",
+   "nameJa": "一気呵成",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:man-dung-phi-dung": {
+   "confidence": "high",
+   "nameJa": "蛮勇非勇",
+   "sourceUrl": "https://sangokushi-shinsen.com/enjyutu/"
+  },
+  "book:muu-ke-sau-xa": {
+   "confidence": "medium",
+   "nameJa": "遠謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:nghia-dung": {
+   "confidence": "medium",
+   "nameJa": "勇毅",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:nhin-ro-mon-mot": {
+   "confidence": "medium",
+   "nameJa": "洞若観火",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:phan-hiem": {
+   "confidence": "high",
+   "nameJa": "分険",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:phong-bi": {
+   "confidence": "high",
+   "nameJa": "防備",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:quy-muu": {
+   "confidence": "high",
+   "nameJa": "鬼謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "book:quy-thuan": {
+   "alts": [
+    "帰従"
+   ],
+   "confidence": "high",
+   "nameJa": "帰心",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "book:ren-luyen": {
+   "confidence": "high",
+   "nameJa": "練磨",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "book:sac-ben": {
+   "confidence": "medium",
+   "nameJa": "鋭利",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tam-ly-nhi-hoan": {
+   "confidence": "medium",
+   "nameJa": "反転攻勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tam-quan-chi-chung": {
+   "confidence": "high",
+   "nameJa": "三軍救助",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "book:tan-cong-diem-yeu": {
+   "confidence": "medium",
+   "nameJa": "傷兵支援",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tan-tien": {
+   "confidence": "medium",
+   "nameJa": "仙風",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:than-co": {
+   "confidence": "medium",
+   "nameJa": "先制",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:thang-se-cang-manh": {
+   "confidence": "medium",
+   "nameJa": "勝敵益強",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:thang-tran": {
+   "confidence": "medium",
+   "nameJa": "常勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:the-phong-thu": {
+   "confidence": "high",
+   "nameJa": "守勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:thich-lam-viec-thien": {
+   "confidence": "medium",
+   "nameJa": "博愛主義",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:thien-chien": {
+   "confidence": "medium",
+   "nameJa": "善戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:thuan-thien-thuan-toi": {
+   "confidence": "high",
+   "nameJa": "順天応時",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tinh-chuan": {
+   "confidence": "medium",
+   "nameJa": "精確",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tinh-tam": {
+   "confidence": "high",
+   "nameJa": "静心",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tinh-than-sang-khoai": {
+   "confidence": "medium",
+   "nameJa": "気分一新",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:toc-chien": {
+   "confidence": "high",
+   "nameJa": "速戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tranh-the-manh-cua-dich": {
+   "confidence": "medium",
+   "nameJa": "鋭鋒回避",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tri-trong": {
+   "confidence": "medium",
+   "nameJa": "持重",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:tuong-uy": {
+   "confidence": "high",
+   "nameJa": "将威",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "book:van-thao": {
+   "confidence": "high",
+   "nameJa": "文韜",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "book:vo-luoc": {
+   "confidence": "high",
+   "nameJa": "武略",
+   "sourceUrl": "https://sangokushi-shinsen.com/baunryoku/"
+  },
+  "book:xem-boi": {
+   "confidence": "high",
+   "nameJa": "占卜",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-beginner/"
+  },
+  "book:yeu-linh-thuong-dan": {
+   "confidence": "high",
+   "nameJa": "惜兵愛民",
+   "sourceUrl": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  "equipment:dai-diep-thanh-dong-giap": {
+   "confidence": "medium",
+   "nameJa": "大葉青銅甲",
+   "sourceUrl": "https://sangokushi-shinsen.com/custom/"
+  },
+  "equipment:han-huyet-bao-ma": {
+   "confidence": "medium",
+   "nameJa": "汗血宝馬",
+   "sourceUrl": "https://sangokushi-shinsen.com/custom/"
+  },
+  "equipment:ngan-long-giap": {
+   "confidence": "medium",
+   "nameJa": "銀竜甲",
+   "sourceUrl": "https://sangokushi-shinsen.com/custom/"
+  },
+  "equipment:phu-ky-giac": {
+   "confidence": "medium",
+   "nameJa": "父己角",
+   "sourceUrl": "https://sangokushi-shinsen.com/preparation/"
+  },
+  "equipment:that-tinh-bao-dao": {
+   "confidence": "medium",
+   "nameJa": "七星宝刀",
+   "sourceUrl": "https://kazten.com/entry/2024/09/17/190000"
+  },
+  "equipment:uyen-thien-ma": {
+   "confidence": "medium",
+   "nameJa": "宛天馬",
+   "sourceUrl": "https://sangokushi-shinsen.com/custom/"
+  },
+  "hero:40y-lu-bo": {
+   "alts": [
+    "40周年呂布"
+   ],
+   "confidence": "medium",
+   "nameJa": "40Y呂布",
+   "sourceUrl": "https://kazten.com/entry/2026/08/30/190000"
+  },
+  "hero:bang-duc": {
+   "confidence": "high",
+   "nameJa": "龐徳",
+   "sourceUrl": "https://sangokushi-shinsen.com/houtoku/"
+  },
+  "hero:bang-thong": {
+   "confidence": "high",
+   "nameJa": "龐統",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:bao-tin": {
+   "confidence": "medium",
+   "nameJa": "鮑信",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:bien-hy": {
+   "confidence": "medium",
+   "nameJa": "卞喜",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:bo-chat": {
+   "confidence": "high",
+   "nameJa": "歩騭",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:bo-luyen-su": {
+   "confidence": "high",
+   "nameJa": "歩練師",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:cam-ninh": {
+   "confidence": "high",
+   "nameJa": "甘寧",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:cao-lam": {
+   "confidence": "high",
+   "nameJa": "高覧",
+   "sourceUrl": "https://sangokushi-shinsen.com/kouran/"
+  },
+  "hero:cao-thuan": {
+   "confidence": "high",
+   "nameJa": "高順",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:chan-co": {
+   "confidence": "medium",
+   "nameJa": "甄姫",
+   "sourceUrl": "https://sanngokusinnsenn.com/korabo-3dann/"
+  },
+  "hero:chu-du": {
+   "confidence": "high",
+   "nameJa": "周瑜",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:chu-hang": {
+   "confidence": "medium",
+   "nameJa": "朱桓",
+   "sourceUrl": "https://sanngokusinnsenn.com/https-sanngokusinnsenn-com-seazon6-sutada/"
+  },
+  "hero:chu-nhien": {
+   "confidence": "medium",
+   "nameJa": "朱然",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:chu-thai": {
+   "confidence": "high",
+   "nameJa": "周泰",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:chu-thuong": {
+   "confidence": "high",
+   "nameJa": "周倉",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:chu-tuan": {
+   "confidence": "high",
+   "nameJa": "朱儁",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:chuc-dung-phu-nhan": {
+   "confidence": "medium",
+   "nameJa": "祝融夫人",
+   "sourceUrl": "https://sangokushi-shinsen.com/gotutotukotu/"
+  },
+  "hero:chung-do": {
+   "confidence": "high",
+   "nameJa": "鍾繇",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:chung-hoi": {
+   "confidence": "high",
+   "nameJa": "鍾会",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:co-chan-co": {
+   "confidence": "high",
+   "nameJa": "無双甄姫",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-shinki/"
+  },
+  "hero:co-chu-nhien": {
+   "confidence": "high",
+   "nameJa": "無双朱然",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:co-dai-kieu": {
+   "confidence": "high",
+   "nameJa": "無双大喬",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-daikyou/"
+  },
+  "hero:co-lu-linh-y": {
+   "confidence": "high",
+   "nameJa": "無双呂玲綺",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-ryoreiki/"
+  },
+  "hero:co-quan-binh": {
+   "confidence": "high",
+   "nameJa": "無双関平",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunjinnoko/"
+  },
+  "hero:co-tao-phi": {
+   "confidence": "high",
+   "nameJa": "無双曹丕",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:co-tieu-kieu": {
+   "confidence": "high",
+   "nameJa": "無双小喬",
+   "sourceUrl": "https://sangokushi-shinsen.com/hakou-sansei/"
+  },
+  "hero:co-tinh-thai": {
+   "confidence": "high",
+   "nameJa": "無双星彩",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-seisai/"
+  },
+  "hero:co-ung": {
+   "confidence": "high",
+   "nameJa": "顧雍",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:cong-ton-toan": {
+   "confidence": "high",
+   "nameJa": "公孫瓚",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:dai-kieu": {
+   "confidence": "high",
+   "nameJa": "大喬",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:dang-chi": {
+   "confidence": "high",
+   "nameJa": "鄧芝",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:dang-ngai": {
+   "confidence": "high",
+   "nameJa": "鄧艾",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:dao-khiem": {
+   "confidence": "medium",
+   "nameJa": "陶謙",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:dien-phong": {
+   "confidence": "high",
+   "nameJa": "田豊",
+   "sourceUrl": "https://sangokushi-shinsen.com/denpou/"
+  },
+  "hero:dien-vi": {
+   "confidence": "high",
+   "nameJa": "典韋",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:dieu-thuyen": {
+   "confidence": "high",
+   "nameJa": "貂蝉",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:dinh-nguyen": {
+   "confidence": "high",
+   "nameJa": "丁原",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "hero:dinh-phung": {
+   "confidence": "high",
+   "nameJa": "丁奉",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:dong-bach": {
+   "confidence": "high",
+   "nameJa": "董白",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:dong-chieu": {
+   "confidence": "high",
+   "nameJa": "董昭",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:dong-duan": {
+   "confidence": "high",
+   "nameJa": "董允",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:dong-tap": {
+   "confidence": "high",
+   "nameJa": "董襲",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:dong-trac": {
+   "confidence": "high",
+   "nameJa": "董卓",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:duong-tu": {
+   "confidence": "high",
+   "nameJa": "楊脩",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:gia-cat-canh": {
+   "confidence": "medium",
+   "nameJa": "諸葛瑾",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:gia-cat-chiem": {
+   "confidence": "high",
+   "nameJa": "諸葛瞻",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:gia-cat-khac": {
+   "confidence": "high",
+   "nameJa": "諸葛恪",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:gia-cat-luong": {
+   "confidence": "high",
+   "nameJa": "諸葛亮",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:gia-hu": {
+   "confidence": "high",
+   "nameJa": "賈詡",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:gian-ung": {
+   "confidence": "high",
+   "nameJa": "簡雍",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:ha-hau-an": {
+   "confidence": "medium",
+   "nameJa": "夏侯恩",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:ha-hau-don": {
+   "confidence": "high",
+   "nameJa": "夏侯惇",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakouton/"
+  },
+  "hero:ha-hau-uyen": {
+   "confidence": "high",
+   "nameJa": "夏侯淵",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:ha-thi": {
+   "confidence": "high",
+   "nameJa": "何氏",
+   "sourceUrl": "https://sangokushi-shinsen.com/kashi/"
+  },
+  "hero:ha-tien": {
+   "confidence": "medium",
+   "nameJa": "何進",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:hac-chieu": {
+   "confidence": "high",
+   "nameJa": "郝昭",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:ham-trach": {
+   "confidence": "medium",
+   "nameJa": "闞沢",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:han-duong": {
+   "confidence": "high",
+   "nameJa": "韓当",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:han-toai": {
+   "confidence": "high",
+   "nameJa": "韓遂",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:ho-xa-nhi": {
+   "confidence": "high",
+   "nameJa": "胡車児",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:hoa-da": {
+   "confidence": "high",
+   "nameJa": "華佗",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:hoa-ham": {
+   "confidence": "high",
+   "nameJa": "華歆",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:hoa-hung": {
+   "confidence": "high",
+   "nameJa": "華雄",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "hero:hoang-cai": {
+   "confidence": "high",
+   "nameJa": "黄蓋",
+   "sourceUrl": "https://sangokushi-shinsen.com/kougai/"
+  },
+  "hero:hoang-nguyet-anh": {
+   "confidence": "high",
+   "nameJa": "黄月英",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:hoang-phu-tung": {
+   "confidence": "high",
+   "nameJa": "皇甫嵩",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:hoang-quyen": {
+   "confidence": "high",
+   "nameJa": "黄権",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:hoang-trung": {
+   "confidence": "high",
+   "nameJa": "黄忠",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:hua-chu": {
+   "confidence": "high",
+   "nameJa": "許褚",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:hua-cong": {
+   "confidence": "medium",
+   "nameJa": "許貢",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:hua-du": {
+   "confidence": "high",
+   "nameJa": "許攸",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:huong-sung": {
+   "confidence": "medium",
+   "nameJa": "向寵",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:khong-dung": {
+   "confidence": "high",
+   "nameJa": "孔融",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:khong-tru": {
+   "confidence": "high",
+   "nameJa": "孔伷",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:khuc-nghia": {
+   "alts": [
+    "麴義"
+   ],
+   "confidence": "high",
+   "nameJa": "麹義",
+   "sourceUrl": "https://sangokushi-shinsen.com/kikugi/"
+  },
+  "hero:khuong-duy": {
+   "confidence": "high",
+   "nameJa": "姜維",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:ky-linh": {
+   "confidence": "high",
+   "nameJa": "紀霊",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:lang-thong": {
+   "confidence": "high",
+   "nameJa": "凌統",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:lieu-hoa": {
+   "confidence": "high",
+   "nameJa": "廖化",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:lo-thuc": {
+   "confidence": "high",
+   "nameJa": "盧植",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:lo-tuc": {
+   "confidence": "high",
+   "nameJa": "魯粛",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:lu-bo": {
+   "confidence": "high",
+   "nameJa": "呂布",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:lu-kien": {
+   "confidence": "high",
+   "nameJa": "呂虔",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "hero:lu-linh-y": {
+   "confidence": "high",
+   "nameJa": "呂玲綺",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:lu-mong": {
+   "confidence": "high",
+   "nameJa": "呂蒙",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:lu-pham": {
+   "confidence": "high",
+   "nameJa": "呂範",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:luc-khang": {
+   "confidence": "high",
+   "nameJa": "陸抗",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:luc-ton": {
+   "confidence": "high",
+   "nameJa": "陸遜",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:luu-ba": {
+   "confidence": "high",
+   "nameJa": "劉巴",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:luu-bi": {
+   "confidence": "high",
+   "nameJa": "劉備",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:luu-bieu": {
+   "confidence": "high",
+   "nameJa": "劉表",
+   "sourceUrl": "https://sangokushi-shinsen.com/horse-training/"
+  },
+  "hero:luu-chuong": {
+   "confidence": "medium",
+   "nameJa": "劉璋",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:luu-dai": {
+   "confidence": "medium",
+   "nameJa": "劉岱",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:luu-diep": {
+   "confidence": "high",
+   "nameJa": "劉曄",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:luu-do": {
+   "confidence": "high",
+   "nameJa": "劉繇",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:luu-ngu": {
+   "confidence": "medium",
+   "nameJa": "劉虞",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:luu-phong": {
+   "confidence": "high",
+   "nameJa": "劉封",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:luu-thien": {
+   "confidence": "high",
+   "nameJa": "劉禅",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:ly-dien": {
+   "confidence": "high",
+   "nameJa": "李典",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:ly-nghiem": {
+   "confidence": "high",
+   "nameJa": "李厳",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:ly-nho": {
+   "confidence": "high",
+   "nameJa": "李儒",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:ly-quyet": {
+   "confidence": "high",
+   "nameJa": "李傕",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:ma-dai": {
+   "confidence": "high",
+   "nameJa": "馬岱",
+   "sourceUrl": "https://sangokushi-shinsen.com/batai/"
+  },
+  "hero:ma-dang": {
+   "confidence": "high",
+   "nameJa": "馬騰",
+   "sourceUrl": "https://sangokushi-shinsen.com/batou/"
+  },
+  "hero:ma-luong": {
+   "confidence": "high",
+   "nameJa": "馬良",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:ma-quan": {
+   "confidence": "high",
+   "nameJa": "馬鈞",
+   "sourceUrl": "https://sangokushi-shinsen.com/bakin/"
+  },
+  "hero:ma-sieu": {
+   "confidence": "high",
+   "nameJa": "馬超",
+   "sourceUrl": "https://sangokushi-shinsen.com/ba-tyo/"
+  },
+  "hero:ma-tac": {
+   "confidence": "high",
+   "nameJa": "馬謖",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:ma-thiet": {
+   "confidence": "high",
+   "nameJa": "馬鉄",
+   "sourceUrl": "https://sangokushi-shinsen.com/horse-training/"
+  },
+  "hero:ma-trung": {
+   "confidence": "high",
+   "nameJa": "馬忠",
+   "sourceUrl": "https://sangokushi-shinsen.com/batyu/"
+  },
+  "hero:ma-van-loc": {
+   "confidence": "medium",
+   "nameJa": "馬雲騄",
+   "sourceUrl": "https://sangokushi-shinsen.com/baunryoku/"
+  },
+  "hero:man-sung": {
+   "confidence": "high",
+   "nameJa": "満寵",
+   "sourceUrl": "https://sangokushi-shinsen.com/kantaii/"
+  },
+  "hero:manh-hoach": {
+   "confidence": "high",
+   "nameJa": "孟獲",
+   "sourceUrl": "https://sangokushi-shinsen.com/moukaku/"
+  },
+  "hero:mao-gioi": {
+   "confidence": "high",
+   "nameJa": "毛玠",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:moc-loc-dai-vuong": {
+   "confidence": "high",
+   "nameJa": "木鹿大王",
+   "sourceUrl": "https://sangokushi-shinsen.com/bokurokudaiou/"
+  },
+  "hero:my-phuong": {
+   "confidence": "medium",
+   "nameJa": "糜芳",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:nghiem-nhan": {
+   "confidence": "high",
+   "nameJa": "厳顔",
+   "sourceUrl": "https://sangokushi-shinsen.com/gengan/"
+  },
+  "hero:ngo-y": {
+   "confidence": "medium",
+   "nameJa": "呉懿",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:ngot-dot-cot": {
+   "confidence": "high",
+   "nameJa": "兀突骨",
+   "sourceUrl": "https://sangokushi-shinsen.com/gotutotukotu/"
+  },
+  "hero:ngu-phien": {
+   "confidence": "medium",
+   "nameJa": "虞翻",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:nguy-dien": {
+   "confidence": "high",
+   "nameJa": "魏延",
+   "sourceUrl": "https://sangokushi-shinsen.com/gien/"
+  },
+  "hero:nguy-du": {
+   "confidence": "medium",
+   "nameJa": "魏攸",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:nhac-tien": {
+   "confidence": "high",
+   "nameJa": "楽進",
+   "sourceUrl": "https://sangokushi-shinsen.com/gakushin/"
+  },
+  "hero:nhan-luong": {
+   "confidence": "high",
+   "nameJa": "顔良",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:phan-chuong": {
+   "confidence": "high",
+   "nameJa": "潘璋",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:phan-phung": {
+   "confidence": "high",
+   "nameJa": "潘鳳",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:phan-tuan": {
+   "confidence": "high",
+   "nameJa": "潘濬",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:phap-chinh": {
+   "confidence": "high",
+   "nameJa": "法正",
+   "sourceUrl": "https://sangokushi-shinsen.com/housei/"
+  },
+  "hero:phi-thi": {
+   "confidence": "high",
+   "nameJa": "費詩",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:phi-y": {
+   "confidence": "high",
+   "nameJa": "費禕",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:pho-si-nhan": {
+   "confidence": "medium",
+   "nameJa": "傅士仁",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:phung-ky": {
+   "confidence": "high",
+   "nameJa": "逢紀",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:quach-do": {
+   "confidence": "high",
+   "nameJa": "郭図",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:quach-gia": {
+   "confidence": "high",
+   "nameJa": "郭嘉",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:quach-hoai": {
+   "confidence": "high",
+   "nameJa": "郭淮",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:quach-ty": {
+   "confidence": "high",
+   "nameJa": "郭汜",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:quan-binh": {
+   "confidence": "high",
+   "nameJa": "関平",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:quan-hoi": {
+   "confidence": "high",
+   "nameJa": "管亥",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:quan-hung": {
+   "confidence": "high",
+   "nameJa": "関興",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:quan-ngan-binh": {
+   "confidence": "high",
+   "nameJa": "関銀屏",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:quan-vu": {
+   "confidence": "high",
+   "nameJa": "関羽",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:sa-ma-kha": {
+   "confidence": "high",
+   "nameJa": "沙摩柯",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:sp-bang-duc": {
+   "confidence": "high",
+   "nameJa": "SP龐徳",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-bo-luyen-su": {
+   "confidence": "high",
+   "nameJa": "SP歩練師",
+   "sourceUrl": "https://sangokushi-shinsen.com/bond/"
+  },
+  "hero:sp-chu-du": {
+   "confidence": "high",
+   "nameJa": "SP周瑜",
+   "sourceUrl": "https://sangokushi-shinsen.com/maintenance-2/"
+  },
+  "hero:sp-chu-tuan": {
+   "confidence": "high",
+   "nameJa": "SP朱儁",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-dien-vi": {
+   "confidence": "high",
+   "nameJa": "SP典韋",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-dieu-thuyen": {
+   "confidence": "high",
+   "nameJa": "SP貂蝉",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:sp-dong-trac": {
+   "confidence": "high",
+   "nameJa": "SP董卓",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:sp-gia-cat-luong": {
+   "confidence": "high",
+   "nameJa": "SP諸葛亮",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-hoang-nguyet-anh": {
+   "confidence": "high",
+   "nameJa": "SP黄月英",
+   "sourceUrl": "https://sangokushi-shinsen.com/kougetuei/"
+  },
+  "hero:sp-hoang-phu-tung": {
+   "confidence": "high",
+   "nameJa": "SP皇甫嵩",
+   "sourceUrl": "https://sangokushi-shinsen.com/maintenance/"
+  },
+  "hero:sp-hoang-trung": {
+   "confidence": "high",
+   "nameJa": "SP黄忠",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:sp-hua-chu": {
+   "confidence": "high",
+   "nameJa": "SP許褚",
+   "sourceUrl": "https://sangokushi-shinsen.com/maintenance-2/"
+  },
+  "hero:sp-lo-thuc": {
+   "confidence": "high",
+   "nameJa": "SP盧植",
+   "sourceUrl": "https://sangokushi-shinsen.com/bond/"
+  },
+  "hero:sp-lu-mong": {
+   "confidence": "high",
+   "nameJa": "SP呂蒙",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-luu-diep": {
+   "confidence": "high",
+   "nameJa": "SP劉曄",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:sp-ma-sieu": {
+   "confidence": "high",
+   "nameJa": "SP馬超",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:sp-nhac-tien": {
+   "confidence": "high",
+   "nameJa": "SP楽進",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:sp-phap-chinh": {
+   "confidence": "high",
+   "nameJa": "SP法正",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:sp-quach-gia": {
+   "confidence": "high",
+   "nameJa": "SP郭嘉",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakuka/"
+  },
+  "hero:sp-quan-vu": {
+   "confidence": "high",
+   "nameJa": "SP関羽",
+   "sourceUrl": "https://sangokushi-shinsen.com/houkantate/"
+  },
+  "hero:sp-tao-chan": {
+   "confidence": "high",
+   "nameJa": "SP曹真",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-tao-thao": {
+   "confidence": "high",
+   "nameJa": "SP曹操",
+   "sourceUrl": "https://sangokushi-shinsen.com/kanshitukyu/"
+  },
+  "hero:sp-ton-kien": {
+   "confidence": "high",
+   "nameJa": "SP孫堅",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-truong-bao": {
+   "confidence": "high",
+   "nameJa": "SP張宝",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-truong-luong": {
+   "confidence": "high",
+   "nameJa": "SP張梁",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:sp-tuan-uc": {
+   "confidence": "high",
+   "nameJa": "SP荀彧",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:sp-vien-thieu": {
+   "confidence": "high",
+   "nameJa": "SP袁紹",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:ta-tu": {
+   "confidence": "high",
+   "nameJa": "左慈",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:tang-ba": {
+   "confidence": "high",
+   "nameJa": "臧覇",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tao-chan": {
+   "confidence": "high",
+   "nameJa": "曹真",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tao-chuong": {
+   "confidence": "high",
+   "nameJa": "曹彰",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tao-hong": {
+   "confidence": "high",
+   "nameJa": "曹洪",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tao-huu": {
+   "confidence": "medium",
+   "nameJa": "曹休",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:tao-nhan": {
+   "confidence": "high",
+   "nameJa": "曹仁",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:tao-phi": {
+   "confidence": "high",
+   "nameJa": "曹丕",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:tao-thao": {
+   "confidence": "high",
+   "nameJa": "曹操",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:tao-thuan": {
+   "confidence": "high",
+   "nameJa": "曹純",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:tao-thuc": {
+   "confidence": "high",
+   "nameJa": "曹植",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:thai-su-tu": {
+   "confidence": "high",
+   "nameJa": "太史慈",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:thai-ung": {
+   "confidence": "high",
+   "nameJa": "蔡邕",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:thai-van-co": {
+   "confidence": "medium",
+   "nameJa": "蔡琰",
+   "sourceUrl": "https://sangokushi-shinsen.com/saien/"
+  },
+  "hero:tham-phoi": {
+   "confidence": "high",
+   "nameJa": "審配",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:thu-thu": {
+   "confidence": "high",
+   "nameJa": "沮授",
+   "sourceUrl": "https://sangokushi-shinsen.com/high-emissions/"
+  },
+  "hero:thuan-vu-quynh": {
+   "confidence": "medium",
+   "nameJa": "淳于瓊",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:tieu-kieu": {
+   "confidence": "high",
+   "nameJa": "小喬",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:toan-tong": {
+   "confidence": "medium",
+   "nameJa": "全琮",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:ton-can": {
+   "confidence": "medium",
+   "nameJa": "孫乾",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:ton-hao": {
+   "confidence": "medium",
+   "nameJa": "孫皓",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:ton-kien": {
+   "confidence": "high",
+   "nameJa": "孫堅",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:ton-quyen": {
+   "confidence": "high",
+   "nameJa": "孫権",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:ton-sach": {
+   "confidence": "high",
+   "nameJa": "孫策",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:ton-thuong-huong": {
+   "confidence": "high",
+   "nameJa": "孫尚香",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:tong-hien": {
+   "confidence": "medium",
+   "nameJa": "宋憲",
+   "sourceUrl": "https://sangokushi-shinsen.com/【三国志真戦】ガチャ確率　星５【シーズン１】/"
+  },
+  "hero:tran-cung": {
+   "confidence": "high",
+   "nameJa": "陳宮",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:tran-dao": {
+   "confidence": "high",
+   "nameJa": "陳到",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:tran-lam": {
+   "confidence": "high",
+   "nameJa": "陳琳",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:tran-quan": {
+   "confidence": "high",
+   "nameJa": "陳羣",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:tran-vo": {
+   "confidence": "high",
+   "nameJa": "陳武",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:trau-thi": {
+   "confidence": "high",
+   "nameJa": "鄒氏",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:trieu-van": {
+   "confidence": "high",
+   "nameJa": "趙雲",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:trinh-duc": {
+   "confidence": "high",
+   "nameJa": "程昱",
+   "sourceUrl": "https://sangokushi-shinsen.com/maintenance-2/"
+  },
+  "hero:trinh-pho": {
+   "confidence": "high",
+   "nameJa": "程普",
+   "sourceUrl": "https://sangokushi-shinsen.com/high-emissions/"
+  },
+  "hero:truong-bao": {
+   "confidence": "high",
+   "nameJa": "張苞",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:truong-bao-khan-vang": {
+   "confidence": "high",
+   "nameJa": "張宝",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:truong-cap": {
+   "confidence": "high",
+   "nameJa": "張郃",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:truong-chieu": {
+   "confidence": "high",
+   "nameJa": "張昭",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:truong-co": {
+   "confidence": "medium",
+   "nameJa": "張氏",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyoushi/"
+  },
+  "hero:truong-doan": {
+   "confidence": "medium",
+   "nameJa": "張允",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:truong-duong": {
+   "confidence": "medium",
+   "nameJa": "張楊",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:truong-giac": {
+   "confidence": "high",
+   "nameJa": "張角",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:truong-hoanh": {
+   "confidence": "high",
+   "nameJa": "張紘",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:truong-lieu": {
+   "confidence": "high",
+   "nameJa": "張遼",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:truong-lo": {
+   "confidence": "high",
+   "nameJa": "張魯",
+   "sourceUrl": "https://sangokushi-shinsen.com/horse-training/"
+  },
+  "hero:truong-luong": {
+   "confidence": "high",
+   "nameJa": "張梁",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:truong-mac": {
+   "confidence": "medium",
+   "nameJa": "張邈",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "hero:truong-man-thanh": {
+   "confidence": "high",
+   "nameJa": "張曼成",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:truong-nham": {
+   "confidence": "high",
+   "nameJa": "張任",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:truong-nhuong": {
+   "confidence": "high",
+   "nameJa": "張譲",
+   "sourceUrl": "https://sangokushi-shinsen.com/engi-dashi/"
+  },
+  "hero:truong-phi": {
+   "confidence": "high",
+   "nameJa": "張飛",
+   "sourceUrl": "https://sangokushi-shinsen.com/image/"
+  },
+  "hero:truong-tu": {
+   "confidence": "high",
+   "nameJa": "張繍",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:truong-xuan-hoa": {
+   "confidence": "high",
+   "nameJa": "張春華",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:truong-yen": {
+   "confidence": "high",
+   "nameJa": "張燕",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:tu-hoang": {
+   "confidence": "high",
+   "nameJa": "徐晃",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:tu-ma-huy": {
+   "confidence": "high",
+   "nameJa": "司馬徽",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:tu-ma-y": {
+   "confidence": "high",
+   "nameJa": "司馬懿",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:tu-thinh": {
+   "confidence": "high",
+   "nameJa": "徐盛",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tu-thu": {
+   "confidence": "high",
+   "nameJa": "徐庶",
+   "sourceUrl": "https://sangokushi-shinsen.com/jyosyo/"
+  },
+  "hero:tuan-du": {
+   "confidence": "high",
+   "nameJa": "荀攸",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:tuan-uc": {
+   "confidence": "high",
+   "nameJa": "荀彧",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "hero:tuong-kham": {
+   "confidence": "high",
+   "nameJa": "蒋欽",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:tuong-uyen": {
+   "confidence": "high",
+   "nameJa": "蒋琬",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:van-sinh": {
+   "confidence": "high",
+   "nameJa": "文聘",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:van-suu": {
+   "confidence": "high",
+   "nameJa": "文醜",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "hero:vien-thieu": {
+   "confidence": "high",
+   "nameJa": "袁紹",
+   "sourceUrl": "https://sangokushi-shinsen.com/en-syou/"
+  },
+  "hero:vien-thuat": {
+   "confidence": "high",
+   "nameJa": "袁術",
+   "sourceUrl": "https://sangokushi-shinsen.com/enjyutu/"
+  },
+  "hero:vu-cam": {
+   "confidence": "high",
+   "nameJa": "于禁",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:vu-cat": {
+   "confidence": "high",
+   "nameJa": "于吉",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "hero:vuong-binh": {
+   "confidence": "high",
+   "nameJa": "王平",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:vuong-di": {
+   "confidence": "high",
+   "nameJa": "王異",
+   "sourceUrl": "https://sangokushi-shinsen.com/gunshigi/"
+  },
+  "hero:vuong-doan": {
+   "confidence": "high",
+   "nameJa": "王允",
+   "sourceUrl": "https://sangokushi-shinsen.com/politics/"
+  },
+  "hero:vuong-lang": {
+   "confidence": "high",
+   "nameJa": "王朗",
+   "sourceUrl": "https://sangokushi-shinsen.com/ranking-4-ability/"
+  },
+  "hero:vuong-nguyen-co": {
+   "confidence": "high",
+   "nameJa": "王元姫",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:vuong-song": {
+   "confidence": "high",
+   "nameJa": "王双",
+   "sourceUrl": "https://sangokushi-shinsen.com/not/"
+  },
+  "hero:xa-tru": {
+   "confidence": "high",
+   "nameJa": "車冑",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "hero:y-tich": {
+   "confidence": "high",
+   "nameJa": "伊籍",
+   "sourceUrl": "https://sangokushi-shinsen.com/iseki/"
+  },
+  "tactic:am-tang-huyen-co": {
+   "confidence": "high",
+   "nameJa": "暗蔵玄機",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "tactic:am-tien-nan-phong": {
+   "confidence": "high",
+   "nameJa": "暗箭難防",
+   "sourceUrl": "https://sangokushi-shinsen.com/batyu/"
+  },
+  "tactic:am-trieu-hung-dung": {
+   "confidence": "medium",
+   "nameJa": "暗中飛躍",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:an-hau-dac-chung": {
+   "confidence": "medium",
+   "nameJa": "恩徳衆心",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan/"
+  },
+  "tactic:an-ui-quan-dan": {
+   "confidence": "medium",
+   "nameJa": "慰撫軍民",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:anh-thanh-tu-thu": {
+   "confidence": "medium",
+   "nameJa": "籠城自守",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:bac-van": {
+   "confidence": "medium",
+   "nameJa": "博聞",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:bach-bo-xuyen-duong": {
+   "confidence": "high",
+   "nameJa": "百歩穿楊",
+   "sourceUrl": "https://sangokushi-shinsen.com/koutyu/"
+  },
+  "tactic:bach-ke-da-muu": {
+   "confidence": "high",
+   "nameJa": "百計多謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/tinkyu/"
+  },
+  "tactic:bach-ky-kiep-doanh": {
+   "confidence": "high",
+   "nameJa": "百騎劫営",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan-nei/"
+  },
+  "tactic:bach-luyen-thanh-cuong": {
+   "alts": [
+    "百錬成鋼"
+   ],
+   "confidence": "high",
+   "nameJa": "百練成鋼",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:bach-ma-nghia-tong": {
+   "confidence": "high",
+   "nameJa": "白馬義従",
+   "sourceUrl": "https://sangokushi-shinsen.com/kousonsan/"
+  },
+  "tactic:bach-my": {
+   "confidence": "high",
+   "nameJa": "白眉",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:bach-nhi-binh": {
+   "confidence": "medium",
+   "nameJa": "白耳兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/tintou/"
+  },
+  "tactic:bach-y-do-giang": {
+   "confidence": "high",
+   "nameJa": "白衣渡江",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryomou/"
+  },
+  "tactic:bao-le-vo-nhan": {
+   "confidence": "medium",
+   "nameJa": "暴戻恣睢",
+   "sourceUrl": "https://sangokushi-shinsen.com/tou-taku/"
+  },
+  "tactic:bao-liem-tu-phuong": {
+   "confidence": "medium",
+   "nameJa": "専横略奪",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:bat-mon-kim-toa-tran": {
+   "confidence": "medium",
+   "nameJa": "八門金鎖の陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/soujin/"
+  },
+  "tactic:bat-nhuc-su-menh": {
+   "confidence": "high",
+   "nameJa": "不辱使命",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:be-canh-tu-an": {
+   "confidence": "high",
+   "nameJa": "閉境自安",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:be-nguyet": {
+   "confidence": "medium",
+   "nameJa": "羞花閉月",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyousen/"
+  },
+  "tactic:biet-minh-biet-ta": {
+   "confidence": "medium",
+   "nameJa": "戦況見極",
+   "sourceUrl": "https://sanngokusinnsenn.com/zikennsennpou-itirann/"
+  },
+  "tactic:binh-phong": {
+   "confidence": "high",
+   "nameJa": "兵鋒",
+   "sourceUrl": "https://sangokushi-shinsen.com/moukaku/"
+  },
+  "tactic:binh-vo-thuong-the": {
+   "confidence": "high",
+   "nameJa": "兵無常勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/denpou/"
+  },
+  "tactic:cam-nang-dieu-ke": {
+   "confidence": "medium",
+   "nameJa": "錦嚢妙計",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-syokaturyo/"
+  },
+  "tactic:cam-pham-bach-linh": {
+   "confidence": "high",
+   "nameJa": "錦帆百翎",
+   "sourceUrl": "https://sangokushi-shinsen.com/kan-nei/"
+  },
+  "tactic:cao-lo-lien-doanh": {
+   "confidence": "high",
+   "nameJa": "高櫓連営",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-ensyou/"
+  },
+  "tactic:cat-xuong-tri-doc": {
+   "confidence": "high",
+   "nameJa": "刮骨療毒",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:chan-hai-tu-canh": {
+   "confidence": "medium",
+   "nameJa": "四境震駭",
+   "sourceUrl": "https://sangokushi-shinsen.com/ousou/"
+  },
+  "tactic:chan-quan-kich-doanh": {
+   "confidence": "medium",
+   "nameJa": "進軍撃営",
+   "sourceUrl": "https://sangokushi-shinsen.com/kouran/"
+  },
+  "tactic:chi-qua-vy-vo": {
+   "confidence": "medium",
+   "nameJa": "止戈為武",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-gakushin/"
+  },
+  "tactic:chinh-quan-kinh-vo": {
+   "confidence": "high",
+   "nameJa": "整軍経武",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kouhosu/"
+  },
+  "tactic:chinh-van": {
+   "confidence": "high",
+   "nameJa": "政運",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:cho-doi-xuat-phat": {
+   "confidence": "medium",
+   "nameJa": "整装雌伏",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:chu-tuong": {
+   "confidence": "medium",
+   "nameJa": "鋳匠",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:chung-dong-van-ke": {
+   "confidence": "medium",
+   "nameJa": "衆妙奇計",
+   "sourceUrl": "https://sanngokusinnsenn.com/zikennsennpou-itirann/"
+  },
+  "tactic:chung-vong-so-quy": {
+   "confidence": "high",
+   "nameJa": "衆望所帰",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:co-chi-ac-lai": {
+   "confidence": "medium",
+   "nameJa": "古の悪来",
+   "sourceUrl": "https://sangokushi-shinsen.com/teni/"
+  },
+  "tactic:co-giam-tien-thuc": {
+   "confidence": "high",
+   "nameJa": "機転先決",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:co-hinh-tran": {
+   "confidence": "high",
+   "nameJa": "箕形陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/kanginpei/"
+  },
+  "tactic:co-luoc-tung-hoanh": {
+   "confidence": "high",
+   "nameJa": "機略縦横",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:co-nhuoc-kim-thang": {
+   "confidence": "medium",
+   "nameJa": "金城湯池",
+   "sourceUrl": "https://sangokushi-shinsen.com/soujin/"
+  },
+  "tactic:co-phan-sinh-tu": {
+   "confidence": "medium",
+   "nameJa": "妍姿艶質",
+   "sourceUrl": "https://sangokushi-shinsen.com/suushi/"
+  },
+  "tactic:cong-bat-duong-quyen": {
+   "confidence": "high",
+   "nameJa": "功不唐捐",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:cong-than": {
+   "confidence": "high",
+   "nameJa": "工神",
+   "sourceUrl": "https://sangokushi-shinsen.com/kougetuei/"
+  },
+  "tactic:cu-thuy-doan-kieu": {
+   "confidence": "high",
+   "nameJa": "据水断橋",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:cung-yeu-co": {
+   "confidence": "high",
+   "nameJa": "弓腰姫",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonsyoukou/"
+  },
+  "tactic:cuoi-ngua-nghin-dam": {
+   "confidence": "medium",
+   "nameJa": "単騎千里",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:cuong-cong": {
+   "confidence": "high",
+   "nameJa": "強攻",
+   "sourceUrl": "https://sanngokusinnsenn.com/hoshi4-busilyou/"
+  },
+  "tactic:cuong-dung-vo-tien": {
+   "confidence": "medium",
+   "nameJa": "剛勇無比",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:cuong-liet-bat-khuat": {
+   "confidence": "medium",
+   "nameJa": "剛毅不屈",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakouton/"
+  },
+  "tactic:cuong-nhu-ket-hop": {
+   "confidence": "high",
+   "nameJa": "剛柔一体",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:cuu-doc": {
+   "confidence": "high",
+   "nameJa": "鴆毒",
+   "sourceUrl": "https://sangokushi-shinsen.com/rijyu/"
+  },
+  "tactic:dai-kich-si": {
+   "confidence": "high",
+   "nameJa": "大戟士",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyoukou/"
+  },
+  "tactic:dai-quan-quyet-chien": {
+   "confidence": "medium",
+   "nameJa": "掲棺決戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/houtoku/"
+  },
+  "tactic:dam-tam": {
+   "confidence": "medium",
+   "nameJa": "談心",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:dan-duong-binh": {
+   "confidence": "high",
+   "nameJa": "丹陽兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:dan-huyen-luc-chien": {
+   "confidence": "high",
+   "nameJa": "引弦力戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/40y-ryohu/"
+  },
+  "tactic:dang-phong-ham-tran": {
+   "confidence": "high",
+   "nameJa": "登鋒陥陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "tactic:danh-bai-quan-dich": {
+   "confidence": "high",
+   "nameJa": "折衝禦侮",
+   "sourceUrl": "https://sangokushi-shinsen.com/taishiji/"
+  },
+  "tactic:danh-dau-thang-do": {
+   "confidence": "medium",
+   "nameJa": "万夫不当",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyo-tyo/"
+  },
+  "tactic:dao-vien-ket-nghia": {
+   "confidence": "high",
+   "nameJa": "桃園結義",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:dao-xuat-nhu-dinh": {
+   "confidence": "high",
+   "nameJa": "刀出如霆",
+   "sourceUrl": "https://sangokushi-shinsen.com/kankou/"
+  },
+  "tactic:dau-tri": {
+   "confidence": "medium",
+   "nameJa": "闘智",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:di-hoa-tiep-moc": {
+   "confidence": "high",
+   "nameJa": "移花接木",
+   "sourceUrl": "https://sangokushi-shinsen.com/batai/"
+  },
+  "tactic:di-qua-dich-chung": {
+   "confidence": "medium",
+   "nameJa": "寡兵奮戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-teni/"
+  },
+  "tactic:dien-hau": {
+   "confidence": "medium",
+   "nameJa": "殿後",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:dinh-muu-quy-quyet": {
+   "confidence": "medium",
+   "nameJa": "即断即決",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyoyu/"
+  },
+  "tactic:dinh-quan-an-dan": {
+   "confidence": "high",
+   "nameJa": "定軍安民",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:doan-binh-tuong-tiep": {
+   "confidence": "high",
+   "nameJa": "短兵相見",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:doat-hon-hiep-phach": {
+   "confidence": "high",
+   "nameJa": "昏迷乱擾",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:doc-hanh-pho-dau": {
+   "confidence": "high",
+   "nameJa": "独行赴闘",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:doc-khi": {
+   "confidence": "high",
+   "nameJa": "毒気",
+   "sourceUrl": "https://sangokushi-shinsen.com/addiction/"
+  },
+  "tactic:doc-suc-tinh-ke": {
+   "confidence": "high",
+   "nameJa": "竭力佐謀",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:doc-tuyen-cu-thuc": {
+   "confidence": "high",
+   "nameJa": "毒泉拒蜀",
+   "sourceUrl": "https://sangokushi-shinsen.com/dashi-king/"
+  },
+  "tactic:dong-long-hop-suc": {
+   "confidence": "high",
+   "nameJa": "勠力同心",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:du-dich-tham-nhap": {
+   "confidence": "high",
+   "nameJa": "誘敵深入",
+   "sourceUrl": "https://sangokushi-shinsen.com/kayu/"
+  },
+  "tactic:dung-gia-dac-tien": {
+   "confidence": "medium",
+   "nameJa": "勇猛果断",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyouryou/"
+  },
+  "tactic:dung-liet-tri-trong": {
+   "confidence": "high",
+   "nameJa": "勇烈持重",
+   "sourceUrl": "https://sangokushi-shinsen.com/teihu/"
+  },
+  "tactic:dung-quan-tam-quan": {
+   "confidence": "high",
+   "nameJa": "勇冠三軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/ikemen/"
+  },
+  "tactic:dung-vo-than-thong": {
+   "confidence": "medium",
+   "nameJa": "神算鬼謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/shibai/"
+  },
+  "tactic:duong-ma-huu-dao": {
+   "confidence": "high",
+   "nameJa": "養馬有道",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:duong-phong-thoi-quyet": {
+   "confidence": "medium",
+   "nameJa": "剣鋒破砕",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:duong-suc-chong-dich": {
+   "confidence": "high",
+   "nameJa": "以逸待労",
+   "sourceUrl": "https://sangokushi-shinsen.com/housei/"
+  },
+  "tactic:duong-suc-doi-chien": {
+   "confidence": "high",
+   "nameJa": "伏機即動",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:giai-phien-ve": {
+   "confidence": "medium",
+   "nameJa": "解煩兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:giam-thong-chan-quan": {
+   "confidence": "medium",
+   "nameJa": "統監震軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/sojyu/"
+  },
+  "tactic:gian-chinh": {
+   "confidence": "medium",
+   "nameJa": "簡政",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:giang-dong-manh-ho": {
+   "confidence": "high",
+   "nameJa": "江東猛虎",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonken-father/"
+  },
+  "tactic:giang-dong-tieu-ba-vuong": {
+   "confidence": "high",
+   "nameJa": "江東小覇王",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  "tactic:giang-thien-truong-diem": {
+   "confidence": "high",
+   "nameJa": "江天長焔",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:ham-tran-doanh": {
+   "confidence": "high",
+   "nameJa": "陥陣営",
+   "sourceUrl": "https://sangokushi-shinsen.com/koujyun/"
+  },
+  "tactic:ham-tran-dot-tap": {
+   "confidence": "medium",
+   "nameJa": "遼来遼来",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyouryou/"
+  },
+  "tactic:han-thien-si-dia": {
+   "confidence": "medium",
+   "nameJa": "燎原之火",
+   "sourceUrl": "https://sangokushi-shinsen.com/rikuson/"
+  },
+  "tactic:hau-phat-che-nhan": {
+   "confidence": "high",
+   "nameJa": "後発制人",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:hiep-the-long-quyen": {
+   "alts": [
+    "挟勢弄権",
+    "狭勢弄権"
+   ],
+   "confidence": "medium",
+   "nameJa": "挾勢弄権",
+   "sourceUrl": "https://sanngokusinnsenn.com/zikennsennpou-itirann/"
+  },
+  "tactic:hieu-thang-duy-ac": {
+   "confidence": "medium",
+   "nameJa": "籌策帷幕",
+   "sourceUrl": "https://sangokushi-shinsen.com/rikukou/"
+  },
+  "tactic:hinh-co-quan-luoc": {
+   "confidence": "high",
+   "nameJa": "形機軍略",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyoui/"
+  },
+  "tactic:hinh-nhat-tran": {
+   "confidence": "high",
+   "nameJa": "形一陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/bunsyu/"
+  },
+  "tactic:ho-bao-ky": {
+   "confidence": "high",
+   "nameJa": "虎豹騎",
+   "sourceUrl": "https://sangokushi-shinsen.com/soujyun/"
+  },
+  "tactic:ho-cu-ung-duong": {
+   "confidence": "high",
+   "nameJa": "虎踞鷹揚",
+   "sourceUrl": "https://sangokushi-shinsen.com/40y-ryohu/"
+  },
+  "tactic:ho-hau": {
+   "confidence": "high",
+   "nameJa": "虎侯",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kyotyo/"
+  },
+  "tactic:ho-si": {
+   "confidence": "high",
+   "nameJa": "虎痴",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyo-tyo/"
+  },
+  "tactic:ho-ve": {
+   "confidence": "medium",
+   "nameJa": "護衛",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:ho-ve-quan": {
+   "confidence": "high",
+   "nameJa": "虎衛軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:hoa-than-anh-phong": {
+   "confidence": "high",
+   "nameJa": "火神英風",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:hoa-thieu-lien-doanh": {
+   "confidence": "high",
+   "nameJa": "火焼連営",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:hoan-kich": {
+   "confidence": "medium",
+   "nameJa": "還撃",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:hoang-thien-thai-binh": {
+   "confidence": "medium",
+   "nameJa": "黄天太平",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyo-kaku/"
+  },
+  "tactic:hoanh-qua-duoc-ma": {
+   "confidence": "high",
+   "nameJa": "横戈躍馬",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakusyo/"
+  },
+  "tactic:hoanh-tao": {
+   "confidence": "medium",
+   "nameJa": "横掃",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:hoanh-tao-thien-quan": {
+   "confidence": "medium",
+   "nameJa": "千軍一掃",
+   "sourceUrl": "https://sangokushi-shinsen.com/kanu/"
+  },
+  "tactic:hop-quan-tu-chung": {
+   "confidence": "medium",
+   "nameJa": "合軍集衆",
+   "sourceUrl": "https://sangokushi-shinsen.com/jyokou/"
+  },
+  "tactic:hung-van-bo-vu": {
+   "confidence": "medium",
+   "nameJa": "雨乞之術",
+   "sourceUrl": "https://sangokushi-shinsen.com/ukitu/"
+  },
+  "tactic:huy-binh-muu-thang": {
+   "confidence": "high",
+   "nameJa": "揮兵謀勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/syokatukaku/"
+  },
+  "tactic:huy-quan-ket-tran": {
+   "alts": [
+    "軍陣結集"
+   ],
+   "confidence": "medium",
+   "nameJa": "軍人結集",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:huyet-dao-tranh-gianh": {
+   "confidence": "medium",
+   "nameJa": "血刃争奪",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:ich-ky-kim-co": {
+   "confidence": "high",
+   "nameJa": "益其金鼓",
+   "sourceUrl": "https://sangokushi-shinsen.com/touhaku/"
+  },
+  "tactic:ke-dinh-muu-quyet": {
+   "confidence": "high",
+   "nameJa": "計定謀決",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-ryuryou/"
+  },
+  "tactic:ke-hay-muu-gioi": {
+   "confidence": "high",
+   "nameJa": "奇計良謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/rosyuku/"
+  },
+  "tactic:ket-minh": {
+   "confidence": "high",
+   "nameJa": "結盟",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonsyoukou/"
+  },
+  "tactic:khac-dich-che-thang": {
+   "confidence": "high",
+   "nameJa": "克敵制勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/teihu/"
+  },
+  "tactic:khi-lang-tam-quan": {
+   "confidence": "high",
+   "nameJa": "気凌三軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:khiem-nhuong": {
+   "confidence": "medium",
+   "nameJa": "謙譲",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:khien-lien": {
+   "confidence": "medium",
+   "nameJa": "巻添",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:khinh-dung-phi-yen": {
+   "confidence": "medium",
+   "nameJa": "勇壮飛燕",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:kho-moc-phung-xuan": {
+   "confidence": "medium",
+   "nameJa": "枯木逢春",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:kho-nhuc-ke": {
+   "confidence": "high",
+   "nameJa": "苦肉計",
+   "sourceUrl": "https://sangokushi-shinsen.com/kougai/"
+  },
+  "tactic:khong-danh-ma-thang": {
+   "confidence": "high",
+   "nameJa": "非攻制勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/batai/"
+  },
+  "tactic:khu-tan": {
+   "confidence": "medium",
+   "nameJa": "駆散",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:khuynh-quoc-khuynh-thanh": {
+   "confidence": "high",
+   "nameJa": "傾国傾城",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyousen/"
+  },
+  "tactic:kich-ky-noa-quy": {
+   "confidence": "high",
+   "nameJa": "撃其惰帰",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:kiet-trung-tan-tri": {
+   "confidence": "medium",
+   "nameJa": "権謀術策",
+   "sourceUrl": "https://sangokushi-shinsen.com/denpou/"
+  },
+  "tactic:kieu-dung-thien-chien": {
+   "confidence": "high",
+   "nameJa": "驍勇善戦",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:kieu-kien-than-hanh": {
+   "confidence": "medium",
+   "nameJa": "驍健神脚",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:kim-dan-bi-thuat": {
+   "confidence": "high",
+   "nameJa": "金丹秘術",
+   "sourceUrl": "https://sangokushi-shinsen.com/saji/"
+  },
+  "tactic:kim-thanh-thang-tri": {
+   "confidence": "medium",
+   "nameJa": "湯池鉄城",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakusyo/"
+  },
+  "tactic:kinh-thien-vi-dia": {
+   "confidence": "high",
+   "nameJa": "経天緯地",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:kinh-thuat-chinh-yeu": {
+   "confidence": "high",
+   "nameJa": "経術政要",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:ky-binh-gian-dao": {
+   "confidence": "medium",
+   "nameJa": "奇兵近道",
+   "sourceUrl": "https://sangokushi-shinsen.com/gien/"
+  },
+  "tactic:ky-ho-nan-ha": {
+   "confidence": "medium",
+   "nameJa": "騎虎之勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:lac-loi": {
+   "confidence": "medium",
+   "nameJa": "名文雷震",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:lac-phuong": {
+   "confidence": "high",
+   "nameJa": "落鳳",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:lam-chien-tien-dang": {
+   "confidence": "medium",
+   "nameJa": "臨戦先駆",
+   "sourceUrl": "https://sangokushi-shinsen.com/gakushin/"
+  },
+  "tactic:lam-nguy-cuu-chu": {
+   "confidence": "medium",
+   "nameJa": "志操堅固",
+   "sourceUrl": "https://sanngokusinnsenn.com/zikennsennpou-itirann/"
+  },
+  "tactic:lam-phong-quyet-dich": {
+   "confidence": "medium",
+   "nameJa": "臨鋒決闘",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:lap-lo-danh-trao": {
+   "confidence": "high",
+   "nameJa": "暗渡陳倉",
+   "sourceUrl": "https://sangokushi-shinsen.com/tougai/"
+  },
+  "tactic:liem-chung-nhi-kich": {
+   "confidence": "high",
+   "nameJa": "歛衆而撃",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:lien-hoan-ke": {
+   "confidence": "high",
+   "nameJa": "連環計",
+   "sourceUrl": "https://sangokushi-shinsen.com/houtou/"
+  },
+  "tactic:lieu-su-nhu-than": {
+   "confidence": "high",
+   "nameJa": "料事如神",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:linh-giap-may": {
+   "confidence": "high",
+   "nameJa": "藤甲兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/gotutotukotu/"
+  },
+  "tactic:linh-thanh-chau": {
+   "confidence": "high",
+   "nameJa": "青州兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:lo-mang": {
+   "confidence": "medium",
+   "nameJa": "天下大吉",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:loa-y-huyet-chien": {
+   "confidence": "high",
+   "nameJa": "裸衣血戦",
+   "sourceUrl": "https://sangokushi-shinsen.com/ba-tyo/"
+  },
+  "tactic:loan-cung-am-vu": {
+   "confidence": "medium",
+   "nameJa": "射石飲羽",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "tactic:loan-the-gian-hung": {
+   "confidence": "medium",
+   "nameJa": "乱世の奸雄",
+   "sourceUrl": "https://sangokushi-shinsen.com/sou-sou/"
+  },
+  "tactic:lu-giang-thuong-giap": {
+   "confidence": "medium",
+   "nameJa": "廬江上甲",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:lua-duoi-gio-bay": {
+   "alts": [
+    "焔逐風飛"
+   ],
+   "confidence": "high",
+   "nameJa": "焰逐風飛",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:luy-the-lap-danh": {
+   "alts": [
+    "累世立命"
+   ],
+   "confidence": "high",
+   "nameJa": "累世立名",
+   "sourceUrl": "https://sangokushi-shinsen.com/en-syou/"
+  },
+  "tactic:ly-nguyet": {
+   "confidence": "high",
+   "nameJa": "舞癒",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:manh-kich": {
+   "confidence": "high",
+   "nameJa": "猛撃",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:mau-gianh-loi-the": {
+   "confidence": "high",
+   "nameJa": "速乗其利",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-syusyun/"
+  },
+  "tactic:me-hoac": {
+   "confidence": "high",
+   "nameJa": "魅惑",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:mong-trung-thi-than": {
+   "confidence": "high",
+   "nameJa": "夢中弑臣",
+   "sourceUrl": "https://sangokushi-shinsen.com/sou-sou/"
+  },
+  "tactic:nach-chien-quan-hung": {
+   "confidence": "high",
+   "nameJa": "搦戦群雄",
+   "sourceUrl": "https://sangokushi-shinsen.com/kayu/"
+  },
+  "tactic:nam-gai-nem-mat": {
+   "confidence": "high",
+   "nameJa": "臥薪嘗胆",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonken-son/"
+  },
+  "tactic:nam-man-cu-khoi": {
+   "confidence": "medium",
+   "nameJa": "南蛮巨魁",
+   "sourceUrl": "https://sangokushi-shinsen.com/moukaku/"
+  },
+  "tactic:ngao-nghe-vuong-hau": {
+   "confidence": "high",
+   "nameJa": "傲睨王侯",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyoyu/"
+  },
+  "tactic:nghia-dam-hung-tam": {
+   "confidence": "high",
+   "nameJa": "義胆雄心",
+   "sourceUrl": "https://sangokushi-shinsen.com/kyoui/"
+  },
+  "tactic:nghia-tam-chieu-liet": {
+   "confidence": "high",
+   "nameJa": "義心昭烈",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryu-bi/"
+  },
+  "tactic:ngoc-co-hoa-mao": {
+   "confidence": "medium",
+   "nameJa": "玉肌花貌",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-shinki/"
+  },
+  "tactic:ngu-coc-phong-dang": {
+   "confidence": "medium",
+   "nameJa": "五穀豊穣",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:ngu-dich-binh-chuong": {
+   "confidence": "high",
+   "nameJa": "御敵屏障",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:ngu-lan-tran": {
+   "confidence": "high",
+   "nameJa": "魚鱗陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-housei/"
+  },
+  "tactic:ngu-loi-oanh-dinh": {
+   "confidence": "medium",
+   "nameJa": "五雷轟天",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyo-kaku/"
+  },
+  "tactic:nguy-thu-tuong-gian": {
+   "confidence": "medium",
+   "nameJa": "偽書疑心",
+   "sourceUrl": "https://sangokushi-shinsen.com/kaku/"
+  },
+  "tactic:nhan-duc-tai-the": {
+   "alts": [
+    "人徳載世"
+   ],
+   "confidence": "high",
+   "nameJa": "仁徳載世",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:nhan-hanh-tran": {
+   "confidence": "high",
+   "nameJa": "雁行陣",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:nhan-loi-che-quyen": {
+   "confidence": "high",
+   "nameJa": "因利制権",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-ryuryou/"
+  },
+  "tactic:nhanh-tri-dong-nao": {
+   "confidence": "high",
+   "nameJa": "霊機一動",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:nhat-cu-tiem-diet": {
+   "confidence": "high",
+   "nameJa": "一挙殲滅",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:nhat-ky-duong-thien": {
+   "confidence": "high",
+   "nameJa": "一騎当千",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryohu/"
+  },
+  "tactic:nhat-luc-cu-thu": {
+   "confidence": "medium",
+   "nameJa": "奮戦力闘",
+   "sourceUrl": "https://sangokushi-shinsen.com/gengan/"
+  },
+  "tactic:nhat-than-thi-dam": {
+   "confidence": "high",
+   "nameJa": "一身是胆",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyouun/"
+  },
+  "tactic:nhuc-than-thiet-bich": {
+   "confidence": "high",
+   "nameJa": "肉身鉄壁",
+   "sourceUrl": "https://sangokushi-shinsen.com/syutai/"
+  },
+  "tactic:o-sao-di-han": {
+   "confidence": "high",
+   "nameJa": "烏巣遺恨",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:pha-giap": {
+   "confidence": "high",
+   "nameJa": "破甲",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:pha-quan-uy-thang": {
+   "confidence": "high",
+   "nameJa": "破軍威勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/mantyou/"
+  },
+  "tactic:pha-tran-thoi-kien": {
+   "confidence": "medium",
+   "nameJa": "破陣砕堅",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonsaku/"
+  },
+  "tactic:phan-dot": {
+   "confidence": "high",
+   "nameJa": "奮突",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:phan-mau-anh-tu": {
+   "confidence": "high",
+   "nameJa": "奮矛英姿",
+   "sourceUrl": "https://sangokushi-shinsen.com/s2-gatya/"
+  },
+  "tactic:phan-phat": {
+   "confidence": "medium",
+   "nameJa": "奮発",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:phan-tien": {
+   "confidence": "high",
+   "nameJa": "奮進",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:phi-hung-quan": {
+   "confidence": "high",
+   "nameJa": "飛熊軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:phi-sa-tau-thach": {
+   "confidence": "high",
+   "nameJa": "飛沙走石",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-tyouhou/"
+  },
+  "tactic:pho-thang-dao-hoa": {
+   "confidence": "medium",
+   "nameJa": "赴湯踏火",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-sonken/"
+  },
+  "tactic:phong-hoa": {
+   "confidence": "high",
+   "nameJa": "放火",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:phong-mang-tat-lo": {
+   "confidence": "medium",
+   "nameJa": "才気煥発",
+   "sourceUrl": "https://sangokushi-shinsen.com/batyu/"
+  },
+  "tactic:phong-thanh-hac-le": {
+   "confidence": "high",
+   "nameJa": "風声鶴唳",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:phong-thi-tran": {
+   "confidence": "high",
+   "nameJa": "鋒矢陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/kougetuei/"
+  },
+  "tactic:phong-tro-hoa-the": {
+   "confidence": "high",
+   "nameJa": "風助火勢",
+   "sourceUrl": "https://sangokushi-shinsen.com/syuyu/"
+  },
+  "tactic:phu-menh-tu-lap": {
+   "confidence": "high",
+   "nameJa": "符命自立",
+   "sourceUrl": "https://sangokushi-shinsen.com/enjyutu/"
+  },
+  "tactic:phu-nguy-dinh-khuynh": {
+   "confidence": "high",
+   "nameJa": "扶危定傾",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kouhosu/"
+  },
+  "tactic:quan-cam-pham": {
+   "confidence": "high",
+   "nameJa": "錦帆軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:quoc-chi-trinh-can": {
+   "confidence": "high",
+   "nameJa": "国の柱石",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:quoc-si-tuong-phong": {
+   "confidence": "high",
+   "nameJa": "国士将風",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryoutou/"
+  },
+  "tactic:quy-than-dinh-uy": {
+   "confidence": "high",
+   "nameJa": "鬼神霆威",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:quyet-thuy-hoi-thanh": {
+   "confidence": "high",
+   "nameJa": "決水潰城",
+   "sourceUrl": "https://sangokushi-shinsen.com/drowning/"
+  },
+  "tactic:si-biet-tam-nhat": {
+   "confidence": "high",
+   "nameJa": "刮目相待",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:si-dieu-phuong-tu": {
+   "confidence": "high",
+   "nameJa": "鴟苕鳳姿",
+   "sourceUrl": "https://sangokushi-shinsen.com/baunryoku/"
+  },
+  "tactic:si-tranh-tien-pho": {
+   "confidence": "high",
+   "nameJa": "士争先赴",
+   "sourceUrl": "https://sangokushi-shinsen.com/kankou/"
+  },
+  "tactic:so-bong-so-gio": {
+   "confidence": "high",
+   "nameJa": "杯中蛇影",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:so-trang-trich-kich": {
+   "confidence": "medium",
+   "nameJa": "投擲画戟",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:soc-huyet-tung-hoanh": {
+   "confidence": "medium",
+   "nameJa": "縦横疾駆",
+   "sourceUrl": "https://sangokushi-shinsen.com/ba-tyo/"
+  },
+  "tactic:su-tu-phan-tan": {
+   "confidence": "high",
+   "nameJa": "獅子奮迅",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryoreiki/"
+  },
+  "tactic:ta-huu-khai-cung": {
+   "confidence": "high",
+   "nameJa": "左右開弓",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:tai-bien-co-tiep": {
+   "confidence": "medium",
+   "nameJa": "能弁機敏",
+   "sourceUrl": "https://sangokushi-shinsen.com/iseki/"
+  },
+  "tactic:tai-khi-qua-nhan": {
+   "confidence": "medium",
+   "nameJa": "才器過人",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:tam-lanh-song-gio": {
+   "confidence": "high",
+   "nameJa": "暫避其鋒",
+   "sourceUrl": "https://sangokushi-shinsen.com/jyosyo/"
+  },
+  "tactic:tam-the-tran": {
+   "confidence": "high",
+   "nameJa": "三勢陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/batou/"
+  },
+  "tactic:tang-khi-dai-thi": {
+   "confidence": "medium",
+   "nameJa": "雄図待時",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-sousou/"
+  },
+  "tactic:tat-phong-sau-vu": {
+   "confidence": "medium",
+   "nameJa": "疾風豪雨",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-tyouryou/"
+  },
+  "tactic:tay-luong-thiet-ky": {
+   "confidence": "high",
+   "nameJa": "西涼鉄騎",
+   "sourceUrl": "https://sangokushi-shinsen.com/batou/"
+  },
+  "tactic:te-ban-hao-thi": {
+   "confidence": "medium",
+   "nameJa": "済貧施恵",
+   "sourceUrl": "https://sangokushi-shinsen.com/rosyuku/"
+  },
+  "tactic:thai-binh-dao-phap": {
+   "confidence": "high",
+   "nameJa": "太平道法",
+   "sourceUrl": "https://sangokushi-shinsen.com/houtou/"
+  },
+  "tactic:thai-thach-tinh-thong": {
+   "confidence": "medium",
+   "nameJa": "採石精通",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:tham-muu-vien-lu": {
+   "confidence": "high",
+   "nameJa": "深計遠略",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:tham-tang-nhuoc-hu": {
+   "confidence": "high",
+   "nameJa": "玄虚深蔵",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:than-co-dieu-toan": {
+   "confidence": "high",
+   "nameJa": "神機妙算",
+   "sourceUrl": "https://sangokushi-shinsen.com/syokaturyou/"
+  },
+  "tactic:than-co-mac-trac": {
+   "confidence": "high",
+   "nameJa": "神機莫測",
+   "sourceUrl": "https://sangokushi-shinsen.com/kaku/"
+  },
+  "tactic:than-hoa-ke": {
+   "confidence": "high",
+   "nameJa": "神火計",
+   "sourceUrl": "https://sangokushi-shinsen.com/syuyu/"
+  },
+  "tactic:than-thuong-su": {
+   "confidence": "high",
+   "nameJa": "神上使",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:than-thuong-thiet-chien": {
+   "confidence": "high",
+   "nameJa": "唇槍舌戦",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:than-xa": {
+   "confidence": "high",
+   "nameJa": "神射",
+   "sourceUrl": "https://sangokushi-shinsen.com/taishiji/"
+  },
+  "tactic:thanh-dong-kich-tay": {
+   "confidence": "high",
+   "nameJa": "声東撃西",
+   "sourceUrl": "https://sangokushi-shinsen.com/syusyun/"
+  },
+  "tactic:thanh-nang": {
+   "confidence": "medium",
+   "nameJa": "青嚢",
+   "sourceUrl": "https://sangokushi-shinsen.com/teni/"
+  },
+  "tactic:thao-tam-hoac-dich": {
+   "confidence": "high",
+   "nameJa": "韜心惑敵",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-tyousen/"
+  },
+  "tactic:thap-dien-mai-phuc": {
+   "confidence": "high",
+   "nameJa": "十面埋伏",
+   "sourceUrl": "https://sangokushi-shinsen.com/tei-iku/"
+  },
+  "tactic:thap-nhi-ky-sach": {
+   "confidence": "high",
+   "nameJa": "十二奇策",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:thap-thang-thap-bai": {
+   "confidence": "high",
+   "nameJa": "十勝十敗",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakuka/"
+  },
+  "tactic:thau-thien-xung-de": {
+   "confidence": "medium",
+   "nameJa": "受禅称帝",
+   "sourceUrl": "https://kazten.com/entry/2024/03/31/190000"
+  },
+  "tactic:the-thu-vo-hang": {
+   "confidence": "high",
+   "nameJa": "誓守無降",
+   "sourceUrl": "https://sangokushi-shinsen.com/gengan/"
+  },
+  "tactic:thi-chi-bat-di": {
+   "confidence": "high",
+   "nameJa": "矢志不移",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:thich-thuong": {
+   "confidence": "high",
+   "nameJa": "刺傷",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:thien-ha-vo-song": {
+   "confidence": "high",
+   "nameJa": "天下無双",
+   "sourceUrl": "https://sangokushi-shinsen.com/musou-ryoreiki/"
+  },
+  "tactic:thien-hang-hoa-vu": {
+   "confidence": "high",
+   "nameJa": "天降火雨",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:thien-ly-tri-vien": {
+   "confidence": "high",
+   "nameJa": "千里馳援",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:thien-van": {
+   "confidence": "medium",
+   "nameJa": "天運",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:thiet-chien-quan-nho": {
+   "confidence": "high",
+   "nameJa": "舌戦群儒",
+   "sourceUrl": "https://sangokushi-shinsen.com/syokaturyou/"
+  },
+  "tactic:thiet-hanh-thua-sung": {
+   "confidence": "medium",
+   "nameJa": "銅臭政治",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyoujyou/"
+  },
+  "tactic:thiet-ky-khu-tri": {
+   "confidence": "high",
+   "nameJa": "鉄騎駆馳",
+   "sourceUrl": "https://sangokushi-shinsen.com/ba-tyo/"
+  },
+  "tactic:thieu-dot-doanh-luy": {
+   "confidence": "high",
+   "nameJa": "焚輜営塁",
+   "sourceUrl": "https://sangokushi-shinsen.com/dashi-king/"
+  },
+  "tactic:thinh-khi-linh-dich": {
+   "confidence": "medium",
+   "nameJa": "意気衝天",
+   "sourceUrl": "https://sangokushi-shinsen.com/ikemen/"
+  },
+  "tactic:thoi-co-chien-thang": {
+   "confidence": "medium",
+   "nameJa": "機変制勝",
+   "sourceUrl": "https://sangokushi-shinsen.com/iseki/"
+  },
+  "tactic:thoi-phong-doan-nhan": {
+   "alts": [
+    "摧鋒断刀"
+   ],
+   "confidence": "medium",
+   "nameJa": "摧鋒断刃",
+   "sourceUrl": "https://kazten.com/entry/2026/03/22/190000"
+  },
+  "tactic:thu-chinh-xuat-phong": {
+   "confidence": "high",
+   "nameJa": "守正出鋒",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:thu-khoi-dao-lac": {
+   "confidence": "high",
+   "nameJa": "手起刀落",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "tactic:thu-nhi-tat-co": {
+   "confidence": "high",
+   "nameJa": "守而必固",
+   "sourceUrl": "https://sangokushi-shinsen.com/tei-iku/"
+  },
+  "tactic:thua-dich-bat-ngu": {
+   "confidence": "high",
+   "nameJa": "乗敵不虞",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:thua-thang-truong-khu": {
+   "confidence": "high",
+   "nameJa": "乗勝長駆",
+   "sourceUrl": "https://sangokushi-shinsen.com/kouran/"
+  },
+  "tactic:thua-thien-tinh-the": {
+   "confidence": "high",
+   "nameJa": "天意靖乱",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:thuc-pha": {
+   "confidence": "medium",
+   "nameJa": "識破",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:thuong-binh-phat-muu": {
+   "confidence": "high",
+   "nameJa": "上兵破謀",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:thuong-lam-phong-thuc": {
+   "confidence": "medium",
+   "nameJa": "倉廩豊実",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:thuong-vu-nhu-phong": {
+   "confidence": "high",
+   "nameJa": "槍舞如風",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyouhou/"
+  },
+  "tactic:thuy-tam-van-vat": {
+   "confidence": "high",
+   "nameJa": "垂心万物",
+   "sourceUrl": "https://sangokushi-shinsen.com/ougenki/"
+  },
+  "tactic:thuy-yem-that-quan": {
+   "confidence": "medium",
+   "nameJa": "樊城水攻",
+   "sourceUrl": "https://sangokushi-shinsen.com/drowning/"
+  },
+  "tactic:thuyen-co-muon-ten": {
+   "confidence": "high",
+   "nameJa": "草船借箭",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:ti-thuc-kich-hu": {
+   "confidence": "high",
+   "nameJa": "避実撃虚",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:tiem-long-tran": {
+   "confidence": "high",
+   "nameJa": "潜龍陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/en-syou/"
+  },
+  "tactic:tien-dang-tu-si": {
+   "confidence": "high",
+   "nameJa": "先駆死士",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:tien-dap": {
+   "confidence": "medium",
+   "nameJa": "践踏",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:tien-ngon": {
+   "confidence": "medium",
+   "nameJa": "進言",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:tien-thanh-ky-lu": {
+   "confidence": "medium",
+   "nameJa": "一致百慮",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kakuka/"
+  },
+  "tactic:tien-tri-nhan-chu": {
+   "confidence": "high",
+   "nameJa": "識主先知",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:tinh-hoa": {
+   "confidence": "medium",
+   "nameJa": "浄化",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:tinh-luyen-sach-so": {
+   "confidence": "high",
+   "nameJa": "精錬策数",
+   "sourceUrl": "https://sangokushi-shinsen.com/syoukai/"
+  },
+  "tactic:tinh-nhanh-tri-dong-nao": {
+   "confidence": "medium",
+   "nameJa": "精・ひらめき",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  "tactic:to-giang-dao-lo": {
+   "confidence": "high",
+   "nameJa": "遡江揺櫓",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:toa-chi-no-tap": {
+   "alts": [
+    "坐志怒襲"
+   ],
+   "confidence": "medium",
+   "nameJa": "挫志怒襲",
+   "sourceUrl": "https://kazten.com/entry/2022/12/23/180000"
+  },
+  "tactic:toa-doan-dong-nam": {
+   "confidence": "high",
+   "nameJa": "坐断東南",
+   "sourceUrl": "https://sangokushi-shinsen.com/sonken-son/"
+  },
+  "tactic:toa-nhue": {
+   "confidence": "medium",
+   "nameJa": "鈍兵挫鋭",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:toa-thu-co-thanh": {
+   "confidence": "medium",
+   "nameJa": "座守孤城",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:toan-quan-dong-long": {
+   "confidence": "high",
+   "nameJa": "衆志成城",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:tra-hang": {
+   "confidence": "high",
+   "nameJa": "詐降",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:tram-doan-co-muu": {
+   "confidence": "medium",
+   "nameJa": "機知頓才",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyousyunka/"
+  },
+  "tactic:tram-sa-quyet-thuy": {
+   "confidence": "medium",
+   "nameJa": "沈砂決水",
+   "sourceUrl": "https://sangokushi-shinsen.com/housei/"
+  },
+  "tactic:tran-ach-phong-cu": {
+   "alts": [
+    "鎮阨防拒"
+   ],
+   "confidence": "high",
+   "nameJa": "鎮扼防拒",
+   "sourceUrl": "https://sangokushi-shinsen.com/mantyou/"
+  },
+  "tactic:tran-ap-khan-vang": {
+   "confidence": "medium",
+   "nameJa": "黄巾平定",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:tran-muc-hoanh-mau": {
+   "confidence": "medium",
+   "nameJa": "瞋目大喝",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyo-hi/"
+  },
+  "tactic:tran-vu-chi-thien": {
+   "confidence": "medium",
+   "nameJa": "至善極地",
+   "sourceUrl": "https://sangokushi-shinsen.com/oui/"
+  },
+  "tactic:tranh-phan-doat-mieu": {
+   "confidence": "medium",
+   "nameJa": "争分奪秒",
+   "sourceUrl": "https://sangokushi-shinsen.com/horse-training/"
+  },
+  "tactic:tri-dinh": {
+   "confidence": "high",
+   "nameJa": "智定",
+   "sourceUrl": "https://sangokushi-shinsen.com/b-sen/"
+  },
+  "tactic:tri-ke": {
+   "confidence": "high",
+   "nameJa": "智計",
+   "sourceUrl": "https://sangokushi-shinsen.com/tinkyu/"
+  },
+  "tactic:tri-quan-nghi-trong": {
+   "confidence": "medium",
+   "nameJa": "確乎不抜",
+   "sourceUrl": "https://sangokushi-shinsen.com/ukin/"
+  },
+  "tactic:trong-kich": {
+   "confidence": "high",
+   "nameJa": "重撃",
+   "sourceUrl": "https://sangokushi-shinsen.com/rush/"
+  },
+  "tactic:trung-dung-nghia-liet": {
+   "confidence": "high",
+   "nameJa": "忠勇義烈",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-kanu/"
+  },
+  "tactic:truong-gia-chi-phong": {
+   "confidence": "high",
+   "nameJa": "長者之風",
+   "sourceUrl": "https://sangokushi-shinsen.com/command/"
+  },
+  "tactic:truong-khu-truc-nhap": {
+   "confidence": "high",
+   "nameJa": "長駆直入",
+   "sourceUrl": "https://sangokushi-shinsen.com/jyokou/"
+  },
+  "tactic:truyen-hich-tuyen-uy": {
+   "confidence": "high",
+   "nameJa": "伝檄宣威",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:tu-chien-bat-thoai": {
+   "confidence": "high",
+   "nameJa": "死戦不退",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-houtoku/"
+  },
+  "tactic:tu-dien-so-ca": {
+   "confidence": "high",
+   "nameJa": "四面楚歌",
+   "sourceUrl": "https://sangokushi-shinsen.com/rijyu/"
+  },
+  "tactic:tu-du": {
+   "alts": [
+    "自愈"
+   ],
+   "confidence": "high",
+   "nameJa": "自癒",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:tung-binh-kiep-luoc": {
+   "confidence": "medium",
+   "nameJa": "暴政劫掠",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:tuong-binh": {
+   "confidence": "high",
+   "nameJa": "象兵",
+   "sourceUrl": "https://sangokushi-shinsen.com/bokurokudaiou/"
+  },
+  "tactic:tuong-hanh-ky-tat": {
+   "confidence": "medium",
+   "nameJa": "疾風二連",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakouen/"
+  },
+  "tactic:tuong-mon-ho-nu": {
+   "confidence": "high",
+   "nameJa": "将門虎女",
+   "sourceUrl": "https://sangokushi-shinsen.com/kanginpei/"
+  },
+  "tactic:tuu-tri-nhuc-lam": {
+   "confidence": "high",
+   "nameJa": "酒池肉林",
+   "sourceUrl": "https://sangokushi-shinsen.com/tou-taku/"
+  },
+  "tactic:tuyet-dia-phan-kich": {
+   "confidence": "high",
+   "nameJa": "絶地反撃",
+   "sourceUrl": "https://sangokushi-shinsen.com/ryoreiki/"
+  },
+  "tactic:tuyet-ke-chiet-muu": {
+   "confidence": "medium",
+   "nameJa": "智計破謀",
+   "sourceUrl": "https://sangokushi-shinsen.com/kashi/"
+  },
+  "tactic:tuyet-ky-cap-dao": {
+   "confidence": "medium",
+   "nameJa": "水路断截",
+   "sourceUrl": "https://sangokushi-shinsen.com/incident/"
+  },
+  "tactic:ung-thi-lang-co": {
+   "confidence": "high",
+   "nameJa": "鷹視狼顧",
+   "sourceUrl": "https://sangokushi-shinsen.com/shibai/"
+  },
+  "tactic:uong-han-di-truu": {
+   "confidence": "high",
+   "nameJa": "飲恨遺仇",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  },
+  "tactic:uy-chan-hoa-ha": {
+   "alts": [
+    "雷鳴天下"
+   ],
+   "confidence": "medium",
+   "nameJa": "雷名天下",
+   "sourceUrl": "https://sangokushi-shinsen.com/kanu/"
+  },
+  "tactic:uy-muu-vo-dich": {
+   "confidence": "medium",
+   "nameJa": "威謀必至",
+   "sourceUrl": "https://sangokushi-shinsen.com/gien/"
+  },
+  "tactic:uy-phong-lam-lam": {
+   "confidence": "medium",
+   "nameJa": "威武堂々",
+   "sourceUrl": "https://sangokushi-shinsen.com/provocation/"
+  },
+  "tactic:uy-vo-tinh-chieu": {
+   "confidence": "high",
+   "nameJa": "威武併昭",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-batyou/"
+  },
+  "tactic:uyen-nhien-nan-trac": {
+   "confidence": "high",
+   "nameJa": "淵然難測",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-soushin/"
+  },
+  "tactic:van-quan-doat-suy": {
+   "confidence": "high",
+   "nameJa": "万軍奪帥",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:van-tien-te-phat": {
+   "confidence": "medium",
+   "nameJa": "万矢斉射",
+   "sourceUrl": "https://sangokushi-shinsen.com/kakouen/"
+  },
+  "tactic:van-tru-quyet-toan": {
+   "confidence": "medium",
+   "nameJa": "奇策妙計",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyousyunka/"
+  },
+  "tactic:van-tu-anh-tong": {
+   "confidence": "high",
+   "nameJa": "雲聚影従",
+   "sourceUrl": "https://sangokushi-shinsen.com/touhaku/"
+  },
+  "tactic:van-vo-song-toan": {
+   "confidence": "high",
+   "nameJa": "文武両道",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  "tactic:vi-su-tat-khuyet": {
+   "confidence": "high",
+   "nameJa": "囲師必闕",
+   "sourceUrl": "https://sangokushi-shinsen.com/sp-syusyun/"
+  },
+  "tactic:vo-duong-phi-quan": {
+   "confidence": "high",
+   "nameJa": "無當飛軍",
+   "sourceUrl": "https://sangokushi-shinsen.com/ouhei/"
+  },
+  "tactic:vo-phong-tran": {
+   "confidence": "high",
+   "nameJa": "武鋒陣",
+   "sourceUrl": "https://sangokushi-shinsen.com/en-syou/"
+  },
+  "tactic:xe-dao-chuoc-dich": {
+   "confidence": "high",
+   "nameJa": "掣刀斫敵",
+   "sourceUrl": "https://sangokushi-shinsen.com/gien/"
+  },
+  "tactic:xu-tu-bat-hoac": {
+   "confidence": "medium",
+   "nameJa": "知者不惑",
+   "sourceUrl": "https://sangokushi-shinsen.com/jyosyo/"
+  },
+  "tactic:xuat-khau-thanh-chuong": {
+   "confidence": "medium",
+   "nameJa": "有智高才",
+   "sourceUrl": "https://sanngokusinnsenn.com/osusume-sennpou-hosi4/"
+  },
+  "tactic:yen-ky-tuc-co": {
+   "confidence": "high",
+   "nameJa": "偃旗息鼓",
+   "sourceUrl": "https://sanngokusinnsenn.com/sennpou-itirann-rannnkingu/"
+  },
+  "tactic:yen-nhan-bao-hao": {
+   "confidence": "high",
+   "nameJa": "燕人咆哮",
+   "sourceUrl": "https://sangokushi-shinsen.com/tyo-hi/"
+  },
+  "tactic:yeu-thuat": {
+   "confidence": "high",
+   "nameJa": "妖術",
+   "sourceUrl": "https://sangokushi-shinsen.com/a-sen/"
+  }
+ },
+ "observedSource": "plans/reports/ja-names-observed-261117.json",
+ "prefixedTactics": [
+  {
+   "baseId": "tactic:an-ui-quan-dan",
+   "confidence": "medium",
+   "name": "転・慰撫軍民",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:cat-xuong-tri-doc",
+   "confidence": "medium",
+   "name": "拓・刮骨療毒",
+   "prefix": "拓",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  {
+   "baseId": "tactic:cat-xuong-tri-doc",
+   "confidence": "medium",
+   "name": "転・刮骨療毒",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:doat-hon-hiep-phach",
+   "confidence": "medium",
+   "name": "拓・昏迷乱擾",
+   "prefix": "拓",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  {
+   "baseId": "tactic:doat-hon-hiep-phach",
+   "confidence": "medium",
+   "name": "転・昏迷乱擾",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:dung-vo-than-thong",
+   "confidence": "medium",
+   "name": "転・神算鬼謀",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:duong-suc-doi-chien",
+   "confidence": "medium",
+   "name": "拓・蓄勢待発",
+   "prefix": "拓",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  {
+   "baseId": "tactic:hoanh-tao-thien-quan",
+   "confidence": "medium",
+   "name": "転・千軍一掃",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:khong-danh-ma-thang",
+   "confidence": "medium",
+   "name": "転・非攻制勝",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:mau-gianh-loi-the",
+   "confidence": "medium",
+   "name": "拓・速乗其利",
+   "prefix": "拓",
+   "sourceUrl": "https://sanngokusinnsenn.com/s22-tougunnseibi/"
+  },
+  {
+   "baseId": "tactic:phong-thi-tran",
+   "confidence": "medium",
+   "name": "拓・鋒矢陣",
+   "prefix": "拓",
+   "sourceUrl": "https://sanngokusinnsenn.com/s21-seazon/"
+  },
+  {
+   "baseId": "tactic:si-biet-tam-nhat",
+   "confidence": "medium",
+   "name": "拓・刮目相待",
+   "prefix": "拓",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  {
+   "baseId": "tactic:su-tu-phan-tan",
+   "confidence": "high",
+   "name": "転・獅子奮迅",
+   "prefix": "転",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  {
+   "baseId": "tactic:tam-lanh-song-gio",
+   "confidence": "medium",
+   "name": "転・暫避其鋒",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:thai-binh-dao-phap",
+   "confidence": "medium",
+   "name": "拓・太平道法",
+   "prefix": "拓",
+   "sourceUrl": "https://sanngokusinnsenn.com/s22-tougunnseibi/"
+  },
+  {
+   "baseId": "tactic:thuyen-co-muon-ten",
+   "confidence": "medium",
+   "name": "拓・草船借箭",
+   "prefix": "拓",
+   "sourceUrl": "https://sangokushi-shinsen.com/spring-autumn/"
+  },
+  {
+   "baseId": "tactic:toan-quan-dong-long",
+   "confidence": "medium",
+   "name": "転・衆志成城",
+   "prefix": "転",
+   "sourceUrl": "https://sangokushi-shinsen.com/copy/"
+  },
+  {
+   "baseId": "tactic:tran-ach-phong-cu",
+   "confidence": "high",
+   "name": "拓・鎮阨防拒",
+   "prefix": "拓",
+   "sourceUrl": "client-screenshot (repo owner, JP client)"
+  },
+  {
+   "baseId": "tactic:uy-muu-vo-dich",
+   "confidence": "medium",
+   "name": "拓・威謀必至",
+   "prefix": "拓",
+   "sourceUrl": "https://sanngokusinnsenn.com/s22-tougunnseibi/"
+  }
+ ],
+ "schemaVersion": 1,
+ "skipped": {
+  "low": [
+   "hero:my-truc",
+   "tactic:hoa-dung-nguyet-mao",
+   "tactic:thuy-kinh-tien-sinh",
+   "tactic:toa-dieu-kinh-ngao",
+   "tactic:vuong-ta-chi-tai"
+  ],
+  "noId": 13,
+  "unknownId": []
+ }
+}
