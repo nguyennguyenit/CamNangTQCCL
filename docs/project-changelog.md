@@ -1,5 +1,9 @@
 # Project Changelog
 
+## 2026-11-16 (Dọn CSS chết sau Thiết kế mới, Đội của tôi giữ bản soạn)
+
+- Removed (#83): quy tắc `.blog-*` không còn trang nào dùng trong `css/styles.css` — `.blog-author`, `.blog-translation`, `.blog-cover`, `.blog-summary*`, `.blog-toc*`, `.blog-faq*`, `.blog-related` (bài chi tiết đã chuyển sang `bv-*`), kèm các selector tương ứng trong nhóm chung `.blog-body h2` và media 680px. Giữ phần còn dùng: danh sách `/bai-viet/` (`.blog-index*`, `.blog-card*`, `.blog-tag*`, `.blog-list`, `.blog-empty*`, `.blog-breadcrumb`, `.blog-lead`) và trang chính sách (`.blog-article*`, `.blog-body`).
+
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
 - Changed: form đăng đội có ô "Mùa bạn đang chơi" (bắt buộc, chọn sẵn mùa hiện hành của Đội chuẩn `pk-s27`); `POST /api/community-teams` nhận `season`. Danh mục mùa = `seasonOptions` của Đội chuẩn đang publish, Worker đọc `/data/recommended/*` lúc chạy (xác minh hash, cache isolate) qua `community-worker/src/season-catalog.ts` — mùa mới thêm vào Đội chuẩn tự có ở Đội cộng đồng sau khi site deploy. `GET /api/community-seasons` → `{current, seasons}`; danh sách mặc định lọc `current`.

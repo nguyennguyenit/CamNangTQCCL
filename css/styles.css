@@ -14916,10 +14916,6 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--accent);
 }
 
-.blog-author {
-  color: var(--ink-2);
-}
-
 .blog-card-desc {
   font: var(--type-body);
   color: var(--ink-2);
@@ -14942,70 +14938,12 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-tag);
 }
 
-.blog-translation a {
-  font: var(--type-control);
-  color: var(--accent);
-}
-
-.blog-cover {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-12);
-}
-
-.blog-summary,
-.blog-toc {
-  padding: var(--space-16) var(--space-20);
-  border-left: var(--space-3) solid var(--accent);
-  border-radius: var(--radius-8);
-  background: var(--panel-3);
-  font: var(--type-body);
-  color: var(--ink);
-}
-
-.blog-toc {
-  border-left-color: var(--line);
-}
-
-.blog-summary p,
-.blog-toc ol {
-  margin: 0;
-}
-
-.blog-summary-label {
-  margin: 0 0 var(--space-6);
-  font: var(--type-label-caps);
-  letter-spacing: var(--type-label-caps-spacing);
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.blog-toc ol {
-  padding-left: var(--space-20);
-}
-
-.blog-toc li {
-  margin: var(--space-4) 0;
-}
-
-.blog-toc .blog-toc-sub {
-  margin-left: var(--space-16);
-  list-style-type: circle;
-}
-
-.blog-toc a {
-  color: var(--ink-2);
-}
-
 .blog-body {
   font: var(--type-body);
   color: var(--ink);
 }
 
-.blog-body h2,
-.blog-faq h2,
-.blog-related h2 {
+.blog-body h2 {
   margin: var(--space-32) 0 var(--space-12);
   font: var(--type-detail-section-title);
   color: var(--ink);
@@ -15069,43 +15007,6 @@ body[data-page-section="roster-recommend"] .layout {
   text-align: left;
 }
 
-.blog-faq {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-}
-
-.blog-faq h2 {
-  margin-bottom: var(--space-4);
-}
-
-.blog-faq-item {
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-10);
-  background: var(--panel);
-}
-
-.blog-faq-item summary {
-  display: flex;
-  align-items: center;
-  min-height: var(--control-44);
-  padding: var(--space-8) var(--space-16);
-  font: var(--type-strong);
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.blog-faq-item p {
-  margin: 0;
-  padding: 0 var(--space-16) var(--space-12);
-  font: var(--type-body);
-  color: var(--ink-2);
-}
-
-.blog-related {
-  max-width: 72ch;
-}
-
 .blog-empty {
   display: flex;
   flex-direction: column;
@@ -15124,9 +15025,7 @@ body[data-page-section="roster-recommend"] .layout {
   .blog-card {
     padding: var(--space-16);
   }
-  .blog-breadcrumb a,
-  .blog-translation a,
-  .blog-toc a {
+  .blog-breadcrumb a {
     display: inline-flex;
     align-items: center;
     min-height: var(--control-44);
