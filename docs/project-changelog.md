@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
+
+- Fixed: ghi chú chia đội Thương/Kỵ trong `data/khaihoang.json` ghi "Hoàng Nguyệt Anh (Vô Đương / Bạch Nhị)" thay "Bạch Nhĩ", cùng cách viết 白毦 = "Bạch Nhị Binh" của Đội chuẩn (#64). Ghi chú lớp `authored-vi`, không có bản zh.
+- Re-pin hash `khaihoang.json` trong policy và ledger route, publish generation hiển thị mới, rebind, prune generation cũ. Handle URL không đổi.
+
 ## 2026-11-17 (Đội chuẩn: Tàng Khí Đợi Thời, Bạch Nhị Binh, provenance trước cấp 20 — #47, #64)
 
 ### Changed
