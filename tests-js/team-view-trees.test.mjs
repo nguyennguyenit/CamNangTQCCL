@@ -150,6 +150,32 @@ for (const locale of ["vi", "zh"]) {
     assertPlain(sourceTree);
     assert.match(treeToHtml(sourceTree), new RegExp(`data-record-id="${link.recordId}"`));
     assert.ok(textOf(sourceTree).length > 100);
+    assert.doesNotMatch(treeToHtml(sourceTree), /Trang bị:|Thẻ Kỳ Lược/u, "bảng 10 cột không có Trang bị/Thẻ Kỳ Lược");
+  });
+
+  test(`Cùng Tồn bảng 11 cột (${locale}): Trang bị dưới cộng điểm, Thẻ Kỳ Lược ở chân thẻ; bản zh bỏ cả hai`, () => {
+    const link = seasonLinks.find((item) => item.scenarioId === "han-diem-truong-minh");
+    assert.ok(link, "kịch bản Hán Diễm Trường Minh có trong dữ liệu");
+    const team = link.target.payload.teams[0];
+    const group = { recordId: link.recordId, source: link.target.source, content: link.target.payload };
+    const tree = run(() => seasonCoexistGroup(group, { teamCard: (item) => coexistTeamCard(item, { locale }), locale }));
+    assertPlain(tree);
+    const html = treeToHtml(tree);
+    const cards = html.split('class="team-card reference-team-card coexist-team-card"').slice(1);
+    assert.equal(cards.length, link.target.payload.teams.length);
+    if (locale === "zh") {
+      assert.doesNotMatch(html, /Trang bị|Thẻ Kỳ Lược|coexist-hero-equipment|coexist-card-strategy/u);
+      return;
+    }
+    // Nguồn "A\n\nB": bỏ dòng trống, giữ ngắt dòng để CSS pre-line hiện hai dòng.
+    assert.equal(team.heroes[0].equipmentRaw, "Trị Quân, Ngự Sách\n\nSức Sống, Hộ Chủ");
+    assert.ok(cards[0].includes('<p class="line books coexist-hero-extra">+ Thống Soái</p><p class="line books coexist-hero-equipment">Trang bị: Trị Quân, Ngự Sách\nSức Sống, Hộ Chủ</p>'));
+    assert.ok(cards[0].includes(`<footer class="reference-card-foot"><p class="coexist-card-strategy">Thẻ Kỳ Lược: ${team.strategyCardsRaw}</p></footer>`));
+    for (const card of cards) {
+      assert.equal((card.match(/coexist-hero-equipment/g) || []).length, 3, "mỗi tướng một dòng Trang bị");
+      assert.equal((card.match(/coexist-card-strategy/g) || []).length, 1, "mỗi đội một dòng Thẻ Kỳ Lược");
+    }
+    assert.doesNotMatch(html, /Cải tạo:/u);
   });
 
   test(`Khai hoang (${locale}): trang danh sách và trang chi tiết có tướng, chiến pháp, ghi chú, điểm`, () => {

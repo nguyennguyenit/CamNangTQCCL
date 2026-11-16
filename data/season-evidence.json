@@ -49,5 +49,38 @@
     "schemaVersion": 1,
     "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
     "sourceSeason": null
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "scenario-attribution",
+      "rulesetId": null,
+      "scenarioId": "han-diem-truong-minh"
+    },
+    "id": "coexist-han-diem-scenario-confirmation",
+    "provenance": {
+      "fetchedAt": "2026-11-17",
+      "region": "VN"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "sourceSeason": null
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "source-observation",
+      "rulesetId": null,
+      "scenarioId": null
+    },
+    "id": "coexist-han-diem-source-snapshot",
+    "provenance": {
+      "fetchedAt": "2026-11-17",
+      "region": "VN"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "snapshotHash": "sha256:6ad506cea28d14604c120622c25fbf85e7aa7b120f52006e21b2eb2d5760fb67",
+    "sourceSeason": null
   }
 ]

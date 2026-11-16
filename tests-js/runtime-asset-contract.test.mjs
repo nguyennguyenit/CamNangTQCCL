@@ -29,7 +29,7 @@ test("season attribution is versioned and cannot imply an unverified ruleset", a
   const proofById = new Map(evidence.map((proof) => [proof.id, proof]));
   assert.equal(proofById.size, evidence.length);
   for (const row of [...registry, ...evidence]) assert.equal(row.schemaVersion, 1);
-  for (const scenarioId of ["anh-hung-menh-the", "binh-dien-xuan-thu"]) {
+  for (const scenarioId of ["han-diem-truong-minh", "anh-hung-menh-the", "binh-dien-xuan-thu"]) {
     const scenario = registry.find((row) => row.id === scenarioId);
     assert.equal(scenario.reviewStatus, "reviewed");
     assert.deepEqual(scenario.rulesets, []);

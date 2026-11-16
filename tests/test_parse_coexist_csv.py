@@ -117,3 +117,91 @@ class CoexistIdentityTest(unittest.TestCase):
         self.source['snapshotHash']=HASH
         self.mapping['groups'].append(copy.deepcopy(self.mapping['groups'][0]))
         with self.assertRaises(ValueError):self.build()
+
+
+STRATEGY_SNAPSHOT=Path(__file__).resolve().parents[1]/'plans/261117-0206-cung-ton-han-diem-truong-minh/research/coexist-han-diem-truong-minh.csv'
+STRATEGY_HASH='sha256:6ad506cea28d14604c120622c25fbf85e7aa7b120f52006e21b2eb2d5760fb67'
+
+
+class ParseStrategyCardCoexistCSVTest(unittest.TestCase):
+    """Bảng 11 cột (Hán Diễm Trường Minh): Trang Bị theo tướng, Thẻ Kỳ Lược theo đội."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.raw=STRATEGY_SNAPSHOT.read_bytes().decode('utf-8')
+        cls.rows=list(csv.reader(io.StringIO(cls.raw,newline='')))
+
+    def test_real_snapshot_has_exact_inventory(self):
+        self.assertEqual({len(row) for row in self.rows},{11})
+        parsed=parse_coexist_csv(self.raw,expected_hash=STRATEGY_HASH)
+        self.assertEqual([group['groupLabel'] for group in parsed['groups']],[f'Cùng tồn {n}' for n in range(1,6)])
+        self.assertEqual(sum(len(group['teams']) for group in parsed['groups']),25)
+        self.assertEqual(sum(len(team['heroes']) for group in parsed['groups'] for team in group['teams']),75)
+        self.assertTrue(all(len(team['heroes'])==3 for group in parsed['groups'] for team in group['teams']))
+        self.assertIn('chỉ mang tính chất tham khảo',parsed['disclaimerRaw'])
+        self.assertEqual(parsed['groups'][0]['teams'][0]['heroes'][0]['nameRaw'],'SP Tào Tháo')
+
+    def test_equipment_and_strategy_cards_preserve_raw_multiline_text(self):
+        parsed=parse_coexist_csv(self.raw)
+        first=parsed['groups'][0]['teams'][0]
+        self.assertEqual(first['heroes'][0]['equipmentRaw'],'Trị Quân, Ngự Sách\n\nSức Sống, Hộ Chủ')
+        self.assertEqual(parsed['groups'][1]['teams'][0]['heroes'][0]['equipmentRaw'],'Trị Quân, Ngự Sách\nSức Sống, Hộ Chủ')
+        self.assertEqual(first['heroes'][1]['equipmentRaw'],'Hộ Chủ, Sức Sống')
+        self.assertEqual(first['strategyCardsRaw'],'Ẩn Tích Mang Thương → Bái Huyện Tụ Nghĩa → Ước Pháp Tam Chương → Lánh Hiểm Hồng Môn → Nhường Cơm Sẻ Áo')
+        self.assertEqual(first['heroes'][0]['bookSlotsRaw'],['Tam Quân Chi Chúng','Cửu Chiến','Dẫn Quân'])
+        self.assertEqual(first['heroes'][2]['tacticSlotsRaw'],['Thâm Tàng Nhược Hư','Đồng Lòng Hợp Sức/\nLập Lờ Đánh Tráo'])
+        self.assertEqual(first['heroes'][0]['statFocusRaw'],'Thống Soái')
+        teams=[team for group in parsed['groups'] for team in group['teams']]
+        self.assertTrue(all(team['strategyCardsRaw'] and 'unitTacticEffectsRaw' not in team for team in teams))
+        self.assertTrue(all(hero['equipmentRaw'] for team in teams for hero in team['heroes']))
+
+    def test_capitalized_notes_marker_splits_notes_from_opening_suggestions(self):
+        first=parse_coexist_csv(self.raw)['groups'][0]
+        self.assertEqual(first['openingSuggestionsRaw'],'[Lô Trực Cung] \nSP Lô Trực\nVương Bình\nTrần Cung')
+        self.assertEqual(first['notesRaw'],'Ghi Chú\nChủ lực tiến cử\nĐại Hán Cung\nTam Thế Lữ Bố 40')
+
+    def test_header_drift_and_mixed_column_counts_reject(self):
+        legacy=['Tiến cử khai hoang','Tên đội','Võ Tướng','Chiến Pháp','','Thêm điểm','Binh Thư','','','Hiệu Quả Cải Tạo Chiến Pháp Binh Chủng']
+        for mode in ('rename','lowercase','reorder','legacy-header','short-row','short-file'):
+            rows=copy.deepcopy(self.rows)
+            if mode=='rename':rows[4][10]='Hiệu Quả Cải Tạo Chiến Pháp Binh Chủng'
+            if mode=='lowercase':rows[23][1]='Tên đội'
+            if mode=='reorder':rows[4][6],rows[4][7]=rows[4][7],rows[4][6]
+            if mode=='legacy-header':rows[4]=legacy+['Thẻ Kỳ Lược']
+            if mode=='short-row':rows[6].pop()
+            if mode=='short-file':rows=[row[:10] for row in rows]
+            with self.subTest(mode=mode),self.assertRaises(ValueError):parse_coexist_csv(csv_text(rows))
+
+    def test_strategy_cards_on_continuation_row_reject(self):
+        rows=copy.deepcopy(self.rows);self.assertEqual(rows[6][10],'');rows[6][10]='Càn Quét Tây Hà'
+        with self.assertRaises(ValueError):parse_coexist_csv(csv_text(rows))
+
+    def test_orphan_and_incomplete_teams_reject(self):
+        for mode in ('orphan','interrupted','extra'):
+            rows=copy.deepcopy(self.rows)
+            if mode=='orphan':rows[5][1]=''
+            if mode=='interrupted':rows.insert(6,['']*11)
+            if mode=='extra':rows.insert(8,copy.deepcopy(rows[7]))
+            with self.subTest(mode=mode),self.assertRaises(ValueError):parse_coexist_csv(csv_text(rows))
+
+    def test_legacy_table_payload_gains_no_new_fields(self):
+        parsed=parse_coexist_csv(SNAPSHOT.read_bytes().decode('utf-8'),expected_hash=HASH)
+        teams=[team for group in parsed['groups'] for team in group['teams']]
+        self.assertEqual({key for team in teams for key in team},{'teamNameRaw','teamName','unitTacticEffectsRaw','heroes','sourceLocator'})
+        self.assertEqual({key for team in teams for hero in team['heroes'] for key in hero},{'nameRaw','tacticSlotsRaw','statFocusRaw','bookSlotsRaw'})
+
+
+class StrategyCardCoexistIdentityTest(unittest.TestCase):
+    def test_reviewed_map_reproduces_source_links_byte_for_byte(self):
+        import json
+        from pipeline.parse_coexist_csv import build_content_links
+        root=STRATEGY_SNAPSHOT.parents[3]
+        mapping=json.loads((root/'pipeline/coexist-han-diem-source-record-map.json').read_text(encoding='utf-8'))
+        links=[link for link in json.loads((root/'pipeline/season-content-links.json').read_text(encoding='utf-8')) if link['scenarioId']=='han-diem-truong-minh']
+        self.assertEqual(len(links),5)
+        source=copy.deepcopy(links[0]['target']['source']);source.pop('disclaimerRaw')
+        self.assertEqual((source['id'],source['snapshotHash']),('coexist-han-diem-sheet',STRATEGY_HASH))
+        rebuilt=build_content_links(STRATEGY_SNAPSHOT.read_bytes().decode('utf-8'),mapping,source,scenario_id='han-diem-truong-minh',evidence_refs=['coexist-han-diem-scenario-confirmation','coexist-han-diem-source-snapshot'])
+        self.assertEqual(rebuilt,links)
+        self.assertTrue(all(link['recordId'].startswith('coexist-hdtm-group-') for link in links))
+        self.assertTrue(all(team['recordId'].startswith('coexist-hdtm-team-') for link in links for team in link['target']['payload']['teams']))
