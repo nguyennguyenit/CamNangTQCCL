@@ -10658,6 +10658,17 @@ body[data-page-section="khaihoang"] .layout {
   font: var(--type-meta);
 }
 
+.cham-su-title .kh-recommended {
+  margin-inline-start: var(--space-6);
+  vertical-align: middle;
+}
+
+.cham-su-tip {
+  margin: 0 0 var(--space-12);
+  color: var(--muted);
+  font: var(--type-meta);
+}
+
 /* ---------- Quân thủ các mỏ: bảng desktop, thẻ mobile ---------- */
 .kh-table-frame {
   border: var(--border-hair) solid var(--line);

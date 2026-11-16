@@ -15108,6 +15108,321 @@
       "reviewStatus": "reviewed",
       "stableId": "book:54889d39343755d53ee8344d",
       "variant": null
+    },
+    {
+      "aliases": [
+        "SP 盧植弓（台服官方開荒）"
+      ],
+      "displayNameVi": "SP Lư Thực Cung (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP 馬超槍（台服官方開荒）"
+      ],
+      "displayNameVi": "SP Mã Siêu Thương (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "何氏開荒（台服官方，PK 賽季 15C）"
+      ],
+      "displayNameVi": "Hà Thị khai hoang (bản chính thức máy chủ Đài Loan, mùa PK 15C)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "姜夏諸（台服官方開荒）"
+      ],
+      "displayNameVi": "Khương Hạ Chư (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "武鋒太史慈（台服官方開荒）"
+      ],
+      "displayNameVi": "Võ Phong Thái Sử Từ (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "混合弓兵（台服官方開荒）"
+      ],
+      "displayNameVi": "Cung binh hỗn hợp (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "蜀騎（台服官方開荒）"
+      ],
+      "displayNameVi": "Thục Kỵ (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "諸葛恪槍（台服官方開荒）"
+      ],
+      "displayNameVi": "Gia Cát Khác Thương (khai hoang, bản chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "張讓黃月英（兩人碰瓷）"
+      ],
+      "displayNameVi": "Trương Nhượng Hoàng Nguyệt Anh (cảm tử hai người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "賈詡呂蒙（兩人碰瓷）"
+      ],
+      "displayNameVi": "Giả Hủ Lữ Mông (cảm tử hai người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "賈詡太史慈死士（三人碰瓷）"
+      ],
+      "displayNameVi": "Giả Hủ Thái Sử Từ Tử Sĩ (cảm tử ba người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "孫尚香凌統城衛（三人碰瓷）"
+      ],
+      "displayNameVi": "Tôn Thượng Hương Lăng Thống Thành Vệ (cảm tử ba người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "孫尚香凌統（兩人碰瓷）"
+      ],
+      "displayNameVi": "Tôn Thượng Hương Lăng Thống (cảm tử hai người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "張讓周泰黃月英（三人碰瓷）"
+      ],
+      "displayNameVi": "Trương Nhượng Chu Thái Hoàng Nguyệt Anh (cảm tử ba người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "甘寧凌統（兩人碰瓷）"
+      ],
+      "displayNameVi": "Cam Ninh Lăng Thống (cảm tử hai người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "甘寧黃月英城衛（三人碰瓷）"
+      ],
+      "displayNameVi": "Cam Ninh Hoàng Nguyệt Anh Thành Vệ (cảm tử ba người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "馬超凌統（兩人碰瓷）"
+      ],
+      "displayNameVi": "Mã Siêu Lăng Thống (cảm tử hai người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "馬超黃月英城衛（三人碰瓷）"
+      ],
+      "displayNameVi": "Mã Siêu Hoàng Nguyệt Anh Thành Vệ (cảm tử ba người)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "40Y 呂貂盧弓"
+      ],
+      "displayNameVi": "40Y Lữ Điêu Lư Cung",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "SP 曹操漢陣營 2+1 弓"
+      ],
+      "displayNameVi": "SP Tào Tháo Cung phe Hán 2+1",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三勢 40Y 呂布盾"
+      ],
+      "displayNameVi": "Tam Thế 40Y Lữ Bố Thuẫn",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "二喬弓"
+      ],
+      "displayNameVi": "Nhị Kiều Cung",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "大漢弓"
+      ],
+      "displayNameVi": "Đại Hán Cung",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "大漢弓（台服官方白皮書）"
+      ],
+      "displayNameVi": "Đại Hán Cung (sách trắng chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "法關盾"
+      ],
+      "displayNameVi": "Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "潛龍呂布弓"
+      ],
+      "displayNameVi": "Tiềm Long Lữ Bố Cung",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "藏器待時三勢 40Y 呂布盾"
+      ],
+      "displayNameVi": "Tàng Khí Đãi Thì Tam Thế 40Y Lữ Bố Thuẫn",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "藏器待時星彩法關盾"
+      ],
+      "displayNameVi": "Tàng Khí Đãi Thì Tinh Thái Pháp Quan Thuẫn",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "北伐盾"
+      ],
+      "displayNameVi": "Bắc Phạt Thuẫn",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "等風熊（台服官方白皮書）"
+      ],
+      "displayNameVi": "Đẳng Phong Hùng (sách trắng chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "網紅槍（台服官方白皮書）"
+      ],
+      "displayNameVi": "Thương nổi mạng (sách trắng chính thức máy chủ Đài Loan)",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "龐統弓"
+      ],
+      "displayNameVi": "Bàng Thống Cung",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "三仙飛熊"
+      ],
+      "displayNameVi": "Tam Tiên Phi Hùng",
+      "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "team",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "何氏"
+      ],
+      "displayNameVi": "Hà Thị",
+      "evidenceRef": "heroes-dict.json (id hero:ha-thi); translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "hero",
+      "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "城衛"
+      ],
+      "displayNameVi": "Thành Vệ",
+      "evidenceRef": "SGSDeck s27-ofw-pc3-* slot is the city-guard unit, not a hero; translation-review:2026-11-16:doi-chuan-draft",
+      "kind": "hero",
+      "reviewStatus": "translation-reviewed"
     }
   ],
   "evidenceInputs": {
