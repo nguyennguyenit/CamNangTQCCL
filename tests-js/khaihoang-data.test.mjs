@@ -107,8 +107,9 @@ test("curated options are complete for each declared phase and preserve the rost
   }
 });
 
-test("Chạm Sứ groups match the separate sheet table without opening-team linkage", () => {
-  // Google Sheet snapshot: tests/fixtures/khaihoang-cham-su-source.csv (2026-09-06).
+test("Chạm Sứ groups keep the sheet table and add the official two- and three-slot reference teams", () => {
+  // Hai ô: bảng Google Sheet (tests/fixtures/khaihoang-cham-su-source.csv, 2026-09-06) đối chiếu ảnh "Tham Khảo Đội Hình Ăn Vạ".
+  // Ba ô: bảng thứ hai của ảnh chính thức (ô "Vệ thành" là tướng Vệ Thành trong từ điển).
   const expected = [
     [["Lữ Mông", "Bạch Mã Nghĩa Tòng"], ["Giả Hủ", "Ngụy Thư Tương Gian"]],
     [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"]],
@@ -118,6 +119,11 @@ test("Chạm Sứ groups match the separate sheet table without opening-team lin
     [["Hạ Hầu Uyên", "Lõa Y Huyết Chiến"], ["Tào Thuận", "Thiết Kỳ Khu Trì"]],
     [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"]],
     [["Cam Ninh", "Phá Quân Uy Thắng"], ["Lăng Thống", "Phong Thi Trận"]],
+    [["Trương Nhượng", "Ngụy Thư Tương Gian"], ["Chu Thái", "Phong Thi Trận"], ["Hoàng Nguyệt Anh", "Trưởng Giả Chi Phong"]],
+    [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Tây Lương Thiết Kỵ/Đại Kích Sĩ"]],
+    [["Giả Hủ", "Ngụy Thư Tương Gian"], ["Thái Sử Từ", "Đánh Bại Quân Địch"], ["Tử Binh", "Bạch Mã Nghĩa Tòng"]],
+    [["Tôn Thượng Hương", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"], ["Vệ Thành", "Đánh Bại Quân Địch/Tây Lương Thiết Kỵ"]],
+    [["Cam Ninh", "Phá Quân Uy Thắng"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Thịnh Khí Linh Địch"]],
   ];
   assert.ok(Array.isArray(data.chamSuTeams), "missing independent Chạm Sứ table");
   assert.deepEqual(data.chamSuTeams.map((t) => t.heroes.map((h) => [h.name, h.tactic])), expected);
@@ -125,11 +131,18 @@ test("Chạm Sứ groups match the separate sheet table without opening-team lin
   for (const group of data.chamSuTeams) {
     assert.ok(group.id);
     assert.equal(group.title, group.heroes.map((h) => h.name).join(" · "));
-    assert.match(group.note, /mang 1 lính/i);
+    if (group.heroes.length === 2) assert.match(group.note, /mang 1 lính/i);
     assert.equal(group.unitType, undefined);
     assert.equal(Object.hasOwn(group, "sources"), false);
   }
   assert.match(data.chamSuTeams[0].note, /Điêu Thuyền, Hoàng Cái, Phùng Kỷ/);
+  assert.match(data.chamSuTip, /reset Điểm Chiến Pháp/);
+  const flagged = data.chamSuTeams.filter((group) => group.recommended === true);
+  assert.deepEqual(
+    flagged.sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((group) => group.id),
+    ["truong-nhuong-hoang-nguyet-anh", "lu-mong-gia-hu", "gia-hu-thai-su-tu-tu-binh"],
+  );
+  flagged.forEach((group, index) => assert.equal(group.recommendedOrder, index + 1, group.id));
   for (const team of data.teams) assert.equal(Object.hasOwn(team, "transforms"), false);
   for (const team of data.teams) assert.equal(Object.hasOwn(team, "sources"), false, team.title);
 });

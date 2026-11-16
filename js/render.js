@@ -777,7 +777,7 @@ const mineName = (value) => (isZh() ? String(value ?? "").replace(/^Mỏ\s*/u, "
 /** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp. */
 function chamSuTeamCard(team) {
   return t("article", { class: "cham-su-card" }, [
-    t("h3", { class: "cham-su-title" }, khaihoangTitle(team)),
+    t("h3", { class: "cham-su-title" }, [khaihoangTitle(team), khaihoangRecommendedBadge(team) ? " " : null, khaihoangRecommendedBadge(team)].filter(Boolean)),
     t("ul", { class: "cham-su-list" }, (team.heroes || []).map((hero) =>
       t("li", {}, [
         t("span", { class: "cham-su-hero" }, seatName(hero.name)),
@@ -830,12 +830,13 @@ function mineCards(mines) {
  * Tham khảo chung của cả mục Khai hoang (trang danh sách, sau lưới đội): nhóm Chạm Sứ rồi quân thủ các mỏ.
  * Không thuộc đội nào nên không theo bộ lọc loại binh. Khối nào không có dữ liệu thì bỏ hẳn.
  */
-function khaihoangReference({ chamSuTeams, mines }) {
+function khaihoangReference({ chamSuTeams, chamSuTip, mines }) {
   return [
     chamSuTeams.length ? t("section", { class: "kh-reference", id: "cham-su" }, [
       t("h2", {}, L("Đội Chạm Sứ / Ăn vạ", "碰瓷队伍")),
+      viProse(chamSuTip) ? t("p", { class: "cham-su-tip" }, chamSuTip) : null,
       t("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
-    ]) : null,
+    ].filter(Boolean)) : null,
     mines.length ? t("section", { class: "kh-reference", id: "mo" }, [
       t("h2", {}, L("Quân thủ các mỏ", "各矿守军")),
       minesTable(mines),
@@ -874,7 +875,7 @@ export function khaihoangTableTree(data, { hrefFor, locale } = {}) {
     // Tương thích ngược: payload mảng (cấu trúc cũ chỉ có mỏ) không có đội nào.
     const teams = Array.isArray(data) ? [] : khaihoangRecommendedFirst(data.teams);
     const shared = Array.isArray(data) ? {} : data;
-    const chamSuTeams = shared.chamSuTeams || [];
+    const chamSuTeams = khaihoangRecommendedFirst(shared.chamSuTeams);
     const mines = shared.mines || [];
 
     // Lọc loại binh: chip đếm theo chính dữ liệu đang dựng; "Tất cả" luôn đứng đầu.
@@ -911,7 +912,7 @@ export function khaihoangTableTree(data, { hrefFor, locale } = {}) {
             t("p", { class: "empty", hidden: true }, L("Không có đội khai hoang nào dùng loại binh này.", "没有使用该兵种的开荒队伍。")),
           ])
         : null,
-      ...khaihoangReference({ chamSuTeams, mines }),
+      ...khaihoangReference({ chamSuTeams, chamSuTip: shared.chamSuTip, mines }),
     ].filter(Boolean));
   });
 }

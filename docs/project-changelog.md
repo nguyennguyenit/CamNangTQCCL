@@ -15,6 +15,15 @@
 - Tests: `community-worker/test/tokens.test.ts`, `test/recruit-pulls.test.ts`.
 - Chưa làm: UI quản lý token trên trang Theo dõi chiêu mộ (cần ghim lại hash `js/recruit-tracker.js` + publish generation); client `tqkh` và skill `quay-tuong` gọi endpoint mới.
 
+## 2026-11-15 (Khai hoang: đội Chạm Sứ / Ăn vạ theo ảnh chính thức)
+
+### Changed
+- `chamSuTeams` trong `data/khaihoang.json` (curate tay) đối chiếu ảnh "Tham Khảo Đội Hình Ăn Vạ": giữ 8 đội cũ (kể cả Mã Siêu·Hoàng Nguyệt Anh, Thái Sử Từ·Lăng Thống, Hạ Hầu Uyên·Tào Thuận không có trong ảnh), cập nhật ghi chú đặc điểm cho 5 đội trùng, thêm 5 đội ba ô (bảng thứ hai của ảnh) gồm ô "Vệ thành" (= tướng Vệ Thành trong từ điển) và "Tử Binh" (chưa có trong từ điển tướng, giữ nguyên tên theo ảnh).
+- Đội Tiến cử: `recommended` + `recommendedOrder` như đội khai hoang (Trương Nhượng·Hoàng Nguyệt Anh, Lữ Mông·Giả Hủ, Giả Hủ·Thái Sử Từ·Tử Binh); thẻ hiện huy hiệu Tiến cử/推荐 và xếp lên đầu lúc render qua `khaihoangRecommendedFirst`.
+- Trường mới `chamSuTip` (tips của ảnh: reset Điểm Chiến Pháp cho đội khai hoang Chủ Lực…) hiện đầu khối Chạm Sứ ở bản Việt; thêm vào `AUTHORED_VI_DATA_FIELDS` của `pipeline/site_localization.py`.
+- Chiến pháp ba ô dùng tên client: `Trưởng Giả Chi Phong` (ảnh ghi "Trường"), lựa chọn `A/B` cho ô Vệ Thành.
+- Re-pin hash nguồn + baseline inventory, publish generation hiển thị, rebind ledger route.
+
 ## 2026-11-15 (Khai hoang: đối chiếu ảnh tham khảo chính thức)
 
 ### Changed

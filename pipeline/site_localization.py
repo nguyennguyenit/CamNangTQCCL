@@ -223,6 +223,7 @@ CANONICAL_DATA_FIELDS = {
 AUTHORED_VI_DATA_FIELDS = {
     "avoid",
     "buildNote",
+    "chamSuTip",
     "context",
     "disclaimerRaw",
     "displayLabel",
