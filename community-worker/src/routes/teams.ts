@@ -77,7 +77,9 @@ interface TeamRow {
   sort_key?: number;
 }
 
-// Cột đầu tiên có `?` là điều kiện hiển thị tác giả: mọi truy vấn bind `now` trước các điều kiện where.
+// Hai cột đầu có `?` (hiển thị tác giả, rồi lọc bình luận hiển thị): mọi truy vấn bind `now` HAI lần trước các điều kiện where.
+// comment_count dùng đúng điều kiện `visibleUserSql` như GET /api/comments nên khớp độ dài danh sách; vẫn là tra index
+// comments_page_lang_created_idx theo page_key + tra khoá chính user cho từng bình luận của đúng trang đó.
 const TEAM_SELECT =
   "select t.id, t.author_id, t.season_id, t.status, t.title, t.hero_1, t.hero_2, t.hero_3, t.hero_key, t.tactics, t.troop, t.playstyle, " +
   "t.strengths, t.weaknesses, t.counters, t.countered_by, t.substitutes, t.text_lang, t.reject_reason, t.deleting_at, t.created_at, t.reviewed_at, " +
@@ -85,7 +87,9 @@ const TEAM_SELECT =
   'u.name as author_name, u.image as author_image, (' +
   visibleUserSql("u") +
   ") as author_visible, " +
-  "(select count(*) from comments where page_key = '/doi-cong-dong/' || t.id || '/') as comment_count, " +
+  "(select count(*) from comments cc join \"user\" cu on cu.id = cc.user_id where cc.page_key = '/doi-cong-dong/' || t.id || '/' and " +
+  visibleUserSql("cu") +
+  ") as comment_count, " +
   "(select count(*) from community_team_images i where i.team_id = t.id) as image_count";
 const TEAM_FROM = ' from community_teams t join community_seasons s on s.id = t.season_id join "user" u on u.id = t.author_id';
 
@@ -338,7 +342,7 @@ teams.get("/api/community-teams", async (c) => {
   const { results } = await c.env.DB.prepare(
     `${TEAM_SELECT}, ${column} as sort_key${TEAM_FROM} where ${where.join(" and ")} order by ${column} desc, t.id desc limit ?`,
   )
-    .bind(now, ...binds, PAGE_SIZE + 1)
+    .bind(now, now, ...binds, PAGE_SIZE + 1)
     .all<TeamRow & { sort_key: number }>();
   const page = paginateByKey(results, PAGE_SIZE, "sort_key");
   return c.json({ items: page.rows.map(toItem), nextCursor: page.nextCursor });
@@ -350,7 +354,7 @@ teams.get("/api/community-teams/export", async (c) => {
   const { results } = await c.env.DB.prepare(
     `${TEAM_SELECT}${TEAM_FROM} where ${teamVisibleSql("t", "u")} order by t.created_at desc, t.id desc`,
   )
-    .bind(now, now)
+    .bind(now, now, now)
     .all<TeamRow>();
   // `author.name` là `string | null`: tên rỗng/toàn khoảng trắng -> null (site tự chọn nhãn thay thế).
   return c.json({
@@ -378,7 +382,7 @@ teams.get("/api/me/community-teams", async (c) => {
   const { results } = await c.env.DB.prepare(
     `${TEAM_SELECT}${TEAM_FROM} where ${where.join(" and ")} order by t.created_at desc, t.id desc limit ?`,
   )
-    .bind(now, ...binds, PAGE_SIZE + 1)
+    .bind(now, now, ...binds, PAGE_SIZE + 1)
     .all<TeamRow>();
   const page = paginate(results, PAGE_SIZE);
   return c.json({
@@ -395,7 +399,7 @@ teams.get("/api/me/community-teams", async (c) => {
 teams.get("/api/community-teams/:id", async (c) => {
   const id = teamIdParam(c);
   const now = c.get("deps").now();
-  const row = await c.env.DB.prepare(`${TEAM_SELECT}${TEAM_FROM} where t.id = ?`).bind(now, id).first<TeamRow>();
+  const row = await c.env.DB.prepare(`${TEAM_SELECT}${TEAM_FROM} where t.id = ?`).bind(now, now, id).first<TeamRow>();
   const notFound = new ApiError(404, "not_found", "Không tìm thấy đội");
   if (!row || row.deleting_at !== null) throw notFound;
   const open = row.status === "approved" && row.author_visible === 1;
@@ -651,10 +655,11 @@ teams.get("/api/admin/community-teams", async (c) => {
     where.push("(t.created_at < ? or (t.created_at = ? and t.id < ?))");
     binds.push(cursor.t, cursor.t, cursor.id);
   }
+  const now = c.get("deps").now();
   const { results } = await c.env.DB.prepare(
     `${TEAM_SELECT}, u.email as author_email${TEAM_FROM} where ${where.join(" and ")} order by t.created_at desc, t.id desc limit ?`,
   )
-    .bind(c.get("deps").now(), ...binds, PAGE_SIZE + 1)
+    .bind(now, now, ...binds, PAGE_SIZE + 1)
     .all<TeamRow & { author_email: string }>();
   const page = paginate(results, PAGE_SIZE);
   return c.json({

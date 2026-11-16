@@ -12,6 +12,9 @@ on:
       # Test import trực tiếp shared/ai-config, shared/ai-models và worker/src/model.
       - "shared/**"
       - "worker/src/**"
+      # recruit-pulls.test.ts import client store dùng chung (và js/i18n.js mà store này import).
+      - "js/recruit-tracker-store.js"
+      - "js/i18n.js"
       # Root tsconfig (vitest transform shared/) + lockfile gốc được cài trong job.
       - "tsconfig.json"
       - "package-lock.json"
@@ -23,6 +26,8 @@ on:
       - "community-worker/**"
       - "shared/**"
       - "worker/src/**"
+      - "js/recruit-tracker-store.js"
+      - "js/i18n.js"
       - ".github/workflows/community-worker-gate.yml"
 
 permissions:
