@@ -126,7 +126,7 @@ describe("migration 0012 + rollback 0013", () => {
     expect(fkProblems()).toEqual([]);
     expect(() => old.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at) values ('x', 'x', 'x', 3)`).run()).toThrow(/UNIQUE/i);
 
-    runMigrations(old, { after: "0011" });
+    runMigrations(old, { after: "0011", upTo: "0012" });
     expect(seasonIds()).toEqual(["og-兵演春秋", "pk-s5"]);
     expect([teamSeason("t1"), teamSeason("t2")]).toEqual(["og-兵演春秋", "pk-s5"]);
     expect(fkProblems()).toEqual([]);

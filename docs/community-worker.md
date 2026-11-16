@@ -242,7 +242,7 @@ Chỉ các route công khai lọc bằng `visibleUserSql` (tác giả không cò
 1. `confirmEmail` phải khớp email của user (trim, không phân biệt hoa thường) → nếu không 400 `confirm_mismatch`. Không xoá mình/root. User **đang bị khoá còn hạn** → 409 `user_banned` (phải mở khoá trước).
 2. Một batch: ghi nhật ký `user.delete.start`, đặt `deleting_at`, huỷ mọi phiên. Từ đây guard và 4 trigger chặn user. Dòng `start` chỉ sinh khi yêu cầu thật sự chuyển trạng thái, nên gọi lại không nhân đôi.
 3. Xoá object R2 của user theo lô ≤ 1000 khoá: `uploads` loại `report`, `battle_reports.image_key`, `scan_samples.image_key`. **Không** xoá ảnh bài viết (`uploads.kind = 'post'`). Lỗi R2 → nhật ký `user.delete` `failed` (`meta.step: "r2"`) và 502 `delete_incomplete`; user giữ trạng thái đang xoá, gọi lại để làm tiếp (bỏ qua bước 2).
-4. Một batch cuối: ghi nhật ký `user.delete` `ok` (đặt **trước** câu xoá, cùng điều kiện đủ quyền), chuyển `uploads` loại `post` sang root đang thao tác, `posts.author_id = null` (giữ `author_name`), `feedback.email = null` và `feedback.user_id = null` (nội dung `body` giữ lại, ẩn danh), `reviewed_by = null` trên chiến báo/mẫu soi đội, rồi `delete from "user"` (cascade bình luận, chiến báo, mẫu soi đội, `recruit_records`, `account`, `session`). Trả `{ok: true, removedObjects}`.
+4. Một batch cuối: ghi nhật ký `user.delete` `ok` (đặt **trước** câu xoá, cùng điều kiện đủ quyền), chuyển `uploads` loại `post` sang root đang thao tác, `posts.author_id = null` (giữ `author_name`), `feedback.email = null` và `feedback.user_id = null` (nội dung `body` giữ lại, ẩn danh), `reviewed_by = null` trên chiến báo/mẫu soi đội, rồi `delete from "user"` (cascade bình luận, chiến báo, mẫu soi đội, `recruit_records`, `api_tokens`, `account`, `session`). Trả `{ok: true, removedObjects}`.
 
 Giới hạn độ bền: nếu D1 hỏng **sau khi** R2 đã xoá xong, dòng nhật ký `failed` có thể không ghi được (chỉ `console.error`); không thể đảm bảo vì chính D1 là nơi ghi. Trạng thái vẫn an toàn: user còn `deleting_at`, gọi lại sẽ chạy tiếp.
 
@@ -400,6 +400,44 @@ Hợp đồng dữ liệu đầy đủ (kind, `data`, trần byte, kết quả t
 ### Triển khai và rollback
 
 Thứ tự: `cd community-worker && npm run db:migrate:remote` (áp `0011_roster.sql`; nếu `0008` của Đội cộng đồng chưa áp, wrangler áp theo thứ tự tên file) → `npm run deploy` → deploy Pages. Rollback Pages, rollback Worker và vì sao không xoá bảng: xem [Deployment guide](./deployment-guide.md#đồng-bộ-kho-và-đội-của-tôi-roster_records).
+
+## Token API cá nhân (ghi Theo dõi chiêu mộ từ tool)
+
+Cho tool ngoài trình duyệt (vd. `tqkh` của skill `quay-tuong`) ghi lượt quay gói **Danh tướng PK** vào tracker của user bằng `Authorization: Bearer <token>`, không cần cookie.
+
+- **Bảng** `api_tokens` (migration [`0014_api_tokens.sql`](../community-worker/migrations/0014_api_tokens.sql), chỉ thêm bảng + index): `id`, `user_id` (`on delete cascade`), `name`, `token_hash` (SHA-256 hex, unique; **không lưu token thô**), `hint` (4 ký tự cuối), `scope` (chỉ `recruit:write`), `created_at`, `last_used_at` (cập nhật nền ≤ 1 lần/10 phút), `expires_at` (null = không hạn), `revoked_at`.
+- **Token**: `tqccl_pat_` + 32 byte ngẫu nhiên base64url (53 ký tự). Mọi user đăng nhập đều tạo được; token chỉ ghi vào tracker của chính họ.
+- **Quản lý** (cookie phiên + kiểm Origin như mọi route ghi). Chưa có UI (để PR sau, cùng lần publish generation kế tiếp vì `js/recruit-tracker.js` được ghim hash trong `pipeline/site-localization-policy.json`); tạm tạo token bằng DevTools trên `https://tqccl.com` khi đã đăng nhập: `await (await fetch("/api/tokens", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({name: "tqkh", expiresInDays: 90})})).json()`.
+  - `GET /api/tokens` → `{items: [{id, name, hint, scope, createdAt, lastUsedAt, expiresAt, revokedAt}]}`, mới nhất trước; không trả hash.
+  - `POST /api/tokens {name (1–40), expiresInDays: 30|90|365|null}` (thiếu = 90) → `201 {token, item}`; `token` thô chỉ có ở phản hồi này. Tối đa 10 token còn hiệu lực mỗi user → `409 token_limit` (kiểm ngay trong câu insert nên request song song không vượt trần). Rate `token_create` 20/ngày.
+  - `DELETE /api/tokens/:id` → `{ok: true}` (đặt `revoked_at`, gọi lại giữ mốc cũ); token người khác/không có → 404.
+- **Ghi lượt**: `POST /api/recruit/pulls` — route duy nhất nhận Bearer; Bearer trên route khác bị bỏ qua (→ 401 vì không có phiên), cookie trên route này → 401.
+  - Body: `{accountName, banner: "danh-tuong-pk", timeZone?, pulls: [{key, at, fiveStar, hero?, heroValueClass?}]}`, 1–4 lượt.
+  - `accountName` khớp chính xác tên tài khoản tracker còn sống (trim + NFC, phân biệt hoa thường): không có → `404 account_not_found`, nhiều → `409 account_ambiguous`; không tự tạo tài khoản.
+  - `key` 8–64 ký tự `[A-Za-z0-9_-]` do tool cấp, duy nhất mỗi user; event id = `evt_ext_<key>`. Gửi lại key đã có (kể cả event user đã xoá trên web) → tính vào `duplicates`, không ghi lại: retry an toàn.
+  - `at` ISO 8601; `date` của event = ngày của `at` theo `timeZone` IANA (mặc định `Asia/Ho_Chi_Minh`; tên lạ → `400 invalid_timeZone`). Lượt cùng/lùi `at` trong một lô được đẩy +1 ms để giữ thứ tự gửi.
+  - `fiveStar: true` bắt buộc `hero` (1–40 ký tự); `heroValueClass` ∈ Chưa phân loại/Chủ lực/Dùng đội/Tình huống/Nội chính/Vật liệu (mặc định Chưa phân loại). Lượt không ra không lưu tên tướng.
+  - Mỗi lượt thành một event schema v2 `{drawKind: "daily", pulls: 1, result: "miss"|"fiveStar", note: "", occurredAt = createdAt = at, updatedAt = giờ server}`, **chỉ insert** (trùng khoá thì bỏ qua, không bao giờ sửa event đã có, kể cả event đã xoá xuất hiện giữa lúc kiểm và lúc ghi); cấp `rev` và tính trần 20 000 bản ghi như `POST /api/recruit`. Trình duyệt nhận qua lượt kéo đồng bộ kế tiếp.
+  - Trần ngày: lượt rẻ còn sống (miss/5★) của tài khoản trên gói ngày trong ngày đó + lượt mới > 4 → `409 daily_limit`, không ghi lượt nào của lô. Kiểm trong chính câu insert của batch, cùng snapshot với chống trùng: mỗi ngày của lô = lượt đã lưu (kể cả event của lô đã có, theo ngày đã lưu của nó) + event của lô chưa có; tổng không đổi giữa các câu nên cả lô cùng ghi hoặc cùng bị bỏ, request song song không vượt trần. Chỉ ngày có event chưa có mới bị kiểm: gửi lại lô đã nhận (toàn trùng) luôn 200.
+  - Phản hồi: `{accepted, duplicates, events: [{key, id, date, duplicate}], daily: {date, used, limit: 4}, cursor}` (`daily` theo ngày của lượt cuối).
+  - Lỗi xác thực: thiếu/sai/thu hồi/hết hạn → `401 invalid_token`; user bị khoá/đang xoá → `403 account_blocked`. Rate `recruit_token_push` 120/giờ/user.
+  - `accepted`/`duplicate` lấy từ kết quả ghi thật của từng câu; `daily.used` đọc lại sau khi ghi.
+- **Origin**: middleware `/api/*` miễn kiểm Origin/`sec-fetch-site` chỉ khi path là `/api/recruit/pulls`, có `Authorization: Bearer` và **không** có cookie phiên Better Auth. Trình duyệt không tự gửi Bearer nên không mở CSRF.
+- **Test**: `test/tokens.test.ts` (tạo/hash/liệt kê/hạn/trần 10 kể cả tạo song song/thu hồi/Origin/rate/cascade) và `test/recruit-pulls.test.ts` (schema event được store client `js/recruit-tracker-store.js` gộp đúng, chống trùng kể cả event xuất hiện giữa lúc kiểm và lúc ghi, trần ngày kể cả lô khác ghi chen giữa, gửi lại lô đã nhận, timeZone, khớp tên tài khoản, 401/403, chỉ `/pulls` nhận Bearer, CSRF khi kèm cookie, cô lập user, `last_used_at`, rate).
+
+### Ví dụ gọi
+
+```bash
+curl -sS https://tqccl.com/api/recruit/pulls \
+  -H "Authorization: Bearer $TQCCL_TOKEN" -H "Content-Type: application/json" \
+  -d '{"accountName":"HLxThanos","banner":"danh-tuong-pk","pulls":[
+        {"key":"thanos-20261115T0800-free","at":"2026-11-15T08:00:00+07:00","fiveStar":false},
+        {"key":"thanos-20261115T0800-half","at":"2026-11-15T08:00:10+07:00","fiveStar":true,"hero":"Tào Tháo"}]}'
+```
+
+### Triển khai và rollback
+
+Thứ tự: `npm run db:migrate:remote` (áp `0014_api_tokens.sql`) → `npm run deploy`. Không cần deploy Pages (proxy `/api/*` đã chuyển nguyên header `Authorization`). Rollback Worker: bản cũ không biết bảng `api_tokens` nên token ngừng chạy (`/api/recruit/pulls` → 404), dữ liệu tracker không đổi; để nguyên bảng.
 
 ## Hành vi cần biết
 

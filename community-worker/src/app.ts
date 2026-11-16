@@ -1,11 +1,12 @@
 // Ứng dụng Hono: Better Auth ở /api/auth/*, chặn CSRF theo Origin, lỗi JSON chuẩn, gắn các route.
 
 import { Hono } from "hono";
-import { createAuth, getSessionUser } from "./auth";
+import { createAuth, getSessionUser, hasSessionCookie } from "./auth";
 import { isBlocked, PERMANENT_BAN_UNTIL, verifyBanNotice } from "./moderation";
 import { currentUser, effectiveRole, type AppDeps, type AppEnv } from "./context";
 import { requestOrigin, trustedOrigins } from "./env";
 import { ApiError, errorResponse } from "./http";
+import { bearerToken } from "./tokens";
 import { admin } from "./routes/admin";
 import { ai } from "./routes/ai";
 import { audit } from "./routes/audit";
@@ -15,6 +16,7 @@ import { posts } from "./routes/posts";
 import { recruit } from "./routes/recruit";
 import { roster } from "./routes/roster";
 import { reports } from "./routes/reports";
+import { tokens } from "./routes/tokens";
 import { scan } from "./routes/scan";
 import { teams } from "./routes/teams";
 import { users } from "./routes/users";
@@ -28,6 +30,8 @@ export const defaultDeps: AppDeps = {
 };
 
 const SAFE_METHODS = ["GET", "HEAD", "OPTIONS"];
+/** Route nhận token API (Bearer): tool ngoài trình duyệt gọi được không cần Origin. */
+const BEARER_PATHS = ["/api/recruit/pulls"];
 
 export function createApp(overrides: Partial<AppDeps> = {}) {
   const deps: AppDeps = { ...defaultDeps, ...overrides };
@@ -53,7 +57,10 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.on(["GET", "POST"], "/api/auth/*", (c) => deps.authHandler(c.env, c.req.raw));
 
   app.use("/api/*", async (c, next) => {
-    if (!SAFE_METHODS.includes(c.req.method)) {
+    // Bearer không được trình duyệt tự gửi nên không có CSRF: chỉ miễn kiểm Origin ở route Bearer và khi không kèm cookie phiên.
+    const bearerOnly =
+      BEARER_PATHS.includes(c.req.path) && bearerToken(c.req.raw.headers) !== null && !hasSessionCookie(c.req.raw.headers);
+    if (!SAFE_METHODS.includes(c.req.method) && !bearerOnly) {
       // Trình duyệt luôn gửi Origin cho POST/PUT/DELETE: khác origin tin cậy -> chặn CSRF.
       const origin = c.req.header("origin");
       const fetchSite = c.req.header("sec-fetch-site");
@@ -96,6 +103,7 @@ export function createApp(overrides: Partial<AppDeps> = {}) {
   app.route("/", reports);
   app.route("/", posts);
   app.route("/", recruit);
+  app.route("/", tokens);
   app.route("/", roster);
   app.route("/", ai);
   app.route("/", scan);
