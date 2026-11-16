@@ -8,6 +8,13 @@
 - Đổi identity map làm glossary digest đổi (`sha256:e00b61a0…`), nên duyệt độc lập lại toàn bộ 6409 vị trí (2812 site + 3597 Tra cứu): 16 batch `doi-chuan-261117-r1-*`, mỗi batch một reviewer. Vòng 1 chấp nhận 6397, từ chối 12. Sửa 7 mục: "nhiều tiên công" (2), đội tốc độ trung bình *khắc chế* Quán Quân Thương / SP Quan Vũ (2), "CO Vô Song Tinh Thái", tùy chọn cải tạo 飛馳 = "Tật Trì" (2). 5 mục bị từ chối nhầm, vì reviewer áp tên client, trong khi ghi chú dùng identity map (Hãn Thiên Sí Địa) và tên client "SP Lô Trực" ở Đội khác. 12 mục được duyệt lại ở batch `r2-000` và chấp nhận hết. Output review cũ `doi-chuan-261116-*` bị thay như lần refresh trước; Git giữ lịch sử.
 - `pipeline/recommended-other-teams.json` ghim lại hash identity map. Generation Đội chuẩn mới publish lại, ledger route rebind.
 
+## 2026-11-16 (Nhãn "mùa cũ" không gắn cho mùa mới hơn mùa mặc định, issue #89)
+
+- Fixed: `isOldSeason` (`src/lib/season-pages.ts`) trước coi mọi mùa khác mùa mặc định là "mùa cũ", nên PK-S28 (mới hơn mặc định PK-S27) bị gắn nhãn sai. Nay chỉ mùa có SỐ MÙA nhỏ hơn số mùa mặc định mới có nhãn.
+- Thứ tự mới/cũ lấy từ số trong id mùa (`/^(?:pk-)?s(\d+)$/`: `s1`..`s3`, `pk-s4`..`pk-s28` là một dãy liên tục), KHÔNG lấy từ vị trí trong `seasonOptions`/`sourceOrder`: đó là thứ tự ô chọn của trang nguồn và đổi giữa các lần crawl (generation #103 xếp PK-S27, PK-S28 … S1, OG). Mùa mặc định, mùa mới hơn nó, mùa không đọc được số (OG, họ mùa mới), mùa/mặc định thiếu đều không có nhãn; mặc định là OG thì không mùa nào có nhãn. Hàm thuần, không nhận thứ tự registry; `SeasonPage.older` mang kết quả cho trang mùa.
+- Changed: trang mùa (`SeasonPage.astro`) chỉ hiện nhãn khi `older`, câu "Đội của mùa hiện tại xem ở Đội chuẩn" giữ cho mọi trang mùa. Chưa đổi: lời dẫn khối "Các mùa khác" trong `SectionPage.astro` còn ghi "các mùa cũ" (file bị ghim hash trong `pipeline/site-localization-policy.json`, cần ghim lại hash mới sửa được). URL, redirect 301 và danh mục trang không đổi.
+- Tests: `tests-js/season-pages.test.mjs` (kể cả thứ tự nguồn của #103: PK-S27 đầu, OG cuối), `tests-js/seo-dist-contract.test.mjs` (nhãn trang mùa và trang đội theo số mùa).
+
 ## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
 
 - Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.

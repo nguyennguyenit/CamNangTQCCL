@@ -392,7 +392,8 @@ test("trang mùa (vi + zh): một H1 có tên và mã mùa, đủ N đội có l
       assert.ok(html.includes(`<link rel="alternate" hreflang="vi" href="${ORIGIN}${page.routePath}">`), `${where}: hreflang vi`);
       assert.ok(html.includes(`<link rel="alternate" hreflang="zh-Hans" href="${ORIGIN}/zh${page.routePath}">`), `${where}: hreflang zh-Hans`);
       assert.ok(html.includes(`<link rel="alternate" hreflang="x-default" href="${ORIGIN}${page.routePath}">`), `${where}: hreflang x-default`);
-      assert.ok(visibleText(html).includes(SEASON_LABEL[locale]), `${where}: thiếu nhãn mùa cũ`);
+      // Nhãn chỉ ở mùa cũ hơn mùa hiện tại; mùa mới hơn (PK-S28 khi mặc định PK-S27) không có nhãn (#89).
+      assert.equal(visibleText(html).includes(SEASON_LABEL[locale]), page.older, `${where}: nhãn mùa cũ phải ${page.older ? "có" : "không có"}`);
       // Trang mùa không có khung comment; trang tĩnh không cần các script nạp dữ liệu đội của trang mục.
       assert.ok(!html.includes('id="community-root"'), `${where}: không được có khung comment`);
     }
@@ -478,10 +479,12 @@ test("/doi-chuan/ không JS: khối \"Các mùa khác\" có <a href> thật tớ
   }
 });
 
-test("trang đội mùa cũ có nhãn \"mùa cũ\" (zh: 旧赛季), đội mùa hiện tại không có; JSON-LD name vẫn là tiền tố <title>, H1 là tên đội", async () => {
+test("trang đội mùa cũ hơn mùa hiện tại có nhãn \"mùa cũ\" (zh: 旧赛季); đội mùa hiện tại và mùa mới hơn không có; JSON-LD name vẫn là tiền tố <title>, H1 là tên đội", async () => {
   const { catalog, defaultSourceSeasonId } = await seasonFixtures();
+  const { isOldSeason } = await import("../src/lib/season-pages.ts");
   let old = 0;
   let current = 0;
+  let newer = 0;
   for (const entry of catalog.recommended) {
     for (const [locale, prefix] of LOCALES) {
       const html = await read(pageFile(`${prefix}${entry.routePath}`));
@@ -490,6 +493,9 @@ test("trang đội mùa cũ có nhãn \"mùa cũ\" (zh: 旧赛季), đội mùa 
       if (entry.sourceSeasonId === defaultSourceSeasonId) {
         current += 1;
         assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: đội mùa hiện tại không được có nhãn`);
+      } else if (!isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId)) {
+        newer += 1;
+        assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: mùa mới hơn / không so được với mùa hiện tại không được có nhãn (${kicker})`);
       } else {
         old += 1;
         assert.ok(kicker.includes(SEASON_LABEL[locale]), `${where}: thiếu nhãn mùa cũ (${kicker})`);
@@ -500,5 +506,5 @@ test("trang đội mùa cũ có nhãn \"mùa cũ\" (zh: 旧赛季), đội mùa 
       assert.doesNotMatch(webPage.description, new RegExp(SEASON_LABEL[locale], "u"), `${where}: nhãn chỉ ở dòng phụ`);
     }
   }
-  assert.ok(old > 0 && current > 0);
+  assert.ok(old > 0 && current > 0 && newer > 0);
 });
