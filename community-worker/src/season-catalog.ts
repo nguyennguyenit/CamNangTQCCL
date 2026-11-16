@@ -194,12 +194,16 @@ export async function loadSeasonCatalog(c: Ctx): Promise<SeasonCatalog> {
  * xong ở request khác, thành công hay lỗi) hoặc fetch lỗi -> 503: không xác nhận được thì không báo sai đầu vào.
  */
 export async function findSeason(c: Ctx, id: string): Promise<CatalogSeason | null> {
-  const fetchedBefore = cache.fetchedAt;
+  const catalogBefore = cache.value;
   const catalog = await loadSeasonCatalog(c);
   const hit = catalog.seasons.find((s) => s.id === id);
   if (hit) return hit;
-  // Bản vừa tải trong lời gọi này (kể cả dùng chung lượt fetch đồng thời) đã là xác nhận.
-  if (cache.fetchedAt !== fetchedBefore) return null;
+  // Bản trả về khác bản có sẵn trước lời gọi = vừa tải trong lời gọi này (kể cả dùng chung lượt fetch đồng thời):
+  // đó là xác nhận. So identity của chính bản trả về, không so mốc thời gian của cache (request khác có thể vừa công
+  // bố bản mới sau khi lời gọi này đã nhận bản cũ).
+  if (catalog !== catalogBefore) return null;
+  // Request khác vừa công bố bản mới sau khi lời gọi này nhận bản cũ: bản đó cũng tải sau khi lời gọi bắt đầu.
+  if (cache.value && cache.value !== catalog) return cache.value.seasons.find((s) => s.id === id) ?? null;
   const now = c.get("deps").now();
   const recent = (at: number | null) => at !== null && now - at < CATALOG_COOLDOWN_MS;
   if (recent(cache.fetchedAt) || recent(cache.failedAt)) throw catalogUnavailable();

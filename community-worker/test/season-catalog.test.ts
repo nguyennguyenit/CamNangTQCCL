@@ -1,6 +1,8 @@
+import { createHash } from "node:crypto";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { CATALOG_COOLDOWN_MS, CATALOG_DEADLINE_MS, CATALOG_TTL_MS } from "../src/season-catalog";
-import { catalogFiles, createHarness, DEFAULT_CATALOG, seasonOption, serveCatalog, type ApiJson, type Harness } from "./fakes";
+import type { Ctx } from "../src/context";
+import { CATALOG_COOLDOWN_MS, CATALOG_DEADLINE_MS, CATALOG_TTL_MS, findSeason, loadSeasonCatalog, resetSeasonCatalogCache } from "../src/season-catalog";
+import { catalogFiles, createHarness, DEFAULT_CATALOG, ORIGIN, seasonOption, serveCatalog, type ApiJson, type Harness } from "./fakes";
 
 // Kiểm qua route công khai GET /api/community-seasons (dùng loadSeasonCatalog) và POST đội (dùng findSeason) ở test route.
 let h: Harness;
@@ -152,5 +154,43 @@ describe("catalog mùa: cache", () => {
     const [a, b] = await Promise.all([seasons(), seasons()]);
     expect([a.status, b.status]).toEqual([200, 200]);
     expect(h.catalogFetches).toBe(3);
+  });
+});
+
+describe("findSeason: tra cứu đồng thời lúc một request khác đang refresh", () => {
+  it("không lượt tra nào trả null (400) cho mùa mới khi bản refresh đã có mùa đó", async () => {
+    resetSeasonCatalogCache();
+    let now = 1_000_000;
+    let files = catalogFiles(DEFAULT_CATALOG);
+    const fetchImpl = (async (input: RequestInfo | URL) => serveCatalog(files, String(input))) as typeof fetch;
+    // Ctx tối thiểu: findSeason chỉ dùng deps (fetchImpl, now) và env (origin).
+    const c = { get: () => ({ fetchImpl, now: () => now }), env: { SITE_ORIGIN: ORIGIN } } as unknown as Ctx;
+    await loadSeasonCatalog(c);
+    files = catalogFiles({ options: [seasonOption("pk-s29"), ...DEFAULT_CATALOG.options], defaultId: "pk-s29", generationId: "f".repeat(64) });
+    now += CATALOG_COOLDOWN_MS;
+
+    // Cả chuỗi refresh chỉ dùng microtask (digest đồng bộ giả), nên vòng dưới — mỗi microtask bắt đầu một lượt tra B —
+    // chắc chắn có lượt bắt đầu ngay trước khi A công bố cache mới và chạy tiếp ngay sau đó.
+    const digest = vi.spyOn(crypto.subtle, "digest").mockImplementation(async (_alg, data) => {
+      const bytes = createHash("sha256").update(new Uint8Array(data as ArrayBuffer)).digest();
+      return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+    });
+    try {
+      const a = findSeason(c, "pk-s29");
+      let settled = false;
+      void a.finally(() => {
+        settled = true;
+      });
+      const lookups: Promise<unknown>[] = [];
+      for (let i = 0; !settled && i < 5_000; i++) {
+        lookups.push(findSeason(c, "pk-s29").then((s) => s, (e: unknown) => e));
+        await Promise.resolve();
+      }
+      expect(settled).toBe(true);
+      expect(await a).toMatchObject({ id: "pk-s29" });
+      for (const result of await Promise.all(lookups)) expect(result).toMatchObject({ id: "pk-s29" });
+    } finally {
+      digest.mockRestore();
+    }
   });
 });
