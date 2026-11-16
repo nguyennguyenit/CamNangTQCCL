@@ -3,7 +3,7 @@
 import { ADMIN, AUDIT_ROWS, PLAYER, USER_ROWS } from '../../tests-e2e/helpers/community-mock.mjs';
 import { AI_READ, COMMENTS, REPORTS, SAMPLES, SEASONS, TEAM_AUDIT, adminTeam, teamDetail, teamItem } from './community-samples.mjs';
 
-/** Dữ liệu chung mọi trạng thái: mùa đang mở, 6 đội mẫu, chi tiết đội, chiến báo + bình luận, kết quả AI đọc ảnh. */
+/** Dữ liệu chung mọi trạng thái: danh mục mùa (mùa hiện hành), 6 đội mẫu, chi tiết đội, chiến báo + bình luận, kết quả AI đọc ảnh. */
 function baseMock() {
   return {
     comments: COMMENTS,

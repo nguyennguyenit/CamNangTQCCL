@@ -1,7 +1,8 @@
 // API Đội cộng đồng: mùa, ảnh, đăng nguyên tử, hiển thị, danh sách, vote, xoá.
 
 import { describe, expect, it } from "vitest";
-import { createHarness, imageForm, PNG_BYTES, seedSeason, seedTeam, type Harness } from "./fakes";
+import { CATALOG_COOLDOWN_MS } from "../src/season-catalog";
+import { createHarness, DEFAULT_CATALOG, imageForm, PNG_BYTES, seasonOption, seedSeason, seedTeam, type Harness } from "./fakes";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const json = async (res: Response): Promise<any> => res.json();
@@ -18,6 +19,7 @@ const teamBody = (uploadIds: string[], extra: Record<string, unknown> = {}) => (
   playstyle: "Đánh nhanh thắng nhanh",
   lang: "vi",
   uploadIds,
+  season: "s1",
   ...extra,
 });
 
@@ -61,6 +63,7 @@ function seedComment(h: Harness, id: string, teamId: string, userId: string) {
     .run(id, PAGE(teamId), userId);
 }
 
+/** Hàng mùa s1 (đích FK cho seedTeam). */
 function openSeason(h: Harness) {
   seedSeason(h, "s1");
 }
@@ -86,27 +89,90 @@ describe("quyền ghi", () => {
 });
 
 describe("GET /api/community-seasons", () => {
-  it("công khai: mùa mở + danh sách mới nhất trước; không mùa -> open null", async () => {
+  it("công khai: danh mục mùa Đội chuẩn, current = mùa hiện hành", async () => {
     const h = createHarness();
-    const none = await json(await h.request("/api/community-seasons"));
-    expect(none).toEqual({ open: null, seasons: [] });
-    seedSeason(h, "s1", 5_000, 1_000);
-    seedSeason(h, "s2", null, 9_000);
     const res = await json(await h.request("/api/community-seasons"));
-    expect(res.open).toEqual({ id: "s2", labelVi: "Mùa s2", labelZh: "赛季s2", openedAt: new Date(9_000).toISOString() });
-    expect(res.seasons.map((s: { id: string }) => s.id)).toEqual(["s2", "s1"]);
-    expect(res.seasons[1].closedAt).toBe(new Date(5_000).toISOString());
+    expect(res.current).toBe("pk-s27");
+    expect(res.seasons.map((s: { id: string }) => s.id)).toEqual(DEFAULT_CATALOG.options.map((o) => o.sourceSeasonId));
+    expect(Object.keys(res).sort()).toEqual(["current", "seasons"]);
   });
 });
 
-describe("không có mùa mở", () => {
-  it("POST đội 409 season_not_open; danh sách []", async () => {
+describe("đăng đội: chọn mùa", () => {
+  const rateRows = (h: Harness) => count(h, "select count(*) n from rate_limits");
+
+  it("mùa cũ trong danh mục -> 201, hàng mùa upsert nhãn theo catalog; đăng lần 2 không nhân đôi", async () => {
+    const h = createHarness();
+    const first = await submit(h, "alice", 1, { season: "pk-s5" });
+    expect(first.status).toBe(201);
+    const { id } = await json(first);
+    expect(h.sqlite.prepare("select season_id from community_teams where id = ?").get(id)).toEqual({ season_id: "pk-s5" });
+    expect(h.sqlite.prepare("select label_vi, label_zh from community_seasons where id = 'pk-s5'").get()).toEqual({
+      label_vi: "PK-S5 · Mùa pk-s5",
+      label_zh: "PK-S5 · 赛季pk-s5",
+    });
+    expect((await submit(h, "alice", 1, { season: "pk-s5" })).status).toBe(201);
+    expect(count(h, "select count(*) n from community_seasons where id = 'pk-s5'")).toBe(1);
+    const detail = await json(await h.request(`${TEAMS}/${id}`, { as: "alice" }));
+    expect(detail.season).toEqual({ id: "pk-s5", labelVi: "PK-S5 · Mùa pk-s5", labelZh: "PK-S5 · 赛季pk-s5" });
+  });
+
+  it("mùa sai định dạng / không có trong danh mục -> 400 invalid_season; không tốn rate limit, không chép R2", async () => {
     const h = createHarness();
     const up = await upload(h);
+    const before = rateRows(h);
+    for (const season of [undefined, "all", "-x", "a".repeat(41), "pk-s99"]) {
+      const res = await h.request(TEAMS, { as: "alice", json: { ...teamBody([up]), season } });
+      expect(res.status, String(season)).toBe(400);
+      expect((await json(res)).error.code).toBe("invalid_season");
+    }
+    expect(rateRows(h)).toBe(before);
+    expect(teamKeys(h)).toEqual([]);
+    expect(count(h, "select count(*) n from uploads")).toBe(1);
+  });
+
+  it("catalog không tải được -> 503; không tốn rate limit, không chép R2", async () => {
+    const h = createHarness();
+    const up = await upload(h);
+    const before = rateRows(h);
+    h.catalogHandler = () => new Response("down", { status: 500 });
     const res = await h.request(TEAMS, { as: "alice", json: teamBody([up]) });
-    expect(res.status).toBe(409);
-    expect((await json(res)).error.code).toBe("season_not_open");
-    expect(await listIds(h)).toEqual([]);
+    expect(res.status).toBe(503);
+    expect((await json(res)).error.code).toBe("season_catalog_unavailable");
+    expect(rateRows(h)).toBe(before);
+    expect(teamKeys(h)).toEqual([]);
+  });
+
+  it("mùa mới chưa có trong cache isolate (trong TTL, ngoài cooldown) -> fetch lại rồi 201", async () => {
+    const h = createHarness();
+    expect((await json(await h.request("/api/community-seasons"))).current).toBe("pk-s27");
+    h.catalog = { options: [seasonOption("pk-s29"), ...DEFAULT_CATALOG.options], defaultId: "pk-s29", generationId: "d".repeat(64) };
+    h.clock.now += CATALOG_COOLDOWN_MS;
+    expect((await submit(h, "alice", 1, { season: "pk-s29" })).status).toBe(201);
+  });
+
+  it("mùa lạ ngay sau lượt fetch thành công (trong cooldown) -> 400, không fetch lại", async () => {
+    const h = createHarness();
+    await h.request("/api/community-seasons");
+    const fetches = h.catalogFetches;
+    const res = await submit(h, "alice", 1, { season: "pk-s29" });
+    expect(res.status).toBe(400);
+    expect(h.catalogFetches).toBe(fetches);
+  });
+
+  it("cache cũ + id mới + refresh lỗi -> 503 (không báo sai 400); rate limit và R2 nguyên trạng", async () => {
+    const h = createHarness();
+    await h.request("/api/community-seasons");
+    h.clock.now += CATALOG_COOLDOWN_MS;
+    h.catalogHandler = () => new Response("down", { status: 502 });
+    const up = await upload(h);
+    const before = rateRows(h);
+    const res = await h.request(TEAMS, { as: "alice", json: { ...teamBody([up]), season: "pk-s29" } });
+    expect(res.status).toBe(503);
+    expect(rateRows(h)).toBe(before);
+    expect(teamKeys(h)).toEqual([]);
+    // Mùa đã biết vẫn đăng được bằng bản cache tốt.
+    expect((await h.request(TEAMS, { as: "alice", json: teamBody([up]) })).status).toBe(201);
   });
 });
 
@@ -157,12 +223,11 @@ describe("đăng đội", () => {
     expect(row).toMatchObject({ author_id: "u-alice", status: "pending", season_id: "s1", hero_key: "hero:a,hero:b,hero:c", text_lang: "vi" });
   });
 
-  it("server gán mùa: body season bị bỏ qua", async () => {
+  it("mùa theo body; các trường server quản lý trong body bị bỏ qua", async () => {
     const h = createHarness();
-    openSeason(h);
-    const { id } = await json(await submit(h, "alice", 1, { season: "x", status: "approved", author_id: "u-bob" }));
+    const { id } = await json(await submit(h, "alice", 1, { season: "og-兵演春秋", status: "approved", author_id: "u-bob" }));
     expect(h.sqlite.prepare("select season_id, status, author_id from community_teams where id = ?").get(id)).toEqual({
-      season_id: "s1",
+      season_id: "og-兵演春秋",
       status: "pending",
       author_id: "u-alice",
     });
@@ -222,19 +287,6 @@ describe("đăng đội", () => {
     expect([...h.objects.keys()].filter((k) => k.startsWith("pending/"))).toEqual([]);
   });
 
-  it("đóng mùa giữa preflight và batch -> 409 season_not_open, không có dòng đội/khoá", async () => {
-    const h = createHarness();
-    openSeason(h);
-    const ids = [await upload(h)];
-    h.beforeNextBatch(() => h.sqlite.prepare("update community_seasons set closed_at = 5 where id = 's1'").run());
-    const res = await h.request(TEAMS, { as: "alice", json: teamBody(ids) });
-    expect(res.status).toBe(409);
-    expect((await json(res)).error.code).toBe("season_not_open");
-    expect(count(h, "select count(*) n from community_teams")).toBe(0);
-    expect(teamKeys(h)).toEqual([]);
-    expect(count(h, "select count(*) n from uploads")).toBe(1);
-  });
-
   it("body sai -> 400; 6 đội/ngày -> 429 ở đội thứ 6", async () => {
     const h = createHarness();
     openSeason(h);
@@ -282,7 +334,6 @@ describe("hiển thị", () => {
       troop: "ky",
       imageCount: 2,
       textLang: "vi",
-      seasonOpen: true,
       myVote: 0,
       analysis: { playstyle: "Lối chơi thử nghiệm", strengths: null },
       author: { id: "u-alice", name: "Alice", image: null },
@@ -415,16 +466,17 @@ describe("danh sách", () => {
     expect((await h.request(`${TEAMS}?cursor=zzz`)).status).toBe(400);
   });
 
-  it("season: mặc định mùa mở; id mùa cũ; all", async () => {
+  it("season: thiếu -> mọi mùa; id mùa cụ thể; all", async () => {
     const h = createHarness();
-    seedSeason(h, "s0", 5);
+    seedSeason(h, "s0");
     openSeason(h);
-    await seedTeam(h, { id: "old", season: "s0" });
-    await seedTeam(h, { id: "cur", season: "s1" });
-    expect(await listIds(h)).toEqual(["cur"]);
+    await seedTeam(h, { id: "old", season: "s0", createdAt: 1 });
+    await seedTeam(h, { id: "cur", season: "s1", createdAt: 2 });
+    expect(await listIds(h, "?sort=new")).toEqual(["cur", "old"]);
     expect(await listIds(h, "?season=s0")).toEqual(["old"]);
-    expect((await listIds(h, "?season=all&sort=new")).sort()).toEqual(["cur", "old"]);
+    expect(await listIds(h, "?season=all&sort=new")).toEqual(["cur", "old"]);
     expect(await listIds(h, "?season=nope")).toEqual([]);
+    expect(await listIds(h, `?season=${encodeURIComponent("og-兵演春秋")}`)).toEqual([]);
   });
 
   it("/api/me/community-teams: mọi trạng thái của mình kèm rejectReason", async () => {
@@ -468,19 +520,13 @@ describe("vote", () => {
     expect(count(h, "select count(*) n from community_team_votes")).toBe(0);
   });
 
-  it("mùa đã đóng: vote và bỏ vote -> 409 season_closed", async () => {
+  it("đội thuộc mùa không phải mùa hiện hành: vote, đổi, bỏ vote đều được", async () => {
     const h = createHarness();
-    seedSeason(h, "s0", 5);
+    seedSeason(h, "s0");
     await seedTeam(h, { id: "t1", season: "s0" });
-    for (const value of [1, 0]) {
-      const res = await vote(h, "t1", value);
-      expect(res.status).toBe(409);
-      expect((await json(res)).error.code).toBe("season_closed");
-    }
-    // phiếu cũ không bị bỏ sau khi mùa đóng
-    h.sqlite.prepare("insert into community_team_votes (team_id, user_id, value, created_at) values ('t1', 'u-bob', 1, 1)").run();
-    expect((await vote(h, "t1", 0)).status).toBe(409);
-    expect(count(h, "select count(*) n from community_team_votes")).toBe(1);
+    expect(await json(await vote(h, "t1", 1))).toMatchObject({ upVotes: 1, myVote: 1 });
+    expect(await json(await vote(h, "t1", -1))).toMatchObject({ downVotes: 1, myVote: -1 });
+    expect(await json(await vote(h, "t1", 0))).toMatchObject({ upVotes: 0, downVotes: 0, myVote: 0 });
   });
 
   it("vote 'đang bay': user bị khoá sau requireUser -> không ghi, 401", async () => {
@@ -661,5 +707,22 @@ describe("xoá đội", () => {
     expect(count(h, "select count(*) n from battle_reports")).toBe(1);
     expect(count(h, "select count(*) n from admin_audit")).toBe(0);
     expect(h.objects.size).toBe(before);
+  });
+});
+
+describe("worker mới trên schema cũ (trước 0012): deploy worker trước migration", () => {
+  it("đọc mùa, danh sách, chi tiết, export, vote chạy được; mùa đang mở cũ vẫn hiển thị", async () => {
+    const h = createHarness({}, { migrationsUpTo: "0011" });
+    // Schema cũ: closed_at null = mùa mở (cột vẫn còn).
+    seedSeason(h, "binh-dien-xuan-thu");
+    await seedTeam(h, { id: "t1", season: "binh-dien-xuan-thu" });
+    expect((await h.request("/api/community-seasons")).status).toBe(200);
+    expect(await listIds(h)).toEqual(["t1"]);
+    expect(await listIds(h, "?season=binh-dien-xuan-thu")).toEqual(["t1"]);
+    const detail = await h.request(`${TEAMS}/t1`);
+    expect(detail.status).toBe(200);
+    expect((await json(detail)).season).toEqual({ id: "binh-dien-xuan-thu", labelVi: "Mùa binh-dien-xuan-thu", labelZh: "赛季binh-dien-xuan-thu" });
+    expect((await h.request(`${TEAMS}/export`)).status).toBe(200);
+    expect((await h.request(`${TEAMS}/t1/vote`, { as: "bob", method: "PUT", json: { value: 1 } })).status).toBe(200);
   });
 });

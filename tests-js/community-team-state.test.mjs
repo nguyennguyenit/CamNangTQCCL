@@ -52,11 +52,12 @@ const FIELDS = {
   counters: "",
   counteredBy: "",
   substitutes: "",
+  season: "og-兵演春秋",
   lang: "vi",
   uploadIds: ["up1", "up2"],
 };
 
-test("teamPayloadFromDraft: đủ 3 tướng + 6 chiến pháp cho body đúng hình dạng API, không có season", () => {
+test("teamPayloadFromDraft: đủ 3 tướng + 6 chiến pháp cho body đúng hình dạng API, có season đã chọn", () => {
   const body = teamPayloadFromDraft(fullDraft(), FIELDS);
   assert.deepEqual(body.heroes, ["hero:a", "hero:b", "hero:c"]);
   assert.deepEqual(body.tactics, [["tactic:t0a", "tactic:t0b"], ["tactic:t1a", "tactic:t1b"], ["tactic:t2a", "tactic:t2b"]]);
@@ -64,7 +65,14 @@ test("teamPayloadFromDraft: đủ 3 tướng + 6 chiến pháp cho body đúng h
   assert.equal(body.strengths, "Mạnh");
   assert.equal(body.troop, "ky");
   assert.deepEqual(body.uploadIds, ["up1", "up2"]);
-  assert.equal("season" in body, false);
+  assert.equal(body.season, "og-兵演春秋");
+});
+
+test("teamPayloadFromDraft: season bắt buộc, rỗng/thiếu/không phải chuỗi → invalid_season", () => {
+  for (const season of [undefined, null, "", "   ", 7]) {
+    assert.throws(() => teamPayloadFromDraft(fullDraft(), { ...FIELDS, season }), { code: "invalid_season" });
+  }
+  assert.equal(teamPayloadFromDraft(fullDraft(), { ...FIELDS, season: " pk-s27 " }).season, "pk-s27");
 });
 
 test("teamPayloadFromDraft: thiếu tướng, thiếu/trùng chiến pháp, ô chưa chắc đều bị chặn kèm mã", () => {

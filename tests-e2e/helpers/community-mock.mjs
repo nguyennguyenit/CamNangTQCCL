@@ -175,7 +175,8 @@ export async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS,
       return json(aiView());
     }
     // Quản trị đội: `teams.admin` là danh sách có trạng thái (duyệt/từ chối đổi tại chỗ); `teams.adminResult(action, id, body)`
-    // trả {status, body} để ép lỗi; `teams.openSeason(body)` trả {status, body} cho POST /api/admin/community-seasons.
+    // trả {status, body} để ép lỗi. `teams.seasons` = `{current, seasons}` của GET /api/community-seasons;
+    // `teams.seasonsError` = {status, body} ép lỗi cho route đó (vd 503 season_catalog_unavailable).
     if (teams && url.pathname === "/api/admin/community-teams" && method === "GET") {
       const wanted = url.searchParams.get("status") || "pending";
       const items = teams.admin.filter((t) => (wanted === "deleting" ? t.deleting : t.status === wanted && !t.deleting));
@@ -192,13 +193,12 @@ export async function mockCommunityApi(page, { user = null, stats = EMPTY_STATS,
       target.rejectReason = action === "reject" ? body.reason : null;
       return json({ id: teamId, status: target.status, ...(action === "reject" ? { rejectReason: body.reason } : {}) });
     }
-    if (teams && method === "POST" && url.pathname === "/api/admin/community-seasons") {
-      const result = teams.openSeason?.(body) ?? { status: 201, body: { id: body.id, labelVi: body.labelVi, labelZh: body.labelZh, openedAt: "2026-10-21T00:00:00.000Z", closedAt: null, previous: null } };
-      return json(result.body, result.status ?? 201);
-    }
     if (teams && url.pathname.startsWith("/api/") && (url.pathname === "/api/community-seasons" || url.pathname.startsWith("/api/community-teams") || url.pathname === "/api/me/community-teams")) {
       const pick = (value, ...args) => (typeof value === "function" ? value(...args) : value);
-      if (method === "GET" && url.pathname === "/api/community-seasons") return json(pick(teams.seasons, url.searchParams) ?? { open: null, seasons: [] });
+      if (method === "GET" && url.pathname === "/api/community-seasons") {
+        if (teams.seasonsError) return json(teams.seasonsError.body, teams.seasonsError.status);
+        return json(pick(teams.seasons, url.searchParams) ?? { current: null, seasons: [] });
+      }
       if (method === "GET" && url.pathname === "/api/me/community-teams") return json(pick(teams.mine, url.searchParams) ?? { items: [], nextCursor: null });
       if (method === "GET" && url.pathname === "/api/community-teams") return json(pick(teams.list, url.searchParams) ?? { items: [], nextCursor: null });
       if (method === "POST" && url.pathname === "/api/community-teams/uploads") return json({ uploadId: `tu-${calls.filter((c) => c.path === url.pathname).length}` }, 201);

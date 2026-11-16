@@ -1,5 +1,5 @@
-// Đội cộng đồng: mùa, ảnh tạm + AI nháp, đăng (nguyên tử), danh sách/chi tiết/ảnh, vote, xoá, duyệt và mở mùa (admin).
-// Quyền, mùa và hiển thị được kiểm trong chính câu ghi (insert … select … where exists), không chỉ ở bước đọc.
+// Đội cộng đồng: mùa (danh mục = mùa Đội chuẩn, xem season-catalog.ts), ảnh tạm + AI nháp, đăng (nguyên tử), danh sách/chi tiết/ảnh,
+// vote, xoá, duyệt (admin). Quyền và hiển thị được kiểm trong chính câu ghi (insert … select … where exists), không chỉ ở bước đọc.
 
 import { Hono } from "hono";
 import { AiCallError, loadAiConfig, resolveRoute } from "../../../shared/ai-config";
@@ -12,11 +12,11 @@ import { adminEmails, isAdminEmail } from "../env";
 import { ApiError, decodeCursor, iso, paginate, paginateByKey } from "../http";
 import { maskEmail, visibleUserSql } from "../moderation";
 import { consumeRateLimit } from "../ratelimit";
+import { findSeason, loadSeasonCatalog } from "../season-catalog";
 import {
   heroKey,
   parseHeroFilter,
   parseSeasonFilter,
-  parseSeasonInput,
   parseTeamInput,
   parseTeamSort,
   parseVote,
@@ -36,28 +36,6 @@ export function teamVisibleSql(t: string, u: string): string {
 /** Đoạn `exists` đội của trang cộng đồng còn hiển thị; bind `[teamId, now]`. */
 export const communityTeamVisibleSql =
   `exists (select 1 from community_teams t join "user" u on u.id = t.author_id where t.id = ? and ${teamVisibleSql("t", "u")})`;
-
-/** Như trên, thêm mùa của đội còn mở; bind `[teamId, now]`. */
-export const communityTeamVisibleOpenSql =
-  `exists (select 1 from community_teams t join "user" u on u.id = t.author_id join community_seasons s on s.id = t.season_id ` +
-  `where t.id = ? and ${teamVisibleSql("t", "u")} and s.closed_at is null)`;
-
-/** Chẩn đoán đội của trang cộng đồng: không thấy/không hiển thị -> missing; hiển thị nhưng mùa đóng -> closed. */
-export async function diagnoseCommunityTeam(
-  db: D1Database,
-  id: string,
-  now: number,
-): Promise<{ state: "missing" | "closed" | "ok"; seasonId: string | null }> {
-  const row = await db
-    .prepare(
-      `select t.season_id, s.closed_at, (${teamVisibleSql("t", "u")}) as visible from community_teams t ` +
-        'join community_seasons s on s.id = t.season_id join "user" u on u.id = t.author_id where t.id = ?',
-    )
-    .bind(now, id)
-    .first<{ season_id: string; closed_at: number | null; visible: number }>();
-  if (!row || !row.visible) return { state: "missing", seasonId: null };
-  return { state: row.closed_at === null ? "ok" : "closed", seasonId: row.season_id };
-}
 
 const pageKeyOf = (teamId: string) => `/doi-cong-dong/${teamId}/`;
 const placeholders = (n: number) => Array.from({ length: n }, () => "?").join(", ");
@@ -91,7 +69,6 @@ interface TeamRow {
   points: number;
   season_label_vi: string;
   season_label_zh: string;
-  season_closed_at: number | null;
   author_name: string;
   author_image: string | null;
   author_visible: number;
@@ -105,7 +82,7 @@ const TEAM_SELECT =
   "select t.id, t.author_id, t.season_id, t.status, t.title, t.hero_1, t.hero_2, t.hero_3, t.hero_key, t.tactics, t.troop, t.playstyle, " +
   "t.strengths, t.weaknesses, t.counters, t.countered_by, t.substitutes, t.text_lang, t.reject_reason, t.deleting_at, t.created_at, t.reviewed_at, " +
   "t.up_votes, t.down_votes, t.evidence_count, t.points, s.label_vi as season_label_vi, s.label_zh as season_label_zh, " +
-  's.closed_at as season_closed_at, u.name as author_name, u.image as author_image, (' +
+  'u.name as author_name, u.image as author_image, (' +
   visibleUserSql("u") +
   ") as author_visible, " +
   "(select count(*) from comments where page_key = '/doi-cong-dong/' || t.id || '/') as comment_count, " +
@@ -150,12 +127,6 @@ function teamIdParam(c: Ctx): string {
   return id;
 }
 
-async function openSeason(db: D1Database) {
-  return db
-    .prepare("select id, label_vi, label_zh, opened_at from community_seasons where closed_at is null")
-    .first<{ id: string; label_vi: string; label_zh: string; opened_at: number }>();
-}
-
 /** Xoá khoá R2 theo lô; lỗi chỉ log (dọn tạm, không làm hỏng kết quả chính). */
 async function removeQuietly(c: Ctx, keys: string[]): Promise<void> {
   if (!keys.length) return;
@@ -184,21 +155,8 @@ function etagMatches(header: string | undefined, etag: string): boolean {
 export const teams = new Hono<AppEnv>();
 
 teams.get("/api/community-seasons", async (c) => {
-  const { results } = await c.env.DB.prepare(
-    "select id, label_vi, label_zh, opened_at, closed_at from community_seasons order by opened_at desc, id desc",
-  ).all<{ id: string; label_vi: string; label_zh: string; opened_at: number; closed_at: number | null }>();
-  const seasons = results.map((s) => ({
-    id: s.id,
-    labelVi: s.label_vi,
-    labelZh: s.label_zh,
-    openedAt: iso(s.opened_at),
-    closedAt: iso(s.closed_at),
-  }));
-  const open = results.find((s) => s.closed_at === null);
-  return c.json({
-    open: open ? { id: open.id, labelVi: open.label_vi, labelZh: open.label_zh, openedAt: iso(open.opened_at) } : null,
-    seasons,
-  });
+  const { current, seasons } = await loadSeasonCatalog(c);
+  return c.json({ current, seasons });
 });
 
 teams.post("/api/community-teams/uploads", async (c) => {
@@ -267,8 +225,8 @@ teams.post("/api/community-teams", async (c) => {
   const input = parseTeamInput(await readJson(c.req.raw));
   const { now, newId } = c.get("deps");
   const createdAt = now();
-  const season = await openSeason(c.env.DB);
-  if (!season) throw new ApiError(409, "season_not_open", "Hiện chưa có mùa đang mở");
+  const season = await findSeason(c, input.season);
+  if (!season) throw new ApiError(400, "invalid_season", "Mùa không có trong danh sách");
   await consumeRateLimit(c.env.DB, "team_post", user.id, createdAt);
 
   const imageMissing = new ApiError(409, "image_missing", "Ảnh không tồn tại, đã dùng hoặc hết hạn");
@@ -303,11 +261,15 @@ teams.post("/api/community-teams", async (c) => {
   let results: D1Result[];
   try {
     results = await c.env.DB.batch([
+      // Hàng mùa là đích FK + nhãn cho join/export; nhãn lấy theo catalog lúc đăng.
+      c.env.DB.prepare(
+        "insert into community_seasons (id, label_vi, label_zh, opened_at) values (?, ?, ?, ?) " +
+          "on conflict (id) do update set label_vi = excluded.label_vi, label_zh = excluded.label_zh",
+      ).bind(season.id, season.labelVi, season.labelZh, createdAt),
       c.env.DB.prepare(
         "insert into community_teams (id, author_id, season_id, status, title, hero_1, hero_2, hero_3, hero_key, tactics, troop, playstyle, " +
           "strengths, weaknesses, counters, countered_by, substitutes, text_lang, created_at) " +
-          `select ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? where (select count(*) from uploads where ${ownedUpload}) = ? ` +
-          "and exists (select 1 from community_seasons where id = ? and closed_at is null)",
+          `select ?, ?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? where (select count(*) from uploads where ${ownedUpload}) = ?`,
       ).bind(
         teamId,
         user.id,
@@ -328,7 +290,6 @@ teams.post("/api/community-teams", async (c) => {
         ...ids,
         user.id,
         ids.length,
-        season.id,
       ),
       ...images.map((img) =>
         c.env.DB.prepare(
@@ -341,10 +302,10 @@ teams.post("/api/community-teams", async (c) => {
     await removeQuietly(c, copied);
     throw e;
   }
-  if (results[0].meta.changes === 0) {
+  // results[0] là upsert mùa; [1] là insert đội.
+  if (results[1].meta.changes === 0) {
     await removeQuietly(c, copied);
-    const stillOpen = await c.env.DB.prepare("select 1 as ok from community_seasons where id = ? and closed_at is null").bind(season.id).first();
-    throw stillOpen ? imageMissing : new ApiError(409, "season_not_open", "Mùa đã đóng");
+    throw imageMissing;
   }
   await removeQuietly(c, ids.map((id) => `${PENDING_PREFIX}${id}`));
   return c.json({ id: teamId, status: "pending" }, 201);
@@ -355,16 +316,10 @@ const SORT_COLUMN: Record<TeamSort, string> = { hot: "t.hot_rank", top: "t.top_r
 teams.get("/api/community-teams", async (c) => {
   const sort = parseTeamSort(c.req.query("sort"));
   const heroes = parseHeroFilter(c.req.query("heroes"));
-  const seasonFilter = parseSeasonFilter(c.req.query("season"));
+  const seasonId = parseSeasonFilter(c.req.query("season"));
   const cursor = decodeCursor(c.req.query("cursor"));
   const now = c.get("deps").now();
 
-  let seasonId = seasonFilter;
-  if (seasonId === null) {
-    const open = await openSeason(c.env.DB);
-    if (!open) return c.json({ items: [], nextCursor: null });
-    seasonId = open.id;
-  }
   const where = [teamVisibleSql("t", "u")];
   const binds: unknown[] = [now];
   if (seasonId !== "all") {
@@ -456,7 +411,6 @@ teams.get("/api/community-teams/:id", async (c) => {
     heroKey: row.hero_key,
     analysis: analysisOf(row),
     myVote: vote?.value ?? 0,
-    seasonOpen: row.season_closed_at === null,
     ...(privileged ? { rejectReason: row.reject_reason } : {}),
   });
 });
@@ -489,8 +443,8 @@ teams.get("/api/community-teams/:id/images/:pos", async (c) => {
   return new Response(object.body, { headers: { ...headers, "Content-Type": object.httpMetadata?.contentType || "application/octet-stream" } });
 });
 
-// Đội còn nhận vote: hiển thị công khai + mùa mở (t, s, u đã join).
-const VOTABLE_TEAM = `from community_teams t join community_seasons s on s.id = t.season_id join "user" u on u.id = t.author_id where t.id = ? and ${teamVisibleSql("t", "u")} and s.closed_at is null`;
+// Đội nhận vote: hiển thị công khai (t, u đã join). Mọi mùa đều nhận vote.
+const VOTABLE_TEAM = `from community_teams t join "user" u on u.id = t.author_id where t.id = ? and ${teamVisibleSql("t", "u")}`;
 
 teams.put("/api/community-teams/:id/vote", async (c) => {
   const { user } = await requireUser(c);
@@ -519,13 +473,12 @@ teams.put("/api/community-teams/:id/vote", async (c) => {
   if (res.meta.changes === 0) {
     // Chẩn đoán vì sao không ghi được; bỏ phiếu khi chưa vote là thành công (không có gì để bỏ).
     const team = await c.env.DB.prepare(
-      `select t.author_id, s.closed_at, (${teamVisibleSql("t", "u")}) as visible from community_teams t join community_seasons s on s.id = t.season_id join "user" u on u.id = t.author_id where t.id = ?`,
+      `select t.author_id, (${teamVisibleSql("t", "u")}) as visible from community_teams t join "user" u on u.id = t.author_id where t.id = ?`,
     )
       .bind(at, id)
-      .first<{ author_id: string; closed_at: number | null; visible: number }>();
+      .first<{ author_id: string; visible: number }>();
     if (!team || !team.visible) throw new ApiError(404, "not_found", "Không tìm thấy đội");
     if (team.author_id === user.id) throw new ApiError(403, "own_team", "Không thể vote đội của chính mình");
-    if (team.closed_at !== null) throw new ApiError(409, "season_closed", "Mùa đã đóng, không thể vote");
     const voter = await c.env.DB.prepare(`select 1 as ok from "user" v where v.id = ? and ${visibleUserSql("v")}`).bind(user.id, at).first();
     if (!voter) throw new ApiError(401, "unauthorized", "Cần đăng nhập");
     if (value !== 0) throw new ApiError(409, "vote_conflict", "Không ghi được phiếu, thử lại");
@@ -822,32 +775,4 @@ teams.post("/api/admin/community-teams/:id/reject", async (c) => {
     : ((await db.prepare("select reject_reason from community_teams where id = ?").bind(id).first<{ reject_reason: string | null }>())?.reject_reason ??
       reason);
   return c.json({ id, status: "rejected", rejectReason: stored });
-});
-
-teams.post("/api/admin/community-seasons", async (c) => {
-  const viewer = await requireRoot(c);
-  const input = parseSeasonInput(await readJson(c.req.raw));
-  const db = c.env.DB;
-  const exists = new ApiError(409, "season_exists", "Mùa này đã tồn tại");
-  if (await db.prepare("select 1 as n from community_seasons where id = ?").bind(input.id).first()) throw exists;
-  const previous = (await db.prepare("select id from community_seasons where closed_at is null").first<{ id: string }>())?.id ?? null;
-  const at = c.get("deps").now();
-  try {
-    // Chỉ đóng đúng mùa đã đọc (`previous`): nếu mùa khác chen vào, câu đóng không đổi gì, insert vướng unique index mùa mở
-    // -> cả batch rollback -> 409 `season_conflict` (audit `previous` luôn đúng).
-    await db.batch([
-      db.prepare("update community_seasons set closed_at = ? where closed_at is null and id is ?").bind(at, previous),
-      db
-        .prepare("insert into community_seasons (id, label_vi, label_zh, opened_at, closed_at) values (?, ?, ?, ?, null)")
-        .bind(input.id, input.labelVi, input.labelZh, at),
-      auditStmt(c, viewer, { action: "season.open", targetType: "season", targetId: input.id, targetLabel: input.id, meta: { previous }, status: "ok" }),
-    ]);
-  } catch (error) {
-    // Batch nguyên tử đã rollback; trùng id do race -> 409, mùa mở đã đổi -> 409 season_conflict, lỗi khác nổi lên.
-    if (await db.prepare("select 1 as n from community_seasons where id = ?").bind(input.id).first()) throw exists;
-    const now = (await db.prepare("select id from community_seasons where closed_at is null").first<{ id: string }>())?.id ?? null;
-    if (now !== previous) throw new ApiError(409, "season_conflict", "Mùa đang mở vừa thay đổi, tải lại rồi thử lại");
-    throw error;
-  }
-  return c.json({ ...input, openedAt: iso(at), closedAt: null, previous }, 201);
 });

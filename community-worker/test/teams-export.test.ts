@@ -30,10 +30,10 @@ const ITEM_KEYS = [
 ];
 
 describe("export đội cộng đồng", () => {
-  it("E1: chỉ đội approved, chưa xoá, tác giả không bị khoá/đang xoá; ban hết hạn và mùa đóng vẫn hiện", async () => {
+  it("E1: chỉ đội approved, chưa xoá, tác giả không bị khoá/đang xoá; ban hết hạn và mùa khác vẫn hiện", async () => {
     const h = createHarness();
     seedSeason(h, "s1");
-    seedSeason(h, "s0", h.clock.now - 1000);
+    seedSeason(h, "s0");
     await seedTeam(h, { id: "t1" });
     await seedTeam(h, { id: "t2", status: "pending" });
     await seedTeam(h, { id: "t3", status: "rejected" });

@@ -88,9 +88,9 @@ describe("bình luận trên trang đội cộng đồng", () => {
   const post = (h: Harness, as: "alice" | "bob", page = TEAM, lang = "vi") => h.request("/api/comments", { as, json: { page, lang, body: "hay" } });
   const post2 = (h: Harness, as: "alice" | "bob", lang: string, page = TEAM) => h.request("/api/comments", { as, json: { page, lang, body: `n-${lang}` } });
 
-  it("mùa đóng vẫn 201; đội pending -> 404; đội đang xoá -> 404", async () => {
+  it("đội mùa khác vẫn 201; đội pending -> 404; đội đang xoá -> 404", async () => {
     const h = createHarness();
-    seedSeason(h, "s0", 5);
+    seedSeason(h, "s0");
     await seedTeam(h, { id: "t1", season: "s0" });
     await seedTeam(h, { id: "t2", status: "pending", season: "s0" });
     await seedTeam(h, { id: "t3", season: "s0" });

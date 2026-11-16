@@ -514,12 +514,16 @@ describe("GET /api/admin/audit", () => {
     expect((await h.request("/api/admin/audit?action=bad%20action", { as: "admin" })).status).toBe(400);
   });
 
-  it("lọc team.approve / season.open qua thao tác thật; tên hành động hợp lệ", async () => {
+  it("lọc team.approve (thao tác thật) / season.open (dòng lịch sử, route mở mùa đã gỡ); tên hành động hợp lệ", async () => {
     const h = await fresh();
     seedSeason(h, "s1");
     await seedTeam(h, { id: "t1", status: "pending" });
     expect((await h.request("/api/admin/community-teams/t1/approve", { as: "moderator", json: {} })).status).toBe(200);
-    expect((await h.request("/api/admin/community-seasons", { as: "admin", json: { id: "s2", labelVi: "Mùa 2", labelZh: "赛季2" } })).status).toBe(201);
+    h.sqlite
+      .prepare(
+        "insert into admin_audit (id, actor_id, actor_role, actor_label, action, target_type, target_id, target_label, meta, status, created_at) values ('old-season', 'u-admin', 'root', 'Admin', 'season.open', 'season', 's2', 's2', '{\"previous\":\"s1\"}', 'ok', 1)",
+      )
+      .run();
     const list = async (action: string) =>
       ((await (await h.request(`/api/admin/audit?action=${action}`, { as: "admin" })).json()) as { items: { action: string; target: { type: string; id: string }; subjectUserId: string | null; meta: unknown }[] }).items;
     const approved = await list("team.approve");

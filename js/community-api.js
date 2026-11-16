@@ -118,22 +118,16 @@ function codeMessage(code) {
       return L('Xoá chưa hoàn tất (lỗi lưu trữ ảnh). Có thể bấm “Thử xoá tiếp”.', '删除尚未完成（图片存储出错），可点击“继续删除”重试。');
     case 'vote_conflict':
       return L('Phiếu bình chọn vừa thay đổi ở nơi khác. Hãy thử lại.', '投票状态刚刚发生变化，请重试。');
-    case 'season_closed':
-      return L('Mùa của đội này đã đóng: không nhận thêm bình chọn hay chiến báo.', '该阵容所属赛季已结束，不再接受投票或战报。');
-    case 'season_not_open':
-      return L('Hiện chưa có mùa nào đang mở nên chưa thể đăng đội.', '目前没有进行中的赛季，暂时无法发布阵容。');
     case 'own_team':
       return L('Bạn không thể bình chọn cho đội của chính mình.', '不能给自己的阵容投票。');
     case 'has_evidence':
       return L('Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.', '该阵容已有他人通过审核的战报；请联系管理员处理。');
     case 'image_missing':
       return L('Một ảnh đã tải lên không còn nữa. Hãy chọn lại ảnh.', '有图片已丢失，请重新选择图片。');
-    case 'season_exists':
-      return L('Mã mùa này đã tồn tại.', '该赛季代码已存在。');
-    case 'season_conflict':
-      return L('Mùa đang mở vừa thay đổi ở nơi khác. Hãy tải lại trang rồi thử lại.', '进行中的赛季刚刚发生变化，请刷新页面后重试。');
     case 'invalid_season':
-      return L('Mã mùa chỉ gồm chữ thường, số và dấu gạch ngang (không dùng “all”); hai tên mùa không được để trống.', '赛季代码只能包含小写字母、数字和连字符（不可用“all”）；两个赛季名称都不能为空。');
+      return L('Hãy chọn mùa trong danh sách.', '请从列表中选择赛季。');
+    case 'season_catalog_unavailable':
+      return L('Chưa tải được danh sách mùa, thử lại sau.', '暂时无法加载赛季列表，请稍后再试。');
     case 'invalid_heroes':
       return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。');
     case 'invalid_tactics':

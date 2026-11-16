@@ -113,10 +113,11 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   };
 
   /* ---------- Mùa (một lần cho cả trang; lỗi thì lần sau hỏi lại) ---------- */
+  // `current` = mùa hiện hành của Đội chuẩn (không nhất thiết là mùa đầu danh mục); `seasons` theo thứ tự catalog.
   let seasonsPromise = null;
   const getSeasons = () => {
     seasonsPromise ??= api('/api/community-seasons').then((body) => ({
-      open: body?.open ?? null,
+      current: typeof body?.current === 'string' && body.current ? body.current : null,
       seasons: Array.isArray(body?.seasons) ? body.seasons : [],
     })).catch((error) => {
       seasonsPromise = null;
@@ -161,30 +162,26 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   const headNav = document.getElementById('cm-team-head-nav');
   const kicker = document.getElementById('cm-team-kicker');
   let headNote = null;
-  const tabs = (active, canPost) => el('nav', { class: 'cm-team-tabs', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
+  const tabs = (active) => el('nav', { class: 'cm-team-tabs', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
     ['list', {}, L('Danh sách', '列表')],
-    canPost ? ['new', { new: '1' }, L('Đăng đội', '发布阵容')] : null,
+    ['new', { new: '1' }, L('Đăng đội', '发布阵容')],
     ['mine', { mine: '1' }, L('Đội của tôi', '我的阵容')],
-  ].filter(Boolean).map(([mode, params, label]) => {
+  ].map(([mode, params, label]) => {
     const anchor = link(params, label, 'cm-team-tab');
     if (mode === active) anchor.setAttribute('aria-current', 'page');
     return anchor;
   }));
   /** Danh sách: nút "Đội của tôi" + "Đăng đội" và dòng công thức điểm; Đăng/Của tôi: tab; chi tiết `?id=`: ẩn đầu trang. */
-  function paintHead(mode, open = null) {
+  function paintHead(mode) {
     if (!head) return;
     head.hidden = mode === 'detail';
-    if (kicker) {
-      kicker.textContent = open
-        ? L(`Cộng đồng · ${seasonLabel(open, locale)} đang mở`, `社区 · ${seasonLabel(open, locale)}进行中`)
-        : L('Cộng đồng', '社区');
-    }
+    if (kicker) kicker.textContent = L('Cộng đồng', '社区');
     headNote?.remove();
     headNote = null;
     if (mode === 'list') {
       headNav?.replaceChildren(el('nav', { class: 'cm-team-actions', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
         link({ mine: '1' }, [teamIcon('list'), L('Đội của tôi', '我的阵容')], 'cm-team-btn cm-team-action-mine'),
-        open ? link({ new: '1' }, [teamIcon('plus'), L('Đăng đội', '发布阵容')], 'cm-team-btn cm-team-btn-primary cm-team-action-new') : null,
+        link({ new: '1' }, [teamIcon('plus'), L('Đăng đội', '发布阵容')], 'cm-team-btn cm-team-btn-primary cm-team-action-new'),
       ]));
       headNote = el('p', { class: 'cm-team-head-note' }, [
         teamIcon('info'),
@@ -195,7 +192,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       ]);
       head.append(headNote);
     } else if (mode === 'new' || mode === 'mine') {
-      headNav?.replaceChildren(tabs(mode, Boolean(open)));
+      headNav?.replaceChildren(tabs(mode));
     } else {
       headNav?.replaceChildren();
     }
@@ -214,13 +211,14 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   /* ---------- Danh sách ---------- */
   async function listView(view, isCurrent) {
-    const { open, seasons } = await getSeasons();
+    const { current, seasons } = await getSeasons();
     if (!isCurrent()) return;
-    paintHead('list', open);
-    const state = { season: open ? open.id : 'all', sort: 'hot', heroes: [], items: [], cursor: null, seq: 0 };
+    paintHead('list');
+    // Mặc định lọc mùa hiện hành; catalog không có mùa đó (không nên xảy ra) thì xem tất cả.
+    const state = { season: seasons.some((item) => item.id === current) ? current : 'all', sort: 'hot', heroes: [], items: [], cursor: null, seq: 0 };
 
     const seasonSelect = el('select', { id: 'cm-team-season', class: 'cm-team-season-select' }, [
-      ...seasons.map((season) => el('option', { value: season.id }, `${seasonLabel(season, locale)}${open?.id === season.id ? L(' (đang mở)', '（进行中）') : ''}`)),
+      ...seasons.map((season) => el('option', { value: season.id }, `${seasonLabel(season, locale)}${current === season.id ? L(' (hiện hành)', '（当前）') : ''}`)),
       el('option', { value: 'all' }, L('Tất cả mùa', '全部赛季')),
     ]);
     seasonSelect.value = state.season;
@@ -324,9 +322,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         }
       }
     };
-    empty.textContent = open || state.season === 'all'
-      ? L('Chưa có đội nào phù hợp.', '暂无符合条件的阵容。')
-      : L('Chưa có đội nào.', '暂无阵容。');
+    empty.textContent = L('Chưa có đội nào phù hợp.', '暂无符合条件的阵容。');
 
     async function load(reset) {
       const seq = ++state.seq;
@@ -387,8 +383,6 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     for (const input of heroInputs) input.addEventListener('change', applyHeroFilter);
     more.addEventListener('click', () => load(false));
 
-    // `Element.append(null)` in chữ "null": chỉ thêm ghi chú khi chưa mở mùa.
-    if (!open) view.append(el('p', { class: 'cm-notice', role: 'note' }, L('Chưa mở mùa. Hiện chưa nhận đội mới.', '赛季尚未开放，暂不接受新阵容。')));
     view.append(
       el('section', { class: 'cm-team-toolbar', 'aria-label': L('Chọn mùa, sắp xếp và lọc', '选择赛季、排序和筛选') }, [seasonField, sortGroup, filterBox]),
       el('div', { class: 'cm-team-list-meta' }, [
@@ -451,7 +445,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     const downButton = el('button', { class: 'cm-team-vote', type: 'button', 'aria-pressed': 'false', dataset: { vote: 'down' } });
     const pointsNode = el('span', { class: 'cm-team-points' });
     const guestSlot = el('div', { class: 'cm-team-guest' });
-    const voteLocked = !team.seasonOpen || isOwner;
+    const voteLocked = isOwner;
     const paintVote = () => {
       upButton.replaceChildren(teamIcon('chevronUp'), formatNumber(counts.up));
       downButton.replaceChildren(teamIcon('chevronDown'), formatNumber(counts.down));
@@ -489,9 +483,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     };
     upButton.addEventListener('click', () => castVote(1));
     downButton.addEventListener('click', () => castVote(-1));
-    const voteNote = !team.seasonOpen
-      ? L('Mùa đã đóng — không nhận bình chọn mới.', '赛季已结束，不再接受投票。')
-      : isOwner ? L('Bạn không thể bình chọn cho đội của mình.', '不能给自己的阵容投票。') : '';
+    const voteNote = isOwner ? L('Bạn không thể bình chọn cho đội của mình.', '不能给自己的阵容投票。') : '';
     const winners = Number(team.evidenceCount) || 0;
     return el('section', { class: 'cm-team-score', 'aria-labelledby': 'cm-team-score-title' }, [
       el('div', { class: 'cm-team-score-head' }, [
@@ -556,7 +548,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       try {
         // Tên tướng chiến báo theo từ điển (tên Việt / chữ Hán theo trang); từ điển chỉ nạp khi có chiến báo để hiện.
         const heroNames = () => getLexicon().then((value) => heroNameResolver(value, { preferIds: team.heroes }));
-        const reports = mountReports(widgets, { pageKey, lang: locale, user, sharedPool: true, archived: !team.seasonOpen, heroNames });
+        const reports = mountReports(widgets, { pageKey, lang: locale, user, sharedPool: true, heroNames });
         const comments = mountComments(widgets, { pageKey, lang: locale, user, sharedPool: true, count: team.commentCount });
         await Promise.all([reports.load(), comments.load()]);
       } catch {
@@ -632,13 +624,11 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   /* ---------- Của tôi ---------- */
   async function mineView(view, isCurrent) {
-    const { open } = await getSeasons().catch(() => ({ open: null }));
-    if (!isCurrent()) return;
-    paintHead('mine', open);
+    paintHead('mine');
     view.append(viewHead(
       L('Đội của tôi', '我的阵容'),
       L('Các đội bạn đã đăng, mới nhất trước.', '你发布过的阵容，最新的在前。'),
-      open ? link({ new: '1' }, [teamIcon('plus'), L('Đăng đội mới', '发布新阵容')], 'cm-team-btn cm-team-btn-primary') : null,
+      link({ new: '1' }, [teamIcon('plus'), L('Đăng đội mới', '发布新阵容')], 'cm-team-btn cm-team-btn-primary'),
     ));
     if (!user) {
       view.append(signInPrompt(L('Đăng nhập để xem các đội bạn đã đăng.', '登录后即可查看你发布的阵容。')));
@@ -732,8 +722,8 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       [L('Gửi đội', '提交阵容'), L('Ảnh, đội hình và lối chơi. Gửi xong không sửa được.', '图片、阵容和打法。提交后不可修改。')],
       [L('Chờ duyệt', '等待审核'), L('Chỉ bạn và quản trị viên xem được đội.', '只有你和管理员可以查看。')],
       [L('Đã duyệt hoặc bị từ chối', '通过或未通过'), L(
-        'Đội đã duyệt hiện ở Danh sách, nhận bình chọn, bình luận và chiến báo khi mùa còn mở. Đội bị từ chối kèm lý do và chỉ bạn thấy.',
-        '通过的阵容显示在列表中，赛季进行中可接受投票、评论和战报。未通过的阵容附带原因，仅你可见。',
+        'Đội đã duyệt hiện ở Danh sách, nhận bình chọn, bình luận và chiến báo. Đội bị từ chối kèm lý do và chỉ bạn thấy.',
+        '通过的阵容显示在列表中，可接受投票、评论和战报。未通过的阵容附带原因，仅你可见。',
       )],
     ].map(([title, text], index) => el('li', {}, [
       el('span', { class: 'cm-team-flow-num', 'aria-hidden': 'true' }, String(index + 1)),
@@ -760,9 +750,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   /* ---------- Đăng ---------- */
   async function newView(view, isCurrent) {
-    const { open } = await getSeasons();
-    if (!isCurrent()) return;
-    paintHead('new', open);
+    paintHead('new');
     view.append(viewHead(
       L('Đăng đội mới', '发布新阵容'),
       L(
@@ -774,12 +762,19 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       view.append(signInPrompt(L('Đăng nhập để đăng đội.', '登录后即可发布阵容。')));
       return;
     }
-    if (!open) {
-      view.append(el('p', { class: 'cm-notice', role: 'note' }, L('Chưa mở mùa. Hiện chưa nhận đội mới.', '赛季尚未开放，暂不接受新阵容。')));
+    // Danh mục mùa lỗi: báo đúng nguyên nhân, không dựng form (không có mùa để chọn).
+    let catalog;
+    try {
+      catalog = await getSeasons();
+    } catch (error) {
+      if (!isCurrent()) return;
+      view.append(el('p', { class: 'cm-notice', role: 'note' }, describeError(error)));
       return;
     }
+    if (!isCurrent()) return;
     mountTeamForm(view, {
-      season: open,
+      seasons: catalog.seasons,
+      current: catalog.current,
       locale,
       user,
       getLexicon: getFormLexicon,

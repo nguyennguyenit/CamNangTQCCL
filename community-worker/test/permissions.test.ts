@@ -74,7 +74,7 @@ function snapshot(h: Harness) {
   };
 }
 
-/** Danh mục tường minh 26 endpoint admin (theo route trong src/routes). */
+/** Danh mục tường minh 25 endpoint admin (theo route trong src/routes). */
 const INVENTORY = [
   "GET /api/admin/counts",
   "GET /api/admin/comments",
@@ -101,7 +101,6 @@ const INVENTORY = [
   "GET /api/admin/community-teams",
   "POST /api/admin/community-teams/tm1/approve",
   "POST /api/admin/community-teams/tm1/reject",
-  "POST /api/admin/community-seasons",
 ];
 
 const ENDPOINTS: Endpoint[] = [
@@ -189,17 +188,6 @@ const ENDPOINTS: Endpoint[] = [
       expect(h.sqlite.prepare("select count(*) n from community_team_images where team_id = 'tm1'").get()).toMatchObject({ n: 0 });
     },
   },
-  {
-    method: "POST",
-    path: "/api/admin/community-seasons",
-    allowed: "root",
-    ok: 201,
-    body: () => ({ json: { id: "s2", labelVi: "Mùa 2", labelZh: "赛季2" } }),
-    persisted: (h) => {
-      expect(table(h, "community_seasons", "s2")).toMatchObject({ closed_at: null });
-      expect(table(h, "community_seasons", "s1")).toMatchObject({ closed_at: h.clock.now });
-    },
-  },
 ];
 
 function expected(endpoint: Endpoint, who: Who): number {
@@ -208,8 +196,8 @@ function expected(endpoint: Endpoint, who: Who): number {
   return 403;
 }
 
-describe("ma trận quyền: 26 endpoint admin × khách/user/KDV/root", () => {
-  it("bảng phủ đúng 26 endpoint admin (so tập method + path với danh mục tường minh)", () => {
+describe("ma trận quyền: 25 endpoint admin × khách/user/KDV/root", () => {
+  it("bảng phủ đúng 25 endpoint admin (so tập method + path với danh mục tường minh)", () => {
     const covered = ENDPOINTS.map((e) => `${e.method} ${e.path}`);
     expect(new Set(covered).size).toBe(covered.length);
     expect([...covered].sort()).toEqual([...INVENTORY].sort());

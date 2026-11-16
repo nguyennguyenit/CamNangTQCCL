@@ -4,11 +4,9 @@ import {
   heroKey,
   parseHeroFilter,
   parseSeasonFilter,
-  parseSeasonInput,
   parseTeamInput,
   parseTeamSort,
   parseVote,
-  SEASON_ID_RE,
 } from "../src/teams-validate";
 import { communityTeamIdFromPage, PAGE_KEY_RE, parseId } from "../src/validate";
 
@@ -42,6 +40,7 @@ const valid = () => ({
   substitutes: undefined,
   lang: "vi",
   uploadIds: ["up-1", "up-2"],
+  season: "og-兵演春秋",
 });
 
 describe("parseTeamInput", () => {
@@ -63,7 +62,17 @@ describe("parseTeamInput", () => {
       substitutes: null,
       lang: "vi",
       uploadIds: ["up-1", "up-2"],
+      season: "og-兵演春秋",
     });
+  });
+
+  it("season: id mùa theo luật CHECK D1 (ký tự đầu a-z0-9, 1–40 code point, khác 'all')", () => {
+    for (const ok of ["s1", "pk-s27", "og-兵演春秋", "a".repeat(40), "兵".padStart(40, "a")]) {
+      expect(codeOf(() => parseTeamInput({ ...valid(), season: ok }))).toBe("no_error");
+    }
+    for (const bad of [undefined, "", "all", "-x", "S1", "a".repeat(41), 5]) {
+      expect(codeOf(() => parseTeamInput({ ...valid(), season: bad }))).toBe("invalid_season");
+    }
   });
 
   it("không phải object -> invalid_body", () => {
@@ -176,32 +185,6 @@ describe("heroKey", () => {
   });
 });
 
-describe("parseSeasonInput", () => {
-  it("nhận id slug + nhãn 1–60", () => {
-    expect(parseSeasonInput({ id: "s1-2026", labelVi: " Mùa 1 ", labelZh: "赛季一" })).toEqual({
-      id: "s1-2026",
-      labelVi: "Mùa 1",
-      labelZh: "赛季一",
-    });
-  });
-  it("từ chối id/nhãn sai", () => {
-    const ok = { id: "s1", labelVi: "a", labelZh: "b" };
-    expect(codeOf(() => parseSeasonInput({ ...ok, id: "-s1" }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, id: "S1" }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, id: "a".repeat(41) }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, id: 5 }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, labelVi: "" }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, labelZh: "a".repeat(61) }))).toBe("invalid_season");
-    expect(codeOf(() => parseSeasonInput({ ...ok, labelZh: "a".repeat(60) }))).toBe("no_error");
-    expect(codeOf(() => parseSeasonInput(null))).toBe("invalid_body");
-  });
-  it("SEASON_ID_RE", () => {
-    expect(SEASON_ID_RE.test("s18")).toBe(true);
-    expect(SEASON_ID_RE.test("s-18")).toBe(true);
-    expect(SEASON_ID_RE.test("s_18")).toBe(false);
-  });
-});
-
 describe("parseVote / parseTeamSort / parseHeroFilter / parseSeasonFilter", () => {
   it("parseVote chỉ nhận 1, -1, 0", () => {
     expect(parseVote(1)).toBe(1);
@@ -230,11 +213,12 @@ describe("parseVote / parseTeamSort / parseHeroFilter / parseSeasonFilter", () =
     expect(codeOf(() => parseHeroFilter("hero:a,"))).toBe("invalid_hero");
   });
 
-  it("parseSeasonFilter: mặc định null (mùa mở), 'all', hoặc id mùa", () => {
-    expect(parseSeasonFilter(undefined)).toBeNull();
-    expect(parseSeasonFilter("")).toBeNull();
+  it("parseSeasonFilter: thiếu/rỗng/'all' -> 'all'; còn lại phải là id mùa", () => {
+    expect(parseSeasonFilter(undefined)).toBe("all");
+    expect(parseSeasonFilter("")).toBe("all");
     expect(parseSeasonFilter("all")).toBe("all");
     expect(parseSeasonFilter("s18")).toBe("s18");
+    expect(parseSeasonFilter("og-兵演春秋")).toBe("og-兵演春秋");
     expect(codeOf(() => parseSeasonFilter("S 18"))).toBe("invalid_season");
   });
 });
