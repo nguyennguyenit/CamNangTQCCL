@@ -71,7 +71,7 @@ tokens.post("/api/tokens", async (c) => {
   const db = c.env.DB;
   await consumeRateLimit(db, "token_create", user.id, now);
   // Dọn cơ hội: chỉ token của chính user này đã thu hồi / hết hạn quá hạn lưu; token còn hiệu lực không bao giờ khớp.
-  // Tra theo api_tokens_user_idx (user_id) nên chỉ đọc vài hàng token của user, không cần cron trigger.
+  // Tra theo api_tokens_user_idx (user_id) nên chỉ đọc hàng token của riêng user này (không quét bảng), không cần cron trigger.
   const purgeBefore = now - API_TOKEN_PURGE_AFTER_DAYS * DAY_MS;
   await db
     .prepare("delete from api_tokens where user_id = ? and ((revoked_at is not null and revoked_at < ?) or (expires_at is not null and expires_at < ?))")
