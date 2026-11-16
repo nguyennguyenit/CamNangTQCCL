@@ -480,7 +480,8 @@ test("/doi-chuan/ không JS: khối \"Các mùa khác\" có <a href> thật tớ
 });
 
 test("trang đội mùa cũ hơn mùa hiện tại có nhãn \"mùa cũ\" (zh: 旧赛季); đội mùa hiện tại và mùa mới hơn không có; JSON-LD name vẫn là tiền tố <title>, H1 là tên đội", async () => {
-  const { catalog, defaultSourceSeasonId, seasonOrder } = await seasonFixtures();
+  const { catalog, defaultSourceSeasonId } = await seasonFixtures();
+  const { isOldSeason } = await import("../src/lib/season-pages.ts");
   let old = 0;
   let current = 0;
   let newer = 0;
@@ -492,9 +493,9 @@ test("trang đội mùa cũ hơn mùa hiện tại có nhãn \"mùa cũ\" (zh: �
       if (entry.sourceSeasonId === defaultSourceSeasonId) {
         current += 1;
         assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: đội mùa hiện tại không được có nhãn`);
-      } else if (seasonOrder.indexOf(entry.sourceSeasonId) < seasonOrder.indexOf(defaultSourceSeasonId)) {
+      } else if (!isOldSeason(entry.sourceSeasonId, defaultSourceSeasonId)) {
         newer += 1;
-        assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: mùa mới hơn mùa hiện tại không được có nhãn (${kicker})`);
+        assert.ok(!kicker.includes(SEASON_LABEL[locale]), `${where}: mùa mới hơn / không so được với mùa hiện tại không được có nhãn (${kicker})`);
       } else {
         old += 1;
         assert.ok(kicker.includes(SEASON_LABEL[locale]), `${where}: thiếu nhãn mùa cũ (${kicker})`);

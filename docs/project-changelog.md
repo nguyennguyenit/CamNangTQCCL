@@ -2,10 +2,10 @@
 
 ## 2026-11-16 (Nhãn "mùa cũ" không gắn cho mùa mới hơn mùa mặc định, issue #89)
 
-- Fixed: `isOldSeason` (`src/lib/season-pages.ts`) trước coi mọi mùa khác mùa mặc định là "mùa cũ", nên PK-S28 (mới hơn mặc định PK-S27) bị gắn nhãn sai. Nay chỉ mùa đứng SAU mùa mặc định trong thứ tự registry mới có nhãn; mùa mặc định và mùa mới hơn nó không có nhãn. Mùa, mặc định hoặc vị trí không rõ cũng không có nhãn.
-- Thứ tự "mới/cũ" lấy từ `seasonOptions` của `seasons.json` (generation đã pin): kiểm trên generation hiện tại, nguồn xếp mới nhất trước liền mạch (`sourceOrder` 0..28: OG, PK-S28 … PK-S4, S3, S2, S1), nên chỉ số nhỏ hơn mặc định = mới hơn. Không suy từ mã mùa vì mã không so sánh được giữa họ OG / PK / S. Hàm vẫn thuần, nhận thứ tự tường minh (`SeasonPageCatalog.seasonOrder`); `SeasonPage.older` mang kết quả cho trang mùa.
+- Fixed: `isOldSeason` (`src/lib/season-pages.ts`) trước coi mọi mùa khác mùa mặc định là "mùa cũ", nên PK-S28 (mới hơn mặc định PK-S27) bị gắn nhãn sai. Nay chỉ mùa có SỐ MÙA nhỏ hơn số mùa mặc định mới có nhãn.
+- Thứ tự mới/cũ lấy từ số trong id mùa (`/^(?:pk-)?s(\d+)$/`: `s1`..`s3`, `pk-s4`..`pk-s28` là một dãy liên tục), KHÔNG lấy từ vị trí trong `seasonOptions`/`sourceOrder`: đó là thứ tự ô chọn của trang nguồn và đổi giữa các lần crawl (generation #103 xếp PK-S27, PK-S28 … S1, OG). Mùa mặc định, mùa mới hơn nó, mùa không đọc được số (OG, họ mùa mới), mùa/mặc định thiếu đều không có nhãn; mặc định là OG thì không mùa nào có nhãn. Hàm thuần, không nhận thứ tự registry; `SeasonPage.older` mang kết quả cho trang mùa.
 - Changed: trang mùa (`SeasonPage.astro`) chỉ hiện nhãn khi `older`, câu "Đội của mùa hiện tại xem ở Đội chuẩn" giữ cho mọi trang mùa. Chưa đổi: lời dẫn khối "Các mùa khác" trong `SectionPage.astro` còn ghi "các mùa cũ" (file bị ghim hash trong `pipeline/site-localization-policy.json`, cần ghim lại hash mới sửa được). URL, redirect 301 và danh mục trang không đổi.
-- Tests: `tests-js/season-pages.test.mjs` (mới hơn / cũ hơn / mặc định / không rõ), `tests-js/seo-dist-contract.test.mjs` (nhãn trang mùa và trang đội theo thứ tự registry).
+- Tests: `tests-js/season-pages.test.mjs` (kể cả thứ tự nguồn của #103: PK-S27 đầu, OG cuối), `tests-js/seo-dist-contract.test.mjs` (nhãn trang mùa và trang đội theo số mùa).
 
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
