@@ -139,52 +139,10 @@ function summaryLine(summary, allSeasons) {
 const percent = (part, total) => `${total ? Math.round((part / total) * 1000) / 10 : 0}%`;
 
 /**
- * Đang lọc theo chip (loại binh, phe, tier…) hoặc tìm từ khoá: số "Ráp được N" của cả mùa sẽ lệch với danh sách đang
- * hiện, nên ẩn số khi có lọc/tìm và hiện lại khi bỏ (thanh kho vẽ lại ở mỗi lần đổi lọc). Đọc từ DOM của chính khu danh
- * sách vì `team-filter-section.js` (bị ghim hash bản dịch) không truyền trạng thái lọc vào thanh kho.
- */
-function listNarrowed(bar) {
-  const section = bar.closest("section, [id^='section-']") ?? bar.parentElement;
-  if (!section) return false;
-  if (section.querySelector(".reference-filters .fchip[aria-pressed='true']")) return true;
-  return Boolean(section.querySelector(".reference-search-input")?.value.trim());
-}
-
-/**
- * Số đội trên hai nút lọc ("Ráp được 4", "Thiếu tối đa 2 10") của cụm nút nằm cạnh khối tóm tắt trong cùng thanh kho.
- * Điều kiện để chạy đúng (hợp đồng ngầm với `paintRosterBar` của `js/team-filter-section.js`, file bị ghim hash bản dịch
- * nên không đổi được chữ ký):
- * - khối tóm tắt và cụm nút được gắn vào CÙNG một phần tử cha (thanh kho), cụm nút là anh em của khối;
- * - cả hai được tạo và gắn trong CÙNG một lượt đồng bộ (`rosterBar.replaceChildren(rosterSummaryNode(…),
- *   rosterControlNodes(…))`), để microtask dưới đây chạy khi cả hai đã ở trong DOM;
- * - hàm này có tác dụng phụ lên phần tử anh em (thêm/gỡ `.fchip-count` trong nút lọc) — gọi `rosterSummaryNode` ở nơi
- *   khác (trang mùa cũ) phải dùng `{ line: true }` để không có tác dụng phụ này.
- * Khi bỏ được ghim hash, nên truyền số vào `rosterControlNodes` trực tiếp thay cho microtask.
- */
-function fillControlCounts(block, summary) {
-  queueMicrotask(() => {
-    const bar = block.parentElement;
-    const controls = bar?.querySelector(".reference-roster-controls");
-    if (!controls) return;
-    const hidden = listNarrowed(bar);
-    const counts = { "kho:rap-duoc": summary.complete, "kho:thieu-2": summary.complete + summary.near };
-    for (const [key, count] of Object.entries(counts)) {
-      const chip = controls.querySelector(`[data-focus-key="${key}"]`);
-      if (!chip) continue;
-      chip.querySelector(".fchip-count")?.remove();
-      if (hidden) continue;
-      // Dấu cách đầu số: tên truy cập của nút đọc "Ráp được 4", không dính "Ráp được4" (flex item bỏ khoảng trắng đầu dòng).
-      chip.append(node("span", { class: "fchip-count" }, ` ${count}`));
-    }
-  });
-}
-
-/**
  * Tóm tắt kho. `summary` của `buildListCoverage` có đủ ba mức và cỡ kho thì vẽ khối của artboard MainKho: câu ráp được,
  * thanh đo hai đoạn (`role=meter`: ráp được, thiếu 1–2 món), chú giải ba mức và nguồn kho + link "Sửa kho"; `line: true`
- * (trang mùa cũ) hoặc `summary` chỉ có `complete/total` thì chỉ một câu.
- * Bản đầy đủ có tác dụng phụ lên phần tử anh em: sau lượt vẽ, nó điền số đội vào cụm nút `rosterControlNodes` gắn cùng
- * cha trong cùng lượt đồng bộ (điều kiện ghi ở `fillControlCounts`).
+ * (trang mùa cũ) hoặc `summary` chỉ có `complete/total` thì chỉ một câu. Không có tác dụng phụ: số đội trên nút lọc do
+ * `rosterControlNodes` nhận qua `summary`.
  */
 export function rosterSummaryNode(summary, { allSeasons = false, line = false } = {}) {
   const detailed = !line && Number.isFinite(summary.near) && Number.isFinite(summary.far);
@@ -220,7 +178,6 @@ export function rosterSummaryNode(summary, { allSeasons = false, line = false } 
     ]),
     source,
   ]);
-  fillControlCounts(block, summary);
   return block;
 }
 
@@ -261,12 +218,12 @@ export function rosterHintNode() {
 /**
  * Nút lọc và sắp theo kho, kèm nhãn "Lọc và sắp theo kho", vạch ngăn và ghi chú khi đang sắp. `filter` là giá trị `kho`
  * đang bật (`null` = không lọc), `sort` là giá trị `xep`. `onChange({kho, xep})` nhận phần thay đổi để ghi lên query;
- * bấm lại nút đang bật thì tắt. Số đội trên hai nút lọc do khối tóm tắt bản đầy đủ (`rosterSummaryNode`) điền sau lượt
- * vẽ, khi cụm nút này được gắn cùng cha và cùng lượt đồng bộ với khối đó (`fillControlCounts`); dùng riêng thì nút không
- * có số.
+ * bấm lại nút đang bật thì tắt. `summary` (độ phủ của mùa, từ `buildListCoverage`) cho số đội trên hai nút lọc ("Ráp được 4",
+ * "Thiếu tối đa 2 10"); `null` thì nút không có số — người gọi truyền `null` khi danh sách đang bị lọc/tìm thu hẹp,
+ * vì số của cả mùa sẽ lệch với danh sách đang hiện.
  */
-export function rosterControlNodes({ filter = null, sort = null, onChange }) {
-  const chip = (label, active, change, focusKey, icon = null) => node("button", {
+export function rosterControlNodes({ filter = null, sort = null, summary = null, onChange }) {
+  const chip = (label, active, change, focusKey, icon = null, count = null) => node("button", {
     type: "button",
     class: `fchip roster-chip${active ? " on" : ""}`,
     "aria-pressed": String(active),
@@ -276,12 +233,14 @@ export function rosterControlNodes({ filter = null, sort = null, onChange }) {
     node("span", { class: "fchip-check", "aria-hidden": "true" }),
     icon ? strokeIcon(icon, 15) : null,
     node("span", { class: "fchip-label" }, label),
+    // Dấu cách đầu số: tên truy cập của nút đọc "Ráp được 4", không dính "Ráp được4" (flex item bỏ khoảng trắng đầu dòng).
+    count === null ? null : node("span", { class: "fchip-count" }, ` ${count}`),
   ]);
   const sorted = sort === ROSTER_SORT_EASIEST;
   return node("div", { class: "reference-roster-controls", role: "group", "aria-label": L("Lọc và sắp theo kho", "按库存筛选和排序") }, [
     node("span", { class: "roster-controls-label", "aria-hidden": "true" }, L("Lọc và sắp theo kho", "按库存筛选和排序")),
-    chip(L("Ráp được", "可组建"), filter === ROSTER_FILTER_READY, { kho: filter === ROSTER_FILTER_READY ? null : ROSTER_FILTER_READY }, "kho:rap-duoc"),
-    chip(L("Thiếu tối đa 2", "最多缺 2 件"), filter === ROSTER_FILTER_NEAR, { kho: filter === ROSTER_FILTER_NEAR ? null : ROSTER_FILTER_NEAR }, "kho:thieu-2"),
+    chip(L("Ráp được", "可组建"), filter === ROSTER_FILTER_READY, { kho: filter === ROSTER_FILTER_READY ? null : ROSTER_FILTER_READY }, "kho:rap-duoc", null, summary && summary.complete),
+    chip(L("Thiếu tối đa 2", "最多缺 2 件"), filter === ROSTER_FILTER_NEAR, { kho: filter === ROSTER_FILTER_NEAR ? null : ROSTER_FILTER_NEAR }, "kho:thieu-2", null, summary && summary.complete + summary.near),
     node("span", { class: "roster-controls-sep", "aria-hidden": "true" }),
     chip(L("Dễ ráp nhất", "最易组建"), sorted, { xep: sorted ? null : ROSTER_SORT_EASIEST }, "xep:de-rap", ICON_SORT),
     sorted ? node("p", { class: "roster-sorted-note" }, L("Sắp theo số món thiếu, giữ khối theo bậc.", "按缺少件数排序，保留分级区块。")) : null,

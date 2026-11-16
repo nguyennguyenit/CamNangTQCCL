@@ -335,10 +335,15 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   };
   const chipText=(key,value)=>key==='tier'?sourceTierLabel(value):key==='source'?sourceLabel(value):displayLabel(key,value);
 
-  /** Lọc đang bật = chip đã chọn + từ khóa tìm; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
-  function activeFilterCount() {
+  /** Chip đã chọn + từ khóa tìm: những lọc thu hẹp danh sách mà số của cả mùa trên nút kho không còn khớp. */
+  function narrowingCount() {
     const facets=Object.values(state.filters || {}).reduce((total,values)=>total + (Array.isArray(values) ? values.length : 0),0);
-    return facets + (state.query ? 1 : 0) + (coverage && state.rosterFilter ? 1 : 0);
+    return facets + (state.query ? 1 : 0);
+  }
+
+  /** Lọc đang bật = chip đã chọn + từ khóa tìm + lọc kho; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
+  function activeFilterCount() {
+    return narrowingCount() + (coverage && state.rosterFilter ? 1 : 0);
   }
 
   /** Thanh kho phía trên danh sách: tóm tắt + nút lọc/sắp khi có kho, một dòng dẫn khi máy chưa có kho. */
@@ -358,7 +363,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const focused=rosterBar.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
     rosterBar.replaceChildren(
       rosterSummaryNode(coverage.summary,{allSeasons:state.season==='all'}),
-      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,onChange:onQuery}),
+      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,summary:narrowingCount() ? null : coverage.summary,onChange:onQuery}),
     );
     rosterBar.dataset.state='ready';
     if (focused) rosterBar.querySelector(`[data-focus-key="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
