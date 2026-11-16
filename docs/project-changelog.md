@@ -1,5 +1,17 @@
 # Project Changelog
 
+## 2026-11-16 (Đội chuẩn: refresh SGSDeck, thêm 41 cấu hình bản chính thức máy chủ Đài Loan, duyệt lại toàn bộ bản dịch)
+
+### Changed
+- Crawl lại toàn bộ SGSDeck Recommended (inventory `sha256:84c691da…`, 1762 trang). Generation Đội chuẩn `ebc80837…` (dựng lại sau khi rebase lên các PR Khai hoang #95/#96): 1681 cấu hình (trước 1640), giữ handle của 1640 hàng cũ, cấp handle cho 41 hàng mới, không gỡ hàng nào. 41 hàng mới là cấu hình PK-S27 từ fanpage chính thức máy chủ Đài Loan và sách trắng ngày 10/11: 23 đội 交戰 (12 T0, gồm Tam Thế 40Y Lữ Bố Thuẫn, Tàng Khí Đãi Thì Tam Thế 40Y Lữ Bố Thuẫn, 40Y Lữ Điêu Lư Cung, Nhị Kiều Cung, Đại Hán Cung, Pháp Quan Thuẫn) và 18 đội khai hoang / cảm tử hai–ba người.
+- Glossary: 33 tên đội, 2 tướng (何氏 = Hà Thị; 城衛 = Thành Vệ, đơn vị thủ thành trong ảnh chính thức, không phải tướng trong đồ giám) và 3 mẫu cộng điểm (`統率 一速`, `統率 武力`, `武力 一速`). Đổi glossary làm stale toàn bộ receipt, nên duyệt độc lập lại toàn bộ 6409 vị trí (2812 site + 3597 Tra cứu) theo glossary `sha256:023394a9…`. Receipt mới gồm 75 batch `doi-chuan-261116-*` và thay receipt cũ. Vòng 1: 6375 chấp nhận, 34 từ chối. Sau xử lý theo bảng quy tắc ngày 03/11, vòng 2–3 chấp nhận hết.
+- Bản dịch: 118 khối ghi chú mới. Sửa 16 ghi chú cũ theo reviewer: tên chiến pháp viết tắt mở rộng thành tên đủ (Lâm Nguy Cứu Chủ; Trầm Đoạn Cơ Mưu + Giám Thống Chấn Xa + Khiêu Chiến Quần Hùng sau Trị Quân), thứ tự tên đội (Quần Yêu Thuẫn, Ngụy Hổ Vệ, Hãm Trận Pháp Quan, Hạt Nhân Thuẫn, Pháp Kỵ). Giữ `據水斷橋` = Cứ Thủy Đoạn Kiều theo identity map.
+- Tra cứu: sửa 3 mục ledger rồi promote generation `lookup:adf392a0…` (transaction `lookup-261116-doi-chuan-review`, chỉ `lookup-catalog.json` đổi byte). Ba mục gồm: `usageVi` của quân sư Gặp Địch Ứng Biến (碰瓷 = cảm tử); `targetViet` và `effectTypeVi` của Kết Nghĩa Vườn Đào, nay theo đúng chữ client Global. Hai mục sau vốn bị chữ client ghi đè khi build nên trang không đổi. Giữ nguyên chữ client Global ở 15 mục reviewer báo lệch số so với nguồn TW (11 lựa chọn cải tạo của Phi Hùng Quân / Tây Lương Thiết Kỵ / Vô Đương Phi Quân, 3 mục đối tượng và 1 điều kiện đổi), theo quy tắc 2.
+- Test: ghim lại số đếm 1640 → 1681 cấu hình, 2590 → 2708 khối ghi chú, 2694 → 2812 obligation site, sitemap (cùng 18 trang Khai hoang) 5656 → 5738; baseline inventory 67361 vị trí.
+
+### Hạ tầng
+- Pipeline Python dùng `fcntl` nên chỉ chạy trên POSIX. Lần này chạy trong clone WSL với `core.autocrlf=false`. Clone Windows mặc định CRLF làm lệch digest Tra cứu (issue #100).
+
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
 - Changed: form đăng đội có ô "Mùa bạn đang chơi" (bắt buộc, chọn sẵn mùa hiện hành của Đội chuẩn `pk-s27`); `POST /api/community-teams` nhận `season`. Danh mục mùa = `seasonOptions` của Đội chuẩn đang publish, Worker đọc `/data/recommended/*` lúc chạy (xác minh hash, cache isolate) qua `community-worker/src/season-catalog.ts` — mùa mới thêm vào Đội chuẩn tự có ở Đội cộng đồng sau khi site deploy. `GET /api/community-seasons` → `{current, seasons}`; danh sách mặc định lọc `current`.
