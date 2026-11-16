@@ -5,7 +5,7 @@
       "batchId": "doi-chuan-261117-r1-000",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-000",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-000.json",
       "outputSha256": "b990ca0a8ff1165230091552d4156036c6d538e30dff8b9336ece9f4c94be2e5",
       "items": [
@@ -3207,7 +3207,7 @@
       "batchId": "doi-chuan-261117-r1-001",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-001",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-001.json",
       "outputSha256": "f1b9b57fcaa09710b426dbdcb26d68b049b0326ccf13b02b8be135193c345719",
       "items": [
@@ -6425,7 +6425,7 @@
       "batchId": "doi-chuan-261117-r1-002",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-002",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-002.json",
       "outputSha256": "84d66fa56a20b5a4dab59ee9c5c319798127aff132c44071d9ab9454cc3bc3e7",
       "items": [
@@ -9643,7 +9643,7 @@
       "batchId": "doi-chuan-261117-r1-003",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-003",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-003.json",
       "outputSha256": "98fbf9bb79e571e554533199968c826de6a3971b5598a9cf41f04a9f73bc792b",
       "items": [
@@ -12821,7 +12821,7 @@
       "batchId": "doi-chuan-261117-r1-004",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-004",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-004.json",
       "outputSha256": "4156007e60db563aa971a675ad60d725b111ab8cc7dcd155ba93a71962794a3f",
       "items": [
@@ -16039,7 +16039,7 @@
       "batchId": "doi-chuan-261117-r1-005",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-005",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-005.json",
       "outputSha256": "7266920efbc31fbe9be9c340a2e151c6df6c227471871e234064ec0aaf9650ff",
       "items": [
@@ -19257,7 +19257,7 @@
       "batchId": "doi-chuan-261117-r1-006",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-006",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-006.json",
       "outputSha256": "7c23f90f28b66bf4c79be4dde789f23f425a476a66ffe4fd1c548695c4e52d41",
       "items": [
@@ -22435,7 +22435,7 @@
       "batchId": "doi-chuan-261117-r1-007",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-007",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-007.json",
       "outputSha256": "6f7aca93dd65494cbdab9de0572d81a8e03c824dccb4a5e1ec5aaad2803b6ef2",
       "items": [
@@ -25653,7 +25653,7 @@
       "batchId": "doi-chuan-261117-r1-008",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-008",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-008.json",
       "outputSha256": "e624e085a40cd98f11d98f7c799032036fca0ca4c859aea86272a9f612756402",
       "items": [
@@ -28871,7 +28871,7 @@
       "batchId": "doi-chuan-261117-r1-009",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-009",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-009.json",
       "outputSha256": "8d27d0471305d9a2493e97c34983fc5638ab3535e1be927aa23ba57c0da47c4f",
       "items": [
@@ -32089,7 +32089,7 @@
       "batchId": "doi-chuan-261117-r1-010",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-010",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-010.json",
       "outputSha256": "60c0de9757680f6b2b339b1735a3a30747b0cf235a48db715ecae462cb613441",
       "items": [
@@ -35307,7 +35307,7 @@
       "batchId": "doi-chuan-261117-r1-011",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-011",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-011.json",
       "outputSha256": "9225eaa6b70f074bace50838153991e02260a85306e84abe8e9e12d317a7956c",
       "items": [
@@ -38525,7 +38525,7 @@
       "batchId": "doi-chuan-261117-r1-012",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-012",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-012.json",
       "outputSha256": "717d68a2756f1a6dbe6d95e42474410622b007635074cf9883666b7615dd0667",
       "items": [
@@ -41743,7 +41743,7 @@
       "batchId": "doi-chuan-261117-r1-013",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-013",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-013.json",
       "outputSha256": "c9194daaf9f371fea2c32d9013cb2d4b9bb34fe798a2e3e141270706380d1641",
       "items": [
@@ -44961,7 +44961,7 @@
       "batchId": "doi-chuan-261117-r1-014",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-014",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-014.json",
       "outputSha256": "eea2cffc7b30d30d0829fe9fafd0d4e50a7dd177c65acc743a9b1a1d38422ade",
       "items": [
@@ -48179,7 +48179,7 @@
       "batchId": "doi-chuan-261117-r1-015",
       "draftSession": "Main:issues-47-64-261117",
       "reviewerSession": "reviewer:Rv261117-r1-015",
-      "reviewedAt": "2026-11-17T00:35:00+07:00",
+      "reviewedAt": "2026-11-17T00:41:00+07:00",
       "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-015.json",
       "outputSha256": "11c895570c32f8afc43db24743b05941a1da164d883971ab011a04a279a5a4e2",
       "items": [
