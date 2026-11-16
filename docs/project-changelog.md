@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-16 (Ép LF cho working tree, gate community-worker thêm client store, issue #100/#105)
+
+- Fixed: `.gitattributes` thêm `* text=auto eol=lf` — checkout Windows (`core.autocrlf=true`) không còn tạo file CRLF làm lệch digest pipeline/MCP. `*.csv -text` và rule `coexist-binh-dien-xuan-thu.csv` đặt sau để vẫn thắng; `git add --renormalize .` không đổi file nào khác (ba CSV snapshot CRLF được giữ nguyên byte nhờ `*.csv -text`). Clone Windows cũ: xem `docs/deployment-guide.md` (Prerequisite).
+- Fixed: `community-worker-gate.yml` (pull_request và push) thêm `js/recruit-tracker-store.js` và `js/i18n.js` vào `paths` — `community-worker/test/recruit-pulls.test.ts` import trực tiếp hai file này.
+
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
 - Changed: form đăng đội có ô "Mùa bạn đang chơi" (bắt buộc, chọn sẵn mùa hiện hành của Đội chuẩn `pk-s27`); `POST /api/community-teams` nhận `season`. Danh mục mùa = `seasonOptions` của Đội chuẩn đang publish, Worker đọc `/data/recommended/*` lúc chạy (xác minh hash, cache isolate) qua `community-worker/src/season-catalog.ts` — mùa mới thêm vào Đội chuẩn tự có ở Đội cộng đồng sau khi site deploy. `GET /api/community-seasons` → `{current, seasons}`; danh sách mặc định lọc `current`.
