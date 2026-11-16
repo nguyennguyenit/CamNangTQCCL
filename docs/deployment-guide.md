@@ -288,7 +288,7 @@ Thêm bảng D1 `api_tokens`, route `/api/tokens` (cookie) và `POST /api/recrui
 ### Thứ tự release
 
 1. Ghi bookmark: `cd community-worker && npx wrangler d1 time-travel info tqccl-community`.
-2. `npm run db:migrate:remote`. `0014_api_tokens.sql` chỉ thêm bảng `api_tokens` + một index, không sửa bảng đang chạy.
+2. Kiểm `npx wrangler d1 migrations list tqccl-community --remote` chỉ còn `0014_api_tokens.sql` chờ áp (migration phá schema `0012_community_season_catalog.sql` phải áp xong theo runbook riêng: Worker tương thích chạy trước). Rồi `npm run db:migrate:remote`. `0014_api_tokens.sql` chỉ thêm bảng `api_tokens` + một index, không sửa bảng đang chạy.
 3. `npm run deploy`. Kiểm: `curl -i -X POST https://tqccl.com/api/recruit/pulls -H "Authorization: Bearer x" -H "Content-Type: application/json" -d "{}"` → `401 invalid_token` (không phải 403 `forbidden_origin` hay 404).
 4. Đăng nhập trên tqccl.com, tạo token bằng lệnh DevTools ở community-worker.md, gửi một lượt thử cho một tài khoản tracker rồi tải lại trang Theo dõi chiêu mộ: dòng mới hiện trong Nhật ký. Xoá dòng thử trên UI nếu không muốn giữ (gửi lại cùng `key` sẽ không ghi lại).
 

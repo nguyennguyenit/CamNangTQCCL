@@ -152,6 +152,55 @@ describe("POST /api/recruit/pulls (token API)", () => {
     expect((await send(h, token, body([pull("fifth-key", T0 + 3)]))).status).toBe(409);
   });
 
+  it("event cùng key xuất hiện giữa lúc kiểm và lúc ghi (vd đã xoá trên UI) -> duplicate, không ghi đè", async () => {
+    const { h, token } = await setup();
+    const iso = new Date(T0).toISOString();
+    const tombstone = JSON.stringify({ id: "evt_ext_race-key-1", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 1, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: iso });
+    h.beforeNextBatch(() => {
+      h.sqlite.prepare("insert into recruit_records (user_id, kind, id, updated_at, rev, payload) values ('u-alice', 'event', 'evt_ext_race-key-1', ?, 99, ?)").run(T0, tombstone);
+    });
+    const res = await send(h, token, body([pull("race-key-1", T0), pull("race-key-2", T0 + 1)]));
+    expect(res.status).toBe(200);
+    const out = await res.json<Omit<PullsBody, "events"> & { events: { duplicate: boolean }[] }>();
+    expect(out).toMatchObject({ accepted: 1, duplicates: 1 });
+    expect(out.events.map((e) => e.duplicate)).toEqual([true, false]);
+    const row = h.sqlite.prepare("select rev, payload from recruit_records where id = 'evt_ext_race-key-1'").get() as { rev: number; payload: string };
+    expect(row).toEqual({ rev: 99, payload: tombstone });
+  });
+
+  it("lô khác ghi cùng tài khoản/ngày giữa lúc kiểm và lúc ghi: không vượt 4, lô này 409 và không ghi gì; gửi lại lô đã nhận vẫn 200", async () => {
+    const { h, token } = await setup();
+    const accepted = [pull("other-001", T0), pull("other-002", T0 + 1)];
+    expect((await send(h, token, body(accepted))).status).toBe(200);
+    const iso = new Date(T0).toISOString();
+    // Lô song song (client khác) commit 1 lượt sau khi lô dưới đã qua bước kiểm sớm.
+    h.beforeNextBatch(() => {
+      const data = { id: "evt_other", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 1, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: "" };
+      h.sqlite.prepare("insert into recruit_records (user_id, kind, id, updated_at, rev, payload) values ('u-alice', 'event', 'evt_other', ?, 50, ?)").run(T0, JSON.stringify(data));
+    });
+    const res = await send(h, token, body([pull("late-001", T0 + 2), pull("late-002", T0 + 3)]));
+    expect(res.status).toBe(409);
+    expect((await res.json<PullsBody>()).error.code).toBe("daily_limit");
+    expect((await serverEvents(h)).map((e) => e.id).sort()).toEqual(["evt_ext_other-001", "evt_ext_other-002", "evt_other"]);
+    // Ngày đã đủ 3 lượt, nhưng gửi lại lô đã nhận (toàn trùng) không bị chặn.
+    const retry = await send(h, token, body(accepted));
+    expect(retry.status).toBe(200);
+    expect(await retry.json<PullsBody>()).toMatchObject({ accepted: 0, duplicates: 2, daily: { used: 3 } });
+  });
+
+  it("gửi lại lô đã nhận khi ngày đã vượt 4 (ghi từ web) vẫn 200, không ghi gì", async () => {
+    const { h, token } = await setup();
+    const lot = [pull("retry-full-1", T0)];
+    expect((await send(h, token, body(lot))).status).toBe(200);
+    const iso = new Date(T0).toISOString();
+    await seed(h, [
+      { kind: "event", id: "evt_web_many", updatedAt: T0, data: { id: "evt_web_many", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 4, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: "" } },
+    ]);
+    const retry = await send(h, token, body(lot));
+    expect(retry.status).toBe(200);
+    expect(await retry.json<PullsBody>()).toMatchObject({ accepted: 0, duplicates: 1, daily: { used: 5 } });
+  });
+
   it("ngày theo timeZone, mặc định Asia/Ho_Chi_Minh; timeZone lạ -> 400", async () => {
     const { h, token } = await setup();
     const evening = Date.UTC(2026, 8, 27, 17, 30, 0); // 00:30 ngày 28 giờ VN

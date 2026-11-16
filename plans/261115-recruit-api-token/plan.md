@@ -38,7 +38,7 @@ sequenceDiagram
   W-->>T: {accepted, duplicates, events, daily}
 ```
 
-- **Migration `0012_api_tokens.sql`** (0007/0009/0010 đã có chủ ở `rollback/`, 0011 là roster): bảng
+- **Migration `0014_api_tokens.sql`** (0007/0009/0010/0013 đã có chủ ở `rollback/`, 0011 là roster, 0012 là catalog mùa): bảng
   `api_tokens(id, user_id → user on delete cascade, name, token_hash unique, hint, scope check = 'recruit:write',
   created_at, last_used_at, expires_at null, revoked_at null)` + index `(user_id)`. Chỉ thêm bảng.
   Xoá tài khoản: cascade theo FK, cùng chỗ với `recruit_records` ở batch cuối.
@@ -85,9 +85,9 @@ Lệnh kiểm: `cd community-worker && npx vitest run && npx tsc --noEmit`; `nod
 
 ## Triển khai (user tự làm sau review Astra → Fable)
 
-1. `cd community-worker && npx wrangler d1 time-travel info tqccl-community` (ghi bookmark) → `npm run db:migrate:remote` (áp `0012`).
+1. `cd community-worker && npx wrangler d1 time-travel info tqccl-community` (ghi bookmark) → kiểm `wrangler d1 migrations list --remote` chỉ còn `0014` → `npm run db:migrate:remote` (áp `0014`).
 2. `npm run deploy` (Worker).
-3. Deploy Pages (UI token).
+3. Không deploy Pages: UI token ở PR riêng (#97).
 
 ## Bước sau (ngoài PR này → issue)
 

@@ -409,7 +409,7 @@ Cho tool ngoài trình duyệt (vd. `tqkh` của skill `quay-tuong`) ghi lượt
 - **Token**: `tqccl_pat_` + 32 byte ngẫu nhiên base64url (53 ký tự). Mọi user đăng nhập đều tạo được; token chỉ ghi vào tracker của chính họ.
 - **Quản lý** (cookie phiên + kiểm Origin như mọi route ghi). Chưa có UI (để PR sau, cùng lần publish generation kế tiếp vì `js/recruit-tracker.js` được ghim hash trong `pipeline/site-localization-policy.json`); tạm tạo token bằng DevTools trên `https://tqccl.com` khi đã đăng nhập: `await (await fetch("/api/tokens", {method: "POST", headers: {"Content-Type": "application/json"}, body: JSON.stringify({name: "tqkh", expiresInDays: 90})})).json()`.
   - `GET /api/tokens` → `{items: [{id, name, hint, scope, createdAt, lastUsedAt, expiresAt, revokedAt}]}`, mới nhất trước; không trả hash.
-  - `POST /api/tokens {name (1–40), expiresInDays: 30|90|365|null}` (thiếu = 90) → `201 {token, item}`; `token` thô chỉ có ở phản hồi này. Tối đa 10 token còn hiệu lực mỗi user → `409 token_limit`. Rate `token_create` 20/ngày.
+  - `POST /api/tokens {name (1–40), expiresInDays: 30|90|365|null}` (thiếu = 90) → `201 {token, item}`; `token` thô chỉ có ở phản hồi này. Tối đa 10 token còn hiệu lực mỗi user → `409 token_limit` (kiểm ngay trong câu insert nên request song song không vượt trần). Rate `token_create` 20/ngày.
   - `DELETE /api/tokens/:id` → `{ok: true}` (đặt `revoked_at`, gọi lại giữ mốc cũ); token người khác/không có → 404.
 - **Ghi lượt**: `POST /api/recruit/pulls` — route duy nhất nhận Bearer; Bearer trên route khác bị bỏ qua (→ 401 vì không có phiên), cookie trên route này → 401.
   - Body: `{accountName, banner: "danh-tuong-pk", timeZone?, pulls: [{key, at, fiveStar, hero?, heroValueClass?}]}`, 1–4 lượt.
@@ -417,13 +417,13 @@ Cho tool ngoài trình duyệt (vd. `tqkh` của skill `quay-tuong`) ghi lượt
   - `key` 8–64 ký tự `[A-Za-z0-9_-]` do tool cấp, duy nhất mỗi user; event id = `evt_ext_<key>`. Gửi lại key đã có (kể cả event user đã xoá trên web) → tính vào `duplicates`, không ghi lại: retry an toàn.
   - `at` ISO 8601; `date` của event = ngày của `at` theo `timeZone` IANA (mặc định `Asia/Ho_Chi_Minh`; tên lạ → `400 invalid_timeZone`). Lượt cùng/lùi `at` trong một lô được đẩy +1 ms để giữ thứ tự gửi.
   - `fiveStar: true` bắt buộc `hero` (1–40 ký tự); `heroValueClass` ∈ Chưa phân loại/Chủ lực/Dùng đội/Tình huống/Nội chính/Vật liệu (mặc định Chưa phân loại). Lượt không ra không lưu tên tướng.
-  - Mỗi lượt thành một event schema v2 `{drawKind: "daily", pulls: 1, result: "miss"|"fiveStar", note: "", occurredAt = createdAt = at, updatedAt = giờ server}` ghi LWW như `POST /api/recruit` (cùng `rev`, cùng trần 20 000 bản ghi). Trình duyệt nhận qua lượt kéo đồng bộ kế tiếp.
-  - Trần ngày: lượt rẻ còn sống (miss/5★) của tài khoản trên gói ngày trong ngày đó + lượt mới > 4 → `409 daily_limit`, không ghi lượt nào của lô.
+  - Mỗi lượt thành một event schema v2 `{drawKind: "daily", pulls: 1, result: "miss"|"fiveStar", note: "", occurredAt = createdAt = at, updatedAt = giờ server}`, **chỉ insert** (trùng khoá thì bỏ qua, không bao giờ sửa event đã có, kể cả event đã xoá xuất hiện giữa lúc kiểm và lúc ghi); cấp `rev` và tính trần 20 000 bản ghi như `POST /api/recruit`. Trình duyệt nhận qua lượt kéo đồng bộ kế tiếp.
+  - Trần ngày: lượt rẻ còn sống (miss/5★) của tài khoản trên gói ngày trong ngày đó + lượt mới > 4 → `409 daily_limit`, không ghi lượt nào của lô. Kiểm sớm rồi kiểm lại trong chính câu insert của batch (đếm bỏ id của lô, nên cả lô cùng ghi hoặc cùng bị bỏ): request song song không vượt trần. Chỉ ngày có lượt mới bị kiểm: gửi lại lô đã nhận (toàn trùng) luôn 200.
   - Phản hồi: `{accepted, duplicates, events: [{key, id, date, duplicate}], daily: {date, used, limit: 4}, cursor}` (`daily` theo ngày của lượt cuối).
   - Lỗi xác thực: thiếu/sai/thu hồi/hết hạn → `401 invalid_token`; user bị khoá/đang xoá → `403 account_blocked`. Rate `recruit_token_push` 120/giờ/user.
-  - Hai request song song cùng tài khoản có thể cùng qua kiểm trần ngày (đọc rồi ghi, không khoá); tool gửi tuần tự nên chấp nhận.
+  - `accepted`/`duplicate` lấy từ kết quả ghi thật của từng câu; `daily.used` đọc lại sau khi ghi.
 - **Origin**: middleware `/api/*` miễn kiểm Origin/`sec-fetch-site` chỉ khi path là `/api/recruit/pulls`, có `Authorization: Bearer` và **không** có cookie phiên Better Auth. Trình duyệt không tự gửi Bearer nên không mở CSRF.
-- **Test**: `test/tokens.test.ts` (tạo/hash/liệt kê/hạn/trần 10/thu hồi/Origin/rate/cascade) và `test/recruit-pulls.test.ts` (schema event được store client `js/recruit-tracker-store.js` gộp đúng, chống trùng, trần ngày, timeZone, khớp tên tài khoản, 401/403, chỉ `/pulls` nhận Bearer, CSRF khi kèm cookie, cô lập user, `last_used_at`, rate).
+- **Test**: `test/tokens.test.ts` (tạo/hash/liệt kê/hạn/trần 10 kể cả tạo song song/thu hồi/Origin/rate/cascade) và `test/recruit-pulls.test.ts` (schema event được store client `js/recruit-tracker-store.js` gộp đúng, chống trùng kể cả event xuất hiện giữa lúc kiểm và lúc ghi, trần ngày kể cả lô khác ghi chen giữa, gửi lại lô đã nhận, timeZone, khớp tên tài khoản, 401/403, chỉ `/pulls` nhận Bearer, CSRF khi kèm cookie, cô lập user, `last_used_at`, rate).
 
 ### Ví dụ gọi
 

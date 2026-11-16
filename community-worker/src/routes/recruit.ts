@@ -228,6 +228,21 @@ async function findAccountId(db: D1Database, userId: string, accountName: string
   return matches[0].id;
 }
 
+/** Điều kiện trần ngày dùng trong câu ghi: lượt rẻ còn sống của tài khoản theo ngày, bỏ các id của chính lô. */
+const DAILY_USED_SQL =
+  "select coalesce(sum(json_extract(r.payload, '$.pulls')), 0) from recruit_records r " +
+  "where r.user_id = ?1 and r.kind = 'event' and json_extract(r.payload, '$.accountId') = ?5 and json_extract(r.payload, '$.bannerId') = ?6 " +
+  "and json_extract(r.payload, '$.result') in ('miss', 'fiveStar') and coalesce(json_extract(r.payload, '$.deletedAt'), '') = '' " +
+  "and json_extract(r.payload, '$.date') = json_extract(f.value, '$.date') and r.id not in (select value from json_each(?7))";
+
+// Chỉ insert, trùng khoá thì bỏ qua (không bao giờ sửa event đã có, kể cả tombstone). Mọi câu của lô cùng một
+// điều kiện trần ngày (đếm bỏ id của lô nên không đổi giữa các câu): cả lô cùng được ghi hoặc cùng bị bỏ.
+const INSERT_PULL =
+  "insert into recruit_records (user_id, kind, id, updated_at, rev, payload) " +
+  "select ?1, 'event', ?2, ?3, (select coalesce(max(rev), 0) + 1 from recruit_records where user_id = ?1), ?4 " +
+  `where not exists (select 1 from json_each(?8) f where json_extract(f.value, '$.n') + (${DAILY_USED_SQL}) > ?9) ` +
+  "on conflict (user_id, kind, id) do nothing";
+
 /** Số lượt rẻ đã ghi (event còn sống, miss/fiveStar) của tài khoản trên gói ngày, theo từng ngày. */
 async function dailyUsed(db: D1Database, userId: string, accountId: string, dates: string[]): Promise<Map<string, number>> {
   const { results } = await db
@@ -241,6 +256,9 @@ async function dailyUsed(db: D1Database, userId: string, accountId: string, date
     .all<{ date: string; n: number }>();
   return new Map(results.map((r) => [r.date, Number(r.n) || 0]));
 }
+
+const dailyLimitError = (date: string) =>
+  new ApiError(409, "daily_limit", `Ngày ${date} vượt ${RECRUIT_DAILY_PULL_LIMIT} lượt rẻ của gói ngày; không ghi lượt nào`);
 
 recruit.post("/api/recruit/pulls", async (c) => {
   const { userId } = await requireToken(c, "recruit:write");
@@ -272,13 +290,12 @@ recruit.post("/api/recruit/pulls", async (c) => {
   const seen = new Set(existing.map((r) => r.id));
   const fresh = events.filter((e) => !seen.has(e.id));
 
-  const dates = [...new Set(events.map((e) => e.date))];
-  const used = await dailyUsed(db, userId, accountId, dates);
-  for (const e of fresh) used.set(e.date, (used.get(e.date) ?? 0) + 1);
-  for (const [date, n] of used) {
-    if (n > RECRUIT_DAILY_PULL_LIMIT) {
-      throw new ApiError(409, "daily_limit", `Ngày ${date} vượt ${RECRUIT_DAILY_PULL_LIMIT} lượt rẻ của gói ngày; không ghi lượt nào`);
-    }
+  // Kiểm sớm để báo lỗi rõ; câu ghi kiểm lại nguyên tử. Chỉ ngày có lượt mới bị chặn: gửi lại lô đã nhận luôn qua.
+  const freshPerDate = new Map<string, number>();
+  for (const e of fresh) freshPerDate.set(e.date, (freshPerDate.get(e.date) ?? 0) + 1);
+  const usedBefore = await dailyUsed(db, userId, accountId, [...freshPerDate.keys()]);
+  for (const [date, n] of freshPerDate) {
+    if ((usedBefore.get(date) ?? 0) + n > RECRUIT_DAILY_PULL_LIMIT) throw dailyLimitError(date);
   }
 
   const updatedAt = new Date(now).toISOString();
@@ -302,18 +319,37 @@ recruit.post("/api/recruit/pulls", async (c) => {
     };
     return { kind: "event", id, updatedAt: now, payload: JSON.stringify(data) };
   });
-  let accepted = 0;
+  const written = new Set<string>();
   if (records.length) {
     await enforceQuota(db, userId, records);
-    const upsert = db.prepare(UPSERT);
-    const results = await db.batch(records.map((r) => upsert.bind(userId, r.kind, r.id, r.updatedAt, userId, r.payload)));
-    for (const res of results) accepted += res.meta.changes ?? 0;
+    const insert = db.prepare(INSERT_PULL);
+    const perDate = JSON.stringify([...freshPerDate].map(([date, n]) => ({ date, n })));
+    const ids = JSON.stringify(records.map((r) => r.id));
+    const results = await db.batch(
+      records.map((r) =>
+        insert.bind(userId, r.id, r.updatedAt, r.payload, accountId, RECRUIT_DAILY_BANNER_ID, ids, perDate, RECRUIT_DAILY_PULL_LIMIT),
+      ),
+    );
+    results.forEach((res, i) => {
+      if (res.meta.changes) written.add(records[i].id);
+    });
+    if (written.size < records.length) {
+      // Câu không ghi: hoặc event cùng key vừa được ghi song song (trùng), hoặc cả lô bị điều kiện trần ngày chặn.
+      const { results: stored } = await db
+        .prepare("select id from recruit_records where user_id = ? and kind = 'event' and id in (select value from json_each(?))")
+        .bind(userId, ids)
+        .all<{ id: string }>();
+      const present = new Set(stored.map((r) => r.id));
+      const blocked = fresh.find((e) => !present.has(e.id));
+      if (blocked) throw dailyLimitError(blocked.date);
+    }
   }
   const lastDate = events[events.length - 1].date;
+  const used = await dailyUsed(db, userId, accountId, [lastDate]);
   return c.json({
-    accepted,
-    duplicates: events.length - fresh.length,
-    events: events.map((e) => ({ key: e.pull.key, id: e.id, date: e.date, duplicate: seen.has(e.id) })),
+    accepted: written.size,
+    duplicates: events.length - written.size,
+    events: events.map((e) => ({ key: e.pull.key, id: e.id, date: e.date, duplicate: !written.has(e.id) })),
     daily: { date: lastDate, used: used.get(lastDate) ?? 0, limit: RECRUIT_DAILY_PULL_LIMIT },
     cursor: await maxRev(db, userId),
   });

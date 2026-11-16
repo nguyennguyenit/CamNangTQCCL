@@ -69,15 +69,6 @@ tokens.post("/api/tokens", async (c) => {
   const now = deps.now();
   const db = c.env.DB;
   await consumeRateLimit(db, "token_create", user.id, now);
-  const active = await db
-    .prepare(
-      "select count(*) as n from api_tokens where user_id = ? and revoked_at is null and (expires_at is null or expires_at > ?)",
-    )
-    .bind(user.id, now)
-    .first<{ n: number }>();
-  if ((active?.n ?? 0) >= API_TOKEN_MAX_ACTIVE) {
-    throw new ApiError(409, "token_limit", `Tối đa ${API_TOKEN_MAX_ACTIVE} token còn hiệu lực; thu hồi bớt token cũ`);
-  }
   const token = generateToken();
   const row: TokenRow = {
     id: deps.newId(),
@@ -89,12 +80,18 @@ tokens.post("/api/tokens", async (c) => {
     expires_at: ttlDays === null ? null : now + ttlDays * DAY_MS,
     revoked_at: null,
   };
-  await db
+  // Kiểm trần ngay trong câu ghi: hai request song song không cùng qua được (D1 ghi tuần tự từng câu).
+  const { meta } = await db
     .prepare(
-      "insert into api_tokens (id, user_id, name, token_hash, hint, scope, created_at, expires_at) values (?, ?, ?, ?, ?, ?, ?, ?)",
+      "insert into api_tokens (id, user_id, name, token_hash, hint, scope, created_at, expires_at) " +
+        "select ?, ?, ?, ?, ?, ?, ?, ? where (select count(*) from api_tokens " +
+        "where user_id = ? and revoked_at is null and (expires_at is null or expires_at > ?)) < ?",
     )
-    .bind(row.id, user.id, row.name, await hashToken(token), row.hint, row.scope, row.created_at, row.expires_at)
+    .bind(row.id, user.id, row.name, await hashToken(token), row.hint, row.scope, row.created_at, row.expires_at, user.id, now, API_TOKEN_MAX_ACTIVE)
     .run();
+  if (!meta.changes) {
+    throw new ApiError(409, "token_limit", `Tối đa ${API_TOKEN_MAX_ACTIVE} token còn hiệu lực; thu hồi bớt token cũ`);
+  }
   return c.json({ token, item: view(row) }, 201);
 });
 

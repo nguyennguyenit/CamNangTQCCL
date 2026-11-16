@@ -105,6 +105,14 @@ describe("token API cá nhân: quản lý", () => {
     expect((await create(h, "bob")).status).toBe(201);
   });
 
+  it("tạo song song sát trần: chỉ một request qua, không vượt trần", async () => {
+    const h = createHarness();
+    for (let i = 1; i < API_TOKEN_MAX_ACTIVE; i++) await created(h);
+    const statuses = (await Promise.all([create(h, "alice"), create(h, "alice")])).map((r) => r.status).sort();
+    expect(statuses).toEqual([201, 409]);
+    expect(rows(h)).toHaveLength(API_TOKEN_MAX_ACTIVE);
+  });
+
   it("thu hồi chỉ token của mình; token người khác/không có -> 404; thu hồi lại giữ mốc cũ", async () => {
     const h = createHarness();
     const { item } = await created(h);
