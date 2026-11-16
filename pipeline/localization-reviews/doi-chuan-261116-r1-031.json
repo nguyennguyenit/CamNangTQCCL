@@ -1,0 +1,487 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261116-r1-031",
+ "reviewerSession": "reviewer:Rv261116-r1-031",
+ "items": [
+  {
+   "entityId": "recommended:s-23f6d4c106a9bb349147ec7b06420cbbd348d1d3a50a6ae37759120adfd1d1ee/s7-wu-wu-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c947005ccac1300cb2c5cf3f38bf2a052cc720e6703a2223e72ca18e5bd8e91a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "65de69611c1742330c738f4a3b545addc4d22b9aca2d1b26c07dd585775c122a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-23f6d4c106a9bb349147ec7b06420cbbd348d1d3a50a6ae37759120adfd1d1ee/s7-wu-wu-qiang",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "47a54df649fddc9abcd3b8e75e04c7b3d6e0c9d4f40e6965ab8141266eb1c17c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "560bd57feef4b181c9a9780974e66e6a90222d6646fe35cec68e7bb77f277afc",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-23f6d4c106a9bb349147ec7b06420cbbd348d1d3a50a6ae37759120adfd1d1ee/s7-wu-wu-zhong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e9aeebcfcece4aaf0680364dbe5915ac4377d80f7ed7a2cfb225c1e07a07d40d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f4055c508ba1f4213500289aaed542ea9d46d08b4e5d99fd4d30ca9eef451e42",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-huaxialv",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "9c1b25c897fce4ac038eca079f2df325d0d9fe0ad999074754db7f4e37232941",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "8ef6612dbc9f5a8be458fe41108f0dc55e9686cc3896a9dfb02bb207f8d3377f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-lv-tai-guo",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4e544e4250eb2995f5cade826958e5c06664a699065910de53e4717c8725633d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "ff4c52db959e69317566a7e8bf5fff51fcee47eaa3506e9ee5398510c342db56",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-lv-tai-zuo",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a5899ff8f8ee57aa5f2a148e6bc169f75866c954d9edcda7ce919d0baf13aa83",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "a8b1bd53dac4bd5589a306295cddeef944b257a3ba2bdd6c80da52bf910bcabd",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-lvbu-baima",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "cf34807b3e0eb06f7030d913a9f05968ff04fa140afeae20e7480091b0bb785e",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "434a7b745fc1ef1e3c7193e3da0a1864256154e9dd97555936492ff7020e4884",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-taishi-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "cece3f918199882ca070063380f33e5aff095fd159ca3af9ccc9a1791dc95dc5",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3089d8f0b037b40f743ed834b14c63f5793462c4e684c3721bb2abbfc55f5f0a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-yuanshao-baima",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2fe60471977043bdcd4046b94eb68db604a00726003530a454a388aa6b59e04e",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "9c4da06a2c56c621f81628088f2eaa7108271822e91397069a6f7b9b5020d246",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-yuanshao-bapi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0f2d8b943777acca93e79daf10f00cda98106d30f91c7baaee0777acf71ee24a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "73d0489a7b06c5e7b75106834d8f896b66f8b0675c7d79b66f9431f3ee586182",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-qun-yuanshao-wudang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f92ec77b0580183cde5cee244f0bb1faf5cd0bf2cba66195e4b16580ddc3ad69",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "2d11b55b56176d86cc3dcb8438a739253e0e71ae7390c942914bd9352c205863",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-da-shu-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "029837a94dffc05fd04c2e3c2950c7ef273e9b2270dc8db5f61c9317cca6c213",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "8832bedd74b12c2e7b864a9763172c25324cc1abef1f310f6bfe7c4aa3d6c7b0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-da-wuhu",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "97d7689d51846a35bbc1b824f633486857cb5a0ec5cf81c47aeaadcd4db6b8b8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "1aba7fa0af449fff9a10afea200874171e3380434a0c484f2c1673af31bfff65",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-fazheng-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ce7c88389524af05840f64aca9701c6b51f65c5874dd320038041699d2e1fa8a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "fd7f45a917dd6b0ede105e277f34cde29c6f2fc1e1f071c87c8be05b222ab40e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "9fc2fdd81a51808375e889587c3e3a4f1a3861f30a17686bc9f12562278b26e5",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "d831d277b46d0ab3160efb4757c913608343abdb9011a64f6ee1e141ca8b77f7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-machao-shu-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3377d5dfbec1e4187fefe0bf9dd6f8fd6a54cf0788365ffa39f3e470f18b4750",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3b06fd29a9931e4c761cf44bb1a73c9446e00d72917ec52e09f7fb30813ea321",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-machao-wuhu",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d8cf7a61d971573292e827a007b00af02b21b4ace4e742d59cead74f4e6767c0",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "61659eb534721c3b82249dd7227f33e49c11ae450555b0dfc9d6edd111acd738",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-shun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e633d4d89689191b330a12ac4a7c7939314308dca5c70597f5f6fd059e9472bd",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "c76d5c1ae313c5ecd2c5ffae53025c3d978fed9b3722b2132d022f464709bcb4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-taoyuan",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "6a8ab985324676012ed7da6aa7e6b3bf428bb783f0a7cfedd846d37800a7214c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "c074fc632567433ff943cd54392cbaaa7782095c3eea6557a5374bd85a0fbcff",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-tianxiadiyi-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3296dd392af9bdc2eb9dda47de6951ff130197f9591c8fd9c5abab934133401e",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3ff1109f6ff9953e711b740a47ec514263554f158ba14c6ad3dffd3095ffd9d4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-wei-taoyuan",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4ac0aabab88f7c54765e5ac2dccff0aa50b42f70c90371153538395fd173c40f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4c2d491e543e209ecc8cae0b15ab69de6c50481365bf5318b9c001db352b7288",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-xiao-wuhu",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e6452073cad827db7b3662ef199f81d32e7889919ceb0e7425a6feb62777f923",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "ba51950d66e15166523fbf05b34b54e084b0b22dbd7abbd38cd0156a5afd8c74",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wei-da-wei-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d55d0d93aa97b54c7a61279c7ae2bfbc8eb51e35bca61e017091396ec3df9acb",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f8f2827a82b42ba7c3a6558d71c541e2627c2726babcaa33b3ec78a029c90b47",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wei-qihu-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "31252bef1efbdd545a4b11077a5b65217996434fe98335b5a604654fe7841aad",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "d1b7063ec0f384e8b9715cdda629b94e152fac4fe555c3627b0a0f28d1b42760",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wei-yuejin-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d3cb3bc03f1b023b1c4ef1b55c16e546e11475d879dee9ef2e372db149f374db",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "b0abf68dba7f85c41952d0c8f525141f0f61af625fcf562a1afc8aea0eaead3a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-chibi-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0880ec2bc4f55b10ba96a5e7c370d78b2ed178c0834fc448962fd23bfeebc1c4",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "27fc79cf81fda2e4fd79a74a0279e502a0adeeb0b36b4c109493fa3479150eea",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-da-dudu",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "10d5091e5abe01b8676841f4032eefd098ba7cd1dedd7824aad53bbc13f0c96f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "512c59acaad2e0ff33b1eebdc09ef23e5cdb1275a31ab6d4da04ddebb8980d05",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-da-wu-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2fe3695a6bf16ccc06c82271958b1eb998d5a64662e9b1d45efd158e7617da1a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "d2a594e79c9e32aaffe13e74181d22d3c0dcd6493fca59b570b52c841a9e1717",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-gan-tai-cheng",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "877ae367ee0046fee569370e87fdc32e4877a8f9a8c7c93cbdbddb5a369b60f2",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "a7a0ffab0cb49c1e0e03ac0e576cdac4d079dde0ab1beb20aff465041ce004b5",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-huanggai-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "74f36ba8c6a1e823aa159a04d57d2ec1babee269c0b78fef941d6ecc0ed864fd",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "80b8b204655c6aa893ecde0a0c293e5136569e3fc8a9fe2ff4be46f5a74dd8e2",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-wu-luxun-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "cf7058dbfb7f7bf763473eadf85003968db3af459e58150a6af29aba0f1d391d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4649991049883a3ce792cc849b04d634413717df67d2d04470a6ac94be30f96b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-qun-gong-zhujun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d56f034d88985bf33879b626a8171fcf3bd29b241dca9fa10c7c847ffa7bebcc",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4f3ea4469f3c0a6223f9cc6807c2a786d0f9907c1eb889b7f3da283899c3d4a1",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-jia",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "73dc7f64f7d78c5414c73d82a8ee11377700ceaed53113dc6d4df804ad75045c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "08665e5605e35c57ddca4a6212eaddbc330584900cd74f8a49d6b27fd7810a86",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-lu",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "00de6348a2ecc8e0ea1f2fc8de805789b5bdcafca240cf2bdb93cbe582e079dc",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "5581814810d08ddbbec7aec0a3389ed19c805fd53d933bc1e94bc9ef98fc8dc1",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-lu",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "417f9430eecef5c797f8d214d834cd1128f0e87c99a5a146de5328325e47c2e1",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "2e8281987e0b9abab398d8c29a7c41dbd0fc4a0064312449dee4863a4505219b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-lu",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "ae4193fd4ca8cb9437b291b884ec16e10ebd0ea5bfb7e0baeb7e844e2b6de6cd",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "2e8281987e0b9abab398d8c29a7c41dbd0fc4a0064312449dee4863a4505219b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-san-shi-lv",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ce28d97fc03f733adbe8e294957a8238b43f5235af6ae5cbf2e7b687831e9a4b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "68e300cfcd7a97652a71f422e766a4435c60469c3f3730c2d19d1e54c3ba6cdb",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-qun-wufeng-qun-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "87cd3bfe4355e56eda491b8d37118bd50780fbfae96c6d0f8ef09755f90117ef",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f74d66febbc072d07b20bcaa832890f8ed21111efd0cbedaf81559cb50d9b0a1",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-baotou-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b4170521f31f16b0003c41cb308959365bf667a1d689c7f64885b76dd3c7987c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "deb5f8fff4eb5a49e67f0dfdb837b93d8dbc7f6e134afd615f094636dbaa91ab",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-hedan-zhang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ca38f11f1e9f38acb5c9474778deb107768744df69abb75b696b3ec25788f12f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "8ec5a24891ca3153ea4cf576c1014efacc0f761ca8c2313d474266a7e961d527",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-qilin-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bd2ccec7ab4fbb89b31e56e7c5e1fb6c5b397d5bed9ecae0ed950a57a2fe40de",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f49d055b716390f794e8b86c9e2fa7fbc919b59112b8c5979c390637ee3c9a2b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-shu-zhi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "36a88701156cf6392c664613972097b1a4df18bf99fbbce24c305c7fb16f8e03",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "6f66502b40bf919cf87931c996927f01654629ea68088693f2839419deccac2c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-taoyuan-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3145c64f595bef2f836bee3dd403462d739ba6ada91266e059b810300407d29d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "ee651d4d8eaf68b5a6a4e6841834670da70c83d3fe24f9589b54d2bf7678e874",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-shu-wuhu-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c93765558023b9818e45cae48fffffde72fe35ab6ee79106c709f44b4526871c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "88201140f9ba8a0bf72f24d5051a613bb066fbb0c6f0476488b99767120a297c",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-baotou-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d97af88911576a0eb06c651a5dc481bdc52acfc472f4ac08c43f8d5dd79149a9",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "1c62635878d162b983cf942313bec59c3a7d8fe750d159628ebeba888cc3fc90",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-fa-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3a8fc74b2467f5f07d7a1f840c306d397e3fb9153a385fea19d7d9de7dd8d8c4",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "e40ad1264660d6b3fe69afebc6bb096ea49269148351412f58b0aae773d42980",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-fa-dun",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "c4b5b9fbbb6e3e2c9afdfe956c93021fdc53af7e2e92b7504b6b904ec8518f64",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "20cf209789fd57e3872a6b544dd3d2b3f2671972cacf7a06294f6d29698c1df8",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-fa-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "188ddbd33d52d5a2cb5e9031c16eafb742a751728a644dc1500b3f89f43eff80",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "64c3f7281316e60634cfc9f39026a2cf32a89d6e5cef913ea15dc6707a1e8197",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-sima-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ee54092d6e57c62ab75298fbb9233478721be413af74066de4b1746e56b47b61",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "626797afe65714ea7c0be9c2240344eb9f33d8a54b81dff9aa898f12ffc9aea0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-traditional-baotou-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "17aa16d9d001111462c8b47aacee23ff5d8a3a6621d77c117f8d56c449b6d568",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "1905dbe749448247832f2fb8868c6c988261bc1bb0c5c2b4ffb24785dc14baa2",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-traditional-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "aacfcd81907fb348cef15b67be27a4479634ff65474a7f0586a7d1d11d079ca6",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "37fe1535770096b5a7a9bbf9d4132689db7a7b25694a03e8eaa2dd7847f03c91",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-wu-mou-chen",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "649b09e88ab1329fe98b27a623ecb9cfec718ed897fdd6753fa123f31d2802ef",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "615cefdc3799fe0162dbfa0a163e7dc7342c3d2fab0f3bc9bf14082b119701b0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-xiahouyuan-solo-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2d6a7b7e5971f0cfbaee8e5d1ccea95908b8e39835fa843c32f713717ef6ddd8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "aebcfe8e8765d823d9360298e45213927bc164f386a13037ccd46dccd4bc8611",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wei-zhangliao-solo-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2ae4859d951c0b08e923c03526b819a8ea18252b3dcf3e71a786174a9595936a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "0247253fd93c29eae9b1a5de81ba96cf3f4c2f18aab34ef83268f3a90e30ad42",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-caochuan-rougong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7cb7dc7de6efbe2fe701d9f61f2657a5c55fba438c070e03db982cdaa845209c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "381c3c1baccbbac416aff95b4ff7e4367e7902e702a9e1daeb160f45f3948baa",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-dudu-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "acb39d6581146e850522e5be83b2556c7c2d93fc81b4cbb3cff85607b42ddd84",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3c3f1b9ee1d5bd48ce55b08e098ea3047a75fb1c6dce71e4cdf73ee06d658da9",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-dudu-zhuanyou",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ecee84a4d49e22879741969e7e488d83e1f5398c1a03c232a3a7a106e259aae6",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "75632cceb779c1ff19e5e1a14aa13ec6e4a2c539689f39e11b3ee5a0e409b670",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-gan-tai-cheng",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "6469e7dbacfa8a7c8d3e3c78f0850dca8cc8807c2bb442d1945333e56e6a2ac9",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "fcf966ca7c98d6e1fce47a06aec488b0d9cc348922a3008e2ac0ae83d5ed91a0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-huchen-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4e09938b7d80a8495c4762edfc5e9b7ec2e60b62f415e0d0fdb7b4c859665b7f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4889638dd19b41124c7777d5f07e36baee820a2ae055fb35a20aa20e2c0ca37f",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-3385d6dee6530739f6ee47fa9bb8ef2ee95329b6f9baab93926710e9f58d121a/s11-wu-jinfan-zei",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c8601af46155a39e150888511978d238afea8ff00647af42e97b6e36731b44c1",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3ec08596a14cc933f803e9ca6a6cdb7a9e99d89954578105045361320e096fe9",
+   "verdict": "accepted"
+  }
+ ]
+}
