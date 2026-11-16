@@ -99,7 +99,7 @@ const otherSeasons = section === 'team-chuan' ? (await seasonPages()).pages : []
   {otherSeasons.length > 0 && (
     <nav class="other-seasons" data-other-seasons aria-labelledby="other-seasons-heading">
       <h2 id="other-seasons-heading" class="other-seasons-heading">{t('Các mùa khác', '其他赛季')}</h2>
-      <p class="other-seasons-lead">{t('Đội chuẩn của các mùa cũ, mỗi mùa một trang.', '往期赛季的推荐阵容，每个赛季一页。')}</p>
+      <p class="other-seasons-lead">{t('Đội chuẩn của các mùa khác, mỗi mùa một trang.', '其他赛季的推荐阵容，每个赛季一页。')}</p>
       <ul class="other-seasons-list">
         {otherSeasons.map((season) => {
           const name = seasonDisplayName(season, locale);
