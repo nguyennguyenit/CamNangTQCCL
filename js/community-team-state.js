@@ -1,7 +1,7 @@
 // Hàm thuần của trang Đội cộng đồng (không đụng DOM, không gọi mạng): kiểm form → body API, chọn phe
 // từ kết quả AI, đọc chế độ từ query, gộp trang danh sách, khối cảnh báo đội tương tự.
 
-import { localePath } from './i18n.js';
+import { DEFAULT_LOCALE, isSiteLocale, localePath, pick } from './i18n.js';
 
 /** Binh chủng mà API chấp nhận (thứ tự hiển thị). */
 export const TROOPS = Object.freeze(['cung', 'khiGioi', 'ky', 'thuan', 'thuong']);
@@ -67,7 +67,7 @@ export function teamPayloadFromDraft(draft, fields) {
     troop: fields.troop,
     playstyle,
     ...optional,
-    lang: fields?.lang === 'zh' ? 'zh' : 'vi',
+    lang: isSiteLocale(fields?.lang) ? fields.lang : DEFAULT_LOCALE,
     uploadIds: [...uploadIds],
   };
 }
@@ -122,7 +122,9 @@ export function similarNotice(count, hasMore, locale) {
   const n = Number(count) || 0;
   if (n <= 0) return null;
   const shown = hasMore ? `${n}+` : String(n);
-  return locale === 'zh'
-    ? { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' }
-    : { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' };
+  return pick(
+    locale,
+    { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' },
+    { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' },
+  );
 }

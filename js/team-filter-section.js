@@ -2,7 +2,7 @@
 // chế độ Thẻ / Thẻ gọn / Bảng). Trên điện thoại, vùng nhóm lọc thu gọn sau nút "Bộ lọc".
 
 import { el, t, FACTION_CODE, coexistGroupLabel, seasonCoexistGroup, sourceLabel } from './render.js';
-import { L, currentLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale } from './i18n.js';
 
 /** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
 export function coexistGroupKey(group, index) {
@@ -187,12 +187,13 @@ const chevron=()=>[svgNode('polyline',{points:'6 9 12 15 18 9'})];
 const filterIcon=()=>[svgNode('line',{x1:4,y1:7,x2:20,y2:7}),svgNode('line',{x1:7,y1:12,x2:17,y2:12}),svgNode('line',{x1:10,y1:17,x2:14,y2:17})];
 
 const cjk=/[\u3400-\u9fff\uf900-\ufaff]/u;
-const zh=()=>currentLocale()==='zh';
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText=()=>!contentLocaleIsVietnamese(currentLocale());
 const safeLabel=value=>typeof value === 'string' && value.trim() && !cjk.test(value)
   ? value.trim()
   : 'Nội dung tiếng Việt chưa sẵn sàng';
 /** Tên mùa không kèm số đội (chip tóm tắt của Gợi ý đội). */
-export const seasonNameText=item=>zh()
+export const seasonNameText=item=>sourceText()
   ? [item.displayCode,item.nameRaw].filter(Boolean).join(' · ') || item.label || item.sourceSeasonId
   : item.displayCode && item.displayNameVi
     ? `${item.displayCode} · ${item.displayNameVi}`
@@ -203,7 +204,7 @@ export const seasonNameText=item=>zh()
  */
 export const seasonOptionText=(item,currentSourceSeasonId)=>`${seasonNameText(item)}${item.advertisedCountRaw != null ? ` (${item.advertisedCountRaw})` : ''}${currentSourceSeasonId && item.sourceSeasonId===currentSourceSeasonId ? L(' · Hiện tại',' · 当前') : ''}`;
 // Bản zh hiện đúng tên mùa nguồn nên không cần chú thích tên dịch.
-export const seasonOptionTitle=item=>zh() ? null : [
+export const seasonOptionTitle=item=>sourceText() ? null : [
   item.label && !cjk.test(item.label) ? item.label : null,
   item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
 ].filter(Boolean).join(' · ') || null;
@@ -306,7 +307,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   }
 
   // Bản zh: giá trị nguồn chữ Hán giữ nguyên, giá trị tiếng Việt của đội cũ đổi sang nhãn chữ Hán.
-  const displayLabel=(kind,value)=>zh()
+  const displayLabel=(kind,value)=>sourceText()
     ? (typeof value === 'string' && cjk.test(value) ? value : legacyLabelZh(kind,value) ?? String(value ?? ''))
     : safeLabel(registry.displayLabels?.[kind]?.[value] || value);
 
@@ -329,7 +330,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const counts=new Map();
     for (const row of scopeRows) for (const value of referenceFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
     for (const value of state.filters?.[key] || []) if (!counts.has(value)) counts.set(value,0);
-    const locale=zh() ? 'zh' : 'vi';
+    const locale=currentLocale();
     if (key==='tier') return [...counts].sort(([a],[b])=>(SOURCE_TIER_ORDER.indexOf(a)<0?999:SOURCE_TIER_ORDER.indexOf(a))-(SOURCE_TIER_ORDER.indexOf(b)<0?999:SOURCE_TIER_ORDER.indexOf(b)) || a.localeCompare(b));
     return [...counts].sort(([a,countA],[b,countB])=>countB-countA || chipText(key,a).localeCompare(chipText(key,b),locale));
   };
@@ -369,7 +370,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const code=key==='faction' ? FACTION_CODE[registry.displayLabels?.faction?.[value] ?? value] : null;
     return el('button',{
       type:'button',class:`fchip ${key}-chip${code ? ` f-${code}` : ''}${selected.includes(value) ? ' on' : ''}`,'aria-pressed':String(selected.includes(value)),
-      title:zh() || chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
+      title:sourceText() || chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
       onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]}),
     },[
       el('span',{class:'fchip-check','aria-hidden':'true'}),

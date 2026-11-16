@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { id, locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const page = await lookupItemPage(id, locale, Astro.site!);
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---

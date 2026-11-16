@@ -12,7 +12,7 @@
 
 import { t, iconTree, svgTree } from "./render.js";
 import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue, zhTranslatedNote, zhTranslatedTextNote } from "./lookup-detail.js";
-import { L, currentLocale, localePath } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 import { portraitTree } from "./hero-portrait.js";
 import { lookupHref } from "./lookup-ids.js";
 import { tacticDisplayName } from "./recommended-reference-state.js";
@@ -84,7 +84,7 @@ function factRow(labelVi, textVi, className = "lookup-fact") {
  */
 export function createProfileRenderer({ group, openInPage, onClose, summaries = null, rawNames = async () => null }) {
   const labels = lookupGroupLabels();
-  const zh = currentLocale() === "zh";
+  const zh = !contentLocaleIsVietnamese(currentLocale());
 
   /**
    * Link/nút mở một mục khác (quan hệ, mục con). Trong hộp thoại, mục cùng nhóm là nút mở tại chỗ (gắn sự kiện qua

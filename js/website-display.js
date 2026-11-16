@@ -1,4 +1,4 @@
-import { L, currentLocale, normalizeLocale } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, pick } from "./i18n.js";
 import { createTacticDisplayTable } from "./lookup-ids.js";
 
 const HASH = /^[0-9a-f]{64}$/;
@@ -74,7 +74,7 @@ export function localizeData(publication, sourcePath, source, locale = currentLo
     throw new Error(`${L("Dữ liệu chưa được xác minh", "数据尚未验证")}: ${sourcePath}`);
   }
   const localized = structuredClone(source);
-  if (normalizeLocale(locale) === "zh") return localized;
+  if (!contentLocaleIsVietnamese(locale)) return localized;
   const prefix = `data:${sourcePath}:`;
   for (const [key, value] of Object.entries(publication?.values || {})) {
     let location;
@@ -156,7 +156,7 @@ const blank = value => typeof value !== "string" || !value.trim();
  * `tacticSlotsVi`/`tacticSlotsRaw`, `textVi`/`textRaw`…
  */
 export function displayText(vi, raw, locale = currentLocale()) {
-  const [first, second] = normalizeLocale(locale) === "zh" ? [raw, vi] : [vi, raw];
+  const [first, second] = pick(locale, [vi, raw], [raw, vi]);
   return blank(first) ? second : first;
 }
 
@@ -190,7 +190,7 @@ export function createRawNameResolver(...dicts) {
 
 /** Tên hiển thị theo ngôn ngữ: bản Trung dùng tên Hán gốc khi tra được, bản Việt giữ nguyên. */
 export function localName(viName, resolver, locale = currentLocale()) {
-  if (normalizeLocale(locale) !== "zh" || typeof resolver !== "function") return viName;
+  if (contentLocaleIsVietnamese(locale) || typeof resolver !== "function") return viName;
   return resolver(viName) ?? viName;
 }
 
@@ -202,7 +202,7 @@ export const RAW_NAME_SOURCES = Object.freeze(["data/heroes-dict.json", "data/ta
  * qua `loadBytes` (bộ nạp dùng chung của trang, nên nguồn đã tải cho Tra cứu không bị gọi mạng lại).
  */
 export async function loadRawNameResolver(loadBytes, locale = currentLocale()) {
-  if (normalizeLocale(locale) !== "zh") return null;
+  if (contentLocaleIsVietnamese(locale)) return null;
   const dicts = await Promise.all(RAW_NAME_SOURCES.map(async path => JSON.parse(decoder.decode(asBytes(await loadBytes(path))))));
   return createRawNameResolver(...dicts);
 }

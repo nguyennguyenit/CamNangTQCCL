@@ -1,6 +1,6 @@
 import { normalizeText } from './filters.js';
 import { canonicalTeamView, resolveTeamView } from './team-view.js';
-import { L, currentLocale, normalizeLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale } from './i18n.js';
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
 let zhNameResolver = null;
@@ -28,7 +28,7 @@ export function setTacticDisplayName(resolver) {
  * không tra được thì giữ nguyên; bản zh giữ nguyên (đã có đường tên chữ Hán riêng qua `sourceName`).
  */
 export function tacticDisplayName(value, raw = null, locale = currentLocale()) {
-  if (!tacticDisplayResolver || normalizeLocale(locale) === 'zh') return value;
+  if (!tacticDisplayResolver || !contentLocaleIsVietnamese(locale)) return value;
   return tacticDisplayResolver(value, raw);
 }
 
@@ -38,7 +38,7 @@ export function tacticDisplayName(value, raw = null, locale = currentLocale()) {
  * vào trang zh); không còn phần nào thì trả chuỗi rỗng để caller hiện ô trống "—".
  */
 export function sourceName(value, locale = currentLocale()) {
-  if (typeof value !== 'string' || !zhNameResolver || normalizeLocale(locale) !== 'zh' || CJK_TEXT.test(value)) return value;
+  if (typeof value !== 'string' || !zhNameResolver || contentLocaleIsVietnamese(locale) || CJK_TEXT.test(value)) return value;
   const parts = value.split(/(\s*[·/+]\s*)/u);
   const kept = [];
   for (let index = 0; index < parts.length; index += 2) {
@@ -58,7 +58,7 @@ const LEGACY_LABEL_ZH = {
 
 /** Bản zh: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
 export function legacyLabelZh(kind, value, locale = currentLocale()) {
-  if (normalizeLocale(locale) !== 'zh' || typeof value !== 'string') return null;
+  if (contentLocaleIsVietnamese(locale) || typeof value !== 'string') return null;
   const table = LEGACY_LABEL_ZH[kind];
   return table && Object.hasOwn(table, value) ? table[value] : null;
 }
@@ -191,7 +191,7 @@ function searchTerms(row,labels) {
 // phần của khóa cache. Bản zh thêm tên chữ Hán gốc và nhãn phe/binh chữ Hán để tìm bằng tiếng Trung.
 const searchBlobs = new WeakMap();
 function searchBlob(row,labels) {
-  const resolver=currentLocale()==='zh' ? (zhNameResolver || 'zh') : null;
+  const resolver=!contentLocaleIsVietnamese(currentLocale()) ? (zhNameResolver || 'zh') : null;
   const cached=searchBlobs.get(row);
   if (cached && cached.labels === labels && cached.resolver === resolver && cached.display === tacticDisplayResolver) return cached.blob;
   const terms=searchTerms(row,labels).filter(Boolean);

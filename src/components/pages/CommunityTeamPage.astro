@@ -16,7 +16,7 @@ import { HREFLANG, type SiteLocale } from '../../lib/locale-routes';
 import { seasonLabel, troopLabel } from '../../../js/community-team-data.js';
 import { portraitTree } from '../../../js/hero-portrait.js';
 import { treeToHtml } from '../../../js/view-tree.js';
-import { localePath, pick, withLocale } from '../../../js/i18n.js';
+import { localePath, normalizeLocale, pick, withLocale } from '../../../js/i18n.js';
 
 interface Props {
   team: CommunityTeam;
@@ -24,7 +24,7 @@ interface Props {
 }
 
 const { team, locale } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const model = await communityTeamPageModel(team, locale, Astro.site!);
 const authorName = teamAuthorName(team, locale);
 const textLang = HREFLANG[team.textLang];
@@ -42,7 +42,12 @@ const analysisLabels: [keyof CommunityTeam['analysis'], string][] = [
   ['substitutes', t('Thay thế', '替补')],
 ];
 const analysis = analysisLabels.filter(([key]) => typeof team.analysis[key] === 'string' && team.analysis[key]!.trim());
-const langTitle = team.textLang === 'zh' ? t('Viết bằng tiếng Trung', '以中文撰写') : t('Viết bằng tiếng Việt', '以越南语撰写');
+/** "Viết bằng tiếng …" theo ngôn ngữ văn bản của đội (khóa) và ngôn ngữ trang (biến thể); mã lạ lùi về bản Việt. */
+const WRITTEN_IN: Record<SiteLocale, string> = {
+  vi: t('Viết bằng tiếng Việt', '以越南语撰写'),
+  zh: t('Viết bằng tiếng Trung', '以中文撰写'),
+};
+const langTitle = WRITTEN_IN[normalizeLocale(team.textLang)];
 // `portraitTree` là JS có tham số mặc định nên TS chỉ suy ra phần có giá trị mặc định; khai kiểu đủ ở đây.
 type PortraitOptions = { chinese: string; nameVi: string; iconUrl: string | null; className: string; alt: string };
 const portraitOf = portraitTree as unknown as (options: PortraitOptions) => Parameters<typeof treeToHtml>[0];

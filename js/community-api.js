@@ -2,7 +2,7 @@
 // Lỗi JSON `{error:{code,message}}` của server không bao giờ hiện nguyên văn: luôn đổi sang câu song ngữ
 // theo mã trạng thái, giống cách js/analyze.js chặn văn bản upstream.
 
-import { L, currentLocale, formatDate, localePath } from './i18n.js';
+import { L, LOCALE_LABEL, currentLocale, formatDate, isSiteLocale, localePath } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 
 /** Khoá localStorage ghi "có thể đang đăng nhập": trang thường chỉ hỏi `/api/me` khi có dấu này. */
@@ -348,10 +348,10 @@ export function avatar(user, className = 'cm-avatar') {
   return el('span', { class: `${className} cm-avatar-fallback`, 'aria-hidden': 'true' }, name ? name[0].toUpperCase() : '?');
 }
 
-/** Nhãn ngôn ngữ gốc `[VI]`/`[ZH]` của một văn bản trong kho dùng chung vi/zh; `null` khi không rõ. */
+/** Nhãn ngôn ngữ gốc `[VI]`/`[ZH]`… của một văn bản trong kho dùng chung mọi locale; `null` khi không rõ. */
 export function langTag(lang, className = 'cm-lang-tag') {
-  if (lang !== 'vi' && lang !== 'zh') return null;
-  return el('span', { class: className, dataset: { lang }, title: lang === 'vi' ? 'Tiếng Việt' : '中文' }, `[${lang.toUpperCase()}]`);
+  if (!isSiteLocale(lang)) return null;
+  return el('span', { class: className, dataset: { lang }, title: LOCALE_LABEL[lang] }, `[${lang.toUpperCase()}]`);
 }
 
 export function displayName(user) {

@@ -6,11 +6,11 @@
 // Đội hình, Phân tích, rồi chiến báo + bình luận; cột phải Ảnh đội + Đội tương tự. Ở bề rộng hẹp còn một cột và
 // thứ tự đổi theo artboard mobile (ảnh lên trước đội hình, đội tương tự xuống cuối).
 
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, htmlLang } from './i18n.js';
 import { avatar, displayName, timeNode } from './community-api.js';
 import { seasonLabel } from './community-team-data.js';
 import { el } from './render.js';
-import { langBadge, teamIcon, teamImageCount, teamImageUrl, troopPill } from './community-team-ui.js';
+import { langBadge, teamIcon, teamImageCount, teamImageUrl, troopPill, writtenInLabel } from './community-team-ui.js';
 
 export const ANALYSIS_FIELDS = [
   ['playstyle', () => L('Lối chơi', '打法')],
@@ -40,7 +40,7 @@ function detailHead(team, locale) {
   const head = el('header', { class: 'cm-team-detail-head' }, [
     el('div', { class: 'cm-team-detail-id' }, [
       el('p', { class: 'cm-team-kicker' }, season ? L(`Đội cộng đồng · ${season}`, `社区阵容 · ${season}`) : L('Đội cộng đồng', '社区阵容')),
-      el('h1', { class: 'cm-team-detail-title cm-team-heading', tabindex: '-1', lang: team.textLang === 'zh' ? 'zh-Hans' : 'vi' }, team.title),
+      el('h1', { class: 'cm-team-detail-title cm-team-heading', tabindex: '-1', lang: htmlLang(team.textLang) }, team.title),
       el('p', { class: 'cm-team-detail-meta cm-team-meta' }, [
         troopPill(team.troop),
         langBadge(team.textLang),
@@ -107,7 +107,7 @@ function analysisSection(team) {
     if (typeof text !== 'string' || !text.trim()) return [];
     return [el('div', { class: 'cm-team-analysis-item' }, [
       el('dt', {}, [label(), ' ', langBadge(team.textLang)]),
-      el('dd', { class: 'cm-team-text', lang: team.textLang === 'zh' ? 'zh-Hans' : 'vi' }, text),
+      el('dd', { class: 'cm-team-text', lang: htmlLang(team.textLang) }, text),
     ])];
   });
   if (!rows.length) return null;
@@ -116,7 +116,7 @@ function analysisSection(team) {
       el('h2', { id: 'cm-team-analysis-title', class: 'cm-team-section-title' }, L('Phân tích của tác giả', '作者分析')),
       el('p', { class: 'cm-team-section-note' }, [
         langBadge(team.textLang),
-        team.textLang === 'zh' ? L('Viết bằng tiếng Trung', '以中文撰写') : L('Viết bằng tiếng Việt', '以越南语撰写'),
+        writtenInLabel(team.textLang),
       ]),
     ]),
     el('dl', { class: 'cm-team-analysis' }, rows),

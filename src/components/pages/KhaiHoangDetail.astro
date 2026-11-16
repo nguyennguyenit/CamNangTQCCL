@@ -13,15 +13,17 @@ import type { SiteLocale } from '../../lib/locale-routes';
 type Props = KhaiHoangDetailProps & { locale: SiteLocale };
 
 const {entry, title, pageLabel, khaiHoangSha256, heroes, savePayload, locale} = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 // Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('khaihoang', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await khaiHoangDetailParts(entry, locale);
-const description = locale === 'zh'
-  ? `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`
-  : `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`;
+const description = pick(
+  locale,
+  `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`,
+  `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`,
+);
 const structured = teamDetailJsonLd({
   locale,
   site: Astro.site!,

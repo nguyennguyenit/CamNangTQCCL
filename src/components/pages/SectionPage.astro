@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { section, locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 
 /** Tiêu đề và mô tả của từng trang mục (chữ tác giả); đường dẫn là bản Việt, bản Trung thêm tiền tố `/zh`. */
 const PAGES: Record<SectionId, { path: string; title: string; description: string }> = {

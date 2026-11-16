@@ -3,10 +3,11 @@
 // `tactic-summaries.json` (ID) + corpus Tra cứu (tên theo ngôn ngữ). DOM ở `js/lookup-tactic-profile.js`.
 
 import { effectVersions, lookupDisplayName } from "./lookup-detail.js";
-import { currentLocale, normalizeLocale, pick } from "./i18n.js";
+import { contentLocaleIsVietnamese, currentLocale, pick } from "./i18n.js";
 import { barPercent } from "./unified-lookup.js";
 
-const isZh = (locale) => normalizeLocale(locale) === "zh";
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = (locale) => !contentLocaleIsVietnamese(locale);
 
 /** Giá trị theo cấp trong chữ hiệu ứng: "20→40", "5%→10%", "0.5 → 1.25%". */
 const LEVEL_RANGE = /\d+(?:\.\d+)?%?\s*→\s*\d+(?:\.\d+)?%?/gu;
@@ -32,7 +33,7 @@ export function tacticEffectSegments(text) {
  */
 export function tacticEffectVersions(record, locale = currentLocale()) {
   const revisions = Array.isArray(record?.lookup?.revisions) ? record.lookup.revisions : [];
-  if (!isZh(locale) && revisions.length && revisions.every((item) => typeof item?.textVi === "string" && item.textVi.trim())) {
+  if (!sourceText(locale) && revisions.length && revisions.every((item) => typeof item?.textVi === "string" && item.textVi.trim())) {
     const ordered = [...revisions.filter((item) => item.isCurrent), ...revisions.filter((item) => !item.isCurrent)];
     return ordered.map((item) => ({
       label: revisions.length === 1 && !item.effectiveDate ? null
@@ -40,7 +41,7 @@ export function tacticEffectVersions(record, locale = currentLocale()) {
       paragraphs: item.textVi.split(/\n+/u).map((part) => part.trim()).filter(Boolean),
     }));
   }
-  return effectVersions(isZh(locale) ? record?.effect : record?.effectViet)
+  return effectVersions(sourceText(locale) ? record?.effect : record?.effectViet)
     .map((block) => ({ label: block.labelVi, paragraphs: block.paragraphs }));
 }
 

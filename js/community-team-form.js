@@ -5,7 +5,7 @@
 // Không import từ community-teams.js (entry tự chạy); bước điều hướng sau khi gửi do `onSubmitted` lo.
 
 import { cellFromInput, draftFromRead, emptyDraft, normalizeTeamRead, sureCell } from './analyze-map.js';
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, pick } from './i18n.js';
 import { api, avatar, describeError, displayName, downscaleImage, liveStatus, unavailableNotice } from './community-api.js';
 import { TeamFormError, pickSide, similarNotice, teamPayloadFromDraft } from './community-team-state.js';
 import { datalistOptions, seasonLabel, troopLabel } from './community-team-data.js';
@@ -143,7 +143,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         ? heroPortrait({ chinese: record.chinese, nameVi: record.viet, iconUrl: record.iconUrl, className: 'cm-team-member-img', alt: '' })
         : el('span', { class: 'cm-team-member-blank' }));
       member.portrait.dataset.faction = FACTION_CODE[faction] ?? '';
-      const factionText = faction ? (locale === 'zh' ? FACTION_ZH[faction] ?? faction : faction) : '';
+      const factionText = faction ? pick(locale, faction, FACTION_ZH[faction] ?? faction) : '';
       member.eyebrow.textContent = factionText ? `${L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`)} · ${factionText}` : L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`);
       member.name.textContent = record ? lexicon.heroName(heroCell.id) : L('Chưa chọn tướng', '尚未选择武将');
       const cells = [heroCell, ...draft.heroes[heroIndex].tactics];

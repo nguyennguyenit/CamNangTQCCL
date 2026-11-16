@@ -29,7 +29,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const href = (path: string): string => localePath(path, locale);
 const num = (value: number): string => localeNumber(value, locale);
 
@@ -42,7 +42,7 @@ const copy = landingCopy(stats, locale);
 // ăn chung CSS — xem trước trông y như trang thật.
 const previews = await landingPreviews(locale);
 /** Vai trò viết tắt — cùng ba nhãn với thẻ danh sách (js/recommended-reference-render.js). */
-const PREVIEW_ROLES = locale === 'zh' ? ['主将', '副将1', '副将2'] : ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
+const PREVIEW_ROLES = pick(locale, ['CHỦ', 'PHÓ 1', 'PHÓ 2'], ['主将', '副将1', '副将2']);
 /** Khoá `data-role` của hàng tướng (CSS tô son nhãn "CHỦ" theo khoá này, không theo chữ hiển thị). */
 const ROLE_KEYS = ['CHỦ', 'PHÓ 1', 'PHÓ 2'];
 /** Tiền tố biến thể thành chip `pre` như thẻ danh sách; chữ Hán gốc viết liền (`SP貂蟬`). */
@@ -65,7 +65,7 @@ const metaParts = (team: (typeof previews)['team']) => [
 const storeButtons = [APP_STORE_LINK, GOOGLE_PLAY_LINK];
 const NEW_TAB = t('(mở tab mới)', '(在新标签页打开)');
 /** Tiếng Việt cách số và câu bằng dấu cách; câu tiếng Trung tự mang dấu phẩy mở đầu. */
-const joiner = locale === 'zh' ? '' : ' ';
+const joiner = pick(locale, ' ', '');
 
 // Hash cũ phải chuyển trước khi vẽ trang: nhúng nguyên hàm thuần của js/legacy-routes.js vào một
 // script inline chặn trong <head>. Listener `hashchange` phủ trường hợp dán link cũ khi đang ở `/`.

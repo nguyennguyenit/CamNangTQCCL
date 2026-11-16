@@ -10,7 +10,7 @@ import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
 import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from "./website-display.js";
-import { L, currentLocale, localePath } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 
 import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
@@ -99,11 +99,11 @@ function stripTrackingParams() {
  */
 function scenarioText(scenario) {
   if (!scenario) return '';
-  if (currentLocale() !== 'zh') return scenario.labelVi;
+  if (contentLocaleIsVietnamese(currentLocale())) return scenario.labelVi;
   const code = scenario.labelVi.split(' · ')[0].trim();
   return /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(code) ? code : scenario.id;
 }
-const rulesetText = rule => (rule && currentLocale() === 'zh' ? rule.id : rule?.label || '');
+const rulesetText = rule => (rule && !contentLocaleIsVietnamese(currentLocale()) ? rule.id : rule?.label || '');
 
 const RETIRED_REFERENCE_PARAMS = ['score', 'category'];
 function stripRetiredReferenceParams(pageSection) {

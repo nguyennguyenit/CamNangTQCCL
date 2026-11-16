@@ -24,7 +24,7 @@ import { buildConflictView } from "./roster-conflict-view.js";
 import { buildTacticRules } from "./team-recommend-engine.js";
 import { readRecommendedQuery, sourceTierLabel, tacticDisplayName } from "./recommended-reference-state.js";
 import { seasonNameText, seasonOptionText, seasonOptionTitle } from "./team-filter-section.js";
-import { L, currentLocale } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale } from "./i18n.js";
 import { createRawNameResolver, localName } from "./website-display.js";
 import { describeError } from "./community-api.js";
 import { boxes, toScanState } from "./roster-cloud-store.js";
@@ -159,7 +159,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const tsBox = el("div", { class: "ana-turnstile" });
   const tsStatus = el("p", { class: "ana-status err", role: "status", hidden: "" });
   // Bản zh hiển thị tên chữ Hán gốc; kho vẫn lưu tên Việt chuẩn nên chỉ đổi lúc vẽ.
-  const zh = currentLocale() === "zh";
+  const zh = !contentLocaleIsVietnamese(currentLocale());
   const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
   const tacticRules = buildTacticRules(tacticsDict);
   const tacticIdOf = createTacticIdResolver(tacticsDict);

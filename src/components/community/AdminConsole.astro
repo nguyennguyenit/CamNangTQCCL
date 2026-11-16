@@ -2,13 +2,14 @@
 // Nội dung trang /quan-tri/: đầu trang tĩnh (artboard Admin*); js/community-admin.js kiểm phiên, điền thẻ tài khoản
 // quản trị và dựng khung điều hướng các khu quản trị.
 import { pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
-  locale: 'vi' | 'zh';
+  locale: SiteLocale;
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 ---
 <section class="cm-page cm-admin" aria-labelledby="cm-admin-title">
   <header class="adm-head">

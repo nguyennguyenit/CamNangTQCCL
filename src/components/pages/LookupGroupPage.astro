@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { group, locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const entries = await lookupGroupEntries(locale);
 const current = entries.find((entry) => entry.group === group)!;
 const firstPage = await lookupGroupPage(group, locale);

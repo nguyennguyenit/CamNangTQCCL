@@ -7,7 +7,7 @@
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view, không `innerHTML`.
 
 import { t, iconTree, svgTree } from "./render.js";
-import { L, currentLocale, localePath } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, zhTranslatedNote } from "./lookup-detail.js";
 import { lookupHref } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
@@ -16,7 +16,8 @@ import { treeToDom } from "./view-tree.js";
 import { tacticCamNangView, tacticEffectSegments, tacticEffectVersions, tacticSourceLabel, tacticTroopFit } from "./lookup-tactic-view.js";
 
 const MISSING = "—";
-const zh = () => currentLocale() === "zh";
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
 const fieldByKey = (profile, key) => profile.fields.find((field) => field.key === key) ?? null;
 const hasValue = (field) => field && field.value !== null && field.value !== undefined && field.value !== "";
 const fieldText = (profile, key) => {
@@ -251,13 +252,13 @@ function camNangCards(view, record, from) {
       ]),
     ]) : null,
   ]);
-  const query = zh() ? record.chinese : record.viet ?? record.hanViet;
+  const query = sourceText() ? record.chinese : record.viet ?? record.hanViet;
   const teams = t("article", { class: "cam-nang-card" }, [
     t("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容")),
     t("ul", { class: "cam-nang-teams" }, view.representative.map((team) => {
       const href = representativeTeamHref(team, from);
       // Tên đội chỉ có bản Việt: bản zh dùng nhãn chung, tướng mang/mùa ở dòng phụ vẫn phân biệt từng đội.
-      const name = zh() ? "查看阵容" : team.name;
+      const name = L(team.name, "查看阵容");
       return t("li", { class: "cam-nang-team" }, [
         href ? t("a", { class: "cam-nang-team-name", href }, name) : t("span", { class: "cam-nang-team-name" }, name),
         t("span", { class: "cam-nang-team-score" }, team.score === null ? MISSING : String(team.score)),

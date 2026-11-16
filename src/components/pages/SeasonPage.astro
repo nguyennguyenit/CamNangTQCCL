@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { season, locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const { bodyHtml, source, teams } = await seasonPageParts(season.sourceSeasonId, locale);
 // Mã mùa luôn có trong tên trang: hai mùa có thể trùng tên Việt (S3 và PK-S7 đều là "Trận chiến Xích Bích").
 const name = seasonDisplayName(season, locale);

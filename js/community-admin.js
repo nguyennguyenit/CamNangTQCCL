@@ -10,7 +10,7 @@
 // Vai trò `root` thấy mọi khu; `moderator` (kiểm duyệt viên) chỉ thấy khu có `roles` cho phép, khu khác không dựng
 // và không gọi API. Server mới là nơi kiểm quyền; trang chỉ ẩn giao diện.
 
-import { L, currentLocale } from './i18n.js';
+import { DEFAULT_LOCALE, L, LOCALE_LABEL, SITE_LOCALES, currentLocale, htmlLang, isSiteLocale, normalizeLocale } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 import {
   api,
@@ -333,7 +333,7 @@ export function pagePath(page, lang) {
     : null;
 }
 
-const langLabel = (lang) => (lang === 'zh' ? '中文' : 'Tiếng Việt');
+const langLabel = (lang) => LOCALE_LABEL[normalizeLocale(lang)];
 
 export function formField(id, label, control, hint) {
   if (hint) control.setAttribute('aria-describedby', `${id}-hint`);
@@ -540,7 +540,7 @@ function openCommentsPanel(panel, { head }) {
           el('span', { class: 'cm-badge' }, langLabel(comment.lang)),
           pagePath(comment.page, comment.lang),
         ]),
-        el('p', { class: 'adm-body', lang: comment.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(comment.body || '')),
+        el('p', { class: 'adm-body', lang: htmlLang(comment.lang) }, String(comment.body || '')),
         remove,
       ]),
     ]);
@@ -598,7 +598,7 @@ function feedbackItem(entry, { status, onToggle }) {
       email && !mailto ? el('span', { class: 'adm-mail' }, email) : null,
     ]),
     el('p', { class: 'adm-feedback-title' }, String(entry.title || '')),
-    el('p', { class: 'adm-body', lang: entry.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(entry.body || '')),
+    el('p', { class: 'adm-body', lang: htmlLang(entry.lang) }, String(entry.body || '')),
     toggle,
   ]);
   const paint = () => {
@@ -718,7 +718,7 @@ function emptyPost() {
 }
 
 function postLangLabel(post) {
-  return el('span', { lang: post.lang === 'zh' ? 'zh-Hans' : 'vi' }, langLabel(post.lang));
+  return el('span', { lang: htmlLang(post.lang) }, langLabel(post.lang));
 }
 
 function postStatusBadge(post) {
@@ -766,7 +766,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
             open.addEventListener('click', () => showEditor(post));
             edit.addEventListener('click', () => showEditor(post));
             return el('tr', {}, [
-              el('td', { class: 'adm-cell-title', lang: post.lang === 'zh' ? 'zh-Hans' : 'vi' }, open),
+              el('td', { class: 'adm-cell-title', lang: htmlLang(post.lang) }, open),
               el('td', { class: 'adm-cell-status' }, postStatusBadge(post)),
               el('td', { class: 'adm-cell-lang' }, postLangLabel(post)),
               el('td', { class: 'adm-cell-slug' }, el('code', {}, String(post.slug || ''))),
@@ -788,7 +788,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
     let post = { ...emptyPost(), ...initial };
     head.hidden = true;
     status.set('');
-    const langSelect = selectInput('cm-post-lang', [['vi', 'Tiếng Việt'], ['zh', '中文']], post.lang === 'zh' ? 'zh' : 'vi');
+    const langSelect = selectInput('cm-post-lang', SITE_LOCALES.map((locale) => [locale, LOCALE_LABEL[locale]]), isSiteLocale(post.lang) ? post.lang : DEFAULT_LOCALE);
     const translationKey = textInput('cm-post-translation', post.translationKey, { mono: true, maxlength: '100', spellcheck: 'false' });
     const slug = textInput('cm-post-slug', post.slug, { mono: true, maxlength: '101', required: '', pattern: SLUG_PATTERN.source, spellcheck: 'false' });
     const title = textInput('cm-post-title', post.title, { maxlength: '200', required: '' });

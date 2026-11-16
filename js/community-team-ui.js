@@ -1,7 +1,7 @@
 // Mảnh giao diện dùng chung của trang Đội cộng đồng (thiết kế mới, artboard DoiCongDong*Moi): icon nét, nhãn
 // binh chủng, nhãn ngôn ngữ, dòng số liệu, khối ảnh thẻ, nút dạng link. Không gọi API, không giữ trạng thái.
 
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, isSiteLocale, normalizeLocale } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 import { troopLabel } from './community-team-data.js';
 
@@ -53,15 +53,38 @@ export function troopPill(troop) {
 }
 
 /**
+ * Chữ nói ngôn ngữ của văn bản người dùng, viết bằng ngôn ngữ trang; khóa = ngôn ngữ văn bản (mọi phần tử
+ * `SITE_LOCALES`), giá trị = biến thể theo ngôn ngữ trang.
+ */
+const TEXT_LANGUAGE_NAME = {
+  vi: () => L('Tiếng Việt', '越南语'),
+  zh: () => L('Tiếng Trung', '中文'),
+};
+const WRITTEN_IN = {
+  vi: () => L('Viết bằng tiếng Việt', '以越南语撰写'),
+  zh: () => L('Viết bằng tiếng Trung', '以中文撰写'),
+};
+
+/** Tên ngôn ngữ của văn bản viết bằng `lang` ("Tiếng Việt" / "Tiếng Trung"); mã lạ → `null`. */
+export function textLanguageName(lang) {
+  return isSiteLocale(lang) ? TEXT_LANGUAGE_NAME[lang]() : null;
+}
+
+/** "Viết bằng tiếng …" của văn bản viết bằng `lang`; mã lạ lùi về bản Việt như trước. */
+export function writtenInLabel(lang) {
+  return WRITTEN_IN[normalizeLocale(lang)]();
+}
+
+/**
  * Nhãn ngôn ngữ văn bản người dùng ("VI"/"ZH", ô mono): giữ class `cm-lang-tag` làm móc cho test và CSS cũ;
  * `title` nói rõ ngôn ngữ cho người dùng chuột, chữ hai ký tự đủ cho trình đọc màn hình.
  */
 export function langBadge(lang) {
-  if (lang !== 'vi' && lang !== 'zh') return null;
+  if (!isSiteLocale(lang)) return null;
   return el('abbr', {
     class: 'cm-lang-tag cm-team-lang',
     dataset: { lang },
-    title: lang === 'vi' ? L('Viết bằng tiếng Việt', '以越南语撰写') : L('Viết bằng tiếng Trung', '以中文撰写'),
+    title: writtenInLabel(lang),
   }, lang.toUpperCase());
 }
 
