@@ -291,8 +291,8 @@ test("chi tiết ?id=: tên tướng và chiến pháp A/B dẫn sang Tra cứu 
   }
 });
 
-test("tiêu đề Bình luận theo danh sách đang hiện khi worker đếm cả bình luận đã ẩn", async ({ page }) => {
-  // Worker đếm mọi bình luận của trang (kể cả của người bị khoá / ẩn), danh sách thì lọc: nạp hết mà rỗng thì là 0.
+test("tiêu đề Bình luận theo danh sách đang hiện khi số worker đếm lệch danh sách đã nạp hết", async ({ page }) => {
+  // `commentCount` của chi tiết (3) có thể lệch danh sách (chi tiết và bình luận tải ở hai request): nạp hết mà rỗng thì là 0.
   await mockCommunityApi(page, { user: PLAYER, comments: [], teams: { seasons: SEASONS, details: (id) => teamDetail(id, { commentCount: 3 }) } });
   await routeStaticTeam(page, "/doi-cong-dong/t1/");
   await page.goto("/doi-cong-dong/t1/");
