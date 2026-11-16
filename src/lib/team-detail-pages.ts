@@ -265,7 +265,7 @@ export interface RecommendedDetailProps {
   lookupLinks: TeamLookupLinks;
   /** Tướng của đội có trang riêng trong Tra cứu (cho JSON-LD). */
   heroes: NamedPath[];
-  /** Đội thuộc mùa cũ (khác `defaultSourceSeasonId` của registry): dòng phụ có nhãn "mùa cũ". */
+  /** Đội thuộc mùa cũ hơn `defaultSourceSeasonId` theo số mùa: dòng phụ có nhãn "mùa cũ" (mùa mới hơn không có nhãn). */
   oldSeason: boolean;
   savePayload: TeamSavePayload;
 }

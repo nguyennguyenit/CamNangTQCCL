@@ -13,6 +13,13 @@
 - Fixed (#86, vòng 3): "Lưu lại" sau lỗi không còn dính nhóm giữ từ server khi người dùng đã chọn nhóm khác; nhóm giữ từ server chỉ áp khi ô Nhóm vẫn đang ở nhóm lúc mở. E2E có ca Lưu lỗi 500 → chọn nhóm khác → Lưu lại.
 - Docs (#81): chú thích `mountComments({ count })` và hai e2e community-teams nêu đúng — từ PR #108 worker đếm theo điều kiện hiển thị, worker cũ đếm cả bình luận người bị ẩn; fallback theo danh sách đã nạp hết giữ nguyên.
 
+## 2026-11-16 (Nhãn "mùa cũ" không gắn cho mùa mới hơn mùa mặc định, issue #89)
+
+- Fixed: `isOldSeason` (`src/lib/season-pages.ts`) trước coi mọi mùa khác mùa mặc định là "mùa cũ", nên PK-S28 (mới hơn mặc định PK-S27) bị gắn nhãn sai. Nay chỉ mùa có SỐ MÙA nhỏ hơn số mùa mặc định mới có nhãn.
+- Thứ tự mới/cũ lấy từ số trong id mùa (`/^(?:pk-)?s(\d+)$/`: `s1`..`s3`, `pk-s4`..`pk-s28` là một dãy liên tục), KHÔNG lấy từ vị trí trong `seasonOptions`/`sourceOrder`: đó là thứ tự ô chọn của trang nguồn và đổi giữa các lần crawl (generation #103 xếp PK-S27, PK-S28 … S1, OG). Mùa mặc định, mùa mới hơn nó, mùa không đọc được số (OG, họ mùa mới), mùa/mặc định thiếu đều không có nhãn; mặc định là OG thì không mùa nào có nhãn. Hàm thuần, không nhận thứ tự registry; `SeasonPage.older` mang kết quả cho trang mùa.
+- Changed: trang mùa (`SeasonPage.astro`) chỉ hiện nhãn khi `older`, câu "Đội của mùa hiện tại xem ở Đội chuẩn" giữ cho mọi trang mùa. Chưa đổi: lời dẫn khối "Các mùa khác" trong `SectionPage.astro` còn ghi "các mùa cũ" (file bị ghim hash trong `pipeline/site-localization-policy.json`, cần ghim lại hash mới sửa được). URL, redirect 301 và danh mục trang không đổi.
+- Tests: `tests-js/season-pages.test.mjs` (kể cả thứ tự nguồn của #103: PK-S27 đầu, OG cuối), `tests-js/seo-dist-contract.test.mjs` (nhãn trang mùa và trang đội theo số mùa).
+
 ## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
 
 - Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
