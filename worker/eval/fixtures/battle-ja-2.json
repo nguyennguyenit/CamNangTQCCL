@@ -1,0 +1,68 @@
+{
+  "image": "battle-ja-2.webp",
+  "source": "Chiến báo client Nhật 三國志 真戦 (nguồn chờ chủ repo xác nhận); chỉ có tên server/liên minh công khai (江淮, 西涼), không có tên người chơi nên không che thêm. Phe phải đọc phải sang trái nên 主将 周瑜 đứng đầu. Chiến pháp liệt kê là hai dòng đã học (bỏ dòng tự mang đầu và dòng 通常攻撃). ID tướng chọn theo biến thể SP khi chiến pháp tự mang trùng dòng đầu; 陸遜 chưa có biến thể SP trong từ điển nên dùng hero:luc-ton.",
+  "expected": {
+    "screen": "battleReport",
+    "sideCount": 2,
+    "sides": [
+      {
+        "side": "left",
+        "heroes": [
+          {
+            "hero": "hero:sp-tao-thao",
+            "tactics": [
+              "tactic:dao-vien-ket-nghia",
+              "tactic:thuyen-co-muon-ten"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:sp-lo-thuc",
+            "tactics": [
+              "tactic:nhan-hanh-tran",
+              "tactic:cuong-nhu-ket-hop"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:sp-dieu-thuyen",
+            "tactics": [
+              "tactic:tham-tang-nhuoc-hu",
+              "tactic:dong-long-hop-suc"
+            ],
+            "book": null
+          }
+        ]
+      },
+      {
+        "side": "right",
+        "heroes": [
+          {
+            "hero": "hero:sp-chu-du",
+            "tactics": [
+              "tactic:van-vo-song-toan",
+              "tactic:toan-quan-dong-long"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:sp-lu-mong",
+            "tactics": [
+              "tactic:tham-muu-vien-lu",
+              "tactic:nhan-hanh-tran"
+            ],
+            "book": null
+          },
+          {
+            "hero": "hero:luc-ton",
+            "tactics": [
+              "tactic:van-quan-doat-suy",
+              "tactic:cong-bat-duong-quyen"
+            ],
+            "book": null
+          }
+        ]
+      }
+    ]
+  }
+}

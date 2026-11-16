@@ -23,8 +23,9 @@ Request JSON:
 | `turnstileToken` | string | Token Turnstile, dùng một lần |
 | `mode` | string (tuỳ chọn) | Một trong 5 chế độ dưới đây; thiếu/rỗng = `analyzeTeamImage` |
 | `context` | object | Chỉ `explainSubstitute` (bắt buộc), xem dưới |
+| `locale` | `"vi"`\|`"zh"`\|`"ja"` (tuỳ chọn) | Chỉ mode đọc ảnh. Vắng = prompt cũ (giản thể, byte không đổi); giá trị ngoài danh sách → 400 `Locale không hợp lệ`. `explainSubstitute` không đọc trường này (locale nằm trong `context`) |
 
-Response 200 theo `mode` (các mode đọc ảnh trả chữ Hán Giản thể; site map sang tiếng Việt qua từ điển):
+Response 200 theo `mode` (các mode đọc ảnh trả chữ Hán Giản thể, trừ `locale: "ja"` trả đúng tự dạng Nhật; site map sang tiếng Việt qua từ điển):
 
 | `mode` | Công cụ | Response |
 |---|---|---|
@@ -43,13 +44,21 @@ cho model. Cột không có tên in đọc được trả `nameCn: "未知"`. `t
 (tối đa 3, kể cả chiến pháp tự mang); dòng không đọc được là `"未知"` tại đúng vị trí đó, không dồn
 dòng. `booksCn` giữ thứ tự in (màn chiến báo không in binh thư → `[]`).
 
+`locale: "ja"` (ảnh từ client Nhật 三國志 真戦) nối thêm vào prompt một đoạn mô tả nhãn client Nhật (戦報, 味方/敵,
+主将/副将) và bỏ câu ép giản thể: model chép **nguyên tự dạng Nhật** đang in (kể cả kana) vào `nameCn`/`tacticsCn`/`booksCn`,
+không dịch; dòng 通常攻撃 không phải chiến pháp. Phần còn lại giữ nguyên (chỉ chép chữ in, không đoán tướng qua
+chân dung, thứ tự phe). `vi`/`zh` cho ra prompt giống hệt khi vắng `locale`. Với `ja`, các mode đọc ảnh trả chữ Hán đúng
+tự dạng in, không phải giản thể; khớp tên Nhật sang ID canonical thuộc phía site/bộ chấm eval.
+Danh sách locale của Worker nằm ở `src/locales.ts` (`WORKER_LOCALES`), được `tests-js/worker-locales-parity.test.mjs`
+khóa trùng `SITE_LOCALES` của site.
+
 `explainSubstitute` là mode **chỉ văn bản** (không ảnh; bỏ qua input guard ảnh, mọi bước còn lại giữ nguyên
 thứ tự: origin, băm IP, cap/rate-limit, Turnstile, đếm quota global). `context` phải đúng các khoá sau, khoá lạ
 hoặc sai kiểu/độ dài → 400 `Ngữ cảnh không hợp lệ`:
 
 ```ts
 context = {
-  locale: "vi" | "zh",
+  locale: "vi" | "zh" | "ja",   // ja: trả lời tiếng Nhật; dữ kiện hiệu ứng vẫn là chữ Trung nguồn do site gửi
   hero: string,                                  // 1..40 ký tự (sau trim)
   missing: { name: string, effect: string },     // name 1..40, effect 0..1200
   substitute: { name: string, effect: string },  // name 1..40, effect 0..1200
@@ -62,7 +71,7 @@ khác biệt đáng kể), không nêu chiến pháp nào khác ngoài hai món 
 Output rỗng hoặc quá 600 ký tự → 422 `Không giải thích được`.
 
 Lỗi luôn là JSON `{ error: "<thông điệp cố định>" }` kèm header CORS: 400 (body/mode/base64/ảnh hỏng/thiếu ảnh ở mode
-đọc ảnh/`context` sai), 403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không
+đọc ảnh/`context` sai/`locale` sai), 403 (origin, Turnstile), 404, 413 (ảnh hoặc `Content-Length` quá lớn), 415, 422 (model không
 đọc được / không giải thích được),
 429 (hết lượt ngày, quá nhiều lần/giờ), 502 (`Dịch vụ AI tạm lỗi, thử lại sau`),
 503 (`Dịch vụ AI đang quá tải, thử lại sau`, kill-switch/cap tháng, `Dịch vụ soi ảnh chưa được cấu hình`),
