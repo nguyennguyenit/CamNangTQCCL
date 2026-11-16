@@ -11993,6 +11993,51 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--on-accent);
 }
 
+/* Hộp thoại Token API (Theo dõi chiêu mộ): token mới hiện một lần + danh sách token đã tạo. */
+.rt-token-secret-row {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.rt-token-secret-row .cm-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+}
+
+.rt-token-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rt-token-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-12);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-8);
+}
+
+.rt-token-item[data-status="revoked"],
+.rt-token-item[data-status="expired"] {
+  color: var(--muted);
+}
+
+.rt-token-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
 /* ---------- Soi đội (Analyze, AnalyzeReview, AnalyzeResult + bản Mobile) ---------- */
 /* Dải 3 bước của trang, nằm bên phải đầu mục công cụ (Analyze.dc.html: Chọn ảnh — Kiểm tra đội — Đối chiếu). */
 .ana-flow {
