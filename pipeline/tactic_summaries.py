@@ -170,8 +170,7 @@ def build_tactic_summaries(*, tactic_catalog_bytes, hero_catalog_bytes, records,
             "tacticCatalogSha256": "sha256:" + hashlib.sha256(bytes(tactic_catalog_bytes)).hexdigest(),
             "heroCatalogSha256": "sha256:" + hashlib.sha256(bytes(hero_catalog_bytes)).hexdigest(),
             # Chuỗi mô tả nằm trong payload đã phát của generation đang ghim: sửa là phải publish generation mới.
-            # Phép nối thực tế còn gồm `heroes[].tacticBeforeLevel20Raw` (xem docstring module).
-            "recommendedJoin": "heroes[].tacticSlotsRaw ↔ chinese|aliases (bỏ khoảng trắng)",
+            "recommendedJoin": "heroes[].tacticSlotsRaw + heroes[].tacticBeforeLevel20Raw ↔ chinese|aliases (bỏ khoảng trắng)",
             "otherJoin": "holders[].tacticSlotsRaw ↔ viet|hanViet (bỏ khoảng trắng hai đầu)",
             "unmatchedSlots": unmatched,
             "ambiguousSlots": ambiguous,

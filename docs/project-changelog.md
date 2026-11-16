@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-17 (Đội chuẩn: Tàng Khí Đợi Thời, Bạch Nhị Binh, provenance trước cấp 20 — #47, #64)
+
+### Changed
+- `pipeline/recommended-identity-map.json`: 藏器待時 = "Tàng Khí Đợi Thời" (tên client, `data/tactics.json` `viet`) thay "Tàng Khí Đãi Thì", kể cả 2 tên đội 藏器待時…; "Ngũ Mưu Cung (chuyển · Bạch Nhị Binh)" thay "Bạch Nhĩ Binh"; dấu ngăn tên đội "chuyển" thống nhất `(chuyển · …)` cho Ngũ Mưu Cung, Thái Sư Cung (trước là ngoặc toàn chiều rộng) và Đô Đốc Cung. 11 ghi chú dịch có "Tàng Khí Đãi Thì" đổi theo. Handle URL đóng băng nên không đổi đường dẫn.
+- `pipeline/tactic_summaries.py`: `provenance.recommendedJoin` ghi cả `heroes[].tacticBeforeLevel20Raw`.
+- Đổi identity map làm glossary digest đổi (`sha256:e00b61a0…`), nên duyệt độc lập lại toàn bộ 6409 vị trí (2812 site + 3597 Tra cứu): 16 batch `doi-chuan-261117-r1-*`, mỗi batch một reviewer. Vòng 1 chấp nhận 6397, từ chối 12. Sửa 7 mục: "nhiều tiên công" (2), đội tốc độ trung bình *khắc chế* Quán Quân Thương / SP Quan Vũ (2), "CO Vô Song Tinh Thái", tùy chọn cải tạo 飛馳 = "Tật Trì" (2). 5 mục bị từ chối nhầm, vì reviewer áp tên client, trong khi ghi chú dùng identity map (Hãn Thiên Sí Địa) và tên client "SP Lô Trực" ở Đội khác. 12 mục được duyệt lại ở batch `r2-000` và chấp nhận hết. Output review cũ `doi-chuan-261116-*` bị thay như lần refresh trước; Git giữ lịch sử.
+- `pipeline/recommended-other-teams.json` ghim lại hash identity map. Generation Đội chuẩn mới publish lại, ledger route rebind.
+
 ## 2026-11-16 (Dọn CSS chết sau Thiết kế mới, Đội của tôi giữ bản soạn)
 
 - Removed (#83): quy tắc `.blog-*` không còn trang nào dùng trong `css/styles.css` — `.blog-author`, `.blog-translation`, `.blog-cover`, `.blog-summary*`, `.blog-toc*`, `.blog-faq*`, `.blog-related` (bài chi tiết đã chuyển sang `bv-*`), kèm các selector tương ứng trong nhóm chung `.blog-body h2` và media 680px. Giữ phần còn dùng: danh sách `/bai-viet/` (`.blog-index*`, `.blog-card*`, `.blog-tag*`, `.blog-list`, `.blog-empty*`, `.blog-breadcrumb`, `.blog-lead`) và trang chính sách (`.blog-article*`, `.blog-body`).
@@ -241,7 +249,6 @@
 
 ### Chưa làm
 - `替代` (chiến pháp thay thế từng tướng) và `特技` (đặc kỹ trang bị) trên SGSDeck chưa vào schema.
-- `pipeline/recommended-identity-map.json` còn `藏器待時` → "Tàng Khí Đãi Thì" (từ điển: Tàng Khí Đợi Thời): chữ này đã nằm trong generation `a25cd18b…` (`tacticSlotsVi`), sửa map là phải dựng và publish generation mới.
 - Ledger route không lưu danh sách segment đã gỡ: segment chỉ được giữ ở lần `--rebind` gỡ hàng của nó.
 
 ## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)
