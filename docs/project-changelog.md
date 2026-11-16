@@ -3,6 +3,8 @@
 ## 2026-11-16 (Dọn CSS chết sau Thiết kế mới, Đội của tôi giữ bản soạn)
 
 - Removed (#83): quy tắc `.blog-*` không còn trang nào dùng trong `css/styles.css` — `.blog-author`, `.blog-translation`, `.blog-cover`, `.blog-summary*`, `.blog-toc*`, `.blog-faq*`, `.blog-related` (bài chi tiết đã chuyển sang `bv-*`), kèm các selector tương ứng trong nhóm chung `.blog-body h2` và media 680px. Giữ phần còn dùng: danh sách `/bai-viet/` (`.blog-index*`, `.blog-card*`, `.blog-tag*`, `.blog-list`, `.blog-empty*`, `.blog-breadcrumb`, `.blog-lead`) và trang chính sách (`.blog-article*`, `.blog-body`).
+- Removed (#80): CSS `adm-*` cũ không còn JS nào dùng, nằm ngoài khối `moi:quan-tri` — `.adm-provider*`, `.adm-rank`, `.adm-group` / `-head` / `-title` / `-foot`, `.adm-chain-row`, `.adm-chain-index`, `.adm-timing`, `.adm-scan-name(s)`, `.adm-block(-head)` và các dòng tương ứng trong media 680px. Giữ `.adm-groups` (còn dùng ở `js/community-admin-ai.js`).
+- Docs (#80): `docs/design/so-binh-phap/README.md` mục Khu Quản trị bỏ câu "thêm khu Soi đội (chưa có artboard)" (đã có `AdminAnalyze`); `docs/system-architecture.md` đã liệt kê đủ `community-admin-{ai,audit,dialogs,scan}.js`.
 
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 

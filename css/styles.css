@@ -15521,16 +15521,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-status[data-kind="warn"] { color: var(--warn); }
 
-.adm-block { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
-
-.adm-block-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-12);
-}
-
 .adm-subtitle { margin: 0; color: var(--ink); font: var(--type-dialog-title); }
 
 /* Nút: dùng `.ana-btn` (phụ) / `.ana-btn.primary` (nền chọn) của site + biến thể của khu quản trị. */
@@ -15882,19 +15872,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-table .adm-cell-action { padding-block: var(--space-8); text-align: right; }
 
-/* Soi đội: mỗi tên AI đọc / đội xác nhận một ô riêng. */
-.adm-scan-names { display: flex; flex-wrap: wrap; gap: var(--space-6); }
-
-.adm-scan-name {
-  padding: var(--space-4) var(--space-8);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-6);
-  background-color: var(--panel);
-  font: var(--type-small);
-}
-
-.adm-scan-name.is-hero { font-weight: var(--weight-semibold); }
-
 .adm-table-title {
   padding: 0;
   border: none;
@@ -16025,7 +16002,6 @@ body[data-page-section="roster-recommend"] .layout {
 .adm-faq-list { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
 
 .adm-faq-row,
-.adm-chain-row,
 .adm-model-row {
   display: grid;
   align-items: end;
@@ -16059,39 +16035,8 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-dock .adm-actions { margin-left: auto; }
 
-/* AI: thẻ nhà cung cấp theo thứ tự failover, khung sửa, nhóm tính năng. */
-.adm-provider {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-14);
-}
-
-.adm-provider[data-editing] { border-color: var(--accent); outline: var(--border-hair) solid var(--accent); }
-
-.adm-provider-info { display: flex; flex: 1 1 var(--size-col-250); align-items: flex-start; gap: var(--space-14); min-width: 0; }
-
-.adm-rank { flex: none; width: var(--space-24); color: var(--accent); font: var(--type-admin-rank); }
-
-.adm-provider[data-enabled="false"] .adm-rank { color: var(--muted); }
-
-.adm-provider-body { display: grid; gap: var(--space-8); min-width: 0; }
-
-.adm-provider-name-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); margin: 0; }
-
-.adm-provider-name { color: var(--ink); font: var(--type-admin-card-name); }
-
+/* AI: khung sửa nhà cung cấp, danh mục model, nhóm tính năng (thẻ nhà cung cấp dựng bằng `.adm-card`). */
 .adm-endpoint { color: var(--muted); font: var(--type-admin-mono); overflow-wrap: anywhere; }
-
-.adm-provider-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6) var(--space-14);
-  margin: 0;
-  color: var(--muted);
-  font: var(--type-small);
-}
 
 .adm-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
 
@@ -16107,17 +16052,7 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-groups { display: grid; gap: var(--space-14); }
 
-.adm-group { display: flex; flex-direction: column; gap: var(--space-12); }
-
-.adm-group-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); }
-
-.adm-group-title { margin: 0; color: var(--ink); font: var(--type-admin-card-name); }
-
 .adm-chain { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
-
-.adm-chain-row { grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto; }
-
-.adm-chain-index { align-self: center; min-width: var(--space-20); color: var(--accent); font: var(--type-card-title-sm); }
 
 .adm-model-row { grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.4fr) auto auto; }
 
@@ -16130,18 +16065,6 @@ body[data-page-section="roster-recommend"] .layout {
   padding: 0;
   border: 0;
 }
-
-.adm-group-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-12);
-}
-
-.adm-timing { display: flex; flex-wrap: wrap; gap: var(--space-12); }
-
-.adm-timing .adm-field { width: var(--size-col-200); }
 
 @media (max-width: 960px) {
   .adm-shell { grid-template-columns: minmax(0, 1fr); gap: var(--space-20); }
@@ -16184,10 +16107,8 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-grid-3,
   .adm-grid-title,
   .adm-faq-row,
-  .adm-chain-row,
   .adm-model-row { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
   .adm-faq-row > .ana-btn,
-  .adm-chain-row .adm-row-actions,
   .adm-model-row .adm-row-actions { justify-self: start; }
   .adm-filters .adm-field { width: auto; flex: 1 1 0; }
   .adm-cover { flex-direction: column; align-items: stretch; }
@@ -16216,7 +16137,6 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-shell .adm-md-input { min-height: var(--size-panel-420); }
   .adm-dock { bottom: var(--space-8); }
   .adm-dock .adm-actions { margin-left: 0; }
-  .adm-timing .adm-field { width: auto; flex: 1 1 0; }
   /* Bảng bài viết thành thẻ: tiêu đề, hàng badge (trạng thái · ngôn ngữ · thời gian), slug. */
   .adm-posts-table { overflow: visible; border: none; background-color: transparent; }
   .adm-posts-table thead {
