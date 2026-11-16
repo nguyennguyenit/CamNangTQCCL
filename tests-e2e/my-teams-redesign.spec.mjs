@@ -349,6 +349,112 @@ test.describe("không mất bản soạn", () => {
     await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-b");
     await expect(nameField(page)).toHaveValue("B đang soạn");
   });
+
+  /** `beforeunload` cho phép huỷ: `true` khi trang xin trình duyệt hỏi lại trước khi rời. */
+  const blocksUnload = (page) => page.evaluate(() => {
+    const event = new Event("beforeunload", { cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+  });
+
+  /** Máy khác xóa đội (tombstone), hoặc chuyển đội sang hộp khác (`moveTo`); rồi ép một lần kéo đồng bộ. */
+  async function changeElsewhere(page, mock, id, { moveTo = null, draft = null } = {}) {
+    if (moveTo) {
+      await seedTeam(mock.server, draft, { boxId: moveTo, groupId: `${moveTo}~ghep-team`, at: Date.now() });
+    } else {
+      const at = Date.now();
+      const iso = new Date(at).toISOString();
+      await mock.server.seed({ kind: "team", id, updatedAt: at, deleted: true, data: { id, boxId: "main", updatedAt: iso, deletedAt: iso } });
+    }
+    const pulls = mock.calls.filter((call) => call.method === "GET" && call.path === "/api/roster").length;
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    await expect.poll(() => mock.calls.filter((call) => call.method === "GET" && call.path === "/api/roster").length).toBeGreaterThan(pulls);
+  }
+
+  test("rời trang khi đang sửa: có thay đổi thì beforeunload hỏi lại; chưa sửa gì, Hủy hoặc Lưu xong thì không hỏi", async ({ page }) => {
+    await open(page, { teams: [{ draft: draftOf("team-u") }] });
+    expect(await blocksUnload(page)).toBe(false);
+
+    await card(page, "team-u").getByRole("button", { name: "Sửa", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toBeVisible();
+    expect(await blocksUnload(page)).toBe(false);
+
+    await nameField(page).fill("Đang sửa dở");
+    expect(await blocksUnload(page)).toBe(true);
+
+    await page.locator("form.mt-editor").getByRole("button", { name: "Hủy" }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    expect(await blocksUnload(page)).toBe(false);
+
+    await card(page, "team-u").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Sửa rồi lưu");
+    expect(await blocksUnload(page)).toBe(true);
+    await page.locator("form.mt-editor").getByRole("button", { name: "Lưu", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thay đổi.");
+    expect(await blocksUnload(page)).toBe(false);
+  });
+
+  test("đội đang sửa bị xóa ở máy khác: trình soạn không tự đóng, báo rõ; Lưu thì thành đội mới, đội cũ vẫn đã xóa", async ({ page }) => {
+    const mock = await open(page, { teams: [{ draft: draftOf("team-con") }, { draft: draftOf("team-mat") }] });
+    await card(page, "team-mat").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn không được mất");
+    await changeElsewhere(page, mock, "team-mat");
+
+    const notice = page.locator("#my-teams .mt-orphan .mt-notice");
+    await expect(notice).toContainText("Đội này đã bị xóa hoặc chuyển hộp ở thiết bị khác");
+    await expect(page.locator("form.mt-editor")).toHaveAttribute("data-team-id", "team-mat");
+    await expect(nameField(page)).toHaveValue("Bản soạn không được mất");
+    await expect(card(page, "team-con")).toBeVisible();
+
+    // Lần vẽ lại cục bộ kế tiếp (thêm nhóm) cũng không đóng trình soạn.
+    await page.locator("#mt-new-group").fill("Nhóm thêm lúc đang sửa");
+    await page.getByRole("button", { name: "Thêm nhóm", exact: true }).click();
+    await expect(page.locator('.mt-group[aria-label="Nhóm thêm lúc đang sửa"]')).toBeVisible();
+    await expect(nameField(page)).toHaveValue("Bản soạn không được mất");
+    await expect(notice).toBeVisible();
+    expect(await blocksUnload(page)).toBe(true);
+
+    await page.locator("form.mt-editor").getByRole("button", { name: "Lưu", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-orphan")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thành đội mới.");
+    await expect.poll(() => mock.server.live("team").map((row) => row.data.name).sort()).toContain("Bản soạn không được mất");
+    const live = mock.server.live("team");
+    const created = live.find((row) => row.data.name === "Bản soạn không được mất");
+    expect(created.id).not.toBe("team-mat");
+    expect(created.data.boxId).toBe("main");
+    expect(live.map((row) => row.id)).not.toContain("team-mat");
+    await expect(card(page, created.id)).toBeVisible();
+    expect(await blocksUnload(page)).toBe(false);
+  });
+
+  test("đội đang sửa bị chuyển hộp ở máy khác: trình soạn còn, Hủy thì bỏ bản soạn và không ghi gì", async ({ page }) => {
+    const draft = draftOf("team-chuyen");
+    const mock = await open(page, { boxes: ["main", "box-phu"], teams: [{ draft }] });
+    await card(page, "team-chuyen").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Sửa dở trước khi bị chuyển");
+    await changeElsewhere(page, mock, "team-chuyen", { moveTo: "box-phu", draft });
+
+    await expect(page.locator("#my-teams .mt-orphan .mt-notice")).toContainText("đã bị xóa hoặc chuyển hộp ở thiết bị khác");
+    await expect(nameField(page)).toHaveValue("Sửa dở trước khi bị chuyển");
+
+    await page.locator("form.mt-editor").getByRole("button", { name: "Hủy" }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-orphan")).toHaveCount(0);
+    await expect(card(page, "team-chuyen")).toHaveCount(0);
+    expect(await blocksUnload(page)).toBe(false);
+    expect(mock.server.live("team").map((row) => [row.id, row.data.boxId])).toEqual([["team-chuyen", "box-phu"]]);
+  });
+
+  test("bản tiếng Trung /zh/doi-cua-toi/: thông báo đội bị xóa ở thiết bị khác bằng chữ Trung", async ({ page }) => {
+    const mock = await open(page, { teams: [{ draft: draftOf("team-zh") }], path: "/zh/doi-cua-toi/" });
+    await card(page, "team-zh").getByRole("button", { name: "编辑", exact: true }).click();
+    await expect(page.locator("form.mt-editor")).toBeVisible();
+    await changeElsewhere(page, mock, "team-zh");
+    await expect(page.locator("#my-teams .mt-orphan .mt-notice")).toContainText("此阵容已在其他设备上被删除或移到别的仓库");
+    await expect(page.locator("form.mt-editor")).toBeVisible();
+  });
 });
 
 test.describe("trình soạn và bảng chọn", () => {
