@@ -516,7 +516,7 @@ async function main() {
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
-      // Lên đầu mục: sau thẻ dựng sẵn (tối đa 60 đội) thông báo sẽ nằm ngoài tầm nhìn.
+      // Lên đầu mục: sau các thẻ dựng sẵn thông báo sẽ nằm ngoài tầm nhìn.
       mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
         ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。')
         : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。')));

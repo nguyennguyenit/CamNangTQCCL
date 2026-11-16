@@ -705,11 +705,13 @@ test('same-document season history re-renders the same records on Back and Forwa
   expect(target,{message:'cần một mùa khác mùa mặc định có đội để kiểm lịch sử'}).toBeTruthy();
 
   await page.goto('/doi-chuan/');
-  // Baseline lấy sau khi client nhận DOM: thân dựng sẵn có đủ đội của mùa, client hiện theo lượt 60.
+  // Baseline lấy sau khi client nhận DOM: thân dựng sẵn có đủ đội của mùa mặc định và client giữ nguyên toàn bộ (#88).
   await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   const baseline={ids:await renderedKeys(),season:await season.inputValue()};
   expect(baseline.ids.length).toBeGreaterThan(0);
+  // Nhận lại đủ danh sách dựng sẵn của mùa mặc định, không cắt còn lượt 60 đội.
+  expect(baseline.ids).toEqual(defaultIds);
 
   await season.selectOption(target.season);
   await expect.poll(()=>query('season')).toBe(target.season);
@@ -720,8 +722,10 @@ test('same-document season history re-renders the same records on Back and Forwa
   await page.goBack();
   await expect(page).toHaveURL(/\/doi-chuan\/$/);
   await expect(season).toHaveValue(baseline.season);
-  await expect(section.locator('.reference-team-card')).toHaveCount(baseline.ids.length);
-  await expect.poll(renderedKeys).toEqual(baseline.ids);
+  // Quay lại là một lượt vẽ mới (không còn thân dựng sẵn): hiện lượt đầu 60 đội của chính mùa mặc định.
+  const baselineKeys=new Set(baseline.ids);
+  await expect(section.locator('.reference-team-card')).toHaveCount(Math.min(baseline.ids.length,60));
+  await expect.poll(async()=>(await renderedKeys()).every(key=>baselineKeys.has(key))).toBe(true);
 
   await page.goForward();
   await expect.poll(()=>query('season')).toBe(target.season);

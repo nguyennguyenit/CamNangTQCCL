@@ -158,8 +158,10 @@ test.describe("Đội chuẩn: badge kho", () => {
     await expect(bar(page).getByRole("link", { name: "Nhập kho" })).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
     await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
     await expect(bar(page).getByRole("button")).toHaveCount(0);
-    // Lượt đầu (tối đa 60 đội) giữ nguyên thứ tự và số lượng như không có `kho`/`xep`.
-    await expect(section(page).locator("[data-reference-key]")).toHaveCount(Math.min(60, records.filter((record) => record.sourceSeasonId === SEASON).length));
+    // Danh sách dựng sẵn đủ đội của mùa mặc định được nhận lại nguyên vẹn, như không có `kho`/`xep`.
+    await expect(section(page).locator("[data-reference-key]")).toHaveCount(records.filter((record) => record.sourceSeasonId === SEASON).length);
+    // Chưa biết mùa có độ phủ hay không (máy chưa có kho): giữ `kho`/`xep` trên URL.
+    expect(new URL(page.url()).search).toBe("?kho=rap-duoc&xep=de-rap");
     for (const count of dictionaryRequests(requests)) expect(count).toBeLessThanOrEqual(1);
   });
 

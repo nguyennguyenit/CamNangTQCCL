@@ -28,9 +28,6 @@ const { generationId } = read("src/data/recommended-reference/current.json");
 const defaultSeason = read(`src/data/recommended-reference/${generationId}/seasons.json`).defaultSourceSeasonId;
 const defaultSeasonTeams = read(`src/data/recommended-reference/${generationId}/index.json`).records
   .filter((row) => row.sourceSeasonId === defaultSeason).length;
-// Thân dựng sẵn của /doi-chuan/ có đủ đội của mùa mặc định; client hiện theo lượt 60, nên chỉ nhận lại node khi mùa ≤ 60 đội.
-const PAGE_SIZE = 60;
-
 const survivors = (page) => page.evaluate(() => window.__ssrNodes.filter((node) => node.isConnected).length);
 
 for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"]]) {
@@ -42,15 +39,10 @@ for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"]]) {
       ["/khai-hoang/", ".kh-card"],
     ]) {
       const prerendered = await bootWithProbe(page, `${prefix}${path}`, selector);
-      if (path === "/doi-chuan/" && defaultSeasonTeams > PAGE_SIZE) {
-        // Mùa mặc định quá một lượt: chữ ký lệch nên client dựng lại lượt đầu, không để thẻ dựng sẵn lẫn vào.
-        expect(prerendered, `${path}: SSR phải đủ đội của mùa mặc định`).toBe(defaultSeasonTeams);
-        expect(await survivors(page), `${path}: còn node dựng sẵn sau khi dựng lại`).toBe(0);
-        await expect(page.locator(selector), `${path}: lượt đầu`).toHaveCount(PAGE_SIZE);
-      } else {
-        expect(await survivors(page), `${path}: node dựng sẵn bị thay`).toBe(prerendered);
-        await expect(page.locator(selector), `${path}: nhân đôi thẻ`).toHaveCount(prerendered);
-      }
+      // Đội chuẩn dựng sẵn đủ đội của mùa mặc định (kể cả khi hơn một lượt 60 đội): client nhận lại cả danh sách, không dựng lại.
+      if (path === "/doi-chuan/") expect(prerendered, `${path}: SSR phải đủ đội của mùa mặc định`).toBe(defaultSeasonTeams);
+      expect(await survivors(page), `${path}: node dựng sẵn bị thay`).toBe(prerendered);
+      await expect(page.locator(selector), `${path}: nhân đôi thẻ`).toHaveCount(prerendered);
       await expect(page.locator("h1"), path).toHaveCount(1);
       await page.unroute("**/js/app.js");
     }

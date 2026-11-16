@@ -455,7 +455,13 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     view.removeAttribute('data-ssr-signature');
     // Đang lọc/sắp theo kho thì danh sách khác bản dựng sẵn: không nhận lại DOM đó.
     const rosterOrdered=Boolean(coverage && (state.rosterFilter || state.rosterSort));
-    if (!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,safeReturnUrl(location.href),shown)) {
+    const from=safeReturnUrl(location.href);
+    const prerenderedFor=count=>!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,from,count);
+    // Mùa dài hơn một lượt: bản dựng sẵn có đủ mọi đội (dấu mang tổng số đội), nên nhận lại cả danh sách ở lần vẽ đầu
+    // và coi như đã "Xem thêm" hết, thay vì bỏ phần sau lượt đầu rồi dựng lại.
+    const wholeList=!prerenderedFor(shown) && prerenderedFor(filteredRows.length);
+    if (wholeList) shown=filteredRows.length;
+    if (wholeList || prerenderedFor(shown)) {
       // Đúng danh sách đã dựng sẵn: giữ nguyên node, chỉ gắn sự kiện "tìm chiến pháp" (không nháy, không nhân đôi).
       bindTacticTags(view,value=>onQuery({q:value}));
     } else {
