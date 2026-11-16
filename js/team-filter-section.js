@@ -554,6 +554,10 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính chưa rõ trong phạm vi này.','此范围内没有属性不明的阵容。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。');
     if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
     else renderView();
+    // Máy có kho nhưng mùa đang xem không có độ phủ: `kho`/`xep` không có tác dụng, thanh kho ẩn và "Xóa lọc" không gỡ được
+    // chúng. Gỡ khỏi URL (replaceState) để đổi sang mùa có độ phủ không bật lại một bộ lọc người dùng đã quên. Chưa biết kho
+    // (`undefined`, đang tải/hỏi lại phiên) hay máy chưa có kho (`null`) thì giữ nguyên: lúc đó chưa biết mùa có độ phủ hay không.
+    if (family==='recommended' && typeof rosterSource==='function' && !coverage && (state.rosterFilter || state.rosterSort)) onQuery({kho:null,xep:null});
   }
   return {
     update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();},

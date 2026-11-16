@@ -237,6 +237,29 @@ test("trang mùa cũ: có kho thì thẻ có badge và dòng tóm tắt; chưa c
 /** Trang vừa trả về từ bfcache: giả lập `pageshow` với `persisted` (Playwright không giữ trang trong bfcache ổn định). */
 const firePersistedPageshow = (page) => page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })));
 
+test("máy có kho nhưng mùa đang xem không có độ phủ: kho và xep bị gỡ khỏi URL, đổi sang mùa có độ phủ không bật lại", async ({ page }) => {
+  // Mùa không có đội nào để đối chiếu: không tính được độ phủ nên thanh kho ẩn và "Xóa lọc" không gỡ được `kho`/`xep`.
+  const emptySeason = read(`src/data/recommended-reference/${generationId}/seasons.json`).seasonOptions
+    .map((option) => option.sourceSeasonId)
+    .find((id) => expectedFor(id, rosterFor(SEASON, READY_TEAMS)).summary.total === 0);
+  expect(emptySeason, "cần một mùa không có độ phủ").toBeTruthy();
+  const roster = rosterFor(SEASON, READY_TEAMS);
+  await seedRoster(page, roster);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(emptySeason)}&kho=rap-duoc&xep=de-rap&view=luoi`);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  await expect(bar(page)).toBeHidden();
+  await expect.poll(() => new URL(page.url()).search).toBe(`?season=${encodeURIComponent(emptySeason)}&view=luoi`);
+
+  // Đổi sang mùa có độ phủ: danh sách đủ, không có bộ lọc kho ngầm.
+  await section(page).getByLabel("Mùa", { exact: true }).selectOption(SEASON);
+  await waitForCoverage(page);
+  expect(new URL(page.url()).searchParams.has("kho")).toBe(false);
+  expect(new URL(page.url()).searchParams.has("xep")).toBe(false);
+  await expect(bar(page).getByRole("button", { name: READY_CHIP })).toHaveAttribute("aria-pressed", "false");
+  await expect(bar(page).getByRole("button", { name: "Dễ ráp nhất", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(section(page).locator(".reference-count strong")).toHaveText(String(records.filter((record) => record.sourceSeasonId === SEASON).length));
+});
+
 test("phạm vi Tất cả: có badge và tóm tắt gộp mọi mùa", async ({ page }) => {
   const roster = rosterFor(SEASON, READY_TEAMS);
   const expected = expectedFor("all", roster);
