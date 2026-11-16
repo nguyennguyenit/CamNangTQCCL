@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-17 (Cùng Tồn: kịch bản PK-S27 · Hán Diễm Trường Minh)
+
+- Added: kịch bản `han-diem-truong-minh` (đứng đầu registry, mặc định của `/cung-ton/`) với 5 nhóm / 25 đội từ tab Cùng Tồn của Google Sheet sau khi chủ sheet ghi đè Binh Diễn Xuân Thu; snapshot ghim ở `plans/261117-0206-cung-ton-han-diem-truong-minh/research/`, bản đồ record `pipeline/coexist-han-diem-source-record-map.json`, hai evidence (xác nhận kịch bản, quan sát snapshot). Link Binh Diễn và Anh Hùng Mệnh Thế giữ nguyên byte.
+- Changed: `pipeline/parse_coexist_csv.py` nhận thêm bảng 11 cột theo header (Trang Bị theo tướng → `equipmentRaw`, Thẻ Kỳ Lược theo đội → `strategyCardsRaw`; không tái dùng `unitTacticEffectsRaw`), "Ghi Chú" không phân biệt hoa thường; validator Python/JS nhận hai dạng, từ chối trộn. Thẻ Cùng Tồn hiện "Trang bị: …" dưới cộng điểm và "Thẻ Kỳ Lược: …" ở chân thẻ (bản zh ẩn).
+- Re-pin hash nguồn + baseline inventory (thêm `equipmentRaw`/`strategyCardsRaw` vào `AUTHORED_VI_DATA_FIELDS`, hai nhãn UI mới), publish generation hiển thị, rebind ledger route.
+
 ## 2026-11-16 (Dọn CSS chết sau Thiết kế mới, Đội của tôi giữ bản soạn)
 
 - Removed (#83): quy tắc `.blog-*` không còn trang nào dùng trong `css/styles.css` — `.blog-author`, `.blog-translation`, `.blog-cover`, `.blog-summary*`, `.blog-toc*`, `.blog-faq*`, `.blog-related` (bài chi tiết đã chuyển sang `bv-*`), kèm các selector tương ứng trong nhóm chung `.blog-body h2` và media 680px. Giữ phần còn dùng: danh sách `/bai-viet/` (`.blog-index*`, `.blog-card*`, `.blog-tag*`, `.blog-list`, `.blog-empty*`, `.blog-breadcrumb`, `.blog-lead`) và trang chính sách (`.blog-article*`, `.blog-body`).

@@ -69,11 +69,22 @@ xem [hợp đồng consumer](mcp-research-server.md).
 ## Cùng Tồn và nguồn Recommended
 
 [Parser CSV](../pipeline/parse_coexist_csv.py) giữ nhóm, ba vị trí tướng, các
-slot có thứ tự, dòng ghi chú và điều kiện nguồn. Cột J thuộc “Cải tạo chiến
-pháp binh chủng”; không tự chuyển thành quân sư. Payload nguồn mới nằm trong
-`season-content-links.json`. [Bản đồ record](../pipeline/coexist-source-record-map.json)
-tách ID ổn định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần
-review mapping, không đổi ID theo vị trí CSV.
+slot có thứ tự, dòng ghi chú và điều kiện nguồn. Parser nhận hai dạng bảng theo
+header, mọi record trong một file cùng số cột:
+
+- 10 cột (Binh Diễn Xuân Thu): cột J thuộc “Cải tạo chiến pháp binh chủng”
+  (`unitTacticEffectsRaw` của đội); không tự chuyển thành quân sư.
+- 11 cột (Hán Diễm Trường Minh): thêm cột Trang Bị theo từng tướng
+  (`equipmentRaw`) và cột cuối Thẻ Kỳ Lược của đội (`strategyCardsRaw`, chỉ ở
+  dòng đầu đội). Dạng này không có `unitTacticEffectsRaw`; payload 10 cột không
+  mang hai trường mới. Validator Python/JS từ chối đội trộn trường hai dạng.
+
+Dòng “Ghi chú”/“Ghi Chú” mở phần ghi chú không phân biệt hoa thường. Payload
+nguồn nằm trong `season-content-links.json`. Mỗi nguồn có một bản đồ record
+([Binh Diễn](../pipeline/coexist-source-record-map.json),
+[Hán Diễm](../pipeline/coexist-han-diem-source-record-map.json)) tách ID ổn
+định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần review mapping,
+không đổi ID theo vị trí CSV.
 
 `parse_coexist_csv.py` là thư viện, không có CLI. `parse_coexist_csv(csv_text,
 expected_hash=...)` parse snapshot; `build_content_links(...)` là bộ sinh các link
@@ -87,7 +98,7 @@ import json
 from pathlib import Path
 from pipeline.parse_coexist_csv import build_content_links
 links = json.loads(Path("pipeline/season-content-links.json").read_text(encoding="utf-8"))
-current = [link for link in links if link["target"]["type"] == "source-owned-coexist"]
+current = [link for link in links if link["scenarioId"] == "binh-dien-xuan-thu"]
 rebuilt = build_content_links(
     Path("plans/260907-0233-season-team-lookup/research/coexist-binh-dien-xuan-thu.csv").read_bytes().decode("utf-8"),
     json.loads(Path("pipeline/coexist-source-record-map.json").read_text(encoding="utf-8")),
@@ -99,9 +110,14 @@ print(len(rebuilt), rebuilt == current)  # 5 True với snapshot đang commit
 EOF
 ```
 
+Hán Diễm Trường Minh dùng cùng lệnh với snapshot
+`plans/261117-0206-cung-ton-han-diem-truong-minh/research/coexist-han-diem-truong-minh.csv`,
+bản đồ `pipeline/coexist-han-diem-source-record-map.json` và
+`scenarioId == "han-diem-truong-minh"`.
+
 Với snapshot mới: cập nhật `snapshotHash` trong metadata nguồn và review bản đồ
-record trước, thay các link `source-owned-coexist` trong
-`pipeline/season-content-links.json` bằng kết quả, rồi publish bằng
+record trước, thay các link `source-owned-coexist` của đúng kịch bản đó trong
+`pipeline/season-content-links.json` bằng kết quả (link kịch bản khác giữ nguyên byte), rồi publish bằng
 `python3 -m pipeline.build_season_data` như mục Bảo trì.
 
 Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
@@ -388,9 +404,11 @@ hiện có. Một kịch bản xuất hiện trong registry không bảo đảm 
 cấu hình đủ bằng chứng. Tập rỗng phải được giữ nguyên cho đến khi đủ bằng
 chứng, không điền bằng dữ liệu mùa khác.
 
-Registry hiện có hai kịch bản tham khảo, đều chưa có luật đã review:
+Registry hiện có ba kịch bản tham khảo, đều chưa có luật đã review:
+**PK-S27 · Hán Diễm Trường Minh** (đứng đầu, mặc định của `/cung-ton/`) cho năm
+nhóm từ cùng tab Google Sheet sau khi chủ sheet ghi đè (snapshot 2026-11-17),
 **PK-S26 · Anh Hùng Mệnh Thế** cho năm nhóm Cùng Tồn legacy và
-**OG · Binh Diễn Xuân Thu** cho năm nhóm được thêm sau. Configs/evaluations
+**OG · Binh Diễn Xuân Thu** cho năm nhóm nhập 2026-09-07. Configs/evaluations
 vẫn rỗng nên chưa có tier hay điểm VN theo luật. Website cho phép đọc nguồn
 khi chỉ chọn kịch bản; request gameplay theo mùa của MCP cần cặp
 kịch bản/luật đã review, vì vậy dữ liệu hiện tại chưa cung cấp cặp hợp lệ cho
