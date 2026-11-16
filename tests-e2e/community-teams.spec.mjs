@@ -711,8 +711,8 @@ test("E5: trang tĩnh vi — vote, bình luận đúng pageKey, tên tướng ch
   expect(calls.find((call) => call.method === "PUT" && call.path === "/api/community-teams/t1/vote").body).toEqual({ value: 1 });
 
   const comments = page.locator(".cm-comments");
-  // Tiêu đề "Bình luận" kèm số: `commentCount` của chi tiết là 4 nhưng danh sách nạp hết chỉ còn 1 (số đếm lệch do hai
-  // request tải riêng), nên tiêu đề theo số đang hiện; tăng khi đăng.
+  // Tiêu đề "Bình luận" kèm số: `commentCount` của chi tiết là 4 nhưng danh sách nạp hết chỉ còn 1 (worker bản cũ đếm cả
+  // bình luận của người bị ẩn, hoặc hai request tải lệch nhau), nên tiêu đề theo số đang hiện; tăng khi đăng.
   await expect(comments.locator(".cm-comment")).toHaveCount(1);
   await expect(comments.locator(".cm-title-count")).toHaveText("1");
   await comments.getByLabel("Viết bình luận").fill("Bình luận từ trang tĩnh.");
