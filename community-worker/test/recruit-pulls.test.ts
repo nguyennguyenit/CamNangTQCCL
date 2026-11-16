@@ -59,6 +59,14 @@ async function setup(): Promise<{ h: Harness; token: string; tokenId: string }> 
   return { h, token, tokenId: id };
 }
 
+/** Ghi thẳng một event lượt rẻ của acc_thanos vào D1 (giả lập request/client khác commit chen giữa). */
+function insertRawEvent(h: Harness, id: string, date: string, extra: Record<string, unknown> = {}, rev = 50): string {
+  const iso = new Date(T0).toISOString();
+  const payload = JSON.stringify({ id, accountId: "acc_thanos", bannerId: "danh-tuong-pk", date, drawKind: "daily", pulls: 1, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: "", ...extra });
+  h.sqlite.prepare("insert into recruit_records (user_id, kind, id, updated_at, rev, payload) values ('u-alice', 'event', ?, ?, ?, ?)").run(id, T0, rev, payload);
+  return payload;
+}
+
 describe("POST /api/recruit/pulls (token API)", () => {
   it("ghi lượt free + nửa giá thành event schema v2; client gộp được, 5★ có tên, lượt không ra không ghi tên", async () => {
     const { h, token } = await setup();
@@ -154,10 +162,9 @@ describe("POST /api/recruit/pulls (token API)", () => {
 
   it("event cùng key xuất hiện giữa lúc kiểm và lúc ghi (vd đã xoá trên UI) -> duplicate, không ghi đè", async () => {
     const { h, token } = await setup();
-    const iso = new Date(T0).toISOString();
-    const tombstone = JSON.stringify({ id: "evt_ext_race-key-1", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 1, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: iso });
+    let tombstone = "";
     h.beforeNextBatch(() => {
-      h.sqlite.prepare("insert into recruit_records (user_id, kind, id, updated_at, rev, payload) values ('u-alice', 'event', 'evt_ext_race-key-1', ?, 99, ?)").run(T0, tombstone);
+      tombstone = insertRawEvent(h, "evt_ext_race-key-1", "2026-09-27", { deletedAt: new Date(T0).toISOString() }, 99);
     });
     const res = await send(h, token, body([pull("race-key-1", T0), pull("race-key-2", T0 + 1)]));
     expect(res.status).toBe(200);
@@ -168,16 +175,12 @@ describe("POST /api/recruit/pulls (token API)", () => {
     expect(row).toEqual({ rev: 99, payload: tombstone });
   });
 
-  it("lô khác ghi cùng tài khoản/ngày giữa lúc kiểm và lúc ghi: không vượt 4, lô này 409 và không ghi gì; gửi lại lô đã nhận vẫn 200", async () => {
+  it("lô khác ghi cùng tài khoản/ngày giữa lúc kiểm trùng và lúc ghi: không vượt 4, lô này 409 và không ghi gì; gửi lại lô đã nhận vẫn 200", async () => {
     const { h, token } = await setup();
     const accepted = [pull("other-001", T0), pull("other-002", T0 + 1)];
     expect((await send(h, token, body(accepted))).status).toBe(200);
-    const iso = new Date(T0).toISOString();
-    // Lô song song (client khác) commit 1 lượt sau khi lô dưới đã qua bước kiểm sớm.
-    h.beforeNextBatch(() => {
-      const data = { id: "evt_other", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 1, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: "" };
-      h.sqlite.prepare("insert into recruit_records (user_id, kind, id, updated_at, rev, payload) values ('u-alice', 'event', 'evt_other', ?, 50, ?)").run(T0, JSON.stringify(data));
-    });
+    // Client khác commit 1 lượt ngay trước batch của lô dưới.
+    h.beforeNextBatch(() => void insertRawEvent(h, "evt_other", "2026-09-27"));
     const res = await send(h, token, body([pull("late-001", T0 + 2), pull("late-002", T0 + 3)]));
     expect(res.status).toBe(409);
     expect((await res.json<PullsBody>()).error.code).toBe("daily_limit");
@@ -192,13 +195,33 @@ describe("POST /api/recruit/pulls (token API)", () => {
     const { h, token } = await setup();
     const lot = [pull("retry-full-1", T0)];
     expect((await send(h, token, body(lot))).status).toBe(200);
-    const iso = new Date(T0).toISOString();
-    await seed(h, [
-      { kind: "event", id: "evt_web_many", updatedAt: T0, data: { id: "evt_web_many", accountId: "acc_thanos", bannerId: "danh-tuong-pk", date: "2026-09-27", drawKind: "daily", pulls: 4, result: "miss", heroName: "", heroValueClass: "", note: "", occurredAt: iso, createdAt: iso, updatedAt: iso, deletedAt: "" } },
-    ]);
+    insertRawEvent(h, "evt_web_many", "2026-09-27", { pulls: 4 });
     const retry = await send(h, token, body(lot));
     expect(retry.status).toBe(200);
     expect(await retry.json<PullsBody>()).toMatchObject({ accepted: 0, duplicates: 1, daily: { used: 5 } });
+  });
+
+  it("key của lô vừa được ghi song song vào ngày khác (timeZone khác): tính đúng ngày đã lưu, không vượt 4", async () => {
+    const { h, token } = await setup();
+    expect((await send(h, token, body([pull("day-d-001", T0), pull("day-d-002", T0 + 1), pull("day-d-003", T0 + 2)]))).status).toBe(200);
+    // Request khác ghi shared-key vào ngày D (đủ 4); lô dưới gửi fresh-key ngày D và shared-key ngày D+1.
+    h.beforeNextBatch(() => void insertRawEvent(h, "evt_ext_shared-key", "2026-09-27"));
+    const res = await send(h, token, body([pull("fresh-key", T0 + 3), pull("shared-key", T0 + 86_400_000)]));
+    expect(res.status).toBe(409);
+    const ids = (await serverEvents(h)).map((e) => e.id);
+    expect(ids).not.toContain("evt_ext_fresh-key");
+    expect(ids).toHaveLength(4);
+  });
+
+  it("lô gốc commit giữa lúc kiểm trùng và lúc ghi của bản gửi lại: bản gửi lại 200, toàn trùng", async () => {
+    const { h, token } = await setup();
+    const lot = [pull("orig-0001", T0), pull("orig-0002", T0 + 1), pull("orig-0003", T0 + 2), pull("orig-0004", T0 + 3)];
+    h.beforeNextBatch(() => {
+      for (const p of lot) insertRawEvent(h, `evt_ext_${p.key}`, "2026-09-27");
+    });
+    const retry = await send(h, token, body(lot));
+    expect(retry.status).toBe(200);
+    expect(await retry.json<PullsBody>()).toMatchObject({ accepted: 0, duplicates: 4, daily: { used: 4 } });
   });
 
   it("ngày theo timeZone, mặc định Asia/Ho_Chi_Minh; timeZone lạ -> 400", async () => {
