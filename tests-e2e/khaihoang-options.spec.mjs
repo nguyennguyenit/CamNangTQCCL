@@ -1,8 +1,11 @@
 import { readFile } from "node:fs/promises";
 import { expect, test } from "@playwright/test";
 import { replaceWebsiteDisplayPin, websiteDisplayFixture } from "./fixtures/website-display-fixture.mjs";
+import { khaihoangRecommendedFirst } from "../js/render.js";
 
 const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8"));
+/** Thứ tự thẻ trên trang: đội Tiến cử lên đầu lúc render, thứ tự dữ liệu giữ nguyên. */
+const renderedTeams = khaihoangRecommendedFirst(data.teams);
 /** Byte gốc của nguồn: pin trên trang chi tiết và hash trong bản phát hành đều so với byte này. */
 const khaihoangSource = await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8");
 const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -97,7 +100,7 @@ test("every version replaces only its card and restores the default", async ({ p
   // Bản Việt hiện tên chiến pháp hiện hành của danh mục: tên lưu đổi theo bảng nhúng `#tactic-display-names`.
   const displayNames = JSON.parse(await page.locator("#tactic-display-names").textContent() || "{}");
   const shownTactic = (name) => displayNames[name.trim()] ?? name;
-  for (const [index, team] of data.teams.entries()) {
+  for (const [index, team] of renderedTeams.entries()) {
     const card = page.locator(".kh-card").nth(index);
     const initial = await card.locator(".kh-build").textContent();
     const next = page.locator(".kh-card").nth((index + 1) % data.teams.length);
@@ -230,7 +233,7 @@ test("each card links its title and Chi tiết to the same detail route", async 
   await expect(main).toHaveCount(data.teams.length);
   for (let index = 0; index < await main.count(); index++) {
     const card = main.nth(index);
-    const team = data.teams[index];
+    const team = renderedTeams[index];
     await expect(card).not.toContainText(/Kazten|CN\/KR|Nguồn/);
     const links = card.getByRole("link");
     await expect(links).toHaveText([team.title, "Chi tiết"]);
@@ -246,7 +249,7 @@ test("the card stamp shows the overall rating, or a dashed empty stamp when the 
   const rated = data.teams.filter((team) => Number.isFinite(Number(team.guide?.ratings?.overall)));
   expect(rated.length).toBeGreaterThan(0);
   expect(rated.length).toBeLessThan(data.teams.length);
-  for (const [index, team] of data.teams.entries()) {
+  for (const [index, team] of renderedTeams.entries()) {
     const stamp = page.locator(".kh-card").nth(index).locator(".kh-card-head .reference-score-wrap");
     const overall = Number(team.guide?.ratings?.overall);
     if (Number.isFinite(overall)) {
@@ -847,7 +850,7 @@ test("panel hành động của chi tiết Khai hoang và Đội khác không tr
   test.slow();
   const handles = await routeHandles(request);
   const ids = data.teams.map((team) => team.id);
-  expect(ids.length).toBe(17);
+  expect(ids.length).toBe(18);
   const boxes = () => page.evaluate(() => [...document.querySelectorAll(".detail-score-panel a, .detail-score-panel button, .detail-score-panel input")]
     .map((node) => { const rect = node.getBoundingClientRect(); return { text: node.textContent.trim().slice(0, 24) || node.type, left: Math.round(rect.left), right: Math.round(rect.right) }; }));
   /** Hai hộp có giao nhau theo cả hai trục (bàn đo không bắt được tràn sang trái). */

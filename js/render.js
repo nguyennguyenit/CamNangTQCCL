@@ -640,6 +640,23 @@ function applyKhaihoangUnit(node, build) {
 /** Class badge loại binh của thẻ Khai hoang (class màu theo giá trị gốc của loại binh). */
 const unitBadgeClass = (unitType) => `badge unit ${UNIT_CLASS[unitType] || ""}`;
 
+/** Huy hiệu "Tiến cử" của đội do nhà phát hành giới thiệu (`team.recommended`); đội khác không có. */
+export const khaihoangRecommendedBadge = (team) => (team?.recommended === true
+  ? t("span", { class: "badge badge-band kh-recommended" }, L("Tiến cử", "推荐"))
+  : null);
+
+/**
+ * Đội `recommended` đứng đầu theo `recommendedOrder` (thứ tự ảnh nhà phát hành), đội còn lại giữ thứ tự dữ liệu.
+ * Thứ tự dữ liệu không đổi để khoá bản dịch theo vị trí (`teams[N]`) vẫn đúng.
+ */
+export const khaihoangRecommendedFirst = (list) => {
+  const rank = (item) => (item?.recommended === true && Number.isFinite(item.recommendedOrder) ? item.recommendedOrder : Infinity);
+  return [...(list || [])].sort((a, b) => {
+    const [ra, rb] = [rank(a), rank(b)];
+    return ra === rb ? 0 : ra < rb ? -1 : 1;
+  });
+};
+
 /** 6 mốc điểm Khai hoang và thang quy đổi chiều dài thanh. */
 const ratingMarks = () => [
   ["land4", L("Đất 4", "4级地")], ["land5", L("Đất 5", "5级地")], ["land6", L("Đất 6", "6级地")],
@@ -738,7 +755,7 @@ function khaihoangTeamCardTree(team, href) {
     t("header", { class: "reference-card-head kh-card-head" }, [
       t("div", { class: "reference-card-title" }, [
         t("h3", { class: "team-name kh-title" }, t("a", { class: "kh-title-link", ...link }, khaihoangTitle(team))),
-        t("p", { class: "reference-meta" }, [t("span", { class: unitBadgeClass(team.unitType) }, unitLabel(team.unitType))]),
+        t("p", { class: "reference-meta" }, [t("span", { class: unitBadgeClass(team.unitType) }, unitLabel(team.unitType)), khaihoangRecommendedBadge(team)].filter(Boolean)),
       ]),
       khaihoangScoreStamp(team.guide?.ratings),
     ]),
@@ -760,7 +777,7 @@ const mineName = (value) => (isZh() ? String(value ?? "").replace(/^Mỏ\s*/u, "
 /** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp. */
 function chamSuTeamCard(team) {
   return t("article", { class: "cham-su-card" }, [
-    t("h3", { class: "cham-su-title" }, khaihoangTitle(team)),
+    t("h3", { class: "cham-su-title" }, [khaihoangTitle(team), khaihoangRecommendedBadge(team) ? " " : null, khaihoangRecommendedBadge(team)].filter(Boolean)),
     t("ul", { class: "cham-su-list" }, (team.heroes || []).map((hero) =>
       t("li", {}, [
         t("span", { class: "cham-su-hero" }, seatName(hero.name)),
@@ -813,12 +830,13 @@ function mineCards(mines) {
  * Tham khảo chung của cả mục Khai hoang (trang danh sách, sau lưới đội): nhóm Chạm Sứ rồi quân thủ các mỏ.
  * Không thuộc đội nào nên không theo bộ lọc loại binh. Khối nào không có dữ liệu thì bỏ hẳn.
  */
-function khaihoangReference({ chamSuTeams, mines }) {
+function khaihoangReference({ chamSuTeams, chamSuTip, mines }) {
   return [
     chamSuTeams.length ? t("section", { class: "kh-reference", id: "cham-su" }, [
       t("h2", {}, L("Đội Chạm Sứ / Ăn vạ", "碰瓷队伍")),
+      viProse(chamSuTip) ? t("p", { class: "cham-su-tip" }, chamSuTip) : null,
       t("div", { class: "cham-su-cards" }, chamSuTeams.map(chamSuTeamCard)),
-    ]) : null,
+    ].filter(Boolean)) : null,
     mines.length ? t("section", { class: "kh-reference", id: "mo" }, [
       t("h2", {}, L("Quân thủ các mỏ", "各矿守军")),
       minesTable(mines),
@@ -855,9 +873,9 @@ function seatName(value) {
 export function khaihoangTableTree(data, { hrefFor, locale } = {}) {
   return withLocale(locale, () => {
     // Tương thích ngược: payload mảng (cấu trúc cũ chỉ có mỏ) không có đội nào.
-    const teams = Array.isArray(data) ? [] : (data.teams || []);
+    const teams = Array.isArray(data) ? [] : khaihoangRecommendedFirst(data.teams);
     const shared = Array.isArray(data) ? {} : data;
-    const chamSuTeams = shared.chamSuTeams || [];
+    const chamSuTeams = khaihoangRecommendedFirst(shared.chamSuTeams);
     const mines = shared.mines || [];
 
     // Lọc loại binh: chip đếm theo chính dữ liệu đang dựng; "Tất cả" luôn đứng đầu.
@@ -894,7 +912,7 @@ export function khaihoangTableTree(data, { hrefFor, locale } = {}) {
             t("p", { class: "empty", hidden: true }, L("Không có đội khai hoang nào dùng loại binh này.", "没有使用该兵种的开荒队伍。")),
           ])
         : null,
-      ...khaihoangReference({ chamSuTeams, mines }),
+      ...khaihoangReference({ chamSuTeams, chamSuTip: shared.chamSuTip, mines }),
     ].filter(Boolean));
   });
 }
@@ -907,7 +925,7 @@ export function khaihoangTableTree(data, { hrefFor, locale } = {}) {
  * lựa chọn, controller chỉ dựng build/chip/href và báo thay đổi qua callback.
  */
 export function khaihoangTable(data, { hrefFor, onNavigate, onChange, adopt = null } = {}) {
-  const teams = Array.isArray(data) ? [] : (data.teams || []);
+  const teams = Array.isArray(data) ? [] : khaihoangRecommendedFirst(data.teams);
   const selections = new Map(teams.map((team) => [team.id, ""]));
   const readHref = (teamId, variantId) => (typeof hrefFor === "function" ? hrefFor(teamId, variantId) : null);
   let unitFilter = "";

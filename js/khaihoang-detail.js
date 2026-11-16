@@ -64,7 +64,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   /** Đầu trang chi tiết: huy hiệu loại binh của build đang chọn + nút sao chép link. */
   const paintHeader = (build) => {
     if (badges) {
-      const nodes = detailBadges({unitType: build?.unitType ? [build.unitType] : []}, null);
+      const nodes = detailBadges({unitType: build?.unitType ? [build.unitType] : [], khaihoangRecommended: team?.recommended === true}, null);
       badges.replaceChildren(...nodes.map((node) => treeToDom(node)));
       badges.hidden = !nodes.length;
     }
