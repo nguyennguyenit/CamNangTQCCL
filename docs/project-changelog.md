@@ -15,6 +15,16 @@
 - Tests: `community-worker/test/tokens.test.ts`, `test/recruit-pulls.test.ts`.
 - Chưa làm: UI quản lý token trên trang Theo dõi chiêu mộ (cần ghim lại hash `js/recruit-tracker.js` + publish generation); client `tqkh` và skill `quay-tuong` gọi endpoint mới.
 
+## 2026-11-15 (Khai hoang: đối chiếu ảnh tham khảo chính thức)
+
+### Changed
+- `data/khaihoang.json` (curate tay): `gia-cat-khac-thai-su-tu-ta-tu` ghi rõ Tả Từ sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng (không thêm Cắt Xương Trị Độc) kèm thực chiến cấp 24–25 thắng thủ quân cấp 6 (15K) hai lần; `khuong-duy-ha-hau-uyen-gia-cat-khac` thêm cấu hình `tham-khao-thoi-phong` (chỉ mùa có Thôi Phong Đoạn Nhẫn) và ghi Khương Duy trước cấp 20 dùng Hoành Tảo Thiên Quân/Vô Đương Phi Quân; `gia-cat-khac-quan-ngan-binh-nhac-tien` thêm lựa chọn Tam Thế Trận (khuyến nghị)/Tiềm Long Trận, Gió Táp Mưa Sa/Dùng Nước Đẩy Cầu, Văn Võ Song Toàn/Lính Thanh Châu/Nhanh Chân Tranh Đất.
+- Chiến pháp 據水斷橋 trong `khaihoang.json` dùng tên client `Dùng Nước Đẩy Cầu` (trường `viet`) thay `Cứ Thủy Đoạn Kiều` (hanViet); `Hoành Tào Thiên Quân` ở đội sửa được đổi thành `Hoành Tảo Thiên Quân`.
+- Thục Kỵ (`khuong-duy-quan-ngan-binh-thai-van-co`) và Hỗn Hợp Lính Cung (`sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa`) chốt theo ảnh chính thức, cấu hình cũ của website giữ dạng lựa chọn `A/B` (vế ảnh đứng trước).
+- Thêm đội `sp-lo-truc-ha-hau-uyen-tran-cung` (SP Lô Trực Cung, theo ảnh chính thức; chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn) kèm route handle Khai hoang mới (18 handle).
+- Huy hiệu "Tiến cử" (`推荐`) cho 7 đội trong ảnh: trường `recommended: true` + `recommendedOrder` (1–7, thứ tự ảnh) trong `khaihoang.json`; thẻ danh sách và trang chi tiết hiện huy hiệu (`badge-band`), danh sách Khai hoang xếp 7 đội này lên đầu qua `khaihoangRecommendedFirst` (render, không đổi thứ tự dữ liệu để khoá bản dịch theo `teams[N]` còn đúng). Không đổi điểm/tier.
+- Re-pin hash `khaihoang.json` và baseline inventory trong policy, publish generation hiển thị mới, rebind ledger route.
+
 ## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
 
 ### Nền dùng chung

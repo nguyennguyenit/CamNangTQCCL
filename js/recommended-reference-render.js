@@ -1,4 +1,4 @@
-import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, sourceLabel, unitLabel, variantNameNodes } from './render.js';
+import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
 import { legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
@@ -214,6 +214,8 @@ function badgeTrees(row,labels) {
     const label=kindLabel(labels,'unit',raw);
     if (label) nodes.push(t('span',{class:'badge unit'},label));
   }
+  const recommended=khaihoangRecommendedBadge({recommended:row?.khaihoangRecommended});
+  if (recommended) nodes.push(recommended);
   return nodes;
 }
 

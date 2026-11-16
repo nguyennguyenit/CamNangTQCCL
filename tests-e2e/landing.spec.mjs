@@ -224,7 +224,7 @@ test('Khải hoang: chỉ đếm đội có đủ cấu hình trước/sau, đú
   expect(afterOnly).toBeTruthy();
   expect(khaiHoangTeamHasBeforeAfter(afterOnly)).toBe(false);
   expect(afterOnly.heroes.every((hero) => !(hero.tacticBefore || '').trim())).toBe(true);
-  expect(EXPECTED.khaiHoangBeforeAfter).toBe('16');
+  expect(EXPECTED.khaiHoangBeforeAfter).toBe('17');
 
   await page.goto('/');
   await expect(page.locator('#landing-sections .landing-tile-desc').nth(3)).toHaveText(

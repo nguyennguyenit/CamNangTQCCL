@@ -402,7 +402,7 @@ test('a custom project root must supply the ledger that belongs to it',async t=>
   const cached=await teamDetailCatalog();
   assert.equal(cached.generationId,defaultCatalog.generationId);
   assert.equal(cached.recommended.length,1640);
-  assert.equal(cached.htmlPaths.length,1823);
+  assert.equal(cached.htmlPaths.length,1824);
 });
 
 test('worktree publication yields the real route inventory and pins the real originals',async()=>{
@@ -456,7 +456,7 @@ test('worktree publication yields the real route inventory and pins the real ori
   assert.equal(ledger.schemaVersion,3);
   assert.equal(catalog.khaiHoangSha256,`sha256:${hash(khaiHoangBytes)}`);
   assert.equal(catalog.khaiHoang.length,khaiHoangTeams.length);
-  assert.equal(catalog.khaiHoang.length,17);
+  assert.equal(catalog.khaiHoang.length,18);
   assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),khaiHoangTeams.map(team=>team.id));
   assert.equal(new Set(catalog.khaiHoang.map(entry=>entry.handle)).size,catalog.khaiHoang.length);
   for (const [index,entry] of catalog.khaiHoang.entries()) {
@@ -471,7 +471,7 @@ test('worktree publication yields the real route inventory and pins the real ori
     catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
     catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
   );
-  assert.equal(catalog.htmlPaths.length,1640+166+17);
+  assert.equal(catalog.htmlPaths.length,1640+166+18);
 });
 
 test('Khai hoang route contract: an injected source yields the emitted routes and pins',async t=>{
@@ -622,7 +622,7 @@ test('Khai hoang route contract: the frozen ledger and the raw data assemble the
 
   assert.equal(catalog.khaiHoangSha256,`sha256:${hash(khaiHoangBytes)}`);
   assert.equal(catalog.khaiHoang.length,khaiHoangTeams.length);
-  assert.equal(catalog.khaiHoang.length,17);
+  assert.equal(catalog.khaiHoang.length,18);
   assert.deepEqual(catalog.khaiHoang.map(entry=>entry.khaiHoangTeamId),khaiHoangTeams.map(team=>team.id));
   assert.deepEqual(catalog.khaiHoang.map(entry=>entry.title),khaiHoangTeams.map(team=>team.title));
   for (const entry of catalog.khaiHoang) {
