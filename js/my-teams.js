@@ -22,7 +22,7 @@ import { setTeamRouteHandlesFromJSON } from "./team-detail-navigation.js";
 
 const MAIN_BOX = "main";
 
-/** Nội dung đội để so "máy khác đã sửa chưa", bỏ ngày giờ và nhóm (server tự đổi hai trường này khi xóa nhóm). */
+/** Nội dung đội để so "máy khác đã sửa chưa", bỏ ngày giờ (server tự đổi khi xóa nhóm) và nhóm (so riêng ở `save`). */
 const contentKey = (team) => JSON.stringify({ ...team, updatedAt: null, groupId: null });
 
 async function loadNames(locale) {
@@ -430,6 +430,14 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     // Đã kiểm trạng thái hiện hành của server trước lần ghi đầu: các lần thử lại / "Giữ bản của tôi" sau đó không kéo lại
     // (kéo lại sẽ làm lần ghi sau thắng bản của máy khác mà không báo; xung đột do `saveTeam` tự phát hiện).
     let verified = false;
+    // Nhóm máy khác đã chuyển đội sang từ lúc mở (người dùng không đổi nhóm trong trình soạn): giữ nhóm đó khi lưu.
+    let keepGroup = null;
+    // Nhóm ô chọn của trình soạn hiện lúc mở (cùng quy tắc với `createTeamEditor`): so với `candidate.groupId` để biết người
+    // dùng có tự đổi nhóm hay không.
+    const editorGroups = groups.length ? groups : defaultGroupsOf(team.boxId);
+    const initialGroupId = editorGroups.some((group) => group.id === team.groupId)
+      ? team.groupId
+      : (editorGroups.find((group) => /~ghep-team$/u.test(group.id)) ?? editorGroups[0])?.id ?? team.groupId;
     // Chỉ đóng trình soạn của chính đội này: lời gọi muộn (lưu xong sau khi trình soạn đã đóng) không đụng trình soạn khác.
     const leave = (savedId = null) => {
       if (view.editor !== editor) return;
@@ -471,6 +479,17 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
             verified = true;
             return { ok: false, conflict: true, server: current, loser: candidate };
           }
+          // Nhóm: máy khác chuyển nhóm (không tính server tự dồn về Ghép Team khi nhóm cũ bị xóa). Người dùng không đổi nhóm
+          // thì giữ nhóm hiện hành trên server; cả hai cùng đổi sang nhóm khác nhau thì là xung đột.
+          const groupLiveBefore = api.snapshot().groups.some((group) => group.id === team.groupId && group.boxId === team.boxId);
+          if (current && groupLiveBefore && current.groupId !== team.groupId) {
+            if (candidate.groupId === initialGroupId) {
+              keepGroup = current.groupId;
+            } else if (candidate.groupId !== current.groupId) {
+              verified = true;
+              return { ok: false, conflict: true, server: current, loser: candidate };
+            }
+          }
           verified = true;
         }
         const live = api.snapshot();
@@ -484,8 +503,9 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         }
         // Nhóm đã chọn bị xóa trong lúc soạn (ở đây hoặc máy khác): lưu vào nhóm dự phòng Ghép Team của hộp,
         // không ghi id nhóm không còn.
-        const groupLive = live.groups.some((group) => group.id === candidate.groupId && group.boxId === team.boxId);
-        const groupId = groupLive ? candidate.groupId : `${team.boxId}~ghep-team`;
+        const wantedGroup = keepGroup ?? candidate.groupId;
+        const groupLive = live.groups.some((group) => group.id === wantedGroup && group.boxId === team.boxId);
+        const groupId = groupLive ? wantedGroup : `${team.boxId}~ghep-team`;
         return api.saveTeam({ ...candidate, groupId }, { boxId: team.boxId, groupId });
       },
       onSaved: (saved) => {

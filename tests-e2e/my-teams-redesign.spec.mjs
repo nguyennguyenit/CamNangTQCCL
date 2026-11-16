@@ -510,6 +510,36 @@ test.describe("không mất bản soạn", () => {
     const created = live.find((row) => row.id !== "team-dich");
     expect(created.data).toMatchObject({ boxId: "main", name: "Bản soạn chưa lưu" });
   });
+
+  test("máy khác chuyển nhóm lúc đang sửa tên: Lưu giữ nhóm mới trên server, không hoàn tác", async ({ page }) => {
+    const draft = draftOf("team-nhom");
+    const mock = await open(page, { teams: [{ draft }] });
+    await card(page, "team-nhom").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Đổi tên, không đổi nhóm");
+    await seedTeam(mock.server, draft, { groupId: "main~khai-hoang", at: Date.now() });
+
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect.poll(() => mock.server.live("team")[0].data.name).toBe("Đổi tên, không đổi nhóm");
+    expect(mock.server.live("team")[0].data.groupId).toBe("main~khai-hoang");
+    await expect(page.locator('.mt-group[data-group-id="main~khai-hoang"]').locator('.mt-team[data-team-id="team-nhom"]')).toBeVisible();
+  });
+
+  test("hai bên cùng đổi nhóm sang nhóm khác nhau: hiện xung đột, không ghi; Giữ bản của tôi thì lưu nhóm đã chọn", async ({ page }) => {
+    const draft = draftOf("team-hai-nhom");
+    const mock = await open(page, { teams: [{ draft }], groups: [{ id: "grp-x", name: "Nhóm X" }] });
+    await card(page, "team-hai-nhom").getByRole("button", { name: "Sửa", exact: true }).click();
+    await page.locator("form.mt-editor").getByLabel("Nhóm", { exact: true }).selectOption("grp-x");
+    await seedTeam(mock.server, draft, { groupId: "main~khai-hoang", at: Date.now() });
+
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor [data-conflict]")).toBeVisible();
+    expect(mock.server.live("team")[0].data.groupId).toBe("main~khai-hoang");
+
+    await page.locator("form.mt-editor [data-conflict]").getByRole("button", { name: "Giữ bản của tôi" }).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect.poll(() => mock.server.live("team")[0].data.groupId).toBe("grp-x");
+  });
 });
 
 test.describe("trình soạn và bảng chọn", () => {

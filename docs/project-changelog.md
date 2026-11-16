@@ -9,6 +9,8 @@
 - Tests (#86): `tests-e2e/my-teams-redesign.spec.mjs` — `beforeunload`, đội bị xóa → Lưu thành đội mới, đội bị chuyển hộp → Hủy, bản zh.
 - Fixed (#86, review Astra): (1) đội gốc xuất hiện lại sau khi đã chọn "lưu thành đội mới" không còn kéo lần "Lưu lại" về ghi đè đội gốc — id và hộp của đội mới được chốt một lần cho mọi lần thử lại; (2) Lưu không còn ghi đè việc xóa / chuyển hộp từ máy khác mà trang chưa kéo: trước lần ghi đầu tiên `api.refresh()` (`js/my-teams-api.js`) kéo trạng thái server, đội đã mất thì báo "Đội này vừa bị xóa hoặc chuyển hộp ở thiết bị khác. Chưa ghi gì" (Lưu lần nữa = đội mới, Hủy = bỏ), nội dung đội bị sửa ở máy khác thì hiện hai bản để chọn (như xung đột cũ) thay vì thắng im lặng; không kéo được thì báo mất kết nối và không ghi gì. Không đổi worker / schema.
 - Tests (#86, review): `tests-e2e/my-teams-redesign.spec.mjs` — lưu mới mất phản hồi rồi đội gốc quay lại; chuyển hộp chưa kéo.
+- Fixed (#86, re-audit Astra): Lưu không còn hoàn tác việc máy khác chuyển nhóm của đội đang sửa. Sau khi kéo server: người dùng không đổi nhóm trong trình soạn thì giữ nhóm hiện hành trên server; cả hai bên đổi sang nhóm khác nhau thì hiện hai bản để chọn (Giữ bản của tôi = nhóm đã chọn); server tự dồn về Ghép Team vì nhóm cũ bị xóa không tính là chuyển nhóm. E2E: `my-teams-redesign.spec.mjs` (2 ca nhóm).
+- Docs (#81): chú thích `mountComments({ count })` và hai e2e community-teams nêu đúng — từ PR #108 worker đếm theo điều kiện hiển thị, worker cũ đếm cả bình luận người bị ẩn; fallback theo danh sách đã nạp hết giữ nguyên.
 
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
