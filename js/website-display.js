@@ -165,7 +165,7 @@ const nameKey = value => String(value).normalize("NFC").trim().toLocaleLowerCase
 /**
  * Bộ tra tên Hán gốc từ tên Hán-Việt. Dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) chỉ lưu
  * tên Việt, nên bản Trung phải tra lại qua từ điển có trường `chinese` (heroes-dict, tactics, books-dict).
- * Khớp đúng `viet`/`hanViet` (không phân biệt hoa thường), rồi thử lại khi bỏ hậu tố dạng " (S)".
+ * Khớp đúng `viet`/`hanViet` rồi tới `aliases` (không phân biệt hoa thường; alias không đè tên chính), rồi thử lại khi bỏ hậu tố dạng " (S)".
  * Ô gộp nhiều lựa chọn ("A/B") chỉ tra được khi mọi phần đều tra được; thiếu một phần thì trả null.
  */
 export function createRawNameResolver(...dicts) {
@@ -175,6 +175,15 @@ export function createRawNameResolver(...dicts) {
       if (blank(entry?.chinese)) continue;
       for (const name of [entry.viet, entry.hanViet]) {
         if (!blank(name) && !index.has(nameKey(name))) index.set(nameKey(name), entry.chinese.trim());
+      }
+    }
+  }
+  // Lượt hai: alias (tên client như "SP Lô Trực") chỉ lấp chỗ trống, không bao giờ đè tên chính của mục khác.
+  for (const dict of dicts) {
+    for (const entry of Array.isArray(dict) ? dict : []) {
+      if (blank(entry?.chinese) || !Array.isArray(entry.aliases)) continue;
+      for (const alias of entry.aliases) {
+        if (typeof alias === "string" && !blank(alias) && !index.has(nameKey(alias))) index.set(nameKey(alias), entry.chinese.trim());
       }
     }
   }

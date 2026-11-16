@@ -1,5 +1,9 @@
 # Project Changelog
 
+## 2026-11-17 (Dot 2: bản zh tra alias tên Hán, nhãn mùa khác, UI token API recruit)
+
+- Fixed (#104): `createRawNameResolver` (`js/website-display.js`) index thêm `aliases` của từ điển ở lượt hai, sau `viet`/`hanViet` của mọi mục, nên alias chỉ lấp chỗ trống và không đè tên chính. "SP Lô Trực" (alias của SP Lô Thực) ra `SP 盧植` ở bản zh thay vì `—`. Không đổi dữ liệu, ledger, URL. Test: `tests-js/website-display.test.mjs` (alias không đè tên chính), `tests-js/team-view-trees.test.mjs` khoá thứ tự thẻ Khai hoang theo `recommendedOrder` 1-2-3. `js/website-display.js` bị ghim hash và kích hoạt release MCP: integrator ghim lại hash và publish generation.
+
 ## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
 
 - Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
