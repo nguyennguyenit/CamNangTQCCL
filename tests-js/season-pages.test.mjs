@@ -87,7 +87,7 @@ test("5. registry rỗng cho 0 trang, không ném lỗi", async () => {
   }
 });
 
-test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện tại mất trang + 301 từ slug của nó, nhãn mùa cũ đổi theo, client không còn hằng số", async () => {
+test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện tại mất trang + 301 từ slug của nó, nhãn mùa cũ theo thứ tự registry, client không còn hằng số", async () => {
   const { registry, catalog } = await data();
   const before = seasonPageCatalog(registry, catalog);
   const switched = withDefault(registry, "pk-s24");
@@ -103,7 +103,9 @@ test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện
     { from: "/zh/doi-chuan/pk-s24/", to: "/zh/doi-chuan/", status: 301 },
   ]);
   assert.equal(isOldSeason(current, registry.defaultSourceSeasonId), false);
-  assert.equal(isOldSeason(current, "pk-s24"), true);
+  // Mặc định đổi sang PK-S24: PK-S27 (mùa hiện tại trước đó) giờ mới hơn mặc định nên không nhãn, PK-S20 thì có.
+  assert.equal(isOldSeason(current, "pk-s24"), false);
+  assert.equal(isOldSeason("pk-s20", "pk-s24"), true);
   assert.equal(isOldSeason("pk-s24", "pk-s24"), false);
   assert.equal(isOldSeason(null, "pk-s24"), false);
   // Chip "Hiện tại" của ô chọn mùa theo registry, không theo hằng số.
@@ -134,4 +136,39 @@ test("6b. mùa mặc định có hơn 60 đội: /doi-chuan/ không JS liệt k�
     .find((id) => { const n = rows.filter((row) => row.sourceSeasonId === id).length; return n > 0 && n <= 60; });
   const small = recommendedSectionTrees({ family: "recommended", rows, registry: withDefault(registry, smallId), locale: "vi" }).map((tree) => treeToHtml(tree)).join("");
   assert.match(small, /data-ssr-signature="[^"]*,60\]"/u);
+});
+
+test("6c. nhãn mùa cũ theo số mùa, không theo thứ tự ô chọn của nguồn (#89)", async () => {
+  const { registry, catalog } = await data();
+  // Thứ tự nguồn của generation #103: PK-S27, PK-S28 … S1, OG (ô chọn, không phải thời gian). Kết quả không được phụ thuộc vào nó.
+  const og = registry.seasonOptions.find((item) => item.sourceSeasonId === "og-兵演春秋");
+  const first = ["pk-s27", "pk-s28"].map((id) => registry.seasonOptions.find((item) => item.sourceSeasonId === id));
+  const rest = registry.seasonOptions.filter((item) => item !== og && !first.includes(item));
+  const real = { ...registry, seasonOptions: [...first, ...rest, og] };
+  assert.equal(real.seasonOptions[0].sourceSeasonId, "pk-s27");
+  assert.equal(real.seasonOptions.at(-1).sourceSeasonId, "og-兵演春秋");
+  assert.equal(isOldSeason("pk-s28", "pk-s27"), false);
+  assert.equal(isOldSeason("pk-s26", "pk-s27"), true);
+  assert.equal(isOldSeason("pk-s4", "pk-s27"), true);
+  assert.equal(isOldSeason("s3", "pk-s4"), true);
+  assert.equal(isOldSeason("s1", "pk-s27"), true);
+  assert.equal(isOldSeason("og-兵演春秋", "pk-s27"), false);
+  assert.equal(isOldSeason("pk-s29", "pk-s27"), false);
+  assert.equal(isOldSeason("pk-s27", "pk-s27"), false);
+  // Không rõ: không nhãn.
+  assert.equal(isOldSeason("pk-s999x", "pk-s27"), false);
+  assert.equal(isOldSeason("pk-s26", "pk-xyz"), false);
+  assert.equal(isOldSeason("pk-s26", null), false);
+  assert.equal(isOldSeason(undefined, "pk-s27"), false);
+  assert.equal(isOldSeason("", "pk-s27"), false);
+  // Mặc định là OG: không mùa nào có nhãn.
+  const ogDefault = seasonPageCatalog(withDefault(real, "og-兵演春秋"), catalog);
+  assert.ok(ogDefault.pages.length > 10);
+  assert.ok(ogDefault.pages.every((page) => page.older === false));
+  // Cờ `older` của trang mùa theo cùng hàm, với thứ tự nguồn của #103.
+  const result = seasonPageCatalog(withDefault(real, "pk-s27"), catalog);
+  assert.equal(result.pages.find((page) => page.sourceSeasonId === "pk-s28").older, false);
+  assert.equal(result.pages.find((page) => page.sourceSeasonId === "pk-s26").older, true);
+  assert.equal(result.pages.find((page) => page.sourceSeasonId === "s1").older, true);
+  assert.equal(result.pages.every((page) => page.older === (page.sourceSeasonId !== "og-兵演春秋" && Number(/(\d+)$/u.exec(page.sourceSeasonId)[1]) < 27)), true);
 });
