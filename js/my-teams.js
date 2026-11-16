@@ -503,7 +503,8 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         }
         // Nhóm đã chọn bị xóa trong lúc soạn (ở đây hoặc máy khác): lưu vào nhóm dự phòng Ghép Team của hộp,
         // không ghi id nhóm không còn.
-        const wantedGroup = keepGroup ?? candidate.groupId;
+        // Nhóm giữ từ server chỉ áp khi người dùng vẫn chưa đổi nhóm; chọn nhóm khác trước khi "Lưu lại" thì theo lựa chọn đó.
+        const wantedGroup = keepGroup !== null && candidate.groupId === initialGroupId ? keepGroup : candidate.groupId;
         const groupLive = live.groups.some((group) => group.id === wantedGroup && group.boxId === team.boxId);
         const groupId = groupLive ? wantedGroup : `${team.boxId}~ghep-team`;
         return api.saveTeam({ ...candidate, groupId }, { boxId: team.boxId, groupId });

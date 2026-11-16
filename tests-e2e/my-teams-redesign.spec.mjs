@@ -540,6 +540,35 @@ test.describe("không mất bản soạn", () => {
     await expect(page.locator("form.mt-editor")).toHaveCount(0);
     await expect.poll(() => mock.server.live("team")[0].data.groupId).toBe("grp-x");
   });
+
+  test("máy khác chuyển nhóm, Lưu lỗi 500, chọn nhóm khác rồi Lưu lại: lưu vào nhóm vừa chọn, không dính nhóm giữ từ server", async ({ page }) => {
+    const draft = draftOf("team-thu-lai");
+    const mock = await open(page, { teams: [{ draft }], groups: [{ id: "grp-x", name: "Nhóm X" }, { id: "grp-y", name: "Nhóm Y" }] });
+    await card(page, "team-thu-lai").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Sửa tên rồi thử lại");
+    await seedTeam(mock.server, draft, { groupId: "grp-x", at: Date.now() });
+
+    // Lần Lưu đầu: POST lỗi 500 (đã giữ nhóm grp-x của server), form còn mở với nút "Lưu lại".
+    let failing = true;
+    await page.route("**/api/roster", async (route) => {
+      if (failing && route.request().method() === "POST") {
+        await route.fulfill({ status: 500, contentType: "application/json", body: JSON.stringify({ error: { code: "internal", message: "probe" } }) });
+        return;
+      }
+      await route.fallback();
+    });
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor").getByRole("alert")).toBeVisible();
+    expect(mock.server.live("team")[0].data.name).not.toBe("Sửa tên rồi thử lại");
+
+    // Người dùng chọn nhóm khác (grp-y) rồi Lưu lại: phải theo lựa chọn đó.
+    failing = false;
+    await page.locator("form.mt-editor").getByLabel("Nhóm", { exact: true }).selectOption("grp-y");
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect.poll(() => mock.server.live("team")[0].data.groupId).toBe("grp-y");
+    expect(mock.server.live("team")[0].data.name).toBe("Sửa tên rồi thử lại");
+  });
 });
 
 test.describe("trình soạn và bảng chọn", () => {
