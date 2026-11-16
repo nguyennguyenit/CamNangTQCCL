@@ -1715,11 +1715,11 @@
       "id": "gia-hu-thai-su-tu-tu-binh",
       "recommended": true,
       "recommendedOrder": 3,
-      "title": "Giả Hủ · Thái Sử Từ · Tử Binh",
+      "title": "Giả Hủ · Thái Sử Từ · Tử Sĩ",
       "heroes": [
         {"name": "Giả Hủ", "tactic": "Ngụy Thư Tương Gian"},
         {"name": "Thái Sử Từ", "tactic": "Đánh Bại Quân Địch"},
-        {"name": "Tử Binh", "tactic": "Bạch Mã Nghĩa Tòng"}
+        {"name": "Tử Sĩ", "tactic": "Bạch Mã Nghĩa Tòng"}
       ],
       "note": "Không ăn tiến bậc, max cao, min thấp."
     },

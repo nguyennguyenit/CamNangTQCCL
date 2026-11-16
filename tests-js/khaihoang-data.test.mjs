@@ -121,7 +121,7 @@ test("Chạm Sứ groups keep the sheet table and add the official two- and thre
     [["Cam Ninh", "Phá Quân Uy Thắng"], ["Lăng Thống", "Phong Thi Trận"]],
     [["Trương Nhượng", "Ngụy Thư Tương Gian"], ["Chu Thái", "Phong Thi Trận"], ["Hoàng Nguyệt Anh", "Trưởng Giả Chi Phong"]],
     [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Tây Lương Thiết Kỵ/Đại Kích Sĩ"]],
-    [["Giả Hủ", "Ngụy Thư Tương Gian"], ["Thái Sử Từ", "Đánh Bại Quân Địch"], ["Tử Binh", "Bạch Mã Nghĩa Tòng"]],
+    [["Giả Hủ", "Ngụy Thư Tương Gian"], ["Thái Sử Từ", "Đánh Bại Quân Địch"], ["Tử Sĩ", "Bạch Mã Nghĩa Tòng"]],
     [["Tôn Thượng Hương", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"], ["Vệ Thành", "Đánh Bại Quân Địch/Tây Lương Thiết Kỵ"]],
     [["Cam Ninh", "Phá Quân Uy Thắng"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Thịnh Khí Linh Địch"]],
   ];
