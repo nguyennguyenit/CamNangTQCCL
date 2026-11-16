@@ -33,7 +33,7 @@ Cửa sổ "frontend cũ + worker mới" (≈ 5–10 phút, không đăng đư�
    2. `cd community-worker && npm run deploy` (worker mới, schema cũ).
    3. Cổng đường thật (Pages Function → service binding → worker → fetch `tqccl.com`): `curl https://tqccl.com/api/community-seasons` → 29 mùa, `current = pk-s27`; `curl https://tqccl.com/api/community-teams/export` → 200. Không dùng `wrangler dev --remote` làm cổng.
       - Lỗi fetch (same-zone/1042): bật compatibility flag `global_fetch_strictly_public` (kiểm trước: không provider AI nào do admin cấu hình trỏ về zone `tqccl.com`), deploy lại, kiểm lại.
-      - Vẫn lỗi: đổi hằng `CATALOG_ORIGIN` trong `season-catalog.ts` sang `https://tqccl.pages.dev` (đã trả 200; không đổi `SITE_ORIGIN`), deploy lại, kiểm lại.
+      - Vẫn lỗi: đổi hàm `catalogOrigin()` trong `community-worker/src/season-catalog.ts` sang trả `https://tqccl.pages.dev` (đã trả 200; không đổi `SITE_ORIGIN`), deploy lại, kiểm lại.
       - Vẫn lỗi: `npx wrangler rollback <version ID ở 3.1>`, dừng; schema chưa đụng.
    4. Ghi bookmark Time Travel: `npx wrangler d1 time-travel info tqccl-community`.
    5. Kiểm prod chỉ có `binh-dien-xuan-thu`: `npx wrangler d1 execute tqccl-community --remote --command "select id from community_seasons"`. Khác → dừng.

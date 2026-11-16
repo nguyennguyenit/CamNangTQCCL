@@ -151,13 +151,29 @@ describe("đăng đội: chọn mùa", () => {
     expect((await submit(h, "alice", 1, { season: "pk-s29" })).status).toBe(201);
   });
 
-  it("mùa lạ ngay sau lượt fetch thành công (trong cooldown) -> 400, không fetch lại", async () => {
+  it("mùa mới publish khi cache isolate còn trong cooldown -> 503 (không báo sai 400), không fetch dồn; hết cooldown -> 201", async () => {
     const h = createHarness();
     await h.request("/api/community-seasons");
+    h.catalog = { options: [seasonOption("pk-s29"), ...DEFAULT_CATALOG.options], defaultId: "pk-s29", generationId: "e".repeat(64) };
     const fetches = h.catalogFetches;
+    h.clock.now += 1_000;
     const res = await submit(h, "alice", 1, { season: "pk-s29" });
-    expect(res.status).toBe(400);
+    expect(res.status).toBe(503);
+    expect((await json(res)).error.code).toBe("season_catalog_unavailable");
     expect(h.catalogFetches).toBe(fetches);
+    h.clock.now += CATALOG_COOLDOWN_MS;
+    expect((await submit(h, "alice", 1, { season: "pk-s29" })).status).toBe(201);
+  });
+
+  it("mùa lạ: 400 chỉ khi lượt fetch thành công trong chính request xác nhận không có", async () => {
+    const h = createHarness();
+    await h.request("/api/community-seasons");
+    h.clock.now += CATALOG_COOLDOWN_MS;
+    // Cache còn trong TTL, ngoài cooldown -> request này fetch lại rồi mới kết luận.
+    const fetches = h.catalogFetches;
+    const res = await submit(h, "alice", 1, { season: "pk-s99" });
+    expect(res.status).toBe(400);
+    expect(h.catalogFetches).toBeGreaterThan(fetches);
   });
 
   it("cache cũ + id mới + refresh lỗi -> 503 (không báo sai 400); rate limit và R2 nguyên trạng", async () => {

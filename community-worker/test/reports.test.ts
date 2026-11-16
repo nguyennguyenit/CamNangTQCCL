@@ -354,6 +354,17 @@ describe("chiến báo trên trang đội cộng đồng", () => {
     expect(h.sqlite.prepare("select season from battle_reports where id = ?").get(reportId)).toMatchObject({ season: "s2" });
   });
 
+  it("worker mới trên schema cũ (trước 0012): gửi chiến báo vào đội được, season lấy từ đội", async () => {
+    const h = createHarness({}, { migrationsUpTo: "0011" });
+    seedSeason(h, "binh-dien-xuan-thu");
+    await seedTeam(h, { id: "t1", season: "binh-dien-xuan-thu" });
+    const id = await upload(h);
+    const res = await send(h, "bob", id, { season: "khac" });
+    expect(res.status).toBe(201);
+    const reportId = (await res.json<ApiJson>()).id as string;
+    expect(h.sqlite.prepare("select season from battle_reports where id = ?").get(reportId)).toMatchObject({ season: "binh-dien-xuan-thu" });
+  });
+
   it("đội bị gỡ giữa preflight và batch -> 404, upload vẫn pending", async () => {
     const h = createHarness();
     seedSeason(h, "s1");

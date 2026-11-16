@@ -343,7 +343,7 @@ Danh mục mùa = `seasonOptions` trong `seasons.json` của generation Đội c
 
 - Worker đọc lúc chạy từ `siteOrigin(env)` (hàm `catalogOrigin`), theo đúng chuỗi xác minh của frontend: `/data/recommended/current.json` → `<gen>/manifest.json` (sha256 = `manifestSha256`; `schemaVersion`, `generationId`, `dedupKeyVersion`) → `<gen>/seasons.json` (sha256 + bytes theo manifest). Hạn chót 5 s cho cả chuỗi; dữ liệu sai hình dạng → lỗi, không đoán.
 - Cache trong isolate (chỉ để giảm độ trễ, không phải bản bền): TTL 10 phút; refresh đồng thời dùng chung một lượt; lỗi không ghi đè bản tốt (còn bản cũ → dùng bản cũ); sau lỗi không fetch lại trong 30 s.
-- Mùa lạ khi đăng đội: bản cache vừa tải thành công (< 30 s) → 400; bản cũ hơn → tải lại một lần rồi mới kết luận (isolate khác có thể đã thấy mùa mới; trễ tối đa 30 s); tải lại lỗi → 503, không báo sai 400.
+- Mùa lạ khi đăng đội: 400 **chỉ** khi một lượt tải thành công trong chính request đó xác nhận không có. Bản cache có sẵn → tải lại một lần rồi mới kết luận (isolate khác có thể đã thấy mùa mới); đang trong 30 s sau lượt tải trước (thành công hay lỗi) hoặc tải lại lỗi → 503 `season_catalog_unavailable`, không báo sai 400 (mùa mới có thể trễ tới 30 s trên một isolate).
 - `sourceSeasonId` đổi giữa các generation: đội cũ giữ hàng `community_seasons` cũ (nhãn vẫn hiện, lọc theo id cũ vẫn được), chỉ không chọn mới được.
 
 ### AI đọc nháp đội

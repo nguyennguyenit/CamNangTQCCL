@@ -189,17 +189,20 @@ export async function loadSeasonCatalog(c: Ctx): Promise<SeasonCatalog> {
 }
 
 /**
- * Tìm mùa theo id. `null` chỉ khi một lượt fetch THÀNH CÔNG gần đây (trong cooldown) xác nhận không có;
- * không xác nhận được (lỗi/đang cooldown lỗi) -> 503. Mùa lạ với bản cache cũ -> fetch lại một lần trước khi kết luận
- * (isolate khác có thể đã thấy mùa mới).
+ * Tìm mùa theo id. `null` (route trả 400) CHỈ khi một lượt fetch thành công trong chính lời gọi này xác nhận không có.
+ * Mùa lạ với bản cache có sẵn -> fetch lại một lần (isolate khác có thể đã thấy mùa mới); đang cooldown (vừa fetch
+ * xong ở request khác, thành công hay lỗi) hoặc fetch lỗi -> 503: không xác nhận được thì không báo sai đầu vào.
  */
 export async function findSeason(c: Ctx, id: string): Promise<CatalogSeason | null> {
+  const fetchedBefore = cache.fetchedAt;
   const catalog = await loadSeasonCatalog(c);
   const hit = catalog.seasons.find((s) => s.id === id);
   if (hit) return hit;
+  // Bản vừa tải trong lời gọi này (kể cả dùng chung lượt fetch đồng thời) đã là xác nhận.
+  if (cache.fetchedAt !== fetchedBefore) return null;
   const now = c.get("deps").now();
-  if (now - cache.fetchedAt < CATALOG_COOLDOWN_MS) return null;
-  if (cache.failedAt !== null && now - cache.failedAt < CATALOG_COOLDOWN_MS) throw catalogUnavailable();
+  const recent = (at: number | null) => at !== null && now - at < CATALOG_COOLDOWN_MS;
+  if (recent(cache.fetchedAt) || recent(cache.failedAt)) throw catalogUnavailable();
   let fresh: SeasonCatalog;
   try {
     fresh = await refresh(c);
