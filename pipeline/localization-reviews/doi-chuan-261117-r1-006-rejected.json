@@ -1,0 +1,47 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261117-r1-006-rejected",
+ "reviewerSession": "reviewer:Rv261117-r1-006",
+ "items": [
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-10",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bc91c32039ab75d530e15b2089855e3100dbc4f4f42989348bbb093e26f35371",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "112943bbb5e79df6d4445844815720a14b34b5f7d33bdd456a0cb7d9028ba1b0",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-05",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7943a1e5e3f40157dcae86e5384984f2360a0f8e78d1344bb1f9c1e5022773d5",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "208470a5792e4c2038e856a4c1cf1caacceb46c7608f9e67110e5fcdaedf582e",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-wei-02",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7c3a4fd0c8dbd203afba1940a509c9d16a4a9338c94e80ed50d25cf2d07c9451",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "8b1a104ed256a663cf03fd7f9d1b8393bbe969371ef2cba287c32dec405efeba",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-wei-03",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "dc75189a2ada33a0dea83f72f0e1ab5ca80b0bf21b9e7b6df51ed640b4036707",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "8b1a104ed256a663cf03fd7f9d1b8393bbe969371ef2cba287c32dec405efeba",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-wei-22",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f631ddafdf07ed874811fec613079d5f9d18ba541e31ea40a7e6ef92f57067e4",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "3e512f8d1e2a684a2e60bd39d2042ef9e79b7fc9f722f1228b6693442e1b28ea",
+   "verdict": "rejected"
+  }
+ ]
+}

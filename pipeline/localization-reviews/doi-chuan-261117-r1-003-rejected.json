@@ -1,0 +1,47 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261117-r1-003-rejected",
+ "reviewerSession": "reviewer:Rv261117-r1-003",
+ "items": [
+  {
+   "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-0617-wei-29",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bc3e97a57f064cc187036cc8ba1f1ce223b108455bf09c35a0f6cc206f0327a9",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "178c9e9d64eb1f1906a22516d45d11c2dae5456d5999f5947918c55acb22be54",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-yuan-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2cfb9b8cf54448598e48ba3cf1b4d4273372e8262e71b35b1aa04e24c3814fa4",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "178c9e9d64eb1f1906a22516d45d11c2dae5456d5999f5947918c55acb22be54",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-faguan-shield-tengjia",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "688342d6fc8023da5aeaf9d77b35a2e99c0ac15912ede13920db7a36b00d0ae9",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "0c48e09033ec478447d04bd12ac71200ace2b5ea800a59d0539da62fd8d1e794",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-lvguoqiao-baima",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b6f1830d169772bc9815b15f2c78aa71a560d4b22da8791de9b2db06651fc52c",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "69d1f0bf7c2eff9fc16e7b873310a274a4fca4ac52b4f295fb43660793212a34",
+   "verdict": "rejected"
+  },
+  {
+   "entityId": "recommended:s-c13081ccd24f7d3bf39d3f625410ca44e4332638b64cfc747ad7884bca2d5ca1/og-bingyan-lvguoqiao-baima",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "28b935aacffaf3cb31aa0b0e9ae96142e9b3803b78fb3d25434ee5e9b93f8eb0",
+   "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
+   "textSha256": "594c389c64b066a200223457962df0020dded692210ee89c8f38c94c6aa36383",
+   "verdict": "rejected"
+  }
+ ]
+}
