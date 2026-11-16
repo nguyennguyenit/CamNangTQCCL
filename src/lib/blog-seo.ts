@@ -2,18 +2,25 @@
  * Chữ hiển thị và dữ liệu có cấu trúc (JSON-LD, RSS, llms.txt) của blog. Mỗi chuỗi chọn đúng một
  * ngôn ngữ qua `pick()`; bản vi là gốc, bản zh là bản dịch tiếng Trung giản thể.
  */
-import { pick } from '../../js/i18n.js';
-import { blogIndexPath, type BlogLocale, type RenderedBlogPost } from './blog-posts.ts';
+import { LOCALE_HTML_LANG, LOCALE_INTL, LOCALE_OG, localePath, pick } from '../../js/i18n.js';
+import { blogIndexPath, type RenderedBlogPost } from './blog-posts.ts';
 import type { LlmsDocuments } from './llms-documents.ts';
+import type { SiteLocale } from './locale-routes.ts';
 
 export const SITE_NAME = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册' } as const;
 
-export function blogCopy(locale: BlogLocale) {
-  const p = (vi: string, zh: string): string => pick(locale, vi, zh);
+/** Nhãn link "đọc bản dịch" theo [ngôn ngữ bài][ngôn ngữ bản dịch], viết bằng ngôn ngữ bài; thiếu cặp thì build lỗi. */
+const TRANSLATION_LINK_LABEL: Record<SiteLocale, Partial<Record<SiteLocale, string>>> = {
+  vi: { zh: 'Đọc bản tiếng Trung' },
+  zh: { vi: '阅读越南语版本' },
+};
+
+export function blogCopy(locale: SiteLocale) {
+  const p = (...variants: string[]): string => pick(locale, ...variants);
   return {
     locale,
-    htmlLang: p('vi', 'zh-Hans'),
-    ogLocale: p('vi_VN', 'zh_CN'),
+    htmlLang: LOCALE_HTML_LANG[locale],
+    ogLocale: LOCALE_OG[locale],
     siteName: SITE_NAME[locale],
     blogName: p('Bài viết', '文章'),
     home: p('Trang chủ', '首页'),
@@ -50,16 +57,19 @@ export function blogCopy(locale: BlogLocale) {
     updated: p('Cập nhật', '更新于'),
     readingTime: (minutes: number) => p(`${minutes} phút đọc`, `阅读约 ${minutes} 分钟`),
     readMore: p('Đọc bài', '阅读全文'),
-    translation: p('Đọc bản tiếng Trung', '阅读越南语版本'),
-    translationLang: p('zh-Hans', 'vi'),
+    translation: (target: SiteLocale): string => {
+      const label = TRANSLATION_LINK_LABEL[locale][target];
+      if (!label) throw new Error(`blogCopy: thiếu nhãn link bản dịch ${locale} → ${target}`);
+      return label;
+    },
     rssLabel: p('RSS bài viết', '文章 RSS'),
     rssTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`),
   };
 }
 
 /** Ngày hiển thị theo giờ Việt Nam (ngày build/đăng đều quy về một múi giờ). */
-export function formatPostDate(iso: string, locale: BlogLocale): string {
-  return new Intl.DateTimeFormat(pick(locale, 'vi-VN', 'zh-CN'), {
+export function formatPostDate(iso: string, locale: SiteLocale): string {
+  return new Intl.DateTimeFormat(LOCALE_INTL[locale], {
     timeZone: 'Asia/Ho_Chi_Minh',
     year: 'numeric',
     month: 'long',
@@ -69,7 +79,7 @@ export function formatPostDate(iso: string, locale: BlogLocale): string {
 
 const absolute = (path: string, site: URL | string) => new URL(path, site).href;
 
-function organization(locale: BlogLocale, site: URL | string) {
+function organization(locale: SiteLocale, site: URL | string) {
   return {
     '@type': 'Organization',
     name: SITE_NAME[locale],
@@ -129,7 +139,7 @@ export function faqJsonLd(post: RenderedBlogPost) {
   };
 }
 
-export function blogIndexJsonLd(locale: BlogLocale, posts: readonly RenderedBlogPost[], site: URL | string) {
+export function blogIndexJsonLd(locale: SiteLocale, posts: readonly RenderedBlogPost[], site: URL | string) {
   const copy = blogCopy(locale);
   const url = absolute(blogIndexPath(locale), site);
   return {
@@ -175,9 +185,9 @@ export const escapeXml = (value: string) => value.replace(/[&<>"']/gu, (characte
 export const RSS_MIME = 'application/rss+xml; charset=utf-8';
 
 /** RSS 2.0 cho một ngôn ngữ; `lastBuildDate` lấy từ bài cập nhật gần nhất để tài liệu ổn định giữa các lần build. */
-export function rssDocument(locale: BlogLocale, posts: readonly RenderedBlogPost[], site: URL | string): string {
+export function rssDocument(locale: SiteLocale, posts: readonly RenderedBlogPost[], site: URL | string): string {
   const copy = blogCopy(locale);
-  const feedPath = locale === 'zh' ? '/zh/rss.xml' : '/rss.xml';
+  const feedPath = localePath('/rss.xml', locale);
   const latest = posts.reduce<string | null>((max, post) => (max === null || post.updatedAt > max ? post.updatedAt : max), null);
   const items = posts.map((post) => {
     const url = absolute(post.path, site);
@@ -215,11 +225,12 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
   // Tiêu đề bài do admin nhập: thoát `[`/`]` để không vỡ cú pháp link Markdown.
   const link = (label: string, path: string, note: string) =>
     `- [${label.replace(/[[\]\\]/gu, (character) => `\\${character}`)}](${absolute(path, site)}): ${note}`;
-  const postLines = (lang: BlogLocale) => {
+  const noPosts: Record<SiteLocale, string> = { vi: '- Chưa có bài viết tiếng Việt.', zh: '- Chưa có bài viết tiếng Trung.' };
+  const postLines = (lang: SiteLocale) => {
     const own = posts.filter((post) => post.lang === lang);
     return own.length
       ? own.map((post) => link(post.title, post.path, `${post.description.replace(/\s+/gu, ' ')} (${post.publishedAt.slice(0, 10)})`))
-      : [lang === 'vi' ? '- Chưa có bài viết tiếng Việt.' : '- Chưa có bài viết tiếng Trung.'];
+      : [noPosts[lang]];
   };
   return [
     `# ${SITE_NAME.vi}`,

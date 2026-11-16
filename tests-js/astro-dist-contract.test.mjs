@@ -1209,6 +1209,26 @@ test("sitemap dates blog posts and each blog index by its newest post", () => {
   assert.equal(entry("/zh/bai-viet/")[1], undefined);
 });
 
+test("sitemap pairs translated blog posts through every locale version and leaves single-language posts alone", () => {
+  const versions = { vi: "/bai-viet/mua-moi/", zh: "/zh/bai-viet/xin-saiji/" };
+  const xml = sitemapDocument(FIXTURE_ORIGIN, blogSitemapRoutes([
+    { path: versions.vi, lang: "vi", updatedAt: "2026-09-20T08:00:00.000Z", translationPaths: versions },
+    { path: versions.zh, lang: "zh", updatedAt: "2026-09-21T08:00:00.000Z", translationPaths: versions },
+    { path: "/bai-viet/don-ngu/", lang: "vi", updatedAt: "2026-09-22T08:00:00.000Z", translationPaths: { vi: "/bai-viet/don-ngu/" } },
+  ]));
+  const block = (path) => xml.match(new RegExp(`<url>\\n    <loc>${FIXTURE_ORIGIN}${path}</loc>\\n[^]*?</url>`, "u"))?.[0] ?? "";
+  for (const path of Object.values(versions)) {
+    const links = [...block(path).matchAll(/hreflang="([^"]+)" href="([^"]+)"/gu)].map(([, lang, href]) => [lang, href]);
+    assert.deepEqual(links, [
+      ["vi", `${FIXTURE_ORIGIN}${versions.vi}`],
+      ["zh-Hans", `${FIXTURE_ORIGIN}${versions.zh}`],
+      ["x-default", `${FIXTURE_ORIGIN}${versions.vi}`],
+    ], path);
+  }
+  assert.ok(block("/bai-viet/don-ngu/"));
+  assert.doesNotMatch(block("/bai-viet/don-ngu/"), /xhtml:link/u);
+});
+
 /** Một bài đã render tối thiểu cho fixture dist (các trường mà JSON-LD, RSS và llms.txt dùng). */
 const FIXTURE_POST = {
   id: "p1", slug: "cach-danh-dat", lang: "vi", translationKey: null, title: "Cách đánh đất", description: "Mẹo đánh đất cấp 6.",

@@ -4,7 +4,8 @@
  * (`landingStatistics`), không hard-code. Không khớp chủ đề nào thì dẫn sang Đội chuẩn.
  */
 import { localePath, pick } from '../../js/i18n.js';
-import type { BlogLocale, BlogPost } from './blog-posts.ts';
+import type { BlogPost } from './blog-posts.ts';
+import type { SiteLocale } from './locale-routes.ts';
 
 export interface BlogGuideLink {
   href: string;
@@ -51,8 +52,8 @@ async function loadStatistics() {
 }
 
 export async function blogGuideLink(post: Pick<BlogPost, 'tags' | 'lang'>): Promise<BlogGuideLink> {
-  const locale: BlogLocale = post.lang;
-  const p = (vi: string, zh: string) => pick(locale, vi, zh);
+  const locale: SiteLocale = post.lang;
+  const p = (...variants: string[]) => pick(locale, ...variants);
   const topic = blogGuideTopic(post.tags);
   if (topic === 'goi-y-doi') {
     return {

@@ -1,14 +1,15 @@
 ---
-// Trang danh sách bài viết của một ngôn ngữ. Route `/bai-viet/` và `/zh/bai-viet/` chỉ truyền locale.
+// Trang danh sách bài viết của một ngôn ngữ. Route `/bai-viet/`, `/zh/bai-viet/`… chỉ truyền locale.
 // Không có bài nào vẫn là một trang đầy đủ (trạng thái rỗng) để link menu không dẫn vào 404.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import BlogPostCard from './BlogPostCard.astro';
-import { blogIndexPath, jsonLd, postsForLocale, type BlogLocale } from '../../lib/blog-posts.ts';
+import { blogIndexPath, jsonLd, postsForLocale } from '../../lib/blog-posts.ts';
+import type { SiteLocale } from '../../lib/locale-routes';
 import { blogCopy, blogIndexJsonLd, breadcrumbJsonLd } from '../../lib/blog-seo.ts';
 import { localePath } from '../../../js/i18n.js';
 
 interface Props {
-  locale: BlogLocale;
+  locale: SiteLocale;
 }
 
 const { locale } = Astro.props;
@@ -16,7 +17,7 @@ const copy = blogCopy(locale);
 const site = Astro.site!;
 const posts = await postsForLocale(locale);
 const canonicalUrl = new URL(blogIndexPath(locale), site);
-const feedPath = locale === 'zh' ? '/zh/rss.xml' : '/rss.xml';
+const feedPath = localePath('/rss.xml', locale);
 const structured = [
   blogIndexJsonLd(locale, posts, site),
   breadcrumbJsonLd([
