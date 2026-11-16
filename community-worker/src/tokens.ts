@@ -12,6 +12,8 @@ export type ApiTokenScope = (typeof API_TOKEN_SCOPES)[number];
 /** Hạn cho phép khi tạo (ngày); null = không hạn. */
 export const API_TOKEN_TTL_DAYS = [30, 90, 365, null] as const;
 export const API_TOKEN_DEFAULT_TTL_DAYS = 90;
+/** Token đã thu hồi / hết hạn quá số ngày này thì bị xoá khi chính chủ tạo token mới (không cần cron). */
+export const API_TOKEN_PURGE_AFTER_DAYS = 30;
 
 const LAST_USED_THROTTLE_MS = 600_000;
 const BEARER_RE = /^Bearer\s+(\S+)$/iu;

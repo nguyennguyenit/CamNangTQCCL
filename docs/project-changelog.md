@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
+
+- Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
+- Added: `POST /api/tokens` xoá token của chính user đã thu hồi/hết hạn quá 30 ngày (#105 mục 3); không cron, không migration, token còn hiệu lực không bị ảnh hưởng. Test thêm ở `test/tokens.test.ts`.
+
 ## 2026-11-16 (Ép LF cho working tree, gate community-worker thêm client store, issue #100/#105)
 
 - Fixed: `.gitattributes` thêm `* text=auto eol=lf` — checkout Windows (`core.autocrlf=true`) không còn tạo file CRLF làm lệch digest pipeline/MCP. `*.csv -text` và rule `coexist-binh-dien-xuan-thu.csv` đặt sau để vẫn thắng; `git add --renormalize .` không đổi file nào khác (ba CSV snapshot CRLF được giữ nguyên byte nhờ `*.csv -text`). Clone Windows cũ: xem `docs/deployment-guide.md` (Prerequisite).
