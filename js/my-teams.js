@@ -22,6 +22,9 @@ import { setTeamRouteHandlesFromJSON } from "./team-detail-navigation.js";
 
 const MAIN_BOX = "main";
 
+/** Nội dung đội để so "máy khác đã sửa chưa", bỏ ngày giờ và nhóm (server tự đổi hai trường này khi xóa nhóm). */
+const contentKey = (team) => JSON.stringify({ ...team, updatedAt: null, groupId: null });
+
 async function loadNames(locale) {
   try {
     const [{ heroes, tactics }, books] = await Promise.all([loadTeamDictionaries(), loadTeamBooks()]);
@@ -421,8 +424,12 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const groups = snapshot.groups.filter((group) => group.boxId === team.boxId);
     clearMessages();
     let editor = null;
-    // Đội gốc đã mất (xem `editingGone`) thì Lưu ghi thành đội mới: id sinh một lần cho cả lần thử lại sau khi mất mạng.
-    let freshId = null;
+    // Đội gốc đã mất (xem `editingGone`) và người dùng đã bấm Lưu: đích lưu thành đội mới `{id, boxId}` được CHỐT một lần và
+    // dùng cho mọi lần thử lại (mất mạng, lỗi tạm), kể cả khi đội gốc xuất hiện lại — không quay về ghi đè đội gốc.
+    let asNewTarget = null;
+    // Đã kiểm trạng thái hiện hành của server trước lần ghi đầu: các lần thử lại / "Giữ bản của tôi" sau đó không kéo lại
+    // (kéo lại sẽ làm lần ghi sau thắng bản của máy khác mà không báo; xung đột do `saveTeam` tự phát hiện).
+    let verified = false;
     // Chỉ đóng trình soạn của chính đội này: lời gọi muộn (lưu xong sau khi trình soạn đã đóng) không đụng trình soạn khác.
     const leave = (savedId = null) => {
       if (view.editor !== editor) return;
@@ -443,15 +450,37 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       catalog: lexicon.catalog,
       owned: snapshot.owned.get(team.boxId) ?? new Set(),
       seasons,
-      save: (candidate) => {
+      save: async (candidate) => {
+        // Biết trước khi bấm Lưu thì thông báo "đã bị xóa / chuyển" đã hiện; chưa biết thì kéo trạng thái hiện hành trước khi
+        // ghi (snapshot cũ có thể chưa thấy việc xóa / chuyển hộp từ máy khác, ghi lúc đó sẽ đè lên nó).
+        const warned = view.gone || asNewTarget !== null;
+        if (!verified && !asNewTarget) {
+          if (!(await api.refresh())) {
+            const status = api.snapshot().status;
+            return status === "signed-out" || status === "mismatch" || status === "guest" ? { ok: false, rejected: true, code: status } : { ok: false, pending: true, code: status };
+          }
+          if (view.editor !== editor) return { ok: false, rejected: true, code: "not_found" };
+          const current = api.snapshot().teams.find((other) => other.id === team.id && other.boxId === team.boxId);
+          if (!current && !warned) {
+            paintKeepingFocus();
+            return { ok: false, rejected: true, code: "team_gone" };
+          }
+          // Máy khác đã sửa nội dung đội này kể từ lúc mở trình soạn (không tính ngày giờ / nhóm do server tự đổi khi xóa nhóm):
+          // hiện hai bản để chọn, không ghi đè im lặng. "Giữ bản của tôi" gọi lại và đi tiếp.
+          if (current && contentKey(current) !== contentKey(team)) {
+            verified = true;
+            return { ok: false, conflict: true, server: current, loser: candidate };
+          }
+          verified = true;
+        }
         const live = api.snapshot();
-        if (editingGone()) {
+        if (asNewTarget || editingGone()) {
           // Ghi thành đội mới vào hộp đang xem (hộp cũ có thể đã bị xóa); nhóm / đội thay thế không thuộc hộp này thì bỏ.
-          const boxId = live.boxes.some((box) => box.id === view.boxId) ? view.boxId : MAIN_BOX;
+          asNewTarget ??= { id: newTeamId(), boxId: live.boxes.some((box) => box.id === view.boxId) ? view.boxId : MAIN_BOX };
+          const { id, boxId } = asNewTarget;
           const groupId = live.groups.some((group) => group.id === candidate.groupId && group.boxId === boxId) ? candidate.groupId : `${boxId}~ghep-team`;
           const replaces = live.teams.some((other) => other.id === candidate.replacesTeamId && other.boxId === boxId) ? candidate.replacesTeamId : null;
-          freshId ??= newTeamId();
-          return api.saveTeam({ ...candidate, id: freshId, groupId, replacesTeamId: replaces }, { boxId, groupId });
+          return api.saveTeam({ ...candidate, id, groupId, replacesTeamId: replaces }, { boxId, groupId });
         }
         // Nhóm đã chọn bị xóa trong lúc soạn (ở đây hoặc máy khác): lưu vào nhóm dự phòng Ghép Team của hộp,
         // không ghi id nhóm không còn.

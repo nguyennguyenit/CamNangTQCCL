@@ -455,6 +455,61 @@ test.describe("không mất bản soạn", () => {
     await expect(page.locator("#my-teams .mt-orphan .mt-notice")).toContainText("此阵容已在其他设备上被删除或移到别的仓库");
     await expect(page.locator("form.mt-editor")).toBeVisible();
   });
+
+  const saveButton = (page) => page.locator("form.mt-editor").getByRole("button", { name: /^(Lưu|Lưu lại)$/u });
+
+  test("lưu thành đội mới mất phản hồi, đội gốc xuất hiện lại: Lưu lại vẫn là đội mới, không đè đội gốc", async ({ page }) => {
+    const draft = draftOf("team-goc");
+    const mock = await open(page, { teams: [{ draft }] });
+    await card(page, "team-goc").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn lưu mới");
+    await changeElsewhere(page, mock, "team-goc");
+    await expect(page.locator("#my-teams .mt-orphan")).toBeVisible();
+
+    // Lưu thành đội mới, server ghi xong nhưng phản hồi mất.
+    mock.server.dropResponse();
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor").getByRole("alert")).toBeVisible();
+    const fresh = mock.server.live("team").map((row) => row.id);
+    expect(fresh).toHaveLength(1);
+    expect(fresh[0]).not.toBe("team-goc");
+
+    // Đội gốc xuất hiện lại (máy khác khôi phục) rồi Lưu lại: vẫn ghi vào đội mới.
+    await changeElsewhere(page, mock, "team-goc", { moveTo: "main", draft: { ...draft, name: "Gốc đã khôi phục" } });
+    await expect(page.locator("#my-teams .mt-orphan")).toHaveCount(0);
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    const live = mock.server.live("team");
+    expect(live.map((row) => row.id).sort()).toEqual(["team-goc", fresh[0]].sort());
+    expect(live.find((row) => row.id === "team-goc").data.name).toBe("Gốc đã khôi phục");
+    expect(live.find((row) => row.id === fresh[0]).data.name).toBe("Bản soạn lưu mới");
+  });
+
+  test("máy khác đã chuyển đội sang hộp khác mà trang chưa kéo: Lưu không đè, báo trước; Lưu lần nữa thì thành đội mới", async ({ page }) => {
+    const draft = draftOf("team-dich");
+    const mock = await open(page, { boxes: ["main", "box-phu"], teams: [{ draft }] });
+    await card(page, "team-dich").getByRole("button", { name: "Sửa", exact: true }).click();
+    await nameField(page).fill("Bản soạn chưa lưu");
+    const before = mock.server.live("team")[0].data.name;
+    // Chuyển hộp ở máy khác; trang này KHÔNG kéo (không có sự kiện đồng bộ nào) trước khi bấm Lưu.
+    await seedTeam(mock.server, draft, { boxId: "box-phu", groupId: "box-phu~ghep-team", at: Date.now() });
+
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor").getByRole("alert")).toContainText("vừa bị xóa hoặc chuyển hộp ở thiết bị khác");
+    await expect(page.locator("#my-teams .mt-orphan .mt-notice")).toBeVisible();
+    await expect(nameField(page)).toHaveValue("Bản soạn chưa lưu");
+    let live = mock.server.live("team");
+    expect(live.map((row) => [row.id, row.data.boxId, row.data.name])).toEqual([["team-dich", "box-phu", before]]);
+
+    await saveButton(page).click();
+    await expect(page.locator("form.mt-editor")).toHaveCount(0);
+    await expect(page.locator("#my-teams .mt-status")).toHaveText("Đã lưu thành đội mới.");
+    live = mock.server.live("team");
+    expect(live).toHaveLength(2);
+    expect(live.find((row) => row.id === "team-dich").data).toMatchObject({ boxId: "box-phu", name: before });
+    const created = live.find((row) => row.id !== "team-dich");
+    expect(created.data).toMatchObject({ boxId: "main", name: "Bản soạn chưa lưu" });
+  });
 });
 
 test.describe("trình soạn và bảng chọn", () => {
