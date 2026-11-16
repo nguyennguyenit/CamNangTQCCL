@@ -105,6 +105,28 @@ describe("token API cá nhân: quản lý", () => {
     expect((await create(h, "bob")).status).toBe(201);
   });
 
+  it("tạo token dọn token của chính user đã thu hồi/hết hạn quá hạn lưu; giữ token hợp lệ và của người khác", async () => {
+    const h = createHarness();
+    const old = { revoked: await created(h, "alice", { name: "old-revoked" }), expired: await created(h, "alice", { name: "old-expired", expiresInDays: 30 }) };
+    const stale = await created(h, "alice", { name: "recent-revoked" });
+    const active = await created(h, "alice", { name: "active", expiresInDays: null });
+    const bobOld = await created(h, "bob", { name: "bob-old", expiresInDays: 30 });
+    expect((await h.request(`/api/tokens/${old.revoked.item.id}`, { as: "alice", method: "DELETE" })).status).toBe(200);
+    h.clock.now += 31 * DAY; // old-expired hết hạn 1 ngày trước, old-revoked thu hồi 31 ngày trước
+    expect((await h.request(`/api/tokens/${stale.item.id}`, { as: "alice", method: "DELETE" })).status).toBe(200);
+    // Chưa tạo token mới thì chưa dọn.
+    expect(rows(h)).toHaveLength(5);
+    h.clock.now += 30 * DAY; // old-expired quá 30 ngày kể từ hết hạn; recent-revoked mới 30 ngày (chưa quá)
+    await created(h, "alice", { name: "new" });
+    const names = rows(h).map((r) => r.name);
+    expect(names).not.toContain("old-revoked");
+    expect(names).not.toContain("old-expired");
+    expect(names).toEqual(expect.arrayContaining(["recent-revoked", "active", "bob-old", "new"]));
+    expect(rows(h)).toHaveLength(4);
+    expect(bobOld.item.id).toBeTruthy();
+    expect((await list(h)).find((t) => t.id === active.item.id)?.revokedAt).toBeNull();
+  });
+
   it("tạo song song sát trần: chỉ một request qua, không vượt trần", async () => {
     const h = createHarness();
     for (let i = 1; i < API_TOKEN_MAX_ACTIVE; i++) await created(h);

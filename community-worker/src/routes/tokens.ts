@@ -7,6 +7,7 @@ import { consumeRateLimit } from "../ratelimit";
 import {
   API_TOKEN_DEFAULT_TTL_DAYS,
   API_TOKEN_MAX_ACTIVE,
+  API_TOKEN_PURGE_AFTER_DAYS,
   API_TOKEN_TTL_DAYS,
   generateToken,
   hashToken,
@@ -69,6 +70,13 @@ tokens.post("/api/tokens", async (c) => {
   const now = deps.now();
   const db = c.env.DB;
   await consumeRateLimit(db, "token_create", user.id, now);
+  // Dọn cơ hội: chỉ token của chính user này đã thu hồi / hết hạn quá hạn lưu; token còn hiệu lực không bao giờ khớp.
+  // Tra theo api_tokens_user_idx (user_id) nên chỉ đọc vài hàng token của user, không cần cron trigger.
+  const purgeBefore = now - API_TOKEN_PURGE_AFTER_DAYS * DAY_MS;
+  await db
+    .prepare("delete from api_tokens where user_id = ? and ((revoked_at is not null and revoked_at < ?) or (expires_at is not null and expires_at < ?))")
+    .bind(user.id, purgeBefore, purgeBefore)
+    .run();
   const token = generateToken();
   const row: TokenRow = {
     id: deps.newId(),

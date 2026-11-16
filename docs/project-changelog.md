@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
+
+- Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
+- Added: `POST /api/tokens` xoá token của chính user đã thu hồi/hết hạn quá 30 ngày (#105 mục 3); không cron, không migration, token còn hiệu lực không bị ảnh hưởng. Test thêm ở `test/tokens.test.ts`.
+
 ## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
 
 - Changed: form đăng đội có ô "Mùa bạn đang chơi" (bắt buộc, chọn sẵn mùa hiện hành của Đội chuẩn `pk-s27`); `POST /api/community-teams` nhận `season`. Danh mục mùa = `seasonOptions` của Đội chuẩn đang publish, Worker đọc `/data/recommended/*` lúc chạy (xác minh hash, cache isolate) qua `community-worker/src/season-catalog.ts` — mùa mới thêm vào Đội chuẩn tự có ở Đội cộng đồng sau khi site deploy. `GET /api/community-seasons` → `{current, seasons}`; danh sách mặc định lọc `current`.
