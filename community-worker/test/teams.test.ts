@@ -453,6 +453,28 @@ describe("danh sách", () => {
     expect(typeof item.createdAt).toBe("string");
   });
 
+  it("commentCount bỏ bình luận của user bị khoá/đang xoá, khớp độ dài GET /api/comments (list, chi tiết, export)", async () => {
+    const h = createHarness();
+    openSeason(h);
+    await seedTeam(h, { id: "t1" });
+    seedComment(h, "c1", "t1", "u-alice");
+    seedComment(h, "c2", "t1", "u-bob");
+    seedComment(h, "c3", "t1", "u-moderator");
+    const visibleLen = async () => (await json(await h.request(`/api/comments?page=${PAGE("t1")}&lang=vi`))).items.length;
+    const countOf = async (url: string, pick: (b: any) => any) => pick(await json(await h.request(url))).commentCount;
+    expect(await visibleLen()).toBe(3);
+    expect(await countOf(TEAMS, (b) => b.items[0])).toBe(3);
+    h.sqlite.prepare('update "user" set banned_until = ? where id = ?').run(h.clock.now + DAY, "u-bob");
+    h.sqlite.prepare('update "user" set deleting_at = ? where id = ?').run(h.clock.now, "u-moderator");
+    expect(await visibleLen()).toBe(1);
+    expect(await countOf(TEAMS, (b) => b.items[0])).toBe(1);
+    expect(await countOf(`${TEAMS}/t1`, (b) => b.item ?? b)).toBe(1);
+    expect(await countOf(`${TEAMS}/export`, (b) => b.items[0])).toBe(1);
+    h.clock.now += 2 * DAY;
+    expect(await countOf(TEAMS, (b) => b.items[0])).toBe(2);
+    expect(await visibleLen()).toBe(2);
+  });
+
   it("lọc 1 và 3 tướng (3 tướng thứ tự khác vẫn khớp)", async () => {
     const h = createHarness();
     openSeason(h);

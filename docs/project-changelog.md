@@ -7,6 +7,16 @@
 - Changed: trang mùa (`SeasonPage.astro`) chỉ hiện nhãn khi `older`, câu "Đội của mùa hiện tại xem ở Đội chuẩn" giữ cho mọi trang mùa. Chưa đổi: lời dẫn khối "Các mùa khác" trong `SectionPage.astro` còn ghi "các mùa cũ" (file bị ghim hash trong `pipeline/site-localization-policy.json`, cần ghim lại hash mới sửa được). URL, redirect 301 và danh mục trang không đổi.
 - Tests: `tests-js/season-pages.test.mjs` (kể cả thứ tự nguồn của #103: PK-S27 đầu, OG cuối), `tests-js/seo-dist-contract.test.mjs` (nhãn trang mùa và trang đội theo số mùa).
 
+## 2026-11-16 (Worker: commentCount đúng số hiển thị, dọn token API cũ)
+
+- Fixed: `commentCount` của đội cộng đồng (#81) join `"user"` và lọc `visibleUserSql` như `GET /api/comments`, không còn đếm bình luận của user bị khoá/đang xoá; vẫn tra theo `page_key` (index `comments_page_lang_created_idx`). `TEAM_SELECT` có thêm một `?` nên mọi truy vấn đội bind `now` hai lần trước điều kiện where. Test thêm ở `test/teams.test.ts`.
+- Added: `POST /api/tokens` xoá token của chính user đã thu hồi/hết hạn quá 30 ngày (#105 mục 3); không cron, không migration, token còn hiệu lực không bị ảnh hưởng. Test thêm ở `test/tokens.test.ts`.
+
+## 2026-11-16 (Ép LF cho working tree, gate community-worker thêm client store, issue #100/#105)
+
+- Fixed: `.gitattributes` thêm `* text=auto eol=lf` — checkout Windows (`core.autocrlf=true`) không còn tạo file CRLF làm lệch digest pipeline/MCP. `*.csv -text` và rule `coexist-binh-dien-xuan-thu.csv` đặt sau để vẫn thắng; `git add --renormalize .` không đổi file nào khác (ba CSV snapshot CRLF được giữ nguyên byte nhờ `*.csv -text`). Clone Windows cũ: xem `docs/deployment-guide.md` (Prerequisite).
+- Fixed: `community-worker-gate.yml` (pull_request và push) thêm `js/recruit-tracker-store.js` và `js/i18n.js` vào `paths` — `community-worker/test/recruit-pulls.test.ts` import trực tiếp hai file này.
+
 ## 2026-11-16 (Đội chuẩn: refresh SGSDeck, thêm 41 cấu hình bản chính thức máy chủ Đài Loan, duyệt lại toàn bộ bản dịch)
 
 ### Changed
