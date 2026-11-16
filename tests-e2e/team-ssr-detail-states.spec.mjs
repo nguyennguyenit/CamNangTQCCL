@@ -10,6 +10,9 @@ async function firstDetailHref(page, listPath, linkSelector) {
   return href.split("?")[0];
 }
 
+/** Link chi tiết của thẻ Khai hoang đầu tiên có cấu hình khác "Mặc định" (đội Tiến cử đầu danh sách có thể không có). */
+const WITH_VARIANT_LINK = 'main .kh-card:has(.kh-config-chip:not([data-variant=""])) a.kh-title-link';
+
 /** Giữ script của trang chi tiết lại: kiểm trạng thái chỉ-HTML (trước khi client chạy), rồi thả. */
 async function openGated(page, url, script) {
   let release;
@@ -69,7 +72,7 @@ test("Khai hoang: chip cấu hình của trang chi tiết bị khoá trước kh
 });
 
 test("Khai hoang: bấm cấu hình khác rồi bấm lại Mặc định khi dữ liệu còn đang tải thì nội dung theo lần bấm sau cùng", async ({ page }) => {
-  const path = await firstDetailHref(page, "/khai-hoang/", "main a.kh-title-link");
+  const path = await firstDetailHref(page, "/khai-hoang/", WITH_VARIANT_LINK);
   let release;
   const gate = new Promise((resolve) => { release = resolve; });
   await page.route("**/data/khaihoang.json*", async (route) => { await gate; await route.continue(); });
@@ -90,7 +93,7 @@ test("Khai hoang: bấm cấu hình khác rồi bấm lại Mặc định khi d�
 });
 
 test("Khai hoang: bấm cấu hình khác mà tải lỗi thì giữ thân dựng sẵn, báo lỗi và URL về mặc định", async ({ page }) => {
-  const path = await firstDetailHref(page, "/khai-hoang/", "main a.kh-title-link");
+  const path = await firstDetailHref(page, "/khai-hoang/", WITH_VARIANT_LINK);
   await page.route("**/data/khaihoang.json*", (route) => route.abort());
   await page.goto(path);
   const other = page.locator('.kh-config-chip:not([data-variant=""])').first();

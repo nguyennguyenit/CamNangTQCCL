@@ -11,20 +11,20 @@
     },
     "notes": {
       "approvedDisplaySlots": 11,
-      "blocks": 2590,
-      "concreteInventorySha256": "b86170f891759675ba825237ace23a44caad929a3c68b0d83714701ba86d95e3",
-      "concreteLocationCount": 66050,
-      "hanBlocks": 2499,
+      "blocks": 2708,
+      "concreteInventorySha256": "409a1481844a1c50cef954ba4f277c47e250cf42b50648df4011e9c77ccfcbf6",
+      "concreteLocationCount": 67361,
+      "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
-      "siteLedgerObligations": 2694,
-      "translationObligations": 6291,
+      "siteLedgerObligations": 2812,
+      "translationObligations": 6409,
       "uiTranslateObligations": 62,
-      "uniqueRawTexts": 1514
+      "uniqueRawTexts": 1609
     },
     "recommended": {
-      "generationId": "093fca99fb074ea1d5fb23a3c280a84608657a476e36ec0dc37daba00e647ff3",
+      "generationId": "c1a78d1bf52a64f0d889e73f636efe6338f01ac1f705b0250360ed14acefc74e",
       "otherTeams": 40,
-      "records": 1640
+      "records": 1681
     },
     "sourcePins": {
       "authority": {
@@ -34,14 +34,14 @@
         ],
         "file": "pipeline/recommended-other-teams.json"
       },
-      "cacheInventoryHash": "sha256:cae5742af24a70a432557f44346e97eea9e81508b90283c7c30f1e2358764cfd",
-      "cacheManifestSha256": "34e653c15814fb61050b717f777b0ed6ea0334a392f9ccff2270347ff55a69ef",
-      "cachedPageBytes": 188085660,
-      "cachedPageCount": 1721,
-      "normalizedSnapshotSha256": "a1a1dc5830213b70ec808caf83067463fd1e76c6b67c9a50df493847639c2209",
-      "recommendedCorpusHash": "sha256:ebf2061547d254e8af8e8b5b887b8a7bfa627e25311ec57bb8bbb39099f0c864",
-      "recordCount": 1640,
-      "sourceInventoryHash": "sha256:cae5742af24a70a432557f44346e97eea9e81508b90283c7c30f1e2358764cfd"
+      "cacheInventoryHash": "sha256:84c691da96a51810377282280731082b97f99997017c1d826d1c098390562efb",
+      "cacheManifestSha256": "9b7e1b1f8965628c3859629781c9fddef0bbe1053f799f469528731f77d79459",
+      "cachedPageBytes": 172670839,
+      "cachedPageCount": 1762,
+      "normalizedSnapshotSha256": "813bafb808f14b19b258840641d5068a7078a4f699541ae5f50a0860c7b40695",
+      "recommendedCorpusHash": "sha256:70f81e980fcf441249f520a11e9155e212165bd474cee7462f51db1aefab4b20",
+      "recordCount": 1681,
+      "sourceInventoryHash": "sha256:84c691da96a51810377282280731082b97f99997017c1d826d1c098390562efb"
     }
   },
   "classifications": [
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261103-doi-chuan-sgsdeck",
+  "policyVersion": "site-vi-261116-doi-chuan-sgsdeck",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -761,7 +761,7 @@
   ],
   "sourceFiles": {
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
-    "data/khaihoang.json": "47f2273b262d76be0bb12da14d332923447e1f8db0a06de713c614770f7244ad",
+    "data/khaihoang.json": "6762b3ed55f827ddf0ff33d1d556388e1e0892493a207aaef267bac8f63a119c",
     "data/season-content-links.json": "1dd183dc85a9a833336c76a79626d6c176fc9447fe746f11184c437054d8b3aa",
     "data/teams.json": "bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
@@ -770,7 +770,7 @@
     "js/detail-actions.js": "835391dcfd203b0c21bcf9eaca3cbdc7a87162c5736ed9c771d41ea7c4cf6259",
     "js/hero-portrait.js": "36d7c01ef8e6a969732696acdb5f5bc027901104ff6b0bfb403335cf035d57ff",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
-    "js/khaihoang-detail.js": "1d9628ee82711189af4a3591e4107c29cb9f180646d2ee38aed8225884594a5c",
+    "js/khaihoang-detail.js": "f0a28170b5f7c9e45dde0a064f83851d20a09fd5833360a331c16a25ca49706e",
     "js/legacy-routes.js": "9dcc3e3282440a6f03f4672ecaa64f831557c07686b7fcb926e5d0bc5a65ca57",
     "js/lookup-data.js": "5e15aa3d0c95c4229ca70ae5444b0ea846db7076541a2ebd1c77910d8d3a6505",
     "js/lookup-detail.js": "f7b150d02ba344fe250fbde0df0e17fa30cc23fdaed9ca046a8f268e2d3721e8",
@@ -780,11 +780,11 @@
     "js/lookup-profile.js": "5b52775ab277347d89be2eceb2427cbffdbcde7a3976c7e4103018c15ef06564",
     "js/lookup-tactic-profile.js": "c4c933b2eee7905b54ed7149d80da847adc313e135ed51b180663501bdaa3ce7",
     "js/lookup-tactic-view.js": "e79e519d95b216ada53ac884414d51e8ba6d0adb29944edba5ed542a3d8b20ab",
-    "js/recommended-reference-render.js": "fd42ddd48ae15d80694c5b0b63b81f6c59d73859babae526a205d34e8b7f8207",
+    "js/recommended-reference-render.js": "53c2cd90028d79a031222596a0f62f34105341046f4a168b87075750f2abc846",
     "js/recommended-reference-state.js": "12b65318f56d0a5e770684016fd5ab0948bede7b55b5fc57c3d6e199a0f90895",
     "js/recruit-tracker-store.js": "4bb2d985549e382c23e77586282db86daa466e4f7b1d6c0c3edf8dfbcf566668",
     "js/recruit-tracker.js": "0fe5de0ed556931e05535c65c36fa40a506515806324ab1d8d2d951975ccb67f",
-    "js/render.js": "c963c2863a9d7c5e9cd770d8de6db93605d4c48fb26ea0bf092f364c4cac2d45",
+    "js/render.js": "abbb60537bd3e699589241dbab445985982cd1fd5500c9c5c15793290b660161",
     "js/roster-picker.js": "93f68a58639433c5609787c04a32658decb693b3bbd72f3be8b0a1013dce1ceb",
     "js/roster-recommend-ui.js": "ce02ee31ae796991a7bd80dbbfccd62a55aa2def8783aa25313b412dfab5c6fa",
     "js/roster-scan-map.js": "b503cab367887d5f0d97acaaf493649b1919b55ec127b85690b37709278e4619",
@@ -799,8 +799,8 @@
     "js/unified-lookup.js": "eb2aaa9bd1fb2db22e7eddbf0bea79cd8098fe29d45769685d80c2a734d92b43",
     "js/website-display.js": "63990c85064dc0c707e865b924d2c9d951ab4e002f8fbdc947fdb512f93fc05c",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
-    "pipeline/recommended-display-map.json": "78ff63816b4082d413e377d9bd0f3689362638802dc07d617531fdf0aab2e007",
-    "pipeline/recommended-identity-map.json": "596f677328ab9110ac880fdd26894c4a37c53e36e6a872ae85268382ad25d2e8",
+    "pipeline/recommended-display-map.json": "531982ffbbb09f0b3de6cefce1ac35d881d618b90ea043702ce0c9318db44eb9",
+    "pipeline/recommended-identity-map.json": "542b99cdaab02acca2fc02f87a209b23cbcea157a15d67ad7109c621d98ed54c",
     "pipeline/sgsdeck-name-map.json": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
     "src/components/landing/Landing.astro": "63772883637328c0fc190dda1ad024879d23324ea868e15620474bb94fbc9126",
     "src/components/pages/KhaiHoangDetail.astro": "8ff06a854a4e607435321dd897ce98f2a3ca9af7ce0c33cd6239f865956ab722",
