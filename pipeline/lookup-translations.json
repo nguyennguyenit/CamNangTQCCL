@@ -655,15 +655,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH18-2026-11-03",
+        "reviewedAt": "2026-11-16T23:00:00+07:00",
+        "reviewer": "reviewer:Rv261116-r3-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Dùng khi đánh tiêu hao bằng lực lượng nhỏ, giúp giảm tổn thất binh lực."
+      "textVi": "Dùng cho đội cảm tử, giúp giảm tổn thất binh lực."
     },
     {
       "entityId": "advisor:minh-the-thu-ngu",
@@ -35615,15 +35615,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH30-2026-11-03",
+        "reviewedAt": "2026-11-16T23:00:00+07:00",
+        "reviewer": "reviewer:Rv261116-r3-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Chỉ huy"
+      "textVi": "Tăng ích"
     },
     {
       "entityId": "tactic:dao-vien-ket-nghia",
@@ -35653,15 +35653,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH30-2026-11-03",
+        "reviewedAt": "2026-11-16T23:00:00+07:00",
+        "reviewer": "reviewer:Rv261116-r3-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Quân ta và quân địch"
+      "textVi": "Tập thể quân ta (3 người)"
     },
     {
       "entityId": "tactic:dao-xuat-nhu-dinh",

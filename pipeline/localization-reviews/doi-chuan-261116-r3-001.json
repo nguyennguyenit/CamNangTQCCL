@@ -1,0 +1,31 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261116-r3-001",
+ "reviewerSession": "reviewer:Rv261116-r3-001",
+ "items": [
+  {
+   "entityId": "advisor:lam-dich-che-bien",
+   "fieldPath": "usageVi",
+   "inputFingerprint": "675c6f119d3f49f3bd11b26a3eb7286070df1b24dd0fba42ce35724e3522c5a8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "8d5fc31ea3a7659fb549c4676388b6ae12ea2bdb9299eec94ccb6cd31a2bb934",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:dao-vien-ket-nghia",
+   "fieldPath": "lookup.effectTypeVi",
+   "inputFingerprint": "48b20ba96fe62488764740e7d9a10d94c32cda52e9b9e88b1228f41b77d06ecd",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "7f547c9123d4a16e08ca361fba27868a580bf784ffde19ed746e738f6b147fae",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "tactic:dao-vien-ket-nghia",
+   "fieldPath": "targetViet",
+   "inputFingerprint": "f54912f462ddc0da1ba0045d2258f71d33ccead93cd09215abaa347197c355e6",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "6620d4e439dce8837ff199fb0b37a2abd11d9c5f2e522ae3bddcdff47f84d63e",
+   "verdict": "accepted"
+  }
+ ]
+}

@@ -1,0 +1,503 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-chuan-261116-r1-066",
+ "reviewerSession": "reviewer:Rv261116-r1-066",
+ "items": [
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-xuhuang-wei-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "047a7362a08eeaa6cd3c82a273eb91e9203804c6db5259332179169a1cf5922e",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "56863c9285defbaeff04d205ce89a30b119c3bbc0fa5219c756db9a6fc095f47",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-yi-wei-gong-1",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "1fad0fd81c86e7d9895a298518c6f67d60cce88127bbf786c61c6290b5d2fc0b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "a341676cdae7091d92f382ceed3e467ca2055b083f76b905f43c43ded3ef1af3",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-yi-wei-gong-1",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "92930baadc66f73c021e32ae5847d4329c24afe4bb85d28647b1791b5154a6d0",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "276e865b2213ac7843ccebe1beb9778ad2166129dcb2f224896dfe391b2c4740",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-yi-wei-gong-2",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "daa1c4adff4d2762403d109c987a31cb6eb4e9c65eb814ea31e93306bd2a1240",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "90f573197a764732e2988b27a99ead9e3ddc0f895d6db447e632dd6f064ade23",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-yi-wei-gong-2",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "e8628169dd1290da9a8e0a6a9dd59a325fcbdaf7ae2ea2d158250b9868e6694c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "276e865b2213ac7843ccebe1beb9778ad2166129dcb2f224896dfe391b2c4740",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-yuan-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e910dd9f92f9983dd0b72165d417eb24fc39037d212beeeea04e76c6445cef04",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "9d42085b81e99752750dbdd513bc011dac4ea9e35e099a7915dec7e9f84f5aec",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-zhan-qi-original",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e6e62acf5c723d5e5df3b39ca70e4e26a4ea3fe0d618fa46ce11a9036c7f7427",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4e3fea16a099f0f908a743e0f097c3faa082179be826823fa24661df1c8d8950",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e16e95facfd12e3006b0ea61a7b0252cfbea7ac7088c1a7b15ced8768ffe4aef/s9-zhao-sima-dun",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ed838d51a5234e675b8543525d47e3ce6ca5dd1679be3bc52b7ac133064bfb40",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "48c8d0739a7ba2c958e8cc0341f60db1b30cd4f05ad5650a46686b2e931077a4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-01",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "ed0bc3c09a88750326953cd94c0605ee7fcc0296b472a25acee7a0867ac61517",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "88ae621d744bdb1611a21ec20abec6066f9eff38ff1d863c44e7297cdf1b5b82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-01",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "016306ccb334489b59eb0a495d2fe492d49e7d2ec3965ccccb56602ca9a0ebe8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-02",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2490dd5cbbb69d0817acc4c320cf5670642256280d9b5b9eb8ca1bd6e15e244d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "88ae621d744bdb1611a21ec20abec6066f9eff38ff1d863c44e7297cdf1b5b82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-02",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "bbf6421bdb222796a22904f503daaa3211375913eb27970322cd0113ce389d5d",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-03",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "64fc8e5c9bd8a1a97f90664297316389d12029c56317c4fc64b67dd059e03c25",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "eaf9d0f9a84b24e9f25d52390cbbed9e4f089efb98511a5be63bffb730a56405",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-04",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "af20a3fb1d742c1d3a841bde09bc14630902c9f7b161fd88eb740dee5dca8227",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "edb9eb8e4a561d9b865c55e6b430f8a0301a8544349105d5a2d6ad723a297d82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-04",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "df1f3559712fccafea368b90e465e43d03ea85e0f29223fd4dd3c3b7cbb52ce8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-05",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "03e7b5fc99cd8a711a32b6515823a1afd3c2d392328fe66da5892c2c4d5e6fa9",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "edb9eb8e4a561d9b865c55e6b430f8a0301a8544349105d5a2d6ad723a297d82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-06",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bb06dca56f80f1eb150f26ae6bc7fa4aaa939eb194166c39978c4c74354eab8b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f3da5c6b26fddb1fecd02bd48ddc147c4db284625de9dcffc14e161e95d753ec",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-06",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "bedf0e38f5c478d7f2053538879348db38d8e308bfa4f919c9e54342edc9e5ff",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-07",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "bc85de2786f525efb0e4e6ae57d34ff79b03aff4046d3ae67aa2dd4387b8c293",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f8d392bd170993350383d9f9c21a11af16e7993a180f27b600b57b74e5cf3ee8",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-07",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "5e1cb49393f543028ca57745cbe91f40c125286026ecd7096cb9383b49970798",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "611cd776b5f4a26e5da4172449e9325532d7b1b903039c839a4d4a98ad05f547",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-08",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "75c450c3d96d0e7a60b9b8c848546263bfb6f29fbfef5acbc0ef5284c5463f8e",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "35bb9dd859a0c307b3399dac9a09db45fd59275a04e6ad407b7876945d0e1267",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-09",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "3da09e3fed13aed588ef64cddcc319e59328248e1783d5014cadf0ad66f17d8a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "a4b4e7fbfbde933f70a26444dcf87f89f195bfa2bf900687af2a3d005013ae1b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-09",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "05927588fa13617a8dadbe3523c924384e20e064149b13864984b52ceb9adb25",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "4347116ddc4adec847317ce2e116663cee85b94755f053d3a167134a181eee2b",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-10",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "6768cece8af2ed78d53cb8de5862539d677a4014420806551040d1afafb7d60b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "112943bbb5e79df6d4445844815720a14b34b5f7d33bdd456a0cb7d9028ba1b0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-11",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "8466a64f6b7bfc93a1525cfdefaa0f61c81932fcd00570332d9cf679b4ab97e1",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "b3024d142ad4914b227179b4539c7a32e3e8570e42fdce4917487b5b5ef1cb74",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-12",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e42d20a5c6dc8c5b684ba8dd7d9b52393dd18f9dbd73c125a0134e4b1f739c13",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "00815d542174999d154df0ae16ef7f65521fe57e508309c0d7db5a9ca8e57390",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-13",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a71ef5a35df672b1009d3a3b4da0f604edc065714f0478cf5d59927ac290a871",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "a4753bc6b5a7c3640696369f0bbfbca18f04da80970b161a99da682c416886c5",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-13",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "d969999b147985ed9b7a478866013585e0ff9f766986b210c80e2e307ec3f472",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "611cd776b5f4a26e5da4172449e9325532d7b1b903039c839a4d4a98ad05f547",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-14",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "66070eeca97338bbe828b3725fab4c0a127e2fe6f60f5f4128188aa0419fe51f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "6b2d637a49457bc157fffc2d6f8917f80878c16f30cf6d87ba65abbc25a70080",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-14",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "797aa3778a97d5fec51b8c4fe8b4f5437c8253450d6c70bed8fcb55c31e9c293",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "611cd776b5f4a26e5da4172449e9325532d7b1b903039c839a4d4a98ad05f547",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-15",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "1f95bfed2781f15d86881f596332816022649c56fd3f6e48b4cdbc3a73519bd1",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "fee16a9f2cbcc379427472290893e3584c8b7df9e7860808c99a9392c8164934",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-15",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "08ca44cb59b327c2367d5bebfc4c7bf95421cbf896af2318a06f4b13119faa1f",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "5bcad04e9082bfd6940c33e7dc1235740a3620db544c9a60ab3064545f761630",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-16",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5f7b80b431cb1c1458de21020dd3a4d0812364854298c28d6e523cb3323c22bb",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "d3a95ec2ab3d481c2da933a4ea2412aee863bf081475d72f9ed4c9ed0960d4ef",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-17",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "21883da364f326ec693e2d935022017cf7c0336287caba4d6e3e287ad6f8c2eb",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "6ec724c0bd68ce2c9f2c00c6c39433a8d76c99202792148d723709dbd71b81eb",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-18",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "77760f81880acb4fb165f1f7ba5f5875419477f208da99d9af09d34bc8412781",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "ac64f153b801ac5ecbdd57b6d508b9409795101e91bafe9bc716049016c8b376",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-19",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5b993cea5fb49c13ab49eef965073b1c63e7590f6c0cbaf2aa0d9749c00cd1a7",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "617b9e2c7cdaaeda88fcaa94397d2f1d55c91d76976514e52fdafe46f632172e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-20",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a54b679428ac67ed68137508613c8c87be1f4f7fb6cb8dd24dc57979554d5fb8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "41170c0d30663483bdaea957194a9c7f868d1ec79938f6e5556e0a900b67361e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-20",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "6f3f01cf2b8045a62bb7f890e6da76ac0342a52cfe56111d37d80114440e8370",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "611cd776b5f4a26e5da4172449e9325532d7b1b903039c839a4d4a98ad05f547",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-21",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "70717193cf585fde35fb08a69537b8047d8a5c8262699ee8e83d0f40393c35fc",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "88ae702797a4b2859b497b99737129de087f3a98a8ce338900044dfb3fa556fa",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-22",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "9727bfd256852b6fc2ec46aeecf19ec857ac7b8b5a1ad3dce8afa98828e0bbe0",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "0f617ba98e6a0f426517e51aff86858da592399abcde80b1b5995a6d0b71a055",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-23",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "333c69183eb61933bfa74cb00d41f53438cb6f477b88e708a67927dbe4b812ec",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "0f617ba98e6a0f426517e51aff86858da592399abcde80b1b5995a6d0b71a055",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-24",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "92de0f85fca31ff7e11157ce5272eb8c12a414c13a1df19cddfbae79d89e6447",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "111d24fd36bb9df96b83178fb84ffcd758e00c662449aa116af719aeca1813e7",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-25",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5538e8db3aac4abeaeed1a5da23e50344d70b5ebea1738eba43c3a7a1fbc87c8",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "fc2664859b087e1f79f7755c899b459d90b8d4ff2e0b90b945af580d2b59fc18",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-26",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b2416ea4a6e305ae5d56688cb57220c6d597817b76507e72b82e0e5ad24d5aa9",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "52f920992c858caf474712992999ffae8a458b1014835e8055849c970e769f8e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-27",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "c81904860e93c3ae9ffeb04f79a5e65c627a6344973518e2195d6450d20f0758",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "52f920992c858caf474712992999ffae8a458b1014835e8055849c970e769f8e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-27",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "8763e904483fac1e961445eeaaced702c29c39a70187edbbbc5b5f8dc2c2e71c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "611cd776b5f4a26e5da4172449e9325532d7b1b903039c839a4d4a98ad05f547",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-01",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "30dd8b4673b6b28cf01df9c7de4db465c997db39780d1774aa246f7b35a187ae",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "88ae621d744bdb1611a21ec20abec6066f9eff38ff1d863c44e7297cdf1b5b82",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-01",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "3141980911ad360ea7dce8f573ca18266c19c9f3e59f75326a37e0254cdbdc35",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-02",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "171204a0b41e3aca60460ffbaa44d821ba75e91ea24cb01b1122072578583ead",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "69e6060e92d856965929096686de433ca4b320e48370fea8dfba373399e79e40",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-03",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "6d96a481b2138aeab18a301de90fc69db39630807cf2d793d508a1158abb4a08",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "eaf9d0f9a84b24e9f25d52390cbbed9e4f089efb98511a5be63bffb730a56405",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-03",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "226407e563e93e7ac4893836354cb48ddafb474977fddb51c9865b178cb0eeff",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "f20b1da8ccb74d118626428fdfb45a1db27ac053d665d2893b1c5c1e5e85bbe4",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-04",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "8b806e1960827f1db297f97b46422de4503d9d38d5536332d69f78b10b5fa9de",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "35be6ed8e16fe66dd5affb3751363ad4ffa3e2d55c089f89c206e585871d8ab0",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-05",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7700bdc9b86c63cff0c9078c0d46d7b47df38fc7c35462b6b0a7769810a98891",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "208470a5792e4c2038e856a4c1cf1caacceb46c7608f9e67110e5fcdaedf582e",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-06",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "f0087cd8e848bdaf6ecd81eafea73a6ec4ac8a557e078cd6b92f340edde33144",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "1f93603db53bfad5c92390f735d0cbb8617b4ab8214ae91c5664a3d1e9b009c8",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-06",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "a10d23706febda73a139a92b6c4bd775ac264325ce2de61d93704de40cf85e43",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "3baca8baef1034960fbd19ade75441066f7fa5e738691847d1c88cddb766c181",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-07",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "731ce657f1ece1c237841e80985cb35c684f08cde69753e0540d8bf67324187b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "6b2d637a49457bc157fffc2d6f8917f80878c16f30cf6d87ba65abbc25a70080",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-07",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "d611be23f30bc031d05c26648ee86d1f95e04fc478a615f732f192f7c41af50c",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "e6785e415210f88fbf37e60932b00fdde75e86b2199a1a48032961437bb03127",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-08",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "7c6e278425adb5437936120768bf6fef3ab33af6a584f0b5d7001ff46364f41a",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "987eaa35b9defa184b7ee2b710ad7f5ebdbedbf10a181532d249ddab6f15d787",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-09",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "682ac52c4026647725c0ae57f59226ec7c77a70f8db93d33718e9a8c412959b2",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "b3c69c94e922206cc71d8430521ad56c1a56efc5e65e265ffef6e65a7f0dcfb6",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-10",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e49897a622aad7a8248c761257f8186e31c8caa455d9d212b8fbabc44dcc0341",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "41ab6e44ac4267fa710a8c6b454579db5fe47ed4b83bceedf41e462cfb71719a",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-qun-11",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "e468323c7853236ce100053e3f45799804cbb740412af3705ac24ab715e0d992",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "0f617ba98e6a0f426517e51aff86858da592399abcde80b1b5995a6d0b71a055",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-shu-01",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a7226af04592825b4d5a289900bacbc1e0dac5e870e996719737d20f82ec3a4b",
+   "glossaryDigest": "sha256:023394a9070ca166693dfc26c8b75e298655a95924dafdb5adca08850cf568e1",
+   "textSha256": "e2668b5573fce2588679e2bd40278b57ff8614415dd7570d0dff5bd9a9cc4cad",
+   "verdict": "accepted"
+  }
+ ]
+}

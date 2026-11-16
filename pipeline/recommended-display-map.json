@@ -203,7 +203,10 @@
       "20 級前全統、20 級後智力": "Trước cấp 20: Toàn Thống Soái; sau cấp 20: Trí Lực",
       "20 級前統、20 級後智統對半": "Trước cấp 20: Thống Soái; sau cấp 20: nửa Trí Lực, nửa Thống Soái",
       "許攸": "Hứa Du",
-      "武+E387": "Võ Lực +E387"
+      "武+E387": "Võ Lực +E387",
+      "統率 一速": "Thống Soái; Tốc Độ cao nhất đội",
+      "統率 武力": "Thống Soái và Võ Lực",
+      "武力 一速": "Võ Lực; Tốc Độ cao nhất đội"
     },
     "noteValues": [
       "S盾",

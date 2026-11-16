@@ -11,20 +11,20 @@
     },
     "notes": {
       "approvedDisplaySlots": 11,
-      "blocks": 2590,
-      "concreteInventorySha256": "b86170f891759675ba825237ace23a44caad929a3c68b0d83714701ba86d95e3",
-      "concreteLocationCount": 66050,
-      "hanBlocks": 2499,
+      "blocks": 2708,
+      "concreteInventorySha256": "246939360ca8be86874e4fd9a5b1fdef733e119f34d83ea3f7f37ffe37c673e0",
+      "concreteLocationCount": 67253,
+      "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
-      "siteLedgerObligations": 2694,
-      "translationObligations": 6291,
+      "siteLedgerObligations": 2812,
+      "translationObligations": 6409,
       "uiTranslateObligations": 62,
-      "uniqueRawTexts": 1514
+      "uniqueRawTexts": 1609
     },
     "recommended": {
-      "generationId": "093fca99fb074ea1d5fb23a3c280a84608657a476e36ec0dc37daba00e647ff3",
+      "generationId": "c1a78d1bf52a64f0d889e73f636efe6338f01ac1f705b0250360ed14acefc74e",
       "otherTeams": 40,
-      "records": 1640
+      "records": 1681
     },
     "sourcePins": {
       "authority": {
@@ -34,14 +34,14 @@
         ],
         "file": "pipeline/recommended-other-teams.json"
       },
-      "cacheInventoryHash": "sha256:cae5742af24a70a432557f44346e97eea9e81508b90283c7c30f1e2358764cfd",
-      "cacheManifestSha256": "34e653c15814fb61050b717f777b0ed6ea0334a392f9ccff2270347ff55a69ef",
-      "cachedPageBytes": 188085660,
-      "cachedPageCount": 1721,
-      "normalizedSnapshotSha256": "a1a1dc5830213b70ec808caf83067463fd1e76c6b67c9a50df493847639c2209",
-      "recommendedCorpusHash": "sha256:ebf2061547d254e8af8e8b5b887b8a7bfa627e25311ec57bb8bbb39099f0c864",
-      "recordCount": 1640,
-      "sourceInventoryHash": "sha256:cae5742af24a70a432557f44346e97eea9e81508b90283c7c30f1e2358764cfd"
+      "cacheInventoryHash": "sha256:84c691da96a51810377282280731082b97f99997017c1d826d1c098390562efb",
+      "cacheManifestSha256": "9b7e1b1f8965628c3859629781c9fddef0bbe1053f799f469528731f77d79459",
+      "cachedPageBytes": 172670839,
+      "cachedPageCount": 1762,
+      "normalizedSnapshotSha256": "813bafb808f14b19b258840641d5068a7078a4f699541ae5f50a0860c7b40695",
+      "recommendedCorpusHash": "sha256:70f81e980fcf441249f520a11e9155e212165bd474cee7462f51db1aefab4b20",
+      "recordCount": 1681,
+      "sourceInventoryHash": "sha256:84c691da96a51810377282280731082b97f99997017c1d826d1c098390562efb"
     }
   },
   "classifications": [
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261103-doi-chuan-sgsdeck",
+  "policyVersion": "site-vi-261116-doi-chuan-sgsdeck",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -799,8 +799,8 @@
     "js/unified-lookup.js": "eb2aaa9bd1fb2db22e7eddbf0bea79cd8098fe29d45769685d80c2a734d92b43",
     "js/website-display.js": "63990c85064dc0c707e865b924d2c9d951ab4e002f8fbdc947fdb512f93fc05c",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
-    "pipeline/recommended-display-map.json": "78ff63816b4082d413e377d9bd0f3689362638802dc07d617531fdf0aab2e007",
-    "pipeline/recommended-identity-map.json": "596f677328ab9110ac880fdd26894c4a37c53e36e6a872ae85268382ad25d2e8",
+    "pipeline/recommended-display-map.json": "531982ffbbb09f0b3de6cefce1ac35d881d618b90ea043702ce0c9318db44eb9",
+    "pipeline/recommended-identity-map.json": "542b99cdaab02acca2fc02f87a209b23cbcea157a15d67ad7109c621d98ed54c",
     "pipeline/sgsdeck-name-map.json": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
     "src/components/landing/Landing.astro": "63772883637328c0fc190dda1ad024879d23324ea868e15620474bb94fbc9126",
     "src/components/pages/KhaiHoangDetail.astro": "8ff06a854a4e607435321dd897ce98f2a3ca9af7ce0c33cd6239f865956ab722",
