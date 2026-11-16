@@ -1569,6 +1569,8 @@
   "chamSuTeams": [
     {
       "id": "lu-mong-gia-hu",
+      "recommended": true,
+      "recommendedOrder": 2,
       "title": "Lữ Mông · Giả Hủ",
       "heroes": [
         {
@@ -1580,7 +1582,7 @@
           "tactic": "Ngụy Thư Tương Gian"
         }
       ],
-      "note": "Mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ."
+      "note": "Mang 1 lính. Tướng thay thế: Điêu Thuyền, Hoàng Cái, Phùng Kỷ. Max cao, min thấp."
     },
     {
       "id": "ma-sieu-hoang-nguyet-anh",
@@ -1599,6 +1601,8 @@
     },
     {
       "id": "truong-nhuong-hoang-nguyet-anh",
+      "recommended": true,
+      "recommendedOrder": 1,
       "title": "Trương Nhượng · Hoàng Nguyệt Anh",
       "heroes": [
         {
@@ -1610,7 +1614,7 @@
           "tactic": "Phong Thi Trận"
         }
       ],
-      "note": "Mang 1 lính."
+      "note": "Mang 1 lính. Có tiến cử Trương Nhượng, ổn định."
     },
     {
       "id": "ton-thuong-huong-lang-thong",
@@ -1625,7 +1629,7 @@
           "tactic": "Phong Thi Trận"
         }
       ],
-      "note": "Mang 1 lính."
+      "note": "Mang 1 lính. Yêu cầu tiến bậc cao."
     },
     {
       "id": "thai-su-tu-lang-thong",
@@ -1670,7 +1674,7 @@
           "tactic": "Phong Thi Trận"
         }
       ],
-      "note": "Mang 1 lính."
+      "note": "Mang 1 lính. Yêu cầu tiến bậc cao."
     },
     {
       "id": "cam-ninh-lang-thong",
@@ -1685,7 +1689,60 @@
           "tactic": "Phong Thi Trận"
         }
       ],
-      "note": "Mang 1 lính."
+      "note": "Mang 1 lính. Cược Hội Tâm, max cao."
+    },
+    {
+      "id": "truong-nhuong-chu-thai-hoang-nguyet-anh",
+      "title": "Trương Nhượng · Chu Thái · Hoàng Nguyệt Anh",
+      "heroes": [
+        {"name": "Trương Nhượng", "tactic": "Ngụy Thư Tương Gian"},
+        {"name": "Chu Thái", "tactic": "Phong Thi Trận"},
+        {"name": "Hoàng Nguyệt Anh", "tactic": "Trưởng Giả Chi Phong"}
+      ],
+      "note": "Có tiến cử Trương Nhượng, ổn định."
+    },
+    {
+      "id": "ma-sieu-hoang-nguyet-anh-ve-thanh",
+      "title": "Mã Siêu · Hoàng Nguyệt Anh · Vệ Thành",
+      "heroes": [
+        {"name": "Mã Siêu", "tactic": "Lõa Y Huyết Chiến"},
+        {"name": "Hoàng Nguyệt Anh", "tactic": "Phong Thi Trận"},
+        {"name": "Vệ Thành", "tactic": "Tây Lương Thiết Kỵ/Đại Kích Sĩ"}
+      ],
+      "note": "Thương Kỵ đổi xen kẽ, ổn định."
+    },
+    {
+      "id": "gia-hu-thai-su-tu-tu-binh",
+      "recommended": true,
+      "recommendedOrder": 3,
+      "title": "Giả Hủ · Thái Sử Từ · Tử Sĩ",
+      "heroes": [
+        {"name": "Giả Hủ", "tactic": "Ngụy Thư Tương Gian"},
+        {"name": "Thái Sử Từ", "tactic": "Đánh Bại Quân Địch"},
+        {"name": "Tử Sĩ", "tactic": "Bạch Mã Nghĩa Tòng"}
+      ],
+      "note": "Không ăn tiến bậc, max cao, min thấp."
+    },
+    {
+      "id": "ton-thuong-huong-lang-thong-ve-thanh",
+      "title": "Tôn Thượng Hương · Lăng Thống · Vệ Thành",
+      "heroes": [
+        {"name": "Tôn Thượng Hương", "tactic": "Lõa Y Huyết Chiến"},
+        {"name": "Lăng Thống", "tactic": "Phong Thi Trận"},
+        {"name": "Vệ Thành", "tactic": "Đánh Bại Quân Địch/Tây Lương Thiết Kỵ"}
+      ],
+      "note": "Không ổn định."
+    },
+    {
+      "id": "cam-ninh-hoang-nguyet-anh-ve-thanh",
+      "title": "Cam Ninh · Hoàng Nguyệt Anh · Vệ Thành",
+      "heroes": [
+        {"name": "Cam Ninh", "tactic": "Phá Quân Uy Thắng"},
+        {"name": "Hoàng Nguyệt Anh", "tactic": "Phong Thi Trận"},
+        {"name": "Vệ Thành", "tactic": "Thịnh Khí Linh Địch"}
+      ],
+      "note": "Cược Hội Tâm, max cao."
     }
-  ]
+  ],
+  "chamSuTip": "Sau khi kết thúc ăn vạ nhớ reset Điểm Chiến Pháp cho đội khai hoang Chủ Lực. Đội ăn vạ với hiệu quả chính là Hỗn Loạn có thể ít tăng cấp Chiến Pháp; các đội ăn vạ khác kiến nghị tăng cấp Chiến Pháp."
 }

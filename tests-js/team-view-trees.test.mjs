@@ -165,7 +165,18 @@ for (const locale of ["vi", "zh"]) {
     assert.match(html, new RegExp(`href="/khai-hoang/${team.id}/"`));
     // Mọi đội của dữ liệu đều có thẻ.
     assert.equal((html.match(/class="team-card reference-team-card kh-card"/g) || []).length, khaihoang.teams.length);
-    assert.equal((html.match(/class="badge badge-band kh-recommended"/g) || []).length, khaihoang.teams.filter((item) => item.recommended === true).length);
+    const flagged = [...khaihoang.teams, ...khaihoang.chamSuTeams].filter((item) => item.recommended === true).length;
+    assert.equal((html.match(/class="badge badge-band kh-recommended"/g) || []).length, flagged);
+    // Đội Tiến cử đứng đầu lúc render (cả đội khai hoang lẫn Chạm Sứ), các đội còn lại theo sau.
+    // Mỗi thẻ: đoạn HTML tới thẻ kế tiếp; thẻ khai hoang cuối cắt ở khối tham khảo (Chạm Sứ, mỏ) phía sau.
+    const badgeRun = (cardClass) => html.split(`class="${cardClass}"`).slice(1)
+      .map((card) => card.split('class="kh-reference"')[0].includes("kh-recommended"));
+    for (const [cardClass, list] of [["team-card reference-team-card kh-card", khaihoang.teams], ["cham-su-card", khaihoang.chamSuTeams]]) {
+      const n = list.filter((item) => item.recommended === true).length;
+      assert.deepEqual(badgeRun(cardClass), list.map((_, i) => i < n), `${cardClass} ${locale}`);
+    }
+    // Tip Chạm Sứ là văn xuôi tiếng Việt: chỉ bản vi có.
+    assert.equal(html.includes('class="cham-su-tip"'), locale === "vi" && Boolean(khaihoang.chamSuTip), `chamSuTip ${locale}`);
 
     const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
     assert.ok(Array.isArray(detail));
