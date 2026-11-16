@@ -655,10 +655,11 @@ teams.get("/api/admin/community-teams", async (c) => {
     where.push("(t.created_at < ? or (t.created_at = ? and t.id < ?))");
     binds.push(cursor.t, cursor.t, cursor.id);
   }
+  const now = c.get("deps").now();
   const { results } = await c.env.DB.prepare(
     `${TEAM_SELECT}, u.email as author_email${TEAM_FROM} where ${where.join(" and ")} order by t.created_at desc, t.id desc limit ?`,
   )
-    .bind(c.get("deps").now(), c.get("deps").now(), ...binds, PAGE_SIZE + 1)
+    .bind(now, now, ...binds, PAGE_SIZE + 1)
     .all<TeamRow & { author_email: string }>();
   const page = paginate(results, PAGE_SIZE);
   return c.json({
