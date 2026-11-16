@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-16 (Đội cộng đồng: người dùng chọn mùa, mùa lấy từ Đội chuẩn)
+
+- Changed: form đăng đội có ô "Mùa bạn đang chơi" (bắt buộc, chọn sẵn mùa hiện hành của Đội chuẩn `pk-s27`); `POST /api/community-teams` nhận `season`. Danh mục mùa = `seasonOptions` của Đội chuẩn đang publish, Worker đọc `/data/recommended/*` lúc chạy (xác minh hash, cache isolate) qua `community-worker/src/season-catalog.ts` — mùa mới thêm vào Đội chuẩn tự có ở Đội cộng đồng sau khi site deploy. `GET /api/community-seasons` → `{current, seasons}`; danh sách mặc định lọc `current`.
+- Removed: mở/đóng mùa — route `POST /api/admin/community-seasons`, khối "Mùa đang mở"/"Mở mùa mới" ở `/quan-tri/`, trường `seasonOpen`, mã lỗi `season_not_open`/`season_closed`/`season_exists`/`season_conflict`. Mọi mùa nhận đội, vote, chiến báo. Mã mới: `invalid_season` (400), `season_catalog_unavailable` (503).
+- Migration `0012_community_season_catalog.sql`: gỡ unique index "một mùa mở" và cột `closed_at`, chuyển `binh-dien-xuan-thu` → `og-兵演春秋` (đội + chiến báo). Rollback chạy tay `rollback/0013_restore_community_season_open.sql`. Thứ tự triển khai: deploy Worker → kiểm `tqccl.com/api/community-seasons` → migrate → merge.
+- Fixed: chiến báo trên trang đội cộng đồng lấy mùa của đội ngay trong câu `insert … select` (trước đây bind giá trị đọc ở preflight).
+
 ## 2026-11-13 (Thiết kế mới: dựng 28 artboard vào site — nền dùng chung và 4 nhóm, issue #74)
 
 ### Nền dùng chung

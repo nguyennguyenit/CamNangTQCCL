@@ -1,5 +1,6 @@
 // Fake D1 (node:sqlite chạy migration thật) + fake R2 trong bộ nhớ + dựng app test.
 
+import { createHash } from "node:crypto";
 import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -8,6 +9,7 @@ import type { DatabaseSync as DatabaseSyncType, SQLInputValue } from "node:sqlit
 import { createApp } from "../src/app";
 import { type SessionUserRow } from "../src/auth";
 import type { Env } from "../src/env";
+import { resetSeasonCatalogCache } from "../src/season-catalog";
 import { AI_CONFIG_KEY, AI_GROUPS, encryptConfig, type AiConfig, type AiGroupConfig, type AiGroupId, type AiProvider } from "../../shared/ai-config";
 
 // Vite (vitest 2) bỏ tiền tố "node:" của node:sqlite khi phân giải import -> nạp bằng require.
@@ -15,6 +17,17 @@ const { DatabaseSync } = createRequire(import.meta.url)("node:sqlite") as typeof
 type DatabaseSync = DatabaseSyncType;
 
 const MIGRATIONS_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "migrations");
+const MIGRATION_FILES = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort();
+
+/** Chạy migration có tiền tố số trong (after, upTo] (vd upTo "0011" = schema trước 0012). */
+export function runMigrations(sqlite: DatabaseSyncType, opts: { after?: string; upTo?: string } = {}): void {
+  for (const file of MIGRATION_FILES) {
+    const n = file.slice(0, 4);
+    if (opts.after !== undefined && n <= opts.after) continue;
+    if (opts.upTo !== undefined && n > opts.upTo) continue;
+    sqlite.exec(readFileSync(`${MIGRATIONS_DIR}/${file}`, "utf8"));
+  }
+}
 
 class FakeStatement {
   constructor(
@@ -55,13 +68,11 @@ class FakeStatement {
   }
 }
 
-export function createFakeD1(): { d1: D1Database; sqlite: DatabaseSync; beforeBatch: (() => void)[] } {
+export function createFakeD1(opts: { upTo?: string } = {}): { d1: D1Database; sqlite: DatabaseSync; beforeBatch: (() => void)[] } {
   const sqlite = new DatabaseSync(":memory:");
   // Hàng đợi hook chạy đồng bộ ngay trước batch kế tiếp (dựng race giữa lúc đọc và lúc ghi).
   const beforeBatch: (() => void)[] = [];
-  for (const file of readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort()) {
-    sqlite.exec(readFileSync(`${MIGRATIONS_DIR}/${file}`, "utf8"));
-  }
+  runMigrations(sqlite, { upTo: opts.upTo });
   const d1 = {
     prepare: (sql: string) => new FakeStatement(sqlite, sql),
     async batch(stmts: FakeStatement[]) {
@@ -195,6 +206,52 @@ export const TEST_CONFIG: AiConfig = {
 };
 const TEST_CONFIG_BLOB = await encryptConfig(TEST_CONFIG, AI_SECRET);
 
+/** Một phần tử `seasonOptions` của `seasons.json` Đội chuẩn (nhãn: `<ID hoa> · Mùa <id>` / `<ID hoa> · 赛季<id>`). */
+export function seasonOption(id: string): Record<string, unknown> {
+  return { sourceSeasonId: id, displayCode: id.toUpperCase(), displayNameVi: `Mùa ${id}`, nameRaw: `赛季${id}`, status: "available" };
+}
+
+export interface CatalogFixture {
+  options: Record<string, unknown>[];
+  defaultId: string;
+  /** 64 hex; mặc định "a"×64. */
+  generationId?: string;
+}
+
+/** Mùa mặc định của harness: `current` = pk-s27, KHÁC phần tử đầu (như dữ liệu thật: OG đứng đầu). */
+export const DEFAULT_CATALOG: CatalogFixture = {
+  options: ["og-兵演春秋", "pk-s27", "pk-s5", "s1", "s0", "s2"].map(seasonOption),
+  defaultId: "pk-s27",
+};
+
+const sha256 = (bytes: Uint8Array) => createHash("sha256").update(bytes).digest("hex");
+
+/** Ba file catalog (đường dẫn sau `/data/recommended/`) với hash khớp nhau như bản publish thật. */
+export function catalogFiles(fixture: CatalogFixture): Map<string, Uint8Array> {
+  const gen = fixture.generationId ?? "a".repeat(64);
+  const enc = (v: unknown) => new TextEncoder().encode(JSON.stringify(v));
+  const seasons = enc({ schemaVersion: 1, defaultSourceSeasonId: fixture.defaultId, seasonOptions: fixture.options, scopes: [] });
+  const manifest = enc({
+    schemaVersion: 1,
+    generationId: gen,
+    dedupKeyVersion: 1,
+    files: { "seasons.json": { sha256: sha256(seasons), bytes: seasons.byteLength } },
+  });
+  const current = enc({ schemaVersion: 1, generationId: gen, manifestSha256: sha256(manifest) });
+  return new Map([
+    ["current.json", current],
+    [`${gen}/manifest.json`, manifest],
+    [`${gen}/seasons.json`, seasons],
+  ]);
+}
+
+/** Trả lời một URL catalog từ bộ file; ngoài bộ -> 404. */
+export function serveCatalog(files: Map<string, Uint8Array>, url: string): Response {
+  const name = url.slice(url.indexOf("/data/recommended/") + "/data/recommended/".length);
+  const bytes = files.get(name);
+  return bytes ? new Response(bytes, { status: 200 }) : new Response("missing", { status: 404 });
+}
+
 export interface Harness {
   env: Env;
   sqlite: DatabaseSync;
@@ -218,14 +275,22 @@ export interface Harness {
   /** Chạy `fn` (đồng bộ) ngay sau khi `getUser` của request kế tiếp đọc xong user, một lần (khoá user "giữa chừng"). */
   afterNextGetUser(fn: () => void): void;
   setFetch(handler: (url: string, init?: RequestInit) => Response | Promise<Response>): void;
+  /** Catalog mùa site đang publish (`<ORIGIN>/data/recommended/*`); đổi để mô phỏng mùa mới. Không ghi vào fetchCalls. */
+  catalog: CatalogFixture;
+  /** Ghi đè cách trả lời URL catalog (lỗi, treo…); null = phục vụ `catalog`. */
+  catalogHandler: ((url: string, init?: RequestInit) => Response | Promise<Response>) | null;
+  /** Số lượt fetch URL catalog. */
+  catalogFetches: number;
   request(path: string, opts?: { method?: string; as?: string; json?: unknown; body?: BodyInit; headers?: Record<string, string> }): Promise<Response>;
   /** Chờ mọi việc nền `waitUntil` của các request đã gửi. */
   settle(): Promise<void>;
 }
 
-export function createHarness(envOverrides: Partial<Env> = {}): Harness {
+export function createHarness(envOverrides: Partial<Env> = {}, opts: { migrationsUpTo?: string } = {}): Harness {
   const clock = { now: Date.UTC(2026, 8, 27, 10, 0, 0) };
-  const { d1, sqlite, beforeBatch } = createFakeD1();
+  const { d1, sqlite, beforeBatch } = createFakeD1({ upTo: opts.migrationsUpTo });
+  // Cache catalog nằm ở module: mỗi harness bắt đầu rỗng.
+  resetSeasonCatalogCache();
   const { bucket: rawBucket, objects } = createFakeR2(() => clock.now);
   const errors = { r2: null as Error | null, kv: null as Error | null };
   let r2Plan: { op: "put" | "delete"; nth: number; seen: number } | null = null;
@@ -271,6 +336,10 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     authHandler: async () => new Response("auth"),
     fetchImpl: (async (input: RequestInfo | URL, init?: RequestInit) => {
       const url = String(input);
+      if (url.startsWith(`${ORIGIN}/data/recommended/`)) {
+        harness.catalogFetches++;
+        return harness.catalogHandler ? harness.catalogHandler(url, init) : serveCatalog(catalogFiles(harness.catalog), url);
+      }
       fetchCalls.push({ url, init });
       return fetchHandler(url, init);
     }) as typeof fetch,
@@ -302,6 +371,9 @@ export function createHarness(envOverrides: Partial<Env> = {}): Harness {
     aiStore,
     mails,
     mailError: null,
+    catalog: DEFAULT_CATALOG,
+    catalogHandler: null,
+    catalogFetches: 0,
     get r2Error() {
       return errors.r2;
     },
@@ -375,11 +447,11 @@ export function imageForm(bytes: Uint8Array, type: string, field = "image"): For
   return form;
 }
 
-/** Seed mùa của Đội cộng đồng (closedAt null = mùa mở). */
-export function seedSeason(h: Harness, id: string, closedAt: number | null = null, openedAt = 1): void {
+/** Seed hàng `community_seasons` (đích FK của đội; route đăng đội tự upsert hàng này từ catalog). */
+export function seedSeason(h: Harness, id: string): void {
   h.sqlite
-    .prepare("insert into community_seasons (id, label_vi, label_zh, opened_at, closed_at) values (?, ?, ?, ?, ?)")
-    .run(id, `Mùa ${id}`, `赛季${id}`, openedAt, closedAt);
+    .prepare("insert into community_seasons (id, label_vi, label_zh, opened_at) values (?, ?, ?, 1)")
+    .run(id, `Mùa ${id}`, `赛季${id}`);
 }
 
 export interface SeedTeam {

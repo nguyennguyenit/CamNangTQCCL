@@ -1,6 +1,6 @@
 // Form đăng đội cộng đồng (artboard DoiCongDongNewMoi): ba bước — 1 Ảnh đội hình (1–3 ảnh, tải lên trước,
 // "Đọc bằng AI" từng ảnh), 2 Tướng và chiến pháp (9 ô + khối tình trạng đọc AI như Soi đội), 3 Thông tin đội
-// (tiêu đề, chip binh chủng, lối chơi, phân tích thêm) — và cột "Gửi để duyệt" (mùa, tên đăng, danh sách kiểm tra).
+// (tiêu đề, mùa đang chơi, chip binh chủng, lối chơi, phân tích thêm) — và cột "Gửi để duyệt" (tên đăng, danh sách kiểm tra).
 // AI chỉ là nháp: ô `unsure` phải được chọn gợi ý hoặc sửa tay trước khi gửi.
 // Không import từ community-teams.js (entry tự chạy); bước điều hướng sau khi gửi do `onSubmitted` lo.
 
@@ -29,7 +29,7 @@ const OPTIONAL_FIELDS = [
 const FACTION_ZH = { 'Ngụy': '魏', 'Thục': '蜀', 'Ngô': '吴', 'Quần': '群', 'Hán': '汉' };
 const FACTION_CODE = { 'Ngụy': 'nguy', 'Thục': 'thuc', 'Ngô': 'ngo', 'Quần': 'quan', 'Hán': 'han' };
 
-const FIELD_CODES = new Set(['invalid_title', 'invalid_troop', 'invalid_text', 'invalid_uploads', 'invalid_heroes', 'invalid_tactics']);
+const FIELD_CODES = new Set(['invalid_title', 'invalid_troop', 'invalid_text', 'invalid_uploads', 'invalid_heroes', 'invalid_tactics', 'invalid_season']);
 
 function unknownMessage(text) {
   return L(
@@ -48,6 +48,8 @@ function formMessage(code) {
       return L('Hãy nhập tiêu đề (tối đa 80 ký tự).', '请填写标题（最多 80 个字符）。');
     case 'invalid_troop':
       return L('Hãy chọn binh chủng.', '请选择兵种。');
+    case 'invalid_season':
+      return L('Hãy chọn mùa trong danh sách.', '请从列表中选择赛季。');
     case 'invalid_text':
       return L('Lối chơi cần ít nhất 10 ký tự; các mục khác tối đa 2000 ký tự.', '打法至少需要 10 个字符；其他项最多 2000 个字符。');
     case 'invalid_uploads':
@@ -60,10 +62,11 @@ function formMessage(code) {
 }
 
 /**
- * Gắn form vào `container`. `getLexicon()` trả bộ tra tên (từ điển tướng/CP/binh thư); `onSubmitted()` chạy sau khi
+ * Gắn form vào `container`. `seasons` = danh mục mùa theo thứ tự catalog (`{id, labelVi, labelZh}`), `current` = id mùa
+ * hiện hành (chọn sẵn). `getLexicon()` trả bộ tra tên (từ điển tướng/CP/binh thư); `onSubmitted()` chạy sau khi
  * server nhận đội (201, chờ duyệt). `user` là người đang đăng (hiện "Đăng với tên …").
  */
-export function mountTeamForm(container, { season, locale, user, getLexicon, teamHref, onSubmitted }) {
+export function mountTeamForm(container, { seasons, current, locale, user, getLexicon, teamHref, onSubmitted }) {
   const root = el('div', { class: 'cm-team-form-root' });
   container.append(root);
   const boot = el('p', { class: 'scope-note' }, L('Đang tải danh sách tướng và chiến pháp…', '正在加载武将和战法列表…'));
@@ -426,6 +429,17 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
 
     /* ----- Bước 3: thông tin đội ----- */
     const troop = troopChips();
+    // Ô chọn mùa bắt buộc: chọn sẵn mùa hiện hành; mùa hiện hành không có trong catalog thì bắt người dùng tự chọn.
+    const hasCurrent = seasons.some((item) => item.id === current);
+    const seasonSelect = el('select', { id: 'cm-team-season-pick', class: 'cm-team-input cm-team-select', required: '' }, [
+      hasCurrent ? null : el('option', { value: '', disabled: '' }, L('Chọn mùa', '请选择赛季')),
+      ...seasons.map((item) => el('option', { value: item.id }, `${seasonLabel(item, locale)}${item.id === current ? L(' (hiện hành)', '（当前）') : ''}`)),
+    ]);
+    seasonSelect.value = hasCurrent ? current : '';
+    const seasonField = el('div', { class: 'cm-team-fld cm-team-fld-wide' }, [
+      el('label', { class: 'cm-team-fld-label', for: 'cm-team-season-pick' }, [L('Mùa bạn đang chơi', '你正在玩的赛季'), el('span', {}, L('bắt buộc', '必填'))]),
+      el('div', { class: 'cm-team-cell-field' }, [seasonSelect, el('span', { class: 'cm-team-select-chevron', 'aria-hidden': 'true' }, teamIcon('chevronDown'))]),
+    ]);
     const titleInput = el('input', { id: 'cm-team-title-input', class: 'cm-team-input', type: 'text', maxlength: String(TITLE_MAX) });
     const playstyleInput = el('textarea', { id: 'cm-team-playstyle', class: 'cm-team-textarea cm-team-textarea-tall', rows: '4', maxlength: String(PLAYSTYLE_MAX) });
     const optional = OPTIONAL_FIELDS.map(([key, label, placeholder]) => {
@@ -464,6 +478,7 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
       const title = titleInput.value.trim().length;
       const playstyle = playstyleInput.value.trim().length;
       const troopValue = troop.value;
+      const seasonPicked = seasons.find((item) => item.id === seasonSelect.value) ?? null;
       const heroesOk = heroes.length === 3 && heroIds.size === 3;
       const tacticsOk = sureTactics.length === 6 && tacticIds.size === 6;
       checklist.replaceChildren(
@@ -473,14 +488,16 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
           ? L(`${sureTactics.length}/6 · còn ${unsureTactics} ô Không chắc`, `${sureTactics.length}/6 · 还有 ${unsureTactics} 格不确定`)
           : L(`${sureTactics.length}/6 · không trùng`, `${sureTactics.length}/6 · 无重复`), tacticsOk),
         checkItem(L('Tiêu đề', '标题'), L(`${formatNumber(title)} / ${TITLE_MAX} ký tự`, `${formatNumber(title)} / ${TITLE_MAX} 字`), title > 0 && title <= TITLE_MAX),
+        checkItem(L('Mùa', '赛季'), seasonPicked ? seasonLabel(seasonPicked, locale) : L('Chưa chọn', '未选择'), Boolean(seasonPicked)),
         checkItem(L('Binh chủng', '兵种'), troopValue ? troopLabel(troopValue) : L('Chưa chọn', '未选择'), Boolean(troopValue)),
         checkItem(L('Lối chơi', '打法'), L(`${formatNumber(playstyle)} ký tự`, `${formatNumber(playstyle)} 字`), playstyle >= PLAYSTYLE_MIN),
       );
-      infoCard.setDone(title > 0 && Boolean(troopValue) && playstyle >= PLAYSTYLE_MIN);
+      infoCard.setDone(title > 0 && Boolean(seasonPicked) && Boolean(troopValue) && playstyle >= PLAYSTYLE_MIN);
     }
     titleInput.addEventListener('input', () => paintChecklist());
     playstyleInput.addEventListener('input', () => paintChecklist());
     for (const input of troop.inputs) input.addEventListener('change', () => paintChecklist());
+    seasonSelect.addEventListener('change', () => paintChecklist());
 
     const submit = el('button', { class: 'cm-team-btn cm-team-btn-primary cm-team-btn-block', type: 'submit' }, [teamIcon('send'), L('Gửi để duyệt', '提交审核')]);
 
@@ -510,6 +527,7 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
     const infoCard = stepCard(3, L('Thông tin đội', '阵容信息'), {
       children: [el('div', { class: 'cm-team-fields' }, [
         countedField({ id: 'cm-team-title-input', label: L('Tiêu đề', '标题'), hint: L('bắt buộc', '必填'), control: titleInput, max: TITLE_MAX, wide: true }),
+        seasonField,
         el('div', { class: 'cm-team-fld cm-team-fld-wide' }, troop.group),
         countedField({
           id: 'cm-team-playstyle',
@@ -525,15 +543,9 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
     const author = user ?? null;
     const sendCard = el('section', { class: 'cm-team-form-card cm-team-send', 'aria-labelledby': 'cm-team-send-title' }, [
       el('h3', { id: 'cm-team-send-title', class: 'cm-team-side-title' }, L('Gửi để duyệt', '提交审核')),
-      el('div', { class: 'cm-team-send-season' }, [
-        el('span', { class: 'cm-team-send-season-text' }, [
-          el('span', { class: 'cm-team-caps' }, L('Mùa đang mở', '进行中的赛季')),
-          el('span', { class: 'cm-team-send-season-name' }, seasonLabel(season, locale)),
-        ]),
-        author
-          ? el('span', { class: 'cm-team-send-author' }, [avatar(author), el('span', {}, [L('Đăng với tên ', '发布名称 '), el('strong', {}, displayName(author))])])
-          : null,
-      ]),
+      author
+        ? el('div', { class: 'cm-team-send-author' }, [avatar(author), el('span', {}, [L('Đăng với tên ', '发布名称 '), el('strong', {}, displayName(author))])])
+        : null,
       checklist,
       el('p', { class: 'cm-team-fine' }, L(
         'Sau khi gửi, đội không sửa được. Đội chỉ hiện với bạn và quản trị viên cho tới khi được duyệt.',
@@ -559,6 +571,7 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
         invalid_tactics: slots.find((slot) => slot.kind === 'tactic' && slot.get().state !== 'sure')?.input
           ?? slots.find((slot) => slot.kind === 'tactic')?.input,
         invalid_title: titleInput,
+        invalid_season: seasonSelect,
         invalid_troop: troop,
         invalid_text: playstyleInput,
         invalid_uploads: imageSlots[0].file,
@@ -587,6 +600,7 @@ export function mountTeamForm(container, { season, locale, user, getLexicon, tea
         payload = teamPayloadFromDraft(draft, {
           title: titleInput.value,
           troop: troop.value,
+          season: seasonSelect.value,
           playstyle: playstyleInput.value,
           ...Object.fromEntries(optional.map((entry) => [entry.key, entry.textarea.value])),
           lang: locale,

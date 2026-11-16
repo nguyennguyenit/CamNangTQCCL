@@ -29,7 +29,7 @@ const length = (text) => Array.from(text).length;
 const sureId = (cell) => (cell?.state === 'sure' && typeof cell.id === 'string' && cell.id ? cell.id : null);
 
 /**
- * Nháp đã xác nhận + các ô nhập → body `POST /api/community-teams` (không có `season`: server gán mùa mở).
+ * Nháp đã xác nhận + các ô nhập → body `POST /api/community-teams` (`season` = id mùa người dùng chọn, bắt buộc).
  * Ném `TeamFormError` (mã `invalid_*` như API) khi thiếu hoặc trùng.
  */
 export function teamPayloadFromDraft(draft, fields) {
@@ -45,6 +45,8 @@ export function teamPayloadFromDraft(draft, fields) {
   const title = trimmed(fields?.title);
   if (!title || length(title) > TITLE_MAX) throw new TeamFormError('invalid_title');
   if (!TROOPS.includes(fields?.troop)) throw new TeamFormError('invalid_troop');
+  const season = trimmed(fields?.season);
+  if (!season) throw new TeamFormError('invalid_season');
   const playstyle = trimmed(fields?.playstyle);
   if (length(playstyle) < PLAYSTYLE_MIN || length(playstyle) > TEXT_MAX) throw new TeamFormError('invalid_text');
   const optional = {};
@@ -58,6 +60,7 @@ export function teamPayloadFromDraft(draft, fields) {
     throw new TeamFormError('invalid_uploads');
   }
   return {
+    season,
     title,
     heroes,
     tactics,

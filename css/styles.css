@@ -374,7 +374,6 @@
   --size-dialog-confirm: 440px;
   --size-media-240: 240px;
   --size-col-150: 150px;
-  --size-col-260: 260px;
   --size-media-360: 360px;
   --size-col-160: 160px;
   --size-col-190: 190px;
@@ -15855,10 +15854,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-team-field { white-space: pre-wrap; overflow-wrap: anywhere; }
 
-.adm-season { display: grid; gap: var(--space-12); margin-bottom: var(--space-14); }
-
-.adm-season-form { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-12); }
-
 .adm-report-image {
   position: relative;
   display: flex;
@@ -16919,79 +16914,10 @@ body[data-page-section="roster-recommend"] .layout {
 /* quan-tri:nguoi-dung:end */
 /* --- Đội cộng đồng chờ duyệt (AdminTeamsMoi) --- */
 /* quan-tri:doi-cong-dong:start */
-/* Component doi-cho-duyet (js/community-admin-teams.js): dòng tổng dưới tiêu đề khu, khối Mùa đang mở + form Mở mùa mới,
+/* Component doi-cho-duyet (js/community-admin-teams.js): dòng tổng dưới tiêu đề khu,
    nhóm nút chọn trạng thái, thẻ đội (ô ảnh 240, chip tướng có chân dung, vùng phân tích), nút gỡ viền son nhạt.
    Viết sau CSS `adm-*` cũ nên cùng độ đặc hiệu thì thắng; `[hidden]` dựa vào `.cm-page [hidden]` (độ đặc hiệu 0,2,0). */
 .adm-team-summary { margin: 0; color: var(--ink-body); font: var(--type-chip-pill); }
-
-.adm-season {
-  display: grid;
-  grid-template-columns: var(--size-col-260) minmax(0, 1fr);
-  align-items: start;
-  gap: var(--space-24);
-  margin-bottom: 0;
-  padding: var(--space-18);
-}
-
-.adm-season-current { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
-
-.adm-season-kicker {
-  margin: 0;
-  color: var(--accent);
-  font: var(--type-admin-kicker);
-  letter-spacing: var(--type-admin-kicker-spacing);
-  text-transform: uppercase;
-}
-
-.adm-season-name {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: var(--space-10);
-  margin: 0;
-  color: var(--ink);
-}
-
-.adm-season-label { font: var(--type-lookup-panel-title); overflow-wrap: anywhere; }
-
-.adm-season-label-alt { color: var(--ink-body); font: var(--type-lookup-zh-mobile); }
-
-.adm-season-none { font: var(--type-dialog-title); }
-
-.adm-season-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-12);
-  margin: 0;
-  color: var(--muted);
-  font: var(--type-small);
-}
-
-.adm-season-meta code { color: var(--ink-body); font: var(--type-admin-mono); }
-
-.adm-season-new { display: flex; min-width: 0; }
-
-.adm-season-form {
-  display: flex;
-  flex: 1 1 auto;
-  flex-direction: column;
-  flex-wrap: nowrap;
-  align-items: stretch;
-  gap: var(--space-12);
-  min-width: 0;
-  padding: var(--space-14);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-12);
-  background-color: var(--panel-3);
-}
-
-.adm-season-form-title { margin: 0; color: var(--ink); font: var(--type-lookup-option-name); }
-
-.adm-season-fields {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr) minmax(0, 1fr);
-  gap: var(--space-12);
-}
 
 /* Nhóm nút chọn một trạng thái (aria-pressed, cùng mẫu `chuyen-the-bang`). */
 .adm-team-filter { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
@@ -17214,9 +17140,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 @media (max-width: 680px) {
   #adm-panel-teams { gap: var(--space-16); }
-  .adm-season { grid-template-columns: minmax(0, 1fr); gap: var(--space-14); padding: var(--space-16); }
-  .adm-season-label { font: var(--type-hero-card-title); }
-  .adm-season-fields { grid-template-columns: minmax(0, 1fr); }
   .adm-team-filter-btn { min-height: var(--control-44); }
   .adm-team { gap: var(--space-14); }
   .adm-team-thumb { width: 100%; }
@@ -18128,8 +18051,6 @@ body[data-page-section="roster-recommend"] .layout {
 .cm-team-similar-warning p { margin: 0 0 var(--space-6); }
 .cm-team-similar-warning ul { margin: 0; padding-left: var(--space-20); }
 
-.cm-archived { padding: var(--space-10) var(--space-14); border: var(--border-hair) dashed var(--line); border-radius: var(--radius-10); }
-
 @media (max-width: 680px) {
   .cm-team-card { grid-template-columns: minmax(0, 1fr); }
   .cm-team-thumb { height: var(--size-col-200); }
@@ -18810,6 +18731,8 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 .cm-team-flag { display: inline-flex; align-items: center; gap: var(--space-4); color: var(--avoid); font: var(--type-badge); }
 .cm-team-flag[hidden] { display: none; }
 .cm-team-cell-field { position: relative; display: block; }
+.cm-team-input.cm-team-select { padding-right: var(--space-40); font: var(--type-select); appearance: none; cursor: pointer; }
+.cm-team-select-chevron { position: absolute; top: 50%; right: var(--space-14); display: inline-flex; color: var(--ink-2); pointer-events: none; transform: translateY(-50%); }
 .cm-team-input,
 .cm-team-textarea {
   display: block;
@@ -18859,9 +18782,6 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 .cm-team-subhead h4 { margin: 0; color: var(--ink); font: var(--type-strong); }
 .cm-team-extra-toggle { display: none; }
 
-.cm-team-send-season { display: flex; justify-content: space-between; align-items: center; gap: var(--space-12); }
-.cm-team-send-season-text { display: grid; gap: var(--space-4); }
-.cm-team-send-season-name { color: var(--ink); font: var(--type-list-title); }
 .cm-team-send-author { display: flex; align-items: center; gap: var(--space-10); color: var(--ink-2); font: var(--type-small); }
 .cm-team-send-author strong { color: var(--ink); font-weight: var(--weight-semibold); }
 .cm-team-check { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }

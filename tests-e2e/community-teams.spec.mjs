@@ -2,19 +2,21 @@ import { test, expect } from "@playwright/test";
 import { ADMIN, MODERATOR, PLAYER, PNG_1X1, mockCommunityApi } from "./helpers/community-mock.mjs";
 
 // Trang /doi-cong-dong/ chạy trên HTML tĩnh đã build; `/api/**` giả lập bằng helper dùng chung, từ điển tên là dữ liệu thật.
-const OPEN_SEASON = { id: "s1", labelVi: "Mùa 1", labelZh: "第一赛季", openedAt: "2026-10-01T00:00:00.000Z" };
-const SEASONS = { open: OPEN_SEASON, seasons: [OPEN_SEASON] };
+// Mùa hiện hành (`current`) cố ý KHÔNG đứng đầu danh mục, đúng như worker (thứ tự picker nguồn, OG trước).
+const FIRST_SEASON = { id: "og-兵演春秋", labelVi: "OG · Binh Diễn Xuân Thu", labelZh: "OG · 兵演春秋" };
+const CURRENT_SEASON = { id: "pk-s27", labelVi: "PK-S27 · Hán Diễm Trường Minh", labelZh: "PK-S27 · 汉艳长明" };
+const SEASONS = { current: CURRENT_SEASON.id, seasons: [FIRST_SEASON, CURRENT_SEASON] };
 const AUTHOR = { id: "u2", name: "Gia Cát", image: null };
 const HEROES = ["hero:tao-thao", "hero:quan-vu", "hero:truong-phi"];
 const TACTICS = [["tactic:binh-phong", "tactic:an-ui-quan-dan"], ["tactic:anh-thanh-tu-thu", "tactic:binh-vo-thuong-the"], ["tactic:bach-bo-xuyen-duong", "tactic:bach-ke-da-muu"]];
 
 const teamItem = (id, overrides = {}) => ({
-  id, title: `Đội ${id}`, season: OPEN_SEASON, heroes: HEROES, tactics: TACTICS, troop: "ky", author: AUTHOR,
+  id, title: `Đội ${id}`, season: CURRENT_SEASON, heroes: HEROES, tactics: TACTICS, troop: "ky", author: AUTHOR,
   upVotes: 3, downVotes: 1, evidenceCount: 2, points: 2, commentCount: 4, imageCount: 1, textLang: "vi",
   createdAt: "2026-10-10T08:00:00.000Z", ...overrides,
 });
 const teamDetail = (id, overrides = {}) => ({
-  ...teamItem(id), status: "approved", heroKey: [...HEROES].sort().join(","), myVote: 0, seasonOpen: true,
+  ...teamItem(id), status: "approved", heroKey: [...HEROES].sort().join(","), myVote: 0,
   analysis: { playstyle: "Mở đầu bằng khống chế.\nRồi dồn sát thương.", strengths: "Mạnh đầu trận", weaknesses: null, counters: null, counteredBy: null, substitutes: null },
   ...overrides,
 });
@@ -43,7 +45,11 @@ test("danh sách: đổi sắp xếp gọi sort=top, lọc tướng gọi heroes
   // Nhãn ngôn ngữ "VI" (ô mono, `title` nói rõ ngôn ngữ) thay "[VI]".
   await expect(cards.first().locator(".cm-lang-tag")).toHaveText("VI");
   const listCalls = () => calls.filter((call) => call.method === "GET" && call.path === "/api/community-teams");
-  expect(listCalls()[0].search.get("season")).toBe("s1");
+  // Mặc định lọc mùa hiện hành (không phải mùa đầu danh mục) và luôn gửi `season` lên API.
+  expect(listCalls()[0].search.get("season")).toBe("pk-s27");
+  await expect(page.locator("#cm-team-season")).toHaveValue("pk-s27");
+  await expect(page.locator("#cm-team-season option").first()).toHaveAttribute("value", "og-兵演春秋");
+  await expect(page.locator("#cm-team-season option:checked")).toHaveText("PK-S27 · Hán Diễm Trường Minh (hiện hành)");
   expect(listCalls()[0].search.get("sort")).toBe("hot");
 
   // Sắp xếp là nhóm nút bật (aria-pressed) thay select.
@@ -84,11 +90,35 @@ test("danh sách: một tiêu đề trang (h1), thẻ là h2; đội không ản
   }
 });
 
-test("không có mùa mở: ghi chú 'Chưa mở mùa' và không có tab Đăng đội", async ({ page }) => {
-  await mockCommunityApi(page, { teams: { seasons: { open: null, seasons: [] } } });
+test("Của tôi: luôn có nút và tab Đăng đội, mở được form đăng", async ({ page }) => {
+  await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS, mine: { items: [], nextCursor: null } } });
+  await page.goto("/doi-cong-dong/?mine=1");
+  await expect(page.getByRole("link", { name: "Đăng đội mới" })).toBeVisible();
+  const tab = page.getByRole("navigation", { name: "Đội cộng đồng" }).getByRole("link", { name: "Đăng đội" });
+  await expect(tab).toBeVisible();
+  await tab.click();
+  await expect(page.locator(".cm-team-view[data-mode='new']")).toBeVisible();
+  await expect(page.locator("#cm-team-season-pick")).toBeVisible();
+  await expect(page.locator("#cm-team-kicker")).toHaveText("Cộng đồng");
+});
+
+test("danh sách: nút Đăng đội luôn hiện và kicker chỉ ghi Cộng đồng, không còn ghi chú Chưa mở mùa", async ({ page }) => {
+  await mockCommunityApi(page, { teams: { seasons: SEASONS, list: { items: [], nextCursor: null } } });
   await page.goto("/doi-cong-dong/");
-  await expect(page.getByText("Chưa mở mùa. Hiện chưa nhận đội mới.")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Đăng đội" })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Đăng đội" })).toBeVisible();
+  await expect(page.locator("#cm-team-kicker")).toHaveText("Cộng đồng");
+  await expect(page.getByText("Chưa mở mùa")).toHaveCount(0);
+});
+
+test("đăng đội: danh mục mùa lỗi (503) → thông báo theo mã, không dựng form", async ({ page }) => {
+  await mockCommunityApi(page, {
+    user: PLAYER,
+    teams: { seasonsError: { status: 503, body: { error: { code: "season_catalog_unavailable", message: "x" } } } },
+  });
+  await page.goto("/doi-cong-dong/?new=1");
+  await expect(page.getByText("Chưa tải được danh sách mùa, thử lại sau.")).toBeVisible();
+  await expect(page.locator("#cm-team-season-pick")).toHaveCount(0);
+  await expect(page.locator(".cm-team-form")).toHaveCount(0);
 });
 
 test("/zh/doi-cong-dong/: tên tướng và chiến pháp tiếng Trung, [VI] trên văn bản/bình luận/chiến báo tiếng Việt", async ({ page }) => {
@@ -114,7 +144,7 @@ test("/zh/doi-cong-dong/: tên tướng và chiến pháp tiếng Trung, [VI] tr
   await expect(report.locator(".cm-lang-tag")).toHaveText("[VI]");
 });
 
-test("chi tiết mùa mở: vote gửi PUT {value:1} và cập nhật số; bấm lại huỷ phiếu", async ({ page }) => {
+test("chi tiết: vote gửi PUT {value:1} và cập nhật số; bấm lại huỷ phiếu", async ({ page }) => {
   const calls = await mockCommunityApi(page, {
     user: PLAYER,
     teams: {
@@ -135,7 +165,7 @@ test("chi tiết mùa mở: vote gửi PUT {value:1} và cập nhật số; bấ
   await up.click();
   await expect(up).toHaveText("3");
   expect(calls.filter((call) => call.method === "PUT").at(-1).body).toEqual({ value: 0 });
-  // Mùa mở: có form chiến báo.
+  // Mọi mùa đều nhận chiến báo: có form chiến báo, không còn ghi chú lưu trữ.
   await expect(page.locator(".cm-reports")).toContainText("Chiến báo");
   await expect(page.locator(".cm-archived")).toHaveCount(0);
   await expect(page.locator(".cm-reports input[type='file']")).toHaveCount(0);
@@ -143,18 +173,18 @@ test("chi tiết mùa mở: vote gửi PUT {value:1} và cập nhật số; bấ
   await expect(page.locator(".cm-reports input[type='file']")).toHaveCount(1);
 });
 
-test("chi tiết mùa đóng: tắt vote, không có form chiến báo, có ghi chú lưu trữ, bình luận vẫn gửi được", async ({ page }) => {
+test("chi tiết đội mùa cũ: vote bật cho người không phải chủ, có form chiến báo, bình luận gửi được", async ({ page }) => {
   const calls = await mockCommunityApi(page, {
     user: PLAYER,
-    teams: { seasons: SEASONS, details: (id) => teamDetail(id, { seasonOpen: false }) },
+    teams: { seasons: SEASONS, details: (id) => teamDetail(id, { season: FIRST_SEASON }) },
   });
   await page.goto("/doi-cong-dong/?id=t1");
-  await expect(page.locator("button[data-vote='up']")).toBeDisabled();
-  await expect(page.locator("button[data-vote='down']")).toBeDisabled();
-  await expect(page.getByText("Mùa đã đóng — không nhận bình chọn mới.")).toBeVisible();
-  await expect(page.locator(".cm-archived")).toHaveText("Mùa đã lưu trữ — không nhận chiến báo mới.");
-  await expect(page.locator(".cm-reports input[type='file']")).toHaveCount(0);
-  await expect(page.locator(".cm-reports").getByRole("button", { name: "Gửi chiến báo", exact: true })).toHaveCount(0);
+  await expect(page.locator("button[data-vote='up']")).toBeEnabled();
+  await expect(page.locator("button[data-vote='down']")).toBeEnabled();
+  await expect(page.locator(".cm-team-vote-note")).toHaveCount(0);
+  await expect(page.locator(".cm-archived")).toHaveCount(0);
+  await page.locator(".cm-reports").getByRole("button", { name: "Gửi chiến báo", exact: true }).click();
+  await expect(page.locator(".cm-reports input[type='file']")).toHaveCount(1);
 
   const comments = page.locator(".cm-comments");
   await comments.getByLabel("Viết bình luận").fill("Đội này vẫn đáng xem.");
@@ -200,7 +230,7 @@ async function uploadAndRead(page) {
   await read.click();
 }
 
-test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận, cảnh báo đội tương tự, body có id và không có season", async ({ page }) => {
+test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận, cảnh báo đội tương tự, body có id và mùa đã chọn", async ({ page }) => {
   const calls = await mockCommunityApi(page, {
     user: PLAYER,
     teams: {
@@ -210,7 +240,13 @@ test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận,
     },
   });
   await page.goto("/doi-cong-dong/?new=1");
-  await expect(page.getByText(/Mùa 1/).first()).toBeVisible();
+  // Ô chọn mùa bắt buộc: theo thứ tự catalog (OG đứng đầu), chọn sẵn mùa hiện hành và ghi "(hiện hành)".
+  const seasonPick = page.getByLabel("Mùa bạn đang chơi");
+  await expect(seasonPick).toBeVisible();
+  await expect(seasonPick).toHaveAttribute("required", "");
+  await expect(seasonPick).toHaveValue("pk-s27");
+  await expect(seasonPick.locator("option")).toHaveText(["OG · Binh Diễn Xuân Thu", "PK-S27 · Hán Diễm Trường Minh (hiện hành)"]);
+  await seasonPick.selectOption("og-兵演春秋");
   await uploadAndRead(page);
   await expect(page.locator("#cm-team-cell-0-0")).toHaveValue("Tào Tháo");
   await expect(page.locator("#cm-team-cell-1-0")).toHaveValue("Quan Vũ");
@@ -237,6 +273,7 @@ test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận,
 
   const created = calls.find((call) => call.method === "POST" && call.path === "/api/community-teams");
   expect(created.body).toEqual({
+    season: "og-兵演春秋",
     title: "Đội Tào Quan Trương",
     heroes: HEROES,
     tactics: [["tactic:binh-phong", "tactic:an-ui-quan-dan"], ["tactic:anh-thanh-tu-thu", "tactic:binh-vo-thuong-the"], ["tactic:bach-bo-xuyen-duong", "tactic:bach-ke-da-muu"]],
@@ -246,7 +283,6 @@ test("đăng đội: AI điền 3 tướng + 6 CP, ô unsure phải xác nhận,
     lang: "vi",
     uploadIds: ["tu-1"],
   });
-  expect(created.body).not.toHaveProperty("season");
 });
 
 test("đăng đội: AI trả 503 → thông báo theo mã, nhập tay vẫn gửi được", async ({ page }) => {
@@ -277,7 +313,10 @@ test("đăng đội: AI trả 503 → thông báo theo mã, nhập tay vẫn g�
   await page.locator("#cm-team-playstyle").fill("Nhập tay vì AI đang bận.");
   await page.getByRole("button", { name: "Gửi để duyệt" }).click();
   await expect.poll(() => calls.find((call) => call.method === "POST" && call.path === "/api/community-teams")?.body.heroes).toEqual(HEROES);
-  expect(calls.find((call) => call.method === "POST" && call.path === "/api/community-teams").body.tactics.flat()).toHaveLength(6);
+  const manualBody = calls.find((call) => call.method === "POST" && call.path === "/api/community-teams").body;
+  expect(manualBody.tactics.flat()).toHaveLength(6);
+  // Không đụng ô mùa: gửi đúng mùa hiện hành đã chọn sẵn.
+  expect(manualBody.season).toBe("pk-s27");
 });
 
 test("đăng đội: chữ gõ không tra được được giữ lại, đánh dấu invalid và chặn gửi kèm thông báo theo ô", async ({ page }) => {
@@ -429,9 +468,10 @@ test("quản trị (KDV): badge teamsPending, duyệt gửi approve rồi badge 
   await expect(rows.first()).toContainText("Đội t1");
   await expect(rows.first()).toContainText("gia***@example.com");
   await expect(rows.first()).toContainText("Tào Tháo");
-  await expect(rows.first()).toContainText("Mùa 1");
+  await expect(rows.first()).toContainText("PK-S27 · Hán Diễm Trường Minh");
   await expect(panel.getByText("Mùa đang mở")).toHaveCount(0);
-  expect(calls.filter((call) => call.path === "/api/admin/community-seasons")).toEqual([]);
+  await expect(panel.locator("#adm-season-form")).toHaveCount(0);
+  expect(calls.filter((call) => call.path.startsWith("/api/community-seasons") || call.path === "/api/admin/community-seasons")).toEqual([]);
 
   await rows.first().getByRole("button", { name: "Duyệt", exact: true }).click();
   await expect.poll(() => calls.some((call) => call.method === "POST" && call.path === "/api/admin/community-teams/t1/approve")).toBe(true);
@@ -539,42 +579,16 @@ test("quản trị: lọc 'Đang xoá dở' liệt kê đội xoá dở, Thử x
   expect(deletes.map((call) => call.body)).toEqual([{ reason: "Dọn dở" }, { reason: "Dọn dở" }]);
 });
 
-test("quản trị (root): khối Mùa đang mở, xác nhận rồi POST đúng body; 409 season_exists hiện thông báo", async ({ page }) => {
-  let attempts = 0;
-  const calls = await mockCommunityApi(page, {
-    user: ADMIN,
-    teams: {
-      seasons: SEASONS,
-      admin: [],
-      openSeason: () => {
-        attempts += 1;
-        return attempts === 1
-          ? { status: 409, body: { error: { code: "season_exists", message: "x" } } }
-          : { status: 201, body: { id: "s2", labelVi: "Mùa 2", labelZh: "第二赛季", openedAt: "2026-10-21T00:00:00.000Z", closedAt: null, previous: "s1" } };
-      },
-    },
-  });
+test("quản trị (root): không còn khối Mùa đang mở / form Mở mùa mới", async ({ page }) => {
+  const calls = await mockCommunityApi(page, { user: ADMIN, teams: { seasons: SEASONS, admin: [] } });
   await page.goto("/quan-tri/#doi-cong-dong");
   const panel = page.getByRole("region", { name: "Đội cộng đồng", exact: true });
-  const block = panel.locator(".adm-season");
-  await expect(block).toContainText("Mùa đang mở");
-  await expect(block).toContainText("Mùa 1");
-  await expect(block).toContainText("第一赛季");
-  await block.getByLabel("Mã mùa").fill("s2");
-  await block.getByLabel("Tên mùa (Việt)").fill("Mùa 2");
-  await block.getByLabel("Tên mùa (Trung)").fill("第二赛季");
-  await block.getByRole("button", { name: "Mở mùa mới…" }).click();
-  const dialog = page.getByRole("dialog", { name: "Mở mùa mới" });
-  await expect(dialog).toContainText("Mùa 1 sẽ bị lưu trữ");
-  await dialog.getByRole("button", { name: "Xác nhận mở mùa" }).click();
-  await expect.poll(() => calls.find((call) => call.method === "POST" && call.path === "/api/admin/community-seasons")?.body)
-    .toEqual({ id: "s2", labelVi: "Mùa 2", labelZh: "第二赛季" });
-  await expect(panel.getByText("Mã mùa này đã tồn tại.")).toBeVisible();
-
-  await block.getByRole("button", { name: "Mở mùa mới…" }).click();
-  await page.getByRole("dialog", { name: "Mở mùa mới" }).getByRole("button", { name: "Xác nhận mở mùa" }).click();
-  await expect(block).toContainText("Mùa 2");
-  await expect(panel.getByText("Đã mở mùa mới.")).toBeVisible();
+  await expect(panel.getByText("Không có đội nào ở trạng thái này.")).toBeVisible();
+  await expect(panel.locator("#adm-season-form")).toHaveCount(0);
+  await expect(panel.locator(".adm-season")).toHaveCount(0);
+  await expect(panel.getByText("Mùa đang mở")).toHaveCount(0);
+  await expect(panel.getByRole("button", { name: "Mở mùa mới…" })).toHaveCount(0);
+  expect(calls.filter((call) => call.path === "/api/admin/community-seasons")).toEqual([]);
 });
 
 test("nhật ký: team.approve / season.open có nhãn hành động và loại đối tượng vi + zh", async ({ page }) => {

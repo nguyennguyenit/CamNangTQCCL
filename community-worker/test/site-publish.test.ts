@@ -201,12 +201,9 @@ describe("site-publish: khoá / xoá tài khoản", () => {
 });
 
 describe("site-publish: không gửi / lỗi", () => {
-  it("D6: đổi vai trò và mở mùa không gửi", async () => {
+  it("D6: đổi vai trò không gửi", async () => {
     const h = createHarness();
     expect((await h.request("/api/admin/users/u-bob/role", { as: "admin", json: { role: "moderator" } })).status).toBe(200);
-    seedSeason(h, "s1");
-    const season = await h.request("/api/admin/community-seasons", { as: "admin", json: { id: "s2", labelVi: "Mùa 2", labelZh: "赛季2" } });
-    expect(season.status).toBe(201);
     expect(h.fetchCalls).toHaveLength(0);
   });
 

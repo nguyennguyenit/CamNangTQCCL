@@ -1,9 +1,9 @@
 // Kiểm tra đầu vào Đội cộng đồng: mùa, đội, vote, bộ lọc danh sách. Id tướng/CP chỉ kiểm định dạng + không trùng.
 
 import { ApiError } from "./http";
+import { isSeasonId } from "./season-catalog";
 import { parseId, parseLang, parseText, type Lang } from "./validate";
 
-export const SEASON_ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/u;
 export const TROOPS = ["cung", "khiGioi", "ky", "thuan", "thuong"] as const;
 export type Troop = (typeof TROOPS)[number];
 export const TEAM_SORTS = ["hot", "new", "top"] as const;
@@ -48,12 +48,8 @@ export interface TeamInput {
   substitutes: string | null;
   lang: Lang;
   uploadIds: string[];
-}
-
-export interface SeasonInput {
-  id: string;
-  labelVi: string;
-  labelZh: string;
+  /** Id mùa (định dạng); có trong danh mục hay không do route kiểm qua catalog. */
+  season: string;
 }
 
 /** 3 id tướng đã sắp xếp, nối bằng ',' (khoá tìm đội cùng bộ tướng). */
@@ -118,20 +114,13 @@ export function parseTeamInput(input: unknown): TeamInput {
     substitutes: optionalText(input.substitutes, "substitutes"),
     lang: parseLang(input.lang),
     uploadIds: parseUploadIds(input.uploadIds),
+    season: parseSeasonId(input.season),
   };
 }
 
-export function parseSeasonInput(input: unknown): SeasonInput {
-  if (!isObject(input)) throw bad("invalid_body", "Nội dung không hợp lệ");
-  // `all` là giá trị lọc "mọi mùa" của danh sách (`parseSeasonFilter`), không được làm id mùa.
-  if (typeof input.id !== "string" || !SEASON_ID_RE.test(input.id) || input.id === "all") {
-    throw bad("invalid_season", "id mùa phải là slug a-z0-9- (tối đa 40 ký tự, khác 'all')");
-  }
-  return {
-    id: input.id,
-    labelVi: text(input.labelVi, "invalid_season", "labelVi", 1, 60),
-    labelZh: text(input.labelZh, "invalid_season", "labelZh", 1, 60),
-  };
+function parseSeasonId(value: unknown): string {
+  if (!isSeasonId(value)) throw bad("invalid_season", "season phải là id mùa (1–40 ký tự, bắt đầu bằng a-z0-9, khác 'all')");
+  return value;
 }
 
 export function parseVote(value: unknown): 1 | -1 | 0 {
@@ -157,10 +146,8 @@ export function parseHeroFilter(value: unknown): string[] {
   return heroes;
 }
 
-/** Query `season`: thiếu -> null (mùa đang mở); `all`; hoặc id mùa. */
-export function parseSeasonFilter(value: unknown): string | null {
-  if (value === undefined || value === null || value === "") return null;
-  if (value === "all") return "all";
-  if (typeof value !== "string" || !SEASON_ID_RE.test(value)) throw bad("invalid_season", "season không hợp lệ");
-  return value;
+/** Query `season`: thiếu/rỗng hoặc `all` -> "all" (mọi mùa); còn lại phải là id mùa hợp lệ. */
+export function parseSeasonFilter(value: unknown): string {
+  if (value === undefined || value === null || value === "" || value === "all") return "all";
+  return parseSeasonId(value);
 }

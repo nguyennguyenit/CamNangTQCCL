@@ -296,11 +296,10 @@ function submitFlow({ pageKey, lang }) {
 /**
  * Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi.
  * `sharedPool` (đội cộng đồng): không lọc theo `lang`, mỗi chiến báo kèm nhãn `[VI]`/`[ZH]`.
- * `archived` (mùa đã đóng): thay luồng gửi bằng ghi chú lưu trữ.
  * `heroNames` (tuỳ chọn): `() => Promise<(tên, phía) => tên hiển thị>` — chỉ gọi khi có tên tướng để hiện. Danh sách
  * vẽ ngay bằng tên gốc, tên được thay khi bộ tra về; lỗi thì giữ tên gốc.
  */
-export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false, heroNames = null }) {
+export function mountReports(container, { pageKey, lang, user, sharedPool = false, heroNames = null }) {
   const titleId = 'cm-reports-title';
   const statsBox = el('div', { class: 'cm-stats-box' });
   const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Chiến báo đã duyệt', '已审核战报') });
@@ -369,9 +368,7 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
     list,
     moreButton,
     status,
-    archived
-      ? el('p', { class: 'scope-note cm-archived' }, L('Mùa đã lưu trữ — không nhận chiến báo mới.', '赛季已归档，不再接受新战报。'))
-      : user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。')),
+    user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。')),
   ]);
   list.hidden = true;
   container.append(section);
