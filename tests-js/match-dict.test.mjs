@@ -126,3 +126,10 @@ test("cjkAliases: chữ Hán truy vấn so cả bí danh chữ Hán; mặc đị
   // Bí danh chữ Latin không bị so như chữ Hán.
   assert.equal(matchDict("経天緯地", [{ chinese: "", aliases: ["kinh thien"], viet: "X" }], { cjkAliases: true }).matched, false);
 });
+
+test("searchDict cjkAliases: ứng viên chữ Hán xét cả bí danh chữ Hán; mặc định như cũ", () => {
+  const dict = [{ chinese: "陷陣營", aliases: ["陥陣営"], viet: "Hãm Trận Doanh" }];
+  assert.deepEqual(searchDict("陥陣〇", dict), []);
+  const hits = searchDict("陥陣〇", dict, { cjkAliases: true });
+  assert.deepEqual(hits.map((hit) => hit.record.viet), ["Hãm Trận Doanh"]);
+});

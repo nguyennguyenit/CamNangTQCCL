@@ -4,6 +4,18 @@
 
 const compactName = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
 
+// Mảng do `withLocaleAliases` trả về: bí danh đã mang tên theo locale, bộ khớp mờ được phép so cả bí danh chữ Hán.
+const localeAliasedDicts = new WeakSet();
+
+/**
+ * Đúng khi `dict` chính là mảng `withLocaleAliases` trả về (bản sao hay mảng lọc lại thì không): `createEntityIndex` dùng cờ
+ * này để bật `cjkAliases` của `matchDict` cho từ điển bản ja, từ điển vi/zh giữ nguyên bộ khớp cũ.
+ * @param {unknown} dict
+ */
+export function hasLocaleAliases(dict) {
+  return Array.isArray(dict) && localeAliasedDicts.has(dict);
+}
+
 /**
  * Bản sao từng bản ghi của `dict` với `aliases` nối thêm tên Nhật `jaEntries[id].name` (và tên viết tách tiền tố như "SP 法正"
  * khi tên Nhật viết liền), bỏ trùng, giữ thứ tự (bí danh cũ trước). Bản ghi có tên Nhật mang thêm `localeNames` (các dạng tên
@@ -20,7 +32,7 @@ export function withLocaleAliases(dict, jaEntries) {
   const entries = jaEntries && typeof jaEntries === "object" && jaEntries.entries && typeof jaEntries.entries === "object"
     ? jaEntries.entries
     : jaEntries ?? {};
-  return dict.map((record) => {
+  const out = dict.map((record) => {
     const own = Array.isArray(record?.aliases) ? record.aliases.filter((value) => typeof value === "string") : [];
     const entry = typeof record?.id === "string" && Object.hasOwn(entries, record.id) ? entries[record.id] : null;
     const name = typeof entry?.name === "string" ? entry.name.trim() : "";
@@ -32,6 +44,8 @@ export function withLocaleAliases(dict, jaEntries) {
     for (const value of [...own, ...localeNames]) if (value && !aliases.includes(value)) aliases.push(value);
     return { ...record, aliases, localeNames };
   });
+  localeAliasedDicts.add(out);
+  return out;
 }
 
 /**

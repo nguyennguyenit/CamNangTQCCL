@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { createExactNameIndex, withLocaleAliases } from "../js/locale-name-aliases.js";
+import { createExactNameIndex, hasLocaleAliases, withLocaleAliases } from "../js/locale-name-aliases.js";
 import { classifyName, createEntityIndex } from "../js/analyze-map.js";
 
 const json = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
@@ -79,4 +79,36 @@ test("createExactNameIndex: tên Nhật thắng chữ Hán nguồn; trùng trong
   assert.equal(exact.get("同名"), null);
   // Không có lớp ja: chỉ một tầng chữ Hán nguồn như trước.
   assert.equal(createExactNameIndex([{ id: "b", chinese: "金城 湯池" }], (row) => row.id).get("金城湯池"), "b");
+});
+
+test("Soi đội bản ja khớp mờ theo tên Nhật: tên lệch một ký tự về đúng chiến pháp; bản vi/zh không đổi (dữ liệu thật)", () => {
+  const tactics = json("data/tactics.json");
+  const ja = json("data/lookup-ja.json");
+  assert.equal(ja.entries["tactic:quoc-chi-trinh-can"].name, "国の柱石");
+  assert.equal(ja.entries["tactic:nhanh-tri-dong-nao"].name, "霊機一動");
+  assert.equal(ja.entries["tactic:ham-tran-doanh"].name, "陥陣営");
+  const aliased = createEntityIndex(withLocaleAliases(tactics, ja), "tactic");
+  const plain = createEntityIndex(tactics, "tactic");
+  assert.equal(aliased.cjkAliases, true);
+  assert.equal(plain.cjkAliases, false);
+  // Lệch một ký tự trên tên bốn chữ: như bản zh với chữ Hán nguồn (靈機一〇), kết quả là "không chắc" với đúng mục đứng đầu.
+  // Tên ba chữ lệch một ký tự rơi dưới ngưỡng khớp, ứng viên đến từ `searchDict` (cũng so bí danh chữ Hán).
+  for (const [raw, id] of [["国の柱〇", "tactic:quoc-chi-trinh-can"], ["霊機一〇", "tactic:nhanh-tri-dong-nao"], ["陥陣〇", "tactic:ham-tran-doanh"]]) {
+    const got = classifyName(raw, aliased);
+    assert.equal(got.state, "unsure", raw);
+    assert.equal(got.candidates[0], id, raw);
+  }
+  assert.deepEqual(classifyName("靈機一〇", aliased), classifyName("靈機一〇", plain));
+  // Bản vi/zh: từ điển không qua `withLocaleAliases`, bộ khớp mờ chỉ so `chinese` như trước nên tên Nhật không có ứng viên.
+  assert.deepEqual(classifyName("国の柱〇", plain), { state: "unknown", raw: "国の柱〇", id: null, candidates: [] });
+  assert.deepEqual(classifyName("陥陣〇", plain), { state: "unknown", raw: "陥陣〇", id: null, candidates: [] });
+  assert.equal(classifyName("靈機一〇", plain).candidates[0], "tactic:nhanh-tri-dong-nao");
+});
+
+test("hasLocaleAliases chỉ nhận mảng do withLocaleAliases trả về", () => {
+  const dict = [{ id: "a", chinese: "甲" }];
+  assert.equal(hasLocaleAliases(dict), false);
+  assert.equal(hasLocaleAliases(withLocaleAliases(dict, null)), true);
+  assert.equal(hasLocaleAliases(withLocaleAliases(dict, null).slice()), false);
+  assert.equal(hasLocaleAliases(null), false);
 });

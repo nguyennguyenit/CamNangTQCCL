@@ -154,16 +154,16 @@ export function matchDict(
 
 /**
  * Tìm nhiều kết quả xếp hạng (cho UI từ điển). Trả [{record, score}] giảm dần.
- * Query rỗng -> trả toàn bộ dict (giữ thứ tự gốc).
+ * Query rỗng -> trả toàn bộ dict (giữ thứ tự gốc). `cjkAliases` như `matchDict` (mặc định tắt).
  */
-export function searchDict(query, dict, { threshold = 0.45, limit = 60 } = {}) {
+export function searchDict(query, dict, { threshold = 0.45, limit = 60, cjkAliases = false } = {}) {
   const raw = (query || "").trim();
   if (!raw) return dict.map((record) => ({ record, score: 0 }));
   const cjk = HAS_CJK.test(raw);
   const q = cjk ? (CJK_OCR_ALIASES[raw] || raw).replace(/\s+/g, "") : normalizeText(raw);
   const scored = [];
   for (const rec of dict) {
-    const s = scoreRecord(q, rec, cjk);
+    const s = scoreRecord(q, rec, cjk, cjkAliases);
     if (s >= threshold) scored.push({ record: rec, score: s });
   }
   scored.sort((a, b) => b.score - a.score);

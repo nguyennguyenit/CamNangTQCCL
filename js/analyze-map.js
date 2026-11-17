@@ -9,7 +9,7 @@ import { matchDict, searchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
 import { bookRowId } from "./lookup-ids.js";
-import { createExactNameIndex } from "./locale-name-aliases.js";
+import { createExactNameIndex, hasLocaleAliases } from "./locale-name-aliases.js";
 
 // Chất tướng Hán -> Việt.
 const STAT_MAP = {
@@ -166,7 +166,8 @@ const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu
  * Chỉ mục một từ điển (heroesDict/tacticsDict/booksDict) theo ID canonical, kèm bảng tên chính xác
  * (`createExactNameIndex`: `chinese` + `aliases`, bỏ khoảng trắng) để tên Giản thể in trong ảnh khớp
  * chắc ngay dù `chinese` của từ điển là Phồn thể. Từ điển đã qua `withLocaleAliases` (bản ja) thì tên
- * Nhật thắng chữ Hán nguồn trùng của mục khác; một tên trỏ về hai ID trong cùng tầng là mơ hồ (`null`).
+ * Nhật thắng chữ Hán nguồn trùng của mục khác; một tên trỏ về hai ID trong cùng tầng là mơ hồ (`null`), và
+ * `cjkAliases` bật để bộ khớp mờ so cả bí danh chữ Hán (tên Nhật lệch một ký tự vẫn về đúng mục).
  * @param {"hero"|"tactic"|"book"} kind
  */
 export function createEntityIndex(dict, kind) {
@@ -177,7 +178,7 @@ export function createEntityIndex(dict, kind) {
     if (!byId.has(id)) byId.set(id, record);
   }
   const exact = createExactNameIndex(records, (record) => recordEntityId(kind, record));
-  return Object.freeze({ kind, records, byId, exact });
+  return Object.freeze({ kind, records, byId, exact, cjkAliases: hasLocaleAliases(dict) });
 }
 
 /**
@@ -190,7 +191,8 @@ export function classifyName(raw, index, { candidateLimit = 3 } = {}) {
   if (UNKNOWN_TERMS.has(text)) return { state: "unknown", raw: text, id: null, candidates: [] };
   const exactId = index.exact.get(compactCjk(text));
   if (exactId) return { state: "sure", raw: text, id: exactId, candidates: [] };
-  const m = matchDict(text, index.records);
+  const cjkAliases = index.cjkAliases === true;
+  const m = matchDict(text, index.records, { cjkAliases });
   if (m.matched && !m.reviewRequired) {
     return { state: "sure", raw: text, id: recordEntityId(index.kind, m.record), candidates: [] };
   }
@@ -201,7 +203,7 @@ export function classifyName(raw, index, { candidateLimit = 3 } = {}) {
   };
   if (m.matched) push(m.record);
   if (m.ambiguous) push(m.secondRecord);
-  for (const { record } of searchDict(text, index.records, { limit: candidateLimit })) push(record);
+  for (const { record } of searchDict(text, index.records, { limit: candidateLimit, cjkAliases })) push(record);
   return candidates.length
     ? { state: "unsure", raw: text, id: null, candidates }
     : { state: "unknown", raw: text, id: null, candidates: [] };
