@@ -51,9 +51,9 @@ export function sourceName(value, locale = currentLocale()) {
 
 /** Nhãn tiếng Trung của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
 const LEGACY_LABEL_ZH = {
-  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hỗn hợp':'混合'},
-  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾'},
-  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）'},
+  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hán':'汉','Hỗn hợp':'混合'},
+  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾','Khí giới':'器械'},
+  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）','youtube':'YouTube'},
 };
 
 /** Bản zh: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
