@@ -1,7 +1,7 @@
 ---
 // Trang mục lục Tra cứu `/tra-cuu/` (mọi ngôn ngữ): 8 thẻ link tới trang nhóm, số đếm tính lúc build.
 // Không nạp js/app.js và không tải dữ liệu. Link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`) được chuyển tiếp
-// tới trang nhóm bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
+// tới trang nhóm (giữ tiền tố ngôn ngữ của trang) bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
 import { LOOKUP_HUB_TABLES, lookupHubTarget } from '../../../js/lookup-ids.js';
@@ -17,7 +17,9 @@ const t = (...variants: string[]): string => pick(locale, ...variants);
 const entries = await lookupGroupEntries(locale);
 const canonicalUrl = new URL(localePath('/tra-cuu/', locale), Astro.site);
 const tables = JSON.stringify(LOOKUP_HUB_TABLES).replace(/</g, '\\u003c');
-const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(window.location.href,${tables}.slugs,${tables}.kinds);if(target!==null&&target!==window.location.pathname+window.location.search+window.location.hash){if(/^\\/(?:zh\\/)?tra-cuu\\/(?:\\?|#|$)/.test(target))window.history.replaceState(window.history.state,'',target);else window.location.replace(target);}})();`;
+// Đích là chính mục lục (của bất kỳ locale nào trong `SITE_LOCALES`) thì chỉ thay URL, không tải lại trang.
+const localeSegments = LOOKUP_HUB_TABLES.prefixes.map((prefix) => prefix.slice(1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+const redirectSource = `(function(){var tables=${tables};var target=(${lookupHubTarget.toString()})(window.location.href,tables.slugs,tables.kinds,tables.prefixes);if(target!==null&&target!==window.location.pathname+window.location.search+window.location.hash){if(/^\\/(?:(?:${localeSegments})\\/)?tra-cuu\\/(?:\\?|#|$)/.test(target))window.history.replaceState(window.history.state,'',target);else window.location.replace(target);}})();`;
 ---
 <SiteLayout
   title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册', '図鑑 — 三國志 真戦 攻略手帳')}

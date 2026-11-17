@@ -6,6 +6,7 @@ import {
   setLookupRouteHandles, setLookupRouteHandlesFromJSON,
 } from '../js/lookup-ids.js';
 import {createTacticIdResolver, createTacticNameIndex} from '../js/lookup-ids.js';
+import {LOCALE_PREFIX, SITE_LOCALES} from '../js/i18n.js';
 
 test('tactic name index: tên cũ (hanViet) và tên mới đều ra cùng mã; tên trùng ở hai mã chọn mã có slug khớp', () => {
   const tactics = [
@@ -165,7 +166,7 @@ test('groupForId và lookupProfilePath đưa mỗi loại mã về đúng trang 
 
 test('lookupHubTarget chuyển link cũ của mục lục sang trang nhóm, giá trị lặp/lạ/lệch nhóm ở lại mục lục', () => {
   const target = (search, path = '/tra-cuu/', hash = '') =>
-    lookupHubTarget(`https://example.test${path}${search}${hash}`, LOOKUP_HUB_TABLES.slugs, LOOKUP_HUB_TABLES.kinds);
+    lookupHubTarget(`https://example.test${path}${search}${hash}`, LOOKUP_HUB_TABLES.slugs, LOOKUP_HUB_TABLES.kinds, LOOKUP_HUB_TABLES.prefixes);
   // Không có group/id: ở nguyên mục lục, không đụng query khác.
   assert.equal(target(''), null);
   assert.equal(target('?utm_source=x'), null);
@@ -186,6 +187,13 @@ test('lookupHubTarget chuyển link cũ của mục lục sang trang nhóm, giá
     '/zh/tra-cuu/tuong/?utm_source=x&id=hero%3Aluu-bi#top',
   );
   assert.equal(target('?group=zz', '/zh/tra-cuu/', '#top'), '/zh/tra-cuu/#top');
+  // Mọi locale có tiền tố trong SITE_LOCALES (bản ja) giữ tiền tố của mình, không rơi về bản vi.
+  assert.equal(target('?group=heroes&id=hero%3Aluu-bi', '/ja/tra-cuu/'), '/ja/tra-cuu/tuong/?id=hero%3Aluu-bi');
+  assert.equal(target('?group=advisors', '/ja/tra-cuu/'), '/ja/tra-cuu/quan-su/');
+  assert.equal(target('?group=zz&utm_source=x', '/ja/tra-cuu/', '#top'), '/ja/tra-cuu/?utm_source=x#top');
+  assert.deepEqual(LOOKUP_HUB_TABLES.prefixes, SITE_LOCALES.map((locale) => LOCALE_PREFIX[locale]).filter(Boolean));
+  // Đường không thuộc tiền tố nào (kể cả `/japan/`) là bản mặc định.
+  assert.equal(target('?group=advisors', '/japan/tra-cuu/'), '/tra-cuu/quan-su/');
 });
 
 test('mã chiến pháp đã gộp (lookup.formerIds) tra ra mã còn sống ở cả ba bộ tra', () => {
