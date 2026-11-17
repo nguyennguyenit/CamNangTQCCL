@@ -4,7 +4,7 @@
 //
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view (`js/view-tree.js`), không HTML thô.
 
-import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText, zhTranslatedNote } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, bindLookupJa, contentMode, isTranslatedZhEffect, lookupDisplayName, lookupJaEntry, sourceTextOf, tacticTypeLabel, zhSafeValue, ratePercentText, zhTranslatedNote } from "./lookup-detail.js";
 import { L, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
 import { bookRowId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
@@ -23,9 +23,14 @@ export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
   heroes: "武将", tactics: "战法", equipment: "装备",
   advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑", books: "兵书",
 });
+/** Nhãn nhóm bản Nhật (`/ja/`). */
+const LOOKUP_GROUP_LABELS_JA = Object.freeze({
+  heroes: "武将", tactics: "戦法", equipment: "装備",
+  advisors: "軍師", "troop-mods": "兵種進階", buildings: "施設", books: "兵法書",
+});
 /** Nhãn nhóm theo ngôn ngữ chỉ định (một phần tử của `SITE_LOCALES`). */
 export function lookupGroupLabels(locale = currentLocale()) {
-  return pick(locale, LOOKUP_GROUP_LABELS, LOOKUP_GROUP_LABELS_ZH);
+  return pick(locale, LOOKUP_GROUP_LABELS, LOOKUP_GROUP_LABELS_ZH, LOOKUP_GROUP_LABELS_JA);
 }
 /** Đơn vị đếm của từng nhóm cho dòng trạng thái ("n tướng · bấm để mở hồ sơ"). */
 export const LOOKUP_GROUP_UNITS = Object.freeze({
@@ -37,8 +42,13 @@ const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
   heroes: "名武将", tactics: "个战法", equipment: "件装备",
   advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑", books: "本兵书",
 });
+/** Lượng từ + đơn vị bản Nhật ("12 名の武将"). */
+const LOOKUP_GROUP_UNITS_JA = Object.freeze({
+  heroes: "名の武将", tactics: "件の戦法", equipment: "件の装備",
+  advisors: "件の軍師", "troop-mods": "件の兵種進階", buildings: "件の施設", books: "件の兵法書",
+});
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
-export const POSITION_LABELS = () => [L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")];
+export const POSITION_LABELS = () => [L("Chủ tướng", "主将", "主将"), L("Phó tướng 1", "副将 1", "副将 1"), L("Phó tướng 2", "副将 2", "副将 2")];
 
 /**
  * Payload mà trang nhóm tải lúc vào (`entry`) và payload mà hồ sơ của nhóm cần thêm (`profile`, tải lười
@@ -57,8 +67,8 @@ export const LOOKUP_GROUP_PAYLOADS = Object.freeze({
 
 // `<html lang>` cố định theo trang nên hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
 const ROUTE_ERRORS = Object.freeze({
-  "duplicate-param": L("Mỗi tham số tra cứu chỉ được xuất hiện một lần.", "每个查询参数只能出现一次。"),
-  "unknown-id-kind": L("Mã mục tra cứu không hợp lệ.", "条目编号无效。"),
+  "duplicate-param": L("Mỗi tham số tra cứu chỉ được xuất hiện một lần.", "每个查询参数只能出现一次。", "各検索パラメータは一度だけ指定できます。"),
+  "unknown-id-kind": L("Mã mục tra cứu không hợp lệ.", "条目编号无效。", "項目IDが無効です。"),
 });
 const CJK_CHAR = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
 const MISSING = "—";
@@ -125,10 +135,41 @@ function bookRecords(books, aliases) {
 const EMPTY_CATALOG = Object.freeze({ equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] });
 
 /**
+ * Khóa tìm của bản ja: tên Nhật, tên chiến pháp kịch bản có tiền tố (転・ 拓・ 精・), tên chữ Hán gốc, `chinese`, `aliasesZh` và
+ * bí danh có chữ Hán (gồm giản thể). Không có chữ Việt (bản ja không hiển thị) và không sinh cách đọc kana.
+ */
+function jaSearchKeys(record, prefixedNames) {
+  const entry = lookupJaEntry(record);
+  const names = [
+    entry?.name, ...(prefixedNames.get(record.id) ?? []), entry?.nameOriginal, record.chinese,
+    ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []),
+    ...(Array.isArray(record.aliases) ? record.aliases : []),
+  ].filter((value) => typeof value === "string" && CJK_CHAR.test(value));
+  return [...new Set(names.map(normalizeText))];
+}
+
+/** Gắn lớp ja vào mọi bản ghi của corpus (cả đặc kỹ và lựa chọn cải tạo) và thêm khóa tìm ja cho từng mục. */
+function attachJa(groups, specials, ja) {
+  const entries = ja.entries;
+  const prefixedNames = new Map();
+  for (const row of Array.isArray(ja.prefixedTactics) ? ja.prefixedTactics : []) {
+    if (typeof row?.baseId === "string" && typeof row.name === "string") prefixedNames.set(row.baseId, [...(prefixedNames.get(row.baseId) ?? []), row.name]);
+  }
+  for (const row of [...Object.values(groups).flat(), ...specials]) {
+    bindLookupJa([row.record], entries);
+    if (Array.isArray(row.record.options)) bindLookupJa(row.record.options, entries);
+  }
+  for (const row of [...Object.values(groups).flat(), ...specials]) row.jaSearchKeys = jaSearchKeys(row.record, prefixedNames);
+  for (const row of groups.equipment) {
+    row.jaSearchKeys = [...row.jaSearchKeys, ...specials.filter((special) => special.record.equipmentId === row.id).flatMap((special) => special.jaSearchKeys)];
+  }
+}
+
+/**
  * Corpus của những payload đã tải: nhóm chưa có payload là mảng rỗng. Trang dựng lại corpus khi payload
  * tải lười về tới, nên hồ sơ chỉ giải được quan hệ sang nhóm đã có dữ liệu.
  */
-export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, books = [], bookAliases = {} } = {}) {
+export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, books = [], bookAliases = {}, ja = null } = {}) {
   const source = catalog ?? EMPTY_CATALOG;
   // Đặc kỹ không có nhóm riêng: chúng nằm trong chi tiết trang bị cha (`exclusives`) hoặc ở danh sách đặc kỹ chung,
   // còn mã `equipment-special:*` vẫn tra được qua `byId`. Tên đặc kỹ gắn trang bị là khóa tìm phụ của trang bị đó.
@@ -156,9 +197,14 @@ export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, b
     buildings: source.buildings.map((record) => entry("buildings", record)),
     books: bookRecords(books, bookAliases).map((record) => entry("books", record)),
   };
+  // Lớp ja (`data/lookup-ja.json` đã kiểm): tên Nhật, bản dịch máy và khóa tìm ja; trang vi/zh không truyền.
+  if (ja?.entries) attachJa(groups, specials, ja);
   const byId = new Map();
   for (const rows of [...Object.values(groups), specials]) for (const row of rows) byId.set(row.id, row);
-  return { groups, byId, heroes, tactics, catalog: source, formerTacticIds: createFormerTacticIdIndex(tactics) };
+  return {
+    groups, byId, heroes, tactics, catalog: source, formerTacticIds: createFormerTacticIdIndex(tactics),
+    ja: ja?.entries ? { notice: ja.notice ?? null } : null,
+  };
 }
 
 /**
@@ -178,12 +224,12 @@ export function lookupGroupCounts(corpus) {
 }
 
 /**
- * Hạng khớp theo tên chữ Hán (bản zh): 0 trùng hẳn, 1 khớp đầu, 2 chứa, 3 chỉ khớp tên Việt/bí danh khác.
+ * Hạng khớp theo tên chữ Hán (bản zh; bản ja xét cả tên Nhật): 0 trùng hẳn, 1 khớp đầu, 2 chứa, 3 chỉ khớp tên Việt/bí danh khác.
  * Sắp xếp ổn định nên trong cùng hạng vẫn giữ thứ tự nguồn.
  */
-function chineseRank(item, needle) {
+function chineseRank(item, needle, locale) {
   const record = item.record ?? {};
-  const names = [recordChinese(record), ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []), ...(Array.isArray(record.aliases) ? record.aliases : [])]
+  const names = [contentMode(locale) === "ja" ? lookupJaEntry(record)?.name : null, recordChinese(record), ...(Array.isArray(record.aliasesZh) ? record.aliasesZh : []), ...(Array.isArray(record.aliases) ? record.aliases : [])]
     .filter((name) => typeof name === "string" && CJK_CHAR.test(name)).map(normalizeText);
   if (names.some((name) => name === needle)) return 0;
   if (names.some((name) => name.startsWith(needle))) return 1;
@@ -198,13 +244,15 @@ function chineseRank(item, needle) {
 export function searchLookupGroup(corpus, { group, query = "", page = 1, pageSize = lookupPageSize(group), locale = currentLocale(), filter = null }) {
   const source = corpus.groups[group] ?? [];
   const needle = normalizeText(query);
+  // Bản ja tìm theo tên Nhật/chữ Hán (không theo chữ Việt) khi corpus có lớp ja.
+  const keysOf = (item) => (contentMode(locale) === "ja" && item.jaSearchKeys ? item.jaSearchKeys : item.searchKeys);
   const searched = needle
-    ? source.filter((item) => item.searchKeys.some((key) => key.includes(needle)))
+    ? source.filter((item) => keysOf(item).some((key) => key.includes(needle)))
     : source;
   const filtered = filter ? searched.filter(filter) : searched;
   // Bản zh ưu tiên mục khớp tên chữ Hán; bản Việt giữ nguyên thứ tự nguồn.
   const matches = needle && !contentLocaleIsVietnamese(locale)
-    ? filtered.map((item, index) => ({ item, index, rank: chineseRank(item, needle) }))
+    ? filtered.map((item, index) => ({ item, index, rank: chineseRank(item, needle, locale) }))
       .sort((a, b) => a.rank - b.rank || a.index - b.index)
       .map(({ item }) => item)
     : filtered;
@@ -238,12 +286,12 @@ export function lookupCardView(group, item, locale = currentLocale()) {
   const kind = item.group ?? group;
   const hero = kind === "heroes";
   const text = (...variants) => pick(locale, ...variants);
-  const stars = hero && Number.isFinite(Number(record.stars)) ? text(`${record.stars} sao`, `${record.stars} 星`) : null;
+  const stars = hero && Number.isFinite(Number(record.stars)) ? text(`${record.stars} sao`, `${record.stars} 星`, `星${record.stars}`) : null;
   const parts = hero
     ? [
         shown(record.faction, locale) ? { kind: "faction", text: shown(record.faction, locale), code: FACTION_CODE[record.faction] ?? "none" } : null,
         stars ? { kind: "stars", text: stars } : null,
-        record.cost ? { kind: "text", text: text(`Thống ngự ${record.cost}`, `统御 ${record.cost}`) } : null,
+        record.cost ? { kind: "text", text: text(`Thống ngự ${record.cost}`, `统御 ${record.cost}`, `コスト ${record.cost}`) } : null,
         shown(record.roleTagViet, locale) ? { kind: "role", text: shown(record.roleTagViet, locale) } : null,
       ]
     : [
@@ -252,7 +300,7 @@ export function lookupCardView(group, item, locale = currentLocale()) {
         kind === "equipment" && shown(record.slotVi, locale) ? { kind: "text", text: shown(record.slotVi, locale) } : null,
         kind === "advisors" && shown(record.elementVi, locale) ? { kind: "text", text: shown(record.elementVi, locale) } : null,
         kind === "troop-mods" && shown(record.appliesToVi, locale) ? { kind: "text", text: shown(record.appliesToVi, locale) } : null,
-        kind === "buildings" && Number.isFinite(Number(record.maxLevel)) ? { kind: "text", text: text("Cấp tối đa ", "最高等级 ") + String(record.maxLevel) } : null,
+        kind === "buildings" && Number.isFinite(Number(record.maxLevel)) ? { kind: "text", text: text("Cấp tối đa ", "最高等级 ", "最大レベル ") + String(record.maxLevel) } : null,
       ];
   return {
     variant,
@@ -267,11 +315,12 @@ export function lookupCardView(group, item, locale = currentLocale()) {
 
 /**
  * Chữ của một trường có bản dịch Việt và (có thể) chữ Hán nguồn: bản Việt dùng bản dịch, bản zh dùng chữ
- * nguồn, không có thì chỉ giữ giá trị dịch được (`zhSafeValue`). Rỗng/không hiện được trả `fallback`.
+ * nguồn, bản ja dùng bản dịch máy khóa `jaKey` của bản ghi; không có thì chỉ giữ giá trị dịch được (`zhSafeValue`).
+ * Rỗng/không hiện được trả `fallback`.
  */
-function localizedCell(vi, raw, locale, fallback) {
+function localizedCell(record, jaKey, vi, raw, locale, fallback) {
   if (!contentLocaleIsVietnamese(locale)) {
-    const rawText = typeof raw === "string" ? raw.trim() : "";
+    const rawText = sourceTextOf(record, jaKey, raw, locale);
     if (rawText) return rawText;
   }
   if (vi === null || vi === undefined || vi === "") return fallback;
@@ -284,11 +333,11 @@ export function tacticTableRow(record, locale = currentLocale()) {
   const rate = record.lookup?.activationRate;
   return {
     nameVi: lookupDisplayName(record, String(record.viet ?? record.nameVi ?? record.hanViet ?? "").trim(), locale),
-    quality: localizedCell(record.quality, null, locale, MISSING),
+    quality: localizedCell(record, null, record.quality, null, locale, MISSING),
     type: tacticTypeLabel(record.type, locale) ?? MISSING,
-    effectType: localizedCell(record.lookup?.effectTypeVi, null, locale, MISSING),
-    target: localizedCell(record.targetViet, record.target, locale, MISSING),
-    effect: localizedCell(record.effectViet, record.effect, locale, ""),
+    effectType: localizedCell(record, null, record.lookup?.effectTypeVi, null, locale, MISSING),
+    target: localizedCell(record, "target", record.targetViet, record.target, locale, MISSING),
+    effect: localizedCell(record, "effect", record.effectViet, record.effect, locale, ""),
     // Ô hiệu ứng bản zh là chữ Hán; chữ dịch từ tiếng Việt mang cờ (bản Việt hiện chữ Việt, không cờ).
     zhTranslated: !contentLocaleIsVietnamese(locale) && isTranslatedZhEffect(record),
     rate: rate === null || rate === undefined || rate === "" ? MISSING : ratePercentText(rate),
@@ -297,12 +346,12 @@ export function tacticTableRow(record, locale = currentLocale()) {
 
 /** Tiêu đề cột bảng chiến pháp (cũng là nhãn `data-label` của ô trên mobile). */
 const TABLE_HEADS = Object.freeze({
-  name: ["Chiến pháp", "战法"],
-  quality: ["Phẩm", "品质"],
-  type: ["Loại", "类型"],
-  effectType: ["Hiệu quả", "效果类型"],
-  target: ["Mục tiêu", "目标"],
-  rate: ["Tỷ lệ", "发动率"],
+  name: ["Chiến pháp", "战法", "戦法"],
+  quality: ["Phẩm", "品质", "品質"],
+  type: ["Loại", "类型", "種類"],
+  effectType: ["Hiệu quả", "效果类型", "効果タイプ"],
+  target: ["Mục tiêu", "目标", "対象"],
+  rate: ["Tỷ lệ", "发动率", "発動確率"],
 });
 const head = (key, locale) => pick(locale, ...TABLE_HEADS[key]);
 
@@ -389,9 +438,9 @@ export function lookupResultTrees(group, items, locale = currentLocale(), { sele
  */
 export function lookupSummaryTrees(group, total, locale = currentLocale(), selected = {}) {
   if (isMasterGroup(group)) return masterSummaryTrees(group, total, locale, selected);
-  const unit = pick(locale, LOOKUP_GROUP_UNITS[group], LOOKUP_GROUP_UNITS_ZH[group]);
-  const hint = group === "tactics" ? pick(locale, " · bấm tên để mở hồ sơ", " · 点击名称查看详情") : pick(locale, " · bấm để mở hồ sơ", " · 点击查看详情");
-  const source = group === "heroes" ? pick(locale, " · ảnh chân dung từ nguồn game", " · 头像取自游戏素材") : "";
+  const unit = pick(locale, LOOKUP_GROUP_UNITS[group], LOOKUP_GROUP_UNITS_ZH[group], LOOKUP_GROUP_UNITS_JA[group]);
+  const hint = group === "tactics" ? pick(locale, " · bấm tên để mở hồ sơ", " · 点击名称查看详情", " · 名前をクリックで詳細") : pick(locale, " · bấm để mở hồ sơ", " · 点击查看详情", " · クリックで詳細");
+  const source = group === "heroes" ? pick(locale, " · ảnh chân dung từ nguồn game", " · 头像取自游戏素材", " · 肖像はゲーム素材より") : "";
   return [h("strong", {}, String(total)), ` ${unit}${hint}${source}`];
 }
 
@@ -401,15 +450,15 @@ export function lookupSummaryTrees(group, total, locale = currentLocale(), selec
  */
 export function lookupOrderNote(query = "", locale = currentLocale()) {
   if (normalizeText(query) && !contentLocaleIsVietnamese(locale)) return null;
-  return pick(locale, "Thứ tự theo nguồn", "按来源顺序");
+  return pick(locale, "Thứ tự theo nguồn", "按来源顺序", "出典の順");
 }
 
 /** Hàng "Xem thêm" khi còn kết quả chưa hiện; hết thì `[]`. */
 export function lookupMoreTrees(shownCount, total, locale = currentLocale(), pageSize = PAGE_SIZE) {
   if (shownCount >= total) return [];
   return [
-    h("button", { type: "button", class: "lookup-more" }, pick(locale, "Xem thêm", "查看更多")),
-    h("span", { class: "lookup-more-note" }, pick(locale, `Mỗi lượt hiện ${pageSize} kết quả`, `每次显示 ${pageSize} 条结果`)),
+    h("button", { type: "button", class: "lookup-more" }, pick(locale, "Xem thêm", "查看更多", "もっと見る")),
+    h("span", { class: "lookup-more-note" }, pick(locale, `Mỗi lượt hiện ${pageSize} kết quả`, `每次显示 ${pageSize} 条结果`, `${pageSize} 件ずつ表示`)),
   ];
 }
 

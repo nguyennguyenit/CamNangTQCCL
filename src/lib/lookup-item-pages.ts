@@ -4,7 +4,7 @@
 // rồi `treeToHtml`; tiêu đề và mô tả meta tính từ chính bản ghi nên mỗi trang một bộ riêng.
 import { createProfileRenderer } from '../../js/lookup-profile.js';
 import { isMasterGroup, masterDetailTree, masterTargetFor } from '../../js/lookup-master.js';
-import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
+import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, lookupNameInfo, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
 import { lookupCardView, lookupGroupLabels } from '../../js/unified-lookup.js';
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
 import { contentLocaleIsVietnamese, localePath, pick, withLocale } from '../../js/i18n.js';
@@ -12,7 +12,7 @@ import { treeToHtml } from '../../js/view-tree.js';
 import { portraitUrl } from '../../js/hero-portrait.js';
 import { lookupItemJsonLd } from './structured-data.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
-import { lookupBuildCorpus, lookupRouteHandles, type LookupGroup } from './lookup-pages.ts';
+import { lookupBuildCorpus, lookupJaNameResolver, lookupRouteHandles, type LookupGroup } from './lookup-pages.ts';
 import { lookupSummaryTables, type LookupSummaryTables } from './team-ssr.ts';
 import type { SiteLocale } from './locale-routes';
 
@@ -46,13 +46,45 @@ const tail = (text: string, colon: string, stop: string) => (text ? `${colon}${c
 
 const parts = (...values: unknown[]) => values.map((value) => String(value ?? '').trim()).filter(Boolean);
 
+/**
+ * Mô tả meta bản ja: chỉ chữ không phải dịch máy (tên Nhật, nhóm, phe, loại, phẩm, số), không trích mô tả dịch máy
+ * (docs/code-standards.md mục JSON-LD: meta/JSON-LD chỉ khai chữ đã kiểm).
+ */
+function describeJa(group: LookupGroup, item: Json, locale: SiteLocale, name: string, shown: (value: unknown) => string): string {
+  const record: Json = item.record ?? {};
+  if (group === 'heroes') {
+    const meta = lookupCardView(group, item, locale).meta.map((part: Json) => part.text);
+    return `${name}（${meta.join('・')}）：武将の能力値、兵種適性、固有戦法と関連する編成。`;
+  }
+  if (group === 'tactics') {
+    const head = parts(shown(record.quality) && `品質${shown(record.quality)}`, tacticTypeLabel(record.type, locale)).join('・');
+    return `${name}（戦法${head ? `・${head}` : ''}）：効果、入手方法とよく使う編成。`;
+  }
+  if (group === 'books') return `${name}（兵法書）：効果とよく使う編成。`;
+  if (group === 'equipment') {
+    const detail = parts(shown(record.slotVi), shown(record.qualityVi)).join('・');
+    const exclusive = item.exclusives?.length ?? 0;
+    return `${name}（装備${detail ? `・${detail}` : ''}）：${exclusive ? `専用特技${exclusive}件、` : ''}鍛造できる共通特技。`;
+  }
+  if (group === 'advisors') {
+    const element = shown(record.elementVi);
+    const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
+    return `${name}（軍師技${element ? `・${element}属性` : ''}${points === null ? '' : `・戦法ポイント${points}`}）：効果とこの軍師技を持つ武将。`;
+  }
+  if (group === 'troop-mods') return `${name}（兵種進階）：進階ツリーとおすすめルート。`;
+  const max = Number.isFinite(Number(record.maxLevel)) ? Number(record.maxLevel) : null;
+  return `${name}（施設${max === null ? '' : `・最大レベル${max}`}）：レベル別の効果と資源。`;
+}
+
 /** Mô tả meta của một mục theo nhóm; chỉ dùng chữ có thật của bản ghi (bản zh bỏ chữ chỉ có tiếng Việt). */
 function describe(group: LookupGroup, item: Json, locale: SiteLocale): string {
-  // Câu mô tả viết theo ngữ pháp của từng ngôn ngữ: `zh` = viết bằng tiếng Trung (locale mới phải tự khai).
-  const zh = pick(locale, false, true);
+  // Câu mô tả viết theo ngữ pháp của từng ngôn ngữ (locale mới phải tự khai): `zh` = viết bằng tiếng Trung.
+  const language = pick(locale, 'vi', 'zh', 'ja');
+  const zh = language === 'zh';
   const record: Json = item.record ?? {};
   const name = lookupDisplayName(record, item.nameVi, locale);
   const shown = (value: unknown) => String(zhSafeValue(value, locale) ?? '').trim();
+  if (language === 'ja') return describeJa(group, item, locale, name, shown);
   if (group === 'heroes' || group === 'tactics' || group === 'books') {
     const meta = lookupCardView(group, item, locale).meta.map((part: Json) => part.text);
     if (group === 'heroes') {
@@ -111,7 +143,7 @@ export interface LookupItemPage {
 }
 
 /** Cây view của hồ sơ một mục (phải gọi trong `withLocale`): đúng cây mà trang riêng và llms.txt cùng dùng. */
-function itemTree(corpus: Json, summaries: LookupSummaryTables, item: Json, locale: SiteLocale) {
+function itemTree(corpus: Json, summaries: LookupSummaryTables, jaNames: (viName: string) => string | null, item: Json, locale: SiteLocale) {
   const id = item.id as string;
   const group = item.group as LookupGroup;
   if (isMasterGroup(group)) {
@@ -122,7 +154,8 @@ function itemTree(corpus: Json, summaries: LookupSummaryTables, item: Json, loca
   const { profilePageTree } = createProfileRenderer({ group, openInPage: () => {}, onClose: () => {} });
   const tree = profilePageTree(corpus, id, {
     summaryTable: group === 'heroes' ? summaries.heroes : group === 'tactics' ? summaries.tactics : null,
-    rawName: contentLocaleIsVietnamese(locale) ? null : summaries.rawName,
+    // Bộ tra tên cho khối "Trong cẩm nang": bản zh tra chữ Hán gốc, bản ja tra tên Nhật.
+    rawName: pick(locale, null, summaries.rawName, jaNames),
   });
   if (!tree) throw new Error(`Lookup profile cannot be built: ${id}`);
   return tree;
@@ -130,10 +163,10 @@ function itemTree(corpus: Json, summaries: LookupSummaryTables, item: Json, loca
 
 /** Cây hồ sơ của mục `id` (llms.txt dùng chữ thuần của đúng cây này). */
 export async function lookupItemTree(id: string, locale: SiteLocale) {
-  const [corpus, , summaries] = await Promise.all([lookupBuildCorpus(), lookupRouteHandles(), lookupSummaryTables()]);
+  const [corpus, , summaries, jaNames] = await Promise.all([lookupBuildCorpus(), lookupRouteHandles(), lookupSummaryTables(), lookupJaNameResolver()]);
   const item: Json = corpus.byId.get(id);
   if (!item) throw new Error(`Lookup item has no corpus entry: ${id}`);
-  return withLocale(locale, () => itemTree(corpus, summaries, item, locale));
+  return withLocale(locale, () => itemTree(corpus, summaries, jaNames, item, locale));
 }
 
 /** Nhóm có thuật ngữ (`DefinedTerm`) trong JSON-LD; nhóm còn lại là `Thing`. */
@@ -141,21 +174,23 @@ const TERM_GROUPS = new Set<LookupGroup>(['tactics', 'books', 'advisors']);
 
 /** Trang riêng của mục `id` ở ngôn ngữ `locale`; `site` là gốc tuyệt đối cho JSON-LD. */
 export async function lookupItemPage(id: string, locale: SiteLocale, site: URL | string): Promise<LookupItemPage> {
-  const [corpus, routes, summaries] = await Promise.all([lookupBuildCorpus(), lookupDetailRoutes(), lookupSummaryTables(), lookupRouteHandles()]);
+  const [corpus, routes, summaries, , jaNames] = await Promise.all([lookupBuildCorpus(), lookupDetailRoutes(), lookupSummaryTables(), lookupRouteHandles(), lookupJaNameResolver()]);
   const item: Json = corpus.byId.get(id);
   if (!item) throw new Error(`Lookup item page has no corpus entry: ${id}`);
   const group = item.group as LookupGroup;
   return withLocale(locale, () => {
-    const bodyHtml = treeToHtml(itemTree(corpus, summaries, item, locale));
+    const bodyHtml = treeToHtml(itemTree(corpus, summaries, jaNames, item, locale));
     const name = lookupDisplayName(item.record, item.nameVi, locale);
     const groupLabel = lookupGroupLabels(locale)[group] as string;
-    const siteName = pick(locale, 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册');
-    const section = pick(locale, 'Tra cứu', '图鉴查询');
+    const siteName = pick(locale, 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册', '三國志 真戦 攻略手帳');
+    const section = pick(locale, 'Tra cứu', '图鉴查询', '図鑑');
     const description = describe(group, item, locale);
     const groupHref = localePath(lookupGroupPath(group) as string, locale);
     // Tên chữ Hán chỉ ở bản Việt và chỉ khi trang có hiện nó (binh thư bản Việt không hiện chữ Hán, chỉ là khoá tìm);
     // bản Trung không hiện tên Việt nên không khai tên thay thế. Tên dịch `nameZh` (chưa đối chiếu, bản Việt không hiện) không khai.
-    const other = !contentLocaleIsVietnamese(locale) || group === 'books' ? null : lookupDisplayName({ ...item.record, nameZh: null }, item.nameVi, 'zh');
+    // Bản Nhật khai tên chữ Hán gốc vì trang luôn hiện dòng "原名"; không khai tên Việt.
+    const viOther = !contentLocaleIsVietnamese(locale) || group === 'books' ? null : lookupDisplayName({ ...item.record, nameZh: null }, item.nameVi, 'zh');
+    const other = pick(locale, viOther, null, lookupNameInfo(item.record, locale)?.original ?? null);
     return {
       title: `${name} — ${groupLabel} — ${section} — ${siteName}`,
       description,

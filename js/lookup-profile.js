@@ -11,7 +11,8 @@
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view, không `innerHTML`.
 
 import { t, iconTree, svgTree } from "./render.js";
-import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, tacticTypeLabel, zhSafeValue, zhTranslatedNote, zhTranslatedTextNote } from "./lookup-detail.js";
+import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhEffect, lookupDisplayName, lookupEmpty, lookupProfile, sourceMissingNote, sourceTextOf, tacticTypeLabel, zhSafeValue, zhTranslatedNote, zhTranslatedTextNote } from "./lookup-detail.js";
+import { machineTranslationNoticeTree, nameOriginalTrees } from "./lookup-master.js";
 import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 import { portraitTree } from "./hero-portrait.js";
 import { lookupHref } from "./lookup-ids.js";
@@ -28,12 +29,12 @@ import {
 } from "./lookup-tactic-profile.js";
 
 const MISSING = "—";
-const FACTION_CODE_BY_LABEL = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hán": "han", "Hỗn hợp": "honhop", "魏": "nguy", "蜀": "thuc", "吴": "ngo", "群": "quan", "汉": "han" };
+const FACTION_CODE_BY_LABEL = { "Ngụy": "nguy", "Thục": "thuc", "Ngô": "ngo", "Quần": "quan", "Hán": "han", "Hỗn hợp": "honhop", "魏": "nguy", "蜀": "thuc", "吴": "ngo", "群": "quan", "汉": "han", "呉": "ngo", "漢": "han" };
 /* Trần thanh chỉ số hồ sơ: artboard LookupProfile vẽ 81→68%, 89→74%, 91→76%, 37→31% (= giá trị/120).
    Dữ liệu thật đa số ≤100 nhưng vài tướng vượt (tới ~249); phần vượt 120 khoá đầy thanh, số vẫn in đúng. */
 const STAT_BAR_MAX = 120;
-/** Hướng điểm (tên Việt từ số liệu build) → chữ Trung; dạng không nhận ra trả rỗng để bản zh bỏ qua. */
-const STAT_ZH = { "Trí Lực": "智力", "Võ Lực": "武力", "Thống Soái": "统率", "Tốc Độ": "速度", "Chính Trị": "政治", "Mị Lực": "魅力" };
+/** Hướng điểm (tên Việt từ số liệu build) → `[chữ Trung, chữ Nhật]`; dạng không nhận ra trả rỗng để bản khác bỏ qua. */
+const STAT_NAMES = { "Trí Lực": ["智力", "知力"], "Võ Lực": ["武力", "武力"], "Thống Soái": ["统率", "統率"], "Tốc Độ": ["速度", "速度"], "Chính Trị": ["政治", "政治"], "Mị Lực": ["魅力", "魅力"] };
 /** Trường chữ dài: hiện thành đoạn văn thay vì một hàng của bảng thông số. */
 const PROSE_KEYS = new Set(["effect"]);
 /** Hàng thông số có giá trị dài hơn ngưỡng này chiếm cả hai cột của bảng. */
@@ -49,13 +50,18 @@ const valueText = (field, fallback = MISSING) => {
 };
 const isEmptyText = (value) => value === null || value === undefined || value === "" || value === lookupEmpty();
 
-function statFocusZh(name) {
+/** Hướng điểm ở bản không phải tiếng Việt ("Toàn Trí Lực" → 全智力, "A và B" → A、B); dạng lạ trả rỗng. */
+function statFocusSource(name) {
+  const stat = (key) => {
+    const row = STAT_NAMES[key];
+    return row ? L(key, row[0], row[1]) : "";
+  };
   const value = String(name ?? "").trim();
   const full = /^Toàn (.+)$/u.exec(value);
-  if (full) return STAT_ZH[full[1]] ? `全${STAT_ZH[full[1]]}` : "";
+  if (full) return stat(full[1]) ? `全${stat(full[1])}` : "";
   const pair = /^(.+) và (.+)$/u.exec(value);
-  if (pair) return STAT_ZH[pair[1]] && STAT_ZH[pair[2]] ? `${STAT_ZH[pair[1]]}、${STAT_ZH[pair[2]]}` : "";
-  return STAT_ZH[value] ?? "";
+  if (pair) return stat(pair[1]) && stat(pair[2]) ? `${stat(pair[1])}、${stat(pair[2])}` : "";
+  return stat(value);
 }
 
 const barFill = (percent, className) => t("span", { class: className, style: `width: ${percent}%;` });
@@ -64,7 +70,7 @@ function revisionText(revision) {
   const parts = Object.entries(revision ?? {})
     .filter(([key, value]) => value && (key.endsWith("Vi") || ["date", "effectiveDate", "version"].includes(key)))
     .map(([, value]) => String(value));
-  return parts.join(" · ") || L("Đã ghi nhận cập nhật", "已记录更新");
+  return parts.join(" · ") || L("Đã ghi nhận cập nhật", "已记录更新", "更新を記録済み");
 }
 
 function factRow(labelVi, textVi, className = "lookup-fact") {
@@ -131,9 +137,9 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       attrs: { "data-lookup-relation": target.id },
     });
     const sub = [tacticTypeLabel(record.type), shown(record.lookup?.effectTypeVi)].filter(Boolean).join(" · ");
-    // Bản zh dùng hiệu ứng chữ Hán nguồn (`effect`), bản Việt dùng bản dịch. Thẻ chỉ hiện phiên bản hiện
-    // hành; bản cũ nằm trong hồ sơ của chính chiến pháp.
-    const [current] = effectVersions(zh ? record.effect : record.effectViet);
+    // Bản zh dùng hiệu ứng chữ Hán nguồn (`effect`), bản ja dùng bản dịch máy của nó, bản Việt dùng bản dịch Việt. Thẻ chỉ
+    // hiện phiên bản hiện hành; bản cũ nằm trong hồ sơ của chính chiến pháp.
+    const [current] = effectVersions(zh ? sourceTextOf(record, "effect", record.effect) : record.effectViet);
     return t("article", { class: "lookup-relation-card" }, [
       label,
       t("div", { class: "lookup-relation-head" }, [name, sub ? t("span", { class: "lookup-relation-sub" }, sub) : null]),
@@ -180,9 +186,9 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   /** Bảng vai trò / danh hiệu / đặc tính theo artboard LookupProfile, cùng các trường hồ sơ tướng khác khi có. */
   function heroFacts(profile) {
     const rows = [
-      [L("Vai trò", "定位"), valueText(fieldByKey(profile, "roleTagViet"), "")],
-      [L("Danh hiệu độc quyền", "专属称号"), valueText(fieldByKey(profile, "exclusiveTitleVi"), "")],
-      [L("Đặc tính", "特性"), valueText(fieldByKey(profile, "flags"), "")],
+      [L("Vai trò", "定位", "役割"), valueText(fieldByKey(profile, "roleTagViet"), "")],
+      [L("Danh hiệu độc quyền", "专属称号", "専用称号"), valueText(fieldByKey(profile, "exclusiveTitleVi"), "")],
+      [L("Đặc tính", "特性", "特性"), valueText(fieldByKey(profile, "flags"), "")],
       // Nhãn do hồ sơ (`lookup-detail.js`) đặt; trường vắng thì `fieldByKey` trả null và dòng bị bỏ.
       ...["civilInnatePoints", "collectibleBonusVi", "redRulesVi"].map((key) => {
         const field = fieldByKey(profile, key);
@@ -205,7 +211,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     if (view.variant) badges.push(t("span", { class: "badge badge-band" }, view.variant));
     if (view.faction) badges.push(t("span", { class: `badge faction f-${FACTION_CODE_BY_LABEL[view.faction] ?? "none"}` }, view.faction));
     if (view.stars) badges.push(t("span", { class: "badge badge-fill" }, view.stars));
-    if (record.cost) badges.push(t("span", { class: "badge badge-fill" }, L(`Thống ngự ${record.cost}`, `统御 ${record.cost}`)));
+    if (record.cost) badges.push(t("span", { class: "badge badge-fill" }, L(`Thống ngự ${record.cost}`, `统御 ${record.cost}`, `コスト ${record.cost}`)));
     // Chiến pháp: phẩm · loại · binh chủng · dạng hiệu ứng (artboard LookupTacticProfile).
     if (tactic) badges.push(...tacticBadges(record, profile));
     // Tướng: hạng mục (badge 'Quân sự' của artboard); nhóm khác: phẩm của chính mục.
@@ -213,7 +219,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     if (grade) badges.push(entryRow.group === "heroes"
       ? t("span", { class: "badge badge-fill" }, String(grade))
       : t("span", { class: "lookup-quality" }, String(grade)));
-    const close = page ? null : t("button", { type: "button", class: "lookup-close", "aria-label": L("Đóng hồ sơ", "关闭详情") }, [
+    const close = page ? null : t("button", { type: "button", class: "lookup-close", "aria-label": L("Đóng hồ sơ", "关闭详情", "詳細を閉じる") }, [
       iconTree([
         svgTree("line", { x1: 6, y1: 6, x2: 18, y2: 18 }),
         svgTree("line", { x1: 18, y1: 6, x2: 6, y2: 18 }),
@@ -225,8 +231,9 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
         t("span", { class: "lookup-dialog-eyebrow" }, eyebrow),
         t("div", { class: "lookup-dialog-titles" }, [
           t(page ? "h1" : "h2", { class: "lookup-dialog-title", id: "lookup-dialog-title" }, profile.titleVi),
-          // Bản zh: tiêu đề đã là chữ Hán, không lặp lại dòng chữ Hán phụ.
+          // Bản zh: tiêu đề đã là chữ Hán, không lặp lại dòng chữ Hán phụ. Bản ja: dòng "原名" + trạng thái tên Nhật.
           chinese && !zh ? t("span", { class: "lookup-dialog-zh", lang: "zh-Hant" }, chinese) : null,
+          ...nameOriginalTrees(record, currentLocale()),
         ]),
         badges.length ? t("div", { class: "lookup-dialog-badges" }, badges) : null,
         heroFacts(profile),
@@ -245,14 +252,14 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       const perLevel = growth.get(key);
       const growthText = perLevel === null || perLevel === undefined || perLevel === ""
         ? MISSING
-        : `${Number(perLevel) > 0 ? "+" : ""}${perLevel} ${L("/ cấp", "/ 级")}`;
+        : `${Number(perLevel) > 0 ? "+" : ""}${perLevel} ${L("/ cấp", "/ 级", "/ レベル")}`;
       return statRow(field.labelVi, field.value, growthText);
     }).filter(Boolean);
     const aptitudes = profile.aptitudes.filter((item) => item && item.value);
     return t("section", { class: "lookup-profile-section" }, [
-      t("h3", { class: "lookup-section-title" }, L("Chỉ số", "属性")),
+      t("h3", { class: "lookup-section-title" }, L("Chỉ số", "属性", "能力値")),
       t("div", { class: "lookup-stats" }, rows),
-      aptitudes.length ? t("h3", { class: "lookup-section-title" }, L("Thích tính binh chủng", "兵种适性")) : null,
+      aptitudes.length ? t("h3", { class: "lookup-section-title" }, L("Thích tính binh chủng", "兵种适性", "兵種適性")) : null,
       aptitudes.length ? t("div", { class: "lookup-aptitudes" }, aptitudes.map((item) => t("div", {
         class: "lookup-aptitude",
         "data-grade": String(item.textVi),
@@ -280,22 +287,22 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   }
 
   function camNangCards(view, rawName, from) {
-    /** Danh sách tên cho bản đang xem; bản zh bỏ tên không tra được chữ Hán để không trộn ngôn ngữ. */
+    /** Danh sách tên cho bản đang xem; bản khác bỏ tên không tra được (chữ Hán / tên Nhật) để không trộn ngôn ngữ. */
     const localNames = (items) => (zh
       ? items.map((item) => ({ ...item, name: rawName ? rawName(item.name) : null })).filter((item) => item.name)
       : items);
     const appearance = t("article", { class: "cam-nang-card" }, [
-      t("h4", { class: "cam-nang-title" }, L("Xuất hiện trong", "出现于")),
+      t("h4", { class: "cam-nang-title" }, L("Xuất hiện trong", "出现于", "登場数")),
       // Số đếm chỉ là số liệu: link "Tìm tướng này trong Đội chuẩn" (thẻ Đội tiêu biểu) mới dẫn sang danh sách,
       // vì kết quả tìm theo tên không trùng khớp con số đếm theo vị trí tướng.
       t("div", { class: "cam-nang-counts" }, [
         t("div", { class: "cam-nang-count" }, [
           t("span", { class: "cam-nang-number" }, String(view.standard)),
-          t("span", { class: "cam-nang-unit" }, L("đội chuẩn", "支推荐阵容")),
+          t("span", { class: "cam-nang-unit" }, L("đội chuẩn", "支推荐阵容", "件の推奨編成")),
         ]),
         t("div", { class: "cam-nang-count" }, [
           t("span", { class: "cam-nang-number" }, String(view.other)),
-          t("span", { class: "cam-nang-unit" }, L("đội khác", "支其他阵容")),
+          t("span", { class: "cam-nang-unit" }, L("đội khác", "支其他阵容", "件のその他の編成")),
         ]),
       ]),
       t("ul", { class: "cam-nang-bars" }, view.positions.map((row) => t("li", { class: "cam-nang-bar" }, [
@@ -307,9 +314,9 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       ]))),
     ]);
     const books = localNames(view.books.items);
-    const statFocus = zh ? view.statFocus.items.map((item) => ({ ...item, name: statFocusZh(item.name) })).filter((item) => item.name) : view.statFocus.items;
+    const statFocus = zh ? view.statFocus.items.map((item) => ({ ...item, name: statFocusSource(item.name) })).filter((item) => item.name) : view.statFocus.items;
     const tactics = t("article", { class: "cam-nang-card" }, [
-      t("h4", { class: "cam-nang-title" }, L("Chiến pháp hay mang", "常带战法")),
+      t("h4", { class: "cam-nang-title" }, L("Chiến pháp hay mang", "常带战法", "よく装備する戦法")),
       t("ul", { class: "cam-nang-bars" }, localNames(view.tactics).map((item) => ({ ...item, name: tacticDisplayName(item.name) })).map((item) => t("li", { class: "cam-nang-bar" }, [
         t("span", { class: "cam-nang-bar-label" }, item.name),
         t("span", { class: "cam-nang-bar-value" }, String(item.teams)),
@@ -319,25 +326,29 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       ]))),
       t("div", { class: "cam-nang-facts" }, [
         books.length ? t("span", { class: "cam-nang-fact" }, [
-          t("span", { class: "cam-nang-fact-label" }, zh
-            ? `常用兵书（${view.books.teams} 支阵容）`
-            : ["Binh thư hay dùng (", String(view.books.teams), " đội)"]),
+          t("span", { class: "cam-nang-fact-label" }, L(
+            ["Binh thư hay dùng (", String(view.books.teams), " đội)"],
+            `常用兵书（${view.books.teams} 支阵容）`,
+            `よく使う兵法書（${view.books.teams}件の編成）`,
+          )),
           t("span", { class: "cam-nang-fact-value" }, books.map((item) => item.name).join(" · ")),
         ]) : null,
         statFocus.length ? t("span", { class: "cam-nang-fact" }, [
-          t("span", { class: "cam-nang-fact-label" }, zh
-            ? `常用加点（${view.statFocus.teams} 支阵容）`
-            : ["Hướng điểm hay dùng (", String(view.statFocus.teams), " đội)"]),
+          t("span", { class: "cam-nang-fact-label" }, L(
+            ["Hướng điểm hay dùng (", String(view.statFocus.teams), " đội)"],
+            `常用加点（${view.statFocus.teams} 支阵容）`,
+            `よく使う加点（${view.statFocus.teams}件の編成）`,
+          )),
           t("span", { class: "cam-nang-fact-value" }, statFocus.map((item) => item.name).join(" · ")),
         ]) : null,
       ].filter(Boolean)),
     ]);
     const teams = t("article", { class: "cam-nang-card" }, [
-      t("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容")),
+      t("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容", "代表的な編成")),
       t("ul", { class: "cam-nang-teams" }, view.representative.map((team) => {
         const href = representativeTeamHref(team, from);
-        // Tên đội chỉ có bản Việt: bản zh dùng nhãn chung, mùa/vị trí ở dòng phụ vẫn phân biệt từng đội.
-        const name = zh ? "查看阵容" : team.name;
+        // Tên đội chỉ có bản Việt: bản khác dùng nhãn chung, mùa/vị trí ở dòng phụ vẫn phân biệt từng đội.
+        const name = L(team.name, "查看阵容", "編成を見る");
         return t("li", { class: "cam-nang-team" }, [
           href
             ? t("a", { class: "cam-nang-team-name", href }, name)
@@ -347,7 +358,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
         ]);
       })),
       t("a", { class: "cam-nang-link", href: localePath(`/doi-chuan/?${new URLSearchParams({ season: "all", q: view.searchName })}`) }, [
-        L("Tìm tướng này trong Đội chuẩn", "在推荐阵容中查找该武将"),
+        L("Tìm tướng này trong Đội chuẩn", "在推荐阵容中查找该武将", "推奨編成でこの武将を探す"),
         iconTree([svgTree("line", { x1: 5, y1: 12, x2: 19, y2: 12 }), svgTree("polyline", { points: "13 6 19 12 13 18" })], { size: 15, stroke: 2 }),
       ]),
     ]);
@@ -358,8 +369,8 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   function summaryBlockTree(content) {
     return t("section", { class: "cam-nang", "aria-labelledby": "cam-nang-title" }, [
       t("div", { class: "cam-nang-head" }, [
-        t("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, L("Trong cẩm nang", "攻略收录")),
-        t("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa", "统计自现有推荐阵容与其他阵容 · 全部赛季")),
+        t("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, L("Trong cẩm nang", "攻略收录", "攻略での使用状況")),
+        t("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa", "统计自现有推荐阵容与其他阵容 · 全部赛季", "掲載中の推奨編成とその他の編成から集計 · 全シーズン")),
       ]),
       ...content,
     ]);
@@ -368,21 +379,21 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   /** Khối "Trong cẩm nang" của hộp thoại: số liệu tính lúc build, chỉ tải khi mở hồ sơ đầu tiên. */
   function summaryBlock(id, isCurrent) {
     const block = treeToDom(summaryBlockTree([
-      t("p", { class: "lookup-summary-status", role: "status" }, L("Đang tải số liệu đội hình…", "正在加载阵容数据…")),
+      t("p", { class: "lookup-summary-status", role: "status" }, L("Đang tải số liệu đội hình…", "正在加载阵容数据…", "編成データを読み込み中…")),
     ]));
     const status = block.querySelector(".lookup-summary-status");
     Promise.all([summaries(), zh ? rawNames().catch(() => null) : null]).then(([table, rawName]) => {
       if (!isCurrent() || !block.isConnected) return;
       const view = camNangView(table[id]);
       if (!view) {
-        status.textContent = L("Chưa có trong đội nào.", "尚未出现在任何阵容中。");
+        status.textContent = L("Chưa có trong đội nào.", "尚未出现在任何阵容中。", "まだどの編成にも登場していません。");
         return;
       }
       status.remove();
       block.append(treeToDom(camNangCards(view, rawName)));
     }).catch(() => {
       if (!isCurrent() || !block.isConnected) return;
-      status.textContent = L("Chưa tải được số liệu Trong cẩm nang.", "无法加载“攻略收录”数据。");
+      status.textContent = L("Chưa tải được số liệu Trong cẩm nang.", "无法加载“攻略收录”数据。", "「攻略での使用状況」のデータを読み込めませんでした。");
     });
     return block;
   }
@@ -392,7 +403,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     const view = camNangView(table[id]);
     return summaryBlockTree(view
       ? [camNangCards(view, rawName, from)]
-      : [t("p", { class: "lookup-summary-status", role: "status" }, L("Chưa có trong đội nào.", "尚未出现在任何阵容中。"))]);
+      : [t("p", { class: "lookup-summary-status", role: "status" }, L("Chưa có trong đội nào.", "尚未出现在任何阵容中。", "まだどの編成にも登場していません。"))]);
   }
 
   /**
@@ -408,13 +419,13 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     // Ghi chú mùa của tướng ở bản zh là chữ dịch từ tiếng Việt: thêm cờ "dịch, chưa đối chiếu" ngay dưới các dòng điều kiện.
     const conditionRows = profile.conditions.map((text) => t("p", { class: "lookup-child-row" }, text));
     if (profile.conditionsZhTranslated && conditionRows.length) conditionRows.push(t("p", { class: "lookup-child-row" }, [t("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedTextNote())]));
-    const conditions = listBlock(L("Điều kiện", "条件"), conditionRows, "lookup-children");
-    // Bản zh đã bỏ nội dung chỉ có chữ Việt: báo một dòng để người đọc biết hồ sơ chưa đầy đủ.
-    const zhNote = profile.viOnly ? t("p", { class: "lookup-child-row lookup-zh-note" }, "部分说明暂无中文原文，未在此显示。") : null;
+    const conditions = listBlock(L("Điều kiện", "条件", "条件"), conditionRows, "lookup-children");
+    // Bản không phải tiếng Việt đã bỏ nội dung chưa có chữ ở bản đó: báo một dòng để người đọc biết hồ sơ chưa đầy đủ.
+    const zhNote = profile.viOnly ? t("p", { class: "lookup-child-row lookup-zh-note" }, sourceMissingNote()) : null;
     if (entryRow.group === "tactics") {
       body = tacticProfileBody(corpus, entryRow, profile, [conditions, zhNote].filter(Boolean), { panels: page });
     } else if (entryRow.group === "heroes") {
-      const revisions = listBlock(L("Lịch sử cập nhật", "更新记录"), profile.revisions.map((revision) => t("p", { class: "lookup-child-row" }, revisionText(revision))), "lookup-children");
+      const revisions = listBlock(L("Lịch sử cập nhật", "更新记录", "更新履歴"), profile.revisions.map((revision) => t("p", { class: "lookup-child-row" }, revisionText(revision))), "lookup-children");
       const tail = [conditions, revisions, zhNote].filter(Boolean);
       const tacticRelations = profile.relations.filter((relation) => relation.key === "selfTactic" || relation.key === "inheritTactic");
       const usage = fieldByKey(profile, "usage");
@@ -437,7 +448,9 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
         zhNote,
       ]);
     }
-    return { entryRow, header, body };
+    // Bản ja: hồ sơ có hiện bản dịch máy thì gắn khối nhãn 機械翻訳 ngay dưới đầu hồ sơ.
+    const notice = profile.machineTranslated ? machineTranslationNoticeTree() : null;
+    return { entryRow, header, notice, body };
   }
 
   /**
@@ -447,7 +460,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   function renderProfile(corpus, id, isCurrent) {
     const parts = profileParts(corpus, id, false);
     if (!parts) return null;
-    const { entryRow, header, body } = parts;
+    const { entryRow, header, notice, body } = parts;
     const tactic = entryRow.group === "tactics";
     const dialog = treeToDom(t("article", {
       class: tactic && summaries ? "lookup-dialog is-tactic" : "lookup-dialog",
@@ -455,7 +468,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       "aria-modal": "true",
       tabindex: "-1",
       "aria-labelledby": "lookup-dialog-title",
-    }, [header, body]));
+    }, [header, ...(notice ? [notice] : []), body]));
     const close = dialog.querySelector(".lookup-close");
     close.addEventListener("click", () => onClose());
     for (const button of dialog.querySelectorAll("[data-lookup-open]")) button.addEventListener("click", () => openInPage(button.dataset.lookupOpen));
@@ -478,7 +491,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   function profilePageTree(corpus, id, { summaryTable = null, rawName = null, from } = {}) {
     const parts = profileParts(corpus, id, true);
     if (!parts) return null;
-    const { entryRow, header, body } = parts;
+    const { entryRow, header, notice, body } = parts;
     const record = entryRow.record ?? {};
     const summary = !summaryTable ? null
       : entryRow.group === "heroes" ? heroSummaryTree(id, summaryTable, rawName, from)
@@ -488,7 +501,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
       class: entryRow.group === "tactics" ? "lookup-dialog is-page is-tactic" : "lookup-dialog is-page",
       "aria-labelledby": "lookup-dialog-title",
       "data-lookup-item": id,
-    }, [header, body, summary]);
+    }, [header, ...(notice ? [notice] : []), body, summary]);
   }
 
   return { renderProfile, profilePageTree };

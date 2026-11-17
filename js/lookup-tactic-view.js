@@ -2,11 +2,11 @@
 // ứng, số in đậm "cấp 1 → cấp tối đa", nhãn nguồn/binh chủng và khối "Trong cẩm nang" tính từ
 // `tactic-summaries.json` (ID) + corpus Tra cứu (tên theo ngôn ngữ). DOM ở `js/lookup-tactic-profile.js`.
 
-import { effectVersions, lookupDisplayName } from "./lookup-detail.js";
+import { effectVersions, lookupDisplayName, sourceTextOf } from "./lookup-detail.js";
 import { contentLocaleIsVietnamese, currentLocale, pick } from "./i18n.js";
 import { barPercent } from "./unified-lookup.js";
 
-// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (bản zh: chữ Hán; bản ja: bản dịch máy của chữ Hán) thay cho lớp dịch Việt.
 const sourceText = (locale) => !contentLocaleIsVietnamese(locale);
 
 /** Giá trị theo cấp trong chữ hiệu ứng: "20→40", "5%→10%", "0.5 → 1.25%". */
@@ -28,7 +28,8 @@ export function tacticEffectSegments(text) {
 
 /**
  * Các phiên bản hiệu ứng, bản hiện hành trước: `[{ label, paragraphs }]`. Bản Việt dùng `lookup.revisions`
- * (nhãn đã duyệt, có ngày); thiếu thì tách `effectViet`. Bản zh tách chữ Hán nguồn `effect` (nhãn nguồn).
+ * (nhãn đã duyệt, có ngày); thiếu thì tách `effectViet`. Bản zh tách chữ Hán nguồn `effect` (nhãn nguồn); bản ja tách bản dịch
+ * máy của `effect` (lớp ja, nhãn phiên bản đã dịch), chưa dịch thì không có phiên bản nào.
  * Chỉ một phiên bản không nhãn ⇒ `label` là `null` (không cần nút chọn).
  */
 export function tacticEffectVersions(record, locale = currentLocale()) {
@@ -37,17 +38,17 @@ export function tacticEffectVersions(record, locale = currentLocale()) {
     const ordered = [...revisions.filter((item) => item.isCurrent), ...revisions.filter((item) => !item.isCurrent)];
     return ordered.map((item) => ({
       label: revisions.length === 1 && !item.effectiveDate ? null
-        : item.isCurrent ? ["Bản hiện hành", item.effectiveDate].filter(Boolean).join(" · ") : String(item.labelVi ?? ""),
+        : item.isCurrent ? [pick(locale, "Bản hiện hành", "当前版本", "現行版"), item.effectiveDate].filter(Boolean).join(" · ") : String(item.labelVi ?? ""),
       paragraphs: item.textVi.split(/\n+/u).map((part) => part.trim()).filter(Boolean),
     }));
   }
-  return effectVersions(sourceText(locale) ? record?.effect : record?.effectViet)
+  return effectVersions(sourceText(locale) ? sourceTextOf(record, "effect", record?.effect, locale) : record?.effectViet)
     .map((block) => ({ label: block.labelVi, paragraphs: block.paragraphs }));
 }
 
 const SOURCE_LABELS = {
-  INHERITANCE: ["Truyền thừa", "传承"], INNATE: ["Tự mang", "自带"], EVENT: ["Sự kiện", "事件"],
-  "Tự mang": ["Tự mang", "自带"], "Sự kiện": ["Sự kiện", "事件"], "Bổ sung sau": ["Bổ sung sau", "后续补充"],
+  INHERITANCE: ["Truyền thừa", "传承", "伝承"], INNATE: ["Tự mang", "自带", "固有"], EVENT: ["Sự kiện", "事件", "イベント"],
+  "Tự mang": ["Tự mang", "自带", "固有"], "Sự kiện": ["Sự kiện", "事件", "イベント"], "Bổ sung sau": ["Bổ sung sau", "后续补充", "後日追加"],
 };
 /** Nhãn nguồn chiến pháp (enum hoặc chữ đã Việt hoá); giá trị lạ trả `null`. */
 export function tacticSourceLabel(value, locale = currentLocale()) {
@@ -55,25 +56,31 @@ export function tacticSourceLabel(value, locale = currentLocale()) {
   return pair ? pick(locale, ...pair) : null;
 }
 
+/** Nhãn binh chủng `[vi, zh, ja]` theo tên Việt chuẩn. */
+const TROOP_LABELS = {
+  "Kỵ binh": ["Kỵ binh", "骑兵", "騎兵"], "Khiên binh": ["Khiên binh", "盾兵", "盾兵"], "Cung binh": ["Cung binh", "弓兵", "弓兵"],
+  "Thương binh": ["Thương binh", "枪兵", "槍兵"], "Khí giới": ["Khí giới", "器械", "器械"],
+};
+/** Binh chủng theo thứ tự chuẩn: tên Việt chuẩn và các tên Việt của dữ liệu khớp vào binh chủng đó. */
 const TROOPS = [
-  ["Kỵ binh", "骑兵", ["Kỵ binh", "Kỵ"]], ["Khiên binh", "盾兵", ["Khiên binh", "Khiên"]],
-  ["Cung binh", "弓兵", ["Cung binh", "Cung"]], ["Thương binh", "枪兵", ["Thương binh", "Thương"]],
-  ["Khí giới", "器械", ["Khí giới"]],
+  ["Kỵ binh", ["Kỵ binh", "Kỵ"]], ["Khiên binh", ["Khiên binh", "Khiên"]],
+  ["Cung binh", ["Cung binh", "Cung"]], ["Thương binh", ["Thương binh", "Thương"]],
+  ["Khí giới", ["Khí giới"]],
 ];
 /** Binh chủng hợp của chiến pháp theo thứ tự chuẩn; đủ năm loại ⇒ `all`. Giá trị lạ bị bỏ. */
 export function tacticTroopFit(values, locale = currentLocale()) {
   const list = Array.isArray(values) ? values.map((value) => String(value).trim()) : [];
-  const troops = TROOPS.filter(([, , names]) => names.some((name) => list.includes(name)));
+  const troops = TROOPS.filter(([, names]) => names.some((name) => list.includes(name)));
   if (!troops.length) return null;
   const all = troops.length === TROOPS.length;
   return {
     all,
-    labels: troops.map(([vi, zh]) => pick(locale, vi, zh)),
-    text: all ? pick(locale, "Mọi binh chủng", "全兵种") : troops.map(([vi, zh]) => pick(locale, vi, zh)).join(", "),
+    labels: troops.map(([vi]) => pick(locale, ...TROOP_LABELS[vi])),
+    text: all ? pick(locale, "Mọi binh chủng", "全兵种", "全兵種") : troops.map(([vi]) => pick(locale, ...TROOP_LABELS[vi])).join(pick(locale, ", ", ", ", "、")),
   };
 }
 
-const POSITIONS = [["Chủ tướng", "主将"], ["Phó tướng 1", "副将 1"], ["Phó tướng 2", "副将 2"]];
+const POSITIONS = [["Chủ tướng", "主将", "主将"], ["Phó tướng 1", "副将 1", "副将 1"], ["Phó tướng 2", "副将 2", "副将 2"]];
 
 /**
  * Khối "Trong cẩm nang" của một chiến pháp. Thanh là tỷ lệ trên tổng số đội có chiến pháp (hai họ), vị trí giữ
@@ -102,7 +109,7 @@ export function tacticCamNangView(summary, corpus, locale = currentLocale()) {
     return {
       ...team,
       carrier,
-      meta: [carrier ? pick(locale, `${carrier} mang`, `${carrier} 携带`) : null, team.seasonLabel || null].filter(Boolean).join(" · "),
+      meta: [carrier ? pick(locale, `${carrier} mang`, `${carrier} 携带`, `${carrier}が装備`) : null, team.seasonLabel || null].filter(Boolean).join(" · "),
     };
   });
   return { standard: summary.standard.teams, other: summary.other.teams, positions, carriers, companions, representative };
