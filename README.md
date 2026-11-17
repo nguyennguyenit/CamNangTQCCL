@@ -11,7 +11,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Hai trang danh sách đội dùng chung một browser và một kiểu thẻ: search toàn văn, một ô chọn mùa nguồn và chip facet (loại binh, phe, nhóm, nguồn) đếm theo mùa đang chọn, chuyển **Thẻ / Thẻ gọn / Bảng** (`?view=luoi`, `?view=bang`), mobile thu gọn vùng lọc sau nút `Bộ lọc`.
 - Danh sách Đội chuẩn (`/doi-chuan/` và các trang mùa cũ) gắn badge kho cho người đã có kho trên máy: "Ráp được" hoặc "Thiếu N món" (tên món thiếu trong `title`), kèm dòng tóm tắt "ráp được X / Y đội của mùa". Trên `/doi-chuan/` có thêm lọc `?kho=rap-duoc|thieu-2` và sắp `?xep=de-rap` (trong từng bậc, đội thiếu ít món đứng trước). Kho đọc từ máy, không gọi mạng: khách dùng kho local của Gợi ý đội, người đã đăng nhập dùng cache kho tài khoản (hộp `main`) của chính mình. Máy chưa có kho thì không có badge, chỉ một dòng dẫn sang Gợi ý đội; con số khớp khối "Độ phủ kho" của Gợi ý đội cho cùng mùa và cùng kho.
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
-- Mỗi mùa cũ của Đội chuẩn có trang tĩnh riêng `/doi-chuan/<mã mùa>/` (`/doi-chuan/pk-s24/`, `/doi-chuan/s1/`; bản zh dưới `/zh/`): đủ mọi đội của mùa nhóm theo tier, có trong sitemap và JSON-LD, đọc được khi không chạy JavaScript, không có khung comment. `/doi-chuan/` (mùa hiện tại) liệt kê các mùa còn lại ở khối "Các mùa khác" bằng link thật; trang đội và trang mùa có số mùa nhỏ hơn mùa hiện tại có nhãn "mùa cũ" (mùa mới hơn như PK-S28 khi mặc định là PK-S27, OG và mùa không đọc được số không có nhãn). Chỉ Đội chuẩn có trang mùa (Đội khác chưa có dữ liệu mùa); `?season=` vẫn là bộ lọc của trang danh sách.
+- Mỗi mùa cũ của Đội chuẩn có trang tĩnh riêng `/doi-chuan/<mã mùa>/` (`/doi-chuan/pk-s24/`, `/doi-chuan/s1/`; bản zh, ja dưới `/zh/`, `/ja/`): đủ mọi đội của mùa nhóm theo tier, có trong sitemap và JSON-LD, đọc được khi không chạy JavaScript, không có khung comment. `/doi-chuan/` (mùa hiện tại) liệt kê các mùa còn lại ở khối "Các mùa khác" bằng link thật; trang đội và trang mùa có số mùa nhỏ hơn mùa hiện tại có nhãn "mùa cũ" (mùa mới hơn như PK-S28 khi mặc định là PK-S27, OG và mùa không đọc được số không có nhãn). Chỉ Đội chuẩn có trang mùa (Đội khác chưa có dữ liệu mùa); `?season=` vẫn là bộ lọc của trang danh sách.
 - Nội dung đội và Tra cứu có sẵn trong HTML (đọc được không cần JavaScript, kể cả với crawler/AI): trang chi tiết đội render đủ tướng, chiến pháp, binh thư, ghi chú; bốn trang danh sách đội render trạng thái mặc định; JavaScript chỉ thêm lọc, đổi mùa, "Xem thêm", hộp thoại. Trang đội, trang nhóm và trang riêng Tra cứu có JSON-LD; `/llms.txt` dẫn tới bộ chữ thuần theo mục `/llms/…` và bản gộp `/llms-full.txt`.
 - Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một ô chọn mùa (mặc định mùa mới nhất `COEXIST_LATEST_SCENARIO_ID` trong `js/season-ui-state.js`, hiện là PK-S27 · Hán Diễm Trường Minh, cũng đứng đầu registry; `?scenario=` cũ vẫn mở đúng kịch bản). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Gợi ý đội có một ô "Mùa bạn đang chơi" (`?season=`, mặc định `defaultSourceSeasonId`) và gợi ý từ Đội chuẩn của mùa đó, đội cũ chỉ lấp chỗ trống; Soi đội đối chiếu với Đội chuẩn theo mùa (`?season=`) và Đội khác. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu local 252 tướng, 412 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; HTML có đủ mọi mục, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` với slug đóng băng trong `pipeline/lookup-route-handles.json`; link Tra cứu từ trang đội trỏ tới trang riêng. `/tra-cuu/` là mục lục.
@@ -19,8 +19,9 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Soi screenshot qua Worker + nhà cung cấp AI OpenAI-compatible (tab AI của `/quan-tri/`: nhà cung cấp và API key dùng chung, mỗi tính năng AI có chuỗi failover riêng gồm nhà cung cấp, model, mức effort cùng timeout/trần tổng; mẫu DeepSeek, OpenCode Zen). AI chỉ chép chữ in trong ảnh (không đoán tướng qua chân dung, không chọn team); người dùng xác nhận từng ô trong editor (hoặc nhập tay), rồi frontend diff từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận chia sẻ qua link `?doi=v1.…` (chỉ ID canonical), lưu lịch sử 10 mục trên máy và xuất thẻ PNG.
 - Gợi ý portfolio tối đa 5 đội bằng engine local từ Đội chuẩn của mùa đang chọn (đội cũ `teams.json` chỉ lấp khi mùa thiếu, gắn nhãn tham khảo). Mục "Thiếu món" cho bấm "Tôi có…" để bổ sung kho hoặc chọn món bù (chiến pháp tướng đó mang ở cấu hình khác cùng mùa, có trong kho); nút "Vì sao?" gọi Worker mode chỉ văn bản `explainSubstitute` để AI giải thích món bù — AI không chọn đội hay món. Mục "Đội dựng được nhưng tranh món với đội đã chọn" (sau danh sách đội, trước "Thiếu món") hiện tối đa 5 đội đủ kho nhưng dùng chung tướng/chiến pháp với đội đã chọn, kèm tên đội đang giữ món; không có xung đột thì không hiện. Khối "Độ phủ kho" (đầu màn kết quả) tính cho mùa đang chọn, từng đội xét độc lập (không ràng buộc dùng chung): theo bậc, số đội ráp đủ / thiếu đúng 1 món / tổng, bấm ô mở danh sách đội (đội thiếu 1 ghi món thiếu kèm nút "Tôi có…"), cùng tiến độ sưu tầm tướng/chiến pháp so với Đội chuẩn của mùa; mùa không có đội hiện trạng thái rỗng.
 - Gợi ý đội (`/goi-y-doi-tu-kho/`) đồng bộ kho là **tùy chọn**: khách vẫn dùng kho `localStorage` như cũ; đăng nhập Google thì lần đầu hỏi gộp kho local vào hộp `main`, rồi đồng bộ qua `community-worker` (`/api/roster`, `js/roster-sync.js`, gộp theo từng bản ghi, hợp đồng ở [docs/roster-sync.md](docs/roster-sync.md)). Bảng chọn nhanh (`js/roster-picker.js`) cho lọc rồi "Chọn tất cả N mục" để nhập kho hàng loạt; công cụ chạy cả khi Worker AI chưa cấu hình (chỉ ẩn đọc ảnh và giải thích AI).
-- Đội của tôi (`/doi-cua-toi/`, `/zh/doi-cua-toi/`, `noindex`, **bắt buộc đăng nhập Google**, không chế độ offline cho đội): hộp kho tự đặt tên, nhóm (mặc định Khai Hoang, Ghép Team), đội là bản sao độc lập lưu từ Đội chuẩn/Đội khác, Khai hoang, Gợi ý đội và Soi đội (nút "Lưu vào đội của tôi"); trình soạn có cấu trúc kèm cột chữ tự do, dấu "chưa có trong kho", cảnh báo trùng tướng, báo "Bản gốc đã cập nhật" nhưng không ghi đè bản của người chơi. Menu tài khoản có "Đội của tôi"; mục cũ tới `/doi-cong-dong/?mine=1` đổi tên "Đội đã đăng". Không chia sẻ đội.
+- Đội của tôi (`/doi-cua-toi/`, `/zh/doi-cua-toi/`, `/ja/doi-cua-toi/`, `noindex`, **bắt buộc đăng nhập Google**, không chế độ offline cho đội): hộp kho tự đặt tên, nhóm (mặc định Khai Hoang, Ghép Team), đội là bản sao độc lập lưu từ Đội chuẩn/Đội khác, Khai hoang, Gợi ý đội và Soi đội (nút "Lưu vào đội của tôi"); trình soạn có cấu trúc kèm cột chữ tự do, dấu "chưa có trong kho", cảnh báo trùng tướng, báo "Bản gốc đã cập nhật" nhưng không ghi đè bản của người chơi. Menu tài khoản có "Đội của tôi"; mục cũ tới `/doi-cong-dong/?mine=1` đổi tên "Đội đã đăng". Không chia sẻ đội.
 - Giao diện Sổ binh pháp dùng chung một shell (header, menu thả, menu mobile, footer), một stylesheet và bộ token ở `docs/design/so-binh-phap/tokens.json`; theme sáng/tối theo lựa chọn đã lưu hoặc hệ điều hành, không nháy khi chuyển trang.
+- Ba ngôn ngữ: bản Việt ở gốc, bản tiếng Trung giản thể dưới `/zh/` và bản tiếng Nhật dưới `/ja/`, cùng đường dẫn và cùng component (danh sách locale ở `SITE_LOCALES` của `js/i18n.js`). Bản ja dùng tên Nhật cho tướng/chiến pháp/binh thư/trang bị (tên `verified` từ nguồn Nhật hoặc `derived` bằng đổi tự dạng, luôn kèm tên gốc chữ Hán trên trang Tra cứu), mô tả Tra cứu dịch máy từ chữ Trung có nhãn 機械翻訳 và dòng 「数値は中国大陸版に基づく」, ghi chú đội chỉ có chữ Trung bị ẩn kèm dòng báo thiếu. Đội chuẩn PK-S26 có thêm tier nguồn Nhật (Kazten) cho 7 đội đã khớp, lọc bằng chip "Tier JP" (`?source=jp`) ở cả ba bản. Ghi cộng đồng ở `/ja/` cần `community-worker` đã áp migration `0015_lang_ja.sql` ([thứ tự deploy](docs/community-worker.md#thứ-tự-deploy)).
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung bảy tool (bề mặt P*; chưa deploy).
 
 Dữ liệu theo kịch bản hiện có ba kịch bản Cùng Tồn ở mức tham khảo (PK-S27 · Hán Diễm
@@ -39,7 +40,7 @@ Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 | Tra cứu | 252 tướng / 412 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
 | Binh thư map | 66 |
 
-Build local ngày 2026-10-15 (dữ liệu hiện tại): 4917 trang HTML (gồm 1772 trang riêng Tra cứu = 886 mục × vi/zh), sitemap 4912 URL, `/llms.txt` + 36 file `/llms/…` + `/llms-full.txt`.
+Build local ngày 2026-11-18 (dữ liệu hiện tại): 8698 trang HTML (mỗi bản `/zh/`, `/ja/` 2899 trang; gồm 2949 trang riêng Tra cứu = 983 mục × vi/zh/ja), sitemap 8685 URL, `/llms.txt` + 37 file `/llms/…` + `/llms-full.txt` (bộ llms chỉ có bản Việt).
 
 ## Chạy local
 
@@ -131,7 +132,12 @@ Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`
 python3 -m pipeline.lookup_route_handles --write
 python3 -m pipeline.lookup_route_handles --check
 node scripts/report-zh-gaps.mjs   # sinh lại docs/zh-gaps.md; npm run verify chạy --check
+python3 -m pipeline.build_lookup_ja --write   # dựng lại data/lookup-ja.json; build dừng khi file lệch generation Tra cứu
+python3 -m pipeline.build_lookup_ja --check
+node scripts/report-ja-gaps.mjs   # sinh lại docs/ja-gaps.md; npm run verify chạy --check
 ```
+
+Chữ Trung nguồn mới cần bản dịch Nhật đi qua `--export-todo`/`--ingest` của `build_lookup_ja`; xem [dữ liệu tiếng Nhật cho Tra cứu](docs/ja-lookup-data.md).
 
 Chi tiết ở [deployment guide](docs/deployment-guide.md#static-pages).
 
@@ -156,9 +162,10 @@ src/pages/<mục>/index.astro # 8 trang mục tĩnh (doi-chuan, doi-khac, cung-t
 src/pages/tra-cuu/[group].astro # 7 trang nhóm Tra cứu (nội dung ở src/components/pages/LookupGroupPage.astro)
 src/pages/tra-cuu/[group]/[slug].astro # trang riêng từng mục Tra cứu (src/lib/lookup-item-pages.ts, slug từ pipeline/lookup-route-handles.json)
 src/pages/llms.txt.ts, src/pages/llms/, src/pages/llms-full.txt.ts # bộ llms sinh từ src/lib/llms-documents.ts
-src/pages/404.astro        # trang 404 top-level (khối Việt + khối Trung cho /zh/)
+src/pages/404.astro        # trang 404 top-level (khối Việt + khối Trung cho /zh/ + khối Nhật cho /ja/)
 src/pages/doi-chuan|doi-khac|khai-hoang/  # ba họ trang chi tiết sinh từ catalog
 src/pages/zh/              # bản tiếng Trung: cùng đường dẫn, cùng component với bản Việt
+src/pages/ja/              # bản tiếng Nhật: cùng tập route với src/pages/zh/ (test locale-route-mirror)
 src/components/pages/      # nội dung trang mục/chi tiết/cộng đồng nhận `locale` (route chỉ là vỏ mỏng)
 src/layouts/SiteLayout.astro # shell dùng chung (head, header, menu, footer, payload)
 src/lib/, src/pages/       # manifest, static endpoints byte-exact, dựng sẵn trang đội/Tra cứu (cây view), JSON-LD
@@ -185,6 +192,7 @@ plans/                     # kế hoạch/báo cáo lịch sử, không phải r
 - [Deployment Guide](docs/deployment-guide.md)
 - [Research MCP server](docs/mcp-research-server.md)
 - [Bảo trì dữ liệu đội theo kịch bản](docs/season-team-data.md)
+- [Dữ liệu tiếng Nhật cho Tra cứu](docs/ja-lookup-data.md) và [mục bản ja còn thiếu](docs/ja-gaps.md)
 - [SGSDeck catalog kỹ thuật (private)](docs/sgsdeck-catalog.md)
 - [Phân loại nguồn research đội hình](docs/research-sources.md)
 - [Design Guidelines](docs/design-guidelines.md)

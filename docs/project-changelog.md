@@ -1,5 +1,15 @@
 # Project Changelog
 
+## 2026-11-18 (Bản tiếng Nhật `/ja/`, issue #113)
+
+- Added: locale `ja` (`SITE_LOCALES = ['vi', 'zh', 'ja']`): mọi route có bản `/zh/` có bản `/ja/` cùng đường dẫn (2899 trang; build 8698 trang HTML, sitemap 8685 URL), `<html lang="ja">`, `og:locale` `ja_JP`, hreflang vi/zh-Hans/ja/x-default, cụm nút chuyển ngôn ngữ, khối ja trong `404.html`, luật `/ja/*` trong `_headers`, `_redirects`, `robots.txt`, mục ja trong `llms.txt`.
+- Changed: refactor N locale. `pick(locale, vi, zh, ja)`/`L(vi, zh, ja)` chọn biến thể theo vị trí trong `SITE_LOCALES` và ném lỗi khi thiếu; bỏ `=== "zh"`, `otherLocale`, `counterpartPath`, kiểu `"vi" | "zh"`; test arity tĩnh (`tests-js/i18n-call-arity.test.mjs`) và route gương (`locale-route-mirror`). `scripts/compare-locale-output.mjs` chứng minh output vi/zh không đổi ngoài allowlist.
+- Added: dữ liệu Nhật cho Tra cứu `data/lookup-ja.json` (`python3 -m pipeline.build_lookup_ja`): tên Nhật `verified`/`derived`, bảng đổi tự dạng `data/ja-kanji-variants.json` (OpenCC, Apache-2.0) dùng chung Python/trình duyệt, mô tả dịch máy từ chữ Trung có kiểm số liệu và glossary `pipeline/ja-glossary.json`; trang ja hiện nhãn 機械翻訳 và 「数値は中国大陸版に基づく」; `docs/ja-gaps.md` (`report-ja-gaps --check` trong `npm run verify`). Ghi chú đội chỉ có chữ Trung bị ẩn ở bản ja kèm dòng báo thiếu.
+- Added: Vision Worker nhận `locale: "ja"` (`explainSubstitute`, bốn mode đọc ảnh; prompt vi/zh giữ nguyên byte), 2 ảnh eval client Nhật + fixture, bộ chấm eval dùng alias tên Nhật.
+- Added: tier nguồn Nhật cho Đội chuẩn PK-S26 (`pipeline/recommended-jp-tiers.json`, `--jp-tiers`, `tierSources`): 7 đội (2 `exact`, 5 `heroes-only`), facet nguồn `?source=jp` ở cả vi/zh/ja, huy hiệu `JP <tier>` và khối "Tier JP" trên trang chi tiết. PK-S27 theo #115.
+- Added: `community-worker` nhận `lang = ja` (migration `0015_lang_ja.sql` dựng lại 8 bảng, rollback viết tay). Phải sao lưu D1, áp `0015` và deploy `community-worker` trước khi merge site ([thứ tự deploy](community-worker.md#thứ-tự-deploy)).
+- Ghép `origin/main` (Cùng Tồn Hán Diễm Trường Minh, sửa bản dịch Đội chuẩn); re-pin hash nguồn, publish generation Recommended mới có `jpTiersHash`, rebind ledger route, sinh lại `workflow-build` của MCP. Bài nháp vi+ja nằm trong `plans/261117-0153-ja-locale/articles/`, chưa publish.
+
 ## 2026-11-17 (Cùng Tồn: kịch bản PK-S27 · Hán Diễm Trường Minh)
 
 - Added: kịch bản `han-diem-truong-minh` (đứng đầu registry, mặc định của `/cung-ton/`) với 5 nhóm / 25 đội từ tab Cùng Tồn của Google Sheet sau khi chủ sheet ghi đè Binh Diễn Xuân Thu; snapshot ghim ở `plans/261117-0206-cung-ton-han-diem-truong-minh/research/`, bản đồ record `pipeline/coexist-han-diem-source-record-map.json`, hai evidence (xác nhận kịch bản, quan sát snapshot). Link Binh Diễn và Anh Hùng Mệnh Thế giữ nguyên byte.
