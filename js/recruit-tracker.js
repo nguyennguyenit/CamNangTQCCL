@@ -1,6 +1,6 @@
 import { el, icon, svgNode } from "./render.js";
 import { createDropdownMenu } from "./site-nav.js";
-import { L } from "./i18n.js";
+import { L, LOCALE_INTL, currentLocale } from "./i18n.js";
 import { describeError, googleIcon } from "./community-api.js";
 import { createRecruitSync } from "./recruit-sync.js";
 import {
@@ -165,7 +165,7 @@ function heroName(hero, names = null) {
 }
 
 function uniqueSorted(values) {
-  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, L("vi", "zh-CN", "ja")));
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, LOCALE_INTL[currentLocale()]));
 }
 
 /** Số cho thanh tiến độ: giữ giá trị thật của store, chỉ gộp phần trăm hiển thị trong khoảng 0–100. */

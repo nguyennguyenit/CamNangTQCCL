@@ -32,7 +32,7 @@ import {
   writeHistory,
 } from "./analyze-state.js";
 import { api, describeError, loadSession, signInPrompt } from "./community-api.js";
-import { L, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
+import { L, LOCALE_INTL, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
 import { createRawNameResolver, localName, localRawName, localRecordName } from "./website-display.js";
 import { withLocaleAliases } from "./locale-name-aliases.js";
@@ -1302,7 +1302,7 @@ export function initAnalyze(deps, mount) {
   /* ----- Lịch sử ----- */
   function renderHistory() {
     historyCard.hidden = historyEntries.length === 0;
-    const formatter = new Intl.DateTimeFormat(pick(currentLocale(), "vi-VN", "zh-CN", "ja-JP"), { dateStyle: "short", timeStyle: "short" });
+    const formatter = new Intl.DateTimeFormat(LOCALE_INTL[currentLocale()], { dateStyle: "short", timeStyle: "short" });
     historyList.replaceChildren(...historyEntries.map((entry) => {
       const team = decodeTeamParam(entry.doi, { hasId });
       if (!team) return null;

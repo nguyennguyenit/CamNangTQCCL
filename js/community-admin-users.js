@@ -7,7 +7,7 @@
 // toàn vì chỉ dùng các hàm đã export, không dùng ở cấp module).
 // Server mới là nơi kiểm quyền; ở đây chỉ ẩn nút với đích không thao tác được và dịch lỗi theo `code`.
 
-import { L, currentLocale, formatDate, htmlLang, pick } from './i18n.js';
+import { L, LOCALE_INTL, currentLocale, formatDate, htmlLang } from './i18n.js';
 import { el } from './render.js';
 import { api, describeError, displayName, formatDateTime, timeNode } from './community-api.js';
 import { SCAN_STATUS_LABEL, adminStatus, emptyNote, formField, pagePath, pagedList, selectInput, textInput } from './community-admin.js';
@@ -27,7 +27,7 @@ function relativeTime(value) {
   if (Number.isNaN(time)) return '';
   const seconds = Math.round((time - Date.now()) / 1000);
   if (Math.abs(seconds) < 60) return L('vừa xong', '刚刚', 'たった今');
-  const formatter = new Intl.RelativeTimeFormat(pick(currentLocale(), 'vi-VN', 'zh-CN', 'ja-JP'), { numeric: 'auto' });
+  const formatter = new Intl.RelativeTimeFormat(LOCALE_INTL[currentLocale()], { numeric: 'auto' });
   const units = [['day', 86400], ['hour', 3600], ['minute', 60]];
   for (const [unit, size] of units) {
     if (Math.abs(seconds) >= size) return formatter.format(Math.round(seconds / size), unit);

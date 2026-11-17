@@ -43,7 +43,7 @@ const analysisLabels: [keyof CommunityTeam['analysis'], string][] = [
 ];
 const analysis = analysisLabels.filter(([key]) => typeof team.analysis[key] === 'string' && team.analysis[key]!.trim());
 /** "Viết bằng tiếng …" theo ngôn ngữ văn bản của đội (khóa) và ngôn ngữ trang (biến thể); mã lạ lùi về bản Việt. */
-const WRITTEN_IN: Record<SiteLocale | 'ja', string> = {
+const WRITTEN_IN: Record<SiteLocale, string> = {
   vi: t('Viết bằng tiếng Việt', '以越南语撰写', 'ベトナム語で記述'),
   zh: t('Viết bằng tiếng Trung', '以中文撰写', '中国語で記述'),
   ja: t('Viết bằng tiếng Nhật', '以日语撰写', '日本語で記述'),

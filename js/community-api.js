@@ -2,7 +2,7 @@
 // Lỗi JSON `{error:{code,message}}` của server không bao giờ hiện nguyên văn: luôn đổi sang câu song ngữ
 // theo mã trạng thái, giống cách js/analyze.js chặn văn bản upstream.
 
-import { L, LOCALE_LABEL, currentLocale, formatDate, isSiteLocale, localePath } from './i18n.js';
+import { L, LOCALE_INTL, LOCALE_LABEL, currentLocale, formatDate, isSiteLocale, localePath } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 
 /** Khoá localStorage ghi "có thể đang đăng nhập": trang thường chỉ hỏi `/api/me` khi có dấu này. */
@@ -433,5 +433,5 @@ export function resultLabel(result) {
 }
 
 export function formatPercent(ratio) {
-  return new Intl.NumberFormat(L('vi-VN', 'zh-CN', 'ja-JP'), { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
+  return new Intl.NumberFormat(LOCALE_INTL[currentLocale()], { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
 }
