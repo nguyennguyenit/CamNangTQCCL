@@ -32,21 +32,24 @@ test("danh sách locale: thứ tự khóa cứng, chỉ được nối thêm ở
   assert.equal(LOCALES, SITE_LOCALES);
 });
 
-test("mọi bảng theo locale có đúng tập khóa SITE_LOCALES", () => {
+test("mọi bảng theo locale có cùng tập khóa, bắt đầu bằng đúng SITE_LOCALES", () => {
+  // Bảng được khai trước locale chưa bật (nằm sau phần SITE_LOCALES); bật locale = nối mã vào cuối SITE_LOCALES.
   const tables = { LOCALE_PREFIX, LOCALE_HTML_LANG, LOCALE_INTL, LOCALE_OG, LOCALE_LABEL, HREFLANG: routes.HREFLANG, ROUTE_LOCALE_LABEL: routes.LOCALE_LABEL };
+  const known = Object.keys(LOCALE_PREFIX);
+  assert.deepEqual(known.slice(0, SITE_LOCALES.length), [...SITE_LOCALES]);
   for (const [name, table] of Object.entries(tables)) {
-    assert.deepEqual(Object.keys(table), [...SITE_LOCALES], name);
+    assert.deepEqual(Object.keys(table), known, name);
     assert.ok(Object.isFrozen(table), `${name} phải bất biến`);
   }
   assert.equal(LOCALE_PREFIX[DEFAULT_LOCALE], "");
-  for (const locale of SITE_LOCALES.slice(1)) assert.equal(LOCALE_PREFIX[locale], `/${locale}`);
+  for (const locale of known.slice(1)) assert.equal(LOCALE_PREFIX[locale], `/${locale}`);
 });
 
 test("giá trị bảng locale giữ đúng output hiện tại", () => {
-  assert.deepEqual({ ...LOCALE_HTML_LANG }, { vi: "vi", zh: "zh-Hans" });
-  assert.deepEqual({ ...LOCALE_INTL }, { vi: "vi-VN", zh: "zh-CN" });
-  assert.deepEqual({ ...LOCALE_OG }, { vi: "vi_VN", zh: "zh_CN" });
-  assert.deepEqual({ ...LOCALE_LABEL }, { vi: "Tiếng Việt", zh: "中文" });
+  assert.deepEqual({ ...LOCALE_HTML_LANG }, { vi: "vi", zh: "zh-Hans", ja: "ja" });
+  assert.deepEqual({ ...LOCALE_INTL }, { vi: "vi-VN", zh: "zh-CN", ja: "ja-JP" });
+  assert.deepEqual({ ...LOCALE_OG }, { vi: "vi_VN", zh: "zh_CN", ja: "ja_JP" });
+  assert.deepEqual({ ...LOCALE_LABEL }, { vi: "Tiếng Việt", zh: "中文", ja: "日本語" });
 });
 
 test("normalizeLocale: theo mã ngôn ngữ chính, không khớp thì về vi", () => {
@@ -56,12 +59,12 @@ test("normalizeLocale: theo mã ngôn ngữ chính, không khớp thì về vi",
   assert.equal(normalizeLocale("ZH-cn"), "zh");
   assert.equal(normalizeLocale("zh_CN"), "zh");
   assert.equal(normalizeLocale("vi-VN"), "vi");
-  for (const value of ["", null, undefined, "en", "fr-FR", "ja"]) assert.equal(normalizeLocale(value), "vi", String(value));
+  for (const value of ["", null, undefined, "en", "fr-FR", "ko"]) assert.equal(normalizeLocale(value), "vi", String(value));
 });
 
 test("isSiteLocale và htmlLang", () => {
   for (const locale of SITE_LOCALES) assert.equal(isSiteLocale(locale), true);
-  for (const value of ["", "en", "zh-Hans", null, undefined, "ja"]) assert.equal(isSiteLocale(value), false, String(value));
+  for (const value of ["", "en", "zh-Hans", null, undefined, "ko"]) assert.equal(isSiteLocale(value), false, String(value));
   assert.equal(htmlLang("zh"), "zh-Hans");
   assert.equal(htmlLang("vi"), "vi");
   assert.equal(htmlLang("lạ"), "vi");

@@ -12,16 +12,19 @@ export const SITE_LOCALES = Object.freeze(/** @type {const} */ (['vi', 'zh']));
 export const LOCALES = SITE_LOCALES;
 export const DEFAULT_LOCALE = SITE_LOCALES[0];
 
+// Các bảng theo locale dưới đây có thể khai trước locale chưa bật (chưa nằm trong `SITE_LOCALES`): mọi hàm chỉ duyệt
+// `SITE_LOCALES` nên bản ghi thừa không đổi output; bật locale chỉ còn là nối mã vào cuối `SITE_LOCALES`.
+
 /** Tiền tố đường dẫn của từng locale (bản mặc định không có tiền tố). */
-export const LOCALE_PREFIX = Object.freeze({ vi: '', zh: '/zh' });
+export const LOCALE_PREFIX = Object.freeze({ vi: '', zh: '/zh', ja: '/ja' });
 /** Giá trị `<html lang>`/`hreflang`/thuộc tính `lang` của từng locale. */
-export const LOCALE_HTML_LANG = Object.freeze({ vi: 'vi', zh: 'zh-Hans' });
+export const LOCALE_HTML_LANG = Object.freeze({ vi: 'vi', zh: 'zh-Hans', ja: 'ja' });
 /** Mã locale cho `Intl` (định dạng số, ngày). */
-export const LOCALE_INTL = Object.freeze({ vi: 'vi-VN', zh: 'zh-CN' });
+export const LOCALE_INTL = Object.freeze({ vi: 'vi-VN', zh: 'zh-CN', ja: 'ja-JP' });
 /** Giá trị `og:locale`. */
-export const LOCALE_OG = Object.freeze({ vi: 'vi_VN', zh: 'zh_CN' });
+export const LOCALE_OG = Object.freeze({ vi: 'vi_VN', zh: 'zh_CN', ja: 'ja_JP' });
 /** Tên ngôn ngữ viết bằng chính ngôn ngữ đó (nhãn nút chuyển ngôn ngữ, ô chọn ngôn ngữ). */
-export const LOCALE_LABEL = Object.freeze({ vi: 'Tiếng Việt', zh: '中文' });
+export const LOCALE_LABEL = Object.freeze({ vi: 'Tiếng Việt', zh: '中文', ja: '日本語' });
 
 /**
  * `value` có đúng là một mã trong `SITE_LOCALES` không (dữ liệu từ ngoài: bài viết, đội cộng đồng).

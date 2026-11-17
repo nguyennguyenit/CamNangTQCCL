@@ -2,19 +2,24 @@
 // có đúng `SITE_LOCALES.length` biến thể. Biến thể đi theo vị trí locale nên thiếu một biến thể là trang của locale đó
 // ném lỗi lúc dựng. Lời gọi trải bảng tuple (`pick(locale, ...LABELS[key])`) được lần tới mảng literal để đếm.
 // File `.astro` không parse ở đây; `pick` ném lỗi khi thiếu biến thể nên build dựng mọi trang sẽ bắt.
-// `I18N_ARITY_LOCALES=vi,zh,ja` cho phép kiểm trước số biến thể của danh sách locale sắp bật.
+// `I18N_ARITY_LOCALES=vi,zh,ja` cho phép kiểm trước số biến thể của danh sách locale sắp bật (đúng bằng số đó).
+// Không khai biến môi trường: nhận từ `SITE_LOCALES.length` tới số locale đã khai bảng ở `js/i18n.js` (`LOCALE_PREFIX`,
+// gồm locale chưa bật) — giai đoạn chuyển tiếp khi chuỗi của locale sắp bật được viết dần; bật xong hai số bằng nhau.
 import assert from "node:assert/strict";
 import { readdirSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { test } from "node:test";
 import ts from "typescript";
-import { SITE_LOCALES } from "../js/i18n.js";
+import { LOCALE_PREFIX, SITE_LOCALES } from "../js/i18n.js";
 
 const ROOT = fileURLToPath(new URL("..", import.meta.url));
-const EXPECTED = process.env.I18N_ARITY_LOCALES
+const EXPECTED_MIN = process.env.I18N_ARITY_LOCALES
   ? process.env.I18N_ARITY_LOCALES.split(",").map((value) => value.trim()).filter(Boolean).length
   : SITE_LOCALES.length;
+const EXPECTED_MAX = process.env.I18N_ARITY_LOCALES ? EXPECTED_MIN : Math.max(EXPECTED_MIN, Object.keys(LOCALE_PREFIX).length);
+const EXPECTED = EXPECTED_MIN === EXPECTED_MAX ? String(EXPECTED_MIN) : `${EXPECTED_MIN}–${EXPECTED_MAX}`;
+const arityOk = (count) => count >= EXPECTED_MIN && count <= EXPECTED_MAX;
 const ITERATION_METHODS = new Set(["map", "forEach", "find", "filter", "some", "every", "flatMap"]);
 
 const walk = (dir, accept) => readdirSync(join(ROOT, dir), { recursive: true })
@@ -176,7 +181,7 @@ function analyze() {
       const spreads = variants.filter(ts.isSpreadElement);
       checked += 1;
       if (spreads.length === 0) {
-        if (variants.length !== EXPECTED) problems.push(`${where}: ${call.expression.getText()}(…) có ${variants.length} biến thể, cần ${EXPECTED}`);
+        if (!arityOk(variants.length)) problems.push(`${where}: ${call.expression.getText()}(…) có ${variants.length} biến thể, cần ${EXPECTED}`);
         return;
       }
       if (variants.length !== 1) {
@@ -189,7 +194,7 @@ function analyze() {
       try {
         const lengths = tupleLengths(spread);
         if (lengths.length === 0) problems.push(`${where}: không tìm thấy tuple biến thể`);
-        for (const length of lengths) if (length !== EXPECTED) problems.push(`${where}: tuple ${length} biến thể, cần ${EXPECTED}`);
+        for (const length of lengths) if (!arityOk(length)) problems.push(`${where}: tuple ${length} biến thể, cần ${EXPECTED}`);
       } catch (error) {
         if (!(error instanceof Unresolved)) throw error;
         problems.push(`${where}: không đếm được biến thể (${error.message})`);
