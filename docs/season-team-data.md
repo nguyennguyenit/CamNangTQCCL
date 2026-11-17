@@ -228,8 +228,10 @@ publish` bên dưới, rồi `team_route_handles --rebind` và `lookup_route_han
 tại lúc chạy `recommended_team_dedup`, còn nhãn mùa của `/doi-khac/` đọc `sourceSeasonIds` của các hàng.
 Vì vậy đổi mùa mặc định thì phải quyết định biên tập về mùa của Đội khác (giữ mùa cũ hay chuyển sang
 mùa mới cùng bộ đội gốc tương ứng); nếu chuyển, chạy lại `recommended_team_dedup` (dedup với Đội chuẩn
-của mùa mới) trước chuỗi publish và review lại phân loại ledger. Không chạy lại thì Đội khác giữ nguyên
-mùa cũ, kể cả nhãn.
+của mùa mới) trước chuỗi publish và review lại phân loại ledger. Hiện chưa giữ được Đội khác ở mùa cũ:
+builder bắt chạy lại dedup mỗi khi inventory Recommended đổi, và lần chạy đó gắn mọi hàng Đội khác sang
+mùa mặc định mới (kể cả đội YouTube của mùa cũ). Muốn giữ mùa cũ thì phải neo mùa trong pipeline trước
+(issue #134).
 
 Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
 duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)
