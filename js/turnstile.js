@@ -14,7 +14,7 @@ export function loadTurnstile() {
     s.onload = () => resolve(window.turnstile);
     s.onerror = () => {
       // Lỗi đã bản địa hoá (cờ `localized`): describeAnalyzeError hiện nguyên câu này.
-      const err = new Error(L("Không tải được Turnstile", "Turnstile 加载失败"));
+      const err = new Error(L("Không tải được Turnstile", "Turnstile 加载失败", "Turnstile を読み込めませんでした"));
       err.localized = true;
       reject(err);
     };
@@ -24,7 +24,7 @@ export function loadTurnstile() {
 }
 
 /** Câu báo khi widget Turnstile lỗi (mạng, domain không nằm trong danh sách site key, …). */
-export const TURNSTILE_ERROR_MESSAGE = L("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.", "人机验证未通过，请刷新页面后重试。");
+export const TURNSTILE_ERROR_MESSAGE = L("Xác thực chống bot không thành công. Tải lại trang rồi thử lại.", "人机验证未通过，请刷新页面后重试。", "ボット対策の認証に失敗しました。ページを再読み込みしてもう一度お試しください。");
 
 /**
  * Nạp Turnstile rồi vẽ widget vào `box`. Lỗi của widget đi qua `error-callback`: bỏ token (`onExpire`),

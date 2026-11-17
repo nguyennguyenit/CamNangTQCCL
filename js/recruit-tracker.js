@@ -40,16 +40,19 @@ import {
 
 const VALUE_CLASSES = ["Chưa phân loại", "Chủ lực", "Dùng đội", "Tình huống", "Nội chính", "Vật liệu"];
 const DEFAULT_VALUE_CLASS = VALUE_CLASSES[0];
-/** Phân loại lưu trong kho luôn là giá trị tiếng Việt ở trên; bản zh chỉ đổi chữ hiển thị. */
-const VALUE_CLASS_ZH = {
-  "Chưa phân loại": "未分类",
-  "Chủ lực": "主力",
-  "Dùng đội": "组队可用",
-  "Tình huống": "特定场景",
-  "Nội chính": "内政",
-  "Vật liệu": "材料",
+/** Phân loại lưu trong kho luôn là giá trị tiếng Việt ở trên; các bản khác chỉ đổi chữ hiển thị. */
+const VALUE_CLASS_LABELS = {
+  "Chưa phân loại": { vi: "Chưa phân loại", zh: "未分类", ja: "未分類" },
+  "Chủ lực": { vi: "Chủ lực", zh: "主力", ja: "主力" },
+  "Dùng đội": { vi: "Dùng đội", zh: "组队可用", ja: "編成向き" },
+  "Tình huống": { vi: "Tình huống", zh: "特定场景", ja: "特定の場面" },
+  "Nội chính": { vi: "Nội chính", zh: "内政", ja: "内政" },
+  "Vật liệu": { vi: "Vật liệu", zh: "材料", ja: "素材" },
 };
-const valueClassLabel = (value) => L(value, VALUE_CLASS_ZH[value] || value);
+const valueClassLabel = (value) => {
+  const labels = VALUE_CLASS_LABELS[value] ?? { vi: value, zh: value, ja: value };
+  return L(labels.vi, labels.zh, labels.ja);
+};
 /** Badge phân loại tướng 5★: "Chủ lực" nền son nhạt, các mức còn lại nền giấy đậm. */
 const VALUE_BADGE_CLASS = { "Chủ lực": "rt-value-accent" };
 
@@ -63,14 +66,14 @@ const SET_PITY_MAX = 999;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 // `<html lang>` cố định theo trang nên nhãn dịch lúc nạp module vẫn đúng ngôn ngữ.
-const RULE_WARNING = L("Kiểm tra lại dữ liệu/quy tắc game", "请核对数据或游戏规则");
-const FIVE_STAR_LABEL = L("Có 5★", "出 5★");
+const RULE_WARNING = L("Kiểm tra lại dữ liệu/quy tắc game", "请核对数据或游戏规则", "データやゲームのルールを確認してください");
+const FIVE_STAR_LABEL = L("Có 5★", "出 5★", "5★ 獲得");
 const SYNC_TEXT = {
-  guest: L("Chưa đồng bộ", "未同步"),
-  syncing: L("Đang đồng bộ…", "正在同步…"),
-  synced: L("Đã đồng bộ", "已同步"),
-  offline: L("Ngoại tuyến · sẽ đồng bộ lại", "离线 · 稍后同步"),
-  error: L("Lỗi đồng bộ", "同步出错"),
+  guest: L("Chưa đồng bộ", "未同步", "未同期"),
+  syncing: L("Đang đồng bộ…", "正在同步…", "同期中…"),
+  synced: L("Đã đồng bộ", "已同步", "同期済み"),
+  offline: L("Ngoại tuyến · sẽ đồng bộ lại", "离线 · 稍后同步", "オフライン · 後で再同期"),
+  error: L("Lỗi đồng bộ", "同步出错", "同期エラー"),
 };
 
 const plusIcon = (size = 16) => icon([
@@ -154,11 +157,12 @@ function heroName(hero) {
   return L(
     hero.name || hero.viet || hero.hanViet || hero.chinese || "",
     hero.chinese || hero.name || hero.viet || hero.hanViet || "",
+    hero.chinese || hero.name || hero.viet || hero.hanViet || "",
   );
 }
 
 function uniqueSorted(values) {
-  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, L("vi", "zh-CN")));
+  return [...new Set(values.filter(Boolean))].sort((a, b) => a.localeCompare(b, L("vi", "zh-CN", "ja")));
 }
 
 /** Số cho thanh tiến độ: giữ giá trị thật của store, chỉ gộp phần trăm hiển thị trong khoảng 0–100. */
@@ -188,9 +192,9 @@ export function expiryView(expiresAt, today) {
   const now = dayNumber(today);
   if (end === null || now === null) return { text: "", expired: false, tone: "" };
   const days = end - now;
-  if (days < 0) return { text: L("hết hạn", "已过期"), expired: true, tone: "avoid" };
-  if (days === 0) return { text: L("hết hạn hôm nay", "今日截止"), expired: false, tone: "warn" };
-  return { text: L(`còn ${days} ngày`, `剩 ${days} 天`), expired: false, tone: "" };
+  if (days < 0) return { text: L("hết hạn", "已过期", "期限切れ"), expired: true, tone: "avoid" };
+  if (days === 0) return { text: L("hết hạn hôm nay", "今日截止", "本日締切"), expired: false, tone: "warn" };
+  return { text: L(`còn ${days} ngày`, `剩 ${days} 天`, `残り ${days} 日`), expired: false, tone: "" };
 }
 
 /** Ngày của dòng nhật ký: "Hôm nay", "Hôm qua", "27/09" (cùng năm với hôm nay) hoặc "27/09/2025". */
@@ -198,8 +202,8 @@ export function logDateLabel(date, today) {
   const day = dayNumber(date);
   const now = dayNumber(today);
   if (day === null || now === null) return String(date || "");
-  if (day === now) return L("Hôm nay", "今天");
-  if (day === now - 1) return L("Hôm qua", "昨天");
+  if (day === now) return L("Hôm nay", "今天", "今日");
+  if (day === now - 1) return L("Hôm qua", "昨天", "昨日");
   const [year, month, dayOfMonth] = date.slice(0, 10).split("-");
   return year === today.slice(0, 4) ? `${dayOfMonth}/${month}` : `${dayOfMonth}/${month}/${year}`;
 }
@@ -210,17 +214,17 @@ function fullDate(date) {
   return day ? `${day}/${month}/${year}` : "";
 }
 
-/** Số thập phân theo ngôn ngữ trang: "21,4" (vi) / "21.4" (zh). */
-const decimal = (value) => L(String(value).replace(".", ","), String(value));
+/** Số thập phân theo ngôn ngữ trang: "21,4" (vi) / "21.4" (zh, ja). */
+const decimal = (value) => L(String(value).replace(".", ","), String(value), String(value));
 
 /** Chữ một dòng nhật ký: "+4 không ra", "★ Tào Tháo · lượt 27", "Đồng bộ 17 lượt". */
 function logText(row) {
   if (row.result === "fiveStar") {
     const count = row.pullCount ?? row.pulls;
-    return L(`★ ${row.heroName} · lượt ${count}`, `★ ${row.heroName} · 第 ${count} 抽`);
+    return L(`★ ${row.heroName} · lượt ${count}`, `★ ${row.heroName} · 第 ${count} 抽`, `★ ${row.heroName} · ${count} 回目`);
   }
-  if (row.result === "set") return L(`Đồng bộ ${row.pulls} lượt`, `同步为 ${row.pulls} 抽`);
-  return L(`+${row.pulls} không ra`, `+${row.pulls} 未出`);
+  if (row.result === "set") return L(`Đồng bộ ${row.pulls} lượt`, `同步为 ${row.pulls} 抽`, `${row.pulls} 回に同期`);
+  return L(`+${row.pulls} không ra`, `+${row.pulls} 未出`, `+${row.pulls} 回 未獲得`);
 }
 
 /**
@@ -243,7 +247,7 @@ function dailySlotTexts(log) {
       done += row.pulls;
       if (row.result !== "miss" || done > DAILY_PULL_LIMIT) continue;
       const range = start === done ? String(done) : `${start}–${done}`;
-      texts.set(row.id, L(`Lượt ${range}/${DAILY_PULL_LIMIT}`, `第 ${range}/${DAILY_PULL_LIMIT} 抽`));
+      texts.set(row.id, L(`Lượt ${range}/${DAILY_PULL_LIMIT}`, `第 ${range}/${DAILY_PULL_LIMIT} 抽`, `${range}/${DAILY_PULL_LIMIT} 回目`));
     }
   }
   return texts;
@@ -252,9 +256,9 @@ function dailySlotTexts(log) {
 /** Nút nhanh của gói ngày: số lượt thật sẽ ghi đã kẹp theo lượt rẻ còn lại hôm nay; dòng phụ nói đúng số đó. */
 function quickButton(key, label, wanted, remainingToday) {
   const pulls = Math.max(Math.min(wanted, remainingToday), 0);
-  let sub = L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`);
-  if (pulls && key === "free") sub = L(`Ghi +${pulls} lượt không ra`, `记录 +${pulls} 次未出`);
-  else if (pulls) sub = L(`Ghi ${pulls} lượt rẻ còn lại`, `记录剩余 ${pulls} 次低价招募`);
+  let sub = L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済み`);
+  if (pulls && key === "free") sub = L(`Ghi +${pulls} lượt không ra`, `记录 +${pulls} 次未出`, `+${pulls} 回 未獲得を記録`);
+  else if (pulls) sub = L(`Ghi ${pulls} lượt rẻ còn lại`, `记录剩余 ${pulls} 次低价招募`, `残り ${pulls} 回の割引招聘を記録`);
   return {
     key,
     label,
@@ -262,8 +266,8 @@ function quickButton(key, label, wanted, remainingToday) {
     disabled: pulls < 1,
     sub,
     ariaLabel: pulls
-      ? L(`${label} (ghi ${pulls} lượt không ra)`, `${label}（记录 ${pulls} 次未出）`)
-      : L(`${label} (hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt)`, `${label}（今日 ${DAILY_PULL_LIMIT} 次已记满）`),
+      ? L(`${label} (ghi ${pulls} lượt không ra)`, `${label}（记录 ${pulls} 次未出）`, `${label}（+${pulls} 回 未獲得を記録）`)
+      : L(`${label} (hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt)`, `${label}（今日 ${DAILY_PULL_LIMIT} 次已记满）`, `${label}（本日 ${DAILY_PULL_LIMIT} 回分を記録済み）`),
   };
 }
 
@@ -271,10 +275,10 @@ const pityText = (pity) => `${pity.value} / ${pity.limit}`;
 
 /** Dòng phụ của ô "TB lượt / 5★": so trung bình với mốc bảo hiểm gói ngày. */
 function averageSub(average, limit) {
-  if (average === null) return L("chưa có 5★", "暂无 5★");
-  if (average < limit) return L(`thấp hơn mốc ${limit}`, `低于保底 ${limit}`);
-  if (average > limit) return L(`cao hơn mốc ${limit}`, `高于保底 ${limit}`);
-  return L(`bằng mốc ${limit}`, `等于保底 ${limit}`);
+  if (average === null) return L("chưa có 5★", "暂无 5★", "5★ なし");
+  if (average < limit) return L(`thấp hơn mốc ${limit}`, `低于保底 ${limit}`, `天井 ${limit} 未満`);
+  if (average > limit) return L(`cao hơn mốc ${limit}`, `高于保底 ${limit}`, `天井 ${limit} 超過`);
+  return L(`bằng mốc ${limit}`, `等于保底 ${limit}`, `天井 ${limit} と同じ`);
 }
 
 export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today = todayLocalDate() } = {}) {
@@ -309,27 +313,27 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
     heroOptions: uniqueSorted(heroes.map(heroName)),
     isEmpty: Boolean(summary.isEmpty),
     daily: {
-      title: L(`${bannerDisplayName(daily.banner)} · Hôm nay`, `${bannerDisplayName(daily.banner)} · 今日`),
+      title: L(`${bannerDisplayName(daily.banner)} · Hôm nay`, `${bannerDisplayName(daily.banner)} · 今日`, `${bannerDisplayName(daily.banner)} · 本日`),
       name: bannerDisplayName(daily.banner),
       pity: dailyPity,
       pityText: pityText(dailyPity),
-      remainingText: L(`Còn ${dailyPity.remaining} lượt`, `还差 ${dailyPity.remaining} 抽`),
+      remainingText: L(`Còn ${dailyPity.remaining} lượt`, `还差 ${dailyPity.remaining} 抽`, `あと ${dailyPity.remaining} 回`),
       cheapText: dailyFull
-        ? L(`hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`)
-        : L(`hôm nay còn ${remainingToday} lượt rẻ`, `今日还剩 ${remainingToday} 次低价招募`),
+        ? L(`hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済み`)
+        : L(`hôm nay còn ${remainingToday} lượt rẻ`, `今日还剩 ${remainingToday} 次低价招募`, `本日あと ${remainingToday} 回の割引招聘`),
       todayDone: daily.todayDone,
       remainingToday,
-      todayText: L(`Hôm nay ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `今日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`),
+      todayText: L(`Hôm nay ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `今日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `本日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`),
       warning: dailyPity.isOverLimit ? RULE_WARNING : "",
       quick: [
-        quickButton("free", L("2 miễn phí", "2 次免费"), 2, remainingToday),
-        quickButton("fill", L(`Đủ ${DAILY_PULL_LIMIT}`, `补满 ${DAILY_PULL_LIMIT}`), DAILY_PULL_LIMIT, remainingToday),
+        quickButton("free", L("2 miễn phí", "2 次免费", "無料 2 回"), 2, remainingToday),
+        quickButton("fill", L(`Đủ ${DAILY_PULL_LIMIT}`, `补满 ${DAILY_PULL_LIMIT}`, `${DAILY_PULL_LIMIT} 回まで埋める`), DAILY_PULL_LIMIT, remainingToday),
       ],
       fiveStarDisabled: dailyFull,
       fiveStarSub: dailyFull
-        ? L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`)
-        : L("Ghi tướng vừa ra", "记录刚出的武将"),
-      hint: dailyFull ? L(`Hôm nay đã ghi đủ ${DAILY_PULL_LIMIT} lượt.`, `今日 ${DAILY_PULL_LIMIT} 次已记满。`) : "",
+        ? L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済み`)
+        : L("Ghi tướng vừa ra", "记录刚出的武将", "獲得した武将を記録"),
+      hint: dailyFull ? L(`Hôm nay đã ghi đủ ${DAILY_PULL_LIMIT} lượt.`, `今日 ${DAILY_PULL_LIMIT} 次已记满。`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済みです。`) : "",
     },
     limitedBanners,
     activeBanners: limitedBanners.filter((item) => !item.archived),
@@ -357,8 +361,8 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
       streakDays: stats.streakDays,
       averageText: average === null ? "—" : decimal(average),
       averageSub: averageSub(average, dailyPity.limit),
-      fiveStarsSub: L(`${mainForces} Chủ lực`, `${mainForces} 个主力`),
-      streakSub: L("ngày liên tiếp", "天连续记录"),
+      fiveStarsSub: L(`${mainForces} Chủ lực`, `${mainForces} 个主力`, `主力 ${mainForces} 人`),
+      streakSub: L("ngày liên tiếp", "天连续记录", "日連続で記録"),
     },
   };
 }
@@ -431,9 +435,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       if (!undo) return;
       undo();
       hideToast();
-      showToast(L("Đã hoàn tác.", "已撤销。"));
+      showToast(L("Đã hoàn tác.", "已撤销。", "元に戻しました。"));
     },
-  }, [undoIcon(), L("Hoàn tác", "撤销")]);
+  }, [undoIcon(), L("Hoàn tác", "撤销", "元に戻す")]);
   const toastCard = el("div", { class: "rt-toast-card", hidden: "" }, [
     el("span", { class: "rt-toast-mark", "aria-hidden": "true" }, [checkIcon()]),
     toastText,
@@ -489,10 +493,10 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const pulledText = (events) => {
     const pulls = events.filter((event) => event.result !== "set").reduce((sum, event) => sum + event.pulls, 0);
     const five = events.find((event) => event.result === "fiveStar");
-    if (five) return L(`Đã ghi 5★ ${five.heroName} · +${pulls} lượt`, `已记录 5★ ${five.heroName} · +${pulls} 抽`);
+    if (five) return L(`Đã ghi 5★ ${five.heroName} · +${pulls} lượt`, `已记录 5★ ${five.heroName} · +${pulls} 抽`, `5★ ${five.heroName} を記録 · +${pulls} 回`);
     const set = events.find((event) => event.result === "set");
-    if (set) return L(`Đã đồng bộ ${set.pulls} lượt`, `已同步为 ${set.pulls} 抽`);
-    return L(`Đã ghi +${pulls} lượt`, `已记录 +${pulls} 抽`);
+    if (set) return L(`Đã đồng bộ ${set.pulls} lượt`, `已同步为 ${set.pulls} 抽`, `${set.pulls} 回に同期しました`);
+    return L(`Đã ghi +${pulls} lượt`, `已记录 +${pulls} 抽`, `+${pulls} 回を記録しました`);
   };
 
   /* ---------- Hộp thoại (một `<dialog>` dùng lại) ---------- */
@@ -549,9 +553,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       input.dispatchEvent(new Event("input", { bubbles: true }));
     };
     return el("div", { class: "rt-stepper" }, [
-      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Bớt 1 lượt", "减 1 抽"), onclick: () => nudge(-1) }, [minusIcon()]),
+      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Bớt 1 lượt", "减 1 抽", "1 回減らす"), onclick: () => nudge(-1) }, [minusIcon()]),
       input,
-      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Thêm 1 lượt", "加 1 抽"), onclick: () => nudge(1) }, [plusIcon()]),
+      el("button", { class: "rt-icon-btn rt-stepper-btn", type: "button", "aria-label": L("Thêm 1 lượt", "加 1 抽", "1 回増やす"), onclick: () => nudge(1) }, [plusIcon()]),
     ]);
   }
 
@@ -626,14 +630,14 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
           class: "rt-icon-btn rt-dialog-close",
           type: "button",
           "data-rt-dialog-close": "",
-          "aria-label": L("Đóng", "关闭"),
+          "aria-label": L("Đóng", "关闭", "閉じる"),
         }, [closeIcon()]),
       ]),
       lead ? el("p", { class: "rt-dialog-lead" }, lead) : null,
       fields.length ? el("div", { class: "rt-dialog-fields" }, fields.map(field)) : null,
       previewBox,
       el("div", { class: "rt-dialog-actions" }, [
-        el("button", { class: "ana-btn", type: "button", "data-rt-dialog-close": "" }, L("Hủy", "取消")),
+        el("button", { class: "ana-btn", type: "button", "data-rt-dialog-close": "" }, L("Hủy", "取消", "キャンセル")),
         el("button", { class: `ana-btn primary${tone ? ` rt-${tone}` : ""}`, type: "submit" }, [submitIcon?.(), submitLabel]),
       ]),
     ]);
@@ -666,15 +670,15 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const valueClassOptions = VALUE_CLASSES.map((value) => ({ value, label: valueClassLabel(value) }));
   const heroField = (value = "") => ({
     name: "heroName",
-    label: L("Tướng", "武将"),
+    label: L("Tướng", "武将", "武将"),
     value,
     list: "rt-hero-options",
     required: true,
-    help: L("Gõ để chọn từ danh sách tướng 5★.", "输入以从 5★ 武将列表中选择。"),
+    help: L("Gõ để chọn từ danh sách tướng 5★.", "输入以从 5★ 武将列表中选择。", "入力して 5★ 武将の一覧から選択します。"),
   });
-  const classField = (value = DEFAULT_VALUE_CLASS) => ({ name: "heroValueClass", label: L("Phân loại", "分类"), type: "select", value, options: valueClassOptions });
-  const noteField = (value = "") => ({ name: "note", label: L("Ghi chú", "备注"), value, maxlength: "200", placeholder: L("Không bắt buộc", "选填") });
-  const dateField = (value = currentDate()) => ({ name: "date", label: L("Ngày", "日期"), type: "date", value, required: true });
+  const classField = (value = DEFAULT_VALUE_CLASS) => ({ name: "heroValueClass", label: L("Phân loại", "分类", "分類"), type: "select", value, options: valueClassOptions });
+  const noteField = (value = "") => ({ name: "note", label: L("Ghi chú", "备注", "メモ"), value, maxlength: "200", placeholder: L("Không bắt buộc", "选填", "任意") });
+  const dateField = (value = currentDate()) => ({ name: "date", label: L("Ngày", "日期", "日付"), type: "date", value, required: true });
   const dialogKicker = (bannerName) => `${bannerName} · ${view.accountName}`;
 
   /** Khung xem trước của hộp thoại 5★: lượt ra 5★ tính trên mốc bảo hiểm và tiến độ sau khi lưu. */
@@ -683,6 +687,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     el("span", {}, L(
       ["Sẽ ghi 5★ ở ", el("strong", {}, `lượt ${count}`), " của mốc bảo hiểm", after ? `, rồi +${after} lượt không ra` : "", " · tiến độ về ", el("strong", {}, `${after} / ${limit}`), "."],
       ["将在保底第 ", el("strong", {}, String(count)), " 抽记录 5★", after ? `，之后 +${after} 次未出` : "", " · 进度回到 ", el("strong", {}, `${after} / ${limit}`), "。"],
+      ["天井の ", el("strong", {}, `${count} 回目`), " に 5★ を記録します", after ? `。その後 +${after} 回 未獲得` : "", " · 進捗は ", el("strong", {}, `${after} / ${limit}`), " に戻ります。"],
     )),
   ];
 
@@ -733,43 +738,43 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const accountSelect = el("select", {
     class: "rt-select",
     id: "rt-account-select",
-    "aria-label": L("Chọn tài khoản", "选择账号"),
+    "aria-label": L("Chọn tài khoản", "选择账号", "アカウントを選択"),
     onchange: (event) => commit(setActiveAccount(state, event.target.value)),
   });
-  const accountMenu = createMenu({ label: L("Tùy chọn tài khoản", "账号选项"), panelClass: "rt-account-actions" });
+  const accountMenu = createMenu({ label: L("Tùy chọn tài khoản", "账号选项", "アカウントのオプション"), panelClass: "rt-account-actions" });
   accountMenu.root.classList.add("rt-account-menu");
   accountMenu.button.classList.add("rt-account-toggle");
   accountMenu.panel.id = "rt-account-actions";
   accountMenu.button.setAttribute("aria-controls", "rt-account-actions");
   accountMenu.panel.append(
-    menuItem(L("Đổi tên", "重命名"), () => renameActiveAccount()),
-    menuItem(L("Xóa tài khoản", "删除账号"), () => deleteActiveAccount(), "rt-menu-danger"),
+    menuItem(L("Đổi tên", "重命名", "名前を変更"), () => renameActiveAccount()),
+    menuItem(L("Xóa tài khoản", "删除账号", "アカウントを削除"), () => deleteActiveAccount(), "rt-menu-danger"),
   );
   const addAccountButton = el("button", {
     class: "rt-btn rt-add-account",
     type: "button",
-    "aria-label": L("Thêm tài khoản", "添加账号"),
+    "aria-label": L("Thêm tài khoản", "添加账号", "アカウントを追加"),
     onclick: (event) => addAccount(event.currentTarget),
-  }, [plusIcon(), L("Tài khoản", "账号")]);
+  }, [plusIcon(), L("Tài khoản", "账号", "アカウント")]);
   const exportButton = el("button", {
     class: "rt-btn rt-ghost",
     type: "button",
     onclick: () => exportJson(),
-  }, [downloadIcon(), L("Xuất JSON", "导出 JSON")]);
+  }, [downloadIcon(), L("Xuất JSON", "导出 JSON", "JSON を書き出す")]);
   const importInput = el("input", {
     type: "file",
     accept: "application/json,.json",
     class: "rt-file",
     onchange: importJson,
   });
-  const importLabel = el("label", { class: "rt-btn rt-ghost rt-import" }, [uploadIcon(), L("Nhập JSON", "导入 JSON"), importInput]);
+  const importLabel = el("label", { class: "rt-btn rt-ghost rt-import" }, [uploadIcon(), L("Nhập JSON", "导入 JSON", "JSON を読み込む"), importInput]);
 
   const syncText = el("span", { class: "rt-sync-text" });
   const syncSignIn = el("button", {
     class: "tool-text-action rt-sync-signin",
     type: "button",
     onclick: () => startSignIn(syncSignIn),
-  }, L("Đăng nhập", "登录"));
+  }, L("Đăng nhập", "登录", "ログイン"));
   const syncChip = el("div", { class: "rt-sync", "data-status": "guest" }, [
     el("span", { class: "rt-sync-pill" }, [
       el("span", { class: "rt-sync-icon", "aria-hidden": "true" }, [cloudIcon()]),
@@ -780,7 +785,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   const accountBar = el("div", { class: "rt-account-bar" }, [
     el("div", { class: "rt-account-field" }, [
-      el("label", { class: "rt-field-label", for: "rt-account-select" }, L("Tài khoản", "账号")),
+      el("label", { class: "rt-field-label", for: "rt-account-select" }, L("Tài khoản", "账号", "アカウント")),
       accountSelect,
     ]),
     el("div", { class: "rt-account-tools" }, [
@@ -794,6 +799,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     el("span", {}, L(
       "Dữ liệu chỉ lưu trong trình duyệt này và có thể mất khi xóa dữ liệu trang. Dùng Xuất JSON để sao lưu, Nhập JSON để gộp lại, hoặc đăng nhập để đồng bộ giữa các máy.",
       "数据仅保存在本浏览器中，清除网站数据后可能丢失。请用“导出 JSON”备份，用“导入 JSON”合并恢复，或登录以在多台设备间同步。",
+      "データはこのブラウザにのみ保存され、サイトデータを消去すると失われる場合があります。「JSON を書き出す」でバックアップし、「JSON を読み込む」で統合して復元するか、ログインして複数の端末間で同期してください。",
     )),
   ]);
 
@@ -804,11 +810,11 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     class: "rt-btn rt-ghost rt-adjust",
     type: "button",
     onclick: (event) => openAdjust({ bannerId: DAILY_BANNER_ID, name: view.daily.name, pity: view.daily.pity, opener: event.currentTarget }),
-  }, [editIcon(), L("Chỉnh số", "调整")]);
+  }, [editIcon(), L("Chỉnh số", "调整", "数値を調整")]);
   const pityValue = el("strong", { class: "rt-pity-value" });
   const pityUnit = el("span", { class: "rt-pity-unit" });
   const pityFill = el("span", { class: "rt-pity-fill" });
-  const pityMeter = meterNode("rt-pity-meter", pityFill, L("Tiến độ bảo hiểm 5★", "5★ 保底进度"));
+  const pityMeter = meterNode("rt-pity-meter", pityFill, L("Tiến độ bảo hiểm 5★", "5★ 保底进度", "5★ 天井の進捗"));
   const todayCount = el("span", { class: "rt-today-count" });
   const pips = Array.from({ length: DAILY_PULL_LIMIT }, () => el("span", { class: "rt-pip" }));
   const remainingLine = el("span", { class: "rt-pity-remaining" });
@@ -849,7 +855,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       el("div", { class: "rt-pity-figures" }, [
         pityValue,
         pityUnit,
-        el("span", { class: "rt-pity-caption" }, L("tới mốc bảo hiểm", "距保底")),
+        el("span", { class: "rt-pity-caption" }, L("tới mốc bảo hiểm", "距保底", "天井まで")),
       ]),
       pityMeter,
       pityMeta,
@@ -879,16 +885,17 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       startFrom(numberValue(onboardInput.value, 0));
     },
   }, [
-    el("h3", { class: "rt-onboard-title" }, L("Bắt đầu theo dõi", "开始记录")),
-    el("label", { class: "rt-onboard-label", for: "rt-onboard-value" }, L("Trong game bạn đang ở lượt mấy?", "游戏里你现在是第几抽？")),
+    el("h3", { class: "rt-onboard-title" }, L("Bắt đầu theo dõi", "开始记录", "記録を始める")),
+    el("label", { class: "rt-onboard-label", for: "rt-onboard-value" }, L("Trong game bạn đang ở lượt mấy?", "游戏里你现在是第几抽？", "ゲーム内で現在何回目ですか？")),
     el("p", { class: "rt-sub" }, L(
       "Xem số lượt đã quay từ lần ra 5★ gần nhất trong màn chiêu mộ Danh tướng PK (0–29).",
       "在 PK 名将招募界面查看距上次 5★ 已抽的次数（0–29）。",
+      "PK 名将招聘の画面で、前回の 5★ からの回数（0–29）を確認してください。",
     )),
     onboardInput,
     el("div", { class: "rt-onboard-actions" }, [
-      el("button", { class: "rt-btn rt-primary", type: "submit" }, L("Bắt đầu", "开始")),
-      el("button", { class: "rt-btn", type: "button", onclick: () => startFrom(0) }, L("Bắt đầu từ 0", "从 0 开始")),
+      el("button", { class: "rt-btn rt-primary", type: "submit" }, L("Bắt đầu", "开始", "開始")),
+      el("button", { class: "rt-btn", type: "button", onclick: () => startFrom(0) }, L("Bắt đầu từ 0", "从 0 开始", "0 から開始")),
     ]),
   ]);
 
@@ -896,7 +903,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     el("header", { class: "rt-section-head" }, [
       el("div", { class: "rt-section-heading" }, [
         todayTitle,
-        el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募")),
+        el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募", "毎日 無料・半額の招聘 4 回")),
       ]),
       adjustDaily,
     ]),
@@ -910,12 +917,12 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     class: "ana-btn primary cm-signin-btn",
     type: "button",
     onclick: () => startSignIn(inviteButton),
-  }, [googleIcon(), L("Đăng nhập bằng Google", "使用 Google 登录")]);
+  }, [googleIcon(), L("Đăng nhập bằng Google", "使用 Google 登录", "Google でログイン")]);
   const invite = el("div", { class: "rt-invite", hidden: "" }, [
     el("p", { class: "rt-invite-text" }, [
-      el("strong", {}, L("Đã ghi tướng 5★!", "已记录 5★ 武将！")),
+      el("strong", {}, L("Đã ghi tướng 5★!", "已记录 5★ 武将！", "5★ 武将を記録しました！")),
       " ",
-      L("Đăng nhập để lưu nhật ký lên cloud và xem trên mọi máy.", "登录后可把记录保存到云端，在任何设备查看。"),
+      L("Đăng nhập để lưu nhật ký lên cloud và xem trên mọi máy.", "登录后可把记录保存到云端，在任何设备查看。", "ログインすると記録をクラウドに保存し、どの端末でも確認できます。"),
     ]),
     el("div", { class: "rt-invite-actions" }, [
       inviteButton,
@@ -926,14 +933,14 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
           writeFlag(storage, INVITE_KEY, "dismissed");
           render();
         },
-      }, L("Để sau", "以后再说")),
+      }, L("Để sau", "以后再说", "あとで")),
     ]),
   ]);
 
   /* ---------- Gói hạn giờ ---------- */
 
   const bannerList = el("div", { class: "rt-limited-list" });
-  const bannerEmpty = el("p", { class: "rt-empty" }, L("Chưa có gói hạn giờ.", "暂无限时卡包。"));
+  const bannerEmpty = el("p", { class: "rt-empty" }, L("Chưa có gói hạn giờ.", "暂无限时卡包。", "期間限定パックはまだありません。"));
   const archivedList = el("div", { class: "rt-limited-list" });
   const archivedCount = el("span", {});
   const archived = el("details", { class: "rt-archived", hidden: "" }, [
@@ -943,12 +950,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const bannerNodes = new Map();
   const limitedSection = el("section", { class: "rt-section rt-limited", "aria-labelledby": "rt-limited-title" }, [
     el("header", { class: "rt-section-head" }, [
-      el("h2", { class: "rt-section-title", id: "rt-limited-title" }, L("Gói hạn giờ / Đột xuất", "限时 / 临时卡包")),
-      el("button", { class: "rt-btn", type: "button", onclick: (event) => addLimitedBanner(event.currentTarget) }, [plusIcon(), L("Thêm gói", "添加卡包")]),
+      el("h2", { class: "rt-section-title", id: "rt-limited-title" }, L("Gói hạn giờ / Đột xuất", "限时 / 临时卡包", "期間限定 / 臨時パック")),
+      el("button", { class: "rt-btn", type: "button", onclick: (event) => addLimitedBanner(event.currentTarget) }, [plusIcon(), L("Thêm gói", "添加卡包", "パックを追加")]),
     ]),
     el("p", { class: "rt-sub rt-limited-lead" }, L(
       "Tạo riêng cho banner có thời hạn hoặc gói theo giai đoạn. Bảo hiểm riêng của gói: 30 lượt.",
       "为限时卡池或阶段性卡包单独创建。每个卡包独立保底：30 抽。",
+      "期間限定ガチャや時期限定パック用に個別に作成します。各パックは独立した天井（30 回）です。",
     )),
     bannerList,
     bannerEmpty,
@@ -963,17 +971,17 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     return el("div", { class: "rt-stat" }, [el("dt", { class: "rt-kicker" }, label), statNodes[key].value, statNodes[key].sub]);
   };
   const statsSection = el("section", { class: "rt-section rt-stats", "aria-labelledby": "rt-stats-title" }, [
-    el("h2", { class: "rt-section-title", id: "rt-stats-title" }, L("Thống kê", "统计")),
+    el("h2", { class: "rt-section-title", id: "rt-stats-title" }, L("Thống kê", "统计", "統計")),
     el("dl", { class: "rt-stats-list" }, [
-      statCard("average", L("TB lượt / 5★", "平均抽数 / 5★")),
-      statCard("fiveStars", L("Tổng 5★", "5★ 总数")),
-      statCard("streak", L("Chuỗi ngày", "连续天数")),
+      statCard("average", L("TB lượt / 5★", "平均抽数 / 5★", "平均回数 / 5★")),
+      statCard("fiveStars", L("Tổng 5★", "5★ 总数", "5★ 合計")),
+      statCard("streak", L("Chuỗi ngày", "连续天数", "連続日数")),
     ]),
   ]);
 
-  const logTitle = el("h2", { class: "rt-section-title", id: "rt-log-title", tabindex: "-1" }, L("Nhật ký", "记录"));
+  const logTitle = el("h2", { class: "rt-section-title", id: "rt-log-title", tabindex: "-1" }, L("Nhật ký", "记录", "履歴"));
   const logList = el("ol", { class: "rt-log-list" });
-  const logEmpty = el("p", { class: "rt-empty" }, L("Chưa có lượt nào.", "暂无记录。"));
+  const logEmpty = el("p", { class: "rt-empty" }, L("Chưa có lượt nào.", "暂无记录。", "履歴はまだありません。"));
   const logMore = el("button", {
     class: "rt-btn rt-log-more",
     type: "button",
@@ -982,11 +990,11 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       logLimit += LOG_PAGE;
       render();
     },
-  }, L("Xem thêm", "查看更多"));
+  }, L("Xem thêm", "查看更多", "もっと見る"));
   const logSection = el("section", { class: "rt-section rt-log", "aria-labelledby": "rt-log-title" }, [
     el("header", { class: "rt-section-heading" }, [
       logTitle,
-      el("p", { class: "rt-sub" }, L("Mới nhất trước, lọc theo tài khoản đang chọn.", "最新在前，仅显示当前账号。")),
+      el("p", { class: "rt-sub" }, L("Mới nhất trước, lọc theo tài khoản đang chọn.", "最新在前，仅显示当前账号。", "新しい順で、選択中のアカウントのみ表示します。")),
     ]),
     logList,
     logEmpty,
@@ -995,9 +1003,9 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   const head = el("header", { class: "tool-head" }, [
     el("div", { class: "reference-head-text" }, [
-      el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta")),
-      el("h1", { class: "reference-title", tabindex: "-1" }, L("Theo dõi chiêu mộ", "招募记录")),
-      el("p", { class: "reference-lead" }, L("Đếm lượt tới mốc bảo hiểm 5★ cho từng tài khoản và ghi lại tướng 5★ đã ra.", "按账号统计距离 5★ 保底的抽数，并记录已抽到的 5★ 武将。")),
+      el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta", "ツール · Beta")),
+      el("h1", { class: "reference-title", tabindex: "-1" }, L("Theo dõi chiêu mộ", "招募记录", "招聘記録")),
+      el("p", { class: "reference-lead" }, L("Đếm lượt tới mốc bảo hiểm 5★ cho từng tài khoản và ghi lại tướng 5★ đã ra.", "按账号统计距离 5★ 保底的抽数，并记录已抽到的 5★ 武将。", "アカウントごとに 5★ 天井までの回数を数え、獲得した 5★ 武将を記録します。")),
     ]),
   ]);
 
@@ -1059,7 +1067,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     meter.setAttribute("aria-valuemin", "0");
     meter.setAttribute("aria-valuemax", String(pity.limit));
     meter.setAttribute("aria-valuenow", String(Math.min(pity.value, pity.limit)));
-    meter.setAttribute("aria-valuetext", L(`${pity.value} / ${pity.limit} lượt`, `${pity.value} / ${pity.limit} 抽`));
+    meter.setAttribute("aria-valuetext", L(`${pity.value} / ${pity.limit} lượt`, `${pity.value} / ${pity.limit} 抽`, `${pity.value} / ${pity.limit} 回`));
     fill.style.width = `${pity.percent}%`;
   }
 
@@ -1071,7 +1079,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     adjustDaily.hidden = view.isEmpty;
     if (view.isEmpty) return;
     pityValue.textContent = String(daily.pity.value);
-    pityUnit.textContent = L(`/ ${daily.pity.limit} lượt`, `/ ${daily.pity.limit} 抽`);
+    pityUnit.textContent = L(`/ ${daily.pity.limit} lượt`, `/ ${daily.pity.limit} 抽`, `/ ${daily.pity.limit} 回`);
     paintMeter(pityMeter, pityFill, daily.pity);
     todayCount.textContent = daily.todayText;
     pips.forEach((pip, index) => pip.classList.toggle("is-on", index < daily.todayDone));
@@ -1113,21 +1121,21 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       const next = !item.archived;
       commit(setBannerArchived(state, id, next));
       showToast(
-        next ? L(`Đã lưu trữ ${item.name}.`, `已归档 ${item.name}。`) : L(`Đã bỏ lưu trữ ${item.name}.`, `已取消归档 ${item.name}。`),
+        next ? L(`Đã lưu trữ ${item.name}.`, `已归档 ${item.name}。`, `${item.name} をアーカイブしました。`) : L(`Đã bỏ lưu trữ ${item.name}.`, `已取消归档 ${item.name}。`, `${item.name} のアーカイブを解除しました。`),
         () => commit(setBannerArchived(state, id, !next)),
       );
     });
     menu.panel.append(
-      menuItem(L("Đổi tên / ngày hết hạn", "重命名 / 截止日期"), () => editBanner(id, menu.button)),
-      menuItem(L("Chỉnh số", "调整"), () => {
+      menuItem(L("Đổi tên / ngày hết hạn", "重命名 / 截止日期", "名前変更 / 期限"), () => editBanner(id, menu.button)),
+      menuItem(L("Chỉnh số", "调整", "数値を調整"), () => {
         const item = bannerView(id);
         if (item) openAdjust({ bannerId: id, name: item.name, pity: item.pity, opener: menu.button });
       }),
       archiveItem,
-      menuItem(L("Xóa gói", "删除卡包"), () => removeBanner(id, menu.button), "rt-menu-danger"),
+      menuItem(L("Xóa gói", "删除卡包", "パックを削除"), () => removeBanner(id, menu.button), "rt-menu-danger"),
     );
     const actions = el("div", { class: "rt-banner-actions" }, [
-      el("button", { class: "rt-btn rt-banner-add", type: "button", onclick: (event) => openBannerMiss(id, event.currentTarget) }, L("+ Lượt", "+ 抽数")),
+      el("button", { class: "rt-btn rt-banner-add", type: "button", onclick: (event) => openBannerMiss(id, event.currentTarget) }, L("+ Lượt", "+ 抽数", "+ 回数")),
       el("button", {
         class: "rt-btn rt-accent rt-five-btn",
         type: "button",
@@ -1163,12 +1171,12 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       entry.expiry.dataset.tone = item.expiry.tone;
       entry.expiryRow.hidden = !item.expiry.text;
       entry.count.textContent = item.pityText;
-      entry.meter.setAttribute("aria-label", L("Tiến độ bảo hiểm 5★ · ", "5★ 保底进度 · ") + item.name);
+      entry.meter.setAttribute("aria-label", L("Tiến độ bảo hiểm 5★ · ", "5★ 保底进度 · ", "5★ 天井の進捗 · ") + item.name);
       paintMeter(entry.meter, entry.fill, item.pity);
       entry.warning.textContent = item.warning;
       entry.warning.hidden = !item.warning;
-      entry.menu.button.setAttribute("aria-label", L(`Tùy chọn gói ${item.name}`, `卡包选项 ${item.name}`));
-      entry.archiveItem.textContent = item.archived ? L("Bỏ lưu trữ", "取消归档") : L("Lưu trữ", "归档");
+      entry.menu.button.setAttribute("aria-label", L(`Tùy chọn gói ${item.name}`, `卡包选项 ${item.name}`, `パックのオプション ${item.name}`));
+      entry.archiveItem.textContent = item.archived ? L("Bỏ lưu trữ", "取消归档", "アーカイブ解除") : L("Lưu trữ", "归档", "アーカイブ");
       // Nối theo đúng thứ tự của store: `append` chỉ di chuyển, nút đang focus vẫn giữ focus.
       (item.archived ? archivedList : bannerList).append(entry.node);
     }
@@ -1180,7 +1188,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     }
     bannerEmpty.hidden = view.activeBanners.length > 0;
     archived.hidden = view.archivedBanners.length === 0;
-    archivedCount.textContent = L(`Đã lưu trữ (${view.archivedBanners.length})`, `已归档（${view.archivedBanners.length}）`);
+    archivedCount.textContent = L(`Đã lưu trữ (${view.archivedBanners.length})`, `已归档（${view.archivedBanners.length}）`, `アーカイブ済み（${view.archivedBanners.length}）`);
   }
 
   function paintStats() {
@@ -1208,7 +1216,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const parts = [el("span", {}, row.bannerName)];
     if (row.slotText) parts.push(logSeparator(), el("span", {}, row.slotText));
     if (row.valueLabel) parts.push(logSeparator(), el("span", { class: `badge rt-value ${row.valueBadgeClass}`.trim() }, row.valueLabel));
-    if (row.result === "set") parts.push(logSeparator(), el("span", { class: "badge rt-value" }, L("Chỉnh số", "调整")));
+    if (row.result === "set") parts.push(logSeparator(), el("span", { class: "badge rt-value" }, L("Chỉnh số", "调整", "数値を調整")));
     return parts;
   }
 
@@ -1224,13 +1232,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
         el("button", {
           class: "rt-icon-btn rt-log-edit",
           type: "button",
-          "aria-label": L(`Sửa dòng ${row.dateLabel} ${row.text}`, `编辑 ${row.dateLabel} ${row.text}`),
+          "aria-label": L(`Sửa dòng ${row.dateLabel} ${row.text}`, `编辑 ${row.dateLabel} ${row.text}`, `${row.dateLabel} ${row.text} を編集`),
           onclick: (event) => editLogRow(row.id, event.currentTarget),
         }, [editIcon()]),
         el("button", {
           class: "rt-icon-btn rt-log-delete",
           type: "button",
-          "aria-label": L(`Xóa dòng ${row.dateLabel} ${row.text}`, `删除 ${row.dateLabel} ${row.text}`),
+          "aria-label": L(`Xóa dòng ${row.dateLabel} ${row.text}`, `删除 ${row.dateLabel} ${row.text}`, `${row.dateLabel} ${row.text} を削除`),
           onclick: () => deleteLogRow(row),
         }, [trashIcon()]),
       ]),
@@ -1247,13 +1255,14 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   function openAdjust({ bannerId, name, pity, opener }) {
     openDialog({
-      title: L(`Chỉnh số · ${name}`, `调整 · ${name}`),
+      title: L(`Chỉnh số · ${name}`, `调整 · ${name}`, `数値を調整 · ${name}`),
       lead: L(
         `Mốc bảo hiểm 5★ là ${pity.limit} lượt. Nhập số lượt đã quay từ lần ra 5★ gần nhất đúng như trong game; nhật ký ghi một dòng "Đồng bộ".`,
         `5★ 保底为 ${pity.limit} 抽。按游戏内显示填写距上次 5★ 已抽的次数，记录中会新增一行“同步”。`,
+        `5★ の天井は ${pity.limit} 回です。ゲーム内の表示どおり、前回の 5★ からの回数を入力してください。履歴に「同期」の行が 1 件追加されます。`,
       ),
-      fields: [{ name: "value", label: L("Trong game bạn đang ở lượt mấy?", "游戏里你现在是第几抽？"), type: "number", value: pity.value, min: "0", max: String(SET_PITY_MAX), required: true }],
-      submitLabel: L("Lưu", "保存"),
+      fields: [{ name: "value", label: L("Trong game bạn đang ở lượt mấy?", "游戏里你现在是第几抽？", "ゲーム内で現在何回目ですか？"), type: "number", value: pity.value, min: "0", max: String(SET_PITY_MAX), required: true }],
+      submitLabel: L("Lưu", "保存", "保存"),
       opener,
       onSubmit: ({ value: next }) => {
         record(setPity(state, { accountId: state.activeAccountId, bannerId, value: numberValue(next, 0), date: currentDate() }), pulledText);
@@ -1272,21 +1281,21 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       fields: [
         {
           name: "hitAt",
-          label: L("Ra 5★ ở lượt", "出 5★ 的是"),
+          label: L("Ra 5★ ở lượt", "出 5★ 的是", "5★ が出たのは"),
           type: "segmented",
           value: 1,
           options: Array.from({ length: remainingToday }, (_, index) => ({
             value: index + 1,
-            label: L(`Lượt ${todayDone + index + 1}/${DAILY_PULL_LIMIT}`, `第 ${todayDone + index + 1}/${DAILY_PULL_LIMIT} 抽`),
+            label: L(`Lượt ${todayDone + index + 1}/${DAILY_PULL_LIMIT}`, `第 ${todayDone + index + 1}/${DAILY_PULL_LIMIT} 抽`, `${todayDone + index + 1}/${DAILY_PULL_LIMIT} 回目`),
           })),
-          help: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`),
+          help: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`, `本日あと ${remainingToday} 回の割引招聘があります。`),
         },
-        { name: "pullsAfter", label: L("Quay tiếp sau đó (không ra)", "之后继续抽（未出）"), type: "stepper", value: remainingToday - 1, min: "0", max: String(remainingToday - 1) },
+        { name: "pullsAfter", label: L("Quay tiếp sau đó (không ra)", "之后继续抽（未出）", "その後の続き（未獲得）"), type: "stepper", value: remainingToday - 1, min: "0", max: String(remainingToday - 1) },
         heroField(),
-        { type: "row", fields: [classField(), { key: "date-shown", label: L("Ngày", "日期"), type: "readonly", value: fullDate(currentDate()) }] },
+        { type: "row", fields: [classField(), { key: "date-shown", label: L("Ngày", "日期", "日付"), type: "readonly", value: fullDate(currentDate()) }] },
         noteField(),
       ],
-      submitLabel: L("Lưu 5★", "保存 5★"),
+      submitLabel: L("Lưu 5★", "保存 5★", "5★ を保存"),
       submitIcon: starIcon,
       tone: "accent",
       opener,
@@ -1327,19 +1336,19 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       fields: [
         {
           name: "pulls",
-          label: L("Số lượt quay lần này", "本次抽数"),
+          label: L("Số lượt quay lần này", "本次抽数", "今回の回数"),
           type: "stepper",
           value: 1,
           min: "1",
           max: String(SET_PITY_MAX),
           required: true,
-          help: L("Gồm cả lượt ra 5★.", "包含出 5★ 的那一抽。"),
+          help: L("Gồm cả lượt ra 5★.", "包含出 5★ 的那一抽。", "5★ が出た回を含みます。"),
         },
         heroField(),
         { type: "row", fields: [classField(), dateField()] },
         noteField(),
       ],
-      submitLabel: L("Lưu 5★", "保存 5★"),
+      submitLabel: L("Lưu 5★", "保存 5★", "5★ を保存"),
       submitIcon: starIcon,
       tone: "accent",
       opener,
@@ -1364,15 +1373,16 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     if (!item) return;
     openDialog({
       kicker: dialogKicker(item.name),
-      title: L("Ghi lượt không ra", "记录未出"),
-      fields: [{ name: "pulls", label: L("Số lượt", "抽数"), type: "stepper", value: 1, min: "1", max: String(SET_PITY_MAX), required: true }],
-      submitLabel: L("Ghi lượt", "记录"),
+      title: L("Ghi lượt không ra", "记录未出", "未獲得を記録"),
+      fields: [{ name: "pulls", label: L("Số lượt", "抽数", "回数"), type: "stepper", value: 1, min: "1", max: String(SET_PITY_MAX), required: true }],
+      submitLabel: L("Ghi lượt", "记录", "記録"),
       opener,
       preview: (form) => {
         const pulls = Math.max(numberValue(form.elements.namedItem("pulls").value, 1), 1);
         return [el("span", {}, L(
           ["Tiến độ về ", el("strong", {}, `${item.pity.value + pulls} / ${item.pity.limit}`), "."],
           ["进度变为 ", el("strong", {}, `${item.pity.value + pulls} / ${item.pity.limit}`), "。"],
+          ["進捗は ", el("strong", {}, `${item.pity.value + pulls} / ${item.pity.limit}`), " になります。"],
         ))];
       },
       onSubmit: (values) => {
@@ -1390,25 +1400,25 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const row = view.log.find((item) => item.id === id);
     if (!row) return;
     const pullsField = row.result === "set"
-      ? { name: "pulls", label: L("Số lượt tích lũy", "累计抽数"), type: "number", value: row.pulls, min: "0", max: String(SET_PITY_MAX), required: true }
-      : { name: "pulls", label: L("Số lượt", "抽数"), type: "number", value: row.pulls, min: "1", required: true };
+      ? { name: "pulls", label: L("Số lượt tích lũy", "累计抽数", "累計回数"), type: "number", value: row.pulls, min: "0", max: String(SET_PITY_MAX), required: true }
+      : { name: "pulls", label: L("Số lượt", "抽数", "回数"), type: "number", value: row.pulls, min: "1", required: true };
     const fields = row.result === "fiveStar"
       ? [pullsField, heroField(row.heroName), { type: "row", fields: [classField(row.heroValueClass || DEFAULT_VALUE_CLASS), dateField(row.date)] }, noteField(row.note)]
       : [pullsField, dateField(row.date), noteField(row.note)];
     openDialog({
-      title: L(`Sửa dòng · ${row.bannerName}`, `编辑记录 · ${row.bannerName}`),
+      title: L(`Sửa dòng · ${row.bannerName}`, `编辑记录 · ${row.bannerName}`, `履歴を編集 · ${row.bannerName}`),
       lead: row.result === "fiveStar"
-        ? L("Số lượt của dòng 5★ gồm cả lượt ra 5★.", "5★ 这一行的抽数包含出 5★ 的那一抽。")
+        ? L("Số lượt của dòng 5★ gồm cả lượt ra 5★.", "5★ 这一行的抽数包含出 5★ 的那一抽。", "5★ の行の回数には、5★ が出た回も含まれます。")
         : "",
       fields,
-      submitLabel: L("Lưu", "保存"),
+      submitLabel: L("Lưu", "保存", "保存"),
       opener,
       onSubmit: (values) => {
         const patch = { pulls: numberValue(values.pulls, row.pulls), note: values.note, date: values.date };
         if (row.result === "fiveStar") Object.assign(patch, { heroName: values.heroName, heroValueClass: values.heroValueClass });
         const before = state;
         commit(updatePullEvent(state, id, patch));
-        showToast(L("Đã sửa dòng nhật ký.", "已修改记录。"), () => commit(mergeBack(before, id)));
+        showToast(L("Đã sửa dòng nhật ký.", "已修改记录。", "履歴を修正しました。"), () => commit(mergeBack(before, id)));
       },
     });
   }
@@ -1428,19 +1438,19 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
 
   function deleteLogRow(row) {
     commit(deletePullEvents(state, [row.id]));
-    showToast(L(`Đã xóa dòng ${row.text}.`, `已删除 ${row.text}。`), () => commit(restorePullEvents(state, [row.id])));
+    showToast(L(`Đã xóa dòng ${row.text}.`, `已删除 ${row.text}。`, `${row.text} を削除しました。`), () => commit(restorePullEvents(state, [row.id])));
     (logList.querySelector(".rt-log-edit") || logTitle).focus();
   }
 
   function addAccount(opener) {
     openDialog({
-      title: L("Thêm tài khoản", "添加账号"),
-      fields: [{ name: "name", label: L("Tên tài khoản mới:", "新账号名称："), required: true }],
-      submitLabel: L("Thêm", "添加"),
+      title: L("Thêm tài khoản", "添加账号", "アカウントを追加"),
+      fields: [{ name: "name", label: L("Tên tài khoản mới:", "新账号名称：", "新しいアカウント名："), required: true }],
+      submitLabel: L("Thêm", "添加", "追加"),
       opener,
       onSubmit: ({ name }) => {
         commit(createAccount(state, String(name || "").trim()));
-        showToast(L("Đã thêm tài khoản.", "已添加账号。"));
+        showToast(L("Đã thêm tài khoản.", "已添加账号。", "アカウントを追加しました。"));
       },
     });
   }
@@ -1448,13 +1458,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   function renameActiveAccount() {
     const current = state.accounts.find((account) => account.id === state.activeAccountId);
     openDialog({
-      title: L("Đổi tên tài khoản", "重命名账号"),
-      fields: [{ name: "name", label: L("Tên tài khoản:", "账号名称："), value: current?.name || "", required: true }],
-      submitLabel: L("Lưu", "保存"),
+      title: L("Đổi tên tài khoản", "重命名账号", "アカウント名を変更"),
+      fields: [{ name: "name", label: L("Tên tài khoản:", "账号名称：", "アカウント名："), value: current?.name || "", required: true }],
+      submitLabel: L("Lưu", "保存", "保存"),
       opener: accountMenu.button,
       onSubmit: ({ name }) => {
         commit(renameAccount(state, state.activeAccountId, String(name || "").trim()));
-        showToast(L("Đã đổi tên tài khoản.", "已重命名账号。"));
+        showToast(L("Đã đổi tên tài khoản.", "已重命名账号。", "アカウント名を変更しました。"));
       },
     });
   }
@@ -1462,41 +1472,42 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   function deleteActiveAccount() {
     const current = state.accounts.find((account) => account.id === state.activeAccountId);
     if (!current || view.accounts.length <= 1) {
-      showToast(L("Cần giữ ít nhất 1 tài khoản.", "至少需保留 1 个账号。"));
+      showToast(L("Cần giữ ít nhất 1 tài khoản.", "至少需保留 1 个账号。", "アカウントは最低 1 件残す必要があります。"));
       return;
     }
     openDialog({
-      title: L("Xóa tài khoản", "删除账号"),
+      title: L("Xóa tài khoản", "删除账号", "アカウントを削除"),
       lead: L(
         `Xóa tài khoản "${current.name}" và dữ liệu chiêu mộ của tài khoản này?`,
         `删除账号“${current.name}”及其招募数据？`,
+        `アカウント「${current.name}」とその招聘データを削除しますか？`,
       ),
-      submitLabel: L("Xóa", "删除"),
+      submitLabel: L("Xóa", "删除", "削除"),
       tone: "danger",
       opener: accountMenu.button,
       onSubmit: () => {
         commit(deleteAccount(state, current.id));
-        showToast(L("Đã xóa tài khoản.", "已删除账号。"));
+        showToast(L("Đã xóa tài khoản.", "已删除账号。", "アカウントを削除しました。"));
       },
     });
   }
 
   function bannerFields(item = null) {
     return [
-      { name: "name", label: L("Tên gói/banner có thời hạn:", "限时卡包 / 卡池名称："), value: item?.name || "", required: true },
-      { name: "expiresAt", label: L("Ngày hết hạn (không bắt buộc)", "截止日期（可选）"), type: "date", value: item?.expiresAt || "" },
+      { name: "name", label: L("Tên gói/banner có thời hạn:", "限时卡包 / 卡池名称：", "期間限定パック / ガチャ名："), value: item?.name || "", required: true },
+      { name: "expiresAt", label: L("Ngày hết hạn (không bắt buộc)", "截止日期（可选）", "期限（任意）"), type: "date", value: item?.expiresAt || "" },
     ];
   }
 
   function addLimitedBanner(opener) {
     openDialog({
-      title: L("Thêm gói hạn giờ", "添加限时卡包"),
+      title: L("Thêm gói hạn giờ", "添加限时卡包", "期間限定パックを追加"),
       fields: bannerFields(),
-      submitLabel: L("Thêm gói", "添加卡包"),
+      submitLabel: L("Thêm gói", "添加卡包", "パックを追加"),
       opener,
       onSubmit: ({ name, expiresAt }) => {
         commit(createLimitedBanner(state, { name: String(name || "").trim(), expiresAt }));
-        showToast(L("Đã thêm gói hạn giờ.", "已添加限时卡包。"));
+        showToast(L("Đã thêm gói hạn giờ.", "已添加限时卡包。", "期間限定パックを追加しました。"));
       },
     });
   }
@@ -1505,13 +1516,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const item = bannerView(id);
     if (!item) return;
     openDialog({
-      title: L(`Sửa gói · ${item.name}`, `编辑卡包 · ${item.name}`),
+      title: L(`Sửa gói · ${item.name}`, `编辑卡包 · ${item.name}`, `パックを編集 · ${item.name}`),
       fields: bannerFields(item),
-      submitLabel: L("Lưu", "保存"),
+      submitLabel: L("Lưu", "保存", "保存"),
       opener,
       onSubmit: ({ name, expiresAt }) => {
         commit(updateBanner(state, id, { name: String(name || "").trim(), expiresAt }));
-        showToast(L("Đã lưu gói.", "已保存卡包。"));
+        showToast(L("Đã lưu gói.", "已保存卡包。", "パックを保存しました。"));
       },
     });
   }
@@ -1520,17 +1531,18 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     const item = bannerView(id);
     if (!item) return;
     openDialog({
-      title: L("Xóa gói", "删除卡包"),
+      title: L("Xóa gói", "删除卡包", "パックを削除"),
       lead: L(
         `Xóa gói "${item.name}"? Các lượt của gói này rời khỏi nhật ký và thống kê.`,
         `删除卡包“${item.name}”？该卡包的记录将从记录和统计中移除。`,
+        `パック「${item.name}」を削除しますか？このパックの回数は履歴と統計から除外されます。`,
       ),
-      submitLabel: L("Xóa", "删除"),
+      submitLabel: L("Xóa", "删除", "削除"),
       tone: "danger",
       opener,
       onSubmit: () => {
         commit(deleteBanner(state, id));
-        showToast(L(`Đã xóa gói ${item.name}.`, `已删除卡包 ${item.name}。`));
+        showToast(L(`Đã xóa gói ${item.name}.`, `已删除卡包 ${item.name}。`, `パック ${item.name} を削除しました。`));
       },
     });
   }
@@ -1538,7 +1550,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   async function startSignIn(button) {
     if (!sync) return;
     button.disabled = true;
-    showToast(L("Đang chuyển tới Google…", "正在跳转到 Google…"));
+    showToast(L("Đang chuyển tới Google…", "正在跳转到 Google…", "Google に移動しています…"));
     const error = await sync.signIn();
     button.disabled = false;
     if (error) showToast(describeError(error));
@@ -1570,24 +1582,25 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       // Chạy thử đúng đường vẽ trước khi gộp: file lọt kiểm tra mà vẫn làm hỏng tracker thì không ghi.
       getRecruitTrackerSummary(mergeRecruitTrackerState(state, parsed), { date: currentDate() });
     } catch {
-      showToast(L("File JSON không hợp lệ.", "JSON 文件无效。"));
+      showToast(L("File JSON không hợp lệ.", "JSON 文件无效。", "JSON ファイルが無効です。"));
       return;
     }
     const summary = validation.summary;
     openDialog({
-      title: L("Gộp dữ liệu từ file?", "合并文件中的数据？"),
+      title: L("Gộp dữ liệu từ file?", "合并文件中的数据？", "ファイルのデータを統合しますか？"),
       lead: L(
         `File có ${summary.accounts} tài khoản, ${summary.banners} đợt chiêu mộ, ${summary.events} lượt quay. Bản ghi trùng giữ bản sửa sau cùng; dữ liệu hiện có không bị ghi đè. Nên Xuất JSON sao lưu trước nếu chưa chắc.`,
         `文件包含 ${summary.accounts} 个账号、${summary.banners} 个卡池、${summary.events} 条抽卡记录。重复记录保留最后修改的版本，现有数据不会被覆盖。如不确定，请先导出 JSON 备份。`,
+        `ファイルにはアカウント ${summary.accounts} 件、ガチャ ${summary.banners} 件、招聘履歴 ${summary.events} 件が含まれています。重複した記録は最後に修正した版を残し、現在のデータは上書きされません。不安な場合は、先に JSON を書き出してバックアップしてください。`,
       ),
-      submitLabel: L("Gộp dữ liệu", "合并数据"),
+      submitLabel: L("Gộp dữ liệu", "合并数据", "データを統合"),
       opener: importInput,
       onSubmit: () => {
         // Gộp lại trên state hiện tại (có thể đã đổi khi hộp thoại mở, ví dụ tab khác vừa ghi).
         commit(mergeRecruitTrackerState(state, parsed));
         // Bản ghi từ file giữ `updatedAt` cũ: đẩy lại toàn bộ để chúng lên đám mây.
         sync?.schedulePush({ full: true });
-        showToast(L("Đã nhập JSON.", "已导入 JSON。"));
+        showToast(L("Đã nhập JSON.", "已导入 JSON。", "JSON を読み込みました。"));
       },
     });
   }

@@ -433,7 +433,7 @@ function lockedEntry(team, index) {
     locked: true,
     team: {
       id: team.teamId || `locked-${index}`,
-      name: team.teamName || team.teamId || L(`Đội đã xây dựng ${index + 1}`, `已组建队伍 ${index + 1}`),
+      name: team.teamName || team.teamId || L(`Đội đã xây dựng ${index + 1}`, `已组建队伍 ${index + 1}`, `編成済み部隊 ${index + 1}`),
     },
     tier: "",
     tierRankings: [],
