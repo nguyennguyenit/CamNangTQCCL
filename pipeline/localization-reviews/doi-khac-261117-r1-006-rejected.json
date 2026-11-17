@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-006-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-006",
+ "items": [
+  {
+   "entityId": "recommended:s-e50a446b16b2e5b06f5c2bf6659cf3d809cc9a6f7b9303db9c647724b4f250b1/s20-hun-07",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5e85a0bed2ec81ad211176ef6237ac6969cf98ab26b444e75343491e42d02088",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "f8d392bd170993350383d9f9c21a11af16e7993a180f27b600b57b74e5cf3ee8",
+   "verdict": "rejected",
+   "errors": [
+    "Meaning inverted: 可以被打反控 = khi bị đánh thì có thể phản khống chế (Trình Phổ is the one who counter-controls); VI 'có thể bị phản khống chế' says Trình Phổ gets counter-controlled."
+   ],
+   "notes": "T0.5 ｜ Trình Phổ có thể đổi sang Hác Chiêu hoặc Tào Tháo hoặc Lỗ Túc, nhưng sẽ yếu đi một bậc, vì Trình Phổ khi đánh SP Mã Siêu mạnh ở chỗ khi bị đánh có thể phản khống chế, đồng thời còn có thể thanh tẩy bản thân để giải khống."
+  }
+ ]
+}

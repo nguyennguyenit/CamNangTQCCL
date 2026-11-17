@@ -1,9 +1,9 @@
 {
   "files": {
     "heroes-dict.json": "501d8a9e59a3d196a55f26dbbd41934ff327e0c633a9cb7cccdf48ead1c5fa7f",
-    "lookup-catalog.json": "b5985b5d7cbf2900430493347265fa458a90e9e5d77e3c0b2266d2b83b16fb0e",
-    "tactics.json": "3aab892ed6d349d891c6b15088d2d63c259caa28b1aec51e0f082b13b46c4bb4"
+    "lookup-catalog.json": "2102130ddef2857f0bec0001d6ba7bee73ad0dd818f3e549e2d1c187452ad30b",
+    "tactics.json": "8791170c9aded5f786ea6e8add6e3539fa538272bfd0b6e8e1af6c488d714855"
   },
-  "generationId": "lookup:adf392a0c06ad237f55e90238f3beee32811ac25376c2bbd2f0ae78a0ee1bdca",
+  "generationId": "lookup:fc439e631df0aee2d0b05d0d12ea7519357e477b1a74485eca4f851c7e5906e9",
   "schemaVersion": 1
 }

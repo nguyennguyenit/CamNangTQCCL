@@ -2216,7 +2216,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng đá +1500/giờ, Quan khai thác đá",
+          "effectVi": "Sản lượng đá +1500/giờ, Quan Đá",
           "effectZh": "石材產量+1500/小時，採石官",
           "id": "building-level:thai-thach-xu:10",
           "level": 10
@@ -2486,7 +2486,7 @@
       "maxLevel": 30,
       "missingFields": [],
       "nameVi": "Điểm nhặt đá",
-      "summaryVi": "Sản xuất đá; Lv10 mở khóa Quan khai thác đá, Lv20 sản lượng đá đồn điền +50%",
+      "summaryVi": "Sản xuất đá; Lv10 mở khóa Quan Đá, Lv20 sản lượng đá đồn điền +50%",
       "summaryZh": "生產石材；Lv10 解鎖採石官，Lv20 屯田石材 +50%",
       "zhSource": {
         "kind": "source"
@@ -2510,7 +2510,7 @@
           },
           "durationVi": "15 giây",
           "durationZh": "15秒",
-          "effectVi": "Giới hạn tài nguyên +20000; mở khóa: Điện Quân Vương cấp 1",
+          "effectVi": "Giới hạn tài nguyên +20000; mở khóa: Quân Vương Điện cấp 1",
           "effectZh": "資源上限+20000解鎖：君王殿1級",
           "id": "building-level:thang-kho:1",
           "level": 1
@@ -4012,7 +4012,7 @@
       "maxLevel": 5,
       "missingFields": [],
       "nameVi": "Trại Công Trình",
-      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Quân Cơ Dinh/Công Sự Dinh)",
+      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Lều cơ mật/Doanh trại công sự)",
       "summaryZh": "提升戰略建築（軍機營/工事營）建造等級上限",
       "zhSource": {
         "kind": "source"
@@ -4122,7 +4122,7 @@
           },
           "durationVi": "1 giờ",
           "durationZh": "1小時",
-          "effectVi": "Tỷ lệ thương mại 40%, Quan Thương Mại",
+          "effectVi": "Tỷ lệ thương mại 40%, Quan giao dịch",
           "effectZh": "貿易比例40%，貿易官",
           "id": "building-level:tap-thi:1",
           "level": 1
@@ -4981,7 +4981,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan thuế vụ",
+          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan Thuế",
           "effectZh": "銅幣產量+1000/小時，稅務官",
           "id": "building-level:dan-cu:10",
           "level": 10
@@ -5111,7 +5111,7 @@
           },
           "durationVi": "64 giờ",
           "durationZh": "64小時",
-          "effectVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Điện Quân Vương cấp 4",
+          "effectVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Quân Vương Điện cấp 4",
           "effectZh": "銅幣產量+2500/小時，每次稅收獲得銅幣+2000解鎖：君王殿4級",
           "id": "building-level:dan-cu:20",
           "level": 20
@@ -5121,7 +5121,7 @@
       "maxLevel": 20,
       "missingFields": [],
       "nameVi": "Dân Cư",
-      "summaryVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan thuế vụ, Lv20 thu nhập thuế +2000",
+      "summaryVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan Thuế, Lv20 thu nhập thuế +2000",
       "summaryZh": "生產銅幣；Lv10 解鎖稅務官，Lv20 稅收 +2000",
       "zhSource": {
         "kind": "source"
@@ -6901,7 +6901,7 @@
           },
           "durationVi": "2 giờ",
           "durationZh": "2小時",
-          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần, Sứ giả tìm kiếm",
+          "effectVi": "Mỗi ngày có thể thăm hỏi 4 lần, Sứ Thăm Hỏi",
           "effectZh": "每日可尋訪4次，尋訪使",
           "id": "building-level:tam-phong-dai:1",
           "level": 1
@@ -6987,7 +6987,7 @@
           },
           "durationVi": "4 giờ",
           "durationZh": "4小時",
-          "effectVi": "Mở khóa huấn luyện ngựa sơ cấp, Quan huấn luyện ngựa",
+          "effectVi": "Mở khóa luyện ngựa sơ cấp, Quan Luyện Ngựa",
           "effectZh": "解鎖初級馴馬，馴馬官",
           "id": "building-level:tuan-ma-truong:1",
           "level": 1
@@ -7058,7 +7058,7 @@
           },
           "durationVi": "5 giờ",
           "durationZh": "5小時",
-          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ giả luyện binh",
+          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ Luyện Binh",
           "effectZh": "武將練兵經驗80000，練兵使",
           "id": "building-level:dien-vo-truong:1",
           "level": 1
@@ -7261,7 +7261,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng quặng sắt +1500/giờ, Quan luyện sắt",
+          "effectVi": "Sản lượng quặng sắt +1500/giờ, Quan Sắt",
           "effectZh": "鐵礦產量+1500/小時，冶鐵官",
           "id": "building-level:da-thiet-dai:10",
           "level": 10
@@ -7531,7 +7531,7 @@
       "maxLevel": 30,
       "missingFields": [],
       "nameVi": "Bệ lò rèn",
-      "summaryVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan luyện sắt, Lv20 đồn điền quặng sắt +50%",
+      "summaryVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan Sắt, Lv20 đồn điền quặng sắt +50%",
       "summaryZh": "生產鐵礦；Lv10 解鎖冶鐵官，Lv20 屯田鐵礦 +50%",
       "zhSource": {
         "kind": "source"
@@ -10262,7 +10262,7 @@
         "周旋"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
+      "descriptionVi": "Dành riêng cho Giáp Toan Nghê Tử Kim; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
       "equipmentId": "equipment:tu-kim-toan-nghe-giap",
       "exclusiveHeroId": null,
       "id": "equipment-special:chu-toan",
