@@ -57,12 +57,14 @@ export function troopPill(troop) {
  * `SITE_LOCALES`), giá trị = biến thể theo ngôn ngữ trang.
  */
 const TEXT_LANGUAGE_NAME = {
-  vi: () => L('Tiếng Việt', '越南语'),
-  zh: () => L('Tiếng Trung', '中文'),
+  vi: () => L('Tiếng Việt', '越南语', 'ベトナム語'),
+  zh: () => L('Tiếng Trung', '中文', '中国語'),
+  ja: () => L('Tiếng Nhật', '日语', '日本語'),
 };
 const WRITTEN_IN = {
-  vi: () => L('Viết bằng tiếng Việt', '以越南语撰写'),
-  zh: () => L('Viết bằng tiếng Trung', '以中文撰写'),
+  vi: () => L('Viết bằng tiếng Việt', '以越南语撰写', 'ベトナム語で記述'),
+  zh: () => L('Viết bằng tiếng Trung', '以中文撰写', '中国語で記述'),
+  ja: () => L('Viết bằng tiếng Nhật', '以日语撰写', '日本語で記述'),
 };
 
 /** Tên ngôn ngữ của văn bản viết bằng `lang` ("Tiếng Việt" / "Tiếng Trung"); mã lạ → `null`. */
@@ -100,11 +102,11 @@ export function statItem(iconName, value, label, { visible = '' } = {}) {
 /** Dòng "57 điểm · ^42 · v3 · 🏆 9 người thắng · 💬 12" của thẻ đội. */
 export function teamStatsLine(team, className = 'cm-team-stats') {
   return el('p', { class: className }, [
-    el('span', { class: 'cm-team-points-text' }, L(`${formatNumber(team.points)} điểm`, `${formatNumber(team.points)} 分`)),
-    statItem('chevronUp', team.upVotes, L('Bình chọn lên', '赞成票')),
-    statItem('chevronDown', team.downVotes, L('Bình chọn xuống', '反对票')),
-    statItem('trophy', team.evidenceCount, L('Người thắng', '获胜玩家'), { visible: L('người thắng', '人获胜') }),
-    statItem('comment', team.commentCount, L('Bình luận', '评论')),
+    el('span', { class: 'cm-team-points-text' }, L(`${formatNumber(team.points)} điểm`, `${formatNumber(team.points)} 分`, `${formatNumber(team.points)} pt`)),
+    statItem('chevronUp', team.upVotes, L('Bình chọn lên', '赞成票', '賛成票')),
+    statItem('chevronDown', team.downVotes, L('Bình chọn xuống', '反对票', '反対票')),
+    statItem('trophy', team.evidenceCount, L('Người thắng', '获胜玩家', '勝利プレイヤー'), { visible: L('người thắng', '人获胜', '人が勝利') }),
+    statItem('comment', team.commentCount, L('Bình luận', '评论', 'コメント')),
   ]);
 }
 
@@ -124,13 +126,13 @@ export function teamMedia(team) {
   if (!count) {
     return el('div', { class: 'cm-team-card-media', dataset: { empty: 'true' } }, [
       teamIcon('imageOff', 22),
-      el('span', { class: 'cm-team-media-empty-title' }, L('Chưa có ảnh đội', '暂无阵容图片')),
-      el('span', { class: 'cm-team-media-empty-hint' }, L('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看')),
+      el('span', { class: 'cm-team-media-empty-title' }, L('Chưa có ảnh đội', '暂无阵容图片', '編成画像なし')),
+      el('span', { class: 'cm-team-media-empty-hint' }, L('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看', '編成は下で確認できます')),
     ]);
   }
   return el('div', { class: 'cm-team-card-media' }, [
     el('img', { class: 'cm-team-thumb', src: teamImageUrl(team.id, 0), alt: '', loading: 'lazy', decoding: 'async' }),
-    el('span', { class: 'cm-team-photo-count' }, [teamIcon('image', 14), L(`${count} ảnh`, `${count} 张图`)]),
+    el('span', { class: 'cm-team-photo-count' }, [teamIcon('image', 14), L(`${count} ảnh`, `${count} 张图`, `${count} 枚`)]),
   ]);
 }
 

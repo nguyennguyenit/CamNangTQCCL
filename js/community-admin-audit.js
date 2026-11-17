@@ -55,18 +55,18 @@ export function iconButton(text, iconName, variant = 'adm-btn-paper', attrs = {}
 /* ---------- Nhãn dùng chung ---------- */
 
 export function roleLabel(role) {
-  if (role === 'root') return L('Quản trị viên', '管理员');
-  if (role === 'moderator') return L('Kiểm duyệt viên', '版主');
-  return L('Người dùng', '用户');
+  if (role === 'root') return L('Quản trị viên', '管理员', '管理者');
+  if (role === 'moderator') return L('Kiểm duyệt viên', '版主', 'モデレーター');
+  return L('Người dùng', '用户', 'ユーザー');
 }
 
 /** Thời hạn khoá theo mã `duration` của API. */
 export function durationLabel(duration) {
   switch (duration) {
-    case '1d': return L('1 ngày', '1 天');
-    case '7d': return L('7 ngày', '7 天');
-    case '30d': return L('30 ngày', '30 天');
-    case 'permanent': return L('Vĩnh viễn', '永久');
+    case '1d': return L('1 ngày', '1 天', '1日');
+    case '7d': return L('7 ngày', '7 天', '7日');
+    case '30d': return L('30 ngày', '30 天', '30日');
+    case 'permanent': return L('Vĩnh viễn', '永久', '無期限');
     default: return '';
   }
 }
@@ -96,28 +96,28 @@ export function initialsAvatar(person, size = 'md') {
 /** Nhãn hành động nhật ký theo mã; mã lạ hiện nguyên mã. */
 export function actionLabel(action) {
   switch (action) {
-    case 'user.ban': return L('Khoá tài khoản', '封禁账号');
-    case 'user.unban': return L('Mở khoá tài khoản', '解封账号');
-    case 'user.role': return L('Đổi vai trò', '变更角色');
-    case 'user.delete.start': return L('Bắt đầu xoá tài khoản', '开始删除账号');
-    case 'user.delete': return L('Xoá tài khoản', '删除账号');
-    case 'comment.delete': return L('Xoá bình luận', '删除评论');
-    case 'report.approve': return L('Duyệt chiến báo', '通过战报');
-    case 'report.reject': return L('Từ chối chiến báo', '拒绝战报');
-    case 'scan_sample.approve': return L('Duyệt ảnh soi đội', '通过识阵截图');
-    case 'scan_sample.reject': return L('Từ chối ảnh soi đội', '拒绝识阵截图');
-    case 'feedback.status': return L('Đổi trạng thái góp ý', '变更反馈状态');
-    case 'post.create': return L('Tạo bài viết', '创建文章');
-    case 'post.update': return L('Sửa bài viết', '修改文章');
-    case 'post.delete': return L('Xoá bài viết', '删除文章');
-    case 'post.publish': return L('Xuất bản bài viết', '发布文章');
-    case 'post.unpublish': return L('Gỡ xuất bản bài viết', '取消发布文章');
-    case 'post.upload': return L('Tải ảnh bài viết', '上传文章图片');
-    case 'ai.config.update': return L('Cập nhật cấu hình AI', '更新 AI 配置');
-    case 'team.approve': return L('Duyệt đội cộng đồng', '通过社区阵容');
-    case 'team.reject': return L('Từ chối đội cộng đồng', '拒绝社区阵容');
-    case 'team.delete': return L('Gỡ đội cộng đồng', '下架社区阵容');
-    case 'season.open': return L('Mở mùa mới', '开启新赛季');
+    case 'user.ban': return L('Khoá tài khoản', '封禁账号', 'アカウント利用停止');
+    case 'user.unban': return L('Mở khoá tài khoản', '解封账号', 'アカウント利用停止の解除');
+    case 'user.role': return L('Đổi vai trò', '变更角色', 'ロール変更');
+    case 'user.delete.start': return L('Bắt đầu xoá tài khoản', '开始删除账号', 'アカウント削除の開始');
+    case 'user.delete': return L('Xoá tài khoản', '删除账号', 'アカウント削除');
+    case 'comment.delete': return L('Xoá bình luận', '删除评论', 'コメント削除');
+    case 'report.approve': return L('Duyệt chiến báo', '通过战报', '戦報承認');
+    case 'report.reject': return L('Từ chối chiến báo', '拒绝战报', '戦報却下');
+    case 'scan_sample.approve': return L('Duyệt ảnh soi đội', '通过识阵截图', '編成解析画像承認');
+    case 'scan_sample.reject': return L('Từ chối ảnh soi đội', '拒绝识阵截图', '編成解析画像却下');
+    case 'feedback.status': return L('Đổi trạng thái góp ý', '变更反馈状态', 'フィードバック状態変更');
+    case 'post.create': return L('Tạo bài viết', '创建文章', '記事作成');
+    case 'post.update': return L('Sửa bài viết', '修改文章', '記事編集');
+    case 'post.delete': return L('Xoá bài viết', '删除文章', '記事削除');
+    case 'post.publish': return L('Xuất bản bài viết', '发布文章', '記事公開');
+    case 'post.unpublish': return L('Gỡ xuất bản bài viết', '取消发布文章', '記事の公開停止');
+    case 'post.upload': return L('Tải ảnh bài viết', '上传文章图片', '記事画像アップロード');
+    case 'ai.config.update': return L('Cập nhật cấu hình AI', '更新 AI 配置', 'AI設定更新');
+    case 'team.approve': return L('Duyệt đội cộng đồng', '通过社区阵容', 'コミュニティ編成承認');
+    case 'team.reject': return L('Từ chối đội cộng đồng', '拒绝社区阵容', 'コミュニティ編成却下');
+    case 'team.delete': return L('Gỡ đội cộng đồng', '下架社区阵容', 'コミュニティ編成の公開停止');
+    case 'season.open': return L('Mở mùa mới', '开启新赛季', '新シーズン開始');
     default: return String(action || '');
   }
 }
@@ -125,14 +125,14 @@ export function actionLabel(action) {
 /** Nhóm hành động của bộ lọc (optgroup), đúng thứ tự artboard. */
 function actionGroups() {
   return [
-    [L('Người dùng', '用户'), ['user.ban', 'user.unban', 'user.role', 'user.delete.start', 'user.delete']],
-    [L('Chiến báo', '战报'), ['report.approve', 'report.reject']],
-    [L('Bình luận', '评论'), ['comment.delete']],
-    [L('Soi đội', '识阵'), ['scan_sample.approve', 'scan_sample.reject']],
-    [L('Góp ý', '反馈'), ['feedback.status']],
-    [L('Bài viết', '文章'), ['post.create', 'post.update', 'post.delete', 'post.publish', 'post.unpublish', 'post.upload']],
+    [L('Người dùng', '用户', 'ユーザー'), ['user.ban', 'user.unban', 'user.role', 'user.delete.start', 'user.delete']],
+    [L('Chiến báo', '战报', '戦報'), ['report.approve', 'report.reject']],
+    [L('Bình luận', '评论', 'コメント'), ['comment.delete']],
+    [L('Soi đội', '识阵', '編成解析'), ['scan_sample.approve', 'scan_sample.reject']],
+    [L('Góp ý', '反馈', 'フィードバック'), ['feedback.status']],
+    [L('Bài viết', '文章', '記事'), ['post.create', 'post.update', 'post.delete', 'post.publish', 'post.unpublish', 'post.upload']],
     ['AI', ['ai.config.update']],
-    [L('Đội cộng đồng', '社区阵容'), ['team.approve', 'team.reject', 'team.delete', 'season.open']],
+    [L('Đội cộng đồng', '社区阵容', 'コミュニティ編成'), ['team.approve', 'team.reject', 'team.delete', 'season.open']],
   ];
 }
 
@@ -171,16 +171,16 @@ function actionGlyph(action) {
 /** Nhãn loại đối tượng của nhật ký; loại lạ hiện nguyên mã. */
 function targetTypeLabel(type) {
   switch (type) {
-    case 'user': return L('người dùng', '用户');
-    case 'report': return L('chiến báo', '战报');
-    case 'comment': return L('bình luận', '评论');
-    case 'feedback': return L('góp ý', '反馈');
-    case 'scan_sample': return L('mẫu soi đội', '识阵样本');
-    case 'post': return L('bài viết', '文章');
-    case 'upload': return L('ảnh bài viết', '文章图片');
-    case 'ai_config': return L('cấu hình AI', 'AI 配置');
-    case 'team': return L('đội cộng đồng', '社区阵容');
-    case 'season': return L('mùa', '赛季');
+    case 'user': return L('người dùng', '用户', 'ユーザー');
+    case 'report': return L('chiến báo', '战报', '戦報');
+    case 'comment': return L('bình luận', '评论', 'コメント');
+    case 'feedback': return L('góp ý', '反馈', 'フィードバック');
+    case 'scan_sample': return L('mẫu soi đội', '识阵样本', '編成解析サンプル');
+    case 'post': return L('bài viết', '文章', '記事');
+    case 'upload': return L('ảnh bài viết', '文章图片', '記事画像');
+    case 'ai_config': return L('cấu hình AI', 'AI 配置', 'AI設定');
+    case 'team': return L('đội cộng đồng', '社区阵容', 'コミュニティ編成');
+    case 'season': return L('mùa', '赛季', 'シーズン');
     default: return String(type || '');
   }
 }
@@ -192,16 +192,16 @@ function resultBadges(entry) {
   const badge = el('span', { class: 'cm-badge' });
   if (entry.status === 'ok') {
     badge.dataset.status = 'approved';
-    badge.textContent = L('Thành công', '成功');
+    badge.textContent = L('Thành công', '成功', '成功');
   } else if (entry.status === 'partial') {
     badge.dataset.status = 'pending';
-    badge.textContent = L('Một phần', '部分完成');
+    badge.textContent = L('Một phần', '部分完成', '一部完了');
   } else {
     badge.dataset.status = 'rejected';
-    badge.textContent = L('Thất bại', '失败');
+    badge.textContent = L('Thất bại', '失败', '失敗');
   }
   const deployPending = entry.meta?.deploy === 'pending';
-  return [badge, deployPending ? el('span', { class: 'cm-badge', dataset: { tone: 'warn' } }, L('chưa rõ kết quả deploy', '部署结果未知')) : null];
+  return [badge, deployPending ? el('span', { class: 'cm-badge', dataset: { tone: 'warn' } }, L('chưa rõ kết quả deploy', '部署结果未知', 'デプロイ結果不明')) : null];
 }
 
 /** "Đối tượng: <loại> · <nhãn>"; nhãn mono với email che / đường dẫn. Không có gì để hiện thì `null`. */
@@ -211,7 +211,7 @@ function targetLine(entry) {
   if (!type && !label) return null;
   const typeText = type ? targetTypeLabel(type) : '';
   return el('p', { class: 'adm-audit-target' }, [
-    L('Đối tượng: ', '对象：'),
+    L('Đối tượng: ', '对象：', '対象：'),
     typeText,
     typeText && label ? ' · ' : '',
     label ? el('span', { class: 'adm-audit-target-label', dataset: MONO_TARGETS.has(type) ? { mono: '' } : {} }, label) : null,
@@ -223,13 +223,13 @@ function detailLines(entry) {
   const lines = [];
   const meta = entry.meta && typeof entry.meta === 'object' ? entry.meta : {};
   if (entry.action === 'user.ban' && durationLabel(meta.duration)) {
-    lines.push(el('p', { class: 'adm-audit-note' }, L(`Thời hạn: ${durationLabel(meta.duration)}`, `期限：${durationLabel(meta.duration)}`)));
+    lines.push(el('p', { class: 'adm-audit-note' }, L(`Thời hạn: ${durationLabel(meta.duration)}`, `期限：${durationLabel(meta.duration)}`, `期限：${durationLabel(meta.duration)}`)));
   }
   if (entry.action === 'user.role' && meta.from && meta.to) {
     lines.push(el('p', { class: 'adm-audit-note' }, `${roleLabel(meta.from)} → ${roleLabel(meta.to)}`));
   }
   if (entry.reason) {
-    lines.push(el('p', { class: 'adm-audit-reason' }, [el('span', { class: 'adm-audit-reason-label' }, L('Lý do: ', '理由：')), String(entry.reason)]));
+    lines.push(el('p', { class: 'adm-audit-reason' }, [el('span', { class: 'adm-audit-reason-label' }, L('Lý do: ', '理由：', '理由：')), String(entry.reason)]));
   }
   return lines;
 }
@@ -238,7 +238,7 @@ function detailLines(entry) {
 function parseActor(actor) {
   const label = String(actor?.label || '').trim();
   const match = label.match(/^(.*?)\s*<([^<>]*)>$/u);
-  return { name: (match ? match[1] : label).trim() || L('Không rõ', '未知'), email: match ? match[2].trim() : '' };
+  return { name: (match ? match[1] : label).trim() || L('Không rõ', '未知', '不明'), email: match ? match[2].trim() : '' };
 }
 
 /** Mốc thời gian hợp lệ hoặc `null`. */
@@ -269,7 +269,7 @@ function auditRow(entry) {
     ]),
     extra.length ? el('div', { class: 'adm-audit-extra' }, extra) : null,
     el('div', { class: 'adm-audit-actor' }, [
-      el('span', { class: 'visually-hidden' }, L('Người làm: ', '操作人：')),
+      el('span', { class: 'visually-hidden' }, L('Người làm: ', '操作人：', '操作者：')),
       initialsAvatar({ name: actor.name }, 'md'),
       el('span', { class: 'adm-audit-actor-text' }, [
         el('span', { class: 'adm-audit-actor-name' }, actor.name),
@@ -277,7 +277,7 @@ function auditRow(entry) {
         actor.email ? el('span', { class: 'adm-audit-actor-meta' }, actor.email) : null,
       ]),
     ]),
-    el('div', { class: 'adm-audit-result' }, [el('span', { class: 'visually-hidden' }, L('Kết quả: ', '结果：')), ...resultBadges(entry)]),
+    el('div', { class: 'adm-audit-result' }, [el('span', { class: 'visually-hidden' }, L('Kết quả: ', '结果：', '結果：')), ...resultBadges(entry)]),
   ]);
 }
 
@@ -294,7 +294,7 @@ export function auditBrief(entry) {
     el('p', { class: 'adm-audit-brief-action' }, [admIcon(glyphName), actionLabel(entry.action)]),
     targetLine(entry),
     ...detailLines(entry),
-    el('p', { class: 'adm-audit-by' }, [L('Bởi ', '操作人 '), el('strong', {}, actor.name), ` · ${roleLabel(entry.actor?.role)}`]),
+    el('p', { class: 'adm-audit-by' }, [L('Bởi ', '操作人 ', '操作者 '), el('strong', {}, actor.name), ` · ${roleLabel(entry.actor?.role)}`]),
   ]);
 }
 
@@ -307,12 +307,12 @@ function dayKey(date) {
 
 /** "Hôm nay · 11 thg 11, 2026" / "Hôm qua · …" / "8 thg 11, 2026"; so với "bây giờ" lúc dựng nhóm. */
 function dayLabel(date) {
-  if (!date) return L('Không rõ ngày', '日期未知');
+  if (!date) return L('Không rõ ngày', '日期未知', '日付不明');
   const now = new Date();
   const text = formatDate(date);
-  if (dayKey(date) === dayKey(now)) return L(`Hôm nay · ${text}`, `今天 · ${text}`);
+  if (dayKey(date) === dayKey(now)) return L(`Hôm nay · ${text}`, `今天 · ${text}`, `今日 · ${text}`);
   const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
-  if (dayKey(date) === dayKey(yesterday)) return L(`Hôm qua · ${text}`, `昨天 · ${text}`);
+  if (dayKey(date) === dayKey(yesterday)) return L(`Hôm qua · ${text}`, `昨天 · ${text}`, `昨日 · ${text}`);
   return text;
 }
 
@@ -326,10 +326,10 @@ function dayGroup(date) {
     el('h3', { id: titleId, class: 'adm-audit-day-title' }, dayLabel(date)),
     el('div', { class: 'adm-audit-table' }, [
       el('div', { class: 'adm-audit-cols', 'aria-hidden': 'true' }, [
-        el('span', {}, L('Giờ', '时间')),
-        el('span', {}, L('Hành động · đối tượng', '操作 · 对象')),
-        el('span', {}, L('Người làm', '操作人')),
-        el('span', {}, L('Kết quả', '结果')),
+        el('span', {}, L('Giờ', '时间', '時刻')),
+        el('span', {}, L('Hành động · đối tượng', '操作 · 对象', '操作 · 対象')),
+        el('span', {}, L('Người làm', '操作人', '操作者')),
+        el('span', {}, L('Kết quả', '结果', '結果')),
       ]),
       list,
     ]),
@@ -347,21 +347,21 @@ export function footNote(text) {
 export function openAuditPanel(panel) {
   const status = adminStatus();
   const filter = el('select', { id: 'adm-audit-action', class: 'cm-select' }, [
-    el('option', { value: '' }, L('Tất cả hành động', '全部动作')),
+    el('option', { value: '' }, L('Tất cả hành động', '全部动作', 'すべての操作')),
     ...actionGroups().map(([label, actions]) => el('optgroup', { label }, actions.map((action) => el('option', { value: action }, actionLabel(action))))),
   ]);
   const summaryLabel = el('strong', {});
   const summary = el('p', { class: 'adm-filter-summary', role: 'status' }, [
     summaryLabel,
-    L(' · mới nhất lên trước · mỗi lần tải 20 mục', ' · 最新在前 · 每次加载 20 条'),
+    L(' · mới nhất lên trước · mỗi lần tải 20 mục', ' · 最新在前 · 每次加载 20 条', ' · 新しい順 · 1回の読み込みで20件'),
   ]);
   const filters = el('div', { class: 'adm-audit-filters' }, [
-    el('div', { class: 'adm-field adm-audit-filter-field' }, [el('label', { class: 'adm-label', for: 'adm-audit-action' }, L('Hành động', '动作')), filter]),
+    el('div', { class: 'adm-field adm-audit-filter-field' }, [el('label', { class: 'adm-label', for: 'adm-audit-action' }, L('Hành động', '动作', '操作')), filter]),
     summary,
   ]);
-  const days = el('div', { class: 'adm-audit-days', 'aria-label': L('Nhật ký quản trị', '管理日志'), role: 'group' });
-  const empty = emptyNote(L('Chưa có thao tác nào.', '暂无操作记录。'));
-  const more = button(L('Tải thêm', '加载更多'), { variant: 'adm-more adm-audit-more adm-btn-paper', hidden: '' });
+  const days = el('div', { class: 'adm-audit-days', 'aria-label': L('Nhật ký quản trị', '管理日志', '管理ログ'), role: 'group' });
+  const empty = emptyNote(L('Chưa có thao tác nào.', '暂无操作记录。', '操作はまだありません。'));
+  const more = button(L('Tải thêm', '加载更多', 'さらに読み込む'), { variant: 'adm-more adm-audit-more adm-btn-paper', hidden: '' });
 
   let cursor = null;
   let generation = 0;
@@ -433,6 +433,7 @@ export function openAuditPanel(panel) {
     footNote(L(
       'Chỉ quản trị viên xem được nhật ký. Email trong tên người làm và tên đối tượng luôn được che trước khi ghi.',
       '只有管理员可以查看日志。操作人名称和对象名称中的邮箱在记录前都会被遮挡。',
+      '管理者のみログを閲覧できます。操作者名と対象名に含まれるメールアドレスは、記録前に必ず伏せられます。',
     )),
   );
   reload();

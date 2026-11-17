@@ -7,14 +7,14 @@ import { api, communityPageHref, loadSession, signInPrompt, timeNode, unavailabl
 import { reportSummary } from './community-reports.js';
 
 const STATUS_LABELS = {
-  pending: () => L('Đang chờ duyệt', '等待审核'),
-  approved: () => L('Đã duyệt', '已通过'),
-  rejected: () => L('Bị từ chối', '未通过'),
+  pending: () => L('Đang chờ duyệt', '等待审核', '承認待ち'),
+  approved: () => L('Đã duyệt', '已通过', '承認済み'),
+  rejected: () => L('Bị từ chối', '未通过', '却下'),
 };
 
 function teamLink(pageKey) {
   if (typeof pageKey !== 'string' || !pageKey.startsWith('/')) return null;
-  return el('a', { class: 'cm-link', href: communityPageHref(pageKey) }, L('Mở trang đội', '打开阵容页面'));
+  return el('a', { class: 'cm-link', href: communityPageHref(pageKey) }, L('Mở trang đội', '打开阵容页面', '編成ページを開く'));
 }
 
 function myReportItem(report) {
@@ -28,7 +28,7 @@ function myReportItem(report) {
     reportSummary(report),
     status === 'rejected' && report.rejectReason
       ? el('p', { class: 'cm-reject-reason' }, [
-          el('strong', {}, L('Lý do: ', '原因：')),
+          el('strong', {}, L('Lý do: ', '原因：', '理由：')),
           String(report.rejectReason),
         ])
       : null,
@@ -42,7 +42,7 @@ export async function initCommunityHub(mount = document.getElementById('communit
   try {
     const user = await loadSession({ probe: true });
     if (!user) {
-      mount.replaceChildren(signInPrompt(L('Đăng nhập để xem chiến báo bạn đã gửi.', '登录后即可查看你提交的战报。')));
+      mount.replaceChildren(signInPrompt(L('Đăng nhập để xem chiến báo bạn đã gửi.', '登录后即可查看你提交的战报。', '送信した戦報を見るにはログインしてください。')));
       return;
     }
     const body = await api('/api/me/reports');
@@ -52,6 +52,7 @@ export async function initCommunityHub(mount = document.getElementById('communit
       : el('p', { class: 'scope-note cm-empty' }, L(
           'Bạn chưa gửi chiến báo nào. Mở một trang đội và dùng mục "Chiến báo thực chiến" để gửi.',
           '你还没有提交战报。打开任一阵容页面，在“实战战报”区域提交即可。',
+          'まだ戦報を送信していません。編成ページを開き、「実戦戦報」から送信してください。',
         )));
   } catch {
     mount.replaceChildren(unavailableNotice());

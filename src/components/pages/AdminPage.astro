@@ -12,10 +12,10 @@ interface Props {
 const { locale } = Astro.props;
 ---
 <SiteLayout
-  title={pick(locale, 'Quản trị — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '管理 — 三国志战略版攻略手册')}
-  description={pick(locale, 'Khu quản trị cộng đồng của Cẩm Nang TQCCL.', '三国志战略版攻略手册的社区管理区。')}
+  title={pick(locale, 'Quản trị — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '管理 — 三国志战略版攻略手册', '管理 — 三國志 真戦 攻略手帳')}
+  description={pick(locale, 'Khu quản trị cộng đồng của Cẩm Nang TQCCL.', '三国志战略版攻略手册的社区管理区。', '三國志 真戦 攻略手帳のコミュニティ管理エリアです。')}
   pageKind="detail"
-  tagline={pick(locale, 'Quản trị cộng đồng', '社区管理')}
+  tagline={pick(locale, 'Quản trị cộng đồng', '社区管理', 'コミュニティ管理')}
   robots="noindex"
   locale={locale}
 >

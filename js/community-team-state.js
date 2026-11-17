@@ -126,5 +126,6 @@ export function similarNotice(count, hasMore, locale) {
     locale,
     { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' },
     { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' },
+    { title: `既に ${shown} 件、同じ武将3名の編成があります`, text: '投稿は可能ですが、重複を避けるため先にご確認ください。' },
   );
 }
