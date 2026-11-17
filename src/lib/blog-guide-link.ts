@@ -58,7 +58,7 @@ export async function blogGuideLink(post: Pick<BlogPost, 'tags' | 'lang'>): Prom
   if (topic === 'goi-y-doi') {
     return {
       href: localePath('/goi-y-doi-tu-kho/', locale),
-      label: p('Mở Gợi ý đội', '打开武将库配队', '所持武将で編成を開く'),
+      label: p('Mở Gợi ý đội', '打开武将库配队', '武将図鑑から編成提案を開く'),
       text: p(
         'Nhập kho tướng và chiến pháp, công cụ chọn tối đa 5 đội không trùng tài nguyên.',
         '录入武将和战法库存，工具最多推荐 5 支资源不重复的阵容。',

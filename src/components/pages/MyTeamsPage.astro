@@ -40,8 +40,8 @@ const sources = [
   { href: `${prefix}/doi-chuan/`, label: t('Đội chuẩn', '推荐阵容', 'おすすめ編成'), paths: ['M5 21V4', 'M5 4h11l-2 4 2 4H5'] },
   { href: `${prefix}/doi-khac/`, label: t('Đội khác', '其他阵容', 'その他の編成'), circle: true, paths: ['M2.5 20c1-3.5 3.6-5 6.5-5s5.5 1.5 6.5 5', 'M16 4.5a3.5 3.5 0 0 1 0 7', 'M18 15c2 .6 3.2 2.2 3.8 5'] },
   { href: `${prefix}/khai-hoang/`, label: t('Khai hoang', '开荒', '開拓'), paths: ['M12 3v4', 'M12 17v4', 'M3 12h4', 'M17 12h4', 'M6 6l2.5 2.5', 'M15.5 15.5L18 18', 'M18 6l-2.5 2.5', 'M8.5 15.5L6 18'] },
-  { href: `${prefix}/goi-y-doi-tu-kho/`, label: t('Gợi ý đội', '武将库配队', '武将庫から編成提案'), rect: true, paths: ['M5 9v10h14V9', 'M10 13h4'] },
-  { href: `${prefix}/soi-doi-tu-anh/`, label: t('Soi đội', '截图识阵', 'スクショ編成診断'), paths: ['M4 8V5a1 1 0 0 1 1-1h3', 'M16 4h3a1 1 0 0 1 1 1v3', 'M20 16v3a1 1 0 0 1-1 1h-3', 'M8 20H5a1 1 0 0 1-1-1v-3', 'M8 12h8'] },
+  { href: `${prefix}/goi-y-doi-tu-kho/`, label: t('Gợi ý đội', '武将库配队', '武将図鑑から編成提案'), rect: true, paths: ['M5 9v10h14V9', 'M10 13h4'] },
+  { href: `${prefix}/soi-doi-tu-anh/`, label: t('Soi đội', '截图识阵', 'スクショ編成解析'), paths: ['M4 8V5a1 1 0 0 1 1-1h3', 'M16 4h3a1 1 0 0 1 1 1v3', 'M20 16v3a1 1 0 0 1-1 1h-3', 'M8 20H5a1 1 0 0 1-1-1v-3', 'M8 12h8'] },
 ];
 ---
 <SiteLayout
@@ -57,7 +57,7 @@ const sources = [
       <div class="mt-head-text">
         <span class="mt-kicker">{t('Tài khoản · Đồng bộ theo Google', '账号 · 通过 Google 同步', 'アカウント · Googleで同期')}</span>
         <h1 id="mt-title" class="detail-title mt-title">{t('Đội của tôi', '我的阵容', 'マイ編成')}</h1>
-        <p class="scope-note mt-lead">{t('Đội bạn lưu từ Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội và Soi đội, đồng bộ theo tài khoản. Bản đã lưu là bản sao của riêng bạn: sửa tự do, không đổi khi nguồn cập nhật.', '你从推荐阵容、其他阵容、开荒、武将库配队和截图识阵保存的阵容，按账号同步。已保存的是你自己的副本：可随意修改，来源更新时不会改变。', 'おすすめ編成・その他の編成・開拓・武将庫から編成提案・スクショ編成診断から保存した編成を、アカウントで同期します。保存したものはあなた専用のコピーなので、自由に編集でき、元データが更新されても変わりません。')}</p>
+        <p class="scope-note mt-lead">{t('Đội bạn lưu từ Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội và Soi đội, đồng bộ theo tài khoản. Bản đã lưu là bản sao của riêng bạn: sửa tự do, không đổi khi nguồn cập nhật.', '你从推荐阵容、其他阵容、开荒、武将库配队和截图识阵保存的阵容，按账号同步。已保存的是你自己的副本：可随意修改，来源更新时不会改变。', 'おすすめ編成・その他の編成・開拓・武将図鑑から編成提案・スクショ編成解析から保存した編成を、アカウントで同期します。保存したものはあなた専用のコピーなので、自由に編集でき、元データが更新されても変わりません。')}</p>
       </div>
       <aside class="mt-sources" aria-labelledby="mt-src-title">
         <p class="mt-sources-title" id="mt-src-title">

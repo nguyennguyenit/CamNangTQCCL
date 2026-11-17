@@ -44,11 +44,11 @@ export function boxBar({ boxes, boxId, teamCounts, owned }, actions) {
   const info = owned.size
     ? [
       el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, [L("Kho của hộp: ", "仓库库存：", "倉庫の在庫："), el("strong", {}, L(`${heroes} tướng · ${tactics} chiến pháp`, `${heroes} 名武将 · ${tactics} 个战法`, `武将${heroes}名 · 戦法${tactics}個`))])]),
-      el("p", { class: "mt-boxinfo-sub" }, [L("Dấu “chưa có trong kho” so với kho này. ", "“库中没有”标记以此库存为准。", "「倉庫にありません」の表示は、この倉庫の在庫を基準にしています。"), rosterLink(L("Sửa kho ở Gợi ý đội", "在武将库配队中修改库存", "武将庫から編成提案で在庫を編集"))]),
+      el("p", { class: "mt-boxinfo-sub" }, [L("Dấu “chưa có trong kho” so với kho này. ", "“库中没有”标记以此库存为准。", "「倉庫にありません」の表示は、この倉庫の在庫を基準にしています。"), rosterLink(L("Sửa kho ở Gợi ý đội", "在武将库配队中修改库存", "武将図鑑から編成提案で在庫を編集"))]),
     ]
     : [
       el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, L("Hộp này chưa có kho.", "此仓库还没有库存。", "この倉庫にはまだ在庫がありません。"))]),
-      el("p", { class: "mt-boxinfo-sub" }, [L("Nhập kho để biết đội thiếu món nào. ", "录入库存后即可看出阵容缺哪些。", "在庫を登録すると、編成に足りないものが分かります。"), rosterLink(L("Nhập kho ở Gợi ý đội", "在武将库配队中录入库存", "武将庫から編成提案で在庫を登録"))]),
+      el("p", { class: "mt-boxinfo-sub" }, [L("Nhập kho để biết đội thiếu món nào. ", "录入库存后即可看出阵容缺哪些。", "在庫を登録すると、編成に足りないものが分かります。"), rosterLink(L("Nhập kho ở Gợi ý đội", "在武将库配队中录入库存", "武将図鑑から編成提案で在庫を登録"))]),
     ];
 
   return el("section", { class: "mt-boxbar", "aria-label": L("Hộp kho", "仓库", "倉庫") }, [

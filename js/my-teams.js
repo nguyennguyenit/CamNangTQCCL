@@ -408,7 +408,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       bar,
       ...notices,
       orphan,
-      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。", "この倉庫にはまだ編成がありません。推奨編成、その他の編成、開拓、武将図鑑の編成提案、スクショ編成診断で「マイ編成に保存」を押すと追加できます。")) : null,
+      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。", "この倉庫にはまだ編成がありません。おすすめ編成、その他の編成、開拓、武将図鑑の編成提案、スクショ編成解析で「マイ編成に保存」を押すと追加できます。")) : null,
       ...sections,
       addGroup,
       privacyNote(),

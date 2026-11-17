@@ -158,12 +158,12 @@ const sections: PolicySection[] = [
       t(
         'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để đọc chữ tên tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
         '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型）识别武将和战法文字。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
-        '「画像から編成判定」と「所持武将から編成提案」の 2 つのツールは、画像をブラウザー上で圧縮してから、Cloudflare Worker を経由して本サイトの利用する AI 事業者（DeepSeek または OpenCode Zen、モデルは DeepSeek V4.1 Flash）に送信し、武将名と戦法名の文字を読み取ります。画像はその読み取りにのみ使用し、本サイトには保存しません。送信前に Cloudflare Turnstile によるボット判定を行います。Turnstile のスクリプトは、この 2 つのページと、ご意見のダイアログを開いたときにのみ読み込まれます。',
+        '「スクショ編成解析」と「武将図鑑から編成提案」の 2 つのツールは、画像をブラウザー上で圧縮してから、Cloudflare Worker を経由して本サイトの利用する AI 事業者（DeepSeek または OpenCode Zen、モデルは DeepSeek V4.1 Flash）に送信し、武将名と戦法名の文字を読み取ります。画像はその読み取りにのみ使用し、本サイトには保存しません。送信前に Cloudflare Turnstile によるボット判定を行います。Turnstile のスクリプトは、この 2 つのページと、ご意見のダイアログを開いたときにのみ読み込まれます。',
       ),
       t(
         'Khi bạn bấm Đối chiếu trong "Soi đội từ ảnh", site ghi một bộ đếm ẩn danh: loại màn hình, phe đã chọn và số ô AI đọc được, số ô bạn phải sửa, số ô không rõ. Bộ đếm chỉ cộng dồn theo ngày, không kèm ảnh, tên tướng, tài khoản hay IP, và chỉ dùng để đo độ chính xác của AI.',
         '在“截图识阵”中点击比对时，本站会记录一条匿名计数：画面类型、所选一方，以及 AI 识别的格数、你需要修改的格数和无法识别的格数。计数只按天累计，不含图片、武将名称、账号或 IP，仅用于衡量 AI 的准确度。',
-        '「画像から編成判定」で照合を押すと、匿名のカウントを 1 件記録します。内容は、画面の種類、選択した陣営、AI が読み取れたマス数、ご自身が修正する必要があったマス数、および判読できなかったマス数です。カウントは日ごとに累計されるだけで、画像、武将名、アカウントや IP は含まれず、AI の精度の測定にのみ使用します。',
+        '「スクショ編成解析」で照合を押すと、匿名のカウントを 1 件記録します。内容は、画面の種類、選択した陣営、AI が読み取れたマス数、ご自身が修正する必要があったマス数、および判読できなかったマス数です。カウントは日ごとに累計されるだけで、画像、武将名、アカウントや IP は含まれず、AI の精度の測定にのみ使用します。',
       ),
       t(
         'Nếu bạn đăng nhập, tick đồng ý và tự bấm "Gửi ảnh này", ảnh đó cùng chữ AI đọc được và đội bạn đã xác nhận được lưu trên Cloudflare R2/D1 để quản trị viên duyệt và dùng làm bộ ảnh kiểm tra độ chính xác của AI. Chỉ quản trị viên xem được; mẫu bị từ chối sẽ bị xoá ảnh. Không bấm gửi thì ảnh không bao giờ được lưu.',
@@ -198,12 +198,12 @@ const sections: PolicySection[] = [
       t(
         'Nhật ký "Theo dõi chiêu mộ" (tài khoản, banner, lượt chiêu mộ). Nếu bạn đăng nhập trên trang này, nhật ký còn được đồng bộ lên máy chủ (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, nhật ký không rời trình duyệt.',
         '“招募记录”的数据（账号、卡池、招募次数）。如果你在该页面登录，记录还会同步到服务器（见“存储位置与处理方”）；未登录时记录不会离开浏览器。',
-        '「募集記録」のデータ（アカウント、ピックアップ、募集回数）。このページでログインしている場合、記録はサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、記録がブラウザーの外に出ることはありません。',
+        '「登用記録」のデータ（アカウント、ピックアップ、登用回数）。このページでログインしている場合、記録はサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、記録がブラウザーの外に出ることはありません。',
       ),
       t(
         'Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho" (cùng mùa đang chọn, đội đang khóa và món bù). Nếu bạn đăng nhập, kho còn được đồng bộ lên máy chủ theo từng hộp kho (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, kho không rời trình duyệt. Khi bạn đăng nhập, bản sao của kho (kèm tên hộp kho bạn tự đặt) được giữ trong localStorage của trình duyệt và xoá khi bạn đăng xuất. Ảnh kho dùng để đọc không bao giờ được lưu hay đồng bộ.',
         '在“武将库配队”中扫描得到的武将与战法库（以及所选赛季、锁定的队伍和替代战法）。如果你登录，库存还会按库存盒同步到服务器（见“存储位置与处理方”）；未登录时库存不会离开浏览器。登录后，库存副本（含你自定义的库存盒名称）会保存在浏览器的 localStorage 中，退出登录时清除。用于识别的库存截图不会被保存或同步。',
-        '「所持武将から編成提案」でスキャンした武将と戦法の所持データ（選択中のシーズン、ロックした編成、代替戦法を含みます）。ログインしている場合、所持データは所持ボックス単位でサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、所持データがブラウザーの外に出ることはありません。ログイン中は、所持データの複製（ご自身で付けた所持ボックス名を含みます）がブラウザーの localStorage に保持され、ログアウト時に削除されます。読み取りに使用した所持データのスクリーンショットは、保存も同期もされません。',
+        '「武将図鑑から編成提案」でスキャンした武将と戦法の所持データ（選択中のシーズン、ロックした編成、代替戦法を含みます）。ログインしている場合、所持データは所持ボックス単位でサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、所持データがブラウザーの外に出ることはありません。ログイン中は、所持データの複製（ご自身で付けた所持ボックス名を含みます）がブラウザーの localStorage に保持され、ログアウト時に削除されます。読み取りに使用した所持データのスクリーンショットは、保存も同期もされません。',
       ),
       t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。', '「ログイン済みであること」を示す目印。必要なときにのみセッションを確認するために使用します。'),
     ],
@@ -215,7 +215,7 @@ const sections: PolicySection[] = [
       t(
         'Đội và nhóm trong "Đội của tôi" (bắt buộc đăng nhập) chỉ lưu trên máy chủ theo tài khoản của bạn (xem mục "Nơi lưu trữ và bên xử lý"), không lưu bền trong trình duyệt: trang chỉ giữ chúng trong bộ nhớ khi đang mở. Hộp kho (tên do bạn đặt) là hộp của "Gợi ý đội từ kho" nên cũng được lưu trong localStorage như mô tả ở trên. Riêng khi bạn bấm lưu lúc chưa đăng nhập, bản đội đang lưu được giữ tạm trong sessionStorage tối đa 30 phút để hoàn tất sau khi đăng nhập. Nội dung bạn tự gõ vào cột chữ tự do được lưu nguyên văn.',
         '“我的阵容”（需登录）中的阵容和分组仅按你的账号保存在服务器上（见“存储位置与处理方”），不会长期保存在浏览器中：页面打开时只保留在内存中。库存盒（名称由你自定义）与“武将库配队”共用，因此也会如上所述保存在 localStorage 中。若你在未登录时点击保存，正在保存的阵容会在 sessionStorage 中临时保留最多 30 分钟，以便登录后完成保存。你在自由文本栏中输入的内容会原样保存。',
-        '「マイ編成」（ログイン必須）の編成とグループは、ご自身のアカウントに紐づけてサーバー上にのみ保存され（「保存場所と処理事業者」の項目をご覧ください）、ブラウザーに長期保存されることはありません。ページを開いている間だけメモリー上に保持されます。所持ボックス（名前はご自身で設定）は「所持武将から編成提案」と共通のため、前述のとおり localStorage にも保存されます。ログインしていない状態で保存を押した場合に限り、保存中の編成は、ログイン後に保存を完了できるよう、sessionStorage に最大 30 分間一時的に保持されます。フリーテキスト欄に入力した内容は、そのまま保存されます。',
+        '「マイ編成」（ログイン必須）の編成とグループは、ご自身のアカウントに紐づけてサーバー上にのみ保存され（「保存場所と処理事業者」の項目をご覧ください）、ブラウザーに長期保存されることはありません。ページを開いている間だけメモリー上に保持されます。所持ボックス（名前はご自身で設定）は「武将図鑑から編成提案」と共通のため、前述のとおり localStorage にも保存されます。ログインしていない状態で保存を押した場合に限り、保存中の編成は、ログイン後に保存を完了できるよう、sessionStorage に最大 30 分間一時的に保持されます。フリーテキスト欄に入力した内容は、そのまま保存されます。',
       ),
     ],
   },
@@ -226,7 +226,7 @@ const sections: PolicySection[] = [
       t(
         'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, đội cộng đồng và phiếu bầu, góp ý, bộ đếm ẩn danh Soi đội, nhật ký "Theo dõi chiêu mộ", kho "Gợi ý đội từ kho" và các đội, nhóm, hộp kho trong "Đội của tôi" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo, ảnh đội cộng đồng và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
         'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/社区阵容与投票/反馈、截图识阵匿名计数以及登录后同步的“招募记录”、“武将库配队”库存和“我的阵容”（阵容、分组、库存盒）数据库（D1；随账号删除）、战报截图、社区阵容图片和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
-        'Cloudflare：サイトのホスティング（Pages）、API サーバー（Workers）、アカウント・コメント・戦報・コミュニティ編成と投票・ご意見・「画像から編成判定」の匿名カウント、ならびにログイン時に同期される「募集記録」・「所持武将から編成提案」の所持データ・「マイ編成」（編成、グループ、所持ボックス）のデータベース（D1。アカウント単位で削除）、戦報のスクリーンショット、コミュニティ編成の画像、およびご自身で送信した編成判定用スクリーンショット（R2）、利用回数のカウンター（KV）、Turnstile、ならびにご意見のメール送信（Email Service）。',
+        'Cloudflare：サイトのホスティング（Pages）、API サーバー（Workers）、アカウント・コメント・戦報・コミュニティ編成と投票・ご意見・「スクショ編成解析」の匿名カウント、ならびにログイン時に同期される「登用記録」・「武将図鑑から編成提案」の所持データ・「マイ編成」（編成、グループ、所持ボックス）のデータベース（D1。アカウント単位で削除）、戦報のスクリーンショット、コミュニティ編成の画像、およびご自身で送信した編成解析用スクリーンショット（R2）、利用回数のカウンター（KV）、Turnstile、ならびにご意見のメール送信（Email Service）。',
       ),
       t('Google: xác thực đăng nhập.', 'Google：登录身份验证。', 'Google：ログインの認証。'),
       t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。', 'DeepSeek（api.deepseek.com）および OpenCode Zen（opencode.ai）：AI による画像の読み取り。管理者が設定した順序で利用します。'),
@@ -246,7 +246,7 @@ const sections: PolicySection[] = [
       t(
         'Tài khoản, bình luận, chiến báo, đội cộng đồng (cùng ảnh và phiếu bầu), góp ý và ảnh Soi đội bạn tự gửi được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá (ảnh Soi đội và ảnh đội cộng đồng bị từ chối thì xoá ngay). Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn. Bộ đếm ẩn danh Soi đội không gắn với ai nên được giữ lâu dài.',
         '账号、评论、战报、社区阵容（连同图片和投票）、反馈以及你主动发送的识阵截图会一直保存，直到你自行删除或申请删除（被拒绝的识阵截图和社区阵容图片会立即删除）。已上传但未提交的图片在 24 小时后删除；登录会话和频率计数器到期自动失效。截图识阵匿名计数不关联任何人，因此会长期保存。',
-        'アカウント、コメント、戦報、コミュニティ編成（画像と投票を含みます）、ご意見、およびご自身で送信した編成判定用スクリーンショットは、ご自身で削除するか削除を依頼されるまで保存されます（却下された編成判定用スクリーンショットとコミュニティ編成の画像は直ちに削除されます）。アップロードされたものの送信されなかった画像は 24 時間後に削除され、ログインセッションと利用回数のカウンターは有効期限が切れると自動的に無効になります。「画像から編成判定」の匿名カウントは特定の個人と結びつかないため、長期間保存されます。',
+        'アカウント、コメント、戦報、コミュニティ編成（画像と投票を含みます）、ご意見、およびご自身で送信した編成解析用スクリーンショットは、ご自身で削除するか削除を依頼されるまで保存されます（却下された編成解析用スクリーンショットとコミュニティ編成の画像は直ちに削除されます）。アップロードされたものの送信されなかった画像は 24 時間後に削除され、ログインセッションと利用回数のカウンターは有効期限が切れると自動的に無効になります。「スクショ編成解析」の匿名カウントは特定の個人と結びつかないため、長期間保存されます。',
       ),
     ],
   },

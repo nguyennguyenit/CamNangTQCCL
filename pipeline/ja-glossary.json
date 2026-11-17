@@ -446,6 +446,252 @@
    ],
    "ja": "兵法書",
    "source": "https://sangokushi-shinsen.com/heihousyo-master/"
+  },
+  {
+   "zh": [
+    "封禁"
+   ],
+   "ja": "利用停止",
+   "source": "unverified",
+   "note": "UI cộng đồng: khoá tài khoản; mở khoá = 利用停止を解除"
+  },
+  {
+   "zh": [
+    "版主"
+   ],
+   "ja": "モデレーター",
+   "source": "unverified",
+   "note": "UI cộng đồng: kiểm duyệt viên"
+  },
+  {
+   "zh": [
+    "管理员"
+   ],
+   "ja": "管理者",
+   "source": "unverified",
+   "note": "UI cộng đồng: quản trị viên"
+  },
+  {
+   "zh": [
+    "角色"
+   ],
+   "ja": "ロール",
+   "source": "unverified",
+   "note": "UI quản trị: vai trò tài khoản"
+  },
+  {
+   "zh": [
+    "截图识阵",
+    "识别阵容"
+   ],
+   "ja": "編成解析",
+   "source": "unverified",
+   "note": "Tên công cụ Soi đội; bản đầy đủ 'Soi đội từ ảnh' = スクショ編成解析"
+  },
+  {
+   "zh": [
+    "环"
+   ],
+   "ja": "段",
+   "source": "unverified",
+   "note": "Chuỗi failover AI ở trang quản trị: mắt xích = 第N段"
+  },
+  {
+   "zh": [
+    "链路"
+   ],
+   "ja": "経路",
+   "source": "unverified",
+   "note": "Chuỗi failover AI ở trang quản trị"
+  },
+  {
+   "zh": [
+    "队伍"
+   ],
+   "ja": "部隊",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "阵容"
+   ],
+   "ja": "編成",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "梯度"
+   ],
+   "ja": "ランク",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "推荐阵容"
+   ],
+   "ja": "おすすめ編成",
+   "source": "unverified",
+   "note": "Mục Đội chuẩn; không dùng 推奨編成"
+  },
+  {
+   "zh": [
+    "其他阵容"
+   ],
+   "ja": "その他の編成",
+   "source": "unverified",
+   "note": "Mục Đội khác"
+  },
+  {
+   "zh": [
+    "共存阵容"
+   ],
+   "ja": "共存編成",
+   "source": "unverified",
+   "note": "Mục Cùng Tồn"
+  },
+  {
+   "zh": [
+    "我的阵容"
+   ],
+   "ja": "マイ編成",
+   "source": "unverified",
+   "note": "Mục Đội của tôi"
+  },
+  {
+   "zh": [
+    "阵法战法"
+   ],
+   "ja": "陣法戦法",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "兵种战法"
+   ],
+   "ja": "兵種戦法",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "替换"
+   ],
+   "ja": "差し替え",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "图鉴",
+    "图鉴查询"
+   ],
+   "ja": "図鑑",
+   "source": "unverified",
+   "note": "Mục Tra cứu (menu: 図鑑検索)"
+  },
+  {
+   "zh": [
+    "保底"
+   ],
+   "ja": "天井",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "招募"
+   ],
+   "ja": "登用",
+   "source": "unverified",
+   "note": "Theo dõi chiêu mộ = 登用記録; không dùng 招聘/募集"
+  },
+  {
+   "zh": [
+    "武将库"
+   ],
+   "ja": "武将図鑑",
+   "source": "unverified",
+   "note": "Kho tướng của người chơi; Gợi ý đội từ kho = 武将図鑑から編成提案"
+  },
+  {
+   "zh": [
+    "仓库"
+   ],
+   "ja": "倉庫",
+   "source": "unverified",
+   "note": "Hộp/kho chứa ở Đội của tôi"
+  },
+  {
+   "zh": [
+    "开荒"
+   ],
+   "ja": "開拓",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "碰瓷"
+   ],
+   "ja": "当たり屋",
+   "source": "unverified",
+   "note": "Đội Chạm Sứ ở Khai hoang; độ tin cậy thấp nhất"
+  },
+  {
+   "zh": [
+    "缘分"
+   ],
+   "ja": "絆",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "红"
+   ],
+   "ja": "赤",
+   "source": "unverified",
+   "note": "Độ đỏ của tướng (至少 N 红 = 赤N以上)"
+  },
+  {
+   "zh": [
+    "剧本"
+   ],
+   "ja": "シナリオ",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "战报"
+   ],
+   "ja": "戦報",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "赛季"
+   ],
+   "ja": "シーズン",
+   "source": "unverified"
+  },
+  {
+   "zh": [
+    "兵种进阶"
+   ],
+   "ja": "兵種進階",
+   "source": "unverified",
+   "note": "Cải tạo binh chủng"
+  },
+  {
+   "zh": [
+    "建筑",
+    "设施"
+   ],
+   "ja": "施設",
+   "source": "unverified",
+   "note": "Công trình"
+  },
+  {
+   "zh": [
+    "统御"
+   ],
+   "ja": "コスト",
+   "source": "unverified"
   }
  ]
 }

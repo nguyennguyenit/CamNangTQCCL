@@ -299,7 +299,7 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
       link('図鑑検索', '/ja/tra-cuu/', 'Tra cứu bản tiếng Nhật'),
       link('登用記録', '/ja/theo-doi-chieu-mo/', 'Theo dõi chiêu mộ bản tiếng Nhật'),
       link('スクショ編成解析', '/ja/soi-doi-tu-anh/', 'Soi đội từ ảnh bản tiếng Nhật'),
-      link('所持武将で編成', '/ja/goi-y-doi-tu-kho/', 'Gợi ý đội từ kho bản tiếng Nhật'),
+      link('武将図鑑から編成提案', '/ja/goi-y-doi-tu-kho/', 'Gợi ý đội từ kho bản tiếng Nhật'),
       '',
     ]),
     '## Bài viết tiếng Việt',

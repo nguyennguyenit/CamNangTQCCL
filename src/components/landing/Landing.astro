@@ -99,23 +99,23 @@ const tiles = [
   {
     path: '/theo-doi-chieu-mo/',
     icon: 'recruit',
-    title: t('Theo dõi chiêu mộ', '招募记录', '募集記録'),
+    title: t('Theo dõi chiêu mộ', '招募记录', '登用記録'),
     beta: true,
     desc: t('Đếm lượt tới mốc bảo hiểm 5★ cho nhiều tài khoản, lưu ngay trong trình duyệt.', '多账号统计距五星保底的抽数，数据只保存在你的浏览器中。', '複数アカウントの星5天井までの回数を集計できます。データはお使いのブラウザにのみ保存されます。'),
   },
   {
     path: '/soi-doi-tu-anh/',
     icon: 'analyze',
-    title: t('Soi đội từ ảnh', '截图识阵', 'スクショ編成判定'),
+    title: t('Soi đội từ ảnh', '截图识阵', 'スクショ編成解析'),
     beta: true,
     desc: t('Gửi ảnh đội hình, nhận tên tướng, chiến pháp và các đội tương tự trong cẩm nang.', '上传阵容截图，识别武将与战法，并匹配手册中的相似阵容。', '編成のスクリーンショットを送ると、武将と戦法を判別し、手帳内の似た編成を探します。'),
   },
   {
     path: '/goi-y-doi-tu-kho/',
     icon: 'roster',
-    title: t('Gợi ý đội từ kho', '武将库配队', '武将庫から編成提案'),
+    title: t('Gợi ý đội từ kho', '武将库配队', '武将図鑑から編成提案'),
     beta: true,
-    desc: t('Đọc ảnh kho tướng, cho bạn sửa lại rồi chọn tối đa 5 đội không trùng tài nguyên.', '识别武将库截图，确认修改后，最多推荐 5 支资源互不冲突的队伍。', '武将庫のスクリーンショットを読み取り、確認・修正のうえで、リソースが重ならない編成を最大5つ提案します。'),
+    desc: t('Đọc ảnh kho tướng, cho bạn sửa lại rồi chọn tối đa 5 đội không trùng tài nguyên.', '识别武将库截图，确认修改后，最多推荐 5 支资源互不冲突的队伍。', '武将図鑑のスクリーンショットを読み取り、確認・修正のうえで、リソースが重ならない編成を最大5つ提案します。'),
   },
 ];
 
@@ -180,7 +180,7 @@ const featureChecks = [
 ];
 ---
 <SiteLayout
-  title={t('Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册', '「三國志 真戦 攻略手帳」')}
+  title={t('Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册', '三國志 真戦 攻略手帳')}
   description={t(
     'Tổng hợp đội hình meta, đội hình Cùng Tồn và Khai hoang game Tam Quốc Chí Chiến Lược, có đầy đủ bộ lọc theo tướng, chiến pháp, binh thư, bậc.',
     '汇总《三国志·战略版》各赛季推荐阵容、共存阵容与开荒攻略，支持按武将、战法、兵书与阵营筛选。',
@@ -200,7 +200,7 @@ const featureChecks = [
       <p class="landing-lead">{copy.heroLead}</p>
       <div class="landing-hero-actions">
         <a class="landing-btn landing-btn-primary" href={href('/doi-chuan/')}>{t('Mở Đội chuẩn', '查看推荐阵容', 'おすすめ編成を見る')}<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={ARROW}></svg></a>
-        <a class="landing-btn landing-btn-ghost" href={href('/goi-y-doi-tu-kho/')}>{t('Gợi ý đội từ kho', '武将库配队', '武将庫から編成提案')}</a>
+        <a class="landing-btn landing-btn-ghost" href={href('/goi-y-doi-tu-kho/')}>{t('Gợi ý đội từ kho', '武将库配队', '武将図鑑から編成提案')}</a>
       </div>
       <ul class="landing-checks">
         {featureChecks.map((label) => (

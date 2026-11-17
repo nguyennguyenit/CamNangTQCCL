@@ -13,8 +13,8 @@ export const kindLabel = (kind) => ({
   recommended: L("Đội chuẩn", "推荐阵容", "おすすめ編成"),
   legacy: L("Đội khác", "其他阵容", "その他の編成"),
   khaihoang: L("Khai hoang", "开荒", "開拓"),
-  analyze: L("Soi đội", "截图识阵", "スクショ編成診断"),
-  "roster-recommend": L("Gợi ý đội", "武将库配队", "武将庫から編成提案"),
+  analyze: L("Soi đội", "截图识阵", "スクショ編成解析"),
+  "roster-recommend": L("Gợi ý đội", "武将库配队", "武将図鑑から編成提案"),
 })[kind] ?? "";
 
 /** Id phần tử của thẻ đội (đích của link trong khối cảnh báo trùng). */
@@ -129,7 +129,7 @@ export function teamCard(team, ctx, deps) {
       ]),
       sourceHref
         ? el("a", { class: "mt-source-link", href: sourceHref }, [L("Xem bản gốc", "查看原版", "元データを見る"), mtIcon("arrow", 15)])
-        : team.source.kind === "analyze" ? el("span", { class: "mt-source-note" }, L("Từ Soi đội · không có bản gốc", "来自截图识阵 · 无原版", "スクショ編成診断より · 元データなし")) : null,
+        : team.source.kind === "analyze" ? el("span", { class: "mt-source-note" }, L("Từ Soi đội · không có bản gốc", "来自截图识阵 · 无原版", "スクショ編成解析より · 元データなし")) : null,
     ]),
     badges.length ? el("div", { class: "mt-badges" }, badges) : null,
     // Câu báo cho trình đọc màn hình đi qua vùng `role=status` chung của trang; dòng này chỉ để nhìn.

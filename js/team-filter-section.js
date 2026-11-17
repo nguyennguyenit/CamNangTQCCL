@@ -140,7 +140,7 @@ import { isNativeNavigationClick, safeReturnUrl } from './team-detail-navigation
 export const PAGE_SIZE=60;
 
 /** Tiêu đề (h1) của mục Đội chuẩn (`recommended`) / Đội khác (`other`); một nguồn cho build lẫn trình duyệt. */
-export const referenceSectionTitle=family=>family==='other' ? L('Đội khác','其他阵容','その他の編成') : L('Đội chuẩn','推荐阵容','推奨編成');
+export const referenceSectionTitle=family=>family==='other' ? L('Đội khác','其他阵容','その他の編成') : L('Đội chuẩn','推荐阵容','おすすめ編成');
 
 /** Chữ đầu mục Đội chuẩn / Đội khác (kicker, h1, lời dẫn) dạng cây; dùng chung giữa bản dựng sẵn và trình duyệt. */
 export function referenceHeadTextTree(title,family) {
@@ -148,7 +148,7 @@ export function referenceHeadTextTree(title,family) {
     t('span',{class:'reference-kicker'},L('Đội hình','阵容','編成')),
     t('h1',{class:'reference-title',tabindex:'-1'},title),
     t('p',{class:'reference-lead'},family==='other'
-      ? L('Các đội có sẵn, đã đối chiếu với đội chuẩn.','现有阵容，已与推荐阵容核对。','既存の編成です。推奨編成と照合済みです。')
+      ? L('Các đội có sẵn, đã đối chiếu với đội chuẩn.','现有阵容，已与推荐阵容核对。','既存の編成です。おすすめ編成と照合済みです。')
       : L('Đội hình tham khảo, chia theo mùa tương ứng.','参考阵容，按对应赛季分类。','参考編成です。対応するシーズンごとに分類しています。')),
   ]);
 }

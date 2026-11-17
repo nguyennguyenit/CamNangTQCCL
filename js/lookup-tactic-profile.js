@@ -231,7 +231,7 @@ function camNangCards(view, record, from) {
     t("div", { class: "cam-nang-counts" }, [
       t("div", { class: "cam-nang-count" }, [
         t("span", { class: "cam-nang-number" }, String(view.standard)),
-        t("span", { class: "cam-nang-unit" }, L("đội chuẩn", "支推荐阵容", "件の推奨編成")),
+        t("span", { class: "cam-nang-unit" }, L("đội chuẩn", "支推荐阵容", "件のおすすめ編成")),
       ]),
       t("div", { class: "cam-nang-count" }, [
         t("span", { class: "cam-nang-number" }, String(view.other)),
@@ -267,7 +267,7 @@ function camNangCards(view, record, from) {
     })),
     // Kết quả tìm theo tên có thể gồm đội chỉ trùng chữ trong tên đội, nên link không hứa đúng con số đếm.
     query ? t("a", { class: "cam-nang-link", href: localePath(`/doi-chuan/?${new URLSearchParams({ season: "all", q: query })}`) }, [
-      L("Tìm chiến pháp này trong Đội chuẩn", "在推荐阵容中查找该战法", "推奨編成でこの戦法を探す"),
+      L("Tìm chiến pháp này trong Đội chuẩn", "在推荐阵容中查找该战法", "おすすめ編成でこの戦法を探す"),
       iconTree([svgTree("line", { x1: 5, y1: 12, x2: 19, y2: 12 }), svgTree("polyline", { points: "13 6 19 12 13 18" })], { size: 15, stroke: 2 }),
     ]) : null,
   ]);
@@ -279,7 +279,7 @@ function summaryBlockTree(content) {
   return t("section", { class: "cam-nang", "aria-labelledby": "cam-nang-title" }, [
     t("div", { class: "cam-nang-head" }, [
       t("h3", { class: "cam-nang-heading", id: "cam-nang-title" }, L("Trong cẩm nang", "攻略收录", "攻略での使用状況")),
-      t("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa", "统计自现有推荐阵容与其他阵容 · 全部赛季", "掲載中の推奨編成とその他の編成から集計 · 全シーズン")),
+      t("span", { class: "cam-nang-note" }, L("Tính từ đội chuẩn và đội khác đang có · mọi mùa", "统计自现有推荐阵容与其他阵容 · 全部赛季", "掲載中のおすすめ編成とその他の編成から集計 · 全シーズン")),
     ]),
     ...content,
   ]);

@@ -104,7 +104,7 @@ export function dailySlotLabel(slotKey) {
 
 /** Tên gói để hiển thị: gói ngày còn giữ tên mặc định thì dịch theo ngôn ngữ trang; tên người dùng đặt giữ nguyên. */
 export function bannerDisplayName(banner) {
-  if (banner?.id === DAILY_BANNER_ID && banner.name === DAILY_BANNER_NAME) return L(DAILY_BANNER_NAME, "PK名将招募", "PK名将募集");
+  if (banner?.id === DAILY_BANNER_ID && banner.name === DAILY_BANNER_NAME) return L(DAILY_BANNER_NAME, "PK名将招募", "PK名将登用");
   return banner?.name || "";
 }
 
