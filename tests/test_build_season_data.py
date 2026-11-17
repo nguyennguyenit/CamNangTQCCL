@@ -379,6 +379,8 @@ class CuratedSeasonBundleTest(unittest.TestCase):
             (refit_link,lambda team:team['heroes'][0].update(equipmentRaw='Linh Động')),
             (refit_link,lambda team:team.update(strategyCardsRaw='A → B')),
             (refit_link,lambda team:(team.pop('unitTacticEffectsRaw'),team.update(strategyCardsRaw=''))),
+            # Đội 11 cột đầy đủ, hợp lệ khi đứng riêng, vẫn không được trộn vào nhóm 10 cột.
+            (refit_link,lambda team:(team.pop('unitTacticEffectsRaw'),team.update(strategyCardsRaw='A → B'),[hero.update(equipmentRaw='Linh Động') for hero in team['heroes']])),
         ]
         for index,(pick,change) in enumerate(changes):
             registry,evidence,options=self.bundle();link=pick(options);payload=link['target']['payload']
