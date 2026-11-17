@@ -458,6 +458,13 @@ class SiteLocalizationTest(unittest.TestCase):
             strict = check(ROOT, stage="all", candidate=full_candidate)
             self.assertEqual(strict["exitCode"], 0)
             self.assertEqual(strict["uiMissingSources"], [])
+            # Kỳ lược của đội được tính ở đường publish này (không qua capture), từ catalog của chính candidate.
+            selector = json.loads((full_candidate / "recommended" / "current.json").read_bytes())
+            generation = full_candidate / "recommended" / selector["generationId"]
+            index = json.loads((generation / "index.json").read_bytes())["records"]
+            wumou = next(row for row in index if row["sourceConfigId"] == "s27-official-wumou-qi")
+            self.assertEqual(wumou["qilue"]["cardIds"][0], "qilue-card:bo-tri-thap-dien")
+            self.assertEqual(sum("qilue" in row for row in index), 59)
 
     def test_publication_rejects_lookup_bytes_outside_reviewed_candidate(self):
         with tempfile.TemporaryDirectory() as temporary:

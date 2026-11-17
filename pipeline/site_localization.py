@@ -130,10 +130,12 @@ NOTE_OWNERS = ("alternative", "primary", "team")
 NOTE_FIELD_PATTERN = "displayNotes.blocks[].textRaw"
 NOTE_ENTITY_PATTERN = "recommended:{safeScopeKey}/{sourceConfigId}"
 
+QILUE_OVERRIDES_PATH = "pipeline/recommended-qilue-overrides.json"
 ROW_DERIVED = frozenset(
     {
         "displayNameVi",
         "displayNotes",
+        "qilue",
         "legacyReferences",
         "sourceCategoryNameVi",
         "sourceSeasonCode",
@@ -2072,6 +2074,7 @@ def compile_candidate(root, output, *, stage):
             "pipeline/recommended-display-map.json",
             "pipeline/recommended-default-season.json",
             "pipeline/recommended-content-links.json",
+            QILUE_OVERRIDES_PATH,
             IDENTITY_MAP_PATH,
             OTHER_LEDGER_PATH,
         )
@@ -2122,6 +2125,9 @@ def compile_candidate(root, output, *, stage):
         # bản đang phát trên đĩa — số liệu không thể lệch với `data/heroes-dict.json` sau publish.
         catalog_bytes=(lookup_root / "heroes-dict.json").read_bytes(),
         tactic_catalog_bytes=(lookup_root / "tactics.json").read_bytes(),
+        # Kỳ lược của đội đọc từ chữ ghi chú, đối chiếu catalog Kỳ lược của chính candidate này.
+        qilue_catalog_bytes=(lookup_root / "lookup-catalog.json").read_bytes(),
+        qilue_overrides_bytes=_repo_member(root, QILUE_OVERRIDES_PATH).read_bytes(),
     )
 
     source_hashes = {
