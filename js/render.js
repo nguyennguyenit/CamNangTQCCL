@@ -85,6 +85,11 @@ const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
  * Chữ công khai của một trường nguồn. Bản vi: chuỗi còn chữ Hán không được hiện (dùng nhãn dự phòng).
  * Bản zh: dữ liệu không áp bản dịch nên chữ Hán gốc là nội dung chính, hiện nguyên.
  */
+/**
+ * Bản ja: văn xuôi chữ Trung của nguồn chưa có bản dịch Nhật nên bị ẩn, thay bằng đúng một dòng báo thiếu (ghi chú đội Đội chuẩn,
+ * panel cấu hình mùa `?config=`).
+ */
+export const SOURCE_PROSE_MISSING_JA = "中国語の原文しかない説明は、日本語訳がないため表示していません。";
 const publicText = (value, fallback = L("Nội dung tiếng Việt chưa sẵn sàng", "内容尚未就绪", "内容はまだ準備中です")) =>
   typeof value === "string" && value.trim() && (sourceText() || !CJK_TEXT.test(value)) ? value.trim() : fallback;
 /**
@@ -1043,6 +1048,14 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
     const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'book' ? item.id : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
     names.set(ref,zh && item.chinese ? sourceName(item.chinese) : item.viet);
   }
+  // Bản ja: văn xuôi chữ Trung (đánh giá, điều kiện, hiệu ứng, ghi chú) chưa có bản dịch Nhật nên bị ẩn; cuối panel có một dòng báo thiếu.
+  const hideSourceProse = contentMode(currentLocale()) === 'ja';
+  let hiddenProse = 0;
+  const prose = (value, fallback) => {
+    if (hideSourceProse && typeof value === 'string' && CJK_TEXT.test(value)) { hiddenProse++; return null; }
+    return publicText(value, fallback);
+  };
+  const proseNode = (tag, props, value, fallback) => { const text = prose(value, fallback); return text === null ? null : el(tag, props, text); };
   const selection = defaultSeasonSelection(config);
   const score = el('p',{class:'config-score'});
   const comparison = el('div',{class:'season-inventory-comparison',role:'status'});
@@ -1087,19 +1100,29 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
     ])),
     el('details',{},[
       el('summary',{},L('Đánh giá cấu hình','配置评价', '構成の評価')),
-      el('p',{},publicText(row.evaluation?.reviewNote, L('Chưa có đánh giá cấu hình.','暂无配置评价。', '構成の評価はまだありません。'))),
+      proseNode('p',{},row.evaluation?.reviewNote, L('Chưa có đánh giá cấu hình.','暂无配置评价。', '構成の評価はまだありません。')),
       ...(row.evaluation?.rankings || []).map(rank=>el('p',{},`${rank.tier}${rank.id === row.evaluation.defaultRankingId ? L(' · Đánh giá được chọn',' · 已选评价', ' · 選択中の評価') : L(' · Đánh giá khác',' · 其他评价', ' · その他の評価')}`)),
     ]),
     el('h4',{},L('Điều kiện và hiệu ứng','条件与效果', '条件と効果')),
-    ...config.requirements.map(item=>el('p',{class:'season-detail-text'},`${publicText(item.descriptionRaw)} · ${L('Chưa xác minh điều kiện','条件尚未核实', '条件は未確認')}${item.mandatory ? L(' · Bắt buộc',' · 必要', ' · 必須') : ''}`)),
+    ...config.requirements.map(item=>{
+      const description = prose(item.descriptionRaw);
+      const status = `${L('Chưa xác minh điều kiện','条件尚未核实', '条件は未確認')}${item.mandatory ? L(' · Bắt buộc',' · 必要', ' · 必須') : ''}`;
+      return el('p',{class:'season-detail-text'},description === null ? status : `${description} · ${status}`);
+    }),
     ...config.effectBundles.map(item=>el('div',{class:'season-effect'},[
-      el('h5',{},publicText(item.labelRaw)),el('p',{class:'season-detail-text'},publicText(item.effectsRaw)),
-      ...item.requirementIds.map(id=>el('p',{class:'season-detail-text'},L(`Điều kiện: ${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`,`条件：${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`, `条件：${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`))),
+      proseNode('h5',{},item.labelRaw),proseNode('p',{class:'season-detail-text'},item.effectsRaw),
+      ...item.requirementIds.map(id=>{
+        const description = prose(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw);
+        return description === null ? null : el('p',{class:'season-detail-text'},L(`Điều kiện: ${description}`,`条件：${description}`, `条件：${description}`));
+      }),
       el('p',{class:'scope-note'},L('Chưa xác minh điều kiện và hiệu ứng từ kho hiện tại.','尚未根据当前武将库核实条件与效果。', '現在の武将図鑑では条件と効果を確認できていません。')),
     ])),
     !config.requirements.length && !config.effectBundles.length ? el('p',{},L('Không có điều kiện đặc biệt được ghi trong cấu hình.','此配置未记录特殊条件。', 'この構成には特別な条件が記録されていません。')) : null,
-    el('p',{class:'season-detail-text'},publicText(config.notes, L('Ghi chú: chưa có dữ liệu','备注：暂无数据', 'メモ：データがありません'))),compare,comparison,
+    proseNode('p',{class:'season-detail-text'},config.notes, L('Ghi chú: chưa có dữ liệu','备注：暂无数据', 'メモ：データがありません')),
   ]);
+  // Đếm văn xuôi bị ẩn sau khi dựng xong các khối trên; dòng báo thiếu đứng trước nút đối chiếu kho.
+  if (hiddenProse) detail.append(el('p',{class:'season-detail-text detail-note-missing'},SOURCE_PROSE_MISSING_JA));
+  detail.append(compare,comparison);
   refreshScore();
   return detail;
 }
