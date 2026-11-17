@@ -93,9 +93,38 @@ export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
 ]));
 
+const LANG_SWITCHER = /<nav\b[^>]*\bdata-lang-switcher\b[^>]*>([\s\S]*?)<\/nav>/gu;
+const ANCHOR = /<a\b([^>]*)>/gu;
+
 /**
- * Trang có bản gương ở mọi locale phải khai đúng `<html lang>` của ngôn ngữ mình và đủ bộ hreflang
- * (mọi locale + x-default = bản Việt) trỏ URL tuyệt đối của nhóm trang.
+ * Nhóm chuyển ngôn ngữ (header + chân menu mobile): mỗi nhóm có đúng một link cho mỗi locale theo thứ tự `SITE_LOCALES`;
+ * link bản đang xem mang `aria-current="page"` (không có `data-lang-switch`), link sang bản khác mang `data-lang-switch`.
+ */
+export function verifyLanguageSwitcher(html, htmlPath, locale) {
+  const groups = [...html.matchAll(LANG_SWITCHER)];
+  if (groups.length < 2) throw new Error(`Page lacks its language switcher groups (header + mobile menu): ${htmlPath}`);
+  for (const [, inner] of groups) {
+    const links = [...inner.matchAll(ANCHOR)].map(([, attributes]) => ({
+      hreflang: attributes.match(/\bhreflang="([^"]+)"/u)?.[1],
+      current: /\baria-current="page"/u.test(attributes),
+      switches: /\bdata-lang-switch\b/u.test(attributes),
+    }));
+    const expected = SITE_LOCALES.map((code) => HREFLANG[code]);
+    if (JSON.stringify(links.map((link) => link.hreflang)) !== JSON.stringify(expected)) {
+      throw new Error(`Language switcher must list ${expected.join(", ")} in order: ${htmlPath}`);
+    }
+    for (const link of links) {
+      const own = link.hreflang === HREFLANG[locale];
+      if (link.current !== own || link.switches === own) {
+        throw new Error(`Language switcher marks the wrong current language (${link.hreflang}): ${htmlPath}`);
+      }
+    }
+  }
+}
+
+/**
+ * Trang có bản gương ở mọi locale phải khai đúng `<html lang>` của ngôn ngữ mình, đủ bộ hreflang
+ * (mọi locale + x-default = bản Việt) trỏ URL tuyệt đối của nhóm trang và nhóm chuyển ngôn ngữ đủ mọi bản.
  */
 function verifyLocalePair(html, htmlPath, locale, routePath, site) {
   if (!html.includes(`<html lang="${HREFLANG[locale]}"`)) {
@@ -105,6 +134,7 @@ function verifyLocalePair(html, htmlPath, locale, routePath, site) {
     const link = `<link rel="alternate" hreflang="${alternate.hreflang}" href="${new URL(alternate.path, site).href}">`;
     if (!html.includes(link)) throw new Error(`Page lacks its hreflang alternate ${alternate.hreflang}: ${htmlPath}`);
   }
+  verifyLanguageSwitcher(html, htmlPath, locale);
 }
 
 /** Output cố định của blog: có kể cả khi API chưa có bài (trang danh sách rỗng, feed rỗng). */
@@ -835,9 +865,15 @@ export async function verifyAstroDist({
   }
   const notFound = await readPage("404.html");
   if (!notFound.includes('id="not-found-title"')) throw new Error("Static 404 page lacks its not-found heading");
-  // Pages chỉ phục vụ một 404.html: khối tiếng Trung dựng sẵn, script chọn nó cho đường dẫn dưới /zh/.
-  if (!notFound.includes('data-not-found="zh"') || !notFound.includes('id="not-found-locale"')) {
-    throw new Error("Static 404 page lacks its Chinese block for /zh/ paths");
+  // Pages chỉ phục vụ một 404.html: mỗi locale có tiền tố có một khối dựng sẵn (ẩn, đúng `lang`), script chọn khối
+  // theo tiền tố đường dẫn (`/zh/`, `/ja/`…).
+  if (!notFound.includes('id="not-found-locale"')) throw new Error("Static 404 page lacks its locale picker script");
+  for (const locale of SITE_LOCALES.filter((code) => LOCALE_PREFIX[code])) {
+    const block = new RegExp(`<section\\b(?=[^>]*\\bdata-not-found="${locale}")(?=[^>]*\\blang="${HREFLANG[locale]}")(?=[^>]*\\bhidden\\b)[^>]*>`, "u");
+    if (!block.test(notFound) || !notFound.includes(`id="not-found-title-${locale}"`)) {
+      throw new Error(`Static 404 page lacks its hidden ${locale} block for ${LOCALE_PREFIX[locale]}/ paths`);
+    }
+    if (!notFound.includes(JSON.stringify(LOCALE_PREFIX[locale]))) throw new Error(`Static 404 picker lacks the ${locale} prefix`);
   }
   if (notFound.includes('src="/js/app.js"') || notFound.includes('src="/js/team-detail.js"') || notFound.includes('src="/js/khaihoang-detail.js"')) {
     throw new Error("Static 404 page must not boot application entries");

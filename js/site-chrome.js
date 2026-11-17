@@ -94,12 +94,13 @@ export function initFooterGameDisclosure({documentTarget = document, windowTarge
 }
 
 /**
- * Nút chuyển ngôn ngữ (`[data-lang-switch]`, header + menu mobile) là link thật tới bản gương của trang.
- * Bộ lọc, biến thể và deep-link nằm ở query/hash và đổi tại chỗ (history API), nên href được ghép lại với
- * query/hash của lúc bấm; href gốc do layout phát được giữ ở `data-lang-base` để không cộng dồn.
+ * Nhóm chuyển ngôn ngữ (header + menu mobile) có một link thật cho mỗi locale: `[data-lang-switch]` tới bản gương
+ * của trang ở từng ngôn ngữ khác, `[data-lang-current]` về chính trang đang xem. Bộ lọc, biến thể và deep-link nằm ở
+ * query/hash và đổi tại chỗ (history API), nên href của mọi link được ghép lại với query/hash của lúc bấm; href gốc
+ * do layout phát được giữ ở `data-lang-base` để không cộng dồn.
  */
 export function syncLanguageSwitch({documentTarget = document, windowTarget = globalThis} = {}) {
-  const links = [...documentTarget.querySelectorAll('[data-lang-switch]')];
+  const links = [...documentTarget.querySelectorAll('[data-lang-switch], [data-lang-current]')];
   const refresh = (link) => {
     const location = windowTarget.location;
     if (!location) return;
