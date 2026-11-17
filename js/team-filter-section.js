@@ -128,7 +128,7 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
   };
 }
 
-import { SOURCE_TIER_ORDER, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
+import { SOURCE_TIER_ORDER, TIER_SOURCE_JP, jpTierSourceLabel, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
 import { bindTacticTags, coexistTeamCard, groupRowsByTier, recommendedListTrees, referenceRowKey, teamItemTree, tierOf, tierSectionTree } from './recommended-reference-render.js';
 import { decorateCoverageBadges, rosterControlNodes, rosterHintNode, rosterSummaryNode } from './roster-list-badges.js';
 import { treeToDom } from './view-tree.js';
@@ -337,7 +337,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     if (key==='tier') return [...counts].sort(([a],[b])=>(SOURCE_TIER_ORDER.indexOf(a)<0?999:SOURCE_TIER_ORDER.indexOf(a))-(SOURCE_TIER_ORDER.indexOf(b)<0?999:SOURCE_TIER_ORDER.indexOf(b)) || a.localeCompare(b));
     return [...counts].sort(([a,countA],[b,countB])=>countB-countA || chipText(key,a).localeCompare(chipText(key,b),locale));
   };
-  const chipText=(key,value)=>key==='tier'?sourceTierLabel(value):key==='source'?sourceLabel(value):displayLabel(key,value);
+  const chipText=(key,value)=>key==='tier'?sourceTierLabel(value):key==='source'?(value===TIER_SOURCE_JP?jpTierSourceLabel():sourceLabel(value)):displayLabel(key,value);
 
   /** Lọc đang bật = chip đã chọn + từ khóa tìm; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
   function activeFilterCount() {

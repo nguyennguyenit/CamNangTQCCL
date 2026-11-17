@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { projectRecommendedRows, readRecommendedQuery } from '../js/recommended-reference-state.js';
+import { TIER_SOURCE_JP, jpTierMatchNote, jpTierSource, projectRecommendedRows, readRecommendedQuery, referenceFacetValues } from '../js/recommended-reference-state.js';
 import { validateHttpSourceUrl } from '../js/http-source-url.js';
 
 const rows = [
@@ -192,4 +192,38 @@ test('kho=rap-duoc chỉ giữ đội thiếu 0; kho=thieu-2 giữ đội thiế
 
 test('xep=de-rap sắp trong từng bậc theo số món thiếu, đội không có độ phủ đứng cuối bậc', () => {
   assert.deepEqual(stockIds(stockState({rosterSort:'de-rap'}), stockCoverage), ['t0-ready','t0-far','t0-none','t1-ready','t1-near']);
+});
+
+test('tier JP là giá trị `jp` của facet nguồn: đếm theo mùa, OR với nguồn khác trong nhóm, AND với nhóm khác', () => {
+  const jp = (tierRaw, matchKind='exact') => [{source:'jp',tierRaw,matchKind,url:'https://kazten.com/entry/2026/06/19/180000',publishedAt:'2026-06-19'}];
+  const tiered = [
+    {sourceConfigId:'s26-a',sourceSeasonId:'pk-s26',tierRaw:'T0.5',tierOrder:1,value:null,listIndex:0,factionRaw:'魏',unitTypesRaw:['騎'],heroes:[],tierSources:jp('T0')},
+    {sourceConfigId:'s26-b',sourceSeasonId:'pk-s26',tierRaw:'T0',tierOrder:0,value:null,listIndex:1,factionRaw:'蜀',unitTypesRaw:['弓'],heroes:[],tierSources:jp('T0.5','heroes-only')},
+    {sourceConfigId:'s26-c',sourceSeasonId:'pk-s26',tierRaw:'T0',tierOrder:0,value:null,listIndex:2,factionRaw:'魏',unitTypesRaw:['盾'],heroes:[]},
+    {sourceConfigId:'s27-a',sourceSeasonId:'pk-s27',tierRaw:'T0',tierOrder:0,value:null,listIndex:0,factionRaw:'魏',unitTypesRaw:['騎'],heroes:[]},
+    {legacyTeamId:'legacy',legacyVariantId:'v',source:'team-intro',sourceSeasonIds:['pk-s26'],holders:[]},
+  ];
+  assert.equal(TIER_SOURCE_JP, 'jp');
+  // Giá trị facet: hàng có tier JP mang `jp`; đội cũ giữ bộ sưu tập của nó; hàng không có tier JP không mang gì.
+  assert.deepEqual(referenceFacetValues(tiered[0],'source'), ['jp']);
+  assert.deepEqual(referenceFacetValues(tiered[2],'source'), []);
+  assert.deepEqual(referenceFacetValues(tiered[4],'source'), ['team-intro']);
+  // Tier SGSDeck không bị tier JP thay: facet tier vẫn đọc `tierRaw`.
+  assert.deepEqual(referenceFacetValues(tiered[0],'tier'), ['T0.5']);
+  const count = season => projectRecommendedRows(tiered,{season,query:'',filters:{}})
+    .reduce((total,row)=>total + referenceFacetValues(row,'source').filter(value=>value==='jp').length,0);
+  assert.equal(count('pk-s26'), 2);
+  assert.equal(count('pk-s27'), 0);
+  assert.equal(count('all'), 2);
+  const state = readRecommendedQuery('https://x.test/doi-chuan/?season=pk-s26&source=jp&source=jp', {seasons:['pk-s26','pk-s27']});
+  assert.deepEqual(state.filters.source, ['jp']);
+  // Thứ tự cố định theo tier SGSDeck (s26-b là T0), không theo tier JP.
+  assert.deepEqual(projectRecommendedRows(tiered,state).map(row=>row.sourceConfigId), ['s26-b','s26-a']);
+  assert.deepEqual(projectRecommendedRows(tiered,{...state,filters:{source:['jp'],tier:['T0']}}).map(row=>row.sourceConfigId), ['s26-b']);
+  assert.deepEqual(projectRecommendedRows(tiered,{...state,season:'all',filters:{source:['jp','team-intro']}}).map(row=>row.sourceConfigId || row.legacyTeamId), ['s26-b','s26-a','legacy']);
+  assert.deepEqual(projectRecommendedRows(tiered,{...state,season:'pk-s27'}), []);
+  // Nhãn phụ chỉ cho đội khớp bộ ba tướng nhưng khác chiến pháp.
+  assert.equal(jpTierMatchNote(jpTierSource(tiered[0])), null);
+  assert.equal(jpTierMatchNote(jpTierSource(tiered[1])), 'khác chiến pháp');
+  assert.equal(jpTierSource({tierSources:[{source:'other',tierRaw:'T0'}]}), null);
 });
