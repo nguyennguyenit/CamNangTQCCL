@@ -774,8 +774,9 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   // A relocated Khai hoang handle moves that page too: the frozen segment is the inventory.
   const relocatedKhaiHoang = { ...fixture.ledger, handles: { ...fixture.ledger.handles, khaihoang: { [KHAIHOANG_TEAM_ID]: "khai-hoang-doi-ten" } } };
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(relocatedKhaiHoang));
-  await assert.rejects(verify(), /missing: khai-hoang\/khai-hoang-doi-ten\/index\.html/i);
-  await assert.rejects(verify(), /unexpected: khai-hoang\/gia-cat-khac-sp-ma-sieu-phap-chinh\/index\.html/i);
+  // Danh sách sắp theo đường dẫn: bản có tiền tố đứng trước bản Việt khi tiền tố nhỏ hơn theo thứ tự chữ.
+  await assert.rejects(verify(), /missing: (?:[^;]*, )?khai-hoang\/khai-hoang-doi-ten\/index\.html/i);
+  await assert.rejects(verify(), /unexpected: (?:[^;]*, )?khai-hoang\/gia-cat-khac-sp-ma-sieu-phap-chinh\/index\.html/i);
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(fixture.ledger));
 
   // Every Khai hoang page pins its own identity, its source hash and its own entry.
@@ -2057,22 +2058,21 @@ test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường h�
   }
 });
 
-test("Tra cứu: mọi trang riêng (983 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+test("Tra cứu: mọi trang riêng (983 × số locale) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
   const origin = new URL(await configuredSite()).origin;
   const routes = await lookupDetailRoutes();
   const titles = new Set();
   const descriptions = new Set();
   for (const entry of routes.entries) {
-    for (const locale of ["vi", "zh"]) {
+    for (const locale of SITE_LOCALES) {
       const viPath = entry.path;
-      const path = locale === "zh" ? zhPathOf(viPath) : viPath;
+      const path = localePath(viPath, locale);
       const html = await distText(`${path.slice(1)}index.html`);
       assert.equal(linkHref(html, "canonical"), new URL(path, origin).href, path);
       assert.equal(metaContent(html, "og:url"), new URL(path, origin).href, path);
       const alternates = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/gu)].map(([, lang, href]) => `${lang} ${href}`);
       assert.deepEqual(alternates, [
-        `vi ${new URL(viPath, origin).href}`,
-        `zh-Hans ${new URL(zhPathOf(viPath), origin).href}`,
+        ...SITE_LOCALES.map((other) => `${HREFLANG[other]} ${new URL(localePath(viPath, other), origin).href}`),
         `x-default ${new URL(viPath, origin).href}`,
       ], path);
       const title = html.match(/<title>([^<]+)<\/title>/u)?.[1];
@@ -2084,11 +2084,11 @@ test("Tra cứu: mọi trang riêng (983 × 2) có canonical + hreflang của ch
       assert.doesNotMatch(description, /Cập nhật[^:：]{0,60}[:：]/u, `${path}: description dùng nhãn phiên bản làm tóm tắt: ${description}`);
       titles.add(title);
       descriptions.add(description);
-      const groupHref = `${locale === "zh" ? "/zh" : ""}/tra-cuu/${entry.path.split("/")[2]}/`;
+      const groupHref = `${LOCALE_PREFIX[locale]}/tra-cuu/${entry.path.split("/")[2]}/`;
       assert.ok(html.includes(`class="detail-link detail-back-link" href="${groupHref}"`), `${path}: thiếu link quay lại ${groupHref}`);
     }
   }
-  assert.equal(titles.size, routes.entries.length * 2);
+  assert.equal(titles.size, routes.entries.length * SITE_LOCALES.length);
 });
 
 test("#15 dist verifier: my-teams-source-index.json và payload lưu đội chỉ được nhận khi nhất quán", async (t) => {

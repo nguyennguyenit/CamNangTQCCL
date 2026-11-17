@@ -14,6 +14,8 @@ const ANY_SOURCE_LOCALE = '*';
  * (tùy chọn) dựng tên chiến pháp bản cải tạo. `locale` vắng thì bộ tra dùng cho mọi bản chưa có bộ riêng — trình duyệt chỉ có một
  * bản; lúc build dựng nhiều bản trong một tiến trình nên mỗi bản đăng ký riêng. Bản vi không cần gọi; truyền giá trị không phải
  * hàm để gỡ (vắng `locale`: gỡ mọi bộ).
+ * @param {unknown} resolver
+ * @param {string | null} [locale]
  */
 export function setZhNameResolver(resolver, locale = null) {
   const key = locale === null || locale === undefined ? ANY_SOURCE_LOCALE : normalizeLocale(locale);
