@@ -20,10 +20,10 @@ const SET_PITY_MAX = 999;
 
 /** Bốn ô lượt ngày của schema v1: chỉ còn để đọc/validate dữ liệu cũ và hiện nhãn `drawSlot` của bản ghi cũ. */
 const LEGACY_DAILY_SLOT_DEFS = [
-  { key: "free_1", label: "Miễn phí 1", labelZh: "免费 1" },
-  { key: "half_1", label: "Nửa giá 1", labelZh: "半价 1" },
-  { key: "free_2", label: "Miễn phí 2", labelZh: "免费 2" },
-  { key: "half_2", label: "Nửa giá 2", labelZh: "半价 2" },
+  { key: "free_1", labels: { vi: "Miễn phí 1", zh: "免费 1", ja: "無料 1" } },
+  { key: "half_1", labels: { vi: "Nửa giá 1", zh: "半价 1", ja: "半額 1" } },
+  { key: "free_2", labels: { vi: "Miễn phí 2", zh: "免费 2", ja: "無料 2" } },
+  { key: "half_2", labels: { vi: "Nửa giá 2", zh: "半价 2", ja: "半額 2" } },
 ];
 // Tên gói ngày mặc định lưu trong kho luôn là bản Việt (dữ liệu, không đổi theo ngôn ngữ).
 const DAILY_BANNER_NAME = "Danh tướng PK";
@@ -99,12 +99,12 @@ const toInt = (value, fallback) => (Number.isFinite(Number(value)) ? Math.floor(
 /** Tên một ô lượt ngày của bản ghi cũ (`free_1` → "Miễn phí 1" / "免费 1"); giá trị lạ (đã lưu nhãn) giữ nguyên. */
 export function dailySlotLabel(slotKey) {
   const def = LEGACY_DAILY_SLOT_DEFS.find((slot) => slot.key === slotKey);
-  return def ? L(def.label, def.labelZh) : String(slotKey || "");
+  return def ? L(def.labels.vi, def.labels.zh, def.labels.ja) : String(slotKey || "");
 }
 
 /** Tên gói để hiển thị: gói ngày còn giữ tên mặc định thì dịch theo ngôn ngữ trang; tên người dùng đặt giữ nguyên. */
 export function bannerDisplayName(banner) {
-  if (banner?.id === DAILY_BANNER_ID && banner.name === DAILY_BANNER_NAME) return L(DAILY_BANNER_NAME, "PK名将招募");
+  if (banner?.id === DAILY_BANNER_ID && banner.name === DAILY_BANNER_NAME) return L(DAILY_BANNER_NAME, "PK名将招募", "PK名将募集");
   return banner?.name || "";
 }
 
@@ -129,7 +129,7 @@ function defaultDailyBanner() {
 }
 
 function defaultAccount() {
-  return { id: DEFAULT_ACCOUNT_ID, name: L("Chính", "主号"), createdAt: EPOCH, updatedAt: EPOCH, deletedAt: "" };
+  return { id: DEFAULT_ACCOUNT_ID, name: L("Chính", "主号", "メイン"), createdAt: EPOCH, updatedAt: EPOCH, deletedAt: "" };
 }
 
 export function createDefaultRecruitTrackerState() {
@@ -346,7 +346,7 @@ function addEvent(state, fields, now) {
 }
 
 function heroFields({ heroName, heroValueClass, note }) {
-  const fallback = L("Tướng chưa ghi", "未记录武将");
+  const fallback = L("Tướng chưa ghi", "未记录武将", "未記録の武将");
   return {
     heroName: cleanName(heroName, fallback),
     heroValueClass: String(heroValueClass || DEFAULT_VALUE_CLASS),
@@ -359,7 +359,7 @@ function heroFields({ heroName, heroValueClass, note }) {
 export function createAccount(state, name, { now } = {}) {
   const next = withState(state, now);
   const at = stamp(next, now);
-  const account = { id: makeId("acc"), name: cleanName(name, L("Tài khoản", "账号")), createdAt: at, updatedAt: at, deletedAt: "" };
+  const account = { id: makeId("acc"), name: cleanName(name, L("Tài khoản", "账号", "アカウント")), createdAt: at, updatedAt: at, deletedAt: "" };
   next.accounts.push(account);
   next.activeAccountId = account.id;
   return next;
@@ -400,7 +400,7 @@ export function createLimitedBanner(state, { name, expiresAt = "", note = "", no
   const at = stamp(next, now);
   next.banners.push({
     id: makeId("banner"),
-    name: cleanName(name, L("Gói hạn giờ", "限时卡包")),
+    name: cleanName(name, L("Gói hạn giờ", "限时卡包", "期間限定パック")),
     type: "limited",
     drawMode: "adHoc",
     hasFiveStar: true,
@@ -695,7 +695,7 @@ export function mergeRecruitTrackerState(state, incoming, { now } = {}) {
 
 /** v1: mọi banner/lượt quay/lượt ngày đúng kiểu và chỉ trỏ tới tài khoản, banner có trong file. */
 function validateV1(value) {
-  const invalid = { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。") };
+  const invalid = { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。", "データが無効です。") };
   const base = validateShape(value);
   if (!base.ok) return base;
   const accountIds = new Set(value.accounts.map((account) => account.id));
@@ -717,19 +717,19 @@ function validateV1(value) {
 }
 
 function validateShape(value) {
-  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: L("Thiếu tài khoản.", "缺少账号。") };
+  if (!Array.isArray(value.accounts) || value.accounts.length === 0) return { ok: false, error: L("Thiếu tài khoản.", "缺少账号。", "アカウントがありません。") };
   if (!value.accounts.every((account) => isRecord(account) && isId(account.id) && typeof account.name === "string")) {
-    return { ok: false, error: L("Tài khoản không hợp lệ.", "账号无效。") };
+    return { ok: false, error: L("Tài khoản không hợp lệ.", "账号无效。", "アカウントが無効です。") };
   }
-  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: L("Tài khoản hiện tại không hợp lệ.", "当前账号无效。") };
-  if (!Array.isArray(value.banners)) return { ok: false, error: L("Thiếu banner.", "缺少卡池。") };
-  if (!Array.isArray(value.pullEvents)) return { ok: false, error: L("Thiếu lịch sử quay.", "缺少抽卡记录。") };
+  if (!value.accounts.some((account) => account.id === value.activeAccountId)) return { ok: false, error: L("Tài khoản hiện tại không hợp lệ.", "当前账号无效。", "現在のアカウントが無効です。") };
+  if (!Array.isArray(value.banners)) return { ok: false, error: L("Thiếu banner.", "缺少卡池。", "バナーがありません。") };
+  if (!Array.isArray(value.pullEvents)) return { ok: false, error: L("Thiếu lịch sử quay.", "缺少抽卡记录。", "ガチャ履歴がありません。") };
   return { ok: true };
 }
 
 /** v2: mọi bản ghi đúng kiểu và lượt chỉ trỏ tới tài khoản, gói có trong file. */
 function validateV2(value) {
-  const invalid = { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。") };
+  const invalid = { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。", "データが無効です。") };
   const base = validateShape(value);
   if (!base.ok) return base;
   if (!value.accounts.every(validAccount) || !value.banners.every(validBanner) || !value.pullEvents.every(validEvent)) return invalid;
@@ -740,9 +740,9 @@ function validateV2(value) {
 }
 
 export function validateRecruitTrackerImport(value) {
-  if (!isRecord(value)) return { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。") };
+  if (!isRecord(value)) return { ok: false, error: L("Dữ liệu không hợp lệ.", "数据无效。", "データが無効です。") };
   const validate = { [LEGACY_SCHEMA_VERSION]: validateV1, [SCHEMA_VERSION]: validateV2 }[value.schemaVersion];
-  if (!validate) return { ok: false, error: L("Sai phiên bản dữ liệu.", "数据版本不符。") };
+  if (!validate) return { ok: false, error: L("Sai phiên bản dữ liệu.", "数据版本不符。", "データのバージョンが一致しません。") };
   const result = validate(value);
   if (!result.ok) return result;
   const live = (list) => list.filter((item) => !item.deletedAt).length;

@@ -57,11 +57,12 @@ const ICON_ARROW = ["M5 12h14", "M13 6l6 6-6 6"];
  */
 function missingItemText(item) {
   const vi = item.kind === "tactic" ? tacticDisplayName(item.name) : item.name;
-  const name = L(vi, item.nameZh || sourceName(item.name) || item.name);
-  if (item.kind === "hero") return L(`tướng ${name}`, `武将${name}`);
+  const sourceLabel = item.nameZh || sourceName(item.name) || item.name;
+  const name = L(vi, sourceLabel, sourceLabel);
+  if (item.kind === "hero") return L(`tướng ${name}`, `武将${name}`, `武将${name}`);
   return item.unresolved
-    ? L(`chiến pháp ${name} (chưa đối chiếu)`, `战法${name}（尚未核对）`)
-    : L(`chiến pháp ${name}`, `战法${name}`);
+    ? L(`chiến pháp ${name} (chưa đối chiếu)`, `战法${name}（尚未核对）`, `戦法${name}（未照合）`)
+    : L(`chiến pháp ${name}`, `战法${name}`, `戦法${name}`);
 }
 
 /** Badge "Ráp được" / "Thiếu N món" có icon; badge đủ kho giữ `title` gợi ý, badge thiếu không lặp danh sách vào `title`. */
@@ -70,17 +71,17 @@ function badgeNode(entry) {
   return node("span", {
     class: `badge ${BADGE_CLASS} ${ready ? "is-ready" : "is-missing"}`,
     dataset: { missingCount: String(entry.missingCount) },
-    title: ready ? L("Kho của bạn có đủ tướng và chiến pháp của đội này", "你的库存已有该阵容的全部武将和战法") : null,
+    title: ready ? L("Kho của bạn có đủ tướng và chiến pháp của đội này", "你的库存已有该阵容的全部武将和战法", "所持武将と戦法でこの編成を組めます") : null,
   }, [
     strokeIcon(ready ? ICON_READY : ICON_MISSING, 13),
-    ready ? L("Ráp được", "可组建") : L(`Thiếu ${entry.missingCount} món`, `缺 ${entry.missingCount} 件`),
+    ready ? L("Ráp được", "可组建", "編成可能") : L(`Thiếu ${entry.missingCount} món`, `缺 ${entry.missingCount} 件`, `${entry.missingCount} 点不足`),
   ]);
 }
 
 /** Dòng "Thiếu: tướng …, chiến pháp …" (bản zh "缺少：武将…、战法…", không dấu cách sau dấu hai chấm toàn khổ). */
 function missingListNode(entry, attrs = {}) {
-  const list = entry.missing.map(missingItemText).join(L(", ", "、"));
-  return node("p", { class: "roster-stock-missing", ...attrs }, [node("b", {}, L("Thiếu:", "缺少：")), L(` ${list}`, list)]);
+  const list = entry.missing.map(missingItemText).join(L(", ", "、", "、"));
+  return node("p", { class: "roster-stock-missing", ...attrs }, [node("b", {}, L("Thiếu:", "缺少：", "不足：")), L(` ${list}`, list, list)]);
 }
 
 /**
@@ -130,9 +131,9 @@ export function decorateCoverageBadges(root, byConfigId) {
 /** Câu "Kho của bạn ráp được X / Y đội của mùa" (`allSeasons`: phạm vi "Tất cả", đếm đội của mọi mùa). */
 function summaryLine(summary, allSeasons) {
   return node("p", { class: "reference-roster-summary" }, [
-    L("Kho của bạn ráp được ", "你的库存可组建 "),
+    L("Kho của bạn ráp được ", "你的库存可组建 ", "所持武将で組める編成は "),
     node("strong", {}, `${summary.complete} / ${summary.total}`),
-    allSeasons ? L(" đội của mọi mùa.", " 支全部赛季阵容。") : L(" đội của mùa này.", " 支本赛季阵容。"),
+    allSeasons ? L(" đội của mọi mùa.", " 支全部赛季阵容。", " 編成（全シーズン）です。") : L(" đội của mùa này.", " 支本赛季阵容。", " 編成（今シーズン）です。"),
   ]);
 }
 
@@ -193,11 +194,11 @@ export function rosterSummaryNode(summary, { allSeasons = false, line = false } 
   const meter = node("div", {
     class: "roster-meter",
     role: "meter",
-    "aria-label": L("Độ phủ kho", "库存覆盖"),
+    "aria-label": L("Độ phủ kho", "库存覆盖", "所持カバー率"),
     "aria-valuemin": "0",
     "aria-valuemax": String(total),
     "aria-valuenow": String(complete),
-    "aria-valuetext": L(`${complete} trên ${total} đội ráp được`, `${total} 支中可组建 ${complete} 支`),
+    "aria-valuetext": L(`${complete} trên ${total} đội ráp được`, `${total} 支中可组建 ${complete} 支`, `${total} 件中 ${complete} 件が編成可能`),
   }, [node("span", { class: "roster-meter-ready" }), node("span", { class: "roster-meter-near" })]);
   meter.children[0].style.width = percent(complete, total);
   meter.children[1].style.width = percent(near, total);
@@ -205,18 +206,18 @@ export function rosterSummaryNode(summary, { allSeasons = false, line = false } 
   const source = roster
     ? node("p", { class: "roster-source" }, [
       roster.source === "cloud"
-        ? L(`Theo kho tài khoản (bản lưu trên máy này): ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据账号库存（本机缓存）：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`)
-        : L(`Theo kho đã lưu trên máy này: ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据本机保存的库存：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`),
-      node("a", { href: localePath("/goi-y-doi-tu-kho/") }, L("Sửa kho", "编辑库存")),
+        ? L(`Theo kho tài khoản (bản lưu trên máy này): ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据账号库存（本机缓存）：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`, `アカウントの所持データ（この端末のキャッシュ）：武将 ${roster.heroes} 名・戦法 ${roster.tactics} 個。`)
+        : L(`Theo kho đã lưu trên máy này: ${roster.heroes} tướng · ${roster.tactics} chiến pháp. `, `依据本机保存的库存：${roster.heroes} 名武将 · ${roster.tactics} 个战法。`, `この端末に保存した所持データ：武将 ${roster.heroes} 名・戦法 ${roster.tactics} 個。`),
+      node("a", { href: localePath("/goi-y-doi-tu-kho/") }, L("Sửa kho", "编辑库存", "所持を編集")),
     ])
     : null;
   const block = node("div", { class: "roster-summary-block" }, [
     summaryLine(summary, allSeasons),
     meter,
     node("p", { class: "roster-legend" }, [
-      node("span", {}, [swatch("ready"), L(`${complete} ráp được`, `${complete} 支可组建`)]),
-      node("span", {}, [swatch("near"), L(`${near} thiếu 1–2 món`, `${near} 支缺 1–2 件`)]),
-      node("span", {}, [swatch("far"), L(`${far} thiếu từ 3 món`, `${far} 支缺 3 件以上`)]),
+      node("span", {}, [swatch("ready"), L(`${complete} ráp được`, `${complete} 支可组建`, `${complete} 件が編成可能`)]),
+      node("span", {}, [swatch("near"), L(`${near} thiếu 1–2 món`, `${near} 支缺 1–2 件`, `${near} 件が 1〜2 点不足`)]),
+      node("span", {}, [swatch("far"), L(`${far} thiếu từ 3 món`, `${far} 支缺 3 件以上`, `${far} 件が 3 点以上不足`)]),
     ]),
     source,
   ]);
@@ -247,13 +248,13 @@ export function rosterHintNode() {
   fragment.append(
     node("span", { class: "roster-empty-icon", "aria-hidden": "true" }, strokeIcon(ICON_STOCK, 20)),
     node("p", { class: "reference-roster-hint" }, [
-      L("Nhập kho ở ", "在"),
-      node("a", { href }, L("Gợi ý đội", "武将库配队")),
+      L("Nhập kho ở ", "在", ""),
+      node("a", { href }, L("Gợi ý đội", "武将库配队", "所持武将から編成提案")),
       signedInHint()
-        ? L(" để xem đội nào ráp được. Kho của tài khoản bạn chưa có trên máy này.", "中录入库存，即可查看哪些阵容可组建。本机暂无你的账号库存。")
-        : L(" để xem đội nào ráp được. Kho chỉ đọc trên máy này, không cần đăng nhập.", "中录入库存，即可查看哪些阵容可组建。库存只在本机读取，无需登录。"),
+        ? L(" để xem đội nào ráp được. Kho của tài khoản bạn chưa có trên máy này.", "中录入库存，即可查看哪些阵容可组建。本机暂无你的账号库存。", "でどの編成が組めるか確認できます。この端末にはアカウントの所持データがまだありません。")
+        : L(" để xem đội nào ráp được. Kho chỉ đọc trên máy này, không cần đăng nhập.", "中录入库存，即可查看哪些阵容可组建。库存只在本机读取，无需登录。", "でどの編成が組めるか確認できます。所持データはこの端末内でのみ読み取るため、ログインは不要です。"),
     ]),
-    node("a", { class: "roster-empty-cta", href }, [L("Nhập kho", "录入库存"), strokeIcon(ICON_ARROW, 16)]),
+    node("a", { class: "roster-empty-cta", href }, [L("Nhập kho", "录入库存", "所持を入力"), strokeIcon(ICON_ARROW, 16)]),
   );
   return fragment;
 }
@@ -278,12 +279,12 @@ export function rosterControlNodes({ filter = null, sort = null, onChange }) {
     node("span", { class: "fchip-label" }, label),
   ]);
   const sorted = sort === ROSTER_SORT_EASIEST;
-  return node("div", { class: "reference-roster-controls", role: "group", "aria-label": L("Lọc và sắp theo kho", "按库存筛选和排序") }, [
-    node("span", { class: "roster-controls-label", "aria-hidden": "true" }, L("Lọc và sắp theo kho", "按库存筛选和排序")),
-    chip(L("Ráp được", "可组建"), filter === ROSTER_FILTER_READY, { kho: filter === ROSTER_FILTER_READY ? null : ROSTER_FILTER_READY }, "kho:rap-duoc"),
-    chip(L("Thiếu tối đa 2", "最多缺 2 件"), filter === ROSTER_FILTER_NEAR, { kho: filter === ROSTER_FILTER_NEAR ? null : ROSTER_FILTER_NEAR }, "kho:thieu-2"),
+  return node("div", { class: "reference-roster-controls", role: "group", "aria-label": L("Lọc và sắp theo kho", "按库存筛选和排序", "所持で絞り込み・並べ替え") }, [
+    node("span", { class: "roster-controls-label", "aria-hidden": "true" }, L("Lọc và sắp theo kho", "按库存筛选和排序", "所持で絞り込み・並べ替え")),
+    chip(L("Ráp được", "可组建", "編成可能"), filter === ROSTER_FILTER_READY, { kho: filter === ROSTER_FILTER_READY ? null : ROSTER_FILTER_READY }, "kho:rap-duoc"),
+    chip(L("Thiếu tối đa 2", "最多缺 2 件", "不足 2 点まで"), filter === ROSTER_FILTER_NEAR, { kho: filter === ROSTER_FILTER_NEAR ? null : ROSTER_FILTER_NEAR }, "kho:thieu-2"),
     node("span", { class: "roster-controls-sep", "aria-hidden": "true" }),
-    chip(L("Dễ ráp nhất", "最易组建"), sorted, { xep: sorted ? null : ROSTER_SORT_EASIEST }, "xep:de-rap", ICON_SORT),
-    sorted ? node("p", { class: "roster-sorted-note" }, L("Sắp theo số món thiếu, giữ khối theo bậc.", "按缺少件数排序，保留分级区块。")) : null,
+    chip(L("Dễ ráp nhất", "最易组建", "編成しやすい順"), sorted, { xep: sorted ? null : ROSTER_SORT_EASIEST }, "xep:de-rap", ICON_SORT),
+    sorted ? node("p", { class: "roster-sorted-note" }, L("Sắp theo số món thiếu, giữ khối theo bậc.", "按缺少件数排序，保留分级区块。", "不足数の少ない順に並べ、ランク別のブロックは維持します。")) : null,
   ]);
 }

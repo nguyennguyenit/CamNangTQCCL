@@ -139,7 +139,7 @@ export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
     .map((t) => mapName(t, tacticsDict, { kind: "tactic" }));
   const books = (read.booksCn || []).filter(named).map((b) => mapName(b, booksDict, { kind: "book" }));
   const hero = mapName(read.nameCn || "", heroesDict, {
-    unknownLabel: L("Chưa rõ", "未知"),
+    unknownLabel: L("Chưa rõ", "未知", "不明"),
     kind: "hero",
   });
   return {

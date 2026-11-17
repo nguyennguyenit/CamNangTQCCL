@@ -115,7 +115,7 @@ export function mapTacticsScanRich(result, context) {
 export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict }) {
   return {
     teams: (result?.teams || []).map((team) => ({
-      teamName: team.teamName || team.name || L("Đội đã được lập", "已组建的队伍"),
+      teamName: team.teamName || team.name || L("Đội đã được lập", "已组建的队伍", "編成済みの部隊"),
       heroes: (team.heroesCn || team.heroes || []).map((name) => mapName(name, heroesDict).name).filter(Boolean),
       tactics: (team.tacticsCn || team.tactics || []).map((name) => mapName(name, tacticsDict).name).filter(Boolean),
     })),
@@ -125,7 +125,7 @@ export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict }) {
 export function mapBuiltTeamsScanRich(result, context) {
   return {
     teams: (result?.teams || []).map((team) => ({
-      teamName: sanitizeText(team.teamName || team.name || L("Đội đã được lập", "已组建的队伍")),
+      teamName: sanitizeText(team.teamName || team.name || L("Đội đã được lập", "已组建的队伍", "編成済みの部隊")),
       heroSlots: (team.heroes || team.heroesCn || []).map((hero) => ({
         hero: richName(hero, context.heroesDict, "hero", context),
         tactics: (hero.tacticsCn || hero.tactics || []).map((tactic) =>
