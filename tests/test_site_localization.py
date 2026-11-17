@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import io
+import re
 import tempfile
 import shutil
 import unittest
@@ -10,6 +11,7 @@ from pathlib import Path
 
 from pipeline.lookup_translations import canonical_json_bytes
 from pipeline.site_localization import (
+    UI_LITERAL_OBLIGATIONS,
     _assert_lookup_publication,
     _data_classification,
     glossary_digest,
@@ -41,6 +43,20 @@ class KhaiHoangNoteClassificationTest(unittest.TestCase):
         self.assertEqual(_data_classification(("teams", 3, "buildNote"), "Cộng Trí Lực."), "authored-vi")
         self.assertEqual(_data_classification(("teams", 3, "openingNote"), "Ưu tiên đất Thương."), "authored-vi")
         self.assertEqual(_data_classification(("teams", 14, "buildNote"), "Chiến pháp 疾風豪雨"), "translate")
+
+
+class UiObligationOwnerTest(unittest.TestCase):
+    def test_constant_owner_symbols_exist_in_owner_file(self):
+        # Owner dạng hằng (`UPPER_SNAKE`) là tên biến thật trong file sở hữu: đổi tên biến thì obligation phải đổi theo.
+        stale = []
+        for obligation in UI_LITERAL_OBLIGATIONS:
+            entity_id, owner_file, owner_symbol = obligation[0], obligation[3], obligation[4]
+            if not re.fullmatch(r"[A-Z][A-Z0-9_]+", owner_symbol):
+                continue
+            text = (ROOT / owner_file).read_text(encoding="utf-8")
+            if not re.search(rf"(?<![\w$]){re.escape(owner_symbol)}(?![\w$])", text):
+                stale.append((entity_id, owner_file, owner_symbol))
+        self.assertEqual(stale, [])
 
 
 class SiteLocalizationTest(unittest.TestCase):

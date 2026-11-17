@@ -687,8 +687,8 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup/hero-card-pack-core", "label", 'L("Tướng lõi", "核心", "コア")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
     ("ui:lookup/hero-card-pack-regular", "label", 'L("Thường", "非核心", "非コア")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
     ("ui:lookup/hero-card-pack-rates", "label", '`${L("lõi", "核心", "コア")} ${percentText(pack.coreRate)} / ${L("thường", "非核心", "非コア")} ${percentText(pack.nonCoreRate)}`', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
-    ("ui:lookup/qilue-rarity-common", "label", 'common: ["Thường", "普通", "普通"]', "js/lookup-detail.js", "QILUE_LABELS", "static", "authored-vi"),
-    ("ui:lookup/qilue-rarity-rare", "label", 'rare: ["Hiếm", "稀有", "稀有"]', "js/lookup-detail.js", "QILUE_LABELS", "static", "authored-vi"),
+    ("ui:lookup/qilue-rarity-common", "label", 'common: ["Thường", "普通", "普通"]', "js/lookup-detail.js", "QILUE_RARITY_LABELS", "static", "authored-vi"),
+    ("ui:lookup/qilue-rarity-rare", "label", 'rare: ["Hiếm", "稀有", "稀有"]', "js/lookup-detail.js", "QILUE_RARITY_LABELS", "static", "authored-vi"),
     # Tra cứu bốn nhóm catalog dạng danh sách + chi tiết (Trang bị, Quân sư, Cải tạo binh chủng, Công trình).
     ("ui:lookup-master/group-equipment", "label", "Trang bị", "js/lookup-master.js", "GROUP_LABELS", "static", "authored-vi"),
     ("ui:lookup-master/group-advisors", "label", "Quân sư", "js/lookup-master.js", "GROUP_LABELS", "static", "authored-vi"),
