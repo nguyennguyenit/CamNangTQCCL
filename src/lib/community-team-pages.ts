@@ -26,7 +26,7 @@ export function metaText(text: string): string {
 
 /** Tên tác giả hiển thị; khớp fallback `displayName()` của js/community-api.js. */
 export function teamAuthorName(team: Pick<CommunityTeam, 'author'>, locale: SiteLocale): string {
-  return team.author.name?.trim() || pick(locale, 'Người chơi', '玩家');
+  return team.author.name?.trim() || pick(locale, 'Người chơi', '玩家', 'プレイヤー');
 }
 
 /** Tên đã dịch theo ngôn ngữ trang: ba tướng và ba cặp chiến pháp, cùng thứ tự với đội. */
@@ -52,12 +52,12 @@ export interface TeamPageCopy {
 const ANALYSIS_FAQ_KEYS = ['playstyle', 'strengths', 'weaknesses', 'counters', 'counteredBy', 'substitutes'] as const;
 
 const QUESTIONS: Record<Exclude<TeamFaqKey, 'lineup'>, (title: string, locale: SiteLocale) => string> = {
-  playstyle: (title, locale) => pick(locale, `Đội ${title} chơi thế nào?`, `${title}怎么玩？`),
-  strengths: (title, locale) => pick(locale, `Điểm mạnh của đội ${title} là gì?`, `${title}的优点是什么？`),
-  weaknesses: (title, locale) => pick(locale, `Điểm yếu của đội ${title} là gì?`, `${title}的缺点是什么？`),
-  counters: (title, locale) => pick(locale, `Đội ${title} khắc chế đội nào?`, `${title}克制哪些阵容？`),
-  counteredBy: (title, locale) => pick(locale, `Đội nào khắc chế ${title}?`, `哪些阵容克制${title}？`),
-  substitutes: (title, locale) => pick(locale, `Có thể thay tướng nào trong đội ${title}?`, `${title}可以用哪些武将替换？`),
+  playstyle: (title, locale) => pick(locale, `Đội ${title} chơi thế nào?`, `${title}怎么玩？`, `${title}の運用方法は？`),
+  strengths: (title, locale) => pick(locale, `Điểm mạnh của đội ${title} là gì?`, `${title}的优点是什么？`, `${title}の長所は？`),
+  weaknesses: (title, locale) => pick(locale, `Điểm yếu của đội ${title} là gì?`, `${title}的缺点是什么？`, `${title}の短所は？`),
+  counters: (title, locale) => pick(locale, `Đội ${title} khắc chế đội nào?`, `${title}克制哪些阵容？`, `${title}が有利な編成は？`),
+  counteredBy: (title, locale) => pick(locale, `Đội nào khắc chế ${title}?`, `哪些阵容克制${title}？`, `${title}に有利な編成は？`),
+  substitutes: (title, locale) => pick(locale, `Có thể thay tướng nào trong đội ${title}?`, `${title}可以用哪些武将替换？`, `${title}で代わりに使える武将は？`),
 };
 
 /** Gộp khoảng trắng; quá `DESCRIPTION_MAX` code point thì cắt (tính cả `…`), không bao giờ cắt giữa cặp surrogate. */
@@ -75,13 +75,14 @@ export function teamPageCopy(team: CommunityTeam, names: TeamNames, locale: Site
     locale,
     `${team.title} (${h1}, ${h2}, ${h3}) — Đội cộng đồng — ${SITE_NAME.vi}`,
     `${team.title}（${h1}、${h2}、${h3}）— 社区阵容 — ${SITE_NAME.zh}`,
+    `${team.title}（${h1}、${h2}、${h3}）— コミュニティ編成 — 三國志 真戦 攻略手帳`,
   );
   const description = clampDescription(`${troop} · ${h1}, ${h2}, ${h3} — ${team.analysis.playstyle}`);
   const pairs = names.heroes.map((hero, index) => `${hero} (${names.tactics[index]!.join(', ')})`);
   const lineup: TeamFaqEntry = {
     key: 'lineup',
-    q: pick(locale, `Đội ${team.title} gồm những tướng nào?`, `${team.title}由哪些武将组成？`),
-    a: pick(locale, `Đội gồm ${pairs.join('; ')}. Binh chủng: ${troop}.`, `阵容为 ${pairs.join('；')}。兵种：${troop}。`),
+    q: pick(locale, `Đội ${team.title} gồm những tướng nào?`, `${team.title}由哪些武将组成？`, `${team.title}はどの武将で構成されていますか？`),
+    a: pick(locale, `Đội gồm ${pairs.join('; ')}. Binh chủng: ${troop}.`, `阵容为 ${pairs.join('；')}。兵种：${troop}。`, `編成は${pairs.join('、')}。兵種：${troop}。`),
   };
   const faq = [lineup];
   for (const key of ANALYSIS_FAQ_KEYS) {

@@ -32,20 +32,21 @@ const listPath = localePath('/doi-cong-dong/', locale);
 const troop = withLocale(locale, () => troopLabel(team.troop)) as string;
 const season = seasonLabel(team.season, locale) as string;
 const images = Array.from({ length: team.imageCount }, (_, position) => position);
-const roles = [t('Chủ tướng', '主将'), t('Phó tướng 1', '副将 1'), t('Phó tướng 2', '副将 2')];
+const roles = [t('Chủ tướng', '主将', '主将'), t('Phó tướng 1', '副将 1', '副将1'), t('Phó tướng 2', '副将 2', '副将2')];
 const analysisLabels: [keyof CommunityTeam['analysis'], string][] = [
-  ['playstyle', t('Lối chơi', '打法')],
-  ['strengths', t('Điểm mạnh', '优点')],
-  ['weaknesses', t('Điểm yếu', '缺点')],
-  ['counters', t('Khắc chế', '克制')],
-  ['counteredBy', t('Bị khắc chế bởi', '被克制于')],
-  ['substitutes', t('Thay thế', '替补')],
+  ['playstyle', t('Lối chơi', '打法', '運用')],
+  ['strengths', t('Điểm mạnh', '优点', '長所')],
+  ['weaknesses', t('Điểm yếu', '缺点', '短所')],
+  ['counters', t('Khắc chế', '克制', '有利な相手')],
+  ['counteredBy', t('Bị khắc chế bởi', '被克制于', '不利な相手')],
+  ['substitutes', t('Thay thế', '替补', '代替')],
 ];
 const analysis = analysisLabels.filter(([key]) => typeof team.analysis[key] === 'string' && team.analysis[key]!.trim());
 /** "Viết bằng tiếng …" theo ngôn ngữ văn bản của đội (khóa) và ngôn ngữ trang (biến thể); mã lạ lùi về bản Việt. */
-const WRITTEN_IN: Record<SiteLocale, string> = {
-  vi: t('Viết bằng tiếng Việt', '以越南语撰写'),
-  zh: t('Viết bằng tiếng Trung', '以中文撰写'),
+const WRITTEN_IN: Record<SiteLocale | 'ja', string> = {
+  vi: t('Viết bằng tiếng Việt', '以越南语撰写', 'ベトナム語で記述'),
+  zh: t('Viết bằng tiếng Trung', '以中文撰写', '中国語で記述'),
+  ja: t('Viết bằng tiếng Nhật', '以日语撰写', '日本語で記述'),
 };
 const langTitle = WRITTEN_IN[normalizeLocale(team.textLang)];
 // `portraitTree` là JS có tham số mặc định nên TS chỉ suy ra phần có giá trị mặc định; khai kiểu đủ ở đây.
@@ -67,7 +68,7 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
   title={metaText(model.copy.title)}
   description={metaText(model.copy.description)}
   pageKind="detail"
-  tagline={t('Đội cộng đồng', '社区阵容')}
+  tagline={t('Đội cộng đồng', '社区阵容', 'コミュニティ編成')}
   canonicalUrl={model.canonicalUrl}
   ogType="article"
   locale={locale}
@@ -80,26 +81,26 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
   </Fragment>
 
   <div class="cm-team-detail-page">
-    <nav class="cm-team-back" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+    <nav class="cm-team-back" aria-label={t('Quay lại danh sách đội', '返回阵容列表', '編成一覧に戻る')}>
       <a class="cm-team-back-link" href={listPath}>
         <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"></path><path d="M12 19l-7-7 7-7"></path></svg>
-        {t('Về danh sách đội cộng đồng', '返回社区阵容列表')}
+        {t('Về danh sách đội cộng đồng', '返回社区阵容列表', 'コミュニティ編成一覧に戻る')}
       </a>
     </nav>
 
     <article class="cm-team-detail cm-team-static" data-team-static aria-labelledby="cm-team-static-title">
       <header class="cm-team-detail-head">
         <div class="cm-team-detail-id">
-          <p class="cm-team-kicker">{t(`Đội cộng đồng · ${season}`, `社区阵容 · ${season}`)}</p>
+          <p class="cm-team-kicker">{t(`Đội cộng đồng · ${season}`, `社区阵容 · ${season}`, `コミュニティ編成 · ${season}`)}</p>
           <h1 id="cm-team-static-title" class="cm-team-detail-title" lang={textLang}>{team.title}</h1>
           <p class="cm-team-detail-meta cm-team-meta">
             <span class="cm-team-troop-pill"><i class="cm-team-troop-dot" aria-hidden="true" data-troop={team.troop}></i>{troop}</span>
             <abbr class="cm-lang-tag cm-team-lang" data-lang={team.textLang} title={langTitle}>{team.textLang.toUpperCase()}</abbr>
             <span class="cm-team-detail-author">
               <span class="cm-avatar cm-avatar-fallback" aria-hidden="true">{initial}</span>
-              <span class="cm-team-author-name">{t('Tác giả: ', '作者：')}<strong>{authorName}</strong></span>
+              <span class="cm-team-author-name">{t('Tác giả: ', '作者：', '投稿者：')}<strong>{authorName}</strong></span>
             </span>
-            <span class="cm-team-detail-date">{t('Duyệt lúc ', '审核于 ')}<time class="cm-time" datetime={team.approvedAt}>{formatPostDate(team.approvedAt, locale)}</time></span>
+            <span class="cm-team-detail-date">{t('Duyệt lúc ', '审核于 ', '承認日時：')}<time class="cm-time" datetime={team.approvedAt}>{formatPostDate(team.approvedAt, locale)}</time></span>
           </p>
         </div>
         <div class="cm-team-detail-side" data-cm-team-side hidden></div>
@@ -108,8 +109,8 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
       <div class="cm-team-detail-main">
         <section class="cm-team-lineup-section" aria-labelledby="cm-team-lineup-title">
           <div class="cm-team-section-head">
-            <h2 id="cm-team-lineup-title" class="cm-team-section-title">{t('Đội hình', '阵容')}</h2>
-            <p class="cm-team-section-note">{t('Tướng đứng đầu bài đăng là chủ tướng', '排在首位的武将为主将')}</p>
+            <h2 id="cm-team-lineup-title" class="cm-team-section-title">{t('Đội hình', '阵容', '編成')}</h2>
+            <p class="cm-team-section-note">{t('Tướng đứng đầu bài đăng là chủ tướng', '排在首位的武将为主将', '先頭の武将が主将です')}</p>
           </div>
           <ol class="cm-team-hero-cards">
             {team.heroes.map((heroId, index) => (
@@ -126,7 +127,7 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
                   </div>
                 </div>
                 <div class="cm-team-hero-card-tactics">
-                  <span class="cm-team-caps">{t('Chiến pháp', '战法')}</span>
+                  <span class="cm-team-caps">{t('Chiến pháp', '战法', '戦法')}</span>
                   <ol class="cm-team-tactic-list">
                     {model.names.tactics[index]!.map((name, position) => {
                       const href = model.tacticPaths[index]?.[position];
@@ -134,7 +135,7 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
                       return (
                         <li>
                           {href
-                            ? <a class="cm-team-tactic-link" href={href} data-tactic-id={team.tactics[index]![position]} title={t('Mở trong Tra cứu', '在查询中打开')}><span class="cm-team-tactic-slot" aria-hidden="true">{slot}</span><span class="cm-team-tactic-name">{name}</span><svg class="cm-team-tactic-go" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg></a>
+                            ? <a class="cm-team-tactic-link" href={href} data-tactic-id={team.tactics[index]![position]} title={t('Mở trong Tra cứu', '在查询中打开', '検索で開く')}><span class="cm-team-tactic-slot" aria-hidden="true">{slot}</span><span class="cm-team-tactic-name">{name}</span><svg class="cm-team-tactic-go" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="M12 5l7 7-7 7"></path></svg></a>
                             : <span class="cm-team-tactic-link" data-tactic-id={team.tactics[index]![position]}><span class="cm-team-tactic-slot" aria-hidden="true">{slot}</span><span class="cm-team-tactic-name">{name}</span></span>}
                         </li>
                       );
@@ -149,7 +150,7 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
         {analysis.length > 0 && (
           <section class="cm-team-analysis-section" aria-labelledby="cm-team-analysis-title">
             <div class="cm-team-section-head">
-              <h2 id="cm-team-analysis-title" class="cm-team-section-title">{t('Phân tích của tác giả', '作者分析')}</h2>
+              <h2 id="cm-team-analysis-title" class="cm-team-section-title">{t('Phân tích của tác giả', '作者分析', '投稿者の分析')}</h2>
               <p class="cm-team-section-note"><abbr class="cm-lang-tag cm-team-lang" data-lang={team.textLang} title={langTitle}>{team.textLang.toUpperCase()}</abbr>{langTitle}</p>
             </div>
             <dl class="cm-team-analysis">
@@ -165,7 +166,7 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
 
         <details class="cm-team-faq">
           <summary class="cm-team-faq-summary">
-            <h2 id="cm-team-faq-title" class="cm-team-faq-title">{t('Câu hỏi thường gặp', '常见问题')}</h2>
+            <h2 id="cm-team-faq-title" class="cm-team-faq-title">{t('Câu hỏi thường gặp', '常见问题', 'よくある質問')}</h2>
           </summary>
           {model.copy.faq.map((entry) => (
             <div class="cm-team-faq-item" data-faq={entry.key}>
@@ -176,11 +177,11 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
         </details>
       </div>
 
-      <aside class="cm-team-detail-aside" aria-label={t('Ảnh và đội liên quan', '图片与相关阵容')}>
+      <aside class="cm-team-detail-aside" aria-label={t('Ảnh và đội liên quan', '图片与相关阵容', '画像と関連編成')}>
         <section class="cm-team-aside-card cm-team-photos" aria-labelledby="cm-team-photos-title">
           <div class="cm-team-aside-head">
-            <h2 id="cm-team-photos-title" class="cm-team-aside-title">{t('Ảnh đội', '阵容图片')}</h2>
-            <span class="cm-team-aside-count">{t(`${images.length} ảnh`, `${images.length} 张`)}</span>
+            <h2 id="cm-team-photos-title" class="cm-team-aside-title">{t('Ảnh đội', '阵容图片', '編成画像')}</h2>
+            <span class="cm-team-aside-count">{t(`${images.length} ảnh`, `${images.length} 张`, `${images.length}枚`)}</span>
           </div>
           {images.length > 0 ? (
             <div class="cm-team-images">
@@ -189,28 +190,28 @@ const initial = (authorName.trim()[0] ?? '?').toUpperCase();
                   <img
                     class="cm-team-image"
                     src={`/api/community-teams/${team.id}/images/${position}`}
-                    alt={t(`Ảnh ${position + 1} của đội`, `阵容图片 ${position + 1}`)}
+                    alt={t(`Ảnh ${position + 1} của đội`, `阵容图片 ${position + 1}`, `編成画像 ${position + 1}`)}
                     loading="lazy"
                     decoding="async"
                   />
                   <span class="cm-team-image-open" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14L21 3"></path></svg></span>
-                  <span class="visually-hidden">{t('(mở tab mới)', '（在新标签页打开）')}</span>
+                  <span class="visually-hidden">{t('(mở tab mới)', '（在新标签页打开）', '（新しいタブで開く）')}</span>
                 </a>
               ))}
             </div>
           ) : (
             <div class="cm-team-card-media" data-empty="true">
-              <span class="cm-team-media-empty-title">{t('Chưa có ảnh đội', '暂无阵容图片')}</span>
-              <span class="cm-team-media-empty-hint">{t('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看')}</span>
+              <span class="cm-team-media-empty-title">{t('Chưa có ảnh đội', '暂无阵容图片', '編成画像はまだありません')}</span>
+              <span class="cm-team-media-empty-hint">{t('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看', '編成は下で確認できます')}</span>
             </div>
           )}
-          {images.length > 0 && <p class="cm-team-aside-note">{t('Bấm để mở ảnh gốc trong tab mới. Tác giả đăng 1–3 ảnh đội hình khi gửi bài.', '点击在新标签页打开原图。作者发布时上传 1–3 张阵容图。')}</p>}
+          {images.length > 0 && <p class="cm-team-aside-note">{t('Bấm để mở ảnh gốc trong tab mới. Tác giả đăng 1–3 ảnh đội hình khi gửi bài.', '点击在新标签页打开原图。作者发布时上传 1–3 张阵容图。', 'クリックすると元画像を新しいタブで開きます。投稿者は投稿時に編成画像を1〜3枚アップロードします。')}</p>}
         </section>
       </aside>
     </article>
 
     <div id="community-teams" class="cm-team-root cm-team-detail-after" data-team-id={team.id}>
-      <noscript><p class="scope-note">{t('Bình chọn, bình luận và chiến báo cần JavaScript.', '投票、评论和战报需要启用 JavaScript。')}</p></noscript>
+      <noscript><p class="scope-note">{t('Bình chọn, bình luận và chiến báo cần JavaScript.', '投票、评论和战报需要启用 JavaScript。', '投票・コメント・戦報にはJavaScriptが必要です。')}</p></noscript>
     </div>
   </div>
   <script is:inline type="module" src="/js/community-teams.js" slot="scripts"></script>

@@ -18,10 +18,10 @@ const indexable = communityTeamsIndexable(teams.length);
 const canonicalUrl = indexable ? new URL(localePath('/doi-cong-dong/', locale), Astro.site) : undefined;
 ---
 <SiteLayout
-  title={pick(locale, 'Đội cộng đồng — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '社区阵容 — 三国志战略版攻略手册')}
-  description={pick(locale, 'Kho đội do người chơi đăng theo mùa: xem, bình chọn, bình luận và gửi chiến báo.', '玩家按赛季发布的阵容库：浏览、投票、评论并提交战报。')}
+  title={pick(locale, 'Đội cộng đồng — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '社区阵容 — 三国志战略版攻略手册', 'コミュニティ編成 — 三國志 真戦 攻略手帳')}
+  description={pick(locale, 'Kho đội do người chơi đăng theo mùa: xem, bình chọn, bình luận và gửi chiến báo.', '玩家按赛季发布的阵容库：浏览、投票、评论并提交战报。', 'シーズンごとにプレイヤーが投稿した編成集です。閲覧、投票、コメント、戦報の送信ができます。')}
   pageKind="detail"
-  tagline={pick(locale, 'Đội cộng đồng', '社区阵容')}
+  tagline={pick(locale, 'Đội cộng đồng', '社区阵容', 'コミュニティ編成')}
   robots={indexable ? undefined : 'noindex'}
   canonicalUrl={canonicalUrl}
   locale={locale}
