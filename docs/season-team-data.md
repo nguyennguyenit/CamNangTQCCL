@@ -302,7 +302,8 @@ Hàng mới, kể cả id từng bị gỡ nay quay lại, nhận handle suy t�
 trùng thì dùng handle suy từ tên kèm `-2`, `-3`… Tombstone không bao giờ được
 cấp lại, kể cả cho chính id từng giữ nó (id SGSDeck không bảo đảm danh tính đội),
 nên một URL đã công bố không bao giờ trỏ sang đội khác. Legacy/Khai hoang không
-đổi; `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
+đổi; khi `data/teams.json` thêm đội gốc thì dùng `--rebind --append-legacy` (handle
+legacy cũ giữ nguyên, đội mới nhận handle chỉ-thêm, xem deployment guide). `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
 segment đang sống). `--write` chỉ dựng ledger lần đầu (`retiredRecommended`
 rỗng) nên từ chối ledger đã có tombstone.
 

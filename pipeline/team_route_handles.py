@@ -18,6 +18,7 @@ tombstone forever: it is never handed out again, not even to the id that held it
 
     python3 -m pipeline.team_route_handles --write
     python3 -m pipeline.team_route_handles --rebind   # successor publication
+    python3 -m pipeline.team_route_handles --rebind --append-legacy   # successor + new legacy teams
     python3 -m pipeline.team_route_handles --check
 """
 
@@ -364,6 +365,56 @@ def build_legacy_handles(teams) -> tuple[dict, dict]:
         "collisions": sorted(collisions, key=lambda group: group["base"]),
     }
     return handles, stats
+
+
+def append_legacy_handles(frozen: dict, teams) -> tuple[dict, list[str]]:
+    """Keep every published legacy handle and give each new legacy team one, append-only.
+
+    A legacy id the ledger holds must still be in `teams` (its page would vanish otherwise). A new id takes
+    the slug of its nickname or name, the same base `build_legacy_handles` derives; when that segment is
+    already live (or handed out earlier in this run) the ASCII slug of the team id is appended, then
+    `-2`, `-3`, ... Frozen handles are never re-derived, so a rename or a new duplicate label cannot move a
+    published `/doi-khac/<handle>/` URL.
+    """
+    team_ids = []
+    for team in teams:
+        team_id = team.get("id")
+        if not isinstance(team_id, str) or not team_id:
+            raise TeamRouteHandleError("Legacy team is missing id")
+        team_ids.append(team_id)
+    if len(set(team_ids)) != len(team_ids):
+        raise TeamRouteHandleError("legacy teams declare an id more than once")
+    missing = sorted(set(frozen) - set(team_ids))
+    if missing:
+        raise TeamRouteHandleError(
+            "legacy teams dropped ids that hold published handles: " + ", ".join(missing)
+        )
+    handles = dict(frozen)
+    taken = set(frozen.values())
+    added = []
+    for team in teams:
+        team_id = team["id"]
+        if team_id in handles:
+            continue
+        nickname = team.get("nickname")
+        label = nickname if isinstance(nickname, str) and nickname else team.get("name")
+        if not isinstance(label, str) or not label.strip():
+            raise TeamRouteHandleError(f"Legacy team {team_id} has no nickname or name")
+        base = slug(label)
+        if not base:
+            raise TeamRouteHandleError(f"Legacy team {team_id} has an empty name slug: {label!r}")
+        handle = base
+        if handle in taken:
+            suffix = slug(ascii_part(team_id))
+            handle = f"{base}-{suffix}" if suffix else base
+        number = 1
+        while handle in taken:
+            number += 1
+            handle = f"{base}-{number}"
+        taken.add(handle)
+        handles[team_id] = handle
+        added.append(team_id)
+    return handles, added
 
 
 def khaihoang_ids(teams) -> list[str]:
@@ -843,7 +894,7 @@ def write_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, di
     return 0
 
 
-def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, out=print) -> int:
+def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, display_map_path, append_legacy=False, out=print) -> int:
     """Move the frozen ledger to a successor publication without moving any surviving URL.
 
     Everything comes from the ledger and the successor; no earlier generation is read. A row kept by
@@ -854,15 +905,23 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
     not even to the id that held them: the source's ids carry no identity guarantee, so a returning
     id is a new row. A new row takes its name-derived handle unless that segment is live or retired,
     then the ASCII part of its `sourceConfigId` appended, then the name-derived handle with `-2`,
-    `-3`, ... Legacy and Khai hoang handles never change.
+    `-3`, ... Legacy and Khai hoang handles never change. With `append_legacy` a changed legacy teams
+    artifact is accepted as long as it keeps every frozen legacy id: those keep their handles and each new
+    legacy team gets one from `append_legacy_handles`.
     """
     publication = read_publication(generation_root)
     teams_bytes, teams = load_teams(teams_path)
     khaihoang_bytes, khaihoang_teams = load_khaihoang(khaihoang_path)
     existing = json.loads(Path(ledger_path).read_bytes())
     frozen = _ledger_handles(existing)
+    legacy, legacy_added = frozen["legacy"], []
     if existing["legacyTeamsSha256"] != "sha256:" + sha256_hex(teams_bytes):
-        raise TeamRouteHandleError("rebind only moves Recommended rows; the legacy teams changed, review them first")
+        if not append_legacy:
+            raise TeamRouteHandleError(
+                "rebind only moves Recommended rows; the legacy teams changed, review them first "
+                "(--append-legacy keeps every published legacy handle and adds the new teams)"
+            )
+        legacy, legacy_added = append_legacy_handles(frozen["legacy"], teams)
     if existing["khaihoangSha256"] != "sha256:" + sha256_hex(khaihoang_bytes):
         raise TeamRouteHandleError("rebind only moves Recommended rows; Khai hoang changed, review it first")
     derived, _stats = build_recommended_handles(publication.records, load_faction_labels(display_map_path))
@@ -922,7 +981,7 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
         teams_bytes,
         khaihoang_bytes,
         recommended,
-        frozen["legacy"],
+        legacy,
         frozen["khaihoang"],
         seasons,
         retired,
@@ -943,7 +1002,7 @@ def rebind_ledger(*, generation_root, teams_path, khaihoang_path, ledger_path, d
     out(
         f"rebound {path} to {publication.generation_id}: kept {len(kept)}, added {len(added)}, dropped {len(dropped)}, "
         f"moved season {len(moved)} Recommended handles; retired {len(newly_retired)} route segments "
-        f"({len(retired)} tombstones)"
+        f"({len(retired)} tombstones); legacy handles kept {len(frozen['legacy'])}, added {len(legacy_added)}"
     )
     for source_config_id in dropped:
         out(f"  dropped {source_config_id}: {old_segment(source_config_id)}")
@@ -1005,6 +1064,12 @@ def main(argv=None) -> int:
     parser.add_argument("--khaihoang", type=Path, help="Khai hoang artifact; required with custom inputs")
     parser.add_argument("--ledger", type=Path, default=DEFAULT_LEDGER_PATH, help="frozen ledger to write or validate")
     parser.add_argument("--display-map", type=Path, default=DEFAULT_DISPLAY_MAP_PATH, help="display map holding labels.faction")
+    parser.add_argument(
+        "--append-legacy",
+        action="store_true",
+        help="with --rebind: accept a reviewed legacy teams change that keeps every published legacy id; "
+        "frozen legacy handles stay, new legacy teams get handles",
+    )
     parser.add_argument("--diagnose", action="store_true", help="with --check: also print name-derived differences without gating on them")
     args = parser.parse_args(argv)
     if args.khaihoang is None:
@@ -1025,7 +1090,11 @@ def main(argv=None) -> int:
                 khaihoang_path=args.khaihoang,
                 ledger_path=args.ledger,
                 display_map_path=args.display_map,
+                append_legacy=args.append_legacy,
             )
+        if args.append_legacy:
+            print("error: --append-legacy only applies to --rebind", file=sys.stderr)
+            return 1
         if args.write:
             return write_ledger(
                 generation_root=args.generation_root,
