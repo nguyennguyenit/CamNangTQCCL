@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { KnowledgeError } from "../../src/knowledge/rule-contracts.js";
+import { KNOWLEDGE_BUNDLE } from "../../src/generated/knowledge-bundle.js";
 import { searchRules } from "../../src/knowledge/search-rules.js";
 import { ids, makeRule, makeSource, noiseRules, realSource } from "./helpers.js";
 
@@ -58,6 +59,19 @@ describe("searchRules — prototype deterministic checks (ported)", () => {
   it("finds lookup guidance for the Chinese query 装备", () => {
     const result = searchRules({ query: "装备", workflow: "lookup" });
     expect(result.guidance[0]?.ruleId).toBe("lookup-seven-groups");
+  });
+
+  it("finds the lookup groups guidance for Kỳ lược (vi, unaccented, zh) and it names the eighth group", () => {
+    for (const query of ["kỳ lược", "ky luoc", "奇略", "phương lược"]) {
+      const result = searchRules({ query, workflow: "lookup" });
+      expect(result.guidance[0]?.ruleId, query).toBe("lookup-seven-groups");
+    }
+    const rule = KNOWLEDGE_BUNDLE.rules.find((row) => row.id === "lookup-seven-groups");
+    expect(rule?.explanation).toContain("Kỳ lược");
+    expect(rule?.explanation).toContain("qilueStrategy");
+    expect(rule?.explanation).toContain("qilueCard");
+    const lookup = KNOWLEDGE_BUNDLE.workflows.workflows.find((row) => row.id === "lookup");
+    expect(lookup?.summary).toContain("tám nhóm");
   });
 
   it("changed configuration pulls in the source-score rule", () => {

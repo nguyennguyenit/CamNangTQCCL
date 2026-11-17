@@ -4,7 +4,7 @@
     {
       "id": "lookup",
       "title": "Tra cứu thực thể và đội tham khảo",
-      "summary": "Resolve tên/ID, đọc catalog/reference của bảy nhóm Tra cứu và đội tham khảo theo mùa nguồn; không gợi ý ghép đội.",
+      "summary": "Resolve tên/ID, đọc catalog/reference của tám nhóm Tra cứu (gồm Kỳ lược) và đội tham khảo theo mùa nguồn; không gợi ý ghép đội.",
       "stages": [
         {
           "id": "resolve-entity",

@@ -55,7 +55,7 @@ describe("generate-knowledge-bundle", () => {
   it("--check fails when a rule changes without regenerating", () => {
     const copy = copyDataset();
     const path = join(copy, "rules/lookup.jsonl");
-    writeFileSync(path, readFileSync(path, "utf8").replace("Tra bảy nhóm Tra cứu", "Tra bảy nhóm Tra cứu (sửa)"));
+    writeFileSync(path, readFileSync(path, "utf8").replace("Tra tám nhóm Tra cứu", "Tra tám nhóm Tra cứu (sửa)"));
     const result = runCheck(copy);
     expect(result.ok).toBe(false);
     expect(result.stderr).toContain("stale");
