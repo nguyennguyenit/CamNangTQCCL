@@ -47,6 +47,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "feedback"),
   entry("js", "feedback-kinds"),
   entry("js", "filters"),
+  entry("js", "han-script"),
   entry("js", "hanviet"),
   entry("js", "hero-identity"),
   entry("js", "hero-portrait"),
