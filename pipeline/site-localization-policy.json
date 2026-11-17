@@ -12,7 +12,7 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "2afd3ac824bcc3301d8668c65d1fc9b60d6af02893e09a4d2ce96caaf32f5bdf",
+      "concreteInventorySha256": "733821f11923e15aadd9fad2373275b1ffcdb32902bc0f6380b2e6937aaccaea",
       "concreteLocationCount": 68205,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
@@ -806,7 +806,7 @@
     "src/components/pages/KhaiHoangDetail.astro": "ec8714aeb796ceaa8e68557f476e9438e650edf8d772f51a3c22fa8528426b6a",
     "src/components/pages/LegacyDetail.astro": "f65ac4ccf3a798edac470e98918a412746f1573be7cffb27bb9ce813e06e25b9",
     "src/components/pages/LookupGroupPage.astro": "f1990ec31c6ad5060033eb3b0fcd3e6b80531da13cc648404f8114ab5b441b54",
-    "src/components/pages/LookupHubPage.astro": "6cd3a95d2aa7c3060caec732b6ed6ec461aaaac85a3bb68b009132cb8c05f29b",
+    "src/components/pages/LookupHubPage.astro": "8e3ed5d1aae00298b3cfbd945949ccdbed9dc297799cec40e23e74d14ab54244",
     "src/components/pages/LookupItemPage.astro": "34f3b8685fb1ae6a171064d8980e3b9f1e62d351b662ae29f6fce32858b2f7dc",
     "src/components/pages/RecommendedDetail.astro": "b595f2f4a47f3a9c9e1fe6f4d4655ca537dbdce6aa1a7354822b08928db011b6",
     "src/components/pages/SectionPage.astro": "36885da4282dbdbafb935c3d950f88008212ac6c73d16f72d17644432378d817",
