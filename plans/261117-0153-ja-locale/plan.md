@@ -21,15 +21,15 @@ Objective, Done means, Out of scope và Constraints giữ nguyên như brief ng�
 
 | Phase | Nội dung | Phụ thuộc | Chạy song song với | Effort | Trạng thái |
 |---|---|---|---|---:|---|
-| [A](phase-01-n-locale-refactor.md) | Refactor N locale, giữ vi/zh trùng byte; công cụ so output | — | B, D, E1, F, G | 10h | pending |
-| [B](phase-02-ja-data-pipeline.md) | Bảng shinjitai, tên Nhật + trạng thái, dịch máy mô tả, `data/lookup-ja.json` | — | A, D, E1, F, G | 20h | pending |
-| [C](phase-03-ja-site-pages-ui.md) | Trang `/ja/`, chuỗi UI ja, Tra cứu/đội đọc dữ liệu ja, `docs/ja-gaps.md` | A, B | D, E1, F, G | 36h | pending |
-| [D](phase-04-worker-ja-alias-eval.md) | D1: Worker nhận `ja` + 2 ảnh eval client Nhật; D2: bộ chấm eval dùng alias tên Nhật | D1: không; D2: C | D1: A, B, C, E1, F, G | 6h | pending |
-| [E1](phase-05-jp-tier-doi-chuan.md#e1) | Đối chiếu mùa JP↔VN, thu tier JP PK-S27/PK-S26, bảng khớp đội đã review | B (tên Nhật, mềm) | A, B, C, D, F, G | 10h | pending |
-| [E2](phase-05-jp-tier-doi-chuan.md#e2) | Đưa tier JP vào generation Recommended + facet nguồn JP | C, E1 | F, G | 8h | pending |
-| [F](phase-06-draft-articles.md) | 3–5 bài vi+ja dạng Markdown nháp trong `plans/` | B (tên Nhật, mềm) | mọi phase | 10h | pending |
-| [G](phase-07-community-worker-ja.md) | `community-worker` nhận `lang = ja` (cần chủ repo chốt) | quyết định Q1 | mọi phase | 8h | pending |
-| [H](phase-08-integration-review.md) | Ghép, ghim lại localization, full gate, docs, PR, review độc lập | tất cả | — | 8h | pending |
+| [A](phase-01-n-locale-refactor.md) | Refactor N locale, giữ vi/zh trùng byte; công cụ so output | — | B, D, E1, F, G | 10h | done |
+| [B](phase-02-ja-data-pipeline.md) | Bảng shinjitai, tên Nhật + trạng thái, dịch máy mô tả, `data/lookup-ja.json` | — | A, D, E1, F, G | 20h | done |
+| [C](phase-03-ja-site-pages-ui.md) | Trang `/ja/`, chuỗi UI ja, Tra cứu/đội đọc dữ liệu ja, `docs/ja-gaps.md` | A, B | D, E1, F, G | 36h | done |
+| [D](phase-04-worker-ja-alias-eval.md) | D1: Worker nhận `ja` + 2 ảnh eval client Nhật; D2: bộ chấm eval dùng alias tên Nhật | D1: không; D2: C | D1: A, B, C, E1, F, G | 6h | done |
+| [E1](phase-05-jp-tier-doi-chuan.md#e1) | Đối chiếu mùa JP↔VN, thu tier JP PK-S27/PK-S26, bảng khớp đội đã review | B (tên Nhật, mềm) | A, B, C, D, F, G | 10h | done |
+| [E2](phase-05-jp-tier-doi-chuan.md#e2) | Đưa tier JP vào generation Recommended + facet nguồn JP | C, E1 | F, G | 8h | done |
+| [F](phase-06-draft-articles.md) | 3–5 bài vi+ja dạng Markdown nháp trong `plans/` | B (tên Nhật, mềm) | mọi phase | 10h | done |
+| [G](phase-07-community-worker-ja.md) | `community-worker` nhận `lang = ja` (cần chủ repo chốt) | quyết định Q1 | mọi phase | 8h | done |
+| [H](phase-08-integration-review.md) | Ghép, ghim lại localization, full gate, docs, PR, review độc lập | tất cả | — | 8h | done |
 
 ```mermaid
 flowchart LR
