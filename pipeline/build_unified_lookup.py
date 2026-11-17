@@ -1088,7 +1088,7 @@ def _check_new_tactic_sources(document, tactics):
 def _validate_client_tactics_document(document):
     if (
         not isinstance(document, dict)
-        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes", "zhEffects", "newAdvisors", "zhTexts", *CLIENT_CATALOG_FIELDS}
+        or not {"schemaVersion", "source", "tactics"} <= set(document) <= {"schemaVersion", "source", "tactics", "newTactics", "retired", "troopMods", "tacticNotes", "zhEffects", "newAdvisors", "zhTexts", *CLIENT_CATALOG_FIELDS, *QILUE_CAPTURE_KEYS}
         or type(document["schemaVersion"]) is not int
         or document["schemaVersion"] != 1
         or not isinstance(document.get("newTactics", {}), dict)
@@ -1449,6 +1449,145 @@ def _apply_client_troop_mods(document, troop_mods):
     return ledger
 
 
+# Kỳ lược PK-S27 (client Global 24.547, Đồ Giám Võ Lược Kỳ Mưu + Phương Lược Tác Chiến). Ba khóa đi cùng nhau.
+QILUE_CAPTURE_KEYS = ("qilueSource", "qilueStrategies", "qilueCards")
+QILUE_CARD_TYPES = ("dung", "muu", "phu", "sach", "te")
+QILUE_RARITIES = ("common", "rare")
+QILUE_STRATEGY_KEYS = {"nameVi", "aliasesVi", "nameZh", "cardTypes", "descriptionVi", "buffVi"}
+QILUE_CARD_KEYS = {"nameVi", "nameZh", "type", "rarity", "targetVi", "effectVi"}
+QILUE_ID = re.compile(r"^qilue-(strategy|card):[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+
+def _plain_public_text(text):
+    """Chữ công khai một dòng: không HTML, thực thể, ký tự điều khiển hay ẩn."""
+    return not ("<" in text or ">" in text or HTML_ENTITY.search(text) or any(unicodedata.category(char) in ("Cc", "Cf") for char in text))
+
+
+def _qilue_text(value, owner, field):
+    """Chữ client công khai: một dòng, không HTML/thực thể/ký tự điều khiển hay ẩn."""
+    text = _client_tactic_text(value, owner, f"qilue.{field}")
+    if not _plain_public_text(text):
+        raise ValueError(f"client qilue {field} is invalid: {owner}")
+    return text
+
+
+def _client_qilue(document):
+    """Đọc và kiểm phần kỳ lược của capture client: trả `(strategies, cards)` đã sắp theo mã.
+
+    Mã (`qilue-strategy:<slug>`, `qilue-card:<slug>`) là khóa viết tay, đóng băng: không bao giờ sinh lại từ tên,
+    nên đổi tên hiển thị không đổi đường dẫn. Biến thể chữ Hán sai trong ghi chú đội KHÔNG nằm ở đây
+    (xem `pipeline/recommended-qilue-overrides.json`), vì `aliasesZh` của catalog là dữ liệu công khai.
+    """
+    if not all(key in document for key in QILUE_CAPTURE_KEYS):
+        raise ValueError("client qilue capture must declare " + ", ".join(QILUE_CAPTURE_KEYS))
+    source, strategy_rows, card_rows = (document[key] for key in QILUE_CAPTURE_KEYS)
+    if (
+        not isinstance(source, dict) or set(source) != CLIENT_SOURCE_KEYS
+        or any(not isinstance(value, str) or not value.strip() for value in source.values())
+        or not isinstance(strategy_rows, dict) or not isinstance(card_rows, dict)
+    ):
+        raise ValueError("client qilue capture shape is invalid")
+    strategies, cards = [], []
+    for kind, rows, keys, out in (("strategy", strategy_rows, QILUE_STRATEGY_KEYS, strategies), ("card", card_rows, QILUE_CARD_KEYS, cards)):
+        for owner, entry in sorted(rows.items()):
+            match = QILUE_ID.match(owner) if isinstance(owner, str) else None
+            if match is None or match.group(1) != kind or not isinstance(entry, dict) or not (keys - {"aliasesVi"}) <= set(entry) <= keys:
+                raise ValueError(f"client qilue {kind} is invalid: {owner}")
+            row = {"id": owner}
+            for field in sorted(keys - {"aliasesVi", "cardTypes", "type", "rarity"}):
+                row[field] = _qilue_text(entry[field], owner, field)
+            if kind == "strategy":
+                aliases = entry.get("aliasesVi", [])
+                if not isinstance(aliases, list) or len(aliases) != len(set(aliases)) or row["nameVi"] in aliases:
+                    raise ValueError(f"client qilue aliasesVi is invalid: {owner}")
+                row["aliasesVi"] = [_qilue_text(alias, owner, "aliasesVi") for alias in aliases]
+                card_types = entry["cardTypes"]
+                if not isinstance(card_types, list) or len(card_types) != 2 or len(set(card_types)) != 2 or not set(card_types) <= set(QILUE_CARD_TYPES):
+                    raise ValueError(f"client qilue cardTypes is invalid: {owner}")
+                row["cardTypes"] = sorted(card_types, key=QILUE_CARD_TYPES.index)
+            else:
+                if entry["type"] not in QILUE_CARD_TYPES or entry["rarity"] not in QILUE_RARITIES:
+                    raise ValueError(f"client qilue type/rarity is invalid: {owner}")
+                row["type"], row["rarity"] = entry["type"], entry["rarity"]
+            out.append(row)
+    if len(strategies) != 5 or len(cards) != 40:
+        raise ValueError("client qilue must have 5 strategies and 40 cards")
+    for card_type in QILUE_CARD_TYPES:
+        rows = [row for row in cards if row["type"] == card_type]
+        if len(rows) != 8 or sum(row["rarity"] == "rare" for row in rows) != 2:
+            raise ValueError(f"client qilue card type must have 6 common + 2 rare cards: {card_type}")
+    names_zh = [row["nameZh"] for row in [*strategies, *cards]]
+    names_vi = [row["nameVi"] for row in [*strategies, *cards]]
+    if len(set(names_zh)) != len(names_zh) or len(set(names_vi)) != len(names_vi):
+        raise ValueError("client qilue names must be unique")
+    return strategies, cards
+
+
+# Hai khóa catalog của nhóm Tra cứu Kỳ lược (`qilue`, slug `ky-luoc`): row phẳng, sắp theo mã, đủ chữ Hán sau `zhTexts`.
+QILUE_CATALOG_COUNTS = {"qilueStrategies": 5, "qilueCards": 40}
+QILUE_STRATEGY_ROW_KEYS = COMMON_KEYS | {"nameZh", "cardTypes", "descriptionVi", "buffVi", "descriptionZh", "buffZh", "zhSource"}
+QILUE_CARD_ROW_KEYS = COMMON_KEYS | {"nameZh", "type", "rarity", "targetVi", "effectVi", "effectZh", "zhSource"}
+QILUE_TARGETS = ("Toàn quân ta", "Một quân ta", "Nhóm quân ta", "Một quân địch", "Toàn quân địch")
+# Ghi chú mùa của mọi row kỳ lược; `{version}` là phiên bản client của `qilueSource`. `textZh` là bản dịch đã duyệt.
+QILUE_SEASON_TEXTS = ("Mùa Hán Diễm Trường Minh (PK-S27, client {version})", "漢焰長明賽季（PK-S27，客戶端 {version}）")
+# Va chạm tên kỳ lược với nhóm khác đã review: (tên của kỳ lược, mã chiến pháp/tướng trùng tên). Tên giữ đúng client,
+# tìm kiếm ghi nhãn nhóm. Mọi va chạm khác làm build dừng.
+QILUE_NAME_COLLISIONS_ALLOWED = frozenset({
+    ("Ám Độ Trần Thương", "tactic:lap-lo-danh-trao"),
+    ("Cường Công", "tactic:cuong-cong"),
+    ("強攻", "tactic:cuong-cong"),
+    # Binh thư không nằm trong lookup candidate: kiểm ở tests/test_build_unified_lookup.py (QilueBookCollisionTest).
+    ("久戰", "book:chien-dau-truong-ky"),
+})
+CJK_TEXT = re.compile(r"[㐀-鿿]")
+
+
+def _apply_client_qilue(document, catalog):
+    """Thêm `qilueStrategies`/`qilueCards` vào catalog từ capture client; trường zh để trống cho `zhTexts` điền.
+    Trả các dòng ledger (một dòng mỗi row, khóa bằng hash của mục client)."""
+    strategies, cards = _client_qilue(document)
+    source = document["qilueSource"]
+    season_vi, season_zh = (text.format(version=source["version"]) for text in QILUE_SEASON_TEXTS)
+    ledger = []
+    for key, rows in (("qilueStrategies", strategies), ("qilueCards", cards)):
+        catalog[key] = []
+        for row in rows:
+            owner = row["id"]
+            catalog[key].append({
+                **row, "aliasesVi": row.get("aliasesVi", []), "aliasesZh": [row["nameZh"]],
+                "conditions": [{"kind": "season", "textVi": season_vi, "textZh": season_zh}], "missingFields": [],
+                **{field: None for field in ZH_TEXT_FIELDS[key]}, "zhSource": None,
+            })
+            ledger.append({
+                "entityId": owner, "fieldPath": "clientCapture.qilue", "disposition": "corrected-public",
+                "chosenInput": "client-capture", "sourceRecordId": f"client-qilue:{owner}",
+                "sourceFieldPath": key, "sourceValueHash": _sha(canonical_json_bytes(document[key][owner])),
+                "localValueHash": None,
+                "reason": "Global client Kỳ Lược screens are the only source for this strategy or card.",
+                "translationInputFingerprint": None,
+                "reviewEvidence": [f"captured Global client {source['screen']}", "pipeline/lookup-client-tactics.json"],
+            })
+    return ledger
+
+
+def _name_key(value):
+    return unicodedata.normalize("NFC", value).strip().casefold()
+
+
+def _check_qilue_name_collisions(heroes, tactics, catalog):
+    """Tên Việt, chữ Hán và alias Việt của kỳ lược so với tên (Việt, Hán-Việt, chữ Hán, alias) của chiến pháp và tướng
+    cùng candidate, không phân biệt hoa thường. Chỉ va chạm trong `QILUE_NAME_COLLISIONS_ALLOWED` được qua."""
+    others = {}
+    for row in (*tactics, *heroes):
+        for name in (row["viet"], row["hanViet"], row["chinese"], *row["aliases"]):
+            if isinstance(name, str) and name.strip():
+                others.setdefault(_name_key(name), set()).add(row["id"])
+    for row in (*catalog["qilueStrategies"], *catalog["qilueCards"]):
+        for name in (row["nameVi"], row["nameZh"], *row["aliasesVi"]):
+            for other in sorted(others.get(_name_key(name), ())):
+                if (name, other) not in QILUE_NAME_COLLISIONS_ALLOWED:
+                    raise ValueError(f"qilue name collision is not allowlisted: {row['id']} {name!r} vs {other}")
+
 # Nhóm catalog nhận số liệu chụp từ client Global (Thượng Thư Đài; quân sư: Minh Giám › Quân sư): trường được ghi đè theo client.
 CLIENT_CATALOG_FIELDS = {
     "equipment": {"nameVi"},
@@ -1495,6 +1634,9 @@ ZH_TEXT_FIELDS = {
     "buildings": {"summaryZh": "summaryVi"},
     "troopMods": {"effectZh": "effectVi"},
     "troopOptions": {"nameZh": "nameVi", "descriptionZh": "descriptionVi"},
+    # Kỳ lược: mọi trường ở đây là bắt buộc (`_apply_zh_texts` dừng build khi còn thiếu).
+    "qilueStrategies": {"descriptionZh": "descriptionVi", "buffZh": "buffVi"},
+    "qilueCards": {"effectZh": "effectVi"},
 }
 ZH_TEXT_KEYS = {"text", "viSha256"}
 ZH_TEXT_OPTIONAL_KEYS = {"ref"}
@@ -1504,7 +1646,7 @@ def _apply_zh_texts(document, catalog):
     """Điền trường zh còn trống bằng bản dịch đã duyệt; hàng nhận `zhSource = {kind: translation}`.
     Bản dịch chỉ lấp chỗ thiếu: trùng trường đã có chữ Hán nguồn, mã lạ hoặc chữ Việt đã đổi (`viSha256`) làm build dừng."""
     targets = {}
-    for group in ("advisors", "buildings", "troopMods"):
+    for group in ("advisors", "buildings", "troopMods", *QILUE_CATALOG_COUNTS):
         for row in catalog[group]:
             targets[row["id"]] = (group, row)
     for row in catalog["troopMods"]:
@@ -1532,7 +1674,9 @@ def _apply_zh_texts(document, catalog):
             if not isinstance(vi, str) or _sha(vi.encode("utf-8")) != entry["viSha256"]:
                 raise ValueError(f"client zhTexts is stale against the Vietnamese text: {owner}.{field}")
             text = _client_tactic_text(entry["text"], owner, field)
-            if not re.search(r"[\u3400-\u9fff]", text):
+            if group in QILUE_CATALOG_COUNTS and not _plain_public_text(text):
+                raise ValueError(f"client zhTexts value is invalid: {owner}.{field}")
+            if not CJK_TEXT.search(text):
                 raise ValueError(f"client zhTexts has no Chinese text: {owner}.{field}")
             row[field] = text
             row["zhSource"] = {"kind": "translation"}
@@ -1546,6 +1690,12 @@ def _apply_zh_texts(document, catalog):
                 "translationInputFingerprint": None,
                 "reviewEvidence": [entry["ref"]] if "ref" in entry else ["zhTexts translation", "pipeline/lookup-client-tactics.json"],
             })
+    # Kỳ lược không có chữ Hán nguồn nào khác: bản zh của trang phải đủ ngay trong candidate.
+    for group in QILUE_CATALOG_COUNTS:
+        for row in catalog[group]:
+            for field in ZH_TEXT_FIELDS[group]:
+                if row[field] is None:
+                    raise ValueError(f"client qilue row lacks Chinese text: {row['id']}.{field}")
     return ledger
 
 
@@ -1903,6 +2053,7 @@ def _build_model(capture):
                 ledger.append({"entityId": owner, "fieldPath": path, "disposition": "translated-public" if translation_fingerprint_value else "compatibility-preimage", "chosenInput": "local-baseline", "sourceRecordId": None, "sourceFieldPath": None, "sourceValueHash": None, "localValueHash": _sha(canonical_json_bytes(value)), "reason": "Frozen local fallback selected and bound to reviewed Vietnamese output." if translation_fingerprint_value else "Frozen local field retained or explicitly compared before source projection.", "translationInputFingerprint": translation_fingerprint_value, "reviewEvidence": ["frozen baseline manifest", "exact compatibility merge"]})
     catalog = {"schemaVersion": 1, "equipment": equipment, "specials": specials, "advisors": advisors, "troopMods": troop_mods, "buildings": buildings}
     client_ledger += _apply_client_catalog(_json(capture["clientTactics"]), catalog, heroes)
+    client_ledger += _apply_client_qilue(_json(capture["clientTactics"]), catalog)
     client_ledger += _apply_zh_texts(_json(capture["clientTactics"]), catalog)
     ledger.extend(client_ledger)
     return heroes, tactics, catalog, ledger, specs
@@ -1938,7 +2089,7 @@ def _walk_vi(value, path=""):
 
 
 def _validate_conditions(rows, owner, *, zh=False):
-    """`zh=True` (chỉ ghi chú mùa của tướng) cho phép thêm `textZh`: chữ Hán dịch từ `textVi`, phải có chữ Hán."""
+    """`zh=True` (chỉ ghi chú mùa của tướng và kỳ lược) cho phép thêm `textZh`: chữ Hán dịch từ `textVi`, phải có chữ Hán."""
     if not isinstance(rows, list):
         raise ValueError(f"conditions must be an array: {owner}")
     for row in rows:
@@ -1972,13 +2123,64 @@ def _optional_string(value):
     return value is None or isinstance(value, str)
 
 
+def _qilue_text_ok(value, *, zh=False):
+    return isinstance(value, str) and bool(value) and value == value.strip() and _plain_public_text(value) and (not zh or bool(CJK_TEXT.search(value)))
+
+
+def _validate_qilue(catalog):
+    """Row kỳ lược theo hợp đồng nhóm: khóa cố định, 5/40 row sắp theo mã, `aliasesZh == [nameZh]`, đủ chữ Hán (bản dịch),
+    loại/độ hiếm/đối tượng trong bảng mã, đúng một nhóm điều kiện mùa có `textZh` giữ nguyên các số của `textVi`."""
+    names = []
+    for key, keys, kind in (("qilueStrategies", QILUE_STRATEGY_ROW_KEYS, "strategy"), ("qilueCards", QILUE_CARD_ROW_KEYS, "card")):
+        rows = catalog[key]
+        if not isinstance(rows, list) or len(rows) != QILUE_CATALOG_COUNTS[key] or any(not isinstance(row, dict) or set(row) != keys for row in rows):
+            raise ValueError(f"{key} public projection shape is invalid")
+        ids = [row["id"] for row in rows]
+        if not all(isinstance(identifier, str) for identifier in ids) or ids != sorted(set(ids)):
+            raise ValueError(f"{key} ids must be unique and sorted")
+        zh_fields = ZH_TEXT_FIELDS[key]
+        for row in rows:
+            match = QILUE_ID.match(row["id"])
+            aliases = row["aliasesVi"]
+            card_types = row.get("cardTypes")
+            if (
+                match is None or match.group(1) != kind
+                or not _qilue_text_ok(row["nameVi"]) or not _qilue_text_ok(row["nameZh"], zh=True)
+                or any(not _qilue_text_ok(row[field], zh=True) or not _qilue_text_ok(row[vi]) for field, vi in zh_fields.items())
+                or row["aliasesZh"] != [row["nameZh"]]
+                or not isinstance(aliases, list) or any(not _qilue_text_ok(alias) for alias in aliases)
+                or len(set(aliases)) != len(aliases) or row["nameVi"] in aliases
+                or row["missingFields"] != [] or row["zhSource"] != {"kind": "translation"}
+                or (kind == "card" and (
+                    aliases != [] or row["type"] not in QILUE_CARD_TYPES or row["rarity"] not in QILUE_RARITIES or row["targetVi"] not in QILUE_TARGETS
+                ))
+                or (kind == "strategy" and (
+                    not _string_list(card_types) or len(card_types) != 2
+                    or card_types != sorted(set(card_types) & set(QILUE_CARD_TYPES), key=QILUE_CARD_TYPES.index)
+                ))
+            ):
+                raise ValueError(f"qilue {kind} public projection is invalid: {row['id']}")
+            conditions = row["conditions"]
+            _validate_conditions(conditions, row["id"], zh=True)
+            if not conditions or any(
+                item["kind"] != "season" or "textZh" not in item or not _qilue_text_ok(item["textZh"]) or not _qilue_text_ok(item["textVi"])
+                or sorted(NOTE_NUMBER.findall(item["textVi"])) != sorted(NOTE_NUMBER.findall(item["textZh"]))
+                for item in conditions
+            ):
+                raise ValueError(f"qilue season condition is invalid: {row['id']}")
+            names += [_name_key(row["nameVi"]), _name_key(row["nameZh"]), *(_name_key(alias) for alias in aliases)]
+    if len(names) != len(set(names)):
+        raise ValueError("qilue names must be unique across strategies and cards")
+
+
 def _validate_payloads(heroes, tactics, catalog):
     if (
         not isinstance(heroes, list)
         or not heroes
         or not isinstance(tactics, list)
         or not tactics
-        or set(catalog) != {"schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings"}
+        or not isinstance(catalog, dict)
+        or set(catalog) != {"schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings", *QILUE_CATALOG_COUNTS}
         or type(catalog["schemaVersion"]) is not int
         or catalog["schemaVersion"] != 1
     ):
@@ -2176,6 +2378,8 @@ def _validate_payloads(heroes, tactics, catalog):
         _validate_revisions(row["revisions"], row["id"])
     if any(type(row["mainCityOnly"]) is not bool or type(row["maxLevel"]) is not int for row in catalog["buildings"]):
         raise ValueError("building scalar type is invalid")
+    _validate_qilue(catalog)
+    _check_qilue_name_collisions(heroes, tactics, catalog)
     _walk_vi({"heroes": heroes, "tactics": tactics, "catalog": catalog})
 
 
@@ -2387,6 +2591,7 @@ def build_candidate(*, inputs, source, identity, translations, output, client_he
             "advisors": len(catalog["advisors"]),
             "troopMods": len(catalog["troopMods"]),
             "buildings": len(catalog["buildings"]),
+            **{key: len(catalog[key]) for key in QILUE_CATALOG_COUNTS},
             "fieldLedgerRows": len(ledger),
         },
         "ledger": "ledger.json",

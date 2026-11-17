@@ -45,23 +45,23 @@ export const recommendTeamsInputSchema = z
       .string()
       .min(1)
       .max(128)
-      .describe("Mùa nguồn trong seasonOptions; lấy từ seasonSelection của tqccl_get_playbook."),
+      .describe("Mùa nguồn trong seasonOptions (seasonSelection của tqccl_get_playbook)."),
     lockedTeams: z
       .array(z.string().min(1).max(256))
       .max(10)
       .optional()
-      .describe("teamId (team:...) trong canonicalState.lockedTeams cần giữ; bỏ trống = giữ mọi đội đã khóa."),
+      .describe("teamId trong canonicalState.lockedTeams cần giữ; bỏ trống = giữ mọi đội đã khóa."),
     maxTeams: z.number().int().min(1).max(10).optional().describe("Số đội tối đa; mặc định 5."),
     mode: z.enum(["meta", "redStars"]).optional().describe("meta = bậc T0→T1; redStars = nhiều hột. Mặc định meta."),
     tacticOverrides: z
       .array(tacticOverrideSchema)
       .max(MAX_TACTIC_OVERRIDES)
       .optional()
-      .describe("Món bù người dùng đã chọn (tối đa 20); vượt thì INVALID_REQUEST, không bỏ âm thầm."),
+      .describe("Món bù người dùng đã chọn (tối đa 20); vượt thì INVALID_REQUEST."),
     fullBox: z
       .boolean()
       .optional()
-      .describe("Tìm toàn kho; mặc định true khi >40 tướng và >60 chiến pháp như trang Gợi ý kho."),
+      .describe("Tìm toàn kho; mặc định true khi >40 tướng và >60 chiến pháp."),
   })
   .strict();
 export type RecommendTeamsInput = z.infer<typeof recommendTeamsInputSchema>;
@@ -171,7 +171,7 @@ const conflictedEntrySchema = z
 
 export const recommendTeamsOutputSchema = commonResultSchema
   .extend({
-    basis: z.literal("source-reference-fit").describe("Cơ sở ghép: luôn là source-reference-fit (nguồn + kho, không chấm theo luật)."),
+    basis: z.literal("source-reference-fit").describe("Luôn là source-reference-fit (nguồn + kho, không chấm theo luật)."),
     rulesetVerified: z.literal(false).describe("Luôn false: kết quả chưa được kiểm theo ruleset mùa."),
     sourceSeasonId: boundedText.describe("Mùa nguồn."),
     mode: z.enum(["meta", "redStars"]).describe("Chế độ."),
@@ -184,7 +184,7 @@ export const recommendTeamsOutputSchema = commonResultSchema
     conflictedTeams: z
       .array(conflictedEntrySchema)
       .max(MAX_CONFLICTED)
-      .describe("Đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn."),
+      .describe("Đội đủ kho khi đứng riêng nhưng trùng tướng/chiến pháp với đội đã chọn."),
     omittedCounts: z
       .object({
         blockedStrongTeams: z.number().int().nonnegative().describe("Đội mạnh còn thiếu tướng hoặc chiến pháp."),
@@ -200,7 +200,7 @@ export const recommendTeamsOutputSchema = commonResultSchema
         ignored: z.array(tacticOverrideSchema.omit({ tactic: true }).strict()).max(MAX_TACTIC_OVERRIDES).describe("Món bù không khớp đội/ô nào."),
       })
       .strict()
-      .describe("Kết quả áp món bù: yêu cầu, đã áp dụng, bị bỏ qua (báo, không bỏ âm thầm)."),
+      .describe("Kết quả áp món bù: yêu cầu, đã áp dụng, bị bỏ qua."),
     diagnostics: z
       .object({
         seasonSourceRecords: z.number().int().nonnegative().describe("Số bản ghi nguồn của mùa."),

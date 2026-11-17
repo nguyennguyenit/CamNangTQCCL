@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "c6689383e58cf52d0ae23613e9a2b8ad087f43904c55222dc5301c6deaba92a5",
-      "concreteLocationCount": 68173,
+      "concreteInventorySha256": "2afd3ac824bcc3301d8668c65d1fc9b60d6af02893e09a4d2ce96caaf32f5bdf",
+      "concreteLocationCount": 68205,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261116-doi-chuan-sgsdeck",
+  "policyVersion": "site-vi-261118-ky-luoc",
   "routeFamilies": [
     {
       "entrypoints": [

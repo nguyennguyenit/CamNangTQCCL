@@ -1,10 +1,10 @@
 // Dữ liệu lúc build của trang riêng từng mục Tra cứu (`/tra-cuu/<nhóm>/<slug>/` + bản `/zh/`): 886 mục × 2 ngôn ngữ từ
 // ledger slug đóng băng (`lookupDetailRoutes`). Hồ sơ dựng bằng đúng cây view mà hộp thoại/panel của trình duyệt dùng
-// (`createProfileRenderer(...).profilePageTree` cho tướng/chiến pháp/binh thư, `masterDetailTree` cho bốn nhóm catalog)
+// (`createProfileRenderer(...).profilePageTree` cho tướng/chiến pháp/binh thư, `masterDetailTree` cho năm nhóm catalog)
 // rồi `treeToHtml`; tiêu đề và mô tả meta tính từ chính bản ghi nên mỗi trang một bộ riêng.
 import { createProfileRenderer } from '../../js/lookup-profile.js';
-import { isMasterGroup, masterDetailTree, masterTargetFor } from '../../js/lookup-master.js';
-import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, lookupNameInfo, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
+import { isMasterGroup, masterDetailTree, masterTargetFor, qilueStrategiesForCard } from '../../js/lookup-master.js';
+import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, lookupNameInfo, qilueLabel, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
 import { lookupCardView, lookupGroupLabels } from '../../js/unified-lookup.js';
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
 import { contentLocaleIsVietnamese, localePath, pick, withLocale } from '../../js/i18n.js';
@@ -76,13 +76,41 @@ function describeJa(group: LookupGroup, item: Json, locale: SiteLocale, name: st
   return `${name}（施設${max === null ? '' : `・最大レベル${max}`}）：レベル別の効果と資源。`;
 }
 
-/** Mô tả meta của một mục theo nhóm; chỉ dùng chữ có thật của bản ghi (bản zh bỏ chữ chỉ có tiếng Việt). */
-function describe(group: LookupGroup, item: Json, locale: SiteLocale): string {
+/**
+ * Mô tả meta của một mục Kỳ lược: nhãn mục (thẻ/phương lược) và nhãn đóng của hợp đồng (loại, độ hiếm, đối tượng), tên game
+ * của phương lược liên quan. Chữ Hán hiệu ứng/mô tả là bản dịch từ tiếng Việt (chưa đối chiếu) nên bản zh không đưa vào meta;
+ * bản ja cũng không trích mô tả dịch máy.
+ */
+function describeQilue(corpus: Json, item: Json, name: string, locale: SiteLocale): string {
+  const language = pick(locale, 'vi', 'zh', 'ja');
+  const record: Json = item.record ?? {};
+  const label = (kind: string, value: unknown) => String(qilueLabel(kind, value, locale) ?? '');
+  if (String(item.id).startsWith('qilue-strategy:')) {
+    const types = (record.cardTypes ?? []).map((type: string) => label('type', type)).filter(Boolean);
+    if (language === 'zh') return `${name}（奇略·作战方略）：可装备${types.join('、')}类奇略卡。`;
+    if (language === 'ja') return `${name}（奇略・方略）：${types.join('・')}の奇略カードを装備できる。`;
+    return `${name} — phương lược kỳ lược, dùng thẻ ${types.join(', ')}${tail(snippet(record.descriptionVi, 110), ':', '.')}`;
+  }
+  const head = parts(label('type', record.type), record.rarity === 'rare' ? label('rarity', record.rarity) : '', label('target', record.targetVi));
+  if (language !== 'vi') {
+    const strategies = qilueStrategiesForCard(corpus, record).map((entry: Json) => lookupDisplayName(entry.record, entry.nameVi, locale));
+    if (language === 'ja') return `${name}（奇略カード・${head.join('・')}）${tail(strategies.length ? `${strategies.join('・')}の方略で使える。` : '', '：', '')}`;
+    return `${name}（奇略卡，${head.join('·')}）${tail(strategies.length ? `可用于${strategies.join('、')}作战方略。` : '', '：', '。')}`;
+  }
+  return `${name} — thẻ kỳ lược ${head.join(' · ')}${tail(snippet(record.effectVi, 120), ':', '.')}`;
+}
+
+/**
+ * Mô tả meta của một mục theo nhóm; chỉ dùng chữ có thật của bản ghi (bản zh bỏ chữ chỉ có tiếng Việt). `corpus` cho quan hệ
+ * trong nhóm (phương lược dùng được của thẻ kỳ lược). Xuất ra để kiểm bằng corpus mẫu, không cần kho Tra cứu của build.
+ */
+export function describe(group: LookupGroup, item: Json, locale: SiteLocale, corpus: Json): string {
   // Câu mô tả viết theo ngữ pháp của từng ngôn ngữ (locale mới phải tự khai): `zh` = viết bằng tiếng Trung.
   const language = pick(locale, 'vi', 'zh', 'ja');
   const zh = language === 'zh';
   const record: Json = item.record ?? {};
   const name = lookupDisplayName(record, item.nameVi, locale);
+  if (group === 'qilue') return describeQilue(corpus, item, name, locale);
   const shown = (value: unknown) => String(zhSafeValue(value, locale) ?? '').trim();
   if (language === 'ja') return describeJa(group, item, locale, name, shown);
   if (group === 'heroes' || group === 'tactics' || group === 'books') {
@@ -170,7 +198,7 @@ export async function lookupItemTree(id: string, locale: SiteLocale) {
 }
 
 /** Nhóm có thuật ngữ (`DefinedTerm`) trong JSON-LD; nhóm còn lại là `Thing`. */
-const TERM_GROUPS = new Set<LookupGroup>(['tactics', 'books', 'advisors']);
+const TERM_GROUPS = new Set<LookupGroup>(['tactics', 'books', 'advisors', 'qilue']);
 
 /** Trang riêng của mục `id` ở ngôn ngữ `locale`; `site` là gốc tuyệt đối cho JSON-LD. */
 export async function lookupItemPage(id: string, locale: SiteLocale, site: URL | string): Promise<LookupItemPage> {
@@ -184,7 +212,7 @@ export async function lookupItemPage(id: string, locale: SiteLocale, site: URL |
     const groupLabel = lookupGroupLabels(locale)[group] as string;
     const siteName = pick(locale, 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册', '三國志 真戦 攻略手帳');
     const section = pick(locale, 'Tra cứu', '图鉴查询', '図鑑');
-    const description = describe(group, item, locale);
+    const description = describe(group, item, locale, corpus);
     const groupHref = localePath(lookupGroupPath(group) as string, locale);
     // Tên chữ Hán chỉ ở bản Việt và chỉ khi trang có hiện nó (binh thư bản Việt không hiện chữ Hán, chỉ là khoá tìm);
     // bản Trung không hiện tên Việt nên không khai tên thay thế. Tên dịch `nameZh` (chưa đối chiếu, bản Việt không hiện) không khai.

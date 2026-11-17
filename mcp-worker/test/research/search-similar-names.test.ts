@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { realHandlers } from "../fixtures/real-handlers.js";
 
-type SearchKind = "hero" | "tactic" | "equipment" | "advisor" | "troopMod" | "building" | "book" | "team";
+type SearchKind = "hero" | "tactic" | "equipment" | "advisor" | "troopMod" | "building" | "book" | "qilueStrategy" | "qilueCard" | "team";
 
 async function search(query: string, kinds?: SearchKind[], locale?: "vi" | "zh") {
   return realHandlers().call("tqccl_search", {

@@ -73,6 +73,20 @@ Bản zh hiện chữ Hán nguồn hoặc bản dịch thay cho chữ Việt; b�
 
 Mục chỉ có ở SGSDeck đã bỏ (`retired: null`), trừ ba chiến pháp Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu, Kết Nghĩa Vườn Đào (khôi phục 2026-11-03 theo fanpage chính thức VN; từ 2026-11-11 chữ Việt, phẩm, Mục tiêu và Buff theo Thượng Thư Đài client 24.547, `tacticNotes` ghi nguồn, `zhEffects` kind `translation`; hai chiến pháp đầu thuộc Hà Thị, phe Hán, ăn ý Cung B của SGSDeck). Hai chiến pháp của SP Tào Tháo (Thừa Thiên Tĩnh Thế, Tàng Khí Đợi Thời) lấy tên, loại, binh chủng và chữ hiệu ứng từ ảnh thông báo "Võ Tướng Mới & Chiến Pháp" của bản Global; thông báo không ghi phẩm, Mục tiêu và Buff nên các trường này để `null` (= giữ nguyên, `targetVi`/`effectTypeVi` cũng nhận `null`). SP Tào Tháo thuộc phe Hán theo thông báo (`overrides`; SGSDeck TW ghi Quần), là tướng phe Hán đầu tiên (màu phe `--f-han`). `pipeline/lookup-client-heroes.json` có `retired` (danh sách mã tướng không có ở client; hiện rỗng — Hà Thị đã được khôi phục 2026-11-03): builder bỏ tướng, gỡ khỏi `inheritedFromIds`; tướng bị bỏ không được còn ghi đè/ảnh/alias/roleTag/heroNotes. 10 chiến pháp của 11 tướng Hán mới (client 24.547) nằm ở `newTactics`: `nameZh` đối chiếu `sanzhan.slgsim.com/zh-hans` (bản Đại Lục, ghi phồn thể; client Việt không hiện chữ Hán, bản TW chưa có), `source: INHERITANCE`, `zhEffects` kind `translation`.
 
+### Kỳ lược từ client Global (`qilueSource`, `qilueStrategies`, `qilueCards`)
+
+Nhóm Tra cứu thứ 8 `qilue` (`/tra-cuu/ky-luoc/`) có 5 phương lược và 40 thẻ kỳ lược của mùa PK-S27 Hán Diễm Trường Minh. Dữ liệu chụp từ client Global 24.547 (Kỳ Lược Triều Hán › Võ Lược Kỳ Mưu › Đồ Giám; Phương Lược Tác Chiến), xem `plans/reports/261117-client-ky-luoc-pk-s27.md`.
+
+- **Input:** ba khóa trong `pipeline/lookup-client-tactics.json`, nên dùng chung hash `inputHashes.clientTactics`. `_client_qilue` kiểm hình dạng: đủ 5 phương lược và 40 thẻ, mỗi loại thẻ (dũng/mưu/phụ/sách/tế) có 6 thẻ thường và 2 thẻ hiếm, tên không trùng.
+- **Mã:** `qilue-strategy:<slug>`, `qilue-card:<slug>`. Đây là khóa viết tay và đóng băng, không sinh lại từ tên. Đổi `nameVi` không đổi đường dẫn.
+- **Catalog:** hai khóa phẳng `qilueStrategies` và `qilueCards`.
+  - `aliasesZh` luôn là `[nameZh]`.
+  - Biến thể chữ Hán sai trong ghi chú đội không bao giờ vào catalog. Chúng nằm trong `pipeline/recommended-qilue-overrides.json`.
+  - `conditions` có một dòng mùa kèm `textZh`.
+  - Chữ zh của hiệu ứng, mô tả và buff lấy từ `zhTexts` kind `translation`, có cờ "dịch từ tiếng Việt" và không vào meta.
+- **Va chạm tên với nhóm khác:** chỉ được phép nếu nằm trong `QILUE_NAME_COLLISIONS_ALLOWED` (Cường Công, 強攻, Ám Độ Trần Thương, 久戰). Phần va chạm với binh thư được kiểm bằng test.
+- **Ledger route:** nhóm `qilue` có hai tiền tố. Khi `GROUP_KINDS` có nhóm mới, `--write` chấp nhận ledger còn thiếu nhóm đó; mọi sửa tay khác vẫn bị từ chối.
+
 ### Đánh giá và Cách nhận
 
 Hồ sơ tướng có thêm **Đánh giá** (`lookup.usageVi`, chữ nguồn `usageZh`) và **Cách nhận** (`lookup.cardPacks`: gói, tướng lõi hay không, tỉ lệ lõi/thường của cả gói) từ `pipeline/sgsdeck-guide.json`. Guide nằm ngoài `data/sgsdeck/` vì snapshot bị registry pin và registry là nguồn glossary của gate bản dịch; guide tự gắn `snapshotManifestHash` của snapshot. Dựng lại guide từ đúng cache của snapshot, không đổi snapshot:

@@ -469,6 +469,10 @@ class SiteLocalizationTest(unittest.TestCase):
             tiered = [row for row in index if row.get("tierSources")]
             self.assertEqual(len(tiered), 7)
             self.assertEqual({row["sourceSeasonId"] for row in tiered}, {"pk-s26"})
+            # Kỳ lược của đội được tính ở đường publish này (không qua capture), từ catalog của chính candidate.
+            wumou = next(row for row in index if row["sourceConfigId"] == "s27-official-wumou-qi")
+            self.assertEqual(wumou["qilue"]["cardIds"][0], "qilue-card:bo-tri-thap-dien")
+            self.assertEqual(sum("qilue" in row for row in index), 59)
 
     def test_publication_rejects_lookup_bytes_outside_reviewed_candidate(self):
         with tempfile.TemporaryDirectory() as temporary:

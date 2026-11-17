@@ -1,5 +1,5 @@
 ---
-// Trang mục lục Tra cứu `/tra-cuu/` (mọi ngôn ngữ): 7 thẻ link tới trang nhóm, số đếm tính lúc build.
+// Trang mục lục Tra cứu `/tra-cuu/` (mọi ngôn ngữ): 8 thẻ link tới trang nhóm, số đếm tính lúc build.
 // Không nạp js/app.js và không tải dữ liệu. Link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`) được chuyển tiếp
 // tới trang nhóm bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
 import SiteLayout from '../../layouts/SiteLayout.astro';
@@ -22,9 +22,9 @@ const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(w
 <SiteLayout
   title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册', '図鑑 — 三國志 真戦 攻略手帳')}
   description={t(
-    'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư theo tên Việt hoặc chữ Hán.',
-    '按名称查询武将、战法、装备、军师、兵种进阶、建筑与兵书。',
-    '武将・戦法・装備・軍師・兵種進階・施設・兵法書を名称で検索できます。',
+    'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược theo tên Việt hoặc chữ Hán.',
+    '按名称查询武将、战法、装备、军师、兵种进阶、建筑、兵书与奇略。',
+    '武将・戦法・装備・軍師・兵種進階・施設・兵法書・奇略を名称で検索できます。',
   )}
   pageKind="section"
   activeSection="lookup"
@@ -38,9 +38,9 @@ const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(w
         <span class="reference-kicker">{t('Tra cứu', '图鉴查询', '図鑑')}</span>
         <h1 class="reference-title">{t('Tra cứu', '图鉴查询', '図鑑')}</h1>
         <p class="reference-lead">{t(
-          'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
-          '武将、战法、装备、军师、兵种进阶、建筑与兵书——可用中文名、越南语名或汉越音搜索。',
-          '武将・戦法・装備・軍師・兵種進階・施設・兵法書 — 日本語名・中国語名で検索できます。',
+          'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
+          '武将、战法、装备、军师、兵种进阶、建筑、兵书与奇略——可用中文名、越南语名或汉越音搜索。',
+          '武将・戦法・装備・軍師・兵種進階・施設・兵法書・奇略 — 日本語名・中国語名で検索できます。',
         )}</p>
       </div>
     </header>

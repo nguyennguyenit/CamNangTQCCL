@@ -26,7 +26,15 @@
     {
       "forms": [
         "bảy nhóm tra cứu",
-        "7 nhóm tra cứu"
+        "7 nhóm tra cứu",
+        "tám nhóm tra cứu",
+        "8 nhóm tra cứu",
+        "kỳ lược",
+        "thẻ kỳ lược",
+        "phương lược",
+        "奇略",
+        "奇略卡",
+        "作戰方略"
       ],
       "ruleIds": [
         "lookup-seven-groups"

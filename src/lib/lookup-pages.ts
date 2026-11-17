@@ -1,4 +1,4 @@
-// Dữ liệu lúc build của các trang Tra cứu: 7 trang nhóm `/tra-cuu/<slug>/` (× mỗi ngôn ngữ) và trang mục lục
+// Dữ liệu lúc build của các trang Tra cứu: 8 trang nhóm `/tra-cuu/<slug>/` (× mỗi ngôn ngữ) và trang mục lục
 // `/tra-cuu/`. Kho Tra cứu đọc từ đúng snapshot byte mà publication phát (`lookupPublicationSnapshot`) và được
 // kiểm trọn bộ — shape lẫn tham chiếu chéo — trước khi dựng trang; trình duyệt chỉ còn kiểm từng payload.
 import { validateLookupBundle } from '../../js/lookup-data.js';
@@ -35,7 +35,7 @@ import type { SiteLocale } from './locale-routes';
 
 export type LookupGroup = keyof typeof LOOKUP_GROUP_SLUGS;
 
-/** Bảy nhóm theo thứ tự công bố (`LOOKUP_GROUPS` của `js/unified-lookup.js`), đúng kiểu nhóm. */
+/** Tám nhóm theo thứ tự công bố (`LOOKUP_GROUPS` của `js/unified-lookup.js`), đúng kiểu nhóm. */
 const GROUPS = LOOKUP_GROUPS as LookupGroup[];
 
 /** Mô tả ngắn của từng nhóm (menu, footer, thẻ mục lục, dòng dẫn trang nhóm). */
@@ -47,6 +47,7 @@ const LOOKUP_DESCRIPTIONS: Record<LookupGroup, {vi: string; zh: string; ja: stri
   'troop-mods': {vi: 'Cải tạo binh chủng và gợi ý build', zh: '兵种进阶与搭配建议', ja: '兵種進階とおすすめ構成'},
   buildings: {vi: 'Công trình theo cấp và hiệu quả', zh: '按等级查看建筑效果', ja: 'レベル別の施設効果'},
   books: {vi: 'Binh thư theo tên Việt và chữ Hán', zh: '按名称查询兵书', ja: '名称で兵法書を探す'},
+  qilue: {vi: 'Phương lược và thẻ kỳ lược theo loại, độ hiếm', zh: '按类型与稀有度查看作战方略与奇略卡', ja: '種類とレア度で方略と奇略カードを探す'},
 };
 
 export function lookupDescription(group: LookupGroup, locale: SiteLocale) {
@@ -125,7 +126,7 @@ export function lookupGroupStaticPaths() {
   return GROUPS.map((group) => ({ params: { group: LOOKUP_GROUP_SLUGS[group] }, props: { group } }));
 }
 
-/** Nhãn, đường dẫn và mô tả của 7 nhóm theo thứ tự công bố (menu, footer): không cần đọc kho Tra cứu. */
+/** Nhãn, đường dẫn và mô tả của 8 nhóm theo thứ tự công bố (menu, footer): không cần đọc kho Tra cứu. */
 export function lookupGroupLinks(locale: SiteLocale) {
   const labels = lookupGroupLabels(locale);
   return GROUPS.map((group) => ({
@@ -185,7 +186,7 @@ export function lookupRouteHandles() {
  * HTML dựng sẵn của trang nhóm: MỌI mục của nhóm (số lượng không phụ thuộc client), dòng trạng thái và hàng "Xem thêm",
  * cùng cây markup mà `js/lookup-page.js` dựng lại trong trình duyệt. Các mục sau trang đầu mang `data-lookup-later`
  * (CSS ẩn khi có JavaScript; trình duyệt bỏ chúng khi nhận lại danh sách và "Xem thêm" dựng lại từ dữ liệu).
- * Bốn nhóm catalog thêm hàng chip lọc và chi tiết của mục đầu.
+ * Năm nhóm catalog thêm hàng chip lọc và chi tiết của mục đầu.
  */
 export async function lookupGroupPage(group: LookupGroup, locale: SiteLocale) {
   const [corpus] = await Promise.all([lookupBuildCorpus(), lookupRouteHandles()]);
@@ -193,7 +194,7 @@ export async function lookupGroupPage(group: LookupGroup, locale: SiteLocale) {
   const total = corpus.groups[group].length;
   const { items } = searchLookupGroup(corpus, { group, page: 1, pageSize: total, locale });
   const master = isMasterGroup(group);
-  // Bốn nhóm catalog chọn sẵn mục đầu (artboard): chi tiết của nó dựng sẵn cạnh danh sách.
+  // Năm nhóm catalog chọn sẵn mục đầu (artboard): chi tiết của nó dựng sẵn cạnh danh sách.
   const selectedId = master ? masterDefaultId(group, items.slice(0, pageSize) as { id: string }[]) : null;
   const target = selectedId ? masterTargetFor(corpus, selectedId) : null;
   return {

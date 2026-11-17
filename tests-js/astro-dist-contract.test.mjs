@@ -80,7 +80,7 @@ const zhPathOf = (viPath) => (viPath === "/" ? "/zh/" : `/zh${viPath}`);
 /** Bản của một đường dẫn ở mọi locale đang bật (thứ tự `SITE_LOCALES`): output thật có một trang cho mỗi locale. */
 const localizedPathsOf = (viPath) => SITE_LOCALES.map((locale) => localePath(viPath, locale));
 /** Số URL sitemap cho mỗi locale: mọi route có bản gương + trang danh sách blog (chưa kể trang mùa). */
-const SITEMAP_ROUTES_PER_LOCALE = 2869;
+const SITEMAP_ROUTES_PER_LOCALE = 2915;
 
 /** Nhóm mục sitemap (một cho mỗi locale) của một route có bản gương; `/` (Landing) được xếp riêng ở đầu. */
 const mirroredEntries = (viPaths) => viPaths.flatMap((viPath) => {
@@ -143,7 +143,7 @@ const SECTION_PAGE_SPECS = [
   { path: "soi-doi-tu-anh", section: "analyze", season: false },
   { path: "goi-y-doi-tu-kho", section: "roster-recommend", season: false },
 ];
-/** Bảy trang nhóm Tra cứu (URL công khai), mỗi trang nạp app.js với nhóm của nó. */
+/** Tám trang nhóm Tra cứu (URL công khai), mỗi trang nạp app.js với nhóm của nó. */
 const LOOKUP_GROUP_SPECS = [
   ["tuong", "heroes", "hero:luu-bi"],
   ["chien-phap", "tactics", "tactic:phong-thi-tran"],
@@ -152,6 +152,7 @@ const LOOKUP_GROUP_SPECS = [
   ["cai-tao-binh-chung", "troop-mods", "troop-mod:ho-bao-ky"],
   ["cong-trinh", "buildings", "building:thai-hoc"],
   ["binh-thu", "books", "book:di-truc-bao-oan"],
+  ["ky-luoc", "qilue", "qilue-card:bo-tri-thap-dien"],
 ].map(([slug, group, sampleId]) => ({ path: `tra-cuu/${slug}`, section: "lookup", season: false, group, sampleId }));
 const LOOKUP_GROUP_PATHS = LOOKUP_GROUP_SPECS.map(({ path }) => `/${path}/`);
 /** Trang nội dung tĩnh có bản gương (các trang chính sách): được index, canonical theo ngôn ngữ. */
@@ -161,7 +162,7 @@ const staticPageHtml = (locale, viPath) =>
 const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
 /** Trang danh sách blog của mọi locale luôn có và là bản dịch của nhau. */
 const BLOG_INDEX_ENTRIES = mirroredEntries(["/bai-viet/"]);
-/** Mọi mục sitemap của fixture: Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
+/** Mọi mục sitemap của fixture: Landing, 8 trang mục, 8 trang nhóm Tra cứu, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
 const FIXTURE_SITEMAP_ENTRIES = [
   ...mirroredEntries(["/", ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`), ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`]),
   ...BLOG_INDEX_ENTRIES,
@@ -201,7 +202,7 @@ function sectionPageHtml({ path, locale, section, season, group, sampleId, regis
   ].join("");
 }
 
-/** Mục lục Tra cứu: tĩnh, chỉ script chuyển tiếp link cũ và thẻ link tới 7 trang nhóm; không app.js. */
+/** Mục lục Tra cứu: tĩnh, chỉ script chuyển tiếp link cũ và thẻ link tới 8 trang nhóm; không app.js. */
 const lookupHubHtml = (locale) => [
   `<!doctype html>${pairHead(locale, "/tra-cuu/")}<head><script id="lookup-hub-redirect">(function(){})();</script></head><body>`,
   ...LOOKUP_GROUP_SPECS.map(({ path, group }) =>
@@ -1036,10 +1037,11 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 7 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 166 legacy, 18 Khai hoang,
-  // 983 trang riêng mục Tra cứu (263 tướng, 422 chiến pháp, 59 quân sư sau đợt theo client Global) — mỗi route một trang cho mỗi locale — và trang danh sách blog của mỗi locale (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 166 legacy, 18 Khai hoang,
+  // 1028 trang riêng mục Tra cứu (263 tướng, 422 chiến pháp, 59 quân sư sau đợt theo client Global; 5 phương lược + 40 thẻ kỳ lược
+  // PK-S27) — mỗi route một trang cho mỗi locale — và trang danh sách blog của mỗi locale (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
-  assert.equal(lookupRoutes.entries.length, 983);
+  assert.equal(lookupRoutes.entries.length, 1028);
   // + trang mùa Đội chuẩn: mỗi mùa cũ có đội một trang, hai ngôn ngữ (mùa hiện tại và mùa 0 đội không có).
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
@@ -1161,7 +1163,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản cùng đường dẫn dưới tiền tố của mọi locale khác (Landing, 8 trang mục, 7 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 983 trang riêng mục Tra cứu).
+  // Mỗi route bản Việt có bản cùng đường dẫn dưới tiền tố của mọi locale khác (Landing, 8 trang mục, 8 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 1028 trang riêng mục Tra cứu).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
@@ -1175,7 +1177,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.equal(catalog.recommended.length, 1681);
   assert.equal(catalog.legacy.length, 166);
   assert.equal(catalog.khaiHoang.length, 18);
-  assert.equal(lookupRoutes.entries.length, 983);
+  assert.equal(lookupRoutes.entries.length, 1028);
   assert.equal(locations.length, SITE_LOCALES.length * (SITEMAP_ROUTES_PER_LOCALE + seasonPageList.length));
   assert.deepEqual(
     locations,
@@ -1739,7 +1741,7 @@ test("lookup fixture: books carry a frozen id, and renaming `viet` in the fixtur
 
 test("dist verifier admits the lookup item pages only with the ledger routes, own metadata and every card prerendered", async (t) => {
   const fixture = await lookupItemsFixture(t);
-  assert.deepEqual([...new Set(fixture.entries.map((entry) => entry.group))].sort(), LOOKUP_GROUP_SPECS.map((spec) => spec.group).sort(), "fixture phải phủ đủ bảy nhóm");
+  assert.deepEqual([...new Set(fixture.entries.map((entry) => entry.group))].sort(), LOOKUP_GROUP_SPECS.map((spec) => spec.group).sort(), "fixture phải phủ đủ tám nhóm");
   // Chưa có trang mục nào: allowlist thiếu file và sitemap thiếu URL.
   await assert.rejects(fixture.verify(), /allowlist mismatch/u);
   await fixture.writeAll();
@@ -2032,6 +2034,11 @@ function lookupSampleExpectations(group, corpus, locale) {
     const row = rows.find((candidate) => candidate.record.appliesToVi);
     return { row, texts: [name(row), ...(zh ? [] : [row.record.appliesToVi.trim()])] };
   }
+  if (group === "qilue") {
+    // Thẻ kỳ lược: tên client (zh: tên game) + hiệu ứng nguyên văn (zh: bản dịch mang cờ).
+    const row = rows.find((candidate) => candidate.id.startsWith("qilue-card:") && candidate.record.effectVi);
+    return { row, texts: [name(row), zh ? row.record.effectZh : row.record.effectVi] };
+  }
   const row = rows.find((candidate) => candidate.record.summaryVi && candidate.record.levels?.length);
   return { row, texts: [name(row), ...(zh ? [`${row.record.maxLevel}`] : [row.record.summaryVi.trim()])] };
 }
@@ -2058,7 +2065,7 @@ test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường h�
   }
 });
 
-test("Tra cứu: mọi trang riêng (983 × số locale) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+test("Tra cứu: mọi trang riêng (1028 × số locale) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
   const origin = new URL(await configuredSite()).origin;
   const routes = await lookupDetailRoutes();
   const titles = new Set();

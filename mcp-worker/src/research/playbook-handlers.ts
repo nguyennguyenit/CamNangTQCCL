@@ -51,7 +51,7 @@ function toKnowledgeContext(context: z.infer<typeof contextInputSchema> | undefi
 export const getPlaybookInputSchema = z
   .object({
     intent: z.enum(WORKFLOW_IDS).describe("lookup = tra cứu; coexist = ghép đội từ kho; research = kiểm chứng cơ chế/meta."),
-    stage: z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/u).optional().describe("Giai đoạn trong workflow; bỏ trống để lấy mọi giai đoạn."),
+    stage: z.string().regex(/^[a-z0-9][a-z0-9-]{0,63}$/u).optional().describe("Giai đoạn workflow; bỏ trống = mọi giai đoạn."),
     context: contextInputSchema.optional().describe("Fact đã biết; vắng = chưa biết, knownEmpty = đã biết là trống."),
     seasonSelection: z
       .object({
@@ -61,7 +61,7 @@ export const getPlaybookInputSchema = z
       })
       .strict()
       .optional()
-      .describe("Mùa nguồn consumer đã chọn; không hợp lệ thì về mặc định và báo lại. Research không gửi thì mùa giữ unknown."),
+      .describe("Mùa nguồn consumer đã chọn; sai thì về mặc định và báo lại. Research không gửi thì mùa là unknown."),
     locale: z.enum(["vi", "zh"]).optional().describe("Ngôn ngữ hiển thị/link; mặc định vi."),
     expectedKnowledgeVersion: z.string().min(1).max(128).optional().describe("knowledgeVersion client đang giữ."),
     expectedWorkflowVersion: workflowVersionSchema.optional().describe("Nếu gửi, phải khớp workflowVersion hiện hành."),
@@ -155,7 +155,7 @@ export const getPlaybookOutputSchema = commonResultSchema
       })
       .strict()
       .describe("Khả năng của release; false trên v1/v2."),
-    seasonSelection: seasonSelectionOutput.nullable().describe("null khi mùa chưa biết (research không gửi seasonSelection) hoặc release không có registry mùa."),
+    seasonSelection: seasonSelectionOutput.nullable().describe("null khi mùa chưa biết (research không gửi seasonSelection) hoặc release không có registry."),
     rulesetResolution: z
       .object({
         status: z.enum(["resolved", "unresolved"]).describe("Trạng thái."),
@@ -239,7 +239,7 @@ export const getPlaybookOutputSchema = commonResultSchema
           .strict(),
       )
       .max(24)
-      .describe("Tool nên gọi tiếp (chỉ tool đã đăng ký và có khả năng trên release)."),
+      .describe("Tool nên gọi tiếp (đã đăng ký, có khả năng trên release)."),
     outputChecklist: z.array(z.string().max(300)).max(24).describe("Checklist đầu ra."),
     errorRecovery: z
       .array(z.object({ code: boundedText.describe("Mã lỗi."), action: z.string().max(400).describe("Cách xử lý.") }).strict())

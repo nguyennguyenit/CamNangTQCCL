@@ -938,3 +938,51 @@ test('Khai hoang detail keeps the title right under the back link',async({page,r
   const khaiHoangGap=await gap();
   expect(khaiHoangGap).toBeLessThanOrEqual(recommendedGap);
 });
+
+// Ô kỳ lược (`qilue` của generation Đội chuẩn): cần generation đã republish có `qilue` — trước đó đội này chưa có section.
+const QILUE_TEAM='/doi-chuan/pk-s27-ngu-muu-ky-official-wumou-qi/';
+const QILUE_DUPLICATE_NOTE='作戰方略：謀算。奇略卡';
+
+test('Recommended detail shows the Kỳ lược section between lineup and notes, linked to Tra cứu, without the duplicate note',async({page})=>{
+  await page.goto(QILUE_TEAM);
+  const body=page.locator('#team-detail-body');
+  const section=body.locator('.detail-qilue');
+  await expect(section.locator('h2')).toHaveText('Kỳ lược');
+  await expect(section.locator('.detail-qilue-chip')).toHaveText('Mưu tính');
+  await expect(section.locator('.detail-qilue-round-label')).toHaveText(['Hiệp 2','Hiệp 3','Hiệp 4','Hiệp 5','Hiệp 6']);
+  const first=section.locator('.detail-qilue-round').first();
+  await expect(first.locator('.detail-qilue-card-name')).toHaveText('Bố Trí Thập Diện');
+  await expect(first.locator('.lookup-qilue-tag')).toHaveText('Mưu');
+  await expect(section.locator('.lookup-qilue-rare')).toHaveCount(1);
+  // Thứ tự section: Đội hình → Kỳ lược → Ghi chú.
+  const order=await body.evaluate(root=>[...root.children].map(node=>node.classList.contains('detail-qilue') ? 'qilue' : node.classList.contains('detail-notes') ? 'notes' : node.querySelector(':scope > h2')?.textContent));
+  expect(order.indexOf('Đội hình')).toBeLessThan(order.indexOf('qilue'));
+  expect(order.indexOf('qilue')).toBeLessThan(order.indexOf('notes'));
+  // Block ghi chú chỉ chép lại kỳ lược bị ẩn trên trang chi tiết.
+  await expect(body.locator('.detail-notes')).not.toContainText(/2\s*→\s*6/u);
+  await first.locator('a.detail-qilue-card').click();
+  await expect(page).toHaveURL(/\/tra-cuu\/ky-luoc\/bo-tri-thap-dien\/$/);
+  await expect(page.locator('h1')).toContainText('Bố Trí Thập Diện');
+});
+
+test('Kỳ lược rounds wrap at 375px without horizontal scrolling',async({page})=>{
+  await page.setViewportSize({width:375,height:812});
+  await page.goto(QILUE_TEAM);
+  const rounds=page.locator('#team-detail-body .detail-qilue-round');
+  await expect(rounds).toHaveCount(5);
+  const tops=await rounds.evaluateAll(nodes=>[...new Set(nodes.map(node=>Math.round(node.getBoundingClientRect().top)))]);
+  expect(tops.length).toBe(2);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(375);
+});
+
+test('Chinese detail shows the Kỳ lược section with source names and /zh Tra cứu links',async({page})=>{
+  await page.goto(`/zh${QILUE_TEAM}`);
+  const section=page.locator('#team-detail-body .detail-qilue');
+  await expect(section.locator('h2')).toHaveText('奇略');
+  await expect(section.locator('.detail-qilue-chip')).toHaveText('謀算');
+  await expect(section.locator('.detail-qilue-round-label').first()).toHaveText('第2回合');
+  await expect(section.locator('.detail-qilue-card-name').first()).toHaveText('設伏十面');
+  await expect(section.locator('a.detail-qilue-card').first()).toHaveAttribute('href','/zh/tra-cuu/ky-luoc/bo-tri-thap-dien/');
+  expect(await section.innerText()).not.toMatch(/Hiệp|Kỳ lược|Mưu tính/u);
+  await expect(page.locator('#team-detail-body .detail-notes')).not.toContainText(QILUE_DUPLICATE_NOTE);
+});

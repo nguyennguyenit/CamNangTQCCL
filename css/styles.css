@@ -6891,6 +6891,160 @@ main.layout:has(> .detail-content) {
   padding-bottom: 0;
 }
 
+/* ---------- Ô kỳ lược (trang chi tiết Đội chuẩn) ---------- */
+/* Section "Kỳ lược" giữa Đội hình và Ghi chú: chip phương lược, lưới "Hiệp 2…" đúng số thẻ (3–5 ô) tô theo loại thẻ
+   (`data-tone`, bảng tint dùng chung với Tra cứu), nhãn loại + dấu Hiếm là class nhãn của Tra cứu. Dạng không thứ tự
+   là hàng chip; dạng chép có dòng link đội nguồn rồi ô của đội nguồn. */
+.detail-qilue-strategy,
+.detail-qilue-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+  margin: 0;
+  color: var(--ink);
+}
+
+.detail-qilue-label,
+.detail-qilue-round-label,
+.detail-qilue-source-name {
+  margin: 0;
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.detail-qilue-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-36);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--accent-line);
+  border-radius: var(--radius-999);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.detail-qilue-chip.is-link:hover,
+.detail-qilue-chip.is-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.detail-qilue-team {
+  color: var(--accent-ink);
+  font-weight: var(--weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.detail-qilue-note {
+  margin: 0;
+  font: var(--type-small);
+  color: var(--muted);
+}
+
+.detail-qilue-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.detail-qilue-rounds,
+.detail-qilue-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail-qilue-rounds {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+.detail-qilue-rounds[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.detail-qilue-rounds[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.detail-qilue-round {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.detail-qilue-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.detail-qilue-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: var(--control-44);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--tone-line, var(--line));
+  border-radius: var(--radius-10);
+  background: var(--tone-bg, var(--panel-2));
+  color: var(--tone-ink, var(--ink));
+  text-decoration: none;
+}
+
+.detail-qilue-chips .detail-qilue-card {
+  flex-direction: row;
+  align-items: center;
+  padding-block: var(--space-6);
+}
+
+.detail-qilue-card.is-link:hover,
+.detail-qilue-card.is-link:focus-visible {
+  border-color: var(--tone-ink, var(--accent));
+}
+
+.detail-qilue-card-name {
+  font: var(--type-hero-name);
+  overflow-wrap: anywhere;
+}
+
+.detail-qilue-marks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* Nhãn loại nằm trên ô đã tô cùng màu: nền giấy để nhãn không chìm vào ô. */
+.detail-qilue-card .lookup-qilue-tag {
+  background: var(--panel);
+}
+
+@media (max-width: 680px) {
+  /* 375px: 4–5 ô xuống hai hàng, không cuộn ngang. */
+  .detail-qilue-rounds,
+  .detail-qilue-rounds[data-count="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .detail-qilue-rounds[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detail-qilue-card {
+    padding: var(--space-8) var(--space-10);
+  }
+}
+
 @media (max-width: 680px) {
   main.layout:has(> .detail-content) {
     padding: var(--space-24) var(--space-16) var(--space-32);
@@ -7531,6 +7685,21 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
 .lookup-master [data-tone="son"] { --tone-bg: var(--tint-son); --tone-ink: var(--tint-son-ink); }
 .lookup-master [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
 
+/* Kỳ lược: màu theo loại thẻ (Dũng/Mưu/Phụ/Sách/Tế) dùng lại bảng tint; cũng đúng trên trang riêng của mục (ngoài `.lookup-master`)
+   và ô kỳ lược của trang chi tiết Đội chuẩn (`.detail-qilue`). */
+.lookup-detail-qilue [data-tone] {
+  --tone-bg: var(--panel-2);
+  --tone-ink: var(--ink-2);
+  --tone-line: var(--line);
+}
+
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="dung"] { --tone-bg: var(--tint-hoa); --tone-ink: var(--tint-hoa-ink); --tone-line: var(--tint-hoa-ink); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="muu"] { --tone-bg: var(--tint-tim); --tone-ink: var(--tint-tim-ink); --tone-line: var(--tint-tim-line); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="phu"] { --tone-bg: var(--tint-phong); --tone-ink: var(--tint-phong-ink); --tone-line: var(--tint-phong-ink); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="sach"] { --tone-bg: var(--tint-cam); --tone-ink: var(--tint-cam-ink); --tone-line: var(--tint-cam-line); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="te"] { --tone-bg: var(--tint-lam); --tone-ink: var(--tint-lam-ink); --tone-line: var(--tint-lam-ink); }
+.lookup-detail-qilue [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
+
 /* Hàng chip lọc: chấm vuông màu phẩm/hệ trước nhãn, số đếm mờ sau nhãn, vạch ngăn giữa hai khía cạnh. */
 .lookup-filters {
   display: flex;
@@ -7929,6 +8098,113 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   display: none;
 }
 
+/* Kỳ lược: danh sách hàng chia khối (Phương lược, rồi từng loại thẻ) bên trái, panel chi tiết bám theo bên phải. Hàng ghi
+   nhãn mục ở dòng phụ, nhãn loại thẻ có màu và dấu "Hiếm". */
+.lookup-master-grid-qilue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lookup-master-qilue .lookup-detail-panel {
+  position: sticky;
+  top: var(--space-88);
+  max-height: calc(100dvh - var(--space-96));
+  overflow-y: auto;
+}
+
+.lookup-qilue-row {
+  gap: var(--space-10);
+  padding-block: var(--space-6);
+}
+
+.lookup-qilue-row .lookup-row-sub {
+  display: block;
+  overflow: hidden;
+  color: var(--muted);
+  font: var(--type-meta);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lookup-qilue-row[aria-current="true"] .lookup-row-sub {
+  color: var(--select-ink-2);
+}
+
+.lookup-qilue-marks {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.lookup-qilue-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-4);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.lookup-qilue-rare,
+.badge.lookup-qilue-rare {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border-radius: var(--radius-4);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.badge.lookup-qilue-rare {
+  padding: var(--space-2) var(--space-9);
+  border-radius: var(--radius-999);
+  font: var(--type-badge);
+}
+
+.lookup-detail-qilue .lookup-detail-tile {
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+}
+
+.lookup-qilue-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-14);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lookup-qilue-type-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.lookup-qilue-type-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--control-40);
+  padding: 0 var(--space-12);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-8);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.lookup-qilue-type-link:hover {
+  background: var(--tone-bg);
+}
+
 /* Panel chi tiết (desktop): khung thẻ bên phải danh sách, bám theo khi cuộn danh sách dài. */
 .lookup-detail-panel {
   box-sizing: border-box;
@@ -8092,6 +8368,12 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   border: var(--border-hair) solid var(--accent-line);
   background: var(--panel);
   color: var(--accent-ink);
+}
+
+/* Nhãn mùa dài của chi tiết (kỳ lược: "Mùa Hán Diễm Trường Minh (PK-S27, client …)") xuống dòng thay vì tràn khung 320px. */
+.lookup-detail-badges .badge.badge-scenario {
+  max-width: 100%;
+  white-space: normal;
 }
 
 .badge.badge-suggest {
@@ -8617,6 +8899,15 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
     gap: var(--space-16);
   }
 
+  /* Kỳ lược (375px): tên và dòng phụ co lại, nhãn loại/Hiếm giữ nguyên; không cuộn ngang. */
+  .lookup-qilue-row {
+    gap: var(--space-10);
+  }
+
+  .lookup-detail-qilue .lookup-detail-facts {
+    display: grid;
+  }
+
   .lookup-eq-head {
     padding: var(--space-12);
   }
@@ -8792,7 +9083,8 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   .lookup-master-equipment .lookup-detail-panel,
   .lookup-master-advisors .lookup-detail-panel,
   .lookup-master-troop-mods .lookup-detail-panel,
-  .lookup-master-buildings .lookup-detail-panel {
+  .lookup-master-buildings .lookup-detail-panel,
+  .lookup-master-qilue .lookup-detail-panel {
     position: static;
     max-height: none;
     padding: 0;

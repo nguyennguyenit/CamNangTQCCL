@@ -255,6 +255,23 @@ Kiểm hình dạng và chiếu nằm ở [`pipeline/recommended_jp_tiers.py`](.
 
 Hiện bảng chỉ có PK-S26 (Kazten, 7 đội gán được tier: 2 `exact`, 5 `heroes-only`); tier PK-S27 theo issue #115.
 
+### Kỳ lược của đội (`qilue`)
+
+`qilue` là projection hiển thị của record Đội chuẩn. Nó được tính ở ranh giới publish (`prepare_publication_inputs`, gọi từ `site_localization.compile_candidate`) từ chữ Hán ghi chú đội, đối chiếu với `lookup-catalog.json` của **cùng** candidate. Trường này không vào source pack (`display_fields`, `ROW_DERIVED`), nên `recommendedCorpusHash` và `pipeline/recommended-other-teams.json` không đổi. Manifest ghim `qilueCatalogHash` và `qilueOverridesHash`.
+
+- **Các dạng nguồn** (`pipeline/recommended_qilue.py`):
+  - `official`: `作戰方略：…。奇略卡（第 2→6 回合）：a→…`
+  - `qimou`: `奇謀（X）：a→…`
+  - `bare`: `X：a→[極]b→…`
+  - `list`: `奇略：a、b…`, không có thứ tự.
+- **`pipeline/recommended-qilue-overrides.json`** gồm: `seasons` (allowlist mùa), `noteVariantsZh` (biến thể chữ Hán sai, chỉ áp trong chuỗi kỳ lược), `copyFrom` (đội ghi 復刻), `fix` (nguồn ghi sai) và `skip` (có lý do).
+- **Fail-closed:** publish dừng nếu gặp một trong các trường hợp:
+  - tên thẻ lạ;
+  - sai luật game (3–5 thẻ, tối đa 1 thẻ hiếm, loại thẻ phải thuộc 2 loại của phương lược);
+  - đội có chữ kỳ lược nhưng không đọc ra được và không nằm trong `skip`.
+- **Trang chi tiết:** section "Kỳ lược" nằm giữa Đội hình và Ghi chú. Block ghi chú chỉ chứa dòng kỳ lược của 台服 (`hideNoteBlockId`) bị ẩn, nhưng chỉ trên trang này.
+- **MCP:** `tqccl_get_team` có section `qilue` đã kèm tên.
+
 ### Tên Việt và dữ liệu Trung nguyên bản
 
 Tên tướng, chiến pháp và binh thư trong Team chuẩn chỉ dùng bản Việt đã có

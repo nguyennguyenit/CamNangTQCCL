@@ -86,7 +86,7 @@ test('trang mục bản Trung dựng nội dung bằng chữ Trung và giữ que
 const SECTIONS = [
   ['doi-chuan', 'team-chuan'], ['doi-khac', 'team-khac'], ['cung-ton', 'coexist'], ['khai-hoang', 'khaihoang'],
   ['tra-cuu', 'lookup'], ['theo-doi-chieu-mo', 'recruit-tracker'], ['soi-doi-tu-anh', 'analyze'], ['goi-y-doi-tu-kho', 'roster-recommend'],
-  ...['tuong', 'chien-phap', 'trang-bi', 'quan-su', 'cai-tao-binh-chung', 'cong-trinh', 'binh-thu'].map((slug) => [`tra-cuu/${slug}`, 'lookup']),
+  ...['tuong', 'chien-phap', 'trang-bi', 'quan-su', 'cai-tao-binh-chung', 'cong-trinh', 'binh-thu', 'ky-luoc'].map((slug) => [`tra-cuu/${slug}`, 'lookup']),
 ];
 for (const [path, section] of SECTIONS) {
   test(`trang mục /zh/${path}/ dựng xong vẫn chỉ có chữ Trung`, async ({ page }) => {
