@@ -10,5 +10,5 @@
     "src/**/*.mjs",
     "src/**/*.ts"
   ],
-  "exclude": ["dist", "worker"]
+  "exclude": ["dist", "worker", "src/pages/_ja"]
 }

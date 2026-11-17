@@ -1,14 +1,22 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { test } from "node:test";
+import { DEFAULT_LOCALE, LOCALE_PREFIX, SITE_LOCALES } from "../js/i18n.js";
 import { PUBLIC_ARTIFACTS } from "../src/lib/public-artifact-manifest.mjs";
 
 const headersPath = new URL("../public/_headers", import.meta.url);
+const robotsPath = new URL("../public/robots.txt", import.meta.url);
+const redirectsPath = new URL("../public/_redirects", import.meta.url);
 const cachePolicy = "public, max-age=0, must-revalidate";
+/**
+ * Tiền tố của mọi locale đã khai bảng ở `js/i18n.js`, kể cả locale chưa nối vào `SITE_LOCALES`: `_headers`,
+ * `robots.txt` và `_redirects` là file tĩnh nên có luật cho locale sắp bật từ trước, đúng cả khi 2 hay 3 locale bật.
+ */
+const LOCALE_PREFIXES = Object.keys(LOCALE_PREFIX).filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => LOCALE_PREFIX[locale]);
 const expectedRules = [
   "/",
   "/index.html",
-  "/zh/*",
+  ...LOCALE_PREFIXES.map((prefix) => `${prefix}/*`),
   "/doi-chuan/*",
   "/doi-khac/*",
   "/khai-hoang/*",
@@ -124,37 +132,37 @@ test("_headers covers every published shell and mutable raw asset", async () => 
     "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
     // Trang cộng đồng (noindex) vẫn là HTML tĩnh phải revalidate.
     ...["chien-bao", "doi-cong-dong", "doi-cua-toi", "quan-tri"].flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
-    // Trang đội cộng đồng dựng lúc build: cùng luật `/doi-cong-dong/*` và `/zh/*`.
+    // Trang đội cộng đồng dựng lúc build: cùng luật `/doi-cong-dong/*` và `/<locale>/*`.
     "/doi-cong-dong/3f2c-team/",
     "/doi-cong-dong/3f2c-team/index.html",
-    "/zh/doi-cong-dong/3f2c-team/",
+    ...LOCALE_PREFIXES.map((prefix) => `${prefix}/doi-cong-dong/3f2c-team/`),
     // Trang chính sách (bảo mật là URL khai với màn hình đồng ý OAuth của Google).
     ...["chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
       .flatMap((page) => [`/${page}/`, `/${page}/index.html`]),
     // Mọi trang mục mới đều phải revalidate như nhau.
     ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho"]
       .flatMap((section) => [`/${section}/`, `/${section}/index.html`]),
-    // Blog: danh sách, bài (vi/zh), feed và llms.txt đổi mỗi lần xuất bản.
+    // Blog: danh sách, bài (mọi locale), feed và llms.txt đổi mỗi lần xuất bản.
     "/bai-viet/",
     "/bai-viet/cach-danh-dat/index.html",
-    "/zh/bai-viet/",
-    "/zh/bai-viet/kai-huang/",
+    ...LOCALE_PREFIXES.flatMap((prefix) => [`${prefix}/bai-viet/`, `${prefix}/bai-viet/kai-huang/`, `${prefix}/rss.xml`]),
     "/rss.xml",
-    "/zh/rss.xml",
     "/llms.txt",
     "/llms-full.txt",
     "/llms/doi-chuan/pk-s24.txt",
     "/llms/tra-cuu/tuong.txt",
     // Chỉ mục hash nguồn của Đội của tôi đổi cùng mỗi lần phát hành dữ liệu đội.
     "/my-teams-source-index.json",
-    // Bản tiếng Trung: Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
-    "/zh/",
-    "/zh/index.html",
-    ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "doi-cong-dong", "doi-cua-toi", "quan-tri", "chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
-      .flatMap((section) => [`/zh/${section}/`, `/zh/${section}/index.html`]),
-    "/zh/doi-chuan/pk-s24-tu-ma-phi-hung/index.html",
-    "/zh/doi-khac/hoang-ma-thuong/",
-    "/zh/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html",
+    // Mỗi bản có tiền tố (zh, ja…): Landing, trang mục, ba họ trang chi tiết và trang cộng đồng dưới cùng một quy tắc.
+    ...LOCALE_PREFIXES.flatMap((prefix) => [
+      `${prefix}/`,
+      `${prefix}/index.html`,
+      ...["doi-chuan", "doi-khac", "cung-ton", "khai-hoang", "tra-cuu", "theo-doi-chieu-mo", "soi-doi-tu-anh", "goi-y-doi-tu-kho", "chien-bao", "doi-cong-dong", "doi-cua-toi", "quan-tri", "chinh-sach-bao-mat", "dieu-khoan-su-dung", "quy-tac-cong-dong", "mien-tru-trach-nhiem"]
+        .flatMap((section) => [`${prefix}/${section}/`, `${prefix}/${section}/index.html`]),
+      `${prefix}/doi-chuan/pk-s24-tu-ma-phi-hung/index.html`,
+      `${prefix}/doi-khac/hoang-ma-thuong/`,
+      `${prefix}/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/index.html`,
+    ]),
   ];
   for (const path of publicPaths) {
     assert.equal(policyFor(rules, path), cachePolicy, `${path} must revalidate`);
@@ -189,4 +197,37 @@ test("cache policy models fresh clients and whole-artifact rollback", async () =
     deployedVersion: "known-good",
     canRevalidate: false,
   }), null);
+});
+
+test("mọi locale có tiền tố đã khai bảng (kể cả chưa bật) đều có luật; mọi locale đang bật đều đã khai bảng", () => {
+  assert.ok(LOCALE_PREFIXES.includes("/zh"));
+  for (const locale of SITE_LOCALES) assert.equal(typeof LOCALE_PREFIX[locale], "string", `${locale} chưa khai LOCALE_PREFIX`);
+});
+
+test("robots.txt chặn trang quản trị của mọi locale ở mọi nhóm bot", async () => {
+  const groups = (await readFile(robotsPath, "utf8")).trim().split(/\n\s*\n/u)
+    .map((block) => block.split("\n"))
+    .filter((lines) => lines[0].startsWith("User-agent:"));
+  assert.ok(groups.length >= 5);
+  for (const group of groups) {
+    assert.deepEqual(group.slice(1), [
+      "Allow: /",
+      "Disallow: /quan-tri/",
+      ...LOCALE_PREFIXES.map((prefix) => `Disallow: ${prefix}/quan-tri/`),
+      "Disallow: /api/",
+    ], group[0]);
+  }
+});
+
+test("_redirects có luật cho mọi tiền tố locale (bộ sinh Python giữ danh sách tiền tố khớp LOCALE_PREFIX)", async () => {
+  const rules = (await readFile(redirectsPath, "utf8")).split("\n").filter((line) => line && !line.startsWith("#"));
+  const base = rules.filter((line) => !LOCALE_PREFIXES.some((prefix) => line.startsWith(`${prefix}/`)));
+  assert.ok(base.length > 0, "_redirects không có luật bản Việt");
+  assert.equal(rules.length, base.length * (LOCALE_PREFIXES.length + 1), "mỗi luật bản Việt có đúng một luật cho mỗi tiền tố");
+  for (const line of base) {
+    const [from, to, status] = line.split(" ");
+    for (const prefix of LOCALE_PREFIXES) {
+      assert.ok(rules.includes(`${prefix}${from} ${prefix}${to} ${status}`), `${prefix}: thiếu luật cho ${from}`);
+    }
+  }
 });

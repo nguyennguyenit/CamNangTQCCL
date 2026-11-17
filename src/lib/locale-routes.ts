@@ -31,6 +31,23 @@ export const COMMUNITY_PATHS = Object.freeze(['/chien-bao/', '/doi-cua-toi/', '/
 /** Các locale đích của nút chuyển ngôn ngữ trên trang `locale`: mọi locale còn lại, theo thứ tự danh sách. */
 export const switchTargets = (locale: SiteLocale): SiteLocale[] => SITE_LOCALES.filter((other) => other !== locale);
 
+/**
+ * Tên truy cập của link chuyển ngôn ngữ theo [ngôn ngữ trang][ngôn ngữ đích]: nói rõ hành động bằng ngôn ngữ trang, kèm
+ * tên ngôn ngữ đích viết bằng chính nó. Khóa theo mã chuỗi (không theo `SiteLocale`) để khai trước locale chưa bật.
+ */
+const LANGUAGE_SWITCH_ARIA: Readonly<Record<string, Readonly<Record<string, string>>>> = Object.freeze({
+  vi: Object.freeze({zh: 'Xem bản tiếng Trung (中文)', ja: 'Xem bản tiếng Nhật (日本語)'}),
+  zh: Object.freeze({vi: '切换到越南语版本 (Tiếng Việt)', ja: '切换到日语版本 (日本語)'}),
+  ja: Object.freeze({vi: 'ベトナム語版に切り替え (Tiếng Việt)', zh: '中国語版に切り替え (中文)'}),
+});
+
+/** Tên truy cập link chuyển từ trang `locale` sang bản `target`; thiếu cặp thì build lỗi. */
+export function languageSwitchAria(locale: SiteLocale, target: SiteLocale): string {
+  const label = LANGUAGE_SWITCH_ARIA[locale]?.[target];
+  if (!label) throw new Error(`locale-routes: thiếu tên truy cập nút chuyển ${locale} → ${target}`);
+  return label;
+}
+
 /** Tệp HTML của một route trong dist theo ngôn ngữ (`doi-chuan/x/index.html` → `zh/doi-chuan/x/index.html`). */
 export const localizedHtmlPath = (htmlPath: string, locale: SiteLocale): string => {
   const prefix: string = LOCALE_PREFIX[locale];

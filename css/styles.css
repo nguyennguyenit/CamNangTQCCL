@@ -457,6 +457,12 @@
   --font-han-serif: Georgia, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC";
 }
 
+:root:lang(ja) {
+  /* Bản Nhật: như bản Trung nhưng chữ Hán lấy font tiếng Nhật của hệ điều hành để hiện đúng tự dạng Nhật. */
+  --font-han: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui;
+  --font-han-serif: Georgia, "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP";
+}
+
 :root[data-theme="dark"] {
   --bg: #0F0E0C;
   --panel: #28251F;
@@ -1571,6 +1577,11 @@ a.lookup-more:hover {
   background-color: var(--band-active);
 }
 
+/* Nhóm chuyển ngôn ngữ trên header: bản đang xem giữ nền sáng như lúc rê (vẫn là nút ma, không viền). */
+.header-actions .lang-switch[aria-current="page"] {
+  background-color: var(--band-active);
+}
+
 .header-actions .cm-auth-login {
   white-space: nowrap;
 }
@@ -2050,9 +2061,11 @@ a.lookup-more:hover {
   color: var(--band-faint);
 }
 
-/* Chân menu: nút chuyển ngôn ngữ + CTA son cùng một hàng, luôn nằm trong tầm ngón cái. */
+/* Chân menu: nhóm chuyển ngôn ngữ + CTA son cùng một hàng, luôn nằm trong tầm ngón cái; màn hẹp không đủ chỗ
+   thì CTA xuống hàng riêng. */
 .site-menu-foot {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-8);
   padding: var(--space-12) var(--space-16) var(--space-16);
   border-top: var(--border-hair) solid var(--band-line);
@@ -2071,6 +2084,19 @@ a.lookup-more:hover {
   color: var(--band-ink);
   font: var(--type-control);
   text-decoration: none;
+}
+
+/* Bản đang xem: viền và nền sáng hơn nút sang bản khác. */
+.site-menu-lang[aria-current="page"] {
+  border-color: var(--band-ink);
+  background-color: var(--band-active);
+}
+
+/* Nhóm ngôn ngữ ở chân menu: nút 52px cách nhau như hàng nút chân (đè khoảng sát của `.lang-switcher`). */
+.site-menu-foot .site-menu-langs {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-8);
 }
 
 .site-menu-foot .header-cta {
@@ -2570,8 +2596,10 @@ a.lookup-more:hover {
   }
 
   /* Header mobile: ☰, thương hiệu và ba nút ngôn ngữ · sáng/tối · đăng nhập; CTA "Mở cẩm nang" chỉ ở desktop
-     (menu mobile đã có nút "Mở Đội chuẩn" ở chân). */
-  .header-actions .header-cta {
+     (menu mobile đã có nút "Mở Đội chuẩn" ở chân). Nhóm ngôn ngữ chỉ giữ link sang bản khác cho gọn; đủ mọi bản
+     (kể cả bản đang xem) nằm ở chân menu mobile. */
+  .header-actions .header-cta,
+  .header-actions .lang-switch[aria-current="page"] {
     display: none;
   }
 
@@ -18872,7 +18900,7 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 }
 /* moi:doi-cong-dong:end */
 
-/* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương vi ↔ zh, nhãn viết bằng ngôn ngữ đích. */
+/* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương ở từng ngôn ngữ, nhãn viết bằng ngôn ngữ đích. */
 .lang-switch {
   display: inline-flex;
   align-items: center;
@@ -18890,6 +18918,13 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
 
 .lang-switch:hover {
   border-color: var(--band-ink);
+}
+
+/* Nhóm chuyển ngôn ngữ (`nav[data-lang-switcher]`): một link cho mỗi bản, xếp sát nhau thành một cụm. */
+.lang-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
 }
 
 /* ---------- Đội của tôi (/doi-cua-toi/) và nút "Lưu vào đội của tôi" ---------- */
