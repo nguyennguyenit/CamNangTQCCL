@@ -1,5 +1,6 @@
-import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
-import { legacyLabelZh, sourceTierLabel, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
+import { t, iconTree, svgTree, FACTION_CODE, SOURCE_PROSE_MISSING_JA, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
+import { jpTierMatchNote, jpTierSource, jpTierSourceLabel, legacyLabelZh, sourceTierLabel, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
+import { validateHttpSourceUrl } from './http-source-url.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
@@ -15,7 +16,6 @@ const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内�
  * nên bị ẩn, thay bằng một dòng báo thiếu ở khối "Ghi chú" (như bản zh bỏ chữ chỉ có tiếng Việt).
  */
 const hidesSourceProse = () => contentMode(currentLocale()) === 'ja';
-const SOURCE_PROSE_MISSING_JA = '中国語の原文しかない説明は、日本語訳がないため表示していません。';
 /**
  * Chữ công khai của một giá trị nguồn. Bản vi: chuỗi còn chữ Hán không được hiện. Bản zh: dữ liệu không áp
  * bản dịch nên chữ Hán gốc là nội dung chính; tên Hán-Việt của dữ liệu cũ đổi sang chữ Hán qua `sourceName`.
@@ -393,10 +393,52 @@ function metaLine(row,labels) {
     .filter(Boolean);
   const nodes=[];
   if (row.sourceConfigId && row.tierRaw) nodes.push(t('span',{class:'badge tier reference-tier',title:'Tier'},sourceTierLabel(row.tierRaw)));
+  const jp=row.sourceConfigId ? jpTierBadge(row) : null;
+  if (jp) nodes.push(jp);
   if (faction.label) nodes.push(t('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(t('span',{class:'reference-units'},units.join(' · ')));
   if (!nodes.length) return null;
   return t('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
+}
+
+/** Tên hiển thị của bài nguồn tier JP (Kazten); bản Nhật dùng tên tác giả bằng chữ Nhật. */
+const jpTierSourceName=()=>L('Kazten','Kazten','カズ天');
+
+/** Huy hiệu tier JP cạnh tier SGSDeck ("JP T0"), kèm nhãn phụ khi bài nguồn dùng chiến pháp khác. */
+function jpTierBadge(row) {
+  const jp=jpTierSource(row);
+  if (!jp) return null;
+  const note=jpTierMatchNote(jp);
+  return t('span',{class:'reference-tier-source',dataset:{tierSource:jp.source}},[
+    t('span',{class:'badge tier reference-tier',title:`${jpTierSourceLabel()} · ${jpTierSourceName()} ${jp.publishedAt || ''}`.trim()},`JP ${jp.tierRaw}`),
+    note ? ' ' : null,
+    note ? t('span',{class:'reference-tier-note'},note) : null,
+  ]);
+}
+
+/** Khối "Tier JP" của trang chi tiết: tier, nhãn chiến pháp khác, nguồn có ngày đăng và link bài (chỉ URL http(s) hợp lệ). */
+function jpTierSection(record) {
+  const jp=jpTierSource(record);
+  if (!jp) return null;
+  const href=validateHttpSourceUrl(jp.url);
+  const origin=`${jpTierSourceName()} · ${jp.publishedAt || ''}`.replace(/ · $/,'');
+  return t('section',{class:'detail-section detail-tier-source',dataset:{tierSource:jp.source}},[
+    t('h2',{},jpTierSourceLabel()),
+    t('dl',{class:'detail-facts'},[
+      fact('tier-source-tier','Tier',jp.tierRaw),
+      fact('tier-source-origin',L('Nguồn','来源','出典'),href ? t('a',{class:'detail-link',href,target:'_blank',rel:'noopener noreferrer'},origin) : origin),
+    ]),
+    jpTierMatchNote(jp) ? t('p',{class:'scope-note'},L(
+      'Khác chiến pháp: bài nguồn dùng cùng ba tướng nhưng chiến pháp khác cấu hình này.',
+      '战法不同：来源文章使用相同的三名武将，但战法与此配置不同。',
+      '戦法違い：出典記事は同じ武将3名ですが、戦法がこの構成と異なります。',
+    )) : null,
+    t('p',{class:'scope-note'},L(
+      'Đánh giá cá nhân của tác giả bài nguồn; tier SGSDeck giữ nguyên.',
+      '来源作者的个人评价；SGSDeck 等级保持不变。',
+      '出典記事の作者による個人的な評価です。SGSDeck のティアはそのまま表示しています。',
+    )),
+  ]);
 }
 
 // Điểm giữ đúng độ chính xác của dữ liệu; thiếu điểm là ô ấn trống "—" (không phải 0) cùng khuôn với
@@ -771,6 +813,9 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
       }),
     ]));
   }
+
+  const tierSource=jpTierSection(record);
+  if (tierSource) out.push(tierSource);
 
   const seasonValue=sourceText()
     ? record.sourceSeasonCode || record.sourceSeasonId

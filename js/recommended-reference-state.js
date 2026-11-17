@@ -100,6 +100,19 @@ export function legacyLabelZh(kind, value, locale = currentLocale()) {
   return table && Object.hasOwn(table, value) ? table[value] : null;
 }
 
+/**
+ * Tier nguồn Nhật (bảng khớp Kazten đã review, `tierSources` của hàng Recommended do builder chiếu). Là một giá trị của facet
+ * `source` sẵn có (`?source=jp`), không phải khóa facet riêng; `tierRaw` của SGSDeck giữ nguyên bên cạnh.
+ */
+export const TIER_SOURCE_JP = 'jp';
+/** Mục tier JP của một hàng (`{source, tierRaw, matchKind, url, publishedAt}`), vắng thì `null`. */
+export const jpTierSource = row => (Array.isArray(row?.tierSources) ? row.tierSources : [])
+  .find(item => item?.source === TIER_SOURCE_JP && typeof item.tierRaw === 'string') ?? null;
+/** Nhãn của tier JP: chip facet nguồn và tiêu đề khối trên trang chi tiết. */
+export const jpTierSourceLabel = () => L('Tier JP','日服等级','日本版ティア');
+/** Nhãn phụ khi bài nguồn dùng cùng ba tướng nhưng chiến pháp khác cấu hình SGSDeck (`matchKind: heroes-only`). */
+export const jpTierMatchNote = item => item?.matchKind === 'heroes-only' ? L('khác chiến pháp','战法不同','戦法違い') : null;
+
 /** Facet lặp được của danh sách đội; bộ lọc điểm đã bỏ nên `score` không còn ở đây. */
 const REPEATABLE = ['faction','unit','tier','subcategory','source'];
 /** Selector cũ của bảng xếp hạng: bỏ khỏi query Team, không map sang điểm nguồn. */
@@ -172,7 +185,8 @@ export function referenceFacetValues(row,key) {
   if (key === 'faction') return [row.factionRaw ?? row.faction].filter(Boolean);
   if (key === 'unit') return row.unitTypesRaw || row.unit || [];
   if (key === 'subcategory') return [row.subcategoryRaw].filter(Boolean);
-  if (key === 'source') return [row.source].filter(Boolean);
+  // Nguồn: bộ sưu tập của đội cũ (`row.source`) hoặc tier nguồn khác của hàng Recommended (hiện chỉ có JP).
+  if (key === 'source') return [row.source,jpTierSource(row) ? TIER_SOURCE_JP : null].filter(Boolean);
   return [];
 }
 
