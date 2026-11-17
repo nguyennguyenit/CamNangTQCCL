@@ -71,7 +71,9 @@ class NameTests(unittest.TestCase):
         bj.validate_overrides(overrides, names)
         resolved = bj.resolve_names(corpus, names, overrides)
         self.assertEqual(resolved["hero:phap-chinh"]["nameStatus"], "verified")
-        self.assertEqual(resolved["tactic:a"], {"name": "千軍一掃", "nameStatus": "derived", "nameOriginal": "橫掃千軍"})
+        self.assertEqual(resolved["tactic:a"], {"name": "千軍一掃", "nameStatus": "derived", "nameOriginal": "橫掃千軍", "nameOriginalLang": "zh-Hant"})
+        self.assertEqual(resolved["hero:lu-bo"]["nameOriginalLang"], "zh-Hant")
+        self.assertEqual(resolved["hero:phap-chinh"]["nameOriginalLang"], "zh")
         # SP chưa có hàng quan sát: tiền tố viết liền + tên tướng gốc, trạng thái theo tướng gốc
         self.assertEqual((resolved["hero:sp-phap-chinh"]["name"], resolved["hero:sp-phap-chinh"]["nameStatus"]), ("SP法正", "verified"))
         self.assertEqual(resolved["hero:sp-tuan-uc"]["name"], "SP荀彧")
@@ -186,6 +188,13 @@ class RealDataTests(unittest.TestCase):
                 if ja is not None:
                     self.assertEqual(bj.number_tokens(ja), bj.number_tokens(src), f"{entry_id}.{key}")
         self.assertEqual(bj.canonical_text(bj.build_payload()), (_ROOT / "data" / "lookup-ja.json").read_text(encoding="utf-8"))
+
+    def test_name_original_lang_follows_script(self):
+        entries = self.payload["entries"]
+        self.assertTrue(all(entry["nameOriginalLang"] in {"zh-Hans", "zh-Hant", "zh"} for entry in entries.values()))
+        self.assertEqual(entries["advisor:bach-ma-thay-chu"]["nameOriginal"], "白马替主")
+        self.assertEqual(entries["advisor:bach-ma-thay-chu"]["nameOriginalLang"], "zh-Hans")
+        self.assertEqual(entries["building:bat-tran-do"]["nameOriginalLang"], "zh-Hant")
 
     def test_sp_variants_carry_prefix(self):
         for row in self.corpus["heroes"]:

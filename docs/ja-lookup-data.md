@@ -35,6 +35,7 @@ node scripts/report-ja-gaps.mjs                               # chữ mới thà
 | `pipeline/ja-name-overrides.json` | Tên Nhật đã quan sát theo ID: `nameJa`, `confidence` (`high`/`medium`), `sourceUrl` (nội bộ, không public), `alts`; cùng `prefixedTactics` (転・ 拓・ 精・) và `skipped`. Dựng bằng `--import-observed` từ `plans/reports/ja-names-observed-261117.json`. |
 | `pipeline/ja-glossary.json` | Thuật ngữ zh -> ja dùng khi dịch; `source` là URL Nhật đã thấy hoặc `unverified`. |
 | `pipeline/ja-translations.json` | `items{sha256(chữ Trung nguồn): {src, ja, model, translatedAt}}`. Chuỗi trùng chỉ dịch một lần. |
+| `pipeline/han-script-chars.json` | Hai chuỗi ký tự `simplifiedOnly` (chỉ giản thể dùng) và `traditionalOnly` (chỉ phồn thể dùng), sinh từ OpenCC (STCharacters, TSCharacters, TWVariants; Apache-2.0, commit và quy tắc ghi trong `source`), chỉ khối CJK cơ bản và mở rộng A. `pipeline/han_script.py` dùng để tính `nameOriginalLang`; chỉ dùng lúc build, trình duyệt không tải. |
 
 ## Quy tắc tên
 
@@ -55,11 +56,12 @@ node scripts/report-ja-gaps.mjs                               # chữ mới thà
   "notice": {"machineTranslated": true, "numbersEdition": "cn-mainland"},
   "payloadSha256": "<sha256 của entries + prefixedTactics>",
   "prefixedTactics": [{"baseId": "tactic:…", "name": "転・刮骨療毒", "prefix": "転"}],
-  "entries": {"tactic:an-ui-quan-dan": {"name": "慰撫軍民", "nameStatus": "derived", "nameOriginal": "撫輯軍民", "texts": {"effect": "…", "target": "…"}, "translatedFromVi": ["effect"]}}
+  "entries": {"tactic:an-ui-quan-dan": {"name": "慰撫軍民", "nameStatus": "derived", "nameOriginal": "撫輯軍民", "nameOriginalLang": "zh-Hant", "texts": {"effect": "…", "target": "…"}, "translatedFromVi": ["effect"]}}
 }
 ```
 
 - Mọi ID của bảy nhóm đều có `name`, `nameStatus`, `nameOriginal` (chữ Hán nguồn; binh thư dùng tên phồn thể trong `sourceNames` nếu có). ID gồm cả đặc kỹ trang bị (`equipment-special:*`) và lựa chọn cải tạo (`troop-option:*`).
+- `nameOriginalLang` là `lang` của dòng 原名, tính lúc build theo lối viết của `nameOriginal`: chỉ có chữ riêng của giản thể thì `zh-Hans` (ví dụ 白马替主), chỉ có chữ riêng của phồn thể thì `zh-Hant`; không có chữ phân biệt được hoặc lẫn cả hai (ví dụ 金丹秘術, vì OpenCC coi 秘 là giản thể) thì `zh`. Trường không bắt buộc với bộ kiểm của trình duyệt: vắng thì trang dùng `zh`.
 - `texts` chỉ chứa khóa đã dịch; khóa vắng nghĩa là chưa có bản dịch và trang hiện dòng báo thiếu. Không bao giờ bịa nội dung.
 - `translatedFromVi` liệt kê khóa mà chữ Hán nguồn vốn dịch từ tiếng Việt (điều kiện tướng, các hiệu ứng `effectZhSource.kind = "translation"`, `zhSource.kind = "translation"`); trang gắn thêm câu báo "dịch từ tiếng Việt".
 - Không có `sourceUrl`, `confidence`, `model`, chữ nguồn hay sha từng chuỗi trong output (giữ nguyên tắc DTO công khai không mang provenance, xem [unified-lookup.md](unified-lookup.md)).

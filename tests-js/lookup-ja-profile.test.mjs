@@ -32,7 +32,6 @@ async function jaSuite() {
   const { masterDetailTree, masterTargetFor } = await import("../js/lookup-master.js");
   const { tacticEffectVersions } = await import("../js/lookup-tactic-view.js");
   const { treeToHtml } = await import("../js/view-tree.js");
-  const { hanScriptLang } = await import("../js/han-script.js");
   const { loadRawNameResolver, localName } = await import("../js/website-display.js");
   const { lookupBuildCorpus } = await import("../src/lib/lookup-pages.ts");
   const { lookupItemPage } = await import("../src/lib/lookup-item-pages.ts");
@@ -148,7 +147,7 @@ async function jaSuite() {
     assert.doesNotMatch(zh, /機械翻訳|原名/u);
   });
 
-  test("原名 gắn lang theo lối viết của tên gốc: giản thể zh-Hans, phồn thể zh-Hant, không phân biệt được thì zh", () => {
+  test("原名 gắn lang theo nameOriginalLang (tính lúc build): giản thể zh-Hans, phồn thể zh-Hant, không phân biệt được thì zh", () => {
     const original = (id, group) => {
       const target = masterTargetFor(corpus, id);
       return inJa(() => treeToHtml(masterDetailTree(group, target.item, corpus, "ja", { targetId: id, page: true })));
@@ -156,7 +155,7 @@ async function jaSuite() {
     assert.equal(ja.entries["advisor:bach-ma-thay-chu"].nameOriginal, "白马替主");
     assert.match(original("advisor:bach-ma-thay-chu", "advisors"), /原名 <span lang="zh-Hans">白马替主<\/span>/u);
     assert.match(original("building:bat-tran-do", "buildings"), /原名 <span lang="zh-Hant">八陣圖<\/span>/u);
-    const neutral = Object.entries(ja.entries).find(([id, entry]) => id.startsWith("advisor:") && hanScriptLang(entry.nameOriginal) === "zh");
+    const neutral = Object.entries(ja.entries).find(([id, entry]) => id.startsWith("advisor:") && entry.nameOriginalLang === "zh");
     assert.ok(neutral, "cần một quân sư có tên gốc không phân biệt được lối viết");
     assert.ok(original(neutral[0], "advisors").includes(`原名 <span lang="zh">${neutral[1].nameOriginal}</span>`));
   });

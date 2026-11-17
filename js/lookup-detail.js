@@ -59,21 +59,24 @@ export function sourceTextOf(record, key, zh, locale = currentLocale()) {
 /** Trường có chữ Hán nguồn nhưng bản đang xem không hiện được (bản ja chưa có bản dịch khóa `key`). */
 export const sourceTextMissing = (record, key, zh, locale = currentLocale()) => Boolean(String(zh ?? "").trim()) && !sourceTextOf(record, key, zh, locale);
 
+const NAME_ORIGINAL_LANGS = new Set(["zh-Hans", "zh-Hant", "zh"]);
 /** Nhãn trạng thái tên Nhật: `verified` (đã thấy trong nguồn Nhật) / `derived` (đổi tự dạng hoặc nguồn chưa chắc). */
 const NAME_STATUS = Object.freeze({
   verified: { label: "確認済み", title: "日本語版の資料で確認した名称です" },
   derived: { label: "字形変換", title: "日本語版での表記は未確認です（中国語名を日本の字体に変換した名称）" },
 });
 /**
- * Tên gốc và trạng thái tên của trang ja (`{original, status, label, title}`): trang chi tiết luôn hiện tên chữ Hán gốc
- * ("原名") cạnh tên Nhật. Bản khác hoặc bản ghi chưa gắn lớp ja → `null`.
+ * Tên gốc và trạng thái tên của trang ja (`{original, lang, status, label, title}`): trang chi tiết luôn hiện tên chữ Hán gốc
+ * ("原名") cạnh tên Nhật. `lang` là `nameOriginalLang` của lớp ja (lối viết tính lúc build), vắng hay lạ thì `zh`. Bản khác hoặc
+ * bản ghi chưa gắn lớp ja → `null`.
  */
 export function lookupNameInfo(record, locale = currentLocale()) {
   if (contentMode(locale) !== "ja") return null;
   const entry = lookupJaEntry(record);
   const status = NAME_STATUS[entry?.nameStatus];
   if (!entry || !status || typeof entry.nameOriginal !== "string") return null;
-  return { original: entry.nameOriginal, status: entry.nameStatus, label: status.label, title: status.title };
+  const lang = NAME_ORIGINAL_LANGS.has(entry.nameOriginalLang) ? entry.nameOriginalLang : "zh";
+  return { original: entry.nameOriginal, lang, status: entry.nameStatus, label: status.label, title: status.title };
 }
 /** Nhãn "原名" (tên chữ Hán gốc) của trang ja. */
 export const NAME_ORIGINAL_LABEL = "原名";

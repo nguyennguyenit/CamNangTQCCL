@@ -336,7 +336,7 @@ export async function lookupBookAliases(options: ArtifactOptions = {}) {
 
 /** Lớp tiếng Nhật của Tra cứu đã kiểm (`data/lookup-ja.json` + bảng tự dạng) và pin byte để trang `/ja/` nhúng. */
 export type LookupJaPublicationSnapshot = {
-  document: { entries: Record<string, { name: string; nameStatus: string; nameOriginal: string; texts: Record<string, string> }>; [key: string]: unknown };
+  document: { entries: Record<string, { name: string; nameStatus: string; nameOriginal: string; nameOriginalLang?: string; texts: Record<string, string> }>; [key: string]: unknown };
   /** Bảng ký tự `parseKanjiVariants` của `data/ja-kanji-variants.json`. */
   variants: Readonly<Record<string, string>>;
   /** `sha256:<hex>` của bytes `lookup-ja.json` (pin `#lookup-ja-pin`). */

@@ -21,6 +21,14 @@ test("tài liệu thật đúng hợp đồng và cùng thế hệ với lookup 
   assert.ok(Object.keys(document.entries).length > 1000);
 });
 
+test("nameOriginalLang (lang của tên gốc, tính lúc build) chỉ nhận zh-Hans/zh-Hant/zh; tài liệu cũ chưa có trường vẫn hợp lệ", () => {
+  const base = json("data/lookup-ja.json");
+  assert.ok(Object.values(base.entries).every((entry) => ["zh-Hans", "zh-Hant", "zh"].includes(entry.nameOriginalLang)));
+  const legacy = structuredClone(base);
+  for (const entry of Object.values(legacy.entries)) delete entry.nameOriginalLang;
+  assert.doesNotThrow(() => validateLookupJaDocument(legacy, { lookupGenerationId: manifest.generationId }));
+});
+
 test("tài liệu lệch thế hệ, sai trạng thái tên, thừa khóa hay chữ rỗng bị từ chối", () => {
   const base = json("data/lookup-ja.json");
   const id = Object.keys(base.entries)[0];
@@ -28,6 +36,7 @@ test("tài liệu lệch thế hệ, sai trạng thái tên, thừa khóa hay ch
   assert.throws(() => validateLookupJaDocument(base, { lookupGenerationId: "lookup:" + "0".repeat(64) }), /thế hệ/);
   const variants = [
     (doc) => { doc.entries[id].nameStatus = "guessed"; },
+    (doc) => { doc.entries[id].nameOriginalLang = "zh-TW"; },
     (doc) => { doc.entries[id].sourceUrl = "https://example.invalid"; },
     (doc) => { doc.entries[id].texts = { effect: " " }; },
     (doc) => { doc.extra = true; },

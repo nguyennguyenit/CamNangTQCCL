@@ -3,6 +3,7 @@
 Chỉ dùng thư viện chuẩn. Đầu vào đã review và commit:
 
 - `data/ja-kanji-variants.json` (bảng ký tự, đọc bằng `pipeline.shinjitai`),
+- `pipeline/han-script-chars.json` (chữ riêng của giản/phồn thể, đọc bằng `pipeline.han_script`, cho `nameOriginalLang`),
 - `pipeline/ja-name-overrides.json` (tên Nhật quan sát theo ID, dựng bằng `--import-observed`),
 - `pipeline/ja-glossary.json` (thuật ngữ zh -> ja dùng khi dịch),
 - `pipeline/ja-translations.json` (bản dịch máy khóa theo sha256 của chữ Trung nguồn, nạp bằng `--ingest`).
@@ -32,6 +33,7 @@ from datetime import date
 from pathlib import Path
 
 from pipeline.common import sha256_hex
+from pipeline.han_script import han_script_lang
 from pipeline.shinjitai import VARIANTS_PATH, to_shinjitai
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -268,7 +270,7 @@ def validate_overrides(overrides, names: dict[str, str]) -> None:
 
 
 def resolve_names(corpus: dict, names: dict[str, str], overrides: dict) -> dict[str, dict]:
-    """`{id: {name, nameStatus, nameOriginal}}`; mọi ID đều có tên.
+    """`{id: {name, nameStatus, nameOriginal, nameOriginalLang}}`; mọi ID đều có tên.
 
     Thứ tự: tên quan sát theo ID (verified khi độ tin high, ngược lại derived); biến thể tướng (SP, 40Y, 無雙)
     chưa có hàng quan sát thì lấy "tiền tố + tên Nhật của tướng gốc có cùng chữ Hán" và thừa hưởng trạng thái của
@@ -301,6 +303,9 @@ def resolve_names(corpus: dict, names: dict[str, str], overrides: dict) -> dict[
         resolved.setdefault(entry_id, derived_of(entry_id))
     for entry_id, info in resolved.items():
         info["nameOriginal"] = names[entry_id]
+        # `lang` của dòng 原名 tính lúc build (giản `zh-Hans` / phồn `zh-Hant` / không phân biệt được `zh`): trình duyệt không
+        # phải tải bảng ký tự.
+        info["nameOriginalLang"] = han_script_lang(names[entry_id])
     return resolved
 
 

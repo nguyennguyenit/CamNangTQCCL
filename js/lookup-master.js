@@ -12,7 +12,6 @@ import {
 } from "./lookup-detail.js";
 import { lookupGroupPath, lookupHref, lookupSlug } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
-import { hanScriptLang } from "./han-script.js";
 
 /** Bốn nhóm dùng bố cục danh sách + chi tiết; nhóm khác (tướng, chiến pháp, binh thư) giữ hộp thoại hồ sơ. */
 export const MASTER_GROUPS = Object.freeze(["equipment", "advisors", "troop-mods", "buildings"]);
@@ -87,8 +86,8 @@ export function nameOriginalTrees(record, locale) {
   const info = lookupNameInfo(record, locale);
   if (!info) return [];
   return [
-    // Tên gốc có thể là giản thể (nguồn đại lục) hoặc phồn thể: `lang` theo đúng chữ, không phân biệt được thì `zh`.
-    h("span", { class: "lookup-dialog-zh lookup-name-original" }, [`${NAME_ORIGINAL_LABEL} `, h("span", { lang: hanScriptLang(info.original) }, info.original)]),
+    // Tên gốc có thể là giản thể (nguồn đại lục) hoặc phồn thể: `lang` theo lối viết tính lúc build (`info.lang`).
+    h("span", { class: "lookup-dialog-zh lookup-name-original" }, [`${NAME_ORIGINAL_LABEL} `, h("span", { lang: info.lang }, info.original)]),
     h("span", { class: "badge badge-outline lookup-name-status", "data-name-status": info.status, title: info.title }, info.label),
   ];
 }

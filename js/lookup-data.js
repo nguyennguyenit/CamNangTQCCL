@@ -383,14 +383,16 @@ export function createLookupPayloadLoader(fetchFn) {
 /* ---------- Lớp tiếng Nhật (`data/lookup-ja.json`, hợp đồng ở docs/ja-lookup-data.md) ---------- */
 
 export const LOOKUP_JA_SOURCE_NAMES = Object.freeze(["data/books-dict.json", "data/heroes-dict.json", "data/ja-kanji-variants.json", "data/lookup-catalog.json", "data/tactics.json"]);
-const JA_ENTRY_KEYS = new Set(["name", "nameStatus", "nameOriginal", "texts", "translatedFromVi"]);
+const JA_ENTRY_KEYS = new Set(["name", "nameStatus", "nameOriginal", "nameOriginalLang", "texts", "translatedFromVi"]);
 const JA_NAME_STATUS = new Set(["verified", "derived"]);
+/** `lang` của tên gốc, tính lúc build theo lối viết (`pipeline/han_script.py`); vắng trường thì trang dùng `zh`. */
+const JA_NAME_ORIGINAL_LANGS = Object.freeze(["zh-Hans", "zh-Hant", "zh"]);
 const PIN = /^sha256:([0-9a-f]{64})$/;
 const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
 
 /**
  * Kiểm tài liệu `lookup-ja.json` đã parse: đúng schema, cùng `lookupGenerationId` với lookup manifest đang phát (`generationId`),
- * mọi mục có tên/trạng thái/tên gốc, `texts` chỉ chứa chữ. Trả tài liệu (không đông cứng sâu; nơi gọi giữ nguyên, không sửa).
+ * mọi mục có tên/trạng thái/tên gốc (`nameOriginalLang`, nếu có, là một trong `JA_NAME_ORIGINAL_LANGS`), `texts` chỉ chứa chữ. Trả tài liệu (không đông cứng sâu; nơi gọi giữ nguyên, không sửa).
  * @param {any} document
  * @param {{lookupGenerationId: string}} expected
  */
@@ -416,6 +418,7 @@ export function validateLookupJaDocument(document, { lookupGenerationId }) {
   for (const [id, entry] of Object.entries(document.entries)) {
     if (!isPlainObject(entry) || Object.keys(entry).some((key) => !JA_ENTRY_KEYS.has(key))
       || !nonEmpty(entry.name) || !JA_NAME_STATUS.has(entry.nameStatus) || !nonEmpty(entry.nameOriginal)
+      || (entry.nameOriginalLang !== undefined && !JA_NAME_ORIGINAL_LANGS.includes(entry.nameOriginalLang))
       || !isPlainObject(entry.texts) || !Object.values(entry.texts).every(nonEmpty)
       || (entry.translatedFromVi !== undefined && !isStringList(entry.translatedFromVi))) {
       throw new Error(`lookup-ja.json mục không hợp lệ: ${id}`);
