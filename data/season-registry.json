@@ -2,6 +2,33 @@
   {
     "aliases": [],
     "evidenceRefs": [
+      "coexist-han-diem-scenario-confirmation"
+    ],
+    "id": "han-diem-truong-minh",
+    "kind": "scenario",
+    "labelVi": "PK-S27 · Hán Diễm Trường Minh",
+    "region": "VN",
+    "reviewStatus": "reviewed",
+    "rulesets": [],
+    "schemaVersion": 1,
+    "sourceMappings": [
+      {
+        "evidenceRefs": [
+          "coexist-han-diem-scenario-confirmation"
+        ],
+        "provenance": {
+          "fetchedAt": "2026-11-17",
+          "region": "VN"
+        },
+        "reviewStatus": "reviewed",
+        "rulesetId": null,
+        "sourceSeason": null
+      }
+    ]
+  },
+  {
+    "aliases": [],
+    "evidenceRefs": [
       "coexist-anh-hung-menh-the-scenario-confirmation"
     ],
     "id": "anh-hung-menh-the",
