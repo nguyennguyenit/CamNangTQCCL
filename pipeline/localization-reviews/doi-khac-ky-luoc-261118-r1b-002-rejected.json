@@ -1,0 +1,31 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r1b-002-rejected",
+ "reviewerSession": "reviewer:RvDkKl261118-r1b-002",
+ "items": [
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-han-zhujun-rou-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "b29bc2a66475c94f93c18bcec0f822f36d8afa03400eb9e8bbc0cb444e80ddf2",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "73f53bec3199646246ac8cd54b2e917ee448ddf11b67d631c5f11a264782e257",
+   "verdict": "rejected",
+   "errors": [
+    "規避 rendered as 'Lẩn Tránh'; the project/client status term for 規避 is 'Né Tránh' (lookup-client-tactics, tactics.json effectViet)."
+   ],
+   "notes": "T0.5 | SP Chu Tuấn gây sát thương chuẩn ổn định, không ngại đội có Né Tránh và Thống Soái cao"
+  },
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-lp-beifa-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "05d15e2e6a01ed0427e18e505a8699a50a2ec2425feb119bbceff81d8416cefc",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2e9ccea4e1e3b820b13b81544e1e3f66151821f562ecb415a6fc31bf9f80a75b",
+   "verdict": "rejected",
+   "errors": [
+    "Subject error: 阿焰 (A Diễm, the ranking author) is listed as a fourth team member ('gồm SP Gia Cát Lượng, Quan Hưng, Trương Bào, A Diễm xếp T1.5'); source: team of SP 諸葛亮/關興/張苞, and A Diễm's ten-team coexistence list ranks it T1.5."
+   ],
+   "notes": "Đội Bắc Phạt Thương gồm SP Gia Cát Lượng, Quan Hưng, Trương Bào; A Diễm xếp T1.5 (85 điểm) trong mười đội cùng tồn, nguyên văn “đội đánh dã, bản cấu hình thấp của Bắc Phạt Thương”. Kỳ Lược: tái hiện Kỳ Lược Ngũ Mưu."
+  }
+ ]
+}

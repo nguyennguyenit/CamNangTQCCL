@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r1-000-rejected",
+ "reviewerSession": "reviewer:RvDkKl261118-r1-000",
+ "items": [
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-han-huangma-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5f288284c4a2e0036e012ef1127e88d6b9dfa8dbc634a9d84f693f38576caa61",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "3090459d55ded436aa78bc92974405f935be98ed8446fb39daf7067b8a9ddf6e",
+   "verdict": "rejected",
+   "errors": [
+    "Kỳ lược card 4 is rendered as the tactic name \"Thôi Phong Đoạn Nhẫn\" (摧鋒斷刃, a tactic, not a Kỳ lược card). pipeline/recommended-qilue-overrides.json fix for s27-han-huangma-qiang resolves this slot to qilue-card:pha-mui-giap-dich (摧鋒陷敵 = Phá Mũi Giáp Địch), the same way the note variant 斬將納降 in this item was normalized to Trảm Địch Chiêu Hàng; the note chain contradicts the structured card list."
+   ],
+   "notes": "T0.5 | Đánh các đội không phải Hoàng Mã như chẻ tre | Chiến đấu lâu dài: Gỡ Bỏ Xiềng Xích→Càn Quét Tây Hà→Đơn Độc Thâm Nhập→Phá Mũi Giáp Địch→[Cực] Trảm Địch Chiêu Hàng"
+  }
+ ]
+}
