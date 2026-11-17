@@ -256,7 +256,11 @@ def validate_overrides(overrides, names: dict[str, str]) -> None:
         raise LookupJaError("ja-name-overrides.json: schemaVersion sai")
     for entry_id, entry in (overrides.get("names") or {}).items():
         if entry_id not in names:
-            raise LookupJaError(f"ja-name-overrides.json: ID không có trong dữ liệu Tra cứu: {entry_id}")
+            raise LookupJaError(
+                f"ja-name-overrides.json: ID không có trong generation Tra cứu hiện tại: {entry_id}; "
+                f'gỡ dòng names["{entry_id}"] khỏi pipeline/ja-name-overrides.json (hoặc sửa ID trong bảng quan sát rồi chạy lại '
+                f"`python3 -m pipeline.build_lookup_ja --import-observed PATH`, ID không còn sẽ vào skipped.unknownId), rồi --write"
+            )
         if not isinstance(entry, dict) or entry.get("confidence") not in CONFIDENCE_RANK:
             raise LookupJaError(f"ja-name-overrides.json: {entry_id} thiếu confidence high|medium")
         name = entry.get("nameJa")
@@ -265,7 +269,12 @@ def validate_overrides(overrides, names: dict[str, str]) -> None:
         if not isinstance(entry.get("sourceUrl"), str) or not entry["sourceUrl"].strip():
             raise LookupJaError(f"ja-name-overrides.json: {entry_id} thiếu sourceUrl (tên không có nguồn không được ghi đè)")
     for item in overrides.get("prefixedTactics") or []:
-        if item.get("baseId") not in names or not item.get("name") or not item.get("prefix"):
+        if item.get("baseId") not in names:
+            raise LookupJaError(
+                f"ja-name-overrides.json: prefixedTactics có baseId không còn trong generation Tra cứu: {item.get('baseId')!r}; "
+                "gỡ mục đó khỏi prefixedTactics (hoặc dựng lại bằng --import-observed), rồi --write"
+            )
+        if not item.get("name") or not item.get("prefix"):
             raise LookupJaError(f"ja-name-overrides.json: mục tiền tố sai: {item!r}")
 
 
@@ -392,14 +401,21 @@ def ingest_batch(batch, sources: dict[str, str], items: dict, model: str, today:
 # Dựng đầu ra
 
 
-def build_payload(data_dir: Path = DATA_DIR, overrides_path: Path = OVERRIDES_PATH, translations_path: Path = TRANSLATIONS_PATH) -> dict:
+def build_payload(
+    data_dir: Path = DATA_DIR,
+    overrides_path: Path = OVERRIDES_PATH,
+    translations_path: Path = TRANSLATIONS_PATH,
+    items: dict | None = None,
+) -> dict:
+    """Dựng `data/lookup-ja.json` trong bộ nhớ. `items` (bản dịch đã nạp sẵn, ví dụ sau khi bỏ mục mồ côi) thay cho việc đọc
+    `translations_path`; vẫn qua đủ bước kiểm."""
     corpus = load_corpus(data_dir)
     names = collect_names(corpus)
     overrides = _read_json(overrides_path) if overrides_path.exists() else {"schemaVersion": SCHEMA_VERSION, "names": {}, "prefixedTactics": []}
     validate_overrides(overrides, names)
     texts = collect_texts(corpus)
     sources = distinct_sources(texts)
-    items = load_translations(translations_path)
+    items = load_translations(translations_path) if items is None else items
     validate_translations(items, sources)
     generation_id = corpus["manifest"].get("generationId")
     if not isinstance(generation_id, str) or not GENERATION_ID.fullmatch(generation_id):
@@ -477,7 +493,7 @@ def main(argv=None) -> int:
     mode.add_argument("--export-todo", metavar="DIR", help="xuất chuỗi chưa dịch thành các lô JSON")
     mode.add_argument("--ingest", metavar="BATCH", help="nạp một lô bản dịch [{h, ja}]")
     parser.add_argument("--prune-orphans", action="store_true",
-                        help="cùng --write: bỏ bản dịch mồ côi khỏi pipeline/ja-translations.json trước khi ghi")
+                        help="cùng --write: bỏ bản dịch mồ côi khỏi pipeline/ja-translations.json; dựng trong bộ nhớ, chỉ ghi khi thành công")
     parser.add_argument("--batch-size", type=int, default=40)
     parser.add_argument("--model", default="")
     parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
@@ -489,12 +505,16 @@ def main(argv=None) -> int:
         parser.error("--prune-orphans chỉ dùng cùng --write")
     try:
         if args.prune_orphans:
+            # Dựng trong bộ nhớ trước; chỉ khi dựng thành công mới ghi cả file dịch đã dọn lẫn đầu ra.
             sources = distinct_sources(collect_texts(load_corpus(args.data_dir)))
-            items = load_translations(args.translations)
-            kept, removed = prune_orphans(items, sources)
+            kept, removed = prune_orphans(load_translations(args.translations), sources)
+            payload = build_payload(args.data_dir, args.overrides, args.translations, items=kept)
             if removed:
                 _write_if_changed(args.translations, canonical_text({"schemaVersion": SCHEMA_VERSION, "items": kept}))
             print(f"bỏ {len(removed)} bản dịch mồ côi khỏi {args.translations}")
+            _write_if_changed(args.output, canonical_text(payload))
+            print(f"ghi {args.output} ({len(payload['entries'])} mục)")
+            return 0
         if args.import_observed:
             names = collect_names(load_corpus(args.data_dir))
             rows = _read_json(Path(args.import_observed))

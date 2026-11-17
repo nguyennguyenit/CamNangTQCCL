@@ -25,7 +25,15 @@ python3 -m pipeline.build_lookup_ja --check
 node scripts/report-ja-gaps.mjs                               # chữ mới thành "chưa dịch", liệt kê trong docs/ja-gaps.md
 ```
 
-`--prune-orphans` chỉ dùng cùng `--write` và chỉ xóa mục mồ côi; bản dịch hỏng (sha lệch, sai số liệu) vẫn làm builder dừng. Trang ja hiện dòng báo thiếu cho trường chưa dịch. Dịch bù sau bằng `--export-todo` → dịch → `--ingest` → `--write`.
+`--prune-orphans` chỉ dùng cùng `--write` và chỉ xóa mục mồ côi; bản dịch hỏng (sha lệch, sai số liệu) vẫn làm builder dừng. Lệnh dựng `data/lookup-ja.json` trong bộ nhớ trước, chỉ ghi `pipeline/ja-translations.json` và đầu ra khi dựng thành công; dừng vì lỗi thì cả hai file giữ nguyên. Trang ja hiện dòng báo thiếu cho trường chưa dịch. Dịch bù sau bằng `--export-todo` → dịch → `--ingest` → `--write`.
+
+### Khi ID trong `pipeline/ja-name-overrides.json` không còn trong generation Tra cứu
+
+Generation mới có thể bỏ hoặc đổi ID một mục. Override trỏ tới ID đó làm `--check`/`--write` dừng với lỗi `ID không có trong generation Tra cứu hiện tại` (hoặc `prefixedTactics có baseId không còn…`). Cách gỡ:
+
+1. Mục bị bỏ hẳn: xóa dòng `names["<id>"]` (hoặc mục `prefixedTactics` có `baseId` đó) khỏi `pipeline/ja-name-overrides.json`.
+2. Mục đổi ID: sửa `id` trong bảng quan sát (`observedSource`, hiện là `plans/reports/ja-names-observed-261117.json`) rồi chạy `--import-observed PATH`; ID không còn tự vào `skipped.unknownId` thay vì làm builder dừng. Dòng override thêm tay ngoài bảng quan sát sẽ mất khi dựng lại, nên tên mới cũng thêm vào bảng quan sát.
+3. Chạy `--write`, `--check`, rồi `node scripts/report-ja-gaps.mjs`.
 
 ## Đầu vào
 

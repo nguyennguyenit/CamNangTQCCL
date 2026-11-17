@@ -85,8 +85,15 @@ class NameTests(unittest.TestCase):
 
     def test_validate_overrides_rejects_unknown_id_and_missing_source(self):
         names = bj.collect_names(_corpus())
-        with self.assertRaises(bj.LookupJaError):
+        with self.assertRaises(bj.LookupJaError) as raised:
             bj.validate_overrides({"schemaVersion": 1, "names": {"hero:zzz": {"confidence": "high", "nameJa": "x漢", "sourceUrl": "u"}}}, names)
+        # ID không còn trong generation Tra cứu: thông báo nêu cách gỡ (xóa dòng override hoặc dựng lại từ bảng quan sát).
+        self.assertIn('names["hero:zzz"]', str(raised.exception))
+        self.assertIn("--import-observed", str(raised.exception))
+        with self.assertRaises(bj.LookupJaError) as raised:
+            bj.validate_overrides({"schemaVersion": 1, "names": {}, "prefixedTactics": [{"baseId": "tactic:zzz", "name": "転・x", "prefix": "転"}]}, names)
+        self.assertIn("prefixedTactics", str(raised.exception))
+        self.assertIn("tactic:zzz", str(raised.exception))
         with self.assertRaises(bj.LookupJaError):
             bj.validate_overrides({"schemaVersion": 1, "names": {"hero:lu-bo": {"confidence": "high", "nameJa": "呂布"}}}, names)
 
@@ -252,6 +259,34 @@ class CliTests(unittest.TestCase):
         self.assertEqual(len(pruned["items"]), len(data["items"]) - 1)
         published = [text for entry in json.loads(out.read_text(encoding="utf-8"))["entries"].values() for text in entry["texts"].values()]
         self.assertNotIn(item["ja"], published)
+
+    def test_prune_orphans_writes_nothing_when_build_fails(self):
+        # Dựng trong bộ nhớ trước: bản dịch hỏng hoặc override sai làm lệnh dừng mà không ghi file dịch hay đầu ra.
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        data = json.loads((_ROOT / "pipeline" / "ja-translations.json").read_text(encoding="utf-8"))
+        good_key, good_item = sorted(data["items"].items())[0]
+        data["items"]["0" * 64] = {"src": "古い", "ja": "x", "model": "m", "translatedAt": "2026-11-17"}
+        broken_overrides = json.loads((_ROOT / "pipeline" / "ja-name-overrides.json").read_text(encoding="utf-8"))
+        broken_overrides["names"]["tactic:khong-ton-tai"] = {"nameJa": "存在せず", "confidence": "high", "sourceUrl": "https://example.invalid/"}
+        cases = {
+            "bản dịch sai số liệu": ({**data, "items": {**data["items"], good_key: {**good_item, "ja": good_item["ja"] + " 999"}}}, None),
+            "override trỏ ID không còn": (data, broken_overrides),
+        }
+        for label, (translations_doc, overrides_doc) in cases.items():
+            with self.subTest(label):
+                translations = tmp / "t.json"
+                translations.write_text(json.dumps(translations_doc, ensure_ascii=False), encoding="utf-8")
+                before = translations.read_bytes()
+                argv = ["--prune-orphans", "--write", "--translations", str(translations), "--output", str(tmp / "o.json")]
+                if overrides_doc is not None:
+                    overrides = tmp / "overrides.json"
+                    overrides.write_text(json.dumps(overrides_doc, ensure_ascii=False), encoding="utf-8")
+                    argv += ["--overrides", str(overrides)]
+                with contextlib.redirect_stderr(io.StringIO()), contextlib.redirect_stdout(io.StringIO()):
+                    self.assertEqual(bj.main(argv), 1)
+                self.assertEqual(translations.read_bytes(), before)
+                self.assertFalse((tmp / "o.json").exists())
 
     def test_prune_orphans_requires_write(self):
         for argv in (["--prune-orphans"], ["--prune-orphans", "--check"], ["--prune-orphans", "--export-todo", "x"]):
