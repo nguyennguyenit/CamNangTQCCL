@@ -288,10 +288,10 @@ class LookupLedgerTest(unittest.TestCase):
 
     def test_merged_tactic_gets_one_301_per_locale_and_dropped_one_none(self):
         self.merge_tactic()
+        self.assertEqual(lrh.REDIRECT_LOCALE_PREFIXES, ("", "/zh", "/ja"))
         self.assertEqual(self.redirects.read_text(encoding="utf-8"), "\n".join([
             lrh.REDIRECTS_HEADER,
-            "/tra-cuu/chien-phap/cu/ /tra-cuu/chien-phap/binh-thanh/ 301",
-            "/zh/tra-cuu/chien-phap/cu/ /zh/tra-cuu/chien-phap/binh-thanh/ 301",
+            *(f"{prefix}/tra-cuu/chien-phap/cu/ {prefix}/tra-cuu/chien-phap/binh-thanh/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES),
         ]) + "\n")
         self.assertEqual(self.run_cli("--check")[0], 0)
 
@@ -300,7 +300,7 @@ class LookupLedgerTest(unittest.TestCase):
         self.write_registry("og-兵演春秋")
         self.assertEqual(self.run_cli("--write")[0], 0)
         lines = self.redirects.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(lines[-2:], ["/doi-chuan/og/ /doi-chuan/ 301", "/zh/doi-chuan/og/ /zh/doi-chuan/ 301"])
+        self.assertEqual(lines[-3:], [f"{prefix}/doi-chuan/og/ {prefix}/doi-chuan/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES])
         self.assertEqual(self.run_cli("--check")[0], 0)
         # The default season changes: the committed rule is stale until regenerated, then it follows the new season.
         self.write_registry("pk-s24")
@@ -309,7 +309,7 @@ class LookupLedgerTest(unittest.TestCase):
         self.assertIn("is stale; run --write", err)
         self.assertEqual(self.run_cli("--write")[0], 0)
         lines = self.redirects.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(lines[-2:], ["/doi-chuan/pk-s24/ /doi-chuan/ 301", "/zh/doi-chuan/pk-s24/ /zh/doi-chuan/ 301"])
+        self.assertEqual(lines[-3:], [f"{prefix}/doi-chuan/pk-s24/ {prefix}/doi-chuan/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES])
         self.assertNotIn("/doi-chuan/og/ /doi-chuan/ 301", lines)
         self.assertEqual(self.run_cli("--check")[0], 0)
 
@@ -365,12 +365,12 @@ class RealLedgerTest(unittest.TestCase):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         former = lrh.former_owner_map(REPO_ROOT / "data")
         season = lrh.season_redirect_lines(lrh.DEFAULT_RECOMMENDED_ROOT)
-        self.assertEqual(len(season), 2, "the pinned registry has a current season, so one rule per locale")
+        self.assertEqual(len(season), len(lrh.REDIRECT_LOCALE_PREFIXES), "the pinned registry has a current season, so one rule per locale")
         self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger, season))
         tactics = json.loads((REPO_ROOT / "data/tactics.json").read_bytes())
         pairs = sum(len(row["lookup"]["formerIds"]) for row in tactics)
         rules = [line for line in lrh.DEFAULT_REDIRECTS_PATH.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
-        self.assertEqual(len(rules), 2 * pairs + 2)
+        self.assertEqual(len(rules), len(lrh.REDIRECT_LOCALE_PREFIXES) * (pairs + 1))
         self.assertTrue(all(line.endswith("/ 301") for line in rules))
 
 
