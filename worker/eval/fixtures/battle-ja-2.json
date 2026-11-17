@@ -1,6 +1,6 @@
 {
   "image": "battle-ja-2.webp",
-  "source": "Chiến báo client Nhật 三國志 真戦 (nguồn chờ chủ repo xác nhận); chỉ có tên server/liên minh công khai (江淮, 西涼), không có tên người chơi nên không che thêm. Phe phải đọc phải sang trái nên 主将 周瑜 đứng đầu. Chiến pháp liệt kê là hai dòng đã học (bỏ dòng tự mang đầu và dòng 通常攻撃). ID tướng chọn theo biến thể SP khi chiến pháp tự mang trùng dòng đầu; 陸遜 chưa có biến thể SP trong từ điển nên dùng hero:luc-ton.",
+  "source": "Chiến báo client Nhật 三國志 真戦 (chủ repo gửi 2026-11-17); chỉ có tên server/liên minh công khai (江淮, 西涼), không có tên người chơi nên không che thêm. Phe phải đọc phải sang trái nên 主将 周瑜 đứng đầu. Chiến pháp liệt kê là hai dòng đã học (bỏ dòng tự mang đầu và dòng 通常攻撃). ID tướng chọn theo biến thể SP khi chiến pháp tự mang trùng dòng đầu; 陸遜 chưa có biến thể SP trong từ điển nên dùng hero:luc-ton.",
   "expected": {
     "screen": "battleReport",
     "sideCount": 2,

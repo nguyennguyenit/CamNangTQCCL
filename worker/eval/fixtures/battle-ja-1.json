@@ -1,6 +1,6 @@
 {
   "image": "battle-ja-1.webp",
-  "source": "Chiến báo client Nhật 三國志 真戦 (nguồn chờ chủ repo xác nhận); đã che tên người chơi. Chữ in tự dạng Nhật (戦報, 味方/敵, 主将/副将). Phe phải đọc phải sang trái nên 主将 曹操 đứng đầu. Chiến pháp liệt kê là hai dòng đã học (bỏ dòng tự mang đầu và dòng 通常攻撃). Tướng đều mang nhãn SP; ID chọn theo biến thể SP có chiến pháp tự mang trùng dòng đầu (機転先決 = tactic:co-giam-tien-thuc của hero:sp-tuan-uc, v.v.), riêng 荀攸 chưa có biến thể SP trong từ điển nên dùng hero:tuan-du. 転・獅子奮迅 (bản chuyển thuộc tính, chưa có ID riêng trong từ điển) để null, không chấm.",
+  "source": "Chiến báo client Nhật 三國志 真戦 (chủ repo gửi 2026-11-17); đã che tên người chơi. Chữ in tự dạng Nhật (戦報, 味方/敵, 主将/副将). Phe phải đọc phải sang trái nên 主将 曹操 đứng đầu. Chiến pháp liệt kê là hai dòng đã học (bỏ dòng tự mang đầu và dòng 通常攻撃). Tướng đều mang nhãn SP; ID chọn theo biến thể SP có chiến pháp tự mang trùng dòng đầu (機転先決 = tactic:co-giam-tien-thuc của hero:sp-tuan-uc, v.v.), riêng 荀攸 chưa có biến thể SP trong từ điển nên dùng hero:tuan-du. 転・獅子奮迅 (bản chuyển thuộc tính, chưa có ID riêng trong từ điển) để null, không chấm.",
   "expected": {
     "screen": "battleReport",
     "sideCount": 2,
