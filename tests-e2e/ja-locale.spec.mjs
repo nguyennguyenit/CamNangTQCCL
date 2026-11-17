@@ -200,6 +200,35 @@ test('trang riêng Tra cứu bản Nhật: tên Nhật, tên gốc chữ Hán, n
   await expect(firstLink).toContainText(lookupJa.entries[await firstLink.getAttribute('data-lookup-id')].name);
 });
 
+test('Kỳ lược bản Nhật: trang nhóm, trang riêng thẻ và ô Kỳ lược trên trang đội dùng tên Nhật, chỉ có chữ Nhật', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const cardId = 'qilue-card:so-ca-tu-khoi';
+  const card = lookupJa.entries[cardId];
+  const cardPath = `/tra-cuu/ky-luoc/${lookupHandles.qilue[cardId]}/`;
+  await page.goto(jaPathOf(cardPath));
+  await expectJaPage(page, cardPath);
+  await expect(page.locator('h1')).toContainText(card.name);
+  const main = page.locator('main');
+  await expect(main).toContainText(card.nameOriginal);
+  await expect(main).toContainText('機械翻訳');
+  await expect(main).toContainText(card.texts.effect);
+  await expectJapaneseOnly(page, 'main');
+  expect(await page.title()).not.toMatch(VIETNAMESE);
+
+  await page.goto('/ja/tra-cuu/ky-luoc/');
+  await expect(page.locator('body[data-boot=ready]')).toBeAttached();
+  await expect(page.locator('#section-lookup')).toContainText(lookupJa.entries['qilue-strategy:chien-dau-lau-dai'].name);
+  await expectJapaneseOnly(page, 'main');
+
+  // Ô Kỳ lược trên trang chi tiết đội: tên Nhật của thẻ, không chữ Việt.
+  const teamPath = '/doi-chuan/pk-s27-tiem-long-luc-ton/';
+  await page.goto(jaPathOf(teamPath));
+  const qilue = page.locator('.detail-qilue');
+  await expect(qilue).toContainText('奇略');
+  await expect(qilue).toContainText(card.name);
+  expect(await qilue.innerText()).not.toMatch(VIETNAMESE);
+});
+
 test('Soi đội từ ảnh và Gợi ý đội từ kho bản Nhật mở được, chỉ có chữ Nhật', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const [path, section] of [['soi-doi-tu-anh', 'analyze'], ['goi-y-doi-tu-kho', 'roster-recommend']]) {

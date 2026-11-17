@@ -26,7 +26,7 @@ export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
 /** Nhãn nhóm bản Nhật (`/ja/`). */
 const LOOKUP_GROUP_LABELS_JA = Object.freeze({
   heroes: "武将", tactics: "戦法", equipment: "装備",
-  advisors: "軍師", "troop-mods": "兵種進階", buildings: "施設", books: "兵法書",
+  advisors: "軍師", "troop-mods": "兵種進階", buildings: "施設", books: "兵法書", qilue: "奇略",
 });
 /** Nhãn nhóm theo ngôn ngữ chỉ định (một phần tử của `SITE_LOCALES`). */
 export function lookupGroupLabels(locale = currentLocale()) {
@@ -45,7 +45,7 @@ const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
 /** Lượng từ + đơn vị bản Nhật ("12 名の武将"). */
 const LOOKUP_GROUP_UNITS_JA = Object.freeze({
   heroes: "名の武将", tactics: "件の戦法", equipment: "件の装備",
-  advisors: "件の軍師", "troop-mods": "件の兵種進階", buildings: "件の施設", books: "件の兵法書",
+  advisors: "件の軍師", "troop-mods": "件の兵種進階", buildings: "件の施設", books: "件の兵法書", qilue: "件の奇略",
 });
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
 export const POSITION_LABELS = () => [L("Chủ tướng", "主将", "主将"), L("Phó tướng 1", "副将 1", "副将 1"), L("Phó tướng 2", "副将 2", "副将 2")];

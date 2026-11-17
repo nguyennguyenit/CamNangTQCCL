@@ -147,6 +147,34 @@ async function jaSuite() {
     assert.doesNotMatch(zh, /機械翻訳|原名/u);
   });
 
+  test("Kỳ lược ja: thẻ và phương lược hiện tên Nhật, 原名, nhãn tiếng Nhật và bản dịch máy; không chữ Việt", async () => {
+    const VI = /[ăâđêôơưĂÂĐÊÔƠƯ]|[àáảãạèéẻẽẹìíỉĩịòóỏõọùúủũụỳýỷỹỵ]/u;
+    const render = (id) => {
+      const target = masterTargetFor(corpus, id);
+      return inJa(() => treeToHtml(masterDetailTree("qilue", target.item, corpus, "ja", { targetId: id, page: true })));
+    };
+    const cardId = "qilue-card:so-ca-tu-khoi";
+    const card = render(cardId);
+    assert.equal(ja.entries[cardId].name, "四面楚歌");
+    assert.ok(card.includes("四面楚歌"));
+    assert.match(card, new RegExp(`原名 <span lang="${ja.entries[cardId].nameOriginalLang}">楚歌四起</span>`, "u"));
+    assert.match(card, /機械翻訳<\/span> 数値は中国大陸版に基づく/u);
+    assert.ok(card.includes(ja.entries[cardId].texts.effect));
+    assert.ok(card.includes(ja.entries[cardId].texts["conditions.0"]));
+    assert.ok(card.includes("奇略カード") && card.includes(">謀<") && card.includes("使える方略"));
+    assert.doesNotMatch(card, VI);
+    const strategyId = "qilue-strategy:chien-dau-lau-dai";
+    const strategy = render(strategyId);
+    assert.ok(strategy.includes("堅牢") && strategy.includes(ja.entries[strategyId].texts.buff));
+    assert.ok(strategy.includes("/ja/tra-cuu/ky-luoc/?type=dung"));
+    assert.doesNotMatch(strategy, VI);
+    const page = await lookupItemPage(cardId, "ja", "https://tqccl.com");
+    assert.equal(page.name, "四面楚歌");
+    assert.ok(page.description.startsWith("四面楚歌（奇略カード・謀"), page.description);
+    assert.ok(!page.description.includes(ja.entries[cardId].texts.effect.slice(0, 8)), page.description);
+    assert.doesNotMatch(page.description, VI);
+  });
+
   test("原名 gắn lang theo nameOriginalLang (tính lúc build): giản thể zh-Hans, phồn thể zh-Hant, không phân biệt được thì zh", () => {
     const original = (id, group) => {
       const target = masterTargetFor(corpus, id);

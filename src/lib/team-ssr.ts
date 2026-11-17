@@ -16,7 +16,7 @@ import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangS
 import { loadSeasonModel } from '../../js/season-ui-state.js';
 import { HERO_SUMMARY_FILE, parseHeroSummaries } from '../../js/hero-summaries.js';
 import { TACTIC_SUMMARY_FILE, parseTacticSummaries } from '../../js/tactic-summaries.js';
-import { readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
+import { lookupJaPublicationSnapshot, readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog } from './team-detail-routes.ts';
 import { lookupJaNameResolver, lookupRouteHandles } from './lookup-pages.ts';
 import { tacticDisplayTable } from './tactic-display.ts';
@@ -93,7 +93,7 @@ export interface TeamDetailParts {
 }
 
 interface QilueContext {
-  /** `qilueLookupTable` của lookup-catalog.json đã pin trong publication: mã kỳ lược → tên vi/zh, loại, độ hiếm. */
+  /** `qilueLookupTable` của lookup-catalog.json đã pin trong publication: mã kỳ lược → tên vi/zh/ja, loại, độ hiếm. */
   table: Json;
   /** Bản ghi index cùng generation theo `sourceConfigId`: đội nguồn của dạng kỳ lược chép (`form: copy`). */
   teams: Map<string, Json>;
@@ -101,13 +101,15 @@ interface QilueContext {
 
 let qilueContext: Promise<QilueContext> | undefined;
 
-/** Bảng tra kỳ lược + index đội cho section Kỳ lược của trang chi tiết (một lần cho cả lần build, dùng chung vi/zh/llms). */
+/** Bảng tra kỳ lược + index đội cho section Kỳ lược của trang chi tiết (một lần cho cả lần build, dùng chung mọi bản và llms). */
 function qilueOptions() {
   return qilueContext ??= (async () => {
     const env = await prepare();
     const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
+    // Tên Nhật của mục kỳ lược: cùng lớp lookup-ja đã kiểm mà trang Tra cứu `/ja/` dùng.
+    const ja = await lookupJaPublicationSnapshot();
     const rows: Json[] = parse(env.website.recommended.files['index.json'])?.records ?? [];
-    return { table: qilueLookupTable(catalog), teams: new Map(rows.map((row) => [row.sourceConfigId, row])) };
+    return { table: qilueLookupTable(catalog, ja.document), teams: new Map(rows.map((row) => [row.sourceConfigId, row])) };
   })();
 }
 

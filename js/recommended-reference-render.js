@@ -744,11 +744,13 @@ const legacyTitle=(content,fallback)=>sourceText()
 const QILUE_KINDS=[['qilueStrategies','qilue-strategy:'],['qilueCards','qilue-card:']];
 
 /**
- * Bảng tra kỳ lược `{mã → {nameVi, nameZh, type, rarity}}` từ `lookup-catalog.json` (`qilueStrategies` + `qilueCards`;
- * phương lược có `type`/`rarity` là `null`). Build dựng một lần từ catalog đã pin, dùng chung cho bản vi, zh và llms.
+ * Bảng tra kỳ lược `{mã → {nameVi, nameZh, nameJa, type, rarity}}` từ `lookup-catalog.json` (`qilueStrategies` + `qilueCards`;
+ * phương lược có `type`/`rarity` là `null`) và tên Nhật của `data/lookup-ja.json` (`jaEntries`: `entries` hoặc cả tài liệu;
+ * vắng thì `nameJa` là `null`). Build dựng một lần từ catalog đã pin, dùng chung cho mọi bản và llms.
  * Catalog thiếu nhóm, mã sai tiền tố/trùng hay thiếu tên là dữ liệu hỏng: ném lỗi thay vì dựng ô thiếu.
  */
-export function qilueLookupTable(catalog) {
+export function qilueLookupTable(catalog,jaEntries=null) {
+  const entries=jaEntries && typeof jaEntries === 'object' && jaEntries.entries && typeof jaEntries.entries === 'object' ? jaEntries.entries : jaEntries ?? {};
   const table={};
   for (const [key,prefix] of QILUE_KINDS) {
     const rows=catalog?.[key];
@@ -759,18 +761,21 @@ export function qilueLookupTable(catalog) {
       if (typeof id !== 'string' || !id.startsWith(prefix) || Object.hasOwn(table,id) || !names.every(name=>typeof name === 'string' && name.trim())) {
         throw new Error(`Lookup catalog has an invalid ${key} row: ${String(id)}`);
       }
-      table[id]=Object.freeze({nameVi:row.nameVi.trim(),nameZh:row.nameZh.trim(),type:row.type ?? null,rarity:row.rarity ?? null});
+      const ja=Object.hasOwn(entries,id) && typeof entries[id]?.name === 'string' && entries[id].name.trim() ? entries[id].name.trim() : null;
+      table[id]=Object.freeze({nameVi:row.nameVi.trim(),nameZh:row.nameZh.trim(),nameJa:ja,type:row.type ?? null,rarity:row.rarity ?? null});
     }
   }
   return Object.freeze(table);
 }
 
-/** Một mục kỳ lược theo ngôn ngữ trang; mã không có trong bảng tra là dữ liệu publish hỏng nên build dừng. */
+/** Một mục kỳ lược theo ngôn ngữ trang; mã không có trong bảng tra (hay thiếu tên của bản đang dựng) là dữ liệu hỏng nên build dừng. */
 function qilueItem(table,id,prefix) {
   if (typeof id !== 'string' || !id.startsWith(prefix) || !Object.hasOwn(table,id)) throw new Error(`Unknown qilue id: ${String(id)}`);
   const row=table[id];
+  const name=L(row.nameVi,row.nameZh,row.nameJa ?? '');
+  if (!name) throw new Error(`Qilue id has no name for locale ${currentLocale()}: ${id}`);
   const path=lookupItemPath(id);
-  return {id,name:isZh() ? row.nameZh : row.nameVi,type:row.type,rarity:row.rarity,href:path ? localePath(path) : null};
+  return {id,name,type:row.type,rarity:row.rarity,href:path ? localePath(path) : null};
 }
 
 /**
@@ -797,7 +802,7 @@ function qilueModel(qilue,table,teams) {
 }
 
 /** Nhãn hiệp của ô thứ `index` (thẻ đầu dùng ở hiệp 2). */
-const qilueRound=index=>L(`Hiệp ${index+2}`,`第${index+2}回合`);
+const qilueRound=index=>L(`Hiệp ${index+2}`,`第${index+2}回合`,`第${index+2}ターン`);
 
 /**
  * Một thẻ kỳ lược: tên, nhãn loại có màu (`data-tone`), dấu Hiếm — cùng class nhãn với Tra cứu (`lookup-qilue-tag`,
@@ -815,21 +820,21 @@ function qilueCard(card) {
   ];
   const attrs={class:card.href ? 'detail-qilue-card is-link' : 'detail-qilue-card','data-tone':card.type};
   return card.href
-    ? t('a',{...attrs,href:card.href,title:L('Mở trong Tra cứu','在图鉴查询中打开')},children)
+    ? t('a',{...attrs,href:card.href,title:L('Mở trong Tra cứu','在图鉴查询中打开','図鑑で開く')},children)
     : t('span',attrs,children);
 }
 
 /** Chip phương lược, lưới "Hiệp 2…" (có thứ tự) hoặc chú thích + chip thẻ (không thứ tự) của một mô hình kỳ lược. */
 function qilueBody(model) {
   const strategy=model.strategy ? t('p',{class:'detail-qilue-strategy'},[
-    t('span',{class:'detail-qilue-label'},L('Phương lược','作戰方略')),
+    t('span',{class:'detail-qilue-label'},L('Phương lược','作戰方略','方略')),
     model.strategy.href
-      ? t('a',{class:'detail-qilue-chip is-link',href:model.strategy.href,title:L('Mở trong Tra cứu','在图鉴查询中打开')},model.strategy.name)
+      ? t('a',{class:'detail-qilue-chip is-link',href:model.strategy.href,title:L('Mở trong Tra cứu','在图鉴查询中打开','図鑑で開く')},model.strategy.name)
       : t('span',{class:'detail-qilue-chip'},model.strategy.name),
   ]) : null;
   if (!model.ordered) {
     return [strategy,
-      t('p',{class:'detail-qilue-note'},L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序')),
+      t('p',{class:'detail-qilue-note'},L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序','出典にターン順の記載なし')),
       t('ul',{class:'detail-qilue-chips'},model.cards.map(card=>t('li',{},qilueCard(card)))),
     ];
   }
@@ -840,14 +845,14 @@ function qilueBody(model) {
 }
 
 /** Dòng gọn cho chữ thuần (llms): "Kỳ lược (Mưu tính): Hiệp 2 …, …" hoặc danh sách thẻ kèm câu "không ghi thứ tự". */
-function qilueLine(model,prefix=L('Kỳ lược','奇略')) {
-  const strategy=model.strategy ? L(` (${model.strategy.name})`,`（${model.strategy.name}）`) : '';
-  const separator=L(', ','、');
+function qilueLine(model,prefix=L('Kỳ lược','奇略','奇略')) {
+  const strategy=model.strategy ? L(` (${model.strategy.name})`,`（${model.strategy.name}）`,`（${model.strategy.name}）`) : '';
+  const separator=L(', ','、','、');
   if (!model.ordered) {
     const names=model.cards.map(card=>card.name).join(separator);
-    return `${prefix}${strategy}${L(': ','：')}${names}${L('. ','。')}${L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序')}${L('.','。')}`;
+    return `${prefix}${strategy}${L(': ','：','：')}${names}${L('. ','。','。')}${L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序','出典にターン順の記載なし')}${L('.','。','。')}`;
   }
-  return `${prefix}${strategy}${L(': ','：')}${model.cards.map((card,index)=>`${qilueRound(index)} ${card.name}`).join(separator)}`;
+  return `${prefix}${strategy}${L(': ','：','：')}${model.cards.map((card,index)=>`${qilueRound(index)} ${card.name}`).join(separator)}`;
 }
 
 /**
@@ -859,21 +864,21 @@ function qilueSection(model,{plainText=false}={}) {
   if (plainText) {
     const lines=model.sources
       ? [
-        L(`Dùng kỳ lược của: ${model.sources.map(source=>source.name).join(', ')}`,`沿用此队奇略：${model.sources.map(source=>source.name).join('、')}`),
-        ...model.sources.filter(source=>source.model).map(source=>qilueLine(source.model,model.sources.length > 1 ? `${source.name} · ${L('Kỳ lược','奇略')}` : undefined)),
+        L(`Dùng kỳ lược của: ${model.sources.map(source=>source.name).join(', ')}`,`沿用此队奇略：${model.sources.map(source=>source.name).join('、')}`,`次の編成の奇略を使用：${model.sources.map(source=>source.name).join('、')}`),
+        ...model.sources.filter(source=>source.model).map(source=>qilueLine(source.model,model.sources.length > 1 ? `${source.name} · ${L('Kỳ lược','奇略','奇略')}` : undefined)),
       ]
       : [qilueLine(model)];
     return t('section',{class:sectionClass},lines.map(line=>t('p',{class:'detail-qilue-line'},line)));
   }
-  const title=t('h2',{},L('Kỳ lược','奇略'));
+  const title=t('h2',{},L('Kỳ lược','奇略','奇略'));
   if (!model.sources) return t('section',{class:sectionClass},[title,...qilueBody(model)]);
   const links=model.sources.flatMap((source,index)=>[
-    index ? L(', ','、') : null,
+    index ? L(', ','、','、') : null,
     source.href ? t('a',{class:'detail-qilue-team',href:source.href,dataset:{teamDetailLink:''}},source.name) : t('span',{class:'detail-qilue-team'},source.name),
   ]);
   return t('section',{class:sectionClass},[
     title,
-    t('p',{class:'detail-qilue-copy'},[L('Dùng kỳ lược của:','沿用此队奇略：'),' ',...links]),
+    t('p',{class:'detail-qilue-copy'},[L('Dùng kỳ lược của:','沿用此队奇略：','次の編成の奇略を使用：'),' ',...links]),
     ...model.sources.filter(source=>source.model).map(source=>t('div',{class:'detail-qilue-source'},[
       model.sources.length > 1 ? t('p',{class:'detail-qilue-source-name'},source.name) : null,
       ...qilueBody(source.model),

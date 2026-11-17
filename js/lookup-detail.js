@@ -132,21 +132,28 @@ const CLOSED_VALUES = {
  * (`targetVi`, đúng năm giá trị; bộ giá trị hợp lệ do js/lookup-data.js kiểm). Chữ Hán theo tên trong game (phồn thể) nên tách khỏi `ZH_VALUES`: "Một quân ta" /
  * "Một quân địch" ở đó là nhãn mục tiêu chiến pháp (giản thể) và không được đổi.
  */
-const QILUE_LABELS = Object.freeze({
-  type: { dung: ["Dũng", "勇"], muu: ["Mưu", "謀"], phu: ["Phụ", "輔"], sach: ["Sách", "策"], te: ["Tế", "濟"] },
-  rarity: { common: ["Thường", "普通"], rare: ["Hiếm", "稀有"] },
-  target: {
-    "Toàn quân ta": ["Toàn quân ta", "我軍全體"], "Một quân ta": ["Một quân ta", "我軍單體"], "Nhóm quân ta": ["Nhóm quân ta", "我軍群體"],
-    "Một quân địch": ["Một quân địch", "敵軍單體"], "Toàn quân địch": ["Toàn quân địch", "敵軍全體"],
-  },
+// Bản ja: loại thẻ theo cách wiki Nhật gọi (勇/謀/補/策/済のカード); độ hiếm chưa thấy trong nguồn Nhật nên giữ chữ Hán
+// (pipeline/ja-glossary.json). Ba bảng riêng theo `kind` để mỗi bộ nhãn có đúng một biến thể cho mỗi locale.
+const QILUE_TYPE_LABELS = Object.freeze({
+  dung: ["Dũng", "勇", "勇"], muu: ["Mưu", "謀", "謀"], phu: ["Phụ", "輔", "補"], sach: ["Sách", "策", "策"], te: ["Tế", "濟", "済"],
+});
+const QILUE_RARITY_LABELS = Object.freeze({ common: ["Thường", "普通", "普通"], rare: ["Hiếm", "稀有", "稀有"] });
+const QILUE_TARGET_LABELS = Object.freeze({
+  "Toàn quân ta": ["Toàn quân ta", "我軍全體", "自軍全体"], "Một quân ta": ["Một quân ta", "我軍單體", "自軍単体"],
+  "Nhóm quân ta": ["Nhóm quân ta", "我軍群體", "自軍群体"], "Một quân địch": ["Một quân địch", "敵軍單體", "敵軍単体"],
+  "Toàn quân địch": ["Toàn quân địch", "敵軍全體", "敵軍全体"],
 });
 /** Nhãn kỳ lược theo ngôn ngữ (`kind`: `type` | `rarity` | `target`); giá trị ngoài bảng trả `null` (không hiện). */
 export function qilueLabel(kind, value, locale = currentLocale()) {
-  const pair = Object.hasOwn(QILUE_LABELS, kind) && Object.hasOwn(QILUE_LABELS[kind], value) ? QILUE_LABELS[kind][value] : null;
-  return pair ? pick(locale, ...pair) : null;
+  const key = typeof value === "string" ? value : "";
+  const tuple = kind === "type" ? (Object.hasOwn(QILUE_TYPE_LABELS, key) ? QILUE_TYPE_LABELS[key] : null)
+    : kind === "rarity" ? (Object.hasOwn(QILUE_RARITY_LABELS, key) ? QILUE_RARITY_LABELS[key] : null)
+      : kind === "target" ? (Object.hasOwn(QILUE_TARGET_LABELS, key) ? QILUE_TARGET_LABELS[key] : null)
+        : null;
+  return tuple ? pick(locale, ...tuple) : null;
 }
 /** Mã loại thẻ theo thứ tự hiển thị (Dũng → Mưu → Phụ → Sách → Tế). */
-export const QILUE_TYPE_ORDER = Object.freeze(Object.keys(QILUE_LABELS.type));
+export const QILUE_TYPE_ORDER = Object.freeze(Object.keys(QILUE_TYPE_LABELS));
 /** Khóa so khớp không phân biệt hoa thường của bộ giá trị đóng (dữ liệu client viết "Phá Trận" lẫn "Phá trận"). */
 const CLOSED_VALUES_FOLDED = new Map(Object.entries(CLOSED_VALUES).map(([vi, row]) => [vi.toLocaleLowerCase("vi"), row]));
 /** Dịch một giá trị đóng sang ngôn ngữ `locale` (không phải bản Việt); không có trong bảng → `null`. */
