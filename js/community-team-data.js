@@ -3,7 +3,7 @@
 
 import { classifyName, createEntityIndex } from './analyze-map.js';
 import { heroFamilyId } from './hero-identity.js';
-import { L, currentLocale } from './i18n.js';
+import { L, currentLocale, normalizeLocale, pick } from './i18n.js';
 import { heroPortrait } from './hero-portrait.js';
 import { createLookupPayloadLoader } from './lookup-data.js';
 import { createTacticIdResolver } from './lookup-ids.js';
@@ -45,7 +45,7 @@ export function loadTeamBooks(loadBytes = createByteLoader()) {
 /** Nhãn hiển thị của một mục từ điển: bản Việt tên Việt, bản Trung chữ Hán gốc (lùi về tên Việt khi thiếu). */
 export function recordLabel(record, locale = currentLocale()) {
   if (!record) return '';
-  return locale === 'zh' ? String(record.chinese || '').trim() || record.viet || '' : record.viet || '';
+  return pick(locale, record.viet || '', String(record.chinese || '').trim() || record.viet || '');
 }
 
 /**
@@ -90,7 +90,8 @@ export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}
 
 /** `<datalist>` nhãn → id đã sắp theo nhãn, dùng chung cho các ô nhập tướng/chiến pháp. */
 export function datalistOptions(labels, locale = currentLocale()) {
-  return [...labels.keys()].sort((a, b) => a.localeCompare(b, locale === 'zh' ? 'zh' : 'vi'));
+  const collation = normalizeLocale(locale);
+  return [...labels.keys()].sort((a, b) => a.localeCompare(b, collation));
 }
 
 /** Nhãn binh chủng theo locale. */
@@ -108,7 +109,7 @@ export function troopLabel(troop) {
 /** Nhãn mùa theo locale. */
 export function seasonLabel(season, locale = currentLocale()) {
   if (!season) return '';
-  return (locale === 'zh' ? season.labelZh : season.labelVi) || season.labelVi || season.labelZh || String(season.id ?? '');
+  return pick(locale, season.labelVi, season.labelZh) || season.labelVi || season.labelZh || String(season.id ?? '');
 }
 
 /** Ô tướng: chân dung + tên theo locale. `lexicon` null (từ điển chưa tải) → chỉ hiện id thô. */

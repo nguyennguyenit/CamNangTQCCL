@@ -25,7 +25,7 @@ import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } f
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
 import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
-import { localePath } from '../../js/i18n.js';
+import { contentLocaleIsVietnamese, localePath } from '../../js/i18n.js';
 import type { SiteLocale } from './locale-routes';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -127,7 +127,7 @@ async function heroLinkBuilder(locale: SiteLocale) {
     for (const row of rows) {
       const id = resolve.hero(text(row.raw) || null, text(row.vi) || null);
       const route = id ? routes.byId.get(id) : undefined;
-      const name = text(row.shown) || (locale === 'zh' ? text(row.raw) : text(row.vi));
+      const name = text(row.shown) || (!contentLocaleIsVietnamese(locale) ? text(row.raw) : text(row.vi));
       if (!route || !name || seen.has(route.id)) continue;
       seen.add(route.id);
       out.push({ name, path: localePath(route.path, locale) });
@@ -272,23 +272,23 @@ export interface RecommendedDetailProps {
 
 /** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
 export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
-  if (locale === 'zh') return entry.nameZh?.trim() || entry.sourceConfigId;
+  if (!contentLocaleIsVietnamese(locale)) return entry.nameZh?.trim() || entry.sourceConfigId;
   return entry.displayNameVi || VI_UNAVAILABLE;
 }
 
 export async function recommendedDetailPaths(locale: SiteLocale) {
   const catalog = await teamDetailCatalog();
-  const seasonNames = locale === 'zh' ? await recommendedSeasonNamesRaw() : null;
+  const seasonNames = !contentLocaleIsVietnamese(locale) ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
   const links = await heroLinkBuilder(locale);
   const { defaultSourceSeasonId } = await seasonPages();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
-    locale === 'zh' ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
+    !contentLocaleIsVietnamese(locale) ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
   ));
   return Promise.all(catalog.recommended.map(async (entry) => {
     // Bản zh: mã mùa trung tính + tên mùa chữ Hán gốc + mã danh mục gốc (交戰/開荒); bản vi giữ nhãn đã dịch.
-    const scope = locale === 'zh'
+    const scope = !contentLocaleIsVietnamese(locale)
       ? [entry.sourceSeasonCode, entry.sourceSeasonId ? seasonNames!.get(entry.sourceSeasonId) : null, entry.sourceCategoryId]
       : [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi];
     const record = await recommendedDetailRecord(entry);
@@ -344,7 +344,7 @@ export async function legacyDetailPaths(locale: SiteLocale) {
   const resolve = await zhNameResolver();
   const links = await heroLinkBuilder(locale);
   let title: (entry: LegacyRouteEntry) => string;
-  if (locale === 'zh') {
+  if (!contentLocaleIsVietnamese(locale)) {
     title = (entry) => lineupTitleZh(heroesById.get(entry.legacyTeamId) ?? [], resolve) ?? entry.legacyTeamId;
   } else {
     title = (entry) => {
@@ -354,7 +354,7 @@ export async function legacyDetailPaths(locale: SiteLocale) {
   }
   // Tên đội trùng nhau giữa các nguồn (và cả trong một nguồn): tiêu đề mang nhãn nguồn, còn trùng thì số thứ tự.
   // Bản vi giữ khoá cũ (tên gốc) để tiêu đề đã phát hành không đổi.
-  const nameKey = locale === 'zh' ? title : (entry: LegacyRouteEntry) => entry.nickname || entry.name || entry.legacyTeamId;
+  const nameKey = !contentLocaleIsVietnamese(locale) ? title : (entry: LegacyRouteEntry) => entry.nickname || entry.name || entry.legacyTeamId;
   const byName = detailTitleRanks(catalog.legacy, nameKey);
   const bySource = detailTitleRanks(catalog.legacy, (entry) => JSON.stringify([nameKey(entry), entry.source]));
   return catalog.legacy.map((entry) => {
@@ -362,7 +362,7 @@ export async function legacyDetailPaths(locale: SiteLocale) {
     const pageLabel = [
       title(entry),
       byName(entry).size > 1 && entry.source
-        ? (locale === 'zh' ? legacyLabelZh('source', entry.source, 'zh') : (SOURCE_LABEL as Record<string, string>)[entry.source]) || entry.source
+        ? (!contentLocaleIsVietnamese(locale) ? legacyLabelZh('source', entry.source, 'zh') : (SOURCE_LABEL as Record<string, string>)[entry.source]) || entry.source
         : null,
       ordinal > 1 ? String(ordinal) : null,
     ].filter(Boolean).join(' · ');
@@ -401,7 +401,7 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
   const resolve = await zhNameResolver();
   const links = await heroLinkBuilder(locale);
   let title: (entry: KhaiHoangRouteEntry) => string;
-  if (locale === 'zh') {
+  if (!contentLocaleIsVietnamese(locale)) {
     title = (entry) => lineupTitleZh(heroesById.get(entry.khaiHoangTeamId) ?? [], resolve) ?? entry.handle;
   } else {
     // Nguồn chưa dịch xong không được lộ chữ Hán ra tiêu đề công khai.
@@ -409,7 +409,7 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
   }
   const ranks = detailTitleRanks(catalog.khaiHoang, title);
   return catalog.khaiHoang.map((entry) => {
-    const ordinal = locale === 'zh' ? ranks(entry).ordinal : 1;
+    const ordinal = !contentLocaleIsVietnamese(locale) ? ranks(entry).ordinal : 1;
     const props: KhaiHoangDetailProps = {
       entry,
       title: title(entry),

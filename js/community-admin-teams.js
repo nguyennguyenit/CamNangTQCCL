@@ -6,10 +6,11 @@
 // đã export và không dùng ở cấp module). Server mới là nơi kiểm quyền; ở đây chỉ ẩn nút và dịch lỗi theo `code`.
 // Mọi văn bản người dùng (tiêu đề, phân tích, tên) là text node.
 
-import { L, currentLocale } from './i18n.js';
+import { L, currentLocale, htmlLang, isSiteLocale } from './i18n.js';
 import { el, icon, svgNode, variantNameNodes } from './render.js';
 import { api, avatar, describeError, displayName, timeNode } from './community-api.js';
 import { createTeamLexicon, loadTeamDictionaries, seasonLabel, tacticName, troopLabel } from './community-team-data.js';
+import { textLanguageName } from './community-team-ui.js';
 import { heroPortrait } from './hero-portrait.js';
 import { treeToDom } from './view-tree.js';
 import { adminStatus, button, emptyNote, formField, glyph, imageTile, pagedList } from './community-admin.js';
@@ -115,7 +116,7 @@ function analysisNodes(team, detail, lexicon, imageCount) {
   if (rows.length) {
     nodes.push(el('div', { class: 'adm-team-block' }, [
       el('h4', { class: 'adm-team-block-title' }, L('Phân tích của tác giả', '作者分析')),
-      el('dl', { class: 'adm-team-fields', lang: team.textLang === 'zh' ? 'zh-Hans' : 'vi' }, rows),
+      el('dl', { class: 'adm-team-fields', lang: htmlLang(team.textLang) }, rows),
     ]));
   }
   nodes.push(el('p', { class: 'adm-hint' }, imagesNote(imageCount)));
@@ -205,9 +206,8 @@ function teamItem(team, { lexicon, status, counts, paged, onChanged }) {
       }, heroIdentity(lexicon, id, 'adm-team-portrait')))),
       el('span', { class: 'adm-team-chips' }, [
         el('span', { class: 'adm-team-chip' }, troopLabel(team.troop)),
-        team.textLang === 'vi' || team.textLang === 'zh'
-          ? el('span', { class: 'adm-team-chip', title: L('Ngôn ngữ phần phân tích', '分析内容的语言') },
-            team.textLang === 'zh' ? L('Tiếng Trung', '中文') : L('Tiếng Việt', '越南语'))
+        isSiteLocale(team.textLang)
+          ? el('span', { class: 'adm-team-chip', title: L('Ngôn ngữ phần phân tích', '分析内容的语言') }, textLanguageName(team.textLang))
           : null,
       ]),
     ]),

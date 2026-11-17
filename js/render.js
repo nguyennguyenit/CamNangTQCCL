@@ -3,7 +3,7 @@
 // trực tiếp cho phần chỉ có ở trình duyệt (chrome tương tác, `seasonConfigDetail`, các công cụ).
 
 import { legacyLabelZh, sourceName, tacticDisplayName } from './recommended-reference-state.js';
-import { L, currentLocale, withLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale, withLocale } from './i18n.js';
 import { h, treeToDom, enableControl } from './view-tree.js';
 
 /** Helper tạo element gọn. */
@@ -79,13 +79,14 @@ export function icon(children, { size = 18, stroke = 1.8, viewBox = "0 0 24 24" 
 }
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
-const isZh = () => currentLocale() === "zh";
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
 /**
  * Chữ công khai của một trường nguồn. Bản vi: chuỗi còn chữ Hán không được hiện (dùng nhãn dự phòng).
  * Bản zh: dữ liệu không áp bản dịch nên chữ Hán gốc là nội dung chính, hiện nguyên.
  */
 const publicText = (value, fallback = L("Nội dung tiếng Việt chưa sẵn sàng", "内容尚未就绪")) =>
-  typeof value === "string" && value.trim() && (isZh() || !CJK_TEXT.test(value)) ? value.trim() : fallback;
+  typeof value === "string" && value.trim() && (sourceText() || !CJK_TEXT.test(value)) ? value.trim() : fallback;
 /** Giữ tiền tố bản cải tạo của chiến pháp và dàn dấu phân cách như các nhãn trên thẻ đội. */
 export const formatModifiedTactic = value => typeof value === "string"
   ? value.replace(/^(Tinh|Chuyển|Thác|精|轉|拓)\s*[·・]\s*/u, "$1 · ")
@@ -93,7 +94,7 @@ export const formatModifiedTactic = value => typeof value === "string"
 /** Tên chiến pháp lưu trong dữ liệu → tên hiển thị của trang (bản vi: `viet` hiện hành của danh mục; bản zh: chữ Hán nguồn). */
 const tacticName = (value) => tacticDisplayName(sourceName(value));
 /** Văn xuôi tác giả viết bằng tiếng Việt (ghi chú, hướng dẫn): bản zh bỏ hẳn để trang không trộn hai ngôn ngữ. */
-const viProse = (value) => (isZh() ? "" : value);
+const viProse = (value) => (sourceText() ? "" : value);
 
 const UNIT_CLASS = { "Kỵ": "u-ky", "Cung": "u-cung", "Thương": "u-thuong", "Khiên": "u-khien" };
 /** Nhãn loại binh của dữ liệu cũ theo ngôn ngữ trang (class màu vẫn tra theo giá trị gốc). */
@@ -120,7 +121,7 @@ const sourceTextLines = (value) => (typeof value === "string" ? value.replace(/\
 const sourceFieldText = (value) => {
   const text = sourceTextLines(value);
   if (!text.trim()) return null;
-  return CJK_TEXT.test(text) && !isZh() ? publicText(text) : text;
+  return CJK_TEXT.test(text) && !sourceText() ? publicText(text) : text;
 };
 
 /**
@@ -163,7 +164,7 @@ export function coexistCounts(teams = []) {
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
-  const zh = isZh();
+  const zh = sourceText();
   if (reference?.source) {
     const empty = () => L("Chưa có dữ liệu", "暂无数据");
     // Ô trống giữ nhãn "chưa có dữ liệu"; bản zh bỏ ô có chữ mà không tra được chữ Hán.
@@ -243,7 +244,7 @@ function zhCoexistHeroName(value) {
  */
 export function coexistGroupLabel(label) {
   const value = typeof label === "string" ? label.trim() : "";
-  if (!isZh()) return value || "Nhóm";
+  if (!sourceText()) return value || "Nhóm";
   if (CJK_TEXT.test(value)) return value;
   const number = value.match(/^Cùng tồn\s*(\d+)$/iu)?.[1];
   return number ? `共存 ${number}` : "分组";
@@ -727,7 +728,7 @@ function khaihoangConfigRowTree(team, { selected = "", locale } = {}) {
     const variants = team.variants || [];
     const chips = [khaihoangConfigChip(L("Mặc định", "默认"), "", selected)].concat(
       variants.map((v, index) => khaihoangConfigChip(
-        isZh() ? `配置 ${index + 1}` : v.displayLabel || `Cấu hình ${index + 1}`, v.id, selected,
+        L(v.displayLabel || `Cấu hình ${index + 1}`, `配置 ${index + 1}`), v.id, selected,
       )),
     );
     return t("div", { class: "kh-config-row", role: "group", "aria-label": L(`Chọn cấu hình ${team.title}`, `选择配置：${khaihoangTitle(team)}`) }, chips);
@@ -772,7 +773,7 @@ function khaihoangTeamCardTree(team, href) {
 }
 
 /** Tên mỏ theo ngôn ngữ trang (`Mỏ 4` → `矿 4`). */
-const mineName = (value) => (isZh() ? String(value ?? "").replace(/^Mỏ\s*/u, "矿 ") : value);
+const mineName = (value) => L(value, String(value ?? "").replace(/^Mỏ\s*/u, "矿 "));
 
 /** Nhóm Chạm Sứ độc lập, giữ nguyên tướng và chiến pháp. */
 function chamSuTeamCard(team) {
@@ -1027,7 +1028,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
   const {config,team} = row;
   const names = new Map();
   // Bản zh hiện tên chữ Hán gốc của từ điển; khóa ref: tướng dựng từ tên Việt, chiến pháp và binh thư theo `id` cố định của dòng.
-  const zh = isZh();
+  const zh = sourceText();
   for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
     if (kind === 'book' && !bookRowId(item)) continue;
     const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'book' ? item.id : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');

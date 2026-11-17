@@ -5,7 +5,7 @@
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { websiteDisplayPublicationSnapshot } from '../../lib/root-static-artifacts.ts';
 import { teamDetailCatalog } from '../../lib/team-detail-routes';
-import { pick } from '../../../js/i18n.js';
+import { LOCALE_PREFIX, pick } from '../../../js/i18n.js';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
@@ -13,8 +13,8 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
-const prefix = locale === 'zh' ? '/zh' : '';
+const t = (...variants: string[]): string => pick(locale, ...variants);
+const prefix = LOCALE_PREFIX[locale];
 // Layout chỉ nhúng `{l}` cho `pageKind="detail"`; trang này tự nhúng đủ `{r, l, k}` để dựng link nguồn của mọi họ đội
 // (`js/my-teams.js` đăng ký bằng `setTeamRouteHandlesFromJSON`, như js/team-detail.js).
 const catalog = await teamDetailCatalog();
@@ -30,7 +30,7 @@ const registry = JSON.parse(Buffer.from(website.recommended.files['seasons.json'
 const seasonOptions = (Array.isArray(registry?.seasonOptions) ? registry.seasonOptions : [])
   .filter((option: { sourceSeasonId?: unknown }) => typeof option?.sourceSeasonId === 'string' && option.sourceSeasonId)
   .map((option: { sourceSeasonId: string; displayCode?: string; displayNameVi?: string; nameRaw?: string }) => {
-    const name = locale === 'zh' ? option.nameRaw : option.displayNameVi;
+    const name = pick(locale, option.displayNameVi, option.nameRaw);
     return { id: option.sourceSeasonId, label: [option.displayCode, name].filter(Boolean).join(' · ') || option.sourceSeasonId };
   });
 const seasonTable = JSON.stringify(seasonOptions).replace(/</g, '\\u003c');

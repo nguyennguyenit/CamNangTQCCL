@@ -35,7 +35,7 @@ interface Props {
 
 const { locale, path, idPrefix, title, description, lead, effectiveDate, sections } = Astro.props;
 const canonicalUrl = new URL(localePath(path, locale), Astro.site);
-const effectiveLabel = locale === 'zh' ? effectiveDate : effectiveDate.split('-').reverse().join('/');
+const effectiveLabel = pick(locale, effectiveDate.split('-').reverse().join('/'), effectiveDate);
 const effectiveText = pick(locale, 'Có hiệu lực từ', '生效日期');
 const pageTitle = pick(locale, `${title} — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`, `${title} — 三国志战略版攻略手册`);
 ---

@@ -3,11 +3,12 @@ import { legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from '.
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
-import { L, currentLocale, localePath, withLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale, localePath, withLocale } from './i18n.js';
 import { enableControl } from './view-tree.js';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
-const isZh = () => currentLocale() === 'zh';
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
 const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内容尚未就绪');
 /**
  * Chữ công khai của một giá trị nguồn. Bản vi: chuỗi còn chữ Hán không được hiện. Bản zh: dữ liệu không áp
@@ -16,18 +17,18 @@ const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内�
 const text = value => {
   if (typeof value !== 'string' || !value.trim()) return unavailable();
   // Tên không tra được chữ Hán bị thay bằng "—" để không lộ tiếng Việt ở bản zh.
-  if (isZh()) return sourceName(value.trim()) || UNRESOLVED_NAME;
+  if (sourceText()) return sourceName(value.trim()) || UNRESOLVED_NAME;
   return CJK.test(value) ? unavailable() : value.trim();
 };
 /** Văn xuôi nguồn (ghi chú, mô tả): bản zh chỉ nhận chữ Hán gốc, văn tiếng Việt bị bỏ để trang không trộn ngôn ngữ. */
 const prose = value => {
   if (typeof value !== 'string' || !value.trim()) return null;
-  if (isZh()) return CJK.test(value) ? value.trim() : null;
+  if (sourceText()) return CJK.test(value) ? value.trim() : null;
   return text(value);
 };
 /** Bản zh: tên đã đổi được sang chữ Hán mới hiện; tên không tra được bị bỏ. Bản vi trả nguyên. */
 const zhResolved = value => {
-  if (!isZh()) return value;
+  if (!sourceText()) return value;
   const name = sourceName(String(value ?? ''));
   return CJK.test(name) ? name : null;
 };
@@ -36,7 +37,7 @@ const localizedSlot = (raw,vi) => {
   const hasDisplay = typeof vi === 'string' && Boolean(vi.trim());
   if (!hasSource && !hasDisplay) return {value:null,interactive:false};
   // Bản zh luôn lấy giá trị nguồn (chữ Hán gốc); tên Hán-Việt của dữ liệu cũ được đổi qua `sourceName`.
-  if (isZh()) {
+  if (sourceText()) {
     const value=text(hasSource && typeof raw === 'string' ? raw : vi);
     // Ô chiến pháp/binh thư không tra được chữ Hán thì bỏ hẳn ô, không hiện "—" như một chiến pháp.
     if (value === UNRESOLVED_NAME) return {value:null,interactive:false};
@@ -50,9 +51,9 @@ const localizedSlot = (raw,vi) => {
 
 /** Tên tướng của một ô: bản vi ưu tiên tên Việt, bản zh ưu tiên tên nguồn chữ Hán. */
 const holderName=holder=>{
-  const name=text(isZh() ? holder.nameRaw || holder.displayNameVi || '' : holder.displayNameVi || holder.nameRaw || '');
+  const name=text(sourceText() ? holder.nameRaw || holder.displayNameVi || '' : holder.displayNameVi || holder.nameRaw || '');
   // Rút gọn tên trên giao diện Việt; tên nguồn và danh tính cấu hình vẫn giữ nguyên.
-  return isZh() ? name : name.replace(/^CO Vô Song (Đại Kiều|Tiểu Kiều|Tinh Thái)$/, 'CO $1');
+  return sourceText() ? name : name.replace(/^CO Vô Song (Đại Kiều|Tiểu Kiều|Tinh Thái)$/, 'CO $1');
 };
 
 /** Tên tướng đúng như trang hiển thị theo ngôn ngữ `locale` (dùng cho JSON-LD của trang đội, không phụ thuộc ngôn ngữ toàn cục). */
@@ -190,7 +191,7 @@ export function labelValue(labels,kind,raw) {
 function kindLabel(labels,kind,raw) {
   if (typeof raw !== 'string' || !raw.trim()) return null;
   const value=raw.trim();
-  if (isZh()) return CJK.test(value) ? value : legacyLabelZh(kind,value) ?? null;
+  if (sourceText()) return CJK.test(value) ? value : legacyLabelZh(kind,value) ?? null;
   return labelValue(labels,kind,value) || (CJK.test(value) ? null : value);
 }
 
@@ -356,7 +357,7 @@ const lineupTitle=holders=>(holders || [])
  * (contract bước 6). Bản vi chỉ nhận chuỗi đã có tiếng Việt; bản zh dùng tên chữ Hán nguồn, đội gốc ghép tên tướng.
  */
 function rowDisplayName(row) {
-  if (isZh()) {
+  if (sourceText()) {
     const raw=[row.nameZh].find(value=>typeof value === 'string' && CJK.test(value));
     return raw ? raw.trim() : lineupTitle(row.heroes || row.holders) || unavailable();
   }
@@ -630,7 +631,7 @@ function notesByOwner(record) {
   const alternative=new Map();
   for (const block of blocks) {
     // Bản zh dùng nguyên văn nguồn (`textRaw`), bản vi dùng bản dịch (`textVi`).
-    const value=(isZh() ? block?.textRaw : block?.textVi) || unavailable();
+    const value=(sourceText() ? block?.textRaw : block?.textVi) || unavailable();
     const bucket=block.owner === 'primary' ? primary : block.owner === 'alternative' ? alternative : null;
     if (!bucket) { team.push(value); continue; }
     const index=Number.isInteger(block.holderIndex) ? block.holderIndex : -1;
@@ -673,7 +674,7 @@ function legacyContentSections(content,{title,provenance=[],links=null}={}) {
 }
 
 /** Tiêu đề đội gốc: bản vi dùng biệt danh/tên đội, bản zh ghép tên tướng chữ Hán. */
-const legacyTitle=(content,fallback)=>isZh()
+const legacyTitle=(content,fallback)=>sourceText()
   ? lineupTitle(content.heroes) || fallback
   : content.nickname || content.name || fallback;
 
@@ -754,10 +755,10 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
     ]));
   }
 
-  const seasonValue=isZh()
+  const seasonValue=sourceText()
     ? record.sourceSeasonCode || record.sourceSeasonId
     : [record.sourceSeasonCode || record.sourceSeasonId,record.sourceSeasonNameVi].filter(Boolean).join(' · ');
-  const categoryValue=isZh() ? record.sourceCategoryId : record.sourceCategoryNameVi || record.sourceCategoryId;
+  const categoryValue=sourceText() ? record.sourceCategoryId : record.sourceCategoryNameVi || record.sourceCategoryId;
   out.push(t('section',{class:'detail-section detail-source'},[
     t('h2',{},L('Phạm vi','范围')),
     t('dl',{class:'detail-facts'},[
@@ -770,7 +771,7 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
 }
 
 /** Loại binh gốc của đội cũ (`"Thương(★★★★)"`, `"Kỵ/Cung(…)"`): bản zh đổi từng tên binh sang chữ Hán, giữ phần sao. */
-const rawTypeLabel=value=>isZh()
+const rawTypeLabel=value=>sourceText()
   ? String(value).replace(/^[^(（]+/u,names=>names.split('/').map(name=>unitLabel(name.trim())).join('/'))
   : value;
 

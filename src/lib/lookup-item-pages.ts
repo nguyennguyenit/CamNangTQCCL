@@ -7,7 +7,7 @@ import { isMasterGroup, masterDetailTree, masterTargetFor } from '../../js/looku
 import { effectVersions, isTranslatedZhEffect, isVersionHeading, lookupDisplayName, tacticTypeLabel, zhSafeValue } from '../../js/lookup-detail.js';
 import { lookupCardView, lookupGroupLabels } from '../../js/unified-lookup.js';
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from '../../js/lookup-ids.js';
-import { localePath, pick, withLocale } from '../../js/i18n.js';
+import { contentLocaleIsVietnamese, localePath, pick, withLocale } from '../../js/i18n.js';
 import { treeToHtml } from '../../js/view-tree.js';
 import { portraitUrl } from '../../js/hero-portrait.js';
 import { lookupItemJsonLd } from './structured-data.ts';
@@ -48,7 +48,8 @@ const parts = (...values: unknown[]) => values.map((value) => String(value ?? ''
 
 /** Mô tả meta của một mục theo nhóm; chỉ dùng chữ có thật của bản ghi (bản zh bỏ chữ chỉ có tiếng Việt). */
 function describe(group: LookupGroup, item: Json, locale: SiteLocale): string {
-  const zh = locale === 'zh';
+  // Câu mô tả viết theo ngữ pháp của từng ngôn ngữ: `zh` = viết bằng tiếng Trung (locale mới phải tự khai).
+  const zh = pick(locale, false, true);
   const record: Json = item.record ?? {};
   const name = lookupDisplayName(record, item.nameVi, locale);
   const shown = (value: unknown) => String(zhSafeValue(value, locale) ?? '').trim();
@@ -121,7 +122,7 @@ function itemTree(corpus: Json, summaries: LookupSummaryTables, item: Json, loca
   const { profilePageTree } = createProfileRenderer({ group, openInPage: () => {}, onClose: () => {} });
   const tree = profilePageTree(corpus, id, {
     summaryTable: group === 'heroes' ? summaries.heroes : group === 'tactics' ? summaries.tactics : null,
-    rawName: locale === 'zh' ? summaries.rawName : null,
+    rawName: contentLocaleIsVietnamese(locale) ? null : summaries.rawName,
   });
   if (!tree) throw new Error(`Lookup profile cannot be built: ${id}`);
   return tree;
@@ -154,7 +155,7 @@ export async function lookupItemPage(id: string, locale: SiteLocale, site: URL |
     const groupHref = localePath(lookupGroupPath(group) as string, locale);
     // Tên chữ Hán chỉ ở bản Việt và chỉ khi trang có hiện nó (binh thư bản Việt không hiện chữ Hán, chỉ là khoá tìm);
     // bản Trung không hiện tên Việt nên không khai tên thay thế. Tên dịch `nameZh` (chưa đối chiếu, bản Việt không hiện) không khai.
-    const other = locale === 'zh' || group === 'books' ? null : lookupDisplayName({ ...item.record, nameZh: null }, item.nameVi, 'zh');
+    const other = !contentLocaleIsVietnamese(locale) || group === 'books' ? null : lookupDisplayName({ ...item.record, nameZh: null }, item.nameVi, 'zh');
     return {
       title: `${name} — ${groupLabel} — ${section} — ${siteName}`,
       description,

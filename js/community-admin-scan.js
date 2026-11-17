@@ -7,7 +7,7 @@
 // "chưa tra được" để không mất thông tin. Module không có hiệu ứng khi nạp: chỉ community-admin.js gọi `openScanPanel`
 // (import vòng an toàn, hàm dùng chung chỉ được gọi lúc chạy).
 
-import { L, currentLocale } from './i18n.js';
+import { L, LOCALE_INTL, currentLocale } from './i18n.js';
 import { el } from './render.js';
 import { api, avatar, describeError, displayName, timeNode } from './community-api.js';
 import { draftFromRead } from './analyze-map.js';
@@ -31,12 +31,12 @@ export const SCAN_STATUS_LABEL = {
 /** Phần trăm một chữ số thập phân theo locale (vi: `6,8%`, zh: `6.8%`); không có ô nào thì `—`. */
 function percent(part, whole) {
   if (!(whole > 0)) return '—';
-  return new Intl.NumberFormat(currentLocale() === 'zh' ? 'zh-CN' : 'vi-VN', {
+  return new Intl.NumberFormat(LOCALE_INTL[currentLocale()], {
     style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1,
   }).format(Number(part) / Number(whole));
 }
 
-const count = (value) => new Intl.NumberFormat(currentLocale() === 'zh' ? 'zh-CN' : 'vi-VN').format(Number(value) || 0);
+const count = (value) => new Intl.NumberFormat(LOCALE_INTL[currentLocale()]).format(Number(value) || 0);
 
 /**
  * Bảng tỷ lệ: một DOM cho cả hai bề rộng. Desktop là bảng 5 cột (số căn phải); ≤680px mỗi dòng thành một thẻ

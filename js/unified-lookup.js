@@ -5,7 +5,7 @@
 // Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view (`js/view-tree.js`), không HTML thô.
 
 import { ZH_TRANSLATED_TAG_ATTRS, isTranslatedZhEffect, lookupDisplayName, tacticTypeLabel, zhSafeValue, ratePercentText, zhTranslatedNote } from "./lookup-detail.js";
-import { L, currentLocale, localePath, normalizeLocale, pick } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
 import { normalizeText } from "./filters.js";
 import { bookRowId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
@@ -23,9 +23,9 @@ export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
   heroes: "武将", tactics: "战法", equipment: "装备",
   advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑", books: "兵书",
 });
-/** Nhãn nhóm theo ngôn ngữ chỉ định (`vi` | `zh`). */
+/** Nhãn nhóm theo ngôn ngữ chỉ định (một phần tử của `SITE_LOCALES`). */
 export function lookupGroupLabels(locale = currentLocale()) {
-  return normalizeLocale(locale) === "zh" ? LOOKUP_GROUP_LABELS_ZH : LOOKUP_GROUP_LABELS;
+  return pick(locale, LOOKUP_GROUP_LABELS, LOOKUP_GROUP_LABELS_ZH);
 }
 /** Đơn vị đếm của từng nhóm cho dòng trạng thái ("n tướng · bấm để mở hồ sơ"). */
 export const LOOKUP_GROUP_UNITS = Object.freeze({
@@ -203,7 +203,7 @@ export function searchLookupGroup(corpus, { group, query = "", page = 1, pageSiz
     : source;
   const filtered = filter ? searched.filter(filter) : searched;
   // Bản zh ưu tiên mục khớp tên chữ Hán; bản Việt giữ nguyên thứ tự nguồn.
-  const matches = needle && normalizeLocale(locale) === "zh"
+  const matches = needle && !contentLocaleIsVietnamese(locale)
     ? filtered.map((item, index) => ({ item, index, rank: chineseRank(item, needle) }))
       .sort((a, b) => a.rank - b.rank || a.index - b.index)
       .map(({ item }) => item)
@@ -237,7 +237,7 @@ export function lookupCardView(group, item, locale = currentLocale()) {
   const variant = VARIANT_LABEL[lookup.variant] ?? null;
   const kind = item.group ?? group;
   const hero = kind === "heroes";
-  const text = (vi, zh) => pick(locale, vi, zh);
+  const text = (...variants) => pick(locale, ...variants);
   const stars = hero && Number.isFinite(Number(record.stars)) ? text(`${record.stars} sao`, `${record.stars} 星`) : null;
   const parts = hero
     ? [
@@ -258,7 +258,7 @@ export function lookupCardView(group, item, locale = currentLocale()) {
     variant,
     title: lookupDisplayName(record, item.nameVi, locale),
     // Binh thư bản Việt dùng tên dịch nghĩa: không hiện chữ Hán (kể cả ô chân dung), chữ Hán chỉ là khóa tìm.
-    chinese: kind === "books" && normalizeLocale(locale) !== "zh" ? "" : recordChinese(record),
+    chinese: kind === "books" && contentLocaleIsVietnamese(locale) ? "" : recordChinese(record),
     faction: hero && shown(record.faction, locale) ? shown(record.faction, locale) : null,
     stars,
     meta: parts.filter(Boolean),
@@ -270,7 +270,7 @@ export function lookupCardView(group, item, locale = currentLocale()) {
  * nguồn, không có thì chỉ giữ giá trị dịch được (`zhSafeValue`). Rỗng/không hiện được trả `fallback`.
  */
 function localizedCell(vi, raw, locale, fallback) {
-  if (normalizeLocale(locale) === "zh") {
+  if (!contentLocaleIsVietnamese(locale)) {
     const rawText = typeof raw === "string" ? raw.trim() : "";
     if (rawText) return rawText;
   }
@@ -290,7 +290,7 @@ export function tacticTableRow(record, locale = currentLocale()) {
     target: localizedCell(record.targetViet, record.target, locale, MISSING),
     effect: localizedCell(record.effectViet, record.effect, locale, ""),
     // Ô hiệu ứng bản zh là chữ Hán; chữ dịch từ tiếng Việt mang cờ (bản Việt hiện chữ Việt, không cờ).
-    zhTranslated: normalizeLocale(locale) === "zh" && isTranslatedZhEffect(record),
+    zhTranslated: !contentLocaleIsVietnamese(locale) && isTranslatedZhEffect(record),
     rate: rate === null || rate === undefined || rate === "" ? MISSING : ratePercentText(rate),
   };
 }
@@ -338,7 +338,7 @@ export function lookupCardTree(group, item, locale = currentLocale()) {
 /** Hàng bảng chiến pháp: tên là link hồ sơ mang `data-lookup-id`. */
 export function lookupTableRowTree(item, locale = currentLocale()) {
   const row = tacticTableRow(item.record ?? {}, locale);
-  const chineseName = normalizeLocale(locale) === "zh" ? "" : recordChinese(item.record ?? {});
+  const chineseName = !contentLocaleIsVietnamese(locale) ? "" : recordChinese(item.record ?? {});
   return h("tr", {}, [
     h("th", { scope: "row", class: "lookup-table-cell-name", "data-label": head("name", locale) }, [
       h("a", { class: "lookup-table-name", href: localePath(lookupHref(item.id), locale), "data-lookup-id": item.id }, row.nameVi),
@@ -400,7 +400,7 @@ export function lookupSummaryTrees(group, total, locale = currentLocale(), selec
  * mức khớp tên chữ Hán (`searchLookupGroup`); khi đó trả `null` để ẩn ghi chú.
  */
 export function lookupOrderNote(query = "", locale = currentLocale()) {
-  if (normalizeText(query) && normalizeLocale(locale) === "zh") return null;
+  if (normalizeText(query) && !contentLocaleIsVietnamese(locale)) return null;
   return pick(locale, "Thứ tự theo nguồn", "按来源顺序");
 }
 

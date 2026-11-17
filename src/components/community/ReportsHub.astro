@@ -2,13 +2,14 @@
 // Nội dung trang /chien-bao/: hướng dẫn đóng góp chiến báo (tĩnh) + "Chiến báo của tôi" do js/community-hub.js dựng.
 // Nhận `locale` để bản /zh/ dùng lại nguyên component.
 import { localePath, pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
-  locale: 'vi' | 'zh';
+  locale: SiteLocale;
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const steps = [
   t('Mở trang chi tiết của đội bạn đã dùng (Đội chuẩn, Đội khác hoặc Khai hoang).', '打开你使用过的阵容详情页（推荐阵容、其他阵容或开荒）。'),
   t('Ở mục "Chiến báo thực chiến", đăng nhập bằng Google rồi chọn ảnh chụp màn hình kết quả trận.', '在“实战战报”区域使用 Google 登录，然后选择战斗结果截图。'),

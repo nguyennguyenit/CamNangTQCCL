@@ -13,13 +13,13 @@ import type { SiteLocale } from '../../lib/locale-routes';
 type Props = LegacyDetailProps & { locale: SiteLocale };
 
 const {entry, title, pageLabel, generationId, manifestSha256, legacyTeamsSha256, heroes, savePayload, locale} = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('legacy', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await legacyDetailParts(entry, locale);
-const description = locale === 'zh' ? `现有阵容数据中「${pageLabel}」的原始内容。` : `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`;
+const description = pick(locale, `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`, `现有阵容数据中「${pageLabel}」的原始内容。`);
 const structured = teamDetailJsonLd({
   locale,
   site: Astro.site!,

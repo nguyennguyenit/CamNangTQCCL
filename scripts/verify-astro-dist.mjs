@@ -22,13 +22,13 @@ import {
   sitemapDocument,
 } from "../src/pages/sitemap.xml.ts";
 import { communityTeamPath, communityTeamsIndexable } from "../src/lib/community-teams.ts";
-import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates } from "../src/lib/locale-routes.ts";
+import { HREFLANG, SITE_LOCALES, localizedHtmlPath, mirroredAlternates, switchTargets } from "../src/lib/locale-routes.ts";
 import { PRERENDERED_TEAM_SECTIONS as TEAM_SSR_SECTIONS } from "../src/lib/team-ssr.ts";
 import { validateLookupBundle } from "../js/lookup-data.js";
 import { sourceKeyPart, variantKey } from "../js/my-teams-sources.js";
 import { mySourceIndex, mySourceIndexJson } from "../src/lib/my-teams-source-index.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
-import { localePath } from "../js/i18n.js";
+import { DEFAULT_LOCALE, LOCALE_PREFIX, localePath } from "../js/i18n.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
 const LOOKUP_HUB_PATH = "/tra-cuu/";
@@ -83,7 +83,7 @@ for (const key of Object.keys(SECTION_MARKERS)) {
 }
 
 /**
- * Trang cộng đồng tĩnh ở cả hai ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. Mặc định noindex, ngoài sitemap;
+ * Trang cộng đồng tĩnh ở mọi ngôn ngữ: mount và entry JS riêng, nội dung dựng lúc chạy. Mặc định noindex, ngoài sitemap;
  * riêng danh sách đội (`listing`) noindex hay index tuỳ số đội trong dist nên do `verifyCommunityTeamOutputs` kiểm.
  */
 export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
@@ -94,8 +94,8 @@ export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
 ]));
 
 /**
- * Trang có bản gương vi ↔ zh phải khai đúng `<html lang>` của ngôn ngữ mình và đủ bộ hreflang
- * (vi, zh-Hans, x-default = bản Việt) trỏ URL tuyệt đối của cặp trang.
+ * Trang có bản gương ở mọi locale phải khai đúng `<html lang>` của ngôn ngữ mình và đủ bộ hreflang
+ * (mọi locale + x-default = bản Việt) trỏ URL tuyệt đối của nhóm trang.
  */
 function verifyLocalePair(html, htmlPath, locale, routePath, site) {
   if (!html.includes(`<html lang="${HREFLANG[locale]}"`)) {
@@ -109,14 +109,17 @@ function verifyLocalePair(html, htmlPath, locale, routePath, site) {
 
 /** Output cố định của blog: có kể cả khi API chưa có bài (trang danh sách rỗng, feed rỗng). */
 export const BLOG_FIXED_OUTPUTS = Object.freeze([
-  "bai-viet/index.html",
-  "zh/bai-viet/index.html",
-  "rss.xml",
-  "zh/rss.xml",
+  ...SITE_LOCALES.map((locale) => localizedHtmlPath("bai-viet/index.html", locale)),
+  ...SITE_LOCALES.map((locale) => localizedHtmlPath("rss.xml", locale)),
   "llms.txt",
 ]);
+
+/** Đoạn regex khớp thư mục tiền tố locale (`zh|…`, không gồm bản mặc định không có tiền tố). */
+const LOCALE_DIR_PATTERN = SITE_LOCALES.filter((locale) => LOCALE_PREFIX[locale]).map((locale) => LOCALE_PREFIX[locale].slice(1)).join("|");
+/** Locale của thư mục tiền tố bắt được (`zh` → `zh`); vắng tiền tố → bản mặc định. */
+const localeOfDir = (dir) => (dir ? SITE_LOCALES.find((locale) => LOCALE_PREFIX[locale] === `/${dir}`) : DEFAULT_LOCALE);
 /** Trang bài viết: tập bài do community API quyết định lúc build nên verifier đọc lại từ chính dist. */
-const BLOG_POST_FILE = /^(zh\/)?bai-viet\/([a-z0-9][a-z0-9-]{0,100})\/index\.html$/u;
+const BLOG_POST_FILE = new RegExp(`^(?:(${LOCALE_DIR_PATTERN})\\/)?bai-viet\\/([a-z0-9][a-z0-9-]{0,100})\\/index\\.html$`, "u");
 
 /** Mọi khối JSON-LD của trang; khối không parse được là lỗi build. */
 function jsonLdBlocks(html, path) {
@@ -137,9 +140,9 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
   const origin = new URL(site).origin;
   const posts = [];
   for (const file of postFiles) {
-    const [, zhPrefix, slug] = file.match(BLOG_POST_FILE);
-    const lang = zhPrefix ? "zh" : "vi";
-    const path = `${zhPrefix ? "/zh" : ""}/bai-viet/${slug}/`;
+    const [, localeDir, slug] = file.match(BLOG_POST_FILE);
+    const lang = localeOfDir(localeDir);
+    const path = localePath(`/bai-viet/${slug}/`, lang);
     const url = new URL(path, origin).href;
     const html = await readFile(resolve(distPath, file), "utf8");
     const article = jsonLdBlocks(html, file).find((block) => block?.["@type"] === "BlogPosting");
@@ -147,24 +150,27 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
       !article
       || article.url !== url
       || article.mainEntityOfPage?.["@id"] !== url
-      || article.inLanguage !== (lang === "zh" ? "zh-Hans" : "vi")
+      || article.inLanguage !== HREFLANG[lang]
       || !article.headline
       || !article.author?.name
       || !Number.isFinite(Date.parse(article.datePublished))
       || !Number.isFinite(Date.parse(article.dateModified))
     ) throw new Error(`Blog post lacks valid BlogPosting JSON-LD: ${file}`);
     if (!html.includes(`<link rel="canonical" href="${url}">`)) throw new Error(`Blog post canonical differs from its URL: ${file}`);
-    // Bản dịch (nếu có) đọc từ hreflang của chính trang để sitemap tái tạo đúng cặp `xhtml:link`.
-    const otherHreflang = lang === "zh" ? "vi" : "zh-Hans";
-    const translationHref = html.match(new RegExp(`<link rel="alternate" hreflang="${otherHreflang}" href="([^"]+)">`, "u"))?.[1];
-    const translationPath = translationHref ? new URL(translationHref).pathname : null;
-    if (translationPath && !BLOG_POST_FILE.test(`${translationPath.slice(1)}index.html`)) {
-      throw new Error(`Blog post hreflang points outside the blog: ${file}`);
+    // Bản dịch (nếu có) đọc từ hreflang của chính trang để sitemap tái tạo đúng bộ `xhtml:link`.
+    const translationPaths = { [lang]: path };
+    for (const other of switchTargets(lang)) {
+      const translationHref = html.match(new RegExp(`<link rel="alternate" hreflang="${HREFLANG[other]}" href="([^"]+)">`, "u"))?.[1];
+      if (!translationHref) continue;
+      const translationPath = new URL(translationHref).pathname;
+      const match = `${translationPath.slice(1)}index.html`.match(BLOG_POST_FILE);
+      if (!match || localeOfDir(match[1]) !== other) throw new Error(`Blog post hreflang points outside the blog: ${file}`);
+      translationPaths[other] = translationPath;
     }
-    posts.push({ path, lang, updatedAt: article.dateModified, url, translationPath });
+    posts.push({ path, lang, updatedAt: article.dateModified, url, translationPaths });
   }
-  for (const lang of ["vi", "zh"]) {
-    const indexFile = lang === "zh" ? "zh/bai-viet/index.html" : "bai-viet/index.html";
+  for (const lang of SITE_LOCALES) {
+    const indexFile = localizedHtmlPath("bai-viet/index.html", lang);
     const html = await readFile(resolve(distPath, indexFile), "utf8");
     const collection = jsonLdBlocks(html, indexFile).find((block) => block?.["@type"] === "CollectionPage");
     const listed = (collection?.mainEntity?.blogPost ?? []).map((entry) => entry.url).sort();
@@ -172,7 +178,7 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
     if (!collection || JSON.stringify(listed) !== JSON.stringify(expected)) {
       throw new Error(`Blog index does not list exactly the emitted ${lang} posts: ${indexFile}`);
     }
-    const feed = await readFile(resolve(distPath, lang === "zh" ? "zh/rss.xml" : "rss.xml"), "utf8");
+    const feed = await readFile(resolve(distPath, localizedHtmlPath("rss.xml", lang)), "utf8");
     if (!feed.startsWith('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"')) throw new Error(`Blog RSS is not an RSS 2.0 document (${lang})`);
     const feedLinks = [...feed.matchAll(/<link>([^<]*)<\/link>/gu)].map(([, link]) => link).slice(1).sort();
     if (JSON.stringify(feedLinks) !== JSON.stringify(expected)) throw new Error(`Blog RSS does not list exactly the emitted ${lang} posts`);
@@ -185,7 +191,7 @@ async function verifyBlogOutputs(distPath, postFiles, site) {
 }
 
 /** Trang đội cộng đồng: tập đội do community API quyết định lúc build nên verifier đọc lại từ chính dist. */
-const COMMUNITY_TEAM_FILE = /^(zh\/)?doi-cong-dong\/([a-z0-9][a-z0-9-]{0,63})\/index\.html$/u;
+const COMMUNITY_TEAM_FILE = new RegExp(`^(?:(${LOCALE_DIR_PATTERN})\\/)?doi-cong-dong\\/([a-z0-9][a-z0-9-]{0,63})\\/index\\.html$`, "u");
 const COMMUNITY_LISTING_PATH = "/doi-cong-dong/";
 const NOINDEX_META = /<meta\b(?=[^>]*\bname=["']robots["'])(?=[^>]*\bcontent=["']noindex["'])[^>]*>/iu;
 const CANONICAL_LINK = /<link\b(?=[^>]*\brel=["']canonical["'])[^>]*>/iu;
@@ -198,20 +204,20 @@ const hasKey = (value, key) => Array.isArray(value)
 const canonicalHref = (html) => CANONICAL_LINK.exec(html)?.[0].match(/\bhref=["']([^"']*)["']/u)?.[1] ?? null;
 
 /**
- * Trang đội tự nhất quán: mỗi id đủ cặp vi/zh, đúng MỘT bản self-canonical (bản `text_lang`, mang JSON-LD) và bản kia canonical về
- * nó, không hreflang, không noindex, không aggregateRating; danh sách index/noindex theo số id duy nhất và link tới mọi đội.
+ * Trang đội tự nhất quán: mỗi id đủ bản ở mọi locale, đúng MỘT bản self-canonical (bản `text_lang`, mang JSON-LD) và các bản kia
+ * canonical về nó, không hreflang, không noindex, không aggregateRating; danh sách index/noindex theo số id duy nhất và link tới mọi đội.
  * Trả về `{path, lastmod}` của bản gốc từng đội cho sitemap.
  */
 async function verifyCommunityTeamOutputs(distPath, teamFiles, site) {
   const origin = new URL(site).origin;
   const byId = new Map();
   for (const file of teamFiles) {
-    const [, zhPrefix, id] = file.match(COMMUNITY_TEAM_FILE);
-    byId.set(id, { ...byId.get(id), [zhPrefix ? "zh" : "vi"]: file });
+    const [, localeDir, id] = file.match(COMMUNITY_TEAM_FILE);
+    byId.set(id, { ...byId.get(id), [localeOfDir(localeDir)]: file });
   }
   const routes = [];
   for (const [id, pair] of byId) {
-    if (!pair.vi || !pair.zh) throw new Error(`Community team page lacks its locale pair: ${id}`);
+    if (SITE_LOCALES.some((locale) => !pair[locale])) throw new Error(`Community team page lacks its locale pair: ${id}`);
     const pages = [];
     for (const locale of SITE_LOCALES) {
       const file = pair[locale];
@@ -439,7 +445,7 @@ export async function verifyAstroDist({
     for (const file of files) staticDirectoryFiles.push([`${directory.sourcePath}/${file}`, `${directory.outputPath}/${file}`]);
   }
   const sectionHtmlPaths = [...SECTION_PATHS, ...LOOKUP_GROUP_PATHS].map((path) => `${path.slice(1)}index.html`);
-  // Mọi route bản Việt có bản Trung cùng đường dẫn dưới `zh/`: Landing, 8 trang mục và 3 họ trang chi tiết.
+  // Mọi route bản Việt có bản gương cùng đường dẫn dưới thư mục mỗi locale: Landing, 8 trang mục và 3 họ trang chi tiết.
   const localizedHtml = (paths) => SITE_LOCALES.flatMap((locale) => paths.map((path) => localizedHtmlPath(path, locale)));
   const files = await listFiles(distPath);
   const blogPostFiles = files.filter((file) => BLOG_POST_FILE.test(file));
@@ -636,7 +642,7 @@ export async function verifyAstroDist({
     if (page.includes('src="/js/app.js"')) throw new Error(`Lookup hub must not boot the root application: ${htmlPath}`);
     if (!page.includes('id="lookup-hub-redirect"')) throw new Error(`Lookup hub lacks its legacy query redirect: ${htmlPath}`);
     for (const groupPath of LOOKUP_GROUP_PATHS) {
-      const href = locale === "zh" ? `/zh${groupPath}` : groupPath;
+      const href = localePath(groupPath, locale);
       if (!page.includes(`class="lookup-hub-card" href="${href}"`)) throw new Error(`Lookup hub lacks its card for ${href}: ${htmlPath}`);
     }
   }
@@ -649,7 +655,7 @@ export async function verifyAstroDist({
         const htmlPath = localizedHtmlPath(`${entry.path.slice(1)}index.html`, locale);
         const page = await readPage(htmlPath);
         verifyLocalePair(page, htmlPath, locale, entry.path, site);
-        const canonical = new URL(locale === "zh" ? `/zh${entry.path}` : entry.path, site).href;
+        const canonical = new URL(localePath(entry.path, locale), site).href;
         if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`Lookup item page lacks its own canonical URL: ${htmlPath}`);
         for (const [kind, pattern] of [["title", /<title>([^<]*)<\/title>/u], ["description", /<meta name="description" content="([^"]*)"/u]]) {
           const value = page.match(pattern)?.[1];
@@ -670,7 +676,7 @@ export async function verifyAstroDist({
         if (!page.includes(`data-lookup-item="${entry.id}"`) && !page.includes(`data-lookup-detail="${entry.id}"`)) {
           throw new Error(`Lookup item page lacks its prerendered profile (${entry.id}): ${htmlPath}`);
         }
-        const groupHref = locale === "zh" ? `/zh${lookupGroupPath(entry.group)}` : lookupGroupPath(entry.group);
+        const groupHref = localePath(lookupGroupPath(entry.group), locale);
         if (!page.includes(`class="detail-link detail-back-link" href="${groupHref}"`)) {
           throw new Error(`Lookup item page lacks its link back to the group page: ${htmlPath}`);
         }
@@ -686,7 +692,7 @@ export async function verifyAstroDist({
     const htmlPath = localizedHtmlPath(`${staticPath.slice(1)}index.html`, locale);
     const page = await readPage(htmlPath);
     verifyLocalePair(page, htmlPath, locale, staticPath, site);
-    const canonical = new URL(locale === "zh" ? `/zh${staticPath}` : staticPath, site).href;
+    const canonical = new URL(localePath(staticPath, locale), site).href;
     if (!page.includes(`<link rel="canonical" href="${canonical}">`)) {
       throw new Error(`Static page lacks its own canonical URL: ${htmlPath}`);
     }
@@ -790,7 +796,7 @@ export async function verifyAstroDist({
       const htmlPath = localizedHtmlPath(season.htmlPath, locale);
       const page = await readPage(htmlPath);
       verifyLocalePair(page, htmlPath, locale, season.routePath, site);
-      const canonical = new URL(locale === "zh" ? `/zh${season.routePath}` : season.routePath, site).href;
+      const canonical = new URL(localePath(season.routePath, locale), site).href;
       if (!page.includes(`<link rel="canonical" href="${canonical}">`)) throw new Error(`Season page lacks its own canonical URL: ${htmlPath}`);
       claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, htmlPath);
       claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, htmlPath);
@@ -821,7 +827,7 @@ export async function verifyAstroDist({
     }
     if (!block) throw new Error(`Section page lacks its other-seasons block: ${htmlPath}`);
     for (const season of seasons.pages) {
-      const href = locale === "zh" ? `/zh${season.routePath}` : season.routePath;
+      const href = localePath(season.routePath, locale);
       if (!block.includes(`<a href="${href}"`)) throw new Error(`Other-seasons block lacks its link ${href}: ${htmlPath}`);
     }
     const mount = page.match(/<section\b[^>]*\bid="section-team-chuan"[^]*?<\/section>/u)?.[0] ?? "";

@@ -21,17 +21,17 @@ import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
 import { lookupGroupLinks, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
 import { tacticDisplayTable } from '../lib/tactic-display';
-import { localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
+import { LOCALE_OG, localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
-import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, otherLocale } from '../lib/locale-routes';
+import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, switchTargets, type SiteLocale } from '../lib/locale-routes';
 // Cầu chuyển domain: script inline ĐẦU TIÊN của <head>, chạy trước mọi script đọc hash/storage.
 import { HOST_BRIDGE_SCRIPT } from '../lib/host-bridge';
 // Vỏ trang dùng chung: Landing, 8 trang mục và các trang chi tiết đều đi qua đây nên phần đầu
 // trang chỉ tồn tại một bản. Trang mục khai `data-page-section` để js/app.js biết mục cần mount.
 // Mọi trang dùng một bộ menu thả; trang con có thêm cột chuyển nhanh nổi ở mép phải (một chạm tới các mục).
 // Menu thả và menu mobile do `js/site-nav.js` điều khiển; chữ hiển thị khai obligation `authored-vi`.
-// Song ngữ: mọi chữ chọn đúng một ngôn ngữ qua `pick(locale, vi, zh)`, mọi link nội bộ qua `localePath`;
-// bản Trung (`/zh/…`) có `<html lang="zh-Hans">`, hreflang tới bản Việt và nút chuyển ngôn ngữ.
+// Đa ngôn ngữ: mọi chữ chọn đúng một ngôn ngữ qua `pick(locale, vi, zh, …)` (thứ tự `SITE_LOCALES`), mọi link nội bộ
+// qua `localePath`; mỗi bản (`/zh/…`) có `<html lang>` riêng, hreflang tới mọi bản khác và một nút chuyển cho mỗi bản khác.
 interface Props {
   title: string;
   description: string;
@@ -43,14 +43,18 @@ interface Props {
   ogType?: 'website' | 'article';
   robots?: string;
   /** Ngôn ngữ trang; mặc định suy từ pathname (`/zh/…` → `zh`). */
-  locale?: 'vi' | 'zh';
+  locale?: SiteLocale;
   /**
-   * Khai cặp hreflang vi/zh-Hans/x-default. Mặc định bật (mọi route đều có bản gương cùng đường dẫn dưới `/zh`);
-   * 404 và bài viết không có bản dịch tắt đi (`false`); bài viết có bản dịch khác slug truyền cặp đường dẫn.
+   * Khai bộ hreflang của mọi locale + x-default. Mặc định bật (mọi route đều có bản gương cùng đường dẫn dưới tiền tố
+   * của từng locale); 404 và bài viết không có bản dịch tắt đi (`false`); bài viết có bản dịch khác slug truyền
+   * đường dẫn theo locale (chỉ các bản có thật).
    */
-  alternates?: boolean | {vi: string; zh: string};
-  /** Đường dẫn bản ngôn ngữ còn lại cho nút chuyển ngôn ngữ; mặc định là bản gương của pathname hiện tại. */
-  counterpartPath?: string;
+  alternates?: boolean | Partial<Record<SiteLocale, string>>;
+  /**
+   * Đích của nút chuyển ngôn ngữ, theo locale đích; mặc định là bản gương của pathname hiện tại. Một chuỗi đứng riêng
+   * là đường dẫn của đúng locale suy từ chính nó (`/zh/` → đích `zh`).
+   */
+  counterpartPath?: string | Partial<Record<SiteLocale, string>>;
   /** Ảnh OG tuyệt đối (ảnh bìa bài viết); vắng thì dùng `/og-image.png` 1200×630. */
   ogImage?: string;
   /** Trang nhóm Tra cứu (`/tra-cuu/<slug>/`): nhóm đang xem, gắn vào `<body data-lookup-group>` cho js/app.js. */
@@ -70,13 +74,15 @@ const {
   lookupGroup,
 } = Astro.props;
 const locale = Astro.props.locale ?? localeFromPath(Astro.url.pathname);
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const href = (path: string): string => localePath(path, locale);
-const switchLocale = otherLocale(locale);
-const counterpartPath = Astro.props.counterpartPath ?? localePath(stripLocale(Astro.url.pathname), switchLocale);
+const counterpartProp = Astro.props.counterpartPath;
+const counterpartPaths: Partial<Record<SiteLocale, string>> = typeof counterpartProp === 'string'
+  ? {[localeFromPath(counterpartProp)]: counterpartProp}
+  : counterpartProp ?? {};
 const alternatesProp = Astro.props.alternates ?? pageKind !== 'not-found';
 const alternateLinks = (typeof alternatesProp === 'object'
-  ? alternatePaths(alternatesProp.vi, alternatesProp.zh)
+  ? alternatePaths(alternatesProp)
   : alternatesProp ? mirroredAlternates(Astro.url.pathname) : []
 ).map((link) => ({hreflang: link.hreflang, href: new URL(link.path, Astro.site).href}));
 
@@ -155,9 +161,24 @@ const SCOPE_GROUP_LABEL = t('Phạm vi đội hình', '阵容范围');
 /** Nút đổi giao diện: tên nói hành động sẽ xảy ra (theo theme đang bật), không dùng `aria-pressed`. */
 const THEME_TO_DARK_LABEL = t('Chuyển sang giao diện tối', '切换到深色模式');
 const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅色模式');
-/** Nút chuyển ngôn ngữ: nhãn viết bằng ngôn ngữ đích, tên truy cập nói rõ hành động bằng ngôn ngữ trang. */
-const SWITCH_LABEL = LOCALE_LABEL[switchLocale];
-const SWITCH_ARIA = t('Xem bản tiếng Trung (中文)', '切换到越南语版本 (Tiếng Việt)');
+/**
+ * Nút chuyển ngôn ngữ, một nút cho mỗi locale còn lại (thứ tự `SITE_LOCALES`): nhãn viết bằng ngôn ngữ đích, tên truy
+ * cập nói rõ hành động bằng ngôn ngữ trang — bảng theo [ngôn ngữ trang][ngôn ngữ đích], thiếu cặp nào thì build lỗi.
+ */
+const SWITCH_ARIA: Record<SiteLocale, Partial<Record<SiteLocale, string>>> = {
+  vi: {zh: 'Xem bản tiếng Trung (中文)'},
+  zh: {vi: '切换到越南语版本 (Tiếng Việt)'},
+};
+const languageSwitches = switchTargets(locale).map((target) => {
+  const aria = SWITCH_ARIA[locale][target];
+  if (!aria) throw new Error(`SiteLayout: thiếu tên truy cập nút chuyển ${locale} → ${target}`);
+  return {
+    href: counterpartPaths[target] ?? localePath(stripLocale(Astro.url.pathname), target),
+    hreflang: HREFLANG[target],
+    label: LOCALE_LABEL[target],
+    aria,
+  };
+});
 /** Trang mục công cụ dựng nội dung bằng JavaScript: không có JS thì vẫn có tiêu đề mục và lời nhắn này (bốn mục đội và Tra cứu dựng sẵn nên không cần). */
 const SECTION_NOSCRIPT_MESSAGE = t(
   'Mục này cần JavaScript để hiển thị nội dung. Hãy bật JavaScript rồi tải lại trang.',
@@ -205,7 +226,7 @@ const booksPage = pageKind === 'section' && lookupGroup === 'books';
 const booksHash = booksPage ? await lookupBooksHash() : null;
 const bookAliasesJson = booksPage ? JSON.stringify(await lookupBookAliases()).replace(/</g, '\\u003c') : null;
 // Ngày build `dd/mm/yyyy` (giờ Việt Nam); bản Trung viết theo thứ tự năm-tháng-ngày.
-const updatedOn = locale === 'zh' ? buildDateVi().split('/').reverse().join('-') : buildDateVi();
+const updatedOn = pick(locale, buildDateVi(), buildDateVi().split('/').reverse().join('-'));
 const topSections = SECTIONS.slice(0, 5);
 const toolSections = SECTIONS.slice(5);
 const landing = pageKind === 'landing';
@@ -391,8 +412,8 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
     <meta property="og:type" content={ogType} />
     {canonicalHref ? <meta property="og:url" content={canonicalHref} /> : null}
     <meta property="og:site_name" content={LOGO_TITLE} />
-    <meta property="og:locale" content={t('vi_VN', 'zh_CN')} />
-    <meta property="og:locale:alternate" content={t('zh_CN', 'vi_VN')} />
+    <meta property="og:locale" content={LOCALE_OG[locale]} />
+    {switchTargets(locale).map((other) => <meta property="og:locale:alternate" content={LOCALE_OG[other]} />)}
     {alternateLinks.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
     <meta property="og:image" content={ogImageHref} />
     {ogImage ? null : <meta property="og:image:width" content="1200" />}
@@ -479,7 +500,7 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
 
         <div class="header-actions">
           <!-- Chuyển ngôn ngữ: link thật tới bản gương của trang; js/site-chrome.js giữ lại query/hash hiện tại. -->
-          <a class="lang-switch" href={counterpartPath} hreflang={HREFLANG[switchLocale]} lang={HREFLANG[switchLocale]} aria-label={SWITCH_ARIA} data-lang-switch>{SWITCH_LABEL}</a>
+          {languageSwitches.map((item) => <a class="lang-switch" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}
           <ThemeToggle id="theme-toggle" toDark={THEME_TO_DARK_LABEL} toLight={THEME_TO_LIGHT_LABEL} />
           <!-- Đăng nhập cộng đồng: js/community-auth.js dựng nút Đăng nhập hoặc ảnh đại diện + menu tài khoản. -->
           <div id="community-auth" class="cm-auth"></div>
@@ -575,7 +596,7 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
         })}
       </nav>
       <div class="site-menu-foot">
-        <a class="site-menu-lang" href={counterpartPath} hreflang={HREFLANG[switchLocale]} lang={HREFLANG[switchLocale]} aria-label={SWITCH_ARIA} data-lang-switch>{SWITCH_LABEL}</a>
+        {languageSwitches.map((item) => <a class="site-menu-lang" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}
         <a class="header-cta" href={href('/doi-chuan/')}>{OPEN_GUIDE_MOBILE_LABEL}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
       </div>
     </div>

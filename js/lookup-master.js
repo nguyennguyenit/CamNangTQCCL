@@ -5,7 +5,7 @@
 // ngoài các bản ghi truyền vào. Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view.
 
 import { h } from "./view-tree.js";
-import { formatNumber, localePath, normalizeLocale, pick } from "./i18n.js";
+import { contentLocaleIsVietnamese, formatNumber, localePath, pick } from "./i18n.js";
 import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhText, lookupDisplayName, zhSafeValue, zhTranslatedTextNote } from "./lookup-detail.js";
 import { lookupGroupPath, lookupHref, lookupSlug } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
@@ -33,8 +33,9 @@ const GROUP_LABELS = {
   buildings: ["Công trình", "建筑"],
 };
 
-const isZh = (locale) => normalizeLocale(locale) === "zh";
-const text = (locale, vi, zh) => pick(locale, vi, zh);
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = (locale) => !contentLocaleIsVietnamese(locale);
+const text = (locale, ...variants) => pick(locale, ...variants);
 /** Giá trị chữ của dữ liệu theo ngôn ngữ: bản zh chỉ giữ giá trị dịch được, còn lại rỗng. */
 const shown = (value, locale) => {
   if (value === null || value === undefined || value === "") return "";
@@ -100,7 +101,7 @@ function facetValues(key, record) {
 
 function facetLabel(key, value, locale) {
   if (key === "scope") return value === "main" ? text(locale, "Chỉ thành chính", "仅主城") : text(locale, "Mọi thành", "所有城池");
-  if (key === "limit") return value === "*" ? text(locale, "Khác", "其他") : isZh(locale) ? (TROOP_ZH[value] ?? "") : value;
+  if (key === "limit") return value === "*" ? text(locale, "Khác", "其他") : pick(locale, value, TROOP_ZH[value] ?? "");
   return shown(value, locale);
 }
 
@@ -230,7 +231,7 @@ function advisorCardTree(item, locale, selectedId, byId) {
   const heroes = advisorHeroes(record, byId, locale).map((hero) => hero.name);
   const owner = [heroes.join(", "), element ? text(locale, `hệ ${element}`, `${element}系`) : ""].filter(Boolean).join(" · ");
   const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
-  const effect = String((isZh(locale) ? record.effectZh : record.effectVi) ?? "").trim();
+  const effect = String((sourceText(locale) ? record.effectZh : record.effectVi) ?? "").trim();
   return h("a", {
     class: "lookup-master-item lookup-adv-card",
     href: itemHref(item.id, locale),
@@ -250,7 +251,7 @@ function advisorCardTree(item, locale, selectedId, byId) {
       ]),
     ]),
     effect ? h("span", { class: "lookup-adv-effect" }, effect) : null,
-    effect && isZh(locale) && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
+    effect && sourceText(locale) && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
     h("span", { class: "lookup-adv-foot" }, [
       h("span", {}, points === null ? "" : text(locale, `${points} điểm chiến pháp`, `${points} 战法点`)),
       h("span", { class: "lookup-adv-more" }, text(locale, "Chi tiết →", "详情 →")),
@@ -273,13 +274,13 @@ function rowTree(item, locale, selectedId, { sub, aside }) {
       sub ? h("span", { class: "lookup-row-sub" }, sub) : null,
     ]),
     // Bản zh: tên hiển thị đã là chữ Hán, không lặp lại.
-    han && !isZh(locale) && !aside ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
+    han && !sourceText(locale) && !aside ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
     aside ? h("span", { class: "lookup-row-aside" }, aside) : null,
   ]);
 }
 
 function troopRowTree(item, locale, selectedId) {
-  if (isZh(locale)) return rowTree(item, locale, selectedId, { sub: String(item.record?.appliesToZh ?? "").trim() });
+  if (sourceText(locale)) return rowTree(item, locale, selectedId, { sub: String(item.record?.appliesToZh ?? "").trim() });
   const applies = String(item.record?.appliesToVi ?? "").trim();
   return rowTree(item, locale, selectedId, { sub: applies || "Chưa có đội hình tham khảo" });
 }
@@ -373,9 +374,9 @@ function heroLink(hero, locale) {
 function specialCardTree(special, byId, locale, targetId) {
   const hero = special.exclusiveHeroId ? byId?.get(special.exclusiveHeroId) : null;
   const heroInfo = hero ? { id: hero.id, name: lookupDisplayName(hero.record, hero.nameVi, locale) } : null;
-  const description = isZh(locale) ? "" : String(special.descriptionVi ?? "").trim();
-  const sources = isZh(locale) ? [] : (special.acquisitionVi ?? []).filter(Boolean);
-  const han = isZh(locale) ? "" : zhName(special);
+  const description = sourceText(locale) ? "" : String(special.descriptionVi ?? "").trim();
+  const sources = sourceText(locale) ? [] : (special.acquisitionVi ?? []).filter(Boolean);
+  const han = sourceText(locale) ? "" : zhName(special);
   return h("article", {
     class: special.id === targetId ? "lookup-special is-target" : "lookup-special",
     "data-tier": special.tierVi ?? null,
@@ -386,7 +387,7 @@ function specialCardTree(special, byId, locale, targetId) {
       h("span", { class: "lookup-special-name" }, lookupDisplayName(special, special.nameVi, locale)),
       han ? h("span", { class: "lookup-special-zh", lang: "zh-Hant" }, han) : null,
     ]),
-    heroInfo ? h("span", { class: "lookup-special-hero" }, isZh(locale)
+    heroInfo ? h("span", { class: "lookup-special-hero" }, sourceText(locale)
       ? [heroLink(heroInfo, locale), "装备时专属"]
       : ["Độc quyền khi ", heroLink(heroInfo, locale), " trang bị"]) : null,
     description ? h("p", { class: "lookup-special-desc" }, description) : null,
@@ -395,7 +396,7 @@ function specialCardTree(special, byId, locale, targetId) {
 }
 
 function commonSpecialRow(special, locale) {
-  const description = isZh(locale) ? "" : String(special.descriptionVi ?? "").trim();
+  const description = sourceText(locale) ? "" : String(special.descriptionVi ?? "").trim();
   return h("li", { class: "lookup-special-row", "data-special-id": special.id }, [
     badge("badge-tier", shown(special.tierVi, locale), { "data-tier": special.tierVi ?? null }),
     h("span", { class: "lookup-special-row-body" }, [
@@ -421,14 +422,14 @@ function equipmentDetail(item, corpus, locale, targetId) {
   const quality = shown(record.qualityVi, locale);
   const exclusives = [...(item.exclusives ?? [])].sort(byTier);
   const common = commonSpecialsFor(record, corpus.catalog?.specials ?? []);
-  const hidden = isZh(locale) && [...exclusives, ...common].some((special) => special.descriptionVi);
+  const hidden = sourceText(locale) && [...exclusives, ...common].some((special) => special.descriptionVi);
   return [
     headTree({
       tile: glyph(record, item.nameVi),
       tone: record.qualityVi ? lookupSlug(record.qualityVi) : null,
       eyebrow: [masterGroupLabel("equipment", locale), slot].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
       badges: [
         slot ? badge("unit", slot) : null,
         quality ? badge("badge-tone", quality, { "data-tone": lookupSlug(record.qualityVi) }) : null,
@@ -457,7 +458,7 @@ function specialDetail(item, corpus, locale) {
       tone: null,
       eyebrow: [masterGroupLabel("equipment", locale), text(locale, "Đặc kỹ", "特技")].join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
       badges: [
         record.tierVi ? badge("badge-tier", shown(record.tierVi, locale), { "data-tier": record.tierVi }) : null,
         slot ? badge("unit", slot) : null,
@@ -467,7 +468,7 @@ function specialDetail(item, corpus, locale) {
       specialCardTree(record, corpus.byId, locale, record.id),
       parent ? h("a", { class: "lookup-detail-link", href: itemHref(parent.id, locale) }, lookupDisplayName(parent.record, parent.nameVi, locale)) : null,
     ]),
-    isZh(locale) && record.descriptionVi ? zhNoteTree() : null,
+    sourceText(locale) && record.descriptionVi ? zhNoteTree() : null,
   ];
 }
 
@@ -476,7 +477,7 @@ function advisorDetail(item, corpus, locale) {
   const element = shown(record.elementVi, locale);
   const heroes = advisorHeroes(record, corpus.byId, locale);
   const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const effect = effectVersions(zh ? record.effectZh : record.effectVi);
   const usage = String((zh ? record.usageZh : record.usageVi) ?? "").trim();
   const effectBoxes = effect.map((block) => h("div", { class: "lookup-effect-box" }, [
@@ -489,7 +490,7 @@ function advisorDetail(item, corpus, locale) {
       tone: record.elementVi ? lookupSlug(record.elementVi) : null,
       eyebrow: [masterGroupLabel("advisors", locale), element ? text(locale, `Hệ ${element}`, `${element}系`) : ""].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
       badges: [
         element ? badge("badge-tone", text(locale, `Hệ ${element}`, `${element}系`), { "data-tone": lookupSlug(record.elementVi) }) : null,
         badge("unit", text(locale, "Kỹ năng quân sư", "军师技能")),
@@ -551,7 +552,7 @@ export function troopEffectVersions(record) {
 }
 
 function optionCardTree(option, suggested, locale) {
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const converts = zh ? shown(option.convertsToVi, locale) : String(option.convertsToVi ?? "").trim();
   const description = String((zh ? option.descriptionZh : option.descriptionVi) ?? "").trim();
   return h("div", { class: suggested ? "lookup-option-card is-suggested" : "lookup-option-card" }, [
@@ -566,7 +567,7 @@ function optionCardTree(option, suggested, locale) {
 
 function troopDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const limits = (record.troopLimitVi ?? []).map((limit) => facetLabel("limit", limit, locale)).filter(Boolean);
   const conditionsVi = (record.conditions ?? []).map((row) => (typeof row === "string" ? row : row?.textVi)).filter(Boolean);
   // Bản zh: điều kiện hiện khi dịch được hết (mùa "Binh Diễn Xuân Thu"…), chữ Hán do bộ giá trị đóng của lookup-detail.
@@ -646,7 +647,7 @@ function troopDetail(item, corpus, locale) {
 function durationLabel(value, locale) {
   const raw = String(value ?? "").trim();
   if (!raw) return null;
-  if (!isZh(locale)) return raw;
+  if (!sourceText(locale)) return raw;
   const match = /^(\d+(?:[.,]\d+)?)\s*(giờ|phút|ngày|giây)$/u.exec(raw);
   return match ? `${match[1]} ${{ "giờ": "小时", "phút": "分钟", "ngày": "天", "giây": "秒" }[match[2]]}` : null;
 }
@@ -674,7 +675,7 @@ export function buildingHeadline(levels, field = "effectVi") {
 }
 
 function levelRowTree(level, isMax, locale) {
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const cell = (className, label, value) => h("td", { class: className, "data-label": label }, value);
   return h("tr", { class: isMax ? "lookup-level-row is-max" : "lookup-level-row" }, [
     h("th", { scope: "row", class: "lookup-level-num", "data-label": text(locale, "Cấp", "等级") }, String(level.level)),
@@ -689,7 +690,7 @@ function levelRowTree(level, isMax, locale) {
 
 function buildingDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const levels = [...(record.levels ?? [])].sort((a, b) => a.level - b.level);
   const last = levels.at(-1);
   const max = Number.isFinite(Number(record.maxLevel)) ? Number(record.maxLevel) : last?.level ?? null;

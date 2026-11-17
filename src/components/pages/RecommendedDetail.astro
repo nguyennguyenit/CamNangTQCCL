@@ -12,7 +12,7 @@ import type { SiteLocale } from '../../lib/locale-routes';
 type Props = RecommendedDetailProps & { locale: SiteLocale };
 
 const {entry, title, ordinal, scopeLine, pageLabel, generationId, manifestSha256, legacyTeamsSha256, lookupLinks, heroes, oldSeason, savePayload, locale} = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const describedName = ordinal > 1 ? `${title} (${ordinal})` : title;
@@ -24,9 +24,11 @@ const tier = entry.tierRaw
 const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId, locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await recommendedDetailBody(entry, lookupLinks, locale);
-const description = locale === 'zh'
-  ? `${describedName}阵容详情${scopeLine ? `（${scopeLine}）` : ''}：武将、战法、兵书与参考评分。`
-  : `Chi tiết đội hình ${describedName}${scopeLine ? ` (${scopeLine})` : ''}: tướng, chiến pháp, binh thư và điểm tham khảo.`;
+const description = pick(
+  locale,
+  `Chi tiết đội hình ${describedName}${scopeLine ? ` (${scopeLine})` : ''}: tướng, chiến pháp, binh thư và điểm tham khảo.`,
+  `${describedName}阵容详情${scopeLine ? `（${scopeLine}）` : ''}：武将、战法、兵书与参考评分。`,
+);
 const structured = teamDetailJsonLd({
   locale,
   site: Astro.site!,

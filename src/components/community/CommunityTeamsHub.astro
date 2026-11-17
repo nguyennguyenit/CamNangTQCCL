@@ -4,16 +4,17 @@
 // Nhận `locale` để bản /zh/ dùng lại nguyên component. Trong mount có danh sách link dựng sẵn tới trang từng đội:
 // `/api/` bị robots.txt chặn nên crawler không render được danh sách bằng JS; JS thay nội dung mount khi chạy.
 // Trang chỉ có một h1 ("Đội cộng đồng"); chế độ chi tiết `?id=` ẩn đầu trang này và lấy tên đội làm h1.
-import { localePath, pick } from '../../../js/i18n.js';
+import { htmlLang, localePath, pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
 import { communityTeamPath, type CommunityTeam } from '../../lib/community-teams.ts';
 
 interface Props {
-  locale: 'vi' | 'zh';
+  locale: SiteLocale;
   teams: readonly CommunityTeam[];
 }
 
 const { locale, teams } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 ---
 <section class="cm-page cm-team-page" aria-labelledby="cm-team-title">
   <header class="cm-team-head" id="cm-team-head">
@@ -31,7 +32,7 @@ const t = (vi: string, zh: string) => pick(locale, vi, zh);
     {teams.length > 0 && (
       <ul class="cm-team-static-list" aria-label={t('Danh sách đội', '阵容列表')}>
         {teams.map((team) => (
-          <li><a class="cm-link" href={communityTeamPath(team.id, locale)} lang={team.textLang === 'zh' ? 'zh-Hans' : 'vi'}>{team.title}</a></li>
+          <li><a class="cm-link" href={communityTeamPath(team.id, locale)} lang={htmlLang(team.textLang)}>{team.title}</a></li>
         ))}
       </ul>
     )}

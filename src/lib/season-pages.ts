@@ -9,6 +9,8 @@
  *   trang cũ của mùa mới hiện tại biến mất và được 301 về `/doi-chuan/` (`seasonRedirectRules`).
  * - Mùa 0 đội (chưa thu thập) không có trang; registry rỗng cho 0 trang.
  */
+import { pick } from '../../js/i18n.js';
+import type { SiteLocale } from './locale-routes.ts';
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog, type RecommendedRouteEntry, type TeamDetailRouteCatalog } from './team-detail-routes.ts';
 
@@ -138,8 +140,8 @@ export async function seasonPages(): Promise<SeasonPageCatalog> {
 }
 
 /** Tên mùa hiển thị theo ngôn ngữ: bản zh dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
-export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: 'vi' | 'zh') {
-  return locale === 'zh' ? season.nameRaw : season.nameVi;
+export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: SiteLocale) {
+  return pick(locale, season.nameVi, season.nameRaw);
 }
 
 export interface SeasonPageProps {

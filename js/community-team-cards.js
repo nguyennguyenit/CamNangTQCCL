@@ -2,7 +2,7 @@
 // Đội của tôi (DoiCongDongMineMoi). Tên tướng/chiến pháp đi qua `names` (bộ tra tên nạp nền của community-teams.js)
 // nên thẻ dựng ngay cả khi từ điển chưa tải xong. Văn bản người dùng luôn là text node.
 
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, htmlLang, isSiteLocale } from './i18n.js';
 import { avatar, displayName, formatDateTime, timeNode } from './community-api.js';
 import { seasonLabel, troopLabel } from './community-team-data.js';
 import { el } from './render.js';
@@ -14,6 +14,7 @@ import {
   teamImageUrl,
   teamMedia,
   teamStatsLine,
+  textLanguageName,
   troopPill,
 } from './community-team-ui.js';
 
@@ -21,7 +22,7 @@ import {
 function shortDate(value, locale) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
-  const text = new Intl.DateTimeFormat(locale === 'zh' ? 'zh-Hans' : 'vi', { day: 'numeric', month: 'short' }).format(date);
+  const text = new Intl.DateTimeFormat(htmlLang(locale), { day: 'numeric', month: 'short' }).format(date);
   return el('time', { class: 'cm-time', datetime: date.toISOString(), title: formatDateTime(value) }, text);
 }
 
@@ -71,11 +72,9 @@ export function statusBadge(status) {
   return el('span', { class: 'cm-badge cm-team-status', dataset: { status: key } }, [teamIcon(STATUS[key].icon, 14), STATUS[key].label()]);
 }
 
-/** Ngôn ngữ văn bản người dùng bằng chữ ("Tiếng Việt" / "Tiếng Trung"). */
+/** Ngôn ngữ văn bản người dùng bằng chữ ("Tiếng Việt" / "Tiếng Trung"), theo ngôn ngữ trang; mã lạ → `null`. */
 function textLangName(lang) {
-  if (lang === 'zh') return L('Tiếng Trung', '中文');
-  if (lang === 'vi') return L('Tiếng Việt', '越南语');
-  return null;
+  return isSiteLocale(lang) ? textLanguageName(lang) : null;
 }
 
 function mineCallout(team) {

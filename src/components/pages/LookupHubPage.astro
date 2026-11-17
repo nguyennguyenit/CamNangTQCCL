@@ -13,7 +13,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const entries = await lookupGroupEntries(locale);
 const canonicalUrl = new URL(localePath('/tra-cuu/', locale), Astro.site);
 const tables = JSON.stringify(LOOKUP_HUB_TABLES).replace(/</g, '\\u003c');

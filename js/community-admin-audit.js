@@ -5,7 +5,7 @@
 // ảnh đại diện chữ đầu, thẻ nhật ký rút gọn cho trang chi tiết người dùng.
 // Không có hiệu ứng khi nạp; import vòng với community-admin.js an toàn vì chỉ dùng hàm đã export lúc chạy.
 
-import { L, currentLocale, formatDate } from './i18n.js';
+import { L, LOCALE_INTL, currentLocale, formatDate } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 import { api, avatar, describeError, formatDateTime } from './community-api.js';
 import { adminStatus, button, emptyNote } from './community-admin.js';
@@ -75,7 +75,7 @@ export function durationLabel(duration) {
 export function initials(name) {
   const words = String(name || '').trim().split(/\s+/u).filter(Boolean);
   if (!words.length) return '?';
-  return words.slice(0, 2).map((word) => [...word][0]).join('').toLocaleUpperCase(currentLocale() === 'zh' ? 'zh-CN' : 'vi-VN');
+  return words.slice(0, 2).map((word) => [...word][0]).join('').toLocaleUpperCase(LOCALE_INTL[currentLocale()]);
 }
 
 /**

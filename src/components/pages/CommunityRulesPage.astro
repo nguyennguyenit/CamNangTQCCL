@@ -10,7 +10,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 
 const sections: PolicySection[] = [
   {

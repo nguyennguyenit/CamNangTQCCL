@@ -3,6 +3,9 @@
  * footer và Landing. Mọi mục giữ sẵn `rel` nên chỗ render không tự đặt lại quy ước link ngoài.
  * Nguồn URL: plans/reports/brainstorm-260923-2033-official-game-links-menu.md §1 (quét 2026-09-23).
  */
+import { pick } from '../../js/i18n.js';
+import type { SiteLocale } from './locale-routes';
+
 export interface SiteLink {
   label: string;
   href: string;
@@ -16,12 +19,12 @@ export interface SiteLink {
 }
 
 /** Nhãn theo ngôn ngữ trang: bản zh dùng `labelZh` khi có, không bao giờ hiện nhãn tiếng Việt cạnh chữ Trung. */
-export function localizedLinkLabel(link: SiteLink, locale: 'vi' | 'zh'): string {
-  return locale === 'zh' && link.labelZh ? link.labelZh : link.label;
+export function localizedLinkLabel(link: SiteLink, locale: SiteLocale): string {
+  return pick(locale, link.label, link.labelZh || link.label);
 }
 
-export function localizedLinkDescription(link: SiteLink, locale: 'vi' | 'zh'): string | undefined {
-  return locale === 'zh' && link.descriptionZh ? link.descriptionZh : link.description;
+export function localizedLinkDescription(link: SiteLink, locale: SiteLocale): string | undefined {
+  return pick(locale, link.description, link.descriptionZh || link.description);
 }
 
 export const EXTERNAL_REL = 'noopener noreferrer';

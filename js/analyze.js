@@ -32,7 +32,7 @@ import {
   writeHistory,
 } from "./analyze-state.js";
 import { api, describeError, loadSession, signInPrompt } from "./community-api.js";
-import { L, currentLocale, localePath } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
 import { createRawNameResolver, localName } from "./website-display.js";
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
@@ -282,7 +282,7 @@ const BOOK_STATUS_LABELS = {
 
 /** Nhãn mùa trong ô chọn: bản zh dùng tên mùa nguồn, bản vi dùng mã + tên dịch. */
 function seasonOptionText(option) {
-  if (currentLocale() === "zh") {
+  if (!contentLocaleIsVietnamese(currentLocale())) {
     return [option.displayCode, option.nameRaw].filter(Boolean).join(" · ") || option.label || option.sourceSeasonId;
   }
   return option.displayCode && option.displayNameVi
@@ -388,7 +388,7 @@ export function drawResultCard(canvas, card) {
  */
 export function initAnalyze(deps, mount) {
   const configured = isAnalyzeConfigured();
-  const zh = currentLocale() === "zh";
+  const zh = !contentLocaleIsVietnamese(currentLocale());
   const indexes = {
     heroes: createEntityIndex(deps.heroesDict, "hero"),
     tactics: createEntityIndex(deps.tacticsDict, "tactic"),

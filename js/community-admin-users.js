@@ -7,7 +7,7 @@
 // toàn vì chỉ dùng các hàm đã export, không dùng ở cấp module).
 // Server mới là nơi kiểm quyền; ở đây chỉ ẩn nút với đích không thao tác được và dịch lỗi theo `code`.
 
-import { L, currentLocale, formatDate, pick } from './i18n.js';
+import { L, currentLocale, formatDate, htmlLang, pick } from './i18n.js';
 import { el } from './render.js';
 import { api, describeError, displayName, formatDateTime, timeNode } from './community-api.js';
 import { SCAN_STATUS_LABEL, adminStatus, emptyNote, formField, pagePath, pagedList, selectInput, textInput } from './community-admin.js';
@@ -166,7 +166,7 @@ function detailLists(body) {
   return el('div', { class: 'adm-user-columns' }, [
     section(L('Bình luận gần đây', '最近评论'), latest(10), comments, (comment) => el('li', { class: 'adm-user-card' }, [
       el('p', { class: 'adm-user-card-meta' }, [timeNode(comment.createdAt), pagePath(comment.page, comment.lang)]),
-      el('p', { class: 'adm-body', lang: comment.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(comment.body || '')),
+      el('p', { class: 'adm-body', lang: htmlLang(comment.lang) }, String(comment.body || '')),
     ]), L('Chưa có bình luận.', '暂无评论。')),
     el('div', { class: 'adm-user-aside' }, [
       section(L('Chiến báo gần đây', '最近战报'), latest(10), reports, (report) => el('li', { class: 'adm-user-card' }, [
