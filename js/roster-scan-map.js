@@ -4,7 +4,7 @@ import { canonicalHeroId, heroFamilyId } from "./hero-identity.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
 import { createTacticIdResolver } from "./lookup-ids.js";
-import { withLocaleAliases } from "./locale-name-aliases.js";
+import { createExactNameIndex, withLocaleAliases } from "./locale-name-aliases.js";
 
 const MAX_UNTRUSTED_TEXT = 256;
 
@@ -28,26 +28,20 @@ const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu
 
 const jaIndexCache = new WeakMap();
 /**
- * Chỉ mục bản ja của một từ điển: bản ghi có `aliases` nối tên Nhật (`withLocaleAliases`) và bảng tên Nhật chính xác
- * (bỏ khoảng trắng) → bản ghi. Tên Nhật trùng ở hai bản ghi thì không còn chắc (`null`, để bộ khớp mờ quyết).
+ * Chỉ mục bản ja của một từ điển: bản ghi có `aliases` nối tên Nhật (`withLocaleAliases`) và bảng tên chính xác dùng chung với
+ * Soi đội và bộ chấm eval (`createExactNameIndex`: tên Nhật thắng chữ Hán nguồn trùng của mục khác; trùng trong cùng tầng thì
+ * `null`, để bộ khớp mờ quyết).
  */
 function jaIndex(dict, jaEntries) {
   const cached = jaIndexCache.get(dict);
   if (cached?.jaEntries === jaEntries) return cached;
   const records = withLocaleAliases(dict, jaEntries);
-  const entries = jaEntries.entries && typeof jaEntries.entries === "object" ? jaEntries.entries : jaEntries;
-  const exact = new Map();
-  for (const record of records) {
-    const id = typeof record?.id === "string" ? record.id : "";
-    const key = id && Object.hasOwn(entries, id) ? compactCjk(entries[id]?.name) : "";
-    if (key) exact.set(key, exact.has(key) && exact.get(key) !== record ? null : record);
-  }
-  const index = { jaEntries, records, exact };
+  const index = { jaEntries, records, exact: createExactNameIndex(records, (record) => record) };
   jaIndexCache.set(dict, index);
   return index;
 }
 
-/** Kết quả khớp chắc theo tên Nhật chính xác, cùng dạng với `matchDict`. */
+/** Kết quả khớp chắc theo tên chính xác, cùng dạng với `matchDict`. */
 const exactMatch = (record) => ({
   record, score: 1, confidence: "high", matched: true,
   secondRecord: null, secondScore: 0, margin: 1, ambiguous: false, reviewRequired: false,
@@ -55,8 +49,8 @@ const exactMatch = (record) => ({
 
 /**
  * Chữ trong ảnh → tên Việt chuẩn. Bản ja (`jaEntries` = `entries` của data/lookup-ja.json): ảnh client Nhật in tên Nhật nên
- * tên Nhật khớp chính xác được ưu tiên (bản Nhật có thể gọi một mục bằng chữ Hán nguồn của mục khác), sau đó khớp mờ trên
- * `chinese` và mọi bí danh chữ Hán (gồm tên Nhật). Không có `jaEntries` thì giữ nguyên bộ khớp của bản vi/zh.
+ * tên khớp chính xác được ưu tiên, trong đó tên Nhật thắng (bản Nhật có thể gọi một mục bằng chữ Hán nguồn của mục khác), sau
+ * đó khớp mờ trên `chinese` và mọi bí danh chữ Hán (gồm tên Nhật). Không có `jaEntries` thì giữ nguyên bộ khớp của bản vi/zh.
  */
 function mapName(cn, dict, jaEntries = null) {
   const rawChinese = sanitizeText(cn);

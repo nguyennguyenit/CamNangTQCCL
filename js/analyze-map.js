@@ -9,6 +9,7 @@ import { matchDict, searchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
 import { bookRowId } from "./lookup-ids.js";
+import { createExactNameIndex } from "./locale-name-aliases.js";
 
 // Chất tướng Hán -> Việt.
 const STAT_MAP = {
@@ -162,25 +163,20 @@ export function mapTeamRead(heroes, dicts) {
 const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
 
 /**
- * Chỉ mục một từ điển (heroesDict/tacticsDict/booksDict) theo ID canonical, kèm bảng chữ Hán
- * chính xác (`chinese` + `aliases`, bỏ khoảng trắng) để tên Giản thể in trong ảnh khớp chắc ngay
- * dù `chinese` của từ điển là Phồn thể.
+ * Chỉ mục một từ điển (heroesDict/tacticsDict/booksDict) theo ID canonical, kèm bảng tên chính xác
+ * (`createExactNameIndex`: `chinese` + `aliases`, bỏ khoảng trắng) để tên Giản thể in trong ảnh khớp
+ * chắc ngay dù `chinese` của từ điển là Phồn thể. Từ điển đã qua `withLocaleAliases` (bản ja) thì tên
+ * Nhật thắng chữ Hán nguồn trùng của mục khác; một tên trỏ về hai ID trong cùng tầng là mơ hồ (`null`).
  * @param {"hero"|"tactic"|"book"} kind
  */
 export function createEntityIndex(dict, kind) {
   const records = (Array.isArray(dict) ? dict : []).filter((record) => recordEntityId(kind, record));
   const byId = new Map();
-  const exact = new Map();
   for (const record of records) {
     const id = recordEntityId(kind, record);
     if (!byId.has(id)) byId.set(id, record);
-    for (const name of [record.chinese, ...(record.aliases || [])]) {
-      const key = compactCjk(name);
-      if (!key) continue;
-      // Một chữ Hán trỏ về hai ID khác nhau thì không còn "chắc": đánh dấu mơ hồ.
-      exact.set(key, exact.has(key) && exact.get(key) !== id ? null : id);
-    }
   }
+  const exact = createExactNameIndex(records, (record) => recordEntityId(kind, record));
   return Object.freeze({ kind, records, byId, exact });
 }
 

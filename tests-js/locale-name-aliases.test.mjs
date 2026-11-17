@@ -2,7 +2,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { withLocaleAliases } from "../js/locale-name-aliases.js";
+import { createExactNameIndex, withLocaleAliases } from "../js/locale-name-aliases.js";
 import { classifyName, createEntityIndex } from "../js/analyze-map.js";
 
 const json = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
@@ -47,4 +47,36 @@ test("bộ khớp tên của Soi đội nhận tên Nhật in trong ảnh sau kh
     if (aliased.exact.get(ja.entries[row.id].name.replace(/\s+/gu, "")) === null) continue; // trùng tên Nhật giữa hai ID: để mơ hồ
     assert.deepEqual([after.state, after.id], ["sure", row.id], ja.entries[row.id].name);
   }
+});
+
+test("tên Nhật trùng chữ Hán nguồn của mục khác: bản ja ưu tiên chủ của tên Nhật, bản vi/zh giữ hành vi cũ", () => {
+  // Bản Nhật gọi 固若金湯 là 金城湯池, còn 金城湯池 là chữ Hán nguồn của chiến pháp khác (bản Nhật gọi 湯池鉄城).
+  const tactics = json("data/tactics.json");
+  const ja = json("data/lookup-ja.json");
+  assert.equal(ja.entries["tactic:co-nhuoc-kim-thang"].name, "金城湯池");
+  const aliased = createEntityIndex(withLocaleAliases(tactics, ja), "tactic");
+  assert.deepEqual(classifyName("金城湯池", aliased), { state: "sure", raw: "金城湯池", id: "tactic:co-nhuoc-kim-thang", candidates: [] });
+  assert.equal(classifyName("湯池鉄城", aliased).id, "tactic:kim-thanh-thang-tri");
+  assert.equal(classifyName("固若金湯", aliased).id, "tactic:co-nhuoc-kim-thang");
+  const plain = createEntityIndex(tactics, "tactic");
+  assert.deepEqual(classifyName("金城湯池", plain), { state: "sure", raw: "金城湯池", id: "tactic:kim-thanh-thang-tri", candidates: [] });
+});
+
+test("createExactNameIndex: tên Nhật thắng chữ Hán nguồn; trùng trong cùng tầng thì mơ hồ (null)", () => {
+  const rows = withLocaleAliases([
+    { id: "a", chinese: "固若金湯" },
+    { id: "b", chinese: "金城湯池", aliases: ["金城汤池"] },
+    { id: "c", chinese: "甲" },
+    { id: "d", chinese: "甲" },
+    { id: "e", chinese: "乙" },
+    { id: "f", chinese: "丙" },
+  ], { a: { name: "金城湯池" }, e: { name: "同名" }, f: { name: "同名" } });
+  const exact = createExactNameIndex(rows, (row) => row.id);
+  assert.equal(exact.get("金城湯池"), "a");
+  assert.equal(exact.get("金城汤池"), "b");
+  assert.equal(exact.get("固若金湯"), "a");
+  assert.equal(exact.get("甲"), null);
+  assert.equal(exact.get("同名"), null);
+  // Không có lớp ja: chỉ một tầng chữ Hán nguồn như trước.
+  assert.equal(createExactNameIndex([{ id: "b", chinese: "金城 湯池" }], (row) => row.id).get("金城湯池"), "b");
 });
