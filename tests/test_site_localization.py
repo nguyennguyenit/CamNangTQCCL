@@ -458,6 +458,17 @@ class SiteLocalizationTest(unittest.TestCase):
             strict = check(ROOT, stage="all", candidate=full_candidate)
             self.assertEqual(strict["exitCode"], 0)
             self.assertEqual(strict["uiMissingSources"], [])
+            # Bảng khớp tier JP nằm trong input hash và được chiếu lên đúng các hàng PK-S26 đã review.
+            self.assertIn("pipeline/recommended-jp-tiers.json", full_manifest["inputHashes"])
+            selector = json.loads((full_candidate / "recommended/current.json").read_bytes())
+            generation = full_candidate / "recommended" / selector["generationId"]
+            manifest = json.loads((generation / "manifest.json").read_bytes())
+            jp_bytes = (ROOT / "pipeline/recommended-jp-tiers.json").read_bytes()
+            self.assertEqual(manifest["jpTiersHash"], "sha256:" + hashlib.sha256(jp_bytes).hexdigest())
+            index = json.loads((generation / "index.json").read_bytes())["records"]
+            tiered = [row for row in index if row.get("tierSources")]
+            self.assertEqual(len(tiered), 7)
+            self.assertEqual({row["sourceSeasonId"] for row in tiered}, {"pk-s26"})
 
     def test_publication_rejects_lookup_bytes_outside_reviewed_candidate(self):
         with tempfile.TemporaryDirectory() as temporary:

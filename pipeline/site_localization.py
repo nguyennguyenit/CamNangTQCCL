@@ -47,6 +47,7 @@ RECEIPTS_PATH = "pipeline/site-translation-reviews.json"
 REVIEW_OUTPUT_DIR = "pipeline/localization-reviews"
 IDENTITY_MAP_PATH = "pipeline/recommended-identity-map.json"
 OTHER_LEDGER_PATH = "pipeline/recommended-other-teams.json"
+JP_TIERS_PATH = "pipeline/recommended-jp-tiers.json"
 
 SCHEMA_VERSION = 1
 CLASSIFICATIONS = ("translate", "canonical", "authored-vi", "exempt", "missing-source")
@@ -2072,6 +2073,7 @@ def compile_candidate(root, output, *, stage):
             "pipeline/recommended-display-map.json",
             "pipeline/recommended-default-season.json",
             "pipeline/recommended-content-links.json",
+            JP_TIERS_PATH,
             IDENTITY_MAP_PATH,
             OTHER_LEDGER_PATH,
         )
@@ -2122,6 +2124,8 @@ def compile_candidate(root, output, *, stage):
         # bản đang phát trên đĩa — số liệu không thể lệch với `data/heroes-dict.json` sau publish.
         catalog_bytes=(lookup_root / "heroes-dict.json").read_bytes(),
         tactic_catalog_bytes=(lookup_root / "tactics.json").read_bytes(),
+        # Tier nguồn JP: bảng khớp đã review, chỉ chiếu lên hàng khớp; file nằm trong input hash ở trên.
+        jp_tiers_bytes=_repo_member(root, JP_TIERS_PATH).read_bytes(),
     )
 
     source_hashes = {
