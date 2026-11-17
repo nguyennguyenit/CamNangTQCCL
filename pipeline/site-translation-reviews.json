@@ -2,12 +2,12 @@
   "schemaVersion": 1,
   "batches": [
     {
-      "batchId": "doi-chuan-261117-r1-000",
-      "draftSession": "Main:issues-47-64-261117",
-      "reviewerSession": "reviewer:Rv261117-r1-000",
-      "reviewedAt": "2026-11-17T00:41:00+07:00",
-      "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-000.json",
-      "outputSha256": "b990ca0a8ff1165230091552d4156036c6d538e30dff8b9336ece9f4c94be2e5",
+      "batchId": "ky-luoc-261118-r2-000",
+      "draftSession": "Main:ky-luoc-261118",
+      "reviewerSession": "reviewer:Rv261118-kl2-000",
+      "reviewedAt": "2026-11-18T00:42:00+07:00",
+      "outputPath": "pipeline/localization-reviews/ky-luoc-261118-r2-000.json",
+      "outputSha256": "6dc9b2504811232608cc32a952439af6e5a88a4ed70c7ea93bf202551cd35ced",
       "items": [
         {
           "entityId": "data:data/khaihoang.json:teams[10].variants[0]",
@@ -2222,7 +2222,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "74bdeb95cd7777c85e66b452706438b42775028a291aaa08f4877df5c284a85e",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7f860151af01f13a1a291af7d1ccb735432415d1dade35b63cac16380eb41665",
+          "textSha256": "6682edbdec9facce2d638a741ed22f87df5c363f46b7103c67adc7a635e04da7",
           "verdict": "accepted"
         },
         {
@@ -2238,7 +2238,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "1c0154b91dd3e6b9193740e2e578aeaa57c3c7cab510f27dc6d516c22211bbc4",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "575583dfe7ab5bc1da569f9fbc0d317752b5a2b5e70dd817a393a3bca0d9ba92",
+          "textSha256": "f56db384d69fead37e93e836a79c67d80a2eaeb816a75e922707ec18fcb4d6d8",
           "verdict": "accepted"
         },
         {
@@ -2478,7 +2478,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b4a1057d50408c27523f61c64978f8b747cfae2693f7222e3af084dbd5454a99",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "55023822664a9c24358fea7d8855c2500619bcf8b4eab28a8a665f3df0a9fd88",
+          "textSha256": "843ba3246367ef71ffbea0bd4c42ccbd5269e9eadce9200e368c63667c1ba446",
           "verdict": "accepted"
         },
         {
@@ -2870,7 +2870,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "e7673360519c09fa62b52ad94aea07c32d145f5772ad46324ca1f949fbe5721c",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "3885a12d24ed38a4c05a7af9ba4a858a345f85e549628bcfc3f9273fb074a037",
+          "textSha256": "deb163ab8b94fce969d86f6e1055b759d37d82d04255668ed0d8cf1acf0410d8",
           "verdict": "accepted"
         },
         {
@@ -2878,7 +2878,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b449f6f119b6558e3e5c44965cb4521f6821d80095c1ce44d6e1602160350704",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1a7381ac6ad4679a73f5e90de58c6def064cb50be864730bbfcaec94c9ececac",
+          "textSha256": "9bb8f75c6e28db35be210a10b20e508f355ed51126b0145bc432f8c69309681e",
           "verdict": "accepted"
         },
         {
@@ -3204,12 +3204,12 @@
       ]
     },
     {
-      "batchId": "doi-chuan-261117-r1-001",
-      "draftSession": "Main:issues-47-64-261117",
-      "reviewerSession": "reviewer:Rv261117-r1-001",
-      "reviewedAt": "2026-11-17T00:41:00+07:00",
-      "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-001.json",
-      "outputSha256": "f1b9b57fcaa09710b426dbdcb26d68b049b0326ccf13b02b8be135193c345719",
+      "batchId": "ky-luoc-261118-r2-001",
+      "draftSession": "Main:ky-luoc-261118",
+      "reviewerSession": "reviewer:Rv261118-kl2-001",
+      "reviewedAt": "2026-11-18T00:42:00+07:00",
+      "outputPath": "pipeline/localization-reviews/ky-luoc-261118-r2-001.json",
+      "outputSha256": "a2840f6bbc7c7e5b0e870d88186edc585a0f88bc83894bc8962b6005ec488b2f",
       "items": [
         {
           "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-shun",
@@ -4656,7 +4656,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "4dd4c6e63fddbc835c7b22a1713bfebce42e87a6b2b4b403351157aaa61cf1d3",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "db818a84263679c341b1728d526083c42f6e65ec7d5ef168892e55ac08ec5189",
+          "textSha256": "95dbfa2ebf561091b78b8e453f09931d48ed5b8596c5b99be1e1d4b3330f94c5",
           "verdict": "accepted"
         },
         {
@@ -4672,7 +4672,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "edb1bf0e058d6e40e514a1f650716ec95449a4e04bda6ec563a3bf8ff3fbd434",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7097bb311b6a121bee64bd4633976bdf5009893d616ca8821f43eaefef6d0989",
+          "textSha256": "45c2722d63bacc10e26d1ee9b05b12f774467eecfd6a77467b54d89aafc0728e",
           "verdict": "accepted"
         },
         {
@@ -4712,7 +4712,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b8b9e167841d9be92195ea044b8bd88cbea66223a0acd90c7218ecbc424aa49d",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "770b2c1b7ac4379e283057a0f3d07091bc5be3a92bac8aa0d22f79a5c8eca9ee",
+          "textSha256": "7987270eaa30b507b0b2c0466db35f4a65e32d3f64881fb6f3def6563f1ad8f4",
           "verdict": "accepted"
         },
         {
@@ -4736,7 +4736,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "2ef48547d9032b879ccf1912ac7cce591644cc88a0393897bc6e40f022f9f9e8",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "832e6d84428c4540cad3fc0108e84f283a30a5288fb1d905816abf0c3f13d6c3",
+          "textSha256": "9716dd4e9cc3d8a777754ac5e1df24e743ff54867a32cf0ae5226a70e68bba51",
           "verdict": "accepted"
         },
         {
@@ -4792,7 +4792,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "07272356d3b2e61ab1882131dcc2dfa1a3b0edd739e8c2743e5b4bf1e97df1b7",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "e025bfc3efb0287af21f20b06cebc186f89cd64d5c3c19ddc13deb1c7a0badd6",
+          "textSha256": "130038c2151df05e70463e3175d909a1b89a0ff56fc9e9f7d21c531e17d10031",
           "verdict": "accepted"
         },
         {
@@ -4968,7 +4968,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "f02c574b81b8fa29a6ce72226ce30256506768fdc285410f041dd111530c8765",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "d6db193a926a9e7ae2f0cafaebdefabef37b810c70fd24963b316ea5b9345b7f",
+          "textSha256": "bca275b93093ea6d0380bb8221363aead0b998c7c835c022873bd1a8ca6024dd",
           "verdict": "accepted"
         },
         {
@@ -4992,7 +4992,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "0d5b5451d6fb5fbc4daa880bf9b49ecd9b8955bb795ccdc38f3196042b499974",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "ce73262fad9ed0ef72ddb561bcf17eaff72df80191580d1014d84882c9f4f61f",
+          "textSha256": "f6e7548b947b7f673ef5af7e5da9b0fd68b97a8b746a19a6fee9c0cd01cdf163",
           "verdict": "accepted"
         },
         {
@@ -5040,7 +5040,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "00e8bd91eb88f68deaa837d8e5c6c89d8a86be013175f8911fcad57de20e8763",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7984d684be4926e4df2465015177fd983999c4626962f36a61b78db38ebb5455",
+          "textSha256": "3090459d55ded436aa78bc92974405f935be98ed8446fb39daf7067b8a9ddf6e",
           "verdict": "accepted"
         },
         {
@@ -5192,7 +5192,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "c601e6b1bfdda560aca3f35a372ebc3ee0c5e5a0d413b1457b579c214ee70891",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7ec674bd1b986dc2d7f090a93dbaa2717753eb4b45a2c14194ba0ff397aea3c4",
+          "textSha256": "bfa1de5513bcef87c388517ec768a04fd176af85299a94ef882c0ac74b77ed4a",
           "verdict": "accepted"
         },
         {
@@ -5368,7 +5368,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "cf1115d91ddfa2b3e0f8530632546ee2a8b6d9e43013b53dd76d800e4d2bf692",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "0610061d203869f05fb2fa555d8053c81b163a96102c16d7d54fbc3bcbe98557",
+          "textSha256": "cbc96ffe5c699c231cad5456da94480771f690ade3dacc9039ef0ea2fa7755dd",
           "verdict": "accepted"
         },
         {
@@ -5392,7 +5392,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "c1802d044884a10252ed9b82e33b1b62a388748c3be6e95b4a983f2aa8708634",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7dc31ba5fb1b081f7d079a567d7c081513204cb2f0468dfb8d216ce018bb0ed6",
+          "textSha256": "a2f48c6a6123440e2b971226b574424b345f085bf3cb56b6e63e6435e673eaba",
           "verdict": "accepted"
         },
         {
@@ -5432,7 +5432,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "29e8d76a0ff365d2a64fbe12e1804018d043837f5b04ba683224c9e8bae80ab0",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1b5eb741c9ce57e5f9306e11e4ccacc4bdbbbf4a25ba7941b531e75eb5077479",
+          "textSha256": "5c96c6280dfef121bd6e759f8bdbe5a5ea8c9713f3d2c412c88efb6951d6ff8e",
           "verdict": "accepted"
         },
         {
@@ -5448,7 +5448,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "007eeddd79465419140dc03b286d8b271e1b2b7a2b0e40152a1e55743ed00491",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "7f9095940527899eb5c4ae6e83e1601aef8043f7319a6642cd15637923737105",
+          "textSha256": "d7b365c6b1e37fe38d2ca180dc07d3c51cf903f877f7e05f5bd84221df5a210c",
           "verdict": "accepted"
         },
         {
@@ -5464,7 +5464,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "6f46864d8012dffd2807e8bdbfe700d0c583164be3bab54a6d91af03bbe40721",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "9b435e7a0b2a87cb6d667dfcb5ebd5ee8c73f5e4e276fae5b8fb9c78821d32c5",
+          "textSha256": "61ba403903d0952df15ca934c598c9d92e74b271a7e4409a1164178a9c7b8ffe",
           "verdict": "accepted"
         },
         {
@@ -5472,7 +5472,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "5e9f9d5b44ab93f74a01e4b7173a3ff8ca2e510687f64c9790d3ef8077e9edf1",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "d980605a728c23df954932761d84adb43fb543cc734a773c1bd59514036ad0df",
+          "textSha256": "a528b04e60a1a01e9213719448ba02a7c3e1df3c7d147e0fcb44274687dd2c67",
           "verdict": "accepted"
         },
         {
@@ -5488,7 +5488,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "3e63b32edacaa60d4ade2a30d8ecf721e87143427bbf25418e2eec9eee3ada08",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "27e8f369ad0ad102a75779834df64eec605fa150d8080a6f38df648521fcf38d",
+          "textSha256": "c84fc3223a6a243091569ac667417de57aaa332d327adc7515423b67acc9ac24",
           "verdict": "accepted"
         },
         {
@@ -5512,7 +5512,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "6d2843fe144c090d555af4852c679964c99e1138b407c7af94decf9add845e72",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "9dcfa93d4b014364b70b9fdc2e87edd6abe02cb24a0e8606c4e323d8e73eb3cf",
+          "textSha256": "5395a0831c4a4f34c2bf529398ead4f8b6863df6283f5d46a90d6786604f3832",
           "verdict": "accepted"
         },
         {
@@ -5536,7 +5536,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "e7fd52db55fc2ba43a846e7e58a3754e11d3856c55183aba62c64a83c54b0f8e",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "48c52fe75b8c431b1ff415c70f93586e1ad000ca0da4b8d7ff14a5e4230e8cf9",
+          "textSha256": "8d14192714bcac15b2a0733b4e25a2f636cbe4fb96a9ee83444fcbcdb62a2aa1",
           "verdict": "accepted"
         },
         {
@@ -5568,7 +5568,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "fa311f877a134b23186a45ea741b4ac050b147c1c9b1d9df65f6b6153b26d91d",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "a0ff6a676582160750e205f14f6ea6636a7547b00446096aa5b5ebf66b4635a6",
+          "textSha256": "af866733920cdaef80432ff00d800f132f188a8ab9daebe16044a6cce46884b7",
           "verdict": "accepted"
         },
         {
@@ -5584,7 +5584,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "6198d6507148062e91089504105414791f6099717e276bc7dd7221f2a336d33d",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "b4919a92b50f1f0f1659bc500929cf16627004f165113a1dd4f7142d4e376ef2",
+          "textSha256": "8aeff53fee52f03ba02ce5fd3da28f29d1c2bd4a44b37f292584e4efbd5c1e4d",
           "verdict": "accepted"
         },
         {
@@ -5624,7 +5624,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "a08a9a105226af126016aebf825b2a8b5712d4c08f780a6f5511e6d5ca444411",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "883f96785b153229fcd741f73ffaccc2bcc9016a3c3fd8457a0146c322f1169c",
+          "textSha256": "e2859abb8849cb743fb8cba01888de209b5427697a3223e3e74b87dcb618276c",
           "verdict": "accepted"
         },
         {
@@ -5640,7 +5640,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "73b9b7b468b24ce8d8d2f1d5b6f3c878d85f59f80ffe963930b6d11aef41cce4",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "57fa8e57ff5cd84357508f08c134936811570f01808d27f2e82ad2595c478b2e",
+          "textSha256": "e62695c370a0a811faac9189bb17b95c2ce87b3f9907fb3510b21c0834342e75",
           "verdict": "accepted"
         },
         {
@@ -5656,7 +5656,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b429df6ef72c60327c82e1de48ffb3157f98a8d67392e7d4fd13dfc368e6693d",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "ad5e782ff34f0dd9c5a2e088e82eb8a94ad75ba3d67e464c2510c26402d07c42",
+          "textSha256": "f408317e19a9422e402c128192e4e6648a4ab98d551ce5b35478fbbc19d28c22",
           "verdict": "accepted"
         },
         {
@@ -5664,7 +5664,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "96fe945b6122cba066ae7d8293761c5f230c44e24b88dcf0d1bb65a6ded340f4",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "ee794b5ae7cc5bcdf53fdbd56e5261e6eca5c0a4237975d1b2cdd9d0c55cee1d",
+          "textSha256": "45e2b093bedf09e15ef6f04143a5b81aa7e2fb5068af0a0e935f6ac2bd22a710",
           "verdict": "accepted"
         },
         {
@@ -5672,7 +5672,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b9e90a5d1c0a8212e780b64f8edc63bcdc858268e091a08adc11d0190d676bb5",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "deb00b9ced5199f816a067003fd4ae5cb5a868018af8c8656765f0aeafd810e3",
+          "textSha256": "f6daff8c69367bbe61a7754e99799c5a45e4c165dc2dd963c4c34ff4173feb9e",
           "verdict": "accepted"
         },
         {
@@ -5688,7 +5688,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "d609be8bed922d4089dccdf962887c01e41bb09fde2cefb0d7f22db336908c40",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "44876a2279e7bf082f65d6aa76c5593dbe0b3d4780ea894da4bbd113a4af3b44",
+          "textSha256": "c0bb71251a5ef020c0e90b7d2302618576ea7f4832d0cdbff953d2fc324183f9",
           "verdict": "accepted"
         },
         {
@@ -5744,7 +5744,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "c87f747b976d7287befd131284a81e863451d95419d85c2cb9fb7d82ca0b3e9a",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "5a1ce8d6de33729114b73fbf8b87f73dcdc390814a441f1080ed91f5d8448d52",
+          "textSha256": "f52e0638dd5399997f52c287af2c2ac910247175812515537fea0e672a6fffe6",
           "verdict": "accepted"
         },
         {
@@ -5768,7 +5768,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "9b2588fa615cc4f3259ad0feb4e47023a36e2035d78cdbf1e433682b9d23602f",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "d936a8799d794c958c3aa013ed12f7b1ff5f53ae58120e1d5efdf090f6999ce9",
+          "textSha256": "f3a2a3435ff155ac5e0ca4b8cd3f9f1978969236c07bc0e1d7fd1da3aa12b881",
           "verdict": "accepted"
         },
         {
@@ -5792,7 +5792,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "dcfe22c9387849fea5d16bb99a39f514e3a054ef52ea9ae35cbbc07528ddb44f",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "66acad3f83127630d3129fe0c030d6beb5a8dcce19c7b14e08ffec08e43bdcef",
+          "textSha256": "0f58b823ef2e84d96b5f26a147d057d318be74bb4be2cfc9416a95751c782285",
           "verdict": "accepted"
         },
         {
@@ -5800,7 +5800,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "ab520da92e8415a29ec94c9071dfd4a68140cee290f211a1474c2d1831c72720",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "6b0238bce6393017ee8b91294c5aa928d28f0b56a3ba6a45635f0572e142942d",
+          "textSha256": "24bde92800ea496c8306b117767b9cd482ec448297cb7acab5585609dced9f33",
           "verdict": "accepted"
         },
         {
@@ -5832,7 +5832,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "89e9cf72da9e63e895bae5820f9b4beac132dc41a43d4f4c0850f3c28a9a01b3",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "3c7ebef8f66b372fe1fe236c91b9c548420a5c14e809524716978efa00f70365",
+          "textSha256": "7b32cd807b1988ddcc5805a92611ad1d8cc05d6e1f137bb8cca2ffd34651942d",
           "verdict": "accepted"
         },
         {
@@ -5880,7 +5880,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "ddef3d5a7047e3566d7137a16f0de41e37a18cb9577b3e4ebdade71fe194e0f0",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "e84e1503fdcca44e60aa3a5cd81d410665da2e1dceb1809aeba95d5b11339364",
+          "textSha256": "cd85f1b1e680666bdc07bac7b3e518f9a76812544cf502290fb94b558dbfa05e",
           "verdict": "accepted"
         },
         {
@@ -5904,7 +5904,7 @@
           "fieldPath": "displayNotes.blocks.p-4.textRaw",
           "inputFingerprint": "2cb75f1f70ebbe904625c46d1d11ca99578b90f60a8f4fbe102f44632c423da7",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "f2b6676993d94628e2031fbd2ac63198ee4902438ab078a810e0561f212cacdc",
+          "textSha256": "27b3bd3d769bf034cb007851cb1df5b9bf9dd308662623debd31da720d8ca51b",
           "verdict": "accepted"
         },
         {
@@ -5912,7 +5912,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "46b5b850ae6c73ccf37d9ee7564cf7973a937b3d8986f6f22c6d4f33032b844e",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "65081190a0341ff5cf0b7d748148eb6662d32964aaad9e2c4747fd3cf4a2fdb6",
+          "textSha256": "9d01a9c519e2e73c9836aa5e6714d4ec109874e9f31ded5f322605057c21d64c",
           "verdict": "accepted"
         },
         {
@@ -5928,7 +5928,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "31e33f7d999876bd38955d38defaaf52d2c1022d12d2356792ad936756bc5d5b",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "3938a5d97ba707109ee9c7f5bc7a911c44dc10187328415ea2e5f1a14c54e9f1",
+          "textSha256": "d3fb849915ced355d4cd557f53a9e559c198ae95b8632b4cf457b6747e434b64",
           "verdict": "accepted"
         },
         {
@@ -5936,7 +5936,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "be367296156788438453f76424fa028e284aac846300dea805627fa62953c947",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "72912d1000f802bd25f2343643dce67097241ec3f6350583741a49313a5e8ec9",
+          "textSha256": "4c0d7775e8d50beb66b50a8692180400187156fac602a4c2606a6104049c18ae",
           "verdict": "accepted"
         },
         {
@@ -5952,7 +5952,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "90d7ee5841f1c2bdddd9754537404bf76d813003f09581738de95f747fc560a9",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "9f0ef1f5568c54b8b35acbd5aee39642a09755eea4129c47f06e77e51a9503e8",
+          "textSha256": "a6b9f0ddc9311166ee856f42d49a1edd15aed2106a1450b5eb2d182251ddae39",
           "verdict": "accepted"
         },
         {
@@ -5960,7 +5960,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "2ca4ea1cf695ef474e84331061bc5d032e77c9c3de4ea7ae38429a47e6d95229",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1b5d5974f57bf3f7be24170924d1a97b0a79be4dcf8a0e9832c67b95517bf75a",
+          "textSha256": "24e4d2e9ef0aa7b295785a8c4ce73b1110e6778c136267cc9d900c1e4ba41adc",
           "verdict": "accepted"
         },
         {
@@ -5968,7 +5968,7 @@
           "fieldPath": "displayNotes.blocks.p-2.textRaw",
           "inputFingerprint": "2ed245ab6363468f464cda12c192d47551fcd3487522f21a77b1bb31062c8159",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "c58fdfe53df51bff4b5fa24d1975988bf5779b62e268292278d334f77a0046e1",
+          "textSha256": "925c36c7807e9d03eb8c6eee21f5c1efa542c4056cc7a77845630aa7f430f2a1",
           "verdict": "accepted"
         },
         {
@@ -5976,7 +5976,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b3587bf94300e5a662fd1d7e753fd0c6025ca68bb4d47f1b22ef704c0daffe7f",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "4e3f7a6f278d43c01a8d6bbdf848f0d734d0f29bb6dee352c534e1387aaa4d56",
+          "textSha256": "995a6c7cf4185c7fd10f30841f5e40574a710cd5199191cc8a74cbd914fd7b54",
           "verdict": "accepted"
         },
         {
@@ -6000,7 +6000,7 @@
           "fieldPath": "displayNotes.blocks.p-4.textRaw",
           "inputFingerprint": "ed4d03ff28134086ada5cfb7de258ca2aa58f56b6c0a13cfc9ff354b110eb2d0",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "0ebab85443a43811588dc2fd5f6a6ebaf891444ba1e9511a93745ac1431b6c2f",
+          "textSha256": "0184bce1190104276914919eeacf0489e836414cf708138b2c0dd1a9d8d351f8",
           "verdict": "accepted"
         },
         {
@@ -6008,7 +6008,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "57499764f2ae45a929841ed0addf5f3fedb786d653934a73409908694f40e402",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1ba036960b7d3ee0245e21aa7fd503835b8bc25cac964943d3c114bea51ddcc3",
+          "textSha256": "ef08c6d4c402db986d185580e317a9e94d3a4a2aa2dce2854d49e1458c4eb830",
           "verdict": "accepted"
         },
         {
@@ -6024,7 +6024,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "1930f554b6da672d199458eee4aa361ef49d9fb19234e372cdc142ffc39a6738",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "4b6230506817995741ab4669eb9db70e2404015fc2cd55e1a19cd41bc64d5dd9",
+          "textSha256": "53874f10ece7f89c7276558c933508c9682bc0c7c4de37396304dda6d23fe2fe",
           "verdict": "accepted"
         },
         {
@@ -6056,7 +6056,7 @@
           "fieldPath": "displayNotes.blocks.p-4.textRaw",
           "inputFingerprint": "1ee4a12278d10de8b903d71d0ad56e64665357849edb85222444f34b8197b8f6",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "bbdf353f3021bcd67f889d30b121b84e193b1631819bef9ead759f54c0c928f2",
+          "textSha256": "f3ef163f47f05f40f9b90e5f397f293150a9a37e844c5f3d7b9458bd7ac6e64f",
           "verdict": "accepted"
         },
         {
@@ -6080,7 +6080,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "93980d66df5d720cb871726808e636d2f3e968115c080e86797c5a02c001961e",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "bc0c111fe9a820718d958fc20c093ce6aade8862edad5ca59d2009e1d3b311d8",
+          "textSha256": "822e545b34fef8e94ecdc7259d5643abaa697fdd6457705c2d95ff64bc8300ca",
           "verdict": "accepted"
         },
         {
@@ -6088,7 +6088,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "1276d6beac0cd57f82144cb683d4697edf372f8471b20f6d21350bcbb257e79a",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "f16eaeda40cfd1eb16ea95cb120306d06f97ae1756f910ff943c480f528b022d",
+          "textSha256": "b4a8f6053f08027f3822b8fdd113ed5f4f4dc29700948afce0b4922a719606bd",
           "verdict": "accepted"
         },
         {
@@ -6096,7 +6096,7 @@
           "fieldPath": "displayNotes.blocks.p-2.textRaw",
           "inputFingerprint": "f080b9cc08899fa8820722e5972cce1594535e50fc0c21abf138ea34d90e4c25",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "2a6462bbc40e93221eecb29b1d0f6c7af309be2e42bbcef7f0b3a8e92bd07f48",
+          "textSha256": "c0f5483c0f36c3452a951f8566e1e9bff4630de0483fe1a8e5afa0978a4843d0",
           "verdict": "accepted"
         },
         {
@@ -6104,7 +6104,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "621961dfce6126ea91043fcdfacce58e8fffc3aeb3155eb5cfb9ec063afd9b60",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "c8a2617b85b21e62e6abb0c0aa31023c93542a1b70fb1f9ee1071f33dae1cd52",
+          "textSha256": "6771e63ecccb88f6db3be5b668a346aea8d3ed9c52d8a1c162ec085886608a25",
           "verdict": "accepted"
         },
         {
@@ -6128,7 +6128,7 @@
           "fieldPath": "displayNotes.blocks.p-4.textRaw",
           "inputFingerprint": "86685a207aad78c98ae5452aa134fc5fb2197a2cf3cacc23c7d243228e7721d5",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "d7201cac14f21fe0f945de5b6c40221203c78478bcab796bd0f7117b676fdff5",
+          "textSha256": "5f567537b27a9314ccab0d796b9991cddc09eb00ef1b19b53c40af55de7b575e",
           "verdict": "accepted"
         },
         {
@@ -6136,7 +6136,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "c45ec83b8b78177d9cc09c35b43a819ca83d045ab9f7b315964bac0340311fc8",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1a571a311becf01145a37f4e2e10180fd93dbd655980023aabd7d68fbb1a2eb9",
+          "textSha256": "763544e8e3533ea608b0df7e4d95ba777ed9082cc3bda73645cc321a0e52dedb",
           "verdict": "accepted"
         },
         {
@@ -6168,7 +6168,7 @@
           "fieldPath": "displayNotes.blocks.p-5.textRaw",
           "inputFingerprint": "07be07dd40eacbf85c932ca7b3ea2a7a9422f0ca053923788f97f1c304d21fb3",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "75cd49e466fdee966da39f8dd58f7d6852de1ce4b3517b48659cfc84e9b58779",
+          "textSha256": "110d609b630d11f76cc364b37cbe14afc7cdf530d8f9b64c47dcc95b911c1234",
           "verdict": "accepted"
         },
         {
@@ -6176,7 +6176,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "51a54b73862729c27d8e374f7d756df2d6167788d440a55ebee1f104bc381054",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "8868d3bd64575e725082f339a32e324db5c8b7addb7ad15410e6afadfe3d732b",
+          "textSha256": "3b3a74119404d72ebcc1a67c52f9bdd9b7e2d1c1a8a345763db4553733871d49",
           "verdict": "accepted"
         },
         {
@@ -6192,7 +6192,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "130c94ff707a90ad7184ba1e86b3dcdb6d3808610139b7fd5e9c589f5094f6ee",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "c7f76d64ced6e8a7f0b1eb2e4468d8edb70878f13298beaaeaa7c07e32f9532e",
+          "textSha256": "62031a4497d0c7425ebeba83ecc81aa7ef6dd21ac84f35722ab7a1f2c68899fc",
           "verdict": "accepted"
         },
         {
@@ -6200,7 +6200,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "97b85a2dd0c3d1c6976e3cdac816b5c9916da518e2a8ee19140e9a57a9b1084d",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "cfc2d10ddf371084e7cd7870572597b7063835bec04c9ea9766effd6fcb96f96",
+          "textSha256": "6a54defbcff8e9de3d10483f9c132a4bb84aabd5850b51c79bfa8c19f42d8923",
           "verdict": "accepted"
         },
         {
@@ -6224,7 +6224,7 @@
           "fieldPath": "displayNotes.blocks.p-4.textRaw",
           "inputFingerprint": "376a8d4cae18c567c7e97a65905cd464edafc004c65ebc8f76438e8a4143ac96",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "74f743830e747dd8c9585cc2ea5c33a9cb61063d479d74bb57a2c1d04cf5ab5f",
+          "textSha256": "1739a3871544d803982f9988cadb0205e2bc633021b96efdeed45fb603c4f4dc",
           "verdict": "accepted"
         },
         {
@@ -6232,7 +6232,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "9e1d516022c048d029f94a3db9e39c032f33b0e64fa462d59d410ae9dba4a41b",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "1cb3bc16bc48b4826fee9411590fa37d44f1a23d294e495be1d50e058f797ce0",
+          "textSha256": "eefb590451c28c73f98a3cff9e394d5040e47f939d327e0d8303fa8b3e340cc7",
           "verdict": "accepted"
         },
         {
@@ -6248,7 +6248,7 @@
           "fieldPath": "displayNotes.blocks.p-3.textRaw",
           "inputFingerprint": "ceb660cf07f61a622dc7ef5c67d5ed9736f82ce2eb360b77c2eebe50b4fabad9",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "a8522cc283e45d63556f8cd8badeb3f1ae59b214ba9e35125d9a1552d0e6961e",
+          "textSha256": "9289191287ee9ec480ab505364197d84380eb42efbe9daa62b66cf702f3e7e40",
           "verdict": "accepted"
         },
         {
@@ -6256,7 +6256,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "e4fb3bc2f1a341ae63608d3ea1661799ef40963ed2f4fb352c5735a6911eb03b",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "2e39e0f66c905cc1cf6fd59ba943a3b74a7f14558837b067e43eb894fce09491",
+          "textSha256": "5fe8d219d3cf6f835f7102706b3fde9770012b4a459be13cf698ad72ca28a305",
           "verdict": "accepted"
         },
         {
@@ -6264,7 +6264,7 @@
           "fieldPath": "displayNotes.blocks.p-2.textRaw",
           "inputFingerprint": "92e9db76cde425742101d1a95686773109f78c49eddba73b338e45eb352b2884",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "55786ed23b8cecceb42b4e44a00a3239ed73a89720aa4515b759c11bd5b96e44",
+          "textSha256": "13171a60608fd8336f7fa99790db13019a0f3c65c2a59cb7ae6d8f6e874713e4",
           "verdict": "accepted"
         },
         {
@@ -6272,7 +6272,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "7e204437b606e519ae89e1527baa19789026dc4f38964aac2b0202df12432ad8",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "a650057212e4ba2bcee13662ac929ba9c01b2dca81b6c32d42818dd9f2432528",
+          "textSha256": "0aee5598e4dda7c3d55de4898bc955122acc55976aefdd42f6273c58a2815850",
           "verdict": "accepted"
         },
         {
@@ -6280,7 +6280,7 @@
           "fieldPath": "displayNotes.blocks.p-2.textRaw",
           "inputFingerprint": "869481c33edf6ee3a532b83415ebb63ad297201818da34123b6c52e5c3727aa4",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "59e966d6b8f925f5a9a44cc5e835da16b47ebf20c92b7e96691ff7725e83699d",
+          "textSha256": "cae7bc23ad086a51af200b8f97fd7032d96f85a47c03a9e2fa3dd990c6c0ff5c",
           "verdict": "accepted"
         },
         {
@@ -6422,12 +6422,12 @@
       ]
     },
     {
-      "batchId": "doi-chuan-261117-r1-002",
-      "draftSession": "Main:issues-47-64-261117",
-      "reviewerSession": "reviewer:Rv261117-r1-002",
-      "reviewedAt": "2026-11-17T00:41:00+07:00",
-      "outputPath": "pipeline/localization-reviews/doi-chuan-261117-r1-002.json",
-      "outputSha256": "84d66fa56a20b5a4dab59ee9c5c319798127aff132c44071d9ab9454cc3bc3e7",
+      "batchId": "ky-luoc-261118-r2-002",
+      "draftSession": "Main:ky-luoc-261118",
+      "reviewerSession": "reviewer:Rv261118-kl2-002",
+      "reviewedAt": "2026-11-18T00:42:00+07:00",
+      "outputPath": "pipeline/localization-reviews/ky-luoc-261118-r2-002.json",
+      "outputSha256": "50093b0c8e2ad4685dd588aa912a553bc733f6c56e7732bc420d48d448b308b8",
       "items": [
         {
           "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-ofw-wanghong-qiang",
@@ -6442,7 +6442,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "bcd49f30a1ed337a2fb76dddb4a7aa380ba3089f14d5985ef436d13b5f21235b",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "2f3273e2c52b1d9ff9019fca9a9856f11df302333bf3c2463f9032733db00a22",
+          "textSha256": "235fb04146ae896023521874f02dfa0e5b396eeaba82c9bd091a1042bcba4e6b",
           "verdict": "accepted"
         },
         {
@@ -6458,7 +6458,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "b76f1f19b4df851b8c3fdbe1e82d78c184481e5ab0da519f1a6affbb8ddde689",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "5f12ebf04743471f25ce8239049cf237a7239b22d7023865a861e5c7a60fc85c",
+          "textSha256": "779a6ab02273c53b4a3f7a5039b62589a66833081bff428b9d3a9ea4c037e39a",
           "verdict": "accepted"
         },
         {
@@ -6506,7 +6506,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "9c3ee9950da25f4719f6ec72ff795051a031cd78095f6caec4d5da2d42618284",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "3c6c94233c9e932ac1f3ae4db095fd329f09dc341e2dd7c9ab4545d8aaa76989",
+          "textSha256": "9691952ccdd89b34fdb18b8c1f19996220e161f9501b037941c9e83b8cd9759a",
           "verdict": "accepted"
         },
         {
@@ -6706,7 +6706,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "1b034a78c19aa759262c8b277416096102217a34d535be6a92e7de45d17a5db1",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "71c90ce61dd83cf4585b48ed134da424d4982be2147fc7dba7cf7515f02438b0",
+          "textSha256": "81a912be94989a522b3330b8aec2752e27ab3ba7554e02d0773cae551648ba1d",
           "verdict": "accepted"
         },
         {
@@ -6794,7 +6794,7 @@
           "fieldPath": "displayNotes.blocks.p-1.textRaw",
           "inputFingerprint": "6b5326bdfdbff09d10fed6d7da5cef7011670c27f3e2b2c17c7befd6397fd595",
           "glossaryDigest": "sha256:e00b61a02c9f9e32623a6df3fd9bfde0c75d1794f0c9c7f5de774b5cf0c26fc3",
-          "textSha256": "f6b43aae24ab7aa6ed9f784cd31731ad9edc148167a9d991d577a0abec6e94e4",
+          "textSha256": "01d6ffacc98fad9407be99a99a6297f6d5bba8a4b30d0ff52ca3082e3fb9b199",
           "verdict": "accepted"
         },
         {
