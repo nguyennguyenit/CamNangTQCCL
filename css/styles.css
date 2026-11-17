@@ -8342,6 +8342,12 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   color: var(--accent-ink);
 }
 
+/* Nhãn mùa dài của chi tiết (kỳ lược: "Mùa Hán Diễm Trường Minh (PK-S27, client …)") xuống dòng thay vì tràn khung 320px. */
+.lookup-detail-badges .badge.badge-scenario {
+  max-width: 100%;
+  white-space: normal;
+}
+
 .badge.badge-suggest {
   background: var(--accent);
   color: var(--on-accent);

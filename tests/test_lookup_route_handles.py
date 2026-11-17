@@ -416,7 +416,7 @@ class RealLedgerTest(unittest.TestCase):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         self.assertEqual(lrh.ledger_problems(ledger, corpus), [])
         counts = {group: len(items) for group, items in ledger["handles"].items()}
-        self.assertEqual(sum(counts.values()), len(corpus["groups"]["heroes"]) + len(corpus["groups"]["tactics"]) + sum(len(corpus["groups"][g]) for g in ("equipment", "advisors", "troop-mods", "buildings", "books")))
+        self.assertEqual(sum(counts.values()), len(corpus["groups"]["heroes"]) + len(corpus["groups"]["tactics"]) + sum(len(corpus["groups"][g]) for g in ("equipment", "advisors", "troop-mods", "buildings", "books", "qilue")))
         self.assertEqual(counts["heroes"], len(json.loads((REPO_ROOT / "data/heroes-dict.json").read_bytes())))
 
     def test_committed_bytes_are_canonical(self):

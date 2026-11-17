@@ -1321,6 +1321,7 @@ class QilueCatalogTest(unittest.TestCase):
     def test_only_reviewed_cross_group_name_collisions_are_allowed(self):
         self.assertEqual(build_module.QILUE_NAME_COLLISIONS_ALLOWED, {
             ("Ám Độ Trần Thương", "tactic:lap-lo-danh-trao"), ("Cường Công", "tactic:cuong-cong"), ("強攻", "tactic:cuong-cong"),
+            ("久戰", "book:chien-dau-truong-ky"),
         })
         _validate_payloads(self.heroes, self.tactics, self.catalog)
         hero = next(row for row in self.heroes if row["id"] == "hero:luu-bi")

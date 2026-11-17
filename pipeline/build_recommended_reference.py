@@ -216,8 +216,11 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
             json.loads(bytes(qilue_catalog_bytes)),
             json.loads(bytes(qilue_overrides_bytes)),
         )
-        for row in [*(candidate.get("records") or []), *details_by_id.values()]:
-            value = qilue.get((row.get("safeScopeKey"), row.get("sourceConfigId")))
+        # Hàng detail của source pack không mang `safeScopeKey`: khóa scope của nó là khóa nhóm `details` (`detail_scope`).
+        targets = [((row.get("safeScopeKey"), row.get("sourceConfigId")), row) for row in candidate.get("records") or []]
+        targets += [((detail_scope[identifier], identifier), row) for identifier, row in details_by_id.items()]
+        for key, row in targets:
+            value = qilue.get(key)
             if value is not None:
                 row["qilue"] = copy.deepcopy(value)
         candidate["qilueCatalogHash"] = "sha256:" + sha256_hex(bytes(qilue_catalog_bytes))

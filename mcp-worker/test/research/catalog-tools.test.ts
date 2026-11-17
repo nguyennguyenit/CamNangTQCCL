@@ -88,10 +88,10 @@ describe("tqccl_search", () => {
 });
 
 describe("tqccl_get_entity", () => {
-  it("returns the Tra cứu profile for one record of each of the seven groups", async () => {
+  it("returns the Tra cứu profile for one record of each of the eight groups", async () => {
     const all = await entities();
     const groups = [...new Set(all.map((entity) => entity.group))];
-    expect(groups).toHaveLength(7);
+    expect(groups).toHaveLength(8);
     for (const group of groups) {
       const entity = all.find((candidate) => candidate.group === group)!;
       const result = await handlers.call("tqccl_get_entity", { entityId: entity.id });

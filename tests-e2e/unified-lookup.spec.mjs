@@ -1288,6 +1288,7 @@ test.describe('tải dữ liệu theo trang nhóm', () => {
     'troop-mods': ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
     buildings: ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
     books: ['website-display.json', 'books-dict.json'],
+    qilue: ['website-display.json', 'lookup-manifest.json', 'lookup-catalog.json'],
   };
 
   /** Ghi lại tên file của mọi request `/data/*.json` cấp đầu (không tính generation `/data/recommended/`). */

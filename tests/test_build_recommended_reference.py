@@ -626,7 +626,9 @@ class RecommendedQiluePublicationTest(unittest.TestCase):
         return {
             "inventory": {"inventoryHash": "a", "seasonOptions": [{"sourceSeasonId": "pk-s27", "label": "S27", "status": "available"}],
                           "scopes": [{"safeScopeKey": scope_key, "sourceScopeId": "pk-s27|交戰", "sourceSeasonId": "pk-s27", "sourceCategoryId": "交戰", "state": "complete"}]},
-            "records": [copy.deepcopy(record)], "details": {scope_key: [copy.deepcopy(record)]},
+            # Hàng detail giống source pack thật: không có `safeScopeKey` (scope là khóa của `details`).
+            "records": [copy.deepcopy(record)],
+            "details": {scope_key: [{key: copy.deepcopy(value) for key, value in record.items() if key != "safeScopeKey"}]},
             "otherTeams": [], "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1,
         }
 

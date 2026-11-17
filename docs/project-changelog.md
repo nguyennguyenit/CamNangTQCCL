@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-18 (Kỳ lược: publish bản dịch hiển thị)
+
+- Bản dịch: thêm 32 obligation `authored-vi` cho chữ mới của nhóm Kỳ lược: `ui:recommended/detail-qilue`, `-strategy`, `-round`, `-unordered`, `-copy` (ô Kỳ lược trên trang đội); `ui:lookup-master/*-qilue*` (21 nhãn danh sách, bộ lọc, chi tiết thẻ/phương lược); `ui:lookup/unit-qilue`, `ui:lookup/qilue-rarity-common`/`-rare`; `ui:layout/lookup-desc-qilue`; `ui:lookup-item/description-qilue-strategy`/`-card`. Mục lục `/tra-cuu/` (vi/zh) liệt kê thêm kỳ lược trong mô tả meta và dòng dẫn (`ui:section-page/tra-cuu`, `ui:lookup/lead`). Không đổi obligation `translate`. Policy `site-vi-261118-ky-luoc`, baseline 67361 → 67393 location; re-pin `js/lookup-data.js`, `js/lookup-detail.js`, `js/lookup-master.js`, `js/lookup-page.js`, `js/recommended-reference-render.js`, `js/unified-lookup.js`, `src/components/pages/LookupHubPage.astro`, `src/lib/lookup-item-pages.ts`, `src/lib/lookup-pages.ts`. Publish generation Đội chuẩn `68095760…` (prune `472a32e9…`), 59 đội PK-S27 có `qilue`; re-pin `pipeline/team-route-handles.json`; `docs/zh-gaps.md` thêm nhóm Kỳ lược (0/45); `WORKFLOW_BUILD_ID` MCP sinh lại.
+- Fixed: `prepare_publication_inputs` gắn `qilue` cho hàng detail theo khóa scope của nhóm `details` (hàng detail của source pack không có `safeScopeKey`), trước đó publish thật dừng ở "Recommended index/detail qilue differ". Fixture test dùng hàng detail không có `safeScopeKey` như source pack.
+- Fixed: nhãn mùa dài trong chi tiết Tra cứu (`.lookup-detail-badges .badge.badge-scenario`) xuống dòng, chi tiết kỳ lược không còn tràn ngang ở 320px.
+- Tests: kỳ vọng số nhóm Tra cứu cập nhật cho nhóm thứ tám (`tests/test_lookup_route_handles.py`, `mcp-worker/test/data/publication-snapshot.test.ts`, `mcp-worker/test/research/catalog-tools.test.ts`, `BOOT_DATA.qilue` trong `tests-e2e/unified-lookup.spec.mjs`); `QILUE_NAME_COLLISIONS_ALLOWED` thêm `久戰` / `book:chien-dau-truong-ky` trong test.
+
 ## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
 
 - Fixed: ghi chú chia đội Thương/Kỵ trong `data/khaihoang.json` ghi "Hoàng Nguyệt Anh (Vô Đương / Bạch Nhị)" thay "Bạch Nhĩ", cùng cách viết 白毦 = "Bạch Nhị Binh" của Đội chuẩn (#64). Ghi chú lớp `authored-vi`, không có bản zh.

@@ -395,7 +395,7 @@ describe("route and locale parity", () => {
     const { publication } = await validateDataSnapshot(release.manifest, release.all);
     const model = publication!;
     const kinds = new Set(model.entities.map((entity) => entity.kind));
-    expect([...kinds].sort()).toEqual(["advisor", "book", "building", "equipment", "equipment-special", "hero", "tactic", "troop-mod"]);
+    expect([...kinds].sort()).toEqual(["advisor", "book", "building", "equipment", "equipment-special", "hero", "qilue-card", "qilue-strategy", "tactic", "troop-mod"]);
     let withPage = 0;
     let special = 0;
     for (const entity of model.entities) {
@@ -447,9 +447,9 @@ describe("read model", () => {
     model = (await validateDataSnapshot(release.manifest, release.all)).publication!;
   });
 
-  it("searches all seven Tra cứu groups by Vi, Han and Han-Viet names", () => {
+  it("searches all eight Tra cứu groups by Vi, Han and Han-Viet names", () => {
     const groups = new Set(model.entities.map((entity) => entity.group));
-    expect([...groups].sort()).toEqual(["advisors", "books", "buildings", "equipment", "heroes", "tactics", "troop-mods"]);
+    expect([...groups].sort()).toEqual(["advisors", "books", "buildings", "equipment", "heroes", "qilue", "tactics", "troop-mods"]);
     const equipment = model.entities.find((entity) => entity.kind === "equipment")!;
     expect(model.searchCatalog(equipment.nameVi, { kinds: ["equipment"] }).items[0]?.entity.id).toBe(equipment.id);
     const hero = model.entities.find((entity) => entity.kind === "hero" && entity.nameZh && entity.hanViet)!;
