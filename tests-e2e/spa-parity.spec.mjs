@@ -1004,9 +1004,10 @@ test("aria-current đúng trên cả 8 trang mục", async ({ page }) => {
       if (await active.isVisible()) break;
       await toggle.click();
     }
-    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp).
+    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp). Link bản đang xem của nhóm chuyển
+    // ngôn ngữ (`data-lang-current`) đánh dấu ngôn ngữ, không phải mục, nên không tính.
     await expect(active).toBeVisible();
-    await expect(page.locator('a[aria-current="page"]:visible')).toHaveCount(1);
+    await expect(page.locator('a[aria-current="page"]:visible:not([data-lang-current])')).toHaveCount(1);
   }
 });
 
@@ -1052,8 +1053,9 @@ test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đ�
   await expect(page).toHaveURL("/tra-cuu/chien-phap/");
   await expect(page.locator("#section-menu-items")).toBeHidden();
   await page.locator("#section-menu-toggle").click();
-  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]')).toHaveAttribute("aria-current", "page");
-  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]')).not.toHaveAttribute("aria-current", /.+/);
+  // Chân menu có link bản đang xem của nhóm chuyển ngôn ngữ trỏ cùng trang: chỉ xét link mục.
+  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]:not([data-lang-current])')).toHaveAttribute("aria-current", "page");
+  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]:not([data-lang-current])')).not.toHaveAttribute("aria-current", /.+/);
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {

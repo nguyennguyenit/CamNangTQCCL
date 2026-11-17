@@ -106,7 +106,8 @@ test('nhóm chuyển ngôn ngữ giữ query và hash cho mọi lựa chọn, k�
     await expect(page.locator(`.header-actions [data-lang-switcher] a[hreflang="${hreflang}"]`))
       .toHaveAttribute('href', `${path('/tra-cuu/chien-phap/')}${query}`);
   }
-  await page.locator('.header-actions [data-lang-switcher] a[hreflang="vi"]').click();
+  // `?id=` mở hồ sơ dạng hộp thoại (lớp nền chặn bấm header): đi theo đúng href của link để kiểm đích chuyển ngôn ngữ.
+  await page.goto(await page.locator('.header-actions [data-lang-switcher] a[hreflang="vi"]').getAttribute('href'));
   await page.waitForURL((url) => url.pathname === '/tra-cuu/chien-phap/' && url.search === query);
   await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
 });
@@ -190,9 +191,13 @@ test('trang riêng Tra cứu bản Nhật: tên Nhật, tên gốc chữ Hán, n
   await expect(main).toContainText(/日本語訳がない|未翻訳/u);
   await expectJapaneseOnly(page, 'main');
 
-  // Trang nhóm: danh sách dựng sẵn dùng tên Nhật.
+  // Trang nhóm: danh sách dựng sẵn (mọi mục, phần sau trang đầu ẩn) dùng tên Nhật; sau khi app dựng lại trang đầu vẫn là tên Nhật.
+  const listHtml = await page.request.get('/ja/tra-cuu/chien-phap/').then((response) => response.text());
+  expect(listHtml).toContain(`data-lookup-id="${translatedId}">${translated.name}</a>`);
   await page.goto('/ja/tra-cuu/chien-phap/');
-  await expect(page.locator(`#section-lookup a[data-lookup-id="${translatedId}"]`).first()).toContainText(translated.name);
+  await expect(page.locator('body[data-boot=ready]')).toBeAttached();
+  const firstLink = page.locator('#section-lookup a[data-lookup-id]').first();
+  await expect(firstLink).toContainText(lookupJa.entries[await firstLink.getAttribute('data-lookup-id')].name);
 });
 
 test('Soi đội từ ảnh và Gợi ý đội từ kho bản Nhật mở được, chỉ có chữ Nhật', async ({ page }) => {
