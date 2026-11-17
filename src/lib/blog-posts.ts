@@ -355,11 +355,13 @@ export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN 
   return { html, headings, text: plain };
 }
 
-/** Phút đọc: tiếng Việt ~220 từ/phút, tiếng Trung ~400 chữ/phút; tối thiểu 1 phút. */
+/** Phút đọc: tiếng Việt ~220 từ/phút, tiếng Trung ~400 chữ/phút, tiếng Nhật ~500 chữ (Hán + kana)/phút; tối thiểu 1 phút. */
 export function readingMinutes(plain: string, lang: SiteLocale): number {
   const han = plain.match(/[\u3400-\u9fff\uf900-\ufaff]/gu)?.length ?? 0;
   const words = plain.replace(/[\u3400-\u9fff\uf900-\ufaff]/gu, ' ').split(/\s+/u).filter(Boolean).length;
-  const minutes = pick(lang, words / 220 + han / 400, (han + words) / 400);
+  const kana = plain.match(/[\u3040-\u30ff]/gu)?.length ?? 0;
+  const latinWords = plain.replace(/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/gu, ' ').split(/\s+/u).filter(Boolean).length;
+  const minutes = pick(lang, words / 220 + han / 400, (han + words) / 400, (han + kana) / 500 + latinWords / 220);
   return Math.max(1, Math.ceil(minutes));
 }
 

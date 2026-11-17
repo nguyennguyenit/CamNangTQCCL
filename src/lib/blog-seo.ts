@@ -1,18 +1,22 @@
 /**
  * Chữ hiển thị và dữ liệu có cấu trúc (JSON-LD, RSS, llms.txt) của blog. Mỗi chuỗi chọn đúng một
- * ngôn ngữ qua `pick()`; bản vi là gốc, bản zh là bản dịch tiếng Trung giản thể.
+ * ngôn ngữ qua `pick()`; bản vi là gốc, bản zh là bản dịch tiếng Trung giản thể, bản ja là bản dịch tiếng Nhật.
  */
-import { LOCALE_HTML_LANG, LOCALE_INTL, LOCALE_OG, localePath, pick } from '../../js/i18n.js';
+import { LOCALE_HTML_LANG, LOCALE_INTL, LOCALE_OG, isSiteLocale, localePath, pick } from '../../js/i18n.js';
 import { blogIndexPath, type RenderedBlogPost } from './blog-posts.ts';
 import type { LlmsDocuments } from './llms-documents.ts';
 import type { SiteLocale } from './locale-routes.ts';
 
-export const SITE_NAME = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册' } as const;
+export const SITE_NAME = { vi: 'Cẩm Nang Game Tam Quốc Chí - Chiến Lược', zh: '三国志战略版攻略手册', ja: '三國志 真戦 攻略手帳' } as const;
 
-/** Nhãn link "đọc bản dịch" theo [ngôn ngữ bài][ngôn ngữ bản dịch], viết bằng ngôn ngữ bài; thiếu cặp thì build lỗi. */
-const TRANSLATION_LINK_LABEL: Record<SiteLocale, Partial<Record<SiteLocale, string>>> = {
-  vi: { zh: 'Đọc bản tiếng Trung' },
-  zh: { vi: '阅读越南语版本' },
+/**
+ * Nhãn link "đọc bản dịch" theo [ngôn ngữ bài][ngôn ngữ bản dịch], viết bằng ngôn ngữ bài; thiếu cặp thì build lỗi.
+ * Khóa theo mã chuỗi (không theo `SiteLocale`) để khai trước locale chưa bật.
+ */
+const TRANSLATION_LINK_LABEL: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  vi: { zh: 'Đọc bản tiếng Trung', ja: 'Đọc bản tiếng Nhật' },
+  zh: { vi: '阅读越南语版本', ja: '阅读日语版本' },
+  ja: { vi: 'ベトナム語版を読む', zh: '中国語版を読む' },
 };
 
 export function blogCopy(locale: SiteLocale) {
@@ -22,48 +26,50 @@ export function blogCopy(locale: SiteLocale) {
     htmlLang: LOCALE_HTML_LANG[locale],
     ogLocale: LOCALE_OG[locale],
     siteName: SITE_NAME[locale],
-    blogName: p('Bài viết', '文章'),
-    home: p('Trang chủ', '首页'),
-    indexTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`),
-    indexHeading: p('Bài viết', '文章'),
+    blogName: p('Bài viết', '文章', '記事'),
+    home: p('Trang chủ', '首页', 'トップ'),
+    indexTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`, `記事 — ${SITE_NAME.ja}`),
+    indexHeading: p('Bài viết', '文章', '記事'),
     indexDescription: p(
       'Bài viết hướng dẫn và phân tích Tam Quốc Chí Chiến Lược: đội hình, tướng, chiến pháp và cách chơi theo mùa.',
       '三国志战略版攻略与分析文章：阵容、武将、战法以及各赛季玩法。',
+      '『三國志 真戦』の攻略・分析記事：編成、武将、戦法、シーズンごとの遊び方。',
     ),
-    indexKicker: p('Cẩm nang cộng đồng', '社区攻略'),
-    tagline: p('Bài viết', '文章'),
-    emptyTitle: p('Chưa có bài viết nào', '暂无文章'),
+    indexKicker: p('Cẩm nang cộng đồng', '社区攻略', 'コミュニティ攻略'),
+    tagline: p('Bài viết', '文章', '記事'),
+    emptyTitle: p('Chưa có bài viết nào', '暂无文章', 'まだ記事はありません'),
     emptyBody: p(
       'Bài viết đầu tiên sẽ xuất hiện ở đây ngay khi được xuất bản. Trong lúc chờ, bạn có thể xem đội hình và tra cứu tướng.',
       '第一篇文章发布后会显示在这里。在此之前，你可以先查看阵容或查询武将。',
+      '最初の記事は公開され次第ここに表示されます。それまでは編成や武将の検索をご覧ください。',
     ),
-    emptyTeams: p('Xem Đội chuẩn', '查看推荐阵容'),
-    emptyLookup: p('Tra cứu', '图鉴查询'),
-    postCount: (count: number) => p(`${count} bài viết`, `共 ${count} 篇文章`),
-    articleTitle: (title: string) => p(`${title} — Bài viết — ${SITE_NAME.vi}`, `${title} — 文章 — ${SITE_NAME.zh}`),
-    back: p('Tất cả bài viết', '全部文章'),
-    backLabel: p('Quay lại danh sách bài viết', '返回文章列表'),
-    breadcrumbLabel: p('Đường dẫn', '导航路径'),
-    summary: p('Tóm tắt', '摘要'),
-    toc: p('Mục lục', '目录'),
-    tocCount: (count: number) => p(`${count} mục`, `${count} 项`),
-    guide: p('Trong cẩm nang', '攻略内'),
-    sideNav: p('Điều hướng bài viết', '文章导航'),
-    faq: p('Câu hỏi thường gặp', '常见问题'),
-    related: p('Bài viết liên quan', '相关文章'),
-    tags: p('Chủ đề', '标签'),
-    author: p('Tác giả', '作者'),
-    published: p('Đăng ngày', '发布于'),
-    updated: p('Cập nhật', '更新于'),
-    readingTime: (minutes: number) => p(`${minutes} phút đọc`, `阅读约 ${minutes} 分钟`),
-    readMore: p('Đọc bài', '阅读全文'),
+    emptyTeams: p('Xem Đội chuẩn', '查看推荐阵容', 'おすすめ編成を見る'),
+    emptyLookup: p('Tra cứu', '图鉴查询', '図鑑検索'),
+    postCount: (count: number) => p(`${count} bài viết`, `共 ${count} 篇文章`, `${count} 件の記事`),
+    articleTitle: (title: string) => p(`${title} — Bài viết — ${SITE_NAME.vi}`, `${title} — 文章 — ${SITE_NAME.zh}`, `${title} — 記事 — ${SITE_NAME.ja}`),
+    back: p('Tất cả bài viết', '全部文章', 'すべての記事'),
+    backLabel: p('Quay lại danh sách bài viết', '返回文章列表', '記事一覧に戻る'),
+    breadcrumbLabel: p('Đường dẫn', '导航路径', 'パンくずリスト'),
+    summary: p('Tóm tắt', '摘要', '要約'),
+    toc: p('Mục lục', '目录', '目次'),
+    tocCount: (count: number) => p(`${count} mục`, `${count} 项`, `${count} 項目`),
+    guide: p('Trong cẩm nang', '攻略内', '手帳内のページ'),
+    sideNav: p('Điều hướng bài viết', '文章导航', '記事ナビゲーション'),
+    faq: p('Câu hỏi thường gặp', '常见问题', 'よくある質問'),
+    related: p('Bài viết liên quan', '相关文章', '関連記事'),
+    tags: p('Chủ đề', '标签', 'タグ'),
+    author: p('Tác giả', '作者', '著者'),
+    published: p('Đăng ngày', '发布于', '公開日'),
+    updated: p('Cập nhật', '更新于', '更新日'),
+    readingTime: (minutes: number) => p(`${minutes} phút đọc`, `阅读约 ${minutes} 分钟`, `約 ${minutes} 分で読めます`),
+    readMore: p('Đọc bài', '阅读全文', '記事を読む'),
     translation: (target: SiteLocale): string => {
-      const label = TRANSLATION_LINK_LABEL[locale][target];
+      const label = TRANSLATION_LINK_LABEL[locale]?.[target];
       if (!label) throw new Error(`blogCopy: thiếu nhãn link bản dịch ${locale} → ${target}`);
       return label;
     },
-    rssLabel: p('RSS bài viết', '文章 RSS'),
-    rssTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`),
+    rssLabel: p('RSS bài viết', '文章 RSS', '記事 RSS'),
+    rssTitle: p(`Bài viết — ${SITE_NAME.vi}`, `文章 — ${SITE_NAME.zh}`, `記事 — ${SITE_NAME.ja}`),
   };
 }
 
@@ -210,7 +216,7 @@ export function rssDocument(locale: SiteLocale, posts: readonly RenderedBlogPost
     `    <title>${escapeXml(copy.rssTitle)}</title>`,
     `    <link>${escapeXml(absolute(blogIndexPath(locale), site))}</link>`,
     `    <description>${escapeXml(copy.indexDescription)}</description>`,
-    `    <language>${pick(locale, 'vi', 'zh-cn')}</language>`,
+    `    <language>${pick(locale, 'vi', 'zh-cn', 'ja')}</language>`,
     `    <atom:link href="${escapeXml(absolute(feedPath, site))}" rel="self" type="application/rss+xml"/>`,
     ...(latest ? [`    <lastBuildDate>${new Date(latest).toUTCString()}</lastBuildDate>`] : []),
     ...items,
@@ -225,17 +231,24 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
   // Tiêu đề bài do admin nhập: thoát `[`/`]` để không vỡ cú pháp link Markdown.
   const link = (label: string, path: string, note: string) =>
     `- [${label.replace(/[[\]\\]/gu, (character) => `\\${character}`)}](${absolute(path, site)}): ${note}`;
-  const noPosts: Record<SiteLocale, string> = { vi: '- Chưa có bài viết tiếng Việt.', zh: '- Chưa có bài viết tiếng Trung.' };
-  const postLines = (lang: SiteLocale) => {
+  const noPosts: Readonly<Record<string, string>> = {
+    vi: '- Chưa có bài viết tiếng Việt.',
+    zh: '- Chưa có bài viết tiếng Trung.',
+    ja: '- Chưa có bài viết tiếng Nhật.',
+  };
+  const postLines = (lang: string) => {
     const own = posts.filter((post) => post.lang === lang);
     return own.length
       ? own.map((post) => link(post.title, post.path, `${post.description.replace(/\s+/gu, ' ')} (${post.publishedAt.slice(0, 10)})`))
       : [noPosts[lang]];
   };
+  // Mục của bản tiếng Nhật chỉ có khi locale `ja` đã bật (nằm trong `SITE_LOCALES`).
+  const hasJa = isSiteLocale('ja');
+  const onlyWithJa = (lines: string[]) => (hasJa ? lines : []);
   return [
     `# ${SITE_NAME.vi}`,
     '',
-    '> Cẩm nang cộng đồng cho người chơi Tam Quốc Chí Chiến Lược (三国志·战略版): đội hình theo mùa, tra cứu tướng, chiến pháp, trang bị, quân sư và vài công cụ tính giúp. Site có bản tiếng Việt (gốc `/`) và bản tiếng Trung giản thể (`/zh/`).',
+    `> Cẩm nang cộng đồng cho người chơi Tam Quốc Chí Chiến Lược (三国志·战略版): đội hình theo mùa, tra cứu tướng, chiến pháp, trang bị, quân sư và vài công cụ tính giúp. ${hasJa ? 'Site có bản tiếng Việt (gốc `/`), bản tiếng Trung giản thể (`/zh/`) và bản tiếng Nhật (`/ja/`).' : 'Site có bản tiếng Việt (gốc `/`) và bản tiếng Trung giản thể (`/zh/`).'}`,
     '',
     'Tên tướng và chiến pháp ở bản tiếng Việt dùng âm Hán Việt; bản tiếng Trung giữ chữ Hán gốc. Nội dung chỉ mang tính tham khảo, không phải thông tin chính thức của nhà phát hành.',
     '',
@@ -248,6 +261,7 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
     link('Tra cứu', '/tra-cuu/', 'tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng và công trình'),
     link('Bài viết', '/bai-viet/', 'bài hướng dẫn và phân tích bằng tiếng Việt'),
     link('文章', '/zh/bai-viet/', 'bài viết bằng tiếng Trung giản thể'),
+    ...onlyWithJa([link('記事', '/ja/bai-viet/', 'bài viết bằng tiếng Nhật')]),
     '',
     '## Tra cứu theo nhóm',
     '',
@@ -272,6 +286,22 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
     link('截图识阵', '/zh/soi-doi-tu-anh/', 'Soi đội từ ảnh bản tiếng Trung'),
     link('武将库配队', '/zh/goi-y-doi-tu-kho/', 'Gợi ý đội từ kho bản tiếng Trung'),
     '',
+    ...onlyWithJa([
+      '## Bản tiếng Nhật',
+      '',
+      'Tên tướng và chiến pháp theo bản game Nhật khi đã đối chiếu, còn lại chuyển chữ Hán sang tự dạng Nhật; mô tả hiệu ứng là bản dịch máy từ chữ Trung, số liệu theo bản Trung Quốc đại lục.',
+      '',
+      link('トップ', '/ja/', 'trang chủ bản tiếng Nhật'),
+      link('おすすめ編成', '/ja/doi-chuan/', 'Đội chuẩn bản tiếng Nhật'),
+      link('その他の編成', '/ja/doi-khac/', 'Đội khác bản tiếng Nhật'),
+      link('共存編成', '/ja/cung-ton/', 'Cùng Tồn bản tiếng Nhật'),
+      link('開拓', '/ja/khai-hoang/', 'Khai hoang bản tiếng Nhật'),
+      link('図鑑検索', '/ja/tra-cuu/', 'Tra cứu bản tiếng Nhật'),
+      link('登用記録', '/ja/theo-doi-chieu-mo/', 'Theo dõi chiêu mộ bản tiếng Nhật'),
+      link('スクショ編成解析', '/ja/soi-doi-tu-anh/', 'Soi đội từ ảnh bản tiếng Nhật'),
+      link('所持武将で編成', '/ja/goi-y-doi-tu-kho/', 'Gợi ý đội từ kho bản tiếng Nhật'),
+      '',
+    ]),
     '## Bài viết tiếng Việt',
     '',
     ...postLines('vi'),
@@ -280,11 +310,13 @@ export function llmsDocument(posts: readonly RenderedBlogPost[], site: URL | str
     '',
     ...postLines('zh'),
     '',
+    ...onlyWithJa(['## Bài viết tiếng Nhật (日本語の記事)', '', ...postLines('ja'), '']),
     '## Khác',
     '',
     link('Sitemap', '/sitemap.xml', 'toàn bộ URL công khai'),
     link('RSS tiếng Việt', '/rss.xml', 'bài viết mới nhất bằng tiếng Việt'),
     link('RSS tiếng Trung', '/zh/rss.xml', 'bài viết mới nhất bằng tiếng Trung'),
+    ...onlyWithJa([link('RSS tiếng Nhật', '/ja/rss.xml', 'bài viết mới nhất bằng tiếng Nhật')]),
     '',
   ].join('\n');
 }
