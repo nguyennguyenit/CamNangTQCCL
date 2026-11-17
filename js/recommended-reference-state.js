@@ -3,14 +3,29 @@ import { canonicalTeamView, resolveTeamView } from './team-view.js';
 import { L, contentLocaleIsVietnamese, currentLocale, normalizeLocale } from './i18n.js';
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
-let zhNameResolver = null;
+/** Bộ tra tên theo locale; khóa `*` dùng cho mọi bản không phải tiếng Việt chưa có bộ riêng. */
+const nameResolvers = new Map();
+const ANY_SOURCE_LOCALE = '*';
 
 /**
- * Bản zh: bộ phân giải tên Hán-Việt của dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) → chữ Hán
- * gốc, dựng từ từ điển tướng/chiến pháp/binh thư. Bản vi không cần gọi; truyền giá trị không phải hàm để gỡ.
+ * Bản không phải tiếng Việt: bộ phân giải tên Hán-Việt của dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) → tên của
+ * bản đang xem, dựng từ từ điển tướng/chiến pháp/binh thư (bản zh: chữ Hán gốc, `createRawNameResolver`; bản ja: tên Nhật,
+ * `createJaNameResolver`). `resolver.fromRaw(chữ Hán nguồn)` (tùy chọn) đổi chữ nguồn đã có chữ Hán; `resolver.prefixed`
+ * (tùy chọn) dựng tên chiến pháp bản cải tạo. `locale` vắng thì bộ tra dùng cho mọi bản chưa có bộ riêng — trình duyệt chỉ có một
+ * bản; lúc build dựng nhiều bản trong một tiến trình nên mỗi bản đăng ký riêng. Bản vi không cần gọi; truyền giá trị không phải
+ * hàm để gỡ (vắng `locale`: gỡ mọi bộ).
  */
-export function setZhNameResolver(resolver) {
-  zhNameResolver = typeof resolver === 'function' ? resolver : null;
+export function setZhNameResolver(resolver, locale = null) {
+  const key = locale === null || locale === undefined ? ANY_SOURCE_LOCALE : normalizeLocale(locale);
+  if (typeof resolver === 'function') nameResolvers.set(key, resolver);
+  else if (key === ANY_SOURCE_LOCALE) nameResolvers.clear();
+  else nameResolvers.delete(key);
+}
+
+/** Bộ tra tên của bản `locale` (bản Việt: `null`). */
+function nameResolverFor(locale) {
+  if (contentLocaleIsVietnamese(locale)) return null;
+  return nameResolvers.get(normalizeLocale(locale)) ?? nameResolvers.get(ANY_SOURCE_LOCALE) ?? null;
 }
 
 let tacticDisplayResolver = null;
@@ -33,20 +48,33 @@ export function tacticDisplayName(value, raw = null, locale = currentLocale()) {
 }
 
 /**
- * Tên nguồn theo ngôn ngữ trang. Bản vi trả nguyên; bản zh giữ nguyên chuỗi đã có chữ Hán, còn tên Hán-Việt
- * đổi sang chữ Hán gốc theo từng phần ngăn bởi `·`, `/`, `+`. Phần không tra được bị bỏ (không trộn tiếng Việt
- * vào trang zh); không còn phần nào thì trả chuỗi rỗng để caller hiện ô trống "—".
+ * Tên nguồn theo ngôn ngữ trang. Bản vi trả nguyên. Bản khác: chuỗi đã có chữ Hán đi qua `resolver.fromRaw` (bản zh giữ
+ * nguyên, bản ja ra tên Nhật / tự dạng Nhật); tên Hán-Việt đổi sang tên của bản đang xem theo từng phần ngăn bởi `·`, `/`, `+`.
+ * Phần không tra được bị bỏ (không trộn tiếng Việt vào trang); không còn phần nào thì trả chuỗi rỗng để caller hiện ô trống "—".
  */
 export function sourceName(value, locale = currentLocale()) {
-  if (typeof value !== 'string' || !zhNameResolver || contentLocaleIsVietnamese(locale) || CJK_TEXT.test(value)) return value;
+  const resolver = typeof value === 'string' ? nameResolverFor(locale) : null;
+  if (!resolver) return value;
+  if (CJK_TEXT.test(value)) return typeof resolver.fromRaw === 'function' ? resolver.fromRaw(value) : value;
   const parts = value.split(/(\s*[·/+]\s*)/u);
   const kept = [];
   for (let index = 0; index < parts.length; index += 2) {
     const name = parts[index].trim();
-    const resolved = name ? zhNameResolver(name) : null;
+    const resolved = name ? resolver(name) : null;
     if (resolved) kept.push({ separator: index ? parts[index - 1] : '', resolved });
   }
   return kept.map((item, index) => (index ? item.separator : '') + item.resolved).join('');
+}
+
+/**
+ * Tên chiến pháp bản cải tạo (`prefix`: `Tinh`/`Chuyển`/`Thác` hoặc `精`/`轉`/`拓`) theo bộ tra của bản đang xem khi bộ tra tự dựng
+ * được (bản ja: tên kịch bản `prefixedTactics` hoặc `転・<tên Nhật>`); `undefined` khi bộ tra không hỗ trợ để caller dùng cách
+ * ghép mặc định, chuỗi rỗng khi tên gốc không tra được.
+ */
+export function sourcePrefixedTactic(prefix, value, locale = currentLocale()) {
+  const resolver = nameResolverFor(locale);
+  if (typeof resolver?.prefixed !== 'function') return undefined;
+  return resolver.prefixed(prefix, value) ?? '';
 }
 
 /** Nhãn chữ Hán (theo locale) của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
@@ -198,7 +226,7 @@ function searchTerms(row,labels) {
 // phần của khóa cache. Bản zh thêm tên chữ Hán gốc và nhãn phe/binh chữ Hán để tìm bằng tiếng Trung.
 const searchBlobs = new WeakMap();
 function searchBlob(row,labels) {
-  const resolver=!contentLocaleIsVietnamese(currentLocale()) ? (zhNameResolver || 'zh') : null;
+  const resolver=!contentLocaleIsVietnamese(currentLocale()) ? (nameResolverFor(currentLocale()) || 'zh') : null;
   const cached=searchBlobs.get(row);
   if (cached && cached.labels === labels && cached.resolver === resolver && cached.display === tacticDisplayResolver) return cached.blob;
   const terms=searchTerms(row,labels).filter(Boolean);

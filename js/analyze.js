@@ -34,7 +34,7 @@ import {
 import { api, describeError, loadSession, signInPrompt } from "./community-api.js";
 import { L, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
-import { createRawNameResolver, localName } from "./website-display.js";
+import { createRawNameResolver, localName, localRawName, localRecordName } from "./website-display.js";
 import { withLocaleAliases } from "./locale-name-aliases.js";
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
 
@@ -386,7 +386,8 @@ export function drawResultCard(canvas, card) {
 /* ---------- Khởi tạo section ---------- */
 
 /**
- * @param deps {heroesDict, tacticsDict, booksDict, jaEntries?: (chỉ bản ja) entries của lookup-ja.json, loadRecommended: () => Promise<model>,
+ * @param deps {heroesDict, tacticsDict, booksDict, jaEntries?: (chỉ bản ja) entries của lookup-ja.json, rawNames?: bộ tra tên của trang
+ *   (`loadRawNameResolver`; bản ja: tên Nhật), loadRecommended: () => Promise<model>,
  *   teamHref: (record) => string|null, onNavigate?: (event) => void}
  */
 export function initAnalyze(deps, mount) {
@@ -402,16 +403,16 @@ export function initAnalyze(deps, mount) {
   const INDEX_BY_KIND = { hero: indexes.heroes, tactic: indexes.tactics, book: indexes.books };
   const tacticIdOf = createTacticIdResolver(deps.tacticsDict);
   const bookIdOf = createBookNameIndex(deps.booksDict || []);
-  const resolveRaw = zh ? createRawNameResolver(deps.heroesDict, deps.tacticsDict, deps.booksDict || []) : null;
+  const resolveRaw = zh ? deps.rawNames ?? createRawNameResolver(deps.heroesDict, deps.tacticsDict, deps.booksDict || []) : null;
 
-  /** Nhãn hiển thị của một mục từ điển: bản vi tên Việt chuẩn, bản zh chữ Hán gốc. */
-  const recordLabel = (record) => (zh ? (record.chinese || "").trim() || record.viet : record.viet);
+  /** Nhãn hiển thị của một mục từ điển: bản vi tên Việt chuẩn, bản zh chữ Hán gốc, bản ja tên Nhật theo mã. */
+  const recordLabel = (record) => (zh ? localRecordName(record, resolveRaw) || record.viet : record.viet);
   /** Tên của một ID; ID ngoài từ điển (tên chỉ có trong đội tham chiếu) dùng tên nguồn. */
   const nameOf = (kind, id, fallbackVi = "", fallbackRaw = "") => {
     const record = id ? INDEX_BY_KIND[kind].byId.get(id) : null;
     if (record) return recordLabel(record);
     if (!zh) return kind === "tactic" ? tacticDisplayName(fallbackVi) : fallbackVi;
-    return fallbackRaw || localName(fallbackVi, resolveRaw);
+    return (fallbackRaw && localRawName(fallbackRaw, resolveRaw)) || localName(fallbackVi, resolveRaw);
   };
   const hasId = (id) => {
     const kind = String(id).split(":")[0];
@@ -472,7 +473,7 @@ export function initAnalyze(deps, mount) {
   const howItWorks = el("ol", { class: "ana-how", "aria-label": L("Cách hoạt động", "工作方式", "仕組み") }, [
     [L("AI chỉ chép chữ trong ảnh", "AI 只抄录图中文字", "AI は画像内の文字を書き写すだけ"), L("Tên tướng, chiến pháp, binh thư in trên màn hình; không đoán theo chân dung.", "抄录画面上印出的武将、战法、兵书名称；不根据头像猜测。", "画面に表示された武将・戦法・兵法書の名前を書き写します。顔グラフィックからの推測はしません。")],
     [L("Bạn xác nhận từng ô", "由您逐格确认", "マスごとにご自身で確認"), L("Ô chắc chắn tự điền; ô “Không chắc” có tối đa 3 gợi ý để chọn.", "确定的格自动填好；“不确定”的格最多给出 3 个建议供选择。", "確実なマスは自動で入力されます。「不確か」のマスには、最大 3 件の候補が表示されます。")],
-    [L("Đối chiếu trên máy", "在本机比对", "端末内で比較"), L("So với Đội chuẩn của mùa bạn chọn và Đội khác, chỉ ra ô lệch.", "与所选赛季的推荐阵容及其他阵容比对，标出不同的格。", "選んだシーズンの推奨編成とその他の編成を比較し、違いのあるマスを示します。")],
+    [L("Đối chiếu trên máy", "在本机比对", "端末内で比較"), L("So với Đội chuẩn của mùa bạn chọn và Đội khác, chỉ ra ô lệch.", "与所选赛季的推荐阵容及其他阵容比对，标出不同的格。", "選んだシーズンのおすすめ編成とその他の編成を比較し、違いのあるマスを示します。")],
   ].map(([title, note], index) => el("li", { class: "ana-how-step" }, [
     el("span", { class: "ana-how-num", "aria-hidden": "true" }, String(index + 1)),
     el("span", { class: "ana-how-text" }, [el("span", { class: "ana-how-title" }, title), el("span", { class: "ana-how-note" }, note)]),
@@ -686,7 +687,7 @@ export function initAnalyze(deps, mount) {
       el("p", { class: "reference-lead" }, L(
         "Chụp màn hình đội hình hoặc nhập tay, kiểm tra từng ô rồi đối chiếu với Đội chuẩn theo mùa và Đội khác.",
         "截取阵容画面或手动输入，逐格核对后与当季推荐阵容及其他阵容比对。",
-        "編成画面のスクリーンショットまたは手動入力から、マスごとに確認したうえで、シーズンの推奨編成やその他の編成と比較します。",
+        "編成画面のスクリーンショットまたは手動入力から、マスごとに確認したうえで、シーズンのおすすめ編成やその他の編成と比較します。",
       )),
     ]),
     flow,
@@ -1014,7 +1015,7 @@ export function initAnalyze(deps, mount) {
   const recordName = (record) => {
     const reference = referenceTeam(record, tacticIdOf, bookIdOf);
     const heroNames = () => reference.slots.map((slot) => nameOf("hero", slot.alternatives[0]?.canonicalId, slot.name, slot.raw)).filter(Boolean).join(" · ");
-    if (record.sourceConfigId) return zh ? record.nameZh || heroNames() : record.displayNameVi || heroNames();
+    if (record.sourceConfigId) return zh ? (record.nameZh && localRawName(record.nameZh, resolveRaw)) || heroNames() : record.displayNameVi || heroNames();
     return zh ? heroNames() : record.name || heroNames();
   };
 
@@ -1107,7 +1108,7 @@ export function initAnalyze(deps, mount) {
     if (!loaded) {
       compared = null;
       compareBody.replaceChildren(el("p", { class: "error", role: "status" }, L(
-        "Dữ liệu đội chuẩn hiện không khả dụng. Thử tải lại trang.", "推荐阵容数据暂不可用，请刷新页面重试。", "推奨編成のデータは現在利用できません。ページを再読み込みしてお試しください。",
+        "Dữ liệu đội chuẩn hiện không khả dụng. Thử tải lại trang.", "推荐阵容数据暂不可用，请刷新页面重试。", "おすすめ編成のデータは現在利用できません。ページを再読み込みしてお試しください。",
       )));
       return;
     }
@@ -1120,8 +1121,8 @@ export function initAnalyze(deps, mount) {
     compared = { team, season, standard, other };
     compareSub.textContent = L("Theo số tướng rồi số chiến pháp khớp", "按相同武将数、再按相同战法数排序", "一致する武将数、次に一致する戦法数の順に並べています");
     compareBody.replaceChildren(
-      group(L(`Đội chuẩn · ${seasonLabel(season)}`, `推荐阵容 · ${seasonLabel(season)}`, `推奨編成 · ${seasonLabel(season)}`), standard,
-        L("Mùa này không có đội chuẩn nào trùng từ 2 tướng.", "本赛季没有至少 2 名武将相同的推荐阵容。", "このシーズンには、武将が 2 名以上一致する推奨編成がありません。"), "ana-group-standard"),
+      group(L(`Đội chuẩn · ${seasonLabel(season)}`, `推荐阵容 · ${seasonLabel(season)}`, `おすすめ編成 · ${seasonLabel(season)}`), standard,
+        L("Mùa này không có đội chuẩn nào trùng từ 2 tướng.", "本赛季没有至少 2 名武将相同的推荐阵容。", "このシーズンには、武将が 2 名以上一致するおすすめ編成がありません。"), "ana-group-standard"),
       group(L("Đội khác · tham khảo", "其他阵容 · 仅供参考", "その他の編成 · 参考"), other,
         L("Không tìm thấy đội có sẵn nào có mức độ tương đồng đủ cao (≥2 tướng trùng).", "未找到相似度足够高的现有队伍（需至少 2 名武将相同）。", "類似度が十分に高い既存の編成が見つかりません（武将が 2 名以上一致する必要があります）。"), "ana-group-other"),
     );
@@ -1379,7 +1380,7 @@ export function initAnalyze(deps, mount) {
       subtitle: L(`Mùa đối chiếu: ${seasonLabel(compared.season)}`, `比对赛季：${seasonLabel(compared.season)}`, `比較シーズン：${seasonLabel(compared.season)}`),
       members: compared.team.heroes.map(memberLine),
       groups: [
-        { title: L("Đội chuẩn gần nhất", "最接近的推荐阵容", "最も近い推奨編成"), rows: rows(compared.standard) },
+        { title: L("Đội chuẩn gần nhất", "最接近的推荐阵容", "最も近いおすすめ編成"), rows: rows(compared.standard) },
         { title: L("Đội khác · tham khảo", "其他阵容 · 仅供参考", "その他の編成 · 参考"), rows: rows(compared.other) },
       ].map((item) => (item.rows.length ? item : { ...item, rows: [L("Không có đội trùng từ 2 tướng.", "没有至少 2 名武将相同的阵容。", "武将が 2 名以上一致する編成はありません。")] })),
       footer: location.host,

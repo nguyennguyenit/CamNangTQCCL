@@ -101,6 +101,7 @@ test("6. đổi defaultSourceSeasonId: mùa cũ cũ có trang, mùa mới hiện
   assert.deepEqual(seasonRedirectRules(after), [
     { from: "/doi-chuan/pk-s24/", to: "/doi-chuan/", status: 301 },
     { from: "/zh/doi-chuan/pk-s24/", to: "/zh/doi-chuan/", status: 301 },
+    { from: "/ja/doi-chuan/pk-s24/", to: "/ja/doi-chuan/", status: 301 },
   ]);
   assert.equal(isOldSeason(current, registry.defaultSourceSeasonId), false);
   // Mặc định đổi sang PK-S24: PK-S27 (mùa hiện tại trước đó) giờ mới hơn mặc định nên không nhãn, PK-S20 thì có.

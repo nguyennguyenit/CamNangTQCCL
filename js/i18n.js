@@ -58,6 +58,16 @@ export function contentLocaleIsVietnamese(locale) {
   return normalizeLocale(locale) === DEFAULT_LOCALE;
 }
 
+/**
+ * Nguồn chữ nội dung của trang theo ngôn ngữ: `vi` (lớp dịch Việt), `source` (chữ Hán nguồn nguyên văn, bản zh), `ja` (bản Nhật
+ * dựng trên chữ nguồn: tên Nhật và bản dịch máy của `data/lookup-ja.json`; văn xuôi chữ Trung chưa dịch bị ẩn). Chọn bằng
+ * `pick` nên locale mới phải tự khai nguồn chữ của nó.
+ * @returns {"vi" | "source" | "ja"}
+ */
+export function contentMode(locale) {
+  return pick(locale, 'vi', 'source', 'ja');
+}
+
 /** Ngôn ngữ đang được ép tạm bởi `withLocale` (dựng cây view cho một locale tường minh); `null` khi không ép. */
 let scopedLocale = null;
 

@@ -589,7 +589,7 @@ function feedbackItem(entry, { status, onToggle }) {
   const mailto = email && entry.emailMasked !== true ? `mailto:${email}?subject=${encodeURIComponent(`Re: ${entry.title}`)}` : null;
   const row = el('li', { class: 'adm-card adm-feedback cm-feedback-item' }, [
     el('p', { class: 'adm-meta' }, [
-      el('span', { class: 'cm-badge', dataset: { tone: FEEDBACK_KIND_TONE[entry.kind] ?? '' } }, kind ? L(kind.vi, kind.zh, kind.ja ?? kind.zh) : String(entry.kind || '')),
+      el('span', { class: 'cm-badge', dataset: { tone: FEEDBACK_KIND_TONE[entry.kind] ?? '' } }, kind ? L(kind.vi, kind.zh, kind.ja) : String(entry.kind || '')),
       badge,
       el('span', { class: 'adm-author' }, entry.author ? displayName(entry.author) : L('Ẩn danh', '匿名', '匿名')),
       timeNode(entry.createdAt),
@@ -640,7 +640,7 @@ function openFeedbackPanel(panel, { head, counts }) {
   ], 'new');
   const kindFilter = selectInput('cm-feedback-kind', [
     ['', L('Tất cả', '全部', 'すべて')],
-    ...FEEDBACK_KINDS.map((kind) => [kind.id, L(kind.vi, kind.zh, kind.ja ?? kind.zh)]),
+    ...FEEDBACK_KINDS.map((kind) => [kind.id, L(kind.vi, kind.zh, kind.ja)]),
   ], '');
   // Dòng tổng theo artboard AdminFeedback: "3 góp ý chưa xử lý · 12 đã xử lý" (mọi loại).
   const summary = el('p', { class: 'adm-filter-summary', hidden: '' });

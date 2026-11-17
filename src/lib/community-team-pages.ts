@@ -8,6 +8,7 @@ import { localePath, pick, withLocale } from '../../js/i18n.js';
 import { SITE_NAME } from './blog-seo.ts';
 import { canonicalTeamPath, type CommunityTeam } from './community-teams.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
+import { lookupJaNameResolver } from './lookup-pages.ts';
 import type { SiteLocale } from './locale-routes';
 import { readPublicArtifact } from './root-static-artifacts.ts';
 import { communityTeamJsonLd, type NamedPath } from './structured-data.ts';
@@ -75,7 +76,7 @@ export function teamPageCopy(team: CommunityTeam, names: TeamNames, locale: Site
     locale,
     `${team.title} (${h1}, ${h2}, ${h3}) — Đội cộng đồng — ${SITE_NAME.vi}`,
     `${team.title}（${h1}、${h2}、${h3}）— 社区阵容 — ${SITE_NAME.zh}`,
-    `${team.title}（${h1}、${h2}、${h3}）— コミュニティ編成 — 三國志 真戦 攻略手帳`,
+    `${team.title}（${h1}、${h2}、${h3}）— コミュニティ編成 — ${SITE_NAME.ja}`,
   );
   const description = clampDescription(`${troop} · ${h1}, ${h2}, ${h3} — ${team.analysis.playstyle}`);
   const pairs = names.heroes.map((hero, index) => `${hero} (${names.tactics[index]!.join(', ')})`);
@@ -120,8 +121,9 @@ function teamDictionaries() {
 }
 
 export async function communityTeamPageModel(team: CommunityTeam, locale: SiteLocale, site: URL | string): Promise<TeamPageModel> {
-  const [dicts, routes] = await Promise.all([teamDictionaries(), lookupDetailRoutes()]);
-  const lexicon = createTeamLexicon(dicts, locale);
+  const [dicts, routes, jaNames] = await Promise.all([teamDictionaries(), lookupDetailRoutes(), lookupJaNameResolver()]);
+  // Bản Nhật: tên tướng/chiến pháp theo mã từ lớp tên Nhật (cùng bộ tra mà trang `/ja/` nạp lại ở trình duyệt).
+  const lexicon = createTeamLexicon({ ...dicts, names: pick(locale, null, null, jaNames) }, locale);
   const names: TeamNames = {
     heroes: team.heroes.map((id) => lexicon.heroName(id)) as unknown as TeamNames['heroes'],
     tactics: team.tactics.map((pair) => pair.map((id) => lexicon.tacticName(id))) as unknown as TeamNames['tactics'],

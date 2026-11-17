@@ -152,12 +152,15 @@ function todayLocalDate() {
   return `${year}-${month}-${day}`;
 }
 
-/** Gợi ý tên tướng: bản zh dùng tên chữ Hán gốc, bản Việt dùng tên Việt. */
-function heroName(hero) {
+/**
+ * Gợi ý tên tướng: bản zh dùng tên chữ Hán gốc, bản ja tên Nhật theo mã (`names` = bộ tra của trang, `loadRawNameResolver`;
+ * vắng thì chữ Hán), bản Việt dùng tên Việt.
+ */
+function heroName(hero, names = null) {
   return L(
     hero.name || hero.viet || hero.hanViet || hero.chinese || "",
     hero.chinese || hero.name || hero.viet || hero.hanViet || "",
-    hero.chinese || hero.name || hero.viet || hero.hanViet || "",
+    names?.nameOf?.(hero.id) || hero.chinese || hero.name || hero.viet || hero.hanViet || "",
   );
 }
 
@@ -258,7 +261,7 @@ function quickButton(key, label, wanted, remainingToday) {
   const pulls = Math.max(Math.min(wanted, remainingToday), 0);
   let sub = L(`Hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済み`);
   if (pulls && key === "free") sub = L(`Ghi +${pulls} lượt không ra`, `记录 +${pulls} 次未出`, `+${pulls} 回 未獲得を記録`);
-  else if (pulls) sub = L(`Ghi ${pulls} lượt rẻ còn lại`, `记录剩余 ${pulls} 次低价招募`, `残り ${pulls} 回の割引招聘を記録`);
+  else if (pulls) sub = L(`Ghi ${pulls} lượt rẻ còn lại`, `记录剩余 ${pulls} 次低价招募`, `残り ${pulls} 回の割引登用を記録`);
   return {
     key,
     label,
@@ -281,7 +284,7 @@ function averageSub(average, limit) {
   return L(`bằng mốc ${limit}`, `等于保底 ${limit}`, `天井 ${limit} と同じ`);
 }
 
-export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today = todayLocalDate() } = {}) {
+export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today = todayLocalDate(), names = null } = {}) {
   const heroes = Array.isArray(heroesDict) ? heroesDict : Object.values(heroesDict || {});
   const { daily, stats } = summary;
   const dailyPity = pityView(daily.pity);
@@ -310,7 +313,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
     }),
     activeAccountId: summary.account?.id || "",
     accountName: summary.account?.name || "",
-    heroOptions: uniqueSorted(heroes.map(heroName)),
+    heroOptions: uniqueSorted(heroes.map((hero) => heroName(hero, names))),
     isEmpty: Boolean(summary.isEmpty),
     daily: {
       title: L(`${bannerDisplayName(daily.banner)} · Hôm nay`, `${bannerDisplayName(daily.banner)} · 今日`, `${bannerDisplayName(daily.banner)} · 本日`),
@@ -320,7 +323,7 @@ export function buildRecruitTrackerViewModel(summary, heroesDict = [], { today =
       remainingText: L(`Còn ${dailyPity.remaining} lượt`, `还差 ${dailyPity.remaining} 抽`, `あと ${dailyPity.remaining} 回`),
       cheapText: dailyFull
         ? L(`hôm nay đã đủ ${DAILY_PULL_LIMIT} lượt`, `今日 ${DAILY_PULL_LIMIT} 次已记满`, `本日 ${DAILY_PULL_LIMIT} 回分を記録済み`)
-        : L(`hôm nay còn ${remainingToday} lượt rẻ`, `今日还剩 ${remainingToday} 次低价招募`, `本日あと ${remainingToday} 回の割引招聘`),
+        : L(`hôm nay còn ${remainingToday} lượt rẻ`, `今日还剩 ${remainingToday} 次低价招募`, `本日あと ${remainingToday} 回の割引登用`),
       todayDone: daily.todayDone,
       remainingToday,
       todayText: L(`Hôm nay ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `今日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`, `本日 ${daily.todayDone}/${DAILY_PULL_LIMIT}`),
@@ -397,7 +400,7 @@ function meterNode(className, fill, label) {
   ]);
 }
 
-export function initRecruitTracker({ heroesDict = [], mount, storage = localStorage } = {}) {
+export function initRecruitTracker({ heroesDict = [], rawNames = null, mount, storage = localStorage } = {}) {
   if (!mount) return null;
   let state = loadRecruitTrackerState(storage);
   const doc = mount.ownerDocument ?? globalThis.document;
@@ -890,7 +893,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     el("p", { class: "rt-sub" }, L(
       "Xem số lượt đã quay từ lần ra 5★ gần nhất trong màn chiêu mộ Danh tướng PK (0–29).",
       "在 PK 名将招募界面查看距上次 5★ 已抽的次数（0–29）。",
-      "PK 名将招聘の画面で、前回の 5★ からの回数（0–29）を確認してください。",
+      "PK 名将登用の画面で、前回の 5★ からの回数（0–29）を確認してください。",
     )),
     onboardInput,
     el("div", { class: "rt-onboard-actions" }, [
@@ -903,7 +906,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     el("header", { class: "rt-section-head" }, [
       el("div", { class: "rt-section-heading" }, [
         todayTitle,
-        el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募", "毎日 無料・半額の招聘 4 回")),
+        el("p", { class: "rt-sub" }, L("4 lượt miễn phí / nửa giá mỗi ngày", "每日 4 次免费 / 半价招募", "毎日 無料・半額の登用 4 回")),
       ]),
       adjustDaily,
     ]),
@@ -1004,7 +1007,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   const head = el("header", { class: "tool-head" }, [
     el("div", { class: "reference-head-text" }, [
       el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta", "ツール · Beta")),
-      el("h1", { class: "reference-title", tabindex: "-1" }, L("Theo dõi chiêu mộ", "招募记录", "招聘記録")),
+      el("h1", { class: "reference-title", tabindex: "-1" }, L("Theo dõi chiêu mộ", "招募记录", "登用記録")),
       el("p", { class: "reference-lead" }, L("Đếm lượt tới mốc bảo hiểm 5★ cho từng tài khoản và ghi lại tướng 5★ đã ra.", "按账号统计距离 5★ 保底的抽数，并记录已抽到的 5★ 武将。", "アカウントごとに 5★ 天井までの回数を数え、獲得した 5★ 武将を記録します。")),
     ]),
   ]);
@@ -1028,7 +1031,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
   function render() {
     renderedDate = currentDate();
     const summary = getRecruitTrackerSummary(state, { date: renderedDate });
-    view = buildRecruitTrackerViewModel(summary, heroesDict, { today: renderedDate });
+    view = buildRecruitTrackerViewModel(summary, heroesDict, { today: renderedDate, names: rawNames });
     paintAccounts();
     paintSync();
     paintToday();
@@ -1288,7 +1291,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
             value: index + 1,
             label: L(`Lượt ${todayDone + index + 1}/${DAILY_PULL_LIMIT}`, `第 ${todayDone + index + 1}/${DAILY_PULL_LIMIT} 抽`, `${todayDone + index + 1}/${DAILY_PULL_LIMIT} 回目`),
           })),
-          help: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`, `本日あと ${remainingToday} 回の割引招聘があります。`),
+          help: L(`Hôm nay còn ${remainingToday} lượt rẻ.`, `今日还剩 ${remainingToday} 次低价招募。`, `本日あと ${remainingToday} 回の割引登用があります。`),
         },
         { name: "pullsAfter", label: L("Quay tiếp sau đó (không ra)", "之后继续抽（未出）", "その後の続き（未獲得）"), type: "stepper", value: remainingToday - 1, min: "0", max: String(remainingToday - 1) },
         heroField(),
@@ -1480,7 +1483,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       lead: L(
         `Xóa tài khoản "${current.name}" và dữ liệu chiêu mộ của tài khoản này?`,
         `删除账号“${current.name}”及其招募数据？`,
-        `アカウント「${current.name}」とその招聘データを削除しますか？`,
+        `アカウント「${current.name}」とその登用データを削除しますか？`,
       ),
       submitLabel: L("Xóa", "删除", "削除"),
       tone: "danger",
@@ -1591,7 +1594,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
       lead: L(
         `File có ${summary.accounts} tài khoản, ${summary.banners} đợt chiêu mộ, ${summary.events} lượt quay. Bản ghi trùng giữ bản sửa sau cùng; dữ liệu hiện có không bị ghi đè. Nên Xuất JSON sao lưu trước nếu chưa chắc.`,
         `文件包含 ${summary.accounts} 个账号、${summary.banners} 个卡池、${summary.events} 条抽卡记录。重复记录保留最后修改的版本，现有数据不会被覆盖。如不确定，请先导出 JSON 备份。`,
-        `ファイルにはアカウント ${summary.accounts} 件、ガチャ ${summary.banners} 件、招聘履歴 ${summary.events} 件が含まれています。重複した記録は最後に修正した版を残し、現在のデータは上書きされません。不安な場合は、先に JSON を書き出してバックアップしてください。`,
+        `ファイルにはアカウント ${summary.accounts} 件、ガチャ ${summary.banners} 件、登用履歴 ${summary.events} 件が含まれています。重複した記録は最後に修正した版を残し、現在のデータは上書きされません。不安な場合は、先に JSON を書き出してバックアップしてください。`,
       ),
       submitLabel: L("Gộp dữ liệu", "合并数据", "データを統合"),
       opener: importInput,

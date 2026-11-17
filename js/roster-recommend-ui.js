@@ -145,7 +145,7 @@ function relativeTime(iso, locale) {
   return format.format(-Math.floor(seconds / 86400), "day");
 }
 
-export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, loadRecommended, onOpenTeam }, mount) {
+export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, rawNames = null, loadRecommended, onOpenTeam }, mount) {
   if (!mount) return;
   // Gợi ý đội chạy bằng công cụ cục bộ nên không phụ thuộc Worker AI: chưa cấu hình thì chỉ thiếu đọc ảnh và nút "Vì sao?".
   const aiReady = isAnalyzeConfigured();
@@ -158,9 +158,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   let scanBusy = false;
   const tsBox = el("div", { class: "ana-turnstile" });
   const tsStatus = el("p", { class: "ana-status err", role: "status", hidden: "" });
-  // Bản zh hiển thị tên chữ Hán gốc; kho vẫn lưu tên Việt chuẩn nên chỉ đổi lúc vẽ.
+  // Bản zh hiển thị tên chữ Hán gốc, bản ja tên Nhật (`rawNames` = bộ tra của trang, `loadRawNameResolver`); kho vẫn lưu tên
+  // Việt chuẩn nên chỉ đổi lúc vẽ.
   const zh = !contentLocaleIsVietnamese(currentLocale());
-  const resolveRaw = createRawNameResolver(heroesDict, tacticsDict);
+  const resolveRaw = rawNames ?? createRawNameResolver(heroesDict, tacticsDict);
   const tacticRules = buildTacticRules(tacticsDict);
   const tacticIdOf = createTacticIdResolver(tacticsDict);
   /** Ô đang mở của bảng Độ phủ kho: `{tier, kind: "complete"|"missingOne"}`; giữ qua các lần vẽ lại kết quả. */
@@ -465,7 +466,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   const seasonField = el("div", { class: "roster-field roster-season-control" }, [
     el("label", { class: "roster-field-label", for: "roster-season" }, L("Mùa bạn đang chơi", "你正在玩的赛季", "プレイ中のシーズン")),
     seasonSelect,
-    el("p", { class: "roster-field-hint" }, L("Gợi ý từ Đội chuẩn của mùa này; thiếu đội thì lấy đội cũ để tham khảo.", "按本赛季推荐阵容推荐；不足时补充旧阵容作参考。", "このシーズンの推奨編成から提案します。足りない場合は参考として旧編成で補います。")),
+    el("p", { class: "roster-field-hint" }, L("Gợi ý từ Đội chuẩn của mùa này; thiếu đội thì lấy đội cũ để tham khảo.", "按本赛季推荐阵容推荐；不足时补充旧阵容作参考。", "このシーズンのおすすめ編成から提案します。足りない場合は参考として旧編成で補います。")),
     seasonNote,
   ]);
   function selectSeason(id) {
@@ -506,7 +507,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     .catch(() => {
       season = null;
       seasonSelect.replaceChildren(el("option", { value: "" }, L("Không có dữ liệu mùa", "暂无赛季数据", "シーズンデータがありません")));
-      seasonNote.textContent = L("Không tải được đội chuẩn theo mùa. Gợi ý tạm dùng đội cũ để tham khảo.", "无法加载赛季推荐阵容，暂以旧阵容作参考推荐。", "シーズン別の推奨編成を読み込めませんでした。当面は旧編成を参考に提案します。");
+      seasonNote.textContent = L("Không tải được đội chuẩn theo mùa. Gợi ý tạm dùng đội cũ để tham khảo.", "无法加载赛季推荐阵容，暂以旧阵容作参考推荐。", "シーズン別のおすすめ編成を読み込めませんでした。当面は旧編成を参考に提案します。");
       seasonNote.hidden = false;
     });
 
@@ -989,7 +990,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   };
   // Lời giải thích nêu chiến pháp khác ngoài hai món được hỏi là đã vượt vai trò "chỉ giải thích": không hiện.
   const namesOtherTactic = (text, allowed) => [...tacticByName.values()].some((item) =>
-    [item.viet, zh ? item.chinese : null].some((name) => typeof name === "string" && name.length >= 3 && !allowed.has(item.viet) && text.includes(name)));
+    [item.viet, zh ? item.chinese : null, zh ? resolveRaw?.nameOf?.(item.id) : null].some((name) => typeof name === "string" && name.length >= 3 && !allowed.has(item.viet) && text.includes(name)));
 
   async function explainSubstitute({ holderName, missing, substitute, configCount }, button, output, box) {
     const show = (text) => {
@@ -1408,12 +1409,12 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
               ]))),
             ]),
           ])
-          : el("p", { class: "roster-empty roster-coverage-empty" }, L("Mùa này chưa có Đội chuẩn nào để tính độ phủ.", "本赛季暂无推荐阵容可计算覆盖度。", "このシーズンにはカバー率を計算できる推奨編成がありません。")),
+          : el("p", { class: "roster-empty roster-coverage-empty" }, L("Mùa này chưa có Đội chuẩn nào để tính độ phủ.", "本赛季暂无推荐阵容可计算覆盖度。", "このシーズンにはカバー率を計算できるおすすめ編成がありません。")),
         body,
         coverage.tiers.length
           ? el("ul", { class: "roster-coverage-progress", "aria-label": L("Tiến độ sưu tầm", "收集进度", "収集の進捗") }, [
-            progress(L("Tướng trong Đội chuẩn của mùa", "本赛季推荐阵容中的武将", "このシーズンの推奨編成に含まれる武将"), coverage.progress.heroes),
-            progress(L("Chiến pháp trong Đội chuẩn của mùa", "本赛季推荐阵容中的战法", "このシーズンの推奨編成に含まれる戦法"), coverage.progress.tactics),
+            progress(L("Tướng trong Đội chuẩn của mùa", "本赛季推荐阵容中的武将", "このシーズンのおすすめ編成に含まれる武将"), coverage.progress.heroes),
+            progress(L("Chiến pháp trong Đội chuẩn của mùa", "本赛季推荐阵容中的战法", "このシーズンのおすすめ編成に含まれる戦法"), coverage.progress.tactics),
           ])
           : null,
         unmappedCount
@@ -1505,8 +1506,8 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
           el("span", { class: "reference-kicker" }, L("Công cụ · Beta", "工具 · Beta", "ツール · Beta")),
           el("h1", { class: "reference-title", tabindex: "-1" }, L("Gợi ý đội từ kho", "武将库配队", "在庫から部隊提案")),
           el("p", { class: "reference-lead" }, aiReady
-            ? L("Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "识别武将与战法库存截图并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。", "武将と戦法の在庫スクリーンショットを読み取って確認すると、ローカルのツールが、プレイ中のシーズンの推奨編成から資源が重複しない部隊を最大5つ選びます。")
-            : L("Chọn tướng và chiến pháp bạn đang có, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "选择你拥有的武将与战法并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。", "所持している武将と戦法を選んで確認すると、ローカルのツールが、プレイ中のシーズンの推奨編成から資源が重複しない部隊を最大5つ選びます。")),
+            ? L("Đọc ảnh kho tướng và chiến pháp, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "识别武将与战法库存截图并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。", "武将と戦法の在庫スクリーンショットを読み取って確認すると、ローカルのツールが、プレイ中のシーズンのおすすめ編成から資源が重複しない部隊を最大5つ選びます。")
+            : L("Chọn tướng và chiến pháp bạn đang có, kiểm tra lại, rồi để công cụ cục bộ chọn tối đa 5 đội không trùng tài nguyên từ Đội chuẩn của mùa bạn đang chơi.", "选择你拥有的武将与战法并核对后，由本地工具从你所在赛季的推荐阵容中挑选最多 5 支资源不冲突的队伍。", "所持している武将と戦法を選んで確認すると、ローカルのツールが、プレイ中のシーズンのおすすめ編成から資源が重複しない部隊を最大5つ選びます。")),
         ]),
       ]),
       flow,

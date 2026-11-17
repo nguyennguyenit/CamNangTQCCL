@@ -9,7 +9,8 @@ import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from "./website-display.js";
+import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readLookupJaPin, readTacticDisplayTable } from "./website-display.js";
+import { loadLookupJa } from "./lookup-data.js";
 import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 
 import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
@@ -206,7 +207,8 @@ async function main() {
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
     // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
-    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs] = await Promise.all([
+    const jaPin = readLookupJaPin();
+    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs, jaEntries] = await Promise.all([
       needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
       pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
       // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
@@ -220,6 +222,9 @@ async function main() {
       // Binh thư chỉ có ở trang nhóm Binh thư; lỗi chỉ làm lưới trống.
       lookupGroup === 'books' ? loadLookupBooks(loadBytes).catch(() => []) : [],
       lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
+      // Bản ja (trang có pin `#lookup-ja-pin`): Soi đội nối tên Nhật vào bí danh để khớp tên in trong ảnh; lỗi chỉ làm việc khớp
+      // lùi về tên chữ Hán.
+      pageSection === 'analyze' && jaPin ? loadLookupJa(loadBytes, jaPin).then(({ document }) => document.entries).catch(() => null) : null,
     ]);
     if (rawNames) setZhNameResolver(rawNames);
     // Bản Việt: tên chiến pháp lưu trong dữ liệu đội hiển thị theo `viet` hiện hành (bảng nhúng lúc build, không tải thêm).
@@ -518,7 +523,7 @@ async function main() {
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
       // Lên đầu mục: sau thẻ dựng sẵn (tối đa 60 đội) thông báo sẽ nằm ngoài tầm nhìn.
       mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
-        ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。', '推奨編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')
+        ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。', 'おすすめ編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')
         : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。', 'その他の編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')));
     }
     // Badge kho của Đội chuẩn: kho đọc từ máy (khách: kho local; đã đăng nhập: cache cloud của chính người đó), không
@@ -620,6 +625,8 @@ async function main() {
       } : null,
       // Bản Trung: bộ tra tên Hán gốc (có binh thư) cho khối "Trong cẩm nang"; bản Việt trả null, không tải gì.
       loadRawNames: () => loadRawNameResolver(loadBytes),
+      // Bộ nạp byte dùng chung: lớp ja và `lookup-manifest` không bị tải lại lần nữa.
+      loadBytes,
     });
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
@@ -630,10 +637,10 @@ async function main() {
       location.assign(href);
     };
     if (lookupBundle) {
-      if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
+      if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, rawNames, mount });
       // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
-      if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
-      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, loadRecommended, onOpenTeam }, mount);
+      if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, jaEntries, rawNames, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, rawNames, loadRecommended, onOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。", "この機能に必要な図鑑データが現在利用できません。")));
     }

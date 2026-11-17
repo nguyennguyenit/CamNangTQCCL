@@ -19,7 +19,7 @@ import {
 } from '../lib/official-links';
 import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
-import { lookupGroupLinks, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
+import { lookupGroupLinks, lookupJaPin, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
 import { tacticDisplayTable } from '../lib/tactic-display';
 import { LOCALE_OG, localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
@@ -104,7 +104,7 @@ const SECTIONS = [
   {id: 'lookup', label: t('Tra cứu', '图鉴查询', '図鑑検索'), path: '/tra-cuu/'},
   {id: 'recruit-tracker', label: t('Theo dõi chiêu mộ', '招募记录', '登用記録'), path: '/theo-doi-chieu-mo/', beta: true},
   {id: 'analyze', label: t('Soi đội từ ảnh', '截图识阵', 'スクショ編成解析'), path: '/soi-doi-tu-anh/', beta: true},
-  {id: 'roster-recommend', label: t('Gợi ý đội từ kho', '武将库配队', '所持武将で編成'), path: '/goi-y-doi-tu-kho/', beta: true},
+  {id: 'roster-recommend', label: t('Gợi ý đội từ kho', '武将库配队', '武将図鑑から編成提案'), path: '/goi-y-doi-tu-kho/', beta: true},
 ];
 /** Mục có phạm vi mùa + chi tiết cấu hình: chỉ 3 trang này cần hai payload bên dưới. */
 const SEASON_SECTIONS = ['team-chuan', 'team-khac', 'coexist'];
@@ -407,6 +407,9 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found' || !embe
 const lookupRouteTable = routeHandles ? JSON.stringify(await lookupRouteHandles()) : null;
 // Bảng tên chiến pháp hiển thị (bản Việt): trang có dữ liệu đội/Tra cứu dựng lại ở trình duyệt dùng cùng bảng với bản dựng sẵn.
 const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? null : JSON.stringify(await tacticDisplayTable()).replace(/</g, '\\u003c');
+// Bản Nhật: pin byte của `data/lookup-ja.json` (tên Nhật, bản dịch máy) cho mọi trang dựng lại dữ liệu ở trình duyệt — trang đội,
+// Tra cứu, công cụ cùng nạp lớp ja qua `loadRawNameResolver`/`loadLookupJa`, chỉ nhận đúng bytes build đã kiểm. Bản khác không nhúng.
+const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await lookupJaPin()) : null;
 ---
 <!doctype html>
 <html lang={HREFLANG[locale]}>
@@ -747,6 +750,7 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
     {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
     {lookupRouteTable && <script is:inline type="application/json" id="lookup-route-handles" set:html={lookupRouteTable}></script>}
     {tacticDisplayJson && <script is:inline type="application/json" id="tactic-display-names" set:html={tacticDisplayJson}></script>}
+    {lookupJaPinValue && <script is:inline type="application/json" id="lookup-ja-pin" set:html={JSON.stringify(lookupJaPinValue)}></script>}
     <script is:inline type="module">
       import { initSiteChrome } from '/js/site-chrome.js';
       initSiteChrome();

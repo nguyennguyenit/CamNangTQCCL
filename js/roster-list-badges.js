@@ -57,7 +57,8 @@ const ICON_ARROW = ["M5 12h14", "M13 6l6 6-6 6"];
  */
 function missingItemText(item) {
   const vi = item.kind === "tactic" ? tacticDisplayName(item.name) : item.name;
-  const sourceLabel = item.nameZh || sourceName(item.name) || item.name;
+  // `sourceName` của chữ Hán: bản zh giữ nguyên, bản ja đổi sang tên Nhật.
+  const sourceLabel = (item.nameZh && sourceName(item.nameZh)) || sourceName(item.name) || item.name;
   const name = L(vi, sourceLabel, sourceLabel);
   if (item.kind === "hero") return L(`tướng ${name}`, `武将${name}`, `武将${name}`);
   return item.unresolved

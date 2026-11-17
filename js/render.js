@@ -2,8 +2,8 @@
 // Khai hoang) là cây view (`t`/`h`, chạy trong Node không cần `document`); `el`/`svgNode`/`icon` còn dựng DOM
 // trực tiếp cho phần chỉ có ở trình duyệt (chrome tương tác, `seasonConfigDetail`, các công cụ).
 
-import { legacyLabelZh, sourceName, tacticDisplayName } from './recommended-reference-state.js';
-import { L, contentLocaleIsVietnamese, currentLocale, withLocale } from './i18n.js';
+import { legacyLabelZh, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
+import { L, contentLocaleIsVietnamese, contentMode, currentLocale, withLocale } from './i18n.js';
 import { h, treeToDom, enableControl } from './view-tree.js';
 
 /** Helper tạo element gọn. */
@@ -87,8 +87,11 @@ const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
  */
 const publicText = (value, fallback = L("Nội dung tiếng Việt chưa sẵn sàng", "内容尚未就绪", "内容はまだ準備中です")) =>
   typeof value === "string" && value.trim() && (sourceText() || !CJK_TEXT.test(value)) ? value.trim() : fallback;
-/** Giữ tiền tố bản cải tạo của chiến pháp và dàn dấu phân cách như các nhãn trên thẻ đội. */
-export const formatModifiedTactic = value => typeof value === "string"
+/**
+ * Giữ tiền tố bản cải tạo của chiến pháp và dàn dấu phân cách như các nhãn trên thẻ đội. Bản ja giữ nguyên: tên đã qua bộ tra
+ * tên Nhật mang sẵn dạng `転・<tên>` của bản Nhật.
+ */
+export const formatModifiedTactic = value => typeof value === "string" && contentMode(currentLocale()) !== "ja"
   ? value.replace(/^(Tinh|Chuyển|Thác|精|轉|拓)\s*[·・]\s*/u, "$1 · ")
   : value;
 /** Tên chiến pháp lưu trong dữ liệu → tên hiển thị của trang (bản vi: `viet` hiện hành của danh mục; bản zh: chữ Hán nguồn). */
@@ -224,10 +227,15 @@ const splitHeroName = (value) => splitSourceTag(value, HERO_NOTE_TAG);
 
 /** Tiền tố bản cải tạo của chiến pháp theo chữ Hán của nguồn (cùng tập với `formatModifiedTactic`). */
 const MODIFIED_PREFIX_ZH = { Tinh: "精", Chuyển: "轉", Thác: "拓" };
-/** Bản zh: chiến pháp Hán-Việt → chữ Hán; tiền tố "Tinh·" đổi sang "精"; không tra được thì chuỗi rỗng. */
+/**
+ * Bản không phải tiếng Việt: chiến pháp Hán-Việt → tên của bản đang xem; tiền tố "Tinh·" đổi sang "精" (bản ja: bộ tra tên Nhật
+ * dựng `精・<tên>` hoặc tên kịch bản của `prefixedTactics`); không tra được thì chuỗi rỗng.
+ */
 function zhModifiedTactic(value) {
   const match = value.match(/^(Tinh|Chuyển|Thác)\s*[·・]\s*(.+)$/su);
   if (!match) return sourceName(value);
+  const localized = sourcePrefixedTactic(match[1], match[2]);
+  if (localized !== undefined) return localized;
   const name = sourceName(match[2]);
   return name ? `${MODIFIED_PREFIX_ZH[match[1]]} · ${name}` : "";
 }
@@ -245,7 +253,7 @@ function zhCoexistHeroName(value) {
 export function coexistGroupLabel(label) {
   const value = typeof label === "string" ? label.trim() : "";
   if (!sourceText()) return value || "Nhóm";
-  if (CJK_TEXT.test(value)) return value;
+  if (CJK_TEXT.test(value)) return sourceName(value);
   const number = value.match(/^Cùng tồn\s*(\d+)$/iu)?.[1];
   return number ? L(`Cùng tồn ${number}`, `共存 ${number}`, `共存 ${number}`) : L("Nhóm", "分组", "グループ");
 }
@@ -1033,7 +1041,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
   for (const [dataset,kind] of [['heroes-dict','hero'],['tactics','tactic'],['books-dict','book']]) for (const item of model.data[dataset]) {
     if (kind === 'book' && !bookRowId(item)) continue;
     const ref = kind === 'hero' ? canonicalHeroId(item.viet) : kind === 'book' ? item.id : kind === 'tactic' && typeof item.id === 'string' && item.id.startsWith('tactic:') ? item.id : kind + ':' + normalizeText(item.viet).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-    names.set(ref,zh && item.chinese ? item.chinese : item.viet);
+    names.set(ref,zh && item.chinese ? sourceName(item.chinese) : item.viet);
   }
   const selection = defaultSeasonSelection(config);
   const score = el('p',{class:'config-score'});
@@ -1052,7 +1060,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
   const compare = el('button',{type:'button',class:'ana-btn',onClick:()=>{
     const inventory = deserializeRosterScanState(localStorage.getItem(ROSTER_SCAN_STORAGE_KEY));
     if (!inventory.ownedHeroes.length && !inventory.ownedTactics.length) {
-      comparison.replaceChildren(el('p',{},L('Chưa có kho để đối chiếu.','尚无可对照的武将库。', '照合できる武将庫がまだありません。')),el('a',{class:'ana-link-btn',href:importHref},L('Mở scan / nhập kho','打开扫描 / 导入武将库', 'スキャン / 武将庫の取り込みを開く')));
+      comparison.replaceChildren(el('p',{},L('Chưa có kho để đối chiếu.','尚无可对照的武将库。', '照合できる武将図鑑がまだありません。')),el('a',{class:'ana-link-btn',href:importHref},L('Mở scan / nhập kho','打开扫描 / 导入武将库', 'スキャン / 武将図鑑の取り込みを開く')));
       return;
     }
     const result = compareSeasonInventory(selection,inventory,createTacticIdResolver(model.data.tactics));
@@ -1061,12 +1069,12 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
     if (result.duplicateHeroes) lines.push(L('Trùng tướng giữa các vị trí.','不同位置之间有重复武将。', '配置間で武将が重複しています。'));
     if (result.duplicateTactics) lines.push(L('Trùng chiến pháp giữa các vị trí.','不同位置之间有重复战法。', '配置間で戦法が重複しています。'));
     if (!lines.length) lines.push(L('Đủ tướng và chiến pháp cho lựa chọn này.','武将和战法均满足此配置。', 'この構成に必要な武将と戦法が揃っています。'));
-    lines.push(L('Binh thư: chưa kiểm chứng từ kho hiện tại.','兵书：尚未根据当前武将库核实。', '兵法書：現在の武将庫では未確認です。'));
+    lines.push(L('Binh thư: chưa kiểm chứng từ kho hiện tại.','兵书：尚未根据当前武将库核实。', '兵法書：現在の武将図鑑では未確認です。'));
     if (result.requirementsUnknown) lines.push(config.requirements.some(requirement=>requirement.mandatory)
       ? L('Điều kiện bắt buộc: chưa kiểm chứng; chưa thể đề xuất build.','必要条件：尚未核实，暂时无法推荐配置。', '必須条件：未確認のため、現時点では構成を提案できません。')
       : L('Điều kiện / hiệu ứng bổ sung: chưa kiểm chứng; thông tin tham khảo, không phải điều kiện bắt buộc để gợi ý đội.','附加条件 / 效果：尚未核实；仅供参考，并非推荐阵容的必要条件。', '追加条件 / 効果：未確認です。参考情報であり、おすすめ編成の必須条件ではありません。'));
     comparison.replaceChildren(...lines.map(line=>el('p',{},line)));
-  }},L('Đối chiếu kho của tôi','对照我的武将库', '自分の武将庫と照合'));
+  }},L('Đối chiếu kho của tôi','对照我的武将库', '自分の武将図鑑と照合'));
   const detail = el('div',{id:'season-config-detail',class:'season-config-detail',role:'region','aria-label':L('Chi tiết cấu hình','配置详情', '構成の詳細'),tabindex:'-1'},[
     el('button',{type:'button',class:'ana-link-btn',onClick:onClose},L('Đóng chi tiết','关闭详情', '詳細を閉じる')),
     el('h3',{},team.name), el('p',{class:'scope-note'},L(`Cấu hình: ${config.id} · ${config.scenarioId} · ${config.rulesetId || 'Tham khảo kịch bản'}`,`配置：${config.id} · ${config.scenarioId} · ${config.rulesetId || '剧本参考'}`, `構成：${config.id} · ${config.scenarioId} · ${config.rulesetId || 'シナリオ参考'}`)),score,
@@ -1087,7 +1095,7 @@ export function seasonConfigDetail(row, model, {onClose,importHref}) {
     ...config.effectBundles.map(item=>el('div',{class:'season-effect'},[
       el('h5',{},publicText(item.labelRaw)),el('p',{class:'season-detail-text'},publicText(item.effectsRaw)),
       ...item.requirementIds.map(id=>el('p',{class:'season-detail-text'},L(`Điều kiện: ${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`,`条件：${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`, `条件：${publicText(config.requirements.find(requirement=>requirement.id === id)?.descriptionRaw)}`))),
-      el('p',{class:'scope-note'},L('Chưa xác minh điều kiện và hiệu ứng từ kho hiện tại.','尚未根据当前武将库核实条件与效果。', '現在の武将庫では条件と効果を確認できていません。')),
+      el('p',{class:'scope-note'},L('Chưa xác minh điều kiện và hiệu ứng từ kho hiện tại.','尚未根据当前武将库核实条件与效果。', '現在の武将図鑑では条件と効果を確認できていません。')),
     ])),
     !config.requirements.length && !config.effectBundles.length ? el('p',{},L('Không có điều kiện đặc biệt được ghi trong cấu hình.','此配置未记录特殊条件。', 'この構成には特別な条件が記録されていません。')) : null,
     el('p',{class:'season-detail-text'},publicText(config.notes, L('Ghi chú: chưa có dữ liệu','备注：暂无数据', 'メモ：データがありません'))),compare,comparison,

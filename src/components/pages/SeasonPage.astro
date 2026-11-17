@@ -7,6 +7,7 @@ import { localePath, pick } from '../../../js/i18n.js';
 import { seasonPageParts } from '../../lib/team-ssr';
 import { recommendedTitle } from '../../lib/team-detail-pages';
 import { seasonDisplayName, type SeasonPage } from '../../lib/season-pages';
+import { lookupJaNameResolver } from '../../lib/lookup-pages';
 import { lookupGroupJsonLd } from '../../lib/structured-data.ts';
 import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
@@ -19,11 +20,13 @@ interface Props {
 const { season, locale } = Astro.props;
 const t = (...variants: string[]): string => pick(locale, ...variants);
 const { bodyHtml, source, teams } = await seasonPageParts(season.sourceSeasonId, locale);
+// Bản Nhật: tên đội/mùa từ chữ Hán nguồn đổi sang tên Nhật / tự dạng Nhật (cùng bộ tra mà trang đội dùng). Bản khác không cần.
+const jaNames = pick(locale, null, null, await lookupJaNameResolver());
 // Mã mùa luôn có trong tên trang: hai mùa có thể trùng tên Việt (S3 và PK-S7 đều là "Trận chiến Xích Bích").
-const name = seasonDisplayName(season, locale);
+const name = seasonDisplayName(season, locale, jaNames);
 const label = name ? `${name} (${season.displayCode})` : season.displayCode;
 const heading = t(`Đội chuẩn mùa ${label}`, `${name ? `${name}（${season.displayCode}）` : season.displayCode}赛季推荐阵容`, `${name ? `${name}（${season.displayCode}）` : season.displayCode}シーズンのおすすめ編成`);
-const title = `${heading}${t(' — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 三国志战略版攻略手册', ' — 「三國志 真戦 攻略手帳」')}`;
+const title = `${heading}${t(' — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 三国志战略版攻略手册', ' — 三國志 真戦 攻略手帳')}`;
 const description = t(
   `Danh sách ${season.count} đội hình Đội chuẩn của mùa ${label}, nhóm theo tier: tướng, chiến pháp và link chi tiết từng đội.`,
   `${name ? `${name}（${season.displayCode}）` : season.displayCode}赛季共 ${season.count} 套推荐阵容，按等级分组：武将、战法与各阵容详情链接。`,
@@ -37,7 +40,7 @@ const structured = lookupGroupJsonLd({
   path: Astro.url.pathname,
   name: heading,
   description,
-  items: teams.map((entry) => ({ name: recommendedTitle(entry, locale), path: localePath(entry.routePath, locale) })),
+  items: teams.map((entry) => ({ name: recommendedTitle(entry, locale, jaNames), path: localePath(entry.routePath, locale) })),
   hub: { name: t('Đội chuẩn', '推荐阵容', 'おすすめ編成'), path: listPath },
 });
 ---

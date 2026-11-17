@@ -4,7 +4,7 @@
  * `treeToHtml`; dữ liệu là byte đã pin của publication (`websiteDisplayPublicationSnapshot`), bản Việt áp lớp
  * dịch bằng chính `loadWebsiteDisplay` + `localizeData` như trình duyệt.
  *
- * Trạng thái toàn cục mà builder cần (bảng route handle, bộ tra tên Hán của bản zh) đặt một lần ở `prepare()`.
+ * Trạng thái toàn cục mà builder cần (bảng route handle, bộ tra tên của bản zh và bản ja) đặt một lần ở `prepare()`.
  */
 import { createRawNameResolver, loadWebsiteDisplay, localizeData } from '../../js/website-display.js';
 import { treeToHtml, treeToText } from '../../js/view-tree.js';
@@ -18,7 +18,7 @@ import { HERO_SUMMARY_FILE, parseHeroSummaries } from '../../js/hero-summaries.j
 import { TACTIC_SUMMARY_FILE, parseTacticSummaries } from '../../js/tactic-summaries.js';
 import { readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog } from './team-detail-routes.ts';
-import { lookupRouteHandles } from './lookup-pages.ts';
+import { lookupJaNameResolver, lookupRouteHandles } from './lookup-pages.ts';
 import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
 import type { LegacyRouteEntry, KhaiHoangRouteEntry, RecommendedRouteEntry } from './team-detail-routes.ts';
@@ -47,7 +47,10 @@ export function prepare() {
     const dicts = await Promise.all(['heroes-dict', 'tactics', 'books-dict'].map(async (routeParam) =>
       parse((await readPublicArtifact({ kind: 'data', routeParam })).bytes)));
     const rawName = createRawNameResolver(...dicts);
-    setZhNameResolver(rawName);
+    // Build dựng mọi bản trong một tiến trình: mỗi bản đăng ký bộ tra riêng (zh: chữ Hán gốc; ja: tên Nhật, cùng dữ liệu mà
+    // trang `/ja/` nạp lại ở trình duyệt qua `loadRawNameResolver`).
+    setZhNameResolver(rawName, 'zh');
+    setZhNameResolver(await lookupJaNameResolver(), 'ja');
     // Cùng bảng route handle mà SiteLayout nhúng cho trang mục (`r`/`l`/`k`).
     const registered = setTeamRouteHandles({
       r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),

@@ -129,7 +129,7 @@ export async function loadWebsiteDisplay(pin, loadBytes, recommendedPin, {paths}
     || expectedRecommended.schemaVersion !== recommendedPin.schemaVersion
     || expectedRecommended.generationId !== recommendedPin.generationId
     || expectedRecommended.manifestSha256 !== recommendedPin.manifestSha256
-  ) throw new Error(L("Bản đội chuẩn không khớp dữ liệu hiển thị", "推荐阵容版本与显示数据不符", "推奨編成のバージョンが表示データと一致しません"));
+  ) throw new Error(L("Bản đội chuẩn không khớp dữ liệu hiển thị", "推荐阵容版本与显示数据不符", "おすすめ編成のバージョンが表示データと一致しません"));
   for (const [path, expected] of Object.entries(document.sourceHashes)) {
     if (!/^data\/[^/]+\.json$/.test(path) || !HASH.test(expected)) throw new Error(L("Dữ liệu hiển thị không hợp lệ", "显示数据无效", "表示データが無効です"));
   }
@@ -195,36 +195,95 @@ export function createRawNameResolver(...dicts) {
   return Object.assign(joinedLookup(single), { fromRaw: raw => raw });
 }
 
+/** Tiền tố bản cải tạo của chiến pháp (Việt, chữ Hán nguồn, tự dạng Nhật) → tiền tố của bản Nhật. */
+const JA_TACTIC_PREFIX = Object.freeze({ Tinh: "精", Chuyển: "転", Thác: "拓", 精: "精", 轉: "転", 転: "転", 拓: "拓" });
+const PREFIXED_RAW = /^(精|轉|転|拓)\s*[·・]\s*(.+)$/su;
+const PREFIXED_VI = /^(Tinh|Chuyển|Thác)\s*[·・]\s*(.+)$/su;
+const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
+
 /**
  * Bộ tra tên Nhật cho bản ja: tên Việt/Hán-Việt của từ điển (heroes-dict, tactics, books-dict) → mã → `entries[mã].name` của
- * `data/lookup-ja.json`; mã chưa có tên Nhật thì đổi tự dạng chữ Hán `chinese` của từ điển. `resolver.fromRaw(chữ Hán thô)` đổi
- * tự dạng chữ nguồn chưa đối chiếu (ô Đội chuẩn, tên đội `nameZh`). Ô gộp "A/B" như `createRawNameResolver`.
+ * `data/lookup-ja.json`; mã chưa có tên Nhật thì đổi tự dạng chữ Hán `chinese` của từ điển. Ô gộp "A/B" như `createRawNameResolver`.
+ * - `resolver.fromRaw(chữ Hán thô)`: chữ Hán trùng `chinese` của một mục từ điển (nguyên dạng hoặc sau khi đổi tự dạng) → tên Nhật
+ *   theo mã; chưa đối chiếu được (ô Đội chuẩn, tên đội `nameZh`) thì đổi tự dạng.
+ * - `resolver.prefixed(tiền tố, tên)`: chiến pháp bản cải tạo (`Chuyển`/`轉`/`転`…): tên kịch bản của `prefixedTactics` khi có
+ *   (`転・神算鬼謀`), không có thì `<tiền tố Nhật>・<tên Nhật>`; tên gốc không tra được thì `null`.
+ * Cả hai lối vào nhận luôn dạng có tiền tố (`轉·刮骨療毒`, `Chuyển · Quát Cốt Liệu Độc`).
+ * - `resolver.nameOf(mã)`: tên Nhật của một mục từ điển theo mã (`null` khi mã lạ).
  * @param {readonly unknown[][]} dicts
- * @param {{entries: Record<string, {name: string}>}} jaDocument
+ * @param {{entries: Record<string, {name: string}>, prefixedTactics?: {baseId: string, name: string, prefix: string}[]}} jaDocument
  * @param {Readonly<Record<string, string>>} variants bảng của `parseKanjiVariants`
  */
 export function createJaNameResolver(dicts, jaDocument, variants) {
   const entries = jaDocument?.entries ?? {};
-  const fromRaw = raw => (typeof raw === "string" ? toShinjitai(raw, variants) : raw);
-  const index = new Map();
+  const shinjitai = raw => toShinjitai(raw, variants);
+  const prefixedNames = new Map();
+  for (const row of Array.isArray(jaDocument?.prefixedTactics) ? jaDocument.prefixedTactics : []) {
+    const key = `${JA_TACTIC_PREFIX[row?.prefix] ?? row?.prefix}|${row?.baseId}`;
+    if (typeof row?.name === "string" && !prefixedNames.has(key)) prefixedNames.set(key, row.name);
+  }
+  // Tên Việt/Hán-Việt → khóa mục, chữ Hán (nguyên dạng và tự dạng Nhật) → khóa mục; khóa mục → tên Nhật.
+  const viIndex = new Map();
+  const rawIndex = new Map();
+  const names = new Map();
   for (const dict of dicts) {
     for (const entry of Array.isArray(dict) ? dict : []) {
-      const jaName = typeof entry?.id === "string" && Object.hasOwn(entries, entry.id) ? entries[entry.id].name : null;
-      const name = jaName ?? (blank(entry?.chinese) ? null : fromRaw(entry.chinese.trim()));
+      const chinese = blank(entry?.chinese) ? null : entry.chinese.trim();
+      const id = typeof entry?.id === "string" ? entry.id : chinese && `raw:${chinese}`;
+      const name = id && Object.hasOwn(entries, id) ? entries[id].name : chinese ? shinjitai(chinese) : null;
       if (!name) continue;
+      if (!names.has(id)) names.set(id, name);
       for (const key of [entry.viet, entry.hanViet]) {
-        if (!blank(key) && !index.has(nameKey(key))) index.set(nameKey(key), name);
+        if (!blank(key) && !viIndex.has(nameKey(key))) viIndex.set(nameKey(key), id);
       }
+      for (const key of [chinese, shinjitai(chinese)]) if (!rawIndex.has(key)) rawIndex.set(key, id);
     }
   }
-  const single = name => index.get(nameKey(name)) ?? index.get(nameKey(name.replace(/\s*\([^()]*\)\s*$/u, ""))) ?? null;
-  return Object.assign(joinedLookup(single), { fromRaw });
+  const viId = name => viIndex.get(nameKey(name)) ?? viIndex.get(nameKey(name.replace(/\s*\([^()]*\)\s*$/u, ""))) ?? null;
+  const rawId = raw => rawIndex.get(raw) ?? rawIndex.get(shinjitai(raw)) ?? null;
+  const prefixed = (prefix, value) => {
+    const jaPrefix = JA_TACTIC_PREFIX[prefix];
+    if (!jaPrefix || blank(value)) return null;
+    const base = value.trim();
+    const id = viId(base) ?? rawId(base);
+    const scenario = id ? prefixedNames.get(`${jaPrefix}|${id}`) : null;
+    if (scenario) return scenario;
+    const name = id ? names.get(id) : HAN.test(base) ? shinjitai(base) : null;
+    return name ? `${jaPrefix}・${name}` : null;
+  };
+  const single = name => {
+    const modified = name.match(PREFIXED_VI);
+    if (modified) return prefixed(modified[1], modified[2]);
+    const id = viId(name);
+    return id ? names.get(id) : null;
+  };
+  const fromRaw = raw => {
+    if (typeof raw !== "string") return raw;
+    const trimmed = raw.trim();
+    const modified = trimmed.match(PREFIXED_RAW);
+    if (modified) return prefixed(modified[1], modified[2]) ?? shinjitai(raw);
+    const id = rawId(trimmed);
+    return id ? names.get(id) : shinjitai(raw);
+  };
+  const nameOf = id => (typeof id === "string" ? names.get(id) ?? null : null);
+  return Object.assign(joinedLookup(single), { fromRaw, prefixed, nameOf });
 }
 
 /** Tên hiển thị theo ngôn ngữ: bản không phải tiếng Việt dùng tên của bộ tra (chữ Hán gốc / tên Nhật) khi tra được, bản Việt giữ nguyên. */
 export function localName(viName, resolver, locale = currentLocale()) {
   if (contentLocaleIsVietnamese(locale) || typeof resolver !== "function") return viName;
   return resolver(viName) ?? viName;
+}
+
+/**
+ * Tên hiển thị của một mục từ điển (`{id, viet, chinese}`) theo locale: bản Việt `viet`, bản Trung chữ Hán `chinese`, bản Nhật tên
+ * Nhật theo mã qua bộ tra của `loadRawNameResolver` (vắng bộ tra thì chữ Hán). Thiếu chữ Hán thì lùi về `viet`.
+ */
+export function localRecordName(record, resolver, locale = currentLocale()) {
+  if (!record) return "";
+  const chinese = String(record.chinese || "").trim();
+  if (contentLocaleIsVietnamese(locale) || !chinese) return record.viet || "";
+  return resolver?.nameOf?.(record.id) ?? localRawName(chinese, resolver, locale) ?? chinese;
 }
 
 /** Chữ Hán thô (chưa đối chiếu từ điển) cho bản đang xem: bản Nhật đổi tự dạng qua `resolver.fromRaw`, bản khác giữ nguyên. */

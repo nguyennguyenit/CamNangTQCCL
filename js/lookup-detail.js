@@ -1,4 +1,4 @@
-import { L, contentLocaleIsVietnamese, currentLocale, pick } from "./i18n.js";
+import { L, contentLocaleIsVietnamese, contentMode as contentModeOf, currentLocale, pick } from "./i18n.js";
 import { LOOKUP_FIELD_LABELS } from "./lookup-field-labels.js";
 import { heroSelfTacticId, innateHolderIndex, uniqueTacticIdByChinese } from "./lookup-innate-holders.js";
 
@@ -7,12 +7,8 @@ import { heroSelfTacticId, innateHolderIndex, uniqueTacticIdByChinese } from "./
 // có bản Việt (mô tả, điều kiện, lịch sử…) bị bỏ khỏi hồ sơ zh để không trộn hai ngôn ngữ.
 // `sourceText()`: trang không phải bản Việt dựng hồ sơ từ chữ Hán nguồn (hiện chỉ có bản zh).
 const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
-/**
- * Nguồn chữ của trang theo ngôn ngữ: `vi` (lớp dịch Việt), `source` (chữ Hán nguồn, bản zh), `ja` (bản Nhật dựng trên chữ nguồn:
- * tên Nhật và bản dịch máy của `data/lookup-ja.json`). Chọn bằng `pick` nên locale mới phải tự khai nguồn chữ của nó.
- * @returns {"vi" | "source" | "ja"}
- */
-export const contentMode = (locale = currentLocale()) => pick(locale, "vi", "source", "ja");
+/** Nguồn chữ của trang theo ngôn ngữ (`vi` / `source` / `ja`), mặc định ngôn ngữ trang hiện tại; định nghĩa ở `js/i18n.js`. */
+export const contentMode = (locale = currentLocale()) => contentModeOf(locale);
 /** Chữ cho ô chưa có dữ liệu (theo ngôn ngữ trang; hàm để build dựng cả hai ngôn ngữ trong một tiến trình). */
 export const lookupEmpty = () => L("Đang cập nhật", "暂无数据", "情報更新中");
 /**
