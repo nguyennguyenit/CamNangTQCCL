@@ -82,14 +82,14 @@ const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
 // `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
 const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
 /**
- * Chữ công khai của một trường nguồn. Bản vi: chuỗi còn chữ Hán không được hiện (dùng nhãn dự phòng).
- * Bản zh: dữ liệu không áp bản dịch nên chữ Hán gốc là nội dung chính, hiện nguyên.
- */
-/**
  * Bản ja: văn xuôi chữ Trung của nguồn chưa có bản dịch Nhật nên bị ẩn, thay bằng đúng một dòng báo thiếu (ghi chú đội Đội chuẩn,
  * panel cấu hình mùa `?config=`).
  */
 export const SOURCE_PROSE_MISSING_JA = "中国語の原文しかない説明は、日本語訳がないため表示していません。";
+/**
+ * Chữ công khai của một trường nguồn. Bản vi: chuỗi còn chữ Hán không được hiện (dùng nhãn dự phòng).
+ * Bản zh: dữ liệu không áp bản dịch nên chữ Hán gốc là nội dung chính, hiện nguyên.
+ */
 const publicText = (value, fallback = L("Nội dung tiếng Việt chưa sẵn sàng", "内容尚未就绪", "内容はまだ準備中です")) =>
   typeof value === "string" && value.trim() && (sourceText() || !CJK_TEXT.test(value)) ? value.trim() : fallback;
 /**
