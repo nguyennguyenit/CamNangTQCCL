@@ -1030,7 +1030,7 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
   expect(dates.size).toBe(1);
 });
 
-test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
+test("menu mobile giữ đủ 8 dòng Tra cứu tới trang nhóm và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tra-cuu/");
   await waitForBoot(page);
@@ -1045,7 +1045,7 @@ test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đ�
   const groupLinks = overlay.locator('a[href^="/tra-cuu/"]:not([href="/tra-cuu/"])');
   expect(await groupLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")))).toEqual([
     "/tra-cuu/tuong/", "/tra-cuu/chien-phap/", "/tra-cuu/trang-bi/", "/tra-cuu/quan-su/",
-    "/tra-cuu/cai-tao-binh-chung/", "/tra-cuu/cong-trinh/", "/tra-cuu/binh-thu/",
+    "/tra-cuu/cai-tao-binh-chung/", "/tra-cuu/cong-trinh/", "/tra-cuu/binh-thu/", "/tra-cuu/ky-luoc/",
   ]);
   // Bấm dòng con vào đúng trang nhóm, menu đóng lại; trên trang nhóm dòng đó là trang hiện tại.
   await overlay.locator('a[href="/tra-cuu/chien-phap/"]').click();
@@ -1359,7 +1359,7 @@ test("không có JavaScript: trang mục có h1 tên mục; trang đội dựng 
   await expect(nojs.locator("#section-lookup [data-lookup-id]")).toHaveCount(HEROES_TOTAL);
   await expect(nojs.locator("#section-lookup .lookup-card").first()).toBeVisible();
   await nojs.goto(new URL(LOOKUP_HUB, baseURL).href, { waitUntil: "domcontentloaded" });
-  await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(7);
+  await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(8);
   await context.close();
 });
 
