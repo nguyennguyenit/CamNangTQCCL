@@ -10,7 +10,7 @@ import { createRawNameResolver, loadWebsiteDisplay, localizeData } from '../../j
 import { treeToHtml, treeToText } from '../../js/view-tree.js';
 import { projectRecommendedRows, setZhNameResolver } from '../../js/recommended-reference-state.js';
 import { setTeamRouteHandles } from '../../js/team-detail-navigation.js';
-import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from '../../js/recommended-reference-render.js';
+import { detailBadges, legacyOriginalDetailContent, qilueLookupTable, recommendedTeamDetailContent } from '../../js/recommended-reference-render.js';
 import { khaihoangDetailTrees } from '../../js/render.js';
 import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees, seasonPageTrees } from './team-section-ssr.js';
 import { loadSeasonModel } from '../../js/season-ui-state.js';
@@ -89,13 +89,36 @@ export interface TeamDetailParts {
   badgesHtml: string;
 }
 
-/** Cây thân + huy hiệu của trang chi tiết Đội chuẩn; `record` là bản ghi chi tiết đã pin của cấu hình. */
-async function recommendedDetailTrees(record: Json, lookupLinks: unknown, locale: SiteLocale) {
+interface QilueContext {
+  /** `qilueLookupTable` của lookup-catalog.json đã pin trong publication: mã kỳ lược → tên vi/zh, loại, độ hiếm. */
+  table: Json;
+  /** Bản ghi index cùng generation theo `sourceConfigId`: đội nguồn của dạng kỳ lược chép (`form: copy`). */
+  teams: Map<string, Json>;
+}
+
+let qilueContext: Promise<QilueContext> | undefined;
+
+/** Bảng tra kỳ lược + index đội cho section Kỳ lược của trang chi tiết (một lần cho cả lần build, dùng chung vi/zh/llms). */
+function qilueOptions() {
+  return qilueContext ??= (async () => {
+    const env = await prepare();
+    const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
+    const rows: Json[] = parse(env.website.recommended.files['index.json'])?.records ?? [];
+    return { table: qilueLookupTable(catalog), teams: new Map(rows.map((row) => [row.sourceConfigId, row])) };
+  })();
+}
+
+/**
+ * Cây thân + huy hiệu của trang chi tiết Đội chuẩn; `record` là bản ghi chi tiết đã pin của cấu hình. `plainText`: bản
+ * chữ thuần cho llms (section Kỳ lược thu về dòng gọn).
+ */
+async function recommendedDetailTrees(record: Json, lookupLinks: unknown, locale: SiteLocale, plainText = false) {
   const env = await prepare();
   const labels = parse(env.website.recommended.files['seasons.json'])?.displayLabels ?? null;
   const legacyTeams = await localizedData('teams', locale);
-  // Tùy chọn của builder JS (không có kiểu JSDoc): `lookupLinks`/`locale` là khóa hợp lệ.
-  const options: Json = { legacyTeams, labels, lookupLinks, locale };
+  const qilue = await qilueOptions();
+  // Tùy chọn của builder JS (không có kiểu JSDoc): `lookupLinks`/`qilueTable`/`qilueTeams`/`plainText`/`locale` là khóa hợp lệ.
+  const options: Json = { legacyTeams, labels, lookupLinks, qilueTable: qilue.table, qilueTeams: qilue.teams, plainText, locale };
   return { body: recommendedTeamDetailContent(record, options) as Tree[], badges: detailBadges(record, labels, { locale }) as Tree[] };
 }
 
@@ -105,9 +128,9 @@ export async function recommendedDetailParts(record: Json, lookupLinks: unknown,
   return { bodyHtml: html(body), badgesHtml: html(badges) };
 }
 
-/** Chữ thuần của trang chi tiết Đội chuẩn (huy hiệu rồi thân) — llms.txt dùng đúng cây mà HTML dựng từ. */
+/** Chữ thuần của trang chi tiết Đội chuẩn (huy hiệu rồi thân) — llms.txt dùng cùng builder và cùng bản ghi với HTML. */
 export async function recommendedDetailText(record: Json, lookupLinks: unknown, locale: SiteLocale): Promise<string> {
-  const { body, badges } = await recommendedDetailTrees(record, lookupLinks, locale);
+  const { body, badges } = await recommendedDetailTrees(record, lookupLinks, locale, true);
   return treeToText([...badges, ...body]);
 }
 
