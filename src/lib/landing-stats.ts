@@ -146,10 +146,10 @@ export function viNumber(value: number): string {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-/** Số theo ngôn ngữ trang: `vi` chấm phân cách nghìn, `zh` dấu phẩy (zh-CN); cùng luật kiểm như `viNumber`. */
+/** Số theo ngôn ngữ trang: `vi` chấm phân cách nghìn, `zh`/`ja` dấu phẩy; cùng luật kiểm như `viNumber`. */
 export function localeNumber(value: number, locale: LandingLocale): string {
   const vi = viNumber(value);
-  return pick(locale, vi, vi.replaceAll('.', ','));
+  return pick(locale, vi, vi.replaceAll('.', ','), vi.replaceAll('.', ','));
 }
 
 /** Số phương án thay thế trong `legacyContent` của một đội (tướng, chiến pháp, binh thư). */
@@ -327,7 +327,7 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
     sourceText ? row.unitsRaw.filter(Boolean) : row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean);
   // Cùng quy tắc `sourceTierLabel` (js/recommended-reference-state.js): đội chức năng có nhãn riêng.
   const tierOf = (row: Row): string | null =>
-    row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? pick(locale, 'Đội chức năng', '功能队') : row.tierRaw ?? null;
+    row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? pick(locale, 'Đội chức năng', '功能队', '機能チーム') : row.tierRaw ?? null;
   const holderName = (holder: Holder): string => (sourceText ? holder.nameZh ?? holder.name : holder.name) ?? '';
   const toPreview = (row: Row): LandingTeamPreview => {
     const href = row.sourceConfigId ? routeByConfig.get(row.sourceConfigId) : undefined;
@@ -357,7 +357,7 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
     team: toPreview(first),
     table: {
       tier: tierOf(first) ?? '',
-      count: pick(locale, ` · ${count} đội`, ` · ${count} 队`),
+      count: pick(locale, ` · ${count} đội`, ` · ${count} 队`, ` · ${count}チーム`),
       rows: tierRows.slice(0, 4).map(toPreview),
     },
   };
@@ -399,6 +399,19 @@ const LANDING_COPY: Record<SiteLocale, (stats: LandingStatistics) => LandingCopy
       otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换方案。`,
       coexistNote: `${n(coexist.groups)} 组，每组 ${n(coexist.teamsPerGroup)} 支队伍可同时上阵——共 ${n(coexist.heroesPerGroup)} 名武将互不重复。`,
       khaiHoangNote: `${n(khaiHoang.teams)} 支开荒队伍，其中 ${n(khaiHoang.beforeAfterTeams)} 支配有完整的前后期配置、${n(khaiHoang.chamSuTeams)} 支碰瓷队，另附 ${n(khaiHoang.mines)} 座矿的守军信息。`,
+    };
+  },
+  ja: (stats) => {
+    const { coexist, khaiHoang } = stats;
+    const n = (value: number) => localeNumber(value, 'ja');
+    return {
+      heroLead: `${n(stats.standardConfigs)}件のおすすめ編成を${n(stats.sourceSeasons)}シーズン分収録。プレイヤーが集めた${n(stats.otherTeams)}チームに加え、${n(stats.heroes)}名の武将と${n(stats.tactics)}個の戦法も検索できます。無料・登録不要。`,
+      standardCount: `${n(stats.standardConfigs)}件の編成`,
+      standardNote: '。シーズンとカテゴリ別に整理し、参考スコアを付けています。',
+      otherCount: `${n(stats.otherTeams)}チーム`,
+      otherNote: `。いずれもプレイヤーの集計で、${n(stats.otherTeamsWithCounters)}チームに苦手な編成の記載、${n(stats.otherTeamsWithAlternatives)}チームに代替案を掲載しています。`,
+      coexistNote: `${n(coexist.groups)}組。各組${n(coexist.teamsPerGroup)}チームを同時に運用でき、計${n(coexist.heroesPerGroup)}名の武将が重複しません。`,
+      khaiHoangNote: `開拓用${n(khaiHoang.teams)}チーム（うち${n(khaiHoang.beforeAfterTeams)}チームは前期・後期の編成が揃い、${n(khaiHoang.chamSuTeams)}チームは当たり屋編成）と、${n(khaiHoang.mines)}か所の鉱山の守備情報を掲載しています。`,
     };
   },
 };

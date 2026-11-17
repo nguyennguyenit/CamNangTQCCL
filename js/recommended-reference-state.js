@@ -1,6 +1,6 @@
 import { normalizeText } from './filters.js';
 import { canonicalTeamView, resolveTeamView } from './team-view.js';
-import { L, contentLocaleIsVietnamese, currentLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale, normalizeLocale } from './i18n.js';
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
 let zhNameResolver = null;
@@ -49,17 +49,24 @@ export function sourceName(value, locale = currentLocale()) {
   return kept.map((item, index) => (index ? item.separator : '') + item.resolved).join('');
 }
 
-/** Nhãn tiếng Trung của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
-const LEGACY_LABEL_ZH = {
-  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hỗn hợp':'混合'},
-  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾'},
-  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）'},
+/** Nhãn chữ Hán (theo locale) của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
+const LEGACY_LABEL = {
+  zh: {
+    faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hỗn hợp':'混合'},
+    unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾'},
+    source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）'},
+  },
+  ja: {
+    faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'呉','Quần':'群雄','Hỗn hợp':'混合'},
+    unit: {'Kỵ':'騎兵','Cung':'弓兵','Thương':'槍兵','Khiên':'盾兵'},
+    source: {'team-intro':'編成紹介','do-uy':'都尉','moi-phe':'勢力別強編成（旧）'},
+  },
 };
 
-/** Bản zh: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
+/** Bản zh/ja: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
 export function legacyLabelZh(kind, value, locale = currentLocale()) {
   if (contentLocaleIsVietnamese(locale) || typeof value !== 'string') return null;
-  const table = LEGACY_LABEL_ZH[kind];
+  const table = LEGACY_LABEL[normalizeLocale(locale)]?.[kind];
   return table && Object.hasOwn(table, value) ? table[value] : null;
 }
 
@@ -87,17 +94,17 @@ export function readRecommendedQuery(href, registry = {}) {
   const scalar = {};
   for (const key of SCALARS) {
     const values = url.searchParams.getAll(key).filter(Boolean);
-    if (values.length > 1) notices.push(L(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`, `参数 ${key} 重复，仅使用第一个值。`));
+    if (values.length > 1) notices.push(L(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`, `参数 ${key} 重复，仅使用第一个值。`, `パラメータ ${key} が重複しています。最初の値のみ使用します。`));
     scalar[key] = values[0] || null;
   }
-  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持固定顺序。'));
+  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持固定顺序。', '旧い星の絞り込みと並べ替えのパラメータは使用されなくなりました。編成は固定の順序で表示します。'));
   const viewValues = url.searchParams.getAll('view').filter(Boolean);
-  if (viewValues.length > 1) notices.push(L('Tham số view bị lặp; chỉ dùng giá trị đầu.', '参数 view 重复，仅使用第一个值。'));
+  if (viewValues.length > 1) notices.push(L('Tham số view bị lặp; chỉ dùng giá trị đầu.', '参数 view 重复，仅使用第一个值。', 'パラメータ view が重複しています。最初の値のみ使用します。'));
   const view = canonicalTeamView(viewValues[0]);
-  if (viewValues[0] && !view) notices.push(L('Kiểu hiển thị không hợp lệ đã bị bỏ.', '无效的显示方式已被忽略。'));
+  if (viewValues[0] && !view) notices.push(L('Kiểu hiển thị không hợp lệ đã bị bỏ.', '无效的显示方式已被忽略。', '無効な表示形式は無視しました。'));
   const seasons = new Set(registry.seasons || registry.seasonOptions?.map(item=>item.sourceSeasonId) || []);
   if (scalar.season && scalar.season !== 'all' && scalar.season !== 'unknown' && seasons.size && !seasons.has(scalar.season)) {
-    notices.push(L('Mùa không tồn tại; đã dùng mùa mặc định.', '赛季不存在，已改用默认赛季。'));
+    notices.push(L('Mùa không tồn tại; đã dùng mùa mặc định.', '赛季不存在，已改用默认赛季。', 'シーズンが存在しないため、既定のシーズンを使用しました。'));
     scalar.season = registry.defaultSourceSeasonId || [...seasons][0] || null;
   }
   return {
@@ -204,7 +211,7 @@ function searchBlob(row,labels) {
 }
 
 export const SOURCE_TIER_ORDER = ['T0','T0.5','T1','T1.5','T2','T3','FUNC','功能隊'];
-export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队') : value;
+export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队','機能特化編成') : value;
 
 function fixedRank(a,b) {
   const tier = (a.tierOrder ?? 999) - (b.tierOrder ?? 999);

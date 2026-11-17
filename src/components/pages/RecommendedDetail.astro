@@ -19,7 +19,7 @@ const describedName = ordinal > 1 ? `${title} (${ordinal})` : title;
 const hasScore = entry.value != null;
 // Nhãn tier như js/recommended-reference-state.js (`sourceTierLabel`): đội chức năng có nhãn riêng.
 const tier = entry.tierRaw
-  ? (entry.tierRaw === 'FUNC' || entry.tierRaw === '功能隊' ? t('Đội chức năng', '功能队') : entry.tierRaw)
+  ? (entry.tierRaw === 'FUNC' || entry.tierRaw === '功能隊' ? t('Đội chức năng', '功能队', '機能チーム') : entry.tierRaw)
   : null;
 const fallbackReturn = familyReturnHref('recommended', { sourceSeasonId: entry.sourceSeasonId, locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
@@ -28,6 +28,7 @@ const description = pick(
   locale,
   `Chi tiết đội hình ${describedName}${scopeLine ? ` (${scopeLine})` : ''}: tướng, chiến pháp, binh thư và điểm tham khảo.`,
   `${describedName}阵容详情${scopeLine ? `（${scopeLine}）` : ''}：武将、战法、兵书与参考评分。`,
+  `${describedName}の編成詳細${scopeLine ? `（${scopeLine}）` : ''}：武将・戦法・兵法書と参考スコア。`,
 );
 const structured = teamDetailJsonLd({
   locale,
@@ -35,16 +36,16 @@ const structured = teamDetailJsonLd({
   path: Astro.url.pathname,
   name: pageLabel,
   description,
-  family: {name: t('Đội chuẩn', '推荐阵容'), path: localePath('/doi-chuan/', locale)},
+  family: {name: t('Đội chuẩn', '推荐阵容', 'おすすめ編成'), path: localePath('/doi-chuan/', locale)},
   heroes,
 });
 ---
 <SiteLayout
-  title={`${pageLabel}${t(' — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 推荐阵容 — 三国志战略版攻略手册')}`}
+  title={`${pageLabel}${t(' — Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 推荐阵容 — 三国志战略版攻略手册', ' — おすすめ編成 — 「三國志 真戦 攻略手帳」')}`}
   description={description}
   pageKind="detail"
   activeSection="team-chuan"
-  tagline={t('Chi tiết đội chuẩn', '推荐阵容详情')}
+  tagline={t('Chi tiết đội chuẩn', '推荐阵容详情', 'おすすめ編成の詳細')}
   canonicalUrl={canonicalUrl}
   ogType="article"
   locale={locale}
@@ -52,10 +53,10 @@ const structured = teamDetailJsonLd({
   <Fragment slot="head">
     {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
-  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表', '編成一覧へ戻る')}>
     <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {t('Quay lại đội chuẩn', '返回推荐阵容')}
+      {t('Quay lại đội chuẩn', '返回推荐阵容', 'おすすめ編成へ戻る')}
     </a>
   </nav>
 
@@ -73,7 +74,7 @@ const structured = teamDetailJsonLd({
   >
     <div class="detail-header">
       <div class="detail-head-main">
-        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}{oldSeason ? <> · <span class="detail-season-old">{t('mùa cũ', '旧赛季')}</span></> : null}</p> : null}
+        {scopeLine ? <p class="scope-note detail-kicker">{scopeLine}{oldSeason ? <> · <span class="detail-season-old">{t('mùa cũ', '旧赛季', '過去シーズン')}</span></> : null}</p> : null}
         <h1 id="team-detail-title" class="detail-title">{title}</h1>
         <div class="detail-meta-row">
           {tier ? (
@@ -88,12 +89,12 @@ const structured = teamDetailJsonLd({
       <div id="team-detail-panel" class="detail-score-panel">
         {hasScore ? (
           <p class="detail-panel-label">
-            <span class="detail-panel-kicker">{t('Điểm', '评分')}</span>
-            <span class="detail-panel-note">{t('tổng hợp', '汇总')}</span>
+            <span class="detail-panel-kicker">{t('Điểm', '评分', 'スコア')}</span>
+            <span class="detail-panel-note">{t('tổng hợp', '汇总', '集計')}</span>
           </p>
         ) : null}
         <p class="detail-score">
-          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分')}</span></> : t('Chưa có điểm', '暂无评分')}
+          {hasScore ? <><span class="detail-score-value">{entry.value}</span> <span class="detail-score-unit">{t('điểm', '分', '点')}</span></> : t('Chưa có điểm', '暂无评分', 'スコアなし')}
         </p>
         <!-- Nút sao chép liên kết do js/team-detail.js gắn; trang đội chuẩn không dẫn link ra ngoài. -->
         <div id="team-detail-actions" class="detail-panel-actions"></div>

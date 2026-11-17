@@ -19,8 +19,8 @@ import { setLookupRouteHandlesFromJSON } from './lookup-ids.js';
 import { treeToDom } from './view-tree.js';
 
 const TEAMS_SOURCE = 'data/teams.json';
-const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证阵容数据。请刷新页面或返回列表。');
-const NETWORK_MESSAGE = L('Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.', '无法加载阵容详情。请检查网络连接后重试。');
+const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证阵容数据。请刷新页面或返回列表。', '編成データを検証できません。ページを再読み込みするか、一覧に戻ってください。');
+const NETWORK_MESSAGE = L('Không tải được chi tiết đội hình. Hãy kiểm tra kết nối rồi thử lại.', '无法加载阵容详情。请检查网络连接后重试。', '編成の詳細を読み込めませんでした。接続を確認してから、もう一度お試しください。');
 
 async function fetchBytes(path) {
   const response = await fetch(path);
@@ -104,7 +104,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     root.setAttribute('aria-busy', 'true');
     body.hidden = true;
     status.hidden = false;
-    status.replaceChildren(L('Đang tải chi tiết…', '正在加载详情…'));
+    status.replaceChildren(L('Đang tải chi tiết…', '正在加载详情…', '詳細を読み込み中…'));
   };
   const showError = (message, {actions = []} = {}) => {
     const status = statusNode();
@@ -114,7 +114,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     body.replaceChildren();
     if (badges) { badges.replaceChildren(); badges.hidden = true; }
     status.hidden = false;
-    const retry = el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试'));
+    const retry = el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试', '再試行'));
     retry.addEventListener('click', () => { if (!pending) load(); });
     status.replaceChildren(el('div', {class: 'error', role: 'alert'}, [
       el('p', {}, message),
@@ -150,9 +150,9 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   async function loadLegacy() {
     const teams = await localizedLegacyTeams();
     const matches = teams.filter(candidate => candidate.id === legacyTeamId);
-    if (matches.length !== 1) throw new Error(L('Không tìm thấy đúng một đội gốc với mã này.', '未找到与此编号唯一对应的原始阵容。'));
+    if (matches.length !== 1) throw new Error(L('Không tìm thấy đúng một đội gốc với mã này.', '未找到与此编号唯一对应的原始阵容。', 'このIDに一致する元の編成が1件だけ見つかりませんでした。'));
     const team = matches[0];
-    const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, L('Xem đội gốc', '查看原始阵容'));
+    const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, L('Xem đội gốc', '查看原始阵容', '元の編成を見る'));
     let admitted;
     try {
       const {load} = await loadVerifiedRecommendedManifest(pin, name => fetchBytes(`/data/recommended/${name}`));
@@ -160,11 +160,11 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       admitted = (other.records || []).find(row => row.legacyTeamId === legacyTeamId && row.legacyVariantId === requestedVariant) || null;
     } catch {
       // Không xác minh được biến thể thì báo rõ, không hiển thị đội gốc như thể là biến thể.
-      showError(L('Không xác minh được biến thể được yêu cầu.', '无法验证所请求的变体。'), {actions: [originalLink]});
+      showError(L('Không xác minh được biến thể được yêu cầu.', '无法验证所请求的变体。', 'リクエストされたバリアントを検証できませんでした。'), {actions: [originalLink]});
       return;
     }
     if (!admitted) {
-      showError(L('Biến thể này không có trong dữ liệu đội khác đã xác minh.', '已验证的其他阵容数据中没有此变体。'), {actions: [originalLink]});
+      showError(L('Biến thể này không có trong dữ liệu đội khác đã xác minh.', '已验证的其他阵容数据中没有此变体。', 'このバリアントは検証済みのその他の編成データにありません。'), {actions: [originalLink]});
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};

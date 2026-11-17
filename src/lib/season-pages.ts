@@ -139,9 +139,9 @@ export async function seasonPages(): Promise<SeasonPageCatalog> {
   return seasonPageCatalog(registry, await teamDetailCatalog());
 }
 
-/** Tên mùa hiển thị theo ngôn ngữ: bản zh dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
+/** Tên mùa hiển thị theo ngôn ngữ: bản zh và ja dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
 export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: SiteLocale) {
-  return pick(locale, season.nameVi, season.nameRaw);
+  return pick(locale, season.nameVi, season.nameRaw, season.nameRaw);
 }
 
 export interface SeasonPageProps {

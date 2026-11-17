@@ -35,7 +35,7 @@ export function stockCounts(owned) {
  */
 export function boxBar({ boxes, boxId, teamCounts, owned }, actions) {
   const select = el("select", { id: "mt-box" }, boxes.map((box) => el("option", { value: box.id },
-    L(`${boxLabel(box)} · ${teamCounts.get(box.id) ?? 0} đội`, `${boxLabel(box)} · ${teamCounts.get(box.id) ?? 0} 个阵容`))));
+    L(`${boxLabel(box)} · ${teamCounts.get(box.id) ?? 0} đội`, `${boxLabel(box)} · ${teamCounts.get(box.id) ?? 0} 个阵容`, `${boxLabel(box)} · ${teamCounts.get(box.id) ?? 0}編成`))));
   select.value = boxId;
   select.addEventListener("change", () => actions.onSelect(select.value));
 
@@ -43,24 +43,24 @@ export function boxBar({ boxes, boxId, teamCounts, owned }, actions) {
   const rosterLink = (text) => el("a", { href: localePath(ROSTER_PATH) }, text);
   const info = owned.size
     ? [
-      el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, [L("Kho của hộp: ", "仓库库存："), el("strong", {}, L(`${heroes} tướng · ${tactics} chiến pháp`, `${heroes} 名武将 · ${tactics} 个战法`))])]),
-      el("p", { class: "mt-boxinfo-sub" }, [L("Dấu “chưa có trong kho” so với kho này. ", "“库中没有”标记以此库存为准。"), rosterLink(L("Sửa kho ở Gợi ý đội", "在武将库配队中修改库存"))]),
+      el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, [L("Kho của hộp: ", "仓库库存：", "倉庫の在庫："), el("strong", {}, L(`${heroes} tướng · ${tactics} chiến pháp`, `${heroes} 名武将 · ${tactics} 个战法`, `武将${heroes}名 · 戦法${tactics}個`))])]),
+      el("p", { class: "mt-boxinfo-sub" }, [L("Dấu “chưa có trong kho” so với kho này. ", "“库中没有”标记以此库存为准。", "「倉庫にありません」の表示は、この倉庫の在庫を基準にしています。"), rosterLink(L("Sửa kho ở Gợi ý đội", "在武将库配队中修改库存", "武将庫から編成提案で在庫を編集"))]),
     ]
     : [
-      el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, L("Hộp này chưa có kho.", "此仓库还没有库存。"))]),
-      el("p", { class: "mt-boxinfo-sub" }, [L("Nhập kho để biết đội thiếu món nào. ", "录入库存后即可看出阵容缺哪些。"), rosterLink(L("Nhập kho ở Gợi ý đội", "在武将库配队中录入库存"))]),
+      el("p", { class: "mt-boxinfo-main" }, [mtIcon("box"), el("span", {}, L("Hộp này chưa có kho.", "此仓库还没有库存。", "この倉庫にはまだ在庫がありません。"))]),
+      el("p", { class: "mt-boxinfo-sub" }, [L("Nhập kho để biết đội thiếu món nào. ", "录入库存后即可看出阵容缺哪些。", "在庫を登録すると、編成に足りないものが分かります。"), rosterLink(L("Nhập kho ở Gợi ý đội", "在武将库配队中录入库存", "武将庫から編成提案で在庫を登録"))]),
     ];
 
-  return el("section", { class: "mt-boxbar", "aria-label": L("Hộp kho", "仓库") }, [
-    el("label", { class: "mt-boxfield", for: "mt-box" }, [el("span", { class: "mt-boxfield-label" }, L("Hộp", "仓库")), select, mtIcon("chevron")]),
+  return el("section", { class: "mt-boxbar", "aria-label": L("Hộp kho", "仓库", "倉庫") }, [
+    el("label", { class: "mt-boxfield", for: "mt-box" }, [el("span", { class: "mt-boxfield-label" }, L("Hộp", "仓库", "倉庫")), select, mtIcon("chevron")]),
     el("div", { class: "mt-boxinfo", dataset: { stock: owned.size ? "yes" : "no" } }, info),
     el("div", { class: "mt-toolbar mt-boxactions" }, [
-      button(L("Tạo hộp", "新建仓库"), "plus", { action: "create-box", onclick: actions.onCreate }),
-      button(L("Đổi tên hộp", "重命名"), "pencil", { ghost: true, action: "rename-box", onclick: actions.onRename }),
+      button(L("Tạo hộp", "新建仓库", "倉庫を作成"), "plus", { action: "create-box", onclick: actions.onCreate }),
+      button(L("Đổi tên hộp", "重命名", "名前を変更"), "pencil", { ghost: true, action: "rename-box", onclick: actions.onRename }),
       boxId === MAIN_BOX
-        ? el("span", { class: "mt-boxlock" }, [mtIcon("lock", 14), L("Hộp chính không xóa được", "主仓库不能删除")])
+        ? el("span", { class: "mt-boxlock" }, [mtIcon("lock", 14), L("Hộp chính không xóa được", "主仓库不能删除", "メイン倉庫は削除できません")])
         : (() => {
-          const remove = button(L("Xóa hộp", "删除仓库"), "trash", { ghost: true, danger: true, action: "delete-box" });
+          const remove = button(L("Xóa hộp", "删除仓库", "倉庫を削除"), "trash", { ghost: true, danger: true, action: "delete-box" });
           remove.addEventListener("click", () => actions.onDelete(remove));
           return remove;
         })(),
@@ -74,14 +74,14 @@ export function dupsSection(warnings, teams, nameOf) {
   return el("section", { class: "mt-dups", id: "mt-dups", "aria-labelledby": "mt-dups-title" }, [
     el("div", { class: "mt-dups-icon" }, [mtIcon("warn", 20)]),
     el("div", { class: "mt-dups-body" }, [
-      el("h2", { class: "mt-dups-title", id: "mt-dups-title" }, L(`${warnings.length} cặp đội trùng tướng hoặc chiến pháp chính trong hộp này`, `此仓库内有 ${warnings.length} 对阵容的武将或主战法重复`)),
+      el("h2", { class: "mt-dups-title", id: "mt-dups-title" }, L(`${warnings.length} cặp đội trùng tướng hoặc chiến pháp chính trong hộp này`, `此仓库内有 ${warnings.length} 对阵容的武将或主战法重复`, `この倉庫内に、武将または主戦法が重複している編成が${warnings.length}組あります`)),
       el("ul", { class: "mt-dups-list" }, warnings.map((warning) => {
         const a = teams.find((team) => team.id === warning.a);
         const b = teams.find((team) => team.id === warning.b);
-        const what = [...warning.heroes.map((id) => nameOf(id, "hero")), ...warning.tactics.map((id) => nameOf(id, "tactic"))].join(L(", ", "、"));
-        return el("li", {}, [link(a), L(" và ", " 与 "), link(b), L(": ", "："), el("span", { class: "mt-dup-what" }, what)]);
+        const what = [...warning.heroes.map((id) => nameOf(id, "hero")), ...warning.tactics.map((id) => nameOf(id, "tactic"))].join(L(", ", "、", "、"));
+        return el("li", {}, [link(a), L(" và ", " 与 ", " と "), link(b), L(": ", "：", "："), el("span", { class: "mt-dup-what" }, what)]);
       })),
-      el("p", { class: "mt-dups-foot" }, L("Không cùng ra trận thì bỏ qua được. Đánh dấu “Thay thế cho …” trong trình soạn để hai đội không bị tính trùng.", "不同时出战则可忽略。在编辑器中设置“替换…”可让两支阵容不再计为重复。")),
+      el("p", { class: "mt-dups-foot" }, L("Không cùng ra trận thì bỏ qua được. Đánh dấu “Thay thế cho …” trong trình soạn để hai đội không bị tính trùng.", "不同时出战则可忽略。在编辑器中设置“替换…”可让两支阵容不再计为重复。", "同時に出陣しない場合は無視して構いません。エディタで「置き換え…」を設定すると、2つの編成が重複として数えられなくなります。")),
     ]),
   ]);
 }
@@ -93,28 +93,28 @@ export function dupsSection(warnings, teams, nameOf) {
 export function groupHead(group, count, isDefault, actions) {
   const headingId = `mt-g-${group.id.replace(/[^a-z0-9-]/giu, "-")}`;
   const tools = isDefault
-    ? el("span", { class: "mt-group-default" }, L("Nhóm mặc định", "默认分组"))
+    ? el("span", { class: "mt-group-default" }, L("Nhóm mặc định", "默认分组", "デフォルトグループ"))
     : el("span", { class: "mt-group-tools" }, [
-      button(L("Đổi tên", "重命名"), "pencil", { ghost: true, small: true, action: "rename-group", onclick: actions.onRename }),
+      button(L("Đổi tên", "重命名", "名前を変更"), "pencil", { ghost: true, small: true, action: "rename-group", onclick: actions.onRename }),
       (() => {
-        const remove = button(L("Xóa nhóm", "删除分组"), "trash", { ghost: true, danger: true, small: true, action: "delete-group" });
+        const remove = button(L("Xóa nhóm", "删除分组", "グループを削除"), "trash", { ghost: true, danger: true, small: true, action: "delete-group" });
         remove.addEventListener("click", () => actions.onDelete(remove));
         return remove;
       })(),
     ]);
   return el("header", { class: "mt-group-head" }, [
     el("h2", { class: "mt-group-name", id: headingId, tabindex: "-1" }, groupLabel(group)),
-    el("span", { class: "mt-count" }, L(`${count} đội`, `${count} 个阵容`)),
+    el("span", { class: "mt-count" }, L(`${count} đội`, `${count} 个阵容`, `${count}編成`)),
     tools,
   ]);
 }
 
 /** Form "Thêm nhóm" (ô chữ + nút); `onSubmit(input, button)` do trang xử lý. */
 export function addGroupForm(onSubmit) {
-  const input = el("input", { class: "ana-input mt-input", type: "text", id: "mt-new-group", autocomplete: "off", placeholder: L("Ví dụ: Đội thủ thành", "例如：守城阵容") });
-  const submit = el("button", { type: "submit", class: "ana-btn mt-btn" }, [mtIcon("plus"), L("Thêm nhóm", "添加分组")]);
+  const input = el("input", { class: "ana-input mt-input", type: "text", id: "mt-new-group", autocomplete: "off", placeholder: L("Ví dụ: Đội thủ thành", "例如：守城阵容", "例：守城編成") });
+  const submit = el("button", { type: "submit", class: "ana-btn mt-btn" }, [mtIcon("plus"), L("Thêm nhóm", "添加分组", "グループを追加")]);
   const form = el("form", { class: "mt-add-group", novalidate: "" }, [
-    el("label", { for: "mt-new-group" }, L("Thêm nhóm", "添加分组")),
+    el("label", { for: "mt-new-group" }, L("Thêm nhóm", "添加分组", "グループを追加")),
     el("div", { class: "mt-add-group-row" }, [input, submit]),
   ]);
   form.addEventListener("submit", (event) => {
@@ -126,21 +126,21 @@ export function addGroupForm(onSubmit) {
 
 export const privacyNote = () => el("p", { class: "mt-privacy" }, [
   mtIcon("shield"),
-  L("Đội chỉ bạn xem được: không công khai, không chia sẻ. Xóa hộp, nhóm hoặc đội luôn hỏi lại trước khi xóa.", "阵容仅你可见：不公开、不分享。删除仓库、分组或阵容前都会再次确认。"),
+  L("Đội chỉ bạn xem được: không công khai, không chia sẻ. Xóa hộp, nhóm hoặc đội luôn hỏi lại trước khi xóa.", "阵容仅你可见：不公开、不分享。删除仓库、分组或阵容前都会再次确认。", "編成はあなただけが閲覧できます。公開も共有もされません。倉庫・グループ・編成を削除する前には必ず確認します。"),
 ]);
 
 /** Thẻ mời đăng nhập của khách (dùng nút đăng nhập chung của cộng đồng). `expired` = phiên vừa hết hạn. */
 export function guestCard({ expired = false } = {}) {
   const prompt = signInPrompt(expired
-    ? L("Phiên đăng nhập đã hết. Hãy đăng nhập lại.", "登录已失效，请重新登录。")
-    : L("Đội của tôi lưu đội theo tài khoản Google nên mở được trên mọi máy. Chưa đăng nhập thì trang này không tải dữ liệu nào.", "“我的阵容”按 Google 账号保存，可在任何设备上打开。未登录时此页面不会加载任何数据。"));
+    ? L("Phiên đăng nhập đã hết. Hãy đăng nhập lại.", "登录已失效，请重新登录。", "ログインの有効期限が切れました。もう一度ログインしてください。")
+    : L("Đội của tôi lưu đội theo tài khoản Google nên mở được trên mọi máy. Chưa đăng nhập thì trang này không tải dữ liệu nào.", "“我的阵容”按 Google 账号保存，可在任何设备上打开。未登录时此页面不会加载任何数据。", "「マイ編成」はGoogleアカウントごとに保存されるため、どの端末からでも開けます。ログインしていない場合、このページはデータを一切読み込みません。"));
   return el("section", { class: "mt-guest", "aria-labelledby": "mt-guest-title" }, [
     el("div", { class: "mt-guest-icon" }, [mtIcon("lock", 26)]),
-    el("h2", { class: "mt-guest-title", id: "mt-guest-title" }, L("Đăng nhập để mở Đội của tôi", "登录后打开“我的阵容”")),
+    el("h2", { class: "mt-guest-title", id: "mt-guest-title" }, L("Đăng nhập để mở Đội của tôi", "登录后打开“我的阵容”", "ログインして「マイ編成」を開く")),
     prompt,
     el("p", { class: "mt-guest-note" }, [
       mtIcon("info", 15),
-      L("Đang ở trang đội và bấm “Lưu vào đội của tôi” khi chưa đăng nhập? Đội được giữ tạm trên trình duyệt này và tự lưu đúng một lần sau khi đăng nhập.", "在阵容页未登录时点了“保存到我的阵容”？阵容会暂存在此浏览器中，登录后自动保存一次。"),
+      L("Đang ở trang đội và bấm “Lưu vào đội của tôi” khi chưa đăng nhập? Đội được giữ tạm trên trình duyệt này và tự lưu đúng một lần sau khi đăng nhập.", "在阵容页未登录时点了“保存到我的阵容”？阵容会暂存在此浏览器中，登录后自动保存一次。", "編成ページでログインせずに「マイ編成に保存」を押しましたか？編成はこのブラウザに一時保存され、ログイン後に一度だけ自動で保存されます。"),
     ]),
   ]);
 }
