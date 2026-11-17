@@ -10,7 +10,7 @@ Ngày 2026-11-18. Branch `feat/ja-locale-d2-eval` (từ `feat/ja-locale`).
 ## Thay đổi
 
 - `worker/eval/score.ts`: `buildIndexes(dicts, jaEntries?)` cho từng từ điển đi qua `withLocaleAliases` khi có `jaEntries` (không có thì hành vi cũ). Thêm `isJaFixture(fixture, name)`: trường `locale: "ja"` hoặc tên/ảnh dạng `*-ja-*`; `Fixture.locale?` tuỳ chọn. Fixture ja của D1 không có trường `locale` (không thuộc sở hữu D2) nên nhận diện bằng tên.
-- `worker/eval/run-eval.ts`: fixture Nhật dùng chỉ mex có alias (nạp lười `data/lookup-ja.json`), fixture vi/zh dùng chỉ mục cũ. Khi gọi AI thật, fixture Nhật truyền `locale: "ja"` cho `callModel`, nếu không prompt vẫn ép giản thể và đo sai điều cần đo.
+- `worker/eval/run-eval.ts`: fixture Nhật dùng chỉ mục có alias (nạp lười `data/lookup-ja.json`), fixture vi/zh dùng chỉ mục cũ. Khi gọi AI thật, fixture Nhật truyền `locale: "ja"` cho `callModel`, nếu không prompt vẫn ép giản thể và đo sai điều cần đo.
 - `worker/README.md`: một đoạn về fixture Nhật và lệnh `--only battle-ja-1`.
 - `worker/test/eval-score.test.ts`: dùng từ điển thật và `lookup-ja.json`.
   - Output giả chép đúng tên Nhật theo ID đáp án (gồm SP荀彧, 機転先決, 経天緯地...) chấm 100% tướng và chiến pháp ở cả `battle-ja-1` và `battle-ja-2`.
