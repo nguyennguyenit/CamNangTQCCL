@@ -5,7 +5,7 @@
 Mục **Tra cứu** đọc một generation đã xác minh gồm bốn file công khai:
 
 - `data/heroes-dict.json`: 263 tướng (202 từ baseline/SGSDeck + 61 từ client Global; chân dung Hà Thị và 11 tướng Hán mới cắt từ trang chi tiết Minh Giám của client 24.547; chân dung SP Tào Tháo cắt từ ảnh thông báo tướng mới của bản Global, `public/heroes/sp-tao-thao.webp`);
-- `data/tactics.json`: 422 chiến pháp;
+- `data/tactics.json`: 423 chiến pháp;
 - `data/lookup-catalog.json`: 114 trang bị với 90 đặc kỹ, 39 kỹ năng quân sư, 16 cải tạo binh chủng với 192 lựa chọn, và 41 công trình với 426 cấp;
 - `data/lookup-manifest.json`: hash của ba payload và `generationId`.
 

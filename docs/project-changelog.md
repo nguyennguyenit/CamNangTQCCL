@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-18 (Tra cứu: Hành Ách Trận — #125)
+
+- Added: chiến pháp `tactic:hanh-ach-tran` (衡軛陣, Hành Ách Trận), trận pháp mới mùa Hán Diễm Trường Minh, qua `newTactics` + `tactics` của `pipeline/lookup-client-tactics.json`: phẩm S, Pháp trận, 100%, đủ 5 binh chủng, Mục tiêu "Tập thể quân ta (3 người)", Buff Tăng ích, chữ Việt theo thẻ Xem Chiến Pháp của client Global; `zhEffects` kind `translation`. `data/tactics.json` 422 → 423, ledger route cấp 1 handle mới.
+- Đội chuẩn: ô 衡軛陣 của 2 đội PK-S27 (Trình Phổ Đô Đốc Cung, đội Tả Từ) nối được hồ sơ Tra cứu; `tactic-summaries.json` có mục Hành Ách Trận. Publish generation hiển thị mới, rebind `team-route-handles.json`, sinh lại `docs/zh-gaps.md`.
+- Chưa làm ở đây: `stableId` cho 衡軛陣 trong `pipeline/recommended-identity-map.json` và ledger Đội khác cần `pipeline.recommended_identity_refresh`, module chỉ có trên PR #131.
+
 ## 2026-11-18 (Kỳ lược: publish bản dịch hiển thị)
 
 - Bản dịch: thêm 32 obligation `authored-vi` cho chữ mới của nhóm Kỳ lược: `ui:recommended/detail-qilue`, `-strategy`, `-round`, `-unordered`, `-copy` (ô Kỳ lược trên trang đội); `ui:lookup-master/*-qilue*` (21 nhãn danh sách, bộ lọc, chi tiết thẻ/phương lược); `ui:lookup/unit-qilue`, `ui:lookup/qilue-rarity-common`/`-rare`; `ui:layout/lookup-desc-qilue`; `ui:lookup-item/description-qilue-strategy`/`-card`. Mục lục `/tra-cuu/` (vi/zh) liệt kê thêm kỳ lược trong mô tả meta và dòng dẫn (`ui:section-page/tra-cuu`, `ui:lookup/lead`). Không đổi obligation `translate`. Policy `site-vi-261118-ky-luoc`, baseline 67361 → 67393 location; re-pin `js/lookup-data.js`, `js/lookup-detail.js`, `js/lookup-master.js`, `js/lookup-page.js`, `js/recommended-reference-render.js`, `js/unified-lookup.js`, `src/components/pages/LookupHubPage.astro`, `src/lib/lookup-item-pages.ts`, `src/lib/lookup-pages.ts`. Publish generation Đội chuẩn `68095760…` (prune `472a32e9…`), 59 đội PK-S27 có `qilue`; re-pin `pipeline/team-route-handles.json`; `docs/zh-gaps.md` thêm nhóm Kỳ lược (0/45); `WORKFLOW_BUILD_ID` MCP sinh lại.
