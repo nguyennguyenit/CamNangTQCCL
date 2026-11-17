@@ -33,13 +33,13 @@ function isHttpsUrl(value) {
 
 function effortLabel(level) {
   switch (level) {
-    case 'off': return L('Tắt suy luận', '关闭思考');
-    case 'none': return L('Không suy luận', '不推理');
-    case 'low': return L('Thấp', '低');
-    case 'medium': return L('Vừa', '中');
-    case 'high': return L('Cao', '高');
-    case 'max': return L('Tối đa', '最高');
-    case 'default': return L('Mặc định của model', '模型默认');
+    case 'off': return L('Tắt suy luận', '关闭思考', '推論オフ');
+    case 'none': return L('Không suy luận', '不推理', '推論なし');
+    case 'low': return L('Thấp', '低', '低');
+    case 'medium': return L('Vừa', '中', '中');
+    case 'high': return L('Cao', '高', '高');
+    case 'max': return L('Tối đa', '最高', '最高');
+    case 'default': return L('Mặc định của model', '模型默认', 'モデル標準');
     default: return level;
   }
 }
@@ -47,7 +47,7 @@ function effortLabel(level) {
 function effortStyleLabel(style) {
   if (style === 'deepseek') return 'DeepSeek (thinking + reasoning_effort)';
   if (style === 'openai') return 'OpenAI (reasoning_effort)';
-  return L('Không có tham số suy luận', '无推理参数');
+  return L('Không có tham số suy luận', '无推理参数', '推論パラメータなし');
 }
 
 const iconButton = (action, iconName, label) =>
@@ -58,23 +58,24 @@ const seconds = (ms) => String(Math.round(ms / 1000));
 export function openAiPanel(panel, { actions }) {
   const status = adminIconStatus();
   const GROUPS = [
-    { id: 'teamScan', label: L('Soi đội từ ảnh', '看图识阵') },
-    { id: 'rosterRecommend', label: L('Gợi ý đội (quét tướng, chiến pháp, đội đã build)', '阵容推荐（扫描武将、战法、已配队伍）') },
-    { id: 'explainSubstitute', label: L('Giải thích món bù', '替代战法说明') },
-    { id: 'battleReport', label: L('Đọc ảnh chiến báo', '识别战报图片') },
+    { id: 'teamScan', label: L('Soi đội từ ảnh', '看图识阵', '画像から編成認識') },
+    { id: 'rosterRecommend', label: L('Gợi ý đội (quét tướng, chiến pháp, đội đã build)', '阵容推荐（扫描武将、战法、已配队伍）', '編成の提案（武将・戦法・作成済み編成をスキャン）') },
+    { id: 'explainSubstitute', label: L('Giải thích món bù', '替代战法说明', '代替戦法の説明') },
+    { id: 'battleReport', label: L('Đọc ảnh chiến báo', '识别战报图片', '戦報画像の読み取り') },
   ];
   const narrow = window.matchMedia(NARROW_QUERY);
   const warning = el('p', { class: 'cm-notice', hidden: '' }, L(
     'Chưa tính năng nào có mắt xích chạy được — mọi tính năng AI đang tạm dừng.',
     '没有任何功能有可用的链节——所有 AI 功能已暂停。',
+    'どの機能にも実行可能な段がありません。すべてのAI機能が一時停止中です。',
   ));
   const list = el('ol', { class: 'adm-ai-providers', 'aria-labelledby': 'cm-ai-providers-title' });
   const editorSlot = el('div', { class: 'adm-editor-slot' });
-  const summaryList = el('ul', { class: 'adm-ai-summary', 'aria-label': L('Tình trạng từng tính năng', '各功能状态') });
+  const summaryList = el('ul', { class: 'adm-ai-summary', 'aria-label': L('Tình trạng từng tính năng', '各功能状态', '機能ごとの状態') });
   const groupsNode = el('div', { class: 'adm-groups' });
   // Chưa tải được cấu hình thì không cho Thêm/Lưu (tránh ghi đè cấu hình thật bằng cấu hình rỗng).
-  const addButton = button(L('Thêm nhà cung cấp', '添加服务商'), { iconName: 'plus', disabled: '' });
-  const saveButtons = [0, 1].map(() => button(L('Lưu', '保存'), { variant: 'primary', disabled: '' }));
+  const addButton = button(L('Thêm nhà cung cấp', '添加服务商', 'プロバイダーを追加'), { iconName: 'plus', disabled: '' });
+  const saveButtons = [0, 1].map(() => button(L('Lưu', '保存', '保存'), { variant: 'primary', disabled: '' }));
   const setSaveDisabled = (disabled) => saveButtons.forEach((node) => { node.disabled = disabled; });
   // Dữ liệu server (catalog mẫu, mức effort theo kiểu, nhóm cần ảnh) + bản đang sửa, giữ trong bộ nhớ tới lần Lưu.
   let presets = [];
@@ -90,7 +91,7 @@ export function openAiPanel(panel, { actions }) {
   // Dòng tóm tắt "N mắt xích · … trần X s" đang hiện, cập nhật tại chỗ khi gõ timeout/trần (không vẽ lại ô đang gõ).
   const summaryTexts = new Map();
 
-  const markDirty = (extra = '') => status.set(`${extra}${L('Có thay đổi chưa lưu — bấm Lưu để áp dụng.', '有未保存的更改——点击“保存”后生效。')}`, 'warn');
+  const markDirty = (extra = '') => status.set(`${extra}${L('Có thay đổi chưa lưu — bấm Lưu để áp dụng.', '有未保存的更改——点击“保存”后生效。', '未保存の変更があります。「保存」を押すと反映されます。')}`, 'warn');
   const modelsOf = (item) => [...(presets.find((p) => p.id === item.preset)?.models ?? []), ...item.extraModels];
   const eligibleModels = (item, groupId) => modelsOf(item).filter((m) => !needsVision[groupId] || m.vision);
   /** Mắt xích trỏ tới model/effort còn hợp lệ cho nhóm (nhà cung cấp tắt vẫn hợp lệ, chỉ không chạy). */
@@ -104,9 +105,9 @@ export function openAiPanel(panel, { actions }) {
   /** Dòng tóm tắt của nhóm: thẻ tóm tắt desktop bỏ timeout, đầu thẻ thu gọn (mobile) có đủ. */
   const describeGroup = (groupId, { withTimeout = false } = {}) => {
     const { chain, timeoutMs, budgetMs } = groups[groupId];
-    const links = L(`${chain.length} mắt xích`, `${chain.length} 个链节`);
-    const timeout = withTimeout ? ` · ${L('timeout', '超时')} ${seconds(timeoutMs)} s` : '';
-    return `${links}${timeout} · ${L('trần', '总时限')} ${seconds(budgetMs)} s`;
+    const links = L(`${chain.length} mắt xích`, `${chain.length} 个链节`, `${chain.length}段`);
+    const timeout = withTimeout ? ` · ${L('timeout', '超时', 'タイムアウト')} ${seconds(timeoutMs)} s` : '';
+    return `${links}${timeout} · ${L('trần', '总时限', '総上限')} ${seconds(budgetMs)} s`;
   };
   const refreshSummaries = (groupId) => {
     for (const [node, withTimeout] of summaryTexts.get(groupId) ?? []) node.textContent = describeGroup(groupId, { withTimeout });
@@ -135,20 +136,20 @@ export function openAiPanel(panel, { actions }) {
     }
     return dropped;
   };
-  const droppedNote = (count) => (count ? L(`Đã bỏ ${count} mắt xích không còn model. `, `已移除 ${count} 个失去模型的链节。`) : '');
+  const droppedNote = (count) => (count ? L(`Đã bỏ ${count} mắt xích không còn model. `, `已移除 ${count} 个失去模型的链节。`, `モデルが存在しない${count}段を削除しました。`) : '');
 
   /* ---------- Nhà cung cấp ---------- */
 
   const paintProviders = (focusSelector) => {
     const last = items.length - 1;
     list.replaceChildren(...items.map((item, index) => {
-      const up = iconButton('up', 'up', L(`Đưa ${item.label} lên trên`, `上移 ${item.label}`));
-      const down = iconButton('down', 'down', L(`Đưa ${item.label} xuống dưới`, `下移 ${item.label}`));
+      const up = iconButton('up', 'up', L(`Đưa ${item.label} lên trên`, `上移 ${item.label}`, `${item.label}を上へ移動`));
+      const down = iconButton('down', 'down', L(`Đưa ${item.label} xuống dưới`, `下移 ${item.label}`, `${item.label}を下へ移動`));
       up.disabled = index === 0;
       down.disabled = index === last;
-      const toggle = button(item.enabled ? L('Tắt', '停用') : L('Bật', '启用'), { compact: true, dataset: { action: 'toggle' } });
-      const edit = button(L('Sửa', '编辑'), { compact: true, dataset: { action: 'edit' } });
-      const remove = button(L('Xoá', '删除'), { variant: 'adm-btn-danger', compact: true, dataset: { action: 'remove' } });
+      const toggle = button(item.enabled ? L('Tắt', '停用', '無効にする') : L('Bật', '启用', '有効にする'), { compact: true, dataset: { action: 'toggle' } });
+      const edit = button(L('Sửa', '编辑', '編集'), { compact: true, dataset: { action: 'edit' } });
+      const remove = button(L('Xoá', '删除', '削除'), { variant: 'adm-btn-danger', compact: true, dataset: { action: 'remove' } });
       const move = (to) => {
         [items[index], items[to]] = [items[to], items[index]];
         markDirty();
@@ -168,16 +169,16 @@ export function openAiPanel(panel, { actions }) {
         paint(items.length ? `[data-index="${Math.min(index, items.length - 1)}"] [data-action="edit"]` : null);
         if (!items.length) addButton.focus();
       });
-      const key = item.apiKey ? L('Key mới (chưa lưu)', '新密钥（未保存）') : `${L('Key', '密钥')} ••••${item.keyLast4 || ''}`;
-      const presetLabel = presets.find((p) => p.id === item.preset)?.label ?? L('Tùy chỉnh', '自定义');
-      const facts = [presetLabel, L(`${modelsOf(item).length} model`, `${modelsOf(item).length} 个模型`), key].join(' · ');
+      const key = item.apiKey ? L('Key mới (chưa lưu)', '新密钥（未保存）', '新しいキー（未保存）') : `${L('Key', '密钥', 'キー')} ••••${item.keyLast4 || ''}`;
+      const presetLabel = presets.find((p) => p.id === item.preset)?.label ?? L('Tùy chỉnh', '自定义', 'カスタム');
+      const facts = [presetLabel, L(`${modelsOf(item).length} model`, `${modelsOf(item).length} 个模型`, `${modelsOf(item).length}モデル`), key].join(' · ');
       const row = el('li', { class: 'adm-ai-provider', dataset: { index: String(index), enabled: String(item.enabled) } }, [
         el('div', { class: 'adm-ai-provider-info' }, [
           el('span', { class: 'adm-ai-rank', 'aria-hidden': 'true' }, String(index + 1)),
           el('div', { class: 'adm-ai-provider-body' }, [
             el('p', { class: 'adm-ai-provider-line' }, [
               el('span', { class: 'adm-ai-provider-name' }, [el('span', { class: 'visually-hidden' }, `${index + 1}. `), item.label]),
-              el('span', { class: 'cm-badge', dataset: { status: item.enabled ? 'approved' : '' } }, item.enabled ? L('Đang bật', '已启用') : L('Đang tắt', '已停用')),
+              el('span', { class: 'cm-badge', dataset: { status: item.enabled ? 'approved' : '' } }, item.enabled ? L('Đang bật', '已启用', '有効') : L('Đang tắt', '已停用', '無効')),
               el('span', { class: 'adm-ai-provider-facts' }, facts),
             ]),
             el('code', { class: 'adm-endpoint' }, item.endpoint),
@@ -206,7 +207,7 @@ export function openAiPanel(panel, { actions }) {
       `${prefix}-provider`,
       items
         .filter((p) => p.id === link.providerId || eligibleModels(p, groupId).length)
-        .map((p) => [p.id, p.enabled ? p.label : `${p.label} (${L('đang tắt', '已停用')})`]),
+        .map((p) => [p.id, p.enabled ? p.label : `${p.label} (${L('đang tắt', '已停用', '無効')})`]),
       link.providerId,
       { dataset: { field: 'provider' } },
     );
@@ -229,10 +230,10 @@ export function openAiPanel(panel, { actions }) {
       link.effort = effortSelect.value;
       markDirty();
     });
-    const up = iconButton('up', 'up', L(`Đưa mắt xích ${index + 1} lên trên`, `上移第 ${index + 1} 环`));
-    const down = iconButton('down', 'down', L(`Đưa mắt xích ${index + 1} xuống dưới`, `下移第 ${index + 1} 环`));
-    const remove = button(L('Bỏ', '移除'), {
-      variant: 'adm-btn-danger', compact: true, dataset: { action: 'remove' }, 'aria-label': L(`Bỏ mắt xích ${index + 1}`, `移除第 ${index + 1} 环`),
+    const up = iconButton('up', 'up', L(`Đưa mắt xích ${index + 1} lên trên`, `上移第 ${index + 1} 环`, `第${index + 1}段を上へ移動`));
+    const down = iconButton('down', 'down', L(`Đưa mắt xích ${index + 1} xuống dưới`, `下移第 ${index + 1} 环`, `第${index + 1}段を下へ移動`));
+    const remove = button(L('Bỏ', '移除', '外す'), {
+      variant: 'adm-btn-danger', compact: true, dataset: { action: 'remove' }, 'aria-label': L(`Bỏ mắt xích ${index + 1}`, `移除第 ${index + 1} 环`, `第${index + 1}段を外す`),
     });
     up.disabled = index === 0;
     down.disabled = index === chain.length - 1;
@@ -253,7 +254,7 @@ export function openAiPanel(panel, { actions }) {
     });
     // Nhãn ô: desktop ẩn (đầu cột thay), mobile hiện phần chính; phần "của mắt xích N" luôn chỉ cho trình đọc màn hình.
     const field = (id, text, control) => el('div', { class: 'adm-field' }, [
-      el('label', { class: 'adm-label adm-ai-link-label', for: id }, [text, el('span', { class: 'visually-hidden' }, ` ${L(`của mắt xích ${index + 1}`, `（第 ${index + 1} 环）`)}`)]),
+      el('label', { class: 'adm-label adm-ai-link-label', for: id }, [text, el('span', { class: 'visually-hidden' }, ` ${L(`của mắt xích ${index + 1}`, `（第 ${index + 1} 环）`, `（第${index + 1}段）`)}`)]),
       control,
     ]);
     const disabledProvider = item && !item.enabled;
@@ -261,17 +262,18 @@ export function openAiPanel(panel, { actions }) {
       el('div', { class: 'adm-ai-link-row' }, [
         el('div', { class: 'adm-ai-link-head' }, [
           el('span', { class: 'adm-ai-link-index', 'aria-hidden': 'true' }, String(index + 1)),
-          el('span', { class: 'adm-ai-link-name', 'aria-hidden': 'true' }, L(`Mắt xích ${index + 1}`, `第 ${index + 1} 环`)),
+          el('span', { class: 'adm-ai-link-name', 'aria-hidden': 'true' }, L(`Mắt xích ${index + 1}`, `第 ${index + 1} 环`, `第${index + 1}段`)),
         ]),
-        field(`${prefix}-provider`, L('Nhà cung cấp', '服务商'), providerSelect),
-        field(`${prefix}-model`, L('Model', '模型'), modelSelect),
-        field(`${prefix}-effort`, L('Effort', '推理强度'), effortSelect),
+        field(`${prefix}-provider`, L('Nhà cung cấp', '服务商', 'プロバイダー'), providerSelect),
+        field(`${prefix}-model`, L('Model', '模型', 'モデル'), modelSelect),
+        field(`${prefix}-effort`, L('Effort', '推理强度', '推論強度'), effortSelect),
         el('div', { class: 'adm-row-actions adm-ai-link-actions' }, [up, down, remove]),
       ]),
       disabledProvider
         ? el('p', { class: 'adm-ai-link-warning' }, [glyph('warning', 14), L(
           'Nhà cung cấp đang tắt: mắt xích này bị bỏ qua khi chạy.',
           '服务商已停用：运行时将跳过此链节。',
+          'プロバイダーが無効です。この段は実行時にスキップされます。',
         )])
         : null,
     ]);
@@ -280,16 +282,16 @@ export function openAiPanel(panel, { actions }) {
   /** Dòng nối giữa hai mắt xích (chỉ để nhìn; thứ tự đã nằm trong danh sách có số). */
   const connector = (next) => el('li', { class: 'adm-ai-connector', 'aria-hidden': 'true' }, [
     glyph('arrowDown', 14),
-    L(`Lỗi hoặc hết timeout thì thử mắt xích ${next}`, `出错或超时则尝试第 ${next} 环`),
+    L(`Lỗi hoặc hết timeout thì thử mắt xích ${next}`, `出错或超时则尝试第 ${next} 环`, `エラーまたはタイムアウトの場合は第${next}段を試します`),
   ]);
 
   const visionNote = (id) => (needsVision[id]
-    ? el('span', { class: 'adm-ai-vision' }, [glyph('image', 14), L('Chỉ model nhận ảnh', '仅支持图片的模型')])
-    : el('span', { class: 'adm-ai-vision' }, L('Chỉ gửi văn bản', '仅发送文本')));
+    ? el('span', { class: 'adm-ai-vision' }, [glyph('image', 14), L('Chỉ model nhận ảnh', '仅支持图片的模型', '画像対応モデルのみ')])
+    : el('span', { class: 'adm-ai-vision' }, L('Chỉ gửi văn bản', '仅发送文本', 'テキストのみ送信')));
 
   const runBadge = (runs, { short = false } = {}) => el('span', { class: 'cm-badge', dataset: { status: runs ? 'approved' : 'rejected' } }, runs
-    ? L('Chạy được', '可运行')
-    : short ? L('Báo lỗi', '报错') : L('Chưa cấu hình — tính năng báo lỗi', '未配置——功能将报错'));
+    ? L('Chạy được', '可运行', '実行可能')
+    : short ? L('Báo lỗi', '报错', 'エラー') : L('Chưa cấu hình — tính năng báo lỗi', '未配置——功能将报错', '未設定 — 機能はエラーになります'));
 
   function groupSection({ id, label }) {
     const group = groups[id];
@@ -325,14 +327,14 @@ export function openAiPanel(panel, { actions }) {
       }
       return null;
     };
-    const add = button(L('Thêm mắt xích', '添加链节'), { iconName: 'plus', compact: true, dataset: { action: 'add-link' } });
+    const add = button(L('Thêm mắt xích', '添加链节', '段を追加'), { iconName: 'plus', compact: true, dataset: { action: 'add-link' } });
     add.disabled = group.chain.length >= AI_MAX_CHAIN || !firstChoice();
     add.addEventListener('click', () => {
       group.chain.push(firstChoice());
       markDirty();
       paintGroups(`[data-group="${id}"] [data-link="${group.chain.length - 1}"] [data-field="provider"]`);
     });
-    const copy = button(L('Áp cho mọi nhóm', '应用到所有功能'), { variant: 'adm-btn-link', compact: true, dataset: { action: 'copy' } });
+    const copy = button(L('Áp cho mọi nhóm', '应用到所有功能', '全機能に適用'), { variant: 'adm-btn-link', compact: true, dataset: { action: 'copy' } });
     copy.addEventListener('click', () => {
       let dropped = 0;
       for (const other of GROUPS) {
@@ -341,8 +343,8 @@ export function openAiPanel(panel, { actions }) {
         dropped += group.chain.length - chain.length;
         groups[other.id] = { chain, timeoutMs: group.timeoutMs, budgetMs: group.budgetMs };
       }
-      const skipped = dropped ? L(`Bỏ ${dropped} mắt xích không hợp lệ ở nhóm đích (vd model không nhận ảnh). `, `跳过 ${dropped} 个在目标功能中无效的链节（如模型不支持图片）。`) : '';
-      markDirty(`${L('Đã áp chuỗi này cho mọi nhóm. ', '已将此链应用到所有功能。')}${skipped}`);
+      const skipped = dropped ? L(`Bỏ ${dropped} mắt xích không hợp lệ ở nhóm đích (vd model không nhận ảnh). `, `跳过 ${dropped} 个在目标功能中无效的链节（如模型不支持图片）。`, `適用先の機能で無効な${dropped}段をスキップしました（例：画像非対応モデル）。`) : '';
+      markDirty(`${L('Đã áp chuỗi này cho mọi nhóm. ', '已将此链应用到所有功能。', 'この経路を全機能に適用しました。')}${skipped}`);
       paintGroups(`[data-group="${id}"] [data-action="copy"]`);
     });
 
@@ -378,22 +380,23 @@ export function openAiPanel(panel, { actions }) {
       group.chain.length && !collapsible
         ? el('div', { class: 'adm-ai-chain-head', 'aria-hidden': 'true' }, [
           el('span', {}),
-          el('span', {}, L('Nhà cung cấp', '服务商')),
-          el('span', {}, L('Model', '模型')),
-          el('span', {}, L('Effort', '推理强度')),
+          el('span', {}, L('Nhà cung cấp', '服务商', 'プロバイダー')),
+          el('span', {}, L('Model', '模型', 'モデル')),
+          el('span', {}, L('Effort', '推理强度', '推論強度')),
           el('span', {}),
         ])
         : null,
-      group.chain.length ? el('ol', { class: 'adm-ai-chain', 'aria-label': L(`Chuỗi của ${label}`, `${label} 的调用链`) }, links) : null,
+      group.chain.length ? el('ol', { class: 'adm-ai-chain', 'aria-label': L(`Chuỗi của ${label}`, `${label} 的调用链`, `${label}の経路`) }, links) : null,
       el('div', { class: 'adm-ai-group-foot' }, [
         el('div', { class: 'adm-ai-timing' }, [
           el('div', { class: 'adm-ai-timing-fields' }, [
-            formField(`cm-ai-${id}-timeout`, L('Timeout mỗi lượt (giây)', '单次超时（秒）'), timeout),
-            formField(`cm-ai-${id}-budget`, L('Trần tổng (giây)', '总时限（秒）'), budget),
+            formField(`cm-ai-${id}-timeout`, L('Timeout mỗi lượt (giây)', '单次超时（秒）', '1回あたりのタイムアウト（秒）'), timeout),
+            formField(`cm-ai-${id}-budget`, L('Trần tổng (giây)', '总时限（秒）', '総上限（秒）'), budget),
           ]),
           el('p', { class: 'adm-hint' }, L(
             `Mỗi lượt ${AI_MIN_TIMEOUT_S}–${AI_MAX_TIMEOUT_S} giây; trần tổng không nhỏ hơn timeout, tối đa ${AI_MAX_BUDGET_S}.`,
             `单次 ${AI_MIN_TIMEOUT_S}–${AI_MAX_TIMEOUT_S} 秒；总时限不小于单次超时，最多 ${AI_MAX_BUDGET_S}。`,
+            `1回あたり${AI_MIN_TIMEOUT_S}〜${AI_MAX_TIMEOUT_S}秒。総上限はタイムアウト以上、最大${AI_MAX_BUDGET_S}秒です。`,
           )),
         ]),
         el('div', { class: 'adm-actions' }, [add, copy]),
@@ -491,16 +494,16 @@ export function openAiPanel(panel, { actions }) {
       });
       return el('label', { class: 'adm-check', for: box.id }, [box, effortLabel(level)]);
     });
-    const remove = button(L('Bỏ', '移除'), { variant: 'adm-btn-danger', compact: true, 'aria-label': L(`Bỏ model ${index + 1}`, `移除模型 ${index + 1}`) });
+    const remove = button(L('Bỏ', '移除', '外す'), { variant: 'adm-btn-danger', compact: true, 'aria-label': L(`Bỏ model ${index + 1}`, `移除模型 ${index + 1}`, `モデル${index + 1}を外す`) });
     remove.addEventListener('click', () => {
       extras.splice(index, 1);
       repaint(extras.length ? `#cm-ai-extra-${Math.min(index, extras.length - 1)}-id` : '#cm-ai-extra-add');
     });
     return el('li', { class: 'adm-model-row' }, [
-      formField(`${prefix}-id`, L('Model id', '模型 ID'), modelId),
-      formField(`${prefix}-style`, L('Kiểu tham số suy luận', '推理参数类型'), style),
-      el('fieldset', { class: 'adm-efforts' }, [el('legend', { class: 'adm-label' }, L('Mức effort nhận được', '支持的推理强度')), ...efforts]),
-      el('label', { class: 'adm-check', for: vision.id }, [vision, L('Nhận ảnh', '支持图片')]),
+      formField(`${prefix}-id`, L('Model id', '模型 ID', 'モデルID'), modelId),
+      formField(`${prefix}-style`, L('Kiểu tham số suy luận', '推理参数类型', '推論パラメータの種類'), style),
+      el('fieldset', { class: 'adm-efforts' }, [el('legend', { class: 'adm-label' }, L('Mức effort nhận được', '支持的推理强度', '対応する推論強度')), ...efforts]),
+      el('label', { class: 'adm-check', for: vision.id }, [vision, L('Nhận ảnh', '支持图片', '画像対応')]),
       el('div', { class: 'adm-row-actions' }, [remove]),
     ]);
   }
@@ -510,7 +513,7 @@ export function openAiPanel(panel, { actions }) {
     const initialPreset = current ? presets.find((p) => p.id === current.preset) : presets[0];
     const presetSelect = selectInput(
       'cm-ai-preset',
-      [...presets.map((p) => [p.id, p.label]), ['', L('Tùy chỉnh', '自定义')]],
+      [...presets.map((p) => [p.id, p.label]), ['', L('Tùy chỉnh', '自定义', 'カスタム')]],
       initialPreset ? initialPreset.id : '',
     );
     const label = textInput('cm-ai-label', current ? current.label : initialPreset?.label, { maxlength: '80', required: '' });
@@ -519,11 +522,11 @@ export function openAiPanel(panel, { actions }) {
     });
     const apiKey = textInput('cm-ai-key', '', {
       type: 'password', autocomplete: 'new-password', maxlength: '500', spellcheck: 'false',
-      placeholder: current ? L(`Để trống để giữ key cũ (••••${current.keyLast4 || ''})`, `留空则保留原密钥（••••${current.keyLast4 || ''}）`) : '',
+      placeholder: current ? L(`Để trống để giữ key cũ (••••${current.keyLast4 || ''})`, `留空则保留原密钥（••••${current.keyLast4 || ''}）`, `空欄の場合は現在のキーを保持（••••${current.keyLast4 || ''}）`) : '',
     });
     const enabled = el('input', { id: 'cm-ai-enabled', type: 'checkbox' });
     enabled.checked = current ? current.enabled : true;
-    const catalogTitle = el('h4', { id: 'cm-ai-catalog-title', class: 'adm-label' }, L('Model sẵn có', '内置模型'));
+    const catalogTitle = el('h4', { id: 'cm-ai-catalog-title', class: 'adm-label' }, L('Model sẵn có', '内置模型', '組み込みモデル'));
     const catalog = el('ul', { class: 'adm-catalog', 'aria-labelledby': 'cm-ai-catalog-title' });
     const paintPreset = () => {
       const preset = presets.find((p) => p.id === presetSelect.value);
@@ -531,7 +534,7 @@ export function openAiPanel(panel, { actions }) {
       catalogTitle.hidden = !preset;
       catalog.replaceChildren(...(preset?.models ?? []).map((m) => el('li', {}, [
         el('code', {}, m.modelId),
-        ` · ${m.vision ? L('nhận ảnh', '支持图片') : L('chỉ văn bản', '仅文本')} · ${m.efforts.map(effortLabel).join(', ')}`,
+        ` · ${m.vision ? L('nhận ảnh', '支持图片', '画像対応') : L('chỉ văn bản', '仅文本', 'テキストのみ')} · ${m.efforts.map(effortLabel).join(', ')}`,
       ])));
     };
     presetSelect.addEventListener('change', () => {
@@ -547,7 +550,7 @@ export function openAiPanel(panel, { actions }) {
 
     const extras = current ? current.extraModels.map((m) => ({ ...m, efforts: [...m.efforts] })) : [];
     const extrasList = el('ul', { class: 'adm-chain', 'aria-labelledby': 'cm-ai-extra-title' });
-    const addExtra = button(L('Thêm model', '添加模型'), { iconName: 'plus', compact: true, id: 'cm-ai-extra-add' });
+    const addExtra = button(L('Thêm model', '添加模型', 'モデルを追加'), { iconName: 'plus', compact: true, id: 'cm-ai-extra-add' });
     const paintExtras = (focusSelector) => {
       extrasList.replaceChildren(...extras.map((model, i) => extraModelRow(extras, model, i, paintExtras)));
       addExtra.disabled = extras.length >= AI_MAX_EXTRA_MODELS;
@@ -560,25 +563,26 @@ export function openAiPanel(panel, { actions }) {
     });
 
     const keyHint = current
-      ? L(`Đang lưu key ••••${current.keyLast4 || ''}. Để trống = giữ key cũ (đổi endpoint thì phải nhập lại).`, `已保存密钥 ••••${current.keyLast4 || ''}。留空则保留原密钥（更换 endpoint 时须重新填写）。`)
-      : L('Bắt buộc với nhà cung cấp mới.', '新服务商必须填写。');
-    const done = button(L('Xong', '完成'), { variant: 'primary', type: 'submit' });
-    const cancel = button(L('Huỷ', '取消'));
+      ? L(`Đang lưu key ••••${current.keyLast4 || ''}. Để trống = giữ key cũ (đổi endpoint thì phải nhập lại).`, `已保存密钥 ••••${current.keyLast4 || ''}。留空则保留原密钥（更换 endpoint 时须重新填写）。`, `保存済みのキー ••••${current.keyLast4 || ''}。空欄の場合は現在のキーを保持します（エンドポイントを変更する場合は再入力が必要）。`)
+      : L('Bắt buộc với nhà cung cấp mới.', '新服务商必须填写。', '新しいプロバイダーでは必須です。');
+    const done = button(L('Xong', '完成', '完了'), { variant: 'primary', type: 'submit' });
+    const cancel = button(L('Huỷ', '取消', 'キャンセル'));
     const form = el('form', { class: 'adm-card adm-editor', novalidate: '' }, [
-      el('h4', { class: 'adm-editor-title' }, current ? L('Sửa nhà cung cấp', '编辑服务商') : L('Nhà cung cấp mới', '新服务商')),
+      el('h4', { class: 'adm-editor-title' }, current ? L('Sửa nhà cung cấp', '编辑服务商', 'プロバイダーを編集') : L('Nhà cung cấp mới', '新服务商', '新規プロバイダー')),
       el('div', { class: 'adm-grid-2' }, [
-        formField('cm-ai-preset', L('Endpoint mẫu', '接口模板'), presetSelect),
-        formField('cm-ai-label', L('Nhãn', '名称'), label),
+        formField('cm-ai-preset', L('Endpoint mẫu', '接口模板', 'エンドポイントのテンプレート'), presetSelect),
+        formField('cm-ai-label', L('Nhãn', '名称', '名称'), label),
       ]),
-      formField('cm-ai-endpoint', L('Endpoint', 'Endpoint'), endpoint),
-      formField('cm-ai-key', L('API key', 'API 密钥'), apiKey, keyHint),
-      el('label', { class: 'adm-check', for: 'cm-ai-enabled' }, [enabled, L('Bật nhà cung cấp này', '启用此服务商')]),
+      formField('cm-ai-endpoint', L('Endpoint', 'Endpoint', 'エンドポイント'), endpoint),
+      formField('cm-ai-key', L('API key', 'API 密钥', 'APIキー'), apiKey, keyHint),
+      el('label', { class: 'adm-check', for: 'cm-ai-enabled' }, [enabled, L('Bật nhà cung cấp này', '启用此服务商', 'このプロバイダーを有効にする')]),
       catalogTitle,
       catalog,
-      el('h4', { id: 'cm-ai-extra-title', class: 'adm-label' }, L('Model tự thêm', '自定义模型')),
+      el('h4', { id: 'cm-ai-extra-title', class: 'adm-label' }, L('Model tự thêm', '自定义模型', 'カスタムモデル')),
       el('p', { class: 'adm-hint' }, L(
         'Model id theo tài liệu nhà cung cấp (API Chat Completions OpenAI-compatible). Đánh dấu Nhận ảnh chỉ khi model đọc được ảnh.',
         '按服务商文档填写模型 ID（兼容 OpenAI Chat Completions 接口）。仅在模型能识别图片时勾选“支持图片”。',
+        'モデルIDはプロバイダーのドキュメントに従って入力してください（OpenAI互換のChat Completions API）。モデルが画像を読み取れる場合のみ「画像対応」にチェックを入れてください。',
       )),
       extrasList,
       el('div', { class: 'adm-actions' }, [addExtra]),
@@ -601,14 +605,14 @@ export function openAiPanel(panel, { actions }) {
       const seen = new Set((preset?.models ?? []).map((m) => m.modelId));
       const badExtra = extras.findIndex((m) => !m.modelId || seen.has(m.modelId) || !m.efforts.length || !seen.add(m.modelId));
       const extraProblem = badExtra < 0 ? null
-        : !extras[badExtra].modelId ? [form.querySelector(`#cm-ai-extra-${badExtra}-id`), L('Hãy nhập model id.', '请填写模型 ID。')]
-          : !extras[badExtra].efforts.length ? [form.querySelector(`#cm-ai-extra-${badExtra}-style`), L('Model cần ít nhất một mức effort.', '模型至少需要一个推理强度。')]
-            : [form.querySelector(`#cm-ai-extra-${badExtra}-id`), L('Model id bị trùng.', '模型 ID 重复。')];
-      const [invalid, message] = !data.label ? [label, L('Hãy nhập nhãn.', '请填写名称。')]
-        : !isHttpsUrl(data.endpoint) ? [endpoint, L('Endpoint phải là URL https hợp lệ.', 'Endpoint 必须是有效的 https URL。')]
-          : !current && !data.apiKey ? [apiKey, L('Nhà cung cấp mới cần API key.', '新服务商需要 API 密钥。')]
+        : !extras[badExtra].modelId ? [form.querySelector(`#cm-ai-extra-${badExtra}-id`), L('Hãy nhập model id.', '请填写模型 ID。', 'モデルIDを入力してください。')]
+          : !extras[badExtra].efforts.length ? [form.querySelector(`#cm-ai-extra-${badExtra}-style`), L('Model cần ít nhất một mức effort.', '模型至少需要一个推理强度。', 'モデルには推論強度が1つ以上必要です。')]
+            : [form.querySelector(`#cm-ai-extra-${badExtra}-id`), L('Model id bị trùng.', '模型 ID 重复。', 'モデルIDが重複しています。')];
+      const [invalid, message] = !data.label ? [label, L('Hãy nhập nhãn.', '请填写名称。', '名称を入力してください。')]
+        : !isHttpsUrl(data.endpoint) ? [endpoint, L('Endpoint phải là URL https hợp lệ.', 'Endpoint 必须是有效的 https URL。', 'エンドポイントは有効なhttps URLにしてください。')]
+          : !current && !data.apiKey ? [apiKey, L('Nhà cung cấp mới cần API key.', '新服务商需要 API 密钥。', '新しいプロバイダーにはAPIキーが必要です。')]
             : current && data.endpoint !== current.endpoint && !data.apiKey && !current.apiKey
-              ? [apiKey, L('Đổi endpoint thì phải nhập lại API key.', '更换 endpoint 时须重新填写 API 密钥。')]
+              ? [apiKey, L('Đổi endpoint thì phải nhập lại API key.', '更换 endpoint 时须重新填写 API 密钥。', 'エンドポイントを変更する場合はAPIキーを再入力してください。')]
               : extraProblem ?? [null, ''];
       if (invalid) {
         invalid.setAttribute('aria-invalid', 'true');
@@ -631,7 +635,7 @@ export function openAiPanel(panel, { actions }) {
       const position = current ? items.findIndex((p) => p.id === current.id) : items.length;
       if (position < 0) {
         close(null);
-        status.set(L('Nhà cung cấp này đã bị xoá khi đang sửa — thay đổi không được áp dụng.', '该服务商在编辑时已被删除——更改未应用。'), 'error');
+        status.set(L('Nhà cung cấp này đã bị xoá khi đang sửa — thay đổi không được áp dụng.', '该服务商在编辑时已被删除——更改未应用。', 'このプロバイダーは編集中に削除されたため、変更は反映されませんでした。'), 'error');
         return;
       }
       items[position] = entry;
@@ -654,14 +658,14 @@ export function openAiPanel(panel, { actions }) {
       const timeoutS = timeoutMs / 1000;
       const budgetS = budgetMs / 1000;
       if (!Number.isInteger(timeoutS) || timeoutS < AI_MIN_TIMEOUT_S || timeoutS > AI_MAX_TIMEOUT_S) {
-        return [id, `#cm-ai-${id}-timeout`, L(`${label}: timeout mỗi lượt phải là số giây nguyên từ ${AI_MIN_TIMEOUT_S} đến ${AI_MAX_TIMEOUT_S}.`, `${label}：单次超时须为 ${AI_MIN_TIMEOUT_S}–${AI_MAX_TIMEOUT_S} 的整数秒。`)];
+        return [id, `#cm-ai-${id}-timeout`, L(`${label}: timeout mỗi lượt phải là số giây nguyên từ ${AI_MIN_TIMEOUT_S} đến ${AI_MAX_TIMEOUT_S}.`, `${label}：单次超时须为 ${AI_MIN_TIMEOUT_S}–${AI_MAX_TIMEOUT_S} 的整数秒。`, `${label}：1回あたりのタイムアウトは${AI_MIN_TIMEOUT_S}〜${AI_MAX_TIMEOUT_S}の整数秒にしてください。`)];
       }
       if (!Number.isInteger(budgetS) || budgetS < timeoutS || budgetS > AI_MAX_BUDGET_S) {
-        return [id, `#cm-ai-${id}-budget`, L(`${label}: trần tổng phải là số giây nguyên, không nhỏ hơn timeout mỗi lượt và không quá ${AI_MAX_BUDGET_S}.`, `${label}：总时限须为整数秒，不小于单次超时且不超过 ${AI_MAX_BUDGET_S}。`)];
+        return [id, `#cm-ai-${id}-budget`, L(`${label}: trần tổng phải là số giây nguyên, không nhỏ hơn timeout mỗi lượt và không quá ${AI_MAX_BUDGET_S}.`, `${label}：总时限须为整数秒，不小于单次超时且不超过 ${AI_MAX_BUDGET_S}。`, `${label}：総上限は整数秒で、1回あたりのタイムアウト以上、かつ${AI_MAX_BUDGET_S}以下にしてください。`)];
       }
       const bad = chain.findIndex((link) => !linkModel(link, id));
       if (bad >= 0) {
-        return [id, `#cm-ai-${id}-${bad}-model`, L(`${label}: mắt xích ${bad + 1} chưa chọn model hợp lệ.`, `${label}：第 ${bad + 1} 环未选择有效模型。`)];
+        return [id, `#cm-ai-${id}-${bad}-model`, L(`${label}: mắt xích ${bad + 1} chưa chọn model hợp lệ.`, `${label}：第 ${bad + 1} 环未选择有效模型。`, `${label}：第${bad + 1}段に有効なモデルが選択されていません。`)];
       }
     }
     return null;
@@ -670,7 +674,7 @@ export function openAiPanel(panel, { actions }) {
   const save = async () => {
     // Khung sửa nhà cung cấp còn mở: bấm Lưu sẽ bỏ mất thay đổi chưa bấm Xong.
     if (editorSlot.firstChild) {
-      status.set(L('Hãy bấm Xong hoặc Huỷ ở khung sửa nhà cung cấp trước khi Lưu.', '请先在服务商编辑框中点击“完成”或“取消”，再保存。'), 'error');
+      status.set(L('Hãy bấm Xong hoặc Huỷ ở khung sửa nhà cung cấp trước khi Lưu.', '请先在服务商编辑框中点击“完成”或“取消”，再保存。', 'プロバイダー編集欄で「完了」か「キャンセル」を押してから保存してください。'), 'error');
       editorSlot.querySelector('button[type="submit"]')?.focus();
       return;
     }
@@ -690,7 +694,7 @@ export function openAiPanel(panel, { actions }) {
       return;
     }
     setSaveDisabled(true);
-    status.set(L('Đang lưu…', '正在保存…'), 'info');
+    status.set(L('Đang lưu…', '正在保存…', '保存中…'), 'info');
     try {
       const body = await api('/api/admin/ai/config', {
         method: 'PUT',
@@ -702,7 +706,7 @@ export function openAiPanel(panel, { actions }) {
       editorSlot.replaceChildren();
       editingId = null;
       load(body);
-      status.set(L('Đã lưu. Có hiệu lực trong khoảng 1 phút.', '已保存，约 1 分钟内生效。'));
+      status.set(L('Đã lưu. Có hiệu lực trong khoảng 1 phút.', '已保存，约 1 分钟内生效。', '保存しました。約1分以内に反映されます。'));
     } catch (error) {
       status.set(describeError(error), 'error');
     } finally {
@@ -745,10 +749,11 @@ export function openAiPanel(panel, { actions }) {
     el('section', { class: 'adm-ai-block', 'aria-labelledby': 'cm-ai-providers-title' }, [
       el('div', { class: 'adm-ai-block-head' }, [
         el('div', { class: 'adm-ai-block-heading' }, [
-          el('h3', { id: 'cm-ai-providers-title', class: 'adm-subtitle' }, L('Nhà cung cấp', '服务商')),
+          el('h3', { id: 'cm-ai-providers-title', class: 'adm-subtitle' }, L('Nhà cung cấp', '服务商', 'プロバイダー')),
           el('p', { class: 'adm-hint' }, L(
             'Endpoint và API key dùng chung cho mọi tính năng. Key chỉ hiện 4 ký tự cuối; thứ tự ở đây chỉ để sắp xếp, chuỗi chạy nằm ở phần Tính năng.',
             'Endpoint 和 API 密钥供所有功能共用。密钥只显示最后 4 位；此处顺序仅用于排列，实际调用链在“功能”部分。',
+            'エンドポイントとAPIキーは全機能で共用します。キーは末尾4文字のみ表示されます。ここでの順序は並べ替え用で、実際の実行経路は「機能」で設定します。',
           )),
         ]),
         addButton,
@@ -758,10 +763,11 @@ export function openAiPanel(panel, { actions }) {
     ]),
     el('section', { class: 'adm-ai-block adm-ai-features', 'aria-labelledby': 'cm-ai-groups-title' }, [
       el('div', { class: 'adm-ai-block-heading' }, [
-        el('h3', { id: 'cm-ai-groups-title', class: 'adm-subtitle' }, L('Tính năng', '功能')),
+        el('h3', { id: 'cm-ai-groups-title', class: 'adm-subtitle' }, L('Tính năng', '功能', '機能')),
         el('p', { class: 'adm-hint' }, L(
           'Mỗi tính năng có chuỗi riêng: gọi mắt xích 1 trước; mắt xích lỗi (sai key, hết tiền, quá tải, máy chủ lỗi) hoặc hết timeout thì chuyển mắt xích kế, tới khi hết trần tổng.',
           '每个功能有自己的调用链：先调用第 1 环；某环出错（密钥错误、余额不足、过载、服务器错误）或超时则切换到下一环，直到用完总时限。',
+          '機能ごとに独自の経路を持ちます。まず第1段を呼び出し、エラー（キー不正・残高不足・過負荷・サーバーエラー）またはタイムアウトの場合は次の段へ切り替え、総上限に達するまで続けます。',
         )),
       ]),
       summaryList,
@@ -771,6 +777,7 @@ export function openAiPanel(panel, { actions }) {
       el('p', {}, L(
         'Lưu ghi cả nhà cung cấp lẫn chuỗi của 4 tính năng; có hiệu lực trong khoảng 1 phút.',
         '“保存”会同时写入服务商和 4 个功能的调用链，约 1 分钟内生效。',
+        '「保存」はプロバイダーと4機能の経路を同時に書き込みます。約1分以内に反映されます。',
       )),
       saveButtons[1],
     ]),

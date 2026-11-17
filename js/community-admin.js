@@ -283,10 +283,11 @@ function adminShell(definitions, counts, { viewer, forbiddenHashes }) {
   });
   const node = el('div', { class: 'adm-shell' }, [
     el('aside', { class: 'adm-side' }, [
-      el('nav', { class: 'adm-nav', 'aria-label': L('Khu quản trị', '管理区域') }, list),
+      el('nav', { class: 'adm-nav', 'aria-label': L('Khu quản trị', '管理区域', '管理エリア') }, list),
       el('p', { class: 'adm-side-note' }, L(
         'Quyền do máy chủ kiểm; trang chỉ ẩn giao diện với tài khoản không phải quản trị.',
         '权限由服务器校验；页面只是对非管理员隐藏界面。',
+        '権限はサーバー側で検証されます。このページは管理者以外に画面を隠すだけです。',
       )),
     ]),
     el('div', { class: 'adm-main' }, sections.map(({ section }) => section)),
@@ -361,7 +362,7 @@ export function imageTile(href, alt) {
   return el('a', { class: 'adm-report-image', href, target: '_blank', rel: 'noopener' }, [
     el('img', { src: href, alt, loading: 'lazy' }),
     el('span', { class: 'adm-report-image-open' }, glyph('external')),
-    el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）')),
+    el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）', '（新しいタブで開く）')),
   ]);
 }
 
@@ -370,7 +371,7 @@ export function imageTile(href, alt) {
  * `render(entry)` dựng một <li>. Tải lại (đổi bộ lọc) khi trang trước chưa về: chỉ lần tải mới nhất được vẽ.
  */
 export function pagedList({ list, empty, status, fetchPage, render, fallbackFocus }) {
-  const more = button(L('Tải thêm', '加载更多'), { variant: 'adm-more', hidden: '' });
+  const more = button(L('Tải thêm', '加载更多', 'もっと見る'), { variant: 'adm-more', hidden: '' });
   let cursor = null;
   let generation = 0;
   const refresh = () => {
@@ -426,11 +427,11 @@ function pendingReportItem(report, { status, onDone }) {
   const imageUrl = typeof report.imageUrl === 'string' && report.imageUrl.startsWith('/api/')
     ? report.imageUrl
     : `/api/reports/${encodeURIComponent(report.id)}/image`;
-  const approve = button(L('Duyệt', '通过'), { variant: 'primary', iconName: 'check' });
-  const reject = button(L('Từ chối', '拒绝'));
+  const approve = button(L('Duyệt', '通过', '承認'), { variant: 'primary', iconName: 'check' });
+  const reject = button(L('Từ chối', '拒绝', '却下'));
   const actions = el('div', { class: 'adm-actions' }, [approve, reject]);
   const item = el('li', { class: 'adm-card adm-report', dataset: { reportId: String(report.id) } }, [
-    imageTile(imageUrl, L('Ảnh chiến báo', '战报截图')),
+    imageTile(imageUrl, L('Ảnh chiến báo', '战报截图', '戦報のスクリーンショット')),
     el('div', { class: 'adm-report-main' }, [
       el('p', { class: 'adm-meta' }, [
         avatar(report.author),
@@ -439,7 +440,7 @@ function pendingReportItem(report, { status, onDone }) {
         pagePath(report.page, report.lang),
       ]),
       // Dữ liệu AI đã được người gửi xác nhận/sửa trước khi gửi; server chỉ lưu bản đã xác nhận.
-      reportSummary(report, { caption: L('Dữ liệu AI đã được người gửi xác nhận', 'AI 识别结果已由提交者确认') }),
+      reportSummary(report, { caption: L('Dữ liệu AI đã được người gửi xác nhận', 'AI 识别结果已由提交者确认', 'AIの認識結果は投稿者が確認済みです') }),
       actions,
     ]),
   ]);
@@ -449,7 +450,7 @@ function pendingReportItem(report, { status, onDone }) {
     reject.disabled = true;
     try {
       await api(`/api/admin/reports/${encodeURIComponent(report.id)}/approve`, { method: 'POST', json: {} });
-      status.set(L('Đã duyệt chiến báo.', '战报已通过。'));
+      status.set(L('Đã duyệt chiến báo.', '战报已通过。', '戦報を承認しました。'));
       onDone(item);
     } catch (error) {
       approve.disabled = false;
@@ -461,10 +462,10 @@ function pendingReportItem(report, { status, onDone }) {
   reject.addEventListener('click', () => {
     const inputId = `cm-reject-${report.id}`;
     const reason = el('textarea', { id: inputId, class: 'cm-textarea', rows: '3', maxlength: '500', required: '' });
-    const confirm = button(L('Xác nhận từ chối', '确认拒绝'), { variant: 'adm-btn-accent', type: 'submit' });
-    const cancel = button(L('Huỷ', '取消'));
+    const confirm = button(L('Xác nhận từ chối', '确认拒绝', '却下を確定'), { variant: 'adm-btn-accent', type: 'submit' });
+    const cancel = button(L('Huỷ', '取消', 'キャンセル'));
     const form = el('form', { class: 'adm-reject', novalidate: '' }, [
-      formField(inputId, L('Lý do từ chối', '拒绝原因'), reason, L('Người gửi xem được lý do này ở trang Cộng đồng.', '提交者可在社区页面看到该原因。')),
+      formField(inputId, L('Lý do từ chối', '拒绝原因', '却下理由'), reason, L('Người gửi xem được lý do này ở trang Cộng đồng.', '提交者可在社区页面看到该原因。', '投稿者はコミュニティページでこの理由を確認できます。')),
       el('div', { class: 'adm-actions' }, [confirm, cancel]),
     ]);
     cancel.addEventListener('click', () => {
@@ -475,7 +476,7 @@ function pendingReportItem(report, { status, onDone }) {
       event.preventDefault();
       const text = reason.value.trim();
       if (!text) {
-        status.set(L('Hãy nhập lý do từ chối.', '请填写拒绝原因。'), 'error');
+        status.set(L('Hãy nhập lý do từ chối.', '请填写拒绝原因。', '却下理由を入力してください。'), 'error');
         reason.setAttribute('aria-invalid', 'true');
         reason.focus();
         return;
@@ -483,7 +484,7 @@ function pendingReportItem(report, { status, onDone }) {
       confirm.disabled = true;
       try {
         await api(`/api/admin/reports/${encodeURIComponent(report.id)}/reject`, { method: 'POST', json: { reason: text } });
-        status.set(L('Đã từ chối chiến báo.', '战报已拒绝。'));
+        status.set(L('Đã từ chối chiến báo.', '战报已拒绝。', '戦報を却下しました。'));
         onDone(item);
       } catch (error) {
         confirm.disabled = false;
@@ -498,8 +499,8 @@ function pendingReportItem(report, { status, onDone }) {
 
 function openReportsPanel(panel, { head, counts }) {
   const status = adminStatus();
-  const list = el('ol', { class: 'adm-list adm-list-roomy', 'aria-label': L('Chiến báo chờ duyệt', '待审核战报') });
-  const empty = emptyNote(L('Không còn chiến báo nào chờ duyệt.', '没有待审核的战报。'));
+  const list = el('ol', { class: 'adm-list adm-list-roomy', 'aria-label': L('Chiến báo chờ duyệt', '待审核战报', '審査待ちの戦報') });
+  const empty = emptyNote(L('Không còn chiến báo nào chờ duyệt.', '没有待审核的战报。', '審査待ちの戦報はありません。'));
   const paged = pagedList({
     list,
     empty,
@@ -527,10 +528,10 @@ function openReportsPanel(panel, { head, counts }) {
 
 function openCommentsPanel(panel, { head }) {
   const status = adminStatus();
-  const list = el('ol', { class: 'adm-list', 'aria-label': L('Bình luận mới nhất', '最新评论') });
-  const empty = emptyNote(L('Chưa có bình luận nào.', '还没有评论。'));
+  const list = el('ol', { class: 'adm-list', 'aria-label': L('Bình luận mới nhất', '最新评论', '最新のコメント') });
+  const empty = emptyNote(L('Chưa có bình luận nào.', '还没有评论。', 'コメントはまだありません。'));
   const item = (comment) => {
-    const remove = comment.canDelete ? button(L('Xoá', '删除'), { variant: 'adm-btn-danger', compact: true }) : null;
+    const remove = comment.canDelete ? button(L('Xoá', '删除', '削除'), { variant: 'adm-btn-danger', compact: true }) : null;
     const row = el('li', { class: 'adm-card adm-comment' }, [
       avatar(comment.author),
       el('div', { class: 'adm-comment-main' }, [
@@ -545,11 +546,11 @@ function openCommentsPanel(panel, { head }) {
       ]),
     ]);
     remove?.addEventListener('click', async () => {
-      if (!window.confirm(L('Xoá bình luận này?', '确定删除这条评论吗？'))) return;
+      if (!window.confirm(L('Xoá bình luận này?', '确定删除这条评论吗？', 'このコメントを削除しますか？'))) return;
       remove.disabled = true;
       try {
         await api(`/api/comments/${encodeURIComponent(comment.id)}`, { method: 'DELETE' });
-        status.set(L('Đã xoá bình luận.', '评论已删除。'));
+        status.set(L('Đã xoá bình luận.', '评论已删除。', 'コメントを削除しました。'));
         paged.remove(row);
       } catch (error) {
         remove.disabled = false;
@@ -574,7 +575,7 @@ function openCommentsPanel(panel, { head }) {
 // Góp ý gửi từ hộp thoại ở footer (cả khách ẩn danh). Admin lọc theo trạng thái/loại và chuyển Mới ⇄ Đã xử lý;
 // trả lời người gửi bằng thư (link mailto hoặc Reply ngay trong thư báo).
 
-const FEEDBACK_STATUS_LABEL = { new: L('Chưa xử lý', '未处理'), done: L('Đã xử lý', '已处理') };
+const FEEDBACK_STATUS_LABEL = { new: L('Chưa xử lý', '未处理', '未対応'), done: L('Đã xử lý', '已处理', '対応済み') };
 /** Màu badge loại góp ý: lỗi son, thông tin sai hổ phách, còn lại giấy đậm. */
 const FEEDBACK_KIND_TONE = { bug: 'accent', wrong_info: 'warn' };
 
@@ -588,9 +589,9 @@ function feedbackItem(entry, { status, onToggle }) {
   const mailto = email && entry.emailMasked !== true ? `mailto:${email}?subject=${encodeURIComponent(`Re: ${entry.title}`)}` : null;
   const row = el('li', { class: 'adm-card adm-feedback cm-feedback-item' }, [
     el('p', { class: 'adm-meta' }, [
-      el('span', { class: 'cm-badge', dataset: { tone: FEEDBACK_KIND_TONE[entry.kind] ?? '' } }, kind ? L(kind.vi, kind.zh) : String(entry.kind || '')),
+      el('span', { class: 'cm-badge', dataset: { tone: FEEDBACK_KIND_TONE[entry.kind] ?? '' } }, kind ? L(kind.vi, kind.zh, kind.ja ?? kind.zh) : String(entry.kind || '')),
       badge,
-      el('span', { class: 'adm-author' }, entry.author ? displayName(entry.author) : L('Ẩn danh', '匿名')),
+      el('span', { class: 'adm-author' }, entry.author ? displayName(entry.author) : L('Ẩn danh', '匿名', '匿名')),
       timeNode(entry.createdAt),
       el('span', { class: 'cm-badge' }, langLabel(entry.lang)),
       pagePath(entry.page),
@@ -608,8 +609,8 @@ function feedbackItem(entry, { status, onToggle }) {
     badge.dataset.status = done ? 'approved' : 'pending';
     toggle.className = done ? 'ana-btn adm-btn-compact' : 'ana-btn primary adm-btn-compact';
     toggle.replaceChildren(...(done
-      ? [L('Đánh dấu chưa xử lý', '标记为未处理')]
-      : [glyph('check'), L('Đánh dấu đã xử lý', '标记为已处理')]));
+      ? [L('Đánh dấu chưa xử lý', '标记为未处理', '未対応に戻す')]
+      : [glyph('check'), L('Đánh dấu đã xử lý', '标记为已处理', '対応済みにする')]));
   };
   paint();
   toggle.addEventListener('click', async () => {
@@ -620,7 +621,7 @@ function feedbackItem(entry, { status, onToggle }) {
       current = next;
       paint();
       onToggle();
-      status.set(next === 'done' ? L('Đã đánh dấu đã xử lý.', '已标记为已处理。') : L('Đã đánh dấu chưa xử lý.', '已标记为未处理。'));
+      status.set(next === 'done' ? L('Đã đánh dấu đã xử lý.', '已标记为已处理。', '対応済みにしました。') : L('Đã đánh dấu chưa xử lý.', '已标记为未处理。', '未対応に戻しました。'));
     } catch (error) {
       status.set(describeError(error), 'error');
     } finally {
@@ -635,28 +636,28 @@ function openFeedbackPanel(panel, { head, counts }) {
   const statusFilter = selectInput('cm-feedback-status', [
     ['new', FEEDBACK_STATUS_LABEL.new],
     ['done', FEEDBACK_STATUS_LABEL.done],
-    ['', L('Tất cả', '全部')],
+    ['', L('Tất cả', '全部', 'すべて')],
   ], 'new');
   const kindFilter = selectInput('cm-feedback-kind', [
-    ['', L('Tất cả', '全部')],
-    ...FEEDBACK_KINDS.map((kind) => [kind.id, L(kind.vi, kind.zh)]),
+    ['', L('Tất cả', '全部', 'すべて')],
+    ...FEEDBACK_KINDS.map((kind) => [kind.id, L(kind.vi, kind.zh, kind.ja ?? kind.zh)]),
   ], '');
   // Dòng tổng theo artboard AdminFeedback: "3 góp ý chưa xử lý · 12 đã xử lý" (mọi loại).
   const summary = el('p', { class: 'adm-filter-summary', hidden: '' });
   counts.subscribe(({ feedbackNew, feedbackDone }) => {
     summary.replaceChildren(
       el('strong', {}, String(feedbackNew)),
-      L(` góp ý chưa xử lý · ${feedbackDone} đã xử lý`, ` 条未处理 · ${feedbackDone} 条已处理`),
+      L(` góp ý chưa xử lý · ${feedbackDone} đã xử lý`, ` 条未处理 · ${feedbackDone} 条已处理`, ` 件が未対応 · ${feedbackDone} 件が対応済み`),
     );
     summary.hidden = false;
   });
   const filters = el('div', { class: 'adm-filters' }, [
-    formField('cm-feedback-status', L('Trạng thái', '状态'), statusFilter),
-    formField('cm-feedback-kind', L('Loại', '类型'), kindFilter),
+    formField('cm-feedback-status', L('Trạng thái', '状态', 'ステータス'), statusFilter),
+    formField('cm-feedback-kind', L('Loại', '类型', '種別'), kindFilter),
     summary,
   ]);
-  const list = el('ol', { class: 'adm-list', 'aria-label': L('Góp ý', '意见反馈') });
-  const empty = emptyNote(L('Không có góp ý nào.', '没有反馈。'));
+  const list = el('ol', { class: 'adm-list', 'aria-label': L('Góp ý', '意见反馈', 'ご意見') });
+  const empty = emptyNote(L('Không có góp ý nào.', '没有反馈。', 'ご意見はありません。'));
   const paged = pagedList({
     list,
     empty,
@@ -681,22 +682,22 @@ function openFeedbackPanel(panel, { head, counts }) {
 /* ---------- Bài viết ---------- */
 
 function statusLabel(post) {
-  return post?.status === 'published' ? L('Đã xuất bản', '已发布') : L('Bản nháp', '草稿');
+  return post?.status === 'published' ? L('Đã xuất bản', '已发布', '公開中') : L('Bản nháp', '草稿', '下書き');
 }
 
 /** Câu mô tả kết quả gọi deploy hook sau khi xuất bản / gỡ xuất bản. */
 function deployMessage(body, published) {
   const deploy = body?.deploy;
   const done = published
-    ? L('Đã xuất bản bài viết.', '文章已发布。')
-    : L('Đã gỡ xuất bản bài viết.', '文章已取消发布。');
+    ? L('Đã xuất bản bài viết.', '文章已发布。', '記事を公開しました。')
+    : L('Đã gỡ xuất bản bài viết.', '文章已取消发布。', '記事を非公開にしました。');
   if (!deploy || typeof deploy !== 'object') return { text: done, kind: '' };
   if (deploy.ok) {
-    return { text: `${done} ${L('Đã yêu cầu build lại site; thay đổi sẽ lên sau vài phút.', '已触发站点重新构建，几分钟后生效。')}`, kind: '' };
+    return { text: `${done} ${L('Đã yêu cầu build lại site; thay đổi sẽ lên sau vài phút.', '已触发站点重新构建，几分钟后生效。', 'サイトの再ビルドを要求しました。変更は数分後に反映されます。')}`, kind: '' };
   }
   const code = Number.isFinite(deploy.status) ? ` (HTTP ${deploy.status})` : '';
   return {
-    text: `${done} ${L('Nhưng gọi deploy hook thất bại', '但调用部署钩子失败')}${code}. ${L('Hãy thử lại để build lại site.', '请重试以重新构建站点。')}`,
+    text: `${done} ${L('Nhưng gọi deploy hook thất bại', '但调用部署钩子失败', 'ただしデプロイフックの呼び出しに失敗しました')}${code}. ${L('Hãy thử lại để build lại site.', '请重试以重新构建站点。', 'もう一度試してサイトを再ビルドしてください。')}`,
     kind: 'error',
   };
 }
@@ -728,7 +729,7 @@ function postStatusBadge(post) {
 function openPostsPanel(panel, { head, actions, counts }) {
   const status = adminStatus();
   const view = el('div', { class: 'adm-posts-view' });
-  const createButton = button(L('Viết bài mới', '写新文章'), { variant: 'primary', iconName: 'plus' });
+  const createButton = button(L('Viết bài mới', '写新文章', '新規記事を作成'), { variant: 'primary', iconName: 'plus' });
   createButton.addEventListener('click', () => showEditor(emptyPost()));
   actions.append(createButton);
   panel.append(view);
@@ -742,6 +743,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
       el('p', { class: 'adm-hint' }, L(
         'Xuất bản, gỡ xuất bản hoặc sửa bài đã xuất bản sẽ yêu cầu build lại site; thay đổi lên sau vài phút.',
         '发布、取消发布或修改已发布文章会触发站点重新构建，几分钟后生效。',
+        '記事の公開・非公開、または公開済み記事の編集を行うと、サイトの再ビルドが要求されます。変更は数分後に反映されます。',
       )),
     );
     view.setAttribute('aria-busy', 'true');
@@ -749,20 +751,20 @@ function openPostsPanel(panel, { head, actions, counts }) {
       const body = await api('/api/admin/posts');
       const posts = Array.isArray(body?.items) ? body.items : [];
       if (!posts.length) {
-        table.replaceChildren(el('p', { class: 'adm-empty' }, L('Chưa có bài viết nào.', '还没有文章。')));
+        table.replaceChildren(el('p', { class: 'adm-empty' }, L('Chưa có bài viết nào.', '还没有文章。', '記事はまだありません。')));
       } else {
         table.replaceChildren(el('div', { class: 'adm-table-wrap adm-table-scroll adm-posts-table' }, el('table', { class: 'adm-table' }, [
           el('thead', {}, el('tr', {}, [
-            el('th', { scope: 'col' }, L('Tiêu đề', '标题')),
-            el('th', { scope: 'col' }, L('Trạng thái', '状态')),
-            el('th', { scope: 'col' }, L('Ngôn ngữ', '语言')),
+            el('th', { scope: 'col' }, L('Tiêu đề', '标题', 'タイトル')),
+            el('th', { scope: 'col' }, L('Trạng thái', '状态', 'ステータス')),
+            el('th', { scope: 'col' }, L('Ngôn ngữ', '语言', '言語')),
             el('th', { scope: 'col' }, 'Slug'),
-            el('th', { scope: 'col' }, L('Cập nhật', '更新')),
-            el('th', { scope: 'col' }, el('span', { class: 'visually-hidden' }, L('Thao tác', '操作'))),
+            el('th', { scope: 'col' }, L('Cập nhật', '更新', '更新')),
+            el('th', { scope: 'col' }, el('span', { class: 'visually-hidden' }, L('Thao tác', '操作', '操作'))),
           ])),
           el('tbody', {}, posts.map((post) => {
             const open = el('button', { class: 'adm-table-title', type: 'button' }, String(post.title || post.slug || ''));
-            const edit = button(L('Sửa', '编辑'), { compact: true, 'aria-label': L(`Sửa bài ${post.title || post.slug || ''}`, `编辑 ${post.title || post.slug || ''}`) });
+            const edit = button(L('Sửa', '编辑', '編集'), { compact: true, 'aria-label': L(`Sửa bài ${post.title || post.slug || ''}`, `编辑 ${post.title || post.slug || ''}`, `編集 ${post.title || post.slug || ''}`) });
             open.addEventListener('click', () => showEditor(post));
             edit.addEventListener('click', () => showEditor(post));
             return el('tr', {}, [
@@ -801,11 +803,11 @@ function openPostsPanel(panel, { head, actions, counts }) {
     const coverMedia = el('div', { class: 'adm-cover-media' });
     const coverName = el('span', { class: 'adm-cover-name' });
     const coverPick = el('label', { class: 'ana-btn adm-btn-compact adm-file-btn', for: 'cm-post-cover' });
-    const coverRemove = button(L('Bỏ ảnh bìa', '移除封面'), { variant: 'adm-btn-ghost', compact: true });
+    const coverRemove = button(L('Bỏ ảnh bìa', '移除封面', 'カバー画像を外す'), { variant: 'adm-btn-ghost', compact: true });
     const paintCover = () => {
-      coverMedia.replaceChildren(coverImage ? el('img', { src: coverImage, alt: L('Ảnh bìa', '封面图') }) : glyph('image', 28));
-      coverName.replaceChildren(coverImage ? el('code', {}, coverImage) : L('Chưa có ảnh bìa · JPG, PNG hoặc WebP', '尚未设置封面 · JPG、PNG 或 WebP'));
-      coverPick.textContent = coverImage ? L('Đổi ảnh', '更换图片') : L('Tải ảnh lên', '上传图片');
+      coverMedia.replaceChildren(coverImage ? el('img', { src: coverImage, alt: L('Ảnh bìa', '封面图', 'カバー画像') }) : glyph('image', 28));
+      coverName.replaceChildren(coverImage ? el('code', {}, coverImage) : L('Chưa có ảnh bìa · JPG, PNG hoặc WebP', '尚未设置封面 · JPG、PNG 或 WebP', 'カバー画像は未設定 · JPG、PNG、WebP'));
+      coverPick.textContent = coverImage ? L('Đổi ảnh', '更换图片', '画像を変更') : L('Tải ảnh lên', '上传图片', '画像をアップロード');
       coverRemove.hidden = !coverImage;
     };
     paintCover();
@@ -817,7 +819,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
     coverFile.addEventListener('change', async () => {
       const file = coverFile.files?.[0];
       if (!file) return;
-      status.set(L('Đang tải ảnh lên…', '正在上传图片…'));
+      status.set(L('Đang tải ảnh lên…', '正在上传图片…', '画像をアップロード中…'));
       try {
         const blob = await downscaleImage(file);
         const form = new FormData();
@@ -826,7 +828,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
         if (typeof body?.url !== 'string' || !body.url.startsWith('/')) throw new Error('missing url');
         coverImage = body.url;
         paintCover();
-        status.set(L('Đã tải ảnh bìa lên.', '封面已上传。'));
+        status.set(L('Đã tải ảnh bìa lên.', '封面已上传。', 'カバー画像をアップロードしました。'));
       } catch (error) {
         status.set(describeError(error), 'error');
       } finally {
@@ -856,16 +858,16 @@ function openPostsPanel(panel, { head, actions, counts }) {
       return node;
     };
     markdown.append(
-      el('div', { class: 'adm-md-switch', role: 'group', 'aria-label': L('Chế độ soạn bài', '编辑模式') }, [
-        modeButton('edit', L('Soạn', '编辑')),
-        modeButton('preview', L('Xem trước', '预览')),
+      el('div', { class: 'adm-md-switch', role: 'group', 'aria-label': L('Chế độ soạn bài', '编辑模式', '編集モード') }, [
+        modeButton('edit', L('Soạn', '编辑', '編集')),
+        modeButton('preview', L('Xem trước', '预览', 'プレビュー')),
       ]),
       el('div', { class: 'adm-md-pane adm-md-edit' }, [
-        el('label', { class: 'adm-label', for: 'cm-post-body' }, L('Nội dung (Markdown)', '正文（Markdown）')),
+        el('label', { class: 'adm-label', for: 'cm-post-body' }, L('Nội dung (Markdown)', '正文（Markdown）', '本文（Markdown）')),
         bodyInput,
       ]),
       el('div', { class: 'adm-md-pane adm-md-view' }, [
-        el('p', { class: 'adm-label', id: 'cm-post-preview-label' }, L('Xem trước', '预览')),
+        el('p', { class: 'adm-label', id: 'cm-post-preview-label' }, L('Xem trước', '预览', 'プレビュー')),
         preview,
       ]),
     );
@@ -882,10 +884,10 @@ function openPostsPanel(panel, { head, actions, counts }) {
       const a = el('textarea', { id: aId, class: 'cm-textarea', rows: '2', maxlength: '2000' });
       a.dataset.faq = 'a';
       a.value = entry.a || '';
-      const remove = button(L('Xoá câu hỏi', '删除问题'), { variant: 'adm-btn-danger', compact: true });
+      const remove = button(L('Xoá câu hỏi', '删除问题', '質問を削除'), { variant: 'adm-btn-danger', compact: true });
       const row = el('li', { class: 'adm-faq-row' }, [
-        formField(qId, L('Câu hỏi', '问题'), q),
-        formField(aId, L('Trả lời', '回答'), a),
+        formField(qId, L('Câu hỏi', '问题', '質問'), q),
+        formField(aId, L('Trả lời', '回答', '回答'), a),
         remove,
       ]);
       remove.addEventListener('click', () => {
@@ -896,28 +898,28 @@ function openPostsPanel(panel, { head, actions, counts }) {
       faqList.append(row);
       if (focus) q.focus();
     };
-    const addFaqButton = button(L('Thêm câu hỏi', '添加问题'), { iconName: 'plus', compact: true });
+    const addFaqButton = button(L('Thêm câu hỏi', '添加问题', '質問を追加'), { iconName: 'plus', compact: true });
     addFaqButton.addEventListener('click', () => addFaq(undefined, true));
     for (const entry of Array.isArray(post.faq) ? post.faq : []) addFaq(entry);
 
-    const heading = el('h2', { class: 'adm-section-title', tabindex: '-1' }, post.id ? L('Sửa bài viết', '编辑文章') : L('Bài viết mới', '新文章'));
+    const heading = el('h2', { class: 'adm-section-title', tabindex: '-1' }, post.id ? L('Sửa bài viết', '编辑文章', '記事を編集') : L('Bài viết mới', '新文章', '新規記事'));
     const state = el('p', { class: 'adm-editor-state' });
     const paintState = () => {
       state.replaceChildren(
         postStatusBadge(post),
-        post.updatedAt ? el('span', {}, [L('Lưu lần cuối ', '最后保存于 '), timeNode(post.updatedAt)]) : el('span', {}, L('Chưa lưu', '尚未保存')),
+        post.updatedAt ? el('span', {}, [L('Lưu lần cuối ', '最后保存于 ', '最終保存: '), timeNode(post.updatedAt)]) : el('span', {}, L('Chưa lưu', '尚未保存', '未保存')),
       );
     };
-    const back = button(L('Về danh sách', '返回列表'), { variant: 'adm-btn-ghost', iconName: 'back' });
-    const save = button(L('Lưu nháp', '保存草稿'), { type: 'submit' });
+    const back = button(L('Về danh sách', '返回列表', '一覧に戻る'), { variant: 'adm-btn-ghost', iconName: 'back' });
+    const save = button(L('Lưu nháp', '保存草稿', '下書きを保存'), { type: 'submit' });
     const publishToggle = button('');
-    const remove = button(L('Xoá bài', '删除文章'), { variant: 'adm-btn-danger' });
+    const remove = button(L('Xoá bài', '删除文章', '記事を削除'), { variant: 'adm-btn-danger' });
     const paintButtons = () => {
       const published = post.status === 'published';
-      publishToggle.textContent = published ? L('Gỡ xuất bản', '取消发布') : L('Xuất bản', '发布');
+      publishToggle.textContent = published ? L('Gỡ xuất bản', '取消发布', '非公開にする') : L('Xuất bản', '发布', '公開する');
       publishToggle.className = published ? 'ana-btn' : 'ana-btn adm-btn-accent';
       remove.hidden = !post.id;
-      save.textContent = published ? L('Lưu thay đổi', '保存修改') : L('Lưu nháp', '保存草稿');
+      save.textContent = published ? L('Lưu thay đổi', '保存修改', '変更を保存') : L('Lưu nháp', '保存草稿', '下書きを保存');
       paintState();
     };
     paintButtons();
@@ -945,8 +947,8 @@ function openPostsPanel(panel, { head, actions, counts }) {
       if (!invalid) return true;
       invalid.setAttribute('aria-invalid', 'true');
       status.set(invalid === slug
-        ? L('Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.', 'Slug 只能包含小写字母、数字和连字符。')
-        : L('Hãy nhập tiêu đề bài viết.', '请填写文章标题。'), 'error');
+        ? L('Slug chỉ gồm chữ thường không dấu, số và dấu gạch ngang.', 'Slug 只能包含小写字母、数字和连字符。', 'Slugには半角小文字の英字・数字・ハイフンのみ使用できます。')
+        : L('Hãy nhập tiêu đề bài viết.', '请填写文章标题。', '記事のタイトルを入力してください。'), 'error');
       invalid.focus();
       return false;
     };
@@ -958,7 +960,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
         ? await api(`/api/admin/posts/${encodeURIComponent(post.id)}`, { method: 'PUT', json: data })
         : await api('/api/admin/posts', { method: 'POST', json: data });
       post = { ...post, ...data, ...(saved && typeof saved === 'object' ? (saved.post || saved) : {}) };
-      heading.textContent = L('Sửa bài viết', '编辑文章');
+      heading.textContent = L('Sửa bài viết', '编辑文章', '記事を編集');
       paintButtons();
       counts.refresh();
       // PUT bài đã xuất bản gọi lại deploy hook: trả `deploy` để báo kết quả build lại.
@@ -971,26 +973,26 @@ function openPostsPanel(panel, { head, actions, counts }) {
 
     const form = el('form', { class: 'adm-form', novalidate: '' }, [
       el('div', { class: 'adm-grid-3' }, [
-        formField('cm-post-lang', L('Ngôn ngữ', '语言'), langSelect),
-        formField('cm-post-slug', 'Slug', slug, L('Ví dụ: doi-hinh-mua-s18. Duy nhất trong cùng ngôn ngữ.', '例如：doi-hinh-mua-s18。同一语言内必须唯一。')),
-        formField('cm-post-translation', L('Khoá bản dịch', '译文关联键'), translationKey, L('Đặt giống nhau cho bản Việt và bản Trung của cùng một bài.', '同一篇文章的越南语版与中文版填写相同的值。')),
+        formField('cm-post-lang', L('Ngôn ngữ', '语言', '言語'), langSelect),
+        formField('cm-post-slug', 'Slug', slug, L('Ví dụ: doi-hinh-mua-s18. Duy nhất trong cùng ngôn ngữ.', '例如：doi-hinh-mua-s18。同一语言内必须唯一。', '例：doi-hinh-mua-s18。同じ言語内で一意にしてください。')),
+        formField('cm-post-translation', L('Khoá bản dịch', '译文关联键', '翻訳キー'), translationKey, L('Đặt giống nhau cho bản Việt và bản Trung của cùng một bài.', '同一篇文章的越南语版与中文版填写相同的值。', '同じ記事のベトナム語版と中国語版には同じ値を入力してください。')),
       ]),
       el('div', { class: 'adm-grid-title' }, [
-        formField('cm-post-title', L('Tiêu đề', '标题'), title),
-        formField('cm-post-tags', L('Thẻ', '标签'), tags, L('Ngăn bằng dấu phẩy.', '用逗号分隔。')),
+        formField('cm-post-title', L('Tiêu đề', '标题', 'タイトル'), title),
+        formField('cm-post-tags', L('Thẻ', '标签', 'タグ'), tags, L('Ngăn bằng dấu phẩy.', '用逗号分隔。', 'カンマで区切ります。')),
       ]),
-      formField('cm-post-description', L('Mô tả ngắn (SEO)', '简短描述（SEO）'), description),
+      formField('cm-post-description', L('Mô tả ngắn (SEO)', '简短描述（SEO）', '短い説明（SEO）'), description),
       el('div', { class: 'adm-card adm-cover' }, [
         coverMedia,
         el('div', { class: 'adm-cover-info' }, [
-          el('span', { class: 'adm-label' }, L('Ảnh bìa', '封面图')),
+          el('span', { class: 'adm-label' }, L('Ảnh bìa', '封面图', 'カバー画像')),
           coverName,
           el('div', { class: 'adm-actions' }, [coverFile, coverPick, coverRemove]),
         ]),
       ]),
       markdown,
       el('fieldset', { class: 'adm-faq' }, [
-        el('legend', {}, L('Câu hỏi thường gặp (FAQ)', '常见问题（FAQ）')),
+        el('legend', {}, L('Câu hỏi thường gặp (FAQ)', '常见问题（FAQ）', 'よくある質問（FAQ）')),
         faqList,
         el('div', {}, addFaqButton),
       ]),
@@ -1001,16 +1003,16 @@ function openPostsPanel(panel, { head, actions, counts }) {
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
       busy(true);
-      status.set(L('Đang lưu…', '正在保存…'));
+      status.set(L('Đang lưu…', '正在保存…', '保存中…'));
       try {
         const saved = await persist();
         if (saved) {
           const deploy = saved.deploy ? deployMessage(saved, true) : null;
           status.set(deploy && deploy.kind === 'error'
-            ? `${L('Đã lưu bài viết.', '文章已保存。')} ${L('Nhưng gọi deploy hook thất bại. Hãy lưu lại để build lại site.', '但调用部署钩子失败，请再次保存以重新构建站点。')}`
+            ? `${L('Đã lưu bài viết.', '文章已保存。', '記事を保存しました。')} ${L('Nhưng gọi deploy hook thất bại. Hãy lưu lại để build lại site.', '但调用部署钩子失败，请再次保存以重新构建站点。', 'ただしデプロイフックの呼び出しに失敗しました。もう一度保存してサイトを再ビルドしてください。')}`
             : deploy
-              ? `${L('Đã lưu bài viết.', '文章已保存。')} ${L('Đã yêu cầu build lại site; thay đổi sẽ lên sau vài phút.', '已触发站点重新构建，几分钟后生效。')}`
-              : L('Đã lưu bài viết.', '文章已保存。'), deploy?.kind ?? '');
+              ? `${L('Đã lưu bài viết.', '文章已保存。', '記事を保存しました。')} ${L('Đã yêu cầu build lại site; thay đổi sẽ lên sau vài phút.', '已触发站点重新构建，几分钟后生效。', 'サイトの再ビルドを要求しました。変更は数分後に反映されます。')}`
+              : L('Đã lưu bài viết.', '文章已保存。', '記事を保存しました。'), deploy?.kind ?? '');
         }
       } catch (error) {
         status.set(describeError(error), 'error');
@@ -1021,7 +1023,7 @@ function openPostsPanel(panel, { head, actions, counts }) {
     publishToggle.addEventListener('click', async () => {
       const publishing = post.status !== 'published';
       busy(true);
-      status.set(publishing ? L('Đang xuất bản…', '正在发布…') : L('Đang gỡ xuất bản…', '正在取消发布…'));
+      status.set(publishing ? L('Đang xuất bản…', '正在发布…', '公開中…') : L('Đang gỡ xuất bản…', '正在取消发布…', '非公開にしています…'));
       try {
         if (!(await persist())) return;
         const body = await api(`/api/admin/posts/${encodeURIComponent(post.id)}/${publishing ? 'publish' : 'unpublish'}`, { method: 'POST', json: {} });
@@ -1037,13 +1039,13 @@ function openPostsPanel(panel, { head, actions, counts }) {
       }
     });
     remove.addEventListener('click', async () => {
-      if (!post.id || !window.confirm(L('Xoá vĩnh viễn bài viết này?', '确定永久删除这篇文章吗？'))) return;
+      if (!post.id || !window.confirm(L('Xoá vĩnh viễn bài viết này?', '确定永久删除这篇文章吗？', 'この記事を完全に削除しますか？'))) return;
       busy(true);
       try {
         await api(`/api/admin/posts/${encodeURIComponent(post.id)}`, { method: 'DELETE' });
         await showList('.adm-section-head .ana-btn');
         counts.refresh();
-        status.set(L('Đã xoá bài viết.', '文章已删除。'));
+        status.set(L('Đã xoá bài viết.', '文章已删除。', '記事を削除しました。'));
       } catch (error) {
         status.set(describeError(error), 'error');
         busy(false);
@@ -1071,8 +1073,8 @@ function paintIdentity(user) {
     el('span', { class: 'adm-identity-text' }, [
       el('span', { class: 'adm-identity-name' }, displayName(user)),
       el('span', { class: 'adm-identity-role' }, user.role === 'root'
-        ? L('Quản trị viên · đăng nhập Google', '管理员 · Google 登录')
-        : L('Kiểm duyệt viên · đăng nhập Google', '版主 · Google 登录')),
+        ? L('Quản trị viên · đăng nhập Google', '管理员 · Google 登录', '管理者 · Googleログイン')
+        : L('Kiểm duyệt viên · đăng nhập Google', '版主 · Google 登录', 'モデレーター · Googleログイン')),
     ]),
   );
   slot.hidden = false;
@@ -1091,11 +1093,11 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
   }
   mount.removeAttribute('aria-busy');
   if (!user) {
-    mount.replaceChildren(signInPrompt(L('Đăng nhập bằng tài khoản quản trị để tiếp tục.', '请使用管理员账号登录。')));
+    mount.replaceChildren(signInPrompt(L('Đăng nhập bằng tài khoản quản trị để tiếp tục.', '请使用管理员账号登录。', '管理者アカウントでログインしてください。')));
     return;
   }
   if (user.role !== 'root' && user.role !== 'moderator') {
-    mount.replaceChildren(el('p', { class: 'cm-notice' }, L('Tài khoản này không có quyền quản trị.', '该账号没有管理权限。')));
+    mount.replaceChildren(el('p', { class: 'cm-notice' }, L('Tài khoản này không có quyền quản trị.', '该账号没有管理权限。', 'このアカウントには管理権限がありません。')));
     return;
   }
   paintIdentity(user);
@@ -1108,12 +1110,13 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: STAFF,
       hash: 'chien-bao',
       icon: 'reports',
-      label: L('Duyệt chiến báo', '审核战报'),
+      label: L('Duyệt chiến báo', '审核战报', '戦報を審査'),
       lead: L(
         'Chiến báo người chơi gửi kèm ảnh và dữ liệu đội đã tự xác nhận. Chỉ chiến báo đã duyệt mới vào số liệu của đội.',
         '玩家提交的战报附带截图和已自行确认的阵容数据。只有通过审核的战报才计入阵容统计。',
+        'プレイヤーが投稿した戦報には、スクリーンショットと投稿者が確認済みの編成データが添付されます。承認された戦報のみ編成の統計に反映されます。',
       ),
-      count: { key: 'reportsPending', unit: L('chiến báo chờ duyệt', '份战报待审核') },
+      count: { key: 'reportsPending', unit: L('chiến báo chờ duyệt', '份战报待审核', '件の戦報が審査待ち') },
       open: openReportsPanel,
     },
     {
@@ -1121,9 +1124,9 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: ROOT,
       hash: 'bai-viet',
       icon: 'posts',
-      label: L('Bài viết', '文章'),
-      lead: L('Bài hướng dẫn và phân tích; bản Việt và bản Trung nối bằng khoá bản dịch.', '攻略与分析文章；越南语版与中文版通过译文关联键对应。'),
-      count: { key: 'postsDraft', unit: L('bản nháp', '篇草稿') },
+      label: L('Bài viết', '文章', '記事'),
+      lead: L('Bài hướng dẫn và phân tích; bản Việt và bản Trung nối bằng khoá bản dịch.', '攻略与分析文章；越南语版与中文版通过译文关联键对应。', '攻略・分析記事。ベトナム語版と中国語版は翻訳キーで対応付けます。'),
+      count: { key: 'postsDraft', unit: L('bản nháp', '篇草稿', '件の下書き') },
       open: openPostsPanel,
     },
     {
@@ -1131,8 +1134,8 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: STAFF,
       hash: 'binh-luan',
       icon: 'comments',
-      label: L('Bình luận', '评论'),
-      lead: L('Bình luận mới nhất trên mọi trang, cả bản Việt và bản Trung · xoá bình luận vi phạm quy tắc cộng đồng.', '所有页面的最新评论（含越南语版与中文版）· 删除违反社区规则的评论。'),
+      label: L('Bình luận', '评论', 'コメント'),
+      lead: L('Bình luận mới nhất trên mọi trang, cả bản Việt và bản Trung · xoá bình luận vi phạm quy tắc cộng đồng.', '所有页面的最新评论（含越南语版与中文版）· 删除违反社区规则的评论。', '全ページの最新コメント（ベトナム語版・中国語版を含む）· コミュニティルールに違反するコメントを削除します。'),
       open: openCommentsPanel,
     },
     {
@@ -1140,9 +1143,9 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: STAFF,
       hash: 'gop-y',
       icon: 'feedback',
-      label: L('Góp ý', '意见反馈'),
-      lead: L('Góp ý và báo lỗi gửi từ footer · đánh dấu đã xử lý để khỏi làm lại.', '从页脚提交的意见与错误报告 · 标记为已处理以免重复。'),
-      count: { key: 'feedbackNew', unit: L('góp ý chưa xử lý', '条反馈未处理') },
+      label: L('Góp ý', '意见反馈', 'ご意見'),
+      lead: L('Góp ý và báo lỗi gửi từ footer · đánh dấu đã xử lý để khỏi làm lại.', '从页脚提交的意见与错误报告 · 标记为已处理以免重复。', 'フッターから送信されたご意見・不具合報告 · 重複対応を避けるため、対応済みにしてください。'),
+      count: { key: 'feedbackNew', unit: L('góp ý chưa xử lý', '条反馈未处理', '件のご意見が未対応') },
       open: openFeedbackPanel,
     },
     {
@@ -1150,12 +1153,13 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: STAFF,
       hash: 'soi-doi',
       icon: 'scan',
-      label: L('Soi đội', '截图识阵'),
+      label: L('Soi đội', '截图识阵', '編成解析'),
       lead: L(
         'Tỷ lệ ô người dùng phải sửa hoặc AI đọc không rõ (đếm ẩn danh) và ảnh người dùng tự nguyện gửi để bổ sung bộ ảnh chuẩn.',
         '用户需要修改或 AI 识别不清的格子占比（匿名统计），以及用户自愿提交、用于补充基准图集的截图。',
+        'ユーザーが修正した、またはAIが読み取れなかったマスの割合（匿名集計）と、基準画像セットの拡充のためユーザーが自発的に送信したスクリーンショット。',
       ),
-      count: { key: 'scanPending', unit: L('ảnh chờ duyệt', '张截图待审核') },
+      count: { key: 'scanPending', unit: L('ảnh chờ duyệt', '张截图待审核', '件のスクリーンショットが審査待ち') },
       open: openScanPanel,
     },
     {
@@ -1167,6 +1171,7 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       lead: L(
         'Nhà cung cấp giữ endpoint và API key dùng chung. Mỗi tính năng có chuỗi failover riêng; bấm Lưu để áp dụng cả hai phần, có hiệu lực trong khoảng 1 phút.',
         '服务商保存共用的 endpoint 和 API 密钥。每个功能有自己的 failover 调用链；点击“保存”同时应用两部分，约 1 分钟内生效。',
+        'プロバイダーが共通のendpointとAPIキーを保持します。機能ごとに独自のfailoverチェーンがあります。「保存」を押すと両方に適用され、約1分で反映されます。',
       ),
       open: openAiPanel,
     },
@@ -1175,21 +1180,21 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       roles: STAFF,
       hash: 'doi-cong-dong',
       icon: 'teams',
-      label: L('Đội cộng đồng', '社区阵容'),
+      label: L('Đội cộng đồng', '社区阵容', 'コミュニティ編成'),
       lead: user.role === 'root'
-        ? L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở và mở mùa mới.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容，并开启新赛季。')
-        : L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở. Email tác giả đã được che.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容。作者邮箱已做遮挡显示。'),
-      count: { key: 'teamsPending', unit: L('đội chờ', '待审') },
+        ? L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở và mở mùa mới.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容，并开启新赛季。', 'プレイヤーが投稿した編成の承認・却下、承認済み編成の取り下げ、削除途中の編成の整理、新シーズンの開始を行います。')
+        : L('Duyệt hoặc từ chối đội người chơi đăng, gỡ đội đã duyệt, dọn đội xoá dở. Email tác giả đã được che.', '审核或拒绝玩家发布的阵容、下架已通过的阵容、清理删除未完成的阵容。作者邮箱已做遮挡显示。', 'プレイヤーが投稿した編成の承認・却下、承認済み編成の取り下げ、削除途中の編成の整理を行います。投稿者のメールアドレスはマスク表示されています。'),
+      count: { key: 'teamsPending', unit: L('đội chờ', '待审', '審査待ち') },
       open: openTeamsPanel,
     },
     {
       id: 'users',
       hash: 'nguoi-dung',
       icon: 'users',
-      label: L('Người dùng', '用户'),
+      label: L('Người dùng', '用户', 'ユーザー'),
       lead: user.role === 'root'
-        ? L('Tìm tài khoản, khoá có thời hạn kèm lý do, cấp hoặc thu quyền kiểm duyệt viên, xoá tài khoản cùng dữ liệu.', '查找账号、按期限封禁并注明理由、授予或收回版主权限、删除账号及其数据。')
-        : L('Tìm tài khoản và khoá hoặc mở khoá người dùng thường kèm lý do. Email hiển thị đã được che.', '查找账号，并对普通用户封禁或解封（需注明理由）。邮箱已做遮挡显示。'),
+        ? L('Tìm tài khoản, khoá có thời hạn kèm lý do, cấp hoặc thu quyền kiểm duyệt viên, xoá tài khoản cùng dữ liệu.', '查找账号、按期限封禁并注明理由、授予或收回版主权限、删除账号及其数据。', 'アカウントの検索、期限と理由を付けた利用停止、モデレーター権限の付与・剥奪、アカウントとデータの削除を行います。')
+        : L('Tìm tài khoản và khoá hoặc mở khoá người dùng thường kèm lý do. Email hiển thị đã được che.', '查找账号，并对普通用户封禁或解封（需注明理由）。邮箱已做遮挡显示。', 'アカウントの検索と、一般ユーザーの利用停止・解除（理由の記入が必要）を行います。メールアドレスはマスク表示されています。'),
       roles: STAFF,
       open: openUsersPanel,
     },
@@ -1197,8 +1202,8 @@ export async function initCommunityAdmin(mount = document.getElementById('commun
       id: 'audit',
       hash: 'nhat-ky',
       icon: 'audit',
-      label: L('Nhật ký', '日志'),
-      lead: L('Mọi thao tác quản trị đã ghi: ai làm, hành động, đối tượng, lý do, kết quả.', '已记录的所有管理操作：操作人、动作、对象、理由与结果。'),
+      label: L('Nhật ký', '日志', '操作ログ'),
+      lead: L('Mọi thao tác quản trị đã ghi: ai làm, hành động, đối tượng, lý do, kết quả.', '已记录的所有管理操作：操作人、动作、对象、理由与结果。', '記録された管理操作すべて：実行者、操作内容、対象、理由、結果。'),
       roles: ROOT,
       open: openAuditPanel,
     },
