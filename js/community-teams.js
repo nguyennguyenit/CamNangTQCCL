@@ -21,9 +21,9 @@ import { lookupItemPath } from './lookup-ids.js';
 import { el } from './render.js';
 
 const SORTS = [
-  ['hot', () => L('Hot', '热门'), () => L('Hot: điểm cao và còn mới lên trước', '热门：分数高且较新的在前')],
-  ['new', () => L('Mới', '最新'), () => L('Mới: đội vừa được duyệt lên trước', '最新：刚通过审核的在前')],
-  ['top', () => L('Top', '最高分'), () => L('Top: điểm cao nhất lên trước', '最高分：分数最高的在前')],
+  ['hot', () => L('Hot', '热门', '人気'), () => L('Hot: điểm cao và còn mới lên trước', '热门：分数高且较新的在前', '人気：スコアが高く新しいものが先頭')],
+  ['new', () => L('Mới', '最新', '新着'), () => L('Mới: đội vừa được duyệt lên trước', '最新：刚通过审核的在前', '新着：承認されたばかりの編成が先頭')],
+  ['top', () => L('Top', '最高分', '最高スコア'), () => L('Top: điểm cao nhất lên trước', '最高分：分数最高的在前', '最高スコア：スコアが最も高いものが先頭')],
 ];
 
 export function initCommunityTeams(mount = document.getElementById('community-teams')) {
@@ -162,10 +162,10 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   const headNav = document.getElementById('cm-team-head-nav');
   const kicker = document.getElementById('cm-team-kicker');
   let headNote = null;
-  const tabs = (active) => el('nav', { class: 'cm-team-tabs', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
-    ['list', {}, L('Danh sách', '列表')],
-    ['new', { new: '1' }, L('Đăng đội', '发布阵容')],
-    ['mine', { mine: '1' }, L('Đội của tôi', '我的阵容')],
+  const tabs = (active) => el('nav', { class: 'cm-team-tabs', 'aria-label': L('Đội cộng đồng', '社区阵容', 'コミュニティ編成') }, [
+    ['list', {}, L('Danh sách', '列表', '一覧')],
+    ['new', { new: '1' }, L('Đăng đội', '发布阵容', '編成を投稿')],
+    ['mine', { mine: '1' }, L('Đội của tôi', '我的阵容', 'マイ編成')],
   ].map(([mode, params, label]) => {
     const anchor = link(params, label, 'cm-team-tab');
     if (mode === active) anchor.setAttribute('aria-current', 'page');
@@ -175,19 +175,19 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   function paintHead(mode) {
     if (!head) return;
     head.hidden = mode === 'detail';
-    if (kicker) kicker.textContent = L('Cộng đồng', '社区');
+    if (kicker) kicker.textContent = L('Cộng đồng', '社区', 'コミュニティ');
     headNote?.remove();
     headNote = null;
     if (mode === 'list') {
-      headNav?.replaceChildren(el('nav', { class: 'cm-team-actions', 'aria-label': L('Đội cộng đồng', '社区阵容') }, [
-        link({ mine: '1' }, [teamIcon('list'), L('Đội của tôi', '我的阵容')], 'cm-team-btn cm-team-action-mine'),
-        link({ new: '1' }, [teamIcon('plus'), L('Đăng đội', '发布阵容')], 'cm-team-btn cm-team-btn-primary cm-team-action-new'),
+      headNav?.replaceChildren(el('nav', { class: 'cm-team-actions', 'aria-label': L('Đội cộng đồng', '社区阵容', 'コミュニティ編成') }, [
+        link({ mine: '1' }, [teamIcon('list'), L('Đội của tôi', '我的阵容', 'マイ編成')], 'cm-team-btn cm-team-action-mine'),
+        link({ new: '1' }, [teamIcon('plus'), L('Đăng đội', '发布阵容', '編成を投稿')], 'cm-team-btn cm-team-btn-primary cm-team-action-new'),
       ]));
       headNote = el('p', { class: 'cm-team-head-note' }, [
         teamIcon('info'),
         el('span', {}, L(
           'Điểm = bình chọn lên − bình chọn xuống + 2 × số người thắng (người chơi khác gửi chiến báo thắng đã duyệt).',
-          '分数 = 赞成票 − 反对票 + 2 × 获胜人数（其他玩家提交并已通过审核的胜利战报）。',
+          '分数 = 赞成票 − 反对票 + 2 × 获胜人数（其他玩家提交并已通过审核的胜利战报）。', 'スコア = 賛成票 − 反対票 + 2 × 勝利者数（他のプレイヤーが投稿し承認された勝利戦報）。',
         )),
       ]);
       head.append(headNote);
@@ -218,12 +218,12 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     const state = { season: seasons.some((item) => item.id === current) ? current : 'all', sort: 'hot', heroes: [], items: [], cursor: null, seq: 0 };
 
     const seasonSelect = el('select', { id: 'cm-team-season', class: 'cm-team-season-select' }, [
-      ...seasons.map((season) => el('option', { value: season.id }, `${seasonLabel(season, locale)}${current === season.id ? L(' (hiện hành)', '（当前）') : ''}`)),
-      el('option', { value: 'all' }, L('Tất cả mùa', '全部赛季')),
+      ...seasons.map((season) => el('option', { value: season.id }, `${seasonLabel(season, locale)}${current === season.id ? L(' (hiện hành)', '（当前）', '（現在）') : ''}`)),
+      el('option', { value: 'all' }, L('Tất cả mùa', '全部赛季', '全シーズン')),
     ]);
     seasonSelect.value = state.season;
     const seasonField = el('label', { class: 'cm-team-season-field' }, [
-      el('span', { class: 'cm-team-caps' }, L('Mùa', '赛季')),
+      el('span', { class: 'cm-team-caps' }, L('Mùa', '赛季', 'シーズン')),
       seasonSelect,
       teamIcon('chevronDown'),
     ]);
@@ -243,7 +243,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       paintSummary();
     };
     const sortGroup = el('div', { class: 'cm-team-sort' }, [
-      el('span', { id: 'cm-team-sort-label', class: 'cm-team-caps' }, L('Sắp xếp', '排序')),
+      el('span', { id: 'cm-team-sort-label', class: 'cm-team-caps' }, L('Sắp xếp', '排序', '並べ替え')),
       el('div', { class: 'cm-team-segment', role: 'group', 'aria-labelledby': 'cm-team-sort-label' }, sortButtons),
     ]);
 
@@ -254,14 +254,14 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       type: 'text',
       list: listId,
       autocomplete: 'off',
-      placeholder: L(`Tướng ${index + 1}`, `武将 ${index + 1}`),
+      placeholder: L(`Tướng ${index + 1}`, `武将 ${index + 1}`, `武将 ${index + 1}`),
     }));
     // Mobile gập ô lọc sau nút "Lọc theo tướng"; desktop luôn mở (CSS ẩn nút).
     const filterBox = el('div', { class: 'cm-team-filter' });
     const filterToggle = el('button', { class: 'cm-team-filter-toggle', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'cm-team-filter-heroes' }, [
       teamIcon('filter'),
-      el('span', { class: 'cm-team-filter-toggle-label' }, L('Lọc theo tướng', '按武将筛选')),
-      el('span', { class: 'cm-team-filter-toggle-hint' }, L('tối đa 3', '最多 3 名')),
+      el('span', { class: 'cm-team-filter-toggle-label' }, L('Lọc theo tướng', '按武将筛选', '武将で絞り込み')),
+      el('span', { class: 'cm-team-filter-toggle-hint' }, L('tối đa 3', '最多 3 名', '最大3名')),
       teamIcon('chevronDown'),
     ]);
     filterToggle.addEventListener('click', () => {
@@ -270,9 +270,9 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       filterToggle.setAttribute('aria-expanded', String(opened));
     });
     filterBox.append(filterToggle, el('fieldset', { id: 'cm-team-filter-heroes', class: 'cm-team-filter-heroes' }, [
-      el('legend', { class: 'cm-team-caps' }, L('Lọc theo tướng · tối đa 3', '按武将筛选 · 最多 3 名')),
+      el('legend', { class: 'cm-team-caps' }, L('Lọc theo tướng · tối đa 3', '按武将筛选 · 最多 3 名', '武将で絞り込み · 最大3名')),
       el('div', { class: 'cm-team-filter-inputs' }, heroInputs.map((input, index) => el('label', { class: 'cm-team-filter-field' }, [
-        el('span', { class: 'visually-hidden' }, L(`Lọc theo tướng ${index + 1}`, `按武将 ${index + 1} 筛选`)),
+        el('span', { class: 'visually-hidden' }, L(`Lọc theo tướng ${index + 1}`, `按武将 ${index + 1} 筛选`, `武将 ${index + 1} で絞り込み`)),
         teamIcon('search'),
         input,
       ]))),
@@ -284,19 +284,19 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       const season = seasons.find((item) => item.id === state.season);
       const sort = SORTS.find(([value]) => value === state.sort);
       summary.replaceChildren(
-        el('strong', {}, season ? seasonLabel(season, locale) : L('Tất cả mùa', '全部赛季')),
+        el('strong', {}, season ? seasonLabel(season, locale) : L('Tất cả mùa', '全部赛季', '全シーズン')),
         ` · ${sort[2]()}`,
       );
     };
     paintSort();
 
     const status = liveStatus();
-    const grid = el('ol', { class: 'cm-team-grid', 'aria-label': L('Danh sách đội', '阵容列表') });
+    const grid = el('ol', { class: 'cm-team-grid', 'aria-label': L('Danh sách đội', '阵容列表', '編成一覧') });
     const empty = el('p', { class: 'scope-note cm-empty', hidden: '' });
-    const more = el('button', { class: 'cm-team-btn cm-more', type: 'button' }, L('Xem thêm', '查看更多'));
+    const more = el('button', { class: 'cm-team-btn cm-more', type: 'button' }, L('Xem thêm', '查看更多', 'もっと見る'));
     const moreBox = el('div', { class: 'cm-team-more', hidden: '' }, [
       more,
-      el('p', { class: 'cm-team-more-note' }, L('Mỗi lượt hiện 20 đội; bấm để nối thêm, đội đã hiện giữ nguyên.', '每次显示 20 个阵容；点击可继续加载，已显示的保持不变。')),
+      el('p', { class: 'cm-team-more-note' }, L('Mỗi lượt hiện 20 đội; bấm để nối thêm, đội đã hiện giữ nguyên.', '每次显示 20 个阵容；点击可继续加载，已显示的保持不变。', '一度に20編成を表示します。クリックで続きを読み込み、表示済みの編成はそのままです。')),
     ]);
 
     whenLexicon((value) => {
@@ -322,7 +322,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         }
       }
     };
-    empty.textContent = L('Chưa có đội nào phù hợp.', '暂无符合条件的阵容。');
+    empty.textContent = L('Chưa có đội nào phù hợp.', '暂无符合条件的阵容。', '条件に合う編成はまだありません。');
 
     async function load(reset) {
       const seq = ++state.seq;
@@ -361,7 +361,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         try {
           lex = await getLexicon();
         } catch {
-          status.set(L('Chưa tải được danh sách tướng. Hãy thử lại.', '尚未加载武将列表，请重试。'), 'error');
+          status.set(L('Chưa tải được danh sách tướng. Hãy thử lại.', '尚未加载武将列表，请重试。', '武将リストを読み込めませんでした。もう一度お試しください。'), 'error');
           return;
         }
       }
@@ -384,12 +384,12 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     more.addEventListener('click', () => load(false));
 
     view.append(
-      el('section', { class: 'cm-team-toolbar', 'aria-label': L('Chọn mùa, sắp xếp và lọc', '选择赛季、排序和筛选') }, [seasonField, sortGroup, filterBox]),
+      el('section', { class: 'cm-team-toolbar', 'aria-label': L('Chọn mùa, sắp xếp và lọc', '选择赛季、排序和筛选', 'シーズン・並べ替え・絞り込み') }, [seasonField, sortGroup, filterBox]),
       el('div', { class: 'cm-team-list-meta' }, [
         summary,
         el('p', { class: 'cm-team-list-hint' }, L(
           'Gõ tên rồi chọn từ gợi ý; đội phải có đủ các tướng đã nhập. Tên không khớp được đánh dấu đỏ.',
-          '输入名称后从提示中选择；阵容须包含所有已填武将。无法匹配的名称会标红。',
+          '输入名称后从提示中选择；阵容须包含所有已填武将。无法匹配的名称会标红。', '名前を入力して候補から選択してください。入力した武将をすべて含む編成のみ表示されます。一致しない名前は赤で表示されます。',
         )),
       ]),
       status,
@@ -417,12 +417,12 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   /** Nút "Xoá đội" của chủ đội: hỏi lại bằng hộp xác nhận trong trang, xoá xong về "Đội của tôi". */
   function ownerDeleteButton(team) {
-    const button = el('button', { class: 'cm-team-btn cm-team-btn-text cm-team-btn-danger cm-team-delete', type: 'button' }, [teamIcon('trash'), L('Xoá đội', '删除阵容')]);
+    const button = el('button', { class: 'cm-team-btn cm-team-btn-text cm-team-btn-danger cm-team-delete', type: 'button' }, [teamIcon('trash'), L('Xoá đội', '删除阵容', '編成を削除')]);
     button.addEventListener('click', async () => {
       const done = await confirmInPage({
-        title: L(`Xoá đội “${team.title}”?`, `删除阵容“${team.title}”？`),
-        message: L('Ảnh và dữ liệu đi kèm cũng bị xoá. Không hoàn tác được.', '附带的图片和数据也会被删除，且无法恢复。'),
-        confirmLabel: L('Xoá đội', '删除阵容'),
+        title: L(`Xoá đội “${team.title}”?`, `删除阵容“${team.title}”？`, `編成「${team.title}」を削除しますか？`),
+        message: L('Ảnh và dữ liệu đi kèm cũng bị xoá. Không hoàn tác được.', '附带的图片和数据也会被删除，且无法恢复。', '付随する画像とデータも削除されます。元に戻せません。'),
+        confirmLabel: L('Xoá đội', '删除阵容', '編成を削除'),
         onConfirm: async () => {
           try {
             await api(`/api/community-teams/${encodeURIComponent(team.id)}`, { method: 'DELETE' });
@@ -432,7 +432,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
           return true;
         },
       });
-      if (done) go({ mine: '1' }, { message: L('Đã xoá đội.', '阵容已删除。') });
+      if (done) go({ mine: '1' }, { message: L('Đã xoá đội.', '阵容已删除。', '編成を削除しました。') });
     });
     return button;
   }
@@ -451,8 +451,8 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       downButton.replaceChildren(teamIcon('chevronDown'), formatNumber(counts.down));
       upButton.setAttribute('aria-pressed', String(myVote === 1));
       downButton.setAttribute('aria-pressed', String(myVote === -1));
-      upButton.setAttribute('aria-label', L(`Bình chọn lên (${counts.up})`, `赞成（${counts.up}）`));
-      downButton.setAttribute('aria-label', L(`Bình chọn xuống (${counts.down})`, `反对（${counts.down}）`));
+      upButton.setAttribute('aria-label', L(`Bình chọn lên (${counts.up})`, `赞成（${counts.up}）`, `賛成（${counts.up}）`));
+      downButton.setAttribute('aria-label', L(`Bình chọn xuống (${counts.down})`, `反对（${counts.down}）`, `反対（${counts.down}）`));
       pointsNode.textContent = formatNumber(counts.points);
     };
     paintVote();
@@ -460,7 +460,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     downButton.disabled = voteLocked;
     const castVote = async (value) => {
       if (!user) {
-        guestSlot.replaceChildren(signInPrompt(L('Đăng nhập để bình chọn.', '登录后即可投票。')));
+        guestSlot.replaceChildren(signInPrompt(L('Đăng nhập để bình chọn.', '登录后即可投票。', 'ログインすると投票できます。')));
         return;
       }
       const next = myVote === value ? 0 : value;
@@ -473,7 +473,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
         counts.points = result.points;
         myVote = Number(result.myVote) || 0;
         paintVote();
-        status.set(L('Đã cập nhật bình chọn.', '投票已更新。'), 'ok');
+        status.set(L('Đã cập nhật bình chọn.', '投票已更新。', '投票を更新しました。'), 'ok');
       } catch (error) {
         status.set(describeError(error), 'error');
       } finally {
@@ -483,20 +483,20 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     };
     upButton.addEventListener('click', () => castVote(1));
     downButton.addEventListener('click', () => castVote(-1));
-    const voteNote = isOwner ? L('Bạn không thể bình chọn cho đội của mình.', '不能给自己的阵容投票。') : '';
+    const voteNote = isOwner ? L('Bạn không thể bình chọn cho đội của mình.', '不能给自己的阵容投票。', '自分の編成には投票できません。') : '';
     const winners = Number(team.evidenceCount) || 0;
     return el('section', { class: 'cm-team-score', 'aria-labelledby': 'cm-team-score-title' }, [
       el('div', { class: 'cm-team-score-head' }, [
-        el('h2', { id: 'cm-team-score-title', class: 'cm-team-caps' }, L('Điểm cộng đồng', '社区分数')),
-        el('span', { class: 'cm-team-score-formula' }, L('lên − xuống + 2 × người thắng', '赞成 − 反对 + 2 × 获胜人数')),
+        el('h2', { id: 'cm-team-score-title', class: 'cm-team-caps' }, L('Điểm cộng đồng', '社区分数', 'コミュニティスコア')),
+        el('span', { class: 'cm-team-score-formula' }, L('lên − xuống + 2 × người thắng', '赞成 − 反对 + 2 × 获胜人数', '賛成 − 反対 + 2 × 勝利者数')),
       ]),
-      el('p', { class: 'cm-team-score-value' }, [pointsNode, el('span', { class: 'cm-team-score-unit' }, L('điểm', '分'))]),
+      el('p', { class: 'cm-team-score-value' }, [pointsNode, el('span', { class: 'cm-team-score-unit' }, L('điểm', '分', 'pt'))]),
       el('div', { class: 'cm-team-vote-bar' }, [upButton, downButton]),
       el('p', { class: 'cm-team-winners' }, [
         teamIcon('trophy'),
         el('span', {}, [
-          el('strong', {}, L(`${formatNumber(winners)} người thắng`, `${formatNumber(winners)} 人获胜`)),
-          L(' · người chơi khác gửi chiến báo thắng đã duyệt', ' · 其他玩家提交并已通过审核的胜利战报'),
+          el('strong', {}, L(`${formatNumber(winners)} người thắng`, `${formatNumber(winners)} 人获胜`, `${formatNumber(winners)} 人が勝利`)),
+          L(' · người chơi khác gửi chiến báo thắng đã duyệt', ' · 其他玩家提交并已通过审核的胜利战报', ' · 他のプレイヤーが投稿し承認された勝利戦報'),
         ]),
       ]),
       voteNote ? el('p', { class: 'scope-note cm-team-vote-note' }, voteNote) : null,
@@ -508,11 +508,11 @@ export function initCommunityTeams(mount = document.getElementById('community-te
 
   /** Bảng bên phải của đội chưa duyệt (chủ đội / quản trị xem): trạng thái + nút xoá. */
   function statePanel(team, { isOwner, status }) {
-    return el('section', { class: 'cm-team-score cm-team-state', 'aria-label': L('Trạng thái duyệt', '审核状态') }, [
+    return el('section', { class: 'cm-team-score cm-team-state', 'aria-label': L('Trạng thái duyệt', '审核状态', '審査状況') }, [
       statusBadge(team.status),
       el('p', { class: 'cm-team-state-text' }, team.status === 'rejected'
-        ? L('Đội không hiện công khai. Bạn có thể xoá đội này rồi đăng lại.', '阵容不会公开显示。你可以删除后重新发布。')
-        : L('Cho tới khi được duyệt, chỉ bạn và quản trị viên xem được đội này.', '审核通过前，只有你和管理员可以看到此阵容。')),
+        ? L('Đội không hiện công khai. Bạn có thể xoá đội này rồi đăng lại.', '阵容不会公开显示。你可以删除后重新发布。', '編成は公開されません。削除してから再投稿できます。')
+        : L('Cho tới khi được duyệt, chỉ bạn và quản trị viên xem được đội này.', '审核通过前，只有你和管理员可以看到此阵容。', '承認されるまで、この編成は自分と管理者のみが閲覧できます。')),
       status,
       isOwner ? el('p', { class: 'cm-team-owner' }, ownerDeleteButton(team)) : null,
     ]);
@@ -565,9 +565,9 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     if (isStatic) layout.nodes.shift();
     else routeClicks(layout.nodes[0].querySelector('a'), {});
     if (team.status === 'pending') {
-      layout.notice.append(el('p', { class: 'cm-notice', role: 'note' }, L('Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.', '阵容正在等待审核；仅你和管理员可见。')));
+      layout.notice.append(el('p', { class: 'cm-notice', role: 'note' }, L('Đội đang chờ duyệt; chỉ bạn và quản trị viên xem được.', '阵容正在等待审核；仅你和管理员可见。', '編成は審査待ちです。自分と管理者のみ閲覧できます。')));
     } else if (team.status === 'rejected') {
-      layout.notice.append(el('p', { class: 'cm-reject-reason' }, [el('strong', {}, L('Lý do từ chối: ', '拒绝原因：')), String(team.rejectReason || '—')]));
+      layout.notice.append(el('p', { class: 'cm-reject-reason' }, [el('strong', {}, L('Lý do từ chối: ', '拒绝原因：', '却下理由：')), String(team.rejectReason || '—')]));
     }
     view.append(...layout.nodes);
     await detailLive({
@@ -626,18 +626,18 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   async function mineView(view, isCurrent) {
     paintHead('mine');
     view.append(viewHead(
-      L('Đội của tôi', '我的阵容'),
-      L('Các đội bạn đã đăng, mới nhất trước.', '你发布过的阵容，最新的在前。'),
-      link({ new: '1' }, [teamIcon('plus'), L('Đăng đội mới', '发布新阵容')], 'cm-team-btn cm-team-btn-primary'),
+      L('Đội của tôi', '我的阵容', 'マイ編成'),
+      L('Các đội bạn đã đăng, mới nhất trước.', '你发布过的阵容，最新的在前。', '投稿した編成を新しい順に表示します。'),
+      link({ new: '1' }, [teamIcon('plus'), L('Đăng đội mới', '发布新阵容', '新しい編成を投稿')], 'cm-team-btn cm-team-btn-primary'),
     ));
     if (!user) {
-      view.append(signInPrompt(L('Đăng nhập để xem các đội bạn đã đăng.', '登录后即可查看你发布的阵容。')));
+      view.append(signInPrompt(L('Đăng nhập để xem các đội bạn đã đăng.', '登录后即可查看你发布的阵容。', 'ログインすると投稿した編成を確認できます。')));
       return;
     }
     const status = liveStatus();
-    const list = el('ol', { class: 'cm-team-mine-list', 'aria-label': L('Đội của tôi', '我的阵容') });
-    const empty = el('p', { class: 'scope-note cm-empty', hidden: '' }, L('Bạn chưa đăng đội nào.', '你还没有发布阵容。'));
-    const more = el('button', { class: 'cm-team-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm', '查看更多'));
+    const list = el('ol', { class: 'cm-team-mine-list', 'aria-label': L('Đội của tôi', '我的阵容', 'マイ編成') });
+    const empty = el('p', { class: 'scope-note cm-empty', hidden: '' }, L('Bạn chưa đăng đội nào.', '你还没有发布阵容。', '投稿した編成はまだありません。'));
+    const more = el('button', { class: 'cm-team-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm', '查看更多', 'もっと見る'));
     const tallySlot = el('div', { class: 'cm-team-tally-slot' });
     let cursor = null;
     let items = [];
@@ -650,7 +650,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       cardNode.remove();
       empty.hidden = items.length > 0;
       paintTally();
-      status.set(L('Đã xoá đội.', '阵容已删除。'), 'ok');
+      status.set(L('Đã xoá đội.', '阵容已删除。', '編成を削除しました。'), 'ok');
       (neighbour?.querySelector('.cm-team-card-title') ?? view.querySelector('.cm-team-view-title'))?.focus();
     };
     const remove = (team) => api(`/api/community-teams/${encodeURIComponent(team.id)}`, { method: 'DELETE' });
@@ -659,7 +659,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       const deleting = team.deleting === true;
       const button = el('button', { class: 'cm-team-btn cm-team-btn-text cm-team-btn-danger cm-team-delete', type: 'button' }, [
         teamIcon('trash'),
-        deleting ? L('Thử xoá tiếp', '继续删除') : L('Xoá', '删除'),
+        deleting ? L('Thử xoá tiếp', '继续删除', '削除を続ける') : L('Xoá', '删除', '削除'),
       ]);
       const node = mineTeamCard(team, { names, locale, titleLink: teamLink, newHref: hrefFor({ new: '1' }), removeButton: button });
       button.addEventListener('click', async () => {
@@ -676,9 +676,9 @@ export function initCommunityTeams(mount = document.getElementById('community-te
           return;
         }
         const done = await confirmInPage({
-          title: L(`Xoá đội “${team.title}”?`, `删除阵容“${team.title}”？`),
-          message: L('Ảnh và dữ liệu đi kèm cũng bị xoá. Không hoàn tác được.', '附带的图片和数据也会被删除，且无法恢复。'),
-          confirmLabel: L('Xoá đội', '删除阵容'),
+          title: L(`Xoá đội “${team.title}”?`, `删除阵容“${team.title}”？`, `編成「${team.title}」を削除しますか？`),
+          message: L('Ảnh và dữ liệu đi kèm cũng bị xoá. Không hoàn tác được.', '附带的图片和数据也会被删除，且无法恢复。', '付随する画像とデータも削除されます。元に戻せません。'),
+          confirmLabel: L('Xoá đội', '删除阵容', '編成を削除'),
           onConfirm: async () => {
             try {
               await remove(team);
@@ -719,11 +719,11 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     });
 
     const flow = el('ol', { class: 'cm-team-flow' }, [
-      [L('Gửi đội', '提交阵容'), L('Ảnh, đội hình và lối chơi. Gửi xong không sửa được.', '图片、阵容和打法。提交后不可修改。')],
-      [L('Chờ duyệt', '等待审核'), L('Chỉ bạn và quản trị viên xem được đội.', '只有你和管理员可以查看。')],
-      [L('Đã duyệt hoặc bị từ chối', '通过或未通过'), L(
+      [L('Gửi đội', '提交阵容', '編成を送信'), L('Ảnh, đội hình và lối chơi. Gửi xong không sửa được.', '图片、阵容和打法。提交后不可修改。', '画像、編成、プレイスタイル。送信後は編集できません。')],
+      [L('Chờ duyệt', '等待审核', '審査待ち'), L('Chỉ bạn và quản trị viên xem được đội.', '只有你和管理员可以查看。', '自分と管理者のみ閲覧できます。')],
+      [L('Đã duyệt hoặc bị từ chối', '通过或未通过', '承認または却下'), L(
         'Đội đã duyệt hiện ở Danh sách, nhận bình chọn, bình luận và chiến báo. Đội bị từ chối kèm lý do và chỉ bạn thấy.',
-        '通过的阵容显示在列表中，可接受投票、评论和战报。未通过的阵容附带原因，仅你可见。',
+        '通过的阵容显示在列表中，可接受投票、评论和战报。未通过的阵容附带原因，仅你可见。', '承認された編成は一覧に表示され、投票・コメント・戦報を受け付けます。却下された編成は理由が付き、自分のみ閲覧できます。',
       )],
     ].map(([title, text], index) => el('li', {}, [
       el('span', { class: 'cm-team-flow-num', 'aria-hidden': 'true' }, String(index + 1)),
@@ -732,15 +732,15 @@ export function initCommunityTeams(mount = document.getElementById('community-te
     view.append(el('div', { class: 'cm-team-split cm-team-mine' }, [
       el('div', { class: 'cm-team-split-main' }, [status, list, empty, more]),
       el('div', { class: 'cm-team-split-aside' }, [
-        card(L('Tình trạng', '状态'), [tallySlot], 'cm-team-tally-card'),
-        card(L('Đội đi qua duyệt thế nào', '阵容审核流程'), [
+        card(L('Tình trạng', '状态', '状況'), [tallySlot], 'cm-team-tally-card'),
+        card(L('Đội đi qua duyệt thế nào', '阵容审核流程', '編成の審査の流れ'), [
           flow,
           el('p', { class: 'cm-team-fine' }, [
             L(
               'Xoá đội sẽ xoá cả ảnh và dữ liệu đi kèm. Đội đã có chiến báo được duyệt của người khác thì cần liên hệ quản trị để gỡ. ',
-              '删除阵容会同时删除图片和相关数据。已有他人通过审核的战报的阵容，需要联系管理员移除。',
+              '删除阵容会同时删除图片和相关数据。已有他人通过审核的战报的阵容，需要联系管理员移除。', '編成を削除すると、画像と関連データも削除されます。他のプレイヤーの承認済み戦報が付いた編成は、管理者への連絡が必要です。',
             ),
-            el('a', { class: 'cm-team-lead-link', href: localePath('/quy-tac-cong-dong/') }, L('Quy tắc cộng đồng', '社区规则')),
+            el('a', { class: 'cm-team-lead-link', href: localePath('/quy-tac-cong-dong/') }, L('Quy tắc cộng đồng', '社区规则', 'コミュニティルール')),
           ]),
         ], 'cm-team-flow-card'),
       ]),
@@ -752,14 +752,14 @@ export function initCommunityTeams(mount = document.getElementById('community-te
   async function newView(view, isCurrent) {
     paintHead('new');
     view.append(viewHead(
-      L('Đăng đội mới', '发布新阵容'),
+      L('Đăng đội mới', '发布新阵容', '新しい編成を投稿'),
       L(
         'Tải ảnh, để AI điền nháp rồi xác nhận từng ô. AI đọc ảnh chỉ là nháp; đội chỉ gửi khi đủ 3 tướng và 6 chiến pháp khớp danh sách.',
-        '上传图片，让 AI 填写草稿后逐项确认。AI 识别仅为草稿；只有 3 名武将和 6 个战法都与列表匹配时才能提交。',
+        '上传图片，让 AI 填写草稿后逐项确认。AI 识别仅为草稿；只有 3 名武将和 6 个战法都与列表匹配时才能提交。', '画像をアップロードすると AI が下書きを入力します。各マスを確認してください。AI の読み取りはあくまで下書きで、武将3名と戦法6つがすべてリストと一致した場合のみ送信できます。',
       ),
     ));
     if (!user) {
-      view.append(signInPrompt(L('Đăng nhập để đăng đội.', '登录后即可发布阵容。')));
+      view.append(signInPrompt(L('Đăng nhập để đăng đội.', '登录后即可发布阵容。', 'ログインすると編成を投稿できます。')));
       return;
     }
     // Danh mục mùa lỗi: báo đúng nguyên nhân, không dựng form (không có mùa để chọn).
@@ -780,7 +780,7 @@ export function initCommunityTeams(mount = document.getElementById('community-te
       getLexicon: getFormLexicon,
       teamHref: (teamId) => hrefFor({ id: teamId }),
       onSubmitted: () => go({ mine: '1' }, {
-        message: L('Đã gửi đội, đang chờ quản trị viên duyệt.', '阵容已提交，等待管理员审核。'),
+        message: L('Đã gửi đội, đang chờ quản trị viên duyệt.', '阵容已提交，等待管理员审核。', '編成を送信しました。管理者の審査をお待ちください。'),
       }),
     });
   }
