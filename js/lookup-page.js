@@ -7,6 +7,8 @@
 import { el } from "./render.js";
 import { L, currentLocale, localePath } from "./i18n.js";
 import { lookupProfilePath } from "./lookup-ids.js";
+import { loadLookupJa } from "./lookup-data.js";
+import { createByteLoader, readLookupJaPin } from "./website-display.js";
 import { treeToDom } from "./view-tree.js";
 import { activatePortraits } from "./hero-portrait.js";
 import { createHeroSummaryLoader } from "./hero-summaries.js";
@@ -38,9 +40,11 @@ const required = (mount, selector) => {
  * - `docs`: payload đã tải lúc vào trang (`{heroes?, tactics?, catalog?, books?, bookAliases?}`).
  * - `loadProfileDocs()`: payload hồ sơ cần thêm (promise có cache; lỗi thì hồ sơ vẫn mở, quan hệ để trạng thái chờ).
  * - `summary`: tùy chọn của `createHeroSummaryLoader` (trang Tướng) hoặc `createTacticSummaryLoader` (trang Chiến pháp).
- * - `loadRawNames()`: bộ tra tên Hán cho khối "Trong cẩm nang" bản zh (`null` ở bản Việt).
+ * - `loadRawNames()`: bộ tra tên cho khối "Trong cẩm nang" (bản zh: chữ Hán, bản ja: tên Nhật; `null` ở bản Việt).
+ * - `loadBytes`: bộ nạp byte dùng chung của trang (`createByteLoader`); vắng thì tự tạo. Chỉ trang `/ja/` (có pin
+ *   `#lookup-ja-pin`) dùng để nạp `data/lookup-ja.json`; trang vi/zh không tải gì thêm.
  */
-export function initLookupPage({ group, mount, docs, loadProfileDocs = async () => ({}), summary = null, loadRawNames = async () => null }) {
+export function initLookupPage({ group, mount, docs, loadProfileDocs = async () => ({}), summary = null, loadRawNames = async () => null, loadBytes = null }) {
   const search = required(mount, ".lookup-search-input");
   const summaryLine = required(mount, ".lookup-summary");
   const orderNote = required(mount, ".lookup-order-note");
@@ -53,9 +57,25 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   const filtersBar = master ? required(mount, ".lookup-filters") : null;
   const pageSize = lookupPageSize(group);
   let profileDocs = null;
+  /** Payload hồ sơ đã tải (để dựng lại corpus khi lớp ja về sau). */
+  let profileExtra = {};
   let profileReady = false;
   // Đã thử tải payload hồ sơ (thành công hay lỗi): danh sách/chi tiết catalog chờ tới lúc này để có tên tướng.
   let profileSettled = false;
+  // Lớp ja (tên Nhật, bản dịch máy): chỉ trang có pin; nạp xong mới dựng lại danh sách (HTML dựng sẵn vẫn hiện trong lúc chờ).
+  const jaPin = readLookupJaPin();
+  let ja = null;
+  let jaSettled = !jaPin;
+  let jaFailed = false;
+  const jaReady = jaPin
+    ? loadLookupJa(loadBytes ?? createByteLoader(), jaPin)
+      .then(({ document }) => { ja = document; })
+      .catch((error) => {
+        console.error(error);
+        jaFailed = true;
+      })
+      .finally(() => { jaSettled = true; })
+    : Promise.resolve();
   let corpus = buildLookupCorpus(docs);
   const summaries = !summary ? null : group === "tactics" ? createTacticSummaryLoader(summary) : createHeroSummaryLoader(summary);
   let query = search.value;
@@ -77,7 +97,7 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     if (!profileDocs) {
       profileDocs = Promise.resolve()
         .then(() => loadProfileDocs())
-        .then((extra) => { corpus = buildLookupCorpus({ ...docs, ...extra }); profileReady = true; })
+        .then((extra) => { profileExtra = extra; corpus = buildLookupCorpus({ ...docs, ...extra, ja }); profileReady = true; })
         .catch((error) => { profileDocs = null; console.error(error); })
         .finally(() => { profileSettled = true; });
     }
@@ -147,14 +167,14 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     const pending = !profileReady;
     if (pending) {
       feedback.removeAttribute("role");
-      feedback.textContent = L("Đang tải hồ sơ…", "正在加载详情…");
+      feedback.textContent = L("Đang tải hồ sơ…", "正在加载详情…", "詳細を読み込み中…");
     }
     ensureProfileDocs().then(() => {
       if (!isCurrent()) return;
       if (pending) feedback.textContent = "";
       const built = renderProfile(corpus, id, isCurrent);
       if (!built) {
-        feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。");
+        feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。", "この項目は更新中です。");
         feedback.setAttribute("role", "alert");
         return;
       }
@@ -255,11 +275,11 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     grid.replaceChildren(...wire(lookupResultTrees(group, items, undefined, { selectedId: listSelectedId, byId: corpus.byId }).map((tree) => treeToDom(tree))));
     if (!result.total) {
       feedback.setAttribute("role", "status");
-      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。");
+      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。", "該当する結果はありません。");
     }
     renderMore(items.length, result.total);
     if (route.id && !target) {
-      feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。");
+      feedback.textContent = L("Mục tra cứu đang được cập nhật.", "该条目正在更新。", "この項目は更新中です。");
       feedback.setAttribute("role", "alert");
     }
     paintPanel(shown);
@@ -280,6 +300,14 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   }
 
   function render() {
+    // Trang ja: chờ lớp ja (tên Nhật) rồi mới dựng lại, để danh sách không lùi về chữ Hán nguồn.
+    if (!jaSettled) {
+      jaReady.then(() => {
+        if (ja) corpus = buildLookupCorpus({ ...docs, ...profileExtra, ja });
+        render();
+      });
+      return;
+    }
     // Danh sách và chi tiết catalog cần tên tướng (payload hồ sơ): chờ tải xong rồi dựng, trong lúc đó HTML dựng sẵn vẫn hiện.
     if (master && !profileSettled) {
       ensureProfileDocs().then(() => render());
@@ -299,6 +327,8 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     }
     feedback.removeAttribute("role");
     feedback.textContent = "";
+    // Lớp ja lỗi: trang vẫn chạy với tên chữ Hán nguồn và báo một dòng.
+    if (jaFailed) feedback.textContent = L("Chưa tải được tên tiếng Nhật.", "未能加载日文名称。", "日本語名を読み込めませんでした。");
     clearDialog();
     if (route.error) {
       grid.replaceChildren();
@@ -328,7 +358,7 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     grid.replaceChildren(...wire(lookupResultTrees(group, items).map((tree) => treeToDom(tree))));
     if (!result.total) {
       feedback.setAttribute("role", "status");
-      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。");
+      feedback.textContent = L("Không có kết quả phù hợp.", "没有符合条件的结果。", "該当する結果はありません。");
     }
     renderMore(items.length, result.total);
     if (route.id) showDialog(route.id);

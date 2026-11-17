@@ -1,5 +1,5 @@
 ---
-// Trang mục lục Tra cứu `/tra-cuu/` (bản Việt và bản Trung): 7 thẻ link tới trang nhóm, số đếm tính lúc build.
+// Trang mục lục Tra cứu `/tra-cuu/` (mọi ngôn ngữ): 7 thẻ link tới trang nhóm, số đếm tính lúc build.
 // Không nạp js/app.js và không tải dữ liệu. Link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`) được chuyển tiếp
 // tới trang nhóm bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
 import SiteLayout from '../../layouts/SiteLayout.astro';
@@ -20,10 +20,11 @@ const tables = JSON.stringify(LOOKUP_HUB_TABLES).replace(/</g, '\\u003c');
 const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(window.location.href,${tables}.slugs,${tables}.kinds);if(target!==null&&target!==window.location.pathname+window.location.search+window.location.hash){if(/^\\/(?:zh\\/)?tra-cuu\\/(?:\\?|#|$)/.test(target))window.history.replaceState(window.history.state,'',target);else window.location.replace(target);}})();`;
 ---
 <SiteLayout
-  title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册')}
+  title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册', '図鑑 — 三國志 真戦 攻略手帳')}
   description={t(
     'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư theo tên Việt hoặc chữ Hán.',
     '按名称查询武将、战法、装备、军师、兵种进阶、建筑与兵书。',
+    '武将・戦法・装備・軍師・兵種進階・施設・兵法書を名称で検索できます。',
   )}
   pageKind="section"
   activeSection="lookup"
@@ -34,11 +35,12 @@ const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(w
   <section id="section-lookup" class="section active">
     <header class="reference-head lookup-head">
       <div class="reference-head-text">
-        <span class="reference-kicker">{t('Tra cứu', '图鉴查询')}</span>
-        <h1 class="reference-title">{t('Tra cứu', '图鉴查询')}</h1>
+        <span class="reference-kicker">{t('Tra cứu', '图鉴查询', '図鑑')}</span>
+        <h1 class="reference-title">{t('Tra cứu', '图鉴查询', '図鑑')}</h1>
         <p class="reference-lead">{t(
           'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
           '武将、战法、装备、军师、兵种进阶、建筑与兵书——可用中文名、越南语名或汉越音搜索。',
+          '武将・戦法・装備・軍師・兵種進階・施設・兵法書 — 日本語名・中国語名で検索できます。',
         )}</p>
       </div>
     </header>

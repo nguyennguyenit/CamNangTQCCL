@@ -5,6 +5,8 @@
  * Tiêu đề bản Trung: đội chuẩn dùng tên chữ Hán gốc (`nameZh`); đội khác và Khai hoang (dữ liệu cũ chỉ ghi
  * tên Hán-Việt) ghép tên tướng chữ Hán tra qua từ điển có trường `chinese` — cùng cách js/recommended-reference-render.js
  * (`legacyTitle`) và js/render.js dựng tên đội ở bản zh. Tên không tra được bị bỏ để trang zh không lẫn tiếng Việt.
+ * Bản Nhật dựng như bản Trung nhưng bằng tên Nhật (`data/lookup-ja.json`), chữ Hán thô (`nameZh`, tên mùa, danh mục) đổi
+ * tự dạng Nhật (`lookupJaNameResolver`).
  */
 import { createLookupIdResolver } from '../../js/lookup-ids.js';
 import { createRawNameResolver } from '../../js/website-display.js';
@@ -25,7 +27,9 @@ import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } f
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
 import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
-import { contentLocaleIsVietnamese, localePath } from '../../js/i18n.js';
+import { contentLocaleIsVietnamese, localePath, pick } from '../../js/i18n.js';
+import { localRawName } from '../../js/website-display.js';
+import { lookupJaNameResolver } from './lookup-pages.ts';
 import type { SiteLocale } from './locale-routes';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
@@ -34,6 +38,23 @@ export const VI_UNAVAILABLE = 'Nội dung tiếng Việt chưa sẵn sàng';
 
 const json = (bytes: Uint8Array) => JSON.parse(Buffer.from(bytes).toString('utf8'));
 
+type NameResolver = ((name: string) => string | null) & { fromRaw?: (raw: string) => string };
+
+/** Bộ tra tên theo ngôn ngữ (chữ Hán gốc / tên Nhật), thêm tiền tố biến thể (SP/CO/40Y) khi chỉ tên gốc có trong từ điển. */
+function withVariantPrefix(resolve: NameResolver) {
+  const fromRaw = resolve.fromRaw ?? ((raw: string) => raw);
+  return (name: string) => {
+    const value = String(name ?? '').trim();
+    if (!value) return null;
+    if (CJK.test(value)) return fromRaw(value);
+    const whole = resolve(value);
+    if (whole) return whole;
+    const variant = value.match(/^(SP|CO|40Y)\s+(.+)$/u);
+    const base = variant ? resolve(variant[2]) : null;
+    return base ? `${variant![1]}${base}` : null;
+  };
+}
+
 let zhNamesPromise: Promise<(name: string) => string | null> | undefined;
 
 /** Bộ tra tên chữ Hán gốc từ tên Hán-Việt (tướng, chiến pháp, binh thư) — đúng ba từ điển của js/website-display.js. */
@@ -41,19 +62,20 @@ function zhNameResolver() {
   return zhNamesPromise ??= (async () => {
     const dicts = await Promise.all(['heroes-dict', 'tactics', 'books-dict'].map(async (routeParam) =>
       json((await readPublicArtifact({ kind: 'data', routeParam })).bytes)));
-    const resolve = createRawNameResolver(...dicts);
-    // Tiền tố biến thể (SP/CO/40Y) giữ nguyên khi chỉ tên gốc có trong từ điển.
-    return (name: string) => {
-      const value = String(name ?? '').trim();
-      if (!value) return null;
-      if (CJK.test(value)) return value;
-      const whole = resolve(value);
-      if (whole) return whole;
-      const variant = value.match(/^(SP|CO|40Y)\s+(.+)$/u);
-      const base = variant ? resolve(variant[2]) : null;
-      return base ? `${variant![1]}${base}` : null;
-    };
+    return withVariantPrefix(createRawNameResolver(...dicts));
   })();
+}
+
+let jaNamesPromise: Promise<(name: string) => string | null> | undefined;
+
+/** Bộ tra tên Nhật từ tên Hán-Việt, cùng quy tắc tiền tố biến thể với bản Trung. */
+function jaNameResolver() {
+  return jaNamesPromise ??= (async () => withVariantPrefix(await lookupJaNameResolver()))();
+}
+
+/** Bộ tra tên của trang không phải bản Việt (bản Việt không dùng tới nhưng vẫn trả bộ chữ Hán cho kiểu thống nhất). */
+function sourceNameResolver(locale: SiteLocale) {
+  return pick(locale, zhNameResolver, zhNameResolver, jaNameResolver)();
 }
 
 /** Tên đội bản Trung ghép từ tên tướng chữ Hán; tướng không tra được bị bỏ, không còn ai thì trả `null`. */
@@ -119,15 +141,17 @@ interface HeroRow {
  * trang hiển thị; tướng không có hồ sơ Tra cứu (hoặc không có tên ở ngôn ngữ này) không có mặt.
  */
 async function heroLinkBuilder(locale: SiteLocale) {
-  const [resolve, routes] = await Promise.all([lookupIdResolver(), lookupDetailRoutes()]);
+  const [resolve, routes, jaNames] = await Promise.all([lookupIdResolver(), lookupDetailRoutes(), lookupJaNameResolver()]);
   const text = (value: unknown) => (typeof value === 'string' ? value.trim() : '');
+  // Tên khi trang không có tên hiển thị: bản Việt dùng tên Việt, bản zh chữ Hán nguồn, bản ja chữ Hán nguồn đổi tự dạng.
+  const fallback = (row: HeroRow) => pick(locale, text(row.vi), text(row.raw), text(row.raw) ? jaNames.fromRaw(text(row.raw)) : '');
   return (rows: HeroRow[]): NamedPath[] => {
     const seen = new Set<string>();
     const out: NamedPath[] = [];
     for (const row of rows) {
       const id = resolve.hero(text(row.raw) || null, text(row.vi) || null);
       const route = id ? routes.byId.get(id) : undefined;
-      const name = text(row.shown) || (!contentLocaleIsVietnamese(locale) ? text(row.raw) : text(row.vi));
+      const name = text(row.shown) || fallback(row);
       if (!route || !name || seen.has(route.id)) continue;
       seen.add(route.id);
       out.push({ name, path: localePath(route.path, locale) });
@@ -270,9 +294,15 @@ export interface RecommendedDetailProps {
   savePayload: TeamSavePayload;
 }
 
-/** Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn. */
-export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale) {
-  if (!contentLocaleIsVietnamese(locale)) return entry.nameZh?.trim() || entry.sourceConfigId;
+/**
+ * Tiêu đề đội chuẩn: bản vi dùng tên đã dịch, bản zh dùng tên chữ Hán gốc của nguồn, bản ja dùng tên gốc đổi tự dạng Nhật qua
+ * `resolver.fromRaw` (truyền `await lookupJaNameResolver()`; vắng thì giữ chữ gốc).
+ */
+export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocale, resolver: { fromRaw?: (raw: string) => string } | null = null) {
+  if (!contentLocaleIsVietnamese(locale)) {
+    const raw = entry.nameZh?.trim();
+    return raw ? localRawName(raw, resolver, locale) : entry.sourceConfigId;
+  }
   return entry.displayNameVi || VI_UNAVAILABLE;
 }
 
@@ -281,15 +311,19 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
   const seasonNames = !contentLocaleIsVietnamese(locale) ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
   const links = await heroLinkBuilder(locale);
+  // Bản ja: chữ Hán thô (tên đội, tên mùa, mã danh mục) đổi tự dạng Nhật; bản khác giữ nguyên.
+  const rawNames = pick(locale, null, null, await lookupJaNameResolver());
+  const raw = (value: string | null | undefined) => (value ? localRawName(value, rawNames, locale) : value);
   const { defaultSourceSeasonId } = await seasonPages();
   // Cùng tên đội có ở nhiều mùa (và đôi khi nhiều cấu hình trong một mùa): tiêu đề mang mã mùa, còn trùng thì số thứ tự.
   const ranks = detailTitleRanks(catalog.recommended, (entry) => JSON.stringify(
-    !contentLocaleIsVietnamese(locale) ? [recommendedTitle(entry, locale), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
+    !contentLocaleIsVietnamese(locale) ? [recommendedTitle(entry, locale, rawNames), entry.sourceSeasonCode] : [entry.displayNameVi, entry.sourceSeasonCode],
   ));
   return Promise.all(catalog.recommended.map(async (entry) => {
-    // Bản zh: mã mùa trung tính + tên mùa chữ Hán gốc + mã danh mục gốc (交戰/開荒); bản vi giữ nhãn đã dịch.
+    // Bản zh: mã mùa trung tính + tên mùa chữ Hán gốc + mã danh mục gốc (交戰/開荒); bản ja đổi tự dạng hai chữ gốc; bản vi
+    // giữ nhãn đã dịch.
     const scope = !contentLocaleIsVietnamese(locale)
-      ? [entry.sourceSeasonCode, entry.sourceSeasonId ? seasonNames!.get(entry.sourceSeasonId) : null, entry.sourceCategoryId]
+      ? [entry.sourceSeasonCode, raw(entry.sourceSeasonId ? seasonNames!.get(entry.sourceSeasonId) : null), raw(entry.sourceCategoryId)]
       : [entry.sourceSeasonCode, entry.sourceSeasonNameVi, entry.sourceCategoryNameVi];
     const record = await recommendedDetailRecord(entry);
     const heroes = links((strings(record?.heroes) as Array<{ nameRaw?: unknown; displayNameVi?: unknown }>).map((hero) => ({
@@ -297,7 +331,7 @@ export async function recommendedDetailPaths(locale: SiteLocale) {
       vi: hero?.displayNameVi,
       shown: holderDisplayName(hero, locale),
     })));
-    const title = recommendedTitle(entry, locale);
+    const title = recommendedTitle(entry, locale, rawNames);
     const { ordinal } = ranks(entry);
     const qualifier = [entry.sourceSeasonCode, ordinal > 1 ? String(ordinal) : null].filter(Boolean).join(' · ');
     const props: RecommendedDetailProps = {
@@ -341,7 +375,7 @@ export async function legacyDetailPaths(locale: SiteLocale) {
   const teamsById = new Map(teams.map((team) => [team.id, team]));
   const ids = await lookupIdResolver();
   const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
-  const resolve = await zhNameResolver();
+  const resolve = await sourceNameResolver(locale);
   const links = await heroLinkBuilder(locale);
   let title: (entry: LegacyRouteEntry) => string;
   if (!contentLocaleIsVietnamese(locale)) {
@@ -362,7 +396,7 @@ export async function legacyDetailPaths(locale: SiteLocale) {
     const pageLabel = [
       title(entry),
       byName(entry).size > 1 && entry.source
-        ? (!contentLocaleIsVietnamese(locale) ? legacyLabelZh('source', entry.source, 'zh') : (SOURCE_LABEL as Record<string, string>)[entry.source]) || entry.source
+        ? (!contentLocaleIsVietnamese(locale) ? legacyLabelZh('source', entry.source, locale) : (SOURCE_LABEL as Record<string, string>)[entry.source]) || entry.source
         : null,
       ordinal > 1 ? String(ordinal) : null,
     ].filter(Boolean).join(' · ');
@@ -398,7 +432,7 @@ export async function khaiHoangDetailPaths(locale: SiteLocale) {
   const heroesById = new Map(source.teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
   const teamsById = new Map(source.teams.map((team) => [team.id, team]));
   const ids = await lookupIdResolver();
-  const resolve = await zhNameResolver();
+  const resolve = await sourceNameResolver(locale);
   const links = await heroLinkBuilder(locale);
   let title: (entry: KhaiHoangRouteEntry) => string;
   if (!contentLocaleIsVietnamese(locale)) {

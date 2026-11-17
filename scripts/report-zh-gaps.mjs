@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Báo cáo mục Tra cứu mà bản zh chưa đủ chữ: quét `lookupProfile(...).viOnly` trên toàn corpus (cùng hàm dựng hồ sơ mà trang
 // riêng dùng) rồi so hồ sơ vi với hồ sơ zh của mục đó để liệt kê trường/mục bị bỏ. Không bổ sung dữ liệu zh, chỉ báo cáo.
+// Các hàm so hồ sơ và chạy lệnh nhận locale nên `scripts/report-ja-gaps.mjs` (báo cáo bản ja) dùng lại.
 //
 //   node scripts/report-zh-gaps.mjs            ghi docs/zh-gaps.md
 //   node scripts/report-zh-gaps.mjs --check    báo lỗi (exit 1) nếu docs/zh-gaps.md không khớp dữ liệu hiện tại (`npm run verify` chạy lệnh này)
@@ -17,12 +18,17 @@ export const ZH_GAPS_REPORT_PATH = process.env.ZH_GAPS_REPORT_PATH
   : new URL("../docs/zh-gaps.md", import.meta.url);
 
 const EMPTY_VI = withLocale("vi", () => lookupEmpty());
-const EMPTY_ZH = withLocale("zh", () => lookupEmpty());
 const keysOf = (rows) => new Set((rows ?? []).map((row) => row.key));
 const count = (rows) => (Array.isArray(rows) ? rows.length : 0);
 
 /** Phần của hồ sơ vi mà hồ sơ zh không có: trường (theo khóa), số điều kiện/lịch sử, số phần tử con theo khóa. */
 export function missingInZh(vi, zh) {
+  return missingInLocale(vi, zh, "zh");
+}
+
+/** Phần của hồ sơ vi mà hồ sơ `locale` (`zh`, `ja`…) cùng mục không có; ô thành chữ trống của `locale` cũng tính là thiếu. */
+export function missingInLocale(vi, zh, locale) {
+  const EMPTY_ZH = withLocale(locale, () => lookupEmpty());
   const missing = [];
   for (const kind of ["fields", "aptitudes", "sections", "relations"]) {
     const kept = keysOf(zh[kind]);
@@ -51,19 +57,30 @@ export function missingInZh(vi, zh) {
 
 /** Mọi mục có `viOnly` ở bản zh, theo thứ tự nhóm rồi thứ tự corpus: `{group, id, name, missing[]}`. */
 export function zhGaps(corpus) {
+  return localeGaps(corpus, "zh").map(({ group, id, name, missing }) => ({ group, id, name, missing }));
+}
+
+/**
+ * Mọi mục mà hồ sơ `locale` còn thiếu (`isGap(hồ sơ)`, mặc định `viOnly`), theo thứ tự nhóm rồi thứ tự corpus:
+ * `{group, id, name, profile, missing[]}` (`profile` là hồ sơ `locale`, `missing` so với hồ sơ vi).
+ */
+export function localeGaps(corpus, locale, isGap = (profile) => Boolean(profile?.viOnly)) {
   const gaps = [];
   for (const group of Object.keys(LOOKUP_GROUP_SLUGS)) {
     for (const item of corpus.groups[group]) {
-      const zh = withLocale("zh", () => lookupProfile(corpus, item.id));
-      if (!zh?.viOnly) continue;
+      const profile = withLocale(locale, () => lookupProfile(corpus, item.id));
+      if (!isGap(profile)) continue;
       const vi = withLocale("vi", () => lookupProfile(corpus, item.id));
-      gaps.push({ group, id: item.id, name: item.nameVi, missing: missingInZh(vi, zh) });
+      gaps.push({ group, id: item.id, name: item.nameVi, profile, missing: missingInLocale(vi, profile, locale) });
     }
   }
   return gaps;
 }
 
-const cell = (value) => String(value).replace(/\|/g, "\\|");
+/** Số mục của từng nhóm trong corpus, theo thứ tự nhóm công bố. */
+export const groupTotals = (corpus) => Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, corpus.groups[group].length]));
+
+export const cell = (value) => String(value).replace(/\|/g, "\\|");
 
 /** Markdown của báo cáo; `totals` là số mục mỗi nhóm của corpus. */
 export function renderZhGapsReport(gaps, totals) {
@@ -95,25 +112,37 @@ export function renderZhGapsReport(gaps, totals) {
   return lines.join("\n");
 }
 
-async function main(argv) {
+/**
+ * Chạy một báo cáo gap: dựng corpus của build, `render(corpus)` ra Markdown rồi ghi `reportPath` hoặc (với `--check`) so với
+ * file hiện có. `command` là lệnh sinh lại in trong thông báo lỗi. Trả mã thoát.
+ */
+export async function runGapsReport({ argv, reportPath, render, command }) {
   // Thư viện corpus lấy gốc dự án từ cwd lúc nạp module: chuyển về gốc repo rồi mới nạp để chạy từ thư mục nào cũng ra cùng kết quả.
   process.chdir(fileURLToPath(new URL("..", import.meta.url)));
   const { lookupBuildCorpus } = await import("../src/lib/lookup-pages.ts");
-  const corpus = await lookupBuildCorpus();
-  const totals = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, corpus.groups[group].length]));
-  const report = renderZhGapsReport(zhGaps(corpus), totals);
+  const report = render(await lookupBuildCorpus());
+  const name = fileURLToPath(reportPath).split(/[\\/]/).at(-1);
   if (argv.includes("--check")) {
-    const current = await readFile(ZH_GAPS_REPORT_PATH, "utf8").catch(() => null);
+    const current = await readFile(reportPath, "utf8").catch(() => null);
     if (current !== report) {
-      console.error(`${fileURLToPath(ZH_GAPS_REPORT_PATH)} không có hoặc không khớp dữ liệu hiện tại: chạy \`node scripts/report-zh-gaps.mjs\``);
+      console.error(`${fileURLToPath(reportPath)} không có hoặc không khớp dữ liệu hiện tại: chạy \`${command}\``);
       return 1;
     }
-    console.log("zh-gaps.md khớp dữ liệu hiện tại");
+    console.log(`${name} khớp dữ liệu hiện tại`);
     return 0;
   }
-  await writeFile(ZH_GAPS_REPORT_PATH, report);
-  console.log(`zh-gaps.md: ${report.split("\n").length} dòng`);
+  await writeFile(reportPath, report);
+  console.log(`${name}: ${report.split("\n").length} dòng`);
   return 0;
+}
+
+async function main(argv) {
+  return runGapsReport({
+    argv,
+    reportPath: ZH_GAPS_REPORT_PATH,
+    render: (corpus) => renderZhGapsReport(zhGaps(corpus), groupTotals(corpus)),
+    command: "node scripts/report-zh-gaps.mjs",
+  });
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? "").href) process.exitCode = await main(process.argv.slice(2));
