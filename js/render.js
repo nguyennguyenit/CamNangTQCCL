@@ -112,6 +112,8 @@ export const sourceLabel = (value) => legacyLabelZh("source", value) ?? SOURCE_L
 
 /** Chuẩn hoá CRLF của trường nguồn nhiều dòng; chuỗi đã nhận được giữ nguyên, không trim. */
 const sourceTextLines = (value) => (typeof value === "string" ? value.replace(/\r\n?/g, "\n") : "");
+/** Trường nguồn nhiều dòng hiện gọn trên thẻ: cắt khoảng trắng hai đầu mỗi dòng, bỏ dòng trống, giữ ngắt dòng. */
+const sourceLines = (value) => sourceTextLines(value).split("\n").map((line) => line.trim()).filter(Boolean).join("\n");
 
 /**
  * Nội dung một trường thô của nguồn: chỉ cắt khoảng trắng để biết ô có rỗng không, còn chữ hiện nguyên văn
@@ -160,7 +162,8 @@ export function coexistCounts(teams = []) {
  * mọi trường nội dung, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
  * dòng cuối (`level` "19C", `tag` "Thương S") để thẻ hiện thành nhãn riêng.
  * Cả hai nhánh đều ghi bằng tiếng Việt: bản zh đổi tên tướng/chiến pháp/binh thư sang chữ Hán gốc, tên đội
- * dựng lại từ tên tướng, còn văn xuôi, thích tính, cải tạo và ghi chú tướng (chưa có bản Trung) bị bỏ.
+ * dựng lại từ tên tướng, còn văn xuôi, thích tính, cải tạo, Trang Bị, Thẻ Kỳ Lược và ghi chú tướng (chưa có
+ * bản Trung) bị bỏ. Trang Bị (`equipmentRaw`) và Thẻ Kỳ Lược (`strategyCardsRaw`) chỉ có ở bảng 11 cột.
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
@@ -184,6 +187,7 @@ function coexistModel(reference) {
               .map((value) => formatModifiedTactic(tacticDisplayName(value))),
             books: (hero.bookSlotsRaw || []).map((value) => slot(value, sourceName) || null).filter(Boolean),
             statFocus: zh ? "" : publicText(hero.statFocusRaw, empty()),
+            equipment: zh ? "" : publicText(sourceLines(hero.equipmentRaw), ""),
           };
         });
         const { name, level } = splitTeamName(publicText(team.teamNameRaw));
@@ -191,6 +195,7 @@ function coexistModel(reference) {
           name: zh ? heroes.map((hero) => hero.name).filter((value) => value !== UNRESOLVED_NAME).join(" · ") || UNRESOLVED_NAME : name,
           level,
           unitTacticEffects: zh ? "" : publicText(team.unitTacticEffectsRaw, ""),
+          strategyCards: zh ? "" : publicText(sourceLines(team.strategyCardsRaw), ""),
           heroes,
         };
       }),

@@ -5,6 +5,7 @@
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
 - Fixed: "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là `hanViet` cũ của 暗渡陳倉. `tactic-summaries` (Đội khác) và bộ tra tên Hán bản zh (`createRawNameResolver`) xét `viet` trước rồi mới tới `hanViet`, như `createTacticNameIndex`: ô của `youtube-208` nối `tactic:di-hoa-tiep-moc` (hết "bỏ 1 ô khớp nhiều ID") và bản zh hiện 移花接木 thay 暗渡陳倉. Chỉ hồ sơ chiến pháp này đổi số liệu.
 - Re-pin hash nguồn 3 file `js/`, publish generation Đội chuẩn `b330fb34…` (prune `a4139e59…`), rebind ledger route (giữ nguyên 1681 handle Đội chuẩn và 443 handle Đội khác); `workflow-build` MCP sinh lại vì `js/website-display.js` đổi. Không đổi receipt dịch.
+- Merge `origin/main` (Cùng Tồn Hán Diễm Trường Minh, #124): re-pin hash nguồn (`data/season-content-links.json`, `js/recommended-reference-render.js`, `js/render.js`) và baseline inventory 75235 location (= 74423 + 812 của Cùng Tồn), publish lại generation Đội chuẩn `0ac387ca…` (prune `b330fb34…`), rebind giữ nguyên mọi handle (1681 Đội chuẩn, 443 Đội khác, 18 Khai hoang, 46 tombstone), sinh lại `workflow-build` MCP. Receipt dịch không đổi (6409/6409).
 - E2E chọn dữ liệu theo thứ tự trang đang hiện (đội đề cử đứng đầu, 60 đội mỗi lượt) thay vì bản ghi khớp đầu tiên của `other-teams.json`.
 
 ## 2026-11-17 (Đội khác mùa Hán Diễm Trường Minh: publish generation, handle đội gốc mới)
@@ -12,6 +13,12 @@
 - Generation Đội chuẩn `a4139e59…`: `other-teams.json` 387 hàng (240 đề cử từ YouTube), mọi hàng `sourceSeasonIds: ["pk-s27"]`. Glossary đổi (`sha256:558beac2…`) nên duyệt độc lập lại toàn bộ 6409 vị trí (18 batch `doi-khac-261117-*`); sửa 15 ghi chú Đội chuẩn và 30 mục Tra cứu theo tên client VN, promote Tra cứu `lookup:fc439e63…` (transaction `lookup-261117-doi-khac-review`).
 - `team_route_handles --rebind --append-legacy`: giữ 166 handle Đội khác đã công bố, cấp 277 handle mới (team-intro-56..65, `youtube-*`); trùng handle đang sống thì thêm slug id đội (vd `uc-hu-di-team-intro-62`). Recommended giữ 1681 handle, 46 tombstone không đổi.
 - Test: ghim 443 đội gốc, sitemap 6292 + trang mùa; "Hành Ách Trận" vào danh sách chiến pháp chờ nguồn (Tra cứu chưa có bản ghi).
+
+## 2026-11-17 (Cùng Tồn: kịch bản PK-S27 · Hán Diễm Trường Minh)
+
+- Added: kịch bản `han-diem-truong-minh` (đứng đầu registry, mặc định của `/cung-ton/`) với 5 nhóm / 25 đội từ tab Cùng Tồn của Google Sheet sau khi chủ sheet ghi đè Binh Diễn Xuân Thu; snapshot ghim ở `plans/261117-0206-cung-ton-han-diem-truong-minh/research/`, bản đồ record `pipeline/coexist-han-diem-source-record-map.json`, hai evidence (xác nhận kịch bản, quan sát snapshot). Link Binh Diễn và Anh Hùng Mệnh Thế giữ nguyên byte.
+- Changed: `pipeline/parse_coexist_csv.py` nhận thêm bảng 11 cột theo header (Trang Bị theo tướng → `equipmentRaw`, Thẻ Kỳ Lược theo đội → `strategyCardsRaw`; không tái dùng `unitTacticEffectsRaw`), "Ghi Chú" không phân biệt hoa thường; validator Python/JS nhận hai dạng, từ chối trộn. Thẻ Cùng Tồn hiện "Trang bị: …" dưới cộng điểm và "Thẻ Kỳ Lược: …" ở chân thẻ (bản zh ẩn).
+- Re-pin hash nguồn + baseline inventory (thêm `equipmentRaw`/`strategyCardsRaw` vào `AUTHORED_VI_DATA_FIELDS`, hai nhãn UI mới), publish generation hiển thị, rebind ledger route.
 
 ## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
 
