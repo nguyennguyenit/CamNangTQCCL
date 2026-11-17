@@ -40,7 +40,8 @@ async function expectPair(page, locale, viPath) {
   await expect(page.locator('link[rel="alternate"][hreflang="zh-Hans"]')).toHaveAttribute('href', `${ORIGIN}${zhPath}`);
   await expect(page.locator('link[rel="alternate"][hreflang="x-default"]')).toHaveAttribute('href', `${ORIGIN}${viPath}`);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', `${ORIGIN}${locale === 'zh' ? zhPath : viPath}`);
-  const switcher = page.locator('.header-actions [data-lang-switch]');
+  // Nhóm chuyển ngôn ngữ có một link cho mỗi bản khác: chọn đúng đích theo `hreflang`.
+  const switcher = page.locator(`.header-actions [data-lang-switch][hreflang="${locale === 'zh' ? 'vi' : 'zh-Hans'}"]`);
   // Nút giữ query/hash hiện tại (js/site-chrome.js); đường dẫn phải là bản gương của trang.
   expect(new URL(await switcher.getAttribute('href'), ORIGIN).pathname).toBe(locale === 'zh' ? viPath : zhPath);
   await expect(switcher).toHaveText(locale === 'zh' ? 'Tiếng Việt' : '中文');
@@ -61,7 +62,7 @@ test('Landing bản Trung chỉ có chữ Trung, lang zh-Hans, hreflang và nút
     links.filter((link) => !link.hasAttribute('data-lang-switch')).map((link) => link.getAttribute('href')));
   expect(internal.length).toBeGreaterThan(5);
   expect(internal.filter((href) => !href.startsWith('/zh/'))).toEqual([]);
-  await page.locator('.header-actions [data-lang-switch]').click();
+  await page.locator('.header-actions [data-lang-switch][hreflang="vi"]').click();
   await expect(page).toHaveURL(/\/$/u);
   await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
 });
@@ -73,7 +74,7 @@ test('trang mục bản Trung dựng nội dung bằng chữ Trung và giữ que
   await expect(page.locator('#section-lookup')).not.toBeEmpty();
   await expectChineseOnly(page, 'header.site-header');
   await expectChineseOnly(page, 'footer.site-footer');
-  await expect(page.locator('.header-actions [data-lang-switch]')).toHaveAttribute('href', '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
+  await expect(page.locator('.header-actions [data-lang-switch][hreflang="vi"]')).toHaveAttribute('href', '/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan');
 
   await page.goto('/zh/doi-chuan/');
   await expectPair(page, 'zh', '/doi-chuan/');
@@ -160,7 +161,7 @@ test('menu mobile bản Trung có nút chuyển ngôn ngữ tới bản Việt',
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/zh/khai-hoang/');
   await page.locator('#section-menu-toggle').click();
-  const menuSwitch = page.locator('#section-menu-items [data-lang-switch]');
+  const menuSwitch = page.locator('#section-menu-items [data-lang-switch][hreflang="vi"]');
   await expect(menuSwitch).toBeVisible();
   await expect(menuSwitch).toHaveAttribute('href', '/khai-hoang/');
   await expectChineseOnly(page, '#section-menu-items');
@@ -173,7 +174,7 @@ test('404 dưới /zh/ hiện khối tiếng Trung và nút về bản Việt', 
   await expect(page.locator('#not-found-title-zh')).toBeVisible();
   await expect(page.locator('#not-found-title')).toHaveCount(0);
   await expect(page.getByRole('link', { name: '返回首页' })).toHaveAttribute('href', '/zh/');
-  await expect(page.locator('.header-actions [data-lang-switch]')).toHaveAttribute('href', '/');
+  await expect(page.locator('.header-actions [data-lang-switch][hreflang="vi"]')).toHaveAttribute('href', '/');
   expect(await page.title()).toMatch(HAN);
 
   await page.goto('/doi-chuan/khong-ton-tai/');

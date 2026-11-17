@@ -6,7 +6,7 @@
  * Danh sách locale theo thứ tự cố định. `L()`/`pick()` chọn biến thể theo **vị trí** trong danh sách này nên chỉ được
  * nối thêm ở cuối (test `tests-js/i18n-locales.test.mjs` khóa thứ tự); locale đầu tiên là mặc định.
  */
-export const SITE_LOCALES = Object.freeze(/** @type {const} */ (['vi', 'zh']));
+export const SITE_LOCALES = Object.freeze(/** @type {const} */ (['vi', 'zh', 'ja']));
 /** @typedef {(typeof SITE_LOCALES)[number]} SiteLocaleCode Một phần tử của `SITE_LOCALES`. */
 /** Tên cũ của `SITE_LOCALES`, giữ cho import hiện có. */
 export const LOCALES = SITE_LOCALES;

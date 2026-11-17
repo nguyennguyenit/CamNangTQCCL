@@ -26,7 +26,7 @@ import * as routes from "../src/lib/locale-routes.ts";
 
 test("danh sách locale: thứ tự khóa cứng, chỉ được nối thêm ở cuối", () => {
   // Biến thể của L()/pick() đi theo vị trí trong danh sách này: chèn giữa hoặc đổi thứ tự làm lệch mọi chuỗi.
-  assert.deepEqual([...SITE_LOCALES], ["vi", "zh"]);
+  assert.deepEqual([...SITE_LOCALES], ["vi", "zh", "ja"]);
   assert.equal(SITE_LOCALES[0], DEFAULT_LOCALE);
   assert.ok(Object.isFrozen(SITE_LOCALES));
   assert.equal(LOCALES, SITE_LOCALES);
@@ -130,8 +130,9 @@ test("locale-routes: re-export danh sách, switchTargets, localizedHtmlPath, alt
   assert.equal(routes.SITE_LOCALES, SITE_LOCALES);
   assert.equal(routes.HREFLANG, LOCALE_HTML_LANG);
   assert.equal(Object.hasOwn(routes, "otherLocale"), false);
-  assert.deepEqual(routes.switchTargets("vi"), ["zh"]);
-  assert.deepEqual(routes.switchTargets("zh"), ["vi"]);
+  assert.deepEqual(routes.switchTargets("vi"), ["zh", "ja"]);
+  assert.deepEqual(routes.switchTargets("zh"), ["vi", "ja"]);
+  assert.deepEqual(routes.switchTargets("ja"), ["vi", "zh"]);
   for (const locale of SITE_LOCALES) {
     const targets = routes.switchTargets(locale);
     assert.deepEqual(targets, SITE_LOCALES.filter((other) => other !== locale));
@@ -145,9 +146,10 @@ test("locale-routes: re-export danh sách, switchTargets, localizedHtmlPath, alt
   assert.deepEqual(routes.mirroredAlternates("/zh/doi-chuan/"), [
     { hreflang: "vi", path: "/doi-chuan/" },
     { hreflang: "zh-Hans", path: "/zh/doi-chuan/" },
+    { hreflang: "ja", path: "/ja/doi-chuan/" },
     { hreflang: "x-default", path: "/doi-chuan/" },
   ]);
-  assert.deepEqual(routes.mirroredPaths("/zh/tra-cuu/"), { vi: "/tra-cuu/", zh: "/zh/tra-cuu/" });
+  assert.deepEqual(routes.mirroredPaths("/zh/tra-cuu/"), { vi: "/tra-cuu/", zh: "/zh/tra-cuu/", ja: "/ja/tra-cuu/" });
   // Locale không có đường dẫn bị bỏ qua; x-default là bản đầu tiên theo thứ tự danh sách (bản Việt khi có).
   assert.deepEqual(routes.alternatePaths({ zh: "/zh/a/" }), [
     { hreflang: "zh-Hans", path: "/zh/a/" },
