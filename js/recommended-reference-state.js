@@ -218,7 +218,8 @@ export const SOURCE_TIER_ORDER = ['T0','T0.5','T1','T1.5','T2','T3','FUNC','功�
 export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队') : value;
 
 function fixedRank(a,b) {
-  // Đội khác: hàng đề cử đứng trước; sort ổn định giữ thứ tự cũ trong mỗi nhóm.
+  // Đội khác: hàng đề cử đứng trước. Trong mỗi nhóm, hàng Đội khác không có `tierOrder`/`value`/`listIndex` nên thứ tự
+  // rơi xuống tie-break cuối theo `legacyVariantId` (hash), KHÔNG phải thứ tự trong `other-teams.json` (xem #129).
   const recommended = Number(isRecommendedOtherRow(b)) - Number(isRecommendedOtherRow(a));
   if (recommended) return recommended;
   const tier = (a.tierOrder ?? 999) - (b.tierOrder ?? 999);
