@@ -120,6 +120,8 @@ npm run eval:vision -- --from base                   # chấm lại không tốn
 npm run eval:vision -- --effort high --runs 3        # so effort; --only <tên> chạy một ảnh
 ```
 
+Fixture ảnh client Nhật (trường `locale: "ja"` hoặc tên `*-ja-*`) được gọi AI với `locale: "ja"` (prompt chép nguyên tự dạng Nhật) và chấm bằng chỉ mục có alias tên Nhật nạp từ `data/lookup-ja.json` (`withLocaleAliases`); fixture vi/zh không đổi. Ví dụ: `npm run eval:vision -- --only battle-ja-1`.
+
 Model ngoài catalog `shared/ai-models.ts` cần `EVAL_EFFORT_STYLE=deepseek|openai|none`; `EVAL_TIMEOUT_MS` mặc định 45000. Sửa `VISION_PROMPT` hay đổi effort/timeout của nhóm `teamScan` ở tab AI thì chạy trước với cấu hình cũ (`--save`) làm mốc rồi so. Ảnh người dùng gửi qua nút "Gửi ảnh này" được duyệt ở tab **Soi đội** của `/quan-tri/`; nút "Tải fixture" xuất JSON không có `screen`/`sideCount` (nhãn AI tự đoán không phải đáp án) — tải ảnh, che tên tài khoản, lưu vào `eval/images/` với tên trong trường `image`, điền `screen` (và `sideCount` nếu ảnh có hai phe) sau khi tự xem ảnh.
 
 ## Cấu hình guardrail (`wrangler.toml [vars]`)

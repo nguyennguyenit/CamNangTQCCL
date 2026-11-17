@@ -17,7 +17,7 @@ import { DEFAULT_TIMEOUT_MS, MAX_BUDGET_MS, type AiRoute } from "../../shared/ai
 import { AI_PRESETS, type EffortStyle } from "../../shared/ai-models";
 import { callModel } from "../src/model";
 import type { AnalyzeResult } from "../src/schema";
-import { addScore, buildIndexes, emptyScore, percentile, scoreFixture, type Fixture, type FixtureScore, type Tally } from "./score";
+import { addScore, buildIndexes, emptyScore, isJaFixture, percentile, scoreFixture, type Fixture, type FixtureScore, type Tally } from "./score";
 
 const EVAL_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_DIR = join(EVAL_DIR, "..", "..");
@@ -67,10 +67,10 @@ interface Run {
   error?: string;
 }
 
-async function readOnce(fixture: Fixture, aiRoute: AiRoute): Promise<Run> {
+async function readOnce(fixture: Fixture, name: string, aiRoute: AiRoute): Promise<Run> {
   const started = Date.now();
   try {
-    const result = (await callModel(await dataUri(fixture.image), { route: aiRoute }, "analyzeTeamImage")) as AnalyzeResult;
+    const result = (await callModel(await dataUri(fixture.image), { route: aiRoute }, "analyzeTeamImage", isJaFixture(fixture, name) ? "ja" : undefined)) as AnalyzeResult;
     return { result, ms: Date.now() - started };
   } catch (e) {
     return { result: null, ms: Date.now() - started, error: e instanceof Error ? e.message : String(e) };
@@ -84,6 +84,16 @@ async function main() {
     ["heroes-dict.json", "tactics.json", "books-dict.json"].map((file) => readJson<Record<string, unknown>[]>(join(REPO_DIR, "data", file))),
   );
   const indexes = buildIndexes({ heroes, tactics, books });
+  // Chỉ mục có alias tên Nhật, nạp lười: chỉ khi có fixture ảnh client Nhật được chạy.
+  let jaIndexes: ReturnType<typeof buildIndexes> | null = null;
+  const indexesFor = async (fixture: Fixture, name: string) => {
+    if (!isJaFixture(fixture, name)) return indexes;
+    if (!jaIndexes) {
+      const lookupJa = await readJson<{ entries: Record<string, { name?: unknown }> }>(join(REPO_DIR, "data", "lookup-ja.json"));
+      jaIndexes = buildIndexes({ heroes, tactics, books }, lookupJa.entries);
+    }
+    return jaIndexes;
+  };
   const names = (await readdir(join(EVAL_DIR, "fixtures")))
     .filter((file) => file.endsWith(".json"))
     .map((file) => basename(file, ".json"))
@@ -105,12 +115,13 @@ async function main() {
   for (const name of names) {
     const fixture = await readJson<Fixture>(join(EVAL_DIR, "fixtures", `${name}.json`));
     const cacheFile = (label: string) => join(EVAL_DIR, ".cache", label, `${name}.json`);
+    const fixtureIndexes = await indexesFor(fixture, name);
     const done: Run[] = [];
     if (args.from) {
       done.push(...(await readJson<Run[]>(cacheFile(args.from))));
     } else {
       // Tuần tự: một nhà cung cấp, tránh tự gây 429 và giữ số đo thời gian sạch.
-      for (let run = 0; run < runs; run++) done.push(await readOnce(fixture, aiRoute!));
+      for (let run = 0; run < runs; run++) done.push(await readOnce(fixture, name, aiRoute!));
     }
     if (args.save) {
       await mkdir(dirname(cacheFile(args.save)), { recursive: true });
@@ -121,7 +132,7 @@ async function main() {
     const bucket = byScreen.get(screen) ?? { images: 0, score: emptyScore() };
     for (const run of done) {
       bucket.images += 1;
-      bucket.score = addScore(bucket.score, scoreFixture(fixture, run.result, indexes));
+      bucket.score = addScore(bucket.score, scoreFixture(fixture, run.result, fixtureIndexes));
       if (run.ms !== null) latencies.push(run.ms);
       if (run.error) {
         failures += 1;
