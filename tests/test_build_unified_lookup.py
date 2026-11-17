@@ -1116,5 +1116,58 @@ class ZhEffectsDataTest(unittest.TestCase):
             self.assertEqual(missing, [], owner)
 
 
+class ClientQilueCaptureTest(unittest.TestCase):
+    """Kỳ lược PK-S27 chụp từ client Global 24.547 (Đồ Giám Võ Lược Kỳ Mưu): 5 phương lược, 40 thẻ."""
+
+    # Hai loại thẻ mỗi phương lược dùng được, theo màn Phương Lược Tác Chiến (plans/reports/261117-client-ky-luoc-pk-s27.md).
+    EXPECTED_CARD_TYPES = {
+        "整軍": ["phu", "te"], "強攻": ["dung", "phu"], "謀算": ["muu", "phu"],
+        "久戰": ["dung", "te"], "襲擾": ["muu", "sach"],
+    }
+
+    def _document(self):
+        return json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+
+    def test_capture_has_five_strategies_and_forty_cards(self):
+        strategies, cards = build_module._client_qilue(self._document())
+        self.assertEqual(len(strategies), 5)
+        self.assertEqual(len(cards), 40)
+        self.assertEqual({row["nameZh"]: row["cardTypes"] for row in strategies}, self.EXPECTED_CARD_TYPES)
+        for card_type in ("dung", "muu", "phu", "sach", "te"):
+            rows = [row for row in cards if row["type"] == card_type]
+            self.assertEqual(len(rows), 8, card_type)
+            self.assertEqual(sum(row["rarity"] == "rare" for row in rows), 2, card_type)
+        names = [row["nameZh"] for row in [*strategies, *cards]]
+        self.assertEqual(len(names), len(set(names)))
+        self.assertTrue(all(row["id"].startswith("qilue-strategy:") for row in strategies))
+        self.assertTrue(all(row["id"].startswith("qilue-card:") for row in cards))
+        by_zh = {row["nameZh"]: row for row in cards}
+        self.assertEqual(by_zh["設伏十面"]["nameVi"], "Bố Trí Thập Diện")
+        self.assertEqual(by_zh["治延軍勢"]["nameVi"], "Trị Duyên Quân Thế")
+        self.assertEqual({row["nameZh"]: row["nameVi"] for row in strategies}["謀算"], "Mưu tính")
+
+    def test_slug_is_a_frozen_key_not_derived_from_the_name(self):
+        document = self._document()
+        document["qilueCards"]["qilue-card:bo-tri-thap-dien"]["nameVi"] = "Tên khác hẳn"
+        _, cards = build_module._client_qilue(document)
+        self.assertIn("qilue-card:bo-tri-thap-dien", {row["id"] for row in cards})
+
+    def test_invalid_capture_is_rejected(self):
+        def mutate(change):
+            document = copy.deepcopy(self._document())
+            change(document)
+            with self.assertRaises(ValueError):
+                build_module._client_qilue(document)
+
+        mutate(lambda d: d["qilueCards"].update({"qilue-card:Sai Dau": d["qilueCards"]["qilue-card:bo-tri-thap-dien"]}))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(rarity="epic"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(type="khac"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(effectVi="<b>x</b>"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(rarity="rare"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(aliasesZh=["十面埋伏"]))
+        mutate(lambda d: d["qilueStrategies"]["qilue-strategy:muu-tinh"].update(cardTypes=["muu"]))
+        mutate(lambda d: d["qilueCards"].pop("qilue-card:bo-tri-thap-dien"))
+
+
 if __name__ == "__main__":
     unittest.main()

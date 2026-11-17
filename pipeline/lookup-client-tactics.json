@@ -13168,5 +13168,399 @@
         "viSha256": "09bcbad65462e96f4d7f26d907c6a8411b40255abe96f24a439de9aae30b152d"
       }
     }
+  },
+  "qilueSource": {
+    "kind": "game-client",
+    "edition": "Global",
+    "client": "Tam Quốc Chí - Chiến Lược",
+    "version": "24.547",
+    "screen": "Kỳ Lược Triều Hán > Võ Lược Kỳ Mưu > Đồ Giám; Phương Lược Tác Chiến",
+    "capturedAt": "2026-11-17"
+  },
+  "qilueStrategies": {
+    "qilue-strategy:toan-quan": {
+      "nameVi": "Toàn quân",
+      "aliasesVi": [
+        "Chỉnh Đốn Quân"
+      ],
+      "nameZh": "整軍",
+      "cardTypes": [
+        "phu",
+        "te"
+      ],
+      "descriptionVi": "Lính mạnh giáp tốt, Giảm ST và cung cấp hiệu ứng tăng ích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Thống Soái"
+    },
+    "qilue-strategy:cuong-cong": {
+      "nameVi": "Cường Công",
+      "nameZh": "強攻",
+      "cardTypes": [
+        "dung",
+        "phu"
+      ],
+      "descriptionVi": "Bẫy trận xông pha, cường hóa sát thương bùng nổ của Chiến Pháp Đột Kích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Võ Lực"
+    },
+    "qilue-strategy:muu-tinh": {
+      "nameVi": "Mưu tính",
+      "aliasesVi": [
+        "Mưu Toán"
+      ],
+      "nameZh": "謀算",
+      "cardTypes": [
+        "muu",
+        "phu"
+      ],
+      "descriptionVi": "Vận dụng kế sách, cường hóa khả năng sử dụng Chiến Pháp chủ động",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Trí Lực"
+    },
+    "qilue-strategy:chien-dau-lau-dai": {
+      "nameVi": "Chiến đấu lâu dài",
+      "aliasesVi": [
+        "Chiến Dài"
+      ],
+      "nameZh": "久戰",
+      "cardTypes": [
+        "dung",
+        "te"
+      ],
+      "descriptionVi": "Mặc giáp kịch chiến, cường hóa khả năng Chịu ST và Chiến Pháp Đột Kích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 2 điểm Võ Lực và Thống Soái"
+    },
+    "qilue-strategy:quay-nhieu": {
+      "nameVi": "Quấy nhiễu",
+      "aliasesVi": [
+        "Tập Kích"
+      ],
+      "nameZh": "襲擾",
+      "cardTypes": [
+        "muu",
+        "sach"
+      ],
+      "descriptionVi": "Khắc chế địch linh hoạt, cường hóa Chiến Pháp Chủ Động và hiệu ứng khống chế",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng địch giảm 2 điểm Võ Lực và Trí Lực"
+    }
+  },
+  "qilueCards": {
+    "qilue-card:am-do-tran-thuong": {
+      "nameVi": "Ám Độ Trần Thương",
+      "nameZh": "暗度陳倉",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Khi thi triển Chiến Pháp chuẩn bị hiệp này có 50% xác suất bỏ qua chuẩn bị"
+    },
+    "qilue-card:an-tich-mang-thuong": {
+      "nameVi": "Ẩn Tích Mang Thương",
+      "nameZh": "芒碭隱蹤",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Giảm 8% ST phải chịu hiệp này"
+    },
+    "qilue-card:bac-lang-chuy-tan": {
+      "nameVi": "Bác Lãng Chuy Tần",
+      "nameZh": "博浪椎秦",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Tăng 20% Phá Trận"
+    },
+    "qilue-card:bai-huyen-tu-nghia": {
+      "nameVi": "Bái Huyện Tụ Nghĩa",
+      "nameZh": "沛縣聚義",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Tăng 15% lượng trị liệu gây ra trong hiệp này"
+    },
+    "qilue-card:bat-vua-pha-doanh": {
+      "nameVi": "Bắt Vua Phá Doanh",
+      "nameZh": "擒王破營",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Đột Kích, tỉ lệ phát động Chiến Pháp Đột Kích của Võ Tướng đồng đội tăng 5% (có thể tích lũy)"
+    },
+    "qilue-card:bi-so-doat-the": {
+      "nameVi": "Bì Sở Đoạt Thế",
+      "nameZh": "疲楚奪勢",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi chịu tấn công thường, gây 1 lần sát thương Binh Đao cho cá thể quân địch (tỷ lệ sát thương 50%)"
+    },
+    "qilue-card:bo-tri-thap-dien": {
+      "nameVi": "Bố Trí Thập Diện",
+      "nameZh": "設伏十面",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%"
+    },
+    "qilue-card:can-quet-tay-ha": {
+      "nameVi": "Càn Quét Tây Hà",
+      "nameZh": "橫掃河西",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Cá thể có Võ Lực Cao Nhất trong hiệp này nhận 40% tỉ lệ Liên Kích"
+    },
+    "qilue-card:cang-nhieu-cang-tot": {
+      "nameVi": "Càng Nhiều Càng Tốt",
+      "nameZh": "多多益善",
+      "type": "muu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đó, mỗi lần dùng Kỳ Lược 1 lần, Chiến Pháp Chủ Động đầu tiên trong hiệp này của quân ta sau khi phát động sẽ có 15% xác suất thử phát động lại"
+    },
+    "qilue-card:cau-hien-duoi-trang": {
+      "nameVi": "Cầu Hiền Dưới Trăng",
+      "nameZh": "月下追賢",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Sau khi thi triển trạng thái khống chế trong hiệp này, trạng thái này còn được áp dụng lên một quân địch khác"
+    },
+    "qilue-card:chi-khi-ngap-tran": {
+      "nameVi": "Chí Khí Ngập Tràn",
+      "nameZh": "壯志不絕",
+      "type": "dung",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Võ Tướng Võ Lực cao nhất quân ta gây ra sát thương Binh Đao tăng 5% (trước đó mỗi lần dùng 1 lá Kỳ Lược hoặc đã tổn thất 15% Binh Lực thì tăng thêm 3%)"
+    },
+    "qilue-card:cong-lao-hien-hach": {
+      "nameVi": "Công Lao Hiển Hách",
+      "nameZh": "居功至偉",
+      "type": "sach",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Vô hiệu Kỳ Lược địch sử dụng lần sau"
+    },
+    "qilue-card:dan-tran-tu-chien": {
+      "nameVi": "Dàn Trận Tử Chiến",
+      "nameZh": "背水列陣",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Một cá thể có Trí Lực và Võ Lực cao nhất trong hiệp này miễn dịch Kế Tận"
+    },
+    "qilue-card:don-doc-tham-nhap": {
+      "nameVi": "Đơn Độc Thâm Nhập",
+      "nameZh": "孤軍深入",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này phát động thất bại Chiến Pháp Đột Kích thử phát động lại 1 lần"
+    },
+    "qilue-card:du-dich-roi-trai": {
+      "nameVi": "Dụ Địch Rời Trại",
+      "nameZh": "誘敵離營",
+      "type": "muu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Đã phóng thích 1 lần Chiến Pháp Chủ Động trước đó, sau khi Kỳ Lược hiệu lực sẽ có 10% xác suất phát huy hiệu lực thêm 1 lần nữa"
+    },
+    "qilue-card:dung-dien-truong-an": {
+      "nameVi": "Dựng Điện Trường An",
+      "nameZh": "築闕長安",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "effectVi": "Hiệp này địch quân thi triển Chiến Pháp Chủ Động không chuẩn bị cần chuẩn bị 1 hiệp"
+    },
+    "qilue-card:giau-tai-giau-cua": {
+      "nameVi": "Giấu Tài Giấu Của",
+      "nameZh": "韜晦自污",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này khi quân ta hành động, nếu Trạng thái Khống chế có hiệu lực， thì làm cho Quân địch đơn thể nhận cùng một Trạng thái Khống chế"
+    },
+    "qilue-card:go-bo-xieng-xich": {
+      "nameVi": "Gỡ Bỏ Xiềng Xích",
+      "nameZh": "親釋刑縛",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Tại đầu hiệp này nếu đang ở trạng thái Khống chế, thì nhận trạng thái miễn dịch tương ứng với trạng thái đó trong 1 hiệp"
+    },
+    "qilue-card:hop-vay-giap-kich": {
+      "nameVi": "Hợp Vây Giáp Kích",
+      "nameZh": "合圍夾擊",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Chủ Động, Trị Liệu đơn thể Đồng Minh Binh Lực thấp nhất (tỷ lệ Trị Liệu 50%)"
+    },
+    "qilue-card:khong-so-lam-nguy": {
+      "nameVi": "Không Sợ Lâm Nguy",
+      "nameZh": "臨危不懼",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Tăng ích ngẫu nhiên đã có kéo dài thêm 1 hiệp"
+    },
+    "qilue-card:ky-cong-gian-phong": {
+      "nameVi": "Kỳ Công Gián Phong",
+      "nameZh": "諫封示公",
+      "type": "phu",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Nhận ngẫu nhiên 1 loại Tăng ích tính năng cho một đơn vị địch ngẫu nhiên (Sau hiệp chuẩn bị với mỗi nhận 1 trạng thái tính năng từng nhận sẽ có 30% xác suất lặp lại 1 lần)"
+    },
+    "qilue-card:lanh-hiem-hong-mon": {
+      "nameVi": "Lánh Hiểm Hồng Môn",
+      "nameZh": "鴻門遁險",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này khi gây Trị Liệu có xác suất gây thêm sát thương Mưu Lược cho đơn thể quân địch (bằng 30% lượng Trị Liệu, mỗi Võ Tướng tối đa kích hoạt 5 lần)"
+    },
+    "qilue-card:lap-ke-an-tru": {
+      "nameVi": "Lập Kế An Trữ",
+      "nameZh": "定計安儲",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này đơn thể có Binh Lực cao nhất của quân ta cứu viện toàn thể quân ta, đồng thời giảm 30% sát thương tấn công thường phải chịu"
+    },
+    "qilue-card:lui-buoc-cong-thanh": {
+      "nameVi": "Lui Bước Công Thành",
+      "nameZh": "功成身退",
+      "type": "phu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đó, cứ mỗi Kỳ Lược Kỳ Lược đã dùng, khi sử dụng Kỳ Lược sau đó sẽ có 30% xác suất ngẫu nhiên thi triển 1 Kỳ Lược đã từng được phe ta dùng"
+    },
+    "qilue-card:nap-sach-tang-thu": {
+      "nameVi": "Nạp Sách Tàng Thư",
+      "nameZh": "藏書納籍",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái khống chế"
+    },
+    "qilue-card:nhan-sach-di-kieu": {
+      "nameVi": "Nhận Sách Di Kiều",
+      "nameZh": "圯橋受書",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Trong hiệp này ngẫu nhiên nhận 1 Tăng ích chức năng chưa từng nhận trước đó"
+    },
+    "qilue-card:nho-co-dich-co": {
+      "nameVi": "Nhổ Cờ Dịch Cờ",
+      "nameZh": "拔旗易幟",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này sau khi tính toán tỉ lệ phát động Chiến Pháp Chủ Động của cá thể có Trí Lực cao nhất trong quân ta sẽ bị đảo ngược"
+    },
+    "qilue-card:nhuong-com-se-ao": {
+      "nameVi": "Nhường Cơm Sẻ Áo",
+      "nameZh": "推食解衣",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này khi nhận sát thương sẽ trị liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)"
+    },
+    "qilue-card:pha-mui-giap-dich": {
+      "nameVi": "Phá Mũi Giáp Địch",
+      "nameZh": "摧鋒陷敵",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích gây ra sát thương tăng 12%"
+    },
+    "qilue-card:phong-lang-cu-tu": {
+      "nameVi": "Phong Lang Cư Tư",
+      "nameZh": "封狼居胥",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích tỉ lệ phát động tăng 10%"
+    },
+    "qilue-card:phong-thuong-tang-ap": {
+      "nameVi": "Phong Thưởng Tăng Ấp",
+      "nameZh": "受封增邑",
+      "type": "sach",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Sau hiệp chuẩn bị, mỗi lần toàn địch bị thi triển trạng thái ST duy trì, thì khi quân địch trúng ST duy trì hiệp này, sẽ phải chịu thêm 5% sát thương"
+    },
+    "qilue-card:so-ca-tu-khoi": {
+      "nameVi": "Sở Ca Tứ Khởi",
+      "nameZh": "楚歌四起",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động gây ra sát thương tăng 10%"
+    },
+    "qilue-card:song-trong-that-bai": {
+      "nameVi": "Sống Trong Thất Bại",
+      "nameZh": "敗中求生",
+      "type": "te",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Mỗi khi quân ta phải chịu 1 lần Công Thường, giảm 2% ST phải chịu"
+    },
+    "qilue-card:tam-sach-cung-tien": {
+      "nameVi": "Tam Sách Cùng Tiến",
+      "nameZh": "三策並進",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trong hiệp này trạng thái chức năng mà quân địch nhận được cũng sẽ được áp dụng cho một đơn vị của quân ta"
+    },
+    "qilue-card:thay-mat-bay-muu": {
+      "nameVi": "Thay Mặt Bày Mưu",
+      "nameZh": "借箸代籌",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Trong hiệp này khi nhận Tăng ích chức năng, nhận thêm một Tăng ích chức năng khác"
+    },
+    "qilue-card:tram-dich-chieu-hang": {
+      "nameVi": "Trảm Địch Chiêu Hàng",
+      "nameZh": "斬逆納降",
+      "type": "dung",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đây mỗi lần phát động 1 Chiến Pháp Đột Kích, trong hiệp này Chiến Pháp Đột Kích sát thương tăng 3%"
+    },
+    "qilue-card:tranh-hoa-cu-kiem": {
+      "nameVi": "Tránh Họa Cự Kiệm",
+      "nameZh": "居儉避禍",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái sát thương duy trì (chịu ảnh hưởng bởi chỉ số cao hơn trong Võ Lực và Trí Lực, tỷ lệ sát thương 50%)"
+    },
+    "qilue-card:tri-duyen-quan-the": {
+      "nameVi": "Trị Duyên Quân Thế",
+      "nameZh": "治延軍勢",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trạng thái sát thương duy trì do quân ta thi triển trong hiệp này kéo dài 1 hiệp"
+    },
+    "qilue-card:truy-kich-tu-tran": {
+      "nameVi": "Truy Kích Tử Trận",
+      "nameZh": "追亡逐北",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi Tấn công thường, Trị Liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)"
+    },
+    "qilue-card:uoc-phap-tam-chuong": {
+      "nameVi": "Ước Pháp Tam Chương",
+      "nameZh": "約法三章",
+      "type": "te",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này Trị Liệu đơn thể Binh Lực thấp nhất của quân ta (tỷ lệ Trị Liệu 100%), gây sát thương Mưu Lược cho đơn thể Binh Lực thấp nhất của quân địch (tỷ lệ sát thương bị ảnh hưởng bởi lượng Trị Liệu dôi ra tích lũy, tối đa 200%)"
+    }
   }
 }
