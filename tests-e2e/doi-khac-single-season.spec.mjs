@@ -52,7 +52,7 @@ test("Đội khác: hàng recommended có nhãn Đề cử ở thẻ, thẻ gọ
   const { seasons, other } = await referenceData(request);
   await page.goto("/doi-khac/");
   await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
-  // Dựng đúng module của trang trong một mount tách rời với dữ liệu giả lập: generation thật chưa có field mới.
+  // Dựng đúng module của trang trong một mount tách rời với dữ liệu giả lập (field mới gắn có kiểm soát).
   const result = await page.evaluate(async ({ rows, registry }) => {
     const [{ createRecommendedSection }, { referenceSectionState }] = await Promise.all([
       import("/js/team-filter-section.js"),
@@ -82,7 +82,11 @@ test("Đội khác: hàng recommended có nhãn Đề cử ở thẻ, thẻ gọ
     paint("table", marked, "bang");
     mount.remove();
     return { seen, flagged: [...flagged], bareOrder: seen.bare.keys };
-  }, { rows: other.records.slice(0, 8), registry: seasons });
+  }, {
+    // Generation thật đã mang `recommended`/`sourceSeasonIds`: bỏ hai field để có mẫu "field vắng", rồi gắn lại có kiểm soát.
+    rows: other.records.slice(0, 8).map(({ recommended, sourceSeasonIds, ...row }) => row),
+    registry: seasons,
+  });
 
   expect(result.seen.bare.badges).toEqual([]);
   for (const view of ["cards", "grid", "table"]) {

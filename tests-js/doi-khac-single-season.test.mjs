@@ -17,7 +17,11 @@ const GENERATION = json("src/data/recommended-reference/current.json").generatio
 const REFERENCE = `src/data/recommended-reference/${GENERATION}`;
 const registry = json(`${REFERENCE}/seasons.json`);
 const labels = registry.displayLabels;
-const base = json(`${REFERENCE}/other-teams.json`).records.filter((row) => row.holders?.length).slice(0, 6);
+// Generation thật đã mang `recommended`/`sourceSeasonIds`; bỏ hai field để có mẫu "field vắng", rồi gắn lại có kiểm soát.
+const base = json(`${REFERENCE}/other-teams.json`).records
+  .filter((row) => row.holders?.length)
+  .slice(0, 6)
+  .map(({ recommended, sourceSeasonIds, ...row }) => row);
 assert.ok(base.length === 6, "cần đủ 6 hàng Đội khác mẫu");
 const season = registry.seasonOptions.find((item) => item.sourceSeasonId === registry.defaultSourceSeasonId);
 const key = (row) => row.legacyVariantId;

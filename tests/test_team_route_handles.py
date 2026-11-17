@@ -1162,7 +1162,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(self.ledger["legacyTeamsSha256"], "sha256:" + hashlib.sha256(self.teams_bytes).hexdigest())
         self.assertEqual(self.ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
         self.assertEqual(len(self.ledger["handles"]["recommended"]), 1681)
-        self.assertEqual(len(self.ledger["handles"]["legacy"]), 166)
+        self.assertEqual(len(self.ledger["handles"]["legacy"]), 443)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 18)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
         self.assertEqual(len(self.ledger["handles"]["recommended"]), len(self.publication.records))
@@ -1219,8 +1219,8 @@ class PinnedLedgerTest(unittest.TestCase):
             with self.subTest(team_id=team_id):
                 self.assertTrue(is_routable_identifier(handle))
         self.assertEqual(khaihoang_stats, {"keys": 18, "distinctHandles": 18})
-        self.assertEqual(legacy_stats["keys"], 166)
-        self.assertEqual(legacy_stats["collisionGroups"], 14)
+        self.assertEqual(legacy_stats["keys"], 443)
+        self.assertEqual(legacy_stats["collisionGroups"], 30)
 
     def test_committed_ledger_reproduces_the_documented_ambiguous_groups(self):
         for season, expected in DOCUMENTED_AMBIGUOUS_GROUPS.items():
@@ -1234,7 +1234,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(DEFAULT_LEDGER_PATH.read_bytes(), before)
         self.assertIn("matches generation " + self.publication.generation_id, out)
-        self.assertIn("recommended handles: 1681; legacy handles: 166; Khai hoang handles: 18", out)
+        self.assertIn("recommended handles: 1681; legacy handles: 443; Khai hoang handles: 18", out)
         # Diagnostics are informational after a rebind: they are printed, never gated on.
         self.assertIn("name-derived diagnostics:", out)
 

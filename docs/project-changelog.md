@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-17 (Đội khác mùa Hán Diễm Trường Minh: publish generation, handle đội gốc mới)
+
+- Generation Đội chuẩn `a4139e59…`: `other-teams.json` 387 hàng (240 đề cử từ YouTube), mọi hàng `sourceSeasonIds: ["pk-s27"]`. Glossary đổi (`sha256:558beac2…`) nên duyệt độc lập lại toàn bộ 6409 vị trí (18 batch `doi-khac-261117-*`); sửa 15 ghi chú Đội chuẩn và 30 mục Tra cứu theo tên client VN, promote Tra cứu `lookup:fc439e63…` (transaction `lookup-261117-doi-khac-review`).
+- `team_route_handles --rebind --append-legacy`: giữ 166 handle Đội khác đã công bố, cấp 277 handle mới (team-intro-56..65, `youtube-*`); trùng handle đang sống thì thêm slug id đội (vd `uc-hu-di-team-intro-62`). Recommended giữ 1681 handle, 46 tombstone không đổi.
+- Test: ghim 443 đội gốc, sitemap 6292 + trang mùa; "Hành Ách Trận" vào danh sách chiến pháp chờ nguồn (Tra cứu chưa có bản ghi).
+
 ## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
 
 - Fixed: ghi chú chia đội Thương/Kỵ trong `data/khaihoang.json` ghi "Hoàng Nguyệt Anh (Vô Đương / Bạch Nhị)" thay "Bạch Nhĩ", cùng cách viết 白毦 = "Bạch Nhị Binh" của Đội chuẩn (#64). Ghi chú lớp `authored-vi`, không có bản zh.

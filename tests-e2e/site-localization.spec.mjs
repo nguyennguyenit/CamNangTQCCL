@@ -31,7 +31,8 @@ test("localization-red-note: Recommended detail renders reviewed Vietnamese note
 test("legacy detail renders its exact approved note instead of raw Han text", async ({ page, request }) => {
   const teams = await (await request.get("/data/teams.json")).json();
   const display = await (await request.get("/data/website-display.json")).json();
-  const index = 160;
+  // team-intro-50 (ghi chú gốc có chữ Hán); đứng sau 10 đội Team giới thiệu mới thêm ở mùa Hán Diễm Trường Minh.
+  const index = 170;
   const team = teams[index];
   const key = JSON.stringify([`data:data/teams.json:[${index}]`, `[${index}].notes`]);
   const approved = display.values[key];
