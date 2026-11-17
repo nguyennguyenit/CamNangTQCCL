@@ -17,8 +17,13 @@ const legacySegment = Object.values(handles.legacy)[0];
 const khaiHoangSegment = Object.values(handles.khaihoang)[0];
 const lookupHandles = JSON.parse(await readFile(new URL('../pipeline/lookup-route-handles.json', import.meta.url), 'utf8')).handles;
 const lookupJa = JSON.parse(await readFile(new URL('../data/lookup-ja.json', import.meta.url), 'utf8'));
-/** Ký tự phồn/giản thể có dạng Nhật khác (`data/ja-kanji-variants.json`): trang đội ja không được còn chữ Hán nguồn chưa đổi. */
-const SOURCE_ONLY_KANJI = new Set(Object.keys(JSON.parse(await readFile(new URL('../data/ja-kanji-variants.json', import.meta.url), 'utf8')).map));
+/**
+ * Ký tự phồn/giản thể có dạng Nhật khác (`data/ja-kanji-variants.json`): trang đội ja không được còn chữ Hán nguồn chưa đổi. Trừ
+ * ký tự có trong tên Nhật của `data/lookup-ja.json` (tên đã thấy ở nguồn Nhật, như 焰逐風飛) và tên game 三國志 của tên site.
+ */
+const JA_NAME_CHARS = new Set(Object.values(lookupJa.entries).flatMap((entry) => [...entry.name]));
+const SOURCE_ONLY_KANJI = new Set(Object.keys(JSON.parse(await readFile(new URL('../data/ja-kanji-variants.json', import.meta.url), 'utf8')).map)
+  .filter((char) => !JA_NAME_CHARS.has(char)));
 
 /** Chữ Việt có dấu (kể cả đ); chữ Latin không dấu như "Beta", "SP" hay mã mùa không bị tính. */
 const VIETNAMESE = /[ăâđêôơưàảãáạằẳẵắặầẩẫấậèẻẽéẹềểễếệìỉĩíịòỏõóọồổỗốộờởỡớợùủũúụừửữứựỳỷỹýỵ]/iu;
@@ -145,7 +150,7 @@ test('ba họ trang chi tiết và một trang mùa bản Nhật: tiêu đề ch
     await expectJapaneseOnly(page, '.detail-back-row, #team-detail-root');
     await expectJapaneseOnly(page, 'footer.site-footer');
     // Tên tướng/chiến pháp/đội là tên Nhật hoặc tự dạng Nhật, không còn chữ Hán nguồn thô (như 轉, 將).
-    const shown = `${await page.title()}\n${await page.locator('#team-detail-title, #team-detail-root').allInnerTexts().then((texts) => texts.join('\n'))}`;
+    const shown = `${await page.title()}\n${await page.locator('#team-detail-title, #team-detail-root').allInnerTexts().then((texts) => texts.join('\n'))}`.replaceAll('三國志', '');
     expect([...new Set([...shown].filter((char) => SOURCE_ONLY_KANJI.has(char)))], `chữ Hán nguồn chưa đổi ở ${viPath}`).toEqual([]);
   }
 
