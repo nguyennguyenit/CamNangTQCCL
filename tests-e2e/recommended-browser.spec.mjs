@@ -54,15 +54,13 @@ test('cards expose holders tactics books and a native detail link',async({page})
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
-test('Team khác honors explicit factions and seasons',async({page})=>{
+test('Team khác honors explicit factions; its single season is a static label, not a select',async({page})=>{
   await page.goto('/doi-khac/?faction=Thục');
   // Thẻ dựng sẵn hiện trước khi app.js chạy: chờ khởi động xong mới thao tác bộ lọc.
   await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
-  const season=page.locator('#section-team-khac').getByLabel('Mùa',{exact:true});
-  const known=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).find(value=>value!=='all'&&value!=='unknown'));
-  await season.selectOption(known);
-  await expect(page.locator('#section-team-khac .reference-team-card')).toHaveCount(0);
+  await expect(page.locator('#section-team-khac').getByLabel('Mùa',{exact:true})).toHaveCount(0);
+  await expect(page.locator('#section-team-khac select')).toHaveCount(0);
 });
 
 test('season scope changes stay on the browser; a retired category key is stripped and never narrows the list',async({page,request})=>{
@@ -860,7 +858,7 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
   await expect(firstChip).toBeFocused();
 });
 
-// Mỗi ô "Mùa" và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
+// Ô "Mùa" của Đội chuẩn và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
 for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
   test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
     await page.setViewportSize({width:1280,height:900});
@@ -873,7 +871,8 @@ for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/
       node.querySelector('.filter-collapse-toggle svg'),
       ...node.querySelectorAll('.fgroup button[aria-expanded] svg'),
     ].map(svg=>svg ? svg.querySelectorAll('polyline, line').length : -1));
-    expect(strokes[0]).toBe(1);
+    // Đội khác chỉ có nhãn mùa tĩnh: không ô chọn nên không có mũi tên.
+    expect(strokes[0]).toBe(section==='#section-team-chuan' ? 1 : -1);
     expect(strokes[1]).toBe(3);
     expect(strokes.slice(2)).toEqual(strokes.slice(2).map(()=>1));
   });

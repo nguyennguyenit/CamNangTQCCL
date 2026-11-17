@@ -3763,6 +3763,21 @@ body[data-page-section="team-khac"] .layout {
   pointer-events: none;
 }
 
+/* Đội khác chỉ có một mùa: cùng khung với ô chọn nhưng là chữ tĩnh, không bấm được. */
+.reference-season-field.reference-season-static {
+  cursor: default;
+}
+
+.reference-season-field.reference-season-static:hover {
+  border-color: var(--line);
+}
+
+.reference-season-name {
+  padding: var(--space-26) var(--space-14) var(--space-8);
+  font: var(--type-control);
+  overflow-wrap: anywhere;
+}
+
 /* Select phủ cả khung (nhãn nằm trong vùng đệm trên) để bấm đâu cũng mở danh sách. */
 .reference-season-field select {
   width: 100%;

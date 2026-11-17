@@ -17,6 +17,7 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
 
 /**
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
+ * Đội khác chỉ có một mùa nên không giữ `season` (bị bỏ lặng lẽ như khóa lạ).
  * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và `category` (bộ chọn danh mục đã bỏ); thêm `view` cho chế độ Thẻ/Bảng.
  * Cùng Tồn chỉ có nhóm, cấu hình và phạm vi kịch bản/luật; Soi đội giữ mùa đối chiếu và đội đã xác nhận
  * (`doi`, chỉ ID canonical); Gợi ý đội giữ mùa đang chọn.
@@ -24,7 +25,7 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
   '/doi-chuan/': ['season','q','faction','unit','tier','view','subcategory','source','scenario','ruleset','config'],
-  '/doi-khac/': ['season','q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-khac/': ['q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['group','config','scenario','ruleset'],
   '/soi-doi-tu-anh/': ['season','doi'],
   '/goi-y-doi-tu-kho/': ['season'],

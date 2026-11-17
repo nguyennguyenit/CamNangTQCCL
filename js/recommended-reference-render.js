@@ -1,5 +1,5 @@
 import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
-import { legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
+import { isRecommendedOtherRow, legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
@@ -202,6 +202,9 @@ export function detailBadges(row,labels,{locale}={}) {
   return withLocale(locale,()=>badgeTrees(row,labels));
 }
 
+/** Nhãn chữ "Đề cử" của hàng Đội khác được đề cử (thẻ, thẻ gọn, bảng, đầu trang chi tiết); không chỉ dựa vào màu. */
+const referenceRecommendedBadge=()=>t('span',{class:'badge badge-band reference-recommended'},L('Đề cử','推荐'));
+
 function badgeTrees(row,labels) {
   const nodes=[];
   const rawFaction=row?.factionRaw ?? row?.faction;
@@ -216,6 +219,8 @@ function badgeTrees(row,labels) {
   }
   const recommended=khaihoangRecommendedBadge({recommended:row?.khaihoangRecommended});
   if (recommended) nodes.push(recommended);
+  // Trang chi tiết Đội khác: `referenceRecommended` do builder trang gắn từ hàng `other-teams.json` của đội.
+  if (row?.referenceRecommended === true) nodes.push(referenceRecommendedBadge());
   return nodes;
 }
 
@@ -380,6 +385,7 @@ function metaLine(row,labels) {
     .map(value=>kindLabel(labels,'unit',value))
     .filter(Boolean);
   const nodes=[];
+  if (isRecommendedOtherRow(row)) nodes.push(referenceRecommendedBadge());
   if (row.sourceConfigId && row.tierRaw) nodes.push(t('span',{class:'badge tier reference-tier',title:'Tier'},sourceTierLabel(row.tierRaw)));
   if (faction.label) nodes.push(t('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(t('span',{class:'reference-units'},units.join(' · ')));
