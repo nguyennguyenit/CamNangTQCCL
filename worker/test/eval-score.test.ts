@@ -127,9 +127,11 @@ describe("fixture ảnh client Nhật (alias tên Nhật)", () => {
 
   it("tên Nhật trùng chữ Hán nguồn của mục khác: chỉ mục ja chấm theo chủ tên Nhật, chỉ mục thường giữ như cũ", () => {
     // Bản Nhật gọi 固若金湯 là 金城湯池; 金城湯池 cũng là chữ Hán nguồn của tactic:kim-thanh-thang-tri (bản Nhật: 湯池鉄城).
-    expect(jaIndexes.tactics.exact.get("金城湯池")).toBe("tactic:co-nhuoc-kim-thang");
-    expect(jaIndexes.tactics.exact.get("湯池鉄城")).toBe("tactic:kim-thanh-thang-tri");
-    expect(baseIndexes.tactics.exact.get("金城湯池")).toBe("tactic:kim-thanh-thang-tri");
+    // `Indexes` giữ chỉ mục ở dạng `unknown` (hợp đồng của js/analyze-map.js không có kiểu); test chỉ đọc bảng tên chính xác.
+    const exactOf = (indexes: typeof jaIndexes) => (indexes.tactics as { exact: Map<string, string | null> }).exact;
+    expect(exactOf(jaIndexes).get("金城湯池")).toBe("tactic:co-nhuoc-kim-thang");
+    expect(exactOf(jaIndexes).get("湯池鉄城")).toBe("tactic:kim-thanh-thang-tri");
+    expect(exactOf(baseIndexes).get("金城湯池")).toBe("tactic:kim-thanh-thang-tri");
   });
 
   it("trường locale: ja đánh dấu fixture Nhật dù tên không có -ja-", () => {
