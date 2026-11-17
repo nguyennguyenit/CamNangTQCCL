@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 // Trang riêng từng mục Tra cứu (/tra-cuu/<nhóm>/<slug>/): thẻ ở trang nhóm là link tới trang đó, click thường vẫn mở hộp
 // thoại; trang riêng đọc được không cần JavaScript; trang nhóm dựng sẵn đủ mọi mục nhưng khi có JavaScript chỉ trang đầu hiện.
 const LEDGER = JSON.parse(readFileSync(new URL("../pipeline/lookup-route-handles.json", import.meta.url), "utf8")).handles;
-const GROUP_SLUG = { heroes: "tuong", tactics: "chien-phap", equipment: "trang-bi", advisors: "quan-su", "troop-mods": "cai-tao-binh-chung", buildings: "cong-trinh", books: "binh-thu" };
+const GROUP_SLUG = { heroes: "tuong", tactics: "chien-phap", equipment: "trang-bi", advisors: "quan-su", "troop-mods": "cai-tao-binh-chung", buildings: "cong-trinh", books: "binh-thu", qilue: "ky-luoc" };
 const LOCALES = [["vi", ""], ["zh", "/zh"]];
 const itemPath = (group, id, prefix = "") => `${prefix}/tra-cuu/${GROUP_SLUG[group]}/${LEDGER[group][id]}/`;
 const firstId = (group) => Object.keys(LEDGER[group])[0];
@@ -224,4 +224,26 @@ test("?id= cũ trên trang nhóm vẫn mở hộp thoại cho chiến pháp, bin
     await page.goto(`/tra-cuu/${slug}/?id=${encodeURIComponent(firstId(group))}`);
     await expect(page.locator(".lookup-dialog")).toBeVisible();
   }
+});
+
+test.describe("kỳ lược: trang riêng đọc được không cần JavaScript", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("thẻ Bố Trí Thập Diện có hiệu ứng nguyên văn và link phương lược; bản zh dùng tên game và cờ dịch", async ({ page }) => {
+    await page.goto(itemPath("qilue", "qilue-card:bo-tri-thap-dien"), { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toHaveText("Bố Trí Thập Diện");
+    await expect(page.locator("main")).toContainText("Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%");
+    await expect(page.locator("main")).toContainText("Dùng được với phương lược");
+    await expect(page.locator(`main a[href="${itemPath("qilue", "qilue-strategy:muu-tinh")}"]`)).toHaveCount(1);
+    await page.goto(itemPath("qilue", "qilue-card:bo-tri-thap-dien", "/zh"), { waitUntil: "domcontentloaded" });
+    await expect(page.locator("h1")).toHaveText("設伏十面");
+    await expect(page.locator('main [data-zh-source="translation"]')).toHaveCount(1);
+  });
+
+  test("phương lược Mưu tính có buff và link loại thẻ sang danh sách đã lọc", async ({ page }) => {
+    await page.goto(itemPath("qilue", "qilue-strategy:muu-tinh"), { waitUntil: "domcontentloaded" });
+    await expect(page.locator("main")).toContainText("Hiệu quả mỗi thẻ");
+    await expect(page.locator('main a[href="/tra-cuu/ky-luoc/?type=muu"]')).toHaveCount(1);
+    await expect(page.locator('main a[href="/tra-cuu/ky-luoc/?type=phu"]')).toHaveCount(1);
+  });
 });

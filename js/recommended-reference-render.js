@@ -2,6 +2,7 @@ import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTact
 import { isRecommendedOtherRow, legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
+import { qilueLabel } from './lookup-detail.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
 import { L, currentLocale, localePath, withLocale } from './i18n.js';
 import { enableControl } from './view-tree.js';
@@ -630,7 +631,8 @@ export function recommendedListTrees(rows,{family,mode,limit=rows.length,labels,
   }));
 }
 
-function notesByOwner(record) {
+/** `hiddenBlockId`: block ghi chú mà section Kỳ lược đã thể hiện trọn (`qilue.hideNoteBlockId`), bỏ khỏi khối Ghi chú. */
+function notesByOwner(record,hiddenBlockId=null) {
   const blocks=record.displayNotes?.blocks;
   if (!Array.isArray(blocks)) {
     return {team:[unavailable()],primary:new Map(),alternative:new Map(),projected:false};
@@ -639,6 +641,7 @@ function notesByOwner(record) {
   const primary=new Map();
   const alternative=new Map();
   for (const block of blocks) {
+    if (hiddenBlockId && block?.id === hiddenBlockId) continue;
     // Bản zh dùng nguyên văn nguồn (`textRaw`), bản vi dùng bản dịch (`textVi`).
     const value=(isZh() ? block?.textRaw : block?.textVi) || unavailable();
     const bucket=block.owner === 'primary' ? primary : block.owner === 'alternative' ? alternative : null;
@@ -687,14 +690,161 @@ const legacyTitle=(content,fallback)=>isZh()
   ? lineupTitle(content.heroes) || fallback
   : content.nickname || content.name || fallback;
 
-/** Nội dung chi tiết Team chuẩn cho trang riêng; trả mảng cây view (các section), không tự tạo article/h1. */
-export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null,lookupLinks=null,locale}={}) {
-  return withLocale(locale,()=>recommendedDetailTrees(record,{legacyTeams,lookupLinks}));
+const QILUE_KINDS=[['qilueStrategies','qilue-strategy:'],['qilueCards','qilue-card:']];
+
+/**
+ * Bảng tra kỳ lược `{mã → {nameVi, nameZh, type, rarity}}` từ `lookup-catalog.json` (`qilueStrategies` + `qilueCards`;
+ * phương lược có `type`/`rarity` là `null`). Build dựng một lần từ catalog đã pin, dùng chung cho bản vi, zh và llms.
+ * Catalog thiếu nhóm, mã sai tiền tố/trùng hay thiếu tên là dữ liệu hỏng: ném lỗi thay vì dựng ô thiếu.
+ */
+export function qilueLookupTable(catalog) {
+  const table={};
+  for (const [key,prefix] of QILUE_KINDS) {
+    const rows=catalog?.[key];
+    if (!Array.isArray(rows)) throw new Error(`Lookup catalog has no ${key}`);
+    for (const row of rows) {
+      const id=row?.id;
+      const names=[row?.nameVi,row?.nameZh];
+      if (typeof id !== 'string' || !id.startsWith(prefix) || Object.hasOwn(table,id) || !names.every(name=>typeof name === 'string' && name.trim())) {
+        throw new Error(`Lookup catalog has an invalid ${key} row: ${String(id)}`);
+      }
+      table[id]=Object.freeze({nameVi:row.nameVi.trim(),nameZh:row.nameZh.trim(),type:row.type ?? null,rarity:row.rarity ?? null});
+    }
+  }
+  return Object.freeze(table);
 }
 
-function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
+/** Một mục kỳ lược theo ngôn ngữ trang; mã không có trong bảng tra là dữ liệu publish hỏng nên build dừng. */
+function qilueItem(table,id,prefix) {
+  if (typeof id !== 'string' || !id.startsWith(prefix) || !Object.hasOwn(table,id)) throw new Error(`Unknown qilue id: ${String(id)}`);
+  const row=table[id];
+  const path=lookupItemPath(id);
+  return {id,name:isZh() ? row.nameZh : row.nameVi,type:row.type,rarity:row.rarity,href:path ? localePath(path) : null};
+}
+
+/**
+ * Mô hình hiển thị của `record.qilue` (xem pipeline/recommended_qilue.py): `{strategy, cards, ordered}` hoặc, với dạng chép
+ * (`form: copy`), `{sources:[{name, href, model}]}` — đội nguồn tra trong `teams` (index cùng generation) theo
+ * `sourceConfigId`; đội nguồn chưa có kỳ lược thì `model` là `null` (chỉ còn link). Không có bảng tra thì không dựng gì.
+ */
+function qilueModel(qilue,table,teams) {
+  if (!qilue || typeof qilue !== 'object' || !table) return null;
+  if (qilue.form === 'copy') {
+    const ids=Array.isArray(qilue.copyFrom) ? qilue.copyFrom : [];
+    const sources=ids.map(sourceConfigId=>{
+      const row=teams?.get?.(sourceConfigId);
+      if (!row) throw new Error(`Recommended qilue copy source is not in the generation: ${String(sourceConfigId)}`);
+      const model=row.qilue?.form === 'copy' ? null : qilueModel(row.qilue,table,teams);
+      return {name:rowDisplayName(row),href:teamDetailPath({sourceConfigId}),model};
+    });
+    return sources.length ? {sources} : null;
+  }
+  const cards=(Array.isArray(qilue.cardIds) ? qilue.cardIds : []).map(id=>qilueItem(table,id,'qilue-card:'));
+  if (!cards.length) return null;
+  const strategy=qilue.strategyId == null ? null : qilueItem(table,qilue.strategyId,'qilue-strategy:');
+  return {strategy,cards,ordered:qilue.ordered === true};
+}
+
+/** Nhãn hiệp của ô thứ `index` (thẻ đầu dùng ở hiệp 2). */
+const qilueRound=index=>L(`Hiệp ${index+2}`,`第${index+2}回合`);
+
+/**
+ * Một thẻ kỳ lược: tên, nhãn loại có màu (`data-tone`), dấu Hiếm — cùng class nhãn với Tra cứu (`lookup-qilue-tag`,
+ * `lookup-qilue-rare`); có trang riêng Tra cứu thì cả ô là link.
+ */
+function qilueCard(card) {
+  const rare=card.rarity === 'rare' ? qilueLabel('rarity','rare') : null;
+  const type=qilueLabel('type',card.type);
+  const children=[
+    t('span',{class:'detail-qilue-card-name'},card.name),
+    t('span',{class:'detail-qilue-marks'},[
+      type ? t('span',{class:'lookup-qilue-tag','data-tone':card.type},type) : null,
+      rare ? t('span',{class:'lookup-qilue-rare'},rare) : null,
+    ]),
+  ];
+  const attrs={class:card.href ? 'detail-qilue-card is-link' : 'detail-qilue-card','data-tone':card.type};
+  return card.href
+    ? t('a',{...attrs,href:card.href,title:L('Mở trong Tra cứu','在图鉴查询中打开')},children)
+    : t('span',attrs,children);
+}
+
+/** Chip phương lược, lưới "Hiệp 2…" (có thứ tự) hoặc chú thích + chip thẻ (không thứ tự) của một mô hình kỳ lược. */
+function qilueBody(model) {
+  const strategy=model.strategy ? t('p',{class:'detail-qilue-strategy'},[
+    t('span',{class:'detail-qilue-label'},L('Phương lược','作戰方略')),
+    model.strategy.href
+      ? t('a',{class:'detail-qilue-chip is-link',href:model.strategy.href,title:L('Mở trong Tra cứu','在图鉴查询中打开')},model.strategy.name)
+      : t('span',{class:'detail-qilue-chip'},model.strategy.name),
+  ]) : null;
+  if (!model.ordered) {
+    return [strategy,
+      t('p',{class:'detail-qilue-note'},L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序')),
+      t('ul',{class:'detail-qilue-chips'},model.cards.map(card=>t('li',{},qilueCard(card)))),
+    ];
+  }
+  return [strategy,t('ol',{class:'detail-qilue-rounds',dataset:{count:model.cards.length}},model.cards.map((card,index)=>t('li',{class:'detail-qilue-round'},[
+    t('span',{class:'detail-qilue-round-label'},qilueRound(index)),
+    qilueCard(card),
+  ])))];
+}
+
+/** Dòng gọn cho chữ thuần (llms): "Kỳ lược (Mưu tính): Hiệp 2 …, …" hoặc danh sách thẻ kèm câu "không ghi thứ tự". */
+function qilueLine(model,prefix=L('Kỳ lược','奇略')) {
+  const strategy=model.strategy ? L(` (${model.strategy.name})`,`（${model.strategy.name}）`) : '';
+  const separator=L(', ','、');
+  if (!model.ordered) {
+    const names=model.cards.map(card=>card.name).join(separator);
+    return `${prefix}${strategy}${L(': ','：')}${names}${L('. ','。')}${L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序')}${L('.','。')}`;
+  }
+  return `${prefix}${strategy}${L(': ','：')}${model.cards.map((card,index)=>`${qilueRound(index)} ${card.name}`).join(separator)}`;
+}
+
+/**
+ * Section "Kỳ lược" của trang chi tiết (giữa Đội hình và Ghi chú). `plainText`: bản chữ thuần cho llms, mỗi kỳ lược
+ * thu về một dòng gọn thay cho lưới ô.
+ */
+function qilueSection(model,{plainText=false}={}) {
+  const sectionClass='detail-section detail-qilue';
+  if (plainText) {
+    const lines=model.sources
+      ? [
+        L(`Dùng kỳ lược của: ${model.sources.map(source=>source.name).join(', ')}`,`沿用此队奇略：${model.sources.map(source=>source.name).join('、')}`),
+        ...model.sources.filter(source=>source.model).map(source=>qilueLine(source.model,model.sources.length > 1 ? `${source.name} · ${L('Kỳ lược','奇略')}` : undefined)),
+      ]
+      : [qilueLine(model)];
+    return t('section',{class:sectionClass},lines.map(line=>t('p',{class:'detail-qilue-line'},line)));
+  }
+  const title=t('h2',{},L('Kỳ lược','奇略'));
+  if (!model.sources) return t('section',{class:sectionClass},[title,...qilueBody(model)]);
+  const links=model.sources.flatMap((source,index)=>[
+    index ? L(', ','、') : null,
+    source.href ? t('a',{class:'detail-qilue-team',href:source.href,dataset:{teamDetailLink:''}},source.name) : t('span',{class:'detail-qilue-team'},source.name),
+  ]);
+  return t('section',{class:sectionClass},[
+    title,
+    t('p',{class:'detail-qilue-copy'},[L('Dùng kỳ lược của:','沿用此队奇略：'),' ',...links]),
+    ...model.sources.filter(source=>source.model).map(source=>t('div',{class:'detail-qilue-source'},[
+      model.sources.length > 1 ? t('p',{class:'detail-qilue-source-name'},source.name) : null,
+      ...qilueBody(source.model),
+    ])),
+  ]);
+}
+
+/**
+ * Nội dung chi tiết Team chuẩn cho trang riêng; trả mảng cây view (các section), không tự tạo article/h1.
+ * `qilueTable` (`qilueLookupTable`) + `qilueTeams` (Map `sourceConfigId → bản ghi index` cùng generation) bật section
+ * Kỳ lược; `plainText` dựng bản chữ thuần cho llms.
+ */
+export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null,lookupLinks=null,qilueTable=null,qilueTeams=null,plainText=false,locale}={}) {
+  return withLocale(locale,()=>recommendedDetailTrees(record,{legacyTeams,lookupLinks,qilueTable,qilueTeams,plainText}));
+}
+
+function recommendedDetailTrees(record,{legacyTeams,lookupLinks,qilueTable,qilueTeams,plainText}) {
   const out=[];
-  const notes=notesByOwner(record);
+  const qilue=qilueModel(record.qilue,qilueTable,qilueTeams);
+  // Block ghi chú mà section Kỳ lược đã thể hiện trọn chỉ ẩn khi section thật sự được dựng (trang chi tiết).
+  const hiddenNote=qilue && typeof record.qilue.hideNoteBlockId === 'string' ? record.qilue.hideNoteBlockId : null;
+  const notes=notesByOwner(record,hiddenNote);
   const holders=record.heroes || record.holders || [];
   const alternatives=record.alternativeHoldersRaw || [];
   const roles=detailHeroRoles();
@@ -706,6 +856,7 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
     links,
   }));
   if (heroCards.length) out.push(section(L('Đội hình','阵容'),t('div',{class:'detail-hero-grid'},heroCards)));
+  if (qilue) out.push(qilueSection(qilue,{plainText}));
   // Ghi chú đội + ghi chú từng tướng gom về một khối dưới đội hình, không nằm trong thẻ tướng.
   const holderNotes=(owners,bucket,offset=0)=>owners.map((holder,position)=>({
     label:isSourceEmpty(holder) ? null : holderLabel(holder),

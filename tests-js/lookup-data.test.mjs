@@ -197,11 +197,18 @@ test("ID bản ghi phải đúng tiền tố và duy nhất", async () => {
   await assert.rejects(validateLookupBundle(duplicatedAcrossGroups.manifest, duplicatedAcrossGroups.rawFiles), /advisor:an-phuc-binh-tam/);
 });
 
-test("catalog phải đủ sáu khóa nhóm, không thừa không thiếu", async () => {
+test("catalog phải đủ tám khóa nhóm (gồm hai khóa kỳ lược), không thừa không thiếu", async () => {
   const missingGroup = catalogDoc();
   delete missingGroup.buildings;
   const missing = withRaw("lookup-catalog.json", missingGroup);
   await assert.rejects(validateLookupBundle(missing.manifest, missing.rawFiles), /buildings/);
+
+  for (const key of ["qilueStrategies", "qilueCards"]) {
+    const withoutQilue = catalogDoc();
+    delete withoutQilue[key];
+    const bundle = withRaw("lookup-catalog.json", withoutQilue);
+    await assert.rejects(validateLookupBundle(bundle.manifest, bundle.rawFiles), new RegExp(key), key);
+  }
 
   const extraGroup = withRaw("lookup-catalog.json", catalogDoc({ books: [] }));
   await assert.rejects(validateLookupBundle(extraGroup.manifest, extraGroup.rawFiles), /books|lookup-catalog\.json/);
@@ -484,4 +491,54 @@ test("zhSource của catalog: có khi và chỉ khi hàng có chữ Hán chính,
     const bad = make(over);
     await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /advisor:an-phuc-binh-tam/, label);
   }
+});
+
+test("kỳ lược: hàng phương lược và thẻ đúng hợp đồng được nhận; aliasesZh luôn là [nameZh], mã/loại/độ hiếm/đối tượng/zhSource lệch bị từ chối", async () => {
+  const ok = bundleFixture();
+  const bundle = await validateLookupBundle(ok.manifest, ok.rawFiles);
+  assert.equal(bundle.catalog.qilueStrategies.length, 3);
+  assert.equal(bundle.catalog.qilueCards.length, 7);
+
+  const base = catalogDoc();
+  const card = (over) => withRaw("lookup-catalog.json", { ...base, qilueCards: [{ ...base.qilueCards[0], ...over }, ...base.qilueCards.slice(1)] });
+  const strategy = (over) => withRaw("lookup-catalog.json", { ...base, qilueStrategies: [{ ...base.qilueStrategies[0], ...over }, ...base.qilueStrategies.slice(1)] });
+  for (const [label, bad] of [
+    ["biến thể chữ Hán lọt vào aliasesZh", card({ aliasesZh: [base.qilueCards[0].nameZh, "十面埋伏"] })],
+    ["aliasesZh khác nameZh", card({ aliasesZh: ["設伏十面"] })],
+    ["nameZh không có chữ Hán", card({ nameZh: "Bo Tri", aliasesZh: ["Bo Tri"] })],
+    ["loại thẻ lạ", card({ type: "khac" })],
+    ["độ hiếm lạ", card({ rarity: "epic" })],
+    ["đối tượng ngoài năm giá trị", card({ targetVi: "Tôi" })],
+    ["hiệu ứng rỗng", card({ effectVi: "" })],
+    ["có chữ Hán hiệu ứng mà thiếu zhSource", card({ zhSource: null })],
+    ["khóa thừa", card({ strategies: [] })],
+    ["mã sai tiền tố", card({ id: "qilue:bo-tri-thap-dien" })],
+    ["điều kiện kind lạ", card({ conditions: [{ kind: "khac", textVi: "x" }] })],
+    ["phương lược thiếu buff", strategy({ buffVi: null })],
+    ["phương lược một loại thẻ", strategy({ cardTypes: ["dung"] })],
+    ["phương lược loại thẻ trùng", strategy({ cardTypes: ["dung", "dung"] })],
+    ["phương lược loại thẻ lạ", strategy({ cardTypes: ["dung", "khac"] })],
+    ["phương lược mã của thẻ", strategy({ id: "qilue-card:cuong-cong" })],
+  ]) {
+    await assert.rejects(validateLookupBundle(bad.manifest, bad.rawFiles), /qilue/, label);
+  }
+
+  const translatedSeason = strategy({ conditions: [{ kind: "season", textVi: "Mùa", textZh: "賽季" }] });
+  await validateLookupBundle(translatedSeason.manifest, translatedSeason.rawFiles);
+  const noZh = card({ effectZh: null, zhSource: null });
+  await validateLookupBundle(noZh.manifest, noZh.rawFiles);
+});
+
+test("bộ giá trị kỳ lược của cổng dữ liệu khớp đúng bảng nhãn hiển thị (vi + zh)", async () => {
+  const { QILUE_CARD_TYPES, QILUE_RARITIES, QILUE_TARGETS } = await import("../js/lookup-data.js");
+  const { QILUE_TYPE_ORDER, qilueLabel } = await import("../js/lookup-detail.js");
+  assert.deepEqual([...QILUE_TYPE_ORDER], [...QILUE_CARD_TYPES]);
+  assert.deepEqual(QILUE_CARD_TYPES.map((type) => qilueLabel("type", type, "vi")), ["Dũng", "Mưu", "Phụ", "Sách", "Tế"]);
+  assert.deepEqual(QILUE_CARD_TYPES.map((type) => qilueLabel("type", type, "zh")), ["勇", "謀", "輔", "策", "濟"]);
+  assert.deepEqual(QILUE_RARITIES.map((rarity) => [qilueLabel("rarity", rarity, "vi"), qilueLabel("rarity", rarity, "zh")]), [["Thường", "普通"], ["Hiếm", "稀有"]]);
+  assert.deepEqual(QILUE_TARGETS.map((target) => [qilueLabel("target", target, "vi"), qilueLabel("target", target, "zh")]), [
+    ["Toàn quân ta", "我軍全體"], ["Một quân ta", "我軍單體"], ["Nhóm quân ta", "我軍群體"], ["Một quân địch", "敵軍單體"], ["Toàn quân địch", "敵軍全體"],
+  ]);
+  assert.equal(qilueLabel("type", "khac", "vi"), null);
+  assert.equal(qilueLabel("target", "Tôi", "zh"), null);
 });

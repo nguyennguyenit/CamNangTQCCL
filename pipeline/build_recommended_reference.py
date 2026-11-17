@@ -12,6 +12,7 @@ from pipeline.common import canonical_json, sha256_hex
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.tactic_summaries import build_tactic_summaries, validate_tactic_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
+from pipeline.recommended_qilue import compute_qilue
 from pipeline.recommended_identity import (
     build_display_mapping,
     resolve_display_kind,
@@ -50,6 +51,7 @@ def raw_source_record(row):
     display_fields = {
         "displayNameVi",
         "displayNotes",
+        "qilue",
         "legacyReferences",
         "sourceSeasonNameVi",
         "sourceSeasonCode",
@@ -121,8 +123,13 @@ def _validated_display_notes(value, row):
     return value
 
 
-def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
-    """Re-derive display lineage from authoritative raw inputs at the publication boundary."""
+def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
+                               qilue_catalog_bytes=None, qilue_overrides_bytes=None):
+    """Re-derive display lineage from authoritative raw inputs at the publication boundary.
+
+    `qilue_catalog_bytes` (lookup-catalog.json của CÙNG lookup candidate) và `qilue_overrides_bytes` đi cùng nhau:
+    có thì mỗi đội thuộc mùa trong overrides nhận projection hiển thị `qilue` (xem `pipeline/recommended_qilue.py`),
+    ghi giống hệt ở index và detail; manifest ghim hash của cả hai input."""
     if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes)):
         raise ValueError("Publication requires authoritative teams, content links, ledger and catalog bytes")
     candidate = copy.deepcopy(inputs)
@@ -200,6 +207,24 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
             _validated_display_notes(detail_notes, detail)
             if index_notes != detail_notes:
                 raise ValueError("Recommended index/detail displayNotes differ")
+
+    if (qilue_catalog_bytes is None) != (qilue_overrides_bytes is None):
+        raise ValueError("Qilue publication needs both the lookup catalog and the overrides")
+    if qilue_catalog_bytes is not None:
+        qilue = compute_qilue(
+            candidate.get("records") or [],
+            json.loads(bytes(qilue_catalog_bytes)),
+            json.loads(bytes(qilue_overrides_bytes)),
+        )
+        # Hàng detail của source pack không mang `safeScopeKey`: khóa scope của nó là khóa nhóm `details` (`detail_scope`).
+        targets = [((row.get("safeScopeKey"), row.get("sourceConfigId")), row) for row in candidate.get("records") or []]
+        targets += [((detail_scope[identifier], identifier), row) for identifier, row in details_by_id.items()]
+        for key, row in targets:
+            value = qilue.get(key)
+            if value is not None:
+                row["qilue"] = copy.deepcopy(value)
+        candidate["qilueCatalogHash"] = "sha256:" + sha256_hex(bytes(qilue_catalog_bytes))
+        candidate["qilueOverridesHash"] = "sha256:" + sha256_hex(bytes(qilue_overrides_bytes))
 
     if ledger.get("dedupKeyVersion") != 1 or candidate.get("dedupKeyVersion") != 1:
         raise ValueError("Unsupported Team khác dedup key version")
@@ -355,6 +380,8 @@ def validate_generation_inputs(inputs):
                     _validated_display_notes(index_row["displayNotes"], index_row)
                     if index_row["displayNotes"] != detail_row.get("displayNotes"):
                         raise ValueError("Recommended index/detail displayNotes differ")
+                if index_row.get("qilue") != detail_row.get("qilue"):
+                    raise ValueError("Recommended index/detail qilue differ")
     admitted = inputs.get("otherTeams", [])
     if any(row.get("classification") != "distinct" for row in admitted):
         raise ValueError("Public Team khác may contain admitted rows only")
@@ -429,6 +456,9 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "tacticSummaryCatalogHash": inputs["tacticCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
+    for key in ("qilueCatalogHash", "qilueOverridesHash"):
+        if inputs.get(key) is not None:
+            descriptor[key] = inputs[key]
     generation_id = sha256_hex(canonical_bytes(descriptor))
     target = output / generation_id
     if not target.exists():
@@ -456,7 +486,8 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     os.replace(temporary, output / "current.json")
     return selector
 
-def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
+def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
+                     qilue_catalog_bytes=None, qilue_overrides_bytes=None):
     candidate = prepare_publication_inputs(
         inputs,
         teams_bytes=teams_bytes,
@@ -464,6 +495,8 @@ def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
         tactic_catalog_bytes=tactic_catalog_bytes,
+        qilue_catalog_bytes=qilue_catalog_bytes,
+        qilue_overrides_bytes=qilue_overrides_bytes,
     )
     validate_generation_inputs(candidate)
     output = Path(output)

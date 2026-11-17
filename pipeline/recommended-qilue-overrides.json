@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "seasons": [
+    "pk-s27"
+  ],
+  "noteVariantsZh": {
+    "十面埋伏": "qilue-card:bo-tri-thap-dien",
+    "合圍突擊": "qilue-card:hop-vay-giap-kich",
+    "圯橋授書": "qilue-card:nhan-sach-di-kieu",
+    "壯志不決": "qilue-card:chi-khi-ngap-tran",
+    "居儉避貨": "qilue-card:tranh-hoa-cu-kiem",
+    "延治軍勢": "qilue-card:tri-duyen-quan-the",
+    "推衣解食": "qilue-card:nhuong-com-se-ao",
+    "摧鋒陷陣": "qilue-card:pha-mui-giap-dich",
+    "敗中求勝": "qilue-card:song-trong-that-bai",
+    "斬將納降": "qilue-card:tram-dich-chieu-hang",
+    "斬敵納降": "qilue-card:tram-dich-chieu-hang",
+    "芒場影蹤": "qilue-card:an-tich-mang-thuong",
+    "鴻門避險": "qilue-card:lanh-hiem-hong-mon",
+    "鴻門遇險": "qilue-card:lanh-hiem-hong-mon"
+  },
+  "copyFrom": {
+    "s27-chuanzi-gong": [
+      "s27-lp-huangma-qiang-ay"
+    ],
+    "s27-lp-beifa-qiang": [
+      "s27-lp-wumou-ay"
+    ],
+    "s27-lp-taiwei-dun-ay": [
+      "s27-lp-juma-gong-ay"
+    ],
+    "s27-lp-taoyuan-dun-ay": [
+      "s27-lp-wumou-ay",
+      "s27-lp-juma-gong-ay"
+    ]
+  },
+  "fix": {
+    "s27-han-huangma-qiang": {
+      "strategyId": "qilue-strategy:chien-dau-lau-dai",
+      "cardIds": [
+        "qilue-card:go-bo-xieng-xich",
+        "qilue-card:can-quet-tay-ha",
+        "qilue-card:don-doc-tham-nhap",
+        "qilue-card:pha-mui-giap-dich",
+        "qilue-card:tram-dich-chieu-hang"
+      ],
+      "ordered": true,
+      "reason": "Nguồn ghi 摧鋒斷刃 (tên chiến pháp, không phải thẻ kỳ lược); thẻ Dũng duy nhất mở đầu bằng 摧鋒 là 摧鋒陷敵. 斬將納降 là biến thể của 斬逆納降."
+    },
+    "s27-lp-zuolv-qiang": {
+      "strategyId": null,
+      "cardIds": [
+        "qilue-card:phong-lang-cu-tu",
+        "qilue-card:can-quet-tay-ha",
+        "qilue-card:pha-mui-giap-dich",
+        "qilue-card:tram-dich-chieu-hang",
+        "qilue-card:truy-kich-tu-tran"
+      ],
+      "ordered": true,
+      "reason": "Nguồn ghi phương lược 謀算 nhưng cả 5 thẻ đều là thẻ Dũng (謀算 không dùng được), chính nguồn ghi 待確認; giữ thứ tự thẻ, không ghi phương lược."
+    }
+  },
+  "skip": {
+    "s27-ayan-liubei-faguan-dun": "Chỉ ghi đổi thẻ thứ năm so với một cấu hình khác, không có chuỗi thẻ đầy đủ.",
+    "s27-ayan-zhuge-faguan-dun": "Chuỗi thẻ chỉ thuộc cấu hình thay thế (SP Quan Vũ mang Thừa Thắng Trường Khu), không phải cấu hình chính của đội.",
+    "s27-ofw-chengyu-wumou-qi": "Chỉ nhắc chiến pháp 十面埋伏 (Thập Diện Mai Phục của Trình Dục), không có kỳ lược.",
+    "s27-ofw-dahan-gong": "Chỉ nhắc chương kỳ lược của sách trắng, không có chuỗi thẻ."
+  }
+}

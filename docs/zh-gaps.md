@@ -3,7 +3,7 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 109 / 983 mục.
+Tổng: 109 / 1028 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
@@ -14,6 +14,7 @@ Tổng: 109 / 983 mục.
 | Cải tạo binh chủng | 0 | 16 |
 | Công trình | 0 | 41 |
 | Binh thư | 0 | 68 |
+| Kỳ lược | 0 | 45 |
 
 ## Tướng (heroes): 0 / 263
 
@@ -150,5 +151,9 @@ Không có mục nào thiếu.
 Không có mục nào thiếu.
 
 ## Binh thư (books): 0 / 68
+
+Không có mục nào thiếu.
+
+## Kỳ lược (qilue): 0 / 45
 
 Không có mục nào thiếu.

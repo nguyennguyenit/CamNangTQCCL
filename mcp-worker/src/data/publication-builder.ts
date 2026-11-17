@@ -250,6 +250,8 @@ const CATALOG_FIELDS = {
   troopMods: ["effectVi", "appliesToVi", "troopLimitVi", "suggestedBuildVi", "effectZh", "appliesToZh", "suggestedBuildZh", "zhSource", "options", "revisions", "conditions", "missingFields"],
   buildings: ["summaryVi", "summaryZh", "zhSource", "mainCityOnly", "maxLevel", "levels", "conditions", "missingFields"],
   specials: ["equipmentId", "slotVi", "tierVi", "exclusiveHeroId", "descriptionVi", "acquisitionVi", "conditions", "missingFields"],
+  qilueStrategies: ["cardTypes", "descriptionVi", "buffVi", "descriptionZh", "buffZh", "zhSource", "conditions", "missingFields"],
+  qilueCards: ["type", "rarity", "targetVi", "effectVi", "effectZh", "zhSource", "conditions", "missingFields"],
 } as const;
 
 function pick(source: Json, keys: readonly string[]): Json {
@@ -273,7 +275,7 @@ export interface CatalogProjectionInput {
   catalog: Json;
 }
 
-/** Allowlisted projection of the seven Tra cứu groups; unknown source fields are dropped, never copied. */
+/** Allowlisted projection of the eight Tra cứu groups; unknown source fields are dropped, never copied. */
 export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactRecord[] {
   const output: ArtifactRecord[] = [];
   for (const hero of input.heroes) {
@@ -299,10 +301,13 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
     const owner = text(special.equipmentId);
     if (owner !== null) specialsByEquipment.set(owner, [...(specialsByEquipment.get(owner) ?? []), String(special.id)]);
   }
-  const catalogRows = (key: keyof typeof CATALOG_FIELDS, kind: CatalogKind, extra?: (row: Json) => Json) => {
-    for (const row of list(input.catalog[key], `catalog.${key}`).map((item, i) => obj(item, `catalog.${key}[${i}]`))) {
+  const rowsOf = (key: keyof typeof CATALOG_FIELDS) => list(input.catalog[key], `catalog.${key}`).map((item, i) => obj(item, `catalog.${key}[${i}]`));
+  /** `withNameZh`: tên Hán của row là tên hiển thị zh của entity (Kỳ lược); các nhóm cũ giữ `nameZh` trong profile. */
+  const catalogRows = (key: keyof typeof CATALOG_FIELDS, kind: CatalogKind, extra?: (row: Json) => Json, withNameZh = false) => {
+    for (const row of rowsOf(key)) {
       const id = text(row.id) ?? fail(`catalog.${key} record has no id`);
-      output.push(entity(kind, id, text(row.nameVi) ?? fail(`${id} has no name`), null, null, [...strings(row.aliasesVi), ...strings(row.aliasesZh)], {
+      const nameZh = withNameZh ? text(row.nameZh) : null;
+      output.push(entity(kind, id, text(row.nameVi) ?? fail(`${id} has no name`), nameZh, null, [...strings(row.aliasesVi), ...strings(row.aliasesZh)], {
         ...pick(row, CATALOG_FIELDS[key]),
         ...(extra?.(row) ?? {}),
       }));
@@ -313,6 +318,12 @@ export function projectCatalogEntities(input: CatalogProjectionInput): ArtifactR
   catalogRows("advisors", "advisor");
   catalogRows("troopMods", "troop-mod");
   catalogRows("buildings", "building");
+  // Kỳ lược: phương lược dùng được một thẻ = phương lược có `cardTypes` chứa `type` của thẻ (tính ở đây, không lưu trong row).
+  const strategyRows = rowsOf("qilueStrategies");
+  catalogRows("qilueStrategies", "qilue-strategy", undefined, true);
+  catalogRows("qilueCards", "qilue-card", (row) => ({
+    strategyIds: strategyRows.filter((strategy) => strings(strategy.cardTypes).includes(String(row.type))).map((strategy) => String(strategy.id)).sort(),
+  }), true);
   for (const book of input.books) {
     const id = bookRowId(book) ?? fail(`book ${JSON.stringify(text(book.viet) ?? text(book.chinese))} has no valid frozen id`);
     output.push(entity("book", id, text(book.viet) ?? text(book.hanViet) ?? fail("book has no name"), text(book.chinese), text(book.hanViet), [...strings(book.sourceNames), ...strings(book.aliases)], pick(book, BOOK_FIELDS)));
@@ -354,11 +365,11 @@ function heroIndexes(heroes: readonly ArtifactRecord[]): HeroResolver {
   return (raw: unknown, vi: unknown) => byRaw.get(rawKey(raw)) ?? byVi.get(viKey(vi)) ?? null;
 }
 
-interface Resolver {
+export interface Resolver {
   tactic(raw: unknown, vi: unknown): string | null;
   book(raw: unknown, vi: unknown): string | null;
 }
-type HeroResolver = (raw: unknown, vi: unknown) => string | null;
+export type HeroResolver = (raw: unknown, vi: unknown) => string | null;
 
 function slotRefs(raws: unknown, vis: unknown, kinds: unknown, resolve: (raw: string | null, vi: string | null) => string | null) {
   const rawList = Array.isArray(raws) ? raws : [];
@@ -376,27 +387,63 @@ function slotRefs(raws: unknown, vis: unknown, kinds: unknown, resolve: (raw: st
   return output;
 }
 
-interface TeamBuild {
+export interface TeamBuild {
   summary: ArtifactRecord;
   detail: ArtifactRecord;
   route: { id: string; vi: string };
 }
 
-function recommendedTeam(
+/** Entity catalog và tập sourceConfigId Recommended của cùng publication: nguồn duy nhất để kiểm mã kỳ lược. */
+export interface RecommendedQilueCatalog {
+  entities: ReadonlyMap<string, ArtifactRecord>;
+  recommendedIds: ReadonlySet<string>;
+}
+
+/** Hiệp 2..6: một đội có tối đa 5 thẻ kỳ lược. */
+const MAX_QILUE_CARDS = 5;
+
+/**
+ * Allowlist trường `qilue` của đội: chỉ giữ mã đã kiểm với catalog cùng publication. `form` và `hideNoteBlockId`
+ * là trường hiển thị của trang web nên không vào artifact MCP. Mã lạ, sai loại hay đội nguồn không có thì dừng.
+ */
+function projectRecommendedQilue(raw: unknown, teamId: string, catalog: RecommendedQilueCatalog): Json {
+  const label = `${teamId}.qilue`;
+  const value = obj(raw, label);
+  const known = (id: unknown, kind: CatalogKind) => {
+    const entity = typeof id === "string" ? catalog.entities.get(id) : undefined;
+    if (entity?.kind !== kind || text(entity.nameZh) === null) fail(`${label} references an unknown ${kind}: ${String(id)}`);
+    return id as string;
+  };
+  const strategyId = value.strategyId === null ? null : known(value.strategyId, "qilue-strategy");
+  const cardIds = list(value.cardIds, `${label}.cardIds`).map((id) => known(id, "qilue-card"));
+  if (cardIds.length > MAX_QILUE_CARDS) fail(`${label}.cardIds has more than ${MAX_QILUE_CARDS} cards`);
+  if (typeof value.ordered !== "boolean") fail(`${label}.ordered must be a boolean`);
+  const copyFrom = value.copyFrom === undefined ? undefined : list(value.copyFrom, `${label}.copyFrom`).map((id) => {
+    if (typeof id !== "string" || !catalog.recommendedIds.has(id)) fail(`${label}.copyFrom references an unknown Recommended team: ${String(id)}`);
+    return id as string;
+  });
+  return { strategyId, cardIds, ordered: value.ordered, ...(copyFrom === undefined ? {} : { copyFrom }) };
+}
+
+export function projectRecommendedTeam(
   position: number,
   index: Json,
   detail: Json,
   segment: string,
   heroOf: HeroResolver,
   resolver: Resolver,
+  qilueCatalog: RecommendedQilueCatalog,
 ): TeamBuild {
   const id = String(index.sourceConfigId);
   const ref = `recommended:${id}`;
   for (const key of Object.keys(detail)) {
     if (stableStringify(detail[key]) !== stableStringify(index[key])) fail(`Recommended index and detail disagree: ${id}.${key}`);
   }
+  // `qilue` thô (kèm hideNoteBlockId, form) không vào record; MCP chỉ phát bản đã kiểm ở `detail.qilue`.
+  const { qilue: rawQilue, ...displayed } = detail;
+  const qilue = rawQilue === undefined ? undefined : projectRecommendedQilue(rawQilue, id, qilueCatalog);
   const record: Json = {
-    ...detail,
+    ...displayed,
     sourceSeasonId: index.sourceSeasonId,
     sourceCategoryId: index.sourceCategoryId,
     sourceSeasonLabel: index.sourceSeasonLabel,
@@ -442,6 +489,7 @@ function recommendedTeam(
       id,
       record,
       resolved: { heroes: heroes.map(({ holder, heroId, tactics, books }) => ({ holder, heroId, tactics, books })) },
+      ...(qilue === undefined ? {} : { qilue }),
     },
     route: { id: ref, vi: recommendedRoutePath(segment) },
   };
@@ -664,6 +712,37 @@ const UPSTREAM_FILES: Record<(typeof UPSTREAM_SOURCE_KEYS)[number], string> = {
   teams: "teams.json",
 };
 
+/**
+ * Entity routes. Entity pages come from the frozen lookup ledger (checked against the built corpus of every Tra cứu
+ * group, `generationId` and the `books-dict` bytes); ids without a page (`equipment-special:*`) keep the group-page
+ * profile route. A ledger that misses or keeps an entity id fails the publication. Computed locally: nothing here
+ * touches the module-global exception table of `js/lookup-ids.js`.
+ */
+export function projectEntityRoutes(
+  entities: readonly ArtifactRecord[],
+  lookupRouteLedger: Uint8Array,
+  pins: { generationId: string; booksSha256: string },
+): Array<{ id: string; kind: "entity"; vi: string; zh: string }> {
+  const pageIdsByGroup: Record<string, string[]> = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, []]));
+  for (const record of entities) {
+    const id = record.id as string;
+    if (lookupDerivedSlug(id) !== null) pageIdsByGroup[groupForId(id) as string]!.push(id);
+  }
+  let pageRoutes;
+  try {
+    pageRoutes = parseLookupDetailLedger(parseJson(lookupRouteLedger, "lookup-route-handles.json"), pageIdsByGroup, pins);
+  } catch (error) {
+    return fail(`lookup route ledger is not valid for this publication: ${error instanceof Error ? error.message : String(error)}`);
+  }
+  return entities.map((record) => {
+    const id = record.id as string;
+    const page = pageRoutes.byId.get(id);
+    const vi = page ? lookupDetailPath(page.group, page.slug) : lookupDerivedSlug(id) === null ? lookupProfilePath(id) : null;
+    if (vi === null) return fail(`catalog entity has no route: ${id}`);
+    return { id, kind: "entity" as const, vi, zh: localePath(vi, "zh") };
+  });
+}
+
 export interface PublicationBuildInput {
   /** The eleven v1/v2 artifact bytes of the same release. */
   objects: ArtifactBytes;
@@ -754,6 +833,10 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
       detailBySourceId.set(id, { ...row, __scope: scope });
     }
   }
+  const qilueCatalog: RecommendedQilueCatalog = {
+    entities: new Map(entities.map((record) => [String(record.id), record])),
+    recommendedIds: new Set(recommended.index.map((row) => String(row.sourceConfigId))),
+  };
   const teams: TeamBuild[] = [];
   for (const [position, row] of recommended.index.entries()) {
     const id = String(row.sourceConfigId);
@@ -764,7 +847,7 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
     const handle = ledger.recommended[id];
     const segment = isRoutableIdentifier(handle) ? recommendedRouteSegment(row.sourceSeasonCode, handle) : null;
     if (segment === null) fail(`Recommended row has no routable segment: ${id}`);
-    teams.push(recommendedTeam(position, row, detail, segment as string, heroOf, resolver));
+    teams.push(projectRecommendedTeam(position, row, detail, segment as string, heroOf, resolver, qilueCatalog));
   }
   if (detailBySourceId.size !== recommended.index.length) fail("Recommended details and index disagree");
   const visibleLegacy = new Set(legacyTeams.filter((team) => team.source !== "do-uy").map((team) => String(team.id)));
@@ -817,30 +900,11 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
     ],
   };
 
-  // 9. routes. Entity pages come from the frozen lookup ledger (checked against the built corpus, `generationId`
-  // and the `books-dict` bytes); ids without a page (`equipment-special:*`) keep the group-page profile route.
-  // Computed locally: nothing here touches the module-global exception table of `js/lookup-ids.js`.
-  const pageIdsByGroup: Record<string, string[]> = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, []]));
-  for (const record of entities) {
-    const id = record.id as string;
-    if (lookupDerivedSlug(id) !== null) pageIdsByGroup[groupForId(id) as string]!.push(id);
-  }
-  let pageRoutes;
-  try {
-    pageRoutes = parseLookupDetailLedger(parseJson(sources.lookupRouteLedger, "lookup-route-handles.json"), pageIdsByGroup, {
+  // 9. routes.
+  const routes = [
+    ...projectEntityRoutes(entities, sources.lookupRouteLedger, {
       generationId: String(lookupManifest.generationId),
       booksSha256: await sha256Hex(need("books-dict")),
-    });
-  } catch (error) {
-    return fail(`lookup route ledger is not valid for this publication: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  const routes = [
-    ...entities.map((record) => {
-      const id = record.id as string;
-      const page = pageRoutes.byId.get(id);
-      const vi = page ? lookupDetailPath(page.group, page.slug) : lookupDerivedSlug(id) === null ? lookupProfilePath(id) : null;
-      if (vi === null) return fail(`catalog entity has no route: ${id}`);
-      return { id: record.id, kind: "entity", vi, zh: localePath(vi, "zh") };
     }),
     ...teams.map((team) => ({ id: team.route.id, kind: "team", vi: team.route.vi, zh: localePath(team.route.vi, "zh") })),
   ];

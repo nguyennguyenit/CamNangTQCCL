@@ -1,7 +1,7 @@
 // Tệp được sinh bởi scripts/generate-knowledge-bundle.ts từ agent-knowledge/. Không sửa thủ công.
 import type { KnowledgeBundle } from "../knowledge/rule-contracts.js";
 
-export const KNOWLEDGE_VERSION = "knowledge:sha256b64:69XlhEFNgSTBECfA7roEch5LhV4rjOLedNBabAicA9E" as const;
+export const KNOWLEDGE_VERSION = "knowledge:sha256b64:rHV7iE4EYWwHFSdY1ZUhszIdB0hIkh90Brz5OKZsTYs" as const;
 export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
   "schemaVersion": 1,
   "manifest": {
@@ -33,7 +33,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       {
         "id": "lookup",
         "title": "Tra cứu thực thể và đội tham khảo",
-        "summary": "Resolve tên/ID, đọc catalog/reference của bảy nhóm Tra cứu và đội tham khảo theo mùa nguồn; không gợi ý ghép đội.",
+        "summary": "Resolve tên/ID, đọc catalog/reference của tám nhóm Tra cứu (gồm Kỳ lược) và đội tham khảo theo mùa nguồn; không gợi ý ghép đội.",
         "stages": [
           {
             "id": "resolve-entity",
@@ -370,7 +370,15 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
       {
         "forms": [
           "bảy nhóm tra cứu",
-          "7 nhóm tra cứu"
+          "7 nhóm tra cứu",
+          "tám nhóm tra cứu",
+          "8 nhóm tra cứu",
+          "kỳ lược",
+          "thẻ kỳ lược",
+          "phương lược",
+          "奇略",
+          "奇略卡",
+          "作戰方略"
         ],
         "ruleIds": [
           "lookup-seven-groups"
@@ -1651,7 +1659,7 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
     },
     {
       "id": "lookup-seven-groups",
-      "revision": 1,
+      "revision": 2,
       "kind": "guidance",
       "status": "active",
       "workflows": [
@@ -1664,15 +1672,15 @@ export const KNOWLEDGE_BUNDLE: KnowledgeBundle = {
         "type": "show-warning",
         "code": "lookup-seven-groups"
       },
-      "title": "Tra bảy nhóm Tra cứu",
-      "terms": "trang bị quân sư cải tạo công trình tướng chiến pháp binh thư 装备 军师 武将 战法 兵书",
-      "explanation": "Dùng catalog search/detail cho bảy nhóm Tra cứu đã công bố: Tướng, Chiến pháp, Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Binh thư.",
+      "title": "Tra tám nhóm Tra cứu",
+      "terms": "trang bị quân sư cải tạo công trình tướng chiến pháp binh thư kỳ lược phương lược thẻ kỳ lược 装备 军师 武将 战法 兵书 奇略 作戰方略 奇略卡",
+      "explanation": "Dùng catalog search/detail cho tám nhóm Tra cứu đã công bố: Tướng, Chiến pháp, Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Binh thư, Kỳ lược (mùa PK-S27: 5 phương lược kind qilueStrategy, 40 thẻ kind qilueCard). Kỳ lược của một đội chuẩn đọc ở tqccl_get_team section qilue.",
       "sourceRefs": [
         "js/unified-lookup.js",
         "js/lookup-ids.js"
       ],
       "origin": "existing-project-contract",
-      "validFrom": "2026-10-08",
+      "validFrom": "2026-11-18",
       "reviewAfter": "2027-04-08",
       "supersedes": [],
       "successor": null,

@@ -43,6 +43,42 @@ export function tacticsDoc(over = []) {
   ];
 }
 
+/** Điều kiện mùa của mọi hàng kỳ lược (`lookup.conditions` kind `season` kèm `textZh`, theo hợp đồng catalog). */
+export const QILUE_SEASON = Object.freeze([{ kind: "season", textVi: "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)", textZh: "漢焰長明賽季（PK-S27，客戶端 24.547）" }]);
+
+const qilueStrategy = (slug, nameVi, nameZh, cardTypes, over = {}) => ({
+  id: `qilue-strategy:${slug}`, nameVi, aliasesVi: [], nameZh, aliasesZh: [nameZh], conditions: QILUE_SEASON.map((row) => ({ ...row })),
+  missingFields: [], cardTypes, descriptionVi: `Mô tả ${nameVi}`, buffVi: `Mỗi trang bị 1 Kỳ Lược, buff ${nameVi}`,
+  descriptionZh: `${nameZh}說明`, buffZh: `${nameZh}加成`, zhSource: { kind: "translation" }, ...over,
+});
+
+const qilueCard = (slug, nameVi, nameZh, type, rarity, targetVi, effectVi, effectZh) => ({
+  id: `qilue-card:${slug}`, nameVi, aliasesVi: [], nameZh, aliasesZh: [nameZh], conditions: QILUE_SEASON.map((row) => ({ ...row })),
+  missingFields: [], type, rarity, targetVi, effectVi, effectZh, zhSource: { kind: "translation" },
+});
+
+/** Phương lược theo hợp đồng (`qilueStrategies[]`, sắp theo `id`): tên client, `aliasesZh == [nameZh]`. */
+export function qilueStrategiesDoc() {
+  return [
+    qilueStrategy("cuong-cong", "Cường Công", "強攻", ["dung", "phu"]),
+    qilueStrategy("muu-tinh", "Mưu tính", "謀算", ["muu", "phu"], { aliasesVi: ["Mưu Toán"] }),
+    qilueStrategy("quay-nhieu", "Quấy nhiễu", "襲擾", ["muu", "sach"], { aliasesVi: ["Tập Kích"] }),
+  ];
+}
+
+/** Thẻ kỳ lược theo hợp đồng (`qilueCards[]`, sắp theo `id`); chữ hiệu ứng lấy từ client 24.547. */
+export function qilueCardsDoc() {
+  return [
+    qilueCard("am-do-tran-thuong", "Ám Độ Trần Thương", "暗度陳倉", "muu", "common", "Nhóm quân ta", "Khi thi triển Chiến Pháp chuẩn bị hiệp này có 50% xác suất bỏ qua chuẩn bị", "本回合施放準備戰法時，有 50% 機率跳過準備"),
+    qilueCard("bo-tri-thap-dien", "Bố Trí Thập Diện", "設伏十面", "muu", "common", "Nhóm quân ta", "Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%", "本回合主動戰法發動率提升 10%"),
+    qilueCard("cang-nhieu-cang-tot", "Càng Nhiều Càng Tốt", "多多益善", "muu", "rare", "Toàn quân ta", "Hiệu ứng hiếm Mưu", "稀有謀效果"),
+    qilueCard("chi-khi-ngap-tran", "Chí Khí Ngập Tràn", "壯志不絕", "dung", "rare", "Một quân ta", "Hiệu ứng hiếm Dũng", "稀有勇效果"),
+    qilueCard("cong-lao-hien-hach", "Công Lao Hiển Hách", "居功至偉", "sach", "rare", "Toàn quân địch", "Hiệu ứng hiếm Sách", "稀有策效果"),
+    qilueCard("bac-lang-chuy-tan", "Bác Lãng Chuy Tần", "博浪椎秦", "phu", "common", "Toàn quân ta", "Tăng 20% Phá Trận", "破陣提升 20%"),
+    qilueCard("an-tich-mang-thuong", "Ẩn Tích Mang Thương", "芒碭隱蹤", "te", "common", "Một quân địch", "Giảm 8% ST phải chịu hiệp này", "本回合受到的傷害降低 8%"),
+  ].sort((a, b) => a.id.localeCompare(b.id));
+}
+
 export function catalogDoc(over = {}) {
   return {
     schemaVersion: 1,
@@ -64,6 +100,8 @@ export function catalogDoc(over = {}) {
       levels: [{ id: "building-level:bat-tran-do:1", level: 1, effectVi: "Hiệu ứng", durationVi: "2 giờ", effectZh: null, durationZh: null, costs: { wood: 32000, stone: 32000, iron: 16000 } }],
       aliasesVi: [], aliasesZh: ["八陣圖"], conditions: [], missingFields: [],
     }],
+    qilueStrategies: qilueStrategiesDoc(),
+    qilueCards: qilueCardsDoc(),
     ...over,
   };
 }

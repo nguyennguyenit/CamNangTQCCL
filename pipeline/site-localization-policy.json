@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261117-doi-khac-han-diem-truong-minh",
+  "policyVersion": "site-vi-261118-doi-khac-ky-luoc",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -772,11 +772,11 @@
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
     "js/khaihoang-detail.js": "f0a28170b5f7c9e45dde0a064f83851d20a09fd5833360a331c16a25ca49706e",
     "js/legacy-routes.js": "9dcc3e3282440a6f03f4672ecaa64f831557c07686b7fcb926e5d0bc5a65ca57",
-    "js/lookup-data.js": "5e15aa3d0c95c4229ca70ae5444b0ea846db7076541a2ebd1c77910d8d3a6505",
-    "js/lookup-detail.js": "f7b150d02ba344fe250fbde0df0e17fa30cc23fdaed9ca046a8f268e2d3721e8",
+    "js/lookup-data.js": "f816a9a29d8cd6316a5e68a8868eb870ba54f2aa1ba8ba0b1b6d534bf5879529",
+    "js/lookup-detail.js": "68a1f45be412a323f1c81eb91ff5a1359953101d2203ffc70dd59605cd6ebba1",
     "js/lookup-field-labels.js": "fc2e80013cbd273e4987ce146239e88ace0058f5f479bcafa83c22abb7c8dea0",
-    "js/lookup-master.js": "18beb4fc3c621cc0dc13b3c4a44b27b622972fa76de99f050313c96f751c4e83",
-    "js/lookup-page.js": "7296cf070d85189c13454c8eb5704ca917c1026e4bf8d93bf1463644bd635abe",
+    "js/lookup-master.js": "9af596b5ea8751231dd2306812c057676a19c553cacc35fc82fc123d4bca2471",
+    "js/lookup-page.js": "723dc62aeeac1ac2186fbe99239af763b2a0c3d7ccbc54138b9d24a0e7c99b6d",
     "js/lookup-profile.js": "5b52775ab277347d89be2eceb2427cbffdbcde7a3976c7e4103018c15ef06564",
     "js/lookup-tactic-profile.js": "c4c933b2eee7905b54ed7149d80da847adc313e135ed51b180663501bdaa3ce7",
     "js/lookup-tactic-view.js": "e79e519d95b216ada53ac884414d51e8ba6d0adb29944edba5ed542a3d8b20ab",
@@ -806,15 +806,15 @@
     "src/components/pages/KhaiHoangDetail.astro": "8ff06a854a4e607435321dd897ce98f2a3ca9af7ce0c33cd6239f865956ab722",
     "src/components/pages/LegacyDetail.astro": "eba9358edbd99dae6b25411693db210765bd3f58f8497da2274682af6345eb6c",
     "src/components/pages/LookupGroupPage.astro": "99de8cb8a369c7eab3211acb57a7a2101102cbb1d3215733d81028c436e8eaa8",
-    "src/components/pages/LookupHubPage.astro": "0eee375dfa02d89598e343aa65ca647c97f89059ca5e4145eef80556def639ce",
+    "src/components/pages/LookupHubPage.astro": "12f6d909450984d2a9b1f9115c168c11fbb93ab782e12979351d152634e4a32a",
     "src/components/pages/LookupItemPage.astro": "d91a7ccf60356c27f198e6fc469a0aa1d858c662e6b7798aa634188337c43f8c",
     "src/components/pages/RecommendedDetail.astro": "7bd2fda7ade68cf457d29a122ac0e61d400017b6839cd98f237b6f5ed5f6586d",
     "src/components/pages/SectionPage.astro": "4072cc460cc88eec10ed607009f8d019d8eafeebb04ace758ade3efd75d72a1c",
     "src/layouts/SiteLayout.astro": "d2f5f5ea16b10b5db92677e736c1bc2c1f90e2378a764d8ae53967453da6c3fd",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "9b1a0b06acb68961197a5271ee5b0a46805a69c8ec6f319f641a139529f892a4",
-    "src/lib/lookup-item-pages.ts": "360638a7ea60f41dbd80881bc8162f202ff1080bb39e01217ea71388959f7fd3",
-    "src/lib/lookup-pages.ts": "770a2517dffd8b6e89ccc2f9d51f0aea98ef0019298251685d8205733c841c50",
+    "src/lib/lookup-item-pages.ts": "ccf01426654e074f79220f9e0b60e6d8ecc84f757292c813afc8acef626ac20f",
+    "src/lib/lookup-pages.ts": "3f51d43d79a39552c4f6f6171ec52ccdda80fa72f19e3c8f7ca42e9b03e7f92d",
     "src/lib/official-links.ts": "af85bc97844e2dbf44449c4bf333811a622500d037514fbb6f04445037707eca",
     "src/lib/root-static-artifacts.ts": "eedec4f6ca8233ad10ad9637cf9989fd006164b80732fad1473be5786f9f8596",
     "src/lib/team-detail-routes.ts": "2a707eccfd0cb11f50fa23d78e18980ad7e893aab05b4c4e5bd3fa0f826c4fdf",

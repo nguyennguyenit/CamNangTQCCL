@@ -10,7 +10,7 @@ import { commonResultSchema, decimalNumberish, jsonArrayish, workflowVersion } f
 import { publicVariantId, referenceSelectorSchema } from "./team-handlers.js";
 import { parseToolInput, type ToolContext } from "./tool-context.js";
 
-export const SEARCH_KINDS = ["hero", "tactic", "equipment", "advisor", "troopMod", "building", "book", "team"] as const;
+export const SEARCH_KINDS = ["hero", "tactic", "equipment", "advisor", "troopMod", "building", "book", "qilueStrategy", "qilueCard", "team"] as const;
 type SearchKindName = (typeof SEARCH_KINDS)[number];
 type Locale = "vi" | "zh";
 
@@ -23,6 +23,8 @@ const PUBLIC_KIND: Record<CatalogKind, Exclude<SearchKindName, "team">> = {
   "troop-mod": "troopMod",
   building: "building",
   book: "book",
+  "qilue-strategy": "qilueStrategy",
+  "qilue-card": "qilueCard",
 };
 const CATALOG_KINDS_FOR: Record<Exclude<SearchKindName, "team">, CatalogKind[]> = {
   hero: ["hero"],
@@ -32,16 +34,18 @@ const CATALOG_KINDS_FOR: Record<Exclude<SearchKindName, "team">, CatalogKind[]> 
   troopMod: ["troop-mod"],
   building: ["building"],
   book: ["book"],
+  qilueStrategy: ["qilue-strategy"],
+  qilueCard: ["qilue-card"],
 };
 
-const locale = z.enum(["vi", "zh"]).optional().describe("vi (mặc định) hoặc zh; chỉ đổi tên hiển thị và pagePath.");
-const cursorText = z.string().max(2_048).optional().describe("Cursor trang trước; bắt buộc kèm expectedWorkflowVersion.");
+const locale = z.enum(["vi", "zh"]).optional().describe("Mặc định vi; chỉ đổi tên và pagePath.");
+const cursorText = z.string().max(2_048).optional().describe("Cursor trang trước; cần expectedWorkflowVersion.");
 const nullableText = z.string().max(2_048).nullable().optional();
 
 export const searchInputSchema = z
   .object({
     query: z.string().max(256).describe("Tên Việt/Hán/Hán-Việt/alias; chuỗi rỗng để duyệt."),
-    kinds: jsonArrayish(z.array(z.enum(SEARCH_KINDS)).max(8).optional()).describe("Loại cần tìm; bỏ trống = tất cả."),
+    kinds: jsonArrayish(z.array(z.enum(SEARCH_KINDS)).max(SEARCH_KINDS.length).optional()).describe("Loại cần tìm; bỏ trống = tất cả."),
     limit: decimalNumberish(z.number().int().min(1).max(50).optional()).describe("Số kết quả mỗi trang, mặc định 20."),
     cursor: cursorText,
     locale,
@@ -50,14 +54,14 @@ export const searchInputSchema = z
   .strict();
 
 export const searchOutputSchema = commonResultSchema.extend({
-  locale: z.enum(["vi", "zh"]).describe("Locale đã dùng cho tên và pagePath."),
+  locale: z.enum(["vi", "zh"]).describe("Locale của tên và pagePath."),
   total: z.number().int().nonnegative().describe("Tổng số kết quả khớp."),
   items: z
     .array(
       z
         .object({
           entityId: z.string().max(300).describe("ID thực thể, hoặc ref đội <collection>:<id>."),
-          kind: z.enum(SEARCH_KINDS).describe("Loại kết quả; equipment gồm cả đặc tính trang bị."),
+          kind: z.enum(SEARCH_KINDS).describe("Loại kết quả; equipment gồm cả đặc tính trang bị; qilueStrategy/qilueCard thuộc nhóm Kỳ lược, khác tactic cùng tên."),
           displayName: z.string().max(256).describe("Tên hiển thị theo locale."),
           matchedTerm: z.string().max(256).optional().describe("Chuỗi khớp truy vấn; vắng khi duyệt."),
           pagePath: z.string().max(512).optional().describe("Đường dẫn trang website theo locale."),
@@ -83,7 +87,7 @@ export const searchOutputSchema = commonResultSchema.extend({
     .min(1)
     .max(5)
     .optional()
-    .describe("Chỉ khi total=0: tên gần có chung ít nhất 2 từ với truy vấn. Không phải kết quả khớp; không phải thực thể được hỏi."),
+    .describe("Chỉ khi total=0: tên gần chung ≥2 từ với truy vấn; không phải kết quả khớp hay thực thể được hỏi."),
 });
 
 export async function handleSearch(ctx: ToolContext, rawInput: unknown) {
@@ -223,8 +227,8 @@ const NESTED: Record<Exclude<EntitySection, "overview">, string> = {
 
 export const getEntityInputSchema = z
   .object({
-    entityId: z.string().min(1).max(256).describe("ID từ tqccl_search, ví dụ hero:..., equipment:..."),
-    section: z.enum(ENTITY_SECTIONS).optional().describe("overview (mặc định) hoặc section lồng nhau có phân trang."),
+    entityId: z.string().min(1).max(256).describe("ID từ tqccl_search, vd hero:..., equipment:..."),
+    section: z.enum(ENTITY_SECTIONS).optional().describe("Mặc định overview; section lồng nhau có phân trang."),
     limit: decimalNumberish(z.number().int().min(1).max(50).optional()).describe("Số mục mỗi trang của section, mặc định 20."),
     cursor: cursorText,
     locale,
@@ -233,13 +237,13 @@ export const getEntityInputSchema = z
   .strict();
 
 export const getEntityOutputSchema = commonResultSchema.extend({
-  locale: z.enum(["vi", "zh"]).describe("Locale đã dùng cho tên và pagePath."),
+  locale: z.enum(["vi", "zh"]).describe("Locale của tên và pagePath."),
   section: z.enum(ENTITY_SECTIONS).describe("Section đã trả về."),
   entity: z
     .object({
       entityId: z.string().max(300).describe("ID thực thể."),
       kind: z.enum(SEARCH_KINDS).describe("Loại thực thể."),
-      group: z.string().max(64).describe("Nhóm Tra cứu: heroes, tactics, equipment, advisors, troop-mods, buildings, books."),
+      group: z.string().max(64).describe("Nhóm Tra cứu: heroes, tactics, equipment, advisors, troop-mods, buildings, books, qilue (Kỳ lược)."),
       displayName: z.string().max(256).describe("Tên hiển thị theo locale."),
       nameVi: z.string().max(256).describe("Tên tiếng Việt."),
       nameZh: z.string().max(2_048).nullable().optional().describe("Tên tiếng Hán nếu có."),
@@ -249,7 +253,7 @@ export const getEntityOutputSchema = commonResultSchema.extend({
     })
     .strict()
     .describe("Thông tin nhận dạng thực thể."),
-  profile: z.record(z.string(), z.unknown()).optional().describe("Trường hồ sơ như trang Tra cứu; phần lồng nhau nằm trong sections. Chiến pháp: innateHeroIds là tướng mang nó làm chiến pháp tự có."),
+  profile: z.record(z.string(), z.unknown()).optional().describe("Hồ sơ như trang Tra cứu; phần lồng nhau ở sections. Chiến pháp: innateHeroIds là tướng có nó làm chiến pháp tự có."),
   sections: z
     .array(z.object({ name: z.enum(ENTITY_SECTIONS).describe("Tên section."), total: z.number().int().positive().describe("Số mục của section.") }).strict())
     .max(4)
@@ -261,11 +265,11 @@ export const getEntityOutputSchema = commonResultSchema.extend({
   fieldLabels: z
     .record(z.enum(["stats", "troopApt"]), z.record(z.string(), z.string().max(64)))
     .optional()
-    .describe("Nhãn theo locale cho khoá của profile.stats và profile.troopApt, như trang Tra cứu (vd thuan → Khiên binh)."),
+    .describe("Nhãn theo locale cho khoá profile.stats/troopApt (vd thuan → Khiên binh)."),
   refNames: z
     .record(z.string().max(300), z.string().max(256))
     .optional()
-    .describe("Tên hiển thị theo locale của mọi ID thực thể nhắc trong profile/items (vd selfTacticId). Dùng tên này, không tự dựng tên từ ID."),
+    .describe("Tên theo locale của mọi ID trong profile/items (vd selfTacticId); dùng tên này, không tự dựng từ ID."),
 });
 
 function pathsOf(paths: LocalePaths, loc: Locale): string {
@@ -288,7 +292,7 @@ function fieldLabelsOf(profile: Record<string, unknown>, loc: Locale) {
   return Object.keys(labels).length > 0 ? labels : undefined;
 }
 
-const ENTITY_ID = /^(hero|tactic|equipment|equipment-special|advisor|troop-mod|building|book):[^\s]+$/u;
+const ENTITY_ID = /^(hero|tactic|equipment|equipment-special|advisor|troop-mod|building|book|qilue-strategy|qilue-card):[^\s]+$/u;
 const MAX_REF_NAMES = 100;
 
 /** Tên của mọi ID thực thể có thật nằm trong `value` (đệ quy), trừ chính thực thể đang xem. */
