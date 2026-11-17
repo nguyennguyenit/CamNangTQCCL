@@ -9422,6 +9422,38 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   font: var(--type-badge);
 }
 
+/* Bản ja (token `components.nhan-ten-nhat`): dòng tên gốc 原名, nhãn trạng thái tên, khối 機械翻訳 và dòng báo thiếu ghi chú. */
+.lookup-name-original {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-4);
+}
+
+.badge.badge-outline.lookup-name-status {
+  cursor: help;
+}
+
+.badge.badge-outline.lookup-name-status[data-name-status="derived"] {
+  border-style: dashed;
+  border-color: var(--line-2);
+  color: var(--muted);
+}
+
+.lookup-child-row.lookup-mt-notice,
+.lookup-mt-notice {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.detail-note.detail-note-missing {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
 /* Hồ sơ không phải tướng: một cột — đoạn văn (đoạn đầu nổi trong khung), bảng thông số, nút liên quan, danh sách. */
 .lookup-profile-entry {
   grid-template-columns: minmax(0, 1fr);
