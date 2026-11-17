@@ -474,8 +474,10 @@ const coexistHeroName=name=>String(name ?? '').replace(/^(.+?)\s*40th$/iu,'40Y $
 
 /**
  * Thẻ một đội Cùng Tồn (cây view): cùng khung và dòng tướng (vai trò · tên · chiến pháp · binh thư) với thẻ Đội chuẩn.
- * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, unitTacticEffects, heroes:[{name, tag,
- * tactics, books, statFocus, advisorSkill}]}`; chiến pháp chỉ hiển thị, không bấm tìm như Đội chuẩn.
+ * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, unitTacticEffects, strategyCards, heroes:[{name,
+ * tag, tactics, books, statFocus, equipment, advisorSkill}]}`; chiến pháp chỉ hiển thị, không bấm tìm như Đội chuẩn.
+ * Trang bị (dưới dòng cộng điểm) và Thẻ Kỳ Lược (chân thẻ) chỉ có ở bản vi: bản zh nhận chuỗi rỗng nên không dựng,
+ * vì vậy nhãn của hai dòng này chỉ viết tiếng Việt. Chuỗi nhiều dòng của nguồn giữ ngắt dòng (CSS `pre-line`).
  */
 export function coexistTeamCard(team,{locale}={}) {
   return withLocale(locale,()=>coexistCardTree(team));
@@ -509,9 +511,11 @@ function coexistCardTree(team) {
           hero.tag ? t('span',{class:'coexist-hero-tag'},hero.tag) : null,
           extra.join(' · '),
         ].filter(Boolean)) : null,
+        hero.equipment ? t('p',{class:'line books coexist-hero-equipment'},`Trang bị: ${hero.equipment}`) : null,
       ].filter(Boolean));
     })),
-  ]);
+    team.strategyCards ? t('footer',{class:'reference-card-foot'},t('p',{class:'coexist-card-strategy'},`Thẻ Kỳ Lược: ${team.strategyCards}`)) : null,
+  ].filter(Boolean));
 }
 
 const tableCell=(children,cls)=>t('td',{class:cls},children);

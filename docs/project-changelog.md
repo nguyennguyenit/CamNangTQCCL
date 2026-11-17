@@ -7,6 +7,12 @@
 - Fixed: nhãn mùa dài trong chi tiết Tra cứu (`.lookup-detail-badges .badge.badge-scenario`) xuống dòng, chi tiết kỳ lược không còn tràn ngang ở 320px.
 - Tests: kỳ vọng số nhóm Tra cứu cập nhật cho nhóm thứ tám (`tests/test_lookup_route_handles.py`, `mcp-worker/test/data/publication-snapshot.test.ts`, `mcp-worker/test/research/catalog-tools.test.ts`, `BOOT_DATA.qilue` trong `tests-e2e/unified-lookup.spec.mjs`); `QILUE_NAME_COLLISIONS_ALLOWED` thêm `久戰` / `book:chien-dau-truong-ky` trong test.
 
+## 2026-11-17 (Cùng Tồn: kịch bản PK-S27 · Hán Diễm Trường Minh)
+
+- Added: kịch bản `han-diem-truong-minh` (đứng đầu registry, mặc định của `/cung-ton/`) với 5 nhóm / 25 đội từ tab Cùng Tồn của Google Sheet sau khi chủ sheet ghi đè Binh Diễn Xuân Thu; snapshot ghim ở `plans/261117-0206-cung-ton-han-diem-truong-minh/research/`, bản đồ record `pipeline/coexist-han-diem-source-record-map.json`, hai evidence (xác nhận kịch bản, quan sát snapshot). Link Binh Diễn và Anh Hùng Mệnh Thế giữ nguyên byte.
+- Changed: `pipeline/parse_coexist_csv.py` nhận thêm bảng 11 cột theo header (Trang Bị theo tướng → `equipmentRaw`, Thẻ Kỳ Lược theo đội → `strategyCardsRaw`; không tái dùng `unitTacticEffectsRaw`), "Ghi Chú" không phân biệt hoa thường; validator Python/JS nhận hai dạng, từ chối trộn. Thẻ Cùng Tồn hiện "Trang bị: …" dưới cộng điểm và "Thẻ Kỳ Lược: …" ở chân thẻ (bản zh ẩn).
+- Re-pin hash nguồn + baseline inventory (thêm `equipmentRaw`/`strategyCardsRaw` vào `AUTHORED_VI_DATA_FIELDS`, hai nhãn UI mới), publish generation hiển thị, rebind ledger route.
+
 ## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
 
 - Fixed: ghi chú chia đội Thương/Kỵ trong `data/khaihoang.json` ghi "Hoàng Nguyệt Anh (Vô Đương / Bạch Nhị)" thay "Bạch Nhĩ", cùng cách viết 白毦 = "Bạch Nhị Binh" của Đội chuẩn (#64). Ghi chú lớp `authored-vi`, không có bản zh.

@@ -13,7 +13,7 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Mỗi đội có trang chi tiết tĩnh riêng dưới `/doi-chuan/<mùa>-<handle>/`, `/doi-khac/<handle>/` hoặc `/khai-hoang/<handle>/`; handle tiếng Việt đóng băng trong `pipeline/team-route-handles.json` nên sửa `displayNameVi` không đổi URL. URL cũ `/teams/…` và URL ngoài danh sách sinh sẵn trả trang 404 tĩnh, không redirect.
 - Mỗi mùa cũ của Đội chuẩn có trang tĩnh riêng `/doi-chuan/<mã mùa>/` (`/doi-chuan/pk-s24/`, `/doi-chuan/s1/`; bản zh dưới `/zh/`): đủ mọi đội của mùa nhóm theo tier, có trong sitemap và JSON-LD, đọc được khi không chạy JavaScript, không có khung comment. `/doi-chuan/` (mùa hiện tại) liệt kê các mùa còn lại ở khối "Các mùa khác" bằng link thật; trang đội và trang mùa có số mùa nhỏ hơn mùa hiện tại có nhãn "mùa cũ" (mùa mới hơn như PK-S28 khi mặc định là PK-S27, OG và mùa không đọc được số không có nhãn). Chỉ Đội chuẩn có trang mùa (Đội khác chưa có dữ liệu mùa); `?season=` vẫn là bộ lọc của trang danh sách.
 - Nội dung đội và Tra cứu có sẵn trong HTML (đọc được không cần JavaScript, kể cả với crawler/AI): trang chi tiết đội render đủ tướng, chiến pháp, binh thư, ghi chú; bốn trang danh sách đội render trạng thái mặc định; JavaScript chỉ thêm lọc, đổi mùa, "Xem thêm", hộp thoại. Trang đội, trang nhóm và trang riêng Tra cứu có JSON-LD; `/llms.txt` dẫn tới bộ chữ thuần theo mục `/llms/…` và bản gộp `/llms-full.txt`.
-- Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một hàng nút (mặc định kịch bản đầu theo registry). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Gợi ý đội có một ô "Mùa bạn đang chơi" (`?season=`, mặc định `defaultSourceSeasonId`) và gợi ý từ Đội chuẩn của mùa đó, đội cũ chỉ lấp chỗ trống; Soi đội đối chiếu với Đội chuẩn theo mùa (`?season=`) và Đội khác. Khai hoang dùng bản bảo trì mới nhất.
+- Phạm vi kịch bản/phiên bản luật nằm trên URL (`scenario`, `ruleset`) cho Đội chuẩn, Đội khác và Cùng Tồn; Cùng Tồn chọn kịch bản bằng một ô chọn mùa (mặc định mùa mới nhất `COEXIST_LATEST_SCENARIO_ID` trong `js/season-ui-state.js`, hiện là PK-S27 · Hán Diễm Trường Minh, cũng đứng đầu registry; `?scenario=` cũ vẫn mở đúng kịch bản). URL giữ phạm vi, bộ lọc và cấu hình đang mở. Gợi ý đội có một ô "Mùa bạn đang chơi" (`?season=`, mặc định `defaultSourceSeasonId`) và gợi ý từ Đội chuẩn của mùa đó, đội cũ chỉ lấp chỗ trống; Soi đội đối chiếu với Đội chuẩn theo mùa (`?season=`) và Đội khác. Khai hoang dùng bản bảo trì mới nhất.
 - Tra cứu local 252 tướng, 412 chiến pháp và bốn nhóm catalog bổ sung, mỗi nhóm một trang (`/tra-cuu/tuong/`, `/chien-phap/`, `/trang-bi/`, `/quan-su/`, `/cai-tao-binh-chung/`, `/cong-trinh/`, `/binh-thu/`) chỉ tải dữ liệu của nhóm; HTML có đủ mọi mục, tìm tên Việt/Hán-Việt/Hán, paging, hộp thoại hồ sơ (dữ liệu nhóm liên quan tải khi mở) và khối "Trong cẩm nang" tính lúc build. Mỗi mục có trang riêng `/tra-cuu/<nhóm>/<slug>/` với slug đóng băng trong `pipeline/lookup-route-handles.json`; link Tra cứu từ trang đội trỏ tới trang riêng. `/tra-cuu/` là mục lục.
 - Theo dõi chiêu mộ (store schema v2, `js/recruit-tracker-store.js`): nhiều tài khoản, ghi lượt ngày một chạm ("2 miễn phí", "Đủ 4", "Có 5★"), Hoàn tác, nhật ký sửa/xóa từng dòng, đồng bộ số lượt từ game, gói hạn giờ (đổi tên, ngày hết hạn, lưu trữ, xóa), thống kê; dữ liệu nằm trong `localStorage`, xuất/nhập JSON (nhập = gộp). Đăng nhập Google là tuỳ chọn: bật đồng bộ cloud qua `community-worker` (`/api/recruit`, gộp theo từng bản ghi).
 - Soi screenshot qua Worker + nhà cung cấp AI OpenAI-compatible (tab AI của `/quan-tri/`: nhà cung cấp và API key dùng chung, mỗi tính năng AI có chuỗi failover riêng gồm nhà cung cấp, model, mức effort cùng timeout/trần tổng; mẫu DeepSeek, OpenCode Zen). AI chỉ chép chữ in trong ảnh (không đoán tướng qua chân dung, không chọn team); người dùng xác nhận từng ô trong editor (hoặc nhập tay), rồi frontend diff từng ô với Đội chuẩn theo mùa và Đội khác. Đội đã xác nhận chia sẻ qua link `?doi=v1.…` (chỉ ID canonical), lưu lịch sử 10 mục trên máy và xuất thẻ PNG.
@@ -23,7 +23,8 @@ Website tĩnh tra cứu đội hình, tướng, chiến pháp và hỗ trợ qu�
 - Giao diện Sổ binh pháp dùng chung một shell (header, menu thả, menu mobile, footer), một stylesheet và bộ token ở `docs/design/so-binh-phap/tokens.json`; theme sáng/tối theo lựa chọn đã lưu hoặc hệ điều hành, không nháy khi chuyển trang.
 - Research MCP chỉ đọc có JSON CLI, stdio và authenticated Streamable HTTP dùng chung bảy tool (bề mặt P*; chưa deploy).
 
-Dữ liệu theo kịch bản hiện có Binh Diễn Xuân Thu ở mức tham khảo; chưa có luật,
+Dữ liệu theo kịch bản hiện có ba kịch bản Cùng Tồn ở mức tham khảo (PK-S27 · Hán Diễm
+Trường Minh, PK-S26 · Anh Hùng Mệnh Thế, OG · Binh Diễn Xuân Thu); chưa có luật,
 cấu hình hoặc điểm VN được xác minh để gợi ý theo mùa. Xem
 [phạm vi dữ liệu và điều kiện promote](docs/season-team-data.md).
 
@@ -33,7 +34,7 @@ Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 |---|---:|
 | Đội legacy | 166 = 56 Team PK + 110 Meta phe cũ |
 | Tier | 31 team, 39 bản xếp hạng nguồn |
-| Cùng Tồn | 5 nhóm, 25 team |
+| Cùng Tồn | 3 kịch bản × 5 nhóm × 5 team (PK-S27 Hán Diễm Trường Minh thêm 2026-11-17, có Trang bị và Thẻ Kỳ Lược) |
 | Khai hoang | 11 team, 5 mỏ |
 | Tra cứu | 252 tướng / 412 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
 | Binh thư map | 66 |
