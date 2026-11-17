@@ -217,7 +217,7 @@ reports.get("/api/reports", async (c) => {
   // Điều kiện ẩn đặt ở lời gọi công khai (listReports còn phục vụ /api/me/reports và /api/admin/reports).
   const teamId = communityTeamIdFromPage(page);
   if (teamId) {
-    // Trang đội cộng đồng: kho chung vi/zh (bỏ lọc lang); đội không hiển thị -> rỗng, không lộ trạng thái.
+    // Trang đội cộng đồng: kho chung mọi ngôn ngữ (bỏ lọc lang); đội không hiển thị -> rỗng, không lộ trạng thái.
     if (!(await communityTeamVisible(c, teamId, now))) return c.json({ items: [], nextCursor: null });
     const { rows, nextCursor } = await listReports(c, ["r.page_key = ?", "r.status = 'approved'", visibleUserSql("u")], [page, now]);
     return c.json({ items: rows.map(toPublicReport), nextCursor });

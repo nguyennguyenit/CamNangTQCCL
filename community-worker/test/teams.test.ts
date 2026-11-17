@@ -99,6 +99,18 @@ describe("GET /api/community-seasons", () => {
 });
 
 describe("đăng đội: chọn mùa", () => {
+  it("lang=ja: đội lưu text_lang ja, chi tiết trả textLang ja; lang ngoài danh sách -> 400", async () => {
+    const h = createHarness();
+    const res = await submit(h, "alice", 1, { lang: "ja", season: "pk-s5" });
+    expect(res.status).toBe(201);
+    const { id } = await json(res);
+    expect(h.sqlite.prepare("select text_lang from community_teams where id = ?").get(id)).toEqual({ text_lang: "ja" });
+    expect(await json(await h.request(`${TEAMS}/${id}`, { as: "alice" }))).toMatchObject({ textLang: "ja" });
+    const ko = await submit(h, "alice", 1, { lang: "ko", season: "pk-s5" });
+    expect(ko.status).toBe(400);
+    expect((await json(ko)).error.code).toBe("invalid_lang");
+  });
+
   const rateRows = (h: Harness) => count(h, "select count(*) n from rate_limits");
 
   it("mùa cũ trong danh mục -> 201, hàng mùa upsert nhãn theo catalog; đăng lần 2 không nhân đôi", async () => {

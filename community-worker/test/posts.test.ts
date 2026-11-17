@@ -16,6 +16,22 @@ async function createPost(h: Harness, fields: Record<string, unknown> = {}) {
 }
 
 describe("posts", () => {
+  it("bài ja: tạo, publish, đọc qua /api/posts/ja/:slug; cùng slug + translationKey với vi vẫn hợp lệ", async () => {
+    const h = createHarness();
+    expect((await createPost(h, { translationKey: "s18" })).status).toBe(201);
+    const res = await createPost(h, { lang: "ja", translationKey: "s18", title: "S18 攻略" });
+    expect(res.status).toBe(201);
+    const post = await res.json<ApiJson>();
+    expect(post).toMatchObject({ lang: "ja", slug: "huong-dan-s18", translationKey: "s18" });
+    expect((await createPost(h, { lang: "ja", slug: "khac", translationKey: "s18" })).status).toBe(409);
+    expect((await h.request(`/api/admin/posts/${post.id}/publish`, { as: "admin", method: "POST" })).status).toBe(200);
+    const pub = await h.request("/api/posts/ja/huong-dan-s18");
+    expect(pub.status).toBe(200);
+    expect(await pub.json<ApiJson>()).toMatchObject({ lang: "ja", title: "S18 攻略" });
+    expect((await h.request("/api/posts/ko/huong-dan-s18")).status).toBe(400);
+    expect((await createPost(h, { lang: "ko", slug: "ko" })).status).toBe(400);
+  });
+
   it("tạo nháp chỉ admin; slug duy nhất theo (lang, slug); translationKey duy nhất theo lang", async () => {
     const h = createHarness();
     expect((await h.request("/api/admin/posts", { as: "alice", json: BASE })).status).toBe(403);
