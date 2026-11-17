@@ -23,6 +23,7 @@ const description = pick(
   locale,
   `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`,
   `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`,
+  `「${pageLabel}」の開拓攻略：選択中の編成と、確認済みのメモをすべて掲載しています。`,
 );
 const structured = teamDetailJsonLd({
   locale,
@@ -30,16 +31,16 @@ const structured = teamDetailJsonLd({
   path: Astro.url.pathname,
   name: pageLabel,
   description,
-  family: {name: t('Khai hoang', '开荒'), path: localePath('/khai-hoang/', locale)},
+  family: {name: t('Khai hoang', '开荒', '開拓'), path: localePath('/khai-hoang/', locale)},
   heroes,
 });
 ---
 <SiteLayout
-  title={`${pageLabel}${t(' — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 开荒 — 三国志战略版攻略手册')}`}
+  title={`${pageLabel}${t(' — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 开荒 — 三国志战略版攻略手册', ' — 開拓 — 「三國志 真戦 攻略手帳」')}`}
   description={description}
   pageKind="detail"
   activeSection="khaihoang"
-  tagline={t('Chi tiết Khai hoang', '开荒详情')}
+  tagline={t('Chi tiết Khai hoang', '开荒详情', '開拓の詳細')}
   canonicalUrl={canonicalUrl}
   ogType="article"
   locale={locale}
@@ -47,10 +48,10 @@ const structured = teamDetailJsonLd({
   <Fragment slot="head">
     {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
-  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Khai hoang', '返回开荒列表')}>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Khai hoang', '返回开荒列表', '開拓一覧へ戻る')}>
     <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {t('Quay lại Khai hoang', '返回开荒')}
+      {t('Quay lại Khai hoang', '返回开荒', '開拓へ戻る')}
     </a>
   </nav>
 

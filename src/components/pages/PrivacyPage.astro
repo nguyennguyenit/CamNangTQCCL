@@ -13,228 +13,259 @@ interface Props {
 const { locale } = Astro.props;
 const t = (...variants: string[]): string => pick(locale, ...variants);
 
-const title = t('Chính sách bảo mật', '隐私政策');
+const title = t('Chính sách bảo mật', '隐私政策', 'プライバシーポリシー');
 const lead = t(
   'Trang này giải thích Cẩm Nang TQCCL (tqccl.com) thu thập dữ liệu gì, dùng vào việc gì, lưu ở đâu và cách bạn yêu cầu xoá.',
   '本页说明《三国志战略版攻略手册》（tqccl.com）收集哪些数据、用途是什么、存放在哪里，以及你如何申请删除。',
+  'このページでは、「三國志 真戦 攻略手帳」（tqccl.com）が収集するデータの内容、利用目的、保存場所、および削除を依頼する方法について説明します。',
 );
 
 const sections: PolicySection[] = [
   {
     id: 'khi-duyet-web',
-    heading: t('Khi bạn chỉ xem cẩm nang', '仅浏览手册时'),
+    heading: t('Khi bạn chỉ xem cẩm nang', '仅浏览手册时', '手帳を閲覧するだけの場合'),
     paragraphs: [
       t(
         'Xem đội hình, tra cứu và dùng công cụ không cần tài khoản. Site không đặt quảng cáo, không dùng công cụ phân tích hay theo dõi của bên thứ ba và không đặt cookie khi bạn chưa đăng nhập.',
         '浏览阵容、查询资料和使用工具都无需账号。本站不投放广告，不使用任何第三方分析或追踪工具，未登录时不设置 Cookie。',
+        '編成の閲覧、情報の検索およびツールの利用にアカウントは不要です。本サイトは広告を掲載せず、第三者の分析ツールや追跡ツールも使用しません。ログインしていない場合、Cookie は設定されません。',
       ),
       t(
         'Site được phục vụ qua Cloudflare, nên Cloudflare xử lý các thông tin kỹ thuật của mỗi lần truy cập (như địa chỉ IP) để phân phối nội dung và chống tấn công.',
         '本站经由 Cloudflare 提供服务，Cloudflare 会为分发内容和防御攻击处理每次访问的技术信息（例如 IP 地址）。',
+        '本サイトは Cloudflare を通じて配信されており、Cloudflare はコンテンツの配信および攻撃の防御のために、アクセスごとの技術情報（IP アドレスなど）を処理します。',
       ),
     ],
   },
   {
     id: 'dang-nhap-google',
-    heading: t('Đăng nhập bằng Google', '使用 Google 登录'),
+    heading: t('Đăng nhập bằng Google', '使用 Google 登录', 'Google でのログイン'),
     paragraphs: [
       t(
         'Đăng nhập là tuỳ chọn, chỉ cần khi bạn muốn bình luận hoặc gửi chiến báo. Site chỉ hỗ trợ đăng nhập bằng Google và nhận từ Google:',
         '登录是可选的，仅在你想发表评论或提交战报时需要。本站只支持 Google 登录，并从 Google 获得：',
+        'ログインは任意であり、コメントの投稿や戦報の送信を行う場合にのみ必要です。本サイトは Google ログインのみに対応しており、Google から次の情報を受け取ります。',
       ),
     ],
     items: [
-      t('Tên hiển thị và ảnh đại diện — hiện công khai cạnh bình luận và chiến báo đã duyệt của bạn.', '显示名称和头像——会公开显示在你的评论和已通过审核的战报旁。'),
-      t('Địa chỉ email — không bao giờ hiển thị công khai; dùng để nhận diện tài khoản và tài khoản quản trị.', '电子邮箱地址——从不公开显示，仅用于识别账号及管理员账号。'),
+      t('Tên hiển thị và ảnh đại diện — hiện công khai cạnh bình luận và chiến báo đã duyệt của bạn.', '显示名称和头像——会公开显示在你的评论和已通过审核的战报旁。', '表示名とプロフィール画像：あなたのコメントおよび承認済みの戦報の横に公開表示されます。'),
+      t('Địa chỉ email — không bao giờ hiển thị công khai; dùng để nhận diện tài khoản và tài khoản quản trị.', '电子邮箱地址——从不公开显示，仅用于识别账号及管理员账号。', 'メールアドレス：公開されることはなく、アカウントの識別および管理者アカウントの判別にのみ使用します。'),
       t(
         'Mã xác thực do Google cấp trong quá trình đăng nhập — chỉ dùng để xác thực, site không đọc dữ liệu nào khác trong tài khoản Google của bạn.',
         '登录过程中 Google 签发的验证令牌——仅用于身份验证，本站不会读取你 Google 账号中的任何其他数据。',
+        'ログイン時に Google が発行する認証トークン：認証にのみ使用し、本サイトがあなたの Google アカウント内のその他のデータを読み取ることはありません。',
       ),
     ],
   },
   {
     id: 'phien-cookie',
-    heading: t('Phiên đăng nhập và cookie', '登录会话与 Cookie'),
+    heading: t('Phiên đăng nhập và cookie', '登录会话与 Cookie', 'ログインセッションと Cookie'),
     paragraphs: [
       t(
         'Sau khi đăng nhập, trình duyệt giữ cookie phiên (Better Auth) để bạn không phải đăng nhập lại. Máy chủ lưu phiên kèm địa chỉ IP và thông tin trình duyệt (user agent) để bảo vệ tài khoản; phiên tự hết hạn và bị xoá khi bạn đăng xuất. Đây là cookie cần thiết, không dùng để quảng cáo hay theo dõi.',
         '登录后，浏览器会保存会话 Cookie（Better Auth），让你无需重复登录。服务器会连同 IP 地址和浏览器信息（User-Agent）一起保存会话，用于保护账号；会话到期自动失效，退出登录时即被删除。该 Cookie 属于必要 Cookie，不用于广告或追踪。',
+        'ログイン後は、再ログインの手間を省くため、ブラウザーにセッション Cookie（Better Auth）が保存されます。サーバーは、アカウントを保護する目的で、セッションを IP アドレスおよびブラウザー情報（ユーザーエージェント）とともに保存します。セッションは有効期限が切れると自動的に無効になり、ログアウト時に削除されます。この Cookie は必須のものであり、広告や追跡には使用しません。',
       ),
     ],
   },
   {
     id: 'binh-luan-chien-bao',
-    heading: t('Bình luận và chiến báo', '评论与战报'),
+    heading: t('Bình luận và chiến báo', '评论与战报', 'コメントと戦報'),
     items: [
       t(
         'Bình luận: lưu nội dung, trang, ngôn ngữ và thời điểm gửi; hiện công khai kèm tên và ảnh đại diện. Bạn tự xoá được bình luận của mình.',
         '评论：保存内容、所在页面、语言和发表时间，并连同你的名称和头像公开显示。你可以自行删除自己的评论。',
+        'コメント：内容、投稿したページ、言語および投稿日時を保存し、名前とプロフィール画像とともに公開表示します。ご自身のコメントはご自身で削除できます。',
       ),
       t(
         'Ảnh chiến báo: ảnh chụp màn hình bạn tải lên được lưu trên Cloudflare R2 và gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để AI đọc kết quả trận và tướng hai bên. Ảnh đã tải lên nhưng không gửi thành chiến báo sẽ tự động bị xoá sau 24 giờ.',
         '战报截图：你上传的截图保存在 Cloudflare R2，并发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型），由 AI 识别对局结果和双方武将。已上传但未提交为战报的截图会在 24 小时后自动删除。',
+        '戦報のスクリーンショット：アップロードされたスクリーンショットは Cloudflare R2 に保存され、本サイトが利用する AI 事業者（DeepSeek または OpenCode Zen、モデルは DeepSeek V4.1 Flash）に送信されて、AI が対戦結果と両軍の武将を読み取ります。アップロードされたものの戦報として送信されなかったスクリーンショットは、24 時間後に自動的に削除されます。',
       ),
       t(
         'Chiến báo đã gửi (ảnh, kết quả, tướng, ghi chú, mùa) chờ quản trị viên duyệt. Chỉ chiến báo được duyệt mới công khai; trước đó ảnh chỉ bạn và quản trị viên xem được.',
         '已提交的战报（截图、结果、武将、备注、赛季）需经管理员审核。只有通过审核的战报才会公开；在此之前截图仅你本人和管理员可见。',
+        '送信された戦報（スクリーンショット、結果、武将、メモ、シーズン）は、管理者の承認を経て公開されます。承認された戦報のみが公開され、それまでスクリーンショットはご本人と管理者のみが閲覧できます。',
       ),
       t(
         'Quản trị viên có thể xoá bình luận và từ chối chiến báo vi phạm nội quy.',
         '管理员可以删除违规评论，并拒绝违规战报。',
+        '管理者は、ルールに違反するコメントを削除し、違反する戦報を却下することがあります。',
       ),
     ],
   },
   {
     id: 'doi-cong-dong',
-    heading: t('Đội cộng đồng', '社区阵容'),
+    heading: t('Đội cộng đồng', '社区阵容', 'コミュニティ編成'),
     items: [
       t(
         'Đội bạn đăng (tiêu đề, 3 tướng, chiến pháp, binh chủng, mô tả lối chơi và phân tích, ngôn ngữ, mùa) kèm 1–3 ảnh được lưu trên Cloudflare D1 và R2, chờ quản trị viên duyệt. Trước khi được duyệt, ảnh và nội dung chỉ bạn và quản trị viên xem được.',
         '你发布的阵容（标题、3 名武将、战法、兵种、打法与分析说明、语言、赛季）连同 1–3 张图片保存在 Cloudflare D1 和 R2，等待管理员审核。审核通过前，图片和内容仅你本人和管理员可见。',
+        '投稿された編成（タイトル、武将 3 名、戦法、兵種、立ち回りと解説、言語、シーズン）は、1～3 枚の画像とともに Cloudflare D1 および R2 に保存され、管理者の承認を待ちます。承認されるまで、画像と内容はご本人と管理者のみが閲覧できます。',
       ),
       t(
         'Khi bạn bấm "Đọc bằng AI", ảnh đội được gửi tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, theo thứ tự quản trị viên đặt) để đọc nháp tên tướng và chiến pháp. Kết quả chỉ là nháp để bạn tự kiểm tra, sửa rồi mới gửi.',
         '当你点击“AI 识别”时，阵容图片会发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，按管理员设定的顺序），用于识别武将和战法草稿。识别结果只是草稿，需由你检查、修改后再提交。',
+        '「AI で読み取る」を押すと、編成の画像が本サイトの利用する AI 事業者（DeepSeek または OpenCode Zen。管理者が設定した順序で利用）に送信され、武将名と戦法名の下書きが読み取られます。読み取り結果はあくまで下書きであり、ご自身で確認・修正したうえで送信していただく必要があります。',
       ),
       t(
         'Sau khi được duyệt, ảnh và phần phân tích hiện công khai kèm tên và ảnh đại diện của bạn. Chiến báo và bình luận của người khác trên trang đội cũng công khai theo quy định ở mục "Bình luận và chiến báo".',
         '审核通过后，图片和分析内容会连同你的名称和头像公开显示。其他人在阵容页下的战报和评论，也按“评论与战报”一节的规定公开。',
+        '承認後は、画像と解説が、あなたの名前とプロフィール画像とともに公開表示されます。編成ページ上の他のユーザーの戦報やコメントも、「コメントと戦報」の項目の定めに従って公開されます。',
       ),
       t(
         'Đội bị từ chối: ảnh của đội bị xoá, chỉ giữ lý do từ chối cho bạn xem. Ảnh đã tải lên nhưng chưa gửi đội tự động bị xoá sau 24 giờ.',
         '被拒绝的阵容：其图片会被删除，仅保留拒绝理由供你查看。已上传但未提交的图片会在 24 小时后自动删除。',
+        '却下された編成：画像は削除され、却下の理由のみがご本人の確認用に残ります。アップロードされたものの送信されなかった画像は、24 時間後に自動的に削除されます。',
       ),
       t(
         'Phiếu bầu: site lưu tài khoản, đội và giá trị phiếu (+1/−1) để tính điểm; site không hiển thị ai đã bầu cho đội nào.',
         '投票：本站保存账号、阵容和投票值（+1/−1）用于计算分数；本站不会显示谁给哪个阵容投了票。',
+        '投票：スコアの計算のため、アカウント、編成および投票値（+1/−1）を保存します。誰がどの編成に投票したかは表示されません。',
       ),
       t(
         'Bạn tự xoá được đội của mình; khi đó ảnh, phiếu bầu, cùng chiến báo và bình luận của mọi người trên trang đội đó cũng bị xoá. Xoá tài khoản sẽ xoá toàn bộ đội, ảnh và phiếu bầu của bạn.',
         '你可以自行删除自己的阵容；删除时，其图片、投票，以及所有人在该阵容页下的战报和评论也会一并删除。删除账号将同时删除你的全部阵容、图片和投票。',
+        'ご自身の編成はご自身で削除できます。削除すると、その画像と投票、ならびに当該編成ページ上のすべてのユーザーの戦報とコメントも併せて削除されます。アカウントを削除すると、あなたのすべての編成、画像および投票も削除されます。',
       ),
     ],
   },
   {
     id: 'gop-y',
-    heading: t('Góp ý, sửa lỗi', '意见反馈'),
+    heading: t('Góp ý, sửa lỗi', '意见反馈', 'ご意見・不具合報告'),
     paragraphs: [
       t(
         'Nút "Góp ý, sửa lỗi" ở chân trang không cần đăng nhập. Site lưu loại góp ý, tiêu đề, nội dung, đường dẫn trang bạn đang xem, ngôn ngữ, thời điểm gửi và email nếu bạn để lại (khi đã đăng nhập, email tài khoản được điền sẵn và bạn có thể xoá). Góp ý không hiển thị công khai; chỉ quản trị viên xem được.',
         '页脚的“意见反馈”按钮无需登录。本站会保存反馈类型、标题、内容、你正在浏览的页面路径、语言、提交时间，以及你留下的邮箱（已登录时会自动填入账号邮箱，你可以删除）。反馈不会公开显示，仅管理员可见。',
+        'フッターの「ご意見・不具合報告」ボタンは、ログインなしでご利用いただけます。ご意見の種類、タイトル、内容、閲覧中のページのパス、言語、送信日時、およびご入力いただいたメールアドレスを保存します（ログイン中はアカウントのメールアドレスが自動入力されますが、削除できます）。ご意見は公開されず、管理者のみが閲覧できます。',
       ),
       t(
         'Mỗi góp ý được gửi thành một email tới hộp thư của quản trị viên qua Cloudflare Email Service. Email bạn để lại chỉ dùng để trả lời góp ý đó.',
         '每条反馈都会通过 Cloudflare Email Service 以邮件形式发送到管理员邮箱。你留下的邮箱仅用于回复该条反馈。',
+        'ご意見は 1 件ごとに、Cloudflare Email Service を通じて管理者のメールボックスにメールとして送信されます。ご入力いただいたメールアドレスは、そのご意見への返信にのみ使用します。',
       ),
       t(
         'Khi chưa đăng nhập, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp lúc bạn mở hộp thoại góp ý.',
         '未登录时由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在你打开反馈对话框时加载。',
+        'ログインしていない場合は、Cloudflare Turnstile によるボット判定を行います。Turnstile のスクリプトは、ご意見のダイアログを開いたときにのみ読み込まれます。',
       ),
     ],
   },
   {
     id: 'cong-cu-doc-anh',
-    heading: t('Công cụ đọc ảnh', '图片识别工具'),
+    heading: t('Công cụ đọc ảnh', '图片识别工具', '画像読み取りツール'),
     paragraphs: [
       t(
         'Công cụ "Soi đội từ ảnh" và "Gợi ý đội từ kho" nén ảnh ngay trong trình duyệt rồi gửi qua Cloudflare Worker tới nhà cung cấp AI của site (DeepSeek hoặc OpenCode Zen, mô hình DeepSeek V4.1 Flash) để đọc chữ tên tướng và chiến pháp. Ảnh chỉ dùng cho lần đọc đó, site không lưu lại. Trước khi gửi, Cloudflare Turnstile kiểm tra để chặn bot; script Turnstile chỉ được nạp trên hai trang này và khi mở hộp thoại góp ý.',
         '“截图识阵”和“武将库配队”两个工具会先在浏览器中压缩图片，再经 Cloudflare Worker 发送至本站使用的 AI 服务商（DeepSeek 或 OpenCode Zen，DeepSeek V4.1 Flash 模型）识别武将和战法文字。图片仅用于本次识别，本站不会保存。发送前由 Cloudflare Turnstile 进行人机验证；Turnstile 脚本只在这两个页面以及打开反馈对话框时加载。',
+        '「画像から編成判定」と「所持武将から編成提案」の 2 つのツールは、画像をブラウザー上で圧縮してから、Cloudflare Worker を経由して本サイトの利用する AI 事業者（DeepSeek または OpenCode Zen、モデルは DeepSeek V4.1 Flash）に送信し、武将名と戦法名の文字を読み取ります。画像はその読み取りにのみ使用し、本サイトには保存しません。送信前に Cloudflare Turnstile によるボット判定を行います。Turnstile のスクリプトは、この 2 つのページと、ご意見のダイアログを開いたときにのみ読み込まれます。',
       ),
       t(
         'Khi bạn bấm Đối chiếu trong "Soi đội từ ảnh", site ghi một bộ đếm ẩn danh: loại màn hình, phe đã chọn và số ô AI đọc được, số ô bạn phải sửa, số ô không rõ. Bộ đếm chỉ cộng dồn theo ngày, không kèm ảnh, tên tướng, tài khoản hay IP, và chỉ dùng để đo độ chính xác của AI.',
         '在“截图识阵”中点击比对时，本站会记录一条匿名计数：画面类型、所选一方，以及 AI 识别的格数、你需要修改的格数和无法识别的格数。计数只按天累计，不含图片、武将名称、账号或 IP，仅用于衡量 AI 的准确度。',
+        '「画像から編成判定」で照合を押すと、匿名のカウントを 1 件記録します。内容は、画面の種類、選択した陣営、AI が読み取れたマス数、ご自身が修正する必要があったマス数、および判読できなかったマス数です。カウントは日ごとに累計されるだけで、画像、武将名、アカウントや IP は含まれず、AI の精度の測定にのみ使用します。',
       ),
       t(
         'Nếu bạn đăng nhập, tick đồng ý và tự bấm "Gửi ảnh này", ảnh đó cùng chữ AI đọc được và đội bạn đã xác nhận được lưu trên Cloudflare R2/D1 để quản trị viên duyệt và dùng làm bộ ảnh kiểm tra độ chính xác của AI. Chỉ quản trị viên xem được; mẫu bị từ chối sẽ bị xoá ảnh. Không bấm gửi thì ảnh không bao giờ được lưu.',
         '如果你登录、勾选同意并主动点击“发送这张图片”，该图片连同 AI 识别的文字和你确认的阵容会保存在 Cloudflare R2/D1，供管理员审核并用作检验 AI 准确度的图片集。仅管理员可见；被拒绝的样本会删除图片。不点击发送，图片永远不会被保存。',
+        'ログインし、同意にチェックを入れ、ご自身で「この画像を送信」を押した場合に限り、その画像、AI が読み取った文字、およびご自身が確認した編成が Cloudflare R2/D1 に保存されます。保存されたものは、管理者が審査したうえで、AI の精度を検証するための画像セットとして使用します。閲覧できるのは管理者のみで、却下されたサンプルは画像が削除されます。送信を押さない限り、画像が保存されることはありません。',
       ),
     ],
   },
   {
     id: 'gioi-han-luot',
-    heading: t('Giới hạn lượt dùng', '使用频率限制'),
+    heading: t('Giới hạn lượt dùng', '使用频率限制', '利用回数の制限'),
     paragraphs: [
       t(
         'Để chống lạm dụng, site đếm số lượt thao tác: công cụ đọc ảnh và góp ý khi chưa đăng nhập đếm theo địa chỉ IP đã được băm (không lưu IP gốc), bình luận, chiến báo và góp ý khi đã đăng nhập đếm theo tài khoản, đăng nhập đếm theo IP. Bộ đếm tự hết hạn và bị xoá định kỳ.',
         '为防止滥用，本站会统计操作次数：图片识别工具和未登录时的反馈按经过哈希处理的 IP 地址计数（不保存原始 IP），评论、战报和已登录时的反馈按账号计数，登录按 IP 计数。计数器到期自动失效并定期清除。',
+        '不正利用を防ぐため、本サイトは操作の回数を集計します。画像読み取りツールおよびログインしていない状態でのご意見送信は、ハッシュ化した IP アドレスで集計し（元の IP アドレスは保存しません）、コメント、戦報およびログイン中のご意見送信はアカウント単位で、ログインは IP アドレス単位で集計します。カウンターは有効期限が切れると自動的に無効になり、定期的に削除されます。',
       ),
     ],
   },
   {
     id: 'luu-tren-may',
-    heading: t('Dữ liệu lưu trên thiết bị của bạn', '保存在你设备上的数据'),
+    heading: t('Dữ liệu lưu trên thiết bị của bạn', '保存在你设备上的数据', 'お使いの端末に保存されるデータ'),
     paragraphs: [
       t(
         'Các dữ liệu sau chỉ nằm trong localStorage/sessionStorage của trình duyệt, không gửi về máy chủ; bạn xoá được bằng cách xoá dữ liệu trang web trong trình duyệt:',
         '以下数据只保存在浏览器的 localStorage/sessionStorage 中，不会发送到服务器；清除浏览器中的网站数据即可删除：',
+        '次のデータはブラウザーの localStorage／sessionStorage にのみ保存され、サーバーには送信されません。ブラウザーでサイトデータを消去すれば削除できます。',
       ),
     ],
     items: [
-      t('Giao diện sáng/tối và cách hiển thị đội hình (thẻ/bảng).', '明暗主题和阵容显示方式（卡片/表格）。'),
+      t('Giao diện sáng/tối và cách hiển thị đội hình (thẻ/bảng).', '明暗主题和阵容显示方式（卡片/表格）。', 'ライト／ダークテーマと、編成の表示方法（カード／表）。'),
       t(
         'Nhật ký "Theo dõi chiêu mộ" (tài khoản, banner, lượt chiêu mộ). Nếu bạn đăng nhập trên trang này, nhật ký còn được đồng bộ lên máy chủ (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, nhật ký không rời trình duyệt.',
         '“招募记录”的数据（账号、卡池、招募次数）。如果你在该页面登录，记录还会同步到服务器（见“存储位置与处理方”）；未登录时记录不会离开浏览器。',
+        '「募集記録」のデータ（アカウント、ピックアップ、募集回数）。このページでログインしている場合、記録はサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、記録がブラウザーの外に出ることはありません。',
       ),
       t(
         'Kho tướng và chiến pháp đã quét ở "Gợi ý đội từ kho" (cùng mùa đang chọn, đội đang khóa và món bù). Nếu bạn đăng nhập, kho còn được đồng bộ lên máy chủ theo từng hộp kho (xem mục "Nơi lưu trữ và bên xử lý"); khi chưa đăng nhập, kho không rời trình duyệt. Khi bạn đăng nhập, bản sao của kho (kèm tên hộp kho bạn tự đặt) được giữ trong localStorage của trình duyệt và xoá khi bạn đăng xuất. Ảnh kho dùng để đọc không bao giờ được lưu hay đồng bộ.',
         '在“武将库配队”中扫描得到的武将与战法库（以及所选赛季、锁定的队伍和替代战法）。如果你登录，库存还会按库存盒同步到服务器（见“存储位置与处理方”）；未登录时库存不会离开浏览器。登录后，库存副本（含你自定义的库存盒名称）会保存在浏览器的 localStorage 中，退出登录时清除。用于识别的库存截图不会被保存或同步。',
+        '「所持武将から編成提案」でスキャンした武将と戦法の所持データ（選択中のシーズン、ロックした編成、代替戦法を含みます）。ログインしている場合、所持データは所持ボックス単位でサーバーにも同期されます（「保存場所と処理事業者」の項目をご覧ください）。ログインしていない場合、所持データがブラウザーの外に出ることはありません。ログイン中は、所持データの複製（ご自身で付けた所持ボックス名を含みます）がブラウザーの localStorage に保持され、ログアウト時に削除されます。読み取りに使用した所持データのスクリーンショットは、保存も同期もされません。',
       ),
-      t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。'),
+      t('Dấu hiệu "đã từng đăng nhập" để chỉ kiểm tra phiên khi cần.', '“曾经登录过”的标记，仅在需要时才检查会话。', '「ログイン済みであること」を示す目印。必要なときにのみセッションを確認するために使用します。'),
     ],
   },
   {
     id: 'doi-cua-toi',
-    heading: t('Đội của tôi', '我的阵容'),
+    heading: t('Đội của tôi', '我的阵容', 'マイ編成'),
     paragraphs: [
       t(
         'Đội và nhóm trong "Đội của tôi" (bắt buộc đăng nhập) chỉ lưu trên máy chủ theo tài khoản của bạn (xem mục "Nơi lưu trữ và bên xử lý"), không lưu bền trong trình duyệt: trang chỉ giữ chúng trong bộ nhớ khi đang mở. Hộp kho (tên do bạn đặt) là hộp của "Gợi ý đội từ kho" nên cũng được lưu trong localStorage như mô tả ở trên. Riêng khi bạn bấm lưu lúc chưa đăng nhập, bản đội đang lưu được giữ tạm trong sessionStorage tối đa 30 phút để hoàn tất sau khi đăng nhập. Nội dung bạn tự gõ vào cột chữ tự do được lưu nguyên văn.',
         '“我的阵容”（需登录）中的阵容和分组仅按你的账号保存在服务器上（见“存储位置与处理方”），不会长期保存在浏览器中：页面打开时只保留在内存中。库存盒（名称由你自定义）与“武将库配队”共用，因此也会如上所述保存在 localStorage 中。若你在未登录时点击保存，正在保存的阵容会在 sessionStorage 中临时保留最多 30 分钟，以便登录后完成保存。你在自由文本栏中输入的内容会原样保存。',
+        '「マイ編成」（ログイン必須）の編成とグループは、ご自身のアカウントに紐づけてサーバー上にのみ保存され（「保存場所と処理事業者」の項目をご覧ください）、ブラウザーに長期保存されることはありません。ページを開いている間だけメモリー上に保持されます。所持ボックス（名前はご自身で設定）は「所持武将から編成提案」と共通のため、前述のとおり localStorage にも保存されます。ログインしていない状態で保存を押した場合に限り、保存中の編成は、ログイン後に保存を完了できるよう、sessionStorage に最大 30 分間一時的に保持されます。フリーテキスト欄に入力した内容は、そのまま保存されます。',
       ),
     ],
   },
   {
     id: 'ha-tang',
-    heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方'),
+    heading: t('Nơi lưu trữ và bên xử lý', '存储位置与处理方', '保存場所と処理事業者'),
     items: [
       t(
         'Cloudflare: lưu trữ site (Pages), máy chủ API (Workers), cơ sở dữ liệu tài khoản, bình luận, chiến báo, đội cộng đồng và phiếu bầu, góp ý, bộ đếm ẩn danh Soi đội, nhật ký "Theo dõi chiêu mộ", kho "Gợi ý đội từ kho" và các đội, nhóm, hộp kho trong "Đội của tôi" đã đồng bộ khi bạn đăng nhập (D1; xoá theo tài khoản), ảnh chiến báo, ảnh đội cộng đồng và ảnh Soi đội bạn tự gửi (R2), bộ đếm giới hạn (KV), Turnstile và gửi email góp ý (Email Service).',
         'Cloudflare：网站托管（Pages）、API 服务（Workers）、账号/评论/战报/社区阵容与投票/反馈、截图识阵匿名计数以及登录后同步的“招募记录”、“武将库配队”库存和“我的阵容”（阵容、分组、库存盒）数据库（D1；随账号删除）、战报截图、社区阵容图片和你主动发送的识阵截图（R2）、频率计数（KV）、Turnstile 以及反馈邮件发送（Email Service）。',
+        'Cloudflare：サイトのホスティング（Pages）、API サーバー（Workers）、アカウント・コメント・戦報・コミュニティ編成と投票・ご意見・「画像から編成判定」の匿名カウント、ならびにログイン時に同期される「募集記録」・「所持武将から編成提案」の所持データ・「マイ編成」（編成、グループ、所持ボックス）のデータベース（D1。アカウント単位で削除）、戦報のスクリーンショット、コミュニティ編成の画像、およびご自身で送信した編成判定用スクリーンショット（R2）、利用回数のカウンター（KV）、Turnstile、ならびにご意見のメール送信（Email Service）。',
       ),
-      t('Google: xác thực đăng nhập.', 'Google：登录身份验证。'),
-      t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。'),
+      t('Google: xác thực đăng nhập.', 'Google：登录身份验证。', 'Google：ログインの認証。'),
+      t('DeepSeek (api.deepseek.com) và OpenCode Zen (opencode.ai): AI đọc ảnh, dùng theo thứ tự quản trị viên đặt.', 'DeepSeek（深度求索，api.deepseek.com）与 OpenCode Zen（opencode.ai）：AI 图片识别，按管理员设定的顺序使用。', 'DeepSeek（api.deepseek.com）および OpenCode Zen（opencode.ai）：AI による画像の読み取り。管理者が設定した順序で利用します。'),
     ],
     closing: [
       t(
         'Site không bán, cho thuê hay chia sẻ dữ liệu cá nhân cho bên nào khác ngoài các bên xử lý trên, và không dùng dữ liệu để quảng cáo.',
         '除上述处理方外，本站不会出售、出租或向任何其他方分享个人数据，也不会将数据用于广告。',
+        '本サイトは、上記の処理事業者以外に対して個人データを販売、貸与または共有することはなく、データを広告に利用することもありません。',
       ),
     ],
   },
   {
     id: 'thoi-gian-luu',
-    heading: t('Thời gian lưu', '保存期限'),
+    heading: t('Thời gian lưu', '保存期限', '保存期間'),
     paragraphs: [
       t(
         'Tài khoản, bình luận, chiến báo, đội cộng đồng (cùng ảnh và phiếu bầu), góp ý và ảnh Soi đội bạn tự gửi được lưu cho đến khi bạn tự xoá hoặc yêu cầu xoá (ảnh Soi đội và ảnh đội cộng đồng bị từ chối thì xoá ngay). Ảnh tải lên chưa gửi bị xoá sau 24 giờ; phiên đăng nhập và bộ đếm giới hạn tự hết hạn. Bộ đếm ẩn danh Soi đội không gắn với ai nên được giữ lâu dài.',
         '账号、评论、战报、社区阵容（连同图片和投票）、反馈以及你主动发送的识阵截图会一直保存，直到你自行删除或申请删除（被拒绝的识阵截图和社区阵容图片会立即删除）。已上传但未提交的图片在 24 小时后删除；登录会话和频率计数器到期自动失效。截图识阵匿名计数不关联任何人，因此会长期保存。',
+        'アカウント、コメント、戦報、コミュニティ編成（画像と投票を含みます）、ご意見、およびご自身で送信した編成判定用スクリーンショットは、ご自身で削除するか削除を依頼されるまで保存されます（却下された編成判定用スクリーンショットとコミュニティ編成の画像は直ちに削除されます）。アップロードされたものの送信されなかった画像は 24 時間後に削除され、ログインセッションと利用回数のカウンターは有効期限が切れると自動的に無効になります。「画像から編成判定」の匿名カウントは特定の個人と結びつかないため、長期間保存されます。',
       ),
     ],
   },
   {
     id: 'yeu-cau-xoa',
-    heading: t('Quyền của bạn và yêu cầu xoá dữ liệu', '你的权利与删除数据申请'),
+    heading: t('Quyền của bạn và yêu cầu xoá dữ liệu', '你的权利与删除数据申请', '利用者の権利とデータ削除の依頼'),
     contact: {
       before: t(
         'Bạn có thể đăng xuất bất cứ lúc nào, tự xoá bình luận và đội cộng đồng của mình và thu hồi quyền truy cập của site tại trang quản lý tài khoản Google. Để xem, sửa hoặc xoá toàn bộ tài khoản cùng bình luận, chiến báo, đội cộng đồng và ảnh liên quan, hãy gửi email từ địa chỉ Gmail bạn dùng để đăng nhập tới',
         '你可以随时退出登录、自行删除评论和社区阵容，并在 Google 账号管理页面撤销本站的访问权限。如需查看、更正或删除整个账号及相关评论、战报、社区阵容和图片，请使用登录所用的 Gmail 地址发送邮件至',
+        'ログアウトはいつでも行うことができ、ご自身のコメントとコミュニティ編成は削除でき、Google アカウントの管理ページで本サイトのアクセス権を取り消すこともできます。アカウント全体および関連するコメント、戦報、コミュニティ編成、画像の確認・訂正・削除をご希望の場合は、ログインに使用した Gmail アドレスから、',
       ),
-      after: t('. Chúng tôi sẽ xoá dữ liệu và phản hồi qua email khi hoàn tất.', '。我们会删除相关数据，并在完成后通过邮件回复你。'),
+      after: t('. Chúng tôi sẽ xoá dữ liệu và phản hồi qua email khi hoàn tất.', '。我们会删除相关数据，并在完成后通过邮件回复你。', '宛にメールをお送りください。データを削除し、完了後にメールでご連絡します。'),
     },
   },
   {
     id: 'thay-doi',
-    heading: t('Thay đổi chính sách', '政策变更'),
-    paragraphs: [t('Khi chính sách thay đổi, nội dung và ngày hiệu lực trên trang này sẽ được cập nhật.', '政策如有变更，本页内容和生效日期将随之更新。')],
+    heading: t('Thay đổi chính sách', '政策变更', 'ポリシーの変更'),
+    paragraphs: [t('Khi chính sách thay đổi, nội dung và ngày hiệu lực trên trang này sẽ được cập nhật.', '政策如有变更，本页内容和生效日期将随之更新。', 'ポリシーを変更した場合は、このページの内容および施行日を更新します。')],
   },
 ];
 ---
@@ -246,6 +277,7 @@ const sections: PolicySection[] = [
   description={t(
     'Cẩm Nang TQCCL thu thập dữ liệu gì khi bạn đăng nhập Google, bình luận, gửi chiến báo, gửi góp ý hoặc dùng công cụ đọc ảnh, lưu ở đâu và cách yêu cầu xoá.',
     '《三国志战略版攻略手册》在你使用 Google 登录、发表评论、提交战报、提交反馈或使用图片识别工具时收集哪些数据、存放在哪里以及如何申请删除。',
+    '「三國志 真戦 攻略手帳」が、Google ログイン、コメントの投稿、戦報の送信、ご意見の送信、または画像読み取りツールのご利用時に収集するデータ、保存場所、および削除を依頼する方法についての説明です。',
   )}
   lead={lead}
   effectiveDate="2026-09-29"

@@ -23,58 +23,65 @@ const t = (...variants: string[]): string => pick(locale, ...variants);
 const PAGES: Record<SectionId, { path: string; title: string; description: string }> = {
   'team-chuan': {
     path: '/doi-chuan/',
-    title: t('Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '推荐阵容 — 三国志战略版攻略手册'),
+    title: t('Đội chuẩn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '推荐阵容 — 三国志战略版攻略手册', 'おすすめ編成 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Danh sách đội hình Đội chuẩn theo từng mùa, lọc theo phe, loại binh và mùa.',
       '按赛季整理的推荐阵容，可按阵营、兵种与赛季筛选。',
+    'シーズン別に整理したおすすめ編成を、陣営・兵種・シーズンで絞り込めます。',
     ),
   },
   'team-khac': {
     path: '/doi-khac/',
-    title: t('Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '其他阵容 — 三国志战略版攻略手册'),
+    title: t('Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '其他阵容 — 三国志战略版攻略手册', 'その他の編成 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Danh sách đội hình Đội khác đã đối chiếu với đội chuẩn, lọc theo phe, loại binh và mùa.',
       '与推荐阵容对照过的其他阵容，可按阵营、兵种与赛季筛选。',
+    'おすすめ編成と照らし合わせたその他の編成を、陣営・兵種・シーズンで絞り込めます。',
     ),
   },
   coexist: {
     path: '/cung-ton/',
-    title: t('Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '共存阵容 — 三国志战略版攻略手册'),
+    title: t('Cùng Tồn — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '共存阵容 — 三国志战略版攻略手册', '共存編成 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Các nhóm tướng Cùng Tồn theo kịch bản, kèm cấu hình áp dụng và phần tham khảo.',
       '按剧本整理的共存阵容组合，附适用配置与参考说明。',
+    'シナリオ別に整理した共存編成の組み合わせ。対応する編成と参考情報を添えています。',
     ),
   },
   khaihoang: {
     path: '/khai-hoang/',
-    title: t('Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '开荒 — 三国志战略版攻略手册'),
+    title: t('Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '开荒 — 三国志战略版攻略手册', '開拓 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Hướng dẫn khai hoang theo từng đội: build trước và sau, thanh điểm mốc và cách đánh đất.',
       '按队伍整理的开荒攻略：换战法前后的配置、各级土地评分与打地方法。',
+    'チーム別の開拓攻略。戦法入れ替え前後の編成、土地レベルごとの評価、攻略方法を掲載しています。',
     ),
   },
   'recruit-tracker': {
     path: '/theo-doi-chieu-mo/',
-    title: t('Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '招募记录 — 三国志战略版攻略手册'),
+    title: t('Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '招募记录 — 三国志战略版攻略手册', '募集記録 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.',
       '按账号记录招募：历史记录、保底进度与各卡池剩余次数。',
+    'アカウントごとに募集を記録。履歴、天井の進捗、各ガチャの残り回数を確認できます。',
     ),
   },
   analyze: {
     path: '/soi-doi-tu-anh/',
-    title: t('Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '截图识阵 — 三国志战略版攻略手册'),
+    title: t('Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '截图识阵 — 三国志战略版攻略手册', 'スクショ編成判定 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Soi đội hình từ ảnh chụp và đối chiếu với dữ liệu đội đã được tuyển chọn.',
       '从截图识别阵容，并与精选阵容数据对照。',
+    'スクリーンショットから編成を判別し、厳選した編成データと照合します。',
     ),
   },
   'roster-recommend': {
     path: '/goi-y-doi-tu-kho/',
-    title: t('Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '武将库配队 — 三国志战略版攻略手册'),
+    title: t('Gợi ý đội từ kho — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '武将库配队 — 三国志战略版攻略手册', '武将庫から編成提案 — 「三國志 真戦 攻略手帳」'),
     description: t(
       'Gợi ý đội từ kho tướng và chiến pháp của bạn, kèm điều kiện và hiệu ứng cần kiểm chứng.',
       '根据你的武将与战法库推荐阵容，并列出需核实的条件与效果。',
+    'お持ちの武将と戦法から編成を提案し、確認が必要な条件と効果も示します。',
     ),
   },
 };
@@ -98,12 +105,12 @@ const otherSeasons = section === 'team-chuan' ? (await seasonPages()).pages : []
   {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
   {otherSeasons.length > 0 && (
     <nav class="other-seasons" data-other-seasons aria-labelledby="other-seasons-heading">
-      <h2 id="other-seasons-heading" class="other-seasons-heading">{t('Các mùa khác', '其他赛季')}</h2>
-      <p class="other-seasons-lead">{t('Đội chuẩn của các mùa cũ, mỗi mùa một trang.', '往期赛季的推荐阵容，每个赛季一页。')}</p>
+      <h2 id="other-seasons-heading" class="other-seasons-heading">{t('Các mùa khác', '其他赛季', 'ほかのシーズン')}</h2>
+      <p class="other-seasons-lead">{t('Đội chuẩn của các mùa cũ, mỗi mùa một trang.', '往期赛季的推荐阵容，每个赛季一页。', '過去シーズンのおすすめ編成を、シーズンごとに1ページで掲載しています。')}</p>
       <ul class="other-seasons-list">
         {otherSeasons.map((season) => {
           const name = seasonDisplayName(season, locale);
-          return <li><a href={localePath(season.routePath, locale)}>{name ? `${season.displayCode} · ${name}` : season.displayCode}{t(` (${season.count} đội)`, `（${season.count} 队）`)}</a></li>;
+          return <li><a href={localePath(season.routePath, locale)}>{name ? `${season.displayCode} · ${name}` : season.displayCode}{t(` (${season.count} đội)`, `（${season.count} 队）`, `（${season.count}チーム）`)}</a></li>;
         })}
       </ul>
     </nav>

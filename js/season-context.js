@@ -9,14 +9,14 @@ const CONFIG_KEYS = ['schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId',
 const TIERS = new Set(['T0', 'T0.5', 'T1', 'T1.5', 'T2', 'T3']);
 const META_TIERS = new Set(['T0', 'T0.5', 'T1']);
 const MODELS = new WeakMap();
-/** Thông báo theo mã lỗi, mỗi mã một cặp [tiếng Việt, tiếng Trung]; chọn theo ngôn ngữ trang lúc tạo lỗi. */
+/** Thông báo theo mã lỗi, mỗi mã một cặp [tiếng Việt, tiếng Trung, tiếng Nhật]; chọn theo ngôn ngữ trang lúc tạo lỗi. */
 const MESSAGES = {
-  SEASON_BUNDLE_INVALID: ['Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.', '剧本数据无效或不同步。'],
-  SEASON_CONTEXT_INVALID: ['Kịch bản hoặc phiên bản luật không hợp lệ.', '剧本或规则版本无效。'],
-  SEASON_CONTEXT_REQUIRED: ['Chọn phiên bản luật đã xác minh để thực hiện thao tác này.', '请选择已验证的规则版本以执行此操作。'],
-  CONFIG_NOT_FOUND: ['Không tìm thấy cấu hình phù hợp phạm vi.', '未找到符合范围的配置。'],
-  CONFIG_AMBIGUOUS: ['Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.', '该阵容有多个符合的配置，请选择具体配置。'],
-  CANDIDATE_LIMIT_EXCEEDED: ['Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.', '符合范围的配置过多，暂时无法生成推荐。'],
+  SEASON_BUNDLE_INVALID: ['Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.', '剧本数据无效或不同步。', 'シナリオデータが無効、または同期されていません。'],
+  SEASON_CONTEXT_INVALID: ['Kịch bản hoặc phiên bản luật không hợp lệ.', '剧本或规则版本无效。', 'シナリオまたはルールバージョンが無効です。'],
+  SEASON_CONTEXT_REQUIRED: ['Chọn phiên bản luật đã xác minh để thực hiện thao tác này.', '请选择已验证的规则版本以执行此操作。', 'この操作を行うには、検証済みのルールバージョンを選択してください。'],
+  CONFIG_NOT_FOUND: ['Không tìm thấy cấu hình phù hợp phạm vi.', '未找到符合范围的配置。', '範囲に合う構成が見つかりません。'],
+  CONFIG_AMBIGUOUS: ['Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.', '该阵容有多个符合的配置，请选择具体配置。', 'この編成には該当する構成が複数あります。具体的な構成を選択してください。'],
+  CANDIDATE_LIMIT_EXCEEDED: ['Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.', '符合范围的配置过多，暂时无法生成推荐。', '範囲に合う構成が多すぎるため、現在はおすすめを生成できません。'],
 };
 const message = code => L(...(MESSAGES[code] || MESSAGES.SEASON_BUNDLE_INVALID));
 

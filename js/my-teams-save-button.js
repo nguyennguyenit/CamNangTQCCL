@@ -14,7 +14,7 @@ import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, ope
 import { el } from "./render.js";
 
 const MAIN_BOX = "main";
-const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容");
+const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容", "マイ編成に保存");
 
 /** `draft.id` theo nguồn: sinh lần đầu, giữ tới khi server xác nhận (thử lại không sinh bản trùng). */
 const draftIds = new Map();
@@ -62,17 +62,17 @@ export function unresolvedNotice(unresolved) {
   const notes = items.filter((item) => item?.reason === "over-limit" && item.field === "notes.general").length;
   const others = items.filter((item) => item?.reason === "over-limit" && item.field !== "notes.general").length;
   return [
-    names ? L(` Có ${names} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${names} 项未能匹配，可在“我的阵容”中修改。`) : "",
-    notes ? L(` ${notes} dòng ghi chú vượt giới hạn dung lượng nên không được lưu, bản đầy đủ vẫn ở trang nguồn.`, ` ${notes} 行备注超出容量上限，未被保存，完整内容仍在来源页面。`) : "",
-    others ? L(` ${others} phương án thay vượt giới hạn nên không được lưu.`, ` ${others} 个替代方案超出上限，未被保存。`) : "",
+    names ? L(` Có ${names} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${names} 项未能匹配，可在“我的阵容”中修改。`, ` ${names} 件は照合できませんでした。「マイ編成」で修正できます。`) : "",
+    notes ? L(` ${notes} dòng ghi chú vượt giới hạn dung lượng nên không được lưu, bản đầy đủ vẫn ở trang nguồn.`, ` ${notes} 行备注超出容量上限，未被保存，完整内容仍在来源页面。`, ` ${notes} 行のメモは容量上限を超えたため保存されませんでした。全文は元のページに残っています。`) : "",
+    others ? L(` ${others} phương án thay vượt giới hạn nên không được lưu.`, ` ${others} 个替代方案超出上限，未被保存。`, ` ${others} 件の代替案は上限を超えたため保存されませんでした。`) : "",
   ].join("");
 }
 
 function successToast(team, unresolved) {
   showToast({
-    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`)}${unresolvedNotice(unresolved)}`,
+    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`, `「${team.name}」をマイ編成に保存しました。`)}${unresolvedNotice(unresolved)}`,
     href: openTeamsHref(),
-    linkLabel: L("Mở Đội của tôi", "打开我的阵容"),
+    linkLabel: L("Mở Đội của tôi", "打开我的阵容", "マイ編成を開く"),
   });
 }
 
@@ -98,16 +98,16 @@ async function openSaveDialog(prep) {
   paintGroups();
 
   const alert = el("p", { class: "mt-alert", role: "alert", hidden: "" });
-  const save = el("button", { type: "button", class: "ana-btn primary" }, L("Lưu", "保存"));
-  const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消"));
+  const save = el("button", { type: "button", class: "ana-btn primary" }, L("Lưu", "保存", "保存"));
+  const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消", "キャンセル"));
   const body = el("div", { class: "mt-save-form" }, [
     el("p", { class: "mt-dialog-lead" }, prep.draft.name),
-    el("label", { class: "mt-field", for: "mt-save-box" }, [el("span", {}, L("Hộp", "仓库")), boxSelect]),
-    el("label", { class: "mt-field", for: "mt-save-group" }, [el("span", {}, L("Nhóm", "分组")), groupSelect]),
+    el("label", { class: "mt-field", for: "mt-save-box" }, [el("span", {}, L("Hộp", "仓库", "倉庫")), boxSelect]),
+    el("label", { class: "mt-field", for: "mt-save-group" }, [el("span", {}, L("Nhóm", "分组", "グループ")), groupSelect]),
     alert,
     el("div", { class: "mt-dialog-actions" }, [cancel, save]),
   ]);
-  const { close } = openDialog({ title: L("Lưu vào đội của tôi", "保存到我的阵容"), body });
+  const { close } = openDialog({ title: L("Lưu vào đội của tôi", "保存到我的阵容", "マイ編成に保存"), body });
   cancel.addEventListener("click", close);
 
   save.addEventListener("click", async () => {
@@ -128,7 +128,7 @@ async function openSaveDialog(prep) {
     }
     alert.textContent = describeFailure(result);
     alert.hidden = false;
-    save.textContent = L("Lưu lại", "重新保存");
+    save.textContent = L("Lưu lại", "重新保存", "再保存");
     save.disabled = false;
   });
   groupSelect.focus();
@@ -152,9 +152,9 @@ const failedToast = (error, retry) =>
   showToast({
     kind: "error",
     message: error?.message === "unknown-variant" || error?.message === "no-payload"
-      ? L("Không dựng được đội để lưu từ trang này.", "无法从此页面生成可保存的阵容。")
+      ? L("Không dựng được đội để lưu từ trang này.", "无法从此页面生成可保存的阵容。", "このページから保存できる編成を作成できませんでした。")
       : describeError(error),
-    actionLabel: L("Lưu lại", "重新保存"),
+    actionLabel: L("Lưu lại", "重新保存", "再保存"),
     onAction: retry,
   });
 
@@ -209,9 +209,9 @@ async function attemptPending() {
       successToast(result.team, unresolved);
       return;
     }
-    showToast({ kind: "error", message: describeFailure(result), actionLabel: L("Lưu lại", "重新保存"), onAction: attemptPending });
+    showToast({ kind: "error", message: describeFailure(result), actionLabel: L("Lưu lại", "重新保存", "再保存"), onAction: attemptPending });
   } catch (error) {
-    showToast({ kind: "error", message: describeError(error), actionLabel: L("Lưu lại", "重新保存"), onAction: attemptPending });
+    showToast({ kind: "error", message: describeError(error), actionLabel: L("Lưu lại", "重新保存", "再保存"), onAction: attemptPending });
   }
 }
 
