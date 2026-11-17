@@ -159,6 +159,36 @@ class RecommendedDedupTest(unittest.TestCase):
         self.assertEqual(seasonal["decisions"][0]["classification"], "distinct")
         self.assertEqual(seasonal["unresolvedRecommended"], [])
 
+    def test_admitted_rows_identical_to_each_other_keep_one_preferring_youtube_then_order(self):
+        entries = [{"kind": "hero", "stableId": f"h{index}", "aliases": [f"H{index}"],
+                    "reviewStatus": "reviewed", "evidenceRef": f"fixture:{index}"}
+                   for index in range(1, 7)]
+        entries += [{"kind": "tactic", "stableId": f"t{index}", "aliases": [f"T{index}"],
+                     "reviewStatus": "reviewed", "evidenceRef": f"fixture:t{index}"} for index in (1, 2)]
+
+        def team(identifier, source, names, tactic="T1"):
+            # Chiến pháp luôn thuộc H1/H4 dù thứ tự tướng đổi: trùng tuyệt đối tính theo chủ sở hữu.
+            return {"id": identifier, "source": source, "name": identifier, "heroes": [
+                {"name": name, "tactics": [{"name": tactic}] if name in ("H1", "H4") else []} for name in names]}
+
+        teams = [
+            team("team-intro-1", "team-intro", ["H1", "H2", "H3"]),
+            team("moi-phe-2", "moi-phe", ["H3", "H2", "H1"]),
+            team("team-intro-3", "team-intro", ["H4", "H5", "H6"]),
+            team("moi-phe-4", "moi-phe", ["H6", "H5", "H4"]),
+            team("team-intro-5", "team-intro", ["H4", "H5", "H6"], tactic="T2"),
+            team("youtube-0", "youtube", ["H2", "H1", "H3"]),
+        ]
+        result = build_other_team_ledger(teams, [], {"entries": entries}, season_id="pk-s27")
+        self.assertEqual([row["legacyTeamId"] for row in result["admitted"]], ["youtube-0", "team-intro-3", "team-intro-5"])
+        decisions = {row["legacyTeamId"]: row for row in result["decisions"]}
+        self.assertEqual({key: (row["classification"], row.get("matchingLocal")) for key, row in decisions.items()
+                          if row["classification"] == "duplicate"},
+                         {"team-intro-1": ("duplicate", "youtube-0"), "moi-phe-2": ("duplicate", "youtube-0"),
+                          "moi-phe-4": ("duplicate", "team-intro-3")})
+        self.assertEqual(result["counts"], {"distinct": 3, "duplicate": 3, "pendingIdentity": 0, "pendingSource": 0})
+        self.assertEqual(len(result["admitted"]), result["counts"]["distinct"])
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests/fixtures/sgsdeck-recommended"
 DETAIL_URL = "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"

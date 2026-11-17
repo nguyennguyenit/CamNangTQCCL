@@ -128,6 +128,22 @@ def _possibly_duplicate(partial_holders, candidate):
                for ordering in itertools.permutations(candidate["holders"]))
 
 
+def _merge_local_duplicates(admitted, decisions):
+    """Hàng admitted trùng tuyệt đối nhau (cùng dedup key) chỉ giữ hàng đầu tiên theo thứ tự đã xếp
+    (đề cử trước, rồi thứ tự xuất hiện); hàng còn lại thành ``duplicate`` trỏ ``matchingLocal`` về hàng giữ."""
+    by_team = {row["legacyTeamId"]: row for row in decisions}
+    kept, owner = [], {}
+    for item in admitted:
+        decision = by_team[item["legacyTeamId"]]
+        key = decision["dedupKey"]
+        if key in owner:
+            decision.update({"classification": "duplicate", "matchingLocal": owner[key]})
+            continue
+        owner[key] = item["legacyTeamId"]
+        kept.append(item)
+    return kept
+
+
 def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team_tiers=(), season_id=None):
     """Phân loại đội cục bộ so với ``recommended_records`` (Đội chuẩn của đúng mùa ``season_id``).
 
@@ -200,7 +216,7 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
     if len(decisions) != len(teams):
         raise ValueError("Every local team needs one final primary classification")
     # sort ổn định: đội đề cử trước, phần còn lại giữ thứ tự cũ.
-    result["admitted"] = sorted(retained, key=lambda item: not item.get("recommended"))
+    result["admitted"] = _merge_local_duplicates(sorted(retained, key=lambda item: not item.get("recommended")), decisions)
     result["decisions"] = decisions
     result["counts"] = {name: sum(item["classification"] == name for item in decisions)
                         for name in ("distinct", "duplicate", "pendingIdentity", "pendingSource")}

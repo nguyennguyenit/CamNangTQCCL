@@ -1,21 +1,22 @@
 # Phân loại ledger Đội khác — PK-S27 (piece B)
 
 Ngày 2026-11-17. Ledger: `pipeline/recommended-other-teams.json`, sinh bằng `--pack pipeline/localization-inputs/recommended.json`.
-Nguồn YouTube: `pipeline/team-youtube-pk-s27.json` sha256 `a648852d15119d654d2fddc5db1b97ed8c296fec91ddb05d695b0f9b85a3ddb3` (202 đội lúc chạy; file còn được bổ sung — đổi file thì chạy lại `build_json` + `recommended_team_dedup`).
+Nguồn YouTube: `pipeline/team-youtube-pk-s27.json` sha256 `5f9794dfe8d31c02ab8c3cbeb5a255bf85d1956413a0656c7381bf68fd7b973d` (267 đội, bản chốt ở commit bd5869e).
 
 ## Tổng
 
 | | admitted | duplicate | pendingIdentity | input |
 |---|---|---|---|---|
 | Trước (HEAD, so mọi mùa) | 40 | 19 | 107 | 166 |
-| Sau (chỉ Đội chuẩn PK-S27) | 344 | 17 | 17 | 378 |
+| Sau (chỉ Đội chuẩn PK-S27) | 387 | 36 | 20 | 443 |
 
-- Admitted theo nguồn trước: {'team-intro': 10, 'moi-phe': 30}; sau: {'youtube': 191, 'team-intro': 54, 'moi-phe': 99}.
-- Mọi hàng admitted có `sourceSeasonIds: ["pk-s27"]`; 191 hàng YouTube `recommended: true` đứng đầu.
-- YouTube: {'duplicate': 3, 'distinct': 191, 'pendingIdentity': 8}.
+- Admitted theo nguồn trước: {'team-intro': 10, 'moi-phe': 30}; sau: {'youtube': 240, 'team-intro': 51, 'moi-phe': 96}.
+- Mọi hàng admitted có `sourceSeasonIds: ["pk-s27"]`; 240 hàng YouTube `recommended: true` đứng đầu.
+- Theo nguồn: moi-phe distinct 96; moi-phe duplicate 5; moi-phe duplicate-nội-bộ 3; moi-phe pendingIdentity 6; team-intro distinct 51; team-intro duplicate 9; team-intro duplicate-nội-bộ 3; team-intro pendingIdentity 3; youtube distinct 240; youtube duplicate 16; youtube pendingIdentity 11.
+- Gộp trùng nội bộ (cùng dedup key tướng + chiến pháp; giữ đội đề cử rồi thứ tự xuất hiện): 6 hàng — moi-phe-115 → giữ team-intro-4, moi-phe-118 → giữ team-intro-26, moi-phe-130 → giữ team-intro-36, team-intro-21 → giữ youtube-162, team-intro-51 → giữ youtube-216, team-intro-62 → giữ team-intro-19.
 - `unresolvedRecommended` (Đội chuẩn PK-S27 còn ô chưa resolve, dùng làm wildcard): s27-chengpu-dudu-gong, s27-chuanzi-gong, s27-hedan-zhujun, s27-lp-beifa-qiang, s27-lp-biyue-dun, s27-lp-taoyuan-dun-ay, s27-ofw-pc2-ganning, s27-ofw-pc2-jiaxu, s27-ofw-pc2-machao, s27-ofw-pc2-sunshangxiang, s27-ofw-pc2-zhangrang, s27-ofw-pc3-ganning, s27-ofw-pc3-jiaxu, s27-ofw-pc3-machao, s27-ofw-pc3-sunshangxiang, s27-ofw-pc3-zhangrang.
 
-Phân rã thay đổi admitted (cùng `data/teams.json` 176 đội trước YouTube):
+Phân rã thay đổi admitted (176 đội không YouTube, trước luật gộp trùng nội bộ):
 
 | Cấu hình | admitted | duplicate | pending |
 |---|---|---|---|
@@ -35,7 +36,7 @@ Phân rã thay đổi admitted (cùng `data/teams.json` 176 đội trước YouT
 | team-intro-59 | Bố Thuyền Thực | 40Y Lữ Bố / SP Điêu Thuyền / SP Lô Thực | admitted |  |
 | team-intro-60 | Bố Dị Chính | 40Y Lữ Bố / Vương Dị / SP Pháp Chính(Cung S) | admitted |  |
 | team-intro-61 | Bố Thuyền Trác | 40Y Lữ Bố / SP Điêu Thuyền / Đổng Trác/SP Đổng Trác | admitted | có lựa chọn thay thế (pendingBranches) |
-| team-intro-62 | Úc Hủ Dị | SP Tuân Úc / Giả Hủ / Vương Dị | admitted |  |
+| team-intro-62 | Úc Hủ Dị | SP Tuân Úc / Giả Hủ / Vương Dị | duplicate (nội bộ) | giữ team-intro-19 |
 | team-intro-63 | Bố Chính Du | 40Y Lữ Bố(S) / SP Pháp Chính / Hứa Du(S) | duplicate | s27-official-sanshi-lvbu-dun, s27-ofw-cangqi-lvbu-dun |
 | team-intro-64 | Vũ Chính Thái | SP Quan Vũ(S) / SP Pháp Chính / CO Tinh Thái | duplicate | s27-ofw-cangqi-xingcai-faguan-dun |
 | team-intro-65 | Bị Vũ Phi | Lưu Bị / Quan Vũ(Kỹ Năng Quân Sư Quan Hưng) / Trương Phi | admitted | có lựa chọn thay thế (pendingBranches) |
@@ -57,6 +58,22 @@ Phân rã thay đổi admitted (cùng `data/teams.json` 176 đội trước YouT
 | youtube-121 | Xã Tắc Cung (Hành Ách Trận) | SP Chu Du / Lục Tốn / Trình Phổ | pending | unresolved-local-primary; chưa resolve: CP Hành Ách Trận |
 | youtube-131 | Khảng Khái Cung | Cam Ninh / Thái Sử Từ / SP Lữ Mông | duplicate | s27-official-kangkai-gong |
 | youtube-195 | Ngô Nữ Cung (Hành Ách Trận) | CO Đại Kiều / Tôn Thượng Hương / CO Tiểu Kiều | pending | unresolved-local-primary; chưa resolve: CP Hành Ách Trận |
+| youtube-202 | Đại Hán Cung | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | duplicate | s27-official-dahan-gong, s27-ofw-dahan-gong |
+| youtube-203 | Tân Cự Mã Cung | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | duplicate | s27-han-hanshi-gong-1 |
+| youtube-207 | Đại Hán Cung (không đặc kỹ Trị Quân) | SP Tào Tháo / SP Điêu Thuyền / SP Lô Thực | duplicate | s27-lp-hanshi-gong-sr |
+| youtube-209 | SP Lô Thực Thái Sư Cung | SP Đổng Trác / SP Lô Thực / SP Điêu Thuyền | duplicate | s27-han-luzhi-taishi-gong |
+| youtube-211 | SP Chu Tuấn Cung Hán | SP Đổng Trác / SP Chu Tuấn / SP Điêu Thuyền | duplicate | s27-han-zhujun-rou-gong |
+| youtube-215 | Pháp Quan Thuẫn (Mã Đại) | SP Quan Vũ / Mã Đại / SP Pháp Chính | duplicate | s27-ayan-madai-faguan-dun |
+| youtube-227 | Hoàng Mã Thương | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | duplicate | s27-lp-huangma-qiang-sr, s27-lp-huangma-qiang-xbs, s27-official-huangma-qiang |
+| youtube-236 | Bế Nguyệt Thuẫn | Điêu Thuyền / Trương Giác / Tả Từ | pending | unresolved-local-primary; chưa resolve: CP Hành Ách Trận |
+| youtube-237 | Bế Nguyệt Thuẫn (Toàn Quân Đồng Lòng) | Điêu Thuyền / Trương Giác / Tả Từ | pending | unresolved-local-primary; chưa resolve: CP Hành Ách Trận |
+| youtube-238 | Bế Nguyệt Thuẫn (Thừa Địch Bất Ngu) | Điêu Thuyền / Trương Giác / Tả Từ | pending | unresolved-local-primary; chưa resolve: CP Hành Ách Trận |
+| youtube-245 | Tàng Khí Bắc Phạt Thuẫn | SP Gia Cát Lượng / Quan Hưng / Trương Bào | duplicate | s27-official-beifa-dun; có lựa chọn thay thế (pendingBranches) |
+| youtube-248 | Quyền Kỵ | Tôn Quyền / Lăng Thống / Chu Thái | duplicate | s27-quan-qi; có lựa chọn thay thế (pendingBranches) |
+| youtube-250 | Ngô Kỵ (Gió Táp Mưa Sa) | Chu Thái / Lăng Thống / Tôn Thượng Hương | duplicate | s27-lp-wu-qi-sr |
+| youtube-255 | Phú Quý Kỵ | SP Tuân Úc / SP Quách Gia / Giả Hủ | duplicate | s27-lp-wumou-qi, s27-official-wumou-qi |
+| youtube-261 | Tuân Du Ngũ Mưu (Sư Tử Phấn Tấn) | SP Tuân Úc / SP Quách Gia / Tuân Du | duplicate | s27-lp-wumou-sr |
+| youtube-266 | Thái Úy Thuẫn (Tư Mã Ý, Trương Xuân Hoa) | Tư Mã Ý / Trương Xuân Hoa / SP Tuân Úc | duplicate | s27-ayan-xunyu-nvwang-dun |
 
 ### Admitted
 
@@ -253,6 +270,55 @@ Phân rã thay đổi admitted (cùng `data/teams.json` 176 đội trước YouT
 | youtube-199 | CO Đại Kiều Kỵ (Trương Liêu, Tả Từ) | CO Đại Kiều / Trương Liêu / Tả Từ | admitted |  |
 | youtube-200 | CO Đại Kiều Thuẫn (Đổng Trác, Trương Liêu) | CO Đại Kiều / Đổng Trác / Trương Liêu | admitted |  |
 | youtube-201 | Lữ Linh Ỷ | Lỗ Túc / Viên Thiệu / Lữ Linh Ỷ | admitted |  |
+| youtube-204 | Hán Thất Cung (SP Tào Tháo mang Tử Sĩ Tiên Phong) | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | admitted |  |
+| youtube-205 | Đại Hán Cung (Thuyền Cỏ Mượn Tên) | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | admitted |  |
+| youtube-206 | Lô Thực Hán Cung | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | admitted |  |
+| youtube-208 | Hán Thất Cung (Lập Lờ Đánh Tráo) | SP Tào Tháo / SP Lô Thực / SP Điêu Thuyền | admitted |  |
+| youtube-210 | SP Lô Thực Thái Sư Cung (SP Lô Thực chủ tướng) | SP Lô Thực / SP Đổng Trác / SP Điêu Thuyền | admitted |  |
+| youtube-212 | Cự Mã Cung | SP Tào Tháo / SP Đổng Trác / SP Điêu Thuyền | admitted |  |
+| youtube-213 | Ly Hỏa Cung (bản Lục Tốn) | SP Điêu Thuyền / Lục Tốn / Tào Tháo | admitted |  |
+| youtube-214 | Tiềm Long Lục Tốn (Cương Nhu Kết Hợp) | SP Điêu Thuyền / Lục Tốn / Tào Tháo | admitted |  |
+| youtube-216 | Pháp Quan (bản Tiểu Bang Thủ) | SP Quan Vũ / Mã Đại / SP Pháp Chính | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-217 | Pháp Quan Thuẫn (Mã Đại, Lính Giáp Mây) | SP Quan Vũ / SP Pháp Chính / Mã Đại | admitted |  |
+| youtube-218 | Pháp Quan Thuẫn (Mã Đại, Kích Kỳ Nọa Quy) | SP Quan Vũ / SP Pháp Chính / Mã Đại | admitted |  |
+| youtube-219 | Pháp Quan Thuẫn (Mã Đại) | SP Quan Vũ / Mã Đại / SP Pháp Chính | admitted |  |
+| youtube-220 | Pháp Quan Thuẫn (Lưu Bị) | SP Quan Vũ / Lưu Bị / SP Pháp Chính | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-221 | Pháp Quan Thuẫn (Lưu Bị, Ngư Lân Trận) | SP Quan Vũ / SP Pháp Chính / Lưu Bị | admitted |  |
+| youtube-222 | Pháp Quan (bản Lưu Bị) | SP Quan Vũ / Lưu Bị / SP Pháp Chính | admitted |  |
+| youtube-223 | Pháp Quan Thuẫn (Lưu Bị, Kích Kỳ Nọa Quy) | SP Quan Vũ / SP Pháp Chính / Lưu Bị | admitted |  |
+| youtube-224 | Pháp Quan Thuẫn (Lưu Bị, Lính Giáp Mây) | SP Quan Vũ / SP Pháp Chính / Lưu Bị | admitted |  |
+| youtube-225 | Pháp Quan Thuẫn (Gia Cát Lượng) | SP Quan Vũ / Gia Cát Lượng / SP Pháp Chính | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-226 | Gia Cát Pháp Quan | SP Quan Vũ / SP Pháp Chính / Gia Cát Lượng | admitted |  |
+| youtube-228 | Hoàng Mã Thương (Thừa Địch Bất Ngu) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-229 | Hoàng Mã Thương (Lâm Nguy Cứu Chủ) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-230 | Hoàng Mã Thương (Mau Giành Lợi Thế) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-231 | Hoàng Mã (Phấn Đột) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-232 | Hoàng Mã Thương (Nhân Lợi Chế Quyền) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-233 | Hoàng Mã Thương (Uy Mưu Vô Địch) | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-234 | Hoàng Mã Cung | SP Mã Siêu / SP Hoàng Phủ Tung / Hứa Du | admitted |  |
+| youtube-235 | Ôn Hầu Thương biến dị | Tả Từ / Lữ Bố / Hứa Du | admitted |  |
+| youtube-239 | Súc Thế Thục Trí | Bàng Thống / Gia Cát Lượng / SP Pháp Chính | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-240 | Thái Bạch Kỳ Lân Cung | Khương Duy / Bàng Thống / Gia Cát Lượng | admitted |  |
+| youtube-241 | Kỳ Lân Cung (Tiểu Bang Thủ) | Khương Duy / Bàng Thống / Gia Cát Lượng | admitted |  |
+| youtube-242 | Kỳ Lân Cung (Thiêu Đốt Doanh Lũy) | Khương Duy / Bàng Thống / Gia Cát Lượng | admitted |  |
+| youtube-243 | Kỳ Lân Cung (TBT) | Khương Duy / Bàng Thống / Gia Cát Lượng | admitted |  |
+| youtube-244 | Kỳ Lân Cung (có Đương Phong Thôi Quyết, Thịnh Khí Linh Địch) | Khương Duy / Bàng Thống / Gia Cát Lượng | admitted |  |
+| youtube-246 | Thương nổi mạng | Trương Phi / Quan Ngân Bình / Hoàng Nguyệt Anh | admitted |  |
+| youtube-247 | Thương nổi mạng (Thôi Phong Đoạn Nhẫn) | Trương Phi / Quan Ngân Bình / Hoàng Nguyệt Anh | admitted |  |
+| youtube-249 | Quyền Kỵ (Mau Giành Lợi Thế) | Tôn Quyền / Lăng Thống / Chu Thái | admitted |  |
+| youtube-251 | Ngô Kỵ (Nằm Gai Nếm Mật) | Chu Thái / Lăng Thống / Tôn Thượng Hương | admitted |  |
+| youtube-252 | Ngô Kỵ (Thiết Kỵ Khu Trì) | Chu Thái / Lăng Thống / Tôn Thượng Hương | admitted |  |
+| youtube-253 | Đô Đốc Cung (Hòa Hán Cung) | SP Chu Du / Lục Tốn / SP Lữ Mông | admitted |  |
+| youtube-254 | Quần Cung | SP Viên Thiệu / SP Chu Tuấn / Thư Thụ | admitted |  |
+| youtube-256 | Ngũ Mưu Kỵ | SP Tuân Úc / SP Quách Gia / Giả Hủ | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-257 | Ngũ Mưu Kỵ (Anh Thành Tự Thủ) | SP Tuân Úc / SP Quách Gia / Giả Hủ | admitted |  |
+| youtube-258 | Ngũ Mưu Kỵ (Sư Tử Phấn Tấn) | SP Tuân Úc / Giả Hủ / SP Quách Gia | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-259 | Lão A8 Ngũ Mưu Kỵ | SP Tuân Úc / SP Quách Gia / Tuân Du | admitted |  |
+| youtube-260 | Ngũ Mưu (Tuân Du, Vạn Quân Đoạt Sư) | SP Tuân Úc / SP Quách Gia / Tuân Du | admitted |  |
+| youtube-262 | Phú Quý Kỵ (Tuân Du) | SP Tuân Úc / SP Quách Gia / Tuân Du | admitted | có lựa chọn thay thế (pendingBranches) |
+| youtube-263 | Phú Quý Kỵ (Tuyệt Kế Chiết Mưu) | SP Tuân Úc / Tuân Du / SP Quách Gia | admitted |  |
+| youtube-264 | Thái Úy Thuẫn (Thừa Thắng Trường Khu) | Tư Mã Ý / Tào Tháo / Mãn Sủng | admitted |  |
+| youtube-265 | Tuân Thái Úy | Tư Mã Ý / Trương Xuân Hoa / SP Tuân Úc | admitted |  |
 
 ## Đội cũ còn pending (không thuộc piece này)
 
@@ -267,14 +333,6 @@ Phân rã thay đổi admitted (cùng `data/teams.json` 176 đội trước YouT
 | team-intro-37 | Du Túc Tốn | SP Chu Du / Lỗ Túc / Lục Tốn | pending | unresolved-local-primary; chưa resolve: CP Tinh·Phong Thi Trận; có lựa chọn thay thế (pendingBranches) |
 | team-intro-53 | Lô Điêu Trác | SP Lô Trực / SP Điêu Thuyền / SP Đổng Trác | pending | unresolved-local-primary; chưa resolve: CP Đồng Tâm Hiệp Lực |
 | team-intro-54 | Lô Tiêu Điêu | SP Lô Trực / Tiêu Chỉ / SP Điêu Thuyền | pending | unresolved-local-primary; chưa resolve: tướng Tiêu Chỉ, CP Đồng Tâm Hiệp Lực |
-
-## Hàng admitted trùng khoá nhau (đội cục bộ trùng đội cục bộ; ledger không gộp)
-
-- youtube-162, team-intro-21
-- team-intro-4, moi-phe-115
-- team-intro-19, team-intro-62
-- team-intro-26, moi-phe-118
-- team-intro-36, moi-phe-130
 
 ## Ghi chú
 
