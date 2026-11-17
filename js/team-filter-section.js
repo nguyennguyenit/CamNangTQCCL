@@ -214,11 +214,27 @@ const seasonTitleText=item=>zh()
   : safeLabel(item.displayNameVi);
 
 /**
- * Nhãn mùa tĩnh của Đội khác: Đội khác chỉ có một mùa (`defaultSourceSeasonId` của registry) nên không có ô chọn.
- * Dạng cây dùng chung giữa bản dựng sẵn và trình duyệt; registry không có mùa mặc định thì không có nhãn (`null`).
+ * Mùa duy nhất của dữ liệu Đội khác: hợp `sourceSeasonIds` của mọi hàng (`other-teams.json`, do dedup ghi). Không có
+ * hàng, có hàng chưa gắn mùa hoặc hợp lại hơn một mùa thì trả `null`. Không suy từ `defaultSourceSeasonId`: đổi mùa
+ * mặc định của Đội chuẩn không tự đổi mùa của Đội khác.
  */
-export function referenceSeasonLabelTree(registry) {
-  const item=(registry?.seasonOptions || []).find(option=>option.sourceSeasonId===registry.defaultSourceSeasonId);
+export function otherTeamsSeasonId(rows) {
+  const seasons=new Set();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!Array.isArray(row?.sourceSeasonIds) || !row.sourceSeasonIds.length) return null;
+    for (const id of row.sourceSeasonIds) seasons.add(id);
+  }
+  return seasons.size===1 ? [...seasons][0] : null;
+}
+
+/**
+ * Nhãn mùa tĩnh của Đội khác: Đội khác chỉ có một mùa (`otherTeamsSeasonId` của các hàng) nên không có ô chọn; tên mùa
+ * lấy từ `seasonOptions` của registry. Dạng cây dùng chung giữa bản dựng sẵn và trình duyệt; không xác định được mùa,
+ * hoặc registry không có mùa đó, thì không có nhãn (`null`).
+ */
+export function referenceSeasonLabelTree(registry,rows) {
+  const seasonId=otherTeamsSeasonId(rows);
+  const item=seasonId ? (registry?.seasonOptions || []).find(option=>option.sourceSeasonId===seasonId) : null;
   if (!item) return null;
   return t('div',{class:'reference-season-field reference-season-static'},[
     t('span',{class:'reference-season-label'},L('Mùa','赛季')),
@@ -250,7 +266,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   // Chỉ Đội chuẩn có ô chọn mùa; Đội khác một mùa nên chỉ có nhãn tĩnh (`referenceSeasonLabelTree`).
   const season=family==='other' ? null : el('select',{'aria-label':L('Mùa','赛季')});
   const seasonStatus=family==='other' ? null : el('span',{class:'reference-season-status',hidden:''},L('Đang diễn ra','进行中'));
-  let seasonLabelNode=null, seasonLabelRegistry=null;
+  let seasonLabelNode=null, seasonLabelRegistry=null, seasonLabelRows=null;
   const filters=el('aside',{class:'reference-filters collapsed',id:`${mount.id}-filters`,'aria-label':L('Bộ lọc','筛选')});
   const notice=el('p',{class:'scope-note reference-notice',role:'status'});
   const count=el('span',{class:'stats reference-count',role:'status'});
@@ -334,10 +350,11 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
 
   function renderSeasonOptions() {
     if (family==='other') {
-      // Nhãn tĩnh chỉ dựng lại khi registry đổi, không theo từng lần lọc.
-      if (seasonLabelRegistry===registry) return;
+      // Nhãn tĩnh chỉ dựng lại khi registry hoặc dữ liệu đổi, không theo từng lần lọc.
+      if (seasonLabelRegistry===registry && seasonLabelRows===rows) return;
       seasonLabelRegistry=registry;
-      const tree=referenceSeasonLabelTree(registry);
+      seasonLabelRows=rows;
+      const tree=referenceSeasonLabelTree(registry,rows);
       const next=tree ? treeToDom(tree) : null;
       seasonLabelNode?.remove();
       seasonLabelNode=next;

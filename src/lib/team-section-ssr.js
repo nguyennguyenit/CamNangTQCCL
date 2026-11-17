@@ -57,7 +57,7 @@ export function recommendedSectionTrees({ family, rows, registry, locale }) {
     const signature = referenceViewSignature(state, state.view, safeReturnUrl(url.href, { origin: url.origin }), Math.max(PAGE_SIZE, limit));
     return inertUntilBound([
       // Đội khác: nhãn mùa tĩnh cùng cây với trình duyệt (`referenceSeasonLabelTree`); Đội chuẩn không dựng sẵn ô chọn mùa.
-      t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family), family === 'other' ? referenceSeasonLabelTree(registry) : null].filter(Boolean)),
+      t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family), family === 'other' ? referenceSeasonLabelTree(registry, rows) : null].filter(Boolean)),
       t('div', { class: 'reference-view', dataset: { ssrSignature: signature } },
         recommendedListTrees(filtered, { family, mode: state.view, limit, labels, hrefFor, mountId, locale })),
     ]);

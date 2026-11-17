@@ -224,6 +224,12 @@ không theo thứ tự mùa của SGSDeck. Builder dừng nếu mùa đó không
 `available`. Đổi mùa mặc định: sửa file, chạy lại chuỗi `site_localization build → check →
 publish` bên dưới, rồi `team_route_handles --rebind` và `lookup_route_handles --write` (redirect
 301 cho trang mùa của mùa mới hiện tại). File không thuộc glossary nên không làm stale receipt dịch.
+Đội khác không tự đi theo: corpus dedup và `sourceSeasonIds` của ledger Đội khác lấy mùa mặc định
+tại lúc chạy `recommended_team_dedup`, còn nhãn mùa của `/doi-khac/` đọc `sourceSeasonIds` của các hàng.
+Vì vậy đổi mùa mặc định thì phải quyết định biên tập về mùa của Đội khác (giữ mùa cũ hay chuyển sang
+mùa mới cùng bộ đội gốc tương ứng); nếu chuyển, chạy lại `recommended_team_dedup` (dedup với Đội chuẩn
+của mùa mới) trước chuỗi publish và review lại phân loại ledger. Không chạy lại thì Đội khác giữ nguyên
+mùa cũ, kể cả nhãn.
 
 Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
 duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)

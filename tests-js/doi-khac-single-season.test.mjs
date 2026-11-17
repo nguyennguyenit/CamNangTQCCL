@@ -1,4 +1,4 @@
-// Đội khác chỉ có một mùa (mùa mặc định của registry): nhãn tĩnh thay ô chọn mùa, `?season=` bị bỏ qua,
+// Đội khác chỉ có một mùa (mùa ghi trên các hàng `other-teams.json`): nhãn tĩnh thay ô chọn mùa, `?season=` bị bỏ qua,
 // hàng `recommended` có nhãn "Đề cử" và đứng đầu; field vắng thì hành vi như cũ. Dữ liệu là bản ghi thật của
 // generation đang pin được sao chép kèm field giả lập (không sửa generation).
 import { test } from "node:test";
@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { treeToHtml } from "../js/view-tree.js";
 import { projectRecommendedRows, readRecommendedQuery, referenceSectionState } from "../js/recommended-reference-state.js";
 import { detailBadges, recommendedListTrees } from "../js/recommended-reference-render.js";
-import { referenceSeasonLabelTree } from "../js/team-filter-section.js";
+import { otherTeamsSeasonId, referenceSeasonLabelTree } from "../js/team-filter-section.js";
 import { safeReturnUrl } from "../js/team-detail-navigation.js";
 import { recommendedSectionTrees } from "../src/lib/team-section-ssr.js";
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from "../js/team-view.js";
@@ -116,11 +116,28 @@ for (const locale of ["vi", "zh"]) {
   });
 }
 
-test("Đội chuẩn dựng sẵn không có nhãn mùa tĩnh; registry thiếu mùa mặc định thì Đội khác không có nhãn", () => {
+test("Đội chuẩn dựng sẵn không có nhãn mùa tĩnh; mùa Đội khác không xác định được hoặc registry không có thì không có nhãn", () => {
   const standard = html(recommendedSectionTrees({ family: "recommended", rows: [], registry, locale: "vi" }));
   assert.doesNotMatch(standard, /reference-season-static/);
-  assert.equal(referenceSeasonLabelTree({ defaultSourceSeasonId: "khong-co", seasonOptions: [] }), null);
-  assert.equal(referenceSeasonLabelTree({}), null);
-  const other = html(recommendedSectionTrees({ family: "other", rows, registry: { ...registry, defaultSourceSeasonId: "khong-co" }, locale: "vi" }));
+  assert.equal(referenceSeasonLabelTree({ defaultSourceSeasonId: "khong-co", seasonOptions: [] }, rows), null);
+  assert.equal(referenceSeasonLabelTree({}, rows), null);
+  assert.equal(referenceSeasonLabelTree(registry, []), null);
+  assert.equal(referenceSeasonLabelTree(registry, base), null, "hàng chưa gắn mùa");
+  const mixed = rows.map((row, index) => (index ? row : { ...row, sourceSeasonIds: ["pk-s26"] }));
+  assert.equal(otherTeamsSeasonId(mixed), null, "hai mùa thì không có nhãn");
+  const unknown = rows.map((row) => ({ ...row, sourceSeasonIds: ["khong-co"] }));
+  const other = html(recommendedSectionTrees({ family: "other", rows: unknown, registry, locale: "vi" }));
   assert.doesNotMatch(other, /reference-season-static/);
+});
+
+test("nhãn mùa Đội khác đi theo mùa của dữ liệu Đội khác, không theo mùa mặc định của Đội chuẩn", () => {
+  assert.equal(otherTeamsSeasonId(rows), registry.defaultSourceSeasonId);
+  const other = registry.seasonOptions.find((item) => item.sourceSeasonId !== registry.defaultSourceSeasonId && item.displayNameVi);
+  // Biên tập đổi mùa mặc định sang mùa khác mà chưa chạy lại dedup: nhãn vẫn là mùa của các hàng Đội khác.
+  const moved = { ...registry, defaultSourceSeasonId: other.sourceSeasonId };
+  const markup = html(recommendedSectionTrees({ family: "other", rows, registry: moved, locale: "vi" }));
+  assert.ok(markup.includes(`<span class="reference-season-name">${season.displayNameVi}</span>`));
+  assert.ok(!markup.includes(`<span class="reference-season-name">${other.displayNameVi}</span>`));
+  const real = json(`${REFERENCE}/other-teams.json`).records;
+  assert.equal(otherTeamsSeasonId(real), "pk-s27");
 });
