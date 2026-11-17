@@ -58,6 +58,7 @@ NUMBER_TOKEN = re.compile(r"\d+(?:\.\d+)?|[%％]|→")
 BAD_TEXT = re.compile(r"<[^>]*>|&[#a-zA-Z0-9]+;|[\x00-\x08\x0b-\x1f\x7f]")
 
 
+QILUE_GROUPS = ("qilueStrategies", "qilueCards")
 PRUNE_COMMAND = "python3 -m pipeline.build_lookup_ja --prune-orphans --write"
 
 
@@ -104,7 +105,7 @@ def _first_cjk(values) -> str | None:
 
 
 def collect_names(corpus: dict) -> dict[str, str]:
-    """`{id: tên chữ Hán nguồn}` cho mọi ID của bảy nhóm (kể cả đặc kỹ trang bị và lựa chọn cải tạo)."""
+    """`{id: tên chữ Hán nguồn}` cho mọi ID của tám nhóm (kể cả đặc kỹ trang bị và lựa chọn cải tạo)."""
     names: dict[str, str] = {}
 
     def put(entry_id, name):
@@ -129,6 +130,10 @@ def collect_names(corpus: dict) -> dict[str, str]:
     for mod in catalog["troopMods"]:
         for option in mod.get("options", []):
             put(option["id"], option.get("nameZh"))
+    # Kỳ lược (phương lược + thẻ): tên game `nameZh`; catalog cũ chưa có hai khóa thì bỏ qua.
+    for group in QILUE_GROUPS:
+        for row in catalog.get(group) or []:
+            put(row["id"], row.get("nameZh") or _first_cjk(row.get("aliasesZh")))
     return names
 
 
@@ -183,6 +188,14 @@ def collect_texts(corpus: dict) -> dict[str, dict[str, tuple[str, bool]]]:
         for index, level in enumerate(row.get("levels") or []):
             put(row["id"], f"levels.{index}.effect", level.get("effectZh"), translated)
             put(row["id"], f"levels.{index}.duration", level.get("durationZh"), translated)
+    for group in QILUE_GROUPS:
+        for row in catalog.get(group) or []:
+            translated = (row.get("zhSource") or {}).get("kind") == "translation"
+            put(row["id"], "description", row.get("descriptionZh"), translated)
+            put(row["id"], "buff", row.get("buffZh"), translated)
+            put(row["id"], "effect", row.get("effectZh"), translated)
+            for index, cond in enumerate(row.get("conditions") or []):
+                put(row["id"], f"conditions.{index}", cond.get("textZh"), translated)
     return out
 
 

@@ -21,7 +21,10 @@ def _corpus():
                    hero("hero:sp-tuan-uc", "SP 荀彧"), hero("hero:tuan-uc", "荀彧"), hero("hero:co-dai-kieu", "無雙大喬")],
         "tactics": [{"id": "tactic:a", "chinese": "橫掃千軍", "effect": "傷害率 50%→100%", "target": "敵軍單體", "lookup": {"effectZhSource": {"kind": "translation"}}}],
         "books": [{"id": "book:b", "chinese": "兵行诡道", "sourceNames": ["兵行詭道"], "effect": "降低 3 回合"}],
-        "catalog": {"equipment": [{"id": "equipment:e", "aliasesZh": ["青龍偃月刀"]}], "specials": [], "advisors": [], "buildings": [], "troopMods": []},
+        "catalog": {"equipment": [{"id": "equipment:e", "aliasesZh": ["青龍偃月刀"]}], "specials": [], "advisors": [], "buildings": [], "troopMods": [],
+                    "qilueStrategies": [{"id": "qilue-strategy:s", "nameZh": "久戰", "aliasesZh": ["久戰"], "descriptionZh": "披甲鏖戰", "buffZh": "武力提升 2 點",
+                                         "conditions": [{"kind": "season", "textZh": "漢焰長明賽季（PK-S27）"}], "zhSource": {"kind": "translation"}}],
+                    "qilueCards": [{"id": "qilue-card:c", "nameZh": "暗度陳倉", "aliasesZh": ["暗度陳倉"], "effectZh": "有 50% 機率跳過準備", "conditions": []}]},
         "manifest": {"generationId": "lookup:" + "a" * 64},
     }
 
@@ -104,6 +107,16 @@ class TranslationTests(unittest.TestCase):
         self.assertEqual(texts["hero:lu-bo"]["usage"], ("兵刃傷害提高 5%", False))
         self.assertEqual(texts["tactic:a"]["effect"], ("傷害率 50%→100%", True))
         self.assertEqual(texts["book:b"]["effect"][1], False)
+
+    def test_qilue_names_and_texts(self):
+        corpus = _corpus()
+        names = bj.collect_names(corpus)
+        self.assertEqual(names["qilue-strategy:s"], "久戰")
+        self.assertEqual(names["qilue-card:c"], "暗度陳倉")
+        texts = bj.collect_texts(corpus)
+        self.assertEqual(texts["qilue-strategy:s"], {
+            "description": ("披甲鏖戰", True), "buff": ("武力提升 2 點", True), "conditions.0": ("漢焰長明賽季（PK-S27）", True)})
+        self.assertEqual(texts["qilue-card:c"], {"effect": ("有 50% 機率跳過準備", False)})
 
     def test_editorial_notes_are_not_published(self):
         corpus = _corpus()
@@ -202,6 +215,15 @@ class RealDataTests(unittest.TestCase):
         self.assertEqual(entries["advisor:bach-ma-thay-chu"]["nameOriginal"], "白马替主")
         self.assertEqual(entries["advisor:bach-ma-thay-chu"]["nameOriginalLang"], "zh-Hans")
         self.assertEqual(entries["building:bat-tran-do"]["nameOriginalLang"], "zh-Hant")
+
+    def test_every_qilue_id_has_japanese_name(self):
+        catalog = json.loads((_ROOT / "data" / "lookup-catalog.json").read_text(encoding="utf-8"))
+        ids = [row["id"] for key in ("qilueStrategies", "qilueCards") for row in catalog[key]]
+        self.assertEqual(len(ids), 45)
+        for entry_id in ids:
+            entry = self.payload["entries"][entry_id]
+            self.assertIn(entry["nameStatus"], ("verified", "derived"))
+            self.assertRegex(entry["name"], r"[\u3400-\u9fff]")
 
     def test_sp_variants_carry_prefix(self):
         for row in self.corpus["heroes"]:

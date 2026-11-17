@@ -7668,6 +7668,646 @@
     "roleTag": "謀"
    }
   },
+  "qilue-card:am-do-tran-thuong": {
+   "name": "暗度陳倉",
+   "nameOriginal": "暗度陳倉",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン準備戦法を発動する時、50%の確率で準備を省略する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:an-tich-mang-thuong": {
+   "name": "芒碭隠踪",
+   "nameOriginal": "芒碭隱蹤",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン受けるダメージが8%低下する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:bac-lang-chuy-tan": {
+   "name": "博浪椎秦",
+   "nameOriginal": "博浪椎秦",
+   "nameOriginalLang": "zh",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "破陣が20%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:bai-huyen-tu-nghia": {
+   "name": "沛県聚義",
+   "nameOriginal": "沛縣聚義",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンの回復量が15%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:bat-vua-pha-doanh": {
+   "name": "鋒鋩粉砕",
+   "nameOriginal": "擒王破營",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン突撃戦法を発動した後、友軍武将の突撃戦法発動確率が5%上昇する（重複可能）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:bi-so-doat-the": {
+   "name": "疲楚奪勢",
+   "nameOriginal": "疲楚奪勢",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン通常攻撃を受けた後、敵軍単体に1回兵刃ダメージを与える（ダメージ率 50%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:bo-tri-thap-dien": {
+   "name": "設伏十面",
+   "nameOriginal": "設伏十面",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンのアクティブ戦法発動確率が10%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:can-quet-tay-ha": {
+   "name": "河西掃討",
+   "nameOriginal": "橫掃河西",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン武力が最も高い単体が40%の連撃率を獲得する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:cang-nhieu-cang-tot": {
+   "name": "多多益善",
+   "nameOriginal": "多多益善",
+   "nameOriginalLang": "zh",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "これまで奇略を1回使用するごとに、自軍がこのターンで最初に発動するアクティブ戦法の発動後、15%の確率で再度発動を試みる"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:cau-hien-duoi-trang": {
+   "name": "月下追賢",
+   "nameOriginal": "月下追賢",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン制御状態を付与した後、その状態を別の敵軍にも付与する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:chi-khi-ngap-tran": {
+   "name": "不屈の志",
+   "nameOriginal": "壯志不絕",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "自軍で武力が最も高い武将が与える兵刃ダメージが5%上昇する（これまで奇略を1枚使用するごと、または兵力を15%失うごとに、さらに3%上昇）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:cong-lao-hien-hach": {
+   "name": "偉功無双",
+   "nameOriginal": "居功至偉",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "敵軍が次に使用する奇略を無効にする"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:dan-tran-tu-chien": {
+   "name": "背水列陣",
+   "nameOriginal": "背水列陣",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン知力と武力が最も高い単体は計窮を免疫する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:don-doc-tham-nhap": {
+   "name": "孤軍深入",
+   "nameOriginal": "孤軍深入",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン発動に失敗した突撃戦法は、もう1回発動を試みる"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:du-dich-roi-trai": {
+   "name": "誘敵離営",
+   "nameOriginal": "誘敵離營",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "これまでにアクティブ戦法を1回発動している場合、奇略の効果発動後に10%の確率でもう1回効果が発動する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:dung-dien-truong-an": {
+   "name": "長安築闕",
+   "nameOriginal": "築闕長安",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン敵軍が発動する準備を要さないアクティブ戦法は、1ターンの準備が必要になる"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:giau-tai-giau-cua": {
+   "name": "自汚忍辱",
+   "nameOriginal": "韜晦自污",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン自軍の行動時、制御状態が有効であれば、敵軍単体にも同じ制御状態を付与する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:go-bo-xieng-xich": {
+   "name": "親釈刑縛",
+   "nameOriginal": "親釋刑縛",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン開始時に制御状態であれば、その状態に対する免疫を獲得し、1ターン持続する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:hop-vay-giap-kich": {
+   "name": "合囲夾撃",
+   "nameOriginal": "合圍夾擊",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンにアクティブ戦法を発動した後、兵力が最も低い友軍単体を回復する（回復率 50%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:khong-so-lam-nguy": {
+   "name": "臨危不懼",
+   "nameOriginal": "臨危不懼",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "既存のランダム強化状態を1ターン延長する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:ky-cong-gian-phong": {
+   "name": "諫封示公",
+   "nameOriginal": "諫封示公",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "ランダムな敵軍単位にランダムで機能性強化を1種付与する（準備ターン後、獲得済みの機能性状態を1つ獲得するごとに、30%の確率でもう1回繰り返す）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:lanh-hiem-hong-mon": {
+   "name": "鴻門遁険",
+   "nameOriginal": "鴻門遁險",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンに回復を行った時、一定確率で敵軍単体に追加で計略ダメージを与える（回復量の30%に相当、武将ごとに最大5回まで発動）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:lap-ke-an-tru": {
+   "name": "定計安儲",
+   "nameOriginal": "定計安儲",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン自軍で兵力が最も高い単体が自軍全体を援護し、同時に受ける通常攻撃ダメージが30%低下する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:lui-buoc-cong-thanh": {
+   "name": "功成身退",
+   "nameOriginal": "功成身退",
+   "nameOriginalLang": "zh",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "これまで奇略を1枚使用するごとに、以降奇略を使用する時、30%の確率で自軍が過去に使用した奇略をランダムで1枚発動する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:nap-sach-tang-thu": {
+   "name": "蔵書納籍",
+   "nameOriginal": "藏書納籍",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン敵軍がランダムで制御状態を1種獲得する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:nhan-sach-di-kieu": {
+   "name": "圯橋受書",
+   "nameOriginal": "圯橋受書",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンこれまで獲得したことのない機能性強化をランダムで1種獲得する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:nho-co-dich-co": {
+   "name": "抜旗易幟",
+   "nameOriginal": "拔旗易幟",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン、自軍で知力が最も高い単体は、アクティブ戦法発動確率の計算後の結果が反転する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:nhuong-com-se-ao": {
+   "name": "推食解衣",
+   "nameOriginal": "推食解衣",
+   "nameOriginalLang": "zh",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンダメージを受けた時、友軍単体を回復する（回復率 40%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:pha-mui-giap-dich": {
+   "name": "敵陣突破",
+   "nameOriginal": "摧鋒陷敵",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンの突撃戦法によるダメージが12%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:phong-lang-cu-tu": {
+   "name": "封狼居胥",
+   "nameOriginal": "封狼居胥",
+   "nameOriginalLang": "zh",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンの突撃戦法発動確率が10%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:phong-thuong-tang-ap": {
+   "name": "封邑加増",
+   "nameOriginal": "受封增邑",
+   "nameOriginalLang": "zh",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "準備ターン後、敵軍全体に持続ダメージ状態が1回付与されるごとに、このターン敵軍が持続ダメージを受ける時、追加で5%のダメージを受ける"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:so-ca-tu-khoi": {
+   "name": "四面楚歌",
+   "nameOriginal": "楚歌四起",
+   "nameOriginalLang": "zh",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターンのアクティブ戦法によるダメージが10%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:song-trong-that-bai": {
+   "name": "敗中求生",
+   "nameOriginal": "敗中求生",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "自軍が通常攻撃を1回受けるごとに、受けるダメージが2%低下する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:tam-sach-cung-tien": {
+   "name": "三策並進",
+   "nameOriginal": "三策並進",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン敵軍が獲得した機能性状態は、自軍の単位にも付与される"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:thay-mat-bay-muu": {
+   "name": "借箸代籌",
+   "nameOriginal": "借箸代籌",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン機能性強化を獲得した時、追加で別の機能性強化を獲得する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:tram-dich-chieu-hang": {
+   "name": "逆臣討伐",
+   "nameOriginal": "斬逆納降",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "これまで突撃戦法を1回発動するごとに、このターンの突撃戦法ダメージが3%上昇する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:tranh-hoa-cu-kiem": {
+   "name": "倹約避禍",
+   "nameOriginal": "居儉避禍",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン敵軍がランダムで持続ダメージ状態を1種獲得する（武力と知力のうち高い方に影響され、ダメージ率 50%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:tri-duyen-quan-the": {
+   "name": "軍勢整備",
+   "nameOriginal": "治延軍勢",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン自軍が付与する持続ダメージ状態を1ターン延長する"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:truy-kich-tu-tran": {
+   "name": "敗走追撃",
+   "nameOriginal": "追亡逐北",
+   "nameOriginalLang": "zh",
+   "nameStatus": "derived",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン通常攻撃の後、友軍単体を回復する（回復率 40%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-card:uoc-phap-tam-chuong": {
+   "name": "約法三章",
+   "nameOriginal": "約法三章",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "effect": "このターン、自軍で兵力が最も低い単体を回復し（回復率 100%）、敵軍で兵力が最も低い単体に計略ダメージを与える（ダメージ率は累計の溢れ回復量に影響され、最大200%）"
+   },
+   "translatedFromVi": [
+    "conditions.0",
+    "effect"
+   ]
+  },
+  "qilue-strategy:chien-dau-lau-dai": {
+   "name": "堅牢",
+   "nameOriginal": "久戰",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "buff": "奇略を1枚装備するごとに、自軍武将の武力と統率がそれぞれ2上昇する",
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "description": "鎧をまとい激戦を戦い抜き、耐久力と突撃戦法を強化する"
+   },
+   "translatedFromVi": [
+    "buff",
+    "conditions.0",
+    "description"
+   ]
+  },
+  "qilue-strategy:cuong-cong": {
+   "name": "強攻",
+   "nameOriginal": "強攻",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "buff": "奇略を1枚装備するごとに、自軍武将の武力が3上昇する",
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "description": "敵陣に突撃し、突撃戦法の爆発的なダメージを強化する"
+   },
+   "translatedFromVi": [
+    "buff",
+    "conditions.0",
+    "description"
+   ]
+  },
+  "qilue-strategy:muu-tinh": {
+   "name": "謀算",
+   "nameOriginal": "謀算",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "buff": "奇略を1枚装備するごとに、自軍武将の知力が3上昇する",
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "description": "知略を巡らせ、アクティブ戦法の運用能力を強化する"
+   },
+   "translatedFromVi": [
+    "buff",
+    "conditions.0",
+    "description"
+   ]
+  },
+  "qilue-strategy:quay-nhieu": {
+   "name": "攪乱",
+   "nameOriginal": "襲擾",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "buff": "奇略を1枚装備するごとに、敵軍武将の武力と知力がそれぞれ2低下する",
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "description": "臨機応変に敵を制し、アクティブ戦法と制御効果を強化する"
+   },
+   "translatedFromVi": [
+    "buff",
+    "conditions.0",
+    "description"
+   ]
+  },
+  "qilue-strategy:toan-quan": {
+   "name": "整軍",
+   "nameOriginal": "整軍",
+   "nameOriginalLang": "zh-Hant",
+   "nameStatus": "verified",
+   "texts": {
+    "buff": "奇略を1枚装備するごとに、自軍武将の統率が3上昇する",
+    "conditions.0": "「漢焔不滅」シーズン（PK-S27、クライアント 24.547）",
+    "description": "堅固な兵と鎧で、ダメージを軽減し強化効果を付与する"
+   },
+   "translatedFromVi": [
+    "buff",
+    "conditions.0",
+    "description"
+   ]
+  },
   "tactic:am-tang-huyen-co": {
    "name": "暗蔵玄機",
    "nameOriginal": "暗藏玄機",
@@ -14366,12 +15006,12 @@
    ]
   }
  },
- "lookupGenerationId": "lookup:adf392a0c06ad237f55e90238f3beee32811ac25376c2bbd2f0ae78a0ee1bdca",
+ "lookupGenerationId": "lookup:040c57590b9e5773e73284a001e50e70e9324478063e53e62aebc2aa9ab8122d",
  "notice": {
   "machineTranslated": true,
   "numbersEdition": "cn-mainland"
  },
- "payloadSha256": "1b7e5eb1c1c0bd39aeb80bee0061868d823b4c0a4a2b4a19898f8c586445d656",
+ "payloadSha256": "8e269b9db50e91c3091526ea0be4de30e79e166dd5e9bb7b34de3196eed053cd",
  "prefixedTactics": [
   {
    "baseId": "tactic:an-ui-quan-dan",
@@ -14474,7 +15114,7 @@
   "data/books-dict.json": "128cdfc1f2ef8b677b1c8f266e95975a32a31d5357755a1171971201f33cda72",
   "data/heroes-dict.json": "501d8a9e59a3d196a55f26dbbd41934ff327e0c633a9cb7cccdf48ead1c5fa7f",
   "data/ja-kanji-variants.json": "869b169b4bc5149614b4188ef41675d0c76dd0533a3f947ffcc6a79598eb3bf3",
-  "data/lookup-catalog.json": "b5985b5d7cbf2900430493347265fa458a90e9e5d77e3c0b2266d2b83b16fb0e",
+  "data/lookup-catalog.json": "1b19447237090851abb30e5d0dc12f9d1b9b5ad099848053c012fe2d43b36392",
   "data/tactics.json": "3aab892ed6d349d891c6b15088d2d63c259caa28b1aec51e0f082b13b46c4bb4"
  }
 }

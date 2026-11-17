@@ -1,6 +1,6 @@
 # Dữ liệu tiếng Nhật cho Tra cứu (`data/lookup-ja.json`)
 
-`data/lookup-ja.json` mang tên Nhật có trạng thái và bản dịch máy tiếng Nhật cho bảy nhóm Tra cứu (tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư). Trang `/ja/` đọc file này cùng bốn payload Tra cứu; file không thay payload nào và không chứa chữ Việt.
+`data/lookup-ja.json` mang tên Nhật có trạng thái và bản dịch máy tiếng Nhật cho tám nhóm Tra cứu (tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư, kỳ lược). Trang `/ja/` đọc file này cùng bốn payload Tra cứu; file không thay payload nào và không chứa chữ Việt.
 
 ## Lệnh
 
@@ -52,7 +52,8 @@ Generation mới có thể bỏ hoặc đổi ID một mục. Override trỏ t�
 3. ID chưa có trong bảng quan sát: `name` = chuyển mặt chữ (`to_shinjitai`, bỏ khoảng trắng giữa chữ Latin/số và chữ Hán), `nameStatus` = `derived`.
 4. Biến thể tướng (`chinese` bắt đầu bằng `SP`, `40Y`, `無雙`) viết liền tiền tố ("SP法正", "無双大喬"). Biến thể chưa có hàng quan sát lấy tiền tố + tên tướng gốc có cùng chữ Hán, trạng thái theo tướng gốc.
 5. Dòng có tiền tố 転・ 拓・ 精・ (`id: null`, `baseId`) không đè tên chiến pháp gốc; lưu ở `prefixedTactics` để trang hiển thị chiến pháp kịch bản.
-6. Ký tự cố ý giữ dạng phồn thể trong tên riêng: 禦, 龍, 當, 聯, 挾, 填 (đối chiếu bảng quan sát); `眾→衆`, `溯→遡`, `弒→弑`, `據→据` thuộc `supplement`. Không sinh cách đọc kana.
+6. Kỳ lược: tên Nhật của phương lược và thẻ lấy từ wiki 貂蝉の三国志真戦 (bài S27 #665, #666, #668, chép từ server thử nghiệm; hệ thống gọi là 奇謀武略, thẻ là 奇略カード). Khớp theo ID: tên cùng chữ (sau shinjitai) hoặc hiệu ứng trên trang trùng hiệu ứng chữ Trung thì `high` (`verified`); tên khớp bằng loại thẻ và loại trừ trong cùng loại thì `medium` (`derived`, vẫn hiện tên Nhật); tên có dấu chép sai (疲楚容勢, 蔵節納籍) là `low`, không dùng. 8 thẻ loại 補 chưa có tên Nhật trong nguồn nên là chuyển tự dạng.
+7. Ký tự cố ý giữ dạng phồn thể trong tên riêng: 禦, 龍, 當, 聯, 挾, 填 (đối chiếu bảng quan sát); `眾→衆`, `溯→遡`, `弒→弑`, `據→据` thuộc `supplement`. Không sinh cách đọc kana.
 
 ## Hợp đồng đầu ra
 
@@ -68,7 +69,7 @@ Generation mới có thể bỏ hoặc đổi ID một mục. Override trỏ t�
 }
 ```
 
-- Mọi ID của bảy nhóm đều có `name`, `nameStatus`, `nameOriginal` (chữ Hán nguồn; binh thư dùng tên phồn thể trong `sourceNames` nếu có). ID gồm cả đặc kỹ trang bị (`equipment-special:*`) và lựa chọn cải tạo (`troop-option:*`).
+- Mọi ID của tám nhóm đều có `name`, `nameStatus`, `nameOriginal` (chữ Hán nguồn; binh thư dùng tên phồn thể trong `sourceNames` nếu có). ID gồm cả đặc kỹ trang bị (`equipment-special:*`), lựa chọn cải tạo (`troop-option:*`), phương lược (`qilue-strategy:*`) và thẻ kỳ lược (`qilue-card:*`).
 - `nameOriginalLang` là `lang` của dòng 原名, tính lúc build theo lối viết của `nameOriginal`: chỉ có chữ riêng của giản thể thì `zh-Hans` (ví dụ 白马替主), chỉ có chữ riêng của phồn thể thì `zh-Hant`; không có chữ phân biệt được hoặc lẫn cả hai (ví dụ 金丹秘術, vì OpenCC coi 秘 là giản thể) thì `zh`. Trường không bắt buộc với bộ kiểm của trình duyệt: vắng thì trang dùng `zh`.
 - `texts` chỉ chứa khóa đã dịch; khóa vắng nghĩa là chưa có bản dịch và trang hiện dòng báo thiếu. Không bao giờ bịa nội dung.
 - `translatedFromVi` liệt kê khóa mà chữ Hán nguồn vốn dịch từ tiếng Việt (điều kiện tướng, các hiệu ứng `effectZhSource.kind = "translation"`, `zhSource.kind = "translation"`); trang gắn thêm câu báo "dịch từ tiếng Việt".
@@ -85,6 +86,8 @@ Generation mới có thể bỏ hoặc đổi ID một mục. Override trỏ t�
 | Lựa chọn cải tạo (`troop-option:*`) | `description` |
 | Công trình | `summary`, `levels.N.effect`, `levels.N.duration` |
 | Binh thư | `effect` |
+| Phương lược kỳ lược (`qilue-strategy:*`) | `description`, `buff`, `conditions.N` |
+| Thẻ kỳ lược (`qilue-card:*`) | `effect`, `conditions.N` |
 
 Trang bị và đặc kỹ không có chữ Trung mô tả nên chỉ có tên.
 

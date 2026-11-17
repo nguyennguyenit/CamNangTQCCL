@@ -3,7 +3,7 @@
 Sinh bằng `node scripts/report-ja-gaps.mjs` (không sửa tay). Mục nằm đây khi hồ sơ ja (`lookupProfile` dưới `withLocale("ja")`) có khóa chữ Hán nguồn chưa có bản dịch máy trong `data/lookup-ja.json` (`untranslated`) hoặc bỏ phần chỉ có chữ Việt (`viOnly`); trang ja hiện một dòng báo thiếu.
 Cột "Khóa chưa dịch" là khóa `texts` còn vắng (bảng khóa ở [ja-lookup-data.md](ja-lookup-data.md)); cột "Phần thiếu" so hồ sơ vi với hồ sơ ja của cùng mục.
 
-Tổng: 147 / 983 mục.
+Tổng: 147 / 1028 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
@@ -14,6 +14,7 @@ Tổng: 147 / 983 mục.
 | Cải tạo binh chủng | 0 | 16 |
 | Công trình | 0 | 41 |
 | Binh thư | 0 | 68 |
+| Kỳ lược | 0 | 45 |
 
 ## Trạng thái tên Nhật
 
@@ -28,6 +29,7 @@ Tổng: 147 / 983 mục.
 | Cải tạo binh chủng | 0 | 16 | 0 | 16 |
 | Công trình | 0 | 41 | 0 | 41 |
 | Binh thư | 29 | 39 | 0 | 68 |
+| Kỳ lược | 27 | 18 | 0 | 45 |
 
 ## Tướng (heroes): 0 / 263
 
@@ -202,5 +204,9 @@ Không có mục nào thiếu.
 Không có mục nào thiếu.
 
 ## Binh thư (books): 0 / 68
+
+Không có mục nào thiếu.
+
+## Kỳ lược (qilue): 0 / 45
 
 Không có mục nào thiếu.
