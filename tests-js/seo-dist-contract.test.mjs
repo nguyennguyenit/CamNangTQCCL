@@ -16,9 +16,11 @@ const dist = (path) => new URL(`../dist/${path}`, import.meta.url);
 const read = (path) => readFile(dist(path), "utf8");
 const exists = (path) => access(dist(path)).then(() => true, () => false);
 const LOCALES = [["vi", ""], ["zh", "/zh"]];
+/** Trang chi tiết đội có cả bản ja: JSON-LD của ba bản cùng hợp đồng. */
+const TEAM_LOCALES = [...LOCALES, ["ja", "/ja"]];
 const GAME_NAME = "三国志·战略版";
-const LANG = { vi: "vi", zh: "zh-Hans" };
-const homeUrl = (prefix) => `${ORIGIN}${prefix ? "/zh/" : "/"}`;
+const LANG = { vi: "vi", zh: "zh-Hans", ja: "ja" };
+const homeUrl = (prefix) => `${ORIGIN}${prefix}/`;
 
 /** Đường dẫn trang → file trong dist. */
 const pageFile = (path) => `${path.replace(/^\//u, "")}index.html`;
@@ -102,14 +104,14 @@ test("trang đội: link Tra cứu là đường dẫn trang riêng của ledger
   assert.ok(links > 1000, `trang đội phải có link tới trang mục (${links})`);
 });
 
-test("JSON-LD trang chi tiết đội (vi + zh): WebPage + BreadcrumbList, about chỉ gồm tướng có trang riêng và hiện trong HTML", async () => {
+test("JSON-LD trang chi tiết đội (vi + zh + ja): WebPage + BreadcrumbList, about chỉ gồm tướng có trang riêng và tên đúng như HTML hiện", async () => {
   const routes = await lookupDetailRoutes();
   const heroUrls = new Set(routes.entries.filter((entry) => entry.group === "heroes").map((entry) => `${ORIGIN}${entry.path}`));
   const familyPath = { "doi-chuan": "/doi-chuan/", "doi-khac": "/doi-khac/", "khai-hoang": "/khai-hoang/" };
   let withAbout = 0;
   let total = 0;
   for (const page of await teamPages()) {
-    for (const [locale, prefix] of LOCALES) {
+    for (const [locale, prefix] of TEAM_LOCALES) {
       const path = `${prefix}${page.path}`;
       const where = `${locale} ${page.path}`;
       const html = await read(pageFile(path));
@@ -138,8 +140,16 @@ test("JSON-LD trang chi tiết đội (vi + zh): WebPage + BreadcrumbList, about
       if (webPage.about?.length) withAbout += 1;
     }
   }
-  assert.ok(total > 3000, String(total));
+  assert.ok(total > 4500, String(total));
   assert.ok(withAbout > total * 0.8, `phần lớn trang đội phải có tướng có trang riêng (${withAbout}/${total})`);
+});
+
+test("JSON-LD trang đội ja ghi tên tướng tiếng Nhật như thân trang, không phải chữ Hán nguồn", async () => {
+  const where = "/ja/doi-chuan/pk-s27-truong-nhuong-han-nhuc-cung/";
+  const webPage = blockOf(jsonLdBlocks(await read(pageFile(where)), where), "WebPage", where);
+  const names = (webPage.about ?? []).map((hero) => compact(hero.name));
+  assert.ok(names.includes("張譲") && names.includes("SP貂蝉"), `${where}: about ${names.join(", ")}`);
+  assert.ok(!names.includes("張讓") && !names.includes("SP貂蟬"), `${where}: about còn tự dạng nguồn ${names.join(", ")}`);
 });
 
 const TERM_GROUPS = new Set(["tactics", "books", "advisors", "qilue"]);

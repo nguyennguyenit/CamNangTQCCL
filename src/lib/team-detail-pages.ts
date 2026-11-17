@@ -23,7 +23,7 @@ import {
   type RecommendedRouteEntry,
   type TeamDetailRouteCatalog,
 } from './team-detail-routes.ts';
-import { recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
+import { prepare, recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
 import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
@@ -307,6 +307,9 @@ export function recommendedTitle(entry: RecommendedRouteEntry, locale: SiteLocal
 }
 
 export async function recommendedDetailPaths(locale: SiteLocale) {
+  // Tên tướng của JSON-LD (`holderDisplayName`) đi qua bộ tra tên zh/ja mà `prepare()` đăng ký cho builder; `getStaticPaths`
+  // có thể chạy trước mọi lần dựng thân trang nên phải đăng ký trước, không thì bản ja ghi chữ Hán nguồn thay tên Nhật.
+  await prepare();
   const catalog = await teamDetailCatalog();
   const seasonNames = !contentLocaleIsVietnamese(locale) ? await recommendedSeasonNamesRaw() : null;
   const resolveLookupId = await lookupIdResolver();
