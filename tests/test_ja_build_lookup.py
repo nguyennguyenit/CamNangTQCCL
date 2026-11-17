@@ -1,5 +1,7 @@
 """TDD pipeline/build_lookup_ja.py: tên Nhật có trạng thái, kiểm số liệu bản dịch, mồ côi, deterministic và dữ liệu thật."""
 
+import contextlib
+import io
 import json
 import os
 import shutil
@@ -139,6 +141,16 @@ class TranslationTests(unittest.TestCase):
         with self.assertRaises(bj.LookupJaError):
             bj.validate_translations({bj.text_hash("兵力 5%"): {"src": "兵力 5%", "ja": "兵力 6%"}}, sources)
 
+    def test_prune_orphans_drops_only_items_without_current_source(self):
+        sources = {bj.text_hash("兵力 5%"): "兵力 5%"}
+        good = {bj.text_hash("兵力 5%"): {"src": "兵力 5%", "ja": "兵力 5%"}}
+        orphan = {"f" * 64: {"src": "古い", "ja": "x"}}
+        kept, removed = bj.prune_orphans({**good, **orphan}, sources)
+        self.assertEqual(kept, good)
+        self.assertEqual(removed, ["f" * 64])
+        bj.validate_translations(kept, sources)
+        self.assertEqual(bj.prune_orphans(good, sources), (good, []))
+
 
 class RealDataTests(unittest.TestCase):
     @classmethod
@@ -202,7 +214,41 @@ class CliTests(unittest.TestCase):
         data["items"]["0" * 64] = {"src": "古い", "ja": "x", "model": "m", "translatedAt": "2026-11-17"}
         bad = tmp / "t.json"
         bad.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-        self.assertEqual(bj.main(["--check", "--translations", str(bad), "--output", str(tmp / "o.json")]), 1)
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            self.assertEqual(bj.main(["--check", "--translations", str(bad), "--output", str(tmp / "o.json")]), 1)
+            self.assertEqual(bj.main(["--write", "--translations", str(bad), "--output", str(tmp / "o.json")]), 1)
+        # Lỗi phải chỉ đúng lệnh dọn để người promote generation Tra cứu mới không bị kẹt.
+        self.assertIn("--prune-orphans --write", stderr.getvalue())
+        self.assertFalse((tmp / "o.json").exists())
+
+    def test_prune_orphans_write_unblocks_build_and_leaves_changed_text_untranslated(self):
+        tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, tmp)
+        data = json.loads((_ROOT / "pipeline" / "ja-translations.json").read_text(encoding="utf-8"))
+        # Giả lập chữ nguồn vi/zh đã đổi: bản dịch cũ còn khóa theo chữ cũ (mồ côi), chữ mới chưa có bản dịch.
+        key, item = sorted(data["items"].items())[0]
+        del data["items"][key]
+        stale_src = item["src"] + "（旧）"
+        data["items"][bj.text_hash(stale_src)] = {**item, "src": stale_src}
+        translations = tmp / "t.json"
+        translations.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        out = tmp / "o.json"
+        with contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(bj.main(["--prune-orphans", "--write", "--translations", str(translations), "--output", str(out)]), 0)
+            self.assertEqual(bj.main(["--check", "--translations", str(translations), "--output", str(out)]), 0)
+        pruned = json.loads(translations.read_text(encoding="utf-8"))
+        self.assertEqual(pruned["schemaVersion"], bj.SCHEMA_VERSION)
+        self.assertNotIn(bj.text_hash(stale_src), pruned["items"])
+        self.assertEqual(len(pruned["items"]), len(data["items"]) - 1)
+        published = [text for entry in json.loads(out.read_text(encoding="utf-8"))["entries"].values() for text in entry["texts"].values()]
+        self.assertNotIn(item["ja"], published)
+
+    def test_prune_orphans_requires_write(self):
+        for argv in (["--prune-orphans"], ["--prune-orphans", "--check"], ["--prune-orphans", "--export-todo", "x"]):
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit) as raised:
+                bj.main(argv)
+            self.assertEqual(raised.exception.code, 2)
 
 
 if __name__ == "__main__":

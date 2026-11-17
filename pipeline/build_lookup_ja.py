@@ -11,11 +11,15 @@ Lệnh:
 
     python3 -m pipeline.build_lookup_ja --check              (mặc định; exit 1 khi file lệch dữ liệu)
     python3 -m pipeline.build_lookup_ja --write
+    python3 -m pipeline.build_lookup_ja --prune-orphans --write   (bỏ bản dịch mồ côi khi chữ nguồn vi/zh đổi, rồi ghi)
     python3 -m pipeline.build_lookup_ja --import-observed PATH   (ghi lại ja-name-overrides.json từ bảng quan sát)
     python3 -m pipeline.build_lookup_ja --export-todo DIR [--batch-size 40]   (xuất chuỗi chưa dịch theo lô)
     python3 -m pipeline.build_lookup_ja --ingest BATCH.json --model NAME      (nạp bản dịch một lô, kiểm số liệu)
 
 Mục thiếu bản dịch không bị bịa: khóa vắng trong `texts`, trang tự hiện dòng báo thiếu.
+
+Promote generation Tra cứu mới làm đổi chữ nguồn thì bản dịch cũ thành mồ côi và `--check`/`--write` dừng:
+chạy `--prune-orphans --write` để bỏ chúng (chữ mới thành "chưa dịch", hiện trong `docs/ja-gaps.md`).
 """
 
 from __future__ import annotations
@@ -50,6 +54,9 @@ VARIANT_RE = re.compile(r"^(SP|40Y|無雙|无双)\s*(.+)$")
 # Phép kiểm số: dãy số (kể cả thập phân), %, → phải trùng nguyên thứ tự giữa nguồn và bản dịch.
 NUMBER_TOKEN = re.compile(r"\d+(?:\.\d+)?|[%％]|→")
 BAD_TEXT = re.compile(r"<[^>]*>|&[#a-zA-Z0-9]+;|[\x00-\x08\x0b-\x1f\x7f]")
+
+
+PRUNE_COMMAND = "python3 -m pipeline.build_lookup_ja --prune-orphans --write"
 
 
 class LookupJaError(Exception):
@@ -331,11 +338,24 @@ def load_translations(path: Path = TRANSLATIONS_PATH) -> dict:
     return payload["items"]
 
 
+def prune_orphans(items: dict, sources: dict[str, str]) -> tuple[dict, list[str]]:
+    """Bỏ bản dịch mồ côi (khóa không còn trong chữ nguồn hiện tại); trả `(items còn lại, [khóa đã bỏ] theo thứ tự)`.
+
+    Chữ nguồn mới của các mục đó chưa có bản dịch nên thành "chưa dịch" (khóa vắng trong `texts`, liệt kê ở
+    `docs/ja-gaps.md`); không mục nào được dịch lại tự động.
+    """
+    removed = sorted(key for key in items if key not in sources)
+    return {key: item for key, item in items.items() if key in sources}, removed
+
+
 def validate_translations(items: dict, sources: dict[str, str]) -> None:
     """Fail-loud: sha lệch, mục mồ côi (chữ nguồn đã đổi) hay bản dịch hỏng đều dừng build."""
     orphans = sorted(key for key in items if key not in sources)
     if orphans:
-        raise LookupJaError(f"ja-translations.json có {len(orphans)} mục mồ côi (chữ nguồn đã đổi), ví dụ {orphans[0][:12]}…; dọn hoặc dịch lại")
+        raise LookupJaError(
+            f"ja-translations.json có {len(orphans)} mục mồ côi (chữ nguồn đã đổi), ví dụ {orphans[0][:12]}…; "
+            f"chạy `{PRUNE_COMMAND}` để bỏ chúng (chữ mới thành chưa dịch, xem docs/ja-gaps.md) hoặc dịch lại"
+        )
     for key, item in items.items():
         if not isinstance(item, dict) or text_hash(str(item.get("src", ""))) != key or item.get("src") != sources[key]:
             raise LookupJaError(f"ja-translations.json: mục {key[:12]}… có src không khớp sha256 hoặc chữ nguồn hiện tại")
@@ -451,6 +471,8 @@ def main(argv=None) -> int:
     mode.add_argument("--import-observed", metavar="PATH", help="ghi pipeline/ja-name-overrides.json từ bảng tên quan sát")
     mode.add_argument("--export-todo", metavar="DIR", help="xuất chuỗi chưa dịch thành các lô JSON")
     mode.add_argument("--ingest", metavar="BATCH", help="nạp một lô bản dịch [{h, ja}]")
+    parser.add_argument("--prune-orphans", action="store_true",
+                        help="cùng --write: bỏ bản dịch mồ côi khỏi pipeline/ja-translations.json trước khi ghi")
     parser.add_argument("--batch-size", type=int, default=40)
     parser.add_argument("--model", default="")
     parser.add_argument("--data-dir", type=Path, default=DATA_DIR)
@@ -458,7 +480,16 @@ def main(argv=None) -> int:
     parser.add_argument("--overrides", type=Path, default=OVERRIDES_PATH)
     parser.add_argument("--translations", type=Path, default=TRANSLATIONS_PATH)
     args = parser.parse_args(argv)
+    if args.prune_orphans and not args.write:
+        parser.error("--prune-orphans chỉ dùng cùng --write")
     try:
+        if args.prune_orphans:
+            sources = distinct_sources(collect_texts(load_corpus(args.data_dir)))
+            items = load_translations(args.translations)
+            kept, removed = prune_orphans(items, sources)
+            if removed:
+                _write_if_changed(args.translations, canonical_text({"schemaVersion": SCHEMA_VERSION, "items": kept}))
+            print(f"bỏ {len(removed)} bản dịch mồ côi khỏi {args.translations}")
         if args.import_observed:
             names = collect_names(load_corpus(args.data_dir))
             rows = _read_json(Path(args.import_observed))

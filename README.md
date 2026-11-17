@@ -132,12 +132,12 @@ Sau khi promote generation Tra cứu mới (hoặc đổi `data/books-dict.json`
 python3 -m pipeline.lookup_route_handles --write
 python3 -m pipeline.lookup_route_handles --check
 node scripts/report-zh-gaps.mjs   # sinh lại docs/zh-gaps.md; npm run verify chạy --check
-python3 -m pipeline.build_lookup_ja --write   # dựng lại data/lookup-ja.json; build dừng khi file lệch generation Tra cứu
+python3 -m pipeline.build_lookup_ja --prune-orphans --write   # dựng lại data/lookup-ja.json, bỏ bản dịch Nhật mồ côi; build dừng khi file lệch generation Tra cứu
 python3 -m pipeline.build_lookup_ja --check
 node scripts/report-ja-gaps.mjs   # sinh lại docs/ja-gaps.md; npm run verify chạy --check
 ```
 
-Chữ Trung nguồn mới cần bản dịch Nhật đi qua `--export-todo`/`--ingest` của `build_lookup_ja`; xem [dữ liệu tiếng Nhật cho Tra cứu](docs/ja-lookup-data.md).
+Chữ nguồn vi/zh đổi thì bản dịch Nhật cũ thành mồ côi; `--prune-orphans` bỏ chúng để promote không bị chặn, chữ mới hiện là "chưa dịch" trong `docs/ja-gaps.md`. Dịch bù qua `--export-todo`/`--ingest` của `build_lookup_ja`; xem [dữ liệu tiếng Nhật cho Tra cứu](docs/ja-lookup-data.md), mục "Khi promote generation Tra cứu mới".
 
 Chi tiết ở [deployment guide](docs/deployment-guide.md#static-pages).
 

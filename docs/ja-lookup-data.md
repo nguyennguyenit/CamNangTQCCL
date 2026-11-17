@@ -7,12 +7,25 @@
 ```bash
 python3 -m pipeline.build_lookup_ja --check     # mặc định; exit 1 khi file lệch dữ liệu hiện tại
 python3 -m pipeline.build_lookup_ja --write
+python3 -m pipeline.build_lookup_ja --prune-orphans --write     # bỏ bản dịch mồ côi khỏi pipeline/ja-translations.json rồi ghi
 python3 -m pipeline.build_lookup_ja --import-observed PATH      # dựng lại pipeline/ja-name-overrides.json
 python3 -m pipeline.build_lookup_ja --export-todo DIR --batch-size 40   # chuỗi chưa dịch, theo lô [{h, zh}]
 python3 -m pipeline.build_lookup_ja --ingest BATCH.json --model NAME    # nạp lô [{h, ja}], loại mục sai số liệu
 ```
 
-Chỉ dùng Python stdlib. Chạy lại `--write` sau mỗi lần promote Tra cứu (đổi `data/heroes-dict.json`, `data/tactics.json`, `data/lookup-catalog.json`, `data/books-dict.json`) vì `lookupGenerationId` và `sources` phải khớp. Chữ nguồn đổi thì mục dịch cũ thành mồ côi và build dừng: chạy `--export-todo` để lấy chuỗi mới, dịch, `--ingest`, rồi dọn mục mồ côi trong `pipeline/ja-translations.json`.
+Chỉ dùng Python stdlib. Chạy lại `--write` sau mỗi lần promote Tra cứu (đổi `data/heroes-dict.json`, `data/tactics.json`, `data/lookup-catalog.json`, `data/books-dict.json`) vì `lookupGenerationId` và `sources` phải khớp.
+
+### Khi promote generation Tra cứu mới
+
+Sửa chữ Trung nguồn (kể cả chữ dịch từ tiếng Việt) làm bản dịch cũ thành mồ côi: khóa sha256 của chúng không còn trong chữ nguồn hiện tại. `--check` và `--write` khi đó dừng với lỗi nêu số mục mồ côi và lệnh dọn. Người sửa dữ liệu vi/zh không cần dịch lại mới promote được:
+
+```bash
+python3 -m pipeline.build_lookup_ja --prune-orphans --write   # bỏ mục mồ côi, ghi lại pipeline/ja-translations.json và data/lookup-ja.json
+python3 -m pipeline.build_lookup_ja --check
+node scripts/report-ja-gaps.mjs                               # chữ mới thành "chưa dịch", liệt kê trong docs/ja-gaps.md
+```
+
+`--prune-orphans` chỉ dùng cùng `--write` và chỉ xóa mục mồ côi; bản dịch hỏng (sha lệch, sai số liệu) vẫn làm builder dừng. Trang ja hiện dòng báo thiếu cho trường chưa dịch. Dịch bù sau bằng `--export-todo` → dịch → `--ingest` → `--write`.
 
 ## Đầu vào
 
@@ -68,6 +81,6 @@ Trang bị và đặc kỹ không có chữ Trung mô tả nên chỉ có tên.
 ## Chính sách dịch máy
 
 - Dịch từ chữ Trung, không từ chữ Việt; dùng `ja-glossary.json`; chữ Hán trong bản dịch qua `to_shinjitai` khi nạp.
-- Số liệu phải bảo toàn: dãy số (kể cả thập phân), `%`, `→` trong bản dịch trùng nguyên thứ tự với nguồn. Mục sai bị loại ở bước `--ingest`, không sửa tay số; builder dừng nếu file dịch còn mục sai, mồ côi hay sha lệch.
+- Số liệu phải bảo toàn: dãy số (kể cả thập phân), `%`, `→` trong bản dịch trùng nguyên thứ tự với nguồn. Mục sai bị loại ở bước `--ingest`, không sửa tay số; builder dừng nếu file dịch còn mục sai, mồ côi hay sha lệch (mục mồ côi dọn bằng `--prune-orphans --write`).
 - Trang gắn nhãn 機械翻訳 và dòng "数値は中国大陸版に基づく". Một số thuật ngữ trạng thái trong glossary còn `unverified` (威圧, 計窮, 迷い, 追撃戦法…) và cần người dùng game Nhật soát.
 - Không chép mô tả của bên thứ ba: nguồn Nhật chỉ cung cấp tên (dữ kiện) và URL nội bộ.
