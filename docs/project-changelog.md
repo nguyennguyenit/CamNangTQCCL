@@ -1,5 +1,24 @@
 # Project Changelog
 
+## 2026-11-17 (Cùng Tồn: kịch bản PK-S27 · Hán Diễm Trường Minh)
+
+- Added: kịch bản `han-diem-truong-minh` (đứng đầu registry, mặc định của `/cung-ton/`) với 5 nhóm / 25 đội từ tab Cùng Tồn của Google Sheet sau khi chủ sheet ghi đè Binh Diễn Xuân Thu; snapshot ghim ở `plans/261117-0206-cung-ton-han-diem-truong-minh/research/`, bản đồ record `pipeline/coexist-han-diem-source-record-map.json`, hai evidence (xác nhận kịch bản, quan sát snapshot). Link Binh Diễn và Anh Hùng Mệnh Thế giữ nguyên byte.
+- Changed: `pipeline/parse_coexist_csv.py` nhận thêm bảng 11 cột theo header (Trang Bị theo tướng → `equipmentRaw`, Thẻ Kỳ Lược theo đội → `strategyCardsRaw`; không tái dùng `unitTacticEffectsRaw`), "Ghi Chú" không phân biệt hoa thường; validator Python/JS nhận hai dạng, từ chối trộn. Thẻ Cùng Tồn hiện "Trang bị: …" dưới cộng điểm và "Thẻ Kỳ Lược: …" ở chân thẻ (bản zh ẩn).
+- Re-pin hash nguồn + baseline inventory (thêm `equipmentRaw`/`strategyCardsRaw` vào `AUTHORED_VI_DATA_FIELDS`, hai nhãn UI mới), publish generation hiển thị, rebind ledger route.
+
+## 2026-11-17 (Khai hoang: Bạch Nhị theo tên Đội chuẩn)
+
+- Fixed: ghi chú chia đội Thương/Kỵ trong `data/khaihoang.json` ghi "Hoàng Nguyệt Anh (Vô Đương / Bạch Nhị)" thay "Bạch Nhĩ", cùng cách viết 白毦 = "Bạch Nhị Binh" của Đội chuẩn (#64). Ghi chú lớp `authored-vi`, không có bản zh.
+- Re-pin hash `khaihoang.json` trong policy và ledger route, publish generation hiển thị mới, rebind, prune generation cũ. Handle URL không đổi.
+
+## 2026-11-17 (Đội chuẩn: Tàng Khí Đợi Thời, Bạch Nhị Binh, provenance trước cấp 20 — #47, #64)
+
+### Changed
+- `pipeline/recommended-identity-map.json`: 藏器待時 = "Tàng Khí Đợi Thời" (tên client, `data/tactics.json` `viet`) thay "Tàng Khí Đãi Thì", kể cả 2 tên đội 藏器待時…; "Ngũ Mưu Cung (chuyển · Bạch Nhị Binh)" thay "Bạch Nhĩ Binh"; dấu ngăn tên đội "chuyển" thống nhất `(chuyển · …)` cho Ngũ Mưu Cung, Thái Sư Cung (trước là ngoặc toàn chiều rộng) và Đô Đốc Cung. 11 ghi chú dịch có "Tàng Khí Đãi Thì" đổi theo. Handle URL đóng băng nên không đổi đường dẫn.
+- `pipeline/tactic_summaries.py`: `provenance.recommendedJoin` ghi cả `heroes[].tacticBeforeLevel20Raw`.
+- Đổi identity map làm glossary digest đổi (`sha256:e00b61a0…`), nên duyệt độc lập lại toàn bộ 6409 vị trí (2812 site + 3597 Tra cứu): 16 batch `doi-chuan-261117-r1-*`, mỗi batch một reviewer. Vòng 1 chấp nhận 6397, từ chối 12. Sửa 7 mục: "nhiều tiên công" (2), đội tốc độ trung bình *khắc chế* Quán Quân Thương / SP Quan Vũ (2), "CO Vô Song Tinh Thái", tùy chọn cải tạo 飛馳 = "Tật Trì" (2). 5 mục bị từ chối nhầm, vì reviewer áp tên client, trong khi ghi chú dùng identity map (Hãn Thiên Sí Địa) và tên client "SP Lô Trực" ở Đội khác. 12 mục được duyệt lại ở batch `r2-000` và chấp nhận hết. Output review cũ `doi-chuan-261116-*` bị thay như lần refresh trước; Git giữ lịch sử.
+- `pipeline/recommended-other-teams.json` ghim lại hash identity map. Generation Đội chuẩn mới publish lại, ledger route rebind.
+
 ## 2026-11-16 (Dọn CSS chết sau Thiết kế mới, Đội của tôi giữ bản soạn)
 
 - Removed (#83): quy tắc `.blog-*` không còn trang nào dùng trong `css/styles.css` — `.blog-author`, `.blog-translation`, `.blog-cover`, `.blog-summary*`, `.blog-toc*`, `.blog-faq*`, `.blog-related` (bài chi tiết đã chuyển sang `bv-*`), kèm các selector tương ứng trong nhóm chung `.blog-body h2` và media 680px. Giữ phần còn dùng: danh sách `/bai-viet/` (`.blog-index*`, `.blog-card*`, `.blog-tag*`, `.blog-list`, `.blog-empty*`, `.blog-breadcrumb`, `.blog-lead`) và trang chính sách (`.blog-article*`, `.blog-body`).
@@ -241,7 +260,6 @@
 
 ### Chưa làm
 - `替代` (chiến pháp thay thế từng tướng) và `特技` (đặc kỹ trang bị) trên SGSDeck chưa vào schema.
-- `pipeline/recommended-identity-map.json` còn `藏器待時` → "Tàng Khí Đãi Thì" (từ điển: Tàng Khí Đợi Thời): chữ này đã nằm trong generation `a25cd18b…` (`tacticSlotsVi`), sửa map là phải dựng và publish generation mới.
 - Ledger route không lưu danh sách segment đã gỡ: segment chỉ được giữ ở lần `--rebind` gỡ hàng của nó.
 
 ## 2026-11-03 (Khôi phục Hà Thị và 3 chiến pháp theo nguồn chính thức VN)

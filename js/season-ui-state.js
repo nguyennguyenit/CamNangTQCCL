@@ -18,7 +18,7 @@ export async function loadSeasonModel(hashes, loadBytes) {
   return validateSeasonBundle(Object.fromEntries(entries));
 }
 /** Mùa Cùng Tồn mới nhất (đang diễn ra): mặc định khi URL chưa chọn mùa và đứng đầu ô chọn mùa. */
-export const COEXIST_LATEST_SCENARIO_ID = 'binh-dien-xuan-thu';
+export const COEXIST_LATEST_SCENARIO_ID = 'han-diem-truong-minh';
 /** Mùa đã review của Cùng Tồn theo thứ tự ô chọn mùa: mùa mới nhất lên đầu, còn lại giữ thứ tự registry. */
 export function coexistScenarioIds(model) {
   const reviewed = model ? model.data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => item.id) : [];

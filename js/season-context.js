@@ -282,16 +282,24 @@ async function validateContent(state) {
       object(payload, ['groupLabel', 'summaryRaw', 'openingSuggestionsRaw', 'notesRaw', 'teams']);
       text(payload.groupLabel); for (const key of ['summaryRaw', 'openingSuggestionsRaw', 'notesRaw']) text(payload[key], 20000, true);
       ensure(list(payload.teams).length > 0);
+      // Bảng 10 cột: đội mang cải tạo (`unitTacticEffectsRaw`). Bảng 11 cột: đội mang Thẻ Kỳ Lược (`strategyCardsRaw`),
+      // mỗi tướng mang Trang Bị (`equipmentRaw`). Một nhóm đến từ đúng một bảng nên mọi đội cùng một dạng.
+      const effectFields = ['unitTacticEffectsRaw', 'strategyCardsRaw'];
+      const shapes = new Set();
       for (const team of payload.teams) {
-        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'unitTacticEffectsRaw', 'heroes']); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
+        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'heroes'], effectFields); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
+        const effects = effectFields.filter(key => Object.hasOwn(team, key)); ensure(effects.length === 1); shapes.add(effects[0]);
+        const equipment = effects[0] === 'strategyCardsRaw';
         sourceLocator(team.sourceLocator); hash(team.contentFingerprint);
-        text(team.teamName); for (const key of ['teamNameRaw', 'unitTacticEffectsRaw']) text(team[key], 20000, true); ensure(team.teamNameRaw.trim());
+        text(team.teamName); for (const key of ['teamNameRaw', effects[0]]) text(team[key], 20000, true); ensure(team.teamNameRaw.trim());
         for (const hero of list(team.heroes, 3)) {
-          object(hero, ['nameRaw', 'tacticSlotsRaw', 'statFocusRaw', 'bookSlotsRaw']); text(hero.nameRaw, 20000, true); ensure(hero.nameRaw.trim()); text(hero.statFocusRaw, 20000, true);
+          object(hero, ['nameRaw', 'tacticSlotsRaw', 'statFocusRaw', 'bookSlotsRaw', ...(equipment ? ['equipmentRaw'] : [])]); text(hero.nameRaw, 20000, true); ensure(hero.nameRaw.trim()); text(hero.statFocusRaw, 20000, true);
+          if (equipment) text(hero.equipmentRaw, 20000, true);
           list(hero.tacticSlotsRaw, 2).forEach(value => text(value, 20000, true)); list(hero.bookSlotsRaw, 3).forEach(value => text(value, 20000, true));
         }
         ensure(team.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(team)));
       }
+      ensure(shapes.size === 1);
       ensure(target.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(payload)));
       ensure(evidence.some(proof => claimMatches(proof, 'source-observation', null, null) && proof.snapshotHash === target.source.snapshotHash));
       state.content.set(link.id, payload);

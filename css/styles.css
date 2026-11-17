@@ -10502,6 +10502,22 @@ body[data-page-section="khaihoang"] .layout {
   white-space: nowrap;
 }
 
+/* Trang bị và Thẻ Kỳ Lược của bảng 11 cột: giữ ngắt dòng của nguồn (vd. hai bộ đặc tính trang bị). */
+.coexist-hero-equipment {
+  white-space: pre-line;
+}
+
+.coexist-card-strategy {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-9) 0;
+  color: var(--ink-2);
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
 /* ---------- Khai hoang: đầu mục, thanh lọc, lưới thẻ (khung thẻ Đội chuẩn) ---------- */
 .khaihoang-head {
   padding-bottom: var(--space-28);
