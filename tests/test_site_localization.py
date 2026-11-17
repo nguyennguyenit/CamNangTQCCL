@@ -43,6 +43,16 @@ class KhaiHoangNoteClassificationTest(unittest.TestCase):
         self.assertEqual(_data_classification(("teams", 14, "buildNote"), "Chiến pháp 疾風豪雨"), "translate")
 
 
+class YoutubeTeamFieldClassificationTest(unittest.TestCase):
+    def test_youtube_trace_fields_are_exempt_and_confidence_is_authored(self):
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾"), "exempt")
+        self.assertEqual(_data_classification((0, "evidence", 0, "videoId"), "khGmfKDo9ng"), "exempt")
+        self.assertEqual(_data_classification((0, "evidence", 0, "at"), "001m16s"), "exempt")
+        self.assertEqual(_data_classification((0, "evidence", 0, "kind"), "đề cử"), "exempt")
+        self.assertEqual(_data_classification((0, "confidence"), "cao"), "authored-vi")
+        self.assertEqual(_data_classification((0, "heroes", 0, "note"), "Chiến pháp chưa đọc được từ video"), "authored-vi")
+
+
 class SiteLocalizationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

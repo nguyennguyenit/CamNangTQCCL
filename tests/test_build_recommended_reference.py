@@ -486,6 +486,9 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
             "classification": "distinct",
             "legacyTeamId": "legacy-a",
             "legacyVariantId": "variant-a",
+            "recommended": True,
+            "sourceLabel": "YouTube",
+            "sourceSeasonIds": ["s"],
         }
         inputs = {
             "inventory": {
@@ -546,6 +549,7 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
             other = json.loads((generation / "other-teams.json").read_text())["records"][0]
             self.assertEqual(published["legacyReferences"][0]["legacyContent"], legacy)
             self.assertEqual(other["legacyContent"], legacy)
+            self.assertEqual((other["recommended"], other["sourceLabel"], other["sourceSeasonIds"]), (True, "YouTube", ["s"]))
             manifest = json.loads((generation / "manifest.json").read_text())
             self.assertEqual(manifest["legacyTeamsHash"], ledger["localTeamsSha256"])
             self.assertTrue(manifest["contentLinksHash"].startswith("sha256:"))
@@ -604,6 +608,16 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
                     ledger_bytes=stale_corpus_bytes,
                 )
+
+
+class OtherTeamFlagsTest(unittest.TestCase):
+    def test_recommended_rows_are_boolean_first_and_seasons_are_null_or_codes(self):
+        builder.validate_other_team_flags([{"recommended": True, "sourceSeasonIds": ["pk-s27"]},
+                                           {"recommended": False, "sourceSeasonIds": None}, {}])
+        for rows in ([{"recommended": "yes"}], [{"recommended": False}, {"recommended": True}],
+                     [{"sourceSeasonIds": []}], [{"sourceSeasonIds": [""]}]):
+            with self.assertRaises(ValueError):
+                builder.validate_other_team_flags(rows)
 
 
 if __name__ == "__main__":

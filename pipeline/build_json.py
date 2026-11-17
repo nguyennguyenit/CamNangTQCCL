@@ -2,8 +2,9 @@
 
 Verify per-file count, fail-fast. Mặc định chỉ ghi ``teams.json`` + ``facets.json``
 (UTF-8, indent 2, ``sort_keys=False``: giữ thứ tự khoá theo code); từ HTML +
-``pipeline/aliases.json``, ``team-nicknames.json`` và ``team-intro-supplement.json``
-(Team PK curate ngoài HTML) phải ra trùng byte bản commit (``--check`` kiểm, không ghi).
+``pipeline/aliases.json``, ``team-nicknames.json``, ``team-intro-supplement.json``
+(Team PK curate ngoài HTML) và ``team-youtube-pk-s27.json`` (đội đề cử từ YouTube, nguồn
+``youtube``; file chưa có thì coi như rỗng) phải ra trùng byte bản commit (``--check`` kiểm, không ghi).
 ``coexist.json``/``khaihoang.json`` đã curate vượt HTML nên chỉ bị ghi đè khi có
 ``--overwrite-curated``. ID đội đã commit trong ``data/teams.json`` được giữ theo
 (nguồn, tập tên tướng đã sắp); đội mới nhận số kế tiếp của đúng nguồn; đội đã commit
@@ -28,10 +29,12 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _SRC = os.path.join(_ROOT, "Meta Team PK")
 _OUT = os.path.join(_ROOT, "data")
 _SUPPLEMENT = os.path.join(_ROOT, "pipeline", "team-intro-supplement.json")
+_YOUTUBE = os.path.join(_ROOT, "pipeline", "team-youtube-pk-s27.json")
+_YOUTUBE_SOURCE = "youtube"
 
 # (file, source-tag, status-hint, expected-count)
 _TEAM_FILES = [
-    ("Team giới thiệu(mới).html", "team-intro", None, 50),
+    ("Team giới thiệu(mới).html", "team-intro", None, 60),
     ("Meta mỗi phe (cũ).html", "moi-phe", "out-meta", 110),
 ]
 
@@ -57,28 +60,38 @@ def load_supplement(path: str = _SUPPLEMENT) -> List[dict]:
         return json.load(fh)["teams"]
 
 
+def load_youtube_teams(path: str = _YOUTUBE) -> List[dict]:
+    """Đội đề cử curate từ YouTube: bản ghi đã chuẩn hóa, không có ``id``, nguồn ``youtube``.
+
+    File chưa có -> rỗng. Giữ nguyên mọi trường (``nameZh``, ``confidence``, ``evidence``...).
+    """
+    if not os.path.exists(path):
+        return []
+    with open(path, "r", encoding="utf-8") as fh:
+        teams = json.load(fh)["teams"]
+    for team in teams:
+        if team.get("source") != _YOUTUBE_SOURCE or "id" in team:
+            raise SystemExit(f"[build] đội YouTube phải có source '{_YOUTUBE_SOURCE}' và chưa có id: {team.get('name')}")
+    return teams
+
+
 def build_teams(committed: Optional[List[dict]] = None) -> List[dict]:
     """Parse + normalize các nguồn đội, nối team curate, giữ ID của ``committed``.
 
-    Ghép theo (nguồn, tập tên tướng đã sắp); trùng khoá thì theo thứ tự xuất hiện.
+    Ghép theo (nguồn, tập tên tướng đã sắp). Khoá trùng: đội có nội dung y hệt bản commit giữ
+    đúng ID đó trước (đội mới cùng bộ tướng chen lên trên trong sheet không lấy ID cũ), phần còn
+    lại theo thứ tự xuất hiện; đội mới nhận số kế tiếp theo thứ tự xuất hiện.
     """
     aliases = load_aliases()
     known: Dict[Tuple[str, Tuple[str, ...]], Deque[str]] = defaultdict(deque)
+    content: Dict[str, dict] = {}
     next_number: Dict[str, int] = defaultdict(int)
     for team in committed or []:
         known[_team_key(team["source"], team["heroes"])].append(team["id"])
+        content[team["id"]] = {k: v for k, v in team.items() if k != "id"}
         next_number[team["source"]] = max(next_number[team["source"]], _id_number(team["id"]) + 1)
 
-    def assign_id(src: str, team: dict) -> dict:
-        matches = known.get(_team_key(src, team["heroes"]))
-        if matches:
-            team_id = matches.popleft()
-        else:
-            team_id = f"{src}-{next_number[src]}"
-            next_number[src] += 1
-        return {"id": team_id, **{k: v for k, v in team.items() if k != "id"}}
-
-    teams: List[dict] = []
+    records: List[Tuple[str, dict]] = []
     for fname, src, hint, expected in _TEAM_FILES:
         raw = parse_team_intro(os.path.join(_SRC, fname), src, hint)
         if len(raw) != expected:
@@ -86,12 +99,30 @@ def build_teams(committed: Optional[List[dict]] = None) -> List[dict]:
                 f"[build] COUNT MISMATCH {fname}: got {len(raw)} expected {expected}"
             )
         nicknames = load_nicknames(source=src)
-        for r in raw:
-            teams.append(assign_id(src, normalize_team(r, aliases, "", nicknames)))
-    for record in load_supplement():
-        teams.append(assign_id(record["source"], record))
+        records.extend((src, normalize_team(r, aliases, "", nicknames)) for r in raw)
+    records.extend((record["source"], record) for record in load_supplement())
+    records.extend((_YOUTUBE_SOURCE, record) for record in load_youtube_teams())
 
-    missing = sorted((i for ids in known.values() for i in ids), key=lambda i: (i.rsplit("-", 1)[0], _id_number(i)))
+    bodies = [{k: v for k, v in team.items() if k != "id"} for _, team in records]
+    ids: List[Optional[str]] = [None] * len(records)
+    for index, (src, team) in enumerate(records):
+        matches = known.get(_team_key(src, team["heroes"]))
+        exact = next((i for i in matches or () if content[i] == bodies[index]), None)
+        if exact is not None:
+            matches.remove(exact)
+            ids[index] = exact
+    for index, (src, team) in enumerate(records):
+        if ids[index] is not None:
+            continue
+        matches = known.get(_team_key(src, team["heroes"]))
+        if matches:
+            ids[index] = matches.popleft()
+        else:
+            ids[index] = f"{src}-{next_number[src]}"
+            next_number[src] += 1
+    teams = [{"id": team_id, **body} for team_id, body in zip(ids, bodies)]
+
+    missing = sorted((i for ids_left in known.values() for i in ids_left), key=lambda i: (i.rsplit("-", 1)[0], _id_number(i)))
     if missing:
         raise SystemExit(
             f"[build] {len(missing)} đội đã commit không còn trong nguồn (ID công khai sẽ mất): "

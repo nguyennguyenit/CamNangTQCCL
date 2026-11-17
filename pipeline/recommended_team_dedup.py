@@ -12,6 +12,9 @@ from pipeline.common import canonical_json
 from pipeline.recommended_identity import build_mapping, resolve_identity
 
 DEDUP_KEY_VERSION = 1
+DEFAULT_SEASON_PATH = Path(__file__).resolve().parent / "recommended-default-season.json"
+YOUTUBE_SOURCE = "youtube"
+SOURCE_LABELS = {YOUTUBE_SOURCE: "YouTube"}
 
 
 def dedup_key(config):
@@ -59,10 +62,24 @@ def classify_candidates(candidates, recommended_corpus):
             "counts": {name: sum(item["classification"] == name for item in decisions)
                        for name in ("distinct", "duplicate", "pendingIdentity", "pendingSource")}}
 
+def _local_identity_name(hero):
+    """Tên tra identity của tướng chính đội cục bộ: tiền tố SP/CO + ``baseName``.
+
+    Ghi chú trong ngoặc (``(S)``, ``(Cung S)``...) và lựa chọn ``A/B`` không đổi danh tính thẻ tướng;
+    lựa chọn thay thế đã nằm ở ``alternatives`` (pendingBranches). Bản ghi không có ``baseName``
+    dùng ``name``.
+    """
+    base = hero.get("baseName")
+    if not base:
+        return hero.get("name")
+    prefix = "SP " if hero.get("isSP") else "CO " if hero.get("isCO") else ""
+    return prefix + base
+
+
 def _resolved_holder(hero, mapping, source=False):
     name = hero.get("nameRaw") if source else hero.get("name")
     tactics = hero.get("tacticSlotsRaw") if source else [item.get("name") for item in hero.get("tactics", [])]
-    hero_identity = resolve_identity("hero", name, mapping)
+    hero_identity = resolve_identity("hero", name if source else _local_identity_name(hero), mapping)
     tactic_identities = [resolve_identity("tactic", value, mapping) for value in tactics if value]
     if hero_identity["status"] != "resolved" or len(tactic_identities) != len([value for value in tactics if value]) or any(item["status"] != "resolved" for item in tactic_identities):
         return None
@@ -111,7 +128,12 @@ def _possibly_duplicate(partial_holders, candidate):
                for ordering in itertools.permutations(candidate["holders"]))
 
 
-def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team_tiers=()):
+def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team_tiers=(), season_id=None):
+    """Phân loại đội cục bộ so với ``recommended_records`` (Đội chuẩn của đúng mùa ``season_id``).
+
+    Mọi hàng admitted mang ``sourceSeasonIds: [season_id]`` (None khi không chọn mùa); hàng nguồn
+    ``youtube`` là đội đề cử (``recommended``) và đứng trước, còn lại giữ thứ tự cũ.
+    """
     mapping = build_mapping(mapping_descriptor["entries"])
     corpus = []
     unresolved_source = set()
@@ -158,9 +180,10 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
             "historicalRankings": tier_rows.get(row["id"], []),
             "historicalTier": min((ranking.get("tier") for ranking in tier_rows.get(row["id"], []) if ranking.get("tier")), key=lambda tier: {"T0": 0, "T0.5": 1, "T1": 2, "T1.5": 3, "T2": 4, "T3": 5}.get(tier, 999), default=None),
             "origin": "existing-local",
+            "recommended": row.get("source") == YOUTUBE_SOURCE,
             "sourceState": "known" if row.get("source") else "unknown",
-            "sourceLabel": row.get("source") or "Nguồn chưa xác định",
-            "sourceSeasonIds": None,
+            "sourceLabel": SOURCE_LABELS.get(row.get("source"), row.get("source")) or "Nguồn chưa xác định",
+            "sourceSeasonIds": [season_id] if season_id else None,
             "seasonAttribution": [],
         })
     result = classify_candidates(candidates, corpus)
@@ -176,7 +199,8 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
     decisions.sort(key=lambda item: item["legacyTeamId"])
     if len(decisions) != len(teams):
         raise ValueError("Every local team needs one final primary classification")
-    result["admitted"] = retained
+    # sort ổn định: đội đề cử trước, phần còn lại giữ thứ tự cũ.
+    result["admitted"] = sorted(retained, key=lambda item: not item.get("recommended"))
     result["decisions"] = decisions
     result["counts"] = {name: sum(item["classification"] == name for item in decisions)
                         for name in ("distinct", "duplicate", "pendingIdentity", "pendingSource")}
@@ -185,6 +209,22 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
     result["pendingBranches"] = pending_branches
     result["inputTeamRows"] = len(teams)
     return result
+
+
+def default_season_id(path=DEFAULT_SEASON_PATH):
+    """Mùa mặc định do biên tập chọn (``recommended-default-season.json``)."""
+    season = json.loads(Path(path).read_bytes()).get("defaultSourceSeasonId")
+    if not isinstance(season, str) or not season:
+        raise ValueError("Recommended default season is missing")
+    return season
+
+
+def season_corpus(inventory, details, season_id):
+    """Bản ghi Đội chuẩn của đúng mùa ``season_id``, theo thứ tự scope trong inventory."""
+    scopes = [scope for scope in inventory["scopes"] if scope.get("sourceSeasonId") == season_id]
+    if not scopes:
+        raise ValueError("Recommended default season has no source scope: " + season_id)
+    return [row for scope in scopes for row in details.get(scope["safeScopeKey"], [])]
 
 
 def main():
@@ -197,6 +237,8 @@ def main():
     parser.add_argument("--identity-map", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--team-tier", required=True)
+    parser.add_argument("--default-season", type=Path, default=DEFAULT_SEASON_PATH,
+                        help="mùa mặc định; chỉ Đội chuẩn của mùa này được dùng để xét trùng")
     args = parser.parse_args()
     if args.pack:
         # The pack was captured once from the crawler cache; it is the locked Recommended source when no cache
@@ -204,22 +246,26 @@ def main():
         from pipeline.site_localization import load_source_pack, pack_corpus
         pack = load_source_pack(Path(args.root), args.pack)
         recommended = pack_corpus(pack)
-        inventory_hash = pack["inventory"]["inventoryHash"]
+        inventory, details = pack["inventory"], pack["details"]
     else:
         from pipeline.build_recommended_reference import inputs_from_cache
         inputs = inputs_from_cache(args.cache)
         recommended = [item for scope in inputs["details"].values() for item in scope]
-        inventory_hash = inputs["inventory"]["inventoryHash"]
+        inventory, details = inputs["inventory"], inputs["details"]
+    inventory_hash = inventory["inventoryHash"]
+    season_id = default_season_id(args.default_season)
+    seasonal = season_corpus(inventory, details, season_id)
     teams_bytes = Path(args.teams).read_bytes()
     tiers_bytes = Path(args.team_tier).read_bytes()
     mapping_bytes = Path(args.identity_map).read_bytes()
     teams = json.loads(teams_bytes)
     team_tiers = json.loads(tiers_bytes)
     mapping = json.loads(mapping_bytes)
-    result = build_other_team_ledger(teams, recommended, mapping, team_tiers)
+    result = build_other_team_ledger(teams, seasonal, mapping, team_tiers, season_id=season_id)
     result.update({
         "sourceInventoryHash": inventory_hash,
         "recommendedCorpusHash": "sha256:" + hashlib.sha256(canonical_json(recommended).encode()).hexdigest(),
+        "recommendedCorpusSeasonId": season_id,
         "mappingFileSha256": "sha256:" + hashlib.sha256(mapping_bytes).hexdigest(),
         "localTeamsSha256": "sha256:" + hashlib.sha256(teams_bytes).hexdigest(),
         "teamTierSha256": "sha256:" + hashlib.sha256(tiers_bytes).hexdigest(),

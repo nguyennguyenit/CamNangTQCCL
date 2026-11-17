@@ -269,6 +269,10 @@ EXEMPT_DATA_FIELDS = {
     "variant",
 }
 CANONICAL_DATA_FIELDS.update({"alternatives", "baseName", "rawType", "trainHeroes"})
+# Đội đề cử YouTube trong data/teams.json: tên gốc của creator (nameZh) và mốc video giữ để truy nguyên,
+# không dịch; mức tin cậy là chữ Việt tự soạn.
+EXEMPT_DATA_FIELDS.update({"nameZh", "videoId", "at"})
+AUTHORED_VI_DATA_FIELDS.add("confidence")
 UI_LITERAL_OBLIGATIONS = (
     ("ui:app/load-error", "errorTemplate", "Lỗi tải dữ liệu: {message}. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "js/app.js", "main", "error", "translate", 'displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")'),
     ("ui:analyze/provider-error", "errorMessage", "Không thể phân tích ảnh. Vui lòng thử lại.", "js/analyze.js", "callWorker", "error", "translate", "localizeWorkerError(data?.error, res.status)"),
