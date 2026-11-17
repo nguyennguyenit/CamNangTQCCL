@@ -237,7 +237,7 @@ export function validatePublicationMeta(value: unknown): PublicationMeta {
 // Record contracts
 // ---------------------------------------------------------------------------------------------
 
-export const CATALOG_GROUPS = ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"] as const;
+export const CATALOG_GROUPS = ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books", "qilue"] as const;
 export type CatalogGroup = (typeof CATALOG_GROUPS)[number];
 export const CATALOG_KINDS = [
   "hero",
@@ -248,6 +248,8 @@ export const CATALOG_KINDS = [
   "troop-mod",
   "building",
   "book",
+  "qilue-strategy",
+  "qilue-card",
 ] as const;
 export type CatalogKind = (typeof CATALOG_KINDS)[number];
 
@@ -260,6 +262,8 @@ export const KIND_GROUP: Readonly<Record<CatalogKind, CatalogGroup>> = Object.fr
   "troop-mod": "troop-mods",
   building: "buildings",
   book: "books",
+  "qilue-strategy": "qilue",
+  "qilue-card": "qilue",
 });
 
 export interface CatalogEntity {

@@ -7503,6 +7503,20 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
 .lookup-master [data-tone="son"] { --tone-bg: var(--tint-son); --tone-ink: var(--tint-son-ink); }
 .lookup-master [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
 
+/* Kỳ lược: màu theo loại thẻ (Dũng/Mưu/Phụ/Sách/Tế) dùng lại bảng tint; cũng đúng trên trang riêng của mục (ngoài `.lookup-master`). */
+.lookup-detail-qilue [data-tone] {
+  --tone-bg: var(--panel-2);
+  --tone-ink: var(--ink-2);
+  --tone-line: var(--line);
+}
+
+:is(.lookup-master, .lookup-detail-qilue) [data-tone="dung"] { --tone-bg: var(--tint-hoa); --tone-ink: var(--tint-hoa-ink); --tone-line: var(--tint-hoa-ink); }
+:is(.lookup-master, .lookup-detail-qilue) [data-tone="muu"] { --tone-bg: var(--tint-tim); --tone-ink: var(--tint-tim-ink); --tone-line: var(--tint-tim-line); }
+:is(.lookup-master, .lookup-detail-qilue) [data-tone="phu"] { --tone-bg: var(--tint-phong); --tone-ink: var(--tint-phong-ink); --tone-line: var(--tint-phong-ink); }
+:is(.lookup-master, .lookup-detail-qilue) [data-tone="sach"] { --tone-bg: var(--tint-cam); --tone-ink: var(--tint-cam-ink); --tone-line: var(--tint-cam-line); }
+:is(.lookup-master, .lookup-detail-qilue) [data-tone="te"] { --tone-bg: var(--tint-lam); --tone-ink: var(--tint-lam-ink); --tone-line: var(--tint-lam-ink); }
+.lookup-detail-qilue [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
+
 /* Hàng chip lọc: chấm vuông màu phẩm/hệ trước nhãn, số đếm mờ sau nhãn, vạch ngăn giữa hai khía cạnh. */
 .lookup-filters {
   display: flex;
@@ -7899,6 +7913,113 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
 
 .lookup-row-group-count {
   display: none;
+}
+
+/* Kỳ lược: danh sách hàng chia khối (Phương lược, rồi từng loại thẻ) bên trái, panel chi tiết bám theo bên phải. Hàng ghi
+   nhãn mục ở dòng phụ, nhãn loại thẻ có màu và dấu "Hiếm". */
+.lookup-master-grid-qilue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lookup-master-qilue .lookup-detail-panel {
+  position: sticky;
+  top: var(--space-88);
+  max-height: calc(100dvh - var(--space-96));
+  overflow-y: auto;
+}
+
+.lookup-qilue-row {
+  gap: var(--space-10);
+  padding-block: var(--space-6);
+}
+
+.lookup-qilue-row .lookup-row-sub {
+  display: block;
+  overflow: hidden;
+  color: var(--muted);
+  font: var(--type-meta);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lookup-qilue-row[aria-current="true"] .lookup-row-sub {
+  color: var(--select-ink-2);
+}
+
+.lookup-qilue-marks {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.lookup-qilue-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-4);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.lookup-qilue-rare,
+.badge.lookup-qilue-rare {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border-radius: var(--radius-4);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.badge.lookup-qilue-rare {
+  padding: var(--space-2) var(--space-9);
+  border-radius: var(--radius-999);
+  font: var(--type-badge);
+}
+
+.lookup-detail-qilue .lookup-detail-tile {
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+}
+
+.lookup-qilue-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-14);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lookup-qilue-type-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.lookup-qilue-type-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--control-40);
+  padding: 0 var(--space-12);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-8);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.lookup-qilue-type-link:hover {
+  background: var(--tone-bg);
 }
 
 /* Panel chi tiết (desktop): khung thẻ bên phải danh sách, bám theo khi cuộn danh sách dài. */
@@ -8589,6 +8710,15 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
     gap: var(--space-16);
   }
 
+  /* Kỳ lược (375px): tên và dòng phụ co lại, nhãn loại/Hiếm giữ nguyên; không cuộn ngang. */
+  .lookup-qilue-row {
+    gap: var(--space-10);
+  }
+
+  .lookup-detail-qilue .lookup-detail-facts {
+    display: grid;
+  }
+
   .lookup-eq-head {
     padding: var(--space-12);
   }
@@ -8764,7 +8894,8 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   .lookup-master-equipment .lookup-detail-panel,
   .lookup-master-advisors .lookup-detail-panel,
   .lookup-master-troop-mods .lookup-detail-panel,
-  .lookup-master-buildings .lookup-detail-panel {
+  .lookup-master-buildings .lookup-detail-panel,
+  .lookup-master-qilue .lookup-detail-panel {
     position: static;
     max-height: none;
     padding: 0;

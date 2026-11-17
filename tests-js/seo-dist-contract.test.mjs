@@ -142,7 +142,7 @@ test("JSON-LD trang chi tiết đội (vi + zh): WebPage + BreadcrumbList, about
   assert.ok(withAbout > total * 0.8, `phần lớn trang đội phải có tướng có trang riêng (${withAbout}/${total})`);
 });
 
-const TERM_GROUPS = new Set(["tactics", "books", "advisors"]);
+const TERM_GROUPS = new Set(["tactics", "books", "advisors", "qilue"]);
 
 test("JSON-LD trang riêng từng mục (886 × 2): ItemPage (url, inLanguage, isPartOf) + mainEntity Thing/DefinedTerm + BreadcrumbList, chỉ phản ánh nội dung có trong HTML", async () => {
   const [routes, corpus] = await Promise.all([lookupDetailRoutes(), lookupBuildCorpus()]);
@@ -222,7 +222,36 @@ test("mô tả meta bản zh (JSON-LD dùng cùng mô tả) của chiến pháp 
   assert.ok(kept > 300, `mục chữ Hán nguồn giữ hiệu ứng trong meta zh (${kept})`);
 });
 
-test("JSON-LD trang nhóm Tra cứu (7 × 2): CollectionPage + ItemList đủ mọi mục, mọi url có file dist", async () => {
+test("Kỳ lược: 45 trang riêng × 2 ngôn ngữ; meta/JSON-LD của thẻ và phương lược đúng nhóm, bản zh không mang chữ Hán dịch", async () => {
+  const [routes, corpus] = await Promise.all([lookupDetailRoutes(), lookupBuildCorpus()]);
+  const entries = routes.entries.filter((entry) => entry.group === "qilue");
+  assert.equal(entries.filter((entry) => entry.id.startsWith("qilue-strategy:")).length, 5);
+  assert.equal(entries.filter((entry) => entry.id.startsWith("qilue-card:")).length, 40);
+  for (const entry of entries) {
+    for (const [, prefix] of LOCALES) assert.ok(await exists(pageFile(`${prefix}${entry.path}`)), `${prefix}${entry.path}`);
+  }
+  for (const id of ["qilue-card:bo-tri-thap-dien", "qilue-strategy:cuong-cong"]) {
+    const entry = routes.byId.get(id);
+    const record = corpus.byId.get(id).record;
+    for (const [locale, prefix] of LOCALES) {
+      const where = `${locale} ${entry.path}`;
+      const html = await read(pageFile(`${prefix}${entry.path}`));
+      const description = metaDescription(html);
+      const thing = jsonLdBlocks(html, where).find((block) => block["@type"] === "ItemPage").mainEntity;
+      assert.equal(thing["@type"], "DefinedTerm", where);
+      for (const text of [description, JSON.stringify(thing)]) assert.doesNotMatch(text, /công trình|建筑/u, where);
+      if (locale === "zh") {
+        assert.equal(thing.name, record.nameZh, where);
+        for (const field of ["effectZh", "descriptionZh", "buffZh"]) {
+          if (record[field]) assert.ok(!description.includes(record[field]) && !JSON.stringify(thing).includes(record[field]), `${where}: meta chứa ${field}`);
+        }
+        assert.match(html, /data-zh-source="translation"/u, `${where}: trang mang cờ dịch`);
+      }
+    }
+  }
+});
+
+test("JSON-LD trang nhóm Tra cứu (8 × 2): CollectionPage + ItemList đủ mọi mục, mọi url có file dist", async () => {
   const [routes, corpus] = await Promise.all([lookupDetailRoutes(), lookupBuildCorpus()]);
   for (const [group, slug] of Object.entries(LOOKUP_GROUP_SLUGS)) {
     for (const [locale, prefix] of LOCALES) {
@@ -270,7 +299,7 @@ test("llms: /llms-full.txt đúng bằng các file con nối theo thứ tự c�
   const SECTION_ORDER = ["/llms/doi-chuan", "/llms/doi-khac.txt", "/llms/cung-ton.txt", "/llms/khai-hoang.txt", ...Object.values(LOOKUP_GROUP_SLUGS).map((slug) => `/llms/tra-cuu/${slug}.txt`)];
   const sectionOf = (child) => SECTION_ORDER.findIndex((prefix) => child.startsWith(prefix));
   assert.ok(children.every((child) => sectionOf(child) >= 0), `file con lạ: ${children.filter((child) => sectionOf(child) < 0)}`);
-  assert.deepEqual(children.map(sectionOf), [...children.map(sectionOf)].sort((a, b) => a - b), "thứ tự mục cố định: đội chuẩn, đội khác, cùng tồn, khai hoang, 7 nhóm tra cứu");
+  assert.deepEqual(children.map(sectionOf), [...children.map(sectionOf)].sort((a, b) => a - b), "thứ tự mục cố định: đội chuẩn, đội khác, cùng tồn, khai hoang, 8 nhóm tra cứu");
   for (const required of SECTION_ORDER.slice(1)) assert.ok(children.includes(required), `thiếu ${required}`);
   assert.ok(children.some((child) => child.startsWith("/llms/doi-chuan")), "thiếu file đội chuẩn");
   assert.equal(new Set(children).size, children.length);
@@ -327,7 +356,7 @@ test("llms: có đủ URL trang chi tiết của mọi đội và URL trang riê
   }
 });
 
-test("llms.txt giữ nội dung blog hiện có và thêm 7 nhóm Tra cứu", async () => {
+test("llms.txt giữ nội dung blog hiện có và thêm 8 nhóm Tra cứu", async () => {
   const index = await read("llms.txt");
   for (const keep of ["## Mục chính", "## Bản tiếng Trung giản thể", "## Bài viết tiếng Việt", "## Khác", `${ORIGIN}/sitemap.xml`, `${ORIGIN}/rss.xml`]) {
     assert.ok(index.includes(keep), `llms.txt mất: ${keep}`);

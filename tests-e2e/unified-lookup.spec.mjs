@@ -1,4 +1,4 @@
-// E2E giao diện Tra cứu: mục lục /tra-cuu/ + bảy trang nhóm /tra-cuu/<slug>/, chip nhóm là link giữa các trang,
+// E2E giao diện Tra cứu: mục lục /tra-cuu/ + tám trang nhóm /tra-cuu/<slug>/, chip nhóm là link giữa các trang,
 // phân trang quá 60, hộp thoại hồ sơ theo `?id=` có focus trap (tướng, chiến pháp, binh thư), bốn nhóm catalog dạng
 // danh sách + chi tiết (chọn sẵn mục đầu, chip lọc, màn chi tiết mobile), live region tiếng Việt, link cũ
 // `?group=&id=` được mục lục chuyển tiếp, và mỗi trang nhóm chỉ tải đúng payload của nhóm mình.
@@ -11,7 +11,7 @@ const ITEM_TOTAL = Object.fromEntries(Object.entries(HANDLES).map(([group, ids])
 const itemPath = (group, id) => `${GROUP_PATH_BY_GROUP[group]}${HANDLES[group][id]}/`;
 const GROUP_PATH_BY_GROUP = {
   heroes: '/tra-cuu/tuong/', tactics: '/tra-cuu/chien-phap/', equipment: '/tra-cuu/trang-bi/', advisors: '/tra-cuu/quan-su/',
-  'troop-mods': '/tra-cuu/cai-tao-binh-chung/', buildings: '/tra-cuu/cong-trinh/', books: '/tra-cuu/binh-thu/',
+  'troop-mods': '/tra-cuu/cai-tao-binh-chung/', buildings: '/tra-cuu/cong-trinh/', books: '/tra-cuu/binh-thu/', qilue: '/tra-cuu/ky-luoc/',
 };
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
@@ -20,7 +20,7 @@ function navLink(page, name, mobile = false) {
 }
 
 const CJK = /[\u3400-\u9fff]/;
-const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings', 'books'];
+const GROUPS = ['heroes', 'tactics', 'equipment', 'advisors', 'troop-mods', 'buildings', 'books', 'qilue'];
 /** Trang nhóm (bản Việt) — khớp `LOOKUP_GROUP_SLUGS` của js/lookup-ids.js. */
 const GROUP_PATH = {
   heroes: '/tra-cuu/tuong/',
@@ -30,6 +30,7 @@ const GROUP_PATH = {
   'troop-mods': '/tra-cuu/cai-tao-binh-chung/',
   buildings: '/tra-cuu/cong-trinh/',
   books: '/tra-cuu/binh-thu/',
+  qilue: '/tra-cuu/ky-luoc/',
 };
 
 const lookup = (page) => page.locator('#section-lookup');
@@ -40,7 +41,7 @@ const results = (page) => lookup(page).locator('.lookup-card, .lookup-table-pane
 /** Nút mở hồ sơ của kết quả đầu tiên (thẻ tướng hoặc tên trong bảng chiến pháp). */
 const firstResult = (page) => lookup(page).locator('[data-lookup-id]').first();
 /** Bốn nhóm catalog dùng danh sách + chi tiết thay cho hộp thoại hồ sơ. */
-const MASTER_GROUPS = new Set(['equipment', 'advisors', 'troop-mods', 'buildings']);
+const MASTER_GROUPS = new Set(['equipment', 'advisors', 'troop-mods', 'buildings', 'qilue']);
 const panel = (page) => lookup(page).locator('.lookup-detail-panel');
 const selectedItem = (page) => lookup(page).locator('.lookup-master-item[aria-current="true"]');
 const groupResults = (page, group) => group === 'tactics'
@@ -53,7 +54,7 @@ async function openLookup(page, url) {
   await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
 }
 
-test('mục lục Tra cứu là trang tĩnh bảy thẻ nhóm, không nạp app.js', async ({ page }) => {
+test('mục lục Tra cứu là trang tĩnh tám thẻ nhóm, không nạp app.js', async ({ page }) => {
   await page.goto('/tra-cuu/');
   await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
   await expect(lookup(page)).toBeVisible();
@@ -81,7 +82,7 @@ test('nav link Tra cứu hỗ trợ điều hướng bằng bàn phím', async (
   await expect(navLink(page, 'Tra cứu', false)).toHaveAttribute('aria-current', 'page');
 });
 
-test('bảy trang nhóm: chip là link, đúng một chip aria-current và kết quả của nhóm', async ({ page }) => {
+test('tám trang nhóm: chip là link, đúng một chip aria-current và kết quả của nhóm', async ({ page }) => {
   for (const group of GROUPS) {
     await openLookup(page, GROUP_PATH[group]);
     await expect(page.locator('body')).toHaveAttribute('data-lookup-group', group);
@@ -1371,4 +1372,46 @@ test.describe('tải dữ liệu theo trang nhóm', () => {
       await expect(page.locator('h1')).toHaveCount(1);
     }
   });
+});
+
+/* ---------- Kỳ lược ---------- */
+
+test('kỳ lược: danh sách 5 phương lược + 40 thẻ, lọc Mưu ra 8 thẻ, Mưu + Hiếm ra 2', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/ky-luoc/');
+  const items = lookup(page).locator('.lookup-master-item');
+  await expect(items).toHaveCount(45);
+  await expect(lookup(page).locator('.lookup-row-group-title').first()).toContainText('Phương lược');
+  await lookup(page).locator('.lookup-filters button[data-facet="type"][data-value="muu"]').click();
+  await expect(items).toHaveCount(8);
+  await expect(lookup(page).locator('[data-lookup-id^="qilue-strategy:"]')).toHaveCount(0);
+  await lookup(page).locator('.lookup-filters button[data-facet="rarity"][data-value="rare"]').click();
+  await expect(items).toHaveCount(2);
+  await expect(lookup(page).locator('.lookup-summary')).toContainText('2 thẻ Mưu');
+});
+
+test('kỳ lược: link loại thẻ của phương lược mở danh sách đã lọc sẵn', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/ky-luoc/?type=muu');
+  await expect(lookup(page).locator('.lookup-master-item')).toHaveCount(8);
+  await expect(lookup(page).locator('.lookup-filters button[data-facet="type"][data-value="muu"]')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('kỳ lược: tìm "Cường Công" ra phương lược ghi nhãn nhóm; 十面埋伏 không ra thẻ', async ({ page }) => {
+  await openLookup(page, '/tra-cuu/ky-luoc/');
+  const search = lookup(page).locator('.lookup-search-input');
+  await search.fill('Cường Công');
+  await expect(lookup(page).locator('.lookup-master-item')).toHaveCount(1);
+  await expect(lookup(page).locator('.lookup-master-item .lookup-row-sub')).toContainText('Phương lược');
+  await search.fill('十面埋伏');
+  await expect(lookup(page).locator('.lookup-master-item')).toHaveCount(0);
+});
+
+test('kỳ lược mobile 375px: không cuộn ngang, mở thẻ thành màn chi tiết', async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await openLookup(page, '/tra-cuu/ky-luoc/');
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+  await lookup(page).locator('[data-lookup-id="qilue-card:bo-tri-thap-dien"]').click();
+  await expect(panel(page)).toContainText('Bố Trí Thập Diện');
+  const detailOverflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(detailOverflow).toBeLessThanOrEqual(0);
 });

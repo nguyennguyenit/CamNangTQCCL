@@ -4,7 +4,8 @@ The corpus is the one `buildLookupCorpus` (js/unified-lookup.js) assembles from 
 data/tactics.json, data/lookup-catalog.json and data/books-dict.json. Those are plain JSON files, so the
 ids are read straight from them (every book row carries its frozen `id`, written by hand in
 pipeline/books-han-viet-map.json and copied by pipeline/build_books_dict.py) instead of spawning node; the slug rule below mirrors `lookupSlug` there and tests/test_lookup_route_handles.py pins it.
-`equipment-special:*` records are not routes (they live inside their equipment page).
+`equipment-special:*` records are not routes (they live inside their equipment page). The Kỳ lược group (`qilue`)
+holds two kinds, strategies (`qilueStrategies`) then cards (`qilueCards`), each in catalog order.
 
 Assignment is one-time: `--write` slugs every id missing from the ledger from its Vietnamese name (collision
 inside a group gets `-2`, `-3`, … in corpus order) and never touches a slug that is already frozen, even if
@@ -12,6 +13,8 @@ the name changed. An id that vanished from the corpus is moved to `retired` (`{g
 stays reserved so it is never issued again, the TS loader ignores `retired`, and the id gets the same slug back
 if it returns. `handlesSha256` covers `handles` and `retired`, so `--write` refuses a hand-edited ledger.
 `--check` only validates the ledger against the current corpus and never re-derives a slug.
+A ledger written before a group of `GROUP_KINDS` existed (both sections lack it, digest intact) is read by `--write`
+as holding that group empty; every other difference from the expected groups is still refused.
 
 Both modes also own `public/_redirects` (Cloudflare Pages): one 301 per locale from the retired slug of every
 tactic merged into a survivor (`lookup.formerIds` of data/tactics.json) to the survivor's live slug. `--write`
@@ -45,15 +48,25 @@ LEDGER_NOTE = (
     "pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết."
 )
 LEDGER_KEYS = ("schemaVersion", "generationId", "booksSha256", "handlesSha256", "note", "handles", "retired")
-# Group order = LOOKUP_GROUPS of js/unified-lookup.js; value = id kind prefix of every id in the group.
+# Group order = LOOKUP_GROUPS of js/unified-lookup.js; value = the id kind prefixes (`<kind>:…`) a group may hold,
+# the same mapping as GROUP_BY_KIND of js/lookup-ids.js. `load_corpus` refuses an id of any other kind.
 GROUP_KINDS = {
-    "heroes": "hero",
-    "tactics": "tactic",
-    "equipment": "equipment",
-    "advisors": "advisor",
-    "troop-mods": "troop-mod",
-    "buildings": "building",
-    "books": "book",
+    "heroes": ("hero",),
+    "tactics": ("tactic",),
+    "equipment": ("equipment",),
+    "advisors": ("advisor",),
+    "troop-mods": ("troop-mod",),
+    "buildings": ("building",),
+    "books": ("book",),
+    "qilue": ("qilue-strategy", "qilue-card"),
+}
+# `lookup-catalog.json` keys read per group (in this order); heroes, tactics and books come from their own files.
+CATALOG_GROUP_KEYS = {
+    "equipment": ("equipment",),
+    "advisors": ("advisors",),
+    "troop-mods": ("troopMods",),
+    "buildings": ("buildings",),
+    "qilue": ("qilueStrategies", "qilueCards"),
 }
 GENERATION_ID = re.compile(r"lookup:[0-9a-f]{64}")
 SLUG_SHAPE = re.compile(r"[a-z0-9]+(?:-[a-z0-9]+)*")
@@ -102,20 +115,21 @@ def load_corpus(data_dir) -> dict:
     catalog = _load(data_dir / "lookup-catalog.json")
     books_bytes = (data_dir / "books-dict.json").read_bytes()
     books = json.loads(books_bytes)
-    sources = {
-        "heroes": _load(data_dir / "heroes-dict.json"),
-        "tactics": _load(data_dir / "tactics.json"),
-        "equipment": catalog["equipment"],
-        "advisors": catalog["advisors"],
-        "troop-mods": catalog["troopMods"],
-        "buildings": catalog["buildings"],
-    }
+    sources = {"heroes": _load(data_dir / "heroes-dict.json"), "tactics": _load(data_dir / "tactics.json")}
+    for group, keys in CATALOG_GROUP_KEYS.items():
+        missing = [key for key in keys if not isinstance(catalog.get(key), list)]
+        if missing:
+            raise LookupRouteHandleError(f"lookup-catalog.json has no {', '.join(missing)} list")
+        sources[group] = [record for key in keys for record in catalog[key]]
     groups = {group: [(record["id"], _name(record)) for record in records] for group, records in sources.items()}
     groups["books"] = [(_book_id(row), _name(row)) for row in (books if isinstance(books, list) else [])]
     generation_id = manifest.get("generationId")
     if not isinstance(generation_id, str) or not GENERATION_ID.fullmatch(generation_id):
         raise LookupRouteHandleError("lookup-manifest.json generationId is not `lookup:<64-hex>`")
-    for group in GROUP_KINDS:
+    for group, kinds in GROUP_KINDS.items():
+        foreign = [item[0] for item in groups[group] if not isinstance(item[0], str) or item[0].partition(":")[0] not in kinds]
+        if foreign:
+            raise LookupRouteHandleError(f"corpus group {group} holds ids of another kind: {', '.join(map(str, foreign))}")
         ids = [item[0] for item in groups[group]]
         if len(set(ids)) != len(ids):
             repeated = sorted({i for i in ids if ids.count(i) > 1})
@@ -280,12 +294,31 @@ def redirects_bytes(former_map: dict[str, str], ledger: dict, season_lines=()) -
     return ("\n".join(lines) + "\n").encode("utf-8")
 
 
+def with_new_groups(ledger: object) -> object:
+    """A ledger frozen before some groups of `GROUP_KINDS` existed, with those groups added empty and re-digested.
+
+    Only a group absent from both `handles` and `retired` counts as new. The digest is renewed only when `handlesSha256`
+    still matches the sections as written; otherwise the stale digest stays, so `ledger_problems` reports the hand edit.
+    A group missing from one section only is left alone and reported as well."""
+    if not isinstance(ledger, dict) or not isinstance(ledger.get("handles"), dict) or not isinstance(ledger.get("retired"), dict):
+        return ledger
+    handles, retired = ledger["handles"], ledger["retired"]
+    new = [group for group in GROUP_KINDS if group not in handles and group not in retired]
+    if not new:
+        return ledger
+    intact = ledger.get("handlesSha256") == handles_digest(handles, retired)
+    handles = {**handles, **{group: {} for group in new}}
+    retired = {**retired, **{group: {} for group in new}}
+    digest = handles_digest(handles, retired) if intact else ledger.get("handlesSha256")
+    return {**ledger, "handles": handles, "retired": retired, "handlesSha256": digest}
+
+
 def write_ledger(*, data_dir, ledger_path, redirects_path=DEFAULT_REDIRECTS_PATH, recommended_root=None, out=print) -> int:
     corpus = load_corpus(data_dir)
     ledger_path = Path(ledger_path)
     existing = retired = None
     if ledger_path.exists():
-        previous = _read_ledger(ledger_path)
+        previous = with_new_groups(_read_ledger(ledger_path))
         # The frozen part must be intact, hand edits included; only pins, new, vanished and returned ids may differ.
         problems = ledger_problems(previous, corpus, pins=False, drift=False)
         if problems:

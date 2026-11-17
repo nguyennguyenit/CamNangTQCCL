@@ -325,7 +325,7 @@ describe("ingress", () => {
 });
 
 describe("book ids", () => {
-  const catalog = { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] };
+  const catalog = { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [], qilueStrategies: [], qilueCards: [] };
   it("projection fails closed for a book row without a valid frozen id", () => {
     for (const row of [{ viet: "Sách" }, { id: "", viet: "Sách" }, { id: "tactic:x", viet: "Sách" }, { id: "book:Sai-Dang", viet: "Sách" }]) {
       expect(() => projectCatalogEntities({ heroes: [], tactics: [], books: [row], catalog })).toThrow();
@@ -345,6 +345,8 @@ describe("projection allowlist", () => {
         advisors: [],
         troopMods: [],
         buildings: [],
+        qilueStrategies: [],
+        qilueCards: [],
       },
     });
     const text = JSON.stringify(entities);
