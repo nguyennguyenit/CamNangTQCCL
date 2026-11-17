@@ -4,6 +4,7 @@ import { canonicalHeroId, heroFamilyId } from "./hero-identity.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
 import { createTacticIdResolver } from "./lookup-ids.js";
+import { withLocaleAliases } from "./locale-name-aliases.js";
 
 const MAX_UNTRUSTED_TEXT = 256;
 
@@ -23,9 +24,51 @@ function tacticIdResolver(dict) {
   return resolverCache.get(dict);
 }
 
-function mapName(cn, dict) {
+const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
+
+const jaIndexCache = new WeakMap();
+/**
+ * Chỉ mục bản ja của một từ điển: bản ghi có `aliases` nối tên Nhật (`withLocaleAliases`) và bảng tên Nhật chính xác
+ * (bỏ khoảng trắng) → bản ghi. Tên Nhật trùng ở hai bản ghi thì không còn chắc (`null`, để bộ khớp mờ quyết).
+ */
+function jaIndex(dict, jaEntries) {
+  const cached = jaIndexCache.get(dict);
+  if (cached?.jaEntries === jaEntries) return cached;
+  const records = withLocaleAliases(dict, jaEntries);
+  const entries = jaEntries.entries && typeof jaEntries.entries === "object" ? jaEntries.entries : jaEntries;
+  const exact = new Map();
+  for (const record of records) {
+    const id = typeof record?.id === "string" ? record.id : "";
+    const key = id && Object.hasOwn(entries, id) ? compactCjk(entries[id]?.name) : "";
+    if (key) exact.set(key, exact.has(key) && exact.get(key) !== record ? null : record);
+  }
+  const index = { jaEntries, records, exact };
+  jaIndexCache.set(dict, index);
+  return index;
+}
+
+/** Kết quả khớp chắc theo tên Nhật chính xác, cùng dạng với `matchDict`. */
+const exactMatch = (record) => ({
+  record, score: 1, confidence: "high", matched: true,
+  secondRecord: null, secondScore: 0, margin: 1, ambiguous: false, reviewRequired: false,
+});
+
+/**
+ * Chữ trong ảnh → tên Việt chuẩn. Bản ja (`jaEntries` = `entries` của data/lookup-ja.json): ảnh client Nhật in tên Nhật nên
+ * tên Nhật khớp chính xác được ưu tiên (bản Nhật có thể gọi một mục bằng chữ Hán nguồn của mục khác), sau đó khớp mờ trên
+ * `chinese` và mọi bí danh chữ Hán (gồm tên Nhật). Không có `jaEntries` thì giữ nguyên bộ khớp của bản vi/zh.
+ */
+function mapName(cn, dict, jaEntries = null) {
   const rawChinese = sanitizeText(cn);
-  const m = matchDict(rawChinese, dict || []);
+  const records = Array.isArray(dict) ? dict : [];
+  let m;
+  if (jaEntries && typeof jaEntries === "object") {
+    const index = jaIndex(records, jaEntries);
+    const exact = index.exact.get(compactCjk(rawChinese));
+    m = exact ? exactMatch(exact) : matchDict(rawChinese, index.records, { cjkAliases: true });
+  } else {
+    m = matchDict(rawChinese, records);
+  }
   const name = m.matched ? m.record.viet : toVietHanViet(rawChinese);
   return {
     name,
@@ -49,7 +92,7 @@ function evidenceFor(item, context) {
 
 function richName(item, dict, kind, context) {
   const source = typeof item === "string" ? { nameCn: item } : item;
-  const mapped = mapName(source?.nameCn || source?.name || "", dict);
+  const mapped = mapName(source?.nameCn || source?.name || "", dict, context.jaEntries);
   const canonicalId = kind === "hero" ? canonicalHeroId(mapped.name) : tacticIdResolver(dict)(mapped.name);
   return {
     name: mapped.name,
@@ -73,10 +116,10 @@ function richName(item, dict, kind, context) {
   };
 }
 
-export function mapHeroesScan(result, { heroesDict }) {
+export function mapHeroesScan(result, { heroesDict, jaEntries = null }) {
   return {
     heroes: (result?.heroes || []).map((hero) => {
-      const mapped = mapName(hero.nameCn || hero.name || "", heroesDict);
+      const mapped = mapName(hero.nameCn || hero.name || "", heroesDict, jaEntries);
       const out = { name: mapped.name, confidence: mapped.confidence };
       if (Number.isFinite(hero.redStars)) out.redStars = hero.redStars;
       if (Number.isFinite(hero.level)) out.level = hero.level;
@@ -95,10 +138,10 @@ export function mapHeroesScanRich(result, context) {
   };
 }
 
-export function mapTacticsScan(result, { tacticsDict }) {
+export function mapTacticsScan(result, { tacticsDict, jaEntries = null }) {
   return {
     tactics: (result?.tactics || []).map((tactic) => {
-      const mapped = mapName(tactic.nameCn || tactic.name || "", tacticsDict);
+      const mapped = mapName(tactic.nameCn || tactic.name || "", tacticsDict, jaEntries);
       return { name: mapped.name, confidence: mapped.confidence };
     }).filter((t) => t.name),
   };
@@ -112,12 +155,12 @@ export function mapTacticsScanRich(result, context) {
   };
 }
 
-export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict }) {
+export function mapBuiltTeamsScan(result, { heroesDict, tacticsDict, jaEntries = null }) {
   return {
     teams: (result?.teams || []).map((team) => ({
       teamName: team.teamName || team.name || L("Đội đã được lập", "已组建的队伍", "編成済みの部隊"),
-      heroes: (team.heroesCn || team.heroes || []).map((name) => mapName(name, heroesDict).name).filter(Boolean),
-      tactics: (team.tacticsCn || team.tactics || []).map((name) => mapName(name, tacticsDict).name).filter(Boolean),
+      heroes: (team.heroesCn || team.heroes || []).map((name) => mapName(name, heroesDict, jaEntries).name).filter(Boolean),
+      tactics: (team.tacticsCn || team.tactics || []).map((name) => mapName(name, tacticsDict, jaEntries).name).filter(Boolean),
     })),
   };
 }

@@ -145,7 +145,7 @@ function relativeTime(iso, locale) {
   return format.format(-Math.floor(seconds / 86400), "day");
 }
 
-export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, rawNames = null, loadRecommended, onOpenTeam }, mount) {
+export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, jaEntries = null, rawNames = null, loadRecommended, onOpenTeam }, mount) {
   if (!mount) return;
   // Gợi ý đội chạy bằng công cụ cục bộ nên không phụ thuộc Worker AI: chưa cấu hình thì chỉ thiếu đọc ảnh và nút "Vì sao?".
   const aiReady = isAnalyzeConfigured();
@@ -162,6 +162,9 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   // Việt chuẩn nên chỉ đổi lúc vẽ.
   const zh = !contentLocaleIsVietnamese(currentLocale());
   const resolveRaw = rawNames ?? createRawNameResolver(heroesDict, tacticsDict);
+  // Bản ja: Worker chép tên in trên ảnh client Nhật (tự dạng Nhật), nên đọc kho khớp thêm tên Nhật của lớp lookup-ja
+  // (`jaEntries` = `entries` của data/lookup-ja.json); lớp ja lỗi thì khớp theo chữ Hán như bản zh.
+  const scanDicts = { heroesDict, tacticsDict, jaEntries: currentLocale() === "ja" ? jaEntries : null };
   const tacticRules = buildTacticRules(tacticsDict);
   const tacticIdOf = createTacticIdResolver(tacticsDict);
   /** Ô đang mở của bảng Độ phủ kho: `{tier, kind: "complete"|"missingOne"}`; giữ qua các lần vẽ lại kết quả. */
@@ -632,10 +635,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       sent = true;
       const raw = await callWorker(imageDataUrl, scanToken, scan.mode);
       const mapped = scan.id === "heroes"
-        ? mapHeroesScan(raw, { heroesDict, tacticsDict })
+        ? mapHeroesScan(raw, scanDicts)
         : scan.id === "tactics"
-          ? mapTacticsScan(raw, { heroesDict, tacticsDict })
-          : mapBuiltTeamsScan(raw, { heroesDict, tacticsDict });
+          ? mapTacticsScan(raw, scanDicts)
+          : mapBuiltTeamsScan(raw, scanDicts);
       state = applyScanResult(state, scan.id, mapped);
       const droppedTeams = state.droppedLockedTeams || 0;
       delete state.droppedLockedTeams;

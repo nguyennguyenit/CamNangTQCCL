@@ -43,7 +43,7 @@ const $ = (sel) => document.querySelector(sel);
 
 /** Đội chuẩn/Đội khác: hai trang danh sách tham chiếu. */
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
-/** Hai công cụ Beta: không có phạm vi mùa của layout (Soi đội tự chọn mùa Đội chuẩn trong công cụ). */
+/** Hai công cụ Beta: không có phạm vi mùa của layout (Soi đội tự chọn mùa Đội chuẩn trong công cụ); cả hai đọc ảnh nên bản ja nạp tên Nhật để khớp. */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
 /** Mục dùng cả kho Tra cứu (tướng, chiến pháp, catalog): Theo dõi chiêu mộ và hai công cụ. */
 const LOOKUP_SECTIONS = ['recruit-tracker', ...TOOL_SECTIONS];
@@ -222,9 +222,9 @@ async function main() {
       // Binh thư chỉ có ở trang nhóm Binh thư; lỗi chỉ làm lưới trống.
       lookupGroup === 'books' ? loadLookupBooks(loadBytes).catch(() => []) : [],
       lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
-      // Bản ja (trang có pin `#lookup-ja-pin`): Soi đội nối tên Nhật vào bí danh để khớp tên in trong ảnh; lỗi chỉ làm việc khớp
-      // lùi về tên chữ Hán.
-      pageSection === 'analyze' && jaPin ? loadLookupJa(loadBytes, jaPin).then(({ document }) => document.entries).catch(() => null) : null,
+      // Bản ja (trang có pin `#lookup-ja-pin`): Soi đội và đọc kho của Gợi ý đội nối tên Nhật vào bí danh để khớp tên in trong
+      // ảnh; lỗi chỉ làm việc khớp lùi về tên chữ Hán.
+      TOOL_SECTIONS.includes(pageSection) && jaPin ? loadLookupJa(loadBytes, jaPin).then(({ document }) => document.entries).catch(() => null) : null,
     ]);
     if (rawNames) setZhNameResolver(rawNames);
     // Bản Việt: tên chiến pháp lưu trong dữ liệu đội hiển thị theo `viet` hiện hành (bảng nhúng lúc build, không tải thêm).
@@ -640,7 +640,7 @@ async function main() {
       if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, rawNames, mount });
       // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
       if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, jaEntries, rawNames, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
-      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, rawNames, loadRecommended, onOpenTeam }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, jaEntries, rawNames, loadRecommended, onOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。", "この機能に必要な図鑑データが現在利用できません。")));
     }
