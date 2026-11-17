@@ -103,7 +103,7 @@ async function controlledBundle(page, data = null) {
       exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null, effectZhSource: null,
     },
   }));
-  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
+  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [], qilueStrategies: [], qilueCards: [] };
   const lookupPayloads = {
     'heroes-dict.json': JSON.stringify(data['heroes-dict']),
     'tactics.json': JSON.stringify(data.tactics),

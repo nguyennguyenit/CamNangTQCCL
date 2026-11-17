@@ -21,10 +21,10 @@ describe("tqccl_search", () => {
     expect(hit?.pagePath).toBe(lookupHref("equipment:thanh-long-yen-nguyet-dao"));
   });
 
-  it("covers all eight kinds when browsing with an empty query", async () => {
+  it("covers all ten kinds when browsing with an empty query", async () => {
     const seen = new Set<string>();
     const all = await entities();
-    const publicKinds: Record<string, string> = { "equipment-special": "equipment", "troop-mod": "troopMod" };
+    const publicKinds: Record<string, string> = { "equipment-special": "equipment", "troop-mod": "troopMod", "qilue-strategy": "qilueStrategy", "qilue-card": "qilueCard" };
     const expected = new Set(all.map((entity) => publicKinds[entity.kind] ?? entity.kind));
     expected.add("team");
     let cursor: string | undefined;
@@ -41,7 +41,7 @@ describe("tqccl_search", () => {
       if (!cursor) break;
     }
     expect(seen).toEqual(expected);
-    expect(expected.size).toBe(8);
+    expect(expected.size).toBe(10);
   });
 
   it("filters by kind and matches Han and alias terms", async () => {
@@ -88,10 +88,10 @@ describe("tqccl_search", () => {
 });
 
 describe("tqccl_get_entity", () => {
-  it("returns the Tra cứu profile for one record of each of the seven groups", async () => {
+  it("returns the Tra cứu profile for one record of each of the eight groups", async () => {
     const all = await entities();
     const groups = [...new Set(all.map((entity) => entity.group))];
-    expect(groups).toHaveLength(7);
+    expect(groups).toHaveLength(8);
     for (const group of groups) {
       const entity = all.find((candidate) => candidate.group === group)!;
       const result = await handlers.call("tqccl_get_entity", { entityId: entity.id });

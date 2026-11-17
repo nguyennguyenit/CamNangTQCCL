@@ -111,9 +111,7 @@ export function publishedOutputSchema<T extends z.ZodObject>(success: T) {
     .partial()
     .extend({ error: errorEnvelopeSchema.shape.error.optional() })
     .strict()
-    .describe(
-      "Kết quả hoặc error (isError=true).",
-    );
+    .describe("Kết quả hoặc error.");
 }
 
 

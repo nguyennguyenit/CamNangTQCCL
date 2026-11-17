@@ -1,4 +1,4 @@
-// Thân "danh sách + chi tiết" của bốn nhóm Tra cứu catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình;
+// Thân "danh sách + chi tiết" của năm nhóm Tra cứu catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Kỳ lược;
 // artboard LookupEquipment/Advisors/Troops/Buildings + bản Mobile và DetailMobile): bộ lọc, thẻ/hàng danh sách và
 // panel chi tiết dựng bằng cây view (`js/view-tree.js`) nên HTML dựng lúc build (Astro) và DOM của trình duyệt
 // (`js/lookup-page.js`) là một định nghĩa. Mọi hàm nhận `locale` tường minh; không đọc DOM, không đụng dữ liệu
@@ -6,12 +6,12 @@
 
 import { h } from "./view-tree.js";
 import { formatNumber, localePath, normalizeLocale, pick } from "./i18n.js";
-import { ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhText, lookupDisplayName, zhSafeValue, zhTranslatedTextNote } from "./lookup-detail.js";
+import { QILUE_TYPE_ORDER, ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhText, lookupDisplayName, qilueLabel, zhSafeValue, zhTranslatedTextNote } from "./lookup-detail.js";
 import { lookupGroupPath, lookupHref, lookupSlug } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
 
-/** Bốn nhóm dùng bố cục danh sách + chi tiết; nhóm khác (tướng, chiến pháp, binh thư) giữ hộp thoại hồ sơ. */
-export const MASTER_GROUPS = Object.freeze(["equipment", "advisors", "troop-mods", "buildings"]);
+/** Năm nhóm dùng bố cục danh sách + chi tiết; nhóm khác (tướng, chiến pháp, binh thư) giữ hộp thoại hồ sơ. */
+export const MASTER_GROUPS = Object.freeze(["equipment", "advisors", "troop-mods", "buildings", "qilue"]);
 export const isMasterGroup = (group) => MASTER_GROUPS.includes(group);
 
 const CJK_CHAR = /[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/u;
@@ -31,6 +31,7 @@ const GROUP_LABELS = {
   advisors: ["Quân sư", "军师"],
   "troop-mods": ["Cải tạo binh chủng", "兵种进阶"],
   buildings: ["Công trình", "建筑"],
+  qilue: ["Kỳ lược", "奇略"],
 };
 
 const isZh = (locale) => normalizeLocale(locale) === "zh";
@@ -82,12 +83,15 @@ export function masterPanelLabel(group, locale) {
     advisors: text(locale, "Chi tiết quân sư", "军师详情"),
     "troop-mods": text(locale, "Chi tiết cải tạo binh chủng", "兵种进阶详情"),
     buildings: text(locale, "Chi tiết công trình", "建筑详情"),
+    qilue: text(locale, "Chi tiết kỳ lược", "奇略详情"),
   }[group];
 }
 
 /* ---------- Bộ lọc ---------- */
 
-const FACET_KEYS = Object.freeze({ equipment: ["slot", "quality"], advisors: ["element"], "troop-mods": ["limit"], buildings: ["scope"] });
+const FACET_KEYS = Object.freeze({ equipment: ["slot", "quality"], advisors: ["element"], "troop-mods": ["limit"], buildings: ["scope"], qilue: ["type", "rarity"] });
+/** Độ hiếm kỳ lược theo thứ tự hiển thị của chip lọc (thẻ hiếm đứng trước trong danh sách, xem `qilueRecords`). */
+const RARITY_ORDER = ["common", "rare"];
 
 /** Các giá trị của một bản ghi theo từng khóa lọc (bản ghi catalog gốc). */
 function facetValues(key, record) {
@@ -95,18 +99,22 @@ function facetValues(key, record) {
   if (key === "quality") return record.qualityVi ? [record.qualityVi] : [];
   if (key === "element") return record.elementVi ? [record.elementVi] : [];
   if (key === "limit") return Array.isArray(record.troopLimitVi) && record.troopLimitVi.length ? record.troopLimitVi : ["*"];
+  // Kỳ lược: chỉ thẻ có loại/độ hiếm; phương lược không thuộc giá trị lọc nào nên bị ẩn khi đang lọc.
+  if (key === "type") return record.type ? [record.type] : [];
+  if (key === "rarity") return record.rarity ? [record.rarity] : [];
   return [record.mainCityOnly ? "main" : "all"];
 }
 
 function facetLabel(key, value, locale) {
   if (key === "scope") return value === "main" ? text(locale, "Chỉ thành chính", "仅主城") : text(locale, "Mọi thành", "所有城池");
   if (key === "limit") return value === "*" ? text(locale, "Khác", "其他") : isZh(locale) ? (TROOP_ZH[value] ?? "") : value;
+  if (key === "type" || key === "rarity") return qilueLabel(key, value, locale) ?? "";
   return shown(value, locale);
 }
 
 /** Thứ tự cố định của các giá trị đã biết (khớp artboard), giá trị lạ nối sau theo thứ tự xuất hiện. */
 function facetOrder(key, present) {
-  const known = { slot: SLOT_ORDER, quality: QUALITY_ORDER, element: ELEMENT_ORDER, limit: TROOP_ORDER, scope: ["main", "all"] }[key];
+  const known = { slot: SLOT_ORDER, quality: QUALITY_ORDER, element: ELEMENT_ORDER, limit: TROOP_ORDER, scope: ["main", "all"], type: QILUE_TYPE_ORDER, rarity: RARITY_ORDER }[key];
   return sortedBy(known, present);
 }
 
@@ -122,7 +130,7 @@ export function masterFacets(group, items, locale) {
       value,
       label: facetLabel(key, value, locale),
       count: records.filter((record) => facetValues(key, record).includes(value)).length,
-      tone: key === "quality" || key === "element" ? lookupSlug(value) : null,
+      tone: key === "quality" || key === "element" ? lookupSlug(value) : key === "type" ? value : null,
     })).filter((option) => option.label);
     return { key, hasAll: index === 0, options };
   });
@@ -133,11 +141,32 @@ export function masterFilterMatches(group, record, selected = {}) {
   return (FACET_KEYS[group] ?? []).every((key) => !selected[key] || facetValues(key, record).includes(selected[key]));
 }
 
+/**
+ * Bộ lọc mở sẵn từ query của trang nhóm (`?type=muu`, link "danh sách đã lọc"): chỉ khóa lọc của nhóm, xuất hiện đúng
+ * một lần và có giá trị là giá trị thật của ít nhất một mục (`items`); khóa khác và giá trị lạ bị bỏ qua.
+ */
+export function masterFiltersFromQuery(group, search, items) {
+  const params = new URLSearchParams(search ?? "");
+  const selected = {};
+  for (const key of FACET_KEYS[group] ?? []) {
+    const values = params.getAll(key);
+    if (values.length !== 1 || !values[0]) continue;
+    if (items.some((item) => facetValues(key, item.record ?? {}).includes(values[0]))) selected[key] = values[0];
+  }
+  return selected;
+}
+
+/** Đường dẫn trang nhóm đã lọc sẵn một giá trị (chưa gắn tiền tố ngôn ngữ). */
+export function masterFilterHref(group, key, value) {
+  return `${lookupGroupPath(group)}?${new URLSearchParams({ [key]: value })}`;
+}
+
 const FILTER_ARIA = {
   equipment: ["Lọc trang bị", "筛选装备"],
   advisors: ["Lọc quân sư", "筛选军师"],
   "troop-mods": ["Lọc cải tạo binh chủng", "筛选兵种进阶"],
   buildings: ["Lọc công trình", "筛选建筑"],
+  qilue: ["Lọc kỳ lược", "筛选奇略"],
 };
 
 /** Hàng chip lọc; chip bật là `aria-pressed="true"`, nút "Tất cả" bật khi khía cạnh không có giá trị chọn. */
@@ -293,10 +322,11 @@ function buildingRowTree(item, locale, selectedId) {
   });
 }
 
-/** Danh sách kết quả của bốn nhóm catalog (rỗng trả `[]`); `selectedId` là mục đang chọn. */
+/** Danh sách kết quả của năm nhóm catalog (rỗng trả `[]`); `selectedId` là mục đang chọn. */
 export function masterResultTrees(group, items, locale, { selectedId = null, byId = null, visibleCount = null } = {}) {
   if (!items.length) return [];
   const later = (tree, item) => laterTree(tree, items.indexOf(item), visibleCount);
+  if (group === "qilue") return qilueResultTrees(items, locale, selectedId, later);
   if (group === "equipment") return items.map((item) => later(equipmentCardTree(item, locale, selectedId), item));
   if (group === "advisors") return items.map((item) => later(advisorCardTree(item, locale, selectedId, byId), item));
   if (group === "buildings") return items.map((item) => later(buildingRowTree(item, locale, selectedId), item));
@@ -317,12 +347,15 @@ export function masterSummaryTrees(group, total, locale, selected = {}) {
     advisors: text(locale, " · chia theo hệ", " · 按属性分类"),
     "troop-mods": text(locale, " · chia theo binh chủng · dòng phụ là đội hình hay dùng", " · 按兵种分类"),
     buildings: text(locale, " · cấp tối đa bên phải", " · 右侧为最高等级"),
+    qilue: text(locale, " · màu theo loại thẻ", " · 颜色按卡牌类型"),
   }[group];
+  const cardType = group === "qilue" && selected.type ? qilueLabel("type", selected.type, locale) : null;
   const unit = {
     equipment: slot ? text(locale, slot.toLowerCase(), `件${slot}`) : text(locale, "trang bị", "件装备"),
     advisors: text(locale, "kỹ năng quân sư", "位军师"),
     "troop-mods": text(locale, "cải tạo", "项兵种进阶"),
     buildings: text(locale, "công trình", "座建筑"),
+    qilue: cardType ? text(locale, `thẻ ${cardType}`, `张${cardType}卡`) : text(locale, "kỳ lược", "项奇略"),
   }[group];
   return [h("strong", {}, String(total)), ` ${unit}`, h("span", { class: "lookup-summary-tail" }, tail)];
 }
@@ -742,6 +775,166 @@ function buildingDetail(item, corpus, locale) {
   ];
 }
 
+/* ---------- Kỳ lược ---------- */
+
+const QILUE_STRATEGY = "qilue-strategy:";
+const isQilueStrategy = (record) => String(record?.id ?? "").startsWith(QILUE_STRATEGY);
+
+/**
+ * Thứ tự mục của nhóm Kỳ lược: phương lược (thứ tự catalog) rồi thẻ theo loại Dũng → Mưu → Phụ → Sách → Tế, trong mỗi loại
+ * thẻ hiếm trước, còn lại giữ thứ tự catalog. Catalog chưa có hai khóa kỳ lược thì rỗng.
+ */
+export function qilueRecords(catalog) {
+  const cards = (catalog?.qilueCards ?? []).map((record, index) => ({ record, index }))
+    .sort((a, b) => rank(QILUE_TYPE_ORDER, a.record.type) - rank(QILUE_TYPE_ORDER, b.record.type)
+      || rank(["rare", "common"], a.record.rarity) - rank(["rare", "common"], b.record.rarity)
+      || a.index - b.index)
+    .map(({ record }) => record);
+  return [...(catalog?.qilueStrategies ?? []), ...cards];
+}
+
+/** Phương lược dùng được một thẻ: mọi phương lược có `cardTypes` chứa loại của thẻ (tính lúc hiển thị, không lưu). */
+export function qilueStrategiesForCard(corpus, card) {
+  return (corpus?.groups?.qilue ?? []).filter((item) => isQilueStrategy(item.record) && (item.record.cardTypes ?? []).includes(card?.type));
+}
+
+/** Nhãn loại thẻ có màu (`data-tone` = mã loại); loại lạ không hiện. */
+function qilueTypeTag(type, locale) {
+  const label = qilueLabel("type", type, locale);
+  return label ? h("span", { class: "lookup-qilue-tag", "data-tone": type }, label) : null;
+}
+
+/** Tên các loại thẻ của một phương lược theo ngôn ngữ (bỏ mã lạ). */
+const qilueTypeNames = (record, locale) => (record.cardTypes ?? []).map((type) => qilueLabel("type", type, locale)).filter(Boolean);
+
+function qilueRowTree(item, locale, selectedId) {
+  const record = item.record ?? {};
+  const strategy = isQilueStrategy(record);
+  const han = zhName(record);
+  const types = qilueTypeNames(record, locale);
+  // Dòng phụ luôn ghi nhãn mục (phương lược / thẻ kỳ lược): tên client trùng nhóm khác (Cường Công là cả chiến pháp).
+  const sub = strategy
+    ? text(locale, `Phương lược · thẻ ${types.join(", ")}`, `作战方略 · ${types.join("、")}卡`)
+    : [text(locale, "Thẻ kỳ lược", "奇略卡"), qilueLabel("target", record.targetVi, locale)].filter(Boolean).join(" · ");
+  const marks = strategy ? [] : [qilueTypeTag(record.type, locale), record.rarity === "rare" ? h("span", { class: "lookup-qilue-rare" }, qilueLabel("rarity", "rare", locale)) : null].filter(Boolean);
+  return h("a", {
+    class: "lookup-master-item lookup-row lookup-qilue-row",
+    href: itemHref(item.id, locale),
+    "data-lookup-id": item.id,
+    "aria-current": current(item, selectedId),
+  }, [
+    h("span", { class: "lookup-row-glyph", lang: "zh-Hant", "aria-hidden": "true", "data-tone": strategy ? "accent" : record.type }, glyph(record, item.nameVi)),
+    h("span", { class: "lookup-row-body" }, [
+      h("span", { class: "lookup-row-name" }, lookupDisplayName(record, item.nameVi, locale)),
+      h("span", { class: "lookup-row-sub" }, sub),
+    ]),
+    marks.length ? h("span", { class: "lookup-qilue-marks" }, marks) : null,
+    han && !isZh(locale) ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
+  ]);
+}
+
+/** Danh sách Kỳ lược chia khối: "Phương lược" rồi một khối cho mỗi loại thẻ có mặt (theo thứ tự loại). */
+function qilueResultTrees(items, locale, selectedId, later) {
+  const sections = [
+    { title: text(locale, "Phương lược", "作战方略"), items: items.filter((item) => isQilueStrategy(item.record)) },
+    ...QILUE_TYPE_ORDER.map((type) => ({
+      title: text(locale, `Thẻ ${qilueLabel("type", type, "vi")}`, `${qilueLabel("type", type, "zh")}卡`),
+      items: items.filter((item) => !isQilueStrategy(item.record) && item.record?.type === type),
+    })),
+  ].filter((section) => section.items.length);
+  return sections.map((section) => h("section", { class: "lookup-row-group" }, [
+    h("h2", { class: "lookup-row-group-title" }, [section.title, h("span", { class: "lookup-row-group-count" }, ` · ${section.items.length}`)]),
+    ...section.items.map((item) => later(qilueRowTree(item, locale, selectedId), item)),
+  ]));
+}
+
+/** Điều kiện mùa của hàng kỳ lược: bản zh dùng `textZh` của hợp đồng catalog, thiếu thì bỏ dòng. */
+const qilueSeasons = (record, locale) => (record.conditions ?? [])
+  .map((row) => String((isZh(locale) ? row?.textZh : row?.textVi) ?? "").trim()).filter(Boolean);
+
+function qilueFact(label, value) {
+  return value ? h("div", { class: "lookup-detail-fact" }, [h("dt", {}, label), h("dd", {}, value)]) : null;
+}
+
+function qilueCardDetail(item, corpus, locale) {
+  const record = item.record ?? {};
+  const zh = isZh(locale);
+  const type = qilueLabel("type", record.type, locale);
+  const effect = String((zh ? record.effectZh : record.effectVi) ?? "").trim();
+  const strategies = qilueStrategiesForCard(corpus, record);
+  return [
+    headTree({
+      tile: glyph(record, item.nameVi),
+      tone: record.type ?? null,
+      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Thẻ kỳ lược", "奇略卡")].join(" · "),
+      title: lookupDisplayName(record, item.nameVi, locale),
+      han: zh ? "" : zhName(record),
+      badges: [
+        type ? badge("badge-tone", type, { "data-tone": record.type }) : null,
+        record.rarity === "rare" ? badge("lookup-qilue-rare", qilueLabel("rarity", "rare", locale)) : null,
+        ...qilueSeasons(record, locale).map((season) => badge("badge-scenario", season)),
+      ].filter(Boolean),
+    }),
+    h("dl", { class: "lookup-detail-facts" }, [
+      qilueFact(text(locale, "Loại", "类型"), qilueTypeTag(record.type, locale)),
+      qilueFact(text(locale, "Độ hiếm", "稀有度"), qilueLabel("rarity", record.rarity, locale)),
+      qilueFact(text(locale, "Đối tượng", "目标"), qilueLabel("target", record.targetVi, locale)),
+    ]),
+    effect ? sectionTree("lookup-qilue-effect", text(locale, "Hiệu ứng", "效果"), [
+      zh && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
+      h("p", { class: "lookup-detail-prose" }, effect),
+    ]) : null,
+    strategies.length ? sectionTree("lookup-qilue-strategies", text(locale, "Dùng được với phương lược", "可用作战方略"), [
+      h("ul", { class: "lookup-qilue-links" }, strategies.map((strategy) => h("li", {}, [
+        h("a", { class: "lookup-detail-link", href: itemHref(strategy.id, locale) }, lookupDisplayName(strategy.record, strategy.nameVi, locale)),
+      ]))),
+    ]) : null,
+    zh && record.effectVi && !record.effectZh ? zhNoteTree() : null,
+  ];
+}
+
+function qilueStrategyDetail(item, corpus, locale) {
+  const record = item.record ?? {};
+  const zh = isZh(locale);
+  const description = String((zh ? record.descriptionZh : record.descriptionVi) ?? "").trim();
+  const buff = String((zh ? record.buffZh : record.buffVi) ?? "").trim();
+  // Tên trong Hướng dẫn (`aliasesVi`) chỉ ở bản Việt: giúp người đọc nhận ra phương lược khi bài viết dùng tên cũ.
+  const aliases = zh ? [] : (record.aliasesVi ?? []).filter(Boolean);
+  const cards = (corpus?.groups?.qilue ?? []).filter((entry) => !isQilueStrategy(entry.record));
+  const types = (record.cardTypes ?? []).filter((type) => qilueLabel("type", type, locale));
+  return [
+    headTree({
+      tile: glyph(record, item.nameVi),
+      tone: "accent",
+      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Phương lược", "作战方略")].join(" · "),
+      title: lookupDisplayName(record, item.nameVi, locale),
+      han: zh ? "" : zhName(record),
+      badges: [
+        ...types.map((type) => badge("badge-tone", qilueLabel("type", type, locale), { "data-tone": type })),
+        ...qilueSeasons(record, locale).map((season) => badge("badge-scenario", season)),
+      ],
+    }),
+    zh && (description || buff) && isTranslatedZhText(record) ? h("p", {}, [zhTranslatedTree(locale)]) : null,
+    description ? h("p", { class: "lookup-detail-prose lookup-detail-summary" }, description) : null,
+    aliases.length ? h("p", { class: "lookup-detail-note" }, `Tên khác: ${aliases.join(", ")}`) : null,
+    buff ? sectionTree("lookup-qilue-buff", text(locale, "Hiệu quả mỗi thẻ", "每张奇略加成"), [h("p", { class: "lookup-detail-prose" }, buff)]) : null,
+    types.length ? sectionTree("lookup-qilue-types", text(locale, "Loại thẻ dùng được", "可用卡牌类型"), [
+      h("div", { class: "lookup-qilue-type-links" }, types.map((type) => {
+        const count = cards.filter((entry) => entry.record?.type === type).length;
+        return h("a", { class: "lookup-qilue-type-link", href: localePath(masterFilterHref("qilue", "type", type), locale), "data-tone": type }, [
+          qilueTypeTag(type, locale),
+          text(locale, ` · ${count} thẻ`, ` · ${count} 张`),
+        ]);
+      })),
+    ]) : null,
+    zh && ((record.descriptionVi && !record.descriptionZh) || (record.buffVi && !record.buffZh)) ? zhNoteTree() : null,
+  ];
+}
+
+function qilueDetail(item, corpus, locale) {
+  return isQilueStrategy(item.record) ? qilueStrategyDetail(item, corpus, locale) : qilueCardDetail(item, corpus, locale);
+}
+
 /** Cây `tree` với tiêu đề chi tiết (`#lookup-detail-title`) đổi từ `h2` thành `h1` (trang riêng chỉ có một `h1`). */
 function titleAsH1(tree) {
   if (typeof tree === "string") return tree;
@@ -761,7 +954,8 @@ export function masterDetailTree(group, item, corpus, locale, { targetId = item.
     ? (item.id.startsWith("equipment-special:") ? specialDetail(item, corpus, locale) : equipmentDetail(item, corpus, locale, targetId))
     : group === "advisors" ? advisorDetail(item, corpus, locale)
       : group === "troop-mods" ? troopDetail(item, corpus, locale)
-        : buildingDetail(item, corpus, locale);
+        : group === "qilue" ? qilueDetail(item, corpus, locale)
+          : buildingDetail(item, corpus, locale);
   const tree = h("article", {
     class: `lookup-detail lookup-detail-${group}`,
     "data-lookup-detail": item.id,

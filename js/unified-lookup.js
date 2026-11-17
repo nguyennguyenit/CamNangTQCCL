@@ -10,18 +10,18 @@ import { normalizeText } from "./filters.js";
 import { bookRowId, createFormerTacticIdIndex, groupForId, lookupHref, lookupProfilePath } from "./lookup-ids.js";
 import { h } from "./view-tree.js";
 import { portraitTree } from "./hero-portrait.js";
-import { isMasterGroup, laterTree, masterResultTrees, masterSummaryTrees } from "./lookup-master.js";
+import { isMasterGroup, laterTree, masterResultTrees, masterSummaryTrees, qilueRecords } from "./lookup-master.js";
 
-export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
+export const LOOKUP_GROUPS = Object.freeze(["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books", "qilue"]);
 /** Nhãn nhóm dùng chung cho trang Tra cứu và menu điều hướng (SiteLayout, bản Việt). */
 export const LOOKUP_GROUP_LABELS = Object.freeze({
   heroes: "Tướng", tactics: "Chiến pháp", equipment: "Trang bị",
-  advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình", books: "Binh thư",
+  advisors: "Quân sư", "troop-mods": "Cải tạo binh chủng", buildings: "Công trình", books: "Binh thư", qilue: "Kỳ lược",
 });
 /** Nhãn nhóm bản Trung (`/zh/`). */
 export const LOOKUP_GROUP_LABELS_ZH = Object.freeze({
   heroes: "武将", tactics: "战法", equipment: "装备",
-  advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑", books: "兵书",
+  advisors: "军师", "troop-mods": "兵种进阶", buildings: "建筑", books: "兵书", qilue: "奇略",
 });
 /** Nhãn nhóm theo ngôn ngữ chỉ định (`vi` | `zh`). */
 export function lookupGroupLabels(locale = currentLocale()) {
@@ -30,12 +30,12 @@ export function lookupGroupLabels(locale = currentLocale()) {
 /** Đơn vị đếm của từng nhóm cho dòng trạng thái ("n tướng · bấm để mở hồ sơ"). */
 export const LOOKUP_GROUP_UNITS = Object.freeze({
   heroes: "tướng", tactics: "chiến pháp", equipment: "trang bị",
-  advisors: "quân sư", "troop-mods": "cải tạo binh chủng", buildings: "công trình", books: "binh thư",
+  advisors: "quân sư", "troop-mods": "cải tạo binh chủng", buildings: "công trình", books: "binh thư", qilue: "kỳ lược",
 });
 /** Lượng từ + đơn vị bản Trung ("12 名武将"). */
 const LOOKUP_GROUP_UNITS_ZH = Object.freeze({
   heroes: "名武将", tactics: "个战法", equipment: "件装备",
-  advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑", books: "本兵书",
+  advisors: "位军师", "troop-mods": "项兵种进阶", buildings: "座建筑", books: "本兵书", qilue: "项奇略",
 });
 /** Thứ tự vai trò trong khối "Trong cẩm nang" (khớp `index.json` heroes[].roleRaw). */
 export const POSITION_LABELS = () => [L("Chủ tướng", "主将"), L("Phó tướng 1", "副将 1"), L("Phó tướng 2", "副将 2")];
@@ -53,6 +53,7 @@ export const LOOKUP_GROUP_PAYLOADS = Object.freeze({
   "troop-mods": Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
   buildings: Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
   books: Object.freeze({ entry: [], profile: [] }),
+  qilue: Object.freeze({ entry: ["lookup-catalog.json"], profile: [] }),
 });
 
 // `<html lang>` cố định theo trang nên hằng dịch lúc nạp module vẫn đúng ngôn ngữ.
@@ -122,7 +123,7 @@ function bookRecords(books, aliases) {
   });
 }
 
-const EMPTY_CATALOG = Object.freeze({ equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] });
+const EMPTY_CATALOG = Object.freeze({ equipment: [], specials: [], advisors: [], troopMods: [], buildings: [], qilueStrategies: [], qilueCards: [] });
 
 /**
  * Corpus của những payload đã tải: nhóm chưa có payload là mảng rỗng. Trang dựng lại corpus khi payload
@@ -155,6 +156,8 @@ export function buildLookupCorpus({ heroes = [], tactics = [], catalog = null, b
     "troop-mods": source.troopMods.map((record) => entry("troop-mods", record)),
     buildings: source.buildings.map((record) => entry("buildings", record)),
     books: bookRecords(books, bookAliases).map((record) => entry("books", record)),
+    // Kỳ lược: phương lược rồi thẻ theo loại (`qilueRecords`); corpus dựng từ catalog cũ (chưa có hai khóa) thì nhóm rỗng.
+    qilue: qilueRecords(source).map((record) => entry("qilue", record)),
   };
   const byId = new Map();
   for (const rows of [...Object.values(groups), specials]) for (const row of rows) byId.set(row.id, row);

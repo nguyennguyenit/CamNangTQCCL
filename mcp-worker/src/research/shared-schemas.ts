@@ -402,7 +402,7 @@ export const commonResultSchema = z.object({
   dataVersion: z
     .string()
     .regex(/^data:[a-f0-9]{12}$/u)
-    .describe("Nhãn dữ liệu để hiển thị."),
+    .describe("Nhãn dữ liệu hiển thị."),
   workflowVersion,
   provenance: z
     .array(provenanceSchema)
@@ -419,7 +419,7 @@ export const commonResultSchema = z.object({
     .string()
     .max(2_048)
     .optional()
-    .describe("Cursor đọc trang tiếp."),
+    .describe("Cursor trang tiếp."),
 });
 
 export const workflowVersionSchema = workflowVersion;

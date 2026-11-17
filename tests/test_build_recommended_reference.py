@@ -18,9 +18,10 @@ from pipeline.build_recommended_reference import (
     localize_rows,
     raw_source_record,
 )
+ROOT = Path(__file__).resolve().parents[1]
 from pipeline.recommended_identity import build_display_mapping, build_mapping, resolve_identity
 
-def _publish(inputs, output, *, links=None):
+def _publish(inputs, output, *, links=None, qilue=None):
     candidate = copy.deepcopy(inputs)
     admitted = candidate.get("otherTeams") or []
     teams = [{"id": row["legacyTeamId"], "name": "Legacy fixture"} for row in admitted]
@@ -61,6 +62,7 @@ def _publish(inputs, output, *, links=None):
         teams_bytes=teams_bytes,
         content_links_bytes=json.dumps({"schemaVersion": 1, "entries": links or []}).encode(),
         ledger_bytes=ledger_bytes,
+        **(qilue or {}),
     )
 
 
@@ -604,6 +606,74 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
                     content_links_bytes=b'{"schemaVersion":1,"entries":[]}',
                     ledger_bytes=stale_corpus_bytes,
                 )
+
+
+class RecommendedQiluePublicationTest(unittest.TestCase):
+    """`qilue` tính ở ranh giới publish từ catalog Kỳ lược cùng candidate; không bao giờ là trường raw."""
+
+    TEXT = "作戰方略：謀算。奇略卡（第 2→6 回合）：設伏十面→背水列陣→楚歌四起→多多益善→合圍夾擊。"
+
+    def _inputs(self):
+        scope_key = "s-" + "7" * 64
+        notes = {"schemaVersion": 1, "blocks": [
+            {"id": "p-1", "owner": "team", "textRaw": "整體搭配以提高發動穩定性為主", "textVi": "Chú trọng độ ổn định phát động."},
+            {"id": "p-2", "owner": "team", "textRaw": self.TEXT, "textVi": "Phương lược tác chiến: Mưu tính."},
+        ]}
+        record = {"sourceConfigId": "s27-official-wumou-qi", "safeScopeKey": scope_key, "sourceScopeId": "pk-s27|交戰",
+                  "sourceSeasonId": "pk-s27", "sourceSeasonLabel": "S27", "sourceCategoryId": "交戰", "tierRaw": "T0",
+                  "tierOrder": 0, "value": 100, "listIndex": 0, "heroes": [], "notesRaw": "整體搭配以提高發動穩定性為主\n" + self.TEXT,
+                  "displayNotes": notes}
+        return {
+            "inventory": {"inventoryHash": "a", "seasonOptions": [{"sourceSeasonId": "pk-s27", "label": "S27", "status": "available"}],
+                          "scopes": [{"safeScopeKey": scope_key, "sourceScopeId": "pk-s27|交戰", "sourceSeasonId": "pk-s27", "sourceCategoryId": "交戰", "state": "complete"}]},
+            # Hàng detail giống source pack thật: không có `safeScopeKey` (scope là khóa của `details`).
+            "records": [copy.deepcopy(record)],
+            "details": {scope_key: [{key: copy.deepcopy(value) for key, value in record.items() if key != "safeScopeKey"}]},
+            "otherTeams": [], "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1,
+        }
+
+    def _qilue(self):
+        from pipeline import build_unified_lookup as lookup
+        document = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+        strategies, cards = lookup._client_qilue(document)
+        overrides = json.loads((ROOT / "pipeline" / "recommended-qilue-overrides.json").read_bytes())
+        overrides.update(copyFrom={}, fix={}, skip={})
+        return {
+            "qilue_catalog_bytes": json.dumps({"qilueStrategies": strategies, "qilueCards": cards}, ensure_ascii=False).encode(),
+            "qilue_overrides_bytes": json.dumps(overrides, ensure_ascii=False).encode(),
+        }
+
+    def test_index_and_detail_carry_the_same_qilue_and_the_manifest_binds_its_inputs(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            qilue = self._qilue()
+            generation = root / _publish(self._inputs(), root, qilue=qilue)["generationId"]
+            index_row = json.loads((generation / "index.json").read_text())["records"][0]
+            detail_name = next(path.name for path in generation.iterdir() if path.name.startswith("details-"))
+            detail_row = json.loads((generation / detail_name).read_text())["records"][0]
+            self.assertEqual(index_row["qilue"], detail_row["qilue"])
+            self.assertEqual(index_row["qilue"]["strategyId"], "qilue-strategy:muu-tinh")
+            self.assertEqual(index_row["qilue"]["cardIds"][0], "qilue-card:bo-tri-thap-dien")
+            self.assertEqual(index_row["qilue"]["hideNoteBlockId"], "p-2")
+            manifest = json.loads((generation / "manifest.json").read_text())
+            self.assertEqual(manifest["qilueCatalogHash"], "sha256:" + hashlib.sha256(qilue["qilue_catalog_bytes"]).hexdigest())
+            self.assertEqual(manifest["qilueOverridesHash"], "sha256:" + hashlib.sha256(qilue["qilue_overrides_bytes"]).hexdigest())
+            self.assertNotIn("qilue", raw_source_record(detail_row))
+
+    def test_without_qilue_inputs_nothing_is_added(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            generation = root / _publish(self._inputs(), root)["generationId"]
+            self.assertNotIn("qilue", json.loads((generation / "index.json").read_text())["records"][0])
+
+    def test_unknown_card_stops_the_publication(self):
+        inputs = self._inputs()
+        for row in (inputs["records"][0], next(iter(inputs["details"].values()))[0]):
+            row["displayNotes"]["blocks"][1]["textRaw"] = self.TEXT.replace("合圍夾擊", "錯字卡")
+            row["notesRaw"] = row["notesRaw"].replace("合圍夾擊", "錯字卡")
+        with tempfile.TemporaryDirectory() as folder:
+            with self.assertRaisesRegex(ValueError, "unknown qilue card"):
+                _publish(inputs, Path(folder), qilue=self._qilue())
 
 
 if __name__ == "__main__":

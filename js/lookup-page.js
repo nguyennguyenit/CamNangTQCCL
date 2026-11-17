@@ -1,7 +1,7 @@
 // Trang nhóm Tra cứu `/tra-cuu/<slug>/` (artboard Lookup/LookupTactics/LookupMobile và 4 nhóm catalog): gắn vào khung do
 // build dựng sẵn (ô tìm, dòng trạng thái, lưới mục đầu), rồi sở hữu tìm kiếm, "Xem thêm", hồ sơ theo `?id=`,
 // lịch sử và focus. Payload hồ sơ cần thêm (quan hệ sang nhóm khác) tải lười ở lần mở hồ sơ đầu tiên.
-// Tướng, chiến pháp và binh thư mở hồ sơ bằng hộp thoại; Trang bị, Quân sư, Cải tạo binh chủng và Công trình là
+// Tướng, chiến pháp và binh thư mở hồ sơ bằng hộp thoại; Trang bị, Quân sư, Cải tạo binh chủng, Công trình và Kỳ lược là
 // danh sách + panel chi tiết (`js/lookup-master.js`), chi tiết hiện cạnh danh sách (desktop) hoặc thành màn riêng (mobile).
 
 import { el } from "./render.js";
@@ -13,7 +13,7 @@ import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { createTacticSummaryLoader } from "./tactic-summaries.js";
 import { isNativeNavigationClick } from "./team-detail-navigation.js";
 import { createProfileRenderer } from "./lookup-profile.js";
-import { isMasterGroup, masterDefaultId, masterDetailTree, masterFilterMatches, masterTargetFor } from "./lookup-master.js";
+import { isMasterGroup, masterDefaultId, masterDetailTree, masterFilterMatches, masterFiltersFromQuery, masterTargetFor } from "./lookup-master.js";
 import { handleEffectTabClick } from "./lookup-effect-panels.js";
 import {
   buildLookupCorpus,
@@ -65,8 +65,9 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   let dialogToken = 0;
   // Đóng hồ sơ bằng history.go(): lượt render của popstate kế tiếp phải trả focus về thẻ đã mở.
   let restoreAfterPop = false;
-  // Bốn nhóm catalog: bộ lọc chip đang chọn (`{khóa: giá trị}`), mục đang tô trong danh sách và màn chi tiết đang mở (mobile).
-  let filters = {};
+  // Nhóm catalog: bộ lọc chip đang chọn (`{khóa: giá trị}`, mở sẵn từ query như `?type=muu` của link "danh sách đã lọc"),
+  // mục đang tô trong danh sách và màn chi tiết đang mở (mobile).
+  let filters = master ? masterFiltersFromQuery(group, location.search, corpus.groups[group] ?? []) : {};
   let listSelectedId = null;
   let detailWasOpen = false;
   let rendered = false;

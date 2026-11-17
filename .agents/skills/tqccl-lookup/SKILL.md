@@ -1,13 +1,13 @@
 ---
 name: tqccl-lookup
-description: Look up TQCCL catalog and source teams: tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội chuẩn, Khai hoang. Handbook only, no web. Not team building or meta proof.
+description: Look up TQCCL catalog and teams: tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, kỳ lược, đội chuẩn, Khai hoang. Handbook only, no web. Not team building or meta proof.
 ---
 
 # TQCCL Lookup
 
-Read-only answers from the CamNangTQCCL handbook data: seven catalog groups
-(tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư)
-and source reference teams (đội chuẩn theo mùa nguồn, Khai hoang). Tool selection
+Read-only answers from the CamNangTQCCL handbook data: eight catalog groups (tướng,
+chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư, kỳ lược PK-S27:
+`qilueStrategy`, `qilueCard`) and source reference teams (đội chuẩn theo mùa nguồn, Khai hoang). Tool selection
 and error recovery: [tool routing](references/tool-routing.md).
 
 ## Scope

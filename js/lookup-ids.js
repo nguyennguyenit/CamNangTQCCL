@@ -271,11 +271,13 @@ export const LOOKUP_GROUP_SLUGS = Object.freeze({
   "troop-mods": "cai-tao-binh-chung",
   buildings: "cong-trinh",
   books: "binh-thu",
+  qilue: "ky-luoc",
 });
 
 const GROUP_BY_KIND = Object.freeze({
   hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
   advisor: "advisors", "troop-mod": "troop-mods", building: "buildings", book: "books",
+  "qilue-strategy": "qilue", "qilue-card": "qilue",
 });
 
 /** Nhóm Tra cứu của một mã hồ sơ canonical (`hero:…`, `equipment-special:…`); mã sai dạng trả `null`. */
