@@ -181,6 +181,20 @@ giải quyết được luôn là wildcard khi đối chiếu, không phải b�
 `recommended-other-teams.json` được ghi vào `other-teams.json`; duplicate và
 pending không đi vào public artifact.
 
+Đội khác chỉ có một mùa: corpus đối chiếu của `recommended_team_dedup` là Đội
+chuẩn của đúng mùa mặc định (`--default-season`, mặc định
+`pipeline/recommended-default-season.json`, hiện `pk-s27`; ledger ghi
+`recommendedCorpusSeasonId`), không phải mọi mùa, và mọi hàng admitted mang
+`sourceSeasonIds: [<mùa đó>]`. Đội gốc gồm sheet cộng đồng và đội đề cử curate tay
+từ YouTube trong `pipeline/team-youtube-pk-s27.json` (bản ghi đã chuẩn hóa, không
+có `id`, `source: "youtube"`); `pipeline.build_json` nối chúng vào `data/teams.json`
+sau supplement với ID `youtube-<n>`, giữ `nameZh`, `confidence`, `evidence`. Hàng
+nguồn YouTube có `recommended: true` (nguồn khác `false`), `sourceLabel` "YouTube"
+và đứng trước; giao diện hiện nhãn "Đề cử". Sau khi loại hàng trùng Đội chuẩn, các
+hàng admitted trùng tuyệt đối nhau (cùng dedup key tướng + chiến pháp) chỉ giữ hàng
+đầu theo thứ tự đã xếp (đề cử trước, rồi thứ tự xuất hiện); hàng còn lại thành
+`duplicate` với `matchingLocal` trỏ về hàng được giữ.
+
 `src/data/recommended-reference/current.json` chọn đúng một generation bất biến.
 Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `other-teams.json` và từng `details-<safeScopeKey>.json`. Astro chỉ xuất
