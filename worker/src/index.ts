@@ -7,6 +7,7 @@
 import { loadAiConfig, resolveRoute, type AiGroupId } from "../../shared/ai-config";
 import { Config, Env, loadConfig } from "./config";
 import { corsHeaders, preflight, validateImage } from "./guard";
+import { isWorkerLocale, type WorkerLocale } from "./locales";
 import { callExplainModel, callModel } from "./model";
 import { checkLimits, commitGlobalUsage, hashIp } from "./ratelimit";
 import {
@@ -43,6 +44,13 @@ export function resolveAnalyzeMode(value: unknown): AnalyzeMode {
   if (value === undefined || value === null || value === "") return "analyzeTeamImage";
   if (typeof value === "string" && (ANALYZE_MODES as string[]).includes(value)) return value as AnalyzeMode;
   throw new Error("Mode không hợp lệ");
+}
+
+/** `locale` tuỳ chọn của mode ảnh: vắng -> undefined (prompt cũ); có thì phải thuộc danh sách của Worker. */
+export function resolveImageLocale(value: unknown): WorkerLocale | undefined {
+  if (value === undefined || value === null) return undefined;
+  if (isWorkerLocale(value)) return value;
+  throw new Error("Locale không hợp lệ");
 }
 
 /** Trần body: base64 của ảnh lớn nhất (4/3) + chỗ cho token, mode và khung JSON. */
@@ -90,6 +98,15 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
   } catch (e: any) {
     return json({ error: e?.message || "Mode không hợp lệ" }, 400, cors);
   }
+  // `locale` chỉ áp cho mode ảnh (explainSubstitute mang locale trong `context`); kiểm rẻ, trước KV/Turnstile.
+  let imageLocale: WorkerLocale | undefined;
+  if (mode !== "explainSubstitute") {
+    try {
+      imageLocale = resolveImageLocale(payload?.locale);
+    } catch (e: any) {
+      return json({ error: e?.message || "Locale không hợp lệ" }, 400, cors);
+    }
+  }
   // Chuỗi AI của nhóm (mã hoá trong KV); thiếu secret/giải mã lỗi/chuỗi rỗng/mọi mắt xích tắt -> 503.
   const route = resolveRoute(await loadAiConfig(env.RL, env.AI_CONFIG_SECRET, CONFIG_CACHE_TTL), GROUP_BY_MODE[mode]);
   if (!route.targets.length) {
@@ -128,7 +145,7 @@ async function handle(request: Request, env: Env, cfg: Config, cors: Record<stri
     if (!img.ok) {
       return json({ error: img.message }, img.status, cors);
     }
-    run = () => callModel(img.dataUri, { route }, mode);
+    run = () => callModel(img.dataUri, { route }, mode, imageLocale);
   }
 
   // [H2] Đếm quota global CHỈ khi đã qua Turnstile + guard (sắp tốn tiền thật).
