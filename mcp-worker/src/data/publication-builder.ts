@@ -365,11 +365,11 @@ function heroIndexes(heroes: readonly ArtifactRecord[]): HeroResolver {
   return (raw: unknown, vi: unknown) => byRaw.get(rawKey(raw)) ?? byVi.get(viKey(vi)) ?? null;
 }
 
-interface Resolver {
+export interface Resolver {
   tactic(raw: unknown, vi: unknown): string | null;
   book(raw: unknown, vi: unknown): string | null;
 }
-type HeroResolver = (raw: unknown, vi: unknown) => string | null;
+export type HeroResolver = (raw: unknown, vi: unknown) => string | null;
 
 function slotRefs(raws: unknown, vis: unknown, kinds: unknown, resolve: (raw: string | null, vi: string | null) => string | null) {
   const rawList = Array.isArray(raws) ? raws : [];
@@ -387,27 +387,63 @@ function slotRefs(raws: unknown, vis: unknown, kinds: unknown, resolve: (raw: st
   return output;
 }
 
-interface TeamBuild {
+export interface TeamBuild {
   summary: ArtifactRecord;
   detail: ArtifactRecord;
   route: { id: string; vi: string };
 }
 
-function recommendedTeam(
+/** Entity catalog và tập sourceConfigId Recommended của cùng publication: nguồn duy nhất để kiểm mã kỳ lược. */
+export interface RecommendedQilueCatalog {
+  entities: ReadonlyMap<string, ArtifactRecord>;
+  recommendedIds: ReadonlySet<string>;
+}
+
+/** Hiệp 2..6: một đội có tối đa 5 thẻ kỳ lược. */
+const MAX_QILUE_CARDS = 5;
+
+/**
+ * Allowlist trường `qilue` của đội: chỉ giữ mã đã kiểm với catalog cùng publication. `form` và `hideNoteBlockId`
+ * là trường hiển thị của trang web nên không vào artifact MCP. Mã lạ, sai loại hay đội nguồn không có thì dừng.
+ */
+function projectRecommendedQilue(raw: unknown, teamId: string, catalog: RecommendedQilueCatalog): Json {
+  const label = `${teamId}.qilue`;
+  const value = obj(raw, label);
+  const known = (id: unknown, kind: CatalogKind) => {
+    const entity = typeof id === "string" ? catalog.entities.get(id) : undefined;
+    if (entity?.kind !== kind || text(entity.nameZh) === null) fail(`${label} references an unknown ${kind}: ${String(id)}`);
+    return id as string;
+  };
+  const strategyId = value.strategyId === null ? null : known(value.strategyId, "qilue-strategy");
+  const cardIds = list(value.cardIds, `${label}.cardIds`).map((id) => known(id, "qilue-card"));
+  if (cardIds.length > MAX_QILUE_CARDS) fail(`${label}.cardIds has more than ${MAX_QILUE_CARDS} cards`);
+  if (typeof value.ordered !== "boolean") fail(`${label}.ordered must be a boolean`);
+  const copyFrom = value.copyFrom === undefined ? undefined : list(value.copyFrom, `${label}.copyFrom`).map((id) => {
+    if (typeof id !== "string" || !catalog.recommendedIds.has(id)) fail(`${label}.copyFrom references an unknown Recommended team: ${String(id)}`);
+    return id as string;
+  });
+  return { strategyId, cardIds, ordered: value.ordered, ...(copyFrom === undefined ? {} : { copyFrom }) };
+}
+
+export function projectRecommendedTeam(
   position: number,
   index: Json,
   detail: Json,
   segment: string,
   heroOf: HeroResolver,
   resolver: Resolver,
+  qilueCatalog: RecommendedQilueCatalog,
 ): TeamBuild {
   const id = String(index.sourceConfigId);
   const ref = `recommended:${id}`;
   for (const key of Object.keys(detail)) {
     if (stableStringify(detail[key]) !== stableStringify(index[key])) fail(`Recommended index and detail disagree: ${id}.${key}`);
   }
+  // `qilue` thô (kèm hideNoteBlockId, form) không vào record; MCP chỉ phát bản đã kiểm ở `detail.qilue`.
+  const { qilue: rawQilue, ...displayed } = detail;
+  const qilue = rawQilue === undefined ? undefined : projectRecommendedQilue(rawQilue, id, qilueCatalog);
   const record: Json = {
-    ...detail,
+    ...displayed,
     sourceSeasonId: index.sourceSeasonId,
     sourceCategoryId: index.sourceCategoryId,
     sourceSeasonLabel: index.sourceSeasonLabel,
@@ -453,6 +489,7 @@ function recommendedTeam(
       id,
       record,
       resolved: { heroes: heroes.map(({ holder, heroId, tactics, books }) => ({ holder, heroId, tactics, books })) },
+      ...(qilue === undefined ? {} : { qilue }),
     },
     route: { id: ref, vi: recommendedRoutePath(segment) },
   };
@@ -796,6 +833,10 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
       detailBySourceId.set(id, { ...row, __scope: scope });
     }
   }
+  const qilueCatalog: RecommendedQilueCatalog = {
+    entities: new Map(entities.map((record) => [String(record.id), record])),
+    recommendedIds: new Set(recommended.index.map((row) => String(row.sourceConfigId))),
+  };
   const teams: TeamBuild[] = [];
   for (const [position, row] of recommended.index.entries()) {
     const id = String(row.sourceConfigId);
@@ -806,7 +847,7 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
     const handle = ledger.recommended[id];
     const segment = isRoutableIdentifier(handle) ? recommendedRouteSegment(row.sourceSeasonCode, handle) : null;
     if (segment === null) fail(`Recommended row has no routable segment: ${id}`);
-    teams.push(recommendedTeam(position, row, detail, segment as string, heroOf, resolver));
+    teams.push(projectRecommendedTeam(position, row, detail, segment as string, heroOf, resolver, qilueCatalog));
   }
   if (detailBySourceId.size !== recommended.index.length) fail("Recommended details and index disagree");
   const visibleLegacy = new Set(legacyTeams.filter((team) => team.source !== "do-uy").map((team) => String(team.id)));
