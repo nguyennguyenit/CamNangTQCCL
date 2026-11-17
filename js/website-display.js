@@ -310,15 +310,33 @@ export function readLookupJaPin(documentTarget = globalThis.document) {
 /**
  * Bộ tra tên cho trang hiện tại: bản Việt trả `null` và không tải gì; bản Trung tải ba từ điển qua `loadBytes` (bộ nạp dùng
  * chung của trang, nên nguồn đã tải cho Tra cứu không bị gọi mạng lại) và tra chữ Hán gốc; bản Nhật tải thêm
- * `data/lookup-ja.json` (khớp pin của trang) và bảng tự dạng, tra tên Nhật. Trang ja thiếu pin thì lỗi (nơi gọi lùi về tên Việt).
+ * `data/lookup-ja.json` (khớp pin của trang) và bảng tự dạng, tra tên Nhật; lớp ja lỗi (thiếu/lệch pin, lệch thế hệ, lỗi mạng)
+ * thì tra chữ Hán nguồn đã đổi tự dạng, không bao giờ lùi về tên Việt. Chỉ khi chính từ điển lỗi thì Promise lỗi.
  */
 export async function loadRawNameResolver(loadBytes, locale = currentLocale(), { pin = readLookupJaPin() } = {}) {
   if (contentLocaleIsVietnamese(locale)) return null;
   const dictsPromise = Promise.all(RAW_NAME_SOURCES.map(async path => JSON.parse(decoder.decode(asBytes(await loadBytes(path))))));
   const kind = pick(locale, "vi", "source", "ja");
   if (kind !== "ja") return createRawNameResolver(...await dictsPromise);
-  const [dicts, { document, variants }] = await Promise.all([dictsPromise, loadLookupJa(loadBytes, pin, { withVariants: true })]);
-  return createJaNameResolver(dicts, document, parseKanjiVariants(variants));
+  // Lớp ja (tên Nhật theo mã + bảng tự dạng đã khớp hash) lỗi thì không kéo cả bộ tra xuống: trang ja không được hiện tên Việt.
+  const jaLayer = loadLookupJa(loadBytes, pin, { withVariants: true })
+    .then(({ document, variants }) => ({ document, variants: parseKanjiVariants(variants) }))
+    .catch(() => null);
+  const [dicts, layer] = await Promise.all([dictsPromise, jaLayer]);
+  if (layer) return createJaNameResolver(dicts, layer.document, layer.variants);
+  return createJaNameResolver(dicts, null, await loadFallbackKanjiVariants(loadBytes));
+}
+
+/**
+ * Bảng tự dạng khi lớp ja không nạp được (lệch pin/thế hệ, lỗi mạng): đọc thẳng `data/ja-kanji-variants.json` (không còn hash
+ * của `lookup-ja.json` để đối chiếu, bảng vẫn qua `parseKanjiVariants`). Bảng cũng lỗi thì bảng rỗng: tên giữ chữ Hán nguồn.
+ */
+async function loadFallbackKanjiVariants(loadBytes) {
+  try {
+    return parseKanjiVariants(JSON.parse(decoder.decode(asBytes(await loadBytes("data/ja-kanji-variants.json")))));
+  } catch {
+    return Object.freeze({});
+  }
 }
 
 /**

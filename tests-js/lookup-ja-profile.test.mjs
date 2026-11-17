@@ -168,6 +168,36 @@ async function jaSuite() {
     const record = corpus.byId.get(TACTIC).record;
     assert.equal(localName(record.viet, resolver, "ja"), ja.entries[TACTIC].name);
     assert.equal(resolver.fromRaw("暗藏玄機"), "暗蔵玄機");
-    await assert.rejects(loadRawNameResolver(async (path) => files[path], "ja", { pin: null }), /Pin/);
+  });
+
+  test("lớp ja lỗi (thiếu/lệch pin, lỗi mạng) thì bộ tra lùi về chữ Hán nguồn, không bao giờ trả tên Việt", async () => {
+    const files = Object.fromEntries(["data/lookup-ja.json", "data/lookup-manifest.json", "data/ja-kanji-variants.json", "data/heroes-dict.json", "data/tactics.json", "data/books-dict.json"]
+      .map((path) => [path, new Uint8Array(readFileSync(new URL(`../${path}`, import.meta.url)))]));
+    const pin = `sha256:${createHash("sha256").update(files["data/lookup-ja.json"]).digest("hex")}`;
+    // Bản Nhật gọi 固若金湯 là 金城湯池: tên Nhật chỉ có khi lớp ja nạp được; lùi về thì hiện chữ Hán nguồn (đã đổi tự dạng).
+    const tactic = json("data/tactics.json").find((record) => record.id === "tactic:co-nhuoc-kim-thang");
+    const hero = json("data/heroes-dict.json").find((record) => record.id === "hero:sp-tuan-uc");
+    const offline = (broken) => async (path) => {
+      if (broken.includes(path)) throw new TypeError("Failed to fetch");
+      return files[path];
+    };
+    const cases = [
+      ["thiếu pin", async (path) => files[path], null],
+      ["lệch pin", async (path) => files[path], `sha256:${"0".repeat(64)}`],
+      ["lỗi mạng lookup-ja.json", offline(["data/lookup-ja.json"]), pin],
+      ["lỗi mạng lookup-manifest.json", offline(["data/lookup-manifest.json"]), pin],
+    ];
+    for (const [label, loader, casePin] of cases) {
+      const resolver = await loadRawNameResolver(loader, "ja", { pin: casePin });
+      assert.equal(localName(tactic.viet, resolver, "ja"), "固若金湯", label);
+      assert.equal(localName(hero.viet, resolver, "ja"), "SP 荀彧", label);
+      assert.equal(localName("Chuyển · Ám Tàng Huyền Cơ", resolver, "ja"), "転・暗蔵玄機", label);
+      assert.equal(resolver.fromRaw("暗藏玄機"), "暗蔵玄機", label);
+    }
+    // Bảng tự dạng cũng không nạp được: vẫn là chữ Hán nguồn nguyên dạng, không phải tên Việt.
+    const bare = await loadRawNameResolver(offline(["data/lookup-ja.json", "data/ja-kanji-variants.json"]), "ja", { pin });
+    assert.equal(localName(json("data/tactics.json").find((record) => record.id === TACTIC).viet, bare, "ja"), "暗藏玄機");
+    // Không có từ điển thì không có gì để tra: nơi gọi tự xử lý lỗi như trước.
+    await assert.rejects(loadRawNameResolver(offline(["data/tactics.json"]), "ja", { pin }));
   });
 }
