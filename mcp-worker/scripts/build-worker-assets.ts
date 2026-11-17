@@ -51,6 +51,9 @@ export const WORKER_SOURCE_ONLY_FILES = [
   "lookup-catalog.json",
   "lookup-manifest.json",
   "website-display.json",
+  // Lớp tên Nhật của Tra cứu (trang `/ja/`) và bảng tự dạng: dữ liệu của site, Worker không phát.
+  "lookup-ja.json",
+  "ja-kanji-variants.json",
 ] as const;
 
 export interface BuildWorkerAssetsOptions {
