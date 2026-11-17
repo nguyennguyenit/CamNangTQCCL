@@ -168,7 +168,8 @@ export async function initTeamDetail({documentTarget = document} = {}) {
       return;
     }
     const content = {...(admitted.legacyContent || team), notes: team.notes};
-    paintHeader(content, null, legacyVariantBuilder(content, requestedVariant));
+    // Nhãn "Đề cử" theo đúng hàng biến thể đã admit; `content` (đưa vào builder lưu đội) không mang field hiển thị này.
+    paintHeader({...content, referenceRecommended: admitted.recommended === true}, null, legacyVariantBuilder(content, requestedVariant));
     showContent(legacyOriginalDetailContent(content, {variant: admitted}));
   }
 
