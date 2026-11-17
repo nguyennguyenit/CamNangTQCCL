@@ -1,7 +1,7 @@
 ---
 title: "Kỳ lược PK-S27: nhóm Tra cứu và ô kỳ lược trên trang Đội chuẩn"
 description: "Thêm nhóm Tra cứu Kỳ lược (5 phương lược, 40 thẻ, tên client 24.547), ô kỳ lược có cấu trúc trên trang Đội chuẩn và đổi tên kỳ lược trong ghi chú đội (#119), phát hành chung một PR."
-status: pending
+status: completed
 priority: P2
 effort: 5d
 issue: 119
