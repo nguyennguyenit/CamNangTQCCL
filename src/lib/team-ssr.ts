@@ -210,18 +210,24 @@ let coexistQilueJson: Promise<string> | undefined;
 
 /**
  * Bảng tra Thẻ Kỳ Lược của thẻ Cùng Tồn từ lookup-catalog.json đã pin: đăng ký cho builder (`setCoexistQilueTable`) và
- * trả JSON gọn (mã, tên vi/zh, loại, độ hiếm) mà trang `/cung-ton/` nhúng ở `#coexist-qilue-table` để trình duyệt dựng
- * lại thẻ khi đổi mùa/nhóm bằng đúng bảng của bản dựng sẵn.
+ * trả JSON gọn (mã, tên vi/zh, loại, độ hiếm; `jaNames` là tên Nhật của thẻ theo cùng lớp lookup-ja mà Đội chuẩn dùng)
+ * mà trang `/cung-ton/` nhúng ở `#coexist-qilue-table` để trình duyệt dựng lại thẻ khi đổi mùa/nhóm bằng đúng bảng của
+ * bản dựng sẵn. Bản ja cần tên Nhật của mọi thẻ (`qilueItem` dừng build khi thiếu).
  */
 export function coexistQilueTableJson(): Promise<string> {
   return coexistQilueJson ??= (async () => {
     const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
     const rows = Array.isArray(catalog?.qilueCards) ? catalog.qilueCards : [];
+    const jaEntries = (await lookupJaPublicationSnapshot()).document?.entries ?? {};
+    const jaNames = Object.fromEntries(rows
+      .filter(({ id }: Json) => typeof jaEntries[id]?.name === 'string' && jaEntries[id].name.trim())
+      .map(({ id }: Json) => [id, { name: jaEntries[id].name }]));
     const compact = {
       qilueStrategies: [],
       qilueCards: rows.map(({ id, nameVi, nameZh, type, rarity }: Json) => ({ id, nameVi, nameZh, type, rarity })),
+      jaNames,
     };
-    setCoexistQilueTable(qilueLookupTable(compact));
+    setCoexistQilueTable(qilueLookupTable(compact, jaNames));
     return JSON.stringify(compact).replace(/</g, '\\u003c');
   })();
 }

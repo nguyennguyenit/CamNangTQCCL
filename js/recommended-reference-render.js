@@ -538,7 +538,8 @@ let coexistQilueTableValue=null;
 
 /**
  * Đăng ký bảng tra kỳ lược (`qilueLookupTable`) cho thẻ Cùng Tồn. Build gọi một lần từ lookup-catalog đã pin trước khi
- * dựng; trình duyệt không gọi mà đọc bảng nhúng `#coexist-qilue-table` lần đầu cần (cùng nguồn với bản dựng sẵn).
+ * dựng; trình duyệt không gọi mà đọc bảng nhúng `#coexist-qilue-table` (kèm tên Nhật `jaNames`) lần đầu cần (cùng nguồn
+ * với bản dựng sẵn).
  */
 export function setCoexistQilueTable(table) {
   coexistQilueTableValue=table;
@@ -551,7 +552,10 @@ export function setCoexistQilueTable(table) {
 function coexistQilueTable() {
   if (!coexistQilueTableValue) {
     const raw=globalThis.document?.getElementById?.(COEXIST_QILUE_TABLE_ID)?.textContent;
-    if (raw) coexistQilueTableValue=qilueLookupTable(JSON.parse(raw));
+    if (raw) {
+      const data=JSON.parse(raw);
+      coexistQilueTableValue=qilueLookupTable(data,data.jaNames ?? null);
+    }
   }
   if (!coexistQilueTableValue) throw new Error('Coexist qilue table is not registered');
   return coexistQilueTableValue;
