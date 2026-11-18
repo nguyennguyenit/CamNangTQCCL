@@ -1,11 +1,12 @@
 // Tệp được sinh bởi scripts/generate-workflow-build.ts. Không sửa thủ công.
-export const WORKFLOW_BUILD_ID = "build:sha256b64:FLXM7EZnoynDdbD89Lkxckjf3dkNrbuE8r02XCaoBJ8" as const;
+export const WORKFLOW_BUILD_ID = "build:sha256b64:Sa0MgWqRK6qPScHA0vVpQRGCAAGEzM4y4JTgNfLJl9Q" as const;
 export const WORKFLOW_SEMANTIC_FILES = [
   "js/analyze-map.js",
   "js/filters.js",
   "js/hanviet.js",
   "js/hero-identity.js",
   "js/i18n.js",
+  "js/locale-name-aliases.js",
   "js/lookup-data.js",
   "js/lookup-detail-ledger.js",
   "js/lookup-field-labels.js",
@@ -15,6 +16,7 @@ export const WORKFLOW_SEMANTIC_FILES = [
   "js/roster-scan-state.js",
   "js/roster-season-candidates.js",
   "js/season-context.js",
+  "js/shinjitai.js",
   "js/team-recommend-engine.js",
   "js/website-display.js",
   "mcp-worker/src/data/artifact-contracts.ts",

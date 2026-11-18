@@ -118,6 +118,16 @@ describe("GET /api/admin/scan-stats", () => {
 });
 
 describe("POST /api/scan-samples", () => {
+  it("lang=ja lưu được; lang ngoài danh sách -> 400 và không lưu ảnh", async () => {
+    const h = createHarness();
+    const res = await submit(h, payload({ lang: "ja" }), "alice");
+    expect(res.status).toBe(201);
+    expect(h.sqlite.prepare("select lang from scan_samples").get()).toEqual({ lang: "ja" });
+    const ko = await submit(h, payload({ lang: "ko" }), "alice");
+    expect(ko.status).toBe(400);
+    expect(h.objects.size).toBe(1);
+  });
+
   it("cần đăng nhập", async () => {
     const h = createHarness();
     expect((await submit(h, payload())).status).toBe(401);

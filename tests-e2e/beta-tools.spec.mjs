@@ -896,6 +896,34 @@ test.describe("Gợi ý đội", () => {
     await expect(card.locator(".roster-scan-preview")).toContainText("2 ảnh · vừa xong");
   });
 
+  test("bản Nhật: ảnh kho in tên Nhật khớp đúng chiến pháp, kho lưu tên Việt chuẩn và hiện tên Nhật", async ({ page }) => {
+    const readJson = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+    const ja = readJson("data/lookup-ja.json").entries;
+    const tactics = readJson("data/tactics.json");
+    const ids = ["tactic:quoc-chi-trinh-can", "tactic:nhanh-tri-dong-nao", "tactic:kinh-thien-vi-dia"];
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    const bodies = [];
+    await page.route(WORKER_ROUTE, (route) => {
+      bodies.push(route.request().postDataJSON());
+      return route.fulfill({ json: { tactics: ids.map((id) => ({ nameCn: ja[id].name })) } });
+    });
+
+    await page.goto("/ja/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.locator(".roster-scan-card").nth(1).locator('input[type="file"]')
+      .setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
+    await expect(section.locator(".roster-scan-status")).toHaveText("読み取りが完了しました。下のデータを確認してください。");
+    expect(bodies.map((body) => body.locale)).toEqual(["ja"]);
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1")));
+    expect(stored.ownedTactics.map(({ name, confidence }) => [name, confidence]))
+      .toEqual(ids.map((id) => [tactics.find((record) => record.id === id).viet, "high"]));
+    const chips = section.locator(".roster-chip-list li");
+    for (const id of ids) await expect(chips.filter({ hasText: ja[id].name })).toHaveCount(1);
+    await expect(section.locator(".roster-chip-check")).toHaveCount(0);
+  });
+
   test("ba nút đọc ảnh không dùng chung một token: đang đọc thì khoá cả ba, nén ảnh lỗi không bỏ token", async ({ page }) => {
     await page.route("https://challenges.cloudflare.com/**", (route) =>
       route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));

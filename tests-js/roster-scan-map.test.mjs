@@ -1,5 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import {
   mapBuiltTeamsScan,
   mapBuiltTeamsScanRich,
@@ -110,4 +111,63 @@ test("rich tactic và built-team mapper giữ holder thay vì làm phẳng evide
     "tactic:an-ui-quan-dan",
   );
   assert.equal(built.teams[0].heroSlots[0].imageOrdinal, 3);
+});
+
+/* ---------- Bản ja: ảnh client Nhật in tên Nhật, kho vẫn lưu tên Việt chuẩn ---------- */
+
+const readData = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+const realHeroes = readData("data/heroes-dict.json");
+const realTactics = readData("data/tactics.json");
+const jaEntries = readData("data/lookup-ja.json").entries;
+const vietOf = (dict, id) => dict.find((record) => record.id === id).viet;
+
+test("ja: tên Nhật trong ảnh kho khớp đúng tướng/chiến pháp qua lớp lookup-ja", () => {
+  const real = { heroesDict: realHeroes, tacticsDict: realTactics, jaEntries };
+  const heroes = mapHeroesScan({ heroes: [{ nameCn: "SP荀彧" }, { nameCn: "SP 荀彧" }] }, real).heroes;
+  assert.deepEqual(heroes.map((hero) => [hero.name, hero.confidence]), [
+    [vietOf(realHeroes, "hero:sp-tuan-uc"), "high"],
+    [vietOf(realHeroes, "hero:sp-tuan-uc"), "high"],
+  ]);
+  const tactics = mapTacticsScan({ tactics: ["国の柱石", "霊機一動", "経天緯地"].map((nameCn) => ({ nameCn })) }, real).tactics;
+  assert.deepEqual(tactics.map((tactic) => [tactic.name, tactic.confidence]), [
+    [vietOf(realTactics, "tactic:quoc-chi-trinh-can"), "high"],
+    [vietOf(realTactics, "tactic:nhanh-tri-dong-nao"), "high"],
+    [vietOf(realTactics, "tactic:kinh-thien-vi-dia"), "high"],
+  ]);
+  // Model chép lệch một chữ (気 thay 機) vẫn về đúng chiến pháp, chỉ hạ độ tin.
+  const [ocr] = mapTacticsScan({ tactics: [{ nameCn: "霊気一動" }] }, real).tactics;
+  assert.equal(ocr.name, vietOf(realTactics, "tactic:nhanh-tri-dong-nao"));
+  const built = mapBuiltTeamsScan({ teams: [{ teamName: "部隊1", heroesCn: ["SP荀彧"], tacticsCn: ["国の柱石", "霊機一動"] }] }, real).teams;
+  assert.deepEqual(built, [{
+    teamName: "部隊1",
+    heroes: [vietOf(realHeroes, "hero:sp-tuan-uc")],
+    tactics: [vietOf(realTactics, "tactic:quoc-chi-trinh-can"), vietOf(realTactics, "tactic:nhanh-tri-dong-nao")],
+  }]);
+});
+
+test("ja: tên Nhật khớp chính xác thắng chữ Hán nguồn của bản ghi khác", () => {
+  // Bản Nhật gọi 固若金湯 là 金城湯池, còn 金城湯池 bản Trung là một chiến pháp khác (bản Nhật gọi 湯池鉄城).
+  const real = { heroesDict: realHeroes, tacticsDict: realTactics, jaEntries };
+  const tactics = mapTacticsScan({ tactics: [{ nameCn: "金城湯池" }, { nameCn: "湯池鉄城" }] }, real).tactics;
+  assert.deepEqual(tactics.map((tactic) => [tactic.name, tactic.confidence]), [
+    [vietOf(realTactics, "tactic:co-nhuoc-kim-thang"), "high"],
+    [vietOf(realTactics, "tactic:kim-thanh-thang-tri"), "high"],
+  ]);
+  const [rich] = mapTacticsScanRich({ tactics: [{ nameCn: "金城湯池" }] }, real).tactics;
+  assert.equal(rich.canonicalId, "tactic:co-nhuoc-kim-thang");
+  assert.equal(rich.reviewRequired, false);
+});
+
+test("vi/zh: không có jaEntries thì kết quả khớp giữ nguyên như trước", () => {
+  const plain = { heroesDict: realHeroes, tacticsDict: realTactics };
+  const tactics = mapTacticsScan({ tactics: ["金城湯池", "經天緯地", "経天緯地"].map((nameCn) => ({ nameCn })) }, plain).tactics;
+  assert.deepEqual(tactics.map((tactic) => [tactic.name, tactic.confidence]), [
+    [vietOf(realTactics, "tactic:kim-thanh-thang-tri"), "high"],
+    [vietOf(realTactics, "tactic:kinh-thien-vi-dia"), "high"],
+    // Bản vi/zh không xét bí danh (giữ hành vi cũ): tự dạng Nhật chỉ khớp mờ theo `chinese`.
+    [vietOf(realTactics, "tactic:kinh-thien-vi-dia"), "low"],
+  ]);
+  assert.deepEqual(mapHeroesScan({ heroes: [{ nameCn: "SP荀彧" }] }, plain).heroes, [{ name: vietOf(realHeroes, "hero:sp-tuan-uc"), confidence: "high" }]);
+  // jaEntries rỗng/null giữ nguyên hành vi bản vi/zh.
+  assert.deepEqual(mapTacticsScan({ tactics: [{ nameCn: "経天緯地" }] }, { ...plain, jaEntries: null }).tactics, [tactics[2]]);
 });

@@ -1,0 +1,33 @@
+# Ghi chú tích hợp phase C
+- C1: manifest đã đăng ký data/lookup-ja.json, data/ja-kanji-variants.json; sau C3 thêm entry js/shinjitai, js/locale-name-aliases.
+- C2a: src/lib/blog-seo.ts cần SITE_NAME.ja = 三國志 真戦 攻略手帳; community-team-pages.ts đổi literal sang SITE_NAME.ja.
+- C2a: js/feedback-kinds.js thiếu trường ja (機能要望 / 不具合報告 / 情報の誤り / その他); community-admin.js dùng kind.ja ?? kind.zh.
+- C2a: community-team-data.js recordLabel, season.labelZh dùng chữ Hán nguồn cho ja — nối tên Nhật C3.
+- C2a: community-api.js:436, community-admin-users.js:30 viết cứng 'ja-JP' → LOCALE_INTL.
+- C2a: WRITTEN_IN kiểu Record<SiteLocale | 'ja'> → đơn giản hoá sau khi bật ja.
+- Glossary bổ sung: 利用停止, モデレーター, 管理者, ロール, 編成解析, 段, 経路.
+- D1 fixture source: sửa "nguồn chờ chủ repo xác nhận" thành "chủ repo gửi 2026-11-17".
+- C2b: obligation ui:roster/* đổi (roster-recommend-ui.js): scan-count, chip-count-truncated (scan.unit → scan.unit.vi), scan-pick-action, flag-check, result-tactics, hero-row-label thêm biến thể ja. Bảng đủ trong phase-c2b-report.md.
+- C2b: js/app.js:635 phải nạp data/lookup-ja.json (qua cơ chế pin của C3) và truyền deps.jaEntries vào initAnalyze khi locale ja.
+- C2b: analyze.js import ./locale-name-aliases.js — cần C3 ghép trước khi build.
+- C2b: chỗ gọi truyền label(item) cho roster-picker, teamLabel roster-conflict-view, statFocusCn analyze-map dùng chữ Hán nguồn cho ja — nối tên Nhật.
+- Glossary C2b: 部隊, 編成, ランク, 推奨編成, その他の編成, 陣法戦法, 兵種戦法, 差し替え, 図鑑, 天井, 招聘.
+- G: deployment-guide.md chỉ trỏ link tới docs/community-worker.md mục Thứ tự deploy (không chép runbook). PR body ghi rõ thứ tự: backup D1 → migrate 0015 → deploy community-worker → merge site. Migration dựng lại 8 bảng (thêm 2 bảng con của community_teams).
+- C2c: 8 obligation đổi (bảng trong phase-c2c-report.md).
+- C2c: SiteLayout.astro dòng ~276-281 pick(locale, page.label.vi, page.label.zh) + page.description cần .ja.
+- C2c QUAN TRỌNG: js/render.js `const zh = sourceText()` + MODIFIED_PREFIX_ZH → trang đội ja hiện tên chữ Hán nguồn và tiền tố 精/轉/拓 thay vì tên Nhật. Phải nối resolver tên Nhật của C3 (ID → entries[id].name, tên thô → toShinjitai; tiền tố 転・/拓・/精・ theo prefixedTactics).
+- C2c: DisclaimerPage bản ja có câu mới về cách ghi tên theo bản Nhật — nêu trong PR cho chủ repo xác nhận.
+- Glossary C2c: 当たり屋 (碰瓷, yếu nhất), 武将庫/武将図鑑 và スクショ編成診断/編成判定/編成解析 chưa thống nhất → chốt một tên.
+- C1 bước 9 khi bật ja: (1) nối 'ja' vào SITE_LOCALES; (2) git mv src/pages/_ja src/pages/ja + bỏ exclude trong tsconfig.json; (3) sửa test thứ tự + 2 dòng switchTargets trong tests-js/i18n-locales.test.mjs; (4) zh-locale.spec.mjs đổi selector .header-actions [data-lang-switch] sang chọn theo hreflang; (5) manifest thêm entry js/shinjitai, js/locale-name-aliases; (6) ghim lại + compare --allow-locale ja với allowlist 404.html, robots.txt, _headers, _redirects, css/styles.css.
+- C1 thử bật: thiếu ja ở WRITTEN_IN (CommunityTeamPage.astro:46 — có thể C2a đã sửa), LANDING_COPY (landing-stats.ts:378), team-ssr pick holderName/unavailable, POLICY_PAGES, FEEDBACK_KINDS. Kiểm lại sau khi gộp C2.
+- Quyết định: chấp nhận route _ja/ + exclude (Astro không chặn sinh trang có điều kiện); css/styles.css vào allowlist có chủ đích (nút ngôn ngữ), nêu trong PR.
+- e2e ja-locale: 2 regex (nhãn trạng thái tên, dòng báo thiếu) phải khớp chữ C3 chốt.
+- C3: 12 obligation đổi (bảng nguyên văn trong phase-c3-report.md).
+- C3: manifest đã có 4 entry (lookup-ja, ja-kanji-variants, shinjitai, locale-name-aliases) — gộp với bản C1 (2 entry data trùng).
+- C3: scripts/preview-locale-hook.mjs dùng tạm cho test hồ sơ ja khi chưa bật; sau khi bật có thể giữ (không đổi gì) hoặc bỏ nếu thừa.
+- C3: js/app.js nên truyền loadBytes vào initLookupPage (tránh tải lookup-manifest 2 lần).
+- C3: SeasonPage.astro truyền await lookupJaNameResolver() vào recommendedTitle cho ja.
+- C3: mcp-worker/workflow-source-manifest.json thêm js/shinjitai.js rồi npm --prefix mcp-worker run generate:workflow-build (WORKFLOW_BUILD_ID lệch từ phase A).
+- C3: CSS cho .lookup-name-original, .lookup-name-status, .lookup-mt-notice (token trước rồi CSS).
+- C3 điểm 4 chưa làm: ẩn ghi chú đội chữ Trung (displayNotes.blocks[].textRaw) trên /ja/, hiện dòng báo thiếu — ở recommended-reference-render.js/state.js.
+- Đã ghép vào feat/ja-locale: D1 (worker/src/schema.ts thuộc sourceFiles → cần ghim), G, F.

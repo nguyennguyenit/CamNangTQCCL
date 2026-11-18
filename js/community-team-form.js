@@ -5,7 +5,7 @@
 // Không import từ community-teams.js (entry tự chạy); bước điều hướng sau khi gửi do `onSubmitted` lo.
 
 import { cellFromInput, draftFromRead, emptyDraft, normalizeTeamRead, sureCell } from './analyze-map.js';
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, pick } from './i18n.js';
 import { api, avatar, describeError, displayName, downscaleImage, liveStatus, unavailableNotice } from './community-api.js';
 import { TeamFormError, pickSide, similarNotice, teamPayloadFromDraft } from './community-team-state.js';
 import { datalistOptions, seasonLabel, troopLabel } from './community-team-data.js';
@@ -20,13 +20,19 @@ const PLAYSTYLE_MAX = 3000;
 const PLAYSTYLE_MIN = 10;
 const OPTIONAL_MAX = 2000;
 const OPTIONAL_FIELDS = [
-  ['strengths', () => L('Điểm mạnh', '优点'), () => L('Đội mạnh ở điểm nào', '阵容的优势')],
-  ['weaknesses', () => L('Điểm yếu', '缺点'), () => L('Đội gặp khó ở tình huống nào', '阵容在什么情况下吃力')],
-  ['counters', () => L('Khắc chế', '克制'), () => L('Đội hoặc lối chơi mà đội này đánh tốt', '本阵容擅长对付的阵容或打法')],
-  ['counteredBy', () => L('Bị khắc chế bởi', '被克制于'), () => L('Đội hoặc lối chơi nên tránh', '应避开的阵容或打法')],
-  ['substitutes', () => L('Thay thế', '替补'), () => L('Tướng hoặc chiến pháp đổi được khi thiếu', '缺少时可替换的武将或战法')],
+  ['strengths', () => L('Điểm mạnh', '优点', '長所'), () => L('Đội mạnh ở điểm nào', '阵容的优势', '編成の強み')],
+  ['weaknesses', () => L('Điểm yếu', '缺点', '短所'), () => L('Đội gặp khó ở tình huống nào', '阵容在什么情况下吃力', '編成が苦戦する状況')],
+  ['counters', () => L('Khắc chế', '克制', '有利な相手'), () => L('Đội hoặc lối chơi mà đội này đánh tốt', '本阵容擅长对付的阵容或打法', 'この編成が得意とする編成・戦術')],
+  ['counteredBy', () => L('Bị khắc chế bởi', '被克制于', '不利な相手'), () => L('Đội hoặc lối chơi nên tránh', '应避开的阵容或打法', '避けるべき編成・戦術')],
+  ['substitutes', () => L('Thay thế', '替补', '代替'), () => L('Tướng hoặc chiến pháp đổi được khi thiếu', '缺少时可替换的武将或战法', '不足時に入れ替えられる武将・戦法')],
 ];
-const FACTION_ZH = { 'Ngụy': '魏', 'Thục': '蜀', 'Ngô': '吴', 'Quần': '群', 'Hán': '汉' };
+const FACTION_LABEL = {
+  'Ngụy': { zh: '魏', ja: '魏' },
+  'Thục': { zh: '蜀', ja: '蜀' },
+  'Ngô': { zh: '吴', ja: '呉' },
+  'Quần': { zh: '群', ja: '群' },
+  'Hán': { zh: '汉', ja: '漢' },
+};
 const FACTION_CODE = { 'Ngụy': 'nguy', 'Thục': 'thuc', 'Ngô': 'ngo', 'Quần': 'quan', 'Hán': 'han' };
 
 const FIELD_CODES = new Set(['invalid_title', 'invalid_troop', 'invalid_text', 'invalid_uploads', 'invalid_heroes', 'invalid_tactics', 'invalid_season']);
@@ -34,30 +40,30 @@ const FIELD_CODES = new Set(['invalid_title', 'invalid_troop', 'invalid_text', '
 function unknownMessage(text) {
   return L(
     `Không tìm thấy “${text}” trong danh sách: hãy chọn một mục gợi ý hoặc sửa lại tên.`,
-    `列表中找不到“${text}”：请选择建议项或修改名称。`,
+    `列表中找不到“${text}”：请选择建议项或修改名称。`, `リストに「${text}」が見つかりません。候補から選ぶか名前を修正してください。`,
   );
 }
 
 function formMessage(code) {
   switch (code) {
     case 'invalid_heroes':
-      return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。');
+      return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。', '異なる武将3名をリストから選んでください。');
     case 'invalid_tactics':
-      return L('Cần đủ 6 chiến pháp khác nhau (2 cho mỗi tướng), chọn từ danh sách.', '需要六个互不相同的战法（每名武将两个），请从列表中选择。');
+      return L('Cần đủ 6 chiến pháp khác nhau (2 cho mỗi tướng), chọn từ danh sách.', '需要六个互不相同的战法（每名武将两个），请从列表中选择。', '重複しない戦法6つ（武将ごとに2つ）をリストから選んでください。');
     case 'invalid_title':
-      return L('Hãy nhập tiêu đề (tối đa 80 ký tự).', '请填写标题（最多 80 个字符）。');
+      return L('Hãy nhập tiêu đề (tối đa 80 ký tự).', '请填写标题（最多 80 个字符）。', 'タイトルを入力してください（最大80文字）。');
     case 'invalid_troop':
-      return L('Hãy chọn binh chủng.', '请选择兵种。');
+      return L('Hãy chọn binh chủng.', '请选择兵种。', '兵種を選択してください。');
     case 'invalid_season':
-      return L('Hãy chọn mùa trong danh sách.', '请从列表中选择赛季。');
+      return L('Hãy chọn mùa trong danh sách.', '请从列表中选择赛季。', 'リストからシーズンを選択してください。');
     case 'invalid_text':
-      return L('Lối chơi cần ít nhất 10 ký tự; các mục khác tối đa 2000 ký tự.', '打法至少需要 10 个字符；其他项最多 2000 个字符。');
+      return L('Lối chơi cần ít nhất 10 ký tự; các mục khác tối đa 2000 ký tự.', '打法至少需要 10 个字符；其他项最多 2000 个字符。', 'プレイスタイルは10文字以上、その他の項目は最大2000文字です。');
     case 'invalid_uploads':
-      return L('Cần tải lên 1–3 ảnh trước khi gửi.', '提交前需要上传 1–3 张图片。');
+      return L('Cần tải lên 1–3 ảnh trước khi gửi.', '提交前需要上传 1–3 张图片。', '送信前に画像を1～3枚アップロードしてください。');
     case 'unconfirmed':
-      return L('Còn ô chưa chắc chắn: hãy chọn gợi ý hoặc sửa lại tên.', '仍有不确定的格子：请选择建议项或修改名称。');
+      return L('Còn ô chưa chắc chắn: hãy chọn gợi ý hoặc sửa lại tên.', '仍有不确定的格子：请选择建议项或修改名称。', '不確実なマスがあります。候補を選ぶか名前を修正してください。');
     default:
-      return L('Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.', '内容无效，请检查后重试。');
+      return L('Dữ liệu chưa hợp lệ. Hãy kiểm tra lại.', '内容无效，请检查后重试。', '内容が無効です。確認してもう一度お試しください。');
   }
 }
 
@@ -69,12 +75,12 @@ function formMessage(code) {
 export function mountTeamForm(container, { seasons, current, locale, user, getLexicon, teamHref, onSubmitted }) {
   const root = el('div', { class: 'cm-team-form-root' });
   container.append(root);
-  const boot = el('p', { class: 'scope-note' }, L('Đang tải danh sách tướng và chiến pháp…', '正在加载武将和战法列表…'));
+  const boot = el('p', { class: 'scope-note' }, L('Đang tải danh sách tướng và chiến pháp…', '正在加载武将和战法列表…', '武将と戦法のリストを読み込み中…'));
   root.append(boot);
   getLexicon().then(
     (lexicon) => build(root, lexicon),
     () => {
-      const retry = el('button', { class: 'cm-team-btn', type: 'button' }, L('Thử lại', '重试'));
+      const retry = el('button', { class: 'cm-team-btn', type: 'button' }, L('Thử lại', '重试', '再試行'));
       retry.addEventListener('click', () => {
         root.replaceChildren(boot);
         getLexicon().then((lexicon) => build(root, lexicon), () => root.replaceChildren(unavailableNotice(), retry));
@@ -118,7 +124,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       // Dòng "AI đọc được …" + gợi ý gần nhất chỉ cho ô không chắc.
       const candidates = cell.state === 'unsure' ? cell.candidates : [];
       slot.raw.hidden = !candidates.length;
-      slot.raw.replaceChildren(L('AI đọc được: ', 'AI 识别为：'), rawText(cell.raw), L(', chưa có trong danh sách', '，列表中没有'));
+      slot.raw.replaceChildren(L('AI đọc được: ', 'AI 识别为：', 'AI の認識結果：'), rawText(cell.raw), L(', chưa có trong danh sách', '，列表中没有', '、リストにありません'));
       slot.fix.hidden = !candidates.length;
       slot.candidates.replaceChildren(...candidates.map((id) => {
         const button = el('button', { class: 'cm-team-candidate', type: 'button' }, labelOf(slot.kind, id));
@@ -143,17 +149,17 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         ? heroPortrait({ chinese: record.chinese, nameVi: record.viet, iconUrl: record.iconUrl, className: 'cm-team-member-img', alt: '' })
         : el('span', { class: 'cm-team-member-blank' }));
       member.portrait.dataset.faction = FACTION_CODE[faction] ?? '';
-      const factionText = faction ? (locale === 'zh' ? FACTION_ZH[faction] ?? faction : faction) : '';
-      member.eyebrow.textContent = factionText ? `${L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`)} · ${factionText}` : L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`);
-      member.name.textContent = record ? lexicon.heroName(heroCell.id) : L('Chưa chọn tướng', '尚未选择武将');
+      const factionText = faction ? pick(locale, faction, FACTION_LABEL[faction]?.zh ?? faction, FACTION_LABEL[faction]?.ja ?? faction) : '';
+      member.eyebrow.textContent = factionText ? `${L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`, `武将 ${heroIndex + 1}`)} · ${factionText}` : L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`, `武将 ${heroIndex + 1}`);
+      member.name.textContent = record ? lexicon.heroName(heroCell.id) : L('Chưa chọn tướng', '尚未选择武将', '武将未選択');
       const cells = [heroCell, ...draft.heroes[heroIndex].tactics];
       const sure = cells.filter((cell) => cell.state === 'sure').length;
       const flagged = cells.filter((cell) => cell.state === 'unsure' || (cell.state === 'unknown' && cell.raw)).length;
       member.node.dataset.state = flagged ? 'unsure' : 'ok';
       member.tally.dataset.state = flagged ? 'unsure' : 'ok';
       member.tally.textContent = flagged
-        ? L(`${flagged} ô cần chọn`, `${flagged} 格待确认`)
-        : L(`${sure}/3 ổn`, `${sure}/3 已确认`);
+        ? L(`${flagged} ô cần chọn`, `${flagged} 格待确认`, `${flagged} マス要確認`)
+        : L(`${sure}/3 ổn`, `${sure}/3 已确认`, `${sure}/3 確認済み`);
     }
 
     function paintSummary() {
@@ -166,7 +172,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       const allSure = slots.every((slot) => slot.get().state === 'sure');
       rosterCard.setDone(allSure);
       readPill.hidden = readFrom === null;
-      readPill.replaceChildren(teamIcon('scan', 14), L(`Đọc từ ảnh ${(readFrom ?? 0) + 1}`, `识别自图片 ${(readFrom ?? 0) + 1}`));
+      readPill.replaceChildren(teamIcon('scan', 14), L(`Đọc từ ảnh ${(readFrom ?? 0) + 1}`, `识别自图片 ${(readFrom ?? 0) + 1}`, `画像 ${(readFrom ?? 0) + 1} から認識`));
       paintChecklist();
     }
 
@@ -210,7 +216,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
               el('a', { class: 'cm-team-similar-open', href: teamHref(item.id), target: '_blank', rel: 'noopener' }, [
                 item.title,
                 teamIcon('external', 14),
-                el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）')),
+                el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）', '（新しいタブで開く）')),
               ]),
               el('span', {}, [displayName(item.author), item.season ? seasonLabel(item.season, locale) : null, troopLabel(item.troop)].filter(Boolean).join(' · ')),
             ]))),
@@ -230,16 +236,16 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       const tally = el('span', { class: 'cm-team-member-tally' });
       const cellsBox = el('div', { class: 'cm-team-member-cells' });
       const node = el('fieldset', { class: 'cm-team-member cm-team-form-hero', dataset: { state: 'ok' } }, [
-        el('legend', { class: 'visually-hidden' }, L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`)),
+        el('legend', { class: 'visually-hidden' }, L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`, `武将 ${heroIndex + 1}`)),
         el('div', { class: 'cm-team-member-head' }, [portrait, el('span', { class: 'cm-team-member-id' }, [eyebrow, name]), tally]),
         cellsBox,
       ]);
       members.push({ node, portrait, eyebrow, name, tally });
       const cellDefs = [
-        { kind: 'hero', label: L('Tướng', '武将'), get: () => draft.heroes[heroIndex].hero, set: (cell) => { draft.heroes[heroIndex].hero = cell; } },
+        { kind: 'hero', label: L('Tướng', '武将', '武将'), get: () => draft.heroes[heroIndex].hero, set: (cell) => { draft.heroes[heroIndex].hero = cell; } },
         ...[0, 1].map((tacticIndex) => ({
           kind: 'tactic',
-          label: L(`Chiến pháp ${tacticIndex + 1}`, `战法 ${tacticIndex + 1}`),
+          label: L(`Chiến pháp ${tacticIndex + 1}`, `战法 ${tacticIndex + 1}`, `戦法 ${tacticIndex + 1}`),
           get: () => draft.heroes[heroIndex].tactics[tacticIndex],
           set: (cell) => { draft.heroes[heroIndex].tactics[tacticIndex] = cell; },
         })),
@@ -255,10 +261,10 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
           spellcheck: 'false',
           'data-cell': `${heroIndex}-${position}`,
         });
-        const flag = el('span', { class: 'cm-team-flag', hidden: '' }, [teamIcon('alert', 13), L('Không chắc', '不确定')]);
+        const flag = el('span', { class: 'cm-team-flag', hidden: '' }, [teamIcon('alert', 13), L('Không chắc', '不确定', '不確実')]);
         const ok = el('span', { class: 'cm-team-ok', 'aria-hidden': 'true', hidden: '' }, teamIcon('check', 14));
         const raw = el('span', { id: `${id}-raw`, class: 'cm-team-raw', hidden: '' });
-        const fix = el('span', { id: `${id}-fix`, class: 'cm-team-caps', hidden: '' }, L('Gợi ý gần nhất', '最接近的建议'));
+        const fix = el('span', { id: `${id}-fix`, class: 'cm-team-caps', hidden: '' }, L('Gợi ý gần nhất', '最接近的建议', '最も近い候補'));
         const candidates = el('div', { class: 'cm-team-candidates' });
         const wrap = el('div', { class: 'cm-team-cell', dataset: { state: 'empty' } }, [
           el('div', { class: 'cm-team-cell-head' }, [el('label', { class: 'cm-team-caps', for: id }, def.label), flag]),
@@ -293,26 +299,26 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       const inputId = `cm-team-image-${index}`;
       const file = el('input', { id: inputId, class: 'cm-team-file visually-hidden', type: 'file', accept: 'image/jpeg,image/png,image/webp' });
       const slotStatus = liveStatus('cm-status cm-team-slot-status');
-      const preview = el('img', { class: 'cm-team-preview', alt: L(`Ảnh ${index + 1} bạn đã chọn`, `你选择的图片 ${index + 1}`) });
+      const preview = el('img', { class: 'cm-team-preview', alt: L(`Ảnh ${index + 1} bạn đã chọn`, `你选择的图片 ${index + 1}`, `選択した画像 ${index + 1}`) });
       const thumb = el('span', { class: 'cm-team-slot-thumb', hidden: '' }, preview);
       const drop = el('label', { class: 'cm-team-drop', for: inputId }, [
         teamIcon('upload', 20),
         el('span', { class: 'cm-team-drop-text' }, [
-          el('span', { class: 'cm-team-drop-title' }, L(`Chọn ảnh ${index + 1}`, `选择图片 ${index + 1}`)),
-          el('span', { class: 'cm-team-drop-hint' }, index === 0 ? L('Bắt buộc · JPG, PNG hoặc WebP', '必填 · JPG、PNG 或 WebP') : L('Tuỳ chọn · JPG, PNG hoặc WebP', '可选 · JPG、PNG 或 WebP')),
+          el('span', { class: 'cm-team-drop-title' }, L(`Chọn ảnh ${index + 1}`, `选择图片 ${index + 1}`, `画像 ${index + 1} を選択`)),
+          el('span', { class: 'cm-team-drop-hint' }, index === 0 ? L('Bắt buộc · JPG, PNG hoặc WebP', '必填 · JPG、PNG 或 WebP', '必須 · JPG・PNG・WebP') : L('Tuỳ chọn · JPG, PNG hoặc WebP', '可选 · JPG、PNG 或 WebP', '任意 · JPG・PNG・WebP')),
         ]),
       ]);
-      const readButton = el('button', { class: 'cm-team-btn cm-team-btn-dark', type: 'button', hidden: '' }, [teamIcon('scan'), L('Đọc bằng AI', '用 AI 识别')]);
-      const change = el('label', { class: 'cm-team-btn cm-team-btn-text', for: inputId, hidden: '' }, L('Đổi ảnh', '更换图片'));
-      const chooser = el('div', { class: 'cm-team-sides', role: 'radiogroup', hidden: '', 'aria-label': L('Chọn phe cần đọc', '选择要识别的一方') });
+      const readButton = el('button', { class: 'cm-team-btn cm-team-btn-dark', type: 'button', hidden: '' }, [teamIcon('scan'), L('Đọc bằng AI', '用 AI 识别', 'AIで読み取る')]);
+      const change = el('label', { class: 'cm-team-btn cm-team-btn-text', for: inputId, hidden: '' }, L('Đổi ảnh', '更换图片', '画像を変更'));
+      const chooser = el('div', { class: 'cm-team-sides', role: 'radiogroup', hidden: '', 'aria-label': L('Chọn phe cần đọc', '选择要识别的一方', '読み取る側を選択') });
       const hint = el('p', { class: 'cm-team-slot-hint' }, index === 0
-        ? L('Ảnh kết quả trận hoặc bảng đội hình có đủ 3 tướng.', '包含三名武将的战斗结果或阵容图。')
-        : L('Thêm ảnh khác góc, ví dụ bảng chiến pháp hoặc binh thư.', '可添加其他角度，例如战法或兵书界面。'));
+        ? L('Ảnh kết quả trận hoặc bảng đội hình có đủ 3 tướng.', '包含三名武将的战斗结果或阵容图。', '武将3名が揃った戦闘結果または編成画面の画像。')
+        : L('Thêm ảnh khác góc, ví dụ bảng chiến pháp hoặc binh thư.', '可添加其他角度，例如战法或兵书界面。', '別の画面も追加できます（例：戦法や兵法書の画面）。'));
       const box = el('li', { class: 'cm-team-image-slot', dataset: { filled: 'false' } }, [
         drop,
         thumb,
         el('div', { class: 'cm-team-slot-body' }, [
-          el('p', { class: 'cm-team-slot-label' }, [L(`Ảnh ${index + 1}`, `图片 ${index + 1}`), el('span', {}, index === 0 ? L('bắt buộc', '必填') : L('tuỳ chọn', '可选'))]),
+          el('p', { class: 'cm-team-slot-label' }, [L(`Ảnh ${index + 1}`, `图片 ${index + 1}`, `画像 ${index + 1}`), el('span', {}, index === 0 ? L('bắt buộc', '必填', '必須') : L('tuỳ chọn', '可选', '任意'))]),
           hint,
           slotStatus,
           chooser,
@@ -325,7 +331,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
     });
     const paintImages = () => {
       const count = imageSlots.filter((slot) => slot.uploadId).length;
-      imagePill.textContent = L(`${count}/3 ảnh`, `${count}/3 张`);
+      imagePill.textContent = L(`${count}/3 ảnh`, `${count}/3 张`, `${count}/3 枚`);
       imageCard.setDone(count > 0);
       paintChecklist();
     };
@@ -339,7 +345,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       const side = pickSide(slot.normalized, slot.choice);
       if (side === null) {
         slot.chooser.replaceChildren(
-          el('p', { class: 'scope-note' }, L('Ảnh có hai phe. Chọn phe là đội của bạn:', '图片中有两方，请选择你的阵容：')),
+          el('p', { class: 'scope-note' }, L('Ảnh có hai phe. Chọn phe là đội của bạn:', '图片中有两方，请选择你的阵容：', '画像に両陣営が写っています。自分の編成の側を選択してください：')),
           ...['left', 'right'].map((value) => {
             const id = `cm-team-side-${slot.index}-${value}`;
             const radio = el('input', { id, type: 'radio', name: `cm-team-side-${slot.index}`, value });
@@ -347,22 +353,22 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
               slot.choice = value;
               applyRead(slot);
             });
-            return el('label', { class: 'cm-team-side', for: id }, [radio, value === 'left' ? L('Phe trái', '左侧') : L('Phe phải', '右侧')]);
+            return el('label', { class: 'cm-team-side', for: id }, [radio, value === 'left' ? L('Phe trái', '左侧', '左側') : L('Phe phải', '右侧', '右側')]);
           }),
         );
         slot.chooser.hidden = false;
-        slot.slotStatus.set(L('Hãy chọn phe cần đọc.', '请选择要识别的一方。'));
+        slot.slotStatus.set(L('Hãy chọn phe cần đọc.', '请选择要识别的一方。', '読み取る側を選択してください。'));
         return;
       }
       slot.chooser.hidden = true;
       if (!side.heroes.length) {
-        slot.slotStatus.set(L('AI không đọc được đội hình trong ảnh này. Bạn có thể nhập tay.', 'AI 无法识别此图片中的阵容，请手动填写。'), 'error');
+        slot.slotStatus.set(L('AI không đọc được đội hình trong ảnh này. Bạn có thể nhập tay.', 'AI 无法识别此图片中的阵容，请手动填写。', 'この画像から AI が編成を読み取れませんでした。手動で入力してください。'), 'error');
         return;
       }
       readFrom = slot.index;
       applyDraft(draftFromRead({ heroes: side.heroes }, lexicon.indexes));
-      okStatus(slot, L('AI đã điền nháp vào mục 2. Hãy kiểm tra từng ô, ô tô đỏ cần xác nhận.', 'AI 已填入第 2 步草稿。请逐项核对，标红的格子需要确认。'));
-      slot.readButton.replaceChildren(teamIcon('refresh'), L('Đọc lại', '重新识别'));
+      okStatus(slot, L('AI đã điền nháp vào mục 2. Hãy kiểm tra từng ô, ô tô đỏ cần xác nhận.', 'AI 已填入第 2 步草稿。请逐项核对，标红的格子需要确认。', 'AI がステップ2に下書きを入力しました。各マスを確認してください。赤いマスは要確認です。'));
+      slot.readButton.replaceChildren(teamIcon('refresh'), L('Đọc lại', '重新识别', '再読み取り'));
       slot.readButton.classList.remove('cm-team-btn-dark');
     }
 
@@ -371,7 +377,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         const file = slot.file.files?.[0];
         if (!file) return;
         if (!/^image\//u.test(file.type)) {
-          slot.slotStatus.set(L('Hãy chọn một tệp ảnh.', '请选择图片文件。'), 'error');
+          slot.slotStatus.set(L('Hãy chọn một tệp ảnh.', '请选择图片文件。', '画像ファイルを選択してください。'), 'error');
           return;
         }
         slot.uploadId = null;
@@ -379,7 +385,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         slot.choice = null;
         slot.chooser.hidden = true;
         slot.readButton.hidden = true;
-        slot.slotStatus.set(L('Đang tải ảnh lên…', '正在上传图片…'));
+        slot.slotStatus.set(L('Đang tải ảnh lên…', '正在上传图片…', '画像をアップロード中…'));
         paintImages();
         try {
           const blob = await downscaleImage(file);
@@ -398,10 +404,10 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
           slot.uploadId = result.uploadId;
           slot.readButton.hidden = false;
           slot.readButton.classList.add('cm-team-btn-dark');
-          slot.readButton.replaceChildren(teamIcon('scan'), L('Đọc bằng AI', '用 AI 识别'));
+          slot.readButton.replaceChildren(teamIcon('scan'), L('Đọc bằng AI', '用 AI 识别', 'AIで読み取る'));
           slot.slotStatus.set(readFrom !== null && readFrom !== slot.index
-            ? L('Đã tải lên. Đọc ảnh này sẽ thay nháp ở mục 2.', '已上传。识别此图片会替换第 2 步的草稿。')
-            : L('Đã tải ảnh lên. Bạn có thể bấm "Đọc bằng AI" hoặc nhập tay.', '图片已上传。可点击“用 AI 识别”，也可手动填写。'));
+            ? L('Đã tải lên. Đọc ảnh này sẽ thay nháp ở mục 2.', '已上传。识别此图片会替换第 2 步的草稿。', 'アップロードしました。この画像を読み取るとステップ2の下書きが置き換わります。')
+            : L('Đã tải ảnh lên. Bạn có thể bấm "Đọc bằng AI" hoặc nhập tay.', '图片已上传。可点击“用 AI 识别”，也可手动填写。', '画像をアップロードしました。「AIで読み取る」を押すか、手動で入力できます。'));
         } catch (error) {
           slot.slotStatus.set(describeError(error), 'error');
         } finally {
@@ -413,7 +419,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         slot.busy = true;
         slot.readButton.disabled = true;
         slot.choice = null;
-        slot.slotStatus.set(L('AI đang đọc ảnh…', 'AI 正在识别图片…'));
+        slot.slotStatus.set(L('AI đang đọc ảnh…', 'AI 正在识别图片…', 'AI が画像を読み取り中…'));
         try {
           const body = await api(`/api/community-teams/uploads/${encodeURIComponent(slot.uploadId)}/analyze`, { method: 'POST' });
           slot.normalized = normalizeTeamRead(body?.read);
@@ -432,12 +438,12 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
     // Ô chọn mùa bắt buộc: chọn sẵn mùa hiện hành; mùa hiện hành không có trong catalog thì bắt người dùng tự chọn.
     const hasCurrent = seasons.some((item) => item.id === current);
     const seasonSelect = el('select', { id: 'cm-team-season-pick', class: 'cm-team-input cm-team-select', required: '' }, [
-      hasCurrent ? null : el('option', { value: '', disabled: '' }, L('Chọn mùa', '请选择赛季')),
-      ...seasons.map((item) => el('option', { value: item.id }, `${seasonLabel(item, locale)}${item.id === current ? L(' (hiện hành)', '（当前）') : ''}`)),
+      hasCurrent ? null : el('option', { value: '', disabled: '' }, L('Chọn mùa', '请选择赛季', 'シーズンを選択')),
+      ...seasons.map((item) => el('option', { value: item.id }, `${seasonLabel(item, locale)}${item.id === current ? L(' (hiện hành)', '（当前）', '（現在）') : ''}`)),
     ]);
     seasonSelect.value = hasCurrent ? current : '';
     const seasonField = el('div', { class: 'cm-team-fld cm-team-fld-wide' }, [
-      el('label', { class: 'cm-team-fld-label', for: 'cm-team-season-pick' }, [L('Mùa bạn đang chơi', '你正在玩的赛季'), el('span', {}, L('bắt buộc', '必填'))]),
+      el('label', { class: 'cm-team-fld-label', for: 'cm-team-season-pick' }, [L('Mùa bạn đang chơi', '你正在玩的赛季', 'プレイ中のシーズン'), el('span', {}, L('bắt buộc', '必填', '必須'))]),
       el('div', { class: 'cm-team-cell-field' }, [seasonSelect, el('span', { class: 'cm-team-select-chevron', 'aria-hidden': 'true' }, teamIcon('chevronDown'))]),
     ]);
     const titleInput = el('input', { id: 'cm-team-title-input', class: 'cm-team-input', type: 'text', maxlength: String(TITLE_MAX) });
@@ -447,14 +453,14 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       return { key, textarea, node: countedField({ id: `cm-team-${key}`, label: label(), control: textarea, max: OPTIONAL_MAX }) };
     });
     const extraToggle = el('button', { class: 'cm-team-extra-toggle', type: 'button', 'aria-expanded': 'false', 'aria-controls': 'cm-team-extra-fields' }, [
-      el('span', { class: 'cm-team-extra-toggle-label' }, L('Phân tích thêm', '补充分析')),
-      el('span', { class: 'cm-team-extra-toggle-hint' }, L('không bắt buộc · 5 mục', '可选 · 5 项')),
+      el('span', { class: 'cm-team-extra-toggle-label' }, L('Phân tích thêm', '补充分析', '補足分析')),
+      el('span', { class: 'cm-team-extra-toggle-hint' }, L('không bắt buộc · 5 mục', '可选 · 5 项', '任意 · 5項目')),
       teamIcon('chevronDown'),
     ]);
     const extra = el('div', { class: 'cm-team-extra' }, [
       el('div', { class: 'cm-team-subhead' }, [
-        el('h4', {}, L('Phân tích thêm', '补充分析')),
-        el('p', { class: 'cm-team-form-note' }, L('Không bắt buộc, tối đa 2000 ký tự mỗi mục. Hiện trong phần phân tích của trang đội.', '可选，每项最多 2000 个字符，会显示在阵容页的分析部分。')),
+        el('h4', {}, L('Phân tích thêm', '补充分析', '補足分析')),
+        el('p', { class: 'cm-team-form-note' }, L('Không bắt buộc, tối đa 2000 ký tự mỗi mục. Hiện trong phần phân tích của trang đội.', '可选，每项最多 2000 个字符，会显示在阵容页的分析部分。', '任意。各項目最大2000文字。編成ページの分析欄に表示されます。')),
       ]),
       extraToggle,
       el('div', { id: 'cm-team-extra-fields', class: 'cm-team-fields cm-team-extra-fields' }, optional.map((entry) => entry.node)),
@@ -466,7 +472,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
     });
 
     /* ----- Cột gửi ----- */
-    const checklist = el('ul', { class: 'cm-team-check', 'aria-label': L('Kiểm tra trước khi gửi', '提交前检查') });
+    const checklist = el('ul', { class: 'cm-team-check', 'aria-label': L('Kiểm tra trước khi gửi', '提交前检查', '送信前チェック') });
     function paintChecklist() {
       const images = imageSlots.filter((slot) => slot.uploadId).length;
       const heroes = draft.heroes.map((member) => member.hero).filter((cell) => cell.state === 'sure');
@@ -482,15 +488,15 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
       const heroesOk = heroes.length === 3 && heroIds.size === 3;
       const tacticsOk = sureTactics.length === 6 && tacticIds.size === 6;
       checklist.replaceChildren(
-        checkItem(L('Ảnh đội hình', '阵容图片'), L(`${images} ảnh · cần 1–3 ảnh`, `${images} 张 · 需要 1–3 张`), images > 0),
-        checkItem(L('Tướng', '武将'), heroIds.size < heroes.length ? L(`${heroes.length}/3 · có tướng trùng`, `${heroes.length}/3 · 有重复`) : L(`${heroes.length}/3 · không trùng`, `${heroes.length}/3 · 无重复`), heroesOk),
-        checkItem(L('Chiến pháp', '战法'), unsureTactics
-          ? L(`${sureTactics.length}/6 · còn ${unsureTactics} ô Không chắc`, `${sureTactics.length}/6 · 还有 ${unsureTactics} 格不确定`)
-          : L(`${sureTactics.length}/6 · không trùng`, `${sureTactics.length}/6 · 无重复`), tacticsOk),
-        checkItem(L('Tiêu đề', '标题'), L(`${formatNumber(title)} / ${TITLE_MAX} ký tự`, `${formatNumber(title)} / ${TITLE_MAX} 字`), title > 0 && title <= TITLE_MAX),
-        checkItem(L('Mùa', '赛季'), seasonPicked ? seasonLabel(seasonPicked, locale) : L('Chưa chọn', '未选择'), Boolean(seasonPicked)),
-        checkItem(L('Binh chủng', '兵种'), troopValue ? troopLabel(troopValue) : L('Chưa chọn', '未选择'), Boolean(troopValue)),
-        checkItem(L('Lối chơi', '打法'), L(`${formatNumber(playstyle)} ký tự`, `${formatNumber(playstyle)} 字`), playstyle >= PLAYSTYLE_MIN),
+        checkItem(L('Ảnh đội hình', '阵容图片', '編成画像'), L(`${images} ảnh · cần 1–3 ảnh`, `${images} 张 · 需要 1–3 张`, `${images} 枚 · 1～3枚必要`), images > 0),
+        checkItem(L('Tướng', '武将', '武将'), heroIds.size < heroes.length ? L(`${heroes.length}/3 · có tướng trùng`, `${heroes.length}/3 · 有重复`, `${heroes.length}/3 · 重複あり`) : L(`${heroes.length}/3 · không trùng`, `${heroes.length}/3 · 无重复`, `${heroes.length}/3 · 重複なし`), heroesOk),
+        checkItem(L('Chiến pháp', '战法', '戦法'), unsureTactics
+          ? L(`${sureTactics.length}/6 · còn ${unsureTactics} ô Không chắc`, `${sureTactics.length}/6 · 还有 ${unsureTactics} 格不确定`, `${sureTactics.length}/6 · 不確実が残り ${unsureTactics} マス`)
+          : L(`${sureTactics.length}/6 · không trùng`, `${sureTactics.length}/6 · 无重复`, `${sureTactics.length}/6 · 重複なし`), tacticsOk),
+        checkItem(L('Tiêu đề', '标题', 'タイトル'), L(`${formatNumber(title)} / ${TITLE_MAX} ký tự`, `${formatNumber(title)} / ${TITLE_MAX} 字`, `${formatNumber(title)} / ${TITLE_MAX} 文字`), title > 0 && title <= TITLE_MAX),
+        checkItem(L('Mùa', '赛季', 'シーズン'), seasonPicked ? seasonLabel(seasonPicked, locale) : L('Chưa chọn', '未选择', '未選択'), Boolean(seasonPicked)),
+        checkItem(L('Binh chủng', '兵种', '兵種'), troopValue ? troopLabel(troopValue) : L('Chưa chọn', '未选择', '未選択'), Boolean(troopValue)),
+        checkItem(L('Lối chơi', '打法', 'プレイスタイル'), L(`${formatNumber(playstyle)} ký tự`, `${formatNumber(playstyle)} 字`, `${formatNumber(playstyle)} 文字`), playstyle >= PLAYSTYLE_MIN),
       );
       infoCard.setDone(title > 0 && Boolean(seasonPicked) && Boolean(troopValue) && playstyle >= PLAYSTYLE_MIN);
     }
@@ -499,40 +505,40 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
     for (const input of troop.inputs) input.addEventListener('change', () => paintChecklist());
     seasonSelect.addEventListener('change', () => paintChecklist());
 
-    const submit = el('button', { class: 'cm-team-btn cm-team-btn-primary cm-team-btn-block', type: 'submit' }, [teamIcon('send'), L('Gửi để duyệt', '提交审核')]);
+    const submit = el('button', { class: 'cm-team-btn cm-team-btn-primary cm-team-btn-block', type: 'submit' }, [teamIcon('send'), L('Gửi để duyệt', '提交审核', '審査に送信')]);
 
     /* ----- Lắp ráp ----- */
-    const imageCard = stepCard(1, L('Ảnh đội hình', '阵容图片'), {
+    const imageCard = stepCard(1, L('Ảnh đội hình', '阵容图片', '編成画像'), {
       pill: imagePill,
       note: el('p', { class: 'cm-team-form-note' }, [
-        L('Chọn 1–3 ảnh; ảnh được thu nhỏ trước khi tải lên. ', '选择 1–3 张图片；上传前会先压缩。'),
-        el('strong', {}, L('Đọc bằng AI', '用 AI 识别')),
+        L('Chọn 1–3 ảnh; ảnh được thu nhỏ trước khi tải lên. ', '选择 1–3 张图片；上传前会先压缩。', '画像を1～3枚選択してください。アップロード前に縮小されます。'),
+        el('strong', {}, L('Đọc bằng AI', '用 AI 识别', 'AIで読み取る')),
         L(
           ' gửi ảnh tới dịch vụ AI để điền nháp, bạn vẫn kiểm tra từng ô. Ảnh hiện công khai cùng đội khi được duyệt, nên cắt bỏ tên tài khoản.',
-          '会把图片发送给 AI 服务以填写草稿，你仍需逐项核对。审核通过后图片会随阵容公开，建议裁掉账号名称。',
+          '会把图片发送给 AI 服务以填写草稿，你仍需逐项核对。审核通过后图片会随阵容公开，建议裁掉账号名称。', 'AI サービスに画像を送信して下書きを入力します。各マスの確認は引き続き必要です。承認後、画像は編成とともに公開されるため、アカウント名はトリミングで除いてください。',
         ),
       ]),
-      children: [el('ul', { class: 'cm-team-slots', 'aria-label': L('Ảnh đội hình', '阵容图片') }, imageSlots.map((slot) => slot.box))],
+      children: [el('ul', { class: 'cm-team-slots', 'aria-label': L('Ảnh đội hình', '阵容图片', '編成画像') }, imageSlots.map((slot) => slot.box))],
     });
     const readPill = pill('', true);
     const summarySlot = el('div', { class: 'cm-team-summary-slot' });
-    const rosterCard = stepCard(2, L('Tướng và chiến pháp', '武将与战法'), {
+    const rosterCard = stepCard(2, L('Tướng và chiến pháp', '武将与战法', '武将と戦法'), {
       pill: readPill,
       note: el('p', { class: 'cm-team-form-note' }, L(
         'Gõ hoặc chọn từ danh sách gợi ý; không đọc bằng AI vẫn điền tay được. Mỗi tướng 2 chiến pháp, 6 chiến pháp không trùng nhau.',
-        '输入或从提示列表中选择；不用 AI 识别也可以手动填写。每名武将两个战法，六个战法不能重复。',
+        '输入或从提示列表中选择；不用 AI 识别也可以手动填写。每名武将两个战法，六个战法不能重复。', '入力するか候補リストから選択してください。AI 読み取りを使わず手動で入力することもできます。武将ごとに戦法は2つで、6つの戦法は重複できません。',
       )),
       children: [summarySlot, memberGrid, similarBox],
     });
-    const infoCard = stepCard(3, L('Thông tin đội', '阵容信息'), {
+    const infoCard = stepCard(3, L('Thông tin đội', '阵容信息', '編成情報'), {
       children: [el('div', { class: 'cm-team-fields' }, [
-        countedField({ id: 'cm-team-title-input', label: L('Tiêu đề', '标题'), hint: L('bắt buộc', '必填'), control: titleInput, max: TITLE_MAX, wide: true }),
+        countedField({ id: 'cm-team-title-input', label: L('Tiêu đề', '标题', 'タイトル'), hint: L('bắt buộc', '必填', '必須'), control: titleInput, max: TITLE_MAX, wide: true }),
         seasonField,
         el('div', { class: 'cm-team-fld cm-team-fld-wide' }, troop.group),
         countedField({
           id: 'cm-team-playstyle',
-          label: L('Lối chơi', '打法'),
-          hint: L('bắt buộc · tối thiểu 10 ký tự', '必填 · 至少 10 个字符'),
+          label: L('Lối chơi', '打法', 'プレイスタイル'),
+          hint: L('bắt buộc · tối thiểu 10 ký tự', '必填 · 至少 10 个字符', '必須 · 10文字以上'),
           control: playstyleInput,
           max: PLAYSTYLE_MAX,
           wide: true,
@@ -542,14 +548,14 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
 
     const author = user ?? null;
     const sendCard = el('section', { class: 'cm-team-form-card cm-team-send', 'aria-labelledby': 'cm-team-send-title' }, [
-      el('h3', { id: 'cm-team-send-title', class: 'cm-team-side-title' }, L('Gửi để duyệt', '提交审核')),
+      el('h3', { id: 'cm-team-send-title', class: 'cm-team-side-title' }, L('Gửi để duyệt', '提交审核', '審査に送信')),
       author
-        ? el('div', { class: 'cm-team-send-author' }, [avatar(author), el('span', {}, [L('Đăng với tên ', '发布名称 '), el('strong', {}, displayName(author))])])
+        ? el('div', { class: 'cm-team-send-author' }, [avatar(author), el('span', {}, [L('Đăng với tên ', '发布名称 ', '投稿名 '), el('strong', {}, displayName(author))])])
         : null,
       checklist,
       el('p', { class: 'cm-team-fine' }, L(
         'Sau khi gửi, đội không sửa được. Đội chỉ hiện với bạn và quản trị viên cho tới khi được duyệt.',
-        '提交后无法修改。审核通过前，阵容只对你和管理员可见。',
+        '提交后无法修改。审核通过前，阵容只对你和管理员可见。', '送信後は編集できません。承認されるまで、編成は自分と管理者にのみ表示されます。',
       )),
       submit,
       status,
@@ -558,7 +564,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
     const form = el('form', { class: 'cm-team-form', novalidate: '' }, [
       el('div', { class: 'cm-team-split cm-team-form-layout' }, [
         el('div', { class: 'cm-team-split-main' }, [imageCard, rosterCard, infoCard]),
-        el('aside', { class: 'cm-team-split-aside cm-team-send-aside', 'aria-label': L('Gửi đội', '提交阵容') }, [sendCard]),
+        el('aside', { class: 'cm-team-split-aside cm-team-send-aside', 'aria-label': L('Gửi đội', '提交阵容', '編成を送信') }, [sendCard]),
       ]),
     ]);
 
@@ -612,7 +618,7 @@ export function mountTeamForm(container, { seasons, current, locale, user, getLe
         return;
       }
       submit.disabled = true;
-      status.set(L('Đang gửi…', '正在提交…'));
+      status.set(L('Đang gửi…', '正在提交…', '送信中…'));
       try {
         await api('/api/community-teams', { method: 'POST', json: payload });
         onSubmitted();

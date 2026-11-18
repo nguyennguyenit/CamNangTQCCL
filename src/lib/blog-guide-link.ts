@@ -4,7 +4,8 @@
  * (`landingStatistics`), không hard-code. Không khớp chủ đề nào thì dẫn sang Đội chuẩn.
  */
 import { localePath, pick } from '../../js/i18n.js';
-import type { BlogLocale, BlogPost } from './blog-posts.ts';
+import type { BlogPost } from './blog-posts.ts';
+import type { SiteLocale } from './locale-routes.ts';
 
 export interface BlogGuideLink {
   href: string;
@@ -19,8 +20,8 @@ export type BlogGuideTopic = 'khai-hoang' | 'goi-y-doi' | 'doi-chuan';
  * khớp "Khoảng cách" / "Khoá đội" / "Khoa học"; từ khoá chữ Hán (không có dấu cách giữa từ) khớp theo chuỗi con.
  */
 const GUIDES: ReadonlyArray<{ id: Exclude<BlogGuideTopic, 'doi-chuan'>; keywords: readonly string[] }> = [
-  { id: 'khai-hoang', keywords: ['khai hoang', 'chạm sứ', 'quân thủ', '开荒', '碰瓷', '守军'] },
-  { id: 'goi-y-doi', keywords: ['gợi ý đội', 'kho', '配队', '库存'] },
+  { id: 'khai-hoang', keywords: ['khai hoang', 'chạm sứ', 'quân thủ', '开荒', '碰瓷', '守军', '開拓', '開荒', '守備軍'] },
+  { id: 'goi-y-doi', keywords: ['gợi ý đội', 'kho', '配队', '库存', '所持武将'] },
 ];
 
 const HAN = /\p{Script=Han}/u;
@@ -51,14 +52,18 @@ async function loadStatistics() {
 }
 
 export async function blogGuideLink(post: Pick<BlogPost, 'tags' | 'lang'>): Promise<BlogGuideLink> {
-  const locale: BlogLocale = post.lang;
-  const p = (vi: string, zh: string) => pick(locale, vi, zh);
+  const locale: SiteLocale = post.lang;
+  const p = (...variants: string[]) => pick(locale, ...variants);
   const topic = blogGuideTopic(post.tags);
   if (topic === 'goi-y-doi') {
     return {
       href: localePath('/goi-y-doi-tu-kho/', locale),
-      label: p('Mở Gợi ý đội', '打开武将库配队'),
-      text: p('Nhập kho tướng và chiến pháp, công cụ chọn tối đa 5 đội không trùng tài nguyên.', '录入武将和战法库存，工具最多推荐 5 支资源不重复的阵容。'),
+      label: p('Mở Gợi ý đội', '打开武将库配队', '武将図鑑から編成提案を開く'),
+      text: p(
+        'Nhập kho tướng và chiến pháp, công cụ chọn tối đa 5 đội không trùng tài nguyên.',
+        '录入武将和战法库存，工具最多推荐 5 支资源不重复的阵容。',
+        '所持している武将と戦法を登録すると、資源が重複しない編成を最大 5 部隊まで提案します。',
+      ),
     };
   }
   statistics ??= loadStatistics();
@@ -68,13 +73,21 @@ export async function blogGuideLink(post: Pick<BlogPost, 'tags' | 'lang'>): Prom
     const { teams, mines } = stats.khaiHoang;
     return {
       href: localePath('/khai-hoang/', locale),
-      label: p('Mở mục Khai hoang', '打开开荒栏目'),
-      text: p(`${n(teams)} đội khai hoang có điểm từng mốc đất và quân thủ của ${n(mines)} mỏ.`, `${n(teams)} 支开荒队，含各级地评分与 ${n(mines)} 个矿的守军。`),
+      label: p('Mở mục Khai hoang', '打开开荒栏目', '開拓を開く'),
+      text: p(
+        `${n(teams)} đội khai hoang có điểm từng mốc đất và quân thủ của ${n(mines)} mỏ.`,
+        `${n(teams)} 支开荒队，含各级地评分与 ${n(mines)} 个矿的守军。`,
+        `開拓部隊 ${n(teams)} 隊：土地レベルごとの評価と ${n(mines)} か所の資源地の守備軍を掲載。`,
+      ),
     };
   }
   return {
     href: localePath('/doi-chuan/', locale),
-    label: p('Mở Đội chuẩn', '打开推荐阵容'),
-    text: p(`${n(stats.standardConfigs)} cấu hình Đội chuẩn của ${n(stats.sourceSeasons)} mùa, có điểm và chiến pháp từng tướng.`, `${n(stats.standardConfigs)} 套推荐阵容，覆盖 ${n(stats.sourceSeasons)} 个赛季，含评分与各武将战法。`),
+    label: p('Mở Đội chuẩn', '打开推荐阵容', 'おすすめ編成を開く'),
+    text: p(
+      `${n(stats.standardConfigs)} cấu hình Đội chuẩn của ${n(stats.sourceSeasons)} mùa, có điểm và chiến pháp từng tướng.`,
+      `${n(stats.standardConfigs)} 套推荐阵容，覆盖 ${n(stats.sourceSeasons)} 个赛季，含评分与各武将战法。`,
+      `おすすめ編成 ${n(stats.standardConfigs)} 件（${n(stats.sourceSeasons)} シーズン分）、評価と武将ごとの戦法付き。`,
+    ),
   };
 }

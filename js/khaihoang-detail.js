@@ -15,12 +15,12 @@ import { treeToDom } from './view-tree.js';
 
 const KHAIHOANG_SOURCE = 'data/khaihoang.json';
 const SOURCE_HASH = /^[0-9a-f]{64}$/;
-const LOADING_MESSAGE = L('Đang tải chi tiết…', '正在加载详情…');
-const NETWORK_MESSAGE = L('Không tải được chi tiết khai hoang. Hãy kiểm tra kết nối rồi thử lại.', '无法加载开荒详情。请检查网络连接后重试。');
-const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu khai hoang. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证开荒数据。请刷新页面或返回列表。');
-const MISSING_PIN_MESSAGE = L('Trang chi tiết thiếu mã kiểm tra dữ liệu khai hoang.', '详情页缺少开荒数据的校验码。');
-const CHANGED_SOURCE_MESSAGE = L('Dữ liệu khai hoang đã thay đổi so với bản đã phát hành.', '开荒数据与已发布版本不一致。');
-const MISSING_TEAM_MESSAGE = L('Không tìm thấy đúng một đội khai hoang với mã này.', '未找到与此编号唯一对应的开荒阵容。');
+const LOADING_MESSAGE = L('Đang tải chi tiết…', '正在加载详情…', '詳細を読み込み中…');
+const NETWORK_MESSAGE = L('Không tải được chi tiết khai hoang. Hãy kiểm tra kết nối rồi thử lại.', '无法加载开荒详情。请检查网络连接后重试。', '開拓の詳細を読み込めませんでした。接続を確認してから、もう一度お試しください。');
+const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu khai hoang. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证开荒数据。请刷新页面或返回列表。', '開拓データを検証できません。ページを再読み込みするか、一覧に戻ってください。');
+const MISSING_PIN_MESSAGE = L('Trang chi tiết thiếu mã kiểm tra dữ liệu khai hoang.', '详情页缺少开荒数据的校验码。', '詳細ページに開拓データの検証コードがありません。');
+const CHANGED_SOURCE_MESSAGE = L('Dữ liệu khai hoang đã thay đổi so với bản đã phát hành.', '开荒数据与已发布版本不一致。', '開拓データが公開済みのバージョンから変更されています。');
+const MISSING_TEAM_MESSAGE = L('Không tìm thấy đúng một đội khai hoang với mã này.', '未找到与此编号唯一对应的开荒阵容。', 'このIDに一致する開拓編成が1件だけ見つかりませんでした。');
 const VERIFY_FAILURES = new Set([MISSING_PIN_MESSAGE, CHANGED_SOURCE_MESSAGE, MISSING_TEAM_MESSAGE]);
 
 const decoder = new TextDecoder();
@@ -101,7 +101,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     body.replaceChildren();
     if (badges) { badges.replaceChildren(); badges.hidden = true; }
     status.hidden = false;
-    const retry = retryable ? el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试')) : null;
+    const retry = retryable ? el('button', {id: 'team-detail-retry', class: 'detail-action', type: 'button'}, L('Thử lại', '重试', '再試行')) : null;
     retry?.addEventListener('click', () => { if (!pending) load(); });
     status.replaceChildren(el('div', {class: 'error', role: 'alert'}, [
       el('p', {}, message),
@@ -114,8 +114,8 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     const link = el('a', {
       id: 'team-detail-default-variant', class: 'detail-link',
       href: khaiHoangDetailVariantUrl(location.href, ''),
-    }, L('Xem cấu hình mặc định', '查看默认配置'));
-    showError(L(`Cấu hình “${variantId}” không thuộc đội này.`, `配置“${variantId}”不属于此阵容。`), {actions: [link], retryable: false});
+    }, L('Xem cấu hình mặc định', '查看默认配置', '既定の構成を見る'));
+    showError(L(`Cấu hình “${variantId}” không thuộc đội này.`, `配置“${variantId}”不属于此阵容。`, `構成「${variantId}」はこの編成に属していません。`), {actions: [link], retryable: false});
   };
 
   const applyVariant = (variantId) => {

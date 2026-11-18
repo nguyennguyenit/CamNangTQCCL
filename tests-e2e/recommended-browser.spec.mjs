@@ -1128,3 +1128,51 @@ test('the ongoing source season is marked independently of the selected season',
   await page.goto('/zh/doi-chuan/');
   await expect(status).toHaveText('进行中');
 });
+
+test('nguồn JP: trang mùa PK-S26 hiện tier JP trên đúng các đội khớp; facet nguồn lọc, đếm theo mùa và giữ qua reload',async({page,request})=>{
+  const {seasons,index}=await referenceData(request);
+  const jpRows=index.records.filter(row=>row.tierSources?.some(item=>item.source==='jp'));
+  const expected=jpRows.filter(row=>row.sourceSeasonId==='pk-s26');
+  // Bảng khớp đã review chỉ có PK-S26: 2 đội khớp đủ + 5 đội cùng tướng khác chiến pháp.
+  expect(expected).toHaveLength(7);
+  expect(jpRows).toHaveLength(expected.length);
+  const heroesOnly=expected.filter(row=>row.tierSources[0].matchKind==='heroes-only').length;
+  expect(heroesOnly).toBe(5);
+
+  await page.goto('/doi-chuan/pk-s26/');
+  const seasonList=page.locator('#section-season-page');
+  const tiered=seasonList.locator('.reference-team-card:has([data-tier-source="jp"])');
+  await expect(tiered).toHaveCount(expected.length);
+  expect((await tiered.evaluateAll(nodes=>nodes.map(node=>node.dataset.sourceConfigId))).sort()).toEqual(expected.map(row=>row.sourceConfigId).sort());
+  await expect(seasonList.locator('.reference-tier-note')).toHaveCount(heroesOnly);
+  await expect(seasonList.locator('.reference-tier-note').first()).toHaveText('khác chiến pháp');
+
+  await page.goto('/doi-chuan/?season=pk-s26');
+  const section=page.locator('#section-team-chuan');
+  await revealAll(section);
+  const chip=section.locator('.fchip[data-focus-key="source:jp"]');
+  await expect(chip).toHaveText(`Tier JP ${expected.length}`);
+  await section.locator('[data-focus-key="source:toggle"]').click();
+  await chip.click();
+  await expect(page).toHaveURL(/[?&]source=jp(?:&|$)/);
+  await revealAll(section);
+  await expect(section.locator('.reference-team-card')).toHaveCount(expected.length);
+  await expect(section.locator('.reference-team-card [data-tier-source="jp"]')).toHaveCount(expected.length);
+  await page.reload();
+  await revealAll(section);
+  await expect(section.locator('.reference-team-card')).toHaveCount(expected.length);
+  await expect(section.locator('.fchip[data-focus-key="source:jp"]')).toHaveAttribute('aria-pressed','true');
+
+  // Mùa khác (mặc định) không có đội mang tier JP nên không có chip JP.
+  expect(seasons.defaultSourceSeasonId).not.toBe('pk-s26');
+  await page.goto('/doi-chuan/');
+  await revealAll(section);
+  await expect(section.locator('.fchip[data-focus-key="source:jp"]')).toHaveCount(0);
+
+  // Trang chi tiết của một đội khớp có khối Tier JP với link bài nguồn.
+  const detailPath=await recommendedPath(request,expected[0].sourceConfigId);
+  await page.goto(detailPath);
+  const block=page.locator('#team-detail-root .detail-tier-source');
+  await expect(block).toContainText(expected[0].tierSources[0].tierRaw);
+  await expect(block.locator('a[href^="https://kazten.com/"]')).toHaveAttribute('rel','noopener noreferrer');
+});

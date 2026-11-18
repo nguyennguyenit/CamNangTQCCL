@@ -1,7 +1,7 @@
 // Mảnh giao diện dùng chung của trang Đội cộng đồng (thiết kế mới, artboard DoiCongDong*Moi): icon nét, nhãn
 // binh chủng, nhãn ngôn ngữ, dòng số liệu, khối ảnh thẻ, nút dạng link. Không gọi API, không giữ trạng thái.
 
-import { L, formatNumber } from './i18n.js';
+import { L, formatNumber, isSiteLocale, normalizeLocale } from './i18n.js';
 import { el, icon, svgNode } from './render.js';
 import { troopLabel } from './community-team-data.js';
 
@@ -53,15 +53,40 @@ export function troopPill(troop) {
 }
 
 /**
+ * Chữ nói ngôn ngữ của văn bản người dùng, viết bằng ngôn ngữ trang; khóa = ngôn ngữ văn bản (mọi phần tử
+ * `SITE_LOCALES`), giá trị = biến thể theo ngôn ngữ trang.
+ */
+const TEXT_LANGUAGE_NAME = {
+  vi: () => L('Tiếng Việt', '越南语', 'ベトナム語'),
+  zh: () => L('Tiếng Trung', '中文', '中国語'),
+  ja: () => L('Tiếng Nhật', '日语', '日本語'),
+};
+const WRITTEN_IN = {
+  vi: () => L('Viết bằng tiếng Việt', '以越南语撰写', 'ベトナム語で記述'),
+  zh: () => L('Viết bằng tiếng Trung', '以中文撰写', '中国語で記述'),
+  ja: () => L('Viết bằng tiếng Nhật', '以日语撰写', '日本語で記述'),
+};
+
+/** Tên ngôn ngữ của văn bản viết bằng `lang` ("Tiếng Việt" / "Tiếng Trung"); mã lạ → `null`. */
+export function textLanguageName(lang) {
+  return isSiteLocale(lang) ? TEXT_LANGUAGE_NAME[lang]() : null;
+}
+
+/** "Viết bằng tiếng …" của văn bản viết bằng `lang`; mã lạ lùi về bản Việt như trước. */
+export function writtenInLabel(lang) {
+  return WRITTEN_IN[normalizeLocale(lang)]();
+}
+
+/**
  * Nhãn ngôn ngữ văn bản người dùng ("VI"/"ZH", ô mono): giữ class `cm-lang-tag` làm móc cho test và CSS cũ;
  * `title` nói rõ ngôn ngữ cho người dùng chuột, chữ hai ký tự đủ cho trình đọc màn hình.
  */
 export function langBadge(lang) {
-  if (lang !== 'vi' && lang !== 'zh') return null;
+  if (!isSiteLocale(lang)) return null;
   return el('abbr', {
     class: 'cm-lang-tag cm-team-lang',
     dataset: { lang },
-    title: lang === 'vi' ? L('Viết bằng tiếng Việt', '以越南语撰写') : L('Viết bằng tiếng Trung', '以中文撰写'),
+    title: writtenInLabel(lang),
   }, lang.toUpperCase());
 }
 
@@ -77,11 +102,11 @@ export function statItem(iconName, value, label, { visible = '' } = {}) {
 /** Dòng "57 điểm · ^42 · v3 · 🏆 9 người thắng · 💬 12" của thẻ đội. */
 export function teamStatsLine(team, className = 'cm-team-stats') {
   return el('p', { class: className }, [
-    el('span', { class: 'cm-team-points-text' }, L(`${formatNumber(team.points)} điểm`, `${formatNumber(team.points)} 分`)),
-    statItem('chevronUp', team.upVotes, L('Bình chọn lên', '赞成票')),
-    statItem('chevronDown', team.downVotes, L('Bình chọn xuống', '反对票')),
-    statItem('trophy', team.evidenceCount, L('Người thắng', '获胜玩家'), { visible: L('người thắng', '人获胜') }),
-    statItem('comment', team.commentCount, L('Bình luận', '评论')),
+    el('span', { class: 'cm-team-points-text' }, L(`${formatNumber(team.points)} điểm`, `${formatNumber(team.points)} 分`, `${formatNumber(team.points)} pt`)),
+    statItem('chevronUp', team.upVotes, L('Bình chọn lên', '赞成票', '賛成票')),
+    statItem('chevronDown', team.downVotes, L('Bình chọn xuống', '反对票', '反対票')),
+    statItem('trophy', team.evidenceCount, L('Người thắng', '获胜玩家', '勝利プレイヤー'), { visible: L('người thắng', '人获胜', '人が勝利') }),
+    statItem('comment', team.commentCount, L('Bình luận', '评论', 'コメント')),
   ]);
 }
 
@@ -101,13 +126,13 @@ export function teamMedia(team) {
   if (!count) {
     return el('div', { class: 'cm-team-card-media', dataset: { empty: 'true' } }, [
       teamIcon('imageOff', 22),
-      el('span', { class: 'cm-team-media-empty-title' }, L('Chưa có ảnh đội', '暂无阵容图片')),
-      el('span', { class: 'cm-team-media-empty-hint' }, L('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看')),
+      el('span', { class: 'cm-team-media-empty-title' }, L('Chưa có ảnh đội', '暂无阵容图片', '編成画像なし')),
+      el('span', { class: 'cm-team-media-empty-hint' }, L('Đội hình vẫn xem được bên dưới', '阵容仍可在下方查看', '編成は下で確認できます')),
     ]);
   }
   return el('div', { class: 'cm-team-card-media' }, [
     el('img', { class: 'cm-team-thumb', src: teamImageUrl(team.id, 0), alt: '', loading: 'lazy', decoding: 'async' }),
-    el('span', { class: 'cm-team-photo-count' }, [teamIcon('image', 14), L(`${count} ảnh`, `${count} 张图`)]),
+    el('span', { class: 'cm-team-photo-count' }, [teamIcon('image', 14), L(`${count} ảnh`, `${count} 张图`, `${count} 枚`)]),
   ]);
 }
 

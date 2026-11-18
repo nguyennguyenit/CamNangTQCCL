@@ -55,19 +55,33 @@ function vietCandidates(rec) {
     .map(normalizeText);
 }
 
-/** Điểm khớp tốt nhất giữa query và 1 record (0..1). */
-function scoreRecord(query, rec, cjk) {
+/** Điểm khớp giữa query chữ Hán và một tên chữ Hán (đã bỏ khoảng trắng), 0..1. */
+function scoreCjk(query, cn) {
+  if (!cn) return 0;
+  if (cn === query) return 1;
+  if (query.length >= 2 && cn.includes(query)) {
+    const lenRatio = query.length / cn.length;
+    const prefixBoost = cn.startsWith(query) ? 0.05 : 0;
+    return Math.min(0.96, 0.84 + 0.14 * lenRatio + prefixBoost);
+  }
+  if (cn.length >= 2 && query.includes(cn)) return 0.9;
+  return ratio(query, cn);
+}
+
+/**
+ * Điểm khớp tốt nhất giữa query và 1 record (0..1). Query chữ Hán so `chinese`; `cjkAliases` (bản ja: bí danh đã nối tên
+ * Nhật) so thêm mọi bí danh có chữ Hán, nên tự dạng Nhật/giản thể in trong ảnh cũng khớp.
+ */
+function scoreRecord(query, rec, cjk, cjkAliases) {
   if (cjk) {
-    const cn = (rec.chinese || "").replace(/\s+/g, "");
-    if (!cn) return 0;
-    if (cn === query) return 1;
-    if (query.length >= 2 && cn.includes(query)) {
-      const lenRatio = query.length / cn.length;
-      const prefixBoost = cn.startsWith(query) ? 0.05 : 0;
-      return Math.min(0.96, 0.84 + 0.14 * lenRatio + prefixBoost);
+    let best = scoreCjk(query, (rec.chinese || "").replace(/\s+/g, ""));
+    if (cjkAliases) {
+      for (const alias of rec.aliases || []) {
+        if (typeof alias !== "string" || !HAS_CJK.test(alias)) continue;
+        best = Math.max(best, scoreCjk(query, alias.replace(/\s+/g, "")));
+      }
     }
-    if (cn.length >= 2 && query.includes(cn)) return 0.9;
-    return ratio(query, cn);
+    return best;
   }
   let best = 0;
   for (const cand of vietCandidates(rec)) {
@@ -92,13 +106,14 @@ function labelConfidence(score) {
 }
 
 /**
- * Khớp 1 query về record tốt nhất trong dict.
+ * Khớp 1 query về record tốt nhất trong dict. `cjkAliases` (mặc định tắt, giữ nguyên kết quả bản vi/zh): query chữ Hán
+ * so cả bí danh chữ Hán của record.
  * @returns {{record, score, confidence, matched}}
  */
 export function matchDict(
   query,
   dict,
-  { threshold = DEFAULT_THRESHOLD, ambiguityMargin = 0.05 } = {},
+  { threshold = DEFAULT_THRESHOLD, ambiguityMargin = 0.05, cjkAliases = false } = {},
 ) {
   const raw = (query || "").trim();
   const cjk = HAS_CJK.test(raw);
@@ -108,7 +123,7 @@ export function matchDict(
   let second = null;
   let secondScore = 0;
   for (const rec of dict) {
-    const s = scoreRecord(q, rec, cjk);
+    const s = scoreRecord(q, rec, cjk, cjkAliases);
     if (s > bestScore) {
       second = best;
       secondScore = bestScore;
@@ -139,16 +154,16 @@ export function matchDict(
 
 /**
  * Tìm nhiều kết quả xếp hạng (cho UI từ điển). Trả [{record, score}] giảm dần.
- * Query rỗng -> trả toàn bộ dict (giữ thứ tự gốc).
+ * Query rỗng -> trả toàn bộ dict (giữ thứ tự gốc). `cjkAliases` như `matchDict` (mặc định tắt).
  */
-export function searchDict(query, dict, { threshold = 0.45, limit = 60 } = {}) {
+export function searchDict(query, dict, { threshold = 0.45, limit = 60, cjkAliases = false } = {}) {
   const raw = (query || "").trim();
   if (!raw) return dict.map((record) => ({ record, score: 0 }));
   const cjk = HAS_CJK.test(raw);
   const q = cjk ? (CJK_OCR_ALIASES[raw] || raw).replace(/\s+/g, "") : normalizeText(raw);
   const scored = [];
   for (const rec of dict) {
-    const s = scoreRecord(q, rec, cjk);
+    const s = scoreRecord(q, rec, cjk, cjkAliases);
     if (s >= threshold) scored.push({ record: rec, score: s });
   }
   scored.sort((a, b) => b.score - a.score);

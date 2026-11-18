@@ -167,7 +167,7 @@ function normalizeLockedTeam(team) {
     ...(typeof team?.teamId === 'string' && team.teamId ? {teamId:team.teamId} : {}),
     ...(typeof team?.configId === 'string' && team.configId ? {configId:team.configId} : {}),
     ...(typeof team?.seasonContext?.scenarioId === 'string' && typeof team?.seasonContext?.rulesetId === 'string' ? {seasonContext:{scenarioId:team.seasonContext.scenarioId,rulesetId:team.seasonContext.rulesetId}} : {}),
-    teamName: String(team?.teamName || team?.name || L("Đội đã được lập", "已组建的队伍")).trim(),
+    teamName: String(team?.teamName || team?.name || L("Đội đã được lập", "已组建的队伍", "編成済みの部隊")).trim(),
     heroes: [...new Set((team?.heroes || []).map((h) => String(h).trim()).filter(Boolean))],
     tactics: [...new Set((team?.tactics || []).map((t) => String(t).trim()).filter(Boolean))],
   };

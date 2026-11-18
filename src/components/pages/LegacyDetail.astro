@@ -13,29 +13,29 @@ import type { SiteLocale } from '../../lib/locale-routes';
 type Props = LegacyDetailProps & { locale: SiteLocale };
 
 const {entry, title, pageLabel, generationId, manifestSha256, legacyTeamsSha256, heroes, savePayload, locale} = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 // Canonical bỏ query/hash: mọi biến thể deep-link vẫn trỏ về đúng một URL chi tiết.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('legacy', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await legacyDetailParts(entry, locale);
-const description = locale === 'zh' ? `现有阵容数据中「${pageLabel}」的原始内容。` : `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`;
+const description = pick(locale, `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`, `现有阵容数据中「${pageLabel}」的原始内容。`, `既存の編成データにある「${pageLabel}」の元の内容です。`);
 const structured = teamDetailJsonLd({
   locale,
   site: Astro.site!,
   path: Astro.url.pathname,
   name: pageLabel,
   description,
-  family: {name: t('Đội khác', '其他阵容'), path: localePath('/doi-khac/', locale)},
+  family: {name: t('Đội khác', '其他阵容', 'その他の編成'), path: localePath('/doi-khac/', locale)},
   heroes,
 });
 ---
 <SiteLayout
-  title={`${pageLabel}${t(' — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 其他阵容 — 三国志战略版攻略手册')}`}
+  title={`${pageLabel}${t(' — Đội khác — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 其他阵容 — 三国志战略版攻略手册', ' — その他の編成 — 三國志 真戦 攻略手帳')}`}
   description={description}
   pageKind="detail"
   activeSection="team-khac"
-  tagline={t('Chi tiết đội khác', '其他阵容详情')}
+  tagline={t('Chi tiết đội khác', '其他阵容详情', 'その他の編成の詳細')}
   canonicalUrl={canonicalUrl}
   ogType="article"
   locale={locale}
@@ -43,10 +43,10 @@ const structured = teamDetailJsonLd({
   <Fragment slot="head">
     {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
-  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表')}>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách đội', '返回阵容列表', '編成一覧へ戻る')}>
     <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {t('Quay lại đội khác', '返回其他阵容')}
+      {t('Quay lại đội khác', '返回其他阵容', 'その他の編成へ戻る')}
     </a>
   </nav>
 

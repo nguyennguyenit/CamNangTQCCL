@@ -22,7 +22,7 @@ let sequence = 0;
  * Mở hộp xác nhận. Trả `Promise<boolean>`: `true` khi người dùng xác nhận và `onConfirm` (nếu có) thành công;
  * `false` khi Huỷ, Escape hoặc bấm nền.
  *
- * - `title`: câu hỏi (tiêu đề hộp), ví dụ `L("Xoá đội “…”?", "删除阵容“…”？")`.
+ * - `title`: câu hỏi (tiêu đề hộp), ví dụ `L("Xoá đội “…”?", "删除阵容“…”？", "編成「…」を削除しますか？")`.
  * - `message`: chuỗi hoặc Node mô tả hậu quả; bỏ trống thì không có `aria-describedby`.
  * - `danger` (mặc định `true`): nút xác nhận nền đỏ + `role="alertdialog"`; `false` dùng nút chính + `role="dialog"`.
  * - `onConfirm` (tuỳ chọn, có thể async): chạy khi bấm xác nhận, hai nút khoá trong lúc chạy. Trả chuỗi khác rỗng
@@ -32,11 +32,11 @@ let sequence = 0;
 export function confirmInPage({
   title,
   message = "",
-  confirmLabel = L("Xoá", "删除"),
-  cancelLabel = L("Huỷ", "取消"),
+  confirmLabel = L("Xoá", "删除", "削除"),
+  cancelLabel = L("Huỷ", "取消", "キャンセル"),
   danger = true,
   onConfirm,
-  errorMessage = L("Chưa thực hiện được. Thử lại sau.", "操作未完成，请稍后重试。"),
+  errorMessage = L("Chưa thực hiện được. Thử lại sau.", "操作未完成，请稍后重试。", "実行できませんでした。しばらくしてからもう一度お試しください。"),
 } = {}) {
   const id = `hop-xac-nhan-${++sequence}`;
   const opener = document.activeElement;

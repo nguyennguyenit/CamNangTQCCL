@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { decodeCursor, encodeCursor } from "../src/http";
 import { requestOrigin, trustedOrigins, type Env } from "../src/env";
-import { parseHeroes, parseLang, parsePageKey, sniffImageType } from "../src/validate";
+import { LANGS, parseHeroes, parseLang, parsePageKey, sniffImageType } from "../src/validate";
 import { createHarness, type ApiJson } from "./fakes";
 
 describe("pageKey", () => {
@@ -24,10 +24,15 @@ describe("pageKey", () => {
 });
 
 describe("lang + tướng", () => {
-  it("chỉ vi|zh", () => {
-    expect(parseLang("zh")).toBe("zh");
+  it("chỉ các ngôn ngữ trong LANGS (vi|zh|ja)", () => {
+    expect(LANGS).toEqual(["vi", "zh", "ja"]);
+    for (const lang of LANGS) expect(parseLang(lang)).toBe(lang);
     expect(() => parseLang("en")).toThrow(expect.objectContaining({ code: "invalid_lang" }));
+    expect(() => parseLang("ko")).toThrow(expect.objectContaining({ code: "invalid_lang", message: "lang phải là vi, zh hoặc ja" }));
     expect(() => parseLang("zh-Hans")).toThrow();
+    expect(() => parseLang("JA")).toThrow();
+    expect(() => parseLang(["ja"])).toThrow();
+    expect(() => parseLang(undefined)).toThrow();
   });
 
   it("mảng tướng tối đa 5, mỗi tên ≤ 20 ký tự, không trùng", () => {
