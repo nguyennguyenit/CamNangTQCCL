@@ -69,8 +69,8 @@ export function createTokenPanel({ api = defaultApi, closeIcon, now = () => Date
     el("label", { class: "cm-label", for: "rt-token-secret" }, L("Token mới", "新令牌")),
     el("div", { class: "rt-token-secret-row" }, [secretInput, copyButton]),
     el("p", { id: "rt-token-secret-help", class: "rt-field-help" }, L(
-      "Sao chép ngay: token chỉ hiện một lần. Lưu vào nơi an toàn (vd. ak-vault), không dán lên chat hay repo.",
-      "请立即复制：令牌只显示一次。请保存到安全位置（如 ak-vault），不要贴到聊天或代码库。",
+      "Sao chép ngay: token chỉ hiện một lần. Lưu vào nơi an toàn (vd. trình quản lý mật khẩu), không dán lên chat hay repo.",
+      "请立即复制：令牌只显示一次。请保存到安全位置（如密码管理器），不要粘贴到聊天或代码库中。",
     )),
   ]);
 
@@ -143,8 +143,8 @@ export function createTokenPanel({ api = defaultApi, closeIcon, now = () => Date
       el("button", { class: "rt-icon-btn rt-dialog-close", type: "button", "data-rt-dialog-close": "", "aria-label": L("Đóng", "关闭") }, [closeIcon?.()]),
     ]),
     el("p", { class: "rt-dialog-lead" }, L(
-      ["Cho công cụ tự động ghi lượt quay gói Danh tướng PK vào tracker của bạn qua ", el("code", {}, "POST /api/recruit/pulls"), ". Token chỉ có quyền ghi lượt quay."],
-      ["允许自动化工具通过 ", el("code", {}, "POST /api/recruit/pulls"), " 将 PK名将招募 的抽卡记录写入你的追踪器。令牌仅有写入抽卡记录的权限。"],
+      ["Cho công cụ tự động ghi lượt quay gói Danh tướng PK vào Theo dõi chiêu mộ của bạn qua ", el("code", {}, "POST /api/recruit/pulls"), ". Token chỉ có quyền ghi lượt quay."],
+      ["允许自动化工具通过 ", el("code", {}, "POST /api/recruit/pulls"), " 将 PK 名将招募的抽卡次数写入你的招募记录。令牌仅有写入抽卡次数的权限。"],
     )),
     reveal,
     el("div", { class: "rt-field-row" }, [
