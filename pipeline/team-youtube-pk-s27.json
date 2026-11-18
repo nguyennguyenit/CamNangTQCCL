@@ -34,7 +34,26 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": [
+                "Man Dũng Phi Dũng"
+              ]
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": [
+                "Võ Lược"
+              ]
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": [
+                "Phân Hiểm"
+              ]
+            }
+          ],
           "note": null
         },
         {
@@ -54,7 +73,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -74,7 +106,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -127,7 +172,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -147,7 +205,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -167,7 +238,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -632,7 +716,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -652,7 +749,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Chuyển · của Hình Nhất Trận (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -672,7 +782,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -1028,7 +1151,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chia Nhỏ Đánh Nhanh",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1048,7 +1184,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -1068,7 +1217,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -1387,7 +1549,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1407,7 +1582,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1427,7 +1615,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Chuyển · của Hình Nhất Trận (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -1578,7 +1779,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1598,7 +1812,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1618,7 +1845,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -1742,7 +1982,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1762,7 +2015,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -1782,7 +2048,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -2003,7 +2282,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2025,7 +2317,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2045,7 +2350,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -2181,7 +2499,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Nhìn Rõ Mồn Một",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2203,7 +2534,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2225,7 +2569,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -2531,7 +2888,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Nhìn Rõ Mồn Một",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2551,7 +2921,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -2624,7 +3003,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2644,7 +3036,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2664,7 +3069,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -2712,7 +3130,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Hợp Biến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2732,7 +3159,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2752,7 +3192,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -2800,7 +3253,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Thuyền Cỏ Mượn Tên (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -2820,7 +3286,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -2840,7 +3319,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -3047,7 +3539,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tránh Thế Mạnh Của Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3067,7 +3572,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3224,7 +3742,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3244,7 +3775,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3264,7 +3808,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -3312,7 +3869,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3332,7 +3902,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3352,7 +3935,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -3664,7 +4260,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3684,7 +4293,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3704,7 +4326,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -3901,7 +4536,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3921,7 +4569,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Hành Động Theo Thời",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -3941,7 +4602,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -4264,7 +4938,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4284,7 +4971,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4304,7 +5004,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Chủ",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -4367,7 +5080,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4387,7 +5113,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4409,7 +5148,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -4555,7 +5307,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4575,7 +5340,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4595,7 +5373,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -4643,7 +5434,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4663,7 +5467,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4683,7 +5500,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -4903,7 +5733,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4923,7 +5766,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -4945,7 +5801,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5077,7 +5946,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5097,7 +5979,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5119,7 +6014,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5182,7 +6090,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5204,7 +6125,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5224,7 +6158,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5272,7 +6219,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5292,7 +6252,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5312,7 +6285,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5362,7 +6348,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5382,7 +6381,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5402,7 +6414,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -5636,7 +6661,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5656,7 +6694,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5678,7 +6729,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5724,7 +6788,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5744,7 +6821,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5766,7 +6856,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -5814,7 +6917,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5834,7 +6950,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -5854,7 +6983,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Chủ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -6093,7 +7235,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6113,7 +7268,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Giá Tình Hình",
+              "alternatives": []
+            },
+            {
+              "name": "Khai Hạp",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6135,7 +7303,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -6183,7 +7364,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6205,7 +7399,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Giá Tình Hình",
+              "alternatives": []
+            },
+            {
+              "name": "Khai Hạp",
+              "alternatives": []
+            },
+            {
+              "name": "Chia Lời",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6227,7 +7434,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -6695,7 +7915,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Cương Nhu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6715,7 +7948,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6735,7 +7981,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -6783,7 +8042,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Cương Nhu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6803,7 +8075,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6823,7 +8108,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -6871,7 +8169,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6891,7 +8202,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -6911,7 +8235,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7047,7 +8384,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            },
+            {
+              "name": "Cương Nhu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7067,7 +8417,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7087,7 +8450,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7135,7 +8511,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7155,7 +8544,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7177,7 +8579,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7235,7 +8650,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7255,7 +8683,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7275,7 +8716,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7410,7 +8864,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7430,7 +8897,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7450,7 +8930,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7498,7 +8991,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7518,7 +9024,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7538,7 +9057,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7815,7 +9347,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7835,7 +9380,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7855,7 +9413,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7903,7 +9474,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7923,7 +9507,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -7943,7 +9540,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Diệu Toán",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -7991,7 +9601,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tinh Thần Sảng Khoái",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8033,7 +9652,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8253,7 +9885,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tinh Thần Sảng Khoái",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8293,7 +9934,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8339,7 +9993,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tinh Thần Sảng Khoái",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8361,7 +10024,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8381,7 +10057,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8429,7 +10118,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8449,7 +10151,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8469,7 +10184,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8527,7 +10255,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8547,7 +10288,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Thần Cơ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8567,7 +10321,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            },
+            {
+              "name": "Xem Bói",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8615,7 +10382,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8711,7 +10491,26 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": [
+                "Kế Sách Dụ Địch"
+              ]
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": [
+                "Khép Hờ"
+              ]
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": [
+                "Khích Lệ Lòng Quân"
+              ]
+            }
+          ],
           "note": null
         },
         {
@@ -8751,7 +10550,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Chủ",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Viện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -8819,7 +10631,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Vào Chỗ Hiểm",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8887,7 +10708,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8907,7 +10741,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -8927,7 +10774,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -9063,7 +10923,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9083,7 +10956,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9188,7 +11070,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Chiến pháp ghi tên Nhật, chưa xác định được bản Việt"
         }
       ],
@@ -9246,7 +11141,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9266,7 +11174,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9286,7 +11207,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -9507,7 +11441,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9529,7 +11476,22 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": [
+                "Giấu Đao"
+              ]
+            }
+          ],
           "note": null
         },
         {
@@ -9551,7 +11513,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -9601,7 +11576,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9621,7 +11609,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Khai Hạp",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9641,7 +11642,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Thuyền Cỏ Mượn Tên (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -9958,7 +11972,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -9980,7 +12007,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10004,7 +12044,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -10050,7 +12103,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10070,7 +12136,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Chia Lời",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10090,7 +12169,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tinh Thần Sảng Khoái",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Chuyển · của Hình Nhất Trận (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -10138,7 +12230,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10158,7 +12263,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Chia Lời",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -10178,7 +12296,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -10490,7 +12621,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10510,7 +12654,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Diệu Toán",
+              "alternatives": []
+            },
+            {
+              "name": "Thần Cơ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10530,7 +12687,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -10581,7 +12751,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10604,7 +12787,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Chia Lời",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -10624,7 +12820,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tinh Thần Sảng Khoái",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -10672,7 +12881,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Hành Động Theo Thời",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10692,7 +12914,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Khai Hạp",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10712,7 +12947,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Chuyển · của Hình Nhất Trận (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -10946,7 +13194,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Nhìn Rõ Mồn Một",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -10966,7 +13227,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Đoạt Hồn Hiệp Phách (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -10986,7 +13260,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -11042,7 +13329,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -11062,7 +13362,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -11082,7 +13395,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -11622,7 +13948,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -11642,7 +13981,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -11662,7 +14014,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12006,7 +14371,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12181,7 +14559,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12203,7 +14594,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12223,7 +14627,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12276,7 +14693,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12298,7 +14728,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12318,7 +14761,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12371,7 +14827,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12391,7 +14860,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12411,7 +14893,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12459,7 +14954,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12479,7 +14987,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12499,7 +15020,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12562,7 +15096,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12582,7 +15129,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12602,7 +15162,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Quy Thuận",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Cắt Xương Trị Độc (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -12832,7 +15405,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12852,7 +15438,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -12872,7 +15471,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -12940,7 +15552,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Cắt Xương Trị Độc (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -12960,7 +15585,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -13282,7 +15920,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13302,7 +15953,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13322,7 +15986,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -13368,7 +16045,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13388,7 +16078,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13408,7 +16111,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -13456,7 +16172,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13476,7 +16205,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13498,7 +16240,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Biến Đá Thành Vàng (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -13559,7 +16314,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13579,7 +16347,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13599,7 +16380,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Cương Nhu",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -13647,7 +16441,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13669,7 +16476,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -13689,7 +16509,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14006,7 +16839,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14026,7 +16872,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14046,7 +16905,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14109,7 +16981,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14129,7 +17014,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Xem Bói",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14149,7 +17047,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Biến Đá Thành Vàng (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -14303,7 +17214,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Thuyền Cỏ Mượn Tên (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -14323,7 +17247,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14343,7 +17280,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14391,7 +17341,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14411,7 +17374,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14431,7 +17407,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14484,7 +17473,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14504,7 +17506,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14524,7 +17539,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14660,7 +17688,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14680,7 +17721,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14700,7 +17754,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -14748,7 +17815,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -14768,7 +17848,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Bố Trận Chờ Đợi",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Thuyền Cỏ Mượn Tên (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -14788,7 +17881,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15067,7 +18173,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Hành Động Theo Thời",
+              "alternatives": []
+            },
+            {
+              "name": "Quy Thuận",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15087,7 +18206,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Hành Động Theo Thời",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15107,7 +18239,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Diệu Toán",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15247,7 +18392,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15267,7 +18425,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15287,7 +18458,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15375,7 +18559,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15577,7 +18774,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15597,7 +18807,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15617,7 +18840,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15847,7 +19083,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15867,7 +19116,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15887,7 +19149,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -15937,7 +19212,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15957,7 +19245,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -15977,7 +19278,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -16362,7 +19676,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16382,7 +19709,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16402,7 +19742,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -16455,7 +19808,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16475,7 +19841,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16495,7 +19874,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -16543,7 +19935,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Quy Thuận",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16563,7 +19968,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16583,7 +20001,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -16842,7 +20273,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16862,7 +20306,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16882,7 +20339,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -16935,7 +20405,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16955,7 +20438,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -16975,7 +20471,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Chủ",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -17023,7 +20532,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17043,7 +20565,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17063,7 +20598,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -17111,7 +20659,22 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Nhìn Rõ Mồn Một",
+              "alternatives": [
+                "Tam Quân Chi Chúng"
+              ]
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17133,7 +20696,26 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": [
+                "Lấy Võ Dẹp Loạn"
+              ]
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": [
+                "Thần Cơ"
+              ]
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": [
+                "Tướng Uy"
+              ]
+            }
+          ],
           "note": null
         },
         {
@@ -17153,7 +20735,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -17378,7 +20973,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": "Một chiến pháp đọc được tên nhưng chưa có trong dữ liệu (có thể đọc nhầm Độc Hành Phó Đấu), chưa xác định được bản Việt"
         },
         {
@@ -17398,7 +21006,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17418,7 +21039,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -17484,7 +21118,16 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Dĩ Trực Báo Oán",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17706,7 +21349,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Giáp Sắt",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17726,7 +21382,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Xem Bói",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17742,7 +21411,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Vào Chỗ Hiểm",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Thần Cơ",
+              "alternatives": []
+            }
+          ],
           "note": "Chiến pháp chưa đọc được từ video"
         }
       ],
@@ -17790,7 +21472,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17810,7 +21505,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17830,7 +21538,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -17913,7 +21634,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17933,7 +21667,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -17953,7 +21700,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -18104,7 +21864,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18124,7 +21897,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Thuyền Cỏ Mượn Tên (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -18144,7 +21930,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -18212,7 +22011,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18232,7 +22044,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18252,7 +22077,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -18486,7 +22324,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18506,7 +22357,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18526,7 +22390,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -18663,7 +22540,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18683,7 +22573,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Mưu Kế Sâu Xa",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18703,7 +22606,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -18831,7 +22747,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18851,7 +22780,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Tinh Chuẩn",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -18871,7 +22813,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -19027,7 +22982,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chia Nhỏ Đánh Nhanh",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19047,7 +23015,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19067,7 +23048,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -19142,7 +23136,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19164,7 +23171,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19184,7 +23204,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -19703,7 +23736,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19723,7 +23769,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19743,7 +23802,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -19959,7 +24031,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -19981,7 +24066,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20001,7 +24099,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -20049,7 +24160,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            },
+            {
+              "name": "Nghĩa Dũng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20069,7 +24193,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         },
         {
@@ -20089,7 +24226,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -20152,7 +24302,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20172,7 +24335,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Giá Tình Hình",
+              "alternatives": []
+            },
+            {
+              "name": "Khai Hạp",
+              "alternatives": []
+            },
+            {
+              "name": "Chia Lời",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20192,7 +24368,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -20295,7 +24484,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20315,7 +24517,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Cứu Chủ",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20335,7 +24550,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Cương Nhu",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -20641,7 +24869,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -20787,7 +25028,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20807,7 +25061,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Diệu Toán",
+              "alternatives": []
+            },
+            {
+              "name": "Xem Bói",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20827,7 +25094,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -20968,7 +25248,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -20988,7 +25281,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Bất Ngờ Thắng",
+              "alternatives": []
+            },
+            {
+              "name": "Thiện Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Trì Trọng",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21008,7 +25314,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Diệu Toán",
+              "alternatives": []
+            },
+            {
+              "name": "Xem Bói",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -21066,7 +25385,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21086,7 +25418,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Phá Vòng Vây",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21106,7 +25451,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tấn Công Điểm Yếu",
+              "alternatives": []
+            },
+            {
+              "name": "Tản Tiên",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -21349,7 +25707,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Quy Thuận",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21373,7 +25744,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21393,7 +25777,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -21446,7 +25843,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21466,7 +25876,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21486,7 +25909,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -21707,7 +26143,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Man Dũng Phi Dũng",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21727,7 +26176,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21747,7 +26209,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kỳ Chính Tương Sinh",
+              "alternatives": []
+            },
+            {
+              "name": "Văn Thao",
+              "alternatives": []
+            },
+            {
+              "name": "Giấu Đao",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -21890,7 +26365,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21912,7 +26400,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Đánh Sau Trúng Trước",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -21932,7 +26433,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Chẩm Qua Tọa Giáp",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -22179,7 +26693,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22201,7 +26728,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Gặp Địch Không Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22221,7 +26761,26 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Yêu Lính Thương Dân",
+              "alternatives": [
+                "Tam Quân Chi Chúng"
+              ]
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": [
+                "Dẫn Quân"
+              ]
+            },
+            {
+              "name": "Phòng Bị",
+              "alternatives": [
+                "Rèn Luyện"
+              ]
+            }
+          ],
           "note": null
         }
       ],
@@ -22294,7 +26853,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22314,7 +26886,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Võ Lược",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22334,7 +26919,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Biết Cách Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Thế Phòng Thủ",
+              "alternatives": []
+            },
+            {
+              "name": "Tĩnh Tâm",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -22392,7 +26990,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Kế Sách Dụ Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Khích Lệ Lòng Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Khép Hờ",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22412,7 +27023,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thắng Sẽ Càng Mạnh",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22432,7 +27056,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Liền Mạch Một Hơi",
+              "alternatives": []
+            },
+            {
+              "name": "Thắng Trận",
+              "alternatives": []
+            },
+            {
+              "name": "Cầm Binh Khí",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -22830,7 +27467,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22850,7 +27500,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22870,7 +27533,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -22938,7 +27614,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22958,7 +27647,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Lấy Võ Dẹp Loạn",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -22980,7 +27682,20 @@
               ]
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Biến Đá Thành Vàng (bản kịch bản), ghi theo chiến pháp gốc; Thẻ ghi bản Chuyển · của Sư Tử Phấn Tấn (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -23226,7 +27941,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23246,7 +27974,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23266,7 +28007,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -23324,7 +28078,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23344,7 +28111,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23364,7 +28144,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Giả Nai Trước Địch",
+              "alternatives": []
+            },
+            {
+              "name": "Bách Chiến",
+              "alternatives": []
+            },
+            {
+              "name": "Tốc Chiến",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -23432,7 +28225,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23617,7 +28423,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23637,7 +28456,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23657,7 +28489,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Không Lộ Tài Năng",
+              "alternatives": []
+            },
+            {
+              "name": "Quỷ Mưu",
+              "alternatives": []
+            },
+            {
+              "name": "Tướng Uy",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
@@ -23793,7 +28638,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23813,7 +28671,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23833,7 +28704,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            }
+          ],
           "note": "Thẻ ghi bản Thác · của Trấn Ách Phòng Cụ (bản kịch bản), ghi theo chiến pháp gốc"
         }
       ],
@@ -23886,7 +28770,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Thích Làm Việc Thiện",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23906,7 +28803,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {
@@ -23926,7 +28836,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Rèn Luyện",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
