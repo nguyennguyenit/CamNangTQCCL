@@ -810,7 +810,7 @@
     "src/components/pages/LookupItemPage.astro": "34f3b8685fb1ae6a171064d8980e3b9f1e62d351b662ae29f6fce32858b2f7dc",
     "src/components/pages/RecommendedDetail.astro": "b595f2f4a47f3a9c9e1fe6f4d4655ca537dbdce6aa1a7354822b08928db011b6",
     "src/components/pages/SectionPage.astro": "36885da4282dbdbafb935c3d950f88008212ac6c73d16f72d17644432378d817",
-    "src/layouts/SiteLayout.astro": "f39cadce1d45b413fb82021d1b743a3fa46e39eb01b0c9f6beb201e8b0dab76f",
+    "src/layouts/SiteLayout.astro": "a53ea66040d74bd31009cc11cf4e155d1fab99eee0bbb60d8e6ef54b43f81aad",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "f641c032dd45e7255f8440a88a1aea21c0c0aa8bd3353e4364d3e939190f53bd",
     "src/lib/lookup-item-pages.ts": "e277f6ec32f8f756227990d145122706c436f01b6ae3d14a7739b8419b76d5a6",
