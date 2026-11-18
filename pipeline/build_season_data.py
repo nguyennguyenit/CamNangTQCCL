@@ -261,8 +261,12 @@ def validate_registry(registry, evidence):
     return scenarios, proofs
 
 
-def build_season_data(registry, evidence, *, configs=None, evaluations=None, content_links=None, legacy_data=None, identity_catalog=None):
-    """Pure candidate build. Consumers may validate further sidecars before write."""
+def build_season_data(registry, evidence, *, configs=None, evaluations=None, content_links=None, legacy_data=None, identity_catalog=None,
+                      qilue_catalog=None, qilue_aliases=None):
+    """Pure candidate build. Consumers may validate further sidecars before write.
+
+    Đội Cùng Tồn bảng 11 cột: `strategyCardIds` phải đúng bằng kết quả nối lại chữ Thẻ Kỳ Lược với `qilue_catalog`
+    (mặc định `data/lookup-catalog.json` đang pin) qua bảng alias đã duyệt; lệch hay tên lạ thì build dừng."""
     scenarios, proofs = validate_registry(registry, evidence)
     extended = any(value is not None for value in (configs, evaluations, content_links))
     if extended and any(value is None for value in (configs, evaluations, content_links)):
@@ -276,6 +280,9 @@ def build_season_data(registry, evidence, *, configs=None, evaluations=None, con
             if legacy_data is None:
                 legacy_data = {name: json.loads((ROOT / 'data' / (name + '.json')).read_text(encoding='utf-8')) for name in ('teams', 'coexist')}
             validate_bundle(configs, evaluations, content_links, scenarios, proofs, legacy_data, identity_catalog)
+            from .coexist_qilue import check_payload_cards, read_aliases, read_catalog
+            check_payload_cards(content_links, read_catalog() if qilue_catalog is None else qilue_catalog,
+                                read_aliases() if qilue_aliases is None else qilue_aliases)
     payloads = {"season-registry.json": public_projection(registry), "season-evidence.json": [public_evidence(proof) for proof in evidence]}
     for name, value in (("season-team-configs.json", configs), ("season-team-evaluations.json", evaluations), ("season-content-links.json", content_links)):
         if value is not None:

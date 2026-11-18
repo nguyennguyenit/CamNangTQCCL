@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "note": "Tên thẻ Kỳ Lược của sheet Cùng Tồn lệch tên client 24.547 trong catalog Kỳ lược (data/lookup-catalog.json). Mỗi alias trỏ đúng một mã qilue-card và ghi chữ Hán của thẻ để build kiểm lại; thêm alias phải được chủ repo duyệt.",
+  "aliases": {
+    "Phong Lang Cư Tế": {
+      "cardId": "qilue-card:phong-lang-cu-tu",
+      "nameZh": "封狼居胥",
+      "source": "Issue #137: sheet ghi 'Phong Lang Cư Tế', client 24.547 ghi 'Phong Lang Cư Tư' (封狼居胥), lệch một chữ (胥 đọc 'Tư')."
+    },
+    "Trấn Giữ Quân Diên": {
+      "cardId": "qilue-card:tri-duyen-quan-the",
+      "nameZh": "治延軍勢",
+      "source": "Issue #137: sheet ghi 'Trấn Giữ Quân Diên', client 24.547 ghi 'Trị Duyên Quân Thế' (治延軍勢), sheet dùng tên khác với client."
+    }
+  }
+}

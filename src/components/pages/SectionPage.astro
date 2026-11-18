@@ -4,7 +4,7 @@
 // (cùng builder với trình duyệt) để có nội dung khi chưa/không chạy JavaScript.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
-import { PRERENDERED_TEAM_SECTIONS, teamSectionParts, type TeamSection } from '../../lib/team-ssr';
+import { PRERENDERED_TEAM_SECTIONS, coexistQilueTableJson, teamSectionParts, type TeamSection } from '../../lib/team-ssr';
 import { ssrStaleGuardScript } from '../../lib/team-section-ssr.js';
 import { seasonDisplayName, seasonPages } from '../../lib/season-pages';
 import { lookupJaNameResolver } from '../../lib/lookup-pages';
@@ -94,6 +94,8 @@ const canonicalUrl = new URL(localePath(page.path, locale), Astro.site);
 const prerendered = PRERENDERED_TEAM_SECTIONS.includes(section) ? await teamSectionParts(section as TeamSection, locale) : null;
 // Mùa cũ có trang riêng (`/doi-chuan/<mã mùa>/`): link thật ở NGOÀI `#section-team-chuan`, vùng mà trình duyệt dựng lại.
 const otherSeasons = section === 'team-chuan' ? (await seasonPages()).pages : [];
+// Cùng Tồn: bảng tra Thẻ Kỳ Lược mà js/recommended-reference-render.js đọc khi dựng lại thẻ ở trình duyệt.
+const coexistQilueJson = section === 'coexist' ? await coexistQilueTableJson() : null;
 ---
 <SiteLayout
   title={page.title}
@@ -106,6 +108,7 @@ const otherSeasons = section === 'team-chuan' ? (await seasonPages()).pages : []
   <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source} set:html={prerendered?.html}></section>
   {/* Thân dựng sẵn là trạng thái mặc định: URL/kiểu hiển thị/snapshot khác mặc định thì ẩn đến khi js/app.js dựng đúng. */}
   {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
+  {coexistQilueJson && <script is:inline type="application/json" id="coexist-qilue-table" set:html={coexistQilueJson}></script>}
   {otherSeasons.length > 0 && (
     <nav class="other-seasons" data-other-seasons aria-labelledby="other-seasons-heading">
       <h2 id="other-seasons-heading" class="other-seasons-heading">{t('Các mùa khác', '其他赛季', 'ほかのシーズン')}</h2>

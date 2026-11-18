@@ -1,8 +1,11 @@
 """Pure canonical fingerprints and seasonal configuration/link contracts."""
 import hashlib
+import re
 
 from pipeline.common import canonical_json
 
+# Mã thẻ kỳ lược của catalog Tra cứu (`qilue-card:<slug>`); cùng mẫu với `QILUE_CARD_ID` của js/season-context.js.
+QILUE_CARD_ID = re.compile(r'qilue-card:[a-z0-9]+(?:-[a-z0-9]+)*')
 CONFIG_FIELDS = ('schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId', 'unitTypes', 'heroSlots', 'requirements', 'effectBundles')
 
 
@@ -31,12 +34,18 @@ def config_fingerprint(config):
     return fingerprint({key: config[key] for key in CONFIG_FIELDS})
 
 
+# Trường định danh/tọa độ và projection tính từ catalog (mã Thẻ Kỳ Lược Cùng Tồn) không phải nội dung nguồn:
+# bỏ khỏi fingerprint để bản đồ record đã duyệt chỉ đổi khi chữ nguồn đổi. Giữ cùng tập với `contentFingerprintProjection`
+# của js/season-context.js.
+FINGERPRINT_EXCLUDED = ('sourceLocator', 'contentFingerprint', 'recordId', 'strategyCardIds')
+
+
 def content_fingerprint(value):
     def project(item):
         if isinstance(item, list):
             return [project(child) for child in item]
         if isinstance(item, dict):
-            return {key: project(child) for key, child in item.items() if key not in ('sourceLocator', 'contentFingerprint', 'recordId')}
+            return {key: project(child) for key, child in item.items() if key not in FINGERPRINT_EXCLUDED}
         return item
     return fingerprint(project(value))
 
@@ -348,10 +357,18 @@ def validate_source_body(body,seen_records):
     effect_fields=('unitTacticEffectsRaw','strategyCardsRaw')
     shapes=set()
     for team in teams:
-        record(team,team_fields,effect_fields)
+        record(team,team_fields,effect_fields+('strategyCardIds',))
         present=[field for field in effect_fields if field in team]
         if len(present)!=1:
             raise ValueError('source team requires exactly one team effect field')
+        # Mã Thẻ Kỳ Lược (projection của `strategyCardsRaw`): chỉ ở đội bảng 11 cột, mảng mã `qilue-card:*` không trùng.
+        # Việc mã khớp chữ nguồn và catalog do `pipeline/coexist_qilue.check_payload_cards` kiểm lúc publish.
+        if 'strategyCardIds' in team:
+            cards=team['strategyCardIds']
+            if (present[0]!='strategyCardsRaw' or not isinstance(team['strategyCardsRaw'],str) or not team['strategyCardsRaw'].strip()
+                    or not isinstance(cards,list) or not cards or not all(isinstance(card,str) and QILUE_CARD_ID.fullmatch(card) for card in cards)
+                    or len(set(cards))!=len(cards)):
+                raise ValueError('invalid source strategy card ids')
         shapes.add(present[0])
         key=identifier(team['recordId'])
         if key in seen_records:

@@ -10,7 +10,7 @@ import { createRawNameResolver, loadWebsiteDisplay, localizeData } from '../../j
 import { treeToHtml, treeToText } from '../../js/view-tree.js';
 import { projectRecommendedRows, setZhNameResolver } from '../../js/recommended-reference-state.js';
 import { setTeamRouteHandles } from '../../js/team-detail-navigation.js';
-import { detailBadges, legacyOriginalDetailContent, qilueLookupTable, recommendedTeamDetailContent } from '../../js/recommended-reference-render.js';
+import { detailBadges, legacyOriginalDetailContent, qilueLookupTable, recommendedTeamDetailContent, setCoexistQilueTable } from '../../js/recommended-reference-render.js';
 import { khaihoangDetailTrees } from '../../js/render.js';
 import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees, seasonPageTrees } from './team-section-ssr.js';
 import { loadSeasonModel } from '../../js/season-ui-state.js';
@@ -206,6 +206,26 @@ function seasonModel() {
   })();
 }
 
+let coexistQilueJson: Promise<string> | undefined;
+
+/**
+ * Bảng tra Thẻ Kỳ Lược của thẻ Cùng Tồn từ lookup-catalog.json đã pin: đăng ký cho builder (`setCoexistQilueTable`) và
+ * trả JSON gọn (mã, tên vi/zh, loại, độ hiếm) mà trang `/cung-ton/` nhúng ở `#coexist-qilue-table` để trình duyệt dựng
+ * lại thẻ khi đổi mùa/nhóm bằng đúng bảng của bản dựng sẵn.
+ */
+export function coexistQilueTableJson(): Promise<string> {
+  return coexistQilueJson ??= (async () => {
+    const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
+    const rows = Array.isArray(catalog?.qilueCards) ? catalog.qilueCards : [];
+    const compact = {
+      qilueStrategies: [],
+      qilueCards: rows.map(({ id, nameVi, nameZh, type, rarity }: Json) => ({ id, nameVi, nameZh, type, rarity })),
+    };
+    setCoexistQilueTable(qilueLookupTable(compact));
+    return JSON.stringify(compact).replace(/</g, '\\u003c');
+  })();
+}
+
 export interface TeamSectionParts {
   /** HTML thân của mục ở trạng thái mặc định (nằm trong `#section-<mục>`). */
   html: string;
@@ -222,7 +242,10 @@ export async function teamSectionParts(section: TeamSection, locale: SiteLocale)
     const rows = parse(env.website.recommended.files[family === 'other' ? 'other-teams.json' : 'index.json']).records;
     return { html: html(recommendedSectionTrees({ family, rows, registry, locale })), source };
   }
-  if (section === 'coexist') return { html: html(coexistSectionTrees({ model: await seasonModel(), locale })), source };
+  if (section === 'coexist') {
+    await coexistQilueTableJson();
+    return { html: html(coexistSectionTrees({ model: await seasonModel(), locale })), source };
+  }
   return { html: html(khaihoangSectionTrees({ data: await localizedData('khaihoang', locale), locale })), source };
 }
 
@@ -267,6 +290,7 @@ export interface CoexistScenarioText {
 /** Chữ thuần của mọi nhóm Cùng Tồn theo từng mùa đã duyệt (llms.txt). */
 export async function coexistScenarioTexts(locale: SiteLocale): Promise<CoexistScenarioText[]> {
   await prepare();
+  await coexistQilueTableJson();
   const blocks = coexistScenarioBlocks({ model: await seasonModel(), locale }) as Array<{ scenarioId: string; label: string; query: string; groups: Tree[] }>;
   return blocks.map((block) => ({ ...block, groups: block.groups.map((tree) => treeToText(tree)) }));
 }

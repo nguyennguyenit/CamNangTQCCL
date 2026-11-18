@@ -10977,6 +10977,51 @@ body[data-page-section="khaihoang"] .layout {
   white-space: pre-line;
 }
 
+/* Ghi chú phụ của tên đội (dòng trong ngoặc của nguồn, vd. "Kỹ Năng Quân Sư Điêu Thuyền") cạnh nhãn cấp đội. */
+.coexist-team-note {
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+/* Thẻ Kỳ Lược ở chân thẻ Cùng Tồn: cùng ô thẻ của Đội chuẩn (`.detail-qilue-card`, tô theo loại thẻ, nhãn loại + Hiếm,
+   link Tra cứu) nhưng xếp dọc từng hiệp vì thẻ đội hẹp; cột nhãn "Hiệp N" thẳng hàng qua subgrid. */
+.coexist-qilue {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  padding: var(--space-12) 0;
+}
+
+.coexist-qilue-rounds {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-6) var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coexist-qilue-round {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.coexist-qilue .detail-qilue-card {
+  flex-direction: row;
+  align-items: center;
+  min-height: 0;
+  padding: var(--space-6) var(--space-10);
+}
+
+.coexist-qilue .detail-qilue-card-name {
+  font: var(--type-small);
+  font-weight: var(--weight-semibold);
+}
+
 .coexist-card-strategy {
   flex: 1 1 auto;
   min-width: 0;
