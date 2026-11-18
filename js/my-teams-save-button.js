@@ -9,7 +9,8 @@
 
 import { loadSession, signIn, describeError } from "./community-api.js";
 import { L, localePath } from "./i18n.js";
-import { completePendingSave, peekPendingSave, peekPendingUnresolved, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
+import { track } from "./analytics.js";
+import { completePendingSave, peekPendingSave, peekPendingTrackSource, peekPendingUnresolved, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
 import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, openDialog, showToast } from "./my-teams-ui.js";
 import { el } from "./render.js";
 
@@ -18,6 +19,17 @@ const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容
 
 /** `draft.id` theo nguồn: sinh lần đầu, giữ tới khi server xác nhận (thử lại không sinh bản trùng). */
 const draftIds = new Map();
+
+/** Nguồn đo lường (`save_my_team.source`) theo loại nguồn của đội nháp; nút của Gợi ý đội truyền nguồn riêng (đội của nó dựng từ nguồn Đội chuẩn/Đội khác). */
+const TRACK_SOURCE_BY_KIND = { recommended: "doi-chuan", legacy: "doi-khac", khaihoang: "khai-hoang", analyze: "soi-doi" };
+/** Nguồn hợp lệ của `save_my_team`: bốn nguồn suy từ đội nháp cộng nguồn riêng của Gợi ý đội. */
+const TRACK_SOURCES = new Set([...Object.values(TRACK_SOURCE_BY_KIND), "goi-y-doi"]);
+export const trackSourceOf = (draft) => TRACK_SOURCE_BY_KIND[draft?.source?.kind] ?? "";
+/** Nguồn đọc lại từ sessionStorage không đáng tin: ngoài tập hợp lệ (hoặc vắng, mục cũ) thì suy lại từ đội nháp. */
+export const resolveTrackSource = (stored, draft) => (TRACK_SOURCES.has(stored) ? stored : trackSourceOf(draft));
+export const trackSave = (source) => {
+  if (TRACK_SOURCES.has(source)) track("save_my_team", { source });
+};
 
 /**
  * Hàm dựng cho trang có payload nhúng (`#team-save-payload`): đọc biến thể LÚC GỌI từ `?variant` của URL hiện tại.
@@ -38,14 +50,14 @@ export function embeddedBuilder({ doc = document, location = globalThis.location
 }
 
 /** Gắn `draft.id` ổn định cho nguồn; trả bản dựng kèm khóa nguồn. */
-async function prepare(build) {
+async function prepare(build, source = "") {
   const built = await build();
   const { newTeamId } = await import("./my-teams-sources.js");
   const key = `${built.draft.source.kind}:${built.draft.source.key}`;
   const pendingId = pendingIdForSource(key);
   if (pendingId) draftIds.set(key, pendingId);
   else if (!draftIds.has(key)) draftIds.set(key, newTeamId());
-  return { ...built, key, draft: { ...built.draft, id: draftIds.get(key) } };
+  return { ...built, key, trackSource: source || trackSourceOf(built.draft), draft: { ...built.draft, id: draftIds.get(key) } };
 }
 
 const openTeamsHref = () => localePath("/doi-cua-toi/");
@@ -122,6 +134,7 @@ async function openSaveDialog(prep) {
     if (result.ok) {
       completePendingSave(result);
       draftIds.delete(prep.key);
+      trackSave(prep.trackSource);
       close();
       successToast(result.team, prep.unresolved);
       return;
@@ -136,12 +149,12 @@ async function openSaveDialog(prep) {
 
 /* ---------- Bấm nút ---------- */
 
-async function onSave(build) {
-  const prep = await prepare(build);
+async function onSave(build, source) {
+  const prep = await prepare(build, source);
   const user = await loadSession({ probe: true });
   if (!user) {
     // Rời trang sang Google: cất nháp (đã có id) để trang quay lại lưu đúng một lần, vào hộp chính theo nhóm mặc định của nguồn.
-    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` }, { unresolved: prep.unresolved });
+    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` }, { unresolved: prep.unresolved, trackSource: prep.trackSource });
     await signIn();
     return;
   }
@@ -163,13 +176,13 @@ const failedToast = (error, retry) =>
  * nút xuất hiện: trang Gợi ý đội chỉ dựng nút sau khi người dùng bấm "Gợi ý", mà trang quay về từ OAuth chưa có kết quả.
  * @returns {HTMLButtonElement}
  */
-export function createSaveButton({ build, className = "detail-action mt-save-btn" }) {
+export function createSaveButton({ build, className = "detail-action mt-save-btn", source = "" }) {
   const button = el("button", { type: "button", class: className, dataset: { mtSave: "" } }, SAVE_LABEL());
   const run = async () => {
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
     try {
-      await onSave(build);
+      await onSave(build, source);
     } catch (error) {
       failedToast(error, run);
     } finally {
@@ -199,6 +212,7 @@ async function attemptPending() {
   const draft = peekPendingSave();
   if (!draft) return;
   const unresolved = peekPendingUnresolved();
+  const trackSource = resolveTrackSource(peekPendingTrackSource(), draft);
   try {
     if (!(await loadSession({ probe: true }))) return;
     const api = await myTeamsApi({ dialog: true });
@@ -206,6 +220,7 @@ async function attemptPending() {
     const result = await api.saveTeam(draft, { boxId: MAIN_BOX });
     if (completePendingSave(result)) {
       draftIds.delete(`${draft.source.kind}:${draft.source.key}`);
+      trackSave(trackSource);
       successToast(result.team, unresolved);
       return;
     }

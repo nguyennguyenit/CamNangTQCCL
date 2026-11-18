@@ -18622,6 +18622,133 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-small);
 }
 
+/* ===== Thanh đồng ý phân tích (GA4 + Consent Mode v2; markup ở SiteLayout, hành vi ở js/consent-banner.js) =====
+   Thanh cố định ở đáy khung nhìn, chỉ hiện khi trang bật GA và chưa có lựa chọn (hoặc mở lại từ nút "Cài đặt cookie"
+   ở footer). js/consent-banner.js ghi chiều cao thật vào `--consent-banner-height` và `data-consent-banner` trên <html>,
+   nên khi thanh mở: cuối trang có đệm (`body`) và `scroll-padding` đúng bằng chiều cao thanh (footer, nút Tab tới và đích
+   cuộn không nằm dưới thanh); nút chuyển nhanh, danh sách của nó, thanh dính đáy (Đối chiếu, thao tác kho) và các thông báo
+   nổi nâng lên trên thanh. Màu theo theme qua token; hai nút dùng chung kiểu `.ana-btn` nên Từ chối và Đồng ý ngang vai. */
+.consent-banner {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: var(--z-30);
+  max-height: 50dvh;
+  overflow-y: auto;
+  border-top: var(--border-hair) solid var(--line);
+  background-color: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-dock);
+}
+
+.consent-banner[hidden] {
+  display: none;
+}
+
+/* Thanh rộng hết khung nhìn nên vòng focus vẽ vào trong (vòng ngoài sẽ nằm ngoài màn hình). */
+.consent-banner:focus-visible {
+  outline-offset: calc(-1 * var(--focus-width));
+}
+
+.consent-banner-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-24);
+  /* Lề 64px như footer: chừa chỗ cho cột chuyển nhanh dính mép phải ở màn rộng. */
+  padding: var(--space-16) var(--space-64);
+}
+
+.consent-banner-text {
+  max-width: 96ch;
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-small);
+  text-wrap: pretty;
+}
+
+.consent-banner-text a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: var(--space-3);
+  white-space: nowrap;
+}
+
+.consent-banner-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: var(--space-10);
+}
+
+.consent-banner-actions .ana-btn {
+  min-width: var(--space-96);
+  cursor: pointer;
+}
+
+@media (max-width: 820px) {
+  .consent-banner-inner {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-12);
+    padding: var(--space-14) var(--space-16);
+  }
+
+  .consent-banner-actions .ana-btn {
+    flex: 1 1 0;
+  }
+}
+
+/* Nút chuyển nhanh dạng tròn (≤820px hoặc màn thấp) và thông báo nổi nằm trên thanh khi thanh đang hiện; danh sách mở lên
+   trên của nút nhường chỗ cho thanh. */
+@media (max-width: 820px), (max-height: 619px) {
+  html[data-consent-banner] .quick-nav {
+    bottom: calc(var(--space-16) + var(--consent-banner-height));
+  }
+
+  html[data-consent-banner] .quick-nav-list {
+    max-height: calc(100dvh - var(--space-64) - var(--space-16) - var(--control-52) - var(--space-10) - var(--space-8) - var(--consent-banner-height));
+  }
+}
+
+html[data-consent-banner] {
+  scroll-padding-bottom: var(--consent-banner-height);
+}
+
+html[data-consent-banner] body {
+  padding-bottom: var(--consent-banner-height);
+}
+
+/* `position: sticky` bỏ qua `scroll-padding`, nên các thanh dính đáy phải tự nâng (ở màn hẹp chúng là `static`, `bottom` không tác dụng). */
+html[data-consent-banner] .ana-editor-foot,
+html[data-consent-banner] .roster-actionbar {
+  bottom: calc(var(--space-16) + var(--consent-banner-height));
+}
+
+html[data-consent-banner] .mt-toasts {
+  bottom: calc(var(--space-16) + var(--consent-banner-height));
+}
+
+html[data-consent-banner] .rt-toast {
+  bottom: calc(var(--space-24) + var(--consent-banner-height));
+}
+
+/* Vùng nội dung chính nhận focus bằng script sau khi chọn ở thanh đồng ý lần đầu (js/consent-banner.js): vùng chứa không thao
+   tác được nên không vẽ vòng focus. */
+#main-content:focus-visible {
+  outline: none;
+}
+
+@media print {
+  .consent-banner {
+    display: none;
+  }
+
+  html[data-consent-banner] body {
+    padding-bottom: 0;
+  }
+}
+
 /* Header ≥1280px có thêm menu Cộng đồng và nút đăng nhập: từ 1280px tới 1599px tên thương hiệu không
    còn đủ chỗ (bị cắt "Cẩ…"). Chỉ giữ dấu ấn làm logo; chữ vẫn là tên truy cập của link về trang chủ. */
 @media (min-width: 1280px) and (max-width: 1599px) {

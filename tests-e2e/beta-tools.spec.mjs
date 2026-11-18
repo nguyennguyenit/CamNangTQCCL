@@ -1470,6 +1470,7 @@ test.describe("Gợi ý đội", () => {
       body: [
         'export const ANALYZE_CONFIG = { workerUrl: "https://REPLACE_ME/analyze", turnstileSiteKey: "REPLACE_ME", maxImageDim: 1600, jpegQuality: 0.82 };',
         'export function isAnalyzeConfigured() { return !ANALYZE_CONFIG.workerUrl.includes("REPLACE_ME") && !ANALYZE_CONFIG.turnstileSiteKey.includes("REPLACE_ME"); }',
+        'export const ANALYTICS_CONFIG = { measurementId: "G-0K23EKM76G", hosts: ["tqccl.com"] };',
       ].join("\n"),
     }));
     const turnstileRequests = [];

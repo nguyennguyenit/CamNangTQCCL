@@ -2,6 +2,7 @@
 // chế độ Thẻ / Thẻ gọn / Bảng). Trên điện thoại, vùng nhóm lọc thu gọn sau nút "Bộ lọc".
 
 import { el, t, FACTION_CODE, coexistGroupLabel, seasonCoexistGroup, sourceLabel } from './render.js';
+import { track } from './analytics.js';
 import { L, contentLocaleIsVietnamese, currentLocale } from './i18n.js';
 
 /** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
@@ -42,7 +43,10 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
     icon(chevron(), {size: 16}),
   ]);
   season.addEventListener('change', () => {
-    if (season.value !== selectedScenario && typeof onScenario === 'function') onScenario(season.value);
+    if (season.value !== selectedScenario && typeof onScenario === 'function') {
+      track('filter_change', {filter: 'scenario', filter_value: season.value});
+      onScenario(season.value);
+    }
   });
   const head = el('header', {class: 'reference-head coexist-head'}, [headText, seasonField]);
   const versionRow = el('div', {class: 'coexist-group-row', role: 'group', 'aria-label': L('Chọn phiên bản Cùng Tồn', '选择共存版本', '共存バージョンを選択')});
@@ -135,6 +139,13 @@ import { treeToDom } from './view-tree.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
 import { isNativeNavigationClick, safeReturnUrl } from './team-detail-navigation.js';
+
+// Đo lường (GA4 `filter_change`): chỉ gọi từ thao tác của người dùng trên điều khiển, không từ lần dựng đầu hay khôi phục URL.
+const trackFilter=(filter,value)=>track('filter_change',{filter,filter_value:String(value)});
+/** `change` của cụm nút kho: `{kho}` hoặc `{xep}`; `null` (tắt) báo là `tat`. */
+const trackRosterChange=change=>{
+  for (const key of ['kho','xep']) if (key in change) trackFilter(key,change[key] ?? 'tat');
+};
 
 /** Danh sách dài dựng theo lượt: dựng cả 1366 thẻ một lần làm trang đứng vài giây trên máy chậm. */
 export const PAGE_SIZE=60;
@@ -292,7 +303,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
   const viewButtons=VIEW_OPTIONS.map(option=>el('button',{
     type:'button',class:`view-btn view-btn-${option.value}`,dataset:{view:option.value},'aria-pressed':'false',
     'aria-label':L(option.aria,option.ariaZh,option.ariaJa),title:L(option.aria,option.ariaZh,option.ariaJa),
-    onClick:()=>onQuery({view: option.value===TEAM_VIEW_CARDS ? null : option.value}),
+    onClick:()=>{if (option.value!==currentView()) trackFilter('view',option.value); onQuery({view: option.value===TEAM_VIEW_CARDS ? null : option.value});},
   },[icon(option.icon(),{size:16}),el('span',{class:'view-btn-label'},L(option.label,option.labelZh,option.labelJa))]));
   // Title/CTA là link thật: chỉ ghi snapshot, không chặn hành vi trình duyệt.
   // Marker ổn định của link chi tiết, không pin path segment của route.
@@ -304,7 +315,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     onNavigate?.(event,link);
   });
   searchInput.addEventListener('input',()=>onQuery({q:searchInput.value || null}));
-  season?.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
+  season?.addEventListener('change',()=>{trackFilter('season',season.value); onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true);});
   toggle.addEventListener('click',()=>setFiltersExpanded(filters.classList.contains('collapsed')));
   const results = el('div',{class:'reference-results'},[
     el('div',{class:'reference-toolbar'},[
@@ -416,7 +427,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     const focused=rosterBar.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
     rosterBar.replaceChildren(
       rosterSummaryNode(coverage.summary,{allSeasons:state.season==='all'}),
-      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,summary:narrowingCount() ? null : coverage.summary,onChange:onQuery}),
+      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,summary:narrowingCount() ? null : coverage.summary,onChange:change=>{trackRosterChange(change); onQuery(change);}}),
     );
     rosterBar.dataset.state='ready';
     if (focused) rosterBar.querySelector(`[data-focus-key="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
@@ -428,7 +439,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     return el('button',{
       type:'button',class:`fchip ${key}-chip${code ? ` f-${code}` : ''}${selected.includes(value) ? ' on' : ''}`,'aria-pressed':String(selected.includes(value)),
       title:sourceText() || chipText(key,value)===value?null:value,dataset:{focusKey:`${key}:${value}`},
-      onClick:()=>onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]}),
+      onClick:()=>{trackFilter('facet',`${key}:${value}`); onQuery({[key]:selected.includes(value)?selected.filter(item=>item!==value):[...selected,value]});},
     },[
       el('span',{class:'fchip-check','aria-hidden':'true'}),
       el('span',{class:'fchip-label'},chipText(key,value)),

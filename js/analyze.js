@@ -21,6 +21,7 @@ import {
   sureCell,
 } from "./analyze-map.js";
 import { createBookNameIndex, createTacticIdResolver } from "./lookup-ids.js";
+import { track } from "./analytics.js";
 import { createSaveButton } from "./my-teams-save-button.js";
 import {
   SEASON_QUERY_KEY,
@@ -1128,6 +1129,7 @@ export function initAnalyze(deps, mount) {
     );
     paintSample();
     if (save) {
+      track("scan_team", { step: "confirm", season });
       sendScanStats();
       historyEntries = addHistoryEntry(historyEntries, { doi, season, savedAt: new Date().toISOString() });
       writeHistory(localStore(), historyEntries);
@@ -1555,6 +1557,7 @@ export function initAnalyze(deps, mount) {
           setStatus(L("Phản hồi không hợp lệ, thử lại.", "返回结果无效，请重试。", "応答が無効です。もう一度お試しください。"), "err");
           return;
         }
+        track("scan_team", { step: "submit" });
         setStatus("");
       } catch (e) {
         if (started !== generation) return;

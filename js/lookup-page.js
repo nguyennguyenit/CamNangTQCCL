@@ -14,6 +14,8 @@ import { activatePortraits } from "./hero-portrait.js";
 import { createHeroSummaryLoader } from "./hero-summaries.js";
 import { createTacticSummaryLoader } from "./tactic-summaries.js";
 import { isNativeNavigationClick } from "./team-detail-navigation.js";
+import { track } from "./analytics.js";
+import { createSearchTracker } from "./lookup-search-tracking.js";
 import { createProfileRenderer } from "./lookup-profile.js";
 import { isMasterGroup, masterDefaultId, masterDetailTree, masterFilterMatches, masterFiltersFromQuery, masterTargetFor } from "./lookup-master.js";
 import { handleEffectTabClick } from "./lookup-effect-panels.js";
@@ -136,6 +138,8 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
     url.searchParams.delete("id");
     if (id) url.searchParams.set("id", id);
     history[push ? "pushState" : "replaceState"](state, "", url);
+    // Người dùng mở hồ sơ (push); khôi phục từ URL/popstate không đi qua đây.
+    if (push && id) track("select_content", { content_type: group, content_id: id });
     render();
   }
 
@@ -370,7 +374,8 @@ export function initLookupPage({ group, mount, docs, loadProfileDocs = async () 
   const prefetch = (event) => { if (event.target.closest?.("[data-lookup-id]")) ensureProfileDocs(); };
   grid.addEventListener("pointerover", prefetch);
   grid.addEventListener("focusin", prefetch);
-  search.addEventListener("input", () => { query = search.value; page = 1; render(); });
+  const searchTracker = createSearchTracker({ group });
+  search.addEventListener("input", () => { query = search.value; page = 1; searchTracker.input(search.value); render(); });
   // Back/Forward giữ số lượt "Xem thêm" đã mở (đóng/mở hồ sơ không đổi lưới).
   window.addEventListener("popstate", render);
   if (master) {

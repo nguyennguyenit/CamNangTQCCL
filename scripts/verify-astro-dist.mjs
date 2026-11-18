@@ -29,6 +29,7 @@ import { sourceKeyPart, variantKey } from "../js/my-teams-sources.js";
 import { mySourceIndex, mySourceIndexJson } from "../src/lib/my-teams-source-index.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
 import { DEFAULT_LOCALE, LOCALE_PREFIX, localePath } from "../js/i18n.js";
+import { ANALYTICS_CONFIG } from "../js/config.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
 const LOOKUP_HUB_PATH = "/tra-cuu/";
@@ -64,6 +65,12 @@ export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
 const WAITING_OR_JS_REQUIRED = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
 
 /**
+ * Dấu vết Google Analytics mà khu quản trị (`/quan-tri/` ở mọi locale) không được mang: script gtag, thanh đồng ý, nút
+ * "Cài đặt cookie" hay id đo. SiteLayout `analytics={false}` giữ chúng ngoài HTML; chốt lại ở đây vì deploy chỉ chạy `verify`.
+ */
+export const ADMIN_ANALYTICS_MARKER = /gtag|googletagmanager|dataLayer|analytics-loader|analyticsConsent|consent-banner|data-consent/u;
+
+/**
  * Bốn trang danh sách đội dựng sẵn đội mặc định lúc build: mỗi mục phải mang dấu hiệu nội dung của nó
  * (danh sách có dấu `data-ssr-signature` + link chi tiết; Cùng Tồn có nhóm + thẻ đội; Khai hoang có lưới thẻ + link).
  */
@@ -90,7 +97,7 @@ export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
   Object.freeze({ htmlPath: localizedHtmlPath("chien-bao/index.html", locale), mount: 'id="community-hub"', entry: "/js/community-hub.js" }),
   Object.freeze({ htmlPath: localizedHtmlPath("doi-cong-dong/index.html", locale), mount: 'id="community-teams"', entry: "/js/community-teams.js", listing: true }),
   Object.freeze({ htmlPath: localizedHtmlPath("doi-cua-toi/index.html", locale), mount: 'id="my-teams"', entry: "/js/my-teams.js" }),
-  Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js" }),
+  Object.freeze({ htmlPath: localizedHtmlPath("quan-tri/index.html", locale), mount: 'id="community-admin"', entry: "/js/community-admin.js", admin: true }),
 ]));
 
 const LANG_SWITCHER = /<nav\b[^>]*\bdata-lang-switcher\b[^>]*>([\s\S]*?)<\/nav>/gu;
@@ -887,12 +894,15 @@ export async function verifyAstroDist({
   if (/<meta\b(?=[^>]*\bproperty=["']og:url["'])[^>]*>/iu.test(notFound)) {
     throw new Error("Static 404 page must not declare og:url");
   }
-  for (const { htmlPath, mount, entry, listing } of COMMUNITY_PAGES) {
+  for (const { htmlPath, mount, entry, listing, admin } of COMMUNITY_PAGES) {
     const page = await readPage(htmlPath);
     if (!page.includes(mount) || !page.includes(`src="${entry}"`)) {
       throw new Error(`Community page lacks its mount or entry: ${htmlPath}`);
     }
     if (page.includes('src="/js/app.js"')) throw new Error(`Community page must not boot the root application: ${htmlPath}`);
+    if (admin && (ADMIN_ANALYTICS_MARKER.test(page) || page.includes(ANALYTICS_CONFIG.measurementId))) {
+      throw new Error(`Admin console must carry no analytics: ${htmlPath}`);
+    }
     // Danh sách đội: noindex/canonical theo ngưỡng đã kiểm ở verifyCommunityTeamOutputs.
     if (listing) continue;
     if (!NOINDEX_META.test(page)) throw new Error(`Community page must declare robots=noindex: ${htmlPath}`);

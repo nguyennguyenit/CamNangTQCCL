@@ -26,6 +26,8 @@ import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
 import { HREFLANG, LOCALE_LABEL, SITE_LOCALES, alternatePaths, languageSwitchAria, mirroredAlternates, switchTargets, type SiteLocale } from '../lib/locale-routes';
 // Cầu chuyển domain: script inline ĐẦU TIÊN của <head>, chạy trước mọi script đọc hash/storage.
 import { HOST_BRIDGE_SCRIPT } from '../lib/host-bridge';
+// Google Analytics 4 + Consent Mode v2: script inline thứ HAI của <head> (ngay sau cầu chuyển domain); trang quản trị tắt bằng `analytics={false}`.
+import { ANALYTICS_LOADER_SCRIPT } from '../lib/analytics-loader';
 // Vỏ trang dùng chung: Landing, 8 trang mục và các trang chi tiết đều đi qua đây nên phần đầu
 // trang chỉ tồn tại một bản. Trang mục khai `data-page-section` để js/app.js biết mục cần mount.
 // Mọi trang dùng một bộ menu thả; trang con có thêm cột chuyển nhanh nổi ở mép phải (một chạm tới các mục).
@@ -59,6 +61,12 @@ interface Props {
   ogImage?: string;
   /** Trang nhóm Tra cứu (`/tra-cuu/<slug>/`): nhóm đang xem, gắn vào `<body data-lookup-group>` cho js/app.js. */
   lookupGroup?: LookupGroup;
+  /**
+   * Bật Google Analytics 4 và thanh đồng ý (mặc định bật): script `<head>`, thanh đồng ý, nút "Cài đặt cookie" ở footer và
+   * `js/consent-banner.js`. Trang quản trị truyền `false` nên HTML của chúng không có dấu vết gtag nào. Host ngoài domain
+   * chính (localhost, *.pages.dev, bản build test) nhận cùng HTML nhưng script tự không dựng gì (src/lib/analytics-loader.ts).
+   */
+  analytics?: boolean;
 }
 
 const {
@@ -72,6 +80,7 @@ const {
   robots,
   ogImage,
   lookupGroup,
+  analytics = true,
 } = Astro.props;
 const locale = Astro.props.locale ?? localeFromPath(Astro.url.pathname);
 const t = (...variants: string[]): string => pick(locale, ...variants);
@@ -219,6 +228,19 @@ const FEEDBACK_TITLE_LABEL = t('Tiêu đề', '标题', 'タイトル');
 const FEEDBACK_BODY_LABEL = t('Nội dung', '内容', '内容');
 const FEEDBACK_EMAIL_LABEL = t('Email (tuỳ chọn, để trả lời)', '邮箱（选填，用于回复）', 'メールアドレス（任意、返信用）');
 const FEEDBACK_SUBMIT_LABEL = t('Gửi góp ý', '提交反馈', '送信する');
+// Thanh đồng ý phân tích (js/consent-banner.js) và nút "Cài đặt cookie" ở footer: nói rõ GA đếm gì, không quảng cáo, đồng ý
+// và từ chối khác nhau ở đâu (cookie, từ khoá tìm); chi tiết ở trang Chính sách bảo mật (nhãn và đường dẫn lấy từ POLICY_PAGES).
+const PRIVACY_PAGE = POLICY_PAGES.find((page) => page.path === '/chinh-sach-bao-mat/');
+if (!PRIVACY_PAGE) throw new Error('SiteLayout: POLICY_PAGES thiếu trang Chính sách bảo mật');
+const CONSENT_LABEL = t('Đồng ý cookie và phân tích', 'Cookie 与统计设置', 'Cookie と分析の設定');
+const CONSENT_TEXT = t(
+  'Cẩm Nang TQCCL dùng Google Analytics để đếm lượt xem trang và biết tính năng nào được dùng; không có quảng cáo. Nếu bạn đồng ý, Google lưu cookie đo lường và nhận cả từ khoá bạn tìm. Nếu từ chối hoặc chưa chọn, không có cookie hay mã nhận dạng lâu dài, nhưng lượt xem trang và tính năng bạn dùng (không kèm từ khoá tìm) vẫn được gửi dưới dạng tín hiệu không cookie.',
+  '本站使用 Google Analytics 统计页面浏览量和功能使用情况，不投放任何广告。选择同意后，Google 会保存统计用 Cookie，并接收你的搜索关键词。拒绝或尚未选择时，不使用 Cookie，也没有长期标识符，但页面浏览量和你使用的功能（不含搜索关键词）仍会以无 Cookie 信号的形式发送。',
+  '本サイトは、ページの閲覧数やどの機能が使われているかを把握するために Google アナリティクスを利用しており、広告は掲載しません。同意すると計測用の Cookie が保存され、検索キーワードも送信されます。拒否した場合や未選択の場合は、Cookie も長期的な識別子も使いませんが、ページの閲覧数と利用した機能（検索キーワードは含みません）は Cookie なしのシグナルとして引き続き送信されます。',
+);
+const CONSENT_DENY_LABEL = t('Từ chối', '拒绝', '拒否する');
+const CONSENT_ALLOW_LABEL = t('Đồng ý', '同意', '同意する');
+const CONSENT_SETTINGS_LABEL = t('Cài đặt cookie', 'Cookie 设置', 'Cookie 設定');
 
 // `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
 const pageSection = pageKind === 'section' ? activeSection : null;
@@ -419,6 +441,7 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
   <head>
     <meta charset="UTF-8" />
     <script is:inline id="host-bridge" set:html={HOST_BRIDGE_SCRIPT}></script>
+    {analytics ? <script is:inline id="analytics-loader" set:html={ANALYTICS_LOADER_SCRIPT}></script> : null}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -465,6 +488,20 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
   </head>
   <body data-page-section={pageSection} data-lookup-group={lookupGroup}>
     <a class="skip-link" href="#main-content">{SKIP_LINK_LABEL}</a>
+    {/* Thanh đồng ý phân tích: đứng ngay sau link bỏ qua điều hướng để thứ tự Tab và thứ tự đọc khớp độ ưu tiên (link bỏ
+        qua vẫn là phần tử Tab đầu tiên và nhảy qua thanh); CSS cố định thanh ở đáy khung nhìn. `hidden` tới khi
+        js/consent-banner.js xác nhận trang bật GA và chưa có lựa chọn; `tabindex="-1"` để nút footer đưa focus vào thanh. */}
+    {analytics ? (
+      <div id="consent-banner" class="consent-banner" role="region" aria-label={CONSENT_LABEL} tabindex="-1" hidden>
+        <div class="consent-banner-inner">
+          <p class="consent-banner-text">{CONSENT_TEXT} <a href={href(PRIVACY_PAGE.path)}>{inLocale(PRIVACY_PAGE.label)}</a></p>
+          <div class="consent-banner-actions">
+            <button type="button" class="ana-btn" data-consent-choice="denied">{CONSENT_DENY_LABEL}</button>
+            <button type="button" class="ana-btn" data-consent-choice="granted">{CONSENT_ALLOW_LABEL}</button>
+          </div>
+        </div>
+      </div>
+    ) : null}
     <div class="top-header">
       <header class:list={['site-header', landing && 'site-header-landing']}>
         <button id="section-menu-toggle" class="site-menu-toggle" type="button" aria-controls="section-menu-items" aria-expanded="false" aria-label={MENU_OPEN_LABEL}>
@@ -661,6 +698,13 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
               <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"></path><path d="M8 9h8"></path><path d="M8 12h5"></path></svg>
               {FEEDBACK_LABEL}
             </button>
+            {/* Mở lại thanh đồng ý; hiện khi js/consent-banner.js xác nhận trang bật GA (host chính, không phải trang quản trị). */}
+            {analytics ? (
+              <button type="button" class="footer-action" data-consent-open aria-controls="consent-banner" aria-expanded="false" hidden>
+                <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h9"></path><path d="M17 8h3"></path><circle cx="15" cy="8" r="2"></circle><path d="M4 16h3"></path><path d="M11 16h9"></path><circle cx="9" cy="16" r="2"></circle></svg>
+                {CONSENT_SETTINGS_LABEL}
+              </button>
+            ) : null}
           </div>
         </div>
         {footerColumns.map((column) => (
@@ -773,6 +817,7 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
     </script>
     <script is:inline type="module" src="/js/donate.js"></script>
     <script is:inline type="module" src="/js/feedback.js"></script>
+    {analytics ? <script is:inline type="module" src="/js/consent-banner.js"></script> : null}
     <slot name="scripts" />
   </body>
 </html>

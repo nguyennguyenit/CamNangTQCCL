@@ -16,7 +16,12 @@ export default defineConfig({
     trace: "retain-on-failure",
     // E2E không phụ thuộc mạng ngoài: Turnstile thật tải chậm trên CI làm xô layout đúng lúc test bấm.
     // Test cần widget tự stub bằng `page.route("https://challenges.cloudflare.com/**", …)`; route chạy trước DNS.
-    launchOptions: { args: ["--host-resolver-rules=MAP challenges.cloudflare.com ~NOTFOUND"] },
+    // Google Analytics cũng bị chặn: trang chạy ở host `tqccl.com` (tests-e2e/host-bridge.spec.mjs, analytics-*.spec.mjs) bật
+    // GA, và chạy test trên CI không được gửi lượt xem vào property thật. Test đọc `window.dataLayer` sau khi stub GTM bằng
+    // `page.route` (tests-e2e/helpers/production-host.mjs).
+    launchOptions: {
+      args: ["--host-resolver-rules=MAP challenges.cloudflare.com ~NOTFOUND, MAP www.googletagmanager.com ~NOTFOUND, MAP *.google-analytics.com ~NOTFOUND"],
+    },
   },
   webServer: [
     {

@@ -18,3 +18,11 @@ export function isAnalyzeConfigured() {
     !ANALYZE_CONFIG.turnstileSiteKey.includes("REPLACE_ME")
   );
 }
+
+// Google Analytics 4 (giá trị PUBLIC, không phải secret; id đo là một nguồn cho script <head> của layout và js/analytics.js).
+// `hosts`: chỉ domain chính gửi số liệu; localhost, *.pages.dev, www.tqccl.com (chuyển hướng về domain chính) và bản
+// build test không nạp GA. Trang quản trị `/quan-tri/` không bao giờ nạp GA ở mọi host.
+export const ANALYTICS_CONFIG = {
+  measurementId: "G-0K23EKM76G",
+  hosts: ["tqccl.com"],
+};
