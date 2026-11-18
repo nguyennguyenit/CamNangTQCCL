@@ -300,6 +300,16 @@ describe("tqccl_recommend_teams output", () => {
     expect(top(website.portfolioTeams.filter((entry) => entry.source !== "legacy").map((entry) => entry.tier))).toBeLessThan(4);
   });
 
+  it("warns when the box builds more teams than the search pool (full PK-S27 box, 10 teams)", async () => {
+    const body = await confirmed(ctx, rosterOfTeams(seasonTeams("pk-s27")));
+    const output = await handleRecommendTeams(ctx, { ...body, sourceSeasonId: "pk-s27", maxTeams: 10 });
+    expect(output.warnings).toContain("portfolio-search-pool-truncated");
+    // Roster nhỏ của ca issue không vượt pool nên không có cảnh báo này.
+    const small = await confirmed(ctx, rosterOfTeams(seasonTeams("pk-s27", ["s27-huchen-gong"])));
+    const plain = await handleRecommendTeams(ctx, { ...small, sourceSeasonId: "pk-s27", maxTeams: 5 });
+    expect(plain.warnings).not.toContain("portfolio-search-pool-truncated");
+  });
+
   it("stays bounded for a full box without silently dropping slots of returned teams", async () => {
     const teams = seasonTeams("pk-s26");
     const roster = rosterOfTeams(teams.slice(0, 40));

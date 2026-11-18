@@ -20,10 +20,14 @@ const DEFAULT_DIAGNOSTICS = () => ({
   heroConflicts: [],
   searchedCandidates: 0,
   searchCapped: false,
+  searchPoolTruncated: false,
   prunedCandidates: [],
 });
 
-/** Số đội tối đa DFS toàn kho (fullBox) duyệt; phần còn lại vẫn được xét bởi bước tham lam dự phòng. */
+/**
+ * Số đội tối đa (đã qua kiểm kho, theo thứ tự xếp hạng) mà DFS duyệt; phần còn lại chỉ được bước tham lam dự phòng
+ * xét, nên kết quả không chắc tối ưu khi kho dựng được nhiều đội hơn (`diagnostics.searchPoolTruncated`).
+ */
 export const DEFAULT_POOL_LIMIT = 60;
 
 /** Trần số nút DFS của `searchPortfolio`; chạm trần thì trả danh sách tốt nhất đã thấy (`diagnostics.searchCapped`). */
@@ -552,6 +556,8 @@ function searchPortfolio(
 ) {
   // Dự phòng: kết quả khả thi trên TOÀN danh sách đã qua kiểm kho, kể cả khi DFS chỉ duyệt `poolLimit` đội đầu.
   let best = greedy(candidates, seed, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered);
+  // Khóa meta của `best`, tính lại mỗi khi `best` đổi (cận trên so với nó ở mọi nút).
+  let bestKey = metaObjective ? metaKey(best) : null;
   let searched = 0;
   let capped = false;
   const limited = candidates.slice(0, poolLimit);
@@ -621,19 +627,21 @@ function searchPortfolio(
       score + slots * scoreMaxFrom[index],
       red + slots * redMaxFrom[index],
     ];
-    return compareMetaKeys(bound, metaKey(best)) <= 0;
+    return compareMetaKeys(bound, bestKey) <= 0;
   }
 
   function visit(index, portfolio, usedHeroes, usedTactics) {
     if (capped) return;
-    searched++;
-    if (searched > nodeLimit) {
+    // `searched` đếm số nút đã duyệt thật, nên không vượt `nodeLimit`.
+    if (searched >= nodeLimit) {
       capped = true;
       return;
     }
+    searched++;
     if (portfolio.length >= maxTeams || index >= limited.length) {
       if (portfolioIsBetter(portfolio, best)) {
         best = portfolio;
+        if (metaObjective) bestKey = metaKey(best);
       }
       return;
     }
@@ -669,7 +677,7 @@ function searchPortfolio(
     new Set(seed.usedHeroes),
     new Set(seed.usedTactics),
   );
-  return { portfolio: best.slice(0, maxTeams), searched, capped };
+  return { portfolio: best.slice(0, maxTeams), searched, capped, poolTruncated: candidates.length > limited.length };
 }
 
 /**
@@ -880,6 +888,7 @@ export function recommendTeams({
     portfolio = searched.portfolio;
     diagnostics.searchedCandidates = searched.searched;
     diagnostics.searchCapped = searched.capped;
+    diagnostics.searchPoolTruncated = searched.poolTruncated;
   } else {
     portfolio = greedy(
       eligible,

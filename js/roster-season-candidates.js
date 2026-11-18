@@ -211,6 +211,7 @@ export function recommendRoster({
     maxTeams,
   });
   let portfolioTeams = season.portfolioTeams;
+  let legacyDiagnostics = null;
   if (portfolioTeams.length < maxTeams && legacyTeams.length) {
     const chosenKeys = new Set(season.addTeams.map((entry) => heroSetKey(entry.team)));
     const legacy = recommendTeams({
@@ -223,6 +224,7 @@ export function recommendRoster({
       maxTeams,
       seedEntries: season.addTeams,
     });
+    legacyDiagnostics = legacy.diagnostics;
     const chosen = new Set(portfolioTeams);
     portfolioTeams = [
       ...portfolioTeams,
@@ -235,7 +237,12 @@ export function recommendRoster({
     blockedStrongTeams: [...season.blockedStrongTeams].sort((a, b) => missingCount(a) - missingCount(b)),
     incompatibleTeams: season.incompatibleTeams,
     conflictedTeams: season.conflictedTeams,
-    diagnostics: season.diagnostics,
+    // Đội mùa giữ chẩn đoán của mình; giới hạn tìm kiếm (trần nút, cắt pool) tính cả lượt bù đội cũ.
+    diagnostics: {
+      ...season.diagnostics,
+      searchCapped: season.diagnostics.searchCapped === true || legacyDiagnostics?.searchCapped === true,
+      searchPoolTruncated: season.diagnostics.searchPoolTruncated === true || legacyDiagnostics?.searchPoolTruncated === true,
+    },
     legacyUsed: portfolioTeams.some((entry) => entry.source === "legacy"),
   };
 }

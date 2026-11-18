@@ -469,6 +469,8 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   if (ignored.length > 0) warnings.push("tactic-overrides-ignored");
   // Tìm danh sách chạm trần nút: kết quả là danh sách tốt nhất đã thấy, chưa chắc tối ưu.
   if (result.diagnostics?.searchCapped === true) warnings.push("portfolio-search-capped");
+  // Kho dựng được nhiều đội hơn pool DFS (60): đội ngoài pool chỉ được xét tham lam, kết quả chưa chắc tối ưu.
+  if (result.diagnostics?.searchPoolTruncated === true) warnings.push("portfolio-search-pool-truncated");
 
   const output: RecommendTeamsOutput = {
     ...ctx.commonResult([

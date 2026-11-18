@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { recommendTeams } from "../js/team-recommend-engine.js";
+import { DEFAULT_POOL_LIMIT, recommendTeams } from "../js/team-recommend-engine.js";
+import { recommendRoster } from "../js/roster-season-candidates.js";
 
 /**
  * Mode meta với `metaSearch`: danh sách tối ưu theo khóa thứ tự (số đội T0+T0.5, số T0, số đội, tổng điểm nguồn,
@@ -89,10 +90,36 @@ test("chạm trần nút thì trả danh sách tốt nhất đã thấy và báo
   // Trần nhỏ (mặc định SEARCH_NODE_LIMIT): kết quả không bao giờ kém danh sách tham lam ban đầu.
   const capped = call(blocking, blockingTier, { metaSearch: true, searchNodeLimit: 2 });
   assert.equal(capped.diagnostics.searchCapped, true);
-  assert.equal(capped.diagnostics.searchedCandidates, 3);
+  assert.equal(capped.diagnostics.searchedCandidates, 2);
   assert.deepEqual(ids(capped), ["a-t0", "d-t1"]);
   // Đủ nút để đi tới lá thứ hai: đã thấy danh sách tốt hơn thì trả danh sách đó dù chưa duyệt hết.
   const partial = call(blocking, blockingTier, { metaSearch: true, searchNodeLimit: 9 });
   assert.equal(partial.diagnostics.searchCapped, true);
   assert.deepEqual(ids(partial), ["b-t05", "c-t05", "d-t1"]);
+});
+
+test("kho dựng được nhiều đội hơn poolLimit: báo searchPoolTruncated, đội ngoài pool chỉ được xét tham lam", () => {
+  assert.equal(call(blocking, blockingTier, { metaSearch: true }).diagnostics.searchPoolTruncated, false);
+  const truncated = call(blocking, blockingTier, { metaSearch: true, poolLimit: 2 });
+  assert.equal(truncated.diagnostics.searchPoolTruncated, true);
+  // Pool chỉ có a-t0, b-t05: DFS chọn b-t05 (giữ X) nhưng c-t05 ngoài pool không được ghép lại; không kém tham lam.
+  assert.ok(truncated.portfolioTeams.length >= call(blocking, blockingTier).portfolioTeams.length);
+  // Ca thật vượt pool mặc định: 61 đội T1 độc lập.
+  const many = Array.from({ length: DEFAULT_POOL_LIMIT + 1 }, (_, index) => team(`p-${String(index).padStart(2, "0")}`, [`p${index}-1`, `p${index}-2`, `p${index}-3`]));
+  assert.equal(call(many, many.map((entry) => tier(entry.id, "T1")), { metaSearch: true }).diagnostics.searchPoolTruncated, true);
+});
+
+test("recommendRoster: chạm trần ở lượt bù đội cũ cũng được báo", () => {
+  // Lượt mùa: một đội, không chạm trần. Lượt đội cũ: bốn đội tranh tướng, trần nhỏ chạm ở lượt này.
+  const seasonTeams = [team("season-only", ["S1", "S2", "S3"])];
+  const seasonTier = [tier("season-only", "T0")];
+  const ownedHeroes = [...new Set([...seasonTeams, ...blocking].flatMap((entry) => entry.heroes.map((hero) => hero.name)))];
+  const options = { seasonTeams, seasonTier, legacyTeams: blocking, legacyTier: blockingTier, ownedHeroes, ownedTactics: [], mode: "meta", metaSearch: true, maxTeams: 5, searchNodeLimit: 4 };
+  const seasonOnly = recommendTeams({ teams: seasonTeams, teamTier: seasonTier, ownedHeroes, ownedTactics: [], mode: "meta", metaSearch: true, maxTeams: 5, searchNodeLimit: 4 });
+  assert.equal(seasonOnly.diagnostics.searchCapped, false);
+  const result = recommendRoster(options);
+  assert.equal(result.legacyUsed, true);
+  assert.equal(result.diagnostics.searchCapped, true);
+  // Không trần: cả hai lượt đều duyệt hết.
+  assert.equal(recommendRoster({ ...options, searchNodeLimit: undefined }).diagnostics.searchCapped, false);
 });
