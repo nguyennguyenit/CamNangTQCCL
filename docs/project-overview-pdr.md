@@ -35,7 +35,7 @@ Ngoài phạm vi: backend chung cho dữ liệu game, AI tự quyết đội, bu
 | FR-02 | Render 56 Team PK và 110 Meta phe cũ theo tab nguồn; không công khai team Đô Úy. |
 | FR-03 | Hai tab team dùng chung search toàn văn và chip facet tính động trong phạm vi tab. |
 | FR-04 | Trên mobile, menu section và vùng lọc team có thể thu gọn; không phụ thuộc hover. |
-| FR-05 | Render 5 nhóm/25 team Cùng Tồn và 17 team/5 mỏ khai hoang từ JSON local. |
+| FR-05 | Render 5 nhóm/25 team Cùng Tồn và 20 team/5 mỏ khai hoang (mùa mục tiêu Hán Diễm Trường Minh) từ JSON local. |
 | FR-06 | Tra cứu 252 tướng và mở chi tiết stats, thích tính, chiến pháp liên quan. |
 | FR-07 | Tra cứu 412 chiến pháp bằng search Việt bỏ dấu, Hán-Việt và Hán. |
 | FR-08 | Hiển thị tier tốt nhất và mọi nguồn xếp hạng cho team khi có dữ liệu tier. |
@@ -65,7 +65,7 @@ Snapshot công khai 2026-09-27:
 
 - 166 team: 56 `team-intro`, 110 `moi-phe`; 48 team `do-uy` từng công khai đã được retire khỏi website, public artifact và Research MCP.
 - 31 team có tier, tổng 39 rankings; 252 tướng (từ 2026-10-15, gồm 50 tướng chụp từ client Global); 412 chiến pháp; 66 map binh thư.
-- 5 nhóm/25 team Cùng Tồn; 17 team/5 mỏ khai hoang.
+- 5 nhóm/25 team Cùng Tồn; 20 team/5 mỏ khai hoang.
 - `facets.json` có tổng source 166, bằng `teams.json` (test chặn lệch); frontend không load file này.
 
 ## Tiêu chí chấp nhận
