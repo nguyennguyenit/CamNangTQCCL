@@ -202,7 +202,7 @@ Kế hoạch: [`plans/261016-1757-quan-ly-nguoi-dung/plan.md`](../plans/261016-1
 | Cấu hình AI (`/api/admin/ai/config`) | có | không |
 | Nhật ký toàn cục `GET /api/admin/audit` | có | không |
 
-Mọi bình luận, góp ý, chiến báo, mẫu soi đội mà KDV thao tác đều ghi nhật ký; riêng KDV vẫn xem được **lịch sử nhật ký theo từng user** trong chi tiết user (`GET /api/admin/users/:id` trả 20 dòng `admin_audit` có `subject_user_id` của user đó, 10 bình luận và 10 chiến báo gần nhất), nhưng không có khu Nhật ký toàn cục.
+Mọi bình luận, góp ý, chiến báo, mẫu soi đội mà KDV thao tác đều ghi nhật ký; riêng KDV vẫn xem được **lịch sử nhật ký theo từng user** trong chi tiết user (`GET /api/admin/users/:id` trả 20 dòng `admin_audit` có `subject_user_id` của user đó, 10 bình luận và 10 chiến báo gần nhất; các giới hạn này nằm trong `limits: {comments, reports, audit}` của response để khu Quản trị hiện đúng số), nhưng không có khu Nhật ký toàn cục.
 
 ### Danh sách và chi tiết user
 

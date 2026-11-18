@@ -588,6 +588,8 @@ function otherTeams(
             sourceLabel: text(variant.sourceLabel),
             sourceState: text(variant.sourceState),
             sourceSeasonIds: Array.isArray(variant.sourceSeasonIds) ? variant.sourceSeasonIds : null,
+            // Nhãn "Đề cử" (đội nguồn YouTube) của website; hàng thiếu field là đội không đề cử.
+            recommended: variant.recommended === true,
             seasonAttribution: variant.seasonAttribution ?? [],
             historicalTier: text(variant.historicalTier),
             historicalRankings: (Array.isArray(variant.historicalRankings) ? variant.historicalRankings : []).map(allowTierRanking),
