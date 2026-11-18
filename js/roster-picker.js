@@ -4,6 +4,7 @@
 //
 // Hai policy dùng chung cơ chế tìm/lọc:
 //  - `inventory`: món có thể nằm trong kho. Chiến pháp INNATE và "Tự mang" luôn bị loại (không vào kho); không có binh thư.
+//    Có thêm ô "Dán danh sách tên" (`roster-pasted-name-list-panel.js`) để thêm nhiều món một lần sau khi xác nhận.
 //  - `editor`: toàn bộ danh mục kể cả INNATE/"Tự mang" và binh thư (`book:<slug>` theo `lookup-ids.js`); chọn từng mục.
 
 import { el } from "./render.js";
@@ -12,10 +13,11 @@ import { L } from "./i18n.js";
 import { normalizeText } from "./filters.js";
 import { bookRowId } from "./lookup-ids.js";
 import { addCanonicalItem, removeItem } from "./roster-scan-state.js";
+import { createPastedNameListPanel } from "./roster-pasted-name-list-panel.js";
 
 export const POLICIES = {
-  inventory: { kinds: ["heroes", "tactics"], excludedSources: ["INNATE"], selectAll: true },
-  editor: { kinds: ["heroes", "tactics", "books"], excludedSources: [], selectAll: false },
+  inventory: { kinds: ["heroes", "tactics"], excludedSources: ["INNATE"], selectAll: true, paste: true },
+  editor: { kinds: ["heroes", "tactics", "books"], excludedSources: [], selectAll: false, paste: false },
 };
 
 const policyOf = (policy) => {
@@ -29,10 +31,13 @@ const sourceGroup = (source) => (source === "Tự mang" ? "INNATE" : typeof sour
 const qualityGroup = (quality) => (typeof quality === "string" && quality ? quality : "other");
 const nameList = (value) => (Array.isArray(value) ? value : []).filter((name) => typeof name === "string" && name.trim());
 const blobOf = (...parts) => normalizeText(parts.flat().filter((part) => typeof part === "string" && part).join(" "));
+/** Các tên đã biết của món (đối chiếu đúng tên cho ô dán danh sách, `roster-pasted-name-list-match.js`). */
+const namesOf = (...parts) => [...new Set(parts.flat().filter((part) => typeof part === "string" && part.trim()).map((part) => part.trim()))];
 
 /**
  * Danh mục phẳng cho bảng chọn. `name` luôn là tên Việt chuẩn của từ điển (kho lưu dạng này, kể cả khi người dùng
- * tìm bằng chữ Hán); `search` là chuỗi đã bỏ dấu gồm tên Việt, Hán-Việt, Hán (giản/phồn) để tìm.
+ * tìm bằng chữ Hán); `search` là chuỗi đã bỏ dấu gồm tên Việt, Hán-Việt, Hán (giản/phồn) để tìm; `names` (tướng,
+ * chiến pháp) giữ nguyên các tên đó để ô dán danh sách đối chiếu đúng tên.
  * Binh thư chỉ có ở policy `editor`.
  */
 export function buildCatalog({ heroesDict = [], tacticsDict = [], books = [] } = {}, policy = "inventory") {
@@ -48,6 +53,7 @@ export function buildCatalog({ heroesDict = [], tacticsDict = [], books = [] } =
       faction: row.faction || "",
       stars: Number(row.stars) || 0,
       cost: Number(row.cost) || 0,
+      names: namesOf(row.viet, row.hanViet, row.chinese, nameList(row.aliases)),
       search: blobOf(row.viet, row.hanViet, row.chinese, nameList(row.aliases)),
     });
   }
@@ -61,6 +67,7 @@ export function buildCatalog({ heroesDict = [], tacticsDict = [], books = [] } =
       tacticType: row.type || "",
       source: sourceGroup(row.source),
       quality: qualityGroup(row.quality),
+      names: namesOf(row.viet, row.hanViet, row.chinese, nameList(row.aliases)),
       search: blobOf(row.viet, row.hanViet, row.chinese, nameList(row.aliases)),
     });
   }
@@ -364,9 +371,23 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
     paint();
   });
 
+  const paste = rules.paste
+    ? createPastedNameListPanel({
+      uid,
+      catalog,
+      label,
+      selected,
+      onAdd: (items) => {
+        onToggle(items, true);
+        paint();
+      },
+    })
+    : null;
+
   const node = el("section", { class: "roster-picker", "aria-labelledby": `${uid}-title`, dataset: { policy } }, [
     el("div", { class: "roster-panel-head" }, [el("h3", { id: `${uid}-title` }, title), status]),
     lead ? el("p", { class: "roster-section-lead" }, lead) : null,
+    paste?.node,
     kindField,
     el("div", { class: "roster-picker-search-row" }, [search]),
     filterRow,
@@ -385,6 +406,7 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
       if (disabled === Boolean(value)) return;
       disabled = Boolean(value);
       search.disabled = disabled;
+      paste?.setDisabled(disabled);
       paint();
     },
   };
