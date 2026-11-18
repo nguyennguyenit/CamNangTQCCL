@@ -176,6 +176,9 @@ const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅�
  * hành động bằng ngôn ngữ trang (`languageSwitchAria`, thiếu cặp thì build lỗi). js/site-chrome.js giữ query/hash.
  */
 const LANG_SWITCHER_LABEL = t('Ngôn ngữ', '语言', '言語');
+/** Nút chọn ngôn ngữ trên header: hiện mã bản đang xem (VI/ZH/JA); tên truy cập nói cả nhãn nhóm lẫn bản đang xem. */
+const LANG_PICKER_CODE = locale.toUpperCase();
+const LANG_PICKER_ARIA = `${LANG_SWITCHER_LABEL}: ${LOCALE_LABEL[locale]}`;
 const languageLinks = SITE_LOCALES.map((target) => {
   const current = target === locale;
   return {
@@ -513,10 +516,23 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
         </nav>
 
         <div class="header-actions">
-          <!-- Chuyển ngôn ngữ: link thật tới bản gương của trang; js/site-chrome.js giữ lại query/hash hiện tại. -->
-          <nav class="lang-switcher" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher>{languageLinks.map((item) => item.current
-            ? <a class="lang-switch" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-current="page" data-lang-current>{item.label}</a>
-            : <a class="lang-switch" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}</nav>
+          <!-- Chọn ngôn ngữ: một nút (địa cầu + mã bản đang xem) mở menu thả theo hợp đồng `data-dropdown` của
+               js/site-nav.js; trong menu là link thật tới bản gương ở mọi locale, js/site-chrome.js giữ lại query/hash. -->
+          <div class="lang-picker" data-dropdown>
+            <button
+              id="lang-picker-toggle"
+              class="icon-btn lang-picker-toggle"
+              type="button"
+              aria-expanded="false"
+              aria-controls="lang-picker-menu"
+              aria-label={LANG_PICKER_ARIA}
+              title={LANG_SWITCHER_LABEL}
+              data-dropdown-button
+            ><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18"></path><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"></path></svg><span class="lang-picker-code" aria-hidden="true">{LANG_PICKER_CODE}</span><svg class="lang-picker-chevron" aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
+            <nav id="lang-picker-menu" class="lang-picker-menu" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher data-dropdown-panel hidden>{languageLinks.map((item) => item.current
+              ? <a class="lang-picker-item" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-current="page" data-lang-current>{item.label}</a>
+              : <a class="lang-picker-item" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}</nav>
+          </div>
           <ThemeToggle id="theme-toggle" toDark={THEME_TO_DARK_LABEL} toLight={THEME_TO_LIGHT_LABEL} />
           <!-- Đăng nhập cộng đồng: js/community-auth.js dựng nút Đăng nhập hoặc ảnh đại diện + menu tài khoản. -->
           <div id="community-auth" class="cm-auth"></div>
@@ -612,7 +628,7 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
         })}
       </nav>
       <div class="site-menu-foot">
-        <nav class="lang-switcher site-menu-langs" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher>{languageLinks.map((item) => item.current
+        <nav class="site-menu-langs" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher>{languageLinks.map((item) => item.current
           ? <a class="site-menu-lang" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-current="page" data-lang-current>{item.label}</a>
           : <a class="site-menu-lang" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}</nav>
         <a class="header-cta" href={href('/doi-chuan/')}>{OPEN_GUIDE_MOBILE_LABEL}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>

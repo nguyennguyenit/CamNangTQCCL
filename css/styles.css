@@ -1570,21 +1570,83 @@ a.lookup-more:hover {
 /* Cụm nút header (ngôn ngữ, sáng/tối, đăng nhập): nút ma không viền, cùng cao 44px, nền sáng lên khi rê;
    chỉ CTA "Mở cẩm nang" là nút tô màu. Từ 821px nút Đăng nhập có chữ và viền đỏ dải (`--nav-underline`,
    ≥3:1 trên `--band` ở cả hai theme; `--accent` sáng chỉ 2.4:1) để nổi lên mà không tranh CTA. */
-.header-actions .icon-btn,
-.header-actions .lang-switch {
+.header-actions .icon-btn {
   border-color: transparent;
 }
 
 .header-actions .icon-btn:hover,
-.header-actions .lang-switch:hover {
+.header-actions .lang-picker.open .lang-picker-toggle {
   border-color: transparent;
   background-color: var(--band-active);
 }
 
-/* Nhóm chuyển ngôn ngữ trên header chỉ giữ link sang bản khác: ở 1280px header desktop không đủ chỗ cho cả ba nút
-   (font rộng như trên Linux/Windows làm trang cuộn ngang). Đủ mọi bản, kể cả bản đang xem, nằm ở chân menu mobile. */
-.header-actions .lang-switch[aria-current="page"] {
+/* Nút chọn ngôn ngữ trên header: một nút gọn (địa cầu + mã bản đang xem + mũi tên) thay cho hàng link, nên header
+   không phình theo số locale. Bấm mở menu thả căn phải liệt kê mọi bản, bản đang xem có dấu ✓. */
+.lang-picker {
+  position: relative;
+  display: flex;
+}
+
+.header-actions .lang-picker-toggle {
+  width: auto;
+  gap: var(--space-4);
+  padding-inline: var(--space-8);
+  font: var(--type-control);
+}
+
+.lang-picker-chevron {
+  transition: transform var(--motion-fast) ease;
+}
+
+.lang-picker.open .lang-picker-chevron {
+  transform: rotate(180deg);
+}
+
+.lang-picker-menu {
+  position: absolute;
+  top: calc(100% + var(--space-6));
+  right: 0;
+  z-index: var(--z-3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background-color: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-menu);
+}
+
+.lang-picker-menu[hidden] {
   display: none;
+}
+
+.lang-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-10);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lang-picker-item:hover,
+.lang-picker-item:focus-visible {
+  background-color: var(--accent-soft);
+}
+
+.lang-picker-item[aria-current="page"] {
+  color: var(--accent);
+}
+
+.lang-picker-item[aria-current="page"]::after {
+  content: "✓";
 }
 
 .header-actions .cm-auth-login {
@@ -1599,15 +1661,14 @@ a.lookup-more:hover {
 /* Desktop (chuột): cụm nút header gọn 36px, chữ 13px — không lấn thanh menu. Màn cảm ứng (≤820px) giữ
    vùng bấm 44px của các quy tắc gốc. */
 @media (min-width: 821px) {
-  .header-actions .icon-btn,
-  .header-actions .lang-switch {
+  .header-actions .icon-btn {
     width: auto;
     min-width: var(--control-36);
     height: var(--control-36);
     border-radius: var(--radius-8);
   }
 
-  .header-actions .lang-switch,
+  .header-actions .lang-picker-toggle,
   .header-actions .cm-auth-login {
     padding-inline: var(--space-8);
     font: var(--type-header-action);
@@ -2066,8 +2127,7 @@ a.lookup-more:hover {
   color: var(--band-faint);
 }
 
-/* Chân menu: nhóm chuyển ngôn ngữ + CTA son cùng một hàng, luôn nằm trong tầm ngón cái; màn hẹp không đủ chỗ
-   thì CTA xuống hàng riêng. */
+/* Chân menu: hàng chọn ngôn ngữ (đủ mọi bản, chia đều bề ngang) rồi CTA son ở hàng dưới, luôn trong tầm ngón cái. */
 .site-menu-foot {
   display: flex;
   flex-wrap: wrap;
@@ -2097,11 +2157,16 @@ a.lookup-more:hover {
   background-color: var(--band-active);
 }
 
-/* Nhóm ngôn ngữ ở chân menu: nút 52px cách nhau như hàng nút chân (đè khoảng sát của `.lang-switcher`). */
+/* Nhóm ngôn ngữ ở chân menu: chiếm trọn một hàng, mỗi bản một ô bằng nhau;
+   thêm locale chỉ làm ô hẹp lại chứ không đẩy CTA xuống hàng lộn xộn. */
 .site-menu-foot .site-menu-langs {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 1 100%;
   gap: var(--space-8);
+}
+
+.site-menu-foot .site-menu-lang {
+  flex: 1 1 0;
 }
 
 .site-menu-foot .header-cta {
@@ -19680,33 +19745,6 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
   .cm-auth-notice-link { min-height: var(--control-44); }
 }
 /* moi:doi-cong-dong:end */
-
-/* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương ở từng ngôn ngữ, nhãn viết bằng ngôn ngữ đích. */
-.lang-switch {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--control-44);
-  height: var(--control-44);
-  padding-inline: var(--space-10);
-  border: var(--border-hair) solid var(--band-control-line);
-  border-radius: var(--radius-10);
-  color: var(--band-ink);
-  font: var(--type-control);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.lang-switch:hover {
-  border-color: var(--band-ink);
-}
-
-/* Nhóm chuyển ngôn ngữ (`nav[data-lang-switcher]`): một link cho mỗi bản, xếp sát nhau thành một cụm. */
-.lang-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-}
 
 /* ---------- Đội của tôi (/doi-cua-toi/) và nút "Lưu vào đội của tôi" ---------- */
 
