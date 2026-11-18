@@ -516,7 +516,8 @@
         "src/pages/tra-cuu/[group]/[slug].astro",
         "src/components/pages/LookupItemPage.astro",
         "src/lib/lookup-item-pages.ts",
-        "js/lookup-master.js"
+        "js/lookup-master.js",
+        "js/building-upgrade-calculator.js"
       ],
       "id": "lookup",
       "label": "Tra cứu",
@@ -767,6 +768,7 @@
     "js/analyze-map.js": "9af75aefadf71a719e5ec36036cb3af4bc7e7033cdc88e71b8d9ee7eecf4aaf7",
     "js/analyze.js": "b8e0f32f986a0d2739ac979cff2aeb6921be5f683896a4f40b9bea0af4dde649",
     "js/app.js": "c195bcbfd2a02598b05fedb93887c35996551550d31afc4864bb01bdc7d9f408",
+    "js/building-upgrade-calculator.js": "1f08eaccd75e8eb053d30f644b3efe3647eeedc1a8bc9349ee09f2915931d3b5",
     "js/detail-actions.js": "1eb33b4980c58bd6ee10b7c023a85102660d0794f1c2d0140dfb8a074db9f36b",
     "js/hero-portrait.js": "36d7c01ef8e6a969732696acdb5f5bc027901104ff6b0bfb403335cf035d57ff",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",

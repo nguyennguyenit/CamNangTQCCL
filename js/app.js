@@ -4,6 +4,7 @@
 import { seasonConfigDetail, el, khaihoangTable } from "./render.js";
 import { createLookupPayloadLoader, loadLookupBundle } from "./lookup-data.js";
 import { initLookupPage } from "./lookup-page.js";
+import { initBuildingCalculator } from "./building-upgrade-calculator.js";
 import { setLookupRouteHandlesFromJSON } from "./lookup-ids.js";
 import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
@@ -633,6 +634,13 @@ async function main() {
       loadRawNames: () => loadRawNameResolver(loadBytes),
       // Bộ nạp byte dùng chung: lớp ja và `lookup-manifest` không bị tải lại lần nữa.
       loadBytes,
+    });
+
+    // Trang nhóm Công trình: máy tính nâng cấp nhiều công trình dùng `catalog.buildings` vừa tải.
+    if (lookupGroup === 'buildings' && lookupDocs?.catalog) initBuildingCalculator({
+      mount: $('[data-building-calc]'),
+      buildings: lookupDocs.catalog.buildings,
+      locale: currentLocale(),
     });
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
