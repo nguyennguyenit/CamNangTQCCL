@@ -18,7 +18,7 @@ const expectedGuideHeroReferences = [
 
 // Reviewed phase-1 migration table: the 30 retired `displayNote` owners, each recorded as the
 // destination field of its sentences. `null` means the field must be absent rather than empty, and
-// the pair must reproduce the retired value sentence for sentence (71 sentences in total).
+// the pair must reproduce the retired value sentence for sentence (107 sentences in total).
 const noteMigration = [
   ["teams[0].variants[0]", "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.", "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản."],
   ["teams[0].variants[1]", "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.", null],
@@ -57,6 +57,12 @@ const noteMigration = [
   ["teams[15].heroes[0]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
   ["teams[15].heroes[1]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
   ["teams[15].heroes[2]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
+  // Cấu hình khai hoang mùa Hán Diễm Trường Minh (PK-S27) đưa từ Đội chuẩn lên mục Khai hoang.
+  ["teams[2].variants[2]", "Gia Cát Khác làm chủ tướng trước và sau cấp 20; sau cấp 20 Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn thay Mau Giành Lợi Thế. Cộng điểm: Gia Cát Khác Thống Soái trước cấp 20, Trí Lực sau cấp 20; Hạ Hầu Uyên Võ Lực; Khương Duy Trí Lực. Bản Kỵ để đánh đất Khiên: trước cấp 20 Khương Duy mang Hổ Báo Kỵ và cộng Võ Lực, Gia Cát Khác chia đều Trí Lực và Thống Soái; sau cấp 20 Khương Duy dùng Thời Cơ Chiến Thắng + Hổ Báo Kỵ. Có thể dùng Pháp Chính thay Gia Cát Khác.", "Bản Cung đánh đất Kỵ, Cung, Thương. Đủ đỏ: cấp 5 mở đất 4, cấp 10 (nhanh nhất) đến cấp 13 (thông thường) mở đất 5; tướng trắng: cấp 7 mở đất 4, cấp 17 mở đất 5. Từ cấp 23 có thể tách hai tướng dẫn một tướng để đánh đất."],
+  ["teams[4].variants[1]", "Xếp hạng thấp nhất trong nhóm đội cùng phe: chỉ nên chọn khi không còn đội khai hoang khác. Hạ Hầu Uyên làm chủ tướng và bắt buộc mang Lõa Y Huyết Chiến, thiếu chiêu này thì không đủ sát thương. Thái Sử Từ nhanh nhất đội để giảm phòng trước; khi dùng đội Chạm Sứ đánh đất 5 thì mang Mau Giành Lợi Thế. Trước cấp 20 Hoàng Nguyệt Anh chọn Tam Thế Trận hoặc Thịnh Khí Linh Địch. Cộng điểm: Hạ Hầu Uyên Võ Lực; Thái Sử Từ Tốc Độ cao nhất đội, còn lại Võ Lực; Hoàng Nguyệt Anh Thống Soái.", "Trước cấp 20 bộ này đi Cung để đánh đất Thương; gặp đất Cung, Kỵ, Khiên thì đổi sang Kỵ, Thái Sử Từ làm chủ tướng mang Nhất Kỵ Đương Thiên, Hạ Hầu Uyên mang Lõa Y Huyết Chiến, Hoàng Nguyệt Anh mang Hổ Báo Kỵ. Sau cấp 20 trinh sát thủ quân rồi mới chọn binh chủng. Đủ đỏ: cấp 7 dùng đội Chạm Sứ mở đất 4, cấp 15–17 dùng đội Chạm Sứ mở đất 5; tướng trắng: cấp 8 và cấp 18. Sau cấp 20 mở đất 5 ổn định mà không cần Chạm Sứ."],
+  ["teams[6].variants[0]", "Đội bình dân, Khương Duy làm chủ tướng. Cộng điểm: Khương Duy Trí Lực; Thái Sử Từ Tốc Độ cao nhất đội, còn lại Võ Lực; Thái Văn Cơ Thống Soái. Trước cấp 20 Thái Sử Từ chọn Mau Giành Lợi Thế hoặc Bạo Lệ Vô Nhân. Bản Kỵ để đánh đất Khiên: trước cấp 20 Khương Duy đổi sang Hoành Tảo Thiên Quân và cộng Võ Lực. Có thể dùng Trương Xuân Hoa thay Thái Văn Cơ, tổn thất sẽ cao hơn.", "Bản Cung đánh đất Thương, Kỵ, Cung. Đội bình dân tổn thất cao: từ cấp 7 dùng đội Chạm Sứ mở đất 4, từ cấp 16 dùng đội Chạm Sứ mở đất 5 để giảm hao binh."],
+  ["teams[18]", "Cấu hình khai hoang mùa Hán Diễm Trường Minh (PK-S27), Trương Phi làm chủ tướng. Trương Phi cần có Hùng Liệt; Trương Phi và Quan Ngân Bình nên từ 3 đỏ trở lên, tướng trắng không khuyến nghị. Cộng điểm: Trương Phi Võ Lực; Quan Ngân Bình Tốc Độ cao nhất đội, còn lại Võ Lực; Thái Văn Cơ Thống Soái. Có thể dùng Trương Xuân Hoa thay Thái Văn Cơ, tổn thất sẽ cao hơn.", "Cấp 7 mở đất 4, cấp 17 mở đất 5. Đội Thương này khai hoang tổn thất cao, đánh đất 5 dễ thua nên cần đánh chắc. Sau khi thành chính đạt cấp 7, thay Thái Văn Cơ bằng Hoàng Nguyệt Anh (cộng Thống Soái, mang Thịnh Khí Linh Địch + Đại Kích Sĩ) để chuyển sang đội Thương đầu mùa; về sau có thể chuyển sang đội Thương Thục với Trương Phi và Quan Ngân Bình."],
+  ["teams[19]", "Cấu hình khai hoang 15 COST mùa Hán Diễm Trường Minh (PK-S27) theo bảng tham khảo đội khai hoang Hà Thị của nhà phát hành. Hà Thị là tướng phe Hán 4 COST dùng được ở mọi mùa: COST thấp, chiến pháp tự mang có tỉ lệ phát động cao, nên cộng toàn Trí Lực. Cộng điểm: Gia Cát Khác Trí Lực, Hà Thị Trí Lực, SP Lô Trực Thống Soái. Ảnh tham khảo không ghi chủ tướng; thứ tự tướng theo ảnh.", "Cùng bảng có bản 10 COST hai tướng: SP Lô Trực (Thịnh Khí Linh Địch; sau cấp 20 Thịnh Khí Linh Địch + Cắt Xương Trị Độc, cộng Thống Soái) và Hà Thị (Sĩ Biệt Tam Nhật; sau cấp 20 Sĩ Biệt Tam Nhật + Thái Bình Đạo Pháp, cộng Trí Lực). Hà Thị cũng dùng được cho đội Chạm Sứ."],
 ];
 
 test("Khác Bình Tiến uses spears in both opening phases", () => {
@@ -69,7 +75,7 @@ test("Khác Bình Tiến uses spears in both opening phases", () => {
 });
 
 test("curated options are complete for each declared phase and preserve the roster", () => {
-  assert.equal(data.season, "Binh Diễn Xuân Thu");
+  assert.equal(data.season, "Hán Diễm Trường Minh");
   for (const team of data.teams) {
     const variants = team.variants || [];
     assert.equal(new Set(variants.map((v) => v.id)).size, variants.length, team.title);
@@ -226,7 +232,7 @@ test("every retired display note keeps its sentences in exactly one owner field"
     sentences += [build, opening].filter(Boolean).join(" ").split(/(?<=\.)\s+/)
       .filter((sentence) => sentence.trim()).length;
   }
-  assert.equal(sentences, 71);
+  assert.equal(sentences, 107);
 });
 
 test("the retired displayNote field is gone from the whole document", () => {

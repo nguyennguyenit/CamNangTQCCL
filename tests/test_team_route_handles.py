@@ -1163,7 +1163,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(self.ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
         self.assertEqual(len(self.ledger["handles"]["recommended"]), 1681)
         self.assertEqual(len(self.ledger["handles"]["legacy"]), 443)
-        self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 18)
+        self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 20)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
         self.assertEqual(len(self.ledger["handles"]["recommended"]), len(self.publication.records))
         self.assertEqual(len(self.ledger["handles"]["legacy"]), len(self.teams))
@@ -1218,7 +1218,7 @@ class PinnedLedgerTest(unittest.TestCase):
         for team_id, handle in frozen.items():
             with self.subTest(team_id=team_id):
                 self.assertTrue(is_routable_identifier(handle))
-        self.assertEqual(khaihoang_stats, {"keys": 18, "distinctHandles": 18})
+        self.assertEqual(khaihoang_stats, {"keys": 20, "distinctHandles": 20})
         self.assertEqual(legacy_stats["keys"], 443)
         self.assertEqual(legacy_stats["collisionGroups"], 30)
 
@@ -1234,7 +1234,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(DEFAULT_LEDGER_PATH.read_bytes(), before)
         self.assertIn("matches generation " + self.publication.generation_id, out)
-        self.assertIn("recommended handles: 1681; legacy handles: 443; Khai hoang handles: 18", out)
+        self.assertIn("recommended handles: 1681; legacy handles: 443; Khai hoang handles: 20", out)
         # Diagnostics are informational after a rebind: they are printed, never gated on.
         self.assertIn("name-derived diagnostics:", out)
 

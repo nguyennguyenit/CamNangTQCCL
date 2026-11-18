@@ -1020,7 +1020,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 443 legacy, 18 Khai hoang,
+  // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 443 legacy, 20 Khai hoang,
   // 1028 trang riêng mục Tra cứu (263 tướng, 422 chiến pháp, 59 quân sư sau đợt theo client Global; 5 phương lược + 40 thẻ kỳ lược
   // PK-S27) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
@@ -1029,7 +1029,7 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
   assert.ok(seasonPageList.length > 10);
-  assert.equal(locations.length, 6384 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 6388 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [rootHref, ...[
@@ -1160,9 +1160,9 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1681);
   assert.equal(catalog.legacy.length, 443);
-  assert.equal(catalog.khaiHoang.length, 18);
+  assert.equal(catalog.khaiHoang.length, 20);
   assert.equal(lookupRoutes.entries.length, 1028);
-  assert.equal(locations.length, 6384 + 2 * seasonPageList.length);
+  assert.equal(locations.length, 6388 + 2 * seasonPageList.length);
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],

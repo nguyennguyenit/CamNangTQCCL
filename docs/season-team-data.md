@@ -120,7 +120,8 @@ record trước, thay các link `source-owned-coexist` của đúng kịch bản
 `pipeline/season-content-links.json` bằng kết quả (link kịch bản khác giữ nguyên byte), rồi publish bằng
 `python3 -m pipeline.build_season_data` như mục Bảo trì.
 
-Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
+Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa; mùa mục tiêu
+hiện là Hán Diễm Trường Minh (PK-S27), ghi ở `season`/`seasonNote` của `data/khaihoang.json`.
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
 
@@ -434,7 +435,10 @@ Sau khi đổi generation trong lúc chạy `npm run dev`, khởi động lại 
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
 tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
-trì riêng; danh mục Khaihoang của Recommended chỉ nằm trong Team chuẩn.
+trì riêng; danh mục Khaihoang của Recommended nằm trong Team chuẩn. Đưa một cấu hình
+Khai hoang của Recommended sang mục Khai hoang là bước curate tay (tên chiêu theo `data/tactics.json`, đội mới
+thêm cuối mảng `teams` để giữ khóa receipt `teams[N]`, thêm handle vào ledger rồi publish lại), không có
+đồng bộ tự động.
 
 ## Kiểm tra phạm vi đã có dữ liệu
 

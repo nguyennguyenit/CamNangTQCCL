@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-18 (Khai hoang: mùa mục tiêu Hán Diễm Trường Minh, #66)
+
+- Changed: `data/khaihoang.json` `season` = Hán Diễm Trường Minh, `seasonNote` nói rõ đội Tiến cử theo đội nhà phát hành giới thiệu mùa PK-S27, lựa chọn "PK-S27" là cấu hình của chính mùa này, đội/lựa chọn còn lại là tham khảo mùa trước hoặc bản CN.
+- Added: hai đội từ nhóm Khai hoang PK-S27 của Đội chuẩn (cuối mảng `teams`, giữ khóa receipt `teams[N]`): Trương Phi · Quan Ngân Bình · Thái Văn Cơ (Thương) và Gia Cát Khác · Hà Thị · SP Lô Trực (Cung, bản 15 COST); handle `/khai-hoang/truong-phi-quan-ngan-binh-thai-van-co/`, `/khai-hoang/gia-cat-khac-ha-thi-sp-lo-truc/`. Ba lựa chọn `pk-s27-phon-the` ("PK-S27 · Phồn thể") cho Khương Duy · Hạ Hầu Uyên · Gia Cát Khác, Hạ Hầu Uyên · Thái Sử Từ · Hoàng Nguyệt Anh, Thái Văn Cơ · Khương Duy · Thái Sử Từ. Mã Pháp Khác không thêm lựa chọn: bản PK-S27 sau khi đảo hai tướng (nguồn tự ghi in đảo) trùng "CN · Thôi Phong". 18 handle cũ giữ nguyên; đội không có nguồn PK-S27 giữ nguyên; 5 đội cảm tử dài hạn ở lại Đội chuẩn.
+- Chữ mới là `authored-vi` (không chữ Hán) nên không thêm receipt dịch (6409/6409). Re-pin `data/khaihoang.json` trong policy và ledger, baseline inventory 75267 → 75400 location, publish generation Đội chuẩn `d7d4a73f…` (prune `95de17f0…`), rebind giữ 1681/443 handle, Khai hoang 18 → 20.
+- Tests: `tests-js/khaihoang-data.test.mjs` (mùa, 5 owner `buildNote`/`openingNote` mới, 107 câu), `tests/test_team_route_handles.py` (20 handle Khai hoang), `tests-js/team-detail-routes.test.mjs` (2144 trang chi tiết), `tests-js/astro-dist-contract.test.mjs` (sitemap 6388 + trang mùa), e2e `khaihoang-options.spec.mjs` (20 đội) và `landing.spec.mjs` (19 đội đủ trước/sau; ca biên "đội không biến thể" chuyển sang SP Lô Trực · Thái Sử Từ · Trương Xuân Hoa). Nhãn chip của lựa chọn mới không chứa mã mùa, theo quy ước của e2e.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
