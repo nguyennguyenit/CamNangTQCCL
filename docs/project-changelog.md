@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-18 (Release gộp #143 #139 #142 #144 #149 #150 #151 trên bản `/ja/`)
+
+- Gộp bảy PR đã review vào nhánh `release/261118` từ main có bản tiếng Nhật (#133). File sinh (generation Recommended, `website-display.json`, ledger route, bundle Tra cứu, `workflow-build.ts`, zh/ja-gaps) không gỡ xung đột bằng tay: lấy bản main rồi dựng lại một lần.
+- Tra cứu `lookup:f9540053…` (heroes-dict trùng byte #143, tactics trùng byte #139), ledger slug 1029 id; lớp ja dựng lại, dịch bù 4 mẫu câu ghi chú phe Hán mới và hiệu ứng 衡軛陣 (ja-gaps 148/1029).
+- Generation Recommended `6e5fa85d…` (policy `site-vi-261118-release`, baseline 75582 location = 75267 + 27 máy tính công trình + 126 Cùng Tồn + 162 Khai hoang, receipt 6409/6409); handle 1681/443/20 (thêm 2 handle Khai hoang như #151).
+- Added: bản ja cho chuỗi UI mới của lô (hộp thoại Token API, máy tính công trình, ô dán danh sách tên, nút thêm hết món thiếu, nhãn Thẻ Kỳ Lược), qua review dịch độc lập (`plans/reports/translation-review-261118-2030-ja-release-ui.md`).
+- Fixed: `/ja/cung-ton/` dừng build vì bảng tra Thẻ Kỳ Lược thiếu tên Nhật; bảng nhúng thêm `jaNames` từ lớp lookup-ja.
+
 ## 2026-11-18 (Bản tiếng Nhật `/ja/`, issue #113)
 
 - Added: locale `ja` (`SITE_LOCALES = ['vi', 'zh', 'ja']`): mọi route có bản `/zh/` có bản `/ja/` cùng đường dẫn (2945 trang; build 8836 trang HTML, sitemap 8823 URL), `<html lang="ja">`, `og:locale` `ja_JP`, hreflang vi/zh-Hans/ja/x-default, cụm nút chuyển ngôn ngữ, khối ja trong `404.html`, luật `/ja/*` trong `_headers`, `_redirects`, `robots.txt`, mục ja trong `llms.txt`.
