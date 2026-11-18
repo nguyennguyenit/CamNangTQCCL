@@ -8,6 +8,8 @@ import { localePath, pick } from '../../../js/i18n.js';
 import { LOOKUP_GROUP_UNITS } from '../../../js/unified-lookup.js';
 import { lookupGroupEntries, lookupGroupPage, type LookupGroup } from '../../lib/lookup-pages';
 import { lookupGroupJsonLd } from '../../lib/structured-data.ts';
+import { buildingCalculatorShellTree } from '../../../js/building-upgrade-calculator.js';
+import { treeToHtml } from '../../../js/view-tree.js';
 import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
 
@@ -35,6 +37,8 @@ const searchPlaceholder = t(
   `Tìm ${LOOKUP_GROUP_UNITS[group]}… (gõ không dấu hoặc chữ Hán đều được)`,
   `搜索${current.label}……（支持中文名）`,
 );
+// Nhóm Công trình: khung máy tính nâng cấp (ẩn tới khi js/app.js gắn), đặt ngay trên danh sách, không có route riêng.
+const buildingCalcHtml = group === 'buildings' ? treeToHtml(buildingCalculatorShellTree(locale)) : '';
 const structured = lookupGroupJsonLd({
   locale,
   site: Astro.site!,
@@ -87,6 +91,7 @@ const structured = lookupGroupJsonLd({
     {/* Thanh nhóm cuộn ngang khi hẹp: đưa nhóm đang xem vào giữa trước lần vẽ đầu (không cuộn trang) và ghi
         `data-fade` để CSS làm mờ mép còn mục khuất; cập nhật khi cuộn và khi đổi cỡ màn hình. */}
     <script is:inline>(function(){var nav=document.getElementById('lookup-chips');if(!nav)return;var current=nav.querySelector('[aria-current="page"]');if(current&&nav.scrollWidth>nav.clientWidth)nav.scrollLeft=current.offsetLeft-nav.offsetLeft-(nav.clientWidth-current.offsetWidth)/2;var fade=function(){var start=nav.scrollLeft>1,end=nav.scrollLeft+nav.clientWidth<nav.scrollWidth-1;var value=start&&end?'both':start?'start':end?'end':'';if(value)nav.dataset.fade=value;else delete nav.dataset.fade;};fade();nav.addEventListener('scroll',fade,{passive:true});window.addEventListener('resize',fade);})();</script>
+    {buildingCalcHtml && <Fragment set:html={buildingCalcHtml} />}
     {firstPage.master ? (
       <div class={`lookup-master lookup-master-${group}`} data-lookup-master>
         <Fragment set:html={firstPage.filtersHtml} />

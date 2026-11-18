@@ -1258,7 +1258,9 @@ a.lookup-more:hover {
 /* ---------- Select và nhãn caps ---------- */
 .season-slot select,
 .reference-scope-controls select,
-.rt-select {
+.rt-select,
+.building-calc-select,
+.building-calc-input {
   min-height: var(--control-44);
   padding: 0 var(--space-14);
   border: var(--border-hair) solid var(--line);
@@ -7657,6 +7659,167 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   gap: var(--space-24);
 }
 
+/* ---------- Máy tính nâng cấp công trình (trang nhóm Công trình, js/building-upgrade-calculator.js) ----------
+   Khối gập đặt trên danh sách; mỗi dòng là công trình + cấp hiện tại + cấp đích, khối tổng dùng lại ô số liệu
+   `.lookup-stat-tile` của panel chi tiết. Hẹp thì ô chọn công trình chiếm cả hàng, hai ô cấp chia đôi hàng dưới. */
+.building-calc {
+  margin: 0 0 var(--space-24);
+}
+
+.building-calc-box {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.building-calc-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--control-56);
+  padding: var(--space-12) var(--space-48) var(--space-12) var(--space-16);
+  cursor: pointer;
+  list-style: none;
+}
+
+.building-calc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.building-calc-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.building-calc-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-lead,
+.building-calc-note,
+.building-calc-empty {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.building-calc-chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--space-16);
+  display: inline-flex;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.building-calc-box[open] > .building-calc-summary .building-calc-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.building-calc-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-4) var(--space-16) var(--space-16);
+}
+
+.building-calc-empty,
+.building-calc-note,
+.building-calc-missing,
+.building-calc-result-title {
+  margin: 0;
+}
+
+.building-calc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.building-calc-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-bottom: var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line-2);
+}
+
+.building-calc-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--size-col-120) var(--size-col-120) auto;
+  align-items: end;
+  gap: var(--space-12);
+}
+
+.building-calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.building-calc-select,
+.building-calc-input {
+  width: 100%;
+}
+
+.building-calc-row-result p {
+  margin: 0;
+}
+
+.building-calc-row-totals {
+  font: var(--type-small);
+}
+
+.building-calc-row-result.is-empty,
+.building-calc-missing {
+  color: var(--warn);
+  font: var(--type-small);
+}
+
+.building-calc-actions {
+  display: flex;
+}
+
+.building-calc-add:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.building-calc-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.building-calc-result-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-totals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-10);
+}
+
+@media (max-width: 680px) {
+  .building-calc-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .building-calc-field-building {
+    grid-column: 1 / -1;
+  }
+
+  .building-calc-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Màu theo phẩm chất / hệ: thẻ, ô chữ và huy hiệu đọc cùng ba biến này. */
 .lookup-master [data-tone] {
   --tone-bg: var(--panel-2);
@@ -9062,6 +9225,7 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   #section-lookup[data-lookup-detail-open="true"] .lookup-head,
   #section-lookup[data-lookup-detail-open="true"] .lookup-search,
   #section-lookup[data-lookup-detail-open="true"] .lookup-chips,
+  #section-lookup[data-lookup-detail-open="true"] .building-calc,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master > .lookup-filters,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master-list {
     display: none;
