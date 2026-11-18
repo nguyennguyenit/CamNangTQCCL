@@ -15532,7 +15532,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Quy Thuận",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         },
         {

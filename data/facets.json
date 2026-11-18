@@ -870,11 +870,11 @@
   "books": [
     {
       "value": "Dẫn Quân",
-      "count": 219
+      "count": 220
     },
     {
       "value": "Tam Quân Chi Chúng",
-      "count": 192
+      "count": 193
     },
     {
       "value": "Rèn Luyện",
@@ -1113,6 +1113,10 @@
       "count": 5
     },
     {
+      "value": "Quy Thuận",
+      "count": 5
+    },
+    {
       "value": "Tam Lý Nhĩ Hoàn",
       "count": 5
     },
@@ -1122,10 +1126,6 @@
     },
     {
       "value": "Phân Hiểm",
-      "count": 4
-    },
-    {
-      "value": "Quy Thuận",
       "count": 4
     },
     {

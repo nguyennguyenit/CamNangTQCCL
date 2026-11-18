@@ -10710,7 +10710,11 @@
       "historicalTier": null,
       "holders": [
         {
-          "bookSlotsRaw": [],
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Quy Thuận",
+            "Dẫn Quân"
+          ],
           "displayNameVi": "Bàng Thống",
           "faction": "Thục",
           "heroIdentityId": "hero:d04269a972ec14e0c95efdec",
@@ -10770,7 +10774,7 @@
         }
       ],
       "legacyTeamId": "youtube-146",
-      "legacyVariantId": "v-8be28ae02aac13ef724e2eafbe891ab438594bba2cd46f500784d22949610104",
+      "legacyVariantId": "v-979c4bcdffb418be76e4f08224b39b64a4a89022146b4a15de9686cf9de2d3c7",
       "name": "SP Thục Trí Thuẫn",
       "nickname": null,
       "origin": "existing-local",
@@ -33279,7 +33283,7 @@
       "classification": "distinct",
       "dedupKey": "sha256:3b40358eeffed07ddae5c60a0769ccc54b7022d87c26a2983b652425c4e04105",
       "legacyTeamId": "youtube-146",
-      "legacyVariantId": "v-8be28ae02aac13ef724e2eafbe891ab438594bba2cd46f500784d22949610104"
+      "legacyVariantId": "v-979c4bcdffb418be76e4f08224b39b64a4a89022146b4a15de9686cf9de2d3c7"
     },
     {
       "classification": "distinct",
@@ -34605,7 +34609,7 @@
   ],
   "dedupKeyVersion": 1,
   "inputTeamRows": 443,
-  "localTeamsSha256": "sha256:eb489a07c52d2983606691715cf898b6399129a5ff3f341dcc0694dfd5c2e171",
+  "localTeamsSha256": "sha256:6d447d8000d1cf4035debee230e670619d108fea228a650713a49b461798ff8b",
   "mappingFileSha256": "sha256:b7554bb819531c33c26b5e193985258225d84d15dfd621327543242c4c2df3e7",
   "pending": [
     {

@@ -4,9 +4,9 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 
 ## Kết quả
 
-- Tướng có binh thư: 382/801 (trước: 3/801).
-- Đội có binh thư ít nhất một tướng: 135/267 (trước: 1/267); đủ cả ba tướng: 120.
-- Đội vẫn trống: 132; đội có một phần: 15.
+- Tướng có binh thư: 383/801 (trước: 3/801).
+- Đội có binh thư ít nhất một tướng: 135/267 (trước: 1/267); đủ cả ba tướng: 121.
+- Đội vẫn trống: 132; đội có một phần: 14.
 - Dedup Đội khác không đổi (387 admitted, 20 pending, cùng danh sách id): dedup chỉ xét tướng + chiến pháp.
 
 ## Quy tắc đã áp
@@ -14,6 +14,7 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 - Thứ tự: binh thư chính trước, rồi hai binh thư phụ. Dạng "A/B" trên bảng creator ghi B vào `alternatives`.
 - Chỉ nhận tướng đọc rõ, khớp đúng bộ tướng của đội (chiến pháp khớp để tách đội cùng bộ tướng), và binh thư chính map được. Cuốn phụ không đọc được hoặc chưa map thì bỏ, không đoán.
 - Nhãn PK trên chân dung (bản PK của cùng tướng) được nhận khi chiến pháp khớp đội.
+- Bàng Thống nhãn S2 (đội SP Thục Trí Thuẫn) là cùng tướng Bàng Thống: anh xác nhận bằng ảnh frame ngày 19/11/2026.
 - Nhiều video cho cùng tướng mà lệch nhau: lấy video đứng sớm nhất trong `evidence` của đội (video dùng để curate đội).
 - Màn chiến báo không hiện binh thư, nên đội chỉ có bằng chứng chiến báo vẫn trống.
 - `歸心` (Quy Thuận) nay có đội dùng: gỡ cờ `outsideTeams` trong bảng binh thư.
@@ -52,7 +53,6 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 | Hạt Nhân Trương Phi | Trương Phi | không có cuốn chính map được: 以退為進, 精準, 持重 | [8wZjFWUB6V4@430s](https://youtu.be/8wZjFWUB6V4?t=430) |
 | Hạt Nhân Chu Tuấn | SP Chu Tuấn | không có cuốn chính map được: 以退為進, 精準, 善戰 | [fnEUNcZUmqI@328s](https://youtu.be/fnEUNcZUmqI?t=328) |
 | Hạt Nhân Chu Tuấn | SP Viên Thiệu | không có cuốn chính map được: 以退為進, 精準, 善戰 | [fnEUNcZUmqI@328s](https://youtu.be/fnEUNcZUmqI?t=328) |
-| SP Thục Trí Thuẫn | Bàng Thống | confidence thấp: 三軍之眾, 歸心, 統軍 | [fnEUNcZUmqI@328s](https://youtu.be/fnEUNcZUmqI?t=328) |
 | Đội chức năng (Trương Phi) | Trương Phi | không có cuốn chính map được: 以退為進, 精準, 善戰 | [c2etTumCOjA@190s](https://youtu.be/c2etTumCOjA?t=190) |
 | Đội chức năng (Quan Ngân Bình) | Quan Ngân Bình | không có cuốn chính map được: 以退為進, 精準, 善戰 | [c2etTumCOjA@190s](https://youtu.be/c2etTumCOjA?t=190) |
 | Đội chức năng (Trương Phi, Quan Ngân Bình, Hoàng Nguyệt Anh) | Trương Phi | không có cuốn chính map được: 以退為進, 精準, 善戰 | [c2etTumCOjA@190s](https://youtu.be/c2etTumCOjA?t=190) |
