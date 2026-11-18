@@ -9,7 +9,8 @@ from unittest import mock
 from pipeline import crawl_sgsdeck_recommended as crawler
 from pipeline import recommended_team_dedup, site_localization
 from pipeline.recommended_identity import build_mapping
-from pipeline.recommended_team_dedup import _partial_source_holders, _possibly_duplicate, build_other_team_ledger, classify_candidates, dedup_key
+from pipeline.recommended_team_dedup import (_local_identity_name, _partial_source_holders, _possibly_duplicate,
+                                             build_other_team_ledger, classify_candidates, dedup_key, season_corpus)
 
 
 def config(identifier, holders, origin="existing-local", evidence=None):
@@ -100,6 +101,94 @@ class RecommendedDedupTest(unittest.TestCase):
         self.assertEqual(result["decisions"][0]["matchingRecommended"], ["source#alternative-1"])
 
 
+    def test_local_identity_uses_sp_co_prefix_and_base_name_without_notes(self):
+        self.assertEqual(_local_identity_name({"name": "SP Pháp Chính(Cung S)", "baseName": "Pháp Chính", "isSP": True}), "SP Pháp Chính")
+        self.assertEqual(_local_identity_name({"name": "CO Tinh Thái", "baseName": "Tinh Thái", "isCO": True}), "CO Tinh Thái")
+        self.assertEqual(_local_identity_name({"name": "40Y Lữ Bố(S)", "baseName": "40Y Lữ Bố"}), "40Y Lữ Bố")
+        self.assertEqual(_local_identity_name({"name": "Đổng Trác/SP Đổng Trác", "baseName": "Đổng Trác",
+                                               "alternatives": ["SP Đổng Trác"]}), "Đổng Trác")
+        self.assertEqual(_local_identity_name({"name": "H1"}), "H1")
+
+    def test_admitted_rows_carry_season_and_youtube_rows_are_recommended_first(self):
+        entries = [{"kind": "hero", "stableId": f"h{index}", "aliases": [f"H{index}"],
+                    "reviewStatus": "reviewed", "evidenceRef": f"fixture:{index}"}
+                   for index in range(1, 10)]
+        teams = [
+            {"id": "team-intro-1", "source": "team-intro", "name": "Sheet", "heroes": [
+                {"name": "H1(S)", "baseName": "H1", "tactics": []}, {"name": "H2", "tactics": []}, {"name": "H3", "tactics": []}]},
+            {"id": "youtube-0", "source": "youtube", "name": "Video", "heroes": [
+                {"name": "H4", "baseName": "H4", "tactics": []}, {"name": "H5", "tactics": []}, {"name": "H6", "tactics": []}]},
+            {"id": "youtube-1", "source": "youtube", "name": "Same", "heroes": [
+                {"name": "H7", "tactics": []}, {"name": "H8", "tactics": []}, {"name": "H9", "tactics": []}]},
+        ]
+        recommended = [{"sourceConfigId": "s27-same", "heroes": [
+            {"nameRaw": "H7", "tacticSlotsRaw": []}, {"nameRaw": "H8", "tacticSlotsRaw": []}, {"nameRaw": "H9", "tacticSlotsRaw": []},
+        ], "alternativeHoldersRaw": []}]
+        result = build_other_team_ledger(teams, recommended, {"entries": entries}, season_id="pk-s27")
+        self.assertEqual([row["legacyTeamId"] for row in result["admitted"]], ["youtube-0", "team-intro-1"])
+        self.assertEqual([(row["recommended"], row["sourceLabel"]) for row in result["admitted"]],
+                         [(True, "YouTube"), (False, "team-intro")])
+        self.assertTrue(all(row["sourceSeasonIds"] == ["pk-s27"] for row in result["admitted"]))
+        self.assertEqual(next(row for row in result["decisions"] if row["legacyTeamId"] == "youtube-1")["matchingRecommended"],
+                         ["s27-same"])
+
+    def test_season_corpus_keeps_only_default_season_scopes(self):
+        inventory = {"scopes": [{"safeScopeKey": "a", "sourceSeasonId": "pk-s27"},
+                                {"safeScopeKey": "b", "sourceSeasonId": "pk-s26"},
+                                {"safeScopeKey": "c", "sourceSeasonId": "pk-s27"}]}
+        details = {"a": [{"sourceConfigId": "a1"}], "b": [{"sourceConfigId": "b1"}], "c": [{"sourceConfigId": "c1"}]}
+        self.assertEqual([row["sourceConfigId"] for row in season_corpus(inventory, details, "pk-s27")], ["a1", "c1"])
+        with self.assertRaisesRegex(ValueError, "pk-s99"):
+            season_corpus(inventory, details, "pk-s99")
+
+    def test_unresolved_record_of_another_season_cannot_hold_back_a_team(self):
+        entries = [{"kind": "hero", "stableId": f"h{index}", "aliases": [f"H{index}"],
+                    "reviewStatus": "reviewed", "evidenceRef": f"fixture:{index}"}
+                   for index in range(1, 4)]
+        teams = [{"id": "local", "name": "Local", "heroes": [
+            {"name": "H1", "tactics": []}, {"name": "H2", "tactics": []}, {"name": "H3", "tactics": []}]}]
+        inventory = {"scopes": [{"safeScopeKey": "old", "sourceSeasonId": "pk-s26"},
+                                {"safeScopeKey": "now", "sourceSeasonId": "pk-s27"}]}
+        details = {"old": [{"sourceConfigId": "old-partial", "heroes": [
+            {"nameRaw": "H1", "tacticSlotsRaw": []}, {"nameRaw": "未知", "tacticSlotsRaw": []}, {"nameRaw": "H3", "tacticSlotsRaw": []},
+        ], "alternativeHoldersRaw": []}], "now": []}
+        everything = build_other_team_ledger(teams, details["old"], {"entries": entries})
+        self.assertEqual(everything["decisions"][0]["reason"], "possibly-matches-unresolved-recommended")
+        seasonal = build_other_team_ledger(teams, season_corpus(inventory, details, "pk-s27"), {"entries": entries},
+                                           season_id="pk-s27")
+        self.assertEqual(seasonal["decisions"][0]["classification"], "distinct")
+        self.assertEqual(seasonal["unresolvedRecommended"], [])
+
+    def test_admitted_rows_identical_to_each_other_keep_one_preferring_youtube_then_order(self):
+        entries = [{"kind": "hero", "stableId": f"h{index}", "aliases": [f"H{index}"],
+                    "reviewStatus": "reviewed", "evidenceRef": f"fixture:{index}"}
+                   for index in range(1, 7)]
+        entries += [{"kind": "tactic", "stableId": f"t{index}", "aliases": [f"T{index}"],
+                     "reviewStatus": "reviewed", "evidenceRef": f"fixture:t{index}"} for index in (1, 2)]
+
+        def team(identifier, source, names, tactic="T1"):
+            # Chiến pháp luôn thuộc H1/H4 dù thứ tự tướng đổi: trùng tuyệt đối tính theo chủ sở hữu.
+            return {"id": identifier, "source": source, "name": identifier, "heroes": [
+                {"name": name, "tactics": [{"name": tactic}] if name in ("H1", "H4") else []} for name in names]}
+
+        teams = [
+            team("team-intro-1", "team-intro", ["H1", "H2", "H3"]),
+            team("moi-phe-2", "moi-phe", ["H3", "H2", "H1"]),
+            team("team-intro-3", "team-intro", ["H4", "H5", "H6"]),
+            team("moi-phe-4", "moi-phe", ["H6", "H5", "H4"]),
+            team("team-intro-5", "team-intro", ["H4", "H5", "H6"], tactic="T2"),
+            team("youtube-0", "youtube", ["H2", "H1", "H3"]),
+        ]
+        result = build_other_team_ledger(teams, [], {"entries": entries}, season_id="pk-s27")
+        self.assertEqual([row["legacyTeamId"] for row in result["admitted"]], ["youtube-0", "team-intro-3", "team-intro-5"])
+        decisions = {row["legacyTeamId"]: row for row in result["decisions"]}
+        self.assertEqual({key: (row["classification"], row.get("matchingLocal")) for key, row in decisions.items()
+                          if row["classification"] == "duplicate"},
+                         {"team-intro-1": ("duplicate", "youtube-0"), "moi-phe-2": ("duplicate", "youtube-0"),
+                          "moi-phe-4": ("duplicate", "team-intro-3")})
+        self.assertEqual(result["counts"], {"distinct": 3, "duplicate": 3, "pendingIdentity": 0, "pendingSource": 0})
+        self.assertEqual(len(result["admitted"]), result["counts"]["distinct"])
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests/fixtures/sgsdeck-recommended"
 DETAIL_URL = "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"
@@ -135,10 +224,14 @@ def _dedup(*args):
 class RecommendedDedupPackTest(unittest.TestCase):
     def test_pack_mode_matches_cache_mode_byte_for_byte_and_passes_ledger_validation(self):
         identity_map = ROOT / "pipeline/recommended-identity-map.json"
-        common = ["--teams", str(ROOT / "data/teams.json"), "--team-tier", str(ROOT / "data/team-tier.json"),
-                  "--identity-map", str(identity_map)]
         with tempfile.TemporaryDirectory() as temporary:
             base = Path(temporary)
+            # Scope fixture là mùa og-兵演春秋; xét trùng chỉ dùng Đội chuẩn của mùa mặc định.
+            season = base / "default-season.json"
+            season.write_text(json.dumps({"schemaVersion": 1, "defaultSourceSeasonId": "og-兵演春秋",
+                                          "evidenceRef": "fixture"}, ensure_ascii=False), encoding="utf-8")
+            common = ["--teams", str(ROOT / "data/teams.json"), "--team-tier", str(ROOT / "data/team-tier.json"),
+                      "--identity-map", str(identity_map), "--default-season", str(season)]
             cache, repository = base / "cache", base / "repository"
             _fixture_cache(cache)
             from_cache = base / "from-cache.json"
@@ -160,6 +253,9 @@ class RecommendedDedupPackTest(unittest.TestCase):
             from_pack = base / "from-pack.json"
             _dedup(*common, "--root", str(repository), "--pack", PACK, "--output", str(from_pack))
             self.assertEqual(from_pack.read_bytes(), from_cache.read_bytes())
+            written = json.loads(from_pack.read_bytes())
+            self.assertEqual(written["recommendedCorpusSeasonId"], "og-兵演春秋")
+            self.assertTrue(all(row["sourceSeasonIds"] == ["og-兵演春秋"] for row in written["admitted"]))
             captured = site_localization.load_source_pack(repository, PACK)
             site_localization._validate_other_ledger(json.loads(from_pack.read_bytes()), captured["inventory"],
                                                      identity_map.read_bytes(), site_localization.pack_corpus(captured))

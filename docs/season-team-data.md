@@ -198,6 +198,20 @@ giải quyết được luôn là wildcard khi đối chiếu, không phải b�
 `recommended-other-teams.json` được ghi vào `other-teams.json`; duplicate và
 pending không đi vào public artifact.
 
+Đội khác chỉ có một mùa: corpus đối chiếu của `recommended_team_dedup` là Đội
+chuẩn của đúng mùa mặc định (`--default-season`, mặc định
+`pipeline/recommended-default-season.json`, hiện `pk-s27`; ledger ghi
+`recommendedCorpusSeasonId`), không phải mọi mùa, và mọi hàng admitted mang
+`sourceSeasonIds: [<mùa đó>]`. Đội gốc gồm sheet cộng đồng và đội đề cử curate tay
+từ YouTube trong `pipeline/team-youtube-pk-s27.json` (bản ghi đã chuẩn hóa, không
+có `id`, `source: "youtube"`); `pipeline.build_json` nối chúng vào `data/teams.json`
+sau supplement với ID `youtube-<n>`, giữ `nameZh`, `confidence`, `evidence`. Hàng
+nguồn YouTube có `recommended: true` (nguồn khác `false`), `sourceLabel` "YouTube"
+và đứng trước; giao diện hiện nhãn "Đề cử". Sau khi loại hàng trùng Đội chuẩn, các
+hàng admitted trùng tuyệt đối nhau (cùng dedup key tướng + chiến pháp) chỉ giữ hàng
+đầu theo thứ tự đã xếp (đề cử trước, rồi thứ tự xuất hiện); hàng còn lại thành
+`duplicate` với `matchingLocal` trỏ về hàng được giữ.
+
 `src/data/recommended-reference/current.json` chọn đúng một generation bất biến.
 Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `other-teams.json` và từng `details-<safeScopeKey>.json`. Astro chỉ xuất
@@ -211,6 +225,14 @@ không theo thứ tự mùa của SGSDeck. Builder dừng nếu mùa đó không
 `available`. Đổi mùa mặc định: sửa file, chạy lại chuỗi `site_localization build → check →
 publish` bên dưới, rồi `team_route_handles --rebind` và `lookup_route_handles --write` (redirect
 301 cho trang mùa của mùa mới hiện tại). File không thuộc glossary nên không làm stale receipt dịch.
+Đội khác không tự đi theo: corpus dedup và `sourceSeasonIds` của ledger Đội khác lấy mùa mặc định
+tại lúc chạy `recommended_team_dedup`, còn nhãn mùa của `/doi-khac/` đọc `sourceSeasonIds` của các hàng.
+Vì vậy đổi mùa mặc định thì phải quyết định biên tập về mùa của Đội khác (giữ mùa cũ hay chuyển sang
+mùa mới cùng bộ đội gốc tương ứng); nếu chuyển, chạy lại `recommended_team_dedup` (dedup với Đội chuẩn
+của mùa mới) trước chuỗi publish và review lại phân loại ledger. Hiện chưa giữ được Đội khác ở mùa cũ:
+builder bắt chạy lại dedup mỗi khi inventory Recommended đổi, và lần chạy đó gắn mọi hàng Đội khác sang
+mùa mặc định mới (kể cả đội YouTube của mùa cũ). Muốn giữ mùa cũ thì phải neo mùa trong pipeline trước
+(issue #134).
 
 Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
 duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)
@@ -359,7 +381,8 @@ Hàng mới, kể cả id từng bị gỡ nay quay lại, nhận handle suy t�
 trùng thì dùng handle suy từ tên kèm `-2`, `-3`… Tombstone không bao giờ được
 cấp lại, kể cả cho chính id từng giữ nó (id SGSDeck không bảo đảm danh tính đội),
 nên một URL đã công bố không bao giờ trỏ sang đội khác. Legacy/Khai hoang không
-đổi; `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
+đổi; khi `data/teams.json` thêm đội gốc thì dùng `--rebind --append-legacy` (handle
+legacy cũ giữ nguyên, đội mới nhận handle chỉ-thêm, xem deployment guide). `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
 segment đang sống). `--write` chỉ dựng ledger lần đầu (`retiredRecommended`
 rỗng) nên từ chối ledger đã có tombstone.
 

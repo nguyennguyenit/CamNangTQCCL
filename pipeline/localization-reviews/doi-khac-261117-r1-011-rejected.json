@@ -1,0 +1,163 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-011-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-011",
+ "items": [
+  {
+   "entityId": "tactic:khi-lang-tam-quan",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "2a373c02251fb790f636ec23a3784d68c00754474f74886f29aabcab897bca34",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2bebc8e8d48b1c413678bd82c7c5ce2a0ad1a666b0be43231b58391977fb7391",
+   "verdict": "rejected",
+   "errors": [
+    "Event name contradicts the official client name for the same event (client exchangeCondition of this tactic: \"Sự kiện Trận Dĩ Thủy Quan\"); \"Tỷ Thủy Quan\" is a different form"
+   ],
+   "notes": "Trận Dĩ Thủy Quan"
+  },
+  {
+   "entityId": "tactic:khong-danh-ma-thang",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "8aff13bb117f6b247590b2d7eccea23fb8cd0d032d3992134be3c4bb4b960d2a",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "f9a7f31549f6df0fd25584d062b3a5f1b2cc05a1c354df4e930be2d6e29aec8d",
+   "verdict": "rejected",
+   "errors": [
+    "Event name contradicts authority: 水淹七軍 = \"Nước Ngập Thất Quân\" (client exchangeCondition of this tactic and recommended-identity-map displayNameVi); \"Thủy Yêm Thất Quân\" is only an alias"
+   ],
+   "notes": "Nước Ngập Thất Quân"
+  },
+  {
+   "entityId": "tactic:kim-dan-bi-thuat",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "19bbab2a7280aaaad3db57de219dca0d6010ef3caf29d96e429f1a9d18ddeaa4",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "d440db2df20b6b5524ba8c2c498474c4ab886e01226c76a5b7cf4c713425307f",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (2020-01-08 effect text, the note about the dodge change, and the original version are all missing)"
+   ],
+   "notes": "Cập nhật 2020-01-08 / Trong 2 lượt đầu trận, khiến toàn thể quân ta nhận 17.5%→35% hiệu quả Né tránh (có thể miễn nhiễm sát thương), đồng thời từ lượt 3 của trận đấu nhận trạng thái Nghỉ dưỡng (mỗi lượt hồi phục binh lực một lần, hồi phục 29%→58%, chịu ảnh hưởng của Trí lực), kéo dài 3 lượt / Ghi chú: hiệu quả Né tránh được điều chỉnh từ lượt 1 thành 2 lượt đầu, xác suất Né tránh được điều chỉnh từ 20%→40% thành 17.5%→35% / Phiên bản gốc / Ở lượt 1 của trận đấu, khiến toàn thể quân ta nhận 20%→40% hiệu quả Né tránh, có thể miễn nhiễm sát thương, đồng thời từ lượt 3 của trận đấu nhận trạng thái Nghỉ dưỡng (mỗi lượt hồi phục binh lực một lần, hồi phục 29%→58%, chịu ảnh hưởng của Trí lực), kéo dài 3 lượt"
+  },
+  {
+   "entityId": "tactic:ky-binh-gian-dao",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "208aa8f89c24970b5884970b0babbe93d3824091a687b7f8136b4e4155827773",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "b8e14624e88921082ebf350b5a5cc7b8d9c6de678c6c1e43746cef815411eeb3",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (the whole 2023-10-11 effect and the original version are missing)"
+   ],
+   "notes": "Cập nhật 2023-10-11 (tăng cường) / Trong chiến đấu, khi bản thân phát động chiến pháp chuẩn bị, có 75% xác suất (chịu ảnh hưởng của Vũ lực) giảm 1 lượt thời gian chuẩn bị; trong 4 lượt đầu trận, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của Vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% hút máu binh khí cho đến khi trận đấu kết thúc / Phiên bản gốc / Trong chiến đấu, khi bản thân phát động chiến pháp chuẩn bị, có 75% xác suất (chịu ảnh hưởng của Vũ lực) giảm 1 lượt thời gian chuẩn bị; trong 4 lượt đầu trận, sát thương do chiến pháp chủ động gây ra tăng 15%→30% (chịu ảnh hưởng của Vũ lực); ở lượt 5, nếu binh lực bản thân thấp hơn 50%, nhận 22.5%→45% hút máu binh khí, nếu không thì tỷ lệ phát động chiến pháp chủ động của bản thân tăng 3%→6%, cho đến khi trận đấu kết thúc"
+  },
+  {
+   "entityId": "tactic:lam-chien-tien-dang",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "523e71486644433622afa30e8506380904b3e0635e5d92227234c9fe103f90a9",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "abbebc2d3bf1765401c5091adb96903d55bb4b90074b419eac74aa670c46158a",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI translates only the 2021-07-21 version; the 2020-04-01 version (67.5%→135%) and the original version (109%→218%, xác suất phát động 60%) are missing"
+   ],
+   "notes": "Cập nhật 2021-07-21 (tăng cường): Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 75%→150%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt. / Cập nhật 2020-04-01: Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 67.5%→135%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt. / Phiên bản gốc: Gây sát thương binh khí lên nhóm quân địch (2 người) (tỷ lệ sát thương 109%→218%), sau đó bản thân rơi vào trạng thái Suy nhược (không thể gây sát thương), kéo dài 1 lượt (xác suất phát động 60%)."
+  },
+  {
+   "entityId": "tactic:lam-nguy-cuu-chu",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "cf7bb9049dbe16e65845b7f2c70a4aa44226cdc844dcd6094075608be8c6f7ba",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "56772734c0b46f1ed2296f60040d1cf3e4a6c11eff54c9187c6071f2eb4b7443",
+   "verdict": "rejected",
+   "errors": [
+    "Event name contradicts the official client name for the same event (client exchangeCondition: \"Sự kiện Cắt Râu Vứt Áo\")"
+   ],
+   "notes": "Cắt Râu Vứt Áo"
+  },
+  {
+   "entityId": "tactic:lam-phong-quyet-dich",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "91986e6298473ef528a0e35c04187651e9dfd154f51f34f5ab0f1424c462e6d3",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "64900c70e236c29d228edaa8e58288572de651908637cf4d8ce83eb64473b1fc",
+   "verdict": "rejected",
+   "errors": [
+    "Event name contradicts the official client name for the same event (client exchangeCondition: \"Sự kiện Chung Hội Chi Loạn\")"
+   ],
+   "notes": "Chung Hội Chi Loạn"
+  },
+  {
+   "entityId": "tactic:linh-thanh-chau",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "538b8686a096d2d5927138ee90c2c6308fec66908b386c986b98b4442cbd4b2e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "dbfdf9822cf29cef354f0d06085bc2a7ace6a2eefed0484900f6700c580c3393",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI translates only the 2021-09-29 version; the 2020-07-29 version (28%, 15%→30% / 15%→30%) and the original version (25%, 15%→30% / 11%→22%) are missing"
+   ],
+   "notes": "Cập nhật 2021-09-29 (làm lại): Nâng cấp Lính Thương thành Lính Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: trong 2 hiệp đầu trận, khi nhóm quân ta (2 người) chịu tấn công thường, phản kích người tấn công 1 lần (tỷ lệ sát thương 36%→72%); khi bắt đầu hiệp 3, lần lượt hồi phục binh lực cho toàn thể quân ta, ưu tiên hồi phục hoàn toàn cho 1 đơn vị quân ta có binh lực thấp nhất, sau đó hồi phục các đơn vị quân ta khác (tổng tỷ lệ trị liệu 90%→180%, chịu ảnh hưởng của Võ lực và chịu thêm ảnh hưởng bởi sát thương quân địch gây ra); nếu Tào Tháo thống lĩnh, trị liệu còn chịu thêm ảnh hưởng của Thống suất. / Cập nhật 2020-07-29 (tăng cường): Nâng cấp Lính Thương thành Lính Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 28% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương lần tới do mục tiêu bị tấn công gây ra giảm 15%→30%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương chịu ảnh hưởng của Thống suất. / Phiên bản gốc: Nâng cấp Lính Thương thành Lính Thanh Châu, chuyên phá vỡ phòng tuyến và đánh tan quân tinh nhuệ: khi đội quân gây sát thương, có 25% xác suất khiến sát thương lần này tăng 15%→30%, đồng thời khiến sát thương lần tới do mục tiêu bị tấn công gây ra giảm 11%→22%; nếu Tào Tháo thống lĩnh, hiệu quả giảm sát thương chịu ảnh hưởng của Thống suất."
+  },
+  {
+   "entityId": "tactic:loa-y-huyet-chien",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "6f2740058c4ca62c11f77d7f9033556c79a44315de1bf36f7df481e87fbb1134",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "cf565edf7caad99052fcc998f79a385c274370c2833dde5d85df483921d691ae",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (the 2020-06-03 effect and the original version are missing)"
+   ],
+   "notes": "Cập nhật 2020-06-03 / Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 lượt đầu trận, nhận 45%→90% Liên kích và 5%→10% hút máu binh khí, đồng thời giảm 40% Thống suất của bản thân và 1 đơn vị địch / Phiên bản gốc / Trong chiến đấu không thể phát động chiến pháp chủ động; trong 3 lượt đầu trận, nhận 45%→90% Liên kích, đồng thời giảm 40% Thống suất của bản thân và 1 đơn vị địch; Vũ lực của bản thân tăng thêm 20%→40% lượng Thống suất mà hai bên bị giảm"
+  },
+  {
+   "entityId": "tactic:luy-the-lap-danh",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "e8c1f1081ca6c80f4cbae7a5fe0842e5c0e5579cb123f73a2598f836b2994088",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "0c2f516a554519b415f25de8ae7d5bacb1a85e637a714fc9a25fcb338dbb57b6",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (the note \"主將時提高統率效果由 50 變更為 40→80\" and the original-version placeholder are missing)"
+   ],
+   "notes": "Cập nhật 2020-01-08 / Ghi chú: hiệu quả tăng Thống suất khi là chủ tướng được thay đổi từ 50 thành 40→80 / Phiên bản gốc / Chờ bổ sung"
+  },
+  {
+   "entityId": "tactic:nach-chien-quan-hung",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "d759500eee6d7124afe0ddd59cba0d099de4430105b997a4affef51e45d450db",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "b97517ba137527dc82c63f4fe1397da7b41f884083435bbee855f7935197e56b",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (the note \"受到兵刃傷害降低效果現在受武力影響\" and the original-version placeholder are missing)"
+   ],
+   "notes": "Cập nhật 2020-04-01 (tăng cường) / Ghi chú: hiệu quả giảm sát thương binh khí phải chịu nay chịu ảnh hưởng của Vũ lực / Phiên bản gốc / Chờ bổ sung"
+  },
+  {
+   "entityId": "tactic:phi-hung-quan",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "2be17086a5c20d76ebe5cabdfed22103c8a15b7a30224c7f30b81e494302ff1c",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "ec7472e873d2538205d0e72578f20b4c5c8a9ebf54be7ab7cc3f589c3fbb9976",
+   "verdict": "rejected",
+   "errors": [
+    "Event name contradicts the official client name for the same event (client exchangeCondition of this tactic, item 392: \"Sự kiện Dương Đông Kích Tây\"); \"Bành Việt Nạo Sở\" is a literal Hán-Việt reading"
+   ],
+   "notes": "Dương Đông Kích Tây"
+  },
+  {
+   "entityId": "tactic:quan-cam-pham",
+   "fieldPath": "effectViet",
+   "inputFingerprint": "5ed41cc06c588f05d57b77e0b49c5fc438f5179558514d2413b8a1272d9c6275",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "8fb8da9d92c2df568b63e7cf9413314854317e9cb02f3ff6b7f91c1aaeb2fdbd",
+   "verdict": "rejected",
+   "errors": [
+    "Content omitted: VI keeps only the version header and drops the rest of the ZH text (the 2023-05-09 effect with 45% and the original version with 40% are missing)"
+   ],
+   "notes": "Cập nhật 2023-05-09 (tăng cường) / Nâng cấp Lính Cung thành Quân Cẩm Phàm khí thế áp đảo ngàn người: khi đội quân đánh thường, có 45% xác suất khiến mục tiêu rơi vào trạng thái Tan tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Vũ lực), kéo dài 2 lượt; nếu mục tiêu đã ở trạng thái Tan tác thì gây tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội tâm cho quân ta / Phiên bản gốc / Nâng cấp Lính Cung thành Quân Cẩm Phàm khí thế áp đảo ngàn người: khi đội quân đánh thường, có 40% xác suất khiến mục tiêu rơi vào trạng thái Tan tác (tỷ lệ sát thương 32%→64%, chịu ảnh hưởng của Vũ lực), kéo dài 2 lượt; nếu mục tiêu đã ở trạng thái Tan tác thì gây tấn công binh khí (tỷ lệ sát thương 55%→110%) và hồi phục binh lực bằng 30% lượng sát thương; nếu Cam Ninh thống lĩnh, tăng 3%→6% Hội tâm cho quân ta"
+  }
+ ]
+}

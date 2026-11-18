@@ -410,7 +410,7 @@ test.describe("Chiêu mộ", () => {
  */
 async function analyzeFixture(page) {
   const fixture = await page.evaluate(async () => {
-    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }, { createBookNameIndex }] = await Promise.all([
+    const [{ compareTeams, createEntityIndex, referenceTeam }, { encodeTeamParam }, { createBookNameIndex, createTacticIdResolver }] = await Promise.all([
       import("/js/analyze-map.js"),
       import("/js/analyze-state.js"),
       import("/js/lookup-ids.js"),
@@ -424,6 +424,7 @@ async function analyzeFixture(page) {
     ]);
     const indexes = { hero: createEntityIndex(heroes, "hero"), tactic: createEntityIndex(tactics, "tactic"), book: createEntityIndex(books, "book") };
     const bookIdOf = createBookNameIndex(books);
+    const tacticIdOf = createTacticIdResolver(tactics);
     const recordOf = (kind, id) => indexes[kind].byId.get(id);
     const compact = (value) => String(value || "").replace(/\s+/gu, "");
     // Chữ Giản thể như in trong game: alias không khoảng trắng khác `chinese`, không có thì `chinese`.
@@ -442,7 +443,9 @@ async function analyzeFixture(page) {
         recordOf("hero", member.hero) && member.tactics.every((id) => id && recordOf("tactic", id)) && member.book && recordOf("book", member.book));
       if (!complete) continue;
       const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
-      const otherMatch = other.records.find((item) => diffTeam(team, item, null, bookIdOf).heroHit >= 2);
+      // Đội khác hiện ra đúng như trang xếp (top 5 theo tướng rồi chiến pháp khớp), không phải bản ghi khớp đầu tiên
+      // trong `other-teams.json`: đội đề cử đứng đầu file nhưng chưa chắc lọt top 5.
+      const otherMatch = compareTeams(team, other.records, { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf })[0]?.record;
       if (unsureIndex < 0 || !otherMatch) continue;
       const reads = team.heroes.map((member, position) => ({
         nameCn: position === unsureIndex

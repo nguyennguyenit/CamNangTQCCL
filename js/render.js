@@ -114,6 +114,7 @@ export const SOURCE_LABEL = {
   "team-intro": "Giới thiệu",
   "do-uy": "Đô úy",
   "moi-phe": "Meta phe (cũ)",
+  "youtube": "YouTube",
 };
 /** Nhãn nguồn đội cũ theo ngôn ngữ trang; giá trị lạ trả nguyên mã. */
 export const sourceLabel = (value) => legacyLabelZh("source", value) ?? SOURCE_LABEL[value] ?? value;

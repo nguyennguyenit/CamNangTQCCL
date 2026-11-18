@@ -274,6 +274,11 @@ EXEMPT_DATA_FIELDS = {
     "variant",
 }
 CANONICAL_DATA_FIELDS.update({"alternatives", "baseName", "rawType", "trainHeroes"})
+# Đội đề cử YouTube trong data/teams.json: tên gốc của creator (nameZh) và mốc video (evidence[].videoId, .at)
+# giữ để truy nguyên, không dịch. Miễn dịch chỉ theo đúng đường dẫn này của hàng `source == "youtube"`
+# (`_youtube_trace_field`), không theo tên field cho mọi file data. Mức tin cậy là chữ Việt tự soạn.
+YOUTUBE_TRACE_SOURCE = ("data/teams.json", "youtube")
+AUTHORED_VI_DATA_FIELDS.add("confidence")
 UI_LITERAL_OBLIGATIONS = (
     ("ui:app/load-error", "errorTemplate", "Lỗi tải dữ liệu: {message}. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "js/app.js", "main", "error", "translate", 'displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")'),
     ("ui:analyze/provider-error", "errorMessage", "Không thể phân tích ảnh. Vui lòng thử lại.", "js/analyze.js", "callWorker", "error", "translate", "localizeWorkerError(data?.error, res.status)"),
@@ -1809,9 +1814,24 @@ def _json_path(path):
     return result
 
 
-def _data_classification(path, text):
+def _youtube_trace_field(relative, document, path):
+    """`[i].nameZh`, `[i].evidence[j].videoId|at` của hàng nguồn YouTube trong `data/teams.json`."""
+    source_file, source = YOUTUBE_TRACE_SOURCE
+    if relative != source_file or not path or not isinstance(path[0], int) or not isinstance(document, list):
+        return False
+    row = document[path[0]] if path[0] < len(document) else None
+    if not isinstance(row, dict) or row.get("source") != source:
+        return False
+    rest = path[1:]
+    return rest == ("nameZh",) or (
+        len(rest) == 3 and rest[0] == "evidence" and isinstance(rest[1], int) and rest[2] in {"videoId", "at"}
+    )
+
+
+def _data_classification(path, text, relative=None, document=None):
     field = next((part for part in reversed(path) if isinstance(part, str)), "")
-    if field in EXEMPT_DATA_FIELDS or re.match(r"^(?:https?://|sha256:)", text):
+    if (field in EXEMPT_DATA_FIELDS or _youtube_trace_field(relative, document, path)
+            or re.match(r"^(?:https?://|sha256:)", text)):
         return "exempt"
     if CJK.search(text):
         return "translate"
@@ -1938,7 +1958,7 @@ def site_translation_obligations(root, pack):
     for relative, owner in DATA_INVENTORY_OWNERS.items():
         value = json.loads(_repo_member(root, relative, label="data translation source").read_bytes())
         for path, text in _walk_strings(value):
-            if _data_classification(path, text) != "translate":
+            if _data_classification(path, text, relative, value) != "translate":
                 continue
             json_path = _json_path(path)
             obligations.append({
@@ -1991,7 +2011,7 @@ def concrete_site_locations(root, pack, ledger_relative):
                 "entityId": f"data:{relative}:{_json_path(path[:-1]) or '$'}",
                 "fieldPath": _json_path(path),
                 "owner": owner,
-                "classification": _data_classification(path, text),
+                "classification": _data_classification(path, text, relative, value),
                 "authority": relative,
             })
     lookup = json.loads(_repo_member(root, "pipeline/lookup-translations.json", label="Lookup ledger").read_bytes())

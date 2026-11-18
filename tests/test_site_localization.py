@@ -59,6 +59,39 @@ class UiObligationOwnerTest(unittest.TestCase):
         self.assertEqual(stale, [])
 
 
+class YoutubeTeamFieldClassificationTest(unittest.TestCase):
+    def test_youtube_trace_fields_are_exempt_and_confidence_is_authored(self):
+        teams = [{"source": "youtube"}]
+        youtube = lambda path, text: _data_classification(path, text, "data/teams.json", teams)
+        self.assertEqual(youtube((0, "nameZh"), "藏器呂布盾"), "exempt")
+        self.assertEqual(youtube((0, "evidence", 0, "videoId"), "khGmfKDo9ng"), "exempt")
+        self.assertEqual(youtube((0, "evidence", 0, "at"), "001m16s"), "exempt")
+        self.assertEqual(_data_classification((0, "evidence", 0, "kind"), "đề cử"), "exempt")
+        self.assertEqual(_data_classification((0, "confidence"), "cao"), "authored-vi")
+        self.assertEqual(_data_classification((0, "heroes", 0, "note"), "Chiến pháp chưa đọc được từ video"), "authored-vi")
+
+    def test_trace_exemption_is_scoped_to_youtube_rows_of_teams_json(self):
+        # Cùng tên field nhưng sai file, sai nguồn hay sai đường dẫn thì không được miễn dịch theo tên.
+        sheet = [{"source": "team-intro"}]
+        youtube = [{"source": "youtube"}]
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾", "data/teams.json", sheet), "translate")
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾", "data/coexist.json", youtube), "translate")
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾"), "translate")
+        self.assertEqual(_data_classification((0, "heroes", 0, "at"), "陣前", "data/teams.json", youtube), "translate")
+        with self.assertRaisesRegex(ValueError, "unreviewed data field classification: videoId"):
+            _data_classification((0, "evidence", 0, "videoId"), "abc", "data/khaihoang.json", youtube)
+
+    def test_real_teams_trace_fields_all_on_youtube_rows(self):
+        from pipeline.site_localization import _walk_strings
+        teams = json.loads((ROOT / "data/teams.json").read_bytes())
+        traced = [path for path, text in _walk_strings(teams)
+                  if path[-1] in {"nameZh", "videoId", "at"}]
+        self.assertTrue(traced)
+        for path in traced:
+            self.assertEqual(teams[path[0]]["source"], "youtube")
+            self.assertEqual(_data_classification(path, "x", "data/teams.json", teams), "exempt")
+
+
 class SiteLocalizationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

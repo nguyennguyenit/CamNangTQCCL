@@ -1,0 +1,55 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-005-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-005",
+ "items": [
+  {
+   "entityId": "recommended:s-cd197a9c1144a36694da6d3286981ab346a2d146670dfcbba1fedc382150b3f6/team-dh3kpk",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0be958c8e3f614aa049eb303b7e9811dcd381d5450bb005fa9fddd1018870259",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2f7c702b776b725756bc91e1e5ca89358b8d36ba385800aff50f970c8b8014b8",
+   "verdict": "rejected",
+   "errors": [
+    "Subject/meaning shift: source lists 盾S as Hạ Hầu Đôn's loadout (shield S variant), then gives poor counter relationships as the reason for the score drop; VI makes the drop about 'quan hệ khắc chế của khiên bậc S' and drops the loadout item."
+   ],
+   "notes": "Điểm: 106 điểm (Hạ Hầu Đôn mang giáp Viện Trợ, khiên bậc S; do quan hệ khắc chế khá kém nên điểm giảm còn 101 điểm)."
+  },
+  {
+   "entityId": "recommended:s-cd197a9c1144a36694da6d3286981ab346a2d146670dfcbba1fedc382150b3f6/team-lm04e",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "241028da011bcc76a9a43bad383af23a5b616568482ee174cbc2e0c182415600",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "8169092dc99c95e04b7a6f1cae2ed2b3d7fea2ced3422d8a1a746c8ee423b8d5",
+   "verdict": "rejected",
+   "errors": [
+    "Abbreviation 鐵騎 rendered as literal short form 'Thiết Kỵ'; the team's slot tactic is 鐵騎驅馳 (team-lm04e tacticSlotsRaw), authority full name Thiết Kỵ Khu Trì (tactics.json / identity map; also used for the same note in item 175). Rule 3."
+   ],
+   "notes": "Thiết Kỵ Khu Trì có thể đổi thành Hổ Báo Kỵ"
+  },
+  {
+   "entityId": "recommended:s-d0a330a4476ef42169aec2c26ddf950fbd56bdd599e744916b3172d250ae2c6a/s18-jingdian-taiwei",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a22edf4594e9de11e99c784fa6b8b0b371de3bb514041154246f58852cf23789",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "83ed1baf9dc9f28115b540103627440c4df333fc613fedf193394cd09158b467",
+   "verdict": "rejected",
+   "errors": [
+    "Stat term 1速 rendered literally as '1 tốc'; project authority (recommended-display-map.json 1速 → 'Tốc Độ cao nhất đội'; brief: 一速 = tốc độ nhanh nhất)."
+   ],
+   "notes": "T0 ｜ 940 điểm ｜ Tư Mã Ý + Tào Tháo (Viện Trợ) + Mãn Sủng (Tốc Độ cao nhất đội)"
+  },
+  {
+   "entityId": "recommended:s-d0a330a4476ef42169aec2c26ddf950fbd56bdd599e744916b3172d250ae2c6a/s18-mantong-shu-qiang",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "820d2f0f49c0e8d6f567123c7b40882e5f1f841177d8624df7172cdc0aef0821",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "f190f4b1868c8605fb69cd7ebd94207dcb03d9c1ceb818036e8c6ef7fa6d45eb",
+   "verdict": "rejected",
+   "errors": [
+    "Stat term 1智 rendered literally as '1 Trí'; project authority recommended-display-map.json 1智 → 'Trí Lực cao nhất đội'."
+   ],
+   "notes": "Cần bảo vật binh chủng để nâng lên biến thể bậc S (Trí Lực cao nhất đội)"
+  }
+ ]
+}

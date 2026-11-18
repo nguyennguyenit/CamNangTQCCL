@@ -212,6 +212,41 @@ export const seasonOptionTitle=item=>sourceText() ? null : [
   item.translationStatus === 'reference-translation' ? 'Tên dịch tham khảo, không phải tên mùa chính thức' : null,
 ].filter(Boolean).join(' · ') || null;
 
+/** Tên mùa đứng một mình (không mã, không số đội): bản vi `displayNameVi`, bản khác tên nguồn (như `seasonNameText`). */
+const seasonTitleText=item=>sourceText()
+  ? item.nameRaw || item.label || item.sourceSeasonId
+  : safeLabel(item.displayNameVi);
+
+/**
+ * Mùa duy nhất của dữ liệu Đội khác: hợp `sourceSeasonIds` của mọi hàng (`other-teams.json`, do dedup ghi). Không có
+ * hàng, có hàng chưa gắn mùa hoặc hợp lại hơn một mùa thì trả `null`. Không suy từ `defaultSourceSeasonId`: đổi mùa
+ * mặc định của Đội chuẩn không tự đổi mùa của Đội khác.
+ */
+export function otherTeamsSeasonId(rows) {
+  const seasons=new Set();
+  for (const row of Array.isArray(rows) ? rows : []) {
+    if (!Array.isArray(row?.sourceSeasonIds) || !row.sourceSeasonIds.length) return null;
+    for (const id of row.sourceSeasonIds) seasons.add(id);
+  }
+  return seasons.size===1 ? [...seasons][0] : null;
+}
+
+/**
+ * Nhãn mùa tĩnh của Đội khác: Đội khác chỉ có một mùa (`otherTeamsSeasonId` của các hàng) nên không có ô chọn; tên mùa
+ * lấy từ `seasonOptions` của registry. Dạng cây dùng chung giữa bản dựng sẵn và trình duyệt; không xác định được mùa,
+ * hoặc registry không có mùa đó, thì không có nhãn (`null`).
+ */
+export function referenceSeasonLabelTree(registry,rows) {
+  const seasonId=otherTeamsSeasonId(rows);
+  const item=seasonId ? (registry?.seasonOptions || []).find(option=>option.sourceSeasonId===seasonId) : null;
+  if (!item) return null;
+  return t('div',{class:'reference-season-field reference-season-static'},[
+    t('span',{class:'reference-season-label'},L('Mùa','赛季','シーズン')),
+    ' ',
+    t('span',{class:'reference-season-name'},seasonTitleText(item)),
+  ]);
+}
+
 /** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
 export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigate,adopt=false}) {
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
@@ -232,8 +267,10 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     icon([svgNode('circle',{cx:11,cy:11,r:7}),svgNode('line',{x1:16.5,y1:16.5,x2:21,y2:21})]),
     searchInput,
   ]);
-  const season=el('select',{'aria-label':L('Mùa','赛季','シーズン')});
-  const seasonStatus=el('span',{class:'reference-season-status',hidden:''},L('Đang diễn ra','进行中','開催中'));
+  // Chỉ Đội chuẩn có ô chọn mùa; Đội khác một mùa nên chỉ có nhãn tĩnh (`referenceSeasonLabelTree`).
+  const season=family==='other' ? null : el('select',{'aria-label':L('Mùa','赛季','シーズン')});
+  const seasonStatus=family==='other' ? null : el('span',{class:'reference-season-status',hidden:''},L('Đang diễn ra','进行中','開催中'));
+  let seasonLabelNode=null, seasonLabelRegistry=null, seasonLabelRows=null;
   const filters=el('aside',{class:'reference-filters collapsed',id:`${mount.id}-filters`,'aria-label':L('Bộ lọc','筛选','絞り込み')});
   const notice=el('p',{class:'scope-note reference-notice',role:'status'});
   const count=el('span',{class:'stats reference-count',role:'status'});
@@ -267,7 +304,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     onNavigate?.(event,link);
   });
   searchInput.addEventListener('input',()=>onQuery({q:searchInput.value || null}));
-  season.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
+  season?.addEventListener('change',()=>onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true));
   toggle.addEventListener('click',()=>setFiltersExpanded(filters.classList.contains('collapsed')));
   const results = el('div',{class:'reference-results'},[
     el('div',{class:'reference-toolbar'},[
@@ -288,17 +325,18 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     setFiltersExpanded(false);
     toggle.focus({preventScroll:true});
   });
+  const head=el('header',{class:'reference-head'},[
+    headText,
+    // Đội chuẩn: ô chọn gói trong một khung có nhãn nhỏ phía trên giá trị. Đội khác: nhãn mùa tĩnh, dựng khi có registry.
+    ...(family==='other' ? [] : [el('label',{class:'reference-season-field'},[
+      el('span',{class:'reference-season-label'},L('Mùa','赛季','シーズン')),
+      seasonStatus,
+      season,
+      icon(chevron(),{size:16}),
+    ])]),
+  ]);
   mount.replaceChildren(
-    el('header',{class:'reference-head'},[
-      headText,
-      // Chỉ còn một phạm vi (mùa): ô chọn gói trong một khung có nhãn nhỏ phía trên giá trị.
-      el('label',{class:'reference-season-field'},[
-        el('span',{class:'reference-season-label'},L('Mùa','赛季','シーズン')),
-        seasonStatus,
-        season,
-        icon(chevron(),{size:16}),
-      ]),
-    ]),
+    head,
     el('div',{class:'reference-browser'},results),
   );
 
@@ -315,12 +353,23 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     : safeLabel(registry.displayLabels?.[kind]?.[value] || value);
 
   function renderSeasonOptions() {
-    const current=state.season || (family==='other'?'all':registry.defaultSourceSeasonId);
+    if (family==='other') {
+      // Nhãn tĩnh chỉ dựng lại khi registry hoặc dữ liệu đổi, không theo từng lần lọc.
+      if (seasonLabelRegistry===registry && seasonLabelRows===rows) return;
+      seasonLabelRegistry=registry;
+      seasonLabelRows=rows;
+      const tree=referenceSeasonLabelTree(registry,rows);
+      const next=tree ? treeToDom(tree) : null;
+      seasonLabelNode?.remove();
+      seasonLabelNode=next;
+      if (next) head.append(next);
+      return;
+    }
+    const current=state.season || registry.defaultSourceSeasonId;
     const options=registry.seasonOptions || [];
-    // `all` có ở cả hai trang (link Tra cứu mở `?season=all`); `unknown` chỉ có nghĩa với đội gốc chưa rõ mùa.
+    // `all` có ở Đội chuẩn (link Tra cứu mở `?season=all`).
     season.replaceChildren(
       el('option',{value:'all'},L('Tất cả','全部','すべて')),
-      ...(family==='other'?[el('option',{value:'unknown'},L('Chưa rõ mùa','赛季不明','シーズン不明'))]:[]),
       ...options.map(item=>el('option',{value:item.sourceSeasonId,title:seasonOptionTitle(item)},seasonOptionText(item,registry.defaultSourceSeasonId))),
     );
     if ([...season.options].some(option=>option.value===current)) season.value=current;
@@ -544,7 +593,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     updateViewButtons();
     filteredRows=filtered;
     viewLabels=labels;
-    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。','絞り込み条件に合う編成がありません。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):family==='other' && state.season==='unknown'?L('Không có đội có thuộc tính chưa rõ trong phạm vi này.','此范围内没有属性不明的阵容。','この範囲に属性が不明な編成はありません。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。','このシーズンのデータはまだありません。');
+    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。','絞り込み条件に合う編成がありません。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。','このシーズンのデータはまだありません。');
     if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
     else renderView();
   }

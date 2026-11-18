@@ -1,5 +1,5 @@
 import { t, iconTree, svgTree, FACTION_CODE, SOURCE_PROSE_MISSING_JA, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
-import { jpTierMatchNote, jpTierSource, jpTierSourceLabel, legacyLabelZh, sourceTierLabel, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
+import { isRecommendedOtherRow, jpTierMatchNote, jpTierSource, jpTierSourceLabel, legacyLabelZh, sourceTierLabel, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
 import { validateHttpSourceUrl } from './http-source-url.js';
 import { teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
@@ -213,6 +213,9 @@ export function detailBadges(row,labels,{locale}={}) {
   return withLocale(locale,()=>badgeTrees(row,labels));
 }
 
+/** Nhãn chữ "Đề cử" của hàng Đội khác được đề cử (thẻ, thẻ gọn, bảng, đầu trang chi tiết); không chỉ dựa vào màu. */
+const referenceRecommendedBadge=()=>t('span',{class:'badge badge-band reference-recommended'},L('Đề cử','推荐','おすすめ'));
+
 function badgeTrees(row,labels) {
   const nodes=[];
   const rawFaction=row?.factionRaw ?? row?.faction;
@@ -227,6 +230,8 @@ function badgeTrees(row,labels) {
   }
   const recommended=khaihoangRecommendedBadge({recommended:row?.khaihoangRecommended});
   if (recommended) nodes.push(recommended);
+  // Trang chi tiết Đội khác: `referenceRecommended` do builder trang gắn từ hàng `other-teams.json` của đội.
+  if (row?.referenceRecommended === true) nodes.push(referenceRecommendedBadge());
   return nodes;
 }
 
@@ -393,6 +398,7 @@ function metaLine(row,labels) {
     .map(value=>kindLabel(labels,'unit',value))
     .filter(Boolean);
   const nodes=[];
+  if (isRecommendedOtherRow(row)) nodes.push(referenceRecommendedBadge());
   if (row.sourceConfigId && row.tierRaw) nodes.push(t('span',{class:'badge tier reference-tier',title:'Tier'},sourceTierLabel(row.tierRaw)));
   const jp=row.sourceConfigId ? jpTierBadge(row) : null;
   if (jp) nodes.push(jp);
