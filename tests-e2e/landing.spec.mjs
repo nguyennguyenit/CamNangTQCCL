@@ -215,7 +215,7 @@ test('Landing không cuộn ngang ở 320/390 và QR vẫn nền sáng trong the
 test('Khải hoang: chỉ đếm đội có đủ cấu hình trước/sau, đúng cả hai ca biên', async ({ page }) => {
   const byId = new Map(khaiHoang.teams.map((team) => [team.id, team]));
   // Ca biên 1: đội KHÔNG có biến thể nhưng mọi tướng đều có bộ trước và bộ sau ⇒ phải được đếm.
-  const fullBuild = byId.get('thai-van-co-khuong-duy-thai-su-tu');
+  const fullBuild = byId.get('sp-lo-truc-thai-su-tu-truong-xuan-hoa');
   expect(fullBuild).toBeTruthy();
   expect((fullBuild.variants ?? []).length).toBe(0);
   expect(khaiHoangTeamHasBeforeAfter(fullBuild)).toBe(true);
@@ -224,7 +224,7 @@ test('Khải hoang: chỉ đếm đội có đủ cấu hình trước/sau, đú
   expect(afterOnly).toBeTruthy();
   expect(khaiHoangTeamHasBeforeAfter(afterOnly)).toBe(false);
   expect(afterOnly.heroes.every((hero) => !(hero.tacticBefore || '').trim())).toBe(true);
-  expect(EXPECTED.khaiHoangBeforeAfter).toBe('17');
+  expect(EXPECTED.khaiHoangBeforeAfter).toBe('19');
 
   await page.goto('/');
   await expect(page.locator('#landing-sections .landing-tile-desc').nth(3)).toHaveText(

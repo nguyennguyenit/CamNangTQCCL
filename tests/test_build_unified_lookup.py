@@ -694,7 +694,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
             self._build(overrides={"hero:dai-kieu": {"inheritTacticId": "tactic:cap-toc"}})
 
     def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
-        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần.", "textZh": "新賽季：漢陣營，本賽季前為群雄陣營。"}]}
+        note = {"conditions": [{"kind": "season", "textVi": "Phe Hán từ bản cập nhật 4/11/2026, trước đó là phe Quần.", "textZh": "自2026年11月4日更新起為漢陣營，此前為群雄陣營。"}]}
         output = self._build(heroes=[self._hero()], hero_notes={"hero:ha-hau-don": note, "hero:tao-ngang": note})
         rows = {item["id"]: item for item in json.loads((output / "heroes-dict.json").read_bytes())}
         for owner in ("hero:ha-hau-don", "hero:tao-ngang"):

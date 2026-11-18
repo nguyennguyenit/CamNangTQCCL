@@ -248,7 +248,7 @@ export function referenceSeasonLabelTree(registry,rows) {
 }
 
 /** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
-export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigate,adopt=false}) {
+export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=onQuery,hrefFor,onNavigate,adopt=false}) {
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
   // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
   let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
@@ -388,10 +388,15 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
   };
   const chipText=(key,value)=>key==='tier'?sourceTierLabel(value):key==='source'?(value===TIER_SOURCE_JP?jpTierSourceLabel():sourceLabel(value)):displayLabel(key,value);
 
-  /** Lọc đang bật = chip đã chọn + từ khóa tìm; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
-  function activeFilterCount() {
+  /** Chip đã chọn + từ khóa tìm: những lọc thu hẹp danh sách mà số của cả mùa trên nút kho không còn khớp. */
+  function narrowingCount() {
     const facets=Object.values(state.filters || {}).reduce((total,values)=>total + (Array.isArray(values) ? values.length : 0),0);
-    return facets + (state.query ? 1 : 0) + (coverage && state.rosterFilter ? 1 : 0);
+    return facets + (state.query ? 1 : 0);
+  }
+
+  /** Lọc đang bật = chip đã chọn + từ khóa tìm + lọc kho; dùng cho badge "Bộ lọc" và trạng thái "Xóa lọc". */
+  function activeFilterCount() {
+    return narrowingCount() + (coverage && state.rosterFilter ? 1 : 0);
   }
 
   /** Thanh kho phía trên danh sách: tóm tắt + nút lọc/sắp khi có kho, một dòng dẫn khi máy chưa có kho. */
@@ -411,7 +416,7 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     const focused=rosterBar.contains(document.activeElement) ? document.activeElement.dataset.focusKey : null;
     rosterBar.replaceChildren(
       rosterSummaryNode(coverage.summary,{allSeasons:state.season==='all'}),
-      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,onChange:onQuery}),
+      rosterControlNodes({filter:state.rosterFilter,sort:state.rosterSort,summary:narrowingCount() ? null : coverage.summary,onChange:onQuery}),
     );
     rosterBar.dataset.state='ready';
     if (focused) rosterBar.querySelector(`[data-focus-key="${CSS.escape(focused)}"]`)?.focus({preventScroll:true});
@@ -508,7 +513,13 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     view.removeAttribute('data-ssr-signature');
     // Đang lọc/sắp theo kho thì danh sách khác bản dựng sẵn: không nhận lại DOM đó.
     const rosterOrdered=Boolean(coverage && (state.rosterFilter || state.rosterSort));
-    if (!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,safeReturnUrl(location.href),shown)) {
+    const from=safeReturnUrl(location.href);
+    const prerenderedFor=count=>!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,from,count);
+    // Mùa dài hơn một lượt: bản dựng sẵn có đủ mọi đội (dấu mang tổng số đội), nên nhận lại cả danh sách ở lần vẽ đầu
+    // và coi như đã "Xem thêm" hết, thay vì bỏ phần sau lượt đầu rồi dựng lại.
+    const wholeList=!prerenderedFor(shown) && prerenderedFor(filteredRows.length);
+    if (wholeList) shown=filteredRows.length;
+    if (wholeList || prerenderedFor(shown)) {
       // Đúng danh sách đã dựng sẵn: giữ nguyên node, chỉ gắn sự kiện "tìm chiến pháp" (không nháy, không nhân đôi).
       bindTacticTags(view,value=>onQuery({q:value}));
     } else {
@@ -596,6 +607,15 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。','絞り込み条件に合う編成がありません。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。','このシーズンのデータはまだありません。');
     if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
     else renderView();
+    // Máy có kho nhưng mùa đang xem không có độ phủ: `kho`/`xep` không có tác dụng, thanh kho ẩn và "Xóa lọc" không gỡ được
+    // chúng. Gỡ khỏi URL để đổi sang mùa có độ phủ không bật lại một bộ lọc người dùng đã quên. Chưa biết kho
+    // (`undefined`, đang tải/hỏi lại phiên) hay máy chưa có kho (`null`) thì giữ nguyên: lúc đó chưa biết mùa có độ phủ hay không.
+    // Không có độ phủ thì hai khóa này không nằm trong `listKey`, nên chỉ bỏ khỏi trạng thái của mục và sửa URL (không vẽ lại):
+    // danh sách dựng sẵn, `details` đang mở và focus khôi phục khi quay lại được giữ nguyên.
+    if (family==='recommended' && typeof rosterSource==='function' && !coverage && (state.rosterFilter || state.rosterSort)) {
+      state={...state,rosterFilter:null,rosterSort:null};
+      onReplaceQuery({kho:null,xep:null});
+    }
   }
   return {
     update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();},

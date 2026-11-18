@@ -41,6 +41,8 @@ interface WebLockedTeam {
 }
 interface Extra {
   fullBox?: boolean;
+  /** Gọi đúng như website hôm nay (không `metaSearch`), cho các ca mà tìm danh sách không đổi kết quả. */
+  realWebsite?: boolean;
   lockedTeams?: WebLockedTeam[];
   tacticOverrides?: Rec[];
 }
@@ -105,7 +107,11 @@ function webOverrides(overrides: Rec[] = []): Rec[] {
   return (deserializeRosterScanState({ tacticOverrides: overrides }) as { tacticOverrides: Rec[] }).tacticOverrides;
 }
 
-/** The website call of `js/roster-recommend-ui.js:544-556`, on the same roster/season/generation. */
+/**
+ * The website call of `js/roster-recommend-ui.js` (`runRecommend`), on the same roster/season/generation.
+ * Mode meta: the tool searches the portfolio (`metaSearch`); the website has not turned that on yet, so the
+ * parity call passes the same flag and compares the shared adapter, not today's website greedy result.
+ */
 function websiteCall(seasonId: string, roster: Roster, mode: "meta" | "redStars", extra: Extra = {}) {
   const season = seasonFrom(seasonId);
   const fullBox = extra.fullBox ?? (roster.ownedHeroes.length > 40 && roster.ownedTactics.length > 60);
@@ -122,6 +128,7 @@ function websiteCall(seasonId: string, roster: Roster, mode: "meta" | "redStars"
     keepExistingTeams: true,
     tacticsDict: data.tacticsDict,
     fullBox,
+    metaSearch: mode === "meta" && extra.realWebsite !== true,
   } as never) as Direct;
   return { result, season, fullBox };
 }
@@ -226,6 +233,30 @@ describe("tqccl_recommend_teams equals the website adapter call", () => {
     const season = seasonFrom("pk-s24", [FIXTURE_IDS.troopRules, FIXTURE_IDS.troopKy, FIXTURE_IDS.unitMissing]);
     const { output } = await expectParity("pk-s24", rosterOf(season.teams, { skipTactics: ["Phi Hùng Quân"] }), "meta");
     expect(output.blockedStrongTeams.some((entry) => entry.missingTacticSlots.length > 0)).toBe(true);
+  });
+
+  it("mode meta, the website's real call (no metaSearch): same result where search cannot change the pick", async () => {
+    const season = seasonFrom("pk-s24", [FIXTURE_IDS.troopKy]);
+    await expectParity("pk-s24", rosterOf(season.teams), "meta", { realWebsite: true });
+  });
+
+  it("mode meta, the website's real call (no metaSearch): the tool may pick differently, never a worse portfolio", async () => {
+    const season = seasonFrom("pk-s24", [FIXTURE_IDS.troopRules, FIXTURE_IDS.troopKy, FIXTURE_IDS.unitMissing]);
+    const roster = rosterOf(season.teams);
+    const { result } = websiteCall("pk-s24", roster, "meta", { realWebsite: true });
+    const output = await handleRecommendTeams(ctx, { ...(await stateFor(roster)), sourceSeasonId: "pk-s24", mode: "meta", maxTeams: 5 } as never);
+    const scores = new Map(ctx.publication().teams.filter((team) => team.collection === "recommended").map((team) => [team.id, team.score ?? 0]));
+    // Khóa meta: số đội T0+T0.5, số T0, số đội, tổng điểm nguồn.
+    const key = (entries: Array<{ tier: string; id: string }>) => [
+      entries.filter((entry) => entry.tier === "T0" || entry.tier === "T0.5").length,
+      entries.filter((entry) => entry.tier === "T0").length,
+      entries.length,
+      entries.reduce((sum, entry) => sum + (scores.get(entry.id) ?? 0), 0),
+    ];
+    const web = key((result.portfolioTeams as Rec[]).map((entry) => ({ tier: entry.tier as string, id: entry.team.id as string })));
+    const tool = key(output.portfolioTeams.map((entry) => ({ tier: entry.tier, id: entry.teamId })));
+    const firstDifference = tool.findIndex((value, index) => value !== web[index]);
+    expect(firstDifference === -1 || tool[firstDifference]! > web[firstDifference]!).toBe(true);
   });
 
   it("team-1imndp3: khiên team builds with its own tactics", async () => {

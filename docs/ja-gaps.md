@@ -3,12 +3,12 @@
 Sinh bằng `node scripts/report-ja-gaps.mjs` (không sửa tay). Mục nằm đây khi hồ sơ ja (`lookupProfile` dưới `withLocale("ja")`) có khóa chữ Hán nguồn chưa có bản dịch máy trong `data/lookup-ja.json` (`untranslated`) hoặc bỏ phần chỉ có chữ Việt (`viOnly`); trang ja hiện một dòng báo thiếu.
 Cột "Khóa chưa dịch" là khóa `texts` còn vắng (bảng khóa ở [ja-lookup-data.md](ja-lookup-data.md)); cột "Phần thiếu" so hồ sơ vi với hồ sơ ja của cùng mục.
 
-Tổng: 147 / 1028 mục.
+Tổng: 148 / 1029 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
 | Tướng | 0 | 263 |
-| Chiến pháp | 147 | 422 |
+| Chiến pháp | 148 | 423 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
@@ -23,7 +23,7 @@ Tổng: 147 / 1028 mục.
 | Nhóm | verified | derived | Không có tên Nhật | Tổng mục |
 |---|---:|---:|---:|---:|
 | Tướng | 214 | 49 | 0 | 263 |
-| Chiến pháp | 210 | 212 | 0 | 422 |
+| Chiến pháp | 210 | 213 | 0 | 423 |
 | Trang bị | 0 | 114 | 0 | 114 |
 | Quân sư | 2 | 57 | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 | 0 | 16 |
@@ -35,7 +35,7 @@ Tổng: 147 / 1028 mục.
 
 Không có mục nào thiếu.
 
-## Chiến pháp (tactics): 147 / 422
+## Chiến pháp (tactics): 148 / 423
 
 | Mã | Tên | Khóa chưa dịch | Phần thiếu |
 |---|---|---|---|
@@ -169,6 +169,7 @@ Không có mục nào thiếu.
 | tactic:toa-dieu-kinh-ngao | 坐釣鯨鰲 · Tọa Điếu Kình Ngao | — | acquiredFromVi |
 | tactic:tuyet-ke-chiet-muu | 智計破謀 · Tuyệt Kế Chiết Mưu | — | conditions (2) |
 | tactic:vo-thanh-chi-tu | 武聖之子 · Quân Thần Chi Tử | — | acquiredFromVi |
+| tactic:hanh-ach-tran | 衡軛陣 · Hành Ách Trận | — | conditions (1) |
 | tactic:tinh-bach-ma-nghia-tong | 精·白馬義従 · Tinh • Bạch Mã Nghĩa Tòng | — | conditions (6) |
 | tactic:tinh-bach-nhi-binh | 精·白毦兵 · Tinh • Bạch Nhị Binh | — | conditions (7) |
 | tactic:tinh-dai-kich-si | 精·大戟士 · Tinh • Đại Kích Sĩ | — | conditions (6) |

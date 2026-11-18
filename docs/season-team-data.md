@@ -115,12 +115,28 @@ Hán Diễm Trường Minh dùng cùng lệnh với snapshot
 bản đồ `pipeline/coexist-han-diem-source-record-map.json` và
 `scenarioId == "han-diem-truong-minh"`.
 
+Bảng 11 cột còn nối Thẻ Kỳ Lược với catalog Kỳ lược
+([`pipeline/coexist_qilue.py`](../pipeline/coexist_qilue.py)): mỗi tên trong
+`strategyCardsRaw` (theo thứ tự hiệp, tách bằng `→`) phải khớp `nameVi` của một
+`qilueCards` trong `data/lookup-catalog.json` hoặc một alias đã duyệt trong
+[`pipeline/coexist-qilue-aliases.json`](../pipeline/coexist-qilue-aliases.json)
+(alias ghi mã thẻ, chữ Hán và nguồn; thêm alias cần chủ repo duyệt). Kết quả là
+`strategyCardIds` của đội. Tên lạ hay chuỗi sai luật game (3–5 thẻ không trùng,
+tối đa 1 thẻ hiếm, loại thẻ thuộc một phương lược) làm `build_content_links` và
+`build_season_data` dừng; sheet không ghi phương lược nên không suy ra. Mã thẻ là
+projection: content fingerprint bỏ qua nên bản đồ record không đổi, còn
+`build_season_data` nối lại từ chữ nguồn với catalog đang pin và từ chối mã lệch
+(catalog Kỳ lược đổi tên/mã thì chạy lại `build_content_links` cho kịch bản đó).
+`build_content_links` mặc định đọc catalog/alias đang commit; truyền
+`qilue_catalog=`/`qilue_aliases=` để dựng với bản khác.
+
 Với snapshot mới: cập nhật `snapshotHash` trong metadata nguồn và review bản đồ
 record trước, thay các link `source-owned-coexist` của đúng kịch bản đó trong
 `pipeline/season-content-links.json` bằng kết quả (link kịch bản khác giữ nguyên byte), rồi publish bằng
 `python3 -m pipeline.build_season_data` như mục Bảo trì.
 
-Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
+Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa; mùa mục tiêu
+hiện là Hán Diễm Trường Minh (PK-S27), ghi ở `season`/`seasonNote` của `data/khaihoang.json`.
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
 
@@ -458,7 +474,10 @@ Sau khi đổi generation trong lúc chạy `npm run dev`, khởi động lại 
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
 tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
-trì riêng; danh mục Khaihoang của Recommended chỉ nằm trong Team chuẩn.
+trì riêng; danh mục Khaihoang của Recommended nằm trong Team chuẩn. Đưa một cấu hình
+Khai hoang của Recommended sang mục Khai hoang là bước curate tay (tên chiêu theo `data/tactics.json`, đội mới
+thêm cuối mảng `teams` để giữ khóa receipt `teams[N]`, thêm handle vào ledger rồi publish lại), không có
+đồng bộ tự động.
 
 ## Kiểm tra phạm vi đã có dữ liệu
 

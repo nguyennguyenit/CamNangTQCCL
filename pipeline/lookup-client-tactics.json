@@ -2057,6 +2057,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:hanh-ach-tran": {
+      "nameVi": "Hành Ách Trận",
+      "quality": "S",
+      "type": "FORMATION",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khi Võ Tướng quân ta có Thống Trị khác nhau, công kích thường của quân địch có 70% xác suất chọn đơn thể Binh Lực cao nhất của quân ta; đồng thời sau khi Võ Tướng quân ta gây sát thương, có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) tăng sát thương gây ra 2.5%→5%, sau khi phải chịu sát thương có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) giảm sát thương phải chịu 2.5%→5% (mỗi hiệu quả đều có thể tích lũy tối đa 4 lần, duy trì 3 hiệp)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:hao-hung-so": {
       "nameVi": "Hào Hùng-Sơ",
       "quality": "C",
@@ -7458,6 +7476,15 @@
     "tactic:gan-da": {
       "nameZh": "壯膽"
     },
+    "tactic:hanh-ach-tran": {
+      "nameZh": "衡軛陣",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Trận pháp mới của mùa Hán Diễm Trường Minh (PK-S27); chữ Việt theo thẻ Xem Chiến Pháp của client Global."
+        }
+      ]
+    },
     "tactic:hao-hung-so": {
       "nameZh": "初級激昂"
     },
@@ -9580,6 +9607,13 @@
       "source": {
         "kind": "source",
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
+      }
+    },
+    "tactic:hanh-ach-tran": {
+      "text": "我軍武將統御各不相同時，敵軍普通攻擊有70%機率選擇我軍兵力最高的單體；且我軍武將造成傷害後，有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）造成傷害提升2.5%→5%，受到傷害後有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）受到傷害降低2.5%→5%（每種效果皆可疊加，最多4次，持續3回合）",
+      "viSha256": "5a497a879950467fb102f37dba6e0d1e72d290c1c64ad68a6189ef04a62b99c1",
+      "source": {
+        "kind": "translation"
       }
     },
     "tactic:hao-hung-so": {

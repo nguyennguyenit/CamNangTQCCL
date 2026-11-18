@@ -158,8 +158,10 @@ test.describe("Đội chuẩn: badge kho", () => {
     await expect(bar(page).getByRole("link", { name: "Nhập kho" })).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
     await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
     await expect(bar(page).getByRole("button")).toHaveCount(0);
-    // Lượt đầu (tối đa 60 đội) giữ nguyên thứ tự và số lượng như không có `kho`/`xep`.
-    await expect(section(page).locator("[data-reference-key]")).toHaveCount(Math.min(60, records.filter((record) => record.sourceSeasonId === SEASON).length));
+    // Danh sách dựng sẵn đủ đội của mùa mặc định được nhận lại nguyên vẹn, như không có `kho`/`xep`.
+    await expect(section(page).locator("[data-reference-key]")).toHaveCount(records.filter((record) => record.sourceSeasonId === SEASON).length);
+    // Chưa biết mùa có độ phủ hay không (máy chưa có kho): giữ `kho`/`xep` trên URL.
+    expect(new URL(page.url()).search).toBe("?kho=rap-duoc&xep=de-rap");
     for (const count of dictionaryRequests(requests)) expect(count).toBeLessThanOrEqual(1);
   });
 
@@ -234,6 +236,68 @@ test("trang mùa cũ: có kho thì thẻ có badge và dòng tóm tắt; chưa c
 
 /** Trang vừa trả về từ bfcache: giả lập `pageshow` với `persisted` (Playwright không giữ trang trong bfcache ổn định). */
 const firePersistedPageshow = (page) => page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pageshow", { persisted: true })));
+
+test("máy có kho nhưng mùa đang xem không có độ phủ: kho và xep bị gỡ khỏi URL, đổi sang mùa có độ phủ không bật lại", async ({ page }) => {
+  // Mùa không có đội nào để đối chiếu: không tính được độ phủ nên thanh kho ẩn và "Xóa lọc" không gỡ được `kho`/`xep`.
+  const emptySeason = read(`src/data/recommended-reference/${generationId}/seasons.json`).seasonOptions
+    .map((option) => option.sourceSeasonId)
+    .find((id) => expectedFor(id, rosterFor(SEASON, READY_TEAMS)).summary.total === 0);
+  expect(emptySeason, "cần một mùa không có độ phủ").toBeTruthy();
+  const roster = rosterFor(SEASON, READY_TEAMS);
+  await seedRoster(page, roster);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(emptySeason)}&kho=rap-duoc&xep=de-rap&view=luoi`);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  await expect(bar(page)).toBeHidden();
+  await expect.poll(() => new URL(page.url()).search).toBe(`?season=${encodeURIComponent(emptySeason)}&view=luoi`);
+
+  // Đổi sang mùa có độ phủ: danh sách đủ, không có bộ lọc kho ngầm.
+  await section(page).getByLabel("Mùa", { exact: true }).selectOption(SEASON);
+  await waitForCoverage(page);
+  expect(new URL(page.url()).searchParams.has("kho")).toBe(false);
+  expect(new URL(page.url()).searchParams.has("xep")).toBe(false);
+  await expect(bar(page).getByRole("button", { name: READY_CHIP })).toHaveAttribute("aria-pressed", "false");
+  await expect(bar(page).getByRole("button", { name: "Dễ ráp nhất", exact: true })).toHaveAttribute("aria-pressed", "false");
+  await expect(section(page).locator(".reference-count strong")).toHaveText(String(records.filter((record) => record.sourceSeasonId === SEASON).length));
+});
+
+test("kho trên mây tới muộn ở mùa không có độ phủ: gỡ kho/xep khỏi URL mà không vẽ lại mục thêm một lượt", async ({ page }) => {
+  const emptySeason = read(`src/data/recommended-reference/${generationId}/seasons.json`).seasonOptions
+    .map((option) => option.sourceSeasonId)
+    .find((id) => expectedFor(id, rosterFor(SEASON, READY_TEAMS)).summary.total === 0);
+  expect(emptySeason, "cần một mùa không có độ phủ").toBeTruthy();
+  // Hiện mùa không có độ phủ là mùa không có đội nào (PK-S15, PK-S21).
+  const resolve = createRosterIdResolver(dicts);
+  const { state } = mergeLocal(emptyCloudState("u-alice"), { ...rosterFor(SEASON, READY_TEAMS), tacticOverrides: [] }, resolve, { now: 1_700_000_000_000 });
+  const cloud = JSON.stringify({ userId: state.userId, cursor: state.cursor, pulledKinds: state.pulledKinds, records: state.records, dirty: state.dirty, rejected: state.rejected });
+  // Phiên chỉ được xác nhận khi test mở cổng: kho (của tài khoản) tới sau khi danh sách đã dựng và người xem đã thao tác.
+  let openGate;
+  const gate = new Promise((resolveGate) => { openGate = resolveGate; });
+  await page.route("**/api/me", async (route) => {
+    await gate;
+    await route.fulfill({ json: { user: { id: "u-alice", name: "Alice", role: "user" } } });
+  });
+  await page.addInitScript(([key, value]) => {
+    if (localStorage.getItem(key) === null) localStorage.setItem(key, value);
+    localStorage.setItem("tqccl:community-session", "1");
+  }, [CLOUD_STORAGE_KEY, cloud]);
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(emptySeason)}&kho=rap-duoc&xep=de-rap`);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  // Chưa biết kho: giữ nguyên hai khóa.
+  expect(new URL(page.url()).searchParams.get("kho")).toBe("rap-duoc");
+  // Mỗi lượt vẽ của mục ghi lại số đếm "n / m đội" đúng một lần: đếm số lượt vẽ sau khi kho tới.
+  await section(page).locator(".reference-count").evaluate((node) => {
+    window.__e2eCountWrites = 0;
+    new MutationObserver((records) => { window.__e2eCountWrites += records.length; }).observe(node, { childList: true });
+  });
+
+  openGate();
+  await expect.poll(() => new URL(page.url()).search).toBe(`?season=${encodeURIComponent(emptySeason)}`);
+  await expect(bar(page)).toBeHidden();
+  // Kho tới chỉ gây một lượt vẽ (giữ danh sách); gỡ `kho`/`xep` chỉ sửa URL, không kéo theo lượt vẽ lại toàn mục
+  // (lượt đó bỏ DOM dựng sẵn và trạng thái mở/đóng khôi phục khi quay lại).
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 50))));
+  expect(await page.evaluate(() => window.__e2eCountWrites)).toBe(1);
+});
 
 test("phạm vi Tất cả: có badge và tóm tắt gộp mọi mùa", async ({ page }) => {
   const roster = rosterFor(SEASON, READY_TEAMS);
