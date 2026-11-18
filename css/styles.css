@@ -14618,7 +14618,7 @@ body[data-page-section="roster-recommend"] .layout {
 
 .roster-paste-input {
   width: 100%;
-  min-height: 7.5rem;
+  min-height: var(--size-col-120);
   padding: var(--space-10) var(--space-14);
   resize: vertical;
 }
