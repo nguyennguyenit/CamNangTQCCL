@@ -5,6 +5,12 @@
 - Changed: `tqccl_recommend_teams` mode `meta` tìm danh sách bằng DFS cắt nhánh theo khóa thứ tự (số đội T0+T0.5, số T0, số đội, tổng điểm nguồn, tổng hột) thay vì lấy đội đầu bảng trước. Ca PK-S27 của issue: 4 đội T0/T0.5 (Hoàng Mã Thương bản cùng tồn A Diễm, SP Tuân Úc Cung chống chịu, Hổ Thần Cung, Khống Chế Thương) thay vì đội T0 Ôn Hầu Cung chặn các bộ Hoàng Mã. Pool tìm kiếm luôn gồm mọi đội T0/T0.5 đủ kho, cộng đội bậc khác tới 60; đội bậc khác ngoài pool được lấp chỗ trống sau khi tìm, kèm cảnh báo `portfolio-search-pool-truncated`. Kho đủ cả mùa PK-S27, 10 đội: 8 đội T0/T0.5 (3 T0, điểm nguồn 862; pool 60 cũ chỉ ra 6). Trần 250000 nút giữ nguyên; chạm trần trả danh sách tốt nhất đã thấy kèm cảnh báo `portfolio-search-capped` (ca PK-S27 trên chạm trần nhưng trùng kết quả duyệt hết 1,14 triệu nút). Hai cảnh báo tính cả lượt bù đội cũ. Đo CPU local: roster 61 tướng tối đa ~30 ms; cả kho `maxTeams` 10 tối đa ~0,6 s (PK-S27, chạm trần), PK-S26 ~0,5 s. mcp-worker cần gói Workers trả phí.
 - Engine dùng chung: tuỳ chọn mới `metaSearch` (mặc định tắt) của `recommendTeams`; đội mùa mang `score` (điểm nguồn). Trang Gợi ý kho chưa bật nên hành vi web không đổi.
 
+## 2026-11-18 (Dọn khu Quản trị: CSS chết, giới hạn chi tiết người dùng, token avatar)
+
+- Removed: CSS không còn ai dùng `.adm-filters-top`, `.adm-team-field` và token chữ `--type-admin-card-name`, `--type-admin-rank` (`tokens.json` + `css/styles.css`).
+- Changed: `GET /api/admin/users/:id` trả `limits: {comments, reports, audit}`; khu Quản trị hiện "N mục mới nhất" theo đúng giới hạn đó thay vì chép tay 10/20 (worker cũ chưa trả thì hiện "Mục mới nhất").
+- Added: token màu avatar chữ đầu `--tint-avatar` / `--tint-avatar-ink` (sáng `#EAD9C0`/`#6B4A1E` theo artboard; tối tự suy `#4A3820`/`#EAD9C0`, 8,09:1), nối vào `.cm-avatar` và `.adm-initials` thay cho `panel-2`/`ink-2` tạm; ngưỡng tương phản 4,5:1 khai ở `meta.contrast` cho cả hai theme.
+
 ## 2026-11-18 (MCP: Đội khác giữ nhãn Đề cử)
 
 - Fixed: projection Đội khác của `mcp-worker` (`publication-builder.ts`) bỏ field `recommended` của `other-teams.json`. Mỗi biến thể giờ có `recommended` (boolean, hàng thiếu field là `false`); `tqccl_find_teams` (collection `other`) và `tqccl_get_team` trả `recommended` để khớp nhãn "Đề cử" của website. Sinh lại `workflow-build` MCP.

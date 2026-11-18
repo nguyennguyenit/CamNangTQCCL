@@ -255,6 +255,8 @@ describe("chi tiết", () => {
     expect(detail.reports).toHaveLength(10);
     expect(detail.reports[0]).toMatchObject({ id: "r12", status: "rejected" });
     expect(detail.audit).toHaveLength(1);
+    // Client hiện "N mục mới nhất" theo đúng giới hạn server trả, không chép tay hằng số.
+    expect(detail.limits).toEqual({ comments: 10, reports: 10, audit: 20 });
     expect(detail.audit[0]).toMatchObject({ action: "user.ban", subjectUserId: "u-bob", reason: "spam", status: "ok" });
 
     const mod = await json(await h.request("/api/admin/users/u-bob", { as: "moderator" }));
