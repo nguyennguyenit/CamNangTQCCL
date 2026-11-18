@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Đo trên đường gọi thật và chốt trần"
-status: pending
+status: completed
 priority: P1
 effort: "4h"
 dependencies: []

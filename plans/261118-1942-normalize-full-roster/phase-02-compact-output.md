@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Thu gọn kết quả normalize"
-status: pending
+status: completed
 priority: P1
 effort: "6h"
 dependencies: [1]

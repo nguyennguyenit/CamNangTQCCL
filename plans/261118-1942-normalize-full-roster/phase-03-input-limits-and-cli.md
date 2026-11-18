@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Trần đầu vào, CLI file/stdin, ngân sách"
-status: pending
+status: completed
 priority: P1
 effort: "6h"
 dependencies: [2]

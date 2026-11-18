@@ -1,7 +1,7 @@
 ---
 title: "Normalize nhận đủ kho thật (#165)"
 description: "tqccl_normalize_entities chạy được kho thật (≥ 238 mục, gửi tên) mà không phải cắt tay, giữ nguyên thuật toán chuẩn hoá và digest."
-status: pending
+status: in-progress
 priority: P1
 effort: 3d
 issue: 165

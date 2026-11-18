@@ -1,7 +1,7 @@
 ---
 phase: 4
 title: "Consumer, tài liệu, rollout"
-status: pending
+status: in-progress
 priority: P1
 effort: "5h"
 dependencies: [3]
