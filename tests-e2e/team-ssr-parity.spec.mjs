@@ -22,6 +22,10 @@ async function listHtml(page, url, selector, { stripMarker }) {
   }
   await page.goto(url);
   await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+  // Bản dựng sẵn có đủ mọi đội của mùa mặc định (có thể hơn một lượt); client tự dựng chỉ hiện lượt đầu, nên bấm
+  // "Xem thêm" tới hết để so cùng một danh sách.
+  const more = page.locator("button.lookup-more");
+  while (await more.count()) await more.click();
   const html = await page.evaluate((query) => {
     const node = document.querySelector(query);
     const clone = node.cloneNode(true);

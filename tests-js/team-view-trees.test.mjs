@@ -228,6 +228,12 @@ for (const locale of ["vi", "zh"]) {
       const n = list.filter((item) => item.recommended === true).length;
       assert.deepEqual(badgeRun(cardClass), list.map((_, i) => i < n), `${cardClass} ${locale}`);
     }
+    // Thứ tự 1-2-3 theo `recommendedOrder` (thứ tự ảnh nhà phát hành): thẻ đầu tiên của trang là đội số 1, rồi 2, 3...
+    const hrefOrder = [...html.matchAll(/class="team-card reference-team-card kh-card"[\s\S]*?href="\/khai-hoang\/([^"/]+)\/"/g)].map((match) => match[1]);
+    const expectedOrder = khaihoang.teams.filter((item) => item.recommended === true)
+      .sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((item) => item.id);
+    assert.ok(expectedOrder.length >= 3, "cần ít nhất ba đội Tiến cử để khoá thứ tự 1-2-3");
+    assert.deepEqual(hrefOrder.slice(0, expectedOrder.length), expectedOrder, `thứ tự recommendedOrder ${locale}`);
     // Tip Chạm Sứ là văn xuôi tiếng Việt: chỉ bản vi có.
     assert.equal(html.includes('class="cham-su-tip"'), locale === "vi" && Boolean(khaihoang.chamSuTip), `chamSuTip ${locale}`);
 

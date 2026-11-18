@@ -88,6 +88,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "unified-lookup"),
   entry("js", "site-nav"),
   entry("js", "recruit-sync"),
+  entry("js", "recruit-tokens"),
   entry("js", "recruit-tracker-store"),
   entry("js", "recruit-tracker"),
   entry("js", "recommended-reference-render"),
