@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-18 (Tra cứu: ghi chú phe Hán theo bản cập nhật 4/11/2026 — #76)
+
+- Changed: 35 `heroNotes` trong `pipeline/lookup-client-heroes.json` (4 mẫu câu, cả `textVi`/`textZh`) bỏ lời "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán…", ghi phe Hán là thay đổi vĩnh viễn từ bản cập nhật 4/11/2026; chỉ việc đổi phe ở Sảnh Chính › Hán Thất là theo mùa. Kiểm tay trên client sau khai mùa PK-S27 (17/11/2026) khớp nên `faction` toàn cục giữ nguyên. Giữ `50K「Châu」` (chờ nguồn, #87/#130).
+- Promote Tra cứu `lookup:1b96b789…` (transaction `lookup-261118-hero-notes-phe-han`; chỉ `heroes-dict.json` đổi, 35 tướng ở `lookup.conditions`), ledger route giữ 1028 handle. Publish generation Đội chuẩn `6b47bccb…` (prune `95de17f0…`), rebind giữ nguyên handle (1681/443/18, 46 tombstone). Receipt dịch không đổi (6409/6409); 4 mẫu câu mới được reviewer độc lập chấp nhận.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
