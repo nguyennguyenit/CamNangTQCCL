@@ -10,6 +10,7 @@ from unittest import mock
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pipeline import build_json  # noqa: E402
+from pipeline.normalize import normalize_team  # noqa: E402
 
 BASE = os.path.join(os.path.dirname(__file__), "..", "Meta Team PK")
 
@@ -25,10 +26,14 @@ class TestBuild(unittest.TestCase):
         cls.teams = build_json.build_teams()
 
     def test_total_count(self):
-        self.assertEqual(len(self.teams), 166)
+        # 60 Team PK + 110 Meta mỗi phe + 6 Team PK curate; đội YouTube (nếu có file) tính riêng.
+        sheet = [t for t in self.teams if t["source"] != "youtube"]
+        self.assertEqual(len(sheet), 176)
+        self.assertEqual(len(self.teams) - len(sheet), len(build_json.load_youtube_teams()))
 
     def test_published_sources_exclude_do_uy(self):
-        self.assertEqual({t["source"] for t in self.teams}, {"team-intro", "moi-phe"})
+        self.assertLessEqual({t["source"] for t in self.teams}, {"team-intro", "moi-phe", "youtube"})
+        self.assertLessEqual({"team-intro", "moi-phe"}, {t["source"] for t in self.teams})
 
     def test_team_shape(self):
         t = self.teams[0]
@@ -97,7 +102,7 @@ def _committed(team_id, *names):
 class TestStableTeamIds(unittest.TestCase):
     """Rebuild giữ ID đã công khai theo (nguồn, tập tướng), không đánh số lại."""
 
-    def _build(self, raw_by_source, committed, supplement=()):
+    def _build(self, raw_by_source, committed, supplement=(), youtube=()):
         files = [
             ("intro.html", "team-intro", None, len(raw_by_source["team-intro"])),
             ("moi.html", "moi-phe", "out-meta", len(raw_by_source["moi-phe"])),
@@ -107,6 +112,7 @@ class TestStableTeamIds(unittest.TestCase):
                 mock.patch.object(build_json, "load_aliases", return_value=empty), \
                 mock.patch.object(build_json, "load_nicknames", return_value={}), \
                 mock.patch.object(build_json, "load_supplement", return_value=list(supplement)), \
+                mock.patch.object(build_json, "load_youtube_teams", return_value=list(youtube)), \
                 mock.patch.object(build_json, "parse_team_intro",
                                   side_effect=lambda _path, src, _hint: raw_by_source[src]):
             return build_json.build_teams(committed=committed)
@@ -158,6 +164,49 @@ class TestStableTeamIds(unittest.TestCase):
         self.assertEqual(teams[2], {"id": "team-intro-1", **record})
         self.assertEqual(list(teams[2])[:2], ["id", "source"])
 
+    def test_new_team_with_same_heroes_above_committed_one_does_not_take_its_id(self):
+        empty = {"heroes": {}, "tactics": {}, "books": {}, "heroNames": {}}
+        committed = [normalize_team(_raw("team-intro", "A", "B", "C"), empty, "team-intro-0")]
+        changed = {**_raw("team-intro", "A", "B", "C"), "rawType": "Cung"}
+        teams = self._build({"team-intro": [changed, _raw("team-intro", "A", "B", "C")], "moi-phe": []}, committed)
+        self.assertEqual([t["id"] for t in teams], ["team-intro-1", "team-intro-0"])
+        self.assertEqual(teams[1]["rawType"], "")
+
+    def test_youtube_teams_follow_supplement_with_their_own_ids(self):
+        video = {"source": "youtube", "name": "Video", "nameZh": "影片", "confidence": "cao",
+                 "evidence": [{"videoId": "abc", "at": "001m16s", "kind": "đề cử"}],
+                 "heroes": [{"baseName": "Y"}]}
+        committed = [_committed("team-intro-0", "A"), _committed("youtube-0", "X")]
+        teams = self._build({"team-intro": [_raw("team-intro", "A")], "moi-phe": []}, committed,
+                            youtube=[{**video, "name": "Old", "heroes": [{"baseName": "X"}]}, video])
+        self.assertEqual([t["id"] for t in teams], ["team-intro-0", "youtube-0", "youtube-1"])
+        self.assertEqual(teams[2], {"id": "youtube-1", **video})
+
+
+class TestYoutubeSource(unittest.TestCase):
+    """File đội YouTube là tuỳ chọn; bản ghi phải là nguồn youtube và chưa có id."""
+
+    def _write(self, tmp, teams):
+        path = os.path.join(tmp, "youtube.json")
+        with open(path, "w", encoding="utf-8") as fh:
+            json.dump({"sourceSeasonId": "pk-s27", "teams": teams}, fh, ensure_ascii=False)
+        return path
+
+    def test_missing_file_is_empty(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(build_json.load_youtube_teams(os.path.join(tmp, "absent.json")), [])
+
+    def test_records_are_kept_verbatim(self):
+        record = {"source": "youtube", "name": "Đội", "nameZh": "隊", "heroes": []}
+        with tempfile.TemporaryDirectory() as tmp:
+            self.assertEqual(build_json.load_youtube_teams(self._write(tmp, [record])), [record])
+
+    def test_wrong_source_or_preset_id_is_refused(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for bad in ({"source": "team-intro", "name": "X"}, {"source": "youtube", "id": "youtube-9", "name": "Y"}):
+                with self.assertRaises(SystemExit):
+                    build_json.load_youtube_teams(self._write(tmp, [bad]))
+
 
 class TestNicknameScope(unittest.TestCase):
     """Nickname chuỗi chỉ đặt tên Team PK; nickname có ``sources`` áp đúng các nguồn đó."""
@@ -179,6 +228,7 @@ class TestNicknameScope(unittest.TestCase):
                     mock.patch.object(build_json, "load_nicknames",
                                       side_effect=lambda source: real_load(path, source=source)), \
                     mock.patch.object(build_json, "load_supplement", return_value=[]), \
+                    mock.patch.object(build_json, "load_youtube_teams", return_value=[]), \
                     mock.patch.object(build_json, "parse_team_intro",
                                       side_effect=lambda _path, src, _hint: raw_by_source[src]):
                 teams = build_json.build_teams()

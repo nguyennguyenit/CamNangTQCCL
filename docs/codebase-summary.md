@@ -40,7 +40,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/recommended-reference-render.js` | Thẻ, bảng, nhóm Tier và thân chi tiết Đội chuẩn/Đội khác/Cùng Tồn dưới dạng cây view; nhận `locale` tường minh. |
 | `src/lib/team-ssr.ts`, `src/lib/team-section-ssr.js` | Dựng sẵn thân trang chi tiết đội và trạng thái mặc định của bốn trang danh sách từ publication đã pin. |
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
-| `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-master.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `src/lib/lookup-pages.ts` | Tra cứu bảy nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM (trang nhóm dựng sẵn đủ mọi mục), hồ sơ và quan hệ theo ID; bốn nhóm catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) dùng bố cục danh sách + chi tiết của `lookup-master.js`. |
+| `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-master.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `src/lib/lookup-pages.ts` | Tra cứu tám nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM (trang nhóm dựng sẵn đủ mọi mục), hồ sơ và quan hệ theo ID; năm nhóm catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Kỳ lược) dùng bố cục danh sách + chi tiết của `lookup-master.js`. |
 | `src/lib/lookup-item-pages.ts`, `src/components/pages/LookupItemPage.astro`, `js/lookup-item-page.js` | Trang riêng `/tra-cuu/<nhóm>/<slug>/` của từng mục: hồ sơ đầy đủ dựng lúc build, client chỉ gắn chân dung và nút phiên bản hiệu ứng. |
 | `pipeline/lookup_route_handles.py`, `pipeline/lookup-route-handles.json`, `src/lib/lookup-detail-routes.ts`, `js/lookup-ids.js` | Ledger slug trang riêng đóng băng theo mã (`--write`/`--check`, mã rời corpus vào `retired`), loader kiểm ledger lúc build, `lookupHref`/`lookupItemPath` cho mọi link Tra cứu. |
 | `src/lib/structured-data.ts` | JSON-LD trang chi tiết đội, trang nhóm và trang riêng Tra cứu (`ItemPage` + `mainEntity` `Thing`/`DefinedTerm`). |
@@ -73,7 +73,8 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/workflow-source-manifest.json`](../mcp-worker/workflow-source-manifest.json), [`generate-workflow-build.ts`](../mcp-worker/scripts/generate-workflow-build.ts) | Owner của semantic closure và `workflowBuildId`; `workflowVersion` ghép identity này với full `releaseId`. |
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
-| `pipeline/build_json.py` | Build team, facet từ HTML export + `team-intro-supplement.json` (trùng byte bản commit, `--check`); Cùng Tồn, khai hoang chỉ với `--overwrite-curated`. |
+| `pipeline/build_json.py` | Build team, facet từ HTML export + `team-intro-supplement.json` + đội đề cử YouTube `team-youtube-pk-s27.json` (trùng byte bản commit, `--check`); Cùng Tồn, khai hoang chỉ với `--overwrite-curated`. |
+| `pipeline/recommended_team_dedup.py` | Ledger Đội khác `pipeline/recommended-other-teams.json`: đối chiếu đội gốc với Đội chuẩn của mùa mặc định, gộp hàng trùng nội bộ, đánh dấu `recommended` cho nguồn YouTube ([season-team-data.md](season-team-data.md)). |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư; mang hiệu ứng (`effect`/`effectViet`/`effectVersion`, đủ cả ba) và tên nguồn (`sourceNames`/`excludedSourceNames`). |
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |
@@ -89,7 +90,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 
 | Artifact | Snapshot công khai 2026-09-27 |
 |---|---:|
-| `data/teams.json` | 166: 56 team-intro, 110 moi-phe |
+| `data/teams.json` | 443: 66 team-intro, 110 moi-phe, 267 youtube (2026-11-17) |
 | `data/team-tier.json` | 31 team, 39 rankings |
 | `data/tactics.json` | 412 (Tra cứu thống nhất, [unified-lookup.md](unified-lookup.md)); 407 chiến pháp lấy chữ/số liệu client Global, 2 chiến pháp của SP Tào Tháo theo bản Trung, 3 chiến pháp khôi phục theo fanpage chính thức VN 2026-11-03 (Duy Nội Thiện Quyền, Tuyệt Kế Chiết Mưu, Kết Nghĩa Vườn Đào; chưa có ở client 24.526) (`pipeline/lookup-client-tactics.json`, gồm 29 mục chỉ có ở client: 13 chiến pháp và 16 chiến pháp binh chủng Tinh của mùa Binh Diễn Xuân Thu), 18 mã trùng đã gộp (`lookup.formerIds`) |
 | `data/heroes-dict.json` | 252 = 202 baseline/SGSDeck (gồm Hà Thị, khôi phục theo fanpage chính thức VN 2026-11-03: phe Hán, Cung A, chưa có ở client 24.526) + 50 từ client Global (`pipeline/lookup-client-heroes.json`) — Tra cứu thống nhất; chân dung tự lưu ở `public/heroes/` |
@@ -131,7 +132,7 @@ Gate thống nhất nằm ở `.github/workflows/mcp-gate.yml` (pull request và
 
 ## Điểm cần chú ý
 
-- `build_json.py` cố ý loại Đô Úy; từ HTML + input curate (`aliases.json`, `team-nicknames.json`, `team-intro-supplement.json`) tái tạo trùng byte `teams.json` 56 + 110 và `facets.json`. `khaihoang.json` curate vượt HTML, không rebuild.
+- `build_json.py` cố ý loại Đô Úy; từ HTML + input curate (`aliases.json`, `team-nicknames.json`, `team-intro-supplement.json`) tái tạo trùng byte `teams.json` (66 team-intro + 110 moi-phe + 267 youtube từ `team-youtube-pk-s27.json`) và `facets.json`. `khaihoang.json` curate vượt HTML, không rebuild.
 - 48 team Đô Úy từng công khai đã được retire; chỉ còn nguồn thô/archive 40 record tại `pipeline/do-uy-ss18-source.json`, không tham gia build/publication.
 - `plans/` có thể chứa mô tả cũ; kiểm chứng bằng code, config và JSON commit.
 - Remote MCP bearer là pre-shared credential cho managed client, không phải OAuth access token. Production release chỉ tiếp tục khi live edge rate control, exact candidate identity và ownership-safe rollback gate đạt.

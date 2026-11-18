@@ -257,6 +257,17 @@ test('raw-name resolver indexes aliases after main names so an alias never overr
   assert.equal(resolve('SP Lô Trực/Tào Tháo'), 'SP 盧植/曹操');
 });
 
+test('raw-name resolver lets a current Vietnamese name win over another entry\'s Hán-Việt name', () => {
+  // "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là `hanViet` cũ của 暗渡陳倉 (đứng trước trong danh mục).
+  const resolve = createRawNameResolver(
+    [{chinese: '暗渡陳倉', viet: 'Ám Độ Trần Thương', hanViet: 'Lập Lờ Đánh Tráo'}],
+    [{chinese: '移花接木', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc'}],
+  );
+  assert.equal(resolve('Lập Lờ Đánh Tráo'), '移花接木');
+  assert.equal(resolve('Ám Độ Trần Thương'), '暗渡陳倉');
+  assert.equal(resolve('Di Hoa Tiếp Mộc'), '移花接木');
+});
+
 test('combined "A/B" slots resolve only when every part resolves', () => {
   const resolve = createRawNameResolver([{chinese: '呂蒙', viet: 'Lữ Mông'}, {chinese: '程普', viet: 'Trình Phổ'}]);
   assert.equal(resolve('Lữ Mông/Trình Phổ'), '呂蒙/程普');

@@ -2216,7 +2216,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng đá +1500/giờ, Quan khai thác đá",
+          "effectVi": "Sản lượng đá +1500/giờ, Quan Đá",
           "effectZh": "石材產量+1500/小時，採石官",
           "id": "building-level:thai-thach-xu:10",
           "level": 10
@@ -2486,7 +2486,7 @@
       "maxLevel": 30,
       "missingFields": [],
       "nameVi": "Điểm nhặt đá",
-      "summaryVi": "Sản xuất đá; Lv10 mở khóa Quan khai thác đá, Lv20 sản lượng đá đồn điền +50%",
+      "summaryVi": "Sản xuất đá; Lv10 mở khóa Quan Đá, Lv20 sản lượng đá đồn điền +50%",
       "summaryZh": "生產石材；Lv10 解鎖採石官，Lv20 屯田石材 +50%",
       "zhSource": {
         "kind": "source"
@@ -2510,7 +2510,7 @@
           },
           "durationVi": "15 giây",
           "durationZh": "15秒",
-          "effectVi": "Giới hạn tài nguyên +20000; mở khóa: Điện Quân Vương cấp 1",
+          "effectVi": "Giới hạn tài nguyên +20000; mở khóa: Quân Vương Điện cấp 1",
           "effectZh": "資源上限+20000解鎖：君王殿1級",
           "id": "building-level:thang-kho:1",
           "level": 1
@@ -4012,7 +4012,7 @@
       "maxLevel": 5,
       "missingFields": [],
       "nameVi": "Trại Công Trình",
-      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Quân Cơ Dinh/Công Sự Dinh)",
+      "summaryVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Lều cơ mật/Doanh trại công sự)",
       "summaryZh": "提升戰略建築（軍機營/工事營）建造等級上限",
       "zhSource": {
         "kind": "source"
@@ -4122,7 +4122,7 @@
           },
           "durationVi": "1 giờ",
           "durationZh": "1小時",
-          "effectVi": "Tỷ lệ thương mại 40%, Quan Thương Mại",
+          "effectVi": "Tỷ lệ thương mại 40%, Quan giao dịch",
           "effectZh": "貿易比例40%，貿易官",
           "id": "building-level:tap-thi:1",
           "level": 1
@@ -4981,7 +4981,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan thuế vụ",
+          "effectVi": "Sản lượng tiền đồng +1000/giờ, Quan Thuế",
           "effectZh": "銅幣產量+1000/小時，稅務官",
           "id": "building-level:dan-cu:10",
           "level": 10
@@ -5111,7 +5111,7 @@
           },
           "durationVi": "64 giờ",
           "durationZh": "64小時",
-          "effectVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Điện Quân Vương cấp 4",
+          "effectVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Quân Vương Điện cấp 4",
           "effectZh": "銅幣產量+2500/小時，每次稅收獲得銅幣+2000解鎖：君王殿4級",
           "id": "building-level:dan-cu:20",
           "level": 20
@@ -5121,7 +5121,7 @@
       "maxLevel": 20,
       "missingFields": [],
       "nameVi": "Dân Cư",
-      "summaryVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan thuế vụ, Lv20 thu nhập thuế +2000",
+      "summaryVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan Thuế, Lv20 thu nhập thuế +2000",
       "summaryZh": "生產銅幣；Lv10 解鎖稅務官，Lv20 稅收 +2000",
       "zhSource": {
         "kind": "source"
@@ -6901,7 +6901,7 @@
           },
           "durationVi": "2 giờ",
           "durationZh": "2小時",
-          "effectVi": "Mỗi ngày có thể tìm kiếm 4 lần, Sứ giả tìm kiếm",
+          "effectVi": "Mỗi ngày có thể thăm hỏi 4 lần, Sứ Thăm Hỏi",
           "effectZh": "每日可尋訪4次，尋訪使",
           "id": "building-level:tam-phong-dai:1",
           "level": 1
@@ -6987,7 +6987,7 @@
           },
           "durationVi": "4 giờ",
           "durationZh": "4小時",
-          "effectVi": "Mở khóa huấn luyện ngựa sơ cấp, Quan huấn luyện ngựa",
+          "effectVi": "Mở khóa luyện ngựa sơ cấp, Quan Luyện Ngựa",
           "effectZh": "解鎖初級馴馬，馴馬官",
           "id": "building-level:tuan-ma-truong:1",
           "level": 1
@@ -7058,7 +7058,7 @@
           },
           "durationVi": "5 giờ",
           "durationZh": "5小時",
-          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ giả luyện binh",
+          "effectVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ Luyện Binh",
           "effectZh": "武將練兵經驗80000，練兵使",
           "id": "building-level:dien-vo-truong:1",
           "level": 1
@@ -7261,7 +7261,7 @@
           },
           "durationVi": "1 giờ 40 phút",
           "durationZh": "1小時40分",
-          "effectVi": "Sản lượng quặng sắt +1500/giờ, Quan luyện sắt",
+          "effectVi": "Sản lượng quặng sắt +1500/giờ, Quan Sắt",
           "effectZh": "鐵礦產量+1500/小時，冶鐵官",
           "id": "building-level:da-thiet-dai:10",
           "level": 10
@@ -7531,7 +7531,7 @@
       "maxLevel": 30,
       "missingFields": [],
       "nameVi": "Bệ lò rèn",
-      "summaryVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan luyện sắt, Lv20 đồn điền quặng sắt +50%",
+      "summaryVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan Sắt, Lv20 đồn điền quặng sắt +50%",
       "summaryZh": "生產鐵礦；Lv10 解鎖冶鐵官，Lv20 屯田鐵礦 +50%",
       "zhSource": {
         "kind": "source"
@@ -9265,6 +9265,1158 @@
       "slotVi": "Vũ khí"
     }
   ],
+  "qilueCards": [
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "暗度陳倉"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Khi thi triển Chiến Pháp chuẩn bị hiệp này có 50% xác suất bỏ qua chuẩn bị",
+      "effectZh": "本回合施放準備戰法時，有 50% 機率跳過準備",
+      "id": "qilue-card:am-do-tran-thuong",
+      "missingFields": [],
+      "nameVi": "Ám Độ Trần Thương",
+      "nameZh": "暗度陳倉",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "芒碭隱蹤"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Giảm 8% ST phải chịu hiệp này",
+      "effectZh": "本回合受到的傷害降低 8%",
+      "id": "qilue-card:an-tich-mang-thuong",
+      "missingFields": [],
+      "nameVi": "Ẩn Tích Mang Thương",
+      "nameZh": "芒碭隱蹤",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "博浪椎秦"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Tăng 20% Phá Trận",
+      "effectZh": "破陣提升 20%",
+      "id": "qilue-card:bac-lang-chuy-tan",
+      "missingFields": [],
+      "nameVi": "Bác Lãng Chuy Tần",
+      "nameZh": "博浪椎秦",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "沛縣聚義"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Tăng 15% lượng trị liệu gây ra trong hiệp này",
+      "effectZh": "本回合造成的治療量提升 15%",
+      "id": "qilue-card:bai-huyen-tu-nghia",
+      "missingFields": [],
+      "nameVi": "Bái Huyện Tụ Nghĩa",
+      "nameZh": "沛縣聚義",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "擒王破營"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Đột Kích, tỉ lệ phát động Chiến Pháp Đột Kích của Võ Tướng đồng đội tăng 5% (có thể tích lũy)",
+      "effectZh": "本回合發動突擊戰法後，友軍武將的突擊戰法發動率提升 5%（可疊加）",
+      "id": "qilue-card:bat-vua-pha-doanh",
+      "missingFields": [],
+      "nameVi": "Bắt Vua Phá Doanh",
+      "nameZh": "擒王破營",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "疲楚奪勢"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này sau khi chịu tấn công thường, gây 1 lần sát thương Binh Đao cho cá thể quân địch (tỷ lệ sát thương 50%)",
+      "effectZh": "本回合受到普通攻擊後，對敵軍單體造成 1 次兵刃傷害（傷害率 50%）",
+      "id": "qilue-card:bi-so-doat-the",
+      "missingFields": [],
+      "nameVi": "Bì Sở Đoạt Thế",
+      "nameZh": "疲楚奪勢",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "設伏十面"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%",
+      "effectZh": "本回合主動戰法發動率提升 10%",
+      "id": "qilue-card:bo-tri-thap-dien",
+      "missingFields": [],
+      "nameVi": "Bố Trí Thập Diện",
+      "nameZh": "設伏十面",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "橫掃河西"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Cá thể có Võ Lực Cao Nhất trong hiệp này nhận 40% tỉ lệ Liên Kích",
+      "effectZh": "本回合武力最高的單體獲得 40% 連擊率",
+      "id": "qilue-card:can-quet-tay-ha",
+      "missingFields": [],
+      "nameVi": "Càn Quét Tây Hà",
+      "nameZh": "橫掃河西",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "多多益善"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trước đó, mỗi lần dùng Kỳ Lược 1 lần, Chiến Pháp Chủ Động đầu tiên trong hiệp này của quân ta sau khi phát động sẽ có 15% xác suất thử phát động lại",
+      "effectZh": "此前每使用 1 次奇略，我軍本回合首個主動戰法發動後，有 15% 機率嘗試再次發動",
+      "id": "qilue-card:cang-nhieu-cang-tot",
+      "missingFields": [],
+      "nameVi": "Càng Nhiều Càng Tốt",
+      "nameZh": "多多益善",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "月下追賢"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Sau khi thi triển trạng thái khống chế trong hiệp này, trạng thái này còn được áp dụng lên một quân địch khác",
+      "effectZh": "本回合施加控制狀態後，該狀態還會施加於另一名敵軍",
+      "id": "qilue-card:cau-hien-duoi-trang",
+      "missingFields": [],
+      "nameVi": "Cầu Hiền Dưới Trăng",
+      "nameZh": "月下追賢",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "壯志不絕"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Võ Tướng Võ Lực cao nhất quân ta gây ra sát thương Binh Đao tăng 5% (trước đó mỗi lần dùng 1 lá Kỳ Lược hoặc đã tổn thất 15% Binh Lực thì tăng thêm 3%)",
+      "effectZh": "我軍武力最高的武將造成的兵刃傷害提升 5%（此前每使用 1 張奇略或已損失 15% 兵力，再提升 3%）",
+      "id": "qilue-card:chi-khi-ngap-tran",
+      "missingFields": [],
+      "nameVi": "Chí Khí Ngập Tràn",
+      "nameZh": "壯志不絕",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "居功至偉"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Vô hiệu Kỳ Lược địch sử dụng lần sau",
+      "effectZh": "使敵軍下一次使用的奇略無效",
+      "id": "qilue-card:cong-lao-hien-hach",
+      "missingFields": [],
+      "nameVi": "Công Lao Hiển Hách",
+      "nameZh": "居功至偉",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "背水列陣"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Một cá thể có Trí Lực và Võ Lực cao nhất trong hiệp này miễn dịch Kế Tận",
+      "effectZh": "本回合智力與武力最高的一名單體免疫計窮",
+      "id": "qilue-card:dan-tran-tu-chien",
+      "missingFields": [],
+      "nameVi": "Dàn Trận Tử Chiến",
+      "nameZh": "背水列陣",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "孤軍深入"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này phát động thất bại Chiến Pháp Đột Kích thử phát động lại 1 lần",
+      "effectZh": "本回合發動失敗的突擊戰法嘗試再次發動 1 次",
+      "id": "qilue-card:don-doc-tham-nhap",
+      "missingFields": [],
+      "nameVi": "Đơn Độc Thâm Nhập",
+      "nameZh": "孤軍深入",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "誘敵離營"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Đã phóng thích 1 lần Chiến Pháp Chủ Động trước đó, sau khi Kỳ Lược hiệu lực sẽ có 10% xác suất phát huy hiệu lực thêm 1 lần nữa",
+      "effectZh": "此前已釋放過 1 次主動戰法時，奇略生效後有 10% 機率再生效 1 次",
+      "id": "qilue-card:du-dich-roi-trai",
+      "missingFields": [],
+      "nameVi": "Dụ Địch Rời Trại",
+      "nameZh": "誘敵離營",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "築闕長安"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này địch quân thi triển Chiến Pháp Chủ Động không chuẩn bị cần chuẩn bị 1 hiệp",
+      "effectZh": "本回合敵軍施放的非準備主動戰法需準備 1 回合",
+      "id": "qilue-card:dung-dien-truong-an",
+      "missingFields": [],
+      "nameVi": "Dựng Điện Trường An",
+      "nameZh": "築闕長安",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "韜晦自污"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này khi quân ta hành động, nếu Trạng thái Khống chế có hiệu lực， thì làm cho Quân địch đơn thể nhận cùng một Trạng thái Khống chế",
+      "effectZh": "本回合我軍行動時，若控制狀態生效，使敵軍單體獲得相同的控制狀態",
+      "id": "qilue-card:giau-tai-giau-cua",
+      "missingFields": [],
+      "nameVi": "Giấu Tài Giấu Của",
+      "nameZh": "韜晦自污",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "親釋刑縛"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Tại đầu hiệp này nếu đang ở trạng thái Khống chế, thì nhận trạng thái miễn dịch tương ứng với trạng thái đó trong 1 hiệp",
+      "effectZh": "本回合開始時若處於控制狀態，獲得對應該狀態的免疫，持續 1 回合",
+      "id": "qilue-card:go-bo-xieng-xich",
+      "missingFields": [],
+      "nameVi": "Gỡ Bỏ Xiềng Xích",
+      "nameZh": "親釋刑縛",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "合圍夾擊"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Chủ Động, Trị Liệu đơn thể Đồng Minh Binh Lực thấp nhất (tỷ lệ Trị Liệu 50%)",
+      "effectZh": "本回合發動主動戰法後，治療兵力最低的友軍單體（治療率 50%）",
+      "id": "qilue-card:hop-vay-giap-kich",
+      "missingFields": [],
+      "nameVi": "Hợp Vây Giáp Kích",
+      "nameZh": "合圍夾擊",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "臨危不懼"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Tăng ích ngẫu nhiên đã có kéo dài thêm 1 hiệp",
+      "effectZh": "已有的隨機增益狀態延長 1 回合",
+      "id": "qilue-card:khong-so-lam-nguy",
+      "missingFields": [],
+      "nameVi": "Không Sợ Lâm Nguy",
+      "nameZh": "臨危不懼",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "諫封示公"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Nhận ngẫu nhiên 1 loại Tăng ích tính năng cho một đơn vị địch ngẫu nhiên (Sau hiệp chuẩn bị với mỗi nhận 1 trạng thái tính năng từng nhận sẽ có 30% xác suất lặp lại 1 lần)",
+      "effectZh": "為隨機一名敵軍單位隨機獲得 1 種功能性增益（準備回合後，每獲得 1 個曾獲得的功能性狀態，有 30% 機率重複 1 次）",
+      "id": "qilue-card:ky-cong-gian-phong",
+      "missingFields": [],
+      "nameVi": "Kỳ Công Gián Phong",
+      "nameZh": "諫封示公",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "鴻門遁險"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này khi gây Trị Liệu có xác suất gây thêm sát thương Mưu Lược cho đơn thể quân địch (bằng 30% lượng Trị Liệu, mỗi Võ Tướng tối đa kích hoạt 5 lần)",
+      "effectZh": "本回合造成治療時，有機率對敵軍單體額外造成謀略傷害（相當於治療量的 30%，每名武將至多觸發 5 次）",
+      "id": "qilue-card:lanh-hiem-hong-mon",
+      "missingFields": [],
+      "nameVi": "Lánh Hiểm Hồng Môn",
+      "nameZh": "鴻門遁險",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "定計安儲"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này đơn thể có Binh Lực cao nhất của quân ta cứu viện toàn thể quân ta, đồng thời giảm 30% sát thương tấn công thường phải chịu",
+      "effectZh": "本回合我軍兵力最高的單體援護我軍全體，同時受到的普通攻擊傷害降低 30%",
+      "id": "qilue-card:lap-ke-an-tru",
+      "missingFields": [],
+      "nameVi": "Lập Kế An Trữ",
+      "nameZh": "定計安儲",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "功成身退"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trước đó, cứ mỗi Kỳ Lược Kỳ Lược đã dùng, khi sử dụng Kỳ Lược sau đó sẽ có 30% xác suất ngẫu nhiên thi triển 1 Kỳ Lược đã từng được phe ta dùng",
+      "effectZh": "此前每使用過 1 張奇略，之後使用奇略時有 30% 機率隨機施放 1 張我方曾使用過的奇略",
+      "id": "qilue-card:lui-buoc-cong-thanh",
+      "missingFields": [],
+      "nameVi": "Lui Bước Công Thành",
+      "nameZh": "功成身退",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "藏書納籍"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái khống chế",
+      "effectZh": "本回合敵軍隨機獲得 1 種控制狀態",
+      "id": "qilue-card:nap-sach-tang-thu",
+      "missingFields": [],
+      "nameVi": "Nạp Sách Tàng Thư",
+      "nameZh": "藏書納籍",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "圯橋受書"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trong hiệp này ngẫu nhiên nhận 1 Tăng ích chức năng chưa từng nhận trước đó",
+      "effectZh": "本回合隨機獲得 1 種此前未曾獲得的功能性增益",
+      "id": "qilue-card:nhan-sach-di-kieu",
+      "missingFields": [],
+      "nameVi": "Nhận Sách Di Kiều",
+      "nameZh": "圯橋受書",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "拔旗易幟"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này sau khi tính toán tỉ lệ phát động Chiến Pháp Chủ Động của cá thể có Trí Lực cao nhất trong quân ta sẽ bị đảo ngược",
+      "effectZh": "本回合我軍智力最高的單體，主動戰法發動率計算後的結果將被反轉",
+      "id": "qilue-card:nho-co-dich-co",
+      "missingFields": [],
+      "nameVi": "Nhổ Cờ Dịch Cờ",
+      "nameZh": "拔旗易幟",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "推食解衣"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này khi nhận sát thương sẽ trị liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)",
+      "effectZh": "本回合受到傷害時，治療友軍單體（治療率 40%）",
+      "id": "qilue-card:nhuong-com-se-ao",
+      "missingFields": [],
+      "nameVi": "Nhường Cơm Sẻ Áo",
+      "nameZh": "推食解衣",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "摧鋒陷敵"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích gây ra sát thương tăng 12%",
+      "effectZh": "本回合突擊戰法造成的傷害提升 12%",
+      "id": "qilue-card:pha-mui-giap-dich",
+      "missingFields": [],
+      "nameVi": "Phá Mũi Giáp Địch",
+      "nameZh": "摧鋒陷敵",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "封狼居胥"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích tỉ lệ phát động tăng 10%",
+      "effectZh": "本回合突擊戰法發動率提升 10%",
+      "id": "qilue-card:phong-lang-cu-tu",
+      "missingFields": [],
+      "nameVi": "Phong Lang Cư Tư",
+      "nameZh": "封狼居胥",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "受封增邑"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Sau hiệp chuẩn bị, mỗi lần toàn địch bị thi triển trạng thái ST duy trì, thì khi quân địch trúng ST duy trì hiệp này, sẽ phải chịu thêm 5% sát thương",
+      "effectZh": "準備回合後，敵軍全體每被施加 1 次持續傷害狀態，本回合敵軍受到持續傷害時額外承受 5% 傷害",
+      "id": "qilue-card:phong-thuong-tang-ap",
+      "missingFields": [],
+      "nameVi": "Phong Thưởng Tăng Ấp",
+      "nameZh": "受封增邑",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "楚歌四起"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động gây ra sát thương tăng 10%",
+      "effectZh": "本回合主動戰法造成的傷害提升 10%",
+      "id": "qilue-card:so-ca-tu-khoi",
+      "missingFields": [],
+      "nameVi": "Sở Ca Tứ Khởi",
+      "nameZh": "楚歌四起",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "muu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "敗中求生"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Mỗi khi quân ta phải chịu 1 lần Công Thường, giảm 2% ST phải chịu",
+      "effectZh": "我軍每受到 1 次普通攻擊，受到的傷害降低 2%",
+      "id": "qilue-card:song-trong-that-bai",
+      "missingFields": [],
+      "nameVi": "Sống Trong Thất Bại",
+      "nameZh": "敗中求生",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "三策並進"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trong hiệp này trạng thái chức năng mà quân địch nhận được cũng sẽ được áp dụng cho một đơn vị của quân ta",
+      "effectZh": "本回合敵軍獲得的功能性狀態，也會施加於我軍一名單位",
+      "id": "qilue-card:tam-sach-cung-tien",
+      "missingFields": [],
+      "nameVi": "Tam Sách Cùng Tiến",
+      "nameZh": "三策並進",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "借箸代籌"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trong hiệp này khi nhận Tăng ích chức năng, nhận thêm một Tăng ích chức năng khác",
+      "effectZh": "本回合獲得功能性增益時，額外獲得另一種功能性增益",
+      "id": "qilue-card:thay-mat-bay-muu",
+      "missingFields": [],
+      "nameVi": "Thay Mặt Bày Mưu",
+      "nameZh": "借箸代籌",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "type": "phu",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "斬逆納降"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trước đây mỗi lần phát động 1 Chiến Pháp Đột Kích, trong hiệp này Chiến Pháp Đột Kích sát thương tăng 3%",
+      "effectZh": "此前每發動 1 次突擊戰法，本回合突擊戰法傷害提升 3%",
+      "id": "qilue-card:tram-dich-chieu-hang",
+      "missingFields": [],
+      "nameVi": "Trảm Địch Chiêu Hàng",
+      "nameZh": "斬逆納降",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "居儉避禍"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái sát thương duy trì (chịu ảnh hưởng bởi chỉ số cao hơn trong Võ Lực và Trí Lực, tỷ lệ sát thương 50%)",
+      "effectZh": "本回合敵軍隨機獲得 1 種持續傷害狀態（受武力與智力中較高者影響，傷害率 50%）",
+      "id": "qilue-card:tranh-hoa-cu-kiem",
+      "missingFields": [],
+      "nameVi": "Tránh Họa Cự Kiệm",
+      "nameZh": "居儉避禍",
+      "rarity": "common",
+      "targetVi": "Toàn quân địch",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "治延軍勢"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Trạng thái sát thương duy trì do quân ta thi triển trong hiệp này kéo dài 1 hiệp",
+      "effectZh": "本回合我軍施加的持續傷害狀態延長 1 回合",
+      "id": "qilue-card:tri-duyen-quan-the",
+      "missingFields": [],
+      "nameVi": "Trị Duyên Quân Thế",
+      "nameZh": "治延軍勢",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "sach",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "追亡逐北"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này sau khi Tấn công thường, Trị Liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)",
+      "effectZh": "本回合普通攻擊後，治療友軍單體（治療率 40%）",
+      "id": "qilue-card:truy-kich-tu-tran",
+      "missingFields": [],
+      "nameVi": "Truy Kích Tử Trận",
+      "nameZh": "追亡逐北",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "type": "dung",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "約法三章"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "effectVi": "Hiệp này Trị Liệu đơn thể Binh Lực thấp nhất của quân ta (tỷ lệ Trị Liệu 100%), gây sát thương Mưu Lược cho đơn thể Binh Lực thấp nhất của quân địch (tỷ lệ sát thương bị ảnh hưởng bởi lượng Trị Liệu dôi ra tích lũy, tối đa 200%)",
+      "effectZh": "本回合治療我軍兵力最低的單體（治療率 100%），並對敵軍兵力最低的單體造成謀略傷害（傷害率受累計溢出治療量影響，至多 200%）",
+      "id": "qilue-card:uoc-phap-tam-chuong",
+      "missingFields": [],
+      "nameVi": "Ước Pháp Tam Chương",
+      "nameZh": "約法三章",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "type": "te",
+      "zhSource": {
+        "kind": "translation"
+      }
+    }
+  ],
+  "qilueStrategies": [
+    {
+      "aliasesVi": [
+        "Chiến Dài"
+      ],
+      "aliasesZh": [
+        "久戰"
+      ],
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 2 điểm Võ Lực và Thống Soái",
+      "buffZh": "每裝備 1 張奇略，我軍武將武力與統率各提升 2 點",
+      "cardTypes": [
+        "dung",
+        "te"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "descriptionVi": "Mặc giáp kịch chiến, cường hóa khả năng Chịu ST và Chiến Pháp Đột Kích",
+      "descriptionZh": "披甲鏖戰，強化承傷能力與突擊戰法",
+      "id": "qilue-strategy:chien-dau-lau-dai",
+      "missingFields": [],
+      "nameVi": "Chiến đấu lâu dài",
+      "nameZh": "久戰",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [],
+      "aliasesZh": [
+        "強攻"
+      ],
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Võ Lực",
+      "buffZh": "每裝備 1 張奇略，我軍武將武力提升 3 點",
+      "cardTypes": [
+        "dung",
+        "phu"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "descriptionVi": "Bẫy trận xông pha, cường hóa sát thương bùng nổ của Chiến Pháp Đột Kích",
+      "descriptionZh": "衝鋒陷陣，強化突擊戰法的爆發傷害",
+      "id": "qilue-strategy:cuong-cong",
+      "missingFields": [],
+      "nameVi": "Cường Công",
+      "nameZh": "強攻",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [
+        "Mưu Toán"
+      ],
+      "aliasesZh": [
+        "謀算"
+      ],
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Trí Lực",
+      "buffZh": "每裝備 1 張奇略，我軍武將智力提升 3 點",
+      "cardTypes": [
+        "muu",
+        "phu"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "descriptionVi": "Vận dụng kế sách, cường hóa khả năng sử dụng Chiến Pháp chủ động",
+      "descriptionZh": "運籌帷幄，強化主動戰法的運用能力",
+      "id": "qilue-strategy:muu-tinh",
+      "missingFields": [],
+      "nameVi": "Mưu tính",
+      "nameZh": "謀算",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [
+        "Tập Kích"
+      ],
+      "aliasesZh": [
+        "襲擾"
+      ],
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng địch giảm 2 điểm Võ Lực và Trí Lực",
+      "buffZh": "每裝備 1 張奇略，敵軍武將武力與智力各降低 2 點",
+      "cardTypes": [
+        "muu",
+        "sach"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "descriptionVi": "Khắc chế địch linh hoạt, cường hóa Chiến Pháp Chủ Động và hiệu ứng khống chế",
+      "descriptionZh": "靈活制敵，強化主動戰法與控制效果",
+      "id": "qilue-strategy:quay-nhieu",
+      "missingFields": [],
+      "nameVi": "Quấy nhiễu",
+      "nameZh": "襲擾",
+      "zhSource": {
+        "kind": "translation"
+      }
+    },
+    {
+      "aliasesVi": [
+        "Chỉnh Đốn Quân"
+      ],
+      "aliasesZh": [
+        "整軍"
+      ],
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Thống Soái",
+      "buffZh": "每裝備 1 張奇略，我軍武將統率提升 3 點",
+      "cardTypes": [
+        "phu",
+        "te"
+      ],
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+          "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）"
+        }
+      ],
+      "descriptionVi": "Lính mạnh giáp tốt, Giảm ST và cung cấp hiệu ứng tăng ích",
+      "descriptionZh": "兵強甲堅，降低傷害並提供增益效果",
+      "id": "qilue-strategy:toan-quan",
+      "missingFields": [],
+      "nameVi": "Toàn quân",
+      "nameZh": "整軍",
+      "zhSource": {
+        "kind": "translation"
+      }
+    }
+  ],
   "schemaVersion": 1,
   "specials": [
     {
@@ -10262,7 +11414,7 @@
         "周旋"
       ],
       "conditions": [],
-      "descriptionVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
+      "descriptionVi": "Dành riêng cho Giáp Toan Nghê Tử Kim; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt",
       "equipmentId": "equipment:tu-kim-toan-nghe-giap",
       "exclusiveHeroId": null,
       "id": "equipment-special:chu-toan",

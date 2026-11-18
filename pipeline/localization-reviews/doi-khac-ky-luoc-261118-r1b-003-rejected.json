@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r1b-003-rejected",
+ "reviewerSession": "reviewer:RvDkKl261118-r1b-003",
+ "items": [
+  {
+   "entityId": "recommended:s-cd197a9c1144a36694da6d3286981ab346a2d146670dfcbba1fedc382150b3f6/team-dh3kpk",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0be958c8e3f614aa049eb303b7e9811dcd381d5450bb005fa9fddd1018870259",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "e95821fc3285b25949dbb716d4b49d18769278b271d78594f19ddcbaa500a5d2",
+   "verdict": "rejected",
+   "errors": [
+    "Condition lost: source says the 盾S (shield-S) variant scores 101 because of worse counter relations; VI lists 'khiên bậc S' as part of Hạ Hầu Đôn's 106-point loadout and makes the drop to 101 apply without a subject."
+   ],
+   "notes": "Điểm: 106 điểm (Hạ Hầu Đôn mang giáp Viện Trợ; bản khiên bậc S do quan hệ khắc chế khá kém nên điểm giảm còn 101 điểm)."
+  }
+ ]
+}

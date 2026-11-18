@@ -551,6 +551,9 @@
     },
     {
       "aliasEvidence": {
+        "Công Kỳ Bất Bị": [
+          "books-dict.json#67"
+        ],
         "攻其不備": [
           "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
           "https://sgsdeck.com/recommended/s10-qun-xianren-dun-yuji",
@@ -558,6 +561,7 @@
         ]
       },
       "aliases": [
+        "Công Kỳ Bất Bị",
         "Đánh Vào Chỗ Hiểm",
         "攻其不備",
         "攻其不备"
@@ -1025,7 +1029,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Xuất Kỳ Chế Thắng": [
+          "books-dict.json#63"
+        ]
+      },
       "aliases": [
+        "Xuất Kỳ Chế Thắng",
         "Đánh Bất Ngờ Thắng",
         "出奇制胜"
       ],
@@ -1697,9 +1707,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "孫策": [
+          "heroes-dict.json#37"
+        ]
+      },
       "aliases": [
         "Tôn Sách",
-        "孙策"
+        "孙策",
+        "孫策"
       ],
       "displayNameVi": "Tôn Sách",
       "evidenceRef": "heroes-dict.json#37",
@@ -1723,9 +1739,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "龐德": [
+          "heroes-dict.json#41"
+        ]
+      },
       "aliases": [
         "Bàng Đức",
-        "庞德"
+        "庞德",
+        "龐德"
       ],
       "displayNameVi": "Bàng Đức",
       "evidenceRef": "heroes-dict.json#41",
@@ -1791,9 +1813,19 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "Văn Xú": [
+          "heroes-dict.json#55"
+        ],
+        "文醜": [
+          "heroes-dict.json#55"
+        ]
+      },
       "aliases": [
         "Văn Sửu",
-        "文丑"
+        "Văn Xú",
+        "文丑",
+        "文醜"
       ],
       "displayNameVi": "Văn Sửu",
       "evidenceRef": "heroes-dict.json#55",
@@ -1804,9 +1836,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "王雙": [
+          "heroes-dict.json#68"
+        ]
+      },
       "aliases": [
         "Vương Song",
-        "王双"
+        "王双",
+        "王雙"
       ],
       "displayNameVi": "Vương Song",
       "evidenceRef": "heroes-dict.json#68",
@@ -1843,9 +1881,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "鄒氏": [
+          "heroes-dict.json#92"
+        ]
+      },
       "aliases": [
         "Trâu Thị",
-        "邹氏"
+        "邹氏",
+        "鄒氏"
       ],
       "displayNameVi": "Trâu Thị",
       "evidenceRef": "heroes-dict.json#92",
@@ -2034,8 +2078,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "孟獲": [
+          "heroes-dict.json#38"
+        ]
+      },
       "aliases": [
         "Mạnh Hoạch",
+        "孟獲",
         "孟获"
       ],
       "displayNameVi": "Mạnh Hoạch",
@@ -2121,9 +2171,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "張姬": [
+          "heroes-dict.json#43"
+        ]
+      },
       "aliases": [
         "Trương Cơ",
-        "张姬"
+        "张姬",
+        "張姬"
       ],
       "displayNameVi": "Trương Cơ",
       "evidenceRef": "heroes-dict.json#43",
@@ -2147,9 +2203,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "蔣琬": [
+          "heroes-dict.json#80"
+        ]
+      },
       "aliases": [
         "Tưởng Uyển",
-        "蒋琬"
+        "蒋琬",
+        "蔣琬"
       ],
       "displayNameVi": "Tưởng Uyển",
       "evidenceRef": "heroes-dict.json#80",
@@ -2229,9 +2291,15 @@
       "variant": "SP"
     },
     {
+      "aliasEvidence": {
+        "鄧艾": [
+          "heroes-dict.json#91"
+        ]
+      },
       "aliases": [
         "Đặng Ngải",
-        "邓艾"
+        "邓艾",
+        "鄧艾"
       ],
       "displayNameVi": "Đặng Ngải",
       "evidenceRef": "heroes-dict.json#91",
@@ -2383,8 +2451,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "馬騰": [
+          "heroes-dict.json#103"
+        ]
+      },
       "aliases": [
         "Mã Đằng",
+        "馬騰",
         "马腾"
       ],
       "displayNameVi": "Mã Đằng",
@@ -2493,9 +2567,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "小喬": [
+          "heroes-dict.json#39"
+        ]
+      },
       "aliases": [
         "Tiểu Kiều",
-        "小乔"
+        "小乔",
+        "小喬"
       ],
       "displayNameVi": "Tiểu Kiều",
       "evidenceRef": "heroes-dict.json#39",
@@ -2506,9 +2586,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "張紘": [
+          "heroes-dict.json#46"
+        ]
+      },
       "aliases": [
         "Trương Hoành",
-        "张纮"
+        "张纮",
+        "張紘"
       ],
       "displayNameVi": "Trương Hoành",
       "evidenceRef": "heroes-dict.json#46",
@@ -2588,9 +2674,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "陸抗": [
+          "heroes-dict.json#96"
+        ]
+      },
       "aliases": [
         "Lục Kháng",
-        "陆抗"
+        "陆抗",
+        "陸抗"
       ],
       "displayNameVi": "Lục Kháng",
       "evidenceRef": "heroes-dict.json#96",
@@ -2635,9 +2727,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "張昭": [
+          "heroes-dict.json#45"
+        ]
+      },
       "aliases": [
         "Trương Chiêu",
-        "张昭"
+        "张昭",
+        "張昭"
       ],
       "displayNameVi": "Trương Chiêu",
       "evidenceRef": "heroes-dict.json#45",
@@ -2755,9 +2853,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "大喬": [
+          "heroes-dict.json#31"
+        ]
+      },
       "aliases": [
         "Đại Kiều",
-        "大乔"
+        "大乔",
+        "大喬"
       ],
       "displayNameVi": "Đại Kiều",
       "evidenceRef": "heroes-dict.json#31",
@@ -2857,8 +2961,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "馬雲祿": [
+          "heroes-dict.json#102"
+        ]
+      },
       "aliases": [
         "Mã Vân Lộc",
+        "馬雲祿",
         "马云禄"
       ],
       "displayNameVi": "Mã Vân Lộc",
@@ -2891,9 +3001,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "陳到": [
+          "heroes-dict.json#98"
+        ]
+      },
       "aliases": [
         "Trần Đáo",
-        "陈到"
+        "陈到",
+        "陳到"
       ],
       "displayNameVi": "Trần Đáo",
       "evidenceRef": "heroes-dict.json#98",
@@ -3024,9 +3140,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "張郃": [
+          "heroes-dict.json#51"
+        ]
+      },
       "aliases": [
         "Trương Cáp",
-        "张郃"
+        "张郃",
+        "張郃"
       ],
       "displayNameVi": "Trương Cáp",
       "evidenceRef": "heroes-dict.json#51",
@@ -3071,9 +3193,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "陳群": [
+          "heroes-dict.json#100"
+        ]
+      },
       "aliases": [
         "Trần Quần",
-        "陈群"
+        "陈群",
+        "陳群"
       ],
       "displayNameVi": "Trần Quần",
       "evidenceRef": "heroes-dict.json#100",
@@ -3145,7 +3273,13 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "Chúc Dung": [
+          "heroes-dict.json#73"
+        ]
+      },
       "aliases": [
+        "Chúc Dung",
         "Chúc Dung Phu Nhân",
         "祝融夫人"
       ],
@@ -3158,8 +3292,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "高覽": [
+          "heroes-dict.json#105"
+        ]
+      },
       "aliases": [
         "Cao Lãm",
+        "高覽",
         "高览"
       ],
       "displayNameVi": "Cao Lãm",
@@ -3171,8 +3311,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "司馬徽": [
+          "heroes-dict.json#22"
+        ]
+      },
       "aliases": [
         "Tư Mã Huy",
+        "司馬徽",
         "司马徽"
       ],
       "displayNameVi": "Tư Mã Huy",
@@ -3252,8 +3398,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "高順": [
+          "heroes-dict.json#106"
+        ]
+      },
       "aliases": [
         "Cao Thuận",
+        "高順",
         "高顺"
       ],
       "displayNameVi": "Cao Thuận",
@@ -3286,9 +3438,15 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "嚴顏": [
+          "heroes-dict.json#7"
+        ]
+      },
       "aliases": [
         "Nghiêm Nhan",
-        "严颜"
+        "严颜",
+        "嚴顏"
       ],
       "displayNameVi": "Nghiêm Nhan",
       "evidenceRef": "heroes-dict.json#7",
@@ -3483,8 +3641,14 @@
       "variant": "base"
     },
     {
+      "aliasEvidence": {
+        "顏良": [
+          "heroes-dict.json#101"
+        ]
+      },
       "aliases": [
         "Nhan Lương",
+        "顏良",
         "颜良"
       ],
       "displayNameVi": "Nhan Lương",
@@ -3879,9 +4043,19 @@
       "reviewStatus": "translation-reviewed"
     },
     {
+      "aliasEvidence": {
+        "Lợi Dụng Lòng Tin": [
+          "tactics.json#133"
+        ],
+        "竊幸乘寵": [
+          "tactics.json#133"
+        ]
+      },
       "aliases": [
+        "Lợi Dụng Lòng Tin",
         "Thiết Hạnh Thừa Sủng",
-        "窃幸乘宠"
+        "窃幸乘宠",
+        "竊幸乘寵"
       ],
       "displayNameVi": "Thiết Hạnh Thừa Sủng",
       "evidenceRef": "tactics.json#134",
@@ -3891,9 +4065,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "興雲布雨": [
+          "tactics.json#58"
+        ]
+      },
       "aliases": [
         "Hưng Vân Bố Vũ",
-        "兴云布雨"
+        "兴云布雨",
+        "興雲布雨"
       ],
       "displayNameVi": "Hưng Vân Bố Vũ",
       "evidenceRef": "tactics.json#58",
@@ -3915,8 +4095,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nhìn Lại Xinh Tươi": [
+          "tactics.json#30"
+        ],
+        "顧盼生姿": [
+          "tactics.json#30"
+        ]
+      },
       "aliases": [
         "Cố Phán Sinh Tư",
+        "Nhìn Lại Xinh Tươi",
+        "顧盼生姿",
         "顾盼生姿"
       ],
       "displayNameVi": "Cố Phán Sinh Tư",
@@ -3927,9 +4117,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Biết Được Gỗ Tốt": [
+          "tactics.json#45"
+        ],
+        "曉知良木": [
+          "tactics.json#45"
+        ]
+      },
       "aliases": [
+        "Biết Được Gỗ Tốt",
         "Hiểu Tri Lương Mộc",
-        "晓知良木"
+        "晓知良木",
+        "曉知良木"
       ],
       "displayNameVi": "Hiểu Tri Lương Mộc",
       "evidenceRef": "tactics.json#45",
@@ -3939,9 +4139,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Xử Từ Bất Hoặc": [
+          "tactics.json#192"
+        ],
+        "處茲不惑": [
+          "tactics.json#192"
+        ]
+      },
       "aliases": [
         "Xử Tư Bất Hoặc",
-        "处兹不惑"
+        "Xử Từ Bất Hoặc",
+        "处兹不惑",
+        "處茲不惑"
       ],
       "displayNameVi": "Xử Tư Bất Hoặc",
       "evidenceRef": "tactics.json#195",
@@ -3951,8 +4161,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thủ Nhĩ Tất Cố": [
+          "tactics.json#151"
+        ]
+      },
       "aliases": [
         "Thủ Nhi Tất Cố",
+        "Thủ Nhĩ Tất Cố",
         "守而必固"
       ],
       "displayNameVi": "Thủ Nhi Tất Cố",
@@ -4001,9 +4217,23 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thâm Mưu Viễn Lự": [
+          "tactics.json#333"
+        ],
+        "深謀遠慮": [
+          "tactics.json#333"
+        ],
+        "深谋远虑": [
+          "tactics.json#333"
+        ]
+      },
       "aliases": [
         "Thâm Mưu Viễn Lược",
-        "深谋远略"
+        "Thâm Mưu Viễn Lự",
+        "深謀遠慮",
+        "深谋远略",
+        "深谋远虑"
       ],
       "displayNameVi": "Thâm Mưu Viễn Lược",
       "evidenceRef": "tactics.json#229",
@@ -4013,8 +4243,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "經術政要": [
+          "tactics.json#75"
+        ]
+      },
       "aliases": [
         "Kinh Thuật Chính Yếu",
+        "經術政要",
         "经术政要"
       ],
       "displayNameVi": "Kinh Thuật Chính Yếu",
@@ -4025,9 +4261,27 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thành Quả To Lớn": [
+          "tactics.json#331"
+        ],
+        "Thạc Quả Lũy Lũy": [
+          "tactics.json#331"
+        ],
+        "硕果累累": [
+          "tactics.json#331"
+        ],
+        "碩果累累": [
+          "tactics.json#331"
+        ]
+      },
       "aliases": [
+        "Thành Quả To Lớn",
         "Thương Lẫm Nhi Thực",
-        "仓廪而实"
+        "Thạc Quả Lũy Lũy",
+        "仓廪而实",
+        "硕果累累",
+        "碩果累累"
       ],
       "displayNameVi": "Thương Lẫm Nhi Thực",
       "evidenceRef": "tactics.json#140",
@@ -4038,6 +4292,9 @@
     },
     {
       "aliasEvidence": {
+        "Dùng Nước Đẩy Cầu": [
+          "tactics.json#32"
+        ],
         "據水斷橋": [
           "https://sgsdeck.com/recommended/s10-shu-dongcha-qiang",
           "https://sgsdeck.com/recommended/s10-shu-funu-qiang",
@@ -4046,6 +4303,7 @@
       },
       "aliases": [
         "Cứ Thủy Đoạn Kiều",
+        "Dùng Nước Đẩy Cầu",
         "据水断桥",
         "據水斷橋"
       ],
@@ -4057,9 +4315,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nhà Nho Đấu Khẩu": [
+          "tactics.json#135"
+        ],
+        "舌戰群儒": [
+          "tactics.json#135"
+        ]
+      },
       "aliases": [
+        "Nhà Nho Đấu Khẩu",
         "Thiệt Chiến Quần Nho",
-        "舌战群儒"
+        "舌战群儒",
+        "舌戰群儒"
       ],
       "displayNameVi": "Thiệt Chiến Quần Nho",
       "evidenceRef": "tactics.json#136",
@@ -4090,8 +4358,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "十勝十敗": [
+          "tactics.json#147"
+        ]
+      },
       "aliases": [
         "Thập Thắng Thập Bại",
+        "十勝十敗",
         "十胜十败"
       ],
       "displayNameVi": "Thập Thắng Thập Bại",
@@ -4122,9 +4396,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "亂世奸雄": [
+          "tactics.json#84"
+        ]
+      },
       "aliases": [
         "Loạn Thế Gian Hùng",
-        "乱世奸雄"
+        "乱世奸雄",
+        "亂世奸雄"
       ],
       "displayNameVi": "Loạn Thế Gian Hùng",
       "evidenceRef": "tactics.json#85",
@@ -4139,12 +4419,16 @@
           "https://sgsdeck.com/recommended/s25-dongzhuo-fanji-dun",
           "https://sgsdeck.com/recommended/s25-wutugu-huangma",
           "https://sgsdeck.com/recommended/s25-xianren-dun"
+        ],
+        "禦敵屏障": [
+          "tactics.json#216"
         ]
       },
       "aliases": [
         "Ngự Địch Bình Chướng",
         "御敌屏障",
-        "御敵屏障"
+        "御敵屏障",
+        "禦敵屏障"
       ],
       "displayNameVi": "Ngự Địch Bình Chướng",
       "evidenceRef": "tactics.json#223",
@@ -4154,9 +4438,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Giám Thống Chấn Xa": [
+          "tactics.json#44"
+        ],
+        "監統震軍": [
+          "tactics.json#44"
+        ]
+      },
       "aliases": [
         "Giám Thống Chấn Quân",
-        "监统震军"
+        "Giám Thống Chấn Xa",
+        "监统震军",
+        "監統震軍"
       ],
       "displayNameVi": "Giám Thống Chấn Quân",
       "evidenceRef": "tactics.json#44",
@@ -4178,9 +4472,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Vạn Vật Giao Điểm": [
+          "tactics.json#138"
+        ],
+        "垂心萬物": [
+          "tactics.json#138"
+        ]
+      },
       "aliases": [
         "Thùy Tâm Vạn Vật",
-        "垂心万物"
+        "Vạn Vật Giao Điểm",
+        "垂心万物",
+        "垂心萬物"
       ],
       "displayNameVi": "Thùy Tâm Vạn Vật",
       "evidenceRef": "tactics.json#139",
@@ -4190,9 +4494,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Tập Kích Trận Địa": [
+          "tactics.json#54"
+        ],
+        "陷陣突襲": [
+          "tactics.json#54"
+        ]
+      },
       "aliases": [
         "Hãm Trận Đột Tập",
-        "陷阵突袭"
+        "Tập Kích Trận Địa",
+        "陷阵突袭",
+        "陷陣突襲"
       ],
       "displayNameVi": "Hãm Trận Đột Tập",
       "evidenceRef": "tactics.json#54",
@@ -4242,9 +4556,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Ỷ Thế Cầm Quyền": [
+          "tactics.json#46"
+        ],
+        "挾勢弄權": [
+          "tactics.json#46"
+        ]
+      },
       "aliases": [
         "Hiệp Thế Lộng Quyền",
-        "挟势弄权"
+        "Ỷ Thế Cầm Quyền",
+        "挟势弄权",
+        "挾勢弄權"
       ],
       "displayNameVi": "Hiệp Thế Lộng Quyền",
       "evidenceRef": "tactics.json#46",
@@ -4275,9 +4599,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "沉沙決水": [
+          "tactics.json#165"
+        ]
+      },
       "aliases": [
         "Trầm Sa Quyết Thủy",
-        "沉沙决水"
+        "沉沙决水",
+        "沉沙決水"
       ],
       "displayNameVi": "Trầm Sa Quyết Thủy",
       "evidenceRef": "tactics.json#167",
@@ -4287,9 +4617,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Kiên Cường Bất Khuất": [
+          "tactics.json#24"
+        ],
+        "剛烈不屈": [
+          "tactics.json#24"
+        ]
+      },
       "aliases": [
         "Cương Liệt Bất Khuất",
-        "刚烈不屈"
+        "Kiên Cường Bất Khuất",
+        "刚烈不屈",
+        "剛烈不屈"
       ],
       "displayNameVi": "Cương Liệt Bất Khuất",
       "evidenceRef": "tactics.json#24",
@@ -4299,8 +4639,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "神火計": [
+          "tactics.json#143"
+        ]
+      },
       "aliases": [
         "Thần Hỏa Kế",
+        "神火計",
         "神火计"
       ],
       "displayNameVi": "Thần Hỏa Kế",
@@ -4331,9 +4677,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Cầm Quân Thận Trọng": [
+          "tactics.json#160"
+        ],
+        "持軍毅重": [
+          "tactics.json#160"
+        ]
+      },
       "aliases": [
+        "Cầm Quân Thận Trọng",
         "Trì Quân Nghị Trọng",
-        "持军毅重"
+        "持军毅重",
+        "持軍毅重"
       ],
       "displayNameVi": "Trì Quân Nghị Trọng",
       "evidenceRef": "tactics.json#162",
@@ -4343,9 +4699,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "圍師必闕": [
+          "tactics.json#182"
+        ]
+      },
       "aliases": [
         "Vi Sư Tất Khuyết",
-        "围师必阙"
+        "围师必阙",
+        "圍師必闕"
       ],
       "displayNameVi": "Vi Sư Tất Khuyết",
       "evidenceRef": "tactics.json#185",
@@ -4377,12 +4739,16 @@
     },
     {
       "aliasEvidence": {
+        "Đẹp Động Lòng Người": [
+          "tactics.json#68"
+        ],
         "傾國傾城": [
           "https://sgsdeck.com/recommended/s11-qun-wufeng-qun-dun"
         ]
       },
       "aliases": [
         "Khuynh Quốc Khuynh Thành",
+        "Đẹp Động Lòng Người",
         "倾国倾城",
         "傾國傾城"
       ],
@@ -4540,9 +4906,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "天下無雙": [
+          "tactics.json#131"
+        ]
+      },
       "aliases": [
         "Thiên Hạ Vô Song",
-        "天下无双"
+        "天下无双",
+        "天下無雙"
       ],
       "displayNameVi": "Thiên Hạ Vô Song",
       "evidenceRef": "tactics.json#132",
@@ -4552,9 +4924,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nghĩa Đản Hùng Tâm": [
+          "tactics.json#97"
+        ],
+        "義膽雄心": [
+          "tactics.json#97"
+        ]
+      },
       "aliases": [
         "Nghĩa Đảm Hùng Tâm",
-        "义胆雄心"
+        "Nghĩa Đản Hùng Tâm",
+        "义胆雄心",
+        "義膽雄心"
       ],
       "displayNameVi": "Nghĩa Đảm Hùng Tâm",
       "evidenceRef": "tactics.json#98",
@@ -4584,9 +4966,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "威震華夏": [
+          "tactics.json#180"
+        ]
+      },
       "aliases": [
         "Uy Chấn Hoa Hạ",
-        "威震华夏"
+        "威震华夏",
+        "威震華夏"
       ],
       "displayNameVi": "Uy Chấn Hoa Hạ",
       "evidenceRef": "tactics.json#183",
@@ -4597,6 +4985,9 @@
     },
     {
       "aliasEvidence": {
+        "Thác-Đoạt Hồn Hiệp Phách": [
+          "tactics.json#196"
+        ],
         "奪魂挾魄": [
           "https://sgsdeck.com/recommended/2-e85j93",
           "https://sgsdeck.com/recommended/2-is9t6t",
@@ -4604,6 +4995,7 @@
         ]
       },
       "aliases": [
+        "Thác-Đoạt Hồn Hiệp Phách",
         "Đoạt Hồn Hiệp Phách",
         "夺魂挟魄",
         "奪魂挾魄"
@@ -4616,7 +5008,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Xuất Đao Như Sấm": [
+          "tactics.json#195"
+        ]
+      },
       "aliases": [
+        "Xuất Đao Như Sấm",
         "Đao Xuất Như Đình",
         "刀出如霆"
       ],
@@ -4659,6 +5057,9 @@
     },
     {
       "aliasEvidence": {
+        "Thác-Sĩ Biệt Tam Nhật": [
+          "tactics.json#123"
+        ],
         "士別三日": [
           "https://sgsdeck.com/recommended/s1-qun-yaoxing-dun",
           "https://sgsdeck.com/recommended/s1-wei-da-wei-qi",
@@ -4667,6 +5068,7 @@
       },
       "aliases": [
         "Sĩ Biệt Tam Nhật",
+        "Thác-Sĩ Biệt Tam Nhật",
         "士別三日",
         "士别三日"
       ],
@@ -4732,9 +5134,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Vững Như Thành Đồng": [
+          "tactics.json#29"
+        ],
+        "固若金湯": [
+          "tactics.json#29"
+        ]
+      },
       "aliases": [
         "Cố Nhược Kim Thang",
-        "固若金汤"
+        "Vững Như Thành Đồng",
+        "固若金汤",
+        "固若金湯"
       ],
       "displayNameVi": "Cố Nhược Kim Thang",
       "evidenceRef": "tactics.json#29",
@@ -4744,9 +5156,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "機鑑先識": [
+          "tactics.json#21"
+        ]
+      },
       "aliases": [
         "Cơ Giám Tiên Thức",
-        "机鉴先识"
+        "机鉴先识",
+        "機鑑先識"
       ],
       "displayNameVi": "Cơ Giám Tiên Thức",
       "evidenceRef": "tactics.json#21",
@@ -4776,9 +5194,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "高櫓連營": [
+          "tactics.json#13"
+        ]
+      },
       "aliases": [
         "Cao Lỗ Liên Doanh",
-        "高橹连营"
+        "高橹连营",
+        "高櫓連營"
       ],
       "displayNameVi": "Cao Lỗ Liên Doanh",
       "evidenceRef": "tactics.json#13",
@@ -4788,8 +5212,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Tiến Quân Thần Tốc": [
+          "tactics.json#162"
+        ],
+        "長驅直入": [
+          "tactics.json#162"
+        ]
+      },
       "aliases": [
+        "Tiến Quân Thần Tốc",
         "Trường Khu Trực Nhập",
+        "長驅直入",
         "长驱直入"
       ],
       "displayNameVi": "Trường Khu Trực Nhập",
@@ -4812,8 +5246,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Giáo Huyết Tung Hoành": [
+          "tactics.json#122"
+        ],
+        "槊血縱橫": [
+          "tactics.json#122"
+        ]
+      },
       "aliases": [
+        "Giáo Huyết Tung Hoành",
         "Sóc Huyết Túng Hoành",
+        "槊血縱橫",
         "槊血纵横"
       ],
       "displayNameVi": "Sóc Huyết Túng Hoành",
@@ -4824,8 +5268,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "火神英風": [
+          "tactics.json#61"
+        ]
+      },
       "aliases": [
         "Hỏa Thần Anh Phong",
+        "火神英風",
         "火神英风"
       ],
       "displayNameVi": "Hỏa Thần Anh Phong",
@@ -4836,9 +5286,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "古之惡來": [
+          "tactics.json#31"
+        ]
+      },
       "aliases": [
         "Cổ Chi Ác Lai",
-        "古之恶来"
+        "古之恶来",
+        "古之惡來"
       ],
       "displayNameVi": "Cổ Chi Ác Lai",
       "evidenceRef": "tactics.json#31",
@@ -4881,6 +5337,9 @@
     },
     {
       "aliasEvidence": {
+        "Vô Địch Can Trường": [
+          "tactics.json#23"
+        ],
         "剛勇無前": [
           "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
           "https://sgsdeck.com/recommended/og-bingyan-zhangfei-nuke-bow",
@@ -4889,6 +5348,7 @@
       },
       "aliases": [
         "Cương Dũng Vô Tiền",
+        "Vô Địch Can Trường",
         "刚勇无前",
         "剛勇無前"
       ],
@@ -4912,8 +5372,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nhân Đức Tái Thế": [
+          "tactics.json#103"
+        ],
+        "仁德載世": [
+          "tactics.json#103"
+        ]
+      },
       "aliases": [
+        "Nhân Đức Tái Thế",
         "Nhân Đức Tải Thế",
+        "仁德載世",
         "仁德载世"
       ],
       "displayNameVi": "Nhân Đức Tải Thế",
@@ -4990,9 +5460,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "決水潰城": [
+          "tactics.json#116"
+        ]
+      },
       "aliases": [
         "Quyết Thủy Hội Thành",
-        "决水溃城"
+        "决水溃城",
+        "決水潰城"
       ],
       "displayNameVi": "Quyết Thủy Hội Thành",
       "evidenceRef": "tactics.json#117",
@@ -5003,6 +5479,9 @@
     },
     {
       "aliasEvidence": {
+        "Liên Minh": [
+          "tactics.json#79"
+        ],
         "結盟": [
           "https://sgsdeck.com/recommended/s11-wu-sunshangxiang-wugong",
           "https://sgsdeck.com/recommended/team-c8mq0"
@@ -5010,6 +5489,7 @@
       },
       "aliases": [
         "Kết Minh",
+        "Liên Minh",
         "結盟",
         "结盟"
       ],
@@ -5073,9 +5553,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "火燒連營": [
+          "tactics.json#60"
+        ]
+      },
       "aliases": [
         "Hỏa Thiêu Liên Doanh",
-        "火烧连营"
+        "火烧连营",
+        "火燒連營"
       ],
       "displayNameVi": "Hỏa Thiêu Liên Doanh",
       "evidenceRef": "tactics.json#60",
@@ -5142,9 +5628,23 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Dĩ Quả Địch Chúng": [
+          "tactics.json#255"
+        ],
+        "以寡敌众": [
+          "tactics.json#255"
+        ],
+        "以寡敵眾": [
+          "tactics.json#255"
+        ]
+      },
       "aliases": [
+        "Dĩ Quả Địch Chúng",
         "Dĩ Thiểu Thắng Đa",
         "Lấy Ít Đánh Nhiều",
+        "以寡敌众",
+        "以寡敵眾",
         "以少胜多"
       ],
       "displayNameVi": "Lấy Ít Đánh Nhiều",
@@ -5187,8 +5687,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "五雷轟頂": [
+          "tactics.json#98"
+        ]
+      },
       "aliases": [
         "Ngũ Lôi Oanh Đỉnh",
+        "五雷轟頂",
         "五雷轰顶"
       ],
       "displayNameVi": "Ngũ Lôi Oanh Đỉnh",
@@ -5199,7 +5705,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Công Danh Nhiều Đời": [
+          "tactics.json#89"
+        ]
+      },
       "aliases": [
+        "Công Danh Nhiều Đời",
         "Lũy Thế Lập Danh",
         "累世立名"
       ],
@@ -5211,8 +5723,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "閉月": [
+          "tactics.json#12"
+        ]
+      },
       "aliases": [
         "Bế Nguyệt",
+        "閉月",
         "闭月"
       ],
       "displayNameVi": "Bế Nguyệt",
@@ -5275,9 +5793,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thành Trì Vững Chắc": [
+          "tactics.json#72"
+        ],
+        "金城湯池": [
+          "tactics.json#72"
+        ]
+      },
       "aliases": [
         "Kim Thành Thang Trì",
-        "金城汤池"
+        "Thành Trì Vững Chắc",
+        "金城汤池",
+        "金城湯池"
       ],
       "displayNameVi": "Kim Thành Thang Trì",
       "evidenceRef": "tactics.json#73",
@@ -5350,6 +5878,9 @@
     },
     {
       "aliasEvidence": {
+        "Lửa Cháy Ngùn Ngụt": [
+          "tactics.json#55"
+        ],
         "熯天熾地": [
           "https://sgsdeck.com/recommended/s19-caoren-taiwei-dun",
           "https://sgsdeck.com/recommended/s19-sima-taiwei-dun",
@@ -5358,6 +5889,7 @@
       },
       "aliases": [
         "Hãn Thiên Sí Địa",
+        "Lửa Cháy Ngùn Ngụt",
         "熯天炽地",
         "熯天熾地"
       ],
@@ -5369,8 +5901,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Túi Gấm Diệu Kế": [
+          "tactics.json#26"
+        ],
+        "錦囊妙計": [
+          "tactics.json#26"
+        ]
+      },
       "aliases": [
         "Cẩm Nang Diệu Kế",
+        "Túi Gấm Diệu Kế",
+        "錦囊妙計",
         "锦囊妙计"
       ],
       "displayNameVi": "Cẩm Nang Diệu Kế",
@@ -5381,9 +5923,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thần Cơ Khó Đoán": [
+          "tactics.json#142"
+        ],
+        "神機莫測": [
+          "tactics.json#142"
+        ]
+      },
       "aliases": [
+        "Thần Cơ Khó Đoán",
         "Thần Cơ Mạc Trắc",
-        "神机莫测"
+        "神机莫测",
+        "神機莫測"
       ],
       "displayNameVi": "Thần Cơ Mạc Trắc",
       "evidenceRef": "tactics.json#144",
@@ -5407,6 +5959,9 @@
     },
     {
       "aliasEvidence": {
+        "Thác-Dưỡng Sức Đợi Chiến": [
+          "tactics.json#225"
+        ],
         "蓄勢待發": [
           "https://sgsdeck.com/recommended/2-1nsjj7f",
           "https://sgsdeck.com/recommended/2-jh7wzr",
@@ -5416,6 +5971,7 @@
       "aliases": [
         "Dưỡng Sức Đợi Chiến",
         "Súc Thế Đãi Phát",
+        "Thác-Dưỡng Sức Đợi Chiến",
         "蓄势待发",
         "蓄勢待發"
       ],
@@ -5468,10 +6024,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "以逸待勞": [
+          "tactics.json#36"
+        ]
+      },
       "aliases": [
         "Dĩ Dật Đãi Lao",
         "Dưỡng Sức Chống Địch",
-        "以逸待劳"
+        "以逸待劳",
+        "以逸待勞"
       ],
       "displayNameVi": "Dưỡng Sức Chống Địch",
       "evidenceRef": "tactics.json#36",
@@ -5534,9 +6096,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nam Man Cự Khôi": [
+          "tactics.json#95"
+        ],
+        "南蠻渠魁": [
+          "tactics.json#95"
+        ]
+      },
       "aliases": [
         "Nam Man Cừ Khôi",
-        "南蛮渠魁"
+        "Nam Man Cự Khôi",
+        "南蛮渠魁",
+        "南蠻渠魁"
       ],
       "displayNameVi": "Nam Man Cừ Khôi",
       "evidenceRef": "tactics.json#96",
@@ -5608,7 +6180,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Ích Kỉ Kim Cổ": [
+          "tactics.json#194"
+        ]
+      },
       "aliases": [
+        "Ích Kỉ Kim Cổ",
         "Ích Kỳ Kim Cổ",
         "益其金鼓"
       ],
@@ -5641,6 +6219,9 @@
     },
     {
       "aliasEvidence": {
+        "Thác-Cắt Xương Trị Độc": [
+          "tactics.json#28"
+        ],
         "刮骨療毒": [
           "https://sgsdeck.com/recommended/og-bingyan-taoyuan-shield-huijun",
           "https://sgsdeck.com/recommended/og-bingyan-wumou-bow-baimaobing",
@@ -5650,6 +6231,7 @@
       "aliases": [
         "Cắt Xương Trị Độc",
         "Quát Cốt Liệu Độc",
+        "Thác-Cắt Xương Trị Độc",
         "刮骨疗毒",
         "刮骨療毒"
       ],
@@ -5682,8 +6264,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "奇兵間道": [
+          "tactics.json#80"
+        ]
+      },
       "aliases": [
         "Kỳ Binh Gian Đạo",
+        "奇兵間道",
         "奇兵间道"
       ],
       "displayNameVi": "Kỳ Binh Gian Đạo",
@@ -5694,9 +6282,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Con Gái Tướng Môn": [
+          "tactics.json#171"
+        ],
+        "將門虎女": [
+          "tactics.json#171"
+        ]
+      },
       "aliases": [
+        "Con Gái Tướng Môn",
         "Tướng Môn Hổ Nữ",
-        "将门虎女"
+        "将门虎女",
+        "將門虎女"
       ],
       "displayNameVi": "Tướng Môn Hổ Nữ",
       "evidenceRef": "tactics.json#174",
@@ -5706,7 +6304,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Yên Nhân Gào Thét": [
+          "tactics.json#193"
+        ]
+      },
       "aliases": [
+        "Yên Nhân Gào Thét",
         "Yến Nhân Bào Hao",
         "燕人咆哮"
       ],
@@ -5750,8 +6354,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Dọc Ngang Trời Đất": [
+          "tactics.json#74"
+        ],
+        "經天緯地": [
+          "tactics.json#74"
+        ]
+      },
       "aliases": [
+        "Dọc Ngang Trời Đất",
         "Kinh Thiên Vĩ Địa",
+        "經天緯地",
         "经天纬地"
       ],
       "displayNameVi": "Kinh Thiên Vĩ Địa",
@@ -5774,9 +6388,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "誓守無降": [
+          "tactics.json#148"
+        ]
+      },
       "aliases": [
         "Thệ Thủ Vô Hàng",
-        "誓守无降"
+        "誓守无降",
+        "誓守無降"
       ],
       "displayNameVi": "Thệ Thủ Vô Hàng",
       "evidenceRef": "tactics.json#150",
@@ -5786,8 +6406,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Kế Hoạch Quyết Đoán": [
+          "tactics.json#203"
+        ],
+        "定謀貴決": [
+          "tactics.json#203"
+        ]
+      },
       "aliases": [
+        "Kế Hoạch Quyết Đoán",
         "Định Mưu Quý Quyết",
+        "定謀貴決",
         "定谋贵决"
       ],
       "displayNameVi": "Định Mưu Quý Quyết",
@@ -5818,9 +6448,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "義心昭烈": [
+          "tactics.json#96"
+        ]
+      },
       "aliases": [
         "Nghĩa Tâm Chiêu Liệt",
-        "义心昭烈"
+        "义心昭烈",
+        "義心昭烈"
       ],
       "displayNameVi": "Nghĩa Tâm Chiêu Liệt",
       "evidenceRef": "tactics.json#97",
@@ -5850,9 +6486,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Bách Phát Bách Trúng": [
+          "tactics.json#4"
+        ],
+        "百步穿楊": [
+          "tactics.json#4"
+        ]
+      },
       "aliases": [
         "Bách Bộ Xuyên Dương",
-        "百步穿杨"
+        "Bách Phát Bách Trúng",
+        "百步穿杨",
+        "百步穿楊"
       ],
       "displayNameVi": "Bách Bộ Xuyên Dương",
       "evidenceRef": "tactics.json#4",
@@ -5882,8 +6528,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "黃天泰平": [
+          "tactics.json#49"
+        ]
+      },
       "aliases": [
         "Hoàng Thiên Thái Bình",
+        "黃天泰平",
         "黄天泰平"
       ],
       "displayNameVi": "Hoàng Thiên Thái Bình",
@@ -5894,8 +6546,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "精練策數": [
+          "tactics.json#155"
+        ]
+      },
       "aliases": [
         "Tinh Luyện Sách Số",
+        "精練策數",
         "精练策数"
       ],
       "displayNameVi": "Tinh Luyện Sách Số",
@@ -5906,8 +6564,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Bốn Bề Rung Động": [
+          "tactics.json#15"
+        ],
+        "震駭四境": [
+          "tactics.json#15"
+        ]
+      },
       "aliases": [
+        "Bốn Bề Rung Động",
         "Chấn Hãi Tứ Cảnh",
+        "震駭四境",
         "震骇四境"
       ],
       "displayNameVi": "Chấn Hãi Tứ Cảnh",
@@ -5919,12 +6587,16 @@
     },
     {
       "aliasEvidence": {
+        "Quân Hổ Vệ": [
+          "tactics.json#66"
+        ],
         "虎衛軍": [
           "https://sgsdeck.com/recommended/og-bingyan-beifa-shield-huweijun"
         ]
       },
       "aliases": [
         "Hổ Vệ Quân",
+        "Quân Hổ Vệ",
         "虎卫军",
         "虎衛軍"
       ],
@@ -5936,9 +6608,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "抬棺決戰": [
+          "tactics.json#197"
+        ]
+      },
       "aliases": [
         "Đài Quan Quyết Chiến",
-        "抬棺决战"
+        "抬棺决战",
+        "抬棺決戰"
       ],
       "displayNameVi": "Đài Quan Quyết Chiến",
       "evidenceRef": "tactics.json#200",
@@ -5948,9 +6626,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "臨戰先登": [
+          "tactics.json#85"
+        ]
+      },
       "aliases": [
         "Lâm Chiến Tiên Đăng",
-        "临战先登"
+        "临战先登",
+        "臨戰先登"
       ],
       "displayNameVi": "Lâm Chiến Tiên Đăng",
       "evidenceRef": "tactics.json#86",
@@ -5960,8 +6644,30 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Cưu Độc": [
+          "tactics.json#249"
+        ],
+        "Rượu Độc": [
+          "tactics.json#249"
+        ],
+        "鳩毒": [
+          "tactics.json#249"
+        ],
+        "鴆毒": [
+          "tactics.json#249"
+        ],
+        "鸠毒": [
+          "tactics.json#249"
+        ]
+      },
       "aliases": [
+        "Cưu Độc",
+        "Rượu Độc",
         "Trậm Độc",
+        "鳩毒",
+        "鴆毒",
+        "鸠毒",
         "鸩毒"
       ],
       "displayNameVi": "Trậm Độc",
@@ -5972,9 +6678,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "傳檄宣威": [
+          "tactics.json#159"
+        ]
+      },
       "aliases": [
         "Truyền Hịch Tuyên Uy",
-        "传檄宣威"
+        "传檄宣威",
+        "傳檄宣威"
       ],
       "displayNameVi": "Truyền Hịch Tuyên Uy",
       "evidenceRef": "tactics.json#161",
@@ -6004,9 +6716,27 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Khắc Tuân Hoạch Nhất": [
+          "tactics.json#278"
+        ],
+        "Khắc Tôn Họa Nhất": [
+          "tactics.json#278"
+        ],
+        "克遵划一": [
+          "tactics.json#278"
+        ],
+        "克遵畫一": [
+          "tactics.json#278"
+        ]
+      },
       "aliases": [
+        "Khắc Tuân Hoạch Nhất",
         "Khắc Tuân Họa Nhất",
-        "克遵画一"
+        "Khắc Tôn Họa Nhất",
+        "克遵划一",
+        "克遵画一",
+        "克遵畫一"
       ],
       "displayNameVi": "Khắc Tuân Họa Nhất",
       "evidenceRef": "tactics.json#70",
@@ -6016,9 +6746,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "江東小霸王": [
+          "tactics.json#43"
+        ]
+      },
       "aliases": [
         "Giang Đông Tiểu Bá Vương",
-        "江东小霸王"
+        "江东小霸王",
+        "江東小霸王"
       ],
       "displayNameVi": "Giang Đông Tiểu Bá Vương",
       "evidenceRef": "tactics.json#43",
@@ -6028,7 +6764,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Dũng Giả Hàng Đầu": [
+          "tactics.json#33"
+        ]
+      },
       "aliases": [
+        "Dũng Giả Hàng Đầu",
         "Dũng Giả Đắc Tiền",
         "勇者得前"
       ],
@@ -6053,8 +6795,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "奇施經略": [
+          "tactics.json#81"
+        ]
+      },
       "aliases": [
         "Kỳ Thi Kinh Lược",
+        "奇施經略",
         "奇施经略"
       ],
       "displayNameVi": "Kỳ Thi Kinh Lược",
@@ -6084,9 +6832,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Dũng Quán Tam Quân": [
+          "tactics.json#35"
+        ],
+        "勇冠三軍": [
+          "tactics.json#35"
+        ]
+      },
       "aliases": [
         "Dũng Quan Tam Quân",
-        "勇冠三军"
+        "Dũng Quán Tam Quân",
+        "勇冠三军",
+        "勇冠三軍"
       ],
       "displayNameVi": "Dũng Quan Tam Quân",
       "evidenceRef": "tactics.json#35",
@@ -6137,8 +6895,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Nghịch Giang Diêu Lỗ": [
+          "tactics.json#177"
+        ],
+        "溯江搖櫓": [
+          "tactics.json#177"
+        ]
+      },
       "aliases": [
+        "Nghịch Giang Diêu Lỗ",
         "Tố Giang Dao Lỗ",
+        "溯江搖櫓",
         "溯江摇橹"
       ],
       "displayNameVi": "Tố Giang Dao Lỗ",
@@ -6170,9 +6938,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "槍舞如風": [
+          "tactics.json#139"
+        ]
+      },
       "aliases": [
         "Thương Vũ Như Phong",
-        "枪舞如风"
+        "枪舞如风",
+        "槍舞如風"
       ],
       "displayNameVi": "Thương Vũ Như Phong",
       "evidenceRef": "tactics.json#141",
@@ -6202,9 +6976,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "功勳克舉": [
+          "tactics.json#19"
+        ]
+      },
       "aliases": [
         "Công Huân Khắc Cử",
-        "功勋克举"
+        "功勋克举",
+        "功勳克舉"
       ],
       "displayNameVi": "Công Huân Khắc Cử",
       "evidenceRef": "tactics.json#19",
@@ -6247,8 +7027,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "夢中弒臣": [
+          "tactics.json#94"
+        ]
+      },
       "aliases": [
         "Mộng Trung Thí Thần",
+        "夢中弒臣",
         "梦中弑臣"
       ],
       "displayNameVi": "Mộng Trung Thí Thần",
@@ -6259,9 +7045,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "將行其疾": [
+          "tactics.json#170"
+        ]
+      },
       "aliases": [
         "Tướng Hành Kỳ Tật",
-        "将行其疾"
+        "将行其疾",
+        "將行其疾"
       ],
       "displayNameVi": "Tướng Hành Kỳ Tật",
       "evidenceRef": "tactics.json#173",
@@ -6312,9 +7104,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "運籌決算": [
+          "tactics.json#190"
+        ]
+      },
       "aliases": [
         "Vận Trù Quyết Toán",
-        "运筹决算"
+        "运筹决算",
+        "運籌決算"
       ],
       "displayNameVi": "Vận Trù Quyết Toán",
       "evidenceRef": "tactics.json#193",
@@ -6356,9 +7154,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Gan Góc Phi Thường": [
+          "tactics.json#106"
+        ],
+        "一身是膽": [
+          "tactics.json#106"
+        ]
+      },
       "aliases": [
+        "Gan Góc Phi Thường",
         "Nhất Thân Thị Đảm",
-        "一身是胆"
+        "一身是胆",
+        "一身是膽"
       ],
       "displayNameVi": "Nhất Thân Thị Đảm",
       "evidenceRef": "tactics.json#107",
@@ -6402,9 +7210,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "神機妙算": [
+          "tactics.json#141"
+        ]
+      },
       "aliases": [
         "Thần Cơ Diệu Toán",
-        "神机妙算"
+        "神机妙算",
+        "神機妙算"
       ],
       "displayNameVi": "Thần Cơ Diệu Toán",
       "evidenceRef": "tactics.json#143",
@@ -6435,8 +7249,26 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Ưng Thị": [
+          "tactics.json#207"
+        ],
+        "鷹視": [
+          "tactics.json#207"
+        ],
+        "鷹視狼顧": [
+          "tactics.json#207"
+        ],
+        "鹰视": [
+          "tactics.json#207"
+        ]
+      },
       "aliases": [
+        "Ưng Thị",
         "Ưng Thị Lang Cố",
+        "鷹視",
+        "鷹視狼顧",
+        "鹰视",
         "鹰视狼顾"
       ],
       "displayNameVi": "Ưng Thị Lang Cố",
@@ -6447,8 +7279,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thân Hình Sắt Đá": [
+          "tactics.json#107"
+        ],
+        "肉身鐵壁": [
+          "tactics.json#107"
+        ]
+      },
       "aliases": [
         "Nhục Thân Thiết Bích",
+        "Thân Hình Sắt Đá",
+        "肉身鐵壁",
         "肉身铁壁"
       ],
       "displayNameVi": "Nhục Thân Thiết Bích",
@@ -6459,9 +7301,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "沉斷機謀": [
+          "tactics.json#166"
+        ]
+      },
       "aliases": [
         "Trầm Đoạn Cơ Mưu",
-        "沉断机谋"
+        "沉断机谋",
+        "沉斷機謀"
       ],
       "displayNameVi": "Trầm Đoạn Cơ Mưu",
       "evidenceRef": "tactics.json#168",
@@ -6471,7 +7319,13 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Hổ Dại": [
+          "tactics.json#65"
+        ]
+      },
       "aliases": [
+        "Hổ Dại",
         "Hổ Si",
         "虎痴"
       ],
@@ -6503,8 +7357,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thác-Thuyền Cỏ Mượn Tên": [
+          "tactics.json#136"
+        ]
+      },
       "aliases": [
         "Thuyền Cỏ Mượn Tên",
+        "Thác-Thuyền Cỏ Mượn Tên",
         "Thảo Thuyền Tá Tiễn",
         "草船借箭"
       ],
@@ -6517,6 +7377,9 @@
     },
     {
       "aliasEvidence": {
+        "Nhanh Chân Tranh Đất": [
+          "tactics.json#124"
+        ],
         "士爭先赴": [
           "https://sgsdeck.com/recommended/s10-qun-san-shi-le-jin",
           "https://sgsdeck.com/recommended/s10-shu-xiao-guan-zhang",
@@ -6524,6 +7387,7 @@
         ]
       },
       "aliases": [
+        "Nhanh Chân Tranh Đất",
         "Sĩ Tranh Tiên Phó",
         "士争先赴",
         "士爭先赴"
@@ -6536,8 +7400,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "錦帆百翎": [
+          "tactics.json#27"
+        ]
+      },
       "aliases": [
         "Cẩm Phàm Bách Linh",
+        "錦帆百翎",
         "锦帆百翎"
       ],
       "displayNameVi": "Cẩm Phàm Bách Linh",
@@ -6548,8 +7418,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "百計多謀": [
+          "tactics.json#5"
+        ]
+      },
       "aliases": [
         "Bách Kế Đa Mưu",
+        "百計多謀",
         "百计多谋"
       ],
       "displayNameVi": "Bách Kế Đa Mưu",
@@ -6560,9 +7436,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "江東猛虎": [
+          "tactics.json#42"
+        ]
+      },
       "aliases": [
         "Giang Đông Mãnh Hổ",
-        "江东猛虎"
+        "江东猛虎",
+        "江東猛虎"
       ],
       "displayNameVi": "Giang Đông Mãnh Hổ",
       "evidenceRef": "tactics.json#42",
@@ -6612,8 +7494,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "誘敵深入": [
+          "tactics.json#39"
+        ]
+      },
       "aliases": [
         "Dụ Địch Thâm Nhập",
+        "誘敵深入",
         "诱敌深入"
       ],
       "displayNameVi": "Dụ Địch Thâm Nhập",
@@ -6625,6 +7513,9 @@
     },
     {
       "aliasEvidence": {
+        "Lửa Lan Khắp Chốn": [
+          "tactics.json#59"
+        ],
         "火熾原燎": [
           "https://sgsdeck.com/recommended/og-bingyan-lvguoqiao-baima",
           "https://sgsdeck.com/recommended/s14-caijun-qiang",
@@ -6633,6 +7524,7 @@
       },
       "aliases": [
         "Hỏa Sí Nguyên Liệu",
+        "Lửa Lan Khắp Chốn",
         "火炽原燎",
         "火熾原燎"
       ],
@@ -6644,9 +7536,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "臨鋒決敵": [
+          "tactics.json#214"
+        ]
+      },
       "aliases": [
         "Lâm Phong Quyết Địch",
-        "临锋决敌"
+        "临锋决敌",
+        "臨鋒決敵"
       ],
       "displayNameVi": "Lâm Phong Quyết Địch",
       "evidenceRef": "tactics.json#218",
@@ -6656,9 +7554,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "國色": [
+          "tactics.json#119"
+        ]
+      },
       "aliases": [
         "Quốc Sắc",
-        "国色"
+        "国色",
+        "國色"
       ],
       "displayNameVi": "Quốc Sắc",
       "evidenceRef": "tactics.json#120",
@@ -6782,8 +7686,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "七步成詩": [
+          "tactics.json#140"
+        ]
+      },
       "aliases": [
         "Thất Bộ Thành Thi",
+        "七步成詩",
         "七步成诗"
       ],
       "displayNameVi": "Thất Bộ Thành Thi",
@@ -6834,9 +7744,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Quốc Thổ Tướng Phong": [
+          "tactics.json#118"
+        ],
+        "國士將風": [
+          "tactics.json#118"
+        ]
+      },
       "aliases": [
         "Quốc Sĩ Tướng Phong",
-        "国士将风"
+        "Quốc Thổ Tướng Phong",
+        "国士将风",
+        "國士將風"
       ],
       "displayNameVi": "Quốc Sĩ Tướng Phong",
       "evidenceRef": "tactics.json#119",
@@ -6846,9 +7766,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "連環計": [
+          "tactics.json#82"
+        ]
+      },
       "aliases": [
         "Liên Hoàn Kế",
-        "连环计"
+        "连环计",
+        "連環計"
       ],
       "displayNameVi": "Liên Hoàn Kế",
       "evidenceRef": "tactics.json#83",
@@ -6879,8 +7805,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "鴟苕鳳姿": [
+          "tactics.json#121"
+        ]
+      },
       "aliases": [
         "Si Điều Phượng Tư",
+        "鴟苕鳳姿",
         "鸱苕凤姿"
       ],
       "displayNameVi": "Si Điều Phượng Tư",
@@ -6891,8 +7823,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "苦肉計": [
+          "tactics.json#71"
+        ]
+      },
       "aliases": [
         "Khổ Nhục Kế",
+        "苦肉計",
         "苦肉计"
       ],
       "displayNameVi": "Khổ Nhục Kế",
@@ -6924,12 +7862,16 @@
     },
     {
       "aliasEvidence": {
+        "Trấn Quân Kích Doanh": [
+          "tactics.json#16"
+        ],
         "振軍擊營": [
           "https://sgsdeck.com/recommended/s27-han-huangma-qiang"
         ]
       },
       "aliases": [
         "Chấn Quân Kích Doanh",
+        "Trấn Quân Kích Doanh",
         "振军击营",
         "振軍擊營"
       ],
@@ -6941,9 +7883,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Lục Lực Thượng Tâm": [
+          "tactics.json#204"
+        ],
+        "戮力上國": [
+          "tactics.json#204"
+        ]
+      },
       "aliases": [
         "Lục Lực Thượng Quốc",
-        "戮力上国"
+        "Lục Lực Thượng Tâm",
+        "戮力上国",
+        "戮力上國"
       ],
       "displayNameVi": "Lục Lực Thượng Quốc",
       "evidenceRef": "tactics.json#207",
@@ -6953,9 +7905,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Cách Hay Cứu Trợ": [
+          "tactics.json#174"
+        ],
+        "濟貧好施": [
+          "tactics.json#174"
+        ]
+      },
       "aliases": [
+        "Cách Hay Cứu Trợ",
         "Tế Bần Hảo Thi",
-        "济贫好施"
+        "济贫好施",
+        "濟貧好施"
       ],
       "displayNameVi": "Tế Bần Hảo Thi",
       "evidenceRef": "tactics.json#177",
@@ -6965,9 +7927,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Khiêu Chiến Quần Hùng": [
+          "tactics.json#108"
+        ],
+        "搦戰群雄": [
+          "tactics.json#108"
+        ]
+      },
       "aliases": [
+        "Khiêu Chiến Quần Hùng",
         "Nạch Chiến Quần Hùng",
-        "搦战群雄"
+        "搦战群雄",
+        "搦戰群雄"
       ],
       "displayNameVi": "Nạch Chiến Quần Hùng",
       "evidenceRef": "tactics.json#109",
@@ -6977,8 +7949,18 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Giang Thiên Trường Diệm": [
+          "tactics.json#41"
+        ],
+        "江天長焰": [
+          "tactics.json#41"
+        ]
+      },
       "aliases": [
         "Giang Thiên Trường Diễm",
+        "Giang Thiên Trường Diệm",
+        "江天長焰",
         "江天长焰"
       ],
       "displayNameVi": "Giang Thiên Trường Diễm",
@@ -7022,6 +8004,9 @@
     },
     {
       "aliasEvidence": {
+        "Trấn Ách Phòng Cụ": [
+          "tactics.json#164"
+        ],
         "鎮扼防拒": [
           "https://sgsdeck.com/recommended/2-1nsjj7f",
           "https://sgsdeck.com/recommended/2-jh7wzr",
@@ -7029,6 +8014,7 @@
         ]
       },
       "aliases": [
+        "Trấn Ách Phòng Cụ",
         "Trấn Ách Phòng Cự",
         "鎮扼防拒",
         "镇扼防拒"
@@ -7053,9 +8039,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "坐斷東南": [
+          "tactics.json#175"
+        ]
+      },
       "aliases": [
         "Tọa Đoạn Đông Nam",
-        "坐断东南"
+        "坐断东南",
+        "坐斷東南"
       ],
       "displayNameVi": "Tọa Đoạn Đông Nam",
       "evidenceRef": "tactics.json#178",
@@ -7089,9 +8081,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Kim Đơn Mật Thuật": [
+          "tactics.json#73"
+        ],
+        "金丹秘術": [
+          "tactics.json#73"
+        ]
+      },
       "aliases": [
         "Kim Đan Bí Thuật",
-        "金丹秘术"
+        "Kim Đơn Mật Thuật",
+        "金丹秘术",
+        "金丹秘術"
       ],
       "displayNameVi": "Kim Đan Bí Thuật",
       "evidenceRef": "tactics.json#74",
@@ -7122,10 +8124,16 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "整裝待發": [
+          "tactics.json#17"
+        ]
+      },
       "aliases": [
         "Chỉnh Trang Đãi Phát",
         "Chờ Đợi Xuất Phát",
-        "整装待发"
+        "整装待发",
+        "整裝待發"
       ],
       "displayNameVi": "Chờ Đợi Xuất Phát",
       "evidenceRef": "tactics.json#17",
@@ -7135,9 +8143,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Đánh Vào Chỗ Đông": [
+          "tactics.json#83"
+        ],
+        "斂眾而擊": [
+          "tactics.json#83"
+        ]
+      },
       "aliases": [
         "Liễm Chúng Nhi Kích",
-        "敛众而击"
+        "Đánh Vào Chỗ Đông",
+        "敛众而击",
+        "斂眾而擊"
       ],
       "displayNameVi": "Liễm Chúng Nhi Kích",
       "evidenceRef": "tactics.json#84",
@@ -7147,9 +8165,27 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Hồ Già Thập Bát Phách": [
+          "tactics.json#62"
+        ],
+        "Tiếng Sáo Dư Âm": [
+          "tactics.json#62"
+        ],
+        "胡笳十八拍": [
+          "tactics.json#62"
+        ],
+        "胡笳餘音": [
+          "tactics.json#62"
+        ]
+      },
       "aliases": [
         "Hồ Già Dư Âm",
-        "胡笳余音"
+        "Hồ Già Thập Bát Phách",
+        "Tiếng Sáo Dư Âm",
+        "胡笳余音",
+        "胡笳十八拍",
+        "胡笳餘音"
       ],
       "displayNameVi": "Hồ Già Dư Âm",
       "evidenceRef": "tactics.json#62",
@@ -7159,8 +8195,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "校勝帷幄": [
+          "tactics.json#47"
+        ]
+      },
       "aliases": [
         "Hiệu Thắng Duy Ác",
+        "校勝帷幄",
         "校胜帷幄"
       ],
       "displayNameVi": "Hiệu Thắng Duy Ác",
@@ -7191,8 +8233,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "登鋒陷陣": [
+          "tactics.json#200"
+        ]
+      },
       "aliases": [
         "Đăng Phong Hãm Trận",
+        "登鋒陷陣",
         "登锋陷阵"
       ],
       "displayNameVi": "Đăng Phong Hãm Trận",
@@ -7215,9 +8263,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "才辯機捷": [
+          "tactics.json#102"
+        ]
+      },
       "aliases": [
         "Tài Biện Cơ Tiệp",
-        "才辩机捷"
+        "才辩机捷",
+        "才辯機捷"
       ],
       "displayNameVi": "Tài Biện Cơ Tiệp",
       "evidenceRef": "tactics.json#103",
@@ -7248,10 +8302,24 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Di Hoa Tiếp Mộc": [
+          "tactics.json#254"
+        ],
+        "暗渡陳倉": [
+          "tactics.json#90"
+        ],
+        "移花接木": [
+          "tactics.json#254"
+        ]
+      },
       "aliases": [
+        "Di Hoa Tiếp Mộc",
         "Lập Lờ Đánh Tráo",
         "Ám Độ Trần Thương",
-        "暗渡陈仓"
+        "暗渡陈仓",
+        "暗渡陳倉",
+        "移花接木"
       ],
       "displayNameVi": "Lập Lờ Đánh Tráo",
       "evidenceRef": "tactics.json#91",
@@ -7261,9 +8329,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Tận Trung Tận Trí": [
+          "tactics.json#76"
+        ],
+        "竭忠盡智": [
+          "tactics.json#76"
+        ]
+      },
       "aliases": [
         "Kiệt Trung Tận Trí",
-        "竭忠尽智"
+        "Tận Trung Tận Trí",
+        "竭忠尽智",
+        "竭忠盡智"
       ],
       "displayNameVi": "Kiệt Trung Tận Trí",
       "evidenceRef": "tactics.json#77",
@@ -7293,8 +8371,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Thận Trọng Anh Dũng": [
+          "tactics.json#34"
+        ]
+      },
       "aliases": [
         "Dũng Liệt Trì Trọng",
+        "Thận Trọng Anh Dũng",
         "勇烈持重"
       ],
       "displayNameVi": "Dũng Liệt Trì Trọng",
@@ -7305,8 +8389,14 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "水鏡先生": [
+          "tactics.json#152"
+        ]
+      },
       "aliases": [
         "Thủy Kính Tiên Sinh",
+        "水鏡先生",
         "水镜先生"
       ],
       "displayNameVi": "Thủy Kính Tiên Sinh",
@@ -7317,9 +8407,19 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "Văn Tụ Ảnh Tòng": [
+          "tactics.json#183"
+        ],
+        "雲聚影從": [
+          "tactics.json#183"
+        ]
+      },
       "aliases": [
         "Vân Tụ Ảnh Tòng",
-        "云聚影从"
+        "Văn Tụ Ảnh Tòng",
+        "云聚影从",
+        "雲聚影從"
       ],
       "displayNameVi": "Vân Tụ Ảnh Tòng",
       "evidenceRef": "tactics.json#186",
@@ -7329,9 +8429,15 @@
       "variant": null
     },
     {
+      "aliasEvidence": {
+        "奮矛英姿": [
+          "tactics.json#115"
+        ]
+      },
       "aliases": [
         "Phấn Mâu Anh Tư",
-        "奋矛英姿"
+        "奋矛英姿",
+        "奮矛英姿"
       ],
       "displayNameVi": "Phấn Mâu Anh Tư",
       "evidenceRef": "tactics.json#116",
@@ -8005,7 +9111,7 @@
       "aliases": [
         "五謀弓（轉·白毦兵）"
       ],
-      "displayNameVi": "Ngũ Mưu Cung (chuyển · Bạch Nhĩ Binh)",
+      "displayNameVi": "Ngũ Mưu Cung (chuyển · Bạch Nhị Binh)",
       "evidenceRef": "translation-review:2026-09-13:batch-2",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
@@ -8986,7 +10092,7 @@
       "aliases": [
         "太師弓（轉·飛熊軍）"
       ],
-      "displayNameVi": "Thái Sư Cung（chuyển·Phi Hùng Quân）",
+      "displayNameVi": "Thái Sư Cung (chuyển · Phi Hùng Quân)",
       "evidenceRef": "translation-review:2026-09-13:batch-4",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
@@ -12424,7 +13530,7 @@
       "aliases": [
         "都督弓（轉·白毦兵）"
       ],
-      "displayNameVi": "Đô Đốc Cung (chuyển·Bạch Nhị Binh)",
+      "displayNameVi": "Đô Đốc Cung (chuyển · Bạch Nhị Binh)",
       "evidenceRef": "translation-review:2026-09-13:batch-12",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
@@ -14909,7 +16015,7 @@
       "aliases": [
         "藏器待時"
       ],
-      "displayNameVi": "Tàng Khí Đãi Thì",
+      "displayNameVi": "Tàng Khí Đợi Thời",
       "evidenceRef": "tactics.json#328",
       "kind": "tactic",
       "reviewStatus": "translation-reviewed"
@@ -15347,7 +16453,7 @@
       "aliases": [
         "藏器待時三勢 40Y 呂布盾"
       ],
-      "displayNameVi": "Tàng Khí Đãi Thì Tam Thế 40Y Lữ Bố Thuẫn",
+      "displayNameVi": "Tàng Khí Đợi Thời Tam Thế 40Y Lữ Bố Thuẫn",
       "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
@@ -15356,7 +16462,7 @@
       "aliases": [
         "藏器待時星彩法關盾"
       ],
-      "displayNameVi": "Tàng Khí Đãi Thì Tinh Thái Pháp Quan Thuẫn",
+      "displayNameVi": "Tàng Khí Đợi Thời Tinh Thái Pháp Quan Thuẫn",
       "evidenceRef": "translation-review:2026-11-16:doi-chuan-draft",
       "kind": "team",
       "reviewStatus": "translation-reviewed"
@@ -15423,14 +16529,4563 @@
       "evidenceRef": "SGSDeck s27-ofw-pc3-* slot is the city-guard unit, not a hero; translation-review:2026-11-16:doi-chuan-draft",
       "kind": "hero",
       "reviewStatus": "translation-reviewed"
+    },
+    {
+      "aliases": [
+        "Mao Giới",
+        "毛玠"
+      ],
+      "displayNameVi": "Mao Giới",
+      "evidenceRef": "heroes-dict.json#232",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:00915cba69461f0da918fee2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Phong",
+        "刘封",
+        "劉封"
+      ],
+      "displayNameVi": "Lưu Phong",
+      "evidenceRef": "heroes-dict.json#146",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:01079513c9599c79c7260ab6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Quản Hợi",
+        "管亥"
+      ],
+      "displayNameVi": "Quản Hợi",
+      "evidenceRef": "heroes-dict.json#164",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:028fe74ff32b88b844400700",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Du Kỵ",
+        "遊騎"
+      ],
+      "displayNameVi": "Du Kỵ",
+      "evidenceRef": "heroes-dict.json#213",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:034ca6c7ccc1772b0d1007db",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Liêu Hoá",
+        "Liêu Hóa",
+        "廖化"
+      ],
+      "displayNameVi": "Liêu Hoá",
+      "evidenceRef": "heroes-dict.json#141",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0371b415d2461ac7a69904e9",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đào Khiêm",
+        "陶謙"
+      ],
+      "displayNameVi": "Đào Khiêm",
+      "evidenceRef": "heroes-dict.json#208",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:084d42dbc16bf8d37af55cd5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Thiện",
+        "劉禪"
+      ],
+      "displayNameVi": "Lưu Thiện",
+      "evidenceRef": "heroes-dict.json#231",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:08a4714d34e12baa1193325a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tử Sĩ",
+        "死士"
+      ],
+      "displayNameVi": "Tử Sĩ",
+      "evidenceRef": "heroes-dict.json#259",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:09e4fec2e78360e3ff71ef55",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hàn Đương",
+        "韓當",
+        "韩当"
+      ],
+      "displayNameVi": "Hàn Đương",
+      "evidenceRef": "heroes-dict.json#134",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0a1476b93cdab6e3af33c3f2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hoa Hâm",
+        "華歆"
+      ],
+      "displayNameVi": "Hoa Hâm",
+      "evidenceRef": "heroes-dict.json#219",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0bf51d3287637fb15d5f5d36",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Nghiêm Tuấn",
+        "嚴畯"
+      ],
+      "displayNameVi": "Nghiêm Tuấn",
+      "evidenceRef": "heroes-dict.json#234",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0c0f525afe5e56894808731f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Tinh Thái",
+        "无双星彩",
+        "無雙星彩"
+      ],
+      "displayNameVi": "CO Tinh Thái",
+      "evidenceRef": "heroes-dict.json#124",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0c7537f9392699ff8d238ad7",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Từ Thịnh",
+        "徐盛"
+      ],
+      "displayNameVi": "Từ Thịnh",
+      "evidenceRef": "heroes-dict.json#197",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:0d04bc60f598c1da65da8fae",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Thương",
+        "周仓",
+        "周倉"
+      ],
+      "displayNameVi": "Chu Thương",
+      "evidenceRef": "heroes-dict.json#114",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:10849aecc98ecce51e32fae0",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Lô Thực",
+        "SP Lô Trực",
+        "SP 盧植",
+        "SP卢植"
+      ],
+      "displayNameVi": "SP Lô Thực",
+      "evidenceRef": "heroes-dict.json#175",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:117cc6c3ad39002cdbf34784",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Hướng Lãng",
+        "向朗"
+      ],
+      "displayNameVi": "Hướng Lãng",
+      "evidenceRef": "heroes-dict.json#222",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:180aa45464c0ad6d0d67108b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Lưu Diệp",
+        "SP 劉曄",
+        "SP刘晔"
+      ],
+      "displayNameVi": "SP Lưu Diệp",
+      "evidenceRef": "heroes-dict.json#176",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:1851a42a707005c7ab21c0b9",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Biện Hỷ",
+        "卞喜"
+      ],
+      "displayNameVi": "Biện Hỷ",
+      "evidenceRef": "heroes-dict.json#203",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:18db87394cadbaa50024a9a1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hướng Sủng",
+        "向寵"
+      ],
+      "displayNameVi": "Hướng Sủng",
+      "evidenceRef": "heroes-dict.json#223",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:19475ee07a398dfe2efb7205",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Tôn Kiên",
+        "SP 孫堅",
+        "SP孙坚"
+      ],
+      "displayNameVi": "SP Tôn Kiên",
+      "evidenceRef": "heroes-dict.json#183",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:1e6a9263d5bcf8bb5cabf28a",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Quan Bình",
+        "关平",
+        "關平"
+      ],
+      "displayNameVi": "Quan Bình",
+      "evidenceRef": "heroes-dict.json#163",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:20e92900e0b72220df299faf",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Lương",
+        "馬良",
+        "马良"
+      ],
+      "displayNameVi": "Mã Lương",
+      "evidenceRef": "heroes-dict.json#151",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:228a4caf39e051ada17f529f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hồ Chất",
+        "胡質"
+      ],
+      "displayNameVi": "Hồ Chất",
+      "evidenceRef": "heroes-dict.json#218",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:23d0e9470833bc06d3e8d4c5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hạ Hầu Ân",
+        "夏侯恩"
+      ],
+      "displayNameVi": "Hạ Hầu Ân",
+      "evidenceRef": "heroes-dict.json#215",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:277ae78d6febe8e5437d0a51",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Điêu Thuyền",
+        "SP 貂蟬",
+        "SP貂蝉"
+      ],
+      "displayNameVi": "SP Điêu Thuyền",
+      "evidenceRef": "heroes-dict.json#169",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2a027c7b25cb232d4d4dafbc",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Tôn Hạo",
+        "孫皓"
+      ],
+      "displayNameVi": "Tôn Hạo",
+      "evidenceRef": "heroes-dict.json#250",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2ae7f3be5095c1875baea4c6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phó Sĩ Nhân",
+        "傅士仁"
+      ],
+      "displayNameVi": "Phó Sĩ Nhân",
+      "evidenceRef": "heroes-dict.json#241",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2bdf1763265fbb79b1abb245",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Bàng Đức",
+        "SP 龐德",
+        "SP庞德"
+      ],
+      "displayNameVi": "SP Bàng Đức",
+      "evidenceRef": "heroes-dict.json#166",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2ea5eff6b651b8a4db2b74de",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Tào Hưu",
+        "曹休"
+      ],
+      "displayNameVi": "Tào Hưu",
+      "evidenceRef": "heroes-dict.json#244",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2f17731f8af38a28891543cc",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Kỷ Linh",
+        "紀靈",
+        "纪灵"
+      ],
+      "displayNameVi": "Kỷ Linh",
+      "evidenceRef": "heroes-dict.json#140",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:2f5c417808107473d87fab28",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Trương Lương",
+        "SP 張梁",
+        "SP张梁"
+      ],
+      "displayNameVi": "SP Trương Lương",
+      "evidenceRef": "heroes-dict.json#185",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:30636ee237a0ea7d8e1ffca7",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Trương Dương",
+        "張楊"
+      ],
+      "displayNameVi": "Trương Dương",
+      "evidenceRef": "heroes-dict.json#256",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3063b6a2f4de92e1e6d9449b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tiều Chu",
+        "譙周"
+      ],
+      "displayNameVi": "Tiều Chu",
+      "evidenceRef": "heroes-dict.json#247",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3345ed96d2671cc45a0089cc",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Đổng Trác",
+        "SP 董卓",
+        "SP董卓"
+      ],
+      "displayNameVi": "SP Đổng Trác",
+      "evidenceRef": "heroes-dict.json#170",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3494a603f82aac1909289ce8",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "My Trúc",
+        "麋竺"
+      ],
+      "displayNameVi": "My Trúc",
+      "evidenceRef": "heroes-dict.json#156",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:35499d4fe223c263cba56dc3",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Tào Phi",
+        "无双曹丕",
+        "無雙曹丕"
+      ],
+      "displayNameVi": "CO Tào Phi",
+      "evidenceRef": "heroes-dict.json#122",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:36b44dc4950d57bc11979123",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Phí Thi",
+        "費詩"
+      ],
+      "displayNameVi": "Phí Thi",
+      "evidenceRef": "heroes-dict.json#240",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:3db7385ebd6709f562b29643",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lý Điển",
+        "李典"
+      ],
+      "displayNameVi": "Lý Điển",
+      "evidenceRef": "heroes-dict.json#147",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4354faf9e69fc5b985db0066",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Quan Bình",
+        "无双关平",
+        "無雙關平"
+      ],
+      "displayNameVi": "CO Quan Bình",
+      "evidenceRef": "heroes-dict.json#121",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:44f4cf872650bf01a6c25027",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Trương Bảo",
+        "Trương Bảo Khăn Vàng",
+        "張寶"
+      ],
+      "displayNameVi": "Trương Bảo Khăn Vàng",
+      "evidenceRef": "heroes-dict.json#254",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:45b2a41d07afdb9f0570175a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Hoàng Trung",
+        "SP 黃忠",
+        "SP黄忠"
+      ],
+      "displayNameVi": "SP Hoàng Trung",
+      "evidenceRef": "heroes-dict.json#173",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:48106e01551a8a14f115646e",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "CO Đại Kiều",
+        "无双大乔",
+        "無雙大喬"
+      ],
+      "displayNameVi": "CO Đại Kiều",
+      "evidenceRef": "heroes-dict.json#119",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:490e2cc156fd981930c86bd0",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Vương Lãng",
+        "王朗"
+      ],
+      "displayNameVi": "Vương Lãng",
+      "evidenceRef": "heroes-dict.json#201",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4a763fb8d285b00c26ec2fb2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hồ Xa Nhi",
+        "胡車兒",
+        "胡车儿"
+      ],
+      "displayNameVi": "Hồ Xa Nhi",
+      "evidenceRef": "heroes-dict.json#136",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4bd018dd621c4ddc531f54ab",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Lỗ",
+        "张鲁",
+        "張魯"
+      ],
+      "displayNameVi": "Trương Lỗ",
+      "evidenceRef": "heroes-dict.json#192",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4e83f4cd08df2730e874a2ca",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Tú",
+        "张绣",
+        "張繡"
+      ],
+      "displayNameVi": "Trương Tú",
+      "evidenceRef": "heroes-dict.json#195",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:4eb50a8df032e360c25d76c9",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đổng Doãn",
+        "Đổng Duẫn",
+        "董允"
+      ],
+      "displayNameVi": "Đổng Duẫn",
+      "evidenceRef": "heroes-dict.json#127",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:51390b3cd295ced24d9a523c",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chung Do",
+        "鍾繇",
+        "钟繇"
+      ],
+      "displayNameVi": "Chung Do",
+      "evidenceRef": "heroes-dict.json#116",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:53b36b41dbed6bcc637ec4e8",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Xa Trụ",
+        "車冑"
+      ],
+      "displayNameVi": "Xa Trụ",
+      "evidenceRef": "heroes-dict.json#262",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:546d02a598151f4ba99eea3d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Ba",
+        "劉巴"
+      ],
+      "displayNameVi": "Lưu Ba",
+      "evidenceRef": "heroes-dict.json#226",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:553419c7ceab53bc73666b9b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Ngang",
+        "曹昂"
+      ],
+      "displayNameVi": "Tào Ngang",
+      "evidenceRef": "heroes-dict.json#245",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:55b20aff2c8eaa1b8c672236",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Ngô Ý",
+        "吳懿"
+      ],
+      "displayNameVi": "Ngô Ý",
+      "evidenceRef": "heroes-dict.json#235",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:57129a8034014c6af1fdd87d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Văn Sính",
+        "文聘"
+      ],
+      "displayNameVi": "Văn Sính",
+      "evidenceRef": "heroes-dict.json#199",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:596c893874a6a0abe9d3dada",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Trương Bảo",
+        "SP 張寶",
+        "SP张宝"
+      ],
+      "displayNameVi": "SP Trương Bảo",
+      "evidenceRef": "heroes-dict.json#184",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:5ef6c8765ff906128fc37f00",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Tào Chân",
+        "曹真"
+      ],
+      "displayNameVi": "Tào Chân",
+      "evidenceRef": "heroes-dict.json#243",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:603b840477e3aa4a40b80b48",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Nhạc Tiến",
+        "SP 樂進",
+        "SP乐进"
+      ],
+      "displayNameVi": "SP Nhạc Tiến",
+      "evidenceRef": "heroes-dict.json#178",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:614ba38e43874fb76734663b",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Quách Hoài",
+        "郭淮"
+      ],
+      "displayNameVi": "Quách Hoài",
+      "evidenceRef": "heroes-dict.json#161",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:624e0ec3701406819d743a41",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Chân Cơ",
+        "无双甄姬",
+        "無雙甄姬"
+      ],
+      "displayNameVi": "CO Chân Cơ",
+      "evidenceRef": "heroes-dict.json#117",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6290780145a4528ba969b2fe",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Tang Bá",
+        "臧霸"
+      ],
+      "displayNameVi": "Tang Bá",
+      "evidenceRef": "heroes-dict.json#186",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6462f85db177d9edda82dbc3",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vương Doãn",
+        "王允"
+      ],
+      "displayNameVi": "Vương Doãn",
+      "evidenceRef": "heroes-dict.json#261",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6476b166729bdacd7e43e3a1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Do",
+        "劉繇"
+      ],
+      "displayNameVi": "Lưu Do",
+      "evidenceRef": "heroes-dict.json#229",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:66717917a8b4b5262de20b57",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lữ Phạm",
+        "吕范",
+        "呂範"
+      ],
+      "displayNameVi": "Lữ Phạm",
+      "evidenceRef": "heroes-dict.json#143",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:67289d77fbcea3193480214e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Sa Ma Kha",
+        "沙摩柯"
+      ],
+      "displayNameVi": "Sa Ma Kha",
+      "evidenceRef": "heroes-dict.json#165",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6b0e2bea8552f247f1e1c13e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Bảo Tín",
+        "鮑信"
+      ],
+      "displayNameVi": "Bảo Tín",
+      "evidenceRef": "heroes-dict.json#202",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6bacbcc1252b1bfdd49a58aa",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lý Nghiêm",
+        "李严",
+        "李嚴"
+      ],
+      "displayNameVi": "Lý Nghiêm",
+      "evidenceRef": "heroes-dict.json#148",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6ceea17b653794a442374e7d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đổng Chiêu",
+        "董昭"
+      ],
+      "displayNameVi": "Đổng Chiêu",
+      "evidenceRef": "heroes-dict.json#210",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6d19a25fbe7e25adc0ac9470",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Mạn Thành",
+        "张曼成",
+        "張曼成"
+      ],
+      "displayNameVi": "Trương Mạn Thành",
+      "evidenceRef": "heroes-dict.json#193",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6d2602b9c45600de340fcea7",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hám Trạch",
+        "闞澤"
+      ],
+      "displayNameVi": "Hám Trạch",
+      "evidenceRef": "heroes-dict.json#217",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:6e75ad421bb2914578028df5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thuần Vu Quỳnh",
+        "淳于瓊"
+      ],
+      "displayNameVi": "Thuần Vu Quỳnh",
+      "evidenceRef": "heroes-dict.json#246",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:74d43348c914936fd4704714",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Trung",
+        "馬忠",
+        "马忠"
+      ],
+      "displayNameVi": "Mã Trung",
+      "evidenceRef": "heroes-dict.json#155",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:75afab7252146b1ef05eaa34",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hoàng Phổ Tung",
+        "Hoàng Phủ Tung",
+        "皇甫嵩"
+      ],
+      "displayNameVi": "Hoàng Phủ Tung",
+      "evidenceRef": "heroes-dict.json#220",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:779b07352932c8cebb18c9b2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tưởng Khâm",
+        "蒋钦",
+        "蔣欽"
+      ],
+      "displayNameVi": "Tưởng Khâm",
+      "evidenceRef": "heroes-dict.json#198",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:78873ddca440ccf28db7696f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đổng Quyết",
+        "董厥"
+      ],
+      "displayNameVi": "Đổng Quyết",
+      "evidenceRef": "heroes-dict.json#211",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:78af70026bb366fb38226d4a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hà Thị",
+        "何氏"
+      ],
+      "displayNameVi": "Hà Thị",
+      "evidenceRef": "heroes-dict.json#133",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:78fbe839aa51b74febb0573b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Nhiệm",
+        "Trương Nhậm",
+        "张任",
+        "張任"
+      ],
+      "displayNameVi": "Trương Nhậm",
+      "evidenceRef": "heroes-dict.json#194",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7c84668791b8c904ddb3558e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phan Chương",
+        "潘璋"
+      ],
+      "displayNameVi": "Phan Chương",
+      "evidenceRef": "heroes-dict.json#157",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:7f595162d3f2c7efa7f13eb9",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Quách Đồ",
+        "郭图",
+        "郭圖"
+      ],
+      "displayNameVi": "Quách Đồ",
+      "evidenceRef": "heroes-dict.json#160",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:83f339821726e95c2eff6908",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Hồng",
+        "曹洪"
+      ],
+      "displayNameVi": "Tào Hồng",
+      "evidenceRef": "heroes-dict.json#188",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8460abc20204db9039a82679",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Cố Ung",
+        "顧雍",
+        "顾雍"
+      ],
+      "displayNameVi": "Cố Ung",
+      "evidenceRef": "heroes-dict.json#125",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:853a5cbb3ad42ebb78d733d1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Doãn",
+        "張允"
+      ],
+      "displayNameVi": "Trương Doãn",
+      "evidenceRef": "heroes-dict.json#255",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8587b35113a34929531dbfec",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lý Quyết",
+        "Lý Thôi",
+        "李傕"
+      ],
+      "displayNameVi": "Lý Quyết",
+      "evidenceRef": "heroes-dict.json#149",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:86a4daa43c0b9c27c6bbe2eb",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Thiết",
+        "馬鐵",
+        "马铁"
+      ],
+      "displayNameVi": "Mã Thiết",
+      "evidenceRef": "heroes-dict.json#154",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:86e855eafe7731a21990d601",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lô Thực",
+        "Lô Trực",
+        "卢植",
+        "盧植"
+      ],
+      "displayNameVi": "Lô Thực",
+      "evidenceRef": "heroes-dict.json#142",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:88554d73bf6cf14daa3018d1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Bộ Chất",
+        "步騭"
+      ],
+      "displayNameVi": "Bộ Chất",
+      "evidenceRef": "heroes-dict.json#204",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8c828f44548750b46c44cbb4",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tôn Tĩnh",
+        "孫靜"
+      ],
+      "displayNameVi": "Tôn Tĩnh",
+      "evidenceRef": "heroes-dict.json#251",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8c906296c48368901e0f25db",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Biểu",
+        "刘表",
+        "劉表"
+      ],
+      "displayNameVi": "Lưu Biểu",
+      "evidenceRef": "heroes-dict.json#144",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8d81a701d941a9f5995c55cd",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Toàn Tông",
+        "全琮"
+      ],
+      "displayNameVi": "Toàn Tông",
+      "evidenceRef": "heroes-dict.json#248",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8f0533393cfd8ef108b1c0ab",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Mã Siêu",
+        "SP 馬超",
+        "SP马超"
+      ],
+      "displayNameVi": "SP Mã Siêu",
+      "evidenceRef": "heroes-dict.json#177",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:8fcf0cab8bcf2416521e4fd6",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Đổng Thừa",
+        "董承"
+      ],
+      "displayNameVi": "Đổng Thừa",
+      "evidenceRef": "heroes-dict.json#212",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:907248eb27cb3453c826b483",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Chu Nhiên",
+        "无双朱然",
+        "無雙朱然"
+      ],
+      "displayNameVi": "CO Chu Nhiên",
+      "evidenceRef": "heroes-dict.json#118",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:922127db185ca0a0aede99dc",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "SP Hoàng Nguyệt Anh",
+        "SP 黃月英",
+        "SP黄月英"
+      ],
+      "displayNameVi": "SP Hoàng Nguyệt Anh",
+      "evidenceRef": "heroes-dict.json#171",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:92652b6de9c085101ff1e588",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Lữ Kiền",
+        "呂虔"
+      ],
+      "displayNameVi": "Lữ Kiền",
+      "evidenceRef": "heroes-dict.json#225",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:92d916339f7b92613c5abf82",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Pháp Chính",
+        "SP 法正",
+        "SP法正"
+      ],
+      "displayNameVi": "SP Pháp Chính",
+      "evidenceRef": "heroes-dict.json#179",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:978506f95a35fb46d6319bbb",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Đổng Tập",
+        "董袭",
+        "董襲"
+      ],
+      "displayNameVi": "Đổng Tập",
+      "evidenceRef": "heroes-dict.json#128",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:97e49c4d2a1065f5d45a6e2d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tống Hiến",
+        "宋憲"
+      ],
+      "displayNameVi": "Tống Hiến",
+      "evidenceRef": "heroes-dict.json#252",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9b82f28adbc198c5c82856a6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Tào Chân",
+        "SP 曹真",
+        "SP曹真"
+      ],
+      "displayNameVi": "SP Tào Chân",
+      "evidenceRef": "heroes-dict.json#181",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9d8f35b17e9b2aa246697c46",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Hoàng Quyền",
+        "黃權",
+        "黄权"
+      ],
+      "displayNameVi": "Hoàng Quyền",
+      "evidenceRef": "heroes-dict.json#137",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9e36533ca4b0032f96098ebe",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Thẩm Phối",
+        "审配",
+        "審配"
+      ],
+      "displayNameVi": "Thẩm Phối",
+      "evidenceRef": "heroes-dict.json#189",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9e95c02033d4c8e16dc347f3",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trần Võ",
+        "Trần Vũ",
+        "陈武",
+        "陳武"
+      ],
+      "displayNameVi": "Trần Võ",
+      "evidenceRef": "heroes-dict.json#191",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:9e9b5d245417f1c4da1afa95",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Đại",
+        "劉岱"
+      ],
+      "displayNameVi": "Lưu Đại",
+      "evidenceRef": "heroes-dict.json#228",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a1a7f30c0edb53a1279bcf85",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Tiểu Kiều",
+        "无双小乔",
+        "無雙小喬"
+      ],
+      "displayNameVi": "CO Tiểu Kiều",
+      "evidenceRef": "heroes-dict.json#123",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a1aa9b44ac57b6b77042a16c",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Lưu Diệp",
+        "刘晔",
+        "劉曄"
+      ],
+      "displayNameVi": "Lưu Diệp",
+      "evidenceRef": "heroes-dict.json#145",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a3fa9e9a7e4b5ea3fa1f815d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "40Y Lữ Bố",
+        "40Y 呂布",
+        "40Y吕布"
+      ],
+      "displayNameVi": "40Y Lữ Bố",
+      "evidenceRef": "heroes-dict.json#112",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a61b0270fdcbb58c5aa012ad",
+      "variant": "40Y"
+    },
+    {
+      "aliases": [
+        "Gia Cát Cảnh",
+        "Gia Cát Cẩn",
+        "諸葛璟",
+        "诸葛璟"
+      ],
+      "displayNameVi": "Gia Cát Cảnh",
+      "evidenceRef": "heroes-dict.json#130",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:a92b5951658ddfbb90bd665e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Lương",
+        "張梁"
+      ],
+      "displayNameVi": "Trương Lương",
+      "evidenceRef": "heroes-dict.json#257",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:aaffa13be94d11ca666ede47",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Điển Vi",
+        "SP 典韋",
+        "SP典韦"
+      ],
+      "displayNameVi": "SP Điển Vi",
+      "evidenceRef": "heroes-dict.json#168",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ab7d3635aaef131decdf5f25",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "My Phương",
+        "糜芳"
+      ],
+      "displayNameVi": "My Phương",
+      "evidenceRef": "heroes-dict.json#233",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ab88b0fb5a2c34a6d67e264f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Gia Cát Khác",
+        "諸葛恪",
+        "诸葛恪"
+      ],
+      "displayNameVi": "Gia Cát Khác",
+      "evidenceRef": "heroes-dict.json#131",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ac75a4de913e715b99fc8979",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Bộ Luyện Sư",
+        "步練師"
+      ],
+      "displayNameVi": "Bộ Luyện Sư",
+      "evidenceRef": "heroes-dict.json#205",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:af21d61dc78d87baac573e62",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Nguỵ Du",
+        "Ngụy Du",
+        "魏攸"
+      ],
+      "displayNameVi": "Nguỵ Du",
+      "evidenceRef": "heroes-dict.json#237",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:afd6b92e2dcb11fc2f0c06eb",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Quân Sĩ",
+        "軍士"
+      ],
+      "displayNameVi": "Quân Sĩ",
+      "evidenceRef": "heroes-dict.json#242",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b08c99c0e3e072f0bd8429c9",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Hứa Chử",
+        "SP 許褚",
+        "SP许褚"
+      ],
+      "displayNameVi": "SP Hứa Chử",
+      "evidenceRef": "heroes-dict.json#174",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b2b85a9bebdd2149b336bff9",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Lưu Chương",
+        "劉璋"
+      ],
+      "displayNameVi": "Lưu Chương",
+      "evidenceRef": "heroes-dict.json#227",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b48c7f2db6328482f0fc65ea",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Đại",
+        "馬岱",
+        "马岱"
+      ],
+      "displayNameVi": "Mã Đại",
+      "evidenceRef": "heroes-dict.json#150",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b886eac4f8d767a0a28edc71",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Tào Tháo",
+        "SP 曹操",
+        "SP曹操"
+      ],
+      "displayNameVi": "SP Tào Tháo",
+      "evidenceRef": "heroes-dict.json#182",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:b93f9b922b15dd27e9a19eae",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Trương Yến",
+        "张燕",
+        "張燕"
+      ],
+      "displayNameVi": "Trương Yến",
+      "evidenceRef": "heroes-dict.json#196",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:bcb1208d023894143c96ca89",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phùng Kỷ",
+        "逢紀",
+        "逢纪"
+      ],
+      "displayNameVi": "Phùng Kỷ",
+      "evidenceRef": "heroes-dict.json#159",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:bd1e596e64dfbd0f16ca5732",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Hoàn",
+        "Chu Hằng",
+        "朱恆",
+        "朱恒"
+      ],
+      "displayNameVi": "Chu Hằng",
+      "evidenceRef": "heroes-dict.json#113",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c3fc9bfc6868bf1fca3d7986",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Gia Cát Chiêm",
+        "諸葛瞻"
+      ],
+      "displayNameVi": "Gia Cát Chiêm",
+      "evidenceRef": "heroes-dict.json#214",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c448eb32586390d622bb850b",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hà Tiến",
+        "何進"
+      ],
+      "displayNameVi": "Hà Tiến",
+      "evidenceRef": "heroes-dict.json#216",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c51f078d279664cc1c68a643",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Tuấn",
+        "朱儁"
+      ],
+      "displayNameVi": "Chu Tuấn",
+      "evidenceRef": "heroes-dict.json#115",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c812f6eeb7d6aa8c14ab5b27",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Khổng Trụ",
+        "孔伷"
+      ],
+      "displayNameVi": "Khổng Trụ",
+      "evidenceRef": "heroes-dict.json#224",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c96292fe56e82bb85756db61",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Khổng Dung",
+        "孔融"
+      ],
+      "displayNameVi": "Khổng Dung",
+      "evidenceRef": "heroes-dict.json#138",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:c9b3bc9bb0238dcfb0cc2e06",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vệ Thành",
+        "Vệ thành",
+        "衛城"
+      ],
+      "displayNameVi": "Vệ Thành",
+      "evidenceRef": "heroes-dict.json#260",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ca1408a7cbf601480fa184d6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đinh Phụng",
+        "丁奉"
+      ],
+      "displayNameVi": "Đinh Phụng",
+      "evidenceRef": "heroes-dict.json#126",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ca628f988152d9d0d724628e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tào Chương",
+        "曹彰"
+      ],
+      "displayNameVi": "Tào Chương",
+      "evidenceRef": "heroes-dict.json#187",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d0f4ec8caea7084744cb03b3",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trình Bỉnh",
+        "程秉"
+      ],
+      "displayNameVi": "Trình Bỉnh",
+      "evidenceRef": "heroes-dict.json#253",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d4cf253627065122b2aa50f6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Quách Dĩ",
+        "Quách Tỷ",
+        "郭汜"
+      ],
+      "displayNameVi": "Quách Tỷ",
+      "evidenceRef": "heroes-dict.json#162",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d73217cdc9779489ed2d3a85",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Bộ Luyện Sư",
+        "SP 步練師",
+        "SP步练师"
+      ],
+      "displayNameVi": "SP Bộ Luyện Sư",
+      "evidenceRef": "heroes-dict.json#167",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d7a2a390c981d5a697a1721d",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Hàn Toại",
+        "韓遂",
+        "韩遂"
+      ],
+      "displayNameVi": "Hàn Toại",
+      "evidenceRef": "heroes-dict.json#135",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d7cddfee1a22cfefa4f5276f",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Tôn Càn",
+        "孫乾"
+      ],
+      "displayNameVi": "Tôn Càn",
+      "evidenceRef": "heroes-dict.json#249",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:d9ad558b380afc3e6186c11a",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Tắc",
+        "馬謖",
+        "马谡"
+      ],
+      "displayNameVi": "Mã Tắc",
+      "evidenceRef": "heroes-dict.json#153",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:db060178727989d1112e7c86",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Giản Ung",
+        "简雍",
+        "簡雍"
+      ],
+      "displayNameVi": "Giản Ung",
+      "evidenceRef": "heroes-dict.json#132",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:db559314d049e856ddc1f821",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Chu Nhiên",
+        "朱然"
+      ],
+      "displayNameVi": "Chu Nhiên",
+      "evidenceRef": "heroes-dict.json#206",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:dc21b0c3398ae1f7d71f3117",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đinh Nguyên",
+        "丁原"
+      ],
+      "displayNameVi": "Đinh Nguyên",
+      "evidenceRef": "heroes-dict.json#209",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:dea1583dd37636392107ad01",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phan Tuấn",
+        "潘濬"
+      ],
+      "displayNameVi": "Phan Tuấn",
+      "evidenceRef": "heroes-dict.json#239",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e0b35118c07248fe84ed7c1e",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Khúc Nghĩa",
+        "麴義",
+        "麹义"
+      ],
+      "displayNameVi": "Khúc Nghĩa",
+      "evidenceRef": "heroes-dict.json#139",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e29e1203e981feef0c6348c9",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Hoàng Phổ Tung",
+        "SP Hoàng Phủ Tung",
+        "SP 皇甫嵩",
+        "SP皇甫嵩"
+      ],
+      "displayNameVi": "SP Hoàng Phủ Tung",
+      "evidenceRef": "heroes-dict.json#172",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e4e654bda7591775b5a2a89d",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Ngu Phiên",
+        "虞翻"
+      ],
+      "displayNameVi": "Ngu Phiên",
+      "evidenceRef": "heroes-dict.json#236",
+      "faction": "Ngô",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:e770c126e73d285926f4f5b1",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Hứa Cống",
+        "許貢"
+      ],
+      "displayNameVi": "Hứa Cống",
+      "evidenceRef": "heroes-dict.json#221",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:eaa0c12dabdb10bc78748ef5",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Mã Quân",
+        "馬鈞",
+        "马钧"
+      ],
+      "displayNameVi": "Mã Quân",
+      "evidenceRef": "heroes-dict.json#152",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ec9485ee20809a96bde1a5a2",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Lưu Ngu",
+        "劉虞"
+      ],
+      "displayNameVi": "Lưu Ngu",
+      "evidenceRef": "heroes-dict.json#230",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ed237ee3e372346d4739aa80",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "SP Quan Vũ",
+        "SP 關羽",
+        "SP关羽"
+      ],
+      "displayNameVi": "SP Quan Vũ",
+      "evidenceRef": "heroes-dict.json#180",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f486e367b33b3655de46cfe9",
+      "variant": "SP"
+    },
+    {
+      "aliases": [
+        "Trần Lâm",
+        "陈琳",
+        "陳琳"
+      ],
+      "displayNameVi": "Trần Lâm",
+      "evidenceRef": "heroes-dict.json#190",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f612fb7fcafc48b676c4411d",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Đặng Chi",
+        "鄧芝"
+      ],
+      "displayNameVi": "Đặng Chi",
+      "evidenceRef": "heroes-dict.json#207",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f82a0212d73e287da23d25a6",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Vương Dị",
+        "王异",
+        "王異"
+      ],
+      "displayNameVi": "Vương Dị",
+      "evidenceRef": "heroes-dict.json#200",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f8609e345d23ffa5dc50e5ed",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phan Phụng",
+        "潘鳳"
+      ],
+      "displayNameVi": "Phan Phụng",
+      "evidenceRef": "heroes-dict.json#238",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:f8c08751b3565c13bd541406",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Phí Y",
+        "費禕",
+        "费祎"
+      ],
+      "displayNameVi": "Phí Y",
+      "evidenceRef": "heroes-dict.json#158",
+      "faction": "Thục",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:fbc5c1d3fd2771f3f3568613",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Trương Mạc",
+        "張邈"
+      ],
+      "displayNameVi": "Trương Mạc",
+      "evidenceRef": "heroes-dict.json#258",
+      "faction": "Hán",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:fe74899a169ec07f96c5e5cd",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "Dương Tu",
+        "杨修",
+        "楊修"
+      ],
+      "displayNameVi": "Dương Tu",
+      "evidenceRef": "heroes-dict.json#129",
+      "faction": "Ngụy",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:ff3e5e8b42049aeb1420506c",
+      "variant": "base"
+    },
+    {
+      "aliases": [
+        "CO Lữ Linh Ỷ",
+        "无双吕玲绮",
+        "無雙呂玲綺"
+      ],
+      "displayNameVi": "CO Lữ Linh Ỷ",
+      "evidenceRef": "heroes-dict.json#120",
+      "faction": "Quần",
+      "kind": "hero",
+      "reviewStatus": "reviewed",
+      "stableId": "hero:fff96b52e700a4629e7acacb",
+      "variant": "CO"
+    },
+    {
+      "aliases": [
+        "Tinh • Quân Hổ Vệ",
+        "精·虎衛軍"
+      ],
+      "displayNameVi": "Tinh • Quân Hổ Vệ",
+      "evidenceRef": "tactics.json#414",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:008ee1780175617b4c5ea8e1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tuyệt Kế Chiết Mưu",
+        "絕計折謀",
+        "绝计折谋"
+      ],
+      "displayNameVi": "Tuyệt Kế Chiết Mưu",
+      "evidenceRef": "tactics.json#370",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:00ef8ff64598ddc423a290ef",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bạch Mi",
+        "Bạch My",
+        "白眉"
+      ],
+      "displayNameVi": "Bạch Mi",
+      "evidenceRef": "tactics.json#234",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0166b961bced3079e622d63b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Yển Kỳ Tức Cổ",
+        "偃旗息鼓"
+      ],
+      "displayNameVi": "Yển Kỳ Tức Cổ",
+      "evidenceRef": "tactics.json#381",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:03f19cc607993f590329b0df",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lư Giang Thượng Giáp",
+        "庐江上甲",
+        "廬江上甲"
+      ],
+      "displayNameVi": "Lư Giang Thượng Giáp",
+      "evidenceRef": "tactics.json#296",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0572d7d57a930d0e96e800d3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mãnh Kích",
+        "猛击",
+        "猛擊"
+      ],
+      "displayNameVi": "Mãnh Kích",
+      "evidenceRef": "tactics.json#298",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:05e5201cb399402c7186df4e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cường Công",
+        "強攻",
+        "强攻"
+      ],
+      "displayNameVi": "Cường Công",
+      "evidenceRef": "tactics.json#248",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:064deb093f1be0a8ef0bceb6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoa Kiên Cường",
+        "Kiên Cường Chi Hoa",
+        "坚强之花",
+        "堅強之花"
+      ],
+      "displayNameVi": "Hoa Kiên Cường",
+      "evidenceRef": "tactics.json#287",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:06530af1ba46a60fb3a38110",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Gió Táp Mưa Sa",
+        "Tật Phong Sậu Vũ",
+        "疾風驟雨",
+        "疾风骤雨"
+      ],
+      "displayNameVi": "Gió Táp Mưa Sa",
+      "evidenceRef": "tactics.json#329",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:06cc3b3042e830471754aefe",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Gan Dạ",
+        "壯膽"
+      ],
+      "displayNameVi": "Gan Dạ",
+      "evidenceRef": "tactics.json#393",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:073c028af80851aadf36ceab",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Minh Sát Thu Hào",
+        "明察秋毫"
+      ],
+      "displayNameVi": "Minh Sát Thu Hào",
+      "evidenceRef": "tactics.json#300",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0768c19b5a312b3d30d15ad7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chí Nhu Động Cương",
+        "Lấy Nhu Chế Cương",
+        "至柔动刚",
+        "至柔動剛"
+      ],
+      "displayNameVi": "Lấy Nhu Chế Cương",
+      "evidenceRef": "tactics.json#241",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0bfd5f1d134c18d7fd8c0eb8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đoản Binh Tương Kiến",
+        "Đoản Binh Tương Tiếp",
+        "短兵相接",
+        "短兵相見",
+        "短兵相见"
+      ],
+      "displayNameVi": "Đoản Binh Tương Kiến",
+      "evidenceRef": "tactics.json#260",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0e111f9008b47433210bf145",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Vô Đương Phi Quân",
+        "Tinh • Vô Đương Phi Quân",
+        "精·無當飛軍",
+        "轉·無當飛軍"
+      ],
+      "displayNameVi": "Tinh • Vô Đương Phi Quân",
+      "evidenceRef": "tactics.json#418",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0e889b636f987b5c3fc0a4cb",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Loan Cung Ấm Vũ",
+        "Loan Cung Ẩm Vũ",
+        "弯弓饮羽",
+        "彎弓飲羽"
+      ],
+      "displayNameVi": "Loan Cung Ấm Vũ",
+      "evidenceRef": "tactics.json#295",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0eb1710411d3dc0b953d1829",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Uy Tín Dũng Võ",
+        "Uy Võ Tịnh Chiêu",
+        "威武並昭",
+        "威武并昭"
+      ],
+      "displayNameVi": "Uy Tín Dũng Võ",
+      "evidenceRef": "tactics.json#372",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:0ed5582f7d1e08eb8271ec28",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kỵ Hổ Nan Hạ",
+        "騎虎難下",
+        "骑虎难下"
+      ],
+      "displayNameVi": "Kỵ Hổ Nan Hạ",
+      "evidenceRef": "tactics.json#290",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:109ee01cf7796daab85f53b1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khí Độc",
+        "Độc Khí",
+        "毒气",
+        "毒氣"
+      ],
+      "displayNameVi": "Khí Độc",
+      "evidenceRef": "tactics.json#261",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:13eef3dd01ba2a09b3a8acef",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chỉ Qua Vi Vũ",
+        "Chỉ Qua Vy Võ",
+        "止戈为武",
+        "止戈為武"
+      ],
+      "displayNameVi": "Chỉ Qua Vi Vũ",
+      "evidenceRef": "tactics.json#242",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:148df028e96fadd582ddb0cf",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Lính Đan Dương",
+        "Tinh • Lính Đan Dương",
+        "精·丹陽兵",
+        "轉·丹陽兵"
+      ],
+      "displayNameVi": "Tinh • Lính Đan Dương",
+      "evidenceRef": "tactics.json#408",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:17977241f893c4924fe936fc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chú Tượng",
+        "Thợ Rèn",
+        "鑄匠",
+        "铸匠"
+      ],
+      "displayNameVi": "Thợ Rèn",
+      "evidenceRef": "tactics.json#244",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:17c050bce5e7c77b81b5bae9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quyền Tiếm Cửu Đỉnh",
+        "权僭九鼎",
+        "權僭九鼎"
+      ],
+      "displayNameVi": "Quyền Tiếm Cửu Đỉnh",
+      "evidenceRef": "tactics.json#323",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1a27d2eff4e3229b0e68e8e9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Hạ Danh Xảo",
+        "天下名巧"
+      ],
+      "displayNameVi": "Thiên Hạ Danh Xảo",
+      "evidenceRef": "tactics.json#341",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1a544c1844fff32d8444713b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Xuất Khẩu Thành Chương",
+        "出口成章"
+      ],
+      "displayNameVi": "Xuất Khẩu Thành Chương",
+      "evidenceRef": "tactics.json#379",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1b8523df8fbb4e7b5355123f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Mật Kế Giết Nghịch",
+        "Mật Kế Tru Nghịch",
+        "密計誅逆",
+        "密计诛逆"
+      ],
+      "displayNameVi": "Mật Kế Giết Nghịch",
+      "evidenceRef": "tactics.json#299",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1f6cc3a0c7e69d38fcbdf7f2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phóng Hỏa",
+        "Đốt Lửa",
+        "放火"
+      ],
+      "displayNameVi": "Đốt Lửa",
+      "evidenceRef": "tactics.json#314",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:1fa8857b448c6af9d3c18978",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Huy Binh Mưu Thắng",
+        "挥兵谋胜",
+        "揮兵謀勝"
+      ],
+      "displayNameVi": "Huy Binh Mưu Thắng",
+      "evidenceRef": "tactics.json#274",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:20bcaa2f501a4670af3d5a32",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lính Đan Dương",
+        "Đan Dương Binh",
+        "丹阳兵",
+        "丹陽兵"
+      ],
+      "displayNameVi": "Lính Đan Dương",
+      "evidenceRef": "tactics.json#251",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:228cadda29a44ed465bed008",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tọa Điếu Kình Ngao",
+        "坐釣鯨鰲",
+        "坐钓鲸鳌"
+      ],
+      "displayNameVi": "Tọa Điếu Kình Ngao",
+      "evidenceRef": "tactics.json#358",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:23a221d1b587179151c75ac4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kiêu Dũng Thiện Chiến",
+        "驍勇善戰",
+        "骁勇善战"
+      ],
+      "displayNameVi": "Kiêu Dũng Thiện Chiến",
+      "evidenceRef": "tactics.json#288",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2531882285f60641613c1fa9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Huy Khảm",
+        "Vung Chém",
+        "挥砍",
+        "揮砍"
+      ],
+      "displayNameVi": "Vung Chém",
+      "evidenceRef": "tactics.json#275",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:253a8d69aa588a687228c068",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trường Giả Chi Phong",
+        "Trưởng Giả Chi Phong",
+        "長者之風",
+        "长者之风"
+      ],
+      "displayNameVi": "Trưởng Giả Chi Phong",
+      "evidenceRef": "tactics.json#364",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:25fd39c436b1c991b2843d09",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phá Giáp",
+        "破甲"
+      ],
+      "displayNameVi": "Phá Giáp",
+      "evidenceRef": "tactics.json#308",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:26cdc4a97086a988737c96be",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Oạt Thái",
+        "Đào Hái",
+        "挖採",
+        "挖采"
+      ],
+      "displayNameVi": "Đào Hái",
+      "evidenceRef": "tactics.json#307",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2817abbd7b0a3441122aa467",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Uy Phong Lẫm Liệt",
+        "Uy Phong Lẫm Lẫm",
+        "威風凜凜",
+        "威风凛凛"
+      ],
+      "displayNameVi": "Uy Phong Lẫm Liệt",
+      "evidenceRef": "tactics.json#371",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:292ae783bc867f4242b1b36c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giẫm Đạp",
+        "Tiễn Đạp",
+        "践踏",
+        "踐踏"
+      ],
+      "displayNameVi": "Giẫm Đạp",
+      "evidenceRef": "tactics.json#354",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2b33a2d97b7914485584c692",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dũng Võ",
+        "勇武"
+      ],
+      "displayNameVi": "Dũng Võ",
+      "evidenceRef": "tactics.json#392",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:2e4f24440fe5a2c54da3921d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Yêu Thuật",
+        "妖术",
+        "妖術"
+      ],
+      "displayNameVi": "Yêu Thuật",
+      "evidenceRef": "tactics.json#382",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3049219803caf9b096035a19",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khiêu Hấn",
+        "Khiêu Khích",
+        "挑衅",
+        "挑釁"
+      ],
+      "displayNameVi": "Khiêu Khích",
+      "evidenceRef": "tactics.json#282",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:32dbcf77cdc90047dd2bfb1c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Hổ Báo Kỵ",
+        "精·虎豹騎"
+      ],
+      "displayNameVi": "Tinh • Hổ Báo Kỵ",
+      "evidenceRef": "tactics.json#407",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:33ce6e2c11cfb7329282f8c2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phong Thanh Hạc Lệ",
+        "風聲鶴唳",
+        "风声鹤唳"
+      ],
+      "displayNameVi": "Phong Thanh Hạc Lệ",
+      "evidenceRef": "tactics.json#316",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:33fe45643d5fef73bbe48343",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phó Thang Đạo Hỏa",
+        "Xông Pha Khói Lửa",
+        "赴汤蹈火",
+        "赴湯蹈火"
+      ],
+      "displayNameVi": "Xông Pha Khói Lửa",
+      "evidenceRef": "tactics.json#313",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3408ec7bf81b5e2defd62323",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cấp Tuần",
+        "Luyện Gấp",
+        "急馴",
+        "急驯"
+      ],
+      "displayNameVi": "Luyện Gấp",
+      "evidenceRef": "tactics.json#240",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:349281197f936a80c8faceb6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phục Khiên Phản Kích",
+        "Phục My Phản Công",
+        "伏盾反攻"
+      ],
+      "displayNameVi": "Phục Khiên Phản Kích",
+      "evidenceRef": "tactics.json#319",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:35507c984478f3253c90df86",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ô Sào Di Hận",
+        "烏巢遺恨"
+      ],
+      "displayNameVi": "Ô Sào Di Hận",
+      "evidenceRef": "tactics.json#397",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:39a8e4b4c249ab42c0701872",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chặt Đốn",
+        "Khảm Phạt",
+        "砍伐"
+      ],
+      "displayNameVi": "Chặt Đốn",
+      "evidenceRef": "tactics.json#279",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3bc06c134cb96718bdcb8149",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lạc Phượng",
+        "落凤",
+        "落鳳"
+      ],
+      "displayNameVi": "Lạc Phượng",
+      "evidenceRef": "tactics.json#292",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3c9056e9e3575e25bef5a5d2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chúng Vọng Sở Quy",
+        "Đích Đến Cuối Cùng",
+        "众望所归",
+        "眾望所歸"
+      ],
+      "displayNameVi": "Đích Đến Cuối Cùng",
+      "evidenceRef": "tactics.json#246",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:3d4d7a96caa9794202fc394d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Lính Giáp Mây",
+        "Tinh • Lính Giáp Mây",
+        "精·藤甲兵",
+        "轉·藤甲兵"
+      ],
+      "displayNameVi": "Tinh • Lính Giáp Mây",
+      "evidenceRef": "tactics.json#409",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:417175d54d41f28398f74f99",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thục Ý Chi Đức",
+        "淑懿之德"
+      ],
+      "displayNameVi": "Thục Ý Chi Đức",
+      "evidenceRef": "tactics.json#350",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:41f15c57cc4a332b9fc6fcc2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thủ Ma Thốn Thiết",
+        "取磨寸鐵",
+        "取磨寸铁"
+      ],
+      "displayNameVi": "Thủ Ma Thốn Thiết",
+      "evidenceRef": "tactics.json#346",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:42466eb02151cd6d1d9c9ae7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cứu trợ",
+        "Viện Cứu",
+        "援救"
+      ],
+      "displayNameVi": "Cứu trợ",
+      "evidenceRef": "tactics.json#375",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:42735bed0d9ecf42e6e2a27b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kho Lương Đầy Ắp",
+        "Thương Lẫm Phong Thực",
+        "仓廪丰实",
+        "倉廩豐實"
+      ],
+      "displayNameVi": "Kho Lương Đầy Ắp",
+      "evidenceRef": "tactics.json#351",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:43f6378a83a571626f38485d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Giải Phiền Vệ",
+        "Tinh • Giải Phiền Vệ",
+        "精·解煩衛",
+        "轉·解煩衛"
+      ],
+      "displayNameVi": "Tinh • Giải Phiền Vệ",
+      "evidenceRef": "tactics.json#405",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:44a139f5e10e0c4431b2cd98",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trọng Kích",
+        "重击",
+        "重擊"
+      ],
+      "displayNameVi": "Trọng Kích",
+      "evidenceRef": "tactics.json#363",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:44b874862834e3c78288778d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Quân Cẩm Phàm",
+        "精·錦帆軍"
+      ],
+      "displayNameVi": "Tinh • Quân Cẩm Phàm",
+      "evidenceRef": "tactics.json#413",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4542c8937790cc12917ebbcb",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hư Thực Kỳ Mưu",
+        "虚实奇谋",
+        "虛實奇謀"
+      ],
+      "displayNameVi": "Hư Thực Kỳ Mưu",
+      "evidenceRef": "tactics.json#272",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:459d238e1f721e90f303e15a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tam Quân Chi Chúng",
+        "三军之众",
+        "三軍之眾"
+      ],
+      "displayNameVi": "Tam Quân Chi Chúng",
+      "evidenceRef": "tactics.json#327",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:47bc2347d2f58728072d792f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Tượng Binh",
+        "精·象兵"
+      ],
+      "displayNameVi": "Tinh • Tượng Binh",
+      "evidenceRef": "tactics.json#417",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:48929bb47277fe4fb5f25096",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ám Tàng Huyền Cơ",
+        "暗藏玄机",
+        "暗藏玄機"
+      ],
+      "displayNameVi": "Ám Tàng Huyền Cơ",
+      "evidenceRef": "tactics.json#227",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:48e9358c68684aecd8250645",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hào Hùng-Sơ",
+        "初級激昂"
+      ],
+      "displayNameVi": "Hào Hùng-Sơ",
+      "evidenceRef": "tactics.json#394",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:493a52e4bbf3ac229835fa8f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tiến Ngôn",
+        "进言",
+        "進言"
+      ],
+      "displayNameVi": "Tiến Ngôn",
+      "evidenceRef": "tactics.json#355",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:49b4a4d0d707898207aad3ac",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dương Đông Kích Tây",
+        "Thanh Đông Kích Tây",
+        "声东击西",
+        "聲東擊西"
+      ],
+      "displayNameVi": "Dương Đông Kích Tây",
+      "evidenceRef": "tactics.json#336",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4d427f85accb9d13b0f5a956",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phạt Mộc Tinh Thông",
+        "Tinh Thông Đốn Gỗ",
+        "伐木精通"
+      ],
+      "displayNameVi": "Tinh Thông Đốn Gỗ",
+      "evidenceRef": "tactics.json#311",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4dc48c57c11c66226a71a82a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Làm Loạn-Sơ",
+        "初級擾亂"
+      ],
+      "displayNameVi": "Làm Loạn-Sơ",
+      "evidenceRef": "tactics.json#396",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4f24a3666151684cb4bc9039",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tử Chiến Bất Thoái",
+        "Tử Chiến Không Lui",
+        "死战不退",
+        "死戰不退"
+      ],
+      "displayNameVi": "Tử Chiến Không Lui",
+      "evidenceRef": "tactics.json#366",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:4f9d344620c363a0d936c5e9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chủng Điền Tinh Thông",
+        "Tinh Thông Làm Ruộng",
+        "种田精通",
+        "種田精通"
+      ],
+      "displayNameVi": "Tinh Thông Làm Ruộng",
+      "evidenceRef": "tactics.json#245",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:51269a47f01e813779dc97e2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ngoan Thiết Sinh Huy",
+        "頑鐵生輝",
+        "顽铁生辉"
+      ],
+      "displayNameVi": "Ngoan Thiết Sinh Huy",
+      "evidenceRef": "tactics.json#302",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:553e41706250d197231e7346",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tài Khí Quá Nhân",
+        "才器过人",
+        "才器過人"
+      ],
+      "displayNameVi": "Tài Khí Quá Nhân",
+      "evidenceRef": "tactics.json#326",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:57d588dea2e227c544fb9c61",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bụi Đất Mù Trời",
+        "Phi Sa Tẩu Thạch",
+        "飛沙走石",
+        "飞沙走石"
+      ],
+      "displayNameVi": "Bụi Đất Mù Trời",
+      "evidenceRef": "tactics.json#312",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:596cdfec96e184921eea0356",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phụng Linh Bình Lỗ",
+        "Phụng Lệnh Bình Lỗ",
+        "奉令平虏",
+        "奉令平虜"
+      ],
+      "displayNameVi": "Phụng Lệnh Bình Lỗ",
+      "evidenceRef": "tactics.json#320",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:59bbb03f06502f38ffdefb92",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trấn Áp Khăn Vàng",
+        "鎮壓黃巾"
+      ],
+      "displayNameVi": "Trấn Áp Khăn Vàng",
+      "evidenceRef": "tactics.json#419",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:59d3933189f528df5179e6dd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ngũ Cốc Phong Đăng",
+        "五穀豐登",
+        "五谷丰登"
+      ],
+      "displayNameVi": "Ngũ Cốc Phong Đăng",
+      "evidenceRef": "tactics.json#304",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:59fcde06de547b68f1397a4e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Biến Đá Thành Vàng",
+        "Tụ Thạch Thành Kim",
+        "聚石成金"
+      ],
+      "displayNameVi": "Biến Đá Thành Vàng",
+      "evidenceRef": "tactics.json#368",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5c246ca3d11aa7cce65f7ff3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bao Trát",
+        "Băng Bó",
+        "包扎",
+        "包紮"
+      ],
+      "displayNameVi": "Băng Bó",
+      "evidenceRef": "tactics.json#236",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5d0b8206ab03bcf4516335af",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bách Luyện Thành Cương",
+        "Dày Công Tôi Luyện",
+        "百炼成钢",
+        "百鍊成鋼"
+      ],
+      "displayNameVi": "Dày Công Tôi Luyện",
+      "evidenceRef": "tactics.json#233",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5d83484764d07504a04e4003",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoàn Kích",
+        "Phản Kích",
+        "还击",
+        "還擊"
+      ],
+      "displayNameVi": "Phản Kích",
+      "evidenceRef": "tactics.json#270",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5e4844324f060f3841d45ba7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chi Diệp Phù Tô",
+        "枝葉扶蘇"
+      ],
+      "displayNameVi": "Chi Diệp Phù Tô",
+      "evidenceRef": "tactics.json#388",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5e4fb87f148fba0ea050c5bd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Huy Quân Kết Trận",
+        "麾军结阵",
+        "麾軍結陣"
+      ],
+      "displayNameVi": "Huy Quân Kết Trận",
+      "evidenceRef": "tactics.json#276",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5f0c5f320c6f2a136084d864",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cẩn Thận Tỉ Mỉ",
+        "Tế Trí Nhập Vy",
+        "細緻入微",
+        "细致入微"
+      ],
+      "displayNameVi": "Cẩn Thận Tỉ Mỉ",
+      "evidenceRef": "tactics.json#330",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5fa9d1de92f362717b30309e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Vạn Quân Đoạt Suý",
+        "Vạn Quân Đoạt Sư",
+        "万军夺帅",
+        "萬軍奪帥"
+      ],
+      "displayNameVi": "Vạn Quân Đoạt Sư",
+      "evidenceRef": "tactics.json#374",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:5fe91452c2b98088630100f9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Liệu Sự Như Thần",
+        "料事如神"
+      ],
+      "displayNameVi": "Liệu Sự Như Thần",
+      "evidenceRef": "tactics.json#293",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:60268bfc2722a6dadd1475d1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nòng Cốt Quốc Gia",
+        "Quốc Chi Trinh Cán",
+        "国之桢榦",
+        "國之楨榦"
+      ],
+      "displayNameVi": "Nòng Cốt Quốc Gia",
+      "evidenceRef": "tactics.json#321",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:62a737a17a1763ad9e6f031f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cao Chiêm Viễn Chúc",
+        "高瞻远瞩",
+        "高瞻遠矚"
+      ],
+      "displayNameVi": "Cao Chiêm Viễn Chúc",
+      "evidenceRef": "tactics.json#239",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6315aaf46bc0e3fac76aebf6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Áp Chế-Sơ",
+        "初級壓制"
+      ],
+      "displayNameVi": "Áp Chế-Sơ",
+      "evidenceRef": "tactics.json#384",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:65434899eb58420e4ea140b6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Thượng Sứ",
+        "Thần Thượng Sử",
+        "神上使"
+      ],
+      "displayNameVi": "Thần Thượng Sứ",
+      "evidenceRef": "tactics.json#334",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6617c9e8bf68e340e4bf64b6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đi Đầu Cùng Chiến",
+        "Đồng Chiến Thân Tiên",
+        "同战身先",
+        "同戰身先"
+      ],
+      "displayNameVi": "Đi Đầu Cùng Chiến",
+      "evidenceRef": "tactics.json#262",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:666282dc23fb7c5e9e8dcc26",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bác Văn",
+        "Uyên Bác",
+        "博聞",
+        "博闻"
+      ],
+      "displayNameVi": "Uyên Bác",
+      "evidenceRef": "tactics.json#232",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:669d103a396ade51c1a7cd8e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thái Thạch Tinh Thông",
+        "Tinh Thông Nhặt Đá",
+        "採石精通",
+        "采石精通"
+      ],
+      "displayNameVi": "Tinh Thông Nhặt Đá",
+      "evidenceRef": "tactics.json#332",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:673a1fe9eef504c546fc0198",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tỏa Chí Nộ Tập",
+        "挫志怒袭",
+        "挫志怒襲"
+      ],
+      "displayNameVi": "Tỏa Chí Nộ Tập",
+      "evidenceRef": "tactics.json#357",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:68787faefdb2664edf6d4b5b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ân Hậu Đắc Chúng",
+        "恩厚得眾"
+      ],
+      "displayNameVi": "Ân Hậu Đắc Chúng",
+      "evidenceRef": "tactics.json#383",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:68fb79377fe8ea1d35ce7dc2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Lính Thanh Châu",
+        "精·青州兵"
+      ],
+      "displayNameVi": "Tinh • Lính Thanh Châu",
+      "evidenceRef": "tactics.json#410",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6a43e8352f2acc88c8f0ff40",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nước Ngập Thất Quân",
+        "Thủy Yêm Thất Quân",
+        "水淹七军",
+        "水淹七軍"
+      ],
+      "displayNameVi": "Nước Ngập Thất Quân",
+      "evidenceRef": "tactics.json#352",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6c92dcec5b0f8e446eb92539",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Bạch Nhị Binh",
+        "Tinh • Bạch Nhị Binh",
+        "精·白毦兵",
+        "轉·白毦兵"
+      ],
+      "displayNameVi": "Tinh • Bạch Nhị Binh",
+      "evidenceRef": "tactics.json#403",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:6ede3780d1cdbd1bb448a3fd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bạo Liễm Tứ Phương",
+        "暴敛四方",
+        "暴斂四方"
+      ],
+      "displayNameVi": "Bạo Liễm Tứ Phương",
+      "evidenceRef": "tactics.json#235",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:72772ea16eb2562c0970821e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kết Nghĩa Vườn Đào",
+        "Đào Viên Kết Nghĩa",
+        "桃园结义",
+        "桃園結義"
+      ],
+      "displayNameVi": "Kết Nghĩa Vườn Đào",
+      "evidenceRef": "tactics.json#252",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:73f8f8dde6b36c57cc953bc0",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dưỡng Mã Hữu Đạo",
+        "养马有道",
+        "養馬有道"
+      ],
+      "displayNameVi": "Dưỡng Mã Hữu Đạo",
+      "evidenceRef": "tactics.json#264",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:74ad65f08097c26e9ca34131",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Vận",
+        "天運"
+      ],
+      "displayNameVi": "Thiên Vận",
+      "evidenceRef": "tactics.json#399",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:74b055e6becf282df8b1b18d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phò Nguy Dẹp Loạn",
+        "Phù Nguy Định Khuynh",
+        "扶危定倾",
+        "扶危定傾"
+      ],
+      "displayNameVi": "Phò Nguy Dẹp Loạn",
+      "evidenceRef": "tactics.json#317",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:778ebf4b87ee358d5a21cb35",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hăng Hái",
+        "Phấn Phát",
+        "奋发",
+        "奮發"
+      ],
+      "displayNameVi": "Hăng Hái",
+      "evidenceRef": "tactics.json#310",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:7cb54705117a49fae217dff9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chốt Đuôi",
+        "Điện Hậu",
+        "殿后",
+        "殿後"
+      ],
+      "displayNameVi": "Chốt Đuôi",
+      "evidenceRef": "tactics.json#256",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:807f5c3b24ad16d74b750222",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hỏa Công",
+        "火攻"
+      ],
+      "displayNameVi": "Hỏa Công",
+      "evidenceRef": "tactics.json#269",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8098358003e2e2dfb18d34a4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phúc Bối Thâu Địch",
+        "Phúc Bối Thụ Địch",
+        "腹背受敌",
+        "腹背受敵"
+      ],
+      "displayNameVi": "Phúc Bối Thụ Địch",
+      "evidenceRef": "tactics.json#318",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8165a2638fc82cb64d862b53",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hổ Hầu",
+        "虎侯"
+      ],
+      "displayNameVi": "Hổ Hầu",
+      "evidenceRef": "tactics.json#268",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8189f3fbea3b9c4faa880ee6",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thừa Thiên Tĩnh Thế",
+        "承天靖世"
+      ],
+      "displayNameVi": "Thừa Thiên Tĩnh Thế",
+      "evidenceRef": "tactics.json#347",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:81d51f4185adb786eb29c4cc",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Nhanh Trí Động Não",
+        "精·靈機一動"
+      ],
+      "displayNameVi": "Tinh • Nhanh Trí Động Não",
+      "evidenceRef": "tactics.json#411",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:82c4194633d9c4eb1bed945e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Che Giấu Tâm Tư",
+        "Thao Tâm Hoặc Địch",
+        "韜心惑敵",
+        "韬心惑敌"
+      ],
+      "displayNameVi": "Che Giấu Tâm Tư",
+      "evidenceRef": "tactics.json#337",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:878d4271e9b6f56c80d530c8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trân Vu Chí Thiện",
+        "Trăn Vu Chí Thiện",
+        "臻于至善",
+        "臻於至善"
+      ],
+      "displayNameVi": "Trân Vu Chí Thiện",
+      "evidenceRef": "tactics.json#361",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8793785127b9a660dd2ed159",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bế Cảnh Tự An",
+        "閉境自安"
+      ],
+      "displayNameVi": "Bế Cảnh Tự An",
+      "evidenceRef": "tactics.json#385",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:88ed29dfb48cbddc0d3a6fc8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nghi Thành",
+        "Nghi Thành Chi Chí",
+        "宜城之志"
+      ],
+      "displayNameVi": "Nghi Thành",
+      "evidenceRef": "tactics.json#301",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8b693896cc0ecfa938baf3de",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khinh Dũng Phi Yến",
+        "輕勇飛燕",
+        "轻勇飞燕"
+      ],
+      "displayNameVi": "Khinh Dũng Phi Yến",
+      "evidenceRef": "tactics.json#283",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8dfcbf72ff43a1aefcd1ad45",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Uyên Nhiên Nan Trắc",
+        "Vực Sâu Khó Dò",
+        "淵然難測",
+        "渊然难测"
+      ],
+      "displayNameVi": "Vực Sâu Khó Dò",
+      "evidenceRef": "tactics.json#373",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8f2e69e2c60e7b42ba8e4d6f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Áp Chế",
+        "压制",
+        "壓制"
+      ],
+      "displayNameVi": "Áp Chế",
+      "evidenceRef": "tactics.json#231",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:8fc5a54540f30218399a1ba1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Định Quân An Dân",
+        "定軍安民"
+      ],
+      "displayNameVi": "Định Quân An Dân",
+      "evidenceRef": "tactics.json#391",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:91c8281f303bed5f4427b9d4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tự Dũ",
+        "Tự Lành",
+        "自愈",
+        "自癒"
+      ],
+      "displayNameVi": "Tự Lành",
+      "evidenceRef": "tactics.json#367",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:93a1b0156fcb006444c0e107",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phi Hùng Quân",
+        "飛熊軍",
+        "飞熊军"
+      ],
+      "displayNameVi": "Phi Hùng Quân",
+      "evidenceRef": "tactics.json#219",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:943c48764561ba03aeccd2ab",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Biệt Cụ Tượng Tâm",
+        "Tư Duy Sáng Tạo",
+        "別具匠心",
+        "别具匠心"
+      ],
+      "displayNameVi": "Tư Duy Sáng Tạo",
+      "evidenceRef": "tactics.json#238",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:94ad2fb0755a0930b5775c67",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tàng Khí Đãi Thì",
+        "Tàng Khí Đợi Thời",
+        "藏器待时",
+        "藏器待時"
+      ],
+      "displayNameVi": "Tàng Khí Đợi Thời",
+      "evidenceRef": "tactics.json#328",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:97e09b9f90288e6052af1956",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khô Mộc Phùng Xuân",
+        "枯木逢春"
+      ],
+      "displayNameVi": "Khô Mộc Phùng Xuân",
+      "evidenceRef": "tactics.json#284",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:98547f70432553e6eaf4334f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lạc Lôi",
+        "落雷"
+      ],
+      "displayNameVi": "Lạc Lôi",
+      "evidenceRef": "tactics.json#291",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:98790e0b18fa7e61ed2794a5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phấn Tiến",
+        "奮進"
+      ],
+      "displayNameVi": "Phấn Tiến",
+      "evidenceRef": "tactics.json#398",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9c5c145796c38f64c1c47925",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Diệu Thư Minh Thạch",
+        "妙书铭石",
+        "妙書銘石"
+      ],
+      "displayNameVi": "Diệu Thư Minh Thạch",
+      "evidenceRef": "tactics.json#257",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9c66b75cfa3caae5ebe31c74",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cấp Tốc",
+        "疾速"
+      ],
+      "displayNameVi": "Cấp Tốc",
+      "evidenceRef": "tactics.json#387",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9d318dfc0904a9feb10e832d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tả Hữu Khai Cung",
+        "左右开弓",
+        "左右開弓"
+      ],
+      "displayNameVi": "Tả Hữu Khai Cung",
+      "evidenceRef": "tactics.json#325",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9da6e7dd57847ea685ef0ba9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Oạt Khoáng Tinh Thông",
+        "Tinh Thông Đào Mỏ",
+        "挖矿精通",
+        "挖礦精通"
+      ],
+      "displayNameVi": "Tinh Thông Đào Mỏ",
+      "evidenceRef": "tactics.json#306",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:9f2f0e38d21dea490c188c83",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Giản Chính",
+        "简政",
+        "簡政"
+      ],
+      "displayNameVi": "Giản Chính",
+      "evidenceRef": "tactics.json#266",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a036b3784b0339b25c6560f9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phong Mang Tất Lộ",
+        "Thể Hiện Tài Năng",
+        "鋒芒畢露",
+        "锋芒毕露"
+      ],
+      "displayNameVi": "Thể Hiện Tài Năng",
+      "evidenceRef": "tactics.json#315",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a1552800edbdc977eb85b934",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thâu Thiền Xưng Đế",
+        "Thụ Thiền Xưng Đế",
+        "受禅称帝",
+        "受禪稱帝"
+      ],
+      "displayNameVi": "Thụ Thiền Xưng Đế",
+      "evidenceRef": "tactics.json#338",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a22908999090953fcb663e88",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Giáng Hỏa Vũ",
+        "Thiên Hàng Hỏa Vũ",
+        "天降火雨"
+      ],
+      "displayNameVi": "Thiên Giáng Hỏa Vũ",
+      "evidenceRef": "tactics.json#342",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a39ede8a528953cd0d1e0cc3",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chỉnh Quân Kinh Võ",
+        "Chỉnh Đốn Quân Ngũ",
+        "整军经武",
+        "整軍經武"
+      ],
+      "displayNameVi": "Chỉnh Đốn Quân Ngũ",
+      "evidenceRef": "tactics.json#243",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a3f748f4ecea6e88356edc35",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Xuất Kỳ Bất Ý",
+        "出其不意"
+      ],
+      "displayNameVi": "Xuất Kỳ Bất Ý",
+      "evidenceRef": "tactics.json#380",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a608c3a5e036b6527224fa05",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tịnh Hoá",
+        "Tịnh Hóa",
+        "净化",
+        "淨化"
+      ],
+      "displayNameVi": "Tịnh Hóa",
+      "evidenceRef": "tactics.json#356",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a6609a2cdff1f2378daa1b07",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Uống Hận Di Trừu",
+        "飲恨遺仇"
+      ],
+      "displayNameVi": "Uống Hận Di Trừu",
+      "evidenceRef": "tactics.json#421",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a68bbe4dee7e33f0e7158d0a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thi Chí Bất Di",
+        "Thỉ Chí Bất Di",
+        "矢志不移"
+      ],
+      "displayNameVi": "Thi Chí Bất Di",
+      "evidenceRef": "tactics.json#339",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a69cfe70e18ae6b0a9f5edad",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Dưỡng Binh Thiên Nhật",
+        "养兵千日",
+        "養兵千日"
+      ],
+      "displayNameVi": "Dưỡng Binh Thiên Nhật",
+      "evidenceRef": "tactics.json#263",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a75ed7a128577be6ac023ee8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thả Lính Cướp Đoạt",
+        "Túng Binh Kiếp Lược",
+        "縱兵劫掠",
+        "纵兵劫掠"
+      ],
+      "displayNameVi": "Thả Lính Cướp Đoạt",
+      "evidenceRef": "tactics.json#369",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a7ba32e7df57b22700a2be5f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quân Thần Chi Tử",
+        "Võ Thánh Chi Tử",
+        "武圣之子",
+        "武聖之子"
+      ],
+      "displayNameVi": "Quân Thần Chi Tử",
+      "evidenceRef": "tactics.json#376",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:a80a2f4b769ecf41e13ddedd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Sát Thương Thêm",
+        "Truy Thương",
+        "追伤",
+        "追傷"
+      ],
+      "displayNameVi": "Sát Thương Thêm",
+      "evidenceRef": "tactics.json#365",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ad37ddccadd94816f5621930",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Án Đồ Tác Kí",
+        "Án Đồ Tác Ký",
+        "按图索骥",
+        "按圖索驥"
+      ],
+      "displayNameVi": "Án Đồ Tác Kí",
+      "evidenceRef": "tactics.json#230",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:adfde3eafa878108a92708cd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phấn Đột",
+        "奋突",
+        "奮突"
+      ],
+      "displayNameVi": "Phấn Đột",
+      "evidenceRef": "tactics.json#309",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b06f9396e73edd378a03a44a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Uy Khiếu Trận",
+        "天威啸阵",
+        "天威嘯陣"
+      ],
+      "displayNameVi": "Thiên Uy Khiếu Trận",
+      "evidenceRef": "tactics.json#344",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b2bdd2f342ea1a4fc3639c9d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Phát Hiện",
+        "Thức Phá",
+        "識破",
+        "识破"
+      ],
+      "displayNameVi": "Phát Hiện",
+      "evidenceRef": "tactics.json#349",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b3cd10a29847569469e5e93f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thủ Khởi Đao Lạc",
+        "手起刀落"
+      ],
+      "displayNameVi": "Thủ Khởi Đao Lạc",
+      "evidenceRef": "tactics.json#345",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b7d4b7255f757a8f0902d7f8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khiêm Nhường",
+        "Khiêm Nhượng",
+        "謙讓",
+        "谦让"
+      ],
+      "displayNameVi": "Khiêm Nhường",
+      "evidenceRef": "tactics.json#280",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b7f2206e723db7d06135ad61",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Xá Thân Cứu Chủ",
+        "Xả Thân Cứu Chủ",
+        "捨身救主",
+        "舍身救主"
+      ],
+      "displayNameVi": "Xả Thân Cứu Chủ",
+      "evidenceRef": "tactics.json#377",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:b8449ce87235a8eb62fe37f0",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tọa Thủ Cô Thành",
+        "坐守孤城"
+      ],
+      "displayNameVi": "Tọa Thủ Cô Thành",
+      "evidenceRef": "tactics.json#359",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:bbe254e34b955856d16fdb57",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Tây Lương Thiết Kỵ",
+        "精·西涼鐵騎"
+      ],
+      "displayNameVi": "Tinh • Tây Lương Thiết Kỵ",
+      "evidenceRef": "tactics.json#415",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:be3e74cf50064710dfec1cee",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cơ Lược Túng Hoành",
+        "Mưu Lược Tung Hoành",
+        "机略纵横",
+        "機略縱橫"
+      ],
+      "displayNameVi": "Mưu Lược Tung Hoành",
+      "evidenceRef": "tactics.json#247",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c1d106c3db494e9004ab81f5",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trí Định",
+        "智定"
+      ],
+      "displayNameVi": "Trí Định",
+      "evidenceRef": "tactics.json#420",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c5145b23758d79712428f45b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Duy Nội Thiện Quyền",
+        "帷內擅權",
+        "帷内擅权"
+      ],
+      "displayNameVi": "Duy Nội Thiện Quyền",
+      "evidenceRef": "tactics.json#265",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:c8179d83f1ea1063d85761a9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khu Tán",
+        "Xua Đuổi",
+        "驅散",
+        "驱散"
+      ],
+      "displayNameVi": "Xua Đuổi",
+      "evidenceRef": "tactics.json#285",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ca381fead6c164d4ec719b02",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Lỗ Mãng",
+        "魯莽",
+        "鲁莽"
+      ],
+      "displayNameVi": "Lỗ Mãng",
+      "evidenceRef": "tactics.json#294",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:cad469ad9000118be0dd1b5c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Đại Kích Sĩ",
+        "精·大戟士"
+      ],
+      "displayNameVi": "Tinh • Đại Kích Sĩ",
+      "evidenceRef": "tactics.json#404",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:cf17785dc6d74e9c56fccb23",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thủ Chính Xuất Phong",
+        "守正出鋒"
+      ],
+      "displayNameVi": "Thủ Chính Xuất Phong",
+      "evidenceRef": "tactics.json#400",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d234d3634a334c5f7904a56c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Định Quân Trảm Tướng",
+        "定军斩将",
+        "定軍斬將"
+      ],
+      "displayNameVi": "Định Quân Trảm Tướng",
+      "evidenceRef": "tactics.json#258",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d347e7e1754a64110e546253",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Hãm Trận Doanh",
+        "精·陷陣營"
+      ],
+      "displayNameVi": "Tinh • Hãm Trận Doanh",
+      "evidenceRef": "tactics.json#406",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d44fe1178b8bf6ddc3271b5e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thiên Lý Trì Viện",
+        "千里馳援",
+        "千里驰援"
+      ],
+      "displayNameVi": "Thiên Lý Trì Viện",
+      "evidenceRef": "tactics.json#343",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:d6e7793dedc44c525e5695e1",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thần Thương Thiệt Chiến",
+        "唇枪舌战",
+        "唇槍舌戰"
+      ],
+      "displayNameVi": "Thần Thương Thiệt Chiến",
+      "evidenceRef": "tactics.json#335",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:db8d088b75f31374825d7fdd",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Khiên Liên",
+        "Liên Luỵ",
+        "牵连",
+        "牽連"
+      ],
+      "displayNameVi": "Liên Luỵ",
+      "evidenceRef": "tactics.json#281",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:df767e2ae7f1c777bf6263de",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nghệ Nhân",
+        "Xảo Tượng",
+        "巧匠"
+      ],
+      "displayNameVi": "Nghệ Nhân",
+      "evidenceRef": "tactics.json#378",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e20ef4b48168ffd9905edc4c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Quỷ Thần Chi Nữ",
+        "鬼神之女"
+      ],
+      "displayNameVi": "Quỷ Thần Chi Nữ",
+      "evidenceRef": "tactics.json#322",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e2ae03d3ffe225c8777bb4ef",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kiến Cơ Hành Sự",
+        "Tùy Cơ Ứng Biến",
+        "見機行事",
+        "见机行事"
+      ],
+      "displayNameVi": "Tùy Cơ Ứng Biến",
+      "evidenceRef": "tactics.json#286",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e3eacf364a7f12b3b597a7c7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hộ Vệ",
+        "護衛"
+      ],
+      "displayNameVi": "Hộ Vệ",
+      "evidenceRef": "tactics.json#395",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e45bbcc6e8f3e1fe9078eb03",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hậu Phát Chế Nhân",
+        "后发制人",
+        "後發制人"
+      ],
+      "displayNameVi": "Hậu Phát Chế Nhân",
+      "evidenceRef": "tactics.json#267",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e51a42b4671c4bcfa7221466",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Li Nguyệt",
+        "Ly Nguyệt",
+        "离月",
+        "離月"
+      ],
+      "displayNameVi": "Li Nguyệt",
+      "evidenceRef": "tactics.json#297",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e73f27a55a4da1f97d053dbf",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Sơ Trang Chiến Kích",
+        "Sơ Trang Trịch Kích",
+        "梳妆掷戟",
+        "梳妝擲戟"
+      ],
+      "displayNameVi": "Sơ Trang Chiến Kích",
+      "evidenceRef": "tactics.json#324",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e7f1acbe26f08d8429b8c869",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ám Tiễn Nan Phòng",
+        "暗箭难防",
+        "暗箭難防"
+      ],
+      "displayNameVi": "Ám Tiễn Nan Phòng",
+      "evidenceRef": "tactics.json#228",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e7f9be60c74ebe2f9a8470bf",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Phi Hùng Quân",
+        "Tinh • Phi Hùng Quân",
+        "精·飛熊軍",
+        "轉·飛熊軍"
+      ],
+      "displayNameVi": "Tinh • Phi Hùng Quân",
+      "evidenceRef": "tactics.json#412",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:e8aacdf8cca71d75996800b9",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tranh Phân",
+        "Tranh Phân Đoạt Miểu",
+        "争分夺秒",
+        "爭分奪秒"
+      ],
+      "displayNameVi": "Tranh Phân",
+      "evidenceRef": "tactics.json#362",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ea91dff25ced2c05d48c630e",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tiên Đăng Tử Sĩ",
+        "Tử Sĩ Tiên Phong",
+        "先登死士"
+      ],
+      "displayNameVi": "Tử Sĩ Tiên Phong",
+      "evidenceRef": "tactics.json#353",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:eb7c0d22910f114edefe5156",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tiên Tri Nhận Chủ",
+        "識主先知"
+      ],
+      "displayNameVi": "Tiên Tri Nhận Chủ",
+      "evidenceRef": "tactics.json#401",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ec5128852a9797df03eabeae",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đồ Kỷ Thượng Nhục",
+        "屠几上肉"
+      ],
+      "displayNameVi": "Đồ Kỷ Thượng Nhục",
+      "evidenceRef": "tactics.json#259",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ecdf63db96475081b39b93e4",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tinh • Bạch Mã Nghĩa Tòng",
+        "精·白馬義從"
+      ],
+      "displayNameVi": "Tinh • Bạch Mã Nghĩa Tòng",
+      "evidenceRef": "tactics.json#402",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:efe8d2cb6e5f1225ccaab775",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cổ Vũ-Sơ",
+        "初級鼓舞"
+      ],
+      "displayNameVi": "Cổ Vũ-Sơ",
+      "evidenceRef": "tactics.json#390",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f0c95ee35a3217080c92688f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Tâm Sự",
+        "Đàm Tâm",
+        "談心",
+        "谈心"
+      ],
+      "displayNameVi": "Tâm Sự",
+      "evidenceRef": "tactics.json#250",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f196ec6927f05ace73e05bef",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Cấp Cứu-Sơ",
+        "初級急救"
+      ],
+      "displayNameVi": "Cấp Cứu-Sơ",
+      "evidenceRef": "tactics.json#386",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f26288accc59830e22a77dbf",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoành Tảo",
+        "Quét Sạch",
+        "横扫",
+        "橫掃"
+      ],
+      "displayNameVi": "Quét Sạch",
+      "evidenceRef": "tactics.json#271",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f29c842a31ef599c05e31f3b",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ngọc Cơ Hoa Mạo",
+        "玉肌花貌"
+      ],
+      "displayNameVi": "Ngọc Cơ Hoa Mạo",
+      "evidenceRef": "tactics.json#303",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f3d374e3208703b02d9b67b2",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kế Định Mưu Quyết",
+        "計定謀決",
+        "计定谋决"
+      ],
+      "displayNameVi": "Kế Định Mưu Quyết",
+      "evidenceRef": "tactics.json#277",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f6cffde409b174be09e92b3c",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Thích Thương",
+        "Đâm Thương",
+        "刺伤",
+        "刺傷"
+      ],
+      "displayNameVi": "Đâm Thương",
+      "evidenceRef": "tactics.json#340",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f756c88c196fc4c904f77d7d",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Bất Nhục Sứ Mệnh",
+        "Bất Nhục Sử Mệnh",
+        "不辱使命"
+      ],
+      "displayNameVi": "Bất Nhục Sứ Mệnh",
+      "evidenceRef": "tactics.json#237",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f8865d9e3cb63cf7b2d2ade7",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Đấu Trí",
+        "斗智",
+        "鬥智"
+      ],
+      "displayNameVi": "Đấu Trí",
+      "evidenceRef": "tactics.json#253",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:f8a00bbc7edf17b1d3432a2a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Hoa Thuần Khiết",
+        "Thuần Khiết Chi Hoa",
+        "純潔之花",
+        "纯洁之花"
+      ],
+      "displayNameVi": "Hoa Thuần Khiết",
+      "evidenceRef": "tactics.json#348",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fa595df72adc3093b14ab6e8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Kiêu Kiện Thần Hành",
+        "驍健神行",
+        "骁健神行"
+      ],
+      "displayNameVi": "Kiêu Kiện Thần Hành",
+      "evidenceRef": "tactics.json#289",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fb99f54f8b2b48734d72d6de",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Ám Triều Dũng Động",
+        "Ám Triều Hung Dũng",
+        "暗潮汹涌",
+        "暗潮洶湧",
+        "暗潮涌动",
+        "暗潮湧動"
+      ],
+      "displayNameVi": "Ám Triều Dũng Động",
+      "evidenceRef": "tactics.json#229",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fb9bba79d6c827937c11a85a",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chuyển • Tử Sĩ Tiên Phong",
+        "Tinh • Tử Sĩ Tiên Phong",
+        "精·先登死士",
+        "轉·先登死士"
+      ],
+      "displayNameVi": "Tinh • Tử Sĩ Tiên Phong",
+      "evidenceRef": "tactics.json#416",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:fe45caa905732e8e31051e1f",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Trá Hàng",
+        "詐降",
+        "诈降"
+      ],
+      "displayNameVi": "Trá Hàng",
+      "evidenceRef": "tactics.json#360",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:feaf0712702605ee7bd54bee",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Nhất Cử Tiêm Diệt",
+        "一举歼灭",
+        "一舉殲滅"
+      ],
+      "displayNameVi": "Nhất Cử Tiêm Diệt",
+      "evidenceRef": "tactics.json#305",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ff07928c2cad71c6bcc903c8",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Chính Vận",
+        "政運"
+      ],
+      "displayNameVi": "Chính Vận",
+      "evidenceRef": "tactics.json#389",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ff5913dd2789b6f3fceb7e55",
+      "variant": null
+    },
+    {
+      "aliases": [
+        "Huệ Chất Lan Tâm",
+        "蕙質蘭心",
+        "蕙质兰心"
+      ],
+      "displayNameVi": "Huệ Chất Lan Tâm",
+      "evidenceRef": "tactics.json#273",
+      "kind": "tactic",
+      "reviewStatus": "reviewed",
+      "stableId": "tactic:ff63148468a238652e73b7c3",
+      "variant": null
     }
   ],
   "evidenceInputs": {
-    "books-dict.json": "sha256:c863effdb9be5fec035f0bee03350459ddd2d3d25981693a809b9a81a849579d",
-    "heroes-dict.json": "sha256:8c99a159c144000897025b98590617bfd9735d543ac4d458821dbc3e11029813",
-    "tactics.json": "sha256:f0e9be17bd1f36e8aba1e1ad3217504c42395aca57efdb3b2a1a7ee967e29834"
+    "books-dict.json": "sha256:128cdfc1f2ef8b677b1c8f266e95975a32a31d5357755a1171971201f33cda72",
+    "heroes-dict.json": "sha256:501d8a9e59a3d196a55f26dbbd41934ff327e0c633a9cb7cccdf48ead1c5fa7f",
+    "tactics.json": "sha256:3aab892ed6d349d891c6b15088d2d63c259caa28b1aec51e0f082b13b46c4bb4"
   },
-  "mappingHash": "sha256:e03ca0669accef0ecc24df011b304c8525227503604ec37fbf17b57909e0f4e2",
+  "mappingHash": "sha256:b37172009e172d9c60169f84ac52c15eff462cfa9e0df97c9b75bbc78f609d3c",
   "schemaVersion": 1,
   "sourceAliasMethod": "Exact source raw alias; macOS Foundation Traditional-Simplified transform matched one reviewed curated Chinese alias without collision.",
   "sourceInventoryHash": "sha256:591857173405450f9972faad1b6ce3b1abbd9641608a8c1a8ea8e843fba15ff5"

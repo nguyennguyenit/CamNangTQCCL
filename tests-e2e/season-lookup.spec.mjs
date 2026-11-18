@@ -29,24 +29,29 @@ test.beforeEach(async ({page}) => {
 test('real scenario-only scope remains reference and preserves Khai hoang', async ({page}) => {
   await page.goto('/cung-ton/');
   const season = page.locator('#section-coexist .reference-season-field select');
-  await expect(season.locator('option')).toHaveText(['OG · Binh Diễn Xuân Thu', 'PK-S26 · Anh Hùng Mệnh Thế']);
+  await expect(season.locator('option')).toHaveText(['PK-S27 · Hán Diễm Trường Minh', 'PK-S26 · Anh Hùng Mệnh Thế', 'OG · Binh Diễn Xuân Thu']);
   await expect(page.locator('#section-coexist select')).toHaveCount(1);
   await expect(page.locator('#season-scenario, #season-ruleset')).toHaveCount(0);
   // Không có `scenario` trong URL: mặc định mùa mới nhất, ghi bằng replaceState.
-  await expect.poll(() => page.evaluate(() => new URL(location.href).searchParams.get('scenario'))).toBe('binh-dien-xuan-thu');
-  await expect(season).toHaveValue('binh-dien-xuan-thu');
+  await expect.poll(() => page.evaluate(() => new URL(location.href).searchParams.get('scenario'))).toBe('han-diem-truong-minh');
+  await expect(season).toHaveValue('han-diem-truong-minh');
   await expect(page.locator('#section-coexist .reference-season-status')).toBeVisible();
+  // Bảng 11 cột: mỗi tướng một dòng Trang bị, mỗi đội một dòng Thẻ Kỳ Lược ở chân thẻ.
+  await expect(page.locator('#section-coexist .coexist-team-card .coexist-hero-equipment')).toHaveCount(15);
+  await expect(page.locator('#section-coexist .coexist-team-card > .reference-card-foot .coexist-card-strategy')).toHaveCount(5);
+  await expect(page.locator('#section-coexist .coexist-card-strategy').first()).toContainText('Thẻ Kỳ Lược: ');
   await expect(page.locator('#season-summary')).toBeHidden();
   await expect(page.locator('#section-coexist input[type="search"], #section-coexist .clear-btn, #section-coexist .fchip, #section-coexist > .scope-note')).toHaveCount(0);
   await expect(page.locator('#section-coexist')).not.toContainText('Chưa xác định kịch bản');
   // Badge cấp đội (`.reference-tier`, vd. "19C") là dữ liệu nguồn; không có điểm/tier mùa.
   await expect(page.locator('#section-coexist .config-score, #section-coexist .badge.tier:not(.reference-tier)')).toHaveCount(0);
   await expect(page.locator('#section-coexist .coexist-team-card').first()).toBeAttached();
-  for (const scenarioId of ['anh-hung-menh-the','binh-dien-xuan-thu']) {
+  for (const scenarioId of ['anh-hung-menh-the','binh-dien-xuan-thu','han-diem-truong-minh']) {
     await season.selectOption(scenarioId);
     await expect.poll(() => page.evaluate(() => new URL(location.href).searchParams.get('scenario'))).toBe(scenarioId);
     expect(await page.evaluate(() => new URL(location.href).searchParams.has('ruleset'))).toBe(false);
-    await expect(page.locator('#section-coexist .reference-season-status')).toBeVisible({visible: scenarioId === 'binh-dien-xuan-thu'});
+    await expect(page.locator('#section-coexist .reference-season-status')).toBeVisible({visible: scenarioId === 'han-diem-truong-minh'});
+    await expect(page.locator('#section-coexist .coexist-hero-equipment')).toHaveCount(scenarioId === 'han-diem-truong-minh' ? 15 : 0);
     // Chỉ nhóm đang xem được dựng: 5 đội của một nhóm, không phải cả 5 nhóm của kịch bản.
     await expect(page.locator('#section-coexist .coexist-group-chip')).toHaveCount(5);
     await expect(page.locator('#section-coexist .coexist-team-card')).toHaveCount(5);
@@ -98,7 +103,7 @@ async function controlledBundle(page, data = null) {
       exchangeConditionVi: null, acquiredFromVi: [], inheritedFromIds: [], formerIds: [], conflictsVi: null, effectZhSource: null,
     },
   }));
-  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [] };
+  const lookupCatalog = { schemaVersion: 1, advisors: [], buildings: [], equipment: [], specials: [], troopMods: [], qilueStrategies: [], qilueCards: [] };
   const lookupPayloads = {
     'heroes-dict.json': JSON.stringify(data['heroes-dict']),
     'tactics.json': JSON.stringify(data.tactics),
@@ -363,7 +368,7 @@ test('coexist rows follow the season projection and the chosen group survives UR
   const expected = [...projected.coexist.applicable, ...projected.coexist.scenarioReference, ...projected.coexist.unknown];
   const labels = new Map(data['season-registry'].filter(item => item.reviewStatus === 'reviewed').map(item => [item.id, item.labelVi]));
   // Ô chọn mùa đặt mùa mới nhất lên đầu, các mùa còn lại theo thứ tự registry.
-  const latest = 'binh-dien-xuan-thu';
+  const latest = 'han-diem-truong-minh';
   const scenarioOrder = [latest, ...[...labels.keys()].filter(id => id !== latest)];
   expect(new Set(expected.map(group => group.scenarioId)), {message: 'dữ liệu thật phải có nhiều hơn một kịch bản'}).toEqual(new Set(scenarioOrder));
 
@@ -415,7 +420,7 @@ test('coexist brief keeps every source field verbatim and counts from the render
   const link = links.find(item => item.target.payload.summaryRaw !== item.target.payload.summaryRaw.trim());
   expect(link, {message: 'dữ liệu thật phải có nhóm chạm biên khoảng trắng'}).toBeTruthy();
   const payload = link.target.payload;
-  await page.goto(`/cung-ton/?scenario=binh-dien-xuan-thu&group=${link.recordId}`);
+  await page.goto(`/cung-ton/?scenario=${link.scenarioId}&group=${link.recordId}`);
 
   const group = page.locator('#section-coexist .coexist-group');
   await expect(group).toHaveCount(1);
@@ -493,7 +498,7 @@ for (const width of [1440, 320]) {
     }));
     const season = page.locator('#section-coexist .reference-season-field select');
     const groups = page.locator('#section-coexist .coexist-group-chip');
-    await expect(season.locator('option')).toHaveCount(2);
+    await expect(season.locator('option')).toHaveCount(3);
     await expect(groups).toHaveCount(5);
 
     // Đổi sang mùa KHÔNG đầu tiên khi ô chọn mùa đang focus: sau khi mục dựng lại, focus vẫn ở ô chọn mùa.
@@ -594,7 +599,7 @@ test('Cùng Tồn has exactly one scenario control and it owns the URL, reload a
     .filter(item => item.reviewStatus === 'reviewed');
   expect(reviewed.length, {message: 'dữ liệu thật phải có ít nhất hai kịch bản đã review'}).toBeGreaterThan(1);
   // Mùa mới nhất đứng đầu ô chọn mùa và là mặc định; các mùa còn lại theo thứ tự registry.
-  const latest = 'binh-dien-xuan-thu';
+  const latest = 'han-diem-truong-minh';
   const registry = [...reviewed.filter(item => item.id === latest), ...reviewed.filter(item => item.id !== latest)];
   const query = () => page.evaluate(() => new URL(location.href).searchParams.get('scenario'));
   const section = page.locator('#section-coexist');

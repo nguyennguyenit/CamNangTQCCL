@@ -54,15 +54,13 @@ test('cards expose holders tactics books and a native detail link',async({page})
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
-test('Team khác honors explicit factions and seasons',async({page})=>{
+test('Team khác honors explicit factions; its single season is a static label, not a select',async({page})=>{
   await page.goto('/doi-khac/?faction=Thục');
   // Thẻ dựng sẵn hiện trước khi app.js chạy: chờ khởi động xong mới thao tác bộ lọc.
   await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
-  const season=page.locator('#section-team-khac').getByLabel('Mùa',{exact:true});
-  const known=await season.locator('option').evaluateAll(options=>options.map(option=>option.value).find(value=>value!=='all'&&value!=='unknown'));
-  await season.selectOption(known);
-  await expect(page.locator('#section-team-khac .reference-team-card')).toHaveCount(0);
+  await expect(page.locator('#section-team-khac').getByLabel('Mùa',{exact:true})).toHaveCount(0);
+  await expect(page.locator('#section-team-khac select')).toHaveCount(0);
 });
 
 test('season scope changes stay on the browser; a retired category key is stripped and never narrows the list',async({page,request})=>{
@@ -153,6 +151,17 @@ const referenceData=async request=>{
   const load=async name=>(await request.get(`/data/recommended/${pin.generationId}/${name}`)).json();
   const [seasons,index,other]=await Promise.all([load('seasons.json'),load('index.json'),load('other-teams.json')]);
   return {seasons,index,other};
+};
+
+/**
+ * Bản ghi Đội khác đầu tiên theo đúng thứ tự trang đang hiện (đội đề cử đứng đầu, mỗi trang 60 đội) trong số
+ * `candidates`: không lấy bản ghi khớp đầu tiên của `other-teams.json`, vì nó chưa chắc nằm ở trang đầu.
+ * `keyOf` đọc khóa của bản ghi theo cùng thuộc tính `attribute` mà phần tử `selector` mang.
+ */
+const firstRenderedRecord=async(section,selector,attribute,candidates,keyOf)=>{
+  await expect(section.locator(selector).first()).toBeVisible();
+  const keys=await section.locator(selector).evaluateAll((nodes,name)=>nodes.map(node=>node.getAttribute(name)),attribute);
+  return keys.map(key=>candidates.find(item=>keyOf(item)===key)).find(Boolean);
 };
 
 test('localized facet chips filter with raw values, show scoped counts and keep the same card membership',async({page,request})=>{
@@ -248,9 +257,12 @@ test('the source scope caption lives on the detail page and never on a card',asy
   await expect(detailNote).toContainText(expectedCode);
   await expect(detailNote).toContainText(expectedCategory);
   if (option?.displayNameVi) await expect(detailNote).toContainText(option.displayNameVi);
-  const legacy=other.records.find(item=>item.sourceLabel);
   await page.goto('/doi-khac/');
-  const legacyCard=page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`);
+  const legacySection=page.locator('#section-team-khac');
+  const legacy=await firstRenderedRecord(legacySection,'.reference-team-card','data-legacy-team-id',
+    other.records.filter(item=>item.sourceLabel),item=>item.legacyTeamId);
+  expect(legacy,{message:'trang đầu Đội khác cần một đội có nhãn nguồn'}).toBeTruthy();
+  const legacyCard=legacySection.locator(`.reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`).first();
   await expect(legacyCard).toBeVisible();
   await expect(legacyCard.locator('.scope-note')).toHaveCount(0);
 });
@@ -411,11 +423,15 @@ test('absent book slots stay noninteractive and distinct from missing translatio
 
 test('Team khác cards read the "Sợ …" line from legacy counters without chips',async({page,request})=>{
   const {other}=await referenceData(request);
-  const legacy=other.records.find(item=>item.legacyContent?.counters?.avoid?.length);
-  const avoid=legacy.legacyContent.counters.avoid;
-  await page.goto('/doi-khac/');
+  const candidates=other.records.filter(item=>item.legacyContent?.counters?.avoid?.length);
+  expect(candidates.length,{message:'cần một đội gốc có counters.avoid'}).toBeGreaterThan(0);
+  // Đội đề cử (YouTube) đứng đầu danh sách và không ghi đội sợ: lọc đúng nguồn của đội có counters.avoid.
+  await page.goto(`/doi-khac/?source=${encodeURIComponent(candidates[0].source)}`);
   const section=page.locator('#section-team-khac');
-  const card=section.locator(`.reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`);
+  const legacy=await firstRenderedRecord(section,'.reference-team-card','data-legacy-team-id',candidates,item=>item.legacyTeamId);
+  expect(legacy,{message:'trang đầu của nguồn cần một đội có counters.avoid'}).toBeTruthy();
+  const avoid=legacy.legacyContent.counters.avoid;
+  const card=section.locator(`.reference-team-card[data-legacy-team-id="${legacy.legacyTeamId}"]`).first();
   await expect(card).toBeVisible();
   const fear=card.locator('.reference-fear');
   await expect(fear).toContainText('Sợ');
@@ -527,11 +543,15 @@ test('compact cards drop the hero panel and give tactic buttons a 44px mobile hi
 
 test('the legacy table names rows by nickname before name without touching identity',async({page,request})=>{
   const {other}=await referenceData(request);
-  const legacy=other.records.find(item=>item.nickname && item.name && item.nickname!==item.name);
-  expect(legacy,{message:'cần một bản ghi đội gốc có nickname khác name'}).toBeTruthy();
-  await page.goto('/doi-khac/?view=bang');
+  const candidates=other.records.filter(item=>item.nickname && item.name && item.nickname!==item.name);
+  expect(candidates.length,{message:'cần một bản ghi đội gốc có nickname khác name'}).toBeGreaterThan(0);
+  // Đội đề cử (YouTube) đứng đầu bảng và không có biệt danh: lọc đúng nguồn của đội có nickname.
+  await page.goto(`/doi-khac/?view=bang&source=${encodeURIComponent(candidates[0].source)}`);
   const section=page.locator('#section-team-khac');
-  const row=section.locator(`.reference-table tbody tr[data-reference-key="${legacy.legacyVariantId || legacy.legacyTeamId}"]`);
+  const keyOf=item=>item.legacyVariantId || item.legacyTeamId;
+  const legacy=await firstRenderedRecord(section,'.reference-table tbody tr[data-reference-key]','data-reference-key',candidates,keyOf);
+  expect(legacy,{message:'trang đầu của nguồn cần một đội có nickname khác name'}).toBeTruthy();
+  const row=section.locator(`.reference-table tbody tr[data-reference-key="${keyOf(legacy)}"]`);
   await expect(row).toBeVisible();
   await expect(row.locator('.reference-table-name')).toHaveText(legacy.nickname);
   expect(legacy.nickname).not.toBe(legacy.name);
@@ -864,7 +884,7 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
   await expect(firstChip).toBeFocused();
 });
 
-// Mỗi ô "Mùa" và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
+// Ô "Mùa" của Đội chuẩn và mỗi nút mở facet vẽ mũi tên riêng: một node SVG dùng chung chỉ còn ở ô dựng sau cùng.
 for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
   test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
     await page.setViewportSize({width:1280,height:900});
@@ -877,7 +897,8 @@ for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/
       node.querySelector('.filter-collapse-toggle svg'),
       ...node.querySelectorAll('.fgroup button[aria-expanded] svg'),
     ].map(svg=>svg ? svg.querySelectorAll('polyline, line').length : -1));
-    expect(strokes[0]).toBe(1);
+    // Đội khác chỉ có nhãn mùa tĩnh: không ô chọn nên không có mũi tên.
+    expect(strokes[0]).toBe(section==='#section-team-chuan' ? 1 : -1);
     expect(strokes[1]).toBe(3);
     expect(strokes.slice(2)).toEqual(strokes.slice(2).map(()=>1));
   });

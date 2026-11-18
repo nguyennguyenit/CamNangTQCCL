@@ -1,0 +1,31 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-007-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-007",
+ "items": [
+  {
+   "entityId": "recommended:s-f112be20e3af7ab7f08afb4260cd5493368108448bb05d018ce6ef69c02921eb/s19-baotou-qi-wangyuanji",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "a86c8c17ee58956fffaff88184969cebc601241d7cdbf57683957d94957fa6db",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "61ecae48cca7e14ad61045e9fd0b70b7b9319d202bb7019a64d5f604faa90882",
+   "verdict": "rejected",
+   "errors": [
+    "武力 rendered as 'Vũ lực'; binding stat term is Võ Lực (notes use 'võ lực')"
+   ],
+   "notes": "T2 ｜ Võ lực của Trương Liêu cao hơn Hạ Hầu Uyên"
+  },
+  {
+   "entityId": "recommended:s-f112be20e3af7ab7f08afb4260cd5493368108448bb05d018ce6ef69c02921eb/s19-baotou-qi-zhangliao",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "4a1cdf8ad0fc7376f948e3134878bf7cdcbe5524f4cef2dcbaa7c180f7754e83",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "647e27873328b8476b631dfae94b523a0c37a24698791d1108a2324e064e8f92",
+   "verdict": "rejected",
+   "errors": [
+    "武力 rendered as 'vũ lực'; binding stat term is Võ Lực (notes use 'võ lực')"
+   ],
+   "notes": "T2 ｜ Trương Liêu có võ lực cao nhất"
+  }
+ ]
+}

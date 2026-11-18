@@ -166,15 +166,18 @@ const nameKey = value => String(value).normalize("NFC").trim().toLocaleLowerCase
  * Bộ tra tên Hán gốc từ tên Hán-Việt. Dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) chỉ lưu
  * tên Việt, nên bản Trung phải tra lại qua từ điển có trường `chinese` (heroes-dict, tactics, books-dict).
  * Khớp đúng `viet`/`hanViet` rồi tới `aliases` (không phân biệt hoa thường; alias không đè tên chính), rồi thử lại khi bỏ hậu tố dạng " (S)".
+ * Tên hiển thị hiện hành `viet` thắng `hanViet` trùng chữ của mục khác (như `createTacticNameIndex` của
+ * `js/lookup-ids.js`): "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là `hanViet` cũ của 暗渡陳倉.
  * Ô gộp nhiều lựa chọn ("A/B") chỉ tra được khi mọi phần đều tra được; thiếu một phần thì trả null.
  */
 export function createRawNameResolver(...dicts) {
   const index = new Map();
-  for (const dict of dicts) {
-    for (const entry of Array.isArray(dict) ? dict : []) {
-      if (blank(entry?.chinese)) continue;
-      for (const name of [entry.viet, entry.hanViet]) {
-        if (!blank(name) && !index.has(nameKey(name))) index.set(nameKey(name), entry.chinese.trim());
+  for (const field of ["viet", "hanViet"]) {
+    for (const dict of dicts) {
+      for (const entry of Array.isArray(dict) ? dict : []) {
+        const name = entry?.[field];
+        if (blank(entry?.chinese) || blank(name) || index.has(nameKey(name))) continue;
+        index.set(nameKey(name), entry.chinese.trim());
       }
     }
   }

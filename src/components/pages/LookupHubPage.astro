@@ -1,5 +1,5 @@
 ---
-// Trang mục lục Tra cứu `/tra-cuu/` (bản Việt và bản Trung): 7 thẻ link tới trang nhóm, số đếm tính lúc build.
+// Trang mục lục Tra cứu `/tra-cuu/` (bản Việt và bản Trung): 8 thẻ link tới trang nhóm, số đếm tính lúc build.
 // Không nạp js/app.js và không tải dữ liệu. Link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`) được chuyển tiếp
 // tới trang nhóm bằng script inline chặn trong <head>, chạy trước khi vẽ trang.
 import SiteLayout from '../../layouts/SiteLayout.astro';
@@ -22,8 +22,8 @@ const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(w
 <SiteLayout
   title={t('Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '图鉴查询 — 三国志战略版攻略手册')}
   description={t(
-    'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư theo tên Việt hoặc chữ Hán.',
-    '按名称查询武将、战法、装备、军师、兵种进阶、建筑与兵书。',
+    'Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược theo tên Việt hoặc chữ Hán.',
+    '按名称查询武将、战法、装备、军师、兵种进阶、建筑、兵书与奇略。',
   )}
   pageKind="section"
   activeSection="lookup"
@@ -37,8 +37,8 @@ const redirectSource = `(function(){var target=(${lookupHubTarget.toString()})(w
         <span class="reference-kicker">{t('Tra cứu', '图鉴查询')}</span>
         <h1 class="reference-title">{t('Tra cứu', '图鉴查询')}</h1>
         <p class="reference-lead">{t(
-          'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
-          '武将、战法、装备、军师、兵种进阶、建筑与兵书——可用中文名、越南语名或汉越音搜索。',
+          'Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.',
+          '武将、战法、装备、军师、兵种进阶、建筑、兵书与奇略——可用中文名、越南语名或汉越音搜索。',
         )}</p>
       </div>
     </header>

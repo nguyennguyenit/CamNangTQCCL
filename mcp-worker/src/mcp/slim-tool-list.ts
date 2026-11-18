@@ -16,7 +16,7 @@ export interface ListedTool {
 /** Hình dạng `error` công bố chung; ràng buộc theo mã nằm ở `errorEnvelopeSchema` nội bộ. */
 export const PUBLISHED_ERROR_SCHEMA: JsonSchema = {
   type: "object",
-  description: "Lỗi (isError=true): mã, thông báo an toàn và cách xử lý.",
+  description: "Lỗi (isError=true).",
   properties: {
     code: { type: "string" },
     message: { type: "string" },

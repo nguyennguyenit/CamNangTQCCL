@@ -1,0 +1,55 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-002-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-002",
+ "items": [
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-lp-wumou-sr",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d0c67f3d21341afa87b9fdd08cf1fc842709be7c3987524909d645f3e86f9204",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "6b0238bce6393017ee8b91294c5aa928d28f0b56a3ba6a45635f0572e142942d",
+   "verdict": "rejected",
+   "errors": [
+    "Sai cấu trúc chủ/vị ngữ: ZH 「SP 荀彧、SP 郭嘉配荀攸的五謀」 = Ngũ Mưu gồm SP Tuân Úc, SP Quách Gia phối Tuân Du; VI biến Ngũ Mưu thành tân ngữ (\"SP Tuân Úc, SP Quách Gia phối Ngũ Mưu của Tuân Du\"), sai nghĩa."
+   ],
+   "notes": "Ngũ Mưu gồm SP Tuân Úc, SP Quách Gia phối Tuân Du, đội Thi Nhân nói “trong môi trường hiện tại, khả năng gỡ tăng ích của Tuân Du tốt hơn Giả Hủ, và 19 Ngự thành hình nhanh hơn”; gắn kết Ngũ Mưu tự mang tiên công, Quách Gia có thể thêm tốc độ để cuốn nội chiến. Khi trong khu có nhiều SP Mã Siêu và đối phương mang Thừa Địch Bất Ngu, nếu có Vạn Quân Đoạt Sư dư thì cũng có thể mang. Bảng cùng tồn của đội Thi Nhân không phân bậc. Kỳ Lược: Di Kiều Thụ Thư, Thiết Phục Thập Diện, Sở Ca Tứ Khởi, Đa Đa Ích Thiện, Hợp Vi Giáp Kích."
+  },
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-official-lv-diao-lu-gong",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "043ea3be8ff4d621b531c501e7f67a7290289b106af87e3f081a974b9d352ffd",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "f16eaeda40cfd1eb16ea95cb120306d06f97ae1756f910ff943c480f528b022d",
+   "verdict": "rejected",
+   "errors": [
+    "Tên phương lược 久戰 trái authority: hint đội ghi 久戰=Chiến Đấu Trường Kỳ (repo đang dùng tên này cho phương lược); \"Cửu Chiến\" là tên client của binh thư 久战, không phải phương lược."
+   ],
+   "notes": "Chỉ số đề xuất chính thức máy chủ Đài Loan ★★★★★｜Phương lược Chiến Đấu Trường Kỳ｜Theo đặc điểm đội hình 40Y Lữ Điêu Lư, trên nền tảng chủ yếu trị liệu hồi phục bền bỉ, bổ sung thêm hiệu quả tăng sát thương và đánh liên tiếp, sát thực chiến hơn."
+  },
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-official-lv-diao-lu-gong",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "dc85cc6090217d9dbef1d2fc5ef2a7cd55df437e8852dfaa7fb5c3f3f90b15df",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2a6462bbc40e93221eecb29b1d0f6c7af309be2e42bbcef7f0b3a8e92bd07f48",
+   "verdict": "rejected",
+   "errors": [
+    "Tên phương lược 久戰 trái authority: hint đội ghi 久戰=Chiến Đấu Trường Kỳ; VI dùng \"Cửu Chiến\"."
+   ],
+   "notes": "Phương lược tác chiến: Chiến Đấu Trường Kỳ. Thẻ Kỳ Lược (hiệp 2→6): Hoành Tảo Hà Tây→Truy Vong Trục Bắc→Hồng Môn Độn Hiểm→Bái Huyện Tụ Nghĩa→Ước Pháp Tam Chương."
+  },
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-qianlong-diao",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2ce7476b1df320a48dc218c3c70c3ccc93af6b0a61cd481ee27e1864376f3a59",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2f3273e2c52b1d9ff9019fca9a9856f11df302333bf3c2463f9032733db00a22",
+   "verdict": "rejected",
+   "errors": [
+    "Sai nghĩa: 老周瑜 = Chu Du bản gốc (không phải SP), VI dịch \"Chu Du già\" (tuổi già); các ô cùng mạch [102]/[103] dùng \"Chu Du cũ\"."
+   ],
+   "notes": "Đội Tiềm Long Trận gồm SP Điêu Thuyền, Tào Tháo cùng SP Chu Du; Tiểu Bang Thủ 1/16 đề xuất xuất trận đầu, đánh giá T0 105. Cùng bài viết nói “dòng Tiềm Long Điêu, đại khu chọn Lục Tốn, tiểu khu thì ưu tiên chọn Chu Du cũ”, nhưng trong bảng là SP Chu Du, dùng Chu Du nào chờ xác nhận. Kỳ Mưu (Chỉnh Quân): Mang Trường Ảnh Tung→Thôi Y Giải Thực→Bại Trung Cầu Thắng→Bái Huyện Tụ Nghĩa→Bác Lãng Chùy Tần."
+  }
+ ]
+}

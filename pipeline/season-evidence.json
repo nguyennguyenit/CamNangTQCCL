@@ -58,5 +58,44 @@
     "schemaVersion": 1,
     "snapshotHash": "sha256:838c9b639d42aef67d270a8813edd13bf0b364efaa85ae80e1fa8efda9b829bb",
     "sourceSeason": null
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "scenario-attribution",
+      "rulesetId": null,
+      "scenarioId": "han-diem-truong-minh"
+    },
+    "id": "coexist-han-diem-scenario-confirmation",
+    "note": "Người dùng/chủ dự án xác nhận ngày 2026-11-17 rằng tab gid=190730430 hiện chứa Cùng Tồn mùa Hán Diễm Trường Minh (chủ sheet đã ghi đè nội dung Binh Diễn Xuân Thu). Đây là xác nhận kịch bản của nguồn, không phải bằng chứng phiên bản luật.",
+    "provenance": {
+      "fetchedAt": "2026-11-17",
+      "provider": "google-sheets",
+      "region": "VN",
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "sourceSeason": null
+  },
+  {
+    "canonicalRef": null,
+    "claim": {
+      "kind": "source-observation",
+      "rulesetId": null,
+      "scenarioId": null
+    },
+    "id": "coexist-han-diem-source-snapshot",
+    "note": "Snapshot CSV kiểm chứng ngày 2026-11-17: 94 records, 196 dòng vật lý, 11 cột (thêm Trang Bị, Thẻ Kỳ Lược), 5 nhóm, 25 đội, 75 vị trí tướng. Nguồn không xác lập ruleset hay số mùa.",
+    "provenance": {
+      "fetchedAt": "2026-11-17",
+      "provider": "google-sheets",
+      "region": "VN",
+      "sourceUrl": "https://docs.google.com/spreadsheets/d/1lQEXti0U2Dcu977Np_pkuX1TJ3-x40qMX2Ze1i227Vw/edit?gid=190730430#gid=190730430"
+    },
+    "reviewStatus": "reviewed",
+    "schemaVersion": 1,
+    "snapshotHash": "sha256:6ad506cea28d14604c120622c25fbf85e7aa7b120f52006e21b2eb2d5760fb67",
+    "sourceSeason": null
   }
 ]

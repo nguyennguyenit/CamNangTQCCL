@@ -57,6 +57,26 @@ const ZH_VALUES = {
   // Cấp lựa chọn cải tạo (client và nguồn).
   "Đặc biệt": "特殊", "Cơ bản": "基础", "Sơ cấp": "初级", "Trung cấp": "中级", "Cao cấp": "高级",
 };
+/**
+ * Kỳ lược (bảng nhãn của hợp đồng catalog): loại thẻ và độ hiếm là mã (`type`, `rarity`), đối tượng là chữ client
+ * (`targetVi`, đúng năm giá trị; bộ giá trị hợp lệ do js/lookup-data.js kiểm). Chữ Hán theo tên trong game (phồn thể) nên tách khỏi `ZH_VALUES`: "Một quân ta" /
+ * "Một quân địch" ở đó là nhãn mục tiêu chiến pháp (giản thể) và không được đổi.
+ */
+const QILUE_LABELS = Object.freeze({
+  type: { dung: ["Dũng", "勇"], muu: ["Mưu", "謀"], phu: ["Phụ", "輔"], sach: ["Sách", "策"], te: ["Tế", "濟"] },
+  rarity: { common: ["Thường", "普通"], rare: ["Hiếm", "稀有"] },
+  target: {
+    "Toàn quân ta": ["Toàn quân ta", "我軍全體"], "Một quân ta": ["Một quân ta", "我軍單體"], "Nhóm quân ta": ["Nhóm quân ta", "我軍群體"],
+    "Một quân địch": ["Một quân địch", "敵軍單體"], "Toàn quân địch": ["Toàn quân địch", "敵軍全體"],
+  },
+});
+/** Nhãn kỳ lược theo ngôn ngữ (`kind`: `type` | `rarity` | `target`); giá trị ngoài bảng trả `null` (không hiện). */
+export function qilueLabel(kind, value, locale = currentLocale()) {
+  const pair = Object.hasOwn(QILUE_LABELS, kind) && Object.hasOwn(QILUE_LABELS[kind], value) ? QILUE_LABELS[kind][value] : null;
+  return pair ? pick(locale, ...pair) : null;
+}
+/** Mã loại thẻ theo thứ tự hiển thị (Dũng → Mưu → Phụ → Sách → Tế). */
+export const QILUE_TYPE_ORDER = Object.freeze(Object.keys(QILUE_LABELS.type));
 /** Khóa so khớp không phân biệt hoa thường của bộ giá trị đóng (dữ liệu client viết "Phá Trận" lẫn "Phá trận"). */
 const ZH_VALUES_FOLDED = new Map(Object.entries(ZH_VALUES).map(([vi, zh]) => [vi.toLocaleLowerCase("vi"), zh]));
 const zhValue = (value) => ZH_VALUES[value] ?? ZH_VALUES_FOLDED.get(String(value).trim().toLocaleLowerCase("vi")) ?? null;

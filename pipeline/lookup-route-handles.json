@@ -1,6 +1,6 @@
 {
   "booksSha256": "128cdfc1f2ef8b677b1c8f266e95975a32a31d5357755a1171971201f33cda72",
-  "generationId": "lookup:adf392a0c06ad237f55e90238f3beee32811ac25376c2bbd2f0ae78a0ee1bdca",
+  "generationId": "lookup:2d9aeca6e53a460031fd3abe916790524323bd55773ea428c5d6cf72a349dd12",
   "handles": {
     "advisors": {
       "advisor:an-nhan-doat-quyen": "an-nhan-doat-quyen",
@@ -557,6 +557,53 @@
       "hero:xa-tru": "xa-tru",
       "hero:y-tich": "y-tich"
     },
+    "qilue": {
+      "qilue-card:am-do-tran-thuong": "am-do-tran-thuong",
+      "qilue-card:an-tich-mang-thuong": "an-tich-mang-thuong",
+      "qilue-card:bac-lang-chuy-tan": "bac-lang-chuy-tan",
+      "qilue-card:bai-huyen-tu-nghia": "bai-huyen-tu-nghia",
+      "qilue-card:bat-vua-pha-doanh": "bat-vua-pha-doanh",
+      "qilue-card:bi-so-doat-the": "bi-so-doat-the",
+      "qilue-card:bo-tri-thap-dien": "bo-tri-thap-dien",
+      "qilue-card:can-quet-tay-ha": "can-quet-tay-ha",
+      "qilue-card:cang-nhieu-cang-tot": "cang-nhieu-cang-tot",
+      "qilue-card:cau-hien-duoi-trang": "cau-hien-duoi-trang",
+      "qilue-card:chi-khi-ngap-tran": "chi-khi-ngap-tran",
+      "qilue-card:cong-lao-hien-hach": "cong-lao-hien-hach",
+      "qilue-card:dan-tran-tu-chien": "dan-tran-tu-chien",
+      "qilue-card:don-doc-tham-nhap": "don-doc-tham-nhap",
+      "qilue-card:du-dich-roi-trai": "du-dich-roi-trai",
+      "qilue-card:dung-dien-truong-an": "dung-dien-truong-an",
+      "qilue-card:giau-tai-giau-cua": "giau-tai-giau-cua",
+      "qilue-card:go-bo-xieng-xich": "go-bo-xieng-xich",
+      "qilue-card:hop-vay-giap-kich": "hop-vay-giap-kich",
+      "qilue-card:khong-so-lam-nguy": "khong-so-lam-nguy",
+      "qilue-card:ky-cong-gian-phong": "ky-cong-gian-phong",
+      "qilue-card:lanh-hiem-hong-mon": "lanh-hiem-hong-mon",
+      "qilue-card:lap-ke-an-tru": "lap-ke-an-tru",
+      "qilue-card:lui-buoc-cong-thanh": "lui-buoc-cong-thanh",
+      "qilue-card:nap-sach-tang-thu": "nap-sach-tang-thu",
+      "qilue-card:nhan-sach-di-kieu": "nhan-sach-di-kieu",
+      "qilue-card:nho-co-dich-co": "nho-co-dich-co",
+      "qilue-card:nhuong-com-se-ao": "nhuong-com-se-ao",
+      "qilue-card:pha-mui-giap-dich": "pha-mui-giap-dich",
+      "qilue-card:phong-lang-cu-tu": "phong-lang-cu-tu",
+      "qilue-card:phong-thuong-tang-ap": "phong-thuong-tang-ap",
+      "qilue-card:so-ca-tu-khoi": "so-ca-tu-khoi",
+      "qilue-card:song-trong-that-bai": "song-trong-that-bai",
+      "qilue-card:tam-sach-cung-tien": "tam-sach-cung-tien",
+      "qilue-card:thay-mat-bay-muu": "thay-mat-bay-muu",
+      "qilue-card:tram-dich-chieu-hang": "tram-dich-chieu-hang",
+      "qilue-card:tranh-hoa-cu-kiem": "tranh-hoa-cu-kiem",
+      "qilue-card:tri-duyen-quan-the": "tri-duyen-quan-the",
+      "qilue-card:truy-kich-tu-tran": "truy-kich-tu-tran",
+      "qilue-card:uoc-phap-tam-chuong": "uoc-phap-tam-chuong",
+      "qilue-strategy:chien-dau-lau-dai": "chien-dau-lau-dai",
+      "qilue-strategy:cuong-cong": "cuong-cong",
+      "qilue-strategy:muu-tinh": "muu-tinh",
+      "qilue-strategy:quay-nhieu": "quay-nhieu",
+      "qilue-strategy:toan-quan": "toan-quan"
+    },
     "tactics": {
       "tactic:am-tang-huyen-co": "am-tang-huyen-co",
       "tactic:am-tien-nan-phong": "am-tien-nan-phong",
@@ -1000,7 +1047,7 @@
       "troop-mod:vo-duong-phi-quan": "vo-duong-phi-quan"
     }
   },
-  "handlesSha256": "e4e41e66b522dc9a22da434ded9baddd3f60be81fe301e54a334e37fb94c683f",
+  "handlesSha256": "83c4de24a7067bf127f5b0ee2e3fa7f5b77e7dd4af2bb4a4d642b0db575bbf95",
   "note": "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết.",
   "retired": {
     "advisors": {},
@@ -1008,6 +1055,7 @@
     "buildings": {},
     "equipment": {},
     "heroes": {},
+    "qilue": {},
     "tactics": {
       "tactic:am-trieu-dung-dong": "am-trieu-dung-dong",
       "tactic:doan-binh-tuong-kien": "doan-binh-tuong-kien",

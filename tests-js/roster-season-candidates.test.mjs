@@ -278,3 +278,42 @@ test("Thiếu món lists the teams closest to buildable first, keeping tier orde
   });
   assert.deepEqual(result.blockedStrongTeams.map((entry) => entry.team.id), ["c", "d", "b", "a"]);
 });
+
+test("đội gốc thiếu ô chiến pháp (nguồn chưa đọc được) không bao giờ là build-now: kho chỉ 3 tướng của youtube-9", () => {
+  const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+  const legacyTeams = read("data/teams.json");
+  const target = legacyTeams.find((team) => team.id === "youtube-9");
+  // Dữ liệu thật: đội YouTube không đọc được chiến pháp nào (0/6 ô), nguồn bỏ trống thay vì ghi tên.
+  assert.deepEqual(target.heroes.map((item) => item.tactics.length), [0, 0, 0]);
+  const owned = target.heroes.map((item) => item.name);
+  const portfolio = (mode) => recommendRoster({
+    seasonTeams: [], seasonTier: [], legacyTeams, legacyTier: read("data/team-tier.json"), tacticsDict: read("data/tactics.json"),
+    mode, experimentalUntiered: true, ownedHeroes: owned, ownedTactics: [],
+  }).portfolioTeams;
+  for (const mode of ["meta", "redStars"]) {
+    const entries = portfolio(mode);
+    assert.equal(entries.filter((entry) => entry.status === "build-now").length, 0, mode);
+    const entry = entries.find((item) => item.team.id === "youtube-9");
+    assert.ok(entry, mode);
+    assert.equal(entry.status, "unreconciled", mode);
+    assert.deepEqual(entry.unresolvedTactics, ["?", "?", "?", "?", "?", "?"], mode);
+    // Ô bù không chiếm chiến pháp nào của kho và không đổi dữ liệu đội đem lưu.
+    assert.deepEqual(entry.team.heroes.map((item) => item.tactics.length), [0, 0, 0], mode);
+  }
+});
+
+test("đội gốc thiếu một ô vẫn phải đủ món ở các ô còn lại; đội đủ 6 ô giữ nguyên hành vi build-now", () => {
+  const legacy = (id, tactics) => ({
+    id, source: "team-intro", unitType: ["Cung"],
+    heroes: ["Tào Tháo", "Lục Tốn", "SP Điêu Thuyền"].map((name, index) => ({ name, tactics: tactics[index].map((tactic) => ({ name: tactic, alternatives: [] })) })),
+  });
+  const full = [["Đồng Lòng Hợp Sức", "Hợp Quân Tụ Chúng"], ["Thiêu Đốt Doanh Lũy", "Vạn Quân Đoạt Soái"], ["Lấy Nhàn Chờ Mệt", "Trận Nhạn Hành"]];
+  const run = (team) => recommendRoster({
+    seasonTeams: [], seasonTier: [], legacyTeams: [team], legacyTier: [], mode: "redStars",
+    ownedHeroes: ["Tào Tháo", "Lục Tốn", "SP Điêu Thuyền"], ownedTactics: full.flat(),
+  }).portfolioTeams[0];
+  assert.equal(run(legacy("du-6", full)).status, "build-now");
+  const short = run(legacy("thieu-1", [full[0], [full[1][0]], full[2]]));
+  assert.equal(short.status, "unreconciled");
+  assert.deepEqual(short.unresolvedTactics, ["?"]);
+});

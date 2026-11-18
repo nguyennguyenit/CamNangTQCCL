@@ -3763,6 +3763,21 @@ body[data-page-section="team-khac"] .layout {
   pointer-events: none;
 }
 
+/* Đội khác chỉ có một mùa: cùng khung với ô chọn nhưng là chữ tĩnh, không bấm được. */
+.reference-season-field.reference-season-static {
+  cursor: default;
+}
+
+.reference-season-field.reference-season-static:hover {
+  border-color: var(--line);
+}
+
+.reference-season-name {
+  padding: var(--space-26) var(--space-14) var(--space-8);
+  font: var(--type-control);
+  overflow-wrap: anywhere;
+}
+
 /* Select phủ cả khung (nhãn nằm trong vùng đệm trên) để bấm đâu cũng mở danh sách. */
 .reference-season-field select {
   width: 100%;
@@ -6863,6 +6878,160 @@ main.layout:has(> .detail-content) {
   padding-bottom: 0;
 }
 
+/* ---------- Ô kỳ lược (trang chi tiết Đội chuẩn) ---------- */
+/* Section "Kỳ lược" giữa Đội hình và Ghi chú: chip phương lược, lưới "Hiệp 2…" đúng số thẻ (3–5 ô) tô theo loại thẻ
+   (`data-tone`, bảng tint dùng chung với Tra cứu), nhãn loại + dấu Hiếm là class nhãn của Tra cứu. Dạng không thứ tự
+   là hàng chip; dạng chép có dòng link đội nguồn rồi ô của đội nguồn. */
+.detail-qilue-strategy,
+.detail-qilue-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8) var(--space-12);
+  margin: 0;
+  color: var(--ink);
+}
+
+.detail-qilue-label,
+.detail-qilue-round-label,
+.detail-qilue-source-name {
+  margin: 0;
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.detail-qilue-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--control-36);
+  padding: 0 var(--space-14);
+  border: var(--border-hair) solid var(--accent-line);
+  border-radius: var(--radius-999);
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.detail-qilue-chip.is-link:hover,
+.detail-qilue-chip.is-link:focus-visible {
+  border-color: var(--accent);
+}
+
+.detail-qilue-team {
+  color: var(--accent-ink);
+  font-weight: var(--weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.detail-qilue-note {
+  margin: 0;
+  font: var(--type-small);
+  color: var(--muted);
+}
+
+.detail-qilue-source {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+}
+
+.detail-qilue-rounds,
+.detail-qilue-chips {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail-qilue-rounds {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+.detail-qilue-rounds[data-count="3"] {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.detail-qilue-rounds[data-count="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.detail-qilue-round {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.detail-qilue-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.detail-qilue-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--space-8);
+  min-width: 0;
+  min-height: var(--control-44);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--tone-line, var(--line));
+  border-radius: var(--radius-10);
+  background: var(--tone-bg, var(--panel-2));
+  color: var(--tone-ink, var(--ink));
+  text-decoration: none;
+}
+
+.detail-qilue-chips .detail-qilue-card {
+  flex-direction: row;
+  align-items: center;
+  padding-block: var(--space-6);
+}
+
+.detail-qilue-card.is-link:hover,
+.detail-qilue-card.is-link:focus-visible {
+  border-color: var(--tone-ink, var(--accent));
+}
+
+.detail-qilue-card-name {
+  font: var(--type-hero-name);
+  overflow-wrap: anywhere;
+}
+
+.detail-qilue-marks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+/* Nhãn loại nằm trên ô đã tô cùng màu: nền giấy để nhãn không chìm vào ô. */
+.detail-qilue-card .lookup-qilue-tag {
+  background: var(--panel);
+}
+
+@media (max-width: 680px) {
+  /* 375px: 4–5 ô xuống hai hàng, không cuộn ngang. */
+  .detail-qilue-rounds,
+  .detail-qilue-rounds[data-count="3"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-8);
+  }
+
+  .detail-qilue-rounds[data-count="4"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .detail-qilue-card {
+    padding: var(--space-8) var(--space-10);
+  }
+}
+
 @media (max-width: 680px) {
   main.layout:has(> .detail-content) {
     padding: var(--space-24) var(--space-16) var(--space-32);
@@ -7503,6 +7672,21 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
 .lookup-master [data-tone="son"] { --tone-bg: var(--tint-son); --tone-ink: var(--tint-son-ink); }
 .lookup-master [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
 
+/* Kỳ lược: màu theo loại thẻ (Dũng/Mưu/Phụ/Sách/Tế) dùng lại bảng tint; cũng đúng trên trang riêng của mục (ngoài `.lookup-master`)
+   và ô kỳ lược của trang chi tiết Đội chuẩn (`.detail-qilue`). */
+.lookup-detail-qilue [data-tone] {
+  --tone-bg: var(--panel-2);
+  --tone-ink: var(--ink-2);
+  --tone-line: var(--line);
+}
+
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="dung"] { --tone-bg: var(--tint-hoa); --tone-ink: var(--tint-hoa-ink); --tone-line: var(--tint-hoa-ink); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="muu"] { --tone-bg: var(--tint-tim); --tone-ink: var(--tint-tim-ink); --tone-line: var(--tint-tim-line); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="phu"] { --tone-bg: var(--tint-phong); --tone-ink: var(--tint-phong-ink); --tone-line: var(--tint-phong-ink); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="sach"] { --tone-bg: var(--tint-cam); --tone-ink: var(--tint-cam-ink); --tone-line: var(--tint-cam-line); }
+:is(.lookup-master, .lookup-detail-qilue, .detail-qilue) [data-tone="te"] { --tone-bg: var(--tint-lam); --tone-ink: var(--tint-lam-ink); --tone-line: var(--tint-lam-ink); }
+.lookup-detail-qilue [data-tone="accent"] { --tone-bg: var(--accent-soft); --tone-ink: var(--accent); --tone-line: var(--accent-line); }
+
 /* Hàng chip lọc: chấm vuông màu phẩm/hệ trước nhãn, số đếm mờ sau nhãn, vạch ngăn giữa hai khía cạnh. */
 .lookup-filters {
   display: flex;
@@ -7901,6 +8085,113 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   display: none;
 }
 
+/* Kỳ lược: danh sách hàng chia khối (Phương lược, rồi từng loại thẻ) bên trái, panel chi tiết bám theo bên phải. Hàng ghi
+   nhãn mục ở dòng phụ, nhãn loại thẻ có màu và dấu "Hiếm". */
+.lookup-master-grid-qilue {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+
+.lookup-master-qilue .lookup-detail-panel {
+  position: sticky;
+  top: var(--space-88);
+  max-height: calc(100dvh - var(--space-96));
+  overflow-y: auto;
+}
+
+.lookup-qilue-row {
+  gap: var(--space-10);
+  padding-block: var(--space-6);
+}
+
+.lookup-qilue-row .lookup-row-sub {
+  display: block;
+  overflow: hidden;
+  color: var(--muted);
+  font: var(--type-meta);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lookup-qilue-row[aria-current="true"] .lookup-row-sub {
+  color: var(--select-ink-2);
+}
+
+.lookup-qilue-marks {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.lookup-qilue-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-4);
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.lookup-qilue-rare,
+.badge.lookup-qilue-rare {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-6);
+  border-radius: var(--radius-4);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: var(--type-badge-small);
+  white-space: nowrap;
+}
+
+.badge.lookup-qilue-rare {
+  padding: var(--space-2) var(--space-9);
+  border-radius: var(--radius-999);
+  font: var(--type-badge);
+}
+
+.lookup-detail-qilue .lookup-detail-tile {
+  background: var(--tone-bg);
+  color: var(--tone-ink);
+}
+
+.lookup-qilue-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-6) var(--space-14);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lookup-qilue-type-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.lookup-qilue-type-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-4);
+  min-height: var(--control-40);
+  padding: 0 var(--space-12);
+  border: var(--border-hair) solid var(--tone-line);
+  border-radius: var(--radius-8);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+}
+
+.lookup-qilue-type-link:hover {
+  background: var(--tone-bg);
+}
+
 /* Panel chi tiết (desktop): khung thẻ bên phải danh sách, bám theo khi cuộn danh sách dài. */
 .lookup-detail-panel {
   box-sizing: border-box;
@@ -8064,6 +8355,12 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   border: var(--border-hair) solid var(--accent-line);
   background: var(--panel);
   color: var(--accent-ink);
+}
+
+/* Nhãn mùa dài của chi tiết (kỳ lược: "Mùa Hán Diễm Trường Minh (PK-S27, client …)") xuống dòng thay vì tràn khung 320px. */
+.lookup-detail-badges .badge.badge-scenario {
+  max-width: 100%;
+  white-space: normal;
 }
 
 .badge.badge-suggest {
@@ -8589,6 +8886,15 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
     gap: var(--space-16);
   }
 
+  /* Kỳ lược (375px): tên và dòng phụ co lại, nhãn loại/Hiếm giữ nguyên; không cuộn ngang. */
+  .lookup-qilue-row {
+    gap: var(--space-10);
+  }
+
+  .lookup-detail-qilue .lookup-detail-facts {
+    display: grid;
+  }
+
   .lookup-eq-head {
     padding: var(--space-12);
   }
@@ -8764,7 +9070,8 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   .lookup-master-equipment .lookup-detail-panel,
   .lookup-master-advisors .lookup-detail-panel,
   .lookup-master-troop-mods .lookup-detail-panel,
-  .lookup-master-buildings .lookup-detail-panel {
+  .lookup-master-buildings .lookup-detail-panel,
+  .lookup-master-qilue .lookup-detail-panel {
     position: static;
     max-height: none;
     padding: 0;
@@ -10440,6 +10747,22 @@ body[data-page-section="khaihoang"] .layout {
   color: var(--ink-2);
   font: var(--type-badge);
   white-space: nowrap;
+}
+
+/* Trang bị và Thẻ Kỳ Lược của bảng 11 cột: giữ ngắt dòng của nguồn (vd. hai bộ đặc tính trang bị). */
+.coexist-hero-equipment {
+  white-space: pre-line;
+}
+
+.coexist-card-strategy {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-9) 0;
+  color: var(--ink-2);
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+  white-space: pre-line;
 }
 
 /* ---------- Khai hoang: đầu mục, thanh lọc, lưới thẻ (khung thẻ Đội chuẩn) ---------- */
@@ -14972,10 +15295,6 @@ body[data-page-section="roster-recommend"] .layout {
   color: var(--accent);
 }
 
-.blog-author {
-  color: var(--ink-2);
-}
-
 .blog-card-desc {
   font: var(--type-body);
   color: var(--ink-2);
@@ -14998,70 +15317,12 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-tag);
 }
 
-.blog-translation a {
-  font: var(--type-control);
-  color: var(--accent);
-}
-
-.blog-cover {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-12);
-}
-
-.blog-summary,
-.blog-toc {
-  padding: var(--space-16) var(--space-20);
-  border-left: var(--space-3) solid var(--accent);
-  border-radius: var(--radius-8);
-  background: var(--panel-3);
-  font: var(--type-body);
-  color: var(--ink);
-}
-
-.blog-toc {
-  border-left-color: var(--line);
-}
-
-.blog-summary p,
-.blog-toc ol {
-  margin: 0;
-}
-
-.blog-summary-label {
-  margin: 0 0 var(--space-6);
-  font: var(--type-label-caps);
-  letter-spacing: var(--type-label-caps-spacing);
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.blog-toc ol {
-  padding-left: var(--space-20);
-}
-
-.blog-toc li {
-  margin: var(--space-4) 0;
-}
-
-.blog-toc .blog-toc-sub {
-  margin-left: var(--space-16);
-  list-style-type: circle;
-}
-
-.blog-toc a {
-  color: var(--ink-2);
-}
-
 .blog-body {
   font: var(--type-body);
   color: var(--ink);
 }
 
-.blog-body h2,
-.blog-faq h2,
-.blog-related h2 {
+.blog-body h2 {
   margin: var(--space-32) 0 var(--space-12);
   font: var(--type-detail-section-title);
   color: var(--ink);
@@ -15125,43 +15386,6 @@ body[data-page-section="roster-recommend"] .layout {
   text-align: left;
 }
 
-.blog-faq {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-8);
-}
-
-.blog-faq h2 {
-  margin-bottom: var(--space-4);
-}
-
-.blog-faq-item {
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-10);
-  background: var(--panel);
-}
-
-.blog-faq-item summary {
-  display: flex;
-  align-items: center;
-  min-height: var(--control-44);
-  padding: var(--space-8) var(--space-16);
-  font: var(--type-strong);
-  color: var(--ink);
-  cursor: pointer;
-}
-
-.blog-faq-item p {
-  margin: 0;
-  padding: 0 var(--space-16) var(--space-12);
-  font: var(--type-body);
-  color: var(--ink-2);
-}
-
-.blog-related {
-  max-width: 72ch;
-}
-
 .blog-empty {
   display: flex;
   flex-direction: column;
@@ -15180,9 +15404,7 @@ body[data-page-section="roster-recommend"] .layout {
   .blog-card {
     padding: var(--space-16);
   }
-  .blog-breadcrumb a,
-  .blog-translation a,
-  .blog-toc a {
+  .blog-breadcrumb a {
     display: inline-flex;
     align-items: center;
     min-height: var(--control-44);
@@ -15678,16 +15900,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-status[data-kind="warn"] { color: var(--warn); }
 
-.adm-block { display: flex; flex-direction: column; gap: var(--space-12); min-width: 0; }
-
-.adm-block-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-12);
-}
-
 .adm-subtitle { margin: 0; color: var(--ink); font: var(--type-dialog-title); }
 
 /* Nút: dùng `.ana-btn` (phụ) / `.ana-btn.primary` (nền chọn) của site + biến thể của khu quản trị. */
@@ -16039,19 +16251,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-table .adm-cell-action { padding-block: var(--space-8); text-align: right; }
 
-/* Soi đội: mỗi tên AI đọc / đội xác nhận một ô riêng. */
-.adm-scan-names { display: flex; flex-wrap: wrap; gap: var(--space-6); }
-
-.adm-scan-name {
-  padding: var(--space-4) var(--space-8);
-  border: var(--border-hair) solid var(--line);
-  border-radius: var(--radius-6);
-  background-color: var(--panel);
-  font: var(--type-small);
-}
-
-.adm-scan-name.is-hero { font-weight: var(--weight-semibold); }
-
 .adm-table-title {
   padding: 0;
   border: none;
@@ -16182,7 +16381,6 @@ body[data-page-section="roster-recommend"] .layout {
 .adm-faq-list { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
 
 .adm-faq-row,
-.adm-chain-row,
 .adm-model-row {
   display: grid;
   align-items: end;
@@ -16216,39 +16414,8 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-dock .adm-actions { margin-left: auto; }
 
-/* AI: thẻ nhà cung cấp theo thứ tự failover, khung sửa, nhóm tính năng. */
-.adm-provider {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-14);
-}
-
-.adm-provider[data-editing] { border-color: var(--accent); outline: var(--border-hair) solid var(--accent); }
-
-.adm-provider-info { display: flex; flex: 1 1 var(--size-col-250); align-items: flex-start; gap: var(--space-14); min-width: 0; }
-
-.adm-rank { flex: none; width: var(--space-24); color: var(--accent); font: var(--type-admin-rank); }
-
-.adm-provider[data-enabled="false"] .adm-rank { color: var(--muted); }
-
-.adm-provider-body { display: grid; gap: var(--space-8); min-width: 0; }
-
-.adm-provider-name-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); margin: 0; }
-
-.adm-provider-name { color: var(--ink); font: var(--type-admin-card-name); }
-
+/* AI: khung sửa nhà cung cấp, danh mục model, nhóm tính năng (thẻ nhà cung cấp dựng bằng `.adm-card`). */
 .adm-endpoint { color: var(--muted); font: var(--type-admin-mono); overflow-wrap: anywhere; }
-
-.adm-provider-facts {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6) var(--space-14);
-  margin: 0;
-  color: var(--muted);
-  font: var(--type-small);
-}
 
 .adm-row-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6); }
 
@@ -16264,17 +16431,7 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-groups { display: grid; gap: var(--space-14); }
 
-.adm-group { display: flex; flex-direction: column; gap: var(--space-12); }
-
-.adm-group-head { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-10); }
-
-.adm-group-title { margin: 0; color: var(--ink); font: var(--type-admin-card-name); }
-
 .adm-chain { display: grid; gap: var(--space-10); margin: 0; padding: 0; list-style: none; }
-
-.adm-chain-row { grid-template-columns: auto repeat(3, minmax(0, 1fr)) auto; }
-
-.adm-chain-index { align-self: center; min-width: var(--space-20); color: var(--accent); font: var(--type-card-title-sm); }
 
 .adm-model-row { grid-template-columns: repeat(2, minmax(0, 1fr)) minmax(0, 1.4fr) auto auto; }
 
@@ -16287,18 +16444,6 @@ body[data-page-section="roster-recommend"] .layout {
   padding: 0;
   border: 0;
 }
-
-.adm-group-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--space-12);
-}
-
-.adm-timing { display: flex; flex-wrap: wrap; gap: var(--space-12); }
-
-.adm-timing .adm-field { width: var(--size-col-200); }
 
 @media (max-width: 960px) {
   .adm-shell { grid-template-columns: minmax(0, 1fr); gap: var(--space-20); }
@@ -16341,10 +16486,8 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-grid-3,
   .adm-grid-title,
   .adm-faq-row,
-  .adm-chain-row,
   .adm-model-row { grid-template-columns: minmax(0, 1fr); align-items: stretch; }
   .adm-faq-row > .ana-btn,
-  .adm-chain-row .adm-row-actions,
   .adm-model-row .adm-row-actions { justify-self: start; }
   .adm-filters .adm-field { width: auto; flex: 1 1 0; }
   .adm-cover { flex-direction: column; align-items: stretch; }
@@ -16373,7 +16516,6 @@ body[data-page-section="roster-recommend"] .layout {
   .adm-shell .adm-md-input { min-height: var(--size-panel-420); }
   .adm-dock { bottom: var(--space-8); }
   .adm-dock .adm-actions { margin-left: 0; }
-  .adm-timing .adm-field { width: auto; flex: 1 1 0; }
   /* Bảng bài viết thành thẻ: tiêu đề, hàng badge (trạng thái · ngôn ngữ · thời gian), slug. */
   .adm-posts-table { overflow: visible; border: none; background-color: transparent; }
   .adm-posts-table thead {

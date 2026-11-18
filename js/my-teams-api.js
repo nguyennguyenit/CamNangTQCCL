@@ -106,6 +106,16 @@ export function createMyTeamsApi({ api = defaultApi, kinds = MY_TEAMS_KINDS, onC
     return snapshot();
   }
 
+  /**
+   * Kéo trạng thái hiện hành của server (kèm đẩy phần đang chờ) để quyết định ghi dựa trên dữ liệu mới, không phải bộ nhớ
+   * đệm cũ: máy khác có thể đã xóa / chuyển hộp đội này mà trang chưa kịp đồng bộ. Trả `true` khi kéo được.
+   */
+  async function refresh() {
+    await sync.start();
+    await sync.syncNow();
+    return sync.status() === "synced";
+  }
+
   /** Hộp + hai nhóm mặc định (idempotent), chỉ sau một lần kéo thành công. Trả `{ok}` hoặc `{ok: false, reason}` (không phiên, hoặc `offline`/`error` khi chưa kéo được). */
   const ensureBoxDefaults = (boxId = MAIN_BOX_ID) => sync.mutateAfterPull((state, { now }) => ensureBoxDefaultsIn(state, boxId, { now }));
 
@@ -270,5 +280,5 @@ export function createMyTeamsApi({ api = defaultApi, kinds = MY_TEAMS_KINDS, onC
     return write([recordKey("team", teamId)], (state, { now }) => removeRecord(state, "team", teamId, { now }));
   }
 
-  return { sync, start: sync.start, load, snapshot, ensureBoxDefaults, saveTeam, createBox, renameBox, deleteBox, createGroup, renameGroup, deleteGroup, moveTeam, deleteTeam };
+  return { sync, start: sync.start, load, refresh, snapshot, ensureBoxDefaults, saveTeam, createBox, renameBox, deleteBox, createGroup, renameGroup, deleteGroup, moveTeam, deleteTeam };
 }

@@ -1,0 +1,15 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r2-000",
+ "reviewerSession": "reviewer:RvDkKl261118-r2-000",
+ "items": [
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-han-huangma-qiang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "5f288284c4a2e0036e012ef1127e88d6b9dfa8dbc634a9d84f693f38576caa61",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "9b347667d3a93ee18648fd9b1846f1e0ab10589218e335bf92d55333096b3a31",
+   "verdict": "accepted"
+  }
+ ]
+}

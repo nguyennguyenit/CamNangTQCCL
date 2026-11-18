@@ -61,6 +61,9 @@ test("Cùng Tồn dựng sẵn: nhóm đầu của mùa mới nhất, năm độ
     assert.equal(count(html, /<h1\b/gu), 1);
     const firstCard = html.split("coexist-team-card")[1];
     assert.equal(count(firstCard.split("</article>")[0], /class="hero reference-holder"/gu), 3, `${locale}: đội đầu phải có ba tướng`);
+    // Nguồn bảng 11 cột: bản vi dựng sẵn Trang bị từng tướng và Thẻ Kỳ Lược từng đội; bản zh không có.
+    assert.equal(count(html, /coexist-hero-equipment/gu), locale === "vi" ? 15 : 0, `${locale}: số dòng Trang bị`);
+    assert.equal(count(html, /coexist-card-strategy/gu), locale === "vi" ? 5 : 0, `${locale}: số dòng Thẻ Kỳ Lược`);
   }
 });
 

@@ -95,6 +95,8 @@ export function describeFailure(result) {
     case "cap":
     case "retained_cap":
       return L("Tài khoản đã đạt giới hạn số lượng cho phép.", "账号已达到数量上限。");
+    case "team_gone":
+      return L("Đội này vừa bị xóa hoặc chuyển hộp ở thiết bị khác. Chưa ghi gì. Bấm Lưu lần nữa để lưu thành đội mới, hoặc Hủy để bỏ.", "此阵容刚在其他设备上被删除或移到别的仓库，尚未写入任何内容。再次点击“保存”可保存为新阵容，或点击“取消”放弃。");
     case "box_missing":
       return L("Hộp này không còn. Hãy tải lại trang.", "该仓库已不存在，请刷新页面。");
     case "group_missing":

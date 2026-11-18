@@ -1,16 +1,22 @@
-// TDD js/unified-lookup.js + js/lookup-detail.js — Tra cứu bảy nhóm, mỗi nhóm một trang.
+// TDD js/unified-lookup.js + js/lookup-detail.js — Tra cứu tám nhóm, mỗi nhóm một trang.
 // Trang nhóm `/tra-cuu/<slug>/` chỉ đọc `?id=<mã>`; mã thuộc nhóm khác được chuyển sang đúng trang.
 // Tìm kiếm toàn nhóm trước khi phân trang, hồ sơ chỉ tiếng Việt và liên kết theo ID.
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   LOOKUP_GROUPS,
+  LOOKUP_GROUP_LABELS,
+  LOOKUP_GROUP_LABELS_ZH,
+  LOOKUP_GROUP_PAYLOADS,
+  LOOKUP_GROUP_UNITS,
+  lookupGroupLabels,
   parseLookupQuery,
   buildLookupCorpus,
   searchLookupGroup,
   retiredLookupRedirect,
 } from "../js/unified-lookup.js";
-import { effectVersions, lookupProfile, zhSafeValue } from "../js/lookup-detail.js";
+import { effectVersions, lookupDisplayName, lookupProfile, zhSafeValue } from "../js/lookup-detail.js";
+import { qilueCardsDoc, qilueStrategiesDoc } from "./fixtures/lookup-bundle-fixtures.mjs";
 import { withLocale } from "../js/i18n.js";
 import { resolveLegacyRoute } from "../js/legacy-routes.js";
 import { bookSourceAliases } from "../js/lookup-ids.js";
@@ -142,8 +148,18 @@ const corpus = () => buildLookupCorpus({ heroes: HERO_POOL, tactics: TACTIC_POOL
 
 /* ---------- Route ---------- */
 
-test("bảy nhóm theo đúng thứ tự công bố", () => {
-  assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books"]);
+test("tám nhóm theo đúng thứ tự công bố (Kỳ lược cuối)", () => {
+  assert.deepEqual(LOOKUP_GROUPS, ["heroes", "tactics", "equipment", "advisors", "troop-mods", "buildings", "books", "qilue"]);
+});
+
+test("nhãn, đơn vị và payload của nhóm Kỳ lược", () => {
+  assert.equal(LOOKUP_GROUP_LABELS.qilue, "Kỳ lược");
+  assert.equal(LOOKUP_GROUP_LABELS_ZH.qilue, "奇略");
+  assert.equal(lookupGroupLabels("zh").qilue, "奇略");
+  assert.equal(LOOKUP_GROUP_UNITS.qilue, "kỳ lược");
+  assert.deepEqual(LOOKUP_GROUP_PAYLOADS.qilue, { entry: ["lookup-catalog.json"], profile: [] });
+  assert.equal(parseLookupQuery("?id=qilue-card%3Abo-tri-thap-dien", "heroes").otherGroup, "qilue");
+  assert.equal(parseLookupQuery("?id=qilue-strategy%3Acuong-cong&type=muu", "qilue").id, "qilue-strategy:cuong-cong");
 });
 
 test("trang nhóm không có id thì không mở hồ sơ, khóa khác của query bị bỏ qua", () => {
@@ -194,7 +210,7 @@ test("alias hash cũ chuyển tới trang mục lục Tra cứu với group tư�
 
 /* ---------- Corpus, tìm kiếm, phân trang ---------- */
 
-test("corpus phủ đủ bảy nhóm và mọi bản ghi con", () => {
+test("corpus phủ đủ tám nhóm và mọi bản ghi con", () => {
   const built = corpus();
   assert.deepEqual(Object.keys(built.groups).sort(), [...LOOKUP_GROUPS].sort());
   assert.equal(built.groups.heroes.length, HERO_POOL.length);
@@ -954,4 +970,32 @@ test("?id= của chiến pháp đã gộp chuyển sang hồ sơ của mã còn 
   assert.equal(retiredLookupRedirect(corpus, route.id), "/tra-cuu/chien-phap/?id=tactic%3Asi-tranh-tien-pho");
   assert.equal(retiredLookupRedirect(corpus, "tactic:si-tranh-tien-pho"), null);
   assert.equal(retiredLookupRedirect(corpus, "tactic:khong-ton-tai"), null);
+});
+
+/* ---------- Kỳ lược ---------- */
+
+const qilueCorpus = () => buildLookupCorpus({ tactics: [tactic("tactic:cuong-cong", "Cường Công", { chinese: "強攻" })], catalog: { ...CATALOG, qilueStrategies: qilueStrategiesDoc(), qilueCards: qilueCardsDoc() } });
+
+test("kỳ lược: corpus gồm phương lược và thẻ, tra được theo mã; tên zh là nameZh", () => {
+  const built = qilueCorpus();
+  assert.equal(built.groups.qilue.length, qilueStrategiesDoc().length + qilueCardsDoc().length);
+  const card = built.byId.get("qilue-card:bo-tri-thap-dien");
+  assert.equal(card.group, "qilue");
+  assert.equal(card.nameVi, "Bố Trí Thập Diện");
+  assert.equal(lookupDisplayName(card.record, card.nameVi, "zh"), card.record.nameZh);
+  assert.equal(lookupDisplayName(card.record, card.nameVi, "zh"), "設伏十面");
+  assert.equal(built.byId.get("qilue-strategy:cuong-cong").group, "qilue");
+});
+
+test("kỳ lược: tìm theo tên Việt, tên cũ trong aliasesVi và tên game; biến thể chữ Hán sai không ra thẻ", () => {
+  const built = qilueCorpus();
+  const ids = (query, locale = "vi") => searchLookupGroup(built, { group: "qilue", query, locale }).items.map((item) => item.id);
+  assert.deepEqual(ids("bo tri thap dien"), ["qilue-card:bo-tri-thap-dien"]);
+  assert.deepEqual(ids("Mưu Toán"), ["qilue-strategy:muu-tinh"]);
+  assert.deepEqual(ids("設伏十面", "zh"), ["qilue-card:bo-tri-thap-dien"]);
+  assert.deepEqual(ids("十面埋伏"), []);
+  assert.deepEqual(ids("十面埋伏", "zh"), []);
+  // Tên trùng nhóm khác: Cường Công vừa là chiến pháp vừa là phương lược; mỗi nhóm chỉ trả mục của chính nó.
+  assert.deepEqual(ids("Cường Công"), ["qilue-strategy:cuong-cong"]);
+  assert.deepEqual(searchLookupGroup(built, { group: "tactics", query: "Cường Công" }).items.map((item) => item.id), ["tactic:cuong-cong"]);
 });

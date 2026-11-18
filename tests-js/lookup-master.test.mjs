@@ -12,16 +12,20 @@ import {
   masterDetailTree,
   masterDisplayItems,
   masterFacets,
+  masterFilterHref,
   masterFilterMatches,
+  masterFiltersFromQuery,
   masterFilterTree,
   masterResultTrees,
   masterSummaryTrees,
   masterTargetFor,
+  qilueStrategiesForCard,
   troopEffectVersions,
   troopSuggestedIds,
 } from "../js/lookup-master.js";
 import { buildLookupCorpus, lookupPageSize, lookupSummaryTrees, searchLookupGroup } from "../js/unified-lookup.js";
 import { treeToHtml } from "../js/view-tree.js";
+import { qilueCardsDoc, qilueStrategiesDoc } from "./fixtures/lookup-bundle-fixtures.mjs";
 
 const text = (trees) => trees.map(treeToHtml).join("");
 const plain = (html) => html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
@@ -101,8 +105,8 @@ function corpus() {
   return buildLookupCorpus({ heroes: HEROES, catalog: CATALOG });
 }
 
-test("bốn nhóm catalog dùng bố cục danh sách + chi tiết, nhóm khác thì không", () => {
-  for (const group of ["equipment", "advisors", "troop-mods", "buildings"]) assert.equal(isMasterGroup(group), true);
+test("năm nhóm catalog dùng bố cục danh sách + chi tiết, nhóm khác thì không", () => {
+  for (const group of ["equipment", "advisors", "troop-mods", "buildings", "qilue"]) assert.equal(isMasterGroup(group), true);
   for (const group of ["heroes", "tactics", "books"]) assert.equal(isMasterGroup(group), false);
 });
 
@@ -343,4 +347,154 @@ test("bản zh catalog: chữ Hán nguồn/bản dịch thay chữ Việt; bản
   assert.match(buildingHtml, /2小時/);
   assert.match(buildingHtml, /data-zh-source="translation"/);
   assert.doesNotMatch(buildingHtml, /部分说明暂无中文原文|Tóm tắt|giờ/);
+});
+
+/* ---------- Kỳ lược ---------- */
+
+const qilueCorpus = () => buildLookupCorpus({ catalog: { ...CATALOG, qilueStrategies: qilueStrategiesDoc(), qilueCards: qilueCardsDoc() } });
+
+test("kỳ lược là nhóm danh sách + chi tiết: phương lược đứng đầu, thẻ theo loại Dũng → Mưu → Phụ → Sách → Tế, hiếm trước thường", () => {
+  assert.equal(isMasterGroup("qilue"), true);
+  const built = qilueCorpus();
+  assert.deepEqual(built.groups.qilue.map((item) => item.id), [
+    "qilue-strategy:cuong-cong", "qilue-strategy:muu-tinh", "qilue-strategy:quay-nhieu",
+    "qilue-card:chi-khi-ngap-tran",
+    "qilue-card:cang-nhieu-cang-tot", "qilue-card:am-do-tran-thuong", "qilue-card:bo-tri-thap-dien",
+    "qilue-card:bac-lang-chuy-tan",
+    "qilue-card:cong-lao-hien-hach",
+    "qilue-card:an-tich-mang-thuong",
+  ]);
+  assert.equal(masterDefaultId("qilue", built.groups.qilue), "qilue-strategy:cuong-cong");
+});
+
+test("kỳ lược: chip lọc loại thẻ (có 'Tất cả', màu theo loại) và độ hiếm (bật/tắt); lọc loại chỉ giữ thẻ, giao với độ hiếm", () => {
+  const built = qilueCorpus();
+  const [type, rarity] = masterFacets("qilue", built.groups.qilue, "vi");
+  assert.equal(type.hasAll, true);
+  assert.equal(rarity.hasAll, false);
+  assert.deepEqual(type.options.map((option) => [option.value, option.label, option.count, option.tone]), [
+    ["dung", "Dũng", 1, "dung"], ["muu", "Mưu", 3, "muu"], ["phu", "Phụ", 1, "phu"], ["sach", "Sách", 1, "sach"], ["te", "Tế", 1, "te"],
+  ]);
+  assert.deepEqual(rarity.options.map((option) => [option.value, option.label, option.count]), [["common", "Thường", 4], ["rare", "Hiếm", 3]]);
+  const [typeZh, rarityZh] = masterFacets("qilue", built.groups.qilue, "zh");
+  assert.deepEqual(typeZh.options.map((option) => option.label), ["勇", "謀", "輔", "策", "濟"]);
+  assert.deepEqual(rarityZh.options.map((option) => option.label), ["普通", "稀有"]);
+
+  const filter = (selected) => (item) => masterFilterMatches("qilue", item.record, selected);
+  const ids = (selected) => searchLookupGroup(built, { group: "qilue", filter: filter(selected) }).items.map((item) => item.id);
+  assert.deepEqual(ids({ type: "muu" }), ["qilue-card:cang-nhieu-cang-tot", "qilue-card:am-do-tran-thuong", "qilue-card:bo-tri-thap-dien"]);
+  assert.deepEqual(ids({ type: "muu", rarity: "rare" }), ["qilue-card:cang-nhieu-cang-tot"]);
+  assert.deepEqual(ids({ rarity: "rare" }), ["qilue-card:chi-khi-ngap-tran", "qilue-card:cang-nhieu-cang-tot", "qilue-card:cong-lao-hien-hach"]);
+  assert.equal(ids({}).length, 10);
+
+  const html = treeToHtml(masterFilterTree("qilue", built.groups.qilue, { type: "muu" }, "vi"));
+  assert.match(html, /aria-label="Lọc kỳ lược"/);
+  assert.match(html, /aria-pressed="true" data-facet="type" data-value="muu" data-tone="muu"/);
+  assert.match(html, /data-facet="type" data-value=""[^>]*>Tất cả<span class="fchip-count">10</);
+});
+
+test("kỳ lược: bộ lọc đọc từ query (chỉ giá trị có thật của nhóm) và link sang danh sách đã lọc", () => {
+  const built = qilueCorpus();
+  assert.deepEqual(masterFiltersFromQuery("qilue", "?type=muu&utm_source=x", built.groups.qilue), { type: "muu" });
+  assert.deepEqual(masterFiltersFromQuery("qilue", "?type=muu&rarity=rare", built.groups.qilue), { type: "muu", rarity: "rare" });
+  assert.deepEqual(masterFiltersFromQuery("qilue", "?type=khac&rarity=", built.groups.qilue), {});
+  assert.deepEqual(masterFiltersFromQuery("qilue", "?type=muu&type=dung", built.groups.qilue), {}, "khóa lặp bị bỏ");
+  assert.deepEqual(masterFiltersFromQuery("equipment", "?slot=V%C5%A9+kh%C3%AD", built.groups.equipment), { slot: "Vũ khí" });
+  assert.equal(masterFilterHref("qilue", "type", "muu"), "/tra-cuu/ky-luoc/?type=muu");
+});
+
+test("kỳ lược: danh sách chia khối Phương lược rồi từng loại thẻ; hàng ghi nhãn nhóm, loại có màu, dấu Hiếm", () => {
+  const built = qilueCorpus();
+  const html = text(masterResultTrees("qilue", built.groups.qilue, "vi", { selectedId: "qilue-strategy:cuong-cong" }));
+  assert.match(html, /<h2 class="lookup-row-group-title">Phương lược<span class="lookup-row-group-count"> · 3<\/span><\/h2>/);
+  assert.match(html, /<h2 class="lookup-row-group-title">Thẻ Mưu<span class="lookup-row-group-count"> · 3<\/span><\/h2>/);
+  assert.ok(html.indexOf("Thẻ Dũng") < html.indexOf("Thẻ Mưu") && html.indexOf("Thẻ Mưu") < html.indexOf("Thẻ Tế"));
+  assert.match(html, /data-lookup-id="qilue-strategy:cuong-cong" aria-current="true"/);
+  assert.match(html, /Cường Công<\/span><span class="lookup-row-sub">Phương lược · thẻ Dũng, Phụ<\/span>/);
+  assert.match(html, /<span class="lookup-qilue-tag" data-tone="muu">Mưu<\/span>/);
+  assert.equal([...html.matchAll(/class="lookup-qilue-rare"/g)].length, 3);
+  assert.match(html, /Bố Trí Thập Diện<\/span><span class="lookup-row-sub">Thẻ kỳ lược · Nhóm quân ta<\/span>/);
+  assert.match(html, /<span class="lookup-row-zh" lang="zh-Hant">設伏十面<\/span>/);
+  assert.match(html, /href="\/tra-cuu\/ky-luoc\/bo-tri-thap-dien\/"/);
+
+  const zh = text(masterResultTrees("qilue", built.groups.qilue, "zh", {}));
+  assert.match(zh, />作战方略<span class="lookup-row-group-count"> · 3/);
+  assert.match(zh, />謀卡<span class="lookup-row-group-count"> · 3/);
+  assert.match(zh, /設伏十面<\/span><span class="lookup-row-sub">奇略卡 · 我軍群體<\/span>/);
+  assert.match(zh, />稀有</);
+  assert.doesNotMatch(zh, /Phương lược|Thẻ kỳ lược|Nhóm quân ta|Hiếm|lookup-row-zh/);
+});
+
+test("kỳ lược: phương lược dùng được của một thẻ tính từ cardTypes", () => {
+  const built = qilueCorpus();
+  const ids = (id) => qilueStrategiesForCard(built, built.byId.get(id).record).map((item) => item.id);
+  assert.deepEqual(ids("qilue-card:bo-tri-thap-dien"), ["qilue-strategy:muu-tinh", "qilue-strategy:quay-nhieu"]);
+  assert.deepEqual(ids("qilue-card:bac-lang-chuy-tan"), ["qilue-strategy:cuong-cong", "qilue-strategy:muu-tinh"]);
+  assert.deepEqual(ids("qilue-card:an-tich-mang-thuong"), []);
+});
+
+test("kỳ lược: hồ sơ thẻ có tên, chữ Hán, loại, độ hiếm, đối tượng, hiệu ứng nguyên văn và link phương lược dùng được", () => {
+  const built = qilueCorpus();
+  const html = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-card:bo-tri-thap-dien"), built, "vi"));
+  assert.match(html, /class="lookup-detail lookup-detail-qilue"/);
+  assert.match(html, /<h2 class="lookup-detail-title" id="lookup-detail-title">Bố Trí Thập Diện<\/h2><span class="lookup-detail-zh" lang="zh-Hant">設伏十面<\/span>/);
+  assert.match(html, /<span class="lookup-detail-eyebrow">Kỳ lược · Thẻ kỳ lược<\/span>/);
+  assert.match(html, /<dt>Loại<\/dt><dd><span class="lookup-qilue-tag" data-tone="muu">Mưu<\/span><\/dd>/);
+  assert.match(html, /<dt>Độ hiếm<\/dt><dd>Thường<\/dd>/);
+  assert.match(html, /<dt>Đối tượng<\/dt><dd>Nhóm quân ta<\/dd>/);
+  assert.match(html, /<p class="lookup-detail-prose">Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%<\/p>/);
+  assert.match(html, /Dùng được với phương lược/);
+  assert.match(html, /<a class="lookup-detail-link" href="\/tra-cuu\/ky-luoc\/muu-tinh\/">Mưu tính<\/a>/);
+  assert.match(html, /<a class="lookup-detail-link" href="\/tra-cuu\/ky-luoc\/quay-nhieu\/">Quấy nhiễu<\/a>/);
+  assert.doesNotMatch(html, /cuong-cong/);
+  assert.match(html, /Mùa Hán Diễm Trường Minh \(PK-S27, client 24\.547\)/);
+  assert.doesNotMatch(html, /data-zh-source/);
+
+  const rare = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-card:cang-nhieu-cang-tot"), built, "vi"));
+  assert.match(rare, /<span class="badge lookup-qilue-rare">Hiếm<\/span>/);
+  assert.match(rare, /<dt>Độ hiếm<\/dt><dd>Hiếm<\/dd>/);
+
+  const none = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-card:an-tich-mang-thuong"), built, "vi"));
+  assert.doesNotMatch(none, /Dùng được với phương lược/);
+});
+
+test("kỳ lược bản zh: tên game nameZh, nhãn theo hợp đồng, hiệu ứng effectZh mang cờ dịch, không còn chữ Việt", () => {
+  const built = qilueCorpus();
+  const html = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-card:bo-tri-thap-dien"), built, "zh", { page: true }));
+  assert.match(html, /<h1 class="lookup-detail-title" id="lookup-detail-title">設伏十面<\/h1>/);
+  assert.doesNotMatch(html, /lookup-detail-zh/);
+  assert.match(html, /<dt>类型<\/dt><dd><span class="lookup-qilue-tag" data-tone="muu">謀<\/span><\/dd>/);
+  assert.match(html, /<dt>稀有度<\/dt><dd>普通<\/dd>/);
+  assert.match(html, /<dt>目标<\/dt><dd>我軍群體<\/dd>/);
+  assert.match(html, /本回合主動戰法發動率提升 10%/);
+  assert.match(html, /data-zh-source="translation"/);
+  assert.match(html, /href="\/zh\/tra-cuu\/ky-luoc\/muu-tinh\/">謀算<\/a>/);
+  assert.match(html, /漢焰長明賽季（PK-S27，客戶端 24\.547）/);
+  assert.doesNotMatch(html, /Hiệp này|Nhóm quân ta|Mưu tính|Thẻ kỳ lược|data-lookup-back/);
+});
+
+test("kỳ lược: hồ sơ phương lược có mô tả, buff mỗi thẻ và hai loại thẻ link sang danh sách đã lọc", () => {
+  const built = qilueCorpus();
+  const html = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-strategy:muu-tinh"), built, "vi"));
+  assert.match(html, /<span class="lookup-detail-eyebrow">Kỳ lược · Phương lược<\/span>/);
+  assert.match(html, /Mô tả Mưu tính/);
+  assert.match(html, /Hiệu quả mỗi thẻ/);
+  assert.match(html, /Mỗi trang bị 1 Kỳ Lược, buff Mưu tính/);
+  assert.match(html, /<a class="lookup-qilue-type-link" href="\/tra-cuu\/ky-luoc\/\?type=muu" data-tone="muu"><span class="lookup-qilue-tag" data-tone="muu">Mưu<\/span> · 3 thẻ<\/a>/);
+  assert.match(html, /href="\/tra-cuu\/ky-luoc\/\?type=phu"[^>]*>.*Phụ<\/span> · 1 thẻ<\/a>/);
+  assert.match(html, /Tên khác: Mưu Toán/);
+
+  const zh = treeToHtml(masterDetailTree("qilue", built.byId.get("qilue-strategy:muu-tinh"), built, "zh"));
+  assert.match(zh, /謀算說明/);
+  assert.match(zh, /謀算加成/);
+  assert.match(zh, /href="\/zh\/tra-cuu\/ky-luoc\/\?type=muu"/);
+  assert.match(zh, /謀<\/span> · 3 张/);
+  assert.match(zh, /data-zh-source="translation"/);
+  assert.doesNotMatch(zh, /Mô tả|Mưu Toán|Phương lược/);
+});
+
+test("kỳ lược: dòng trạng thái theo loại thẻ đang lọc", () => {
+  assert.equal(plain(text(lookupSummaryTrees("qilue", 45, "vi"))), "45 kỳ lược · màu theo loại thẻ");
+  assert.equal(plain(text(masterSummaryTrees("qilue", 8, "vi", { type: "muu" }))), "8 thẻ Mưu · màu theo loại thẻ");
+  assert.equal(plain(text(masterSummaryTrees("qilue", 8, "zh", { type: "muu" }))), "8 张謀卡 · 颜色按卡牌类型");
 });

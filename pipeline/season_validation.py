@@ -342,8 +342,17 @@ def validate_source_body(body,seen_records):
     teams=array(payload['teams'])
     if not teams:
         raise ValueError('empty source group')
+    # Bảng 10 cột: đội mang cải tạo chiến pháp binh chủng. Bảng 11 cột: đội mang Thẻ Kỳ Lược, mỗi tướng
+    # mang Trang Bị. Một nhóm đến từ đúng một bảng nên mọi đội cùng một dạng, không trộn trường hai dạng.
+    team_fields=('recordId','sourceLocator','contentFingerprint','teamNameRaw','teamName','heroes')
+    effect_fields=('unitTacticEffectsRaw','strategyCardsRaw')
+    shapes=set()
     for team in teams:
-        record(team,('recordId','sourceLocator','contentFingerprint','teamNameRaw','teamName','unitTacticEffectsRaw','heroes'))
+        record(team,team_fields,effect_fields)
+        present=[field for field in effect_fields if field in team]
+        if len(present)!=1:
+            raise ValueError('source team requires exactly one team effect field')
+        shapes.add(present[0])
         key=identifier(team['recordId'])
         if key in seen_records:
             raise ValueError('duplicate source team identity')
@@ -351,17 +360,21 @@ def validate_source_body(body,seen_records):
         locator=record(team['sourceLocator'],('csvRecordStart','csvRecordEnd','lineStart','lineEnd'))
         if any(type(value) is not int or not 1<=value<=9007199254740991 for value in locator.values()) or locator['csvRecordEnd']-locator['csvRecordStart']!=2 or locator['lineEnd']<locator['lineStart']:
             raise ValueError('invalid source locator')
-        raw_text(team['teamNameRaw'],nonempty=True);text(team['teamName']);raw_text(team['unitTacticEffectsRaw'])
+        raw_text(team['teamNameRaw'],nonempty=True);text(team['teamName']);raw_text(team[present[0]])
         if len(array(team['heroes']))!=3:
             raise ValueError('source team must have three heroes')
+        equipment=present[0]=='strategyCardsRaw'
         for hero in team['heroes']:
-            record(hero,('nameRaw','tacticSlotsRaw','statFocusRaw','bookSlotsRaw'))
+            record(hero,('nameRaw','tacticSlotsRaw','statFocusRaw','bookSlotsRaw')+(('equipmentRaw',) if equipment else ()))
             raw_text(hero['nameRaw'],nonempty=True);raw_text(hero['statFocusRaw'])
+            if equipment:raw_text(hero['equipmentRaw'])
             for key,count in (('tacticSlotsRaw',2),('bookSlotsRaw',3)):
                 if len(array(hero[key]))!=count:
                     raise ValueError('source ordered slot count mismatch')
                 for value in hero[key]:raw_text(value)
         if sha256(team['contentFingerprint'])!=content_fingerprint(team):
             raise ValueError('source team content fingerprint mismatch')
+    if len(shapes)!=1:
+        raise ValueError('source group mixes table formats')
     if sha256(body['contentFingerprint'])!=content_fingerprint(payload):
         raise ValueError('source group content fingerprint mismatch')
