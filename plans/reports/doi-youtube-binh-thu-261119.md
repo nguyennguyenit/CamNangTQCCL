@@ -4,9 +4,9 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 
 ## Kết quả
 
-- Tướng có binh thư: 383/801 (trước: 3/801).
-- Đội có binh thư ít nhất một tướng: 135/267 (trước: 1/267); đủ cả ba tướng: 121.
-- Đội vẫn trống: 132; đội có một phần: 14.
+- Tướng có binh thư: 384/801 (trước: 3/801).
+- Đội có binh thư ít nhất một tướng: 135/267 (trước: 1/267); đủ cả ba tướng: 122.
+- Đội vẫn trống: 132; đội có một phần: 13.
 - Dedup Đội khác không đổi (387 admitted, 20 pending, cùng danh sách id): dedup chỉ xét tướng + chiến pháp.
 
 ## Quy tắc đã áp
@@ -15,6 +15,7 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 - Chỉ nhận tướng đọc rõ, khớp đúng bộ tướng của đội (chiến pháp khớp để tách đội cùng bộ tướng), và binh thư chính map được. Cuốn phụ không đọc được hoặc chưa map thì bỏ, không đoán.
 - Nhãn PK trên chân dung (bản PK của cùng tướng) được nhận khi chiến pháp khớp đội.
 - Bàng Thống nhãn S2 (đội SP Thục Trí Thuẫn) là cùng tướng Bàng Thống: anh xác nhận bằng ảnh frame ngày 19/11/2026.
+- SP Điêu Thuyền đội Hán Thất Cung (bản Hoa Đà): binh thư dưới watermark, anh đọc từ ảnh frame (三軍之眾, 久戰, 統軍).
 - Nhiều video cho cùng tướng mà lệch nhau: lấy video đứng sớm nhất trong `evidence` của đội (video dùng để curate đội).
 - Màn chiến báo không hiện binh thư, nên đội chỉ có bằng chứng chiến báo vẫn trống.
 - `歸心` (Quy Thuận) nay có đội dùng: gỡ cờ `outsideTeams` trong bảng binh thư.
@@ -63,7 +64,6 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 | Hoàng Mã Thương | SP Hoàng Phủ Tung | confidence thấp: 审时度势, 开合, 分利 | [ryQDIKf6crg@112s](https://youtu.be/ryQDIKf6crg?t=112) |
 | Hoàng Mã Thương | Hứa Du | confidence thấp: 惜兵爱民, 守势, 刚柔 | [ryQDIKf6crg@112s](https://youtu.be/ryQDIKf6crg?t=112) |
 | Thích Đổng Cung | Hứa Du | không có cuốn chính map được: 無功而勵, 掩虚, 救主 | [-vwpyxaT9ks@44s](https://youtu.be/-vwpyxaT9ks?t=44) |
-| Hán Thất Cung (bản Hoa Đà) | Điêu Thuyền (SP) | confidence thấp: 枕戈坐甲, 久戰, 統軍 | [iFegveMn4z0@22s](https://youtu.be/iFegveMn4z0?t=22) |
 | Hoàng Mã (Phấn Đột) | Hoàng Phủ Tung (SP) | không có cuốn chính map được: 開闔, 分利 | [6oZ7uOTJdGw@89s](https://youtu.be/6oZ7uOTJdGw?t=89) |
 | Trình Phổ Cung (Cam Ninh, Tả Từ) | Cam Ninh | không có cuốn chính map được: 鬼謀, 將威 | [scZe9zuAckw@48s](https://youtu.be/scZe9zuAckw?t=48) |
 | Tuân Du Ngũ Mưu (Sư Tử Phấn Tấn) | Tuân Úc (SP) | không có cuốn chính map được: 統軍 | [79LwxX01G5Y@552s](https://youtu.be/79LwxX01G5Y?t=552) |

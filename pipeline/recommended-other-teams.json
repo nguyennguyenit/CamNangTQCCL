@@ -2032,7 +2032,11 @@
           ]
         },
         {
-          "bookSlotsRaw": [],
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Chiến Đấu Trường Kỳ",
+            "Dẫn Quân"
+          ],
           "displayNameVi": "SP Điêu Thuyền",
           "faction": "Hán",
           "heroIdentityId": "hero:2a027c7b25cb232d4d4dafbc",
@@ -2050,7 +2054,7 @@
         }
       ],
       "legacyTeamId": "youtube-28",
-      "legacyVariantId": "v-f9a4540b4dbaa54b425ef25c5fa498df0ae933387a018eaf99a7e27f72d6d711",
+      "legacyVariantId": "v-24e2e8d3ef6c5bb82ae07ac7b5aa46b5e8b97a9773af84da74aab60f056e0344",
       "name": "Hán Thất Cung (bản Hoa Đà)",
       "nickname": null,
       "origin": "existing-local",
@@ -34136,7 +34140,7 @@
       "classification": "distinct",
       "dedupKey": "sha256:f073dc21f7ed94e71faac938b896cb1963b43ddd53204992837a98723bf478d9",
       "legacyTeamId": "youtube-28",
-      "legacyVariantId": "v-f9a4540b4dbaa54b425ef25c5fa498df0ae933387a018eaf99a7e27f72d6d711"
+      "legacyVariantId": "v-24e2e8d3ef6c5bb82ae07ac7b5aa46b5e8b97a9773af84da74aab60f056e0344"
     },
     {
       "classification": "distinct",
@@ -34609,7 +34613,7 @@
   ],
   "dedupKeyVersion": 1,
   "inputTeamRows": 443,
-  "localTeamsSha256": "sha256:6d447d8000d1cf4035debee230e670619d108fea228a650713a49b461798ff8b",
+  "localTeamsSha256": "sha256:a201f82795cb0dbdec285295e459629ad463c53e28eb521585243fe8c7dbfb3f",
   "mappingFileSha256": "sha256:b7554bb819531c33c26b5e193985258225d84d15dfd621327543242c4c2df3e7",
   "pending": [
     {

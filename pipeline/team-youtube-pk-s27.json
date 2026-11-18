@@ -2950,7 +2950,20 @@
               "alternatives": []
             }
           ],
-          "books": [],
+          "books": [
+            {
+              "name": "Tam Quân Chi Chúng",
+              "alternatives": []
+            },
+            {
+              "name": "Chiến Đấu Trường Kỳ",
+              "alternatives": []
+            },
+            {
+              "name": "Dẫn Quân",
+              "alternatives": []
+            }
+          ],
           "note": null
         }
       ],
