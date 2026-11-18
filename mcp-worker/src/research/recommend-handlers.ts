@@ -283,7 +283,13 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     const known = new Set(state.lockedTeams.map((team) => team.teamId as string));
     if ([...wantedLocks].some((id) => !known.has(id))) throw invalid(["lockedTeams"]);
   }
-  const heroNames = new Map(state.heroes.map((hero) => [hero.canonicalId as string, hero.displayName]));
+  // Tên lấy từ catalog theo canonicalId; displayName client gửi bị bỏ qua (state gọn không còn tên, #166).
+  const catalogNames = new Map<string, string>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind === "hero" || entry.kind === "tactic") catalogNames.set(entry.canonicalId, entry.displayName);
+  }
+  const nameOf = (canonicalId: string): string => catalogNames.get(canonicalId) ?? canonicalId;
+  const heroNames = new Map(state.heroes.map((hero) => [hero.canonicalId as string, nameOf(hero.canonicalId)]));
 
   const heroesDict = ctx.snapshot.artifacts["heroes-dict"] as never;
   const tacticsDict = ctx.snapshot.artifacts.tactics as never;
@@ -295,7 +301,7 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   const tacticRules = buildTacticRules(tacticsDict);
 
   const ownedHeroes = state.heroes.slice(0, 500).map((hero) => ({
-    name: hero.displayName,
+    name: heroNames.get(hero.canonicalId),
     canonicalId: hero.canonicalId,
     ...(hero.redStars === undefined ? {} : { redStars: hero.redStars }),
   }));
@@ -303,7 +309,7 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   const formerTactic: Map<string, string> = createFormerTacticIdIndex(tacticsDict);
   const liveTacticId = (id: string): string => formerTactic.get(id) ?? id;
   const ownedTactics = state.tactics.slice(0, 1_000).map((tactic) => ({
-    name: tactic.displayName,
+    name: catalogNames.get(liveTacticId(tactic.canonicalId)) ?? nameOf(tactic.canonicalId),
     canonicalId: liveTacticId(tactic.canonicalId),
   }));
   const lockedTeams = state.lockedTeams

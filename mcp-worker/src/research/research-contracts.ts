@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {
-  MAX_NORMALIZE_REQUEST_BYTES, boundedRequest, canonicalStateSchema, commonResultSchema, confirmationBindingSchema, seasonContextSchema, seasonId, structuredObservationSchema, workflowVersion,
+  MAX_NORMALIZE_OBSERVATION_ID_LENGTH, MAX_NORMALIZE_OBSERVATIONS, MAX_NORMALIZE_REQUEST_BYTES, boundedRequest, canonicalId, nullableFlat, commonResultSchema, confirmationBindingSchema, normalizedCanonicalStateSchema, seasonContextSchema, seasonId, structuredObservationSchema, workflowVersion,
 } from "./shared-schemas.js";
 import { findTeamsInputSchema, findTeamsOutputSchema, getTeamInputSchema, getTeamOutputSchema } from "./team-handlers.js";
 import { getEntityInputSchema, getEntityOutputSchema, searchInputSchema, searchOutputSchema } from "./catalog-handlers.js";
@@ -13,8 +13,12 @@ const normalizeInputSchema = z
     expectedWorkflowVersion: workflowVersion.optional(),
     seasonContext: seasonContextSchema.optional(),
     observations: z
-      .array(structuredObservationSchema)
-      .max(100)
+      .array(
+        structuredObservationSchema.extend({
+          observationId: z.string().min(1).max(MAX_NORMALIZE_OBSERVATION_ID_LENGTH).describe("ID observation duy nhất (tối đa 32 ký tự)."),
+        }),
+      )
+      .max(MAX_NORMALIZE_OBSERVATIONS)
       .describe("Observation đầu vào."),
   })
   .strict();
@@ -22,11 +26,11 @@ const normalizeInputSchema = z
 
 const normalizeOutputSchema = commonResultSchema.extend({
   seasonContext: seasonContextSchema.optional(),
-  canonicalState: canonicalStateSchema,
-  observations: z
-    .array(structuredObservationSchema)
-    .max(500)
-    .describe("Observation chuẩn hóa."),
+  canonicalState: normalizedCanonicalStateSchema,
+  resolvedIds: z
+    .array(nullableFlat(canonicalId, "canonicalId server tra tên theo đúng vị trí observation đầu vào; null nếu không có."))
+    .max(MAX_NORMALIZE_OBSERVATIONS)
+    .describe("Theo vị trí của observations đầu vào: canonicalId server tra tên, null nếu client gửi sẵn canonicalId hoặc mục chưa rõ/bị thay/xung đột."),
   reviewRequired: z
     .boolean()
     .describe("Cần rà soát ambiguity."),

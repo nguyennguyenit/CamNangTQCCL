@@ -42,7 +42,7 @@ export const PUBLIC_ERRORS = {
   },
   RESULT_TOO_LARGE: {
     message: "Kết quả vượt giới hạn cho phép.",
-    nextAction: "Thu hẹp truy vấn, chọn section hoặc giảm limit rồi thử lại; với playbook, gửi `stage` để chia nhỏ.",
+    nextAction: "Thu hẹp truy vấn, chọn section hoặc giảm limit rồi thử lại; với playbook, gửi `stage` để chia nhỏ; với normalize, sửa hoặc bỏ các mục chưa nhận ra (tên sai/không có trong catalog) hoặc gửi ít mục hơn.",
   },
   INTERNAL_ERROR: {
     message: "Không thể hoàn tất yêu cầu.",

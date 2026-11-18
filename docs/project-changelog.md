@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-19 (Normalize nhận đủ kho thật, #165, #166)
+
+- Changed: `tqccl_normalize_entities` trả kết quả gọn: state không còn tên/`evidence`/`confidence`; `unresolved` không còn `observedText`/`evidence`, `candidates` khử trùng; `observations[]` thay bằng `resolvedIds` theo vị trí đầu vào (`null` khi client gửi sẵn id hoặc mục chưa rõ/bị thay thế/xung đột); `manual: true` cho mục sửa tay; provenance `canonical-state` mang `trust: "untrusted"`; quá 100 cảnh báo thì gộp phần dư thành `summary:<loại>:<số>`. Thuật toán chuẩn hoá và digest không đổi. Trần đầu vào 100 mục / 16 KiB → 300 mục / 60 770 B, `observationId` ≤ 32 ký tự; kho ≤ 300 mục với ≤ 60 mục chưa rõ (tỉ lệ tướng/chiến pháp như kho thật) lọt trần kết quả 40 000 ký tự. `--input -` từ chối stdin TTY.
+- Changed: `tqccl_recommend_teams` lấy tên tướng/chiến pháp từ catalog theo `canonicalId`; `displayName` trong `canonicalState` thành tuỳ chọn và bị bỏ qua (#166: tướng chọn danh tính bằng `canonicalId` không còn tên rỗng).
+- Added: CLI `--input -` (stdin) và `--input-file <path>`, đọc có giới hạn 256 KiB, chỉ nhận regular file, UTF-8 không BOM.
+- Breaking: output schema normalize và `WORKFLOW_BUILD_ID` đổi → consumer MCP refresh `tools/list`; mọi binding đã xác nhận phải normalize + xác nhận lại. Release không dùng `rehearse_rollback` (catalog bản trước khác); rollback cũng làm binding mất hiệu lực lần nữa.
+- Docs: `docs/goclaw-mcp-skill-handoff.md` sửa trần phản hồi ghi nhầm 131072 → 98304.
+
 ## 2026-11-18 (Google Analytics 4 + Consent Mode v2)
 
 - Added: Google Analytics 4 (`G-0K23EKM76G` ở `ANALYTICS_CONFIG` của `js/config.js`) ở Consent Mode v2 chế độ advanced. Script inline thứ hai của `<head>` (`src/lib/analytics-loader.ts`, do `SiteLayout` phát ngay sau cầu chuyển domain) dựng `dataLayer`/`gtag`, khai consent mặc định từ chối (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization`, `wait_for_update` 500), áp lựa chọn đã lưu nếu là "granted" (chỉ `analytics_storage`), rồi `js` + `config` (`send_page_view: false`; Google Signals và cá nhân hoá quảng cáo tắt), gửi `page_view` đầu tường minh với `page_location` chụp ở `<head>` (vì `js/app.js` gỡ `utm_*`/`gclid` khỏi URL trước khi gtag.js tải xong) và nạp gtag.js bất đồng bộ. Chỉ `tqccl.com` gửi số liệu (localhost, `*.pages.dev`, `www.tqccl.com`, bản build test thì không); `/quan-tri/` ở mọi locale không có gtag, thanh đồng ý hay nút cookie trong HTML (`SiteLayout analytics={false}`), `scripts/verify-astro-dist.mjs` chặn bằng `ADMIN_ANALYTICS_MARKER`.
