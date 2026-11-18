@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-18 (Dọn khu Quản trị: CSS chết, giới hạn chi tiết người dùng, token avatar)
+
+- Removed: CSS không còn ai dùng `.adm-filters-top`, `.adm-team-field` và token chữ `--type-admin-card-name`, `--type-admin-rank` (`tokens.json` + `css/styles.css`).
+- Changed: `GET /api/admin/users/:id` trả `limits: {comments, reports, audit}`; khu Quản trị hiện "N mục mới nhất" theo đúng giới hạn đó thay vì chép tay 10/20 (worker cũ chưa trả thì hiện "Mục mới nhất").
+- Added: token màu avatar chữ đầu `--tint-avatar` / `--tint-avatar-ink` (sáng `#EAD9C0`/`#6B4A1E` theo artboard; tối tự suy `#4A3820`/`#EAD9C0`, 8,09:1), nối vào `.cm-avatar` và `.adm-initials` thay cho `panel-2`/`ink-2` tạm; ngưỡng tương phản 4,5:1 khai ở `meta.contrast` cho cả hai theme.
+
 ## 2026-11-18 (MCP: Đội khác giữ nhãn Đề cử)
 
 - Fixed: projection Đội khác của `mcp-worker` (`publication-builder.ts`) bỏ field `recommended` của `other-teams.json`. Mỗi biến thể giờ có `recommended` (boolean, hàng thiếu field là `false`); `tqccl_find_teams` (collection `other`) và `tqccl_get_team` trả `recommended` để khớp nhãn "Đề cử" của website. Sinh lại `workflow-build` MCP.
