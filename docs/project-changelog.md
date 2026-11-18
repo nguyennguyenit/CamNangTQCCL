@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-18 (Gợi ý đội: thêm hàng loạt vào kho, #61)
+
+- Added: thẻ đội ở mục Thiếu món có nút "Tôi có tất cả món thiếu của đội này" (khi thẻ liệt kê từ 2 món): thêm đúng các món thẻ đang ghi vào kho đang dùng (local với khách, hộp đang chọn khi đã đăng nhập), gợi ý tính lại ngay, thanh thông báo đầu kết quả có "Hoàn tác" gỡ đúng các món vừa thêm. Đội thiếu tướng chỉ thêm tướng (engine chưa xét chiến pháp của đội đó), không thêm hộ món người dùng chưa thấy.
+- Added: bảng chọn nhanh của kho có khối "Dán danh sách tên": tách theo dòng, tab, dấu phẩy, chấm phẩy (cả `，；、`), bỏ số thứ tự đầu dòng; chỉ nhận tên khớp đúng (tên Việt, Hán-Việt, chữ Hán giản/phồn, alias; bỏ dấu khi không khớp giữ dấu), không so gần đúng. Xem lại bốn nhóm Khớp / Cần chọn (mặc định Bỏ qua) / Không nhận ra / Chiến pháp tự mang rồi mới ghi; tên không nhận ra ở lại trong ô để sửa. Hàm thuần ở `js/roster-pasted-name-list-match.js`, DOM ở `js/roster-pasted-name-list-panel.js`, nút thêm tất cả ở `js/roster-team-missing-items-bulk-add.js`.
+- Re-pin hash nguồn `js/roster-picker.js`, `js/roster-recommend-ui.js`, thêm `js/roster-pasted-name-list-panel.js` vào `sourceFiles` và entrypoint mục `roster-recommend`; policy `site-vi-261118-goi-y-doi-them-hang-loat`, publish generation Đội chuẩn `47d3aa52…` (prune `95de17f0…`), rebind giữ nguyên mọi handle. Receipt dịch không đổi (6409/6409); chuỗi UI mới duyệt độc lập ở `plans/reports/translation-review-261118-1930-goi-y-doi-them-hang-loat.md`.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).

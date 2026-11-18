@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261118-doi-khac-ky-luoc",
+  "policyVersion": "site-vi-261118-goi-y-doi-them-hang-loat",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -697,6 +697,7 @@
       "entrypoints": [
         "src/pages/goi-y-doi-tu-kho/index.astro",
         "src/components/pages/SectionPage.astro",
+        "js/roster-pasted-name-list-panel.js",
         "js/roster-picker.js",
         "js/roster-recommend-ui.js",
         "js/roster-scan-map.js",
@@ -785,8 +786,9 @@
     "js/recruit-tracker-store.js": "4bb2d985549e382c23e77586282db86daa466e4f7b1d6c0c3edf8dfbcf566668",
     "js/recruit-tracker.js": "0fe5de0ed556931e05535c65c36fa40a506515806324ab1d8d2d951975ccb67f",
     "js/render.js": "d929e2f888c42ba6ef8a0c417e50aff89279186740b0dd7d4ec81c54fc3a2bdb",
-    "js/roster-picker.js": "93f68a58639433c5609787c04a32658decb693b3bbd72f3be8b0a1013dce1ceb",
-    "js/roster-recommend-ui.js": "ce02ee31ae796991a7bd80dbbfccd62a55aa2def8783aa25313b412dfab5c6fa",
+    "js/roster-pasted-name-list-panel.js": "ccdf98d861d77c39c6104d66bbf6b731348511ac7b60e700542c909cf8512382",
+    "js/roster-picker.js": "5a16fb4e9e014fe3db6d01a9ea2de1198c961f07fcfe8f63eecddd89602ce995",
+    "js/roster-recommend-ui.js": "93dc82d5fb6748df5ec56316445503ae95226f38e8e81d61ba07adc5e759fca6",
     "js/roster-scan-map.js": "b503cab367887d5f0d97acaaf493649b1919b55ec127b85690b37709278e4619",
     "js/roster-scan-state.js": "511d33d1d19aac9cc733d68cf84eda0634ecd3b0327805e61811dea565140757",
     "js/site-chrome.js": "067886ae9ea13e635cf3fbca1d0de2a149eef80d79bf758aa1839b3fbf695c88",
