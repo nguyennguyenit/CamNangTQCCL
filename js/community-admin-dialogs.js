@@ -13,7 +13,7 @@ export const REASON_MAX = 500;
 
 /** Lỗi của thao tác trên một tài khoản: 403 `forbidden` ở đây là đích ngoài quyền (KDV khác, root, khoá của root). */
 export function describeUserActionError(error) {
-  return error?.code === 'forbidden' ? L('Bạn không có quyền thao tác trên tài khoản này.', '你无权对该账号执行此操作。') : describeError(error);
+  return error?.code === 'forbidden' ? L('Bạn không có quyền thao tác trên tài khoản này.', '你无权对该账号执行此操作。', 'このアカウントを操作する権限がありません。') : describeError(error);
 }
 
 let dialogSeq = 0;
@@ -40,7 +40,7 @@ export function actionDialog({
   };
   const confirm = button(submitLabel, { variant: confirmVariant ?? (danger ? 'adm-btn-danger' : 'primary'), type: 'submit' });
   confirm.disabled = confirmDisabled;
-  const cancel = button(L('Huỷ', '取消'));
+  const cancel = button(L('Huỷ', '取消', 'キャンセル'));
   const heading = el('h2', { id: titleId, class: 'donate-dialog-title' }, title);
   const leadNode = lead == null || lead === '' ? null : lead.nodeType ? lead : el('p', { class: 'donate-dialog-lead' }, lead);
   if (leadNode) leadNode.id = leadId;
@@ -109,15 +109,15 @@ const DEFAULT_DURATION = '1d';
 let banSeq = 0;
 
 function confirmLabel(duration) {
-  return duration === 'permanent' ? L('Khoá vĩnh viễn', '永久封禁') : L(`Khoá ${durationLabel(duration)}`, `封禁 ${durationLabel(duration)}`);
+  return duration === 'permanent' ? L('Khoá vĩnh viễn', '永久封禁', '無期限で利用停止') : L(`Khoá ${durationLabel(duration)}`, `封禁 ${durationLabel(duration)}`, `${durationLabel(duration)}利用停止`);
 }
 
 /** Câu hết hạn theo giờ địa phương của người xem nếu khoá ngay bây giờ. */
 export function banUntilText(duration, now = Date.now()) {
   const span = BAN_SPANS.find(([value]) => value === duration)?.[1];
-  if (span == null) return L('Không tự hết hạn; chỉ mở khoá bằng tay ở trang này.', '不会自动到期；只能在此页面手动解封。');
+  if (span == null) return L('Không tự hết hạn; chỉ mở khoá bằng tay ở trang này.', '不会自动到期；只能在此页面手动解封。', '自動では解除されません。このページから手動で解除する必要があります。');
   const at = formatDateTime(now + span);
-  return L(`Tự mở khoá lúc ${at} nếu khoá ngay bây giờ.`, `如果现在封禁，将于 ${at} 自动解封。`);
+  return L(`Tự mở khoá lúc ${at} nếu khoá ngay bây giờ.`, `如果现在封禁，将于 ${at} 自动解封。`, `今すぐ利用停止にすると、${at}に自動で解除されます。`);
 }
 
 /**
@@ -132,7 +132,7 @@ export function openBanDialog(user, { submit, onClose }) {
 
   const untilText = el('span', {});
   const durations = el('fieldset', { class: 'adm-ban-dur-group' }, [
-    el('legend', { class: 'adm-label' }, L('Thời hạn', '期限')),
+    el('legend', { class: 'adm-label' }, L('Thời hạn', '期限', '期間')),
     el('div', { class: 'adm-ban-dur-grid' }, radios.map((radio) => el('label', { class: 'adm-ban-dur' }, [radio, el('span', {}, durationLabel(radio.value))]))),
     el('p', { class: 'adm-ban-until', 'aria-live': 'polite' }, [admIcon('clock', 14), untilText]),
   ]);
@@ -147,20 +147,20 @@ export function openBanDialog(user, { submit, onClose }) {
   });
   const counter = el('span', { class: 'adm-ban-counter', 'aria-hidden': 'true' }, `0/${REASON_MAX}`);
   const reasonField = el('div', { class: 'adm-field' }, [
-    el('label', { class: 'adm-label', for: 'adm-ban-reason' }, [L('Lý do', '理由'), el('span', { class: 'adm-required', 'aria-hidden': 'true' }, ' *')]),
+    el('label', { class: 'adm-label', for: 'adm-ban-reason' }, [L('Lý do', '理由', '理由'), el('span', { class: 'adm-required', 'aria-hidden': 'true' }, ' *')]),
     reason,
     el('div', { class: 'adm-ban-reason-foot' }, [
-      el('p', { id: 'adm-ban-reason-hint', class: 'adm-hint' }, L(`Bắt buộc, tối đa ${REASON_MAX} ký tự. Người bị khoá sẽ thấy lý do này.`, `必填，最多 ${REASON_MAX} 个字符。被封禁者将看到此理由。`)),
+      el('p', { id: 'adm-ban-reason-hint', class: 'adm-hint' }, L(`Bắt buộc, tối đa ${REASON_MAX} ký tự. Người bị khoá sẽ thấy lý do này.`, `必填，最多 ${REASON_MAX} 个字符。被封禁者将看到此理由。`, `必須、最大${REASON_MAX}文字。利用停止となったユーザーにはこの理由が表示されます。`)),
       counter,
     ]),
   ]);
 
   const effects = el('div', { class: 'adm-ban-effects' }, [
-    el('p', { class: 'adm-ban-effects-title' }, L('Người bị khoá sẽ:', '被封禁的用户将：')),
+    el('p', { class: 'adm-ban-effects-title' }, L('Người bị khoá sẽ:', '被封禁的用户将：', '利用停止となったユーザーは次のようになります。')),
     el('ul', { class: 'adm-ban-effects-list' }, [
-      ['signout', L('Bị đăng xuất.', '被强制下线。')],
-      ['lock', L('Không đăng nhập lại được cho tới khi hết hạn hoặc được mở khoá.', '在到期或被解封之前无法再次登录。')],
-      ['hidden', L('Bị ẩn nội dung công khai.', '公开内容将被隐藏。')],
+      ['signout', L('Bị đăng xuất.', '被强制下线。', 'ログアウトされます。')],
+      ['lock', L('Không đăng nhập lại được cho tới khi hết hạn hoặc được mở khoá.', '在到期或被解封之前无法再次登录。', '期限が切れるか解除されるまで、再ログインできません。')],
+      ['hidden', L('Bị ẩn nội dung công khai.', '公开内容将被隐藏。', '公開コンテンツが非表示になります。')],
     ].map(([glyph, text]) => el('li', {}, [el('span', { class: 'adm-ban-effects-icon' }, admIcon(glyph)), el('span', {}, text)]))),
   ]);
 
@@ -171,7 +171,7 @@ export function openBanDialog(user, { submit, onClose }) {
   ]);
 
   const { confirm } = actionDialog({
-    title: L('Khoá tài khoản', '封禁账号'),
+    title: L('Khoá tài khoản', '封禁账号', 'アカウントを利用停止'),
     headIcon: 'lock',
     subtitle,
     lead: effects,
@@ -185,7 +185,7 @@ export function openBanDialog(user, { submit, onClose }) {
         reason.setAttribute('aria-invalid', 'true');
         reason.focus();
       } else reason.removeAttribute('aria-invalid');
-      return missing ? L('Cần nhập lý do khoá.', '请填写封禁理由。') : '';
+      return missing ? L('Cần nhập lý do khoá.', '请填写封禁理由。', '利用停止の理由を入力してください。') : '';
     },
     submit: () => submit({ duration: selected(), reason: reason.value.trim() }),
     onClose,

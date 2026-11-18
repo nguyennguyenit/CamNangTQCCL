@@ -1004,9 +1004,10 @@ test("aria-current đúng trên cả 8 trang mục", async ({ page }) => {
       if (await active.isVisible()) break;
       await toggle.click();
     }
-    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp).
+    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp). Link bản đang xem của nhóm chuyển
+    // ngôn ngữ (`data-lang-current`) đánh dấu ngôn ngữ, không phải mục, nên không tính.
     await expect(active).toBeVisible();
-    await expect(page.locator('a[aria-current="page"]:visible')).toHaveCount(1);
+    await expect(page.locator('a[aria-current="page"]:visible:not([data-lang-current])')).toHaveCount(1);
   }
 });
 
@@ -1052,8 +1053,9 @@ test("menu mobile giữ đủ 8 dòng Tra cứu tới trang nhóm và tiêu đ�
   await expect(page).toHaveURL("/tra-cuu/chien-phap/");
   await expect(page.locator("#section-menu-items")).toBeHidden();
   await page.locator("#section-menu-toggle").click();
-  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]')).toHaveAttribute("aria-current", "page");
-  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]')).not.toHaveAttribute("aria-current", /.+/);
+  // Chân menu có link bản đang xem của nhóm chuyển ngôn ngữ trỏ cùng trang: chỉ xét link mục.
+  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]:not([data-lang-current])')).toHaveAttribute("aria-current", "page");
+  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]:not([data-lang-current])')).not.toHaveAttribute("aria-current", /.+/);
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
@@ -1130,11 +1132,12 @@ test("rời trang bằng điều hướng khác tài liệu rồi quay lại kh�
 
 /* ---------- Vòng sửa Opus (P3-B1…B3, N1…N5) ---------- */
 
-test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang", async ({ page }) => {
-  const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
-  for (const width of [1280, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/", "/doi-chuan/", detail]) {
+// Một test cho mỗi trang (kể cả bản zh/ja: nhãn nav và nhóm chuyển ngôn ngữ mỗi bản một độ rộng khác nhau);
+// gộp chung một test thì trên runner CI vượt giới hạn 30 s.
+for (const path of ["/", "/doi-chuan/", legacyRoute(teamsFixture[0].id), "/zh/", "/ja/", "/ja/doi-chuan/"]) {
+  test(`menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang: ${path}`, async ({ page }) => {
+    for (const width of [1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
       await expect(page.locator("#nav-toggle-game")).toBeVisible();
       const buttons = await page.locator(".site-nav [data-dropdown-button]").all();
@@ -1152,8 +1155,8 @@ test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không
       // Nhóm Game neo theo mép phải nút (artboard LandingMenu: right 0, width 500).
       expect(await page.locator("#nav-toggle-game").evaluate((node) => node.closest("[data-dropdown]").classList.contains("nav-dropdown-game"))).toBe(true);
     }
-  }
-});
+  });
+}
 
 test("header 821–1279px dùng ☰ thay nav ngang; 1280px mọi nhãn nav một dòng", async ({ page }) => {
   for (const width of [821, 1024, 1180, 1279]) {

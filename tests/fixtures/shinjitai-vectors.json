@@ -1,0 +1,297 @@
+{
+ "description": "Vector chuyển tự dạng Nhật dùng chung cho Python (tests/test_ja_shinjitai.py) và JS (phase C). 56 cặp đầu lấy từ tên Nhật đã quan sát trong nguồn Nhật (độ tin high); phần sau là ngoại lệ, giản thể và ký tự giữ nguyên.",
+ "cases": [
+  {
+   "input": "SP 樂進",
+   "expected": "SP 楽進"
+  },
+  {
+   "input": "SP 貂蟬",
+   "expected": "SP 貂蝉"
+  },
+  {
+   "input": "一舉殲滅",
+   "expected": "一挙殲滅"
+  },
+  {
+   "input": "乘敵不虞",
+   "expected": "乗敵不虞"
+  },
+  {
+   "input": "以逸待勞",
+   "expected": "以逸待労"
+  },
+  {
+   "input": "傳檄宣威",
+   "expected": "伝檄宣威"
+  },
+  {
+   "input": "劉禪",
+   "expected": "劉禅"
+  },
+  {
+   "input": "嚴顏",
+   "expected": "厳顔"
+  },
+  {
+   "input": "因利制權",
+   "expected": "因利制権"
+  },
+  {
+   "input": "國士將風",
+   "expected": "国士将風"
+  },
+  {
+   "input": "圍師必闕",
+   "expected": "囲師必闕"
+  },
+  {
+   "input": "坐斷東南",
+   "expected": "坐断東南"
+  },
+  {
+   "input": "士爭先赴",
+   "expected": "士争先赴"
+  },
+  {
+   "input": "天下無雙",
+   "expected": "天下無双"
+  },
+  {
+   "input": "張寶",
+   "expected": "張宝"
+  },
+  {
+   "input": "張繡",
+   "expected": "張繍"
+  },
+  {
+   "input": "張讓",
+   "expected": "張譲"
+  },
+  {
+   "input": "後發制人",
+   "expected": "後発制人"
+  },
+  {
+   "input": "擊其惰歸",
+   "expected": "撃其惰帰"
+  },
+  {
+   "input": "據水斷橋",
+   "expected": "据水断橋"
+  },
+  {
+   "input": "暗藏玄機",
+   "expected": "暗蔵玄機"
+  },
+  {
+   "input": "機略縱橫",
+   "expected": "機略縦横"
+  },
+  {
+   "input": "步騭",
+   "expected": "歩騭"
+  },
+  {
+   "input": "毒氣",
+   "expected": "毒気"
+  },
+  {
+   "input": "江天長焰",
+   "expected": "江天長焔"
+  },
+  {
+   "input": "溯江搖櫓",
+   "expected": "遡江揺櫓"
+  },
+  {
+   "input": "滿寵",
+   "expected": "満寵"
+  },
+  {
+   "input": "潛龍陣",
+   "expected": "潜龍陣"
+  },
+  {
+   "input": "火燒連營",
+   "expected": "火焼連営"
+  },
+  {
+   "input": "烏巢遺恨",
+   "expected": "烏巣遺恨"
+  },
+  {
+   "input": "焚輜營壘",
+   "expected": "焚輜営塁"
+  },
+  {
+   "input": "猛擊",
+   "expected": "猛撃"
+  },
+  {
+   "input": "獨行赴鬥",
+   "expected": "独行赴闘"
+  },
+  {
+   "input": "王元姬",
+   "expected": "王元姫"
+  },
+  {
+   "input": "田豐",
+   "expected": "田豊"
+  },
+  {
+   "input": "眾望所歸",
+   "expected": "衆望所帰"
+  },
+  {
+   "input": "絕地反擊",
+   "expected": "絶地反撃"
+  },
+  {
+   "input": "經天緯地",
+   "expected": "経天緯地"
+  },
+  {
+   "input": "聲東擊西",
+   "expected": "声東撃西"
+  },
+  {
+   "input": "臥薪嘗膽",
+   "expected": "臥薪嘗胆"
+  },
+  {
+   "input": "臧霸",
+   "expected": "臧覇"
+  },
+  {
+   "input": "萬軍奪帥",
+   "expected": "万軍奪帥"
+  },
+  {
+   "input": "蔣欽",
+   "expected": "蒋欽"
+  },
+  {
+   "input": "裸衣血戰",
+   "expected": "裸衣血戦"
+  },
+  {
+   "input": "避實擊虛",
+   "expected": "避実撃虚"
+  },
+  {
+   "input": "鍾會",
+   "expected": "鍾会"
+  },
+  {
+   "input": "長驅直入",
+   "expected": "長駆直入"
+  },
+  {
+   "input": "關羽",
+   "expected": "関羽"
+  },
+  {
+   "input": "陷陣營",
+   "expected": "陥陣営"
+  },
+  {
+   "input": "雲聚影從",
+   "expected": "雲聚影従"
+  },
+  {
+   "input": "靈機一動",
+   "expected": "霊機一動"
+  },
+  {
+   "input": "馬鐵",
+   "expected": "馬鉄"
+  },
+  {
+   "input": "高覽",
+   "expected": "高覧"
+  },
+  {
+   "input": "麴義",
+   "expected": "麹義"
+  },
+  {
+   "input": "黃蓋",
+   "expected": "黄蓋"
+  },
+  {
+   "input": "龐德",
+   "expected": "龐徳"
+  },
+  {
+   "input": "劉備",
+   "expected": "劉備"
+  },
+  {
+   "input": "龐統",
+   "expected": "龐統"
+  },
+  {
+   "input": "魏",
+   "expected": "魏"
+  },
+  {
+   "input": "吳",
+   "expected": "呉"
+  },
+  {
+   "input": "SP 呂蒙",
+   "expected": "SP 呂蒙"
+  },
+  {
+   "input": "Lv10 谋略",
+   "expected": "Lv10 謀略"
+  },
+  {
+   "input": "无双上将",
+   "expected": "無双上将"
+  },
+  {
+   "input": "百战",
+   "expected": "百戦"
+  },
+  {
+   "input": "严阵以待",
+   "expected": "厳陣以待"
+  },
+  {
+   "input": "发起",
+   "expected": "発起"
+  },
+  {
+   "input": "炼",
+   "expected": "錬"
+  },
+  {
+   "input": "胜",
+   "expected": "勝"
+  },
+  {
+   "input": "禦敵屏障",
+   "expected": "禦敵屏障"
+  },
+  {
+   "input": "潛龍",
+   "expected": "潜龍"
+  },
+  {
+   "input": "一騎當千",
+   "expected": "一騎當千"
+  },
+  {
+   "input": "群雄",
+   "expected": "群雄"
+  },
+  {
+   "input": "",
+   "expected": ""
+  }
+ ]
+}

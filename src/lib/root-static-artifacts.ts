@@ -12,6 +12,8 @@ import {
   type RecommendedPublicationSnapshot,
 } from "./recommended-reference-artifacts.ts";
 import { bookSourceAliases } from "../../js/lookup-ids.js";
+import { LOOKUP_JA_SOURCE_NAMES, validateLookupJaDocument } from "../../js/lookup-data.js";
+import { parseKanjiVariants } from "../../js/shinjitai.js";
 
 type ArtifactKind = "js" | "css" | "data";
 type PublicArtifactManifest = Parameters<typeof validatePublicArtifactManifest>[0];
@@ -330,4 +332,50 @@ export async function lookupBookAliases(options: ArtifactOptions = {}) {
     readFile(join(rootDir, 'pipeline', 'recommended-identity-map.json')),
   ]);
   return bookSourceAliases(JSON.parse(Buffer.from(bytes).toString('utf8')), JSON.parse(identity.toString('utf8')).entries);
+}
+
+/** Lớp tiếng Nhật của Tra cứu đã kiểm (`data/lookup-ja.json` + bảng tự dạng) và pin byte để trang `/ja/` nhúng. */
+export type LookupJaPublicationSnapshot = {
+  document: { entries: Record<string, { name: string; nameStatus: string; nameOriginal: string; nameOriginalLang?: string; texts: Record<string, string> }>; [key: string]: unknown };
+  /** Bảng ký tự `parseKanjiVariants` của `data/ja-kanji-variants.json`. */
+  variants: Readonly<Record<string, string>>;
+  /** `sha256:<hex>` của bytes `lookup-ja.json` (pin `#lookup-ja-pin`). */
+  pin: string;
+};
+const lookupJaSnapshots = new Map<string, Promise<LookupJaPublicationSnapshot>>();
+
+/**
+ * `data/lookup-ja.json` đúng hợp đồng và khớp publication hiện tại: cùng `lookupGenerationId` với lookup manifest, `sources`
+ * trùng hash bytes của bốn payload Tra cứu và bảng tự dạng đang phát. Lệch là lỗi build (chạy lại
+ * `python3 -m pipeline.build_lookup_ja --write` sau mỗi lần promote Tra cứu).
+ */
+export function lookupJaPublicationSnapshot(options: ArtifactOptions = {}) {
+  const key = options.rootDir ?? DEFAULT_PROJECT_ROOT;
+  const cached = options.manifest === undefined ? lookupJaSnapshots.get(key) : undefined;
+  if (cached) return cached;
+  const pending = (async () => {
+    const lookup = await lookupPublicationSnapshot(options);
+    const read = async (routeParam: string) => (await readPublicArtifact({ ...options, kind: "data", routeParam })).bytes;
+    const [jaBytes, variantsBytes, booksBytes] = await Promise.all([read("lookup-ja"), read("ja-kanji-variants"), read("books-dict")]);
+    const document = validateLookupJaDocument(JSON.parse(Buffer.from(jaBytes).toString("utf8")), { lookupGenerationId: lookup.generationId });
+    const actual: Record<string, string> = {
+      "data/books-dict.json": sha256(booksBytes),
+      "data/heroes-dict.json": lookup.manifest.files["heroes-dict.json"],
+      "data/ja-kanji-variants.json": sha256(variantsBytes),
+      "data/lookup-catalog.json": lookup.manifest.files["lookup-catalog.json"],
+      "data/tactics.json": lookup.manifest.files["tactics.json"],
+    };
+    for (const name of LOOKUP_JA_SOURCE_NAMES) {
+      if (document.sources[name] !== actual[name]) {
+        throw new Error(`data/lookup-ja.json lệch ${name}: chạy lại \`python3 -m pipeline.build_lookup_ja --write\``);
+      }
+    }
+    const variants = parseKanjiVariants(JSON.parse(Buffer.from(variantsBytes).toString("utf8")));
+    return Object.freeze({ document, variants, pin: `sha256:${sha256(jaBytes)}` });
+  })();
+  // Manifest khác mặc định (verifier, test) thì dựng riêng, không nhớ.
+  if (options.manifest !== undefined) return pending;
+  lookupJaSnapshots.set(key, pending);
+  pending.catch(() => { if (lookupJaSnapshots.get(key) === pending) lookupJaSnapshots.delete(key); });
+  return pending;
 }

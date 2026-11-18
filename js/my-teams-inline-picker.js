@@ -18,9 +18,9 @@ const SHOWN = 40;
 const STOCKED_KINDS = new Set(["heroes", "tactics"]);
 
 const KIND_NOUN = {
-  heroes: () => L("tướng", "武将"),
-  tactics: () => L("chiến pháp", "战法"),
-  books: () => L("binh thư", "兵书"),
+  heroes: () => L("tướng", "武将", "武将"),
+  tactics: () => L("chiến pháp", "战法", "戦法"),
+  books: () => L("binh thư", "兵书", "兵法書"),
 };
 
 /**
@@ -28,12 +28,12 @@ const KIND_NOUN = {
  * hash trong pipeline/site-localization-policy.json, thêm `export` làm `site_localization check` đỏ.
  */
 const FILTER_LABELS = {
-  faction: () => L("Thế lực", "势力"),
-  stars: () => L("Số sao", "星级"),
-  cost: () => L("Cost", "费用"),
-  type: () => L("Loại", "类型"),
-  source: () => L("Nguồn", "来源"),
-  quality: () => L("Phẩm", "品质"),
+  faction: () => L("Thế lực", "势力", "勢力"),
+  stars: () => L("Số sao", "星级", "星数"),
+  cost: () => L("Cost", "费用", "コスト"),
+  type: () => L("Loại", "类型", "タイプ"),
+  source: () => L("Nguồn", "来源", "入手元"),
+  quality: () => L("Phẩm", "品质", "品質"),
 };
 
 /**
@@ -51,10 +51,10 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
   const filters = {};
   const choices = filterOptions("editor", kind);
   const listId = `${id}-list`;
-  const search = el("input", { id: `${id}-q`, type: "search", autocomplete: "off", "aria-controls": listId, "aria-label": L(`Tìm ${KIND_NOUN[kind]()}`, `搜索${KIND_NOUN[kind]()}`), placeholder: L("Tên Việt, Hán-Việt hoặc chữ Hán…", "越南名、汉越音或汉字…") });
+  const search = el("input", { id: `${id}-q`, type: "search", autocomplete: "off", "aria-controls": listId, "aria-label": L(`Tìm ${KIND_NOUN[kind]()}`, `搜索${KIND_NOUN[kind]()}`, `${KIND_NOUN[kind]()}を検索`), placeholder: L("Tên Việt, Hán-Việt hoặc chữ Hán…", "越南名、汉越音或汉字…", "ベトナム語名、漢越音、漢字…") });
   const hint = el("p", { class: "mt-picker-hint", role: "status", "aria-live": "polite" });
   const list = el("ul", { class: "mt-picker-list", id: listId, "aria-label": label });
-  const done = el("button", { type: "button", class: "ana-btn mt-btn mt-btn-sm" }, L("Xong", "完成"));
+  const done = el("button", { type: "button", class: "ana-btn mt-btn mt-btn-sm" }, L("Xong", "完成", "完了"));
 
   // Bộ lọc gọn: một nút bật/tắt hàng chip; mỗi bộ lọc chọn một giá trị, bấm lại để bỏ.
   const filterPanel = el("div", { class: "mt-picker-filters", id: `${id}-filters`, hidden: "" });
@@ -67,9 +67,9 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
     const count = activeCount();
     // `replaceChildren(null)` chèn chữ "null": chỉ truyền nút thật.
     filterToggle.replaceChildren(...[
-      L("Bộ lọc", "筛选"),
+      L("Bộ lọc", "筛选", "絞り込み"),
       count ? el("span", { class: "fchip-count", "aria-hidden": "true" }, String(count)) : null,
-      count ? el("span", { class: "visually-hidden" }, L(` (${count} đang bật)`, `（已启用 ${count} 项）`)) : null,
+      count ? el("span", { class: "visually-hidden" }, L(` (${count} đang bật)`, `（已启用 ${count} 项）`, `（${count} 件有効）`)) : null,
     ].filter(Boolean));
   };
   function paintFilters() {
@@ -108,8 +108,8 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
   const stockTag = (itemId) => {
     if (!owned.size || !STOCKED_KINDS.has(kind)) return null;
     return owned.has(itemId)
-      ? el("span", { class: "mt-have" }, L("có trong kho", "库中有"))
-      : el("span", { class: "mt-miss" }, L("chưa có trong kho", "库中没有"));
+      ? el("span", { class: "mt-have" }, L("có trong kho", "库中有", "所持あり"))
+      : el("span", { class: "mt-miss" }, L("chưa có trong kho", "库中没有", "所持なし"));
   };
 
   function toggle(itemId) {
@@ -120,7 +120,7 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
     } else if (at >= 0) {
       values.splice(at, 1);
     } else if (values.length >= max) {
-      limitNote = L(`Tối đa ${max} mục.`, `最多 ${max} 项。`);
+      limitNote = L(`Tối đa ${max} mục.`, `最多 ${max} 项。`, `最大 ${max} 件です。`);
     } else {
       values.push(itemId);
     }
@@ -132,9 +132,9 @@ export function inlinePicker({ id, kind, catalog, values, max, single = false, o
     const found = filterCatalog(catalog, { kind, query: search.value, ...filters }, "editor");
     const shown = found.slice(0, SHOWN);
     const count = found.length > SHOWN
-      ? L(`${found.length} kết quả, hiện ${SHOWN} đầu`, `${found.length} 个结果，显示前 ${SHOWN} 个`)
-      : L(`${found.length} kết quả`, `${found.length} 个结果`);
-    hint.textContent = limitNote || L(`Chỉ hiện ${KIND_NOUN[kind]()} · ${count}`, `仅显示${KIND_NOUN[kind]()} · ${count}`);
+      ? L(`${found.length} kết quả, hiện ${SHOWN} đầu`, `${found.length} 个结果，显示前 ${SHOWN} 个`, `${found.length} 件の結果（先頭 ${SHOWN} 件を表示）`)
+      : L(`${found.length} kết quả`, `${found.length} 个结果`, `${found.length} 件の結果`);
+    hint.textContent = limitNote || L(`Chỉ hiện ${KIND_NOUN[kind]()} · ${count}`, `仅显示${KIND_NOUN[kind]()} · ${count}`, `${KIND_NOUN[kind]()}のみ表示 · ${count}`);
     hint.dataset.limit = String(Boolean(limitNote));
     list.replaceChildren(...shown.map((item) => {
       const on = values.includes(item.id);

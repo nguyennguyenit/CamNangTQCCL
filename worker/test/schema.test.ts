@@ -180,6 +180,10 @@ describe("validateExplainContext", () => {
     expect(validateExplainContext(zh)).toMatchObject({ locale: "zh", hero: "关羽", configCount: 0 });
   });
 
+  it("chấp nhận locale ja", () => {
+    expect(validateExplainContext({ ...valid(), locale: "ja" })).toMatchObject({ locale: "ja" });
+  });
+
   it("chấp nhận biên: tên 40 ký tự, hiệu ứng 1200 ký tự, configCount 999", () => {
     const edge = { ...valid(), hero: "x".repeat(40), missing: { name: "y".repeat(40), effect: "z".repeat(1200) }, configCount: 999 };
     expect(validateExplainContext(edge)).toEqual(edge);
@@ -189,6 +193,9 @@ describe("validateExplainContext", () => {
     ["không phải object", () => "context"],
     ["mảng", () => []],
     ["locale lạ", (c) => ({ ...c, locale: "en" })],
+    ["locale ko", (c) => ({ ...c, locale: "ko" })],
+    ["locale rỗng", (c) => ({ ...c, locale: "" })],
+    ["locale sai kiểu", (c) => ({ ...c, locale: 1 })],
     ["thiếu hero", ({ hero, ...rest }) => rest],
     ["hero rỗng sau trim", (c) => ({ ...c, hero: "   " })],
     ["hero quá 40 ký tự", (c) => ({ ...c, hero: "x".repeat(41) })],

@@ -137,6 +137,10 @@ test('mục lục chuyển tiếp link cũ ?group=&id=, link sai thì ở lại 
     ['/tra-cuu/?group=heroes&id=tactic%3Aan-ui-quan-dan', '/tra-cuu/'],
     ['/tra-cuu/?group=heroes&group=tactics', '/tra-cuu/'],
     ['/tra-cuu/?id=https%3A%2F%2Fevil.example%2Fx.json', '/tra-cuu/'],
+    // Mục lục của locale có tiền tố giữ tiền tố của mình (cả khi ở lại mục lục).
+    ['/zh/tra-cuu/?group=heroes&id=hero%3Aluu-bi', '/zh/tra-cuu/tuong/?id=hero%3Aluu-bi'],
+    ['/ja/tra-cuu/?group=heroes&id=hero%3Aluu-bi', '/ja/tra-cuu/tuong/?id=hero%3Aluu-bi'],
+    ['/ja/tra-cuu/?group=scrolls&foo=1', '/ja/tra-cuu/?foo=1'],
   ]) {
     await page.goto(route);
     await expect(page, route).toHaveURL(target);

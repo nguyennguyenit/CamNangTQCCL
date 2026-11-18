@@ -4,7 +4,7 @@
  * lỗi → dừng build (không bao giờ phát một dist thiếu đội do lỗi tạm thời). Chỉ giữ trường cần để render: số vote/điểm,
  * `author.id`, `evidenceCount`… bị bỏ để trang tĩnh không thể nhúng nhầm số liệu sống.
  */
-import { localePath } from '../../js/i18n.js';
+import { SITE_LOCALES, isSiteLocale, localePath } from '../../js/i18n.js';
 import { communityApiOrigin } from './blog-posts.ts';
 import type { SiteLocale } from './locale-routes';
 
@@ -115,7 +115,7 @@ function validateTeam(raw: unknown, index: number): CommunityTeam {
   const imageCount = raw.imageCount;
   if (!Number.isInteger(imageCount) || (imageCount as number) < 0 || (imageCount as number) > 3) fail(`${where}.imageCount must be an integer 0-3`);
   const textLang = raw.textLang;
-  if (textLang !== 'vi' && textLang !== 'zh') fail(`${where}.textLang must be vi or zh`);
+  if (!isSiteLocale(textLang)) fail(`${where}.textLang must be ${SITE_LOCALES.join(' or ')}`);
   if (!isRecord(raw.analysis)) fail(`${where}.analysis must be an object`);
   const analysis: CommunityTeamAnalysis = {
     playstyle: nonEmpty(raw.analysis.playstyle, `${where}.analysis.playstyle`),

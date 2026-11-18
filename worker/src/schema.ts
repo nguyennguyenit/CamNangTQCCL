@@ -3,6 +3,8 @@
 // Chỉ chép chữ in trong ảnh: ô không đọc được là `未知`. Site map Hán -> Việt qua dict
 // (match-dict.js), Worker KHÔNG map.
 
+import { isWorkerLocale, type WorkerLocale } from "./locales";
+
 /** Chữ đánh dấu ô không đọc được (tên tướng hoặc một ô chiến pháp). */
 export const UNKNOWN_CN = "未知";
 /** Số dòng chiến pháp tối đa in dưới một tướng: tự mang + 2 ô tự chọn (màn chiến báo in đủ 3). */
@@ -63,7 +65,7 @@ export interface ExplainTactic {
 }
 /** Ngữ cảnh mode explainSubstitute: vì sao `substitute` thay được `missing` trên tướng `hero`. */
 export interface ExplainContext {
-  locale: "vi" | "zh";
+  locale: WorkerLocale;
   hero: string;
   missing: ExplainTactic;
   substitute: ExplainTactic;
@@ -265,7 +267,7 @@ export function validateExplainContext(value: unknown): ExplainContext {
     throw new TypeError(INVALID_CONTEXT);
   }
   const { locale, configCount } = value;
-  if (locale !== "vi" && locale !== "zh") throw new TypeError(INVALID_CONTEXT);
+  if (!isWorkerLocale(locale)) throw new TypeError(INVALID_CONTEXT);
   if (typeof configCount !== "number" || !Number.isInteger(configCount) || configCount < 0 || configCount > MAX_CONFIG_COUNT) {
     throw new TypeError(INVALID_CONTEXT);
   }

@@ -18,6 +18,8 @@ import {
   websiteDisplayPublicationSnapshot,
 } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { DEFAULT_LOCALE, LOCALE_OG, LOCALE_PREFIX, localeFromPath, localePath, pick, stripLocale } from "../js/i18n.js";
+import { HREFLANG, SITE_LOCALES } from "../src/lib/locale-routes.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
 import { effectVersions, lookupDisplayName } from "../js/lookup-detail.js";
@@ -30,7 +32,7 @@ import {
   mirroredSitemapPaths,
   mirroredSitemapRoutes,
 } from "../src/pages/sitemap.xml.ts";
-import { COMMUNITY_PAGES, verifyAstroDist } from "../scripts/verify-astro-dist.mjs";
+import { COMMUNITY_PAGES, verifyAstroDist, verifyLanguageSwitcher } from "../scripts/verify-astro-dist.mjs";
 import { jsonLd } from "../src/lib/blog-posts.ts";
 import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
@@ -58,14 +60,14 @@ const FIXTURE_ORIGIN = "https://tqccl.com";
 
 /**
  * The fixture dist mirrors the built sitemap: the root page plus every catalog route, XML-escaped. Một mục là
- * URL trần hoặc `{loc, pair: [viHref, zhHref]}` — trang có bản gương khai ba `xhtml:link` (vi, zh-Hans, x-default).
+ * URL trần hoặc `{loc, pair: [href theo thứ tự SITE_LOCALES]}` — trang có bản gương khai một `xhtml:link` cho mỗi locale + x-default.
  */
 const fixtureSitemapXml = (entries) => `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${entries.map((entry) => {
   const { loc, pair } = typeof entry === "string" ? { loc: entry, pair: null } : entry;
   const links = pair
-    ? [["vi", pair[0]], ["zh-Hans", pair[1]], ["x-default", pair[0]]]
+    ? [...SITE_LOCALES.map((locale, index) => [HREFLANG[locale], pair[index]]), ["x-default", pair[0]]]
       .map(([lang, href]) => `    <xhtml:link rel="alternate" hreflang="${lang}" href="${href}"/>\n`).join("")
     : "";
   return `  <url>\n    <loc>${loc}</loc>\n${links}  </url>`;
@@ -75,12 +77,18 @@ ${entries.map((entry) => {
 
 /** Bản Việt của một đường dẫn và bản Trung dưới `/zh`. */
 const zhPathOf = (viPath) => (viPath === "/" ? "/zh/" : `/zh${viPath}`);
+/** Bản của một đường dẫn ở mọi locale đang bật (thứ tự `SITE_LOCALES`): output thật có một trang cho mỗi locale. */
+const localizedPathsOf = (viPath) => SITE_LOCALES.map((locale) => localePath(viPath, locale));
+/** Số URL sitemap cho mỗi locale: mọi route có bản gương + trang danh sách blog (chưa kể trang mùa). */
+const SITEMAP_ROUTES_PER_LOCALE = 3192;
 
-/** Cặp mục sitemap (vi + zh) của một route có bản gương; `/` (Landing) được xếp riêng ở đầu. */
+/** Nhóm mục sitemap (một cho mỗi locale) của một route có bản gương; `/` (Landing) được xếp riêng ở đầu. */
 const mirroredEntries = (viPaths) => viPaths.flatMap((viPath) => {
-  const pair = [`${FIXTURE_ORIGIN}${viPath}`, `${FIXTURE_ORIGIN}${zhPathOf(viPath)}`];
-  return [{ loc: pair[0], pair }, { loc: pair[1], pair }];
+  const pair = localizedPathsOf(viPath).map((path) => `${FIXTURE_ORIGIN}${path}`);
+  return pair.map((loc) => ({ loc, pair }));
 });
+/** Thư mục dist của một locale (bản mặc định ở gốc, bản khác dưới tiền tố). */
+const localeDistDir = (distDir, locale) => (LOCALE_PREFIX[locale] ? join(distDir, LOCALE_PREFIX[locale].slice(1)) : distDir);
 
 /** Sitemap như generator phát: root trước, rồi mọi mục còn lại theo thứ tự URL. */
 const orderedSitemap = (entries) => {
@@ -90,12 +98,18 @@ const orderedSitemap = (entries) => {
   return fixtureSitemapXml([...root, ...rest]);
 };
 
-/** `<html lang>` và bộ hreflang mà verifier đòi ở mọi trang có bản gương. */
+/** Nhóm chuyển ngôn ngữ như layout phát: một link mỗi locale, bản đang xem `aria-current`, bản khác `data-lang-switch`. */
+const languageSwitcherHtml = (locale, viPath) => `<nav class="lang-switcher" data-lang-switcher>${SITE_LOCALES.map((target) => (target === locale
+  ? `<a class="lang-switch" href="${localePath(viPath, target)}" hreflang="${HREFLANG[target]}" aria-current="page" data-lang-current>${target}</a>`
+  : `<a class="lang-switch" href="${localePath(viPath, target)}" hreflang="${HREFLANG[target]}" data-lang-switch>${target}</a>`)).join("")}</nav>`;
+
+/** `<html lang>`, bộ hreflang và hai nhóm chuyển ngôn ngữ (header + menu mobile) mà verifier đòi ở mọi trang có bản gương. */
 const pairHead = (locale, viPath) => [
-  `<html lang="${locale === "zh" ? "zh-Hans" : "vi"}">`,
-  `<link rel="alternate" hreflang="vi" href="${FIXTURE_ORIGIN}${viPath}">`,
-  `<link rel="alternate" hreflang="zh-Hans" href="${FIXTURE_ORIGIN}${zhPathOf(viPath)}">`,
+  `<html lang="${HREFLANG[locale]}">`,
+  ...SITE_LOCALES.map((target) => `<link rel="alternate" hreflang="${HREFLANG[target]}" href="${FIXTURE_ORIGIN}${localePath(viPath, target)}">`),
   `<link rel="alternate" hreflang="x-default" href="${FIXTURE_ORIGIN}${viPath}">`,
+  languageSwitcherHtml(locale, viPath),
+  languageSwitcherHtml(locale, viPath),
 ].join("");
 
 const FIXTURE_ROBOTS = `User-agent: *\nAllow: /\n\nSitemap: ${FIXTURE_ORIGIN}/sitemap.xml\n`;
@@ -105,8 +119,8 @@ const FIXTURE_REDIRECTS = "/tra-cuu/chien-phap/cu/ /tra-cuu/chien-phap/moi/ 301\
 
 /** Output blog đúng như build sinh ra từ một tập bài (rỗng khi không có API). */
 async function writeBlogOutputs(distDir, posts = []) {
-  for (const lang of ["vi", "zh"]) {
-    const prefix = lang === "zh" ? join(distDir, "zh") : distDir;
+  for (const lang of SITE_LOCALES) {
+    const prefix = localeDistDir(distDir, lang);
     const own = posts.filter((post) => post.lang === lang);
     await mkdir(join(prefix, "bai-viet"), { recursive: true });
     await writeFile(
@@ -144,11 +158,10 @@ const LOOKUP_GROUP_PATHS = LOOKUP_GROUP_SPECS.map(({ path }) => `/${path}/`);
 /** Trang nội dung tĩnh có bản gương (các trang chính sách): được index, canonical theo ngôn ngữ. */
 const STATIC_PAGE_PATHS = ["/dieu-khoan-su-dung/", "/chinh-sach-bao-mat/", "/quy-tac-cong-dong/", "/mien-tru-trach-nhiem/"];
 const staticPageHtml = (locale, viPath) =>
-  `<!doctype html>${pairHead(locale, viPath)}<link rel="canonical" href="${FIXTURE_ORIGIN}${locale === "zh" ? zhPathOf(viPath) : viPath}"><body>\n`;
+  `<!doctype html>${pairHead(locale, viPath)}<link rel="canonical" href="${FIXTURE_ORIGIN}${localePath(viPath, locale)}"><body>\n`;
 const SECTION_LOCATIONS = SECTION_PAGE_SPECS.map(({ path }) => `${FIXTURE_ORIGIN}/${path}/`);
-/** Hai trang danh sách blog luôn có và là cặp dịch của nhau. */
-const BLOG_INDEX_ENTRIES = [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`]
-  .map((loc) => ({ loc, pair: [`${FIXTURE_ORIGIN}/bai-viet/`, `${FIXTURE_ORIGIN}/zh/bai-viet/`] }));
+/** Trang danh sách blog của mọi locale luôn có và là bản dịch của nhau. */
+const BLOG_INDEX_ENTRIES = mirroredEntries(["/bai-viet/"]);
 /** Mọi mục sitemap của fixture: Landing, 8 trang mục, 8 trang nhóm Tra cứu, trang tĩnh, 2 trang chi tiết (mỗi route hai ngôn ngữ) và blog. */
 const FIXTURE_SITEMAP_ENTRIES = [
   ...mirroredEntries(["/", ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`), ...LOOKUP_GROUP_PATHS, ...STATIC_PAGE_PATHS, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`]),
@@ -193,7 +206,7 @@ function sectionPageHtml({ path, locale, section, season, group, sampleId, regis
 const lookupHubHtml = (locale) => [
   `<!doctype html>${pairHead(locale, "/tra-cuu/")}<head><script id="lookup-hub-redirect">(function(){})();</script></head><body>`,
   ...LOOKUP_GROUP_SPECS.map(({ path, group }) =>
-    `<a class="lookup-hub-card" href="${locale === "zh" ? "/zh" : ""}/${path}/" data-group="${group}"></a>`),
+    `<a class="lookup-hub-card" href="${LOCALE_PREFIX[locale]}/${path}/" data-group="${group}"></a>`),
   "\n",
 ].join("");
 
@@ -205,10 +218,10 @@ const communityPageHtml = (mount, entry) =>
 
 /** Landing chỉ còn script chuyển tiếp hash cũ (bản Việt); không payload, không app.js. */
 const LANDING_HTML = `<!doctype html>${pairHead("vi", "/")}<body><script id="legacy-route-redirect">(function(){})();</script>\n`;
-const LANDING_ZH_HTML = `<!doctype html>${pairHead("zh", "/")}<body>\n`;
+const landingHtml = (locale) => (locale === DEFAULT_LOCALE ? LANDING_HTML : `<!doctype html>${pairHead(locale, "/")}<body>\n`);
 
-/** 404 duy nhất của Pages: khối Việt, khối Trung dựng sẵn và script chọn khối Trung dưới /zh/. */
-const NOT_FOUND_HTML = '<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1><section data-not-found="zh" hidden><h1 id="not-found-title-zh">页面不存在</h1></section><script id="not-found-locale">(function(){})();</script>\n';
+/** 404 duy nhất của Pages: khối Việt, một khối ẩn cho mỗi locale có tiền tố và script chọn khối theo tiền tố. */
+const NOT_FOUND_HTML = `<!doctype html><head><meta name="robots" content="noindex"></head><h1 id="not-found-title">Không tìm thấy trang</h1>${SITE_LOCALES.filter((locale) => LOCALE_PREFIX[locale]).map((locale) => `<section data-not-found="${locale}" lang="${HREFLANG[locale]}" hidden><h1 id="not-found-title-${locale}">${locale}</h1></section>`).join("")}<script id="not-found-locale">(function(){var L=${JSON.stringify(Object.fromEntries(SITE_LOCALES.filter((locale) => LOCALE_PREFIX[locale]).map((locale) => [locale, { prefix: LOCALE_PREFIX[locale] }])))};})();</script>\n`;
 
 /** Font self-host là thư mục public tĩnh; fixture dist phải có bản sao byte-equal ở cả hai phía. */
 async function writeStaticFonts(projectDir, distDir) {
@@ -311,12 +324,13 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     l: { [LEGACY_TEAM_ID]: LEGACY_HANDLE },
     k: { [KHAIHOANG_TEAM_ID]: KHAIHOANG_HANDLE },
   };
-  await writeFile(join(distDir, "index.html"), LANDING_HTML);
-  await mkdir(join(distDir, "zh"), { recursive: true });
-  await writeFile(join(distDir, "zh", "index.html"), LANDING_ZH_HTML);
-  for (const locale of ["vi", "zh"]) {
+  for (const locale of SITE_LOCALES) {
+    await mkdir(localeDistDir(distDir, locale), { recursive: true });
+    await writeFile(join(localeDistDir(distDir, locale), "index.html"), landingHtml(locale));
+  }
+  for (const locale of SITE_LOCALES) {
     for (const spec of [...SECTION_PAGE_SPECS, ...LOOKUP_GROUP_SPECS]) {
-      const dir = locale === "zh" ? join(distDir, "zh", spec.path) : join(distDir, spec.path);
+      const dir = join(localeDistDir(distDir, locale), spec.path);
       await mkdir(dir, { recursive: true });
       await writeFile(
         join(dir, "index.html"),
@@ -324,9 +338,9 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
       );
     }
   }
-  for (const locale of ["vi", "zh"]) {
+  for (const locale of SITE_LOCALES) {
     for (const viPath of STATIC_PAGE_PATHS) {
-      const dir = join(distDir, ...(locale === "zh" ? ["zh"] : []), viPath.slice(1, -1));
+      const dir = join(localeDistDir(distDir, locale), viPath.slice(1, -1));
       await mkdir(dir, { recursive: true });
       await writeFile(join(dir, "index.html"), staticPageHtml(locale, viPath));
     }
@@ -363,9 +377,9 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
   await writeBlogOutputs(distDir);
   await writeFile(join(distDir, "my-teams-source-index.json"), `${JSON.stringify({ [`khaihoang:${KHAIHOANG_TEAM_ID}`]: MY_TEAMS_HASH, [`legacy:${LEGACY_TEAM_ID}`]: MY_TEAMS_HASH })}\n`);
-  // Trang chi tiết có bản Trung cùng pin identity dưới `zh/`.
-  for (const locale of ["vi", "zh"]) {
-    const base = locale === "zh" ? join(distDir, "zh") : distDir;
+  // Trang chi tiết có bản ở mọi locale cùng pin identity dưới thư mục tiền tố.
+  for (const locale of SITE_LOCALES) {
+    const base = localeDistDir(distDir, locale);
     await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
@@ -761,8 +775,9 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   // A relocated Khai hoang handle moves that page too: the frozen segment is the inventory.
   const relocatedKhaiHoang = { ...fixture.ledger, handles: { ...fixture.ledger.handles, khaihoang: { [KHAIHOANG_TEAM_ID]: "khai-hoang-doi-ten" } } };
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(relocatedKhaiHoang));
-  await assert.rejects(verify(), /missing: khai-hoang\/khai-hoang-doi-ten\/index\.html/i);
-  await assert.rejects(verify(), /unexpected: khai-hoang\/gia-cat-khac-sp-ma-sieu-phap-chinh\/index\.html/i);
+  // Danh sách sắp theo đường dẫn: bản có tiền tố đứng trước bản Việt khi tiền tố nhỏ hơn theo thứ tự chữ.
+  await assert.rejects(verify(), /missing: (?:[^;]*, )?khai-hoang\/khai-hoang-doi-ten\/index\.html/i);
+  await assert.rejects(verify(), /unexpected: (?:[^;]*, )?khai-hoang\/gia-cat-khac-sp-ma-sieu-phap-chinh\/index\.html/i);
   await writeFile(join(projectDir, "pipeline", "team-route-handles.json"), jsonBytes(fixture.ledger));
 
   // Every Khai hoang page pins its own identity, its source hash and its own entry.
@@ -1014,7 +1029,9 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   assert.deepEqual(sitemapLine, [`Sitemap: ${rootHref}sitemap.xml`]);
   assert.deepEqual(groups.map((group) => group[0]), ["User-agent: *", "User-agent: GPTBot", "User-agent: ClaudeBot", "User-agent: PerplexityBot", "User-agent: Google-Extended"]);
   for (const group of groups) {
-    assert.deepEqual(group.slice(1), ["Allow: /", "Disallow: /quan-tri/", "Disallow: /zh/quan-tri/", "Disallow: /api/"], group[0]);
+    // `robots.txt` tĩnh: chặn trang quản trị của mọi locale đã khai bảng, kể cả locale chưa bật.
+    const localeAdmins = Object.keys(LOCALE_PREFIX).filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => `Disallow: ${LOCALE_PREFIX[locale]}/quan-tri/`);
+    assert.deepEqual(group.slice(1), ["Allow: /", "Disallow: /quan-tri/", ...localeAdmins, "Disallow: /api/"], group[0]);
   }
 
   const sitemap = await read("sitemap.xml");
@@ -1022,18 +1039,18 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
   // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 443 legacy, 18 Khai hoang,
   // 1028 trang riêng mục Tra cứu (263 tướng, 422 chiến pháp, 59 quân sư sau đợt theo client Global; 5 phương lược + 40 thẻ kỳ lược
-  // PK-S27) — mỗi route hai ngôn ngữ — và 2 trang danh sách blog (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
+  // PK-S27) — mỗi route một trang cho mỗi locale — và trang danh sách blog của mỗi locale (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
   assert.equal(lookupRoutes.entries.length, 1028);
   // + trang mùa Đội chuẩn: mỗi mùa cũ có đội một trang, hai ngôn ngữ (mùa hiện tại và mùa 0 đội không có).
   const { seasonPages } = await import("../src/lib/season-pages.ts");
   const { pages: seasonPageList } = await seasonPages();
   assert.ok(seasonPageList.length > 10);
-  assert.equal(locations.length, 6384 + 2 * seasonPageList.length);
+  assert.equal(locations.length, SITE_LOCALES.length * (SITEMAP_ROUTES_PER_LOCALE + seasonPageList.length));
   assert.deepEqual(
     locations,
     [rootHref, ...[
-      "/zh/",
+      ...localizedPathsOf("/").slice(1),
       ...[
         ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
         ...LOOKUP_GROUP_PATHS,
@@ -1041,9 +1058,8 @@ test("built dist declares canonical, article metadata, robots and the catalog si
         ...[...catalog.recommended, ...catalog.legacy, ...catalog.khaiHoang].map((entry) => entry.routePath),
         ...lookupRoutes.entries.map((entry) => entry.path),
         ...seasonPageList.map((page) => page.routePath),
-      ].flatMap((path) => [path, zhPathOf(path)]),
-      "/bai-viet/",
-      "/zh/bai-viet/",
+        "/bai-viet/",
+      ].flatMap(localizedPathsOf),
     ].sort().map((path) => new URL(path, origin).href)],
   );
   for (const location of locations) {
@@ -1068,10 +1084,10 @@ test("every canonical page declares its own-language site name, locale and an ab
   for (const pathname of pages) {
     const html = await readFile(new URL(`../dist${pathname}index.html`, import.meta.url), "utf8");
     assert.ok(linkHref(html, "canonical"), pathname);
-    const zh = pathname.startsWith("/zh/");
-    assert.equal(metaContent(html, "og:site_name"), zh ? "三国志战略版攻略手册" : "Cẩm Nang Game Tam Quốc Chí - Chiến Lược", pathname);
-    assert.equal(metaContent(html, "og:locale"), zh ? "zh_CN" : "vi_VN", pathname);
-    assert.match(html, zh ? /<html lang="zh-Hans"/u : /<html lang="vi"/u, pathname);
+    const locale = localeFromPath(pathname);
+    assert.equal(metaContent(html, "og:site_name"), pick(locale, "Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "三国志战略版攻略手册", "三國志 真戦 攻略手帳"), pathname);
+    assert.equal(metaContent(html, "og:locale"), LOCALE_OG[locale], pathname);
+    assert.ok(html.includes(`<html lang="${HREFLANG[locale]}"`), pathname);
     const image = metaContent(html, "og:image");
     assert.ok(image, `${pathname} lacks og:image`);
     const url = new URL(image);
@@ -1147,7 +1163,7 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   assert.doesNotMatch(xml, /<changefreq>|<priority>/u);
 
   const locations = [...xml.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Mỗi route bản Việt có bản Trung cùng đường dẫn dưới /zh (Landing, 8 trang mục, 8 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 1028 trang riêng mục Tra cứu).
+  // Mỗi route bản Việt có bản cùng đường dẫn dưới tiền tố của mọi locale khác (Landing, 8 trang mục, 8 trang nhóm Tra cứu, trang tĩnh, 3 họ chi tiết đội, 1028 trang riêng mục Tra cứu).
   const mirrored = [
     "/",
     ...SECTION_PAGE_SPECS.map(({ path }) => `/${path}/`),
@@ -1157,12 +1173,12 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
     ...lookupRoutes.entries.map((entry) => entry.path),
     ...seasonPageList.map((page) => page.routePath),
   ];
-  const routePaths = [...mirrored.flatMap((path) => [path, zhPathOf(path)]), "/bai-viet/", "/zh/bai-viet/"].filter((path) => path !== "/");
+  const routePaths = [...mirrored, "/bai-viet/"].flatMap(localizedPathsOf).filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1681);
   assert.equal(catalog.legacy.length, 443);
   assert.equal(catalog.khaiHoang.length, 18);
   assert.equal(lookupRoutes.entries.length, 1028);
-  assert.equal(locations.length, 6384 + 2 * seasonPageList.length);
+  assert.equal(locations.length, SITE_LOCALES.length * (SITEMAP_ROUTES_PER_LOCALE + seasonPageList.length));
   assert.deepEqual(
     locations,
     [new URL("/", origin).href, ...routePaths.sort().map((path) => new URL(path, origin).href)],
@@ -1171,11 +1187,10 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   const urls = xml.split("<url>").slice(1);
   for (const block of urls) {
     const loc = block.match(/<loc>([^<]*)<\/loc>/u)[1];
-    const viPath = new URL(loc).pathname.replace(/^\/zh(?=\/)/u, "");
+    const viPath = stripLocale(new URL(loc).pathname);
     const alternates = [...block.matchAll(/<xhtml:link rel="alternate" hreflang="([^"]+)" href="([^"]+)"\/>/gu)].map(([, lang, href]) => `${lang} ${href}`);
     assert.deepEqual(alternates, [
-      `vi ${new URL(viPath, origin).href}`,
-      `zh-Hans ${new URL(zhPathOf(viPath), origin).href}`,
+      ...SITE_LOCALES.map((locale) => `${HREFLANG[locale]} ${new URL(localePath(viPath, locale), origin).href}`),
       `x-default ${new URL(viPath, origin).href}`,
     ], loc);
   }
@@ -1209,6 +1224,26 @@ test("sitemap dates blog posts and each blog index by its newest post", () => {
   // Bản zh chưa có bài: trang danh sách vẫn được publish nhưng không có ngày sửa.
   assert.ok(entry("/zh/bai-viet/"));
   assert.equal(entry("/zh/bai-viet/")[1], undefined);
+});
+
+test("sitemap pairs translated blog posts through every locale version and leaves single-language posts alone", () => {
+  const versions = { vi: "/bai-viet/mua-moi/", zh: "/zh/bai-viet/xin-saiji/" };
+  const xml = sitemapDocument(FIXTURE_ORIGIN, blogSitemapRoutes([
+    { path: versions.vi, lang: "vi", updatedAt: "2026-09-20T08:00:00.000Z", translationPaths: versions },
+    { path: versions.zh, lang: "zh", updatedAt: "2026-09-21T08:00:00.000Z", translationPaths: versions },
+    { path: "/bai-viet/don-ngu/", lang: "vi", updatedAt: "2026-09-22T08:00:00.000Z", translationPaths: { vi: "/bai-viet/don-ngu/" } },
+  ]));
+  const block = (path) => xml.match(new RegExp(`<url>\\n    <loc>${FIXTURE_ORIGIN}${path}</loc>\\n[^]*?</url>`, "u"))?.[0] ?? "";
+  for (const path of Object.values(versions)) {
+    const links = [...block(path).matchAll(/hreflang="([^"]+)" href="([^"]+)"/gu)].map(([, lang, href]) => [lang, href]);
+    assert.deepEqual(links, [
+      ["vi", `${FIXTURE_ORIGIN}${versions.vi}`],
+      ["zh-Hans", `${FIXTURE_ORIGIN}${versions.zh}`],
+      ["x-default", `${FIXTURE_ORIGIN}${versions.vi}`],
+    ], path);
+  }
+  assert.ok(block("/bai-viet/don-ngu/"));
+  assert.doesNotMatch(block("/bai-viet/don-ngu/"), /xhtml:link/u);
 });
 
 /** Một bài đã render tối thiểu cho fixture dist (các trường mà JSON-LD, RSS và llms.txt dùng). */
@@ -1519,10 +1554,10 @@ async function lookupDistFixture(t) {
   await writeStaticImages(projectDir, distDir);
   await writeStaticFonts(projectDir, distDir);
   await writeRecommendedFixture(projectDir, distDir);
-  // Pin mùa sống ở mọi trang mục có phạm vi mùa, cả bản Việt lẫn bản Trung; fixture phải đổi đồng bộ mọi trang.
+  // Pin mùa sống ở mọi trang mục có phạm vi mùa, ở mọi locale; fixture phải đổi đồng bộ mọi trang.
   const marker = async (hashes) => {
     for (const pagePath of SECTION_PAGE_SPECS.filter((entry) => entry.season)
-      .flatMap((spec) => [join(distDir, spec.path, "index.html"), join(distDir, "zh", spec.path, "index.html")])) {
+      .flatMap((spec) => SITE_LOCALES.map((locale) => join(localeDistDir(distDir, locale), spec.path, "index.html")))) {
       const html = await readFile(pagePath, "utf8");
       const stripped = html.replace(/<script id="season-artifact-hashes"[^>]*>[^<]*<\/script>\n?/, "");
       await writeFile(pagePath, `${stripped.trimEnd()}<script id="season-artifact-hashes" type="application/json">${JSON.stringify(hashes)}</script>\n`);
@@ -1551,6 +1586,34 @@ test("dist verifier accepts one lookup generation across HTML, routes and emitte
   const result = await fixture.verify();
   assert.equal(result.lookupGenerationId, fixture.manifest.generationId);
   assert.equal(result.unexpectedFiles.length, 0);
+});
+
+test("nhóm chuyển ngôn ngữ: mỗi trang có hai nhóm, đủ mọi locale theo thứ tự, đúng một bản đang xem", () => {
+  for (const locale of SITE_LOCALES) {
+    const html = pairHead(locale, "/doi-chuan/");
+    assert.doesNotThrow(() => verifyLanguageSwitcher(html, "x.html", locale), locale);
+    const other = SITE_LOCALES.find((code) => code !== locale);
+    assert.throws(() => verifyLanguageSwitcher(html, "x.html", other), /wrong current language/u, `${locale} đánh dấu sai bản`);
+    const oneGroup = html.replace(/<nav\b[^>]*data-lang-switcher[\s\S]*?<\/nav>/u, "");
+    assert.throws(() => verifyLanguageSwitcher(oneGroup, "x.html", locale), /switcher groups/u);
+    const missing = html.replaceAll(new RegExp(`<a\\b[^>]*hreflang="${HREFLANG[other]}"[^>]*>[^<]*</a>`, "gu"), "");
+    assert.throws(() => verifyLanguageSwitcher(missing, "x.html", locale), /in order/u);
+    const unmarked = html.replaceAll(' aria-current="page" data-lang-current', "");
+    assert.throws(() => verifyLanguageSwitcher(unmarked, "x.html", locale), /wrong current language/u);
+  }
+});
+
+test("dist verifier rejects a 404 without the hidden block of every prefixed locale", async (t) => {
+  const fixture = await lookupDistFixture(t);
+  await fixture.verify();
+  const notFound = join(fixture.distDir, "404.html");
+  const html = await readFile(notFound, "utf8");
+  for (const locale of SITE_LOCALES.filter((code) => LOCALE_PREFIX[code])) {
+    await writeFile(notFound, html.replace(`data-not-found="${locale}" lang="${HREFLANG[locale]}" hidden`, `data-not-found="${locale}"`));
+    await assert.rejects(fixture.verify(), new RegExp(`hidden ${locale} block`, "u"), locale);
+  }
+  await writeFile(notFound, html.replace('id="not-found-locale"', 'id="x"'));
+  await assert.rejects(fixture.verify(), /locale picker script/u);
 });
 
 test("dist verifier rejects HTML pinned to an older generation than the emitted routes", async (t) => {
@@ -1597,9 +1660,9 @@ async function lookupItemsFixture(t) {
   const manifest = ["heroes-dict", "tactics", "lookup-catalog", "lookup-manifest", "books-dict"].map(dataEntry);
   // Trang nhóm gốc của fixture (một thẻ mẫu): làm khung để dựng lại với đủ mọi thẻ.
   const baseGroupPages = {};
-  for (const locale of ["vi", "zh"]) {
+  for (const locale of SITE_LOCALES) {
     for (const spec of LOOKUP_GROUP_SPECS) {
-      baseGroupPages[`${locale}/${spec.group}`] = await readFile(join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), spec.path, "index.html"), "utf8");
+      baseGroupPages[`${locale}/${spec.group}`] = await readFile(join(localeDistDir(fixture.distDir, locale), spec.path, "index.html"), "utf8");
     }
   }
   const corpus = await lookupBuildCorpus({ rootDir: fixture.projectDir, manifest });
@@ -1619,10 +1682,10 @@ async function lookupItemsFixture(t) {
   const ledgerPath = join(fixture.projectDir, "pipeline", "lookup-route-handles.json");
   await writeFile(ledgerPath, jsonBytes(ledgerOf(handles)));
   const entries = Object.entries(handles).flatMap(([group, table]) => Object.entries(table).map(([id, slug]) => ({ group, id, slug, path: `/tra-cuu/${LOOKUP_GROUP_SPECS.find((spec) => spec.group === group).path.split("/")[1]}/${slug}/` })));
-  const itemFile = (locale, entry) => join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), ...entry.path.split("/").filter(Boolean), "index.html");
+  const itemFile = (locale, entry) => join(localeDistDir(fixture.distDir, locale), ...entry.path.split("/").filter(Boolean), "index.html");
   const itemHtml = (locale, entry, overrides = {}) => {
-    const groupHref = `${locale === "zh" ? "/zh" : ""}/${LOOKUP_GROUP_SPECS.find((spec) => spec.group === entry.group).path}/`;
-    const canonical = `${FIXTURE_ORIGIN}${locale === "zh" ? "/zh" : ""}${entry.path}`;
+    const groupHref = `${LOCALE_PREFIX[locale]}/${LOOKUP_GROUP_SPECS.find((spec) => spec.group === entry.group).path}/`;
+    const canonical = `${FIXTURE_ORIGIN}${LOCALE_PREFIX[locale]}${entry.path}`;
     return [
       `<!doctype html>${pairHead(locale, entry.path)}<title>${overrides.title ?? `${entry.id} ${locale}`}</title>`,
       `<meta name="description" content="${overrides.description ?? `mô tả ${entry.id} ${locale}`}">`,
@@ -1640,9 +1703,9 @@ async function lookupItemsFixture(t) {
     );
   };
   const writeAll = async () => {
-    for (const locale of ["vi", "zh"]) {
+    for (const locale of SITE_LOCALES) {
       for (const spec of LOOKUP_GROUP_SPECS) {
-        await writeFile(join(fixture.distDir, ...(locale === "zh" ? ["zh"] : []), spec.path, "index.html"), groupHtml(locale, spec));
+        await writeFile(join(localeDistDir(fixture.distDir, locale), spec.path, "index.html"), groupHtml(locale, spec));
       }
       for (const entry of entries) {
         await mkdir(dirname(itemFile(locale, entry)), { recursive: true });
@@ -1695,7 +1758,7 @@ test("dist verifier admits the lookup item pages only with the ledger routes, ow
     "no profile of its own": [fixture.itemHtml("vi", first).replace(`data-lookup-item="${first.id}"`, 'data-lookup-item="hero:other"'), /prerendered profile/u],
     "two h1": [fixture.itemHtml("vi", first).replace("</article>", "<h1>x</h1></article>"), /exactly one h1/u],
     "the root application booted": [fixture.itemHtml("vi", first).replace("lookup-item-page.js", "app.js"), /only its own script/u],
-    "no link back to the group page": [fixture.itemHtml("vi", first).replace(/href="\/tra-cuu\/[^"]+\/"/u, 'href="/"'), /link back to the group page/u],
+    "no link back to the group page": [fixture.itemHtml("vi", first).replace(/(class="detail-link detail-back-link" )href="[^"]+"/u, '$1href="/"'), /link back to the group page/u],
     "a description ending in a colon": [fixture.itemHtml("vi", first, { description: "Ám Triều Dũng Động — chiến pháp phẩm A · Chủ động: " }), /dangling colon/u],
     "a description ending in a full-width colon": [fixture.itemHtml("vi", first, { description: "暗潮湧動（战法，品质A·主动）：" }), /dangling colon/u],
     "waiting text": [fixture.itemHtml("vi", first).replace("<h1>", "<h1>Đang tải chi tiết "), /waiting or JavaScript-required/u],
@@ -2002,22 +2065,21 @@ test("Tra cứu: trang riêng mẫu của mỗi nhóm có tên và trường h�
   }
 });
 
-test("Tra cứu: mọi trang riêng (1028 × 2) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
+test("Tra cứu: mọi trang riêng (1028 × số locale) có canonical + hreflang của chính nó, title và description duy nhất, link về trang nhóm", async () => {
   const origin = new URL(await configuredSite()).origin;
   const routes = await lookupDetailRoutes();
   const titles = new Set();
   const descriptions = new Set();
   for (const entry of routes.entries) {
-    for (const locale of ["vi", "zh"]) {
+    for (const locale of SITE_LOCALES) {
       const viPath = entry.path;
-      const path = locale === "zh" ? zhPathOf(viPath) : viPath;
+      const path = localePath(viPath, locale);
       const html = await distText(`${path.slice(1)}index.html`);
       assert.equal(linkHref(html, "canonical"), new URL(path, origin).href, path);
       assert.equal(metaContent(html, "og:url"), new URL(path, origin).href, path);
       const alternates = [...html.matchAll(/<link rel="alternate" hreflang="([^"]+)" href="([^"]+)"/gu)].map(([, lang, href]) => `${lang} ${href}`);
       assert.deepEqual(alternates, [
-        `vi ${new URL(viPath, origin).href}`,
-        `zh-Hans ${new URL(zhPathOf(viPath), origin).href}`,
+        ...SITE_LOCALES.map((other) => `${HREFLANG[other]} ${new URL(localePath(viPath, other), origin).href}`),
         `x-default ${new URL(viPath, origin).href}`,
       ], path);
       const title = html.match(/<title>([^<]+)<\/title>/u)?.[1];
@@ -2029,11 +2091,11 @@ test("Tra cứu: mọi trang riêng (1028 × 2) có canonical + hreflang của c
       assert.doesNotMatch(description, /Cập nhật[^:：]{0,60}[:：]/u, `${path}: description dùng nhãn phiên bản làm tóm tắt: ${description}`);
       titles.add(title);
       descriptions.add(description);
-      const groupHref = `${locale === "zh" ? "/zh" : ""}/tra-cuu/${entry.path.split("/")[2]}/`;
+      const groupHref = `${LOCALE_PREFIX[locale]}/tra-cuu/${entry.path.split("/")[2]}/`;
       assert.ok(html.includes(`class="detail-link detail-back-link" href="${groupHref}"`), `${path}: thiếu link quay lại ${groupHref}`);
     }
   }
-  assert.equal(titles.size, routes.entries.length * 2);
+  assert.equal(titles.size, routes.entries.length * SITE_LOCALES.length);
 });
 
 test("#15 dist verifier: my-teams-source-index.json và payload lưu đội chỉ được nhận khi nhất quán", async (t) => {
@@ -2163,10 +2225,10 @@ test("#15 dist thật: payload lưu đội của mọi trang chi tiết parse đ
 const COMMUNITY_TEAMS = validateTeamsExport(JSON.parse(await readFile(new URL("./fixtures/community-teams-export.json", import.meta.url), "utf8")));
 const teamById = (id) => COMMUNITY_TEAMS.find((team) => team.id === id);
 const LISTING_PATH = "/doi-cong-dong/";
-const localeOf = (viPath, locale) => (locale === "zh" ? zhPathOf(viPath) : viPath);
+const localeOf = (viPath, locale) => localePath(viPath, locale);
 
 /** Trang đội như component phát: self-canonical + JSON-LD ở bản gốc, canonical về bản gốc và không JSON-LD ở bản gương. */
-function teamPageHtml(team, locale, { canonical, blocks, extraHead = "", lang = locale === "zh" ? "zh-Hans" : "vi" } = {}) {
+function teamPageHtml(team, locale, { canonical, blocks, extraHead = "", lang = HREFLANG[locale] } = {}) {
   const original = locale === team.textLang;
   const canonicalHref = canonical ?? `${FIXTURE_ORIGIN}${canonicalTeamPath(team)}`;
   const data = blocks ?? (original
@@ -2192,7 +2254,7 @@ function teamPageHtml(team, locale, { canonical, blocks, extraHead = "", lang = 
 function listingHtml(teams, locale, indexable) {
   const head = indexable
     ? `${pairHead(locale, LISTING_PATH)}<link rel="canonical" href="${FIXTURE_ORIGIN}${localeOf(LISTING_PATH, locale)}">`
-    : `<html lang="${locale === "zh" ? "zh-Hans" : "vi"}"><meta name="robots" content="noindex">`;
+    : `<html lang="${HREFLANG[locale]}"><meta name="robots" content="noindex">`;
   const links = teams.map((team) => `<li><a href="${communityTeamPath(team.id, locale)}">${team.id}</a></li>`).join("");
   return `<!doctype html>${head}<div id="community-teams"><ul>${links}</ul></div><script type="module" src="/js/community-teams.js"></script>\n`;
 }
@@ -2215,23 +2277,23 @@ async function communityTeamsFixture(t) {
     distDir: new URL(`file://${distDir}/`),
     manifest: [],
   });
-  const pagePath = (id, locale) => join(distDir, ...(locale === "zh" ? ["zh"] : []), "doi-cong-dong", id, "index.html");
-  const listingPath = (locale) => join(distDir, ...(locale === "zh" ? ["zh"] : []), "doi-cong-dong", "index.html");
+  const pagePath = (id, locale) => join(localeDistDir(distDir, locale), "doi-cong-dong", id, "index.html");
+  const listingPath = (locale) => join(localeDistDir(distDir, locale), "doi-cong-dong", "index.html");
   const writeSitemap = (teams, { routes } = {}) => writeFile(join(distDir, "sitemap.xml"), sitemapDocument(FIXTURE_ORIGIN, [
     ...mirroredSitemapRoutes(mirroredSitemapPaths([`/doi-khac/${LEGACY_ROUTE_SEGMENT}/`, `/khai-hoang/${KHAIHOANG_ROUTE_SEGMENT}/`])),
     ...blogSitemapRoutes([]),
     ...(routes ?? communityTeamSitemapRoutes(teams.map((team) => ({ path: canonicalTeamPath(team), lastmod: team.approvedAt })))),
   ]));
-  /** Ghi cả bộ output của một tập đội: hai trang mỗi đội, hai trang danh sách theo ngưỡng, sitemap khớp. */
+  /** Ghi cả bộ output của một tập đội: một trang mỗi đội cho mỗi locale, trang danh sách theo ngưỡng, sitemap khớp. */
   const writeAll = async (teams, { indexable = teams.length >= 10 } = {}) => {
-    await Promise.all([join(distDir, "doi-cong-dong"), join(distDir, "zh", "doi-cong-dong")].map((dir) => rm(dir, { recursive: true, force: true })));
+    await Promise.all(SITE_LOCALES.map((locale) => join(localeDistDir(distDir, locale), "doi-cong-dong")).map((dir) => rm(dir, { recursive: true, force: true })));
     for (const team of teams) {
-      for (const locale of ["vi", "zh"]) {
+      for (const locale of SITE_LOCALES) {
         await mkdir(dirname(pagePath(team.id, locale)), { recursive: true });
         await writeFile(pagePath(team.id, locale), teamPageHtml(team, locale));
       }
     }
-    for (const locale of ["vi", "zh"]) {
+    for (const locale of SITE_LOCALES) {
       await mkdir(dirname(listingPath(locale)), { recursive: true });
       await writeFile(listingPath(locale), listingHtml(teams, locale, indexable));
     }

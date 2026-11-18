@@ -8,6 +8,10 @@
 /zh/*
   Cache-Control: public, max-age=0, must-revalidate
 
+# Bản tiếng Nhật: cùng tập route dưới /ja/.
+/ja/*
+  Cache-Control: public, max-age=0, must-revalidate
+
 /doi-chuan/*
   Cache-Control: public, max-age=0, must-revalidate
 

@@ -170,6 +170,7 @@ python3 -m pipeline.build_recommended_reference \
   --content-links pipeline/recommended-content-links.json \
   --catalog data/heroes-dict.json \
   --tactic-catalog data/tactics.json \
+  --jp-tiers pipeline/recommended-jp-tiers.json \
   --output src/data/recommended-reference
 ```
 
@@ -252,6 +253,29 @@ Generation descriptor pin thêm `legacyTeamsHash` và `contentLinksHash`, nên �
 tương ứng, `textRaw` không rỗng và `textVi` đã review không rỗng/không chứa chữ Hán.
 Capture chỉ nhận ownership cùng `textRaw`; strict publication mới yêu cầu `textVi`.
 Renderer không suy ownership hoặc fallback raw khi bản dịch thiếu.
+
+### Tier nguồn Nhật (`tierSources`)
+
+`--jp-tiers` (tuỳ chọn ở CLI, luôn có trong chuỗi `site_localization`: `pipeline/recommended-jp-tiers.json`
+nằm trong `inputHashes` của candidate) nhận bảng khớp tier JP đã review, schema 1. Bảng có một `source`
+(bài tier, `url` https, `publishedAt`, `vnSourceSeasonId`) và `entries`, mỗi entry giữ đội theo chữ Nhật,
+`tierJa`, `match.kind` (`exact`, `heroes-only`, `none`), `match.recommendedTeamId` và `reviewStatus`.
+Kiểm hình dạng và chiếu nằm ở [`pipeline/recommended_jp_tiers.py`](../pipeline/recommended_jp_tiers.py).
+
+- Chỉ entry `reviewed` có `match.kind` là `exact` hoặc `heroes-only` được chiếu, thành
+  `tierSources: [{source: "jp", tierRaw, matchKind, url, publishedAt}]` trên hàng index và detail cùng
+  `sourceConfigId`. `tierRaw` của SGSDeck giữ nguyên; tier JP chỉ là trường hiển thị, không vào raw lineage,
+  `recommendedCorpusHash`, content links hay identity map.
+- Đối chiếu mùa theo tên kịch bản, không theo số mùa: số mùa JP lệch VN (JP S25「時代の英雄」= VN PK-S26,
+  JP「漢焔不滅」= VN PK-S27). Builder dừng khi hàng đích không có, lệch mùa với `source.vnSourceSeasonId`,
+  vắng ở detail hoặc bị hai entry trỏ tới; index và detail phải có cùng `tierSources`.
+- Mã tướng nội bộ của bảng (`do-uy:<tên>`) không ra bản phát. Descriptor ghi `jpTiersHash`, nên đổi bảng là
+  sinh generation mới (chạy lại chuỗi publish bên dưới).
+- Giao diện: facet nguồn sẵn có (`?source=jp`, chip "Tier JP" / 日服等级 / 日本版ティア) đếm theo mùa, huy hiệu
+  `JP <tier>` trên thẻ/bảng, khối "Tier JP" trên trang chi tiết kèm link bài nguồn. Đội `heroes-only` có nhãn
+  phụ "khác chiến pháp".
+
+Hiện bảng chỉ có PK-S26 (Kazten, 7 đội gán được tier: 2 `exact`, 5 `heroes-only`); tier PK-S27 theo issue #115.
 
 ### Kỳ lược của đội (`qilue`)
 

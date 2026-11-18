@@ -11,7 +11,8 @@ import { setTeamRouteHandles } from "../js/team-detail-navigation.js";
 import { qilueLookupTable, recommendedTeamDetailContent } from "../js/recommended-reference-render.js";
 
 const catalog = JSON.parse(readFileSync(new URL("../data/lookup-catalog.json", import.meta.url), "utf8"));
-const qilueTable = qilueLookupTable(catalog);
+const lookupJa = JSON.parse(readFileSync(new URL("../data/lookup-ja.json", import.meta.url), "utf8"));
+const qilueTable = qilueLookupTable(catalog, lookupJa);
 
 const OFFICIAL_NOTE = "作戰方略：謀算。奇略卡（第 2→6 回合）：設伏十面→背水列陣→楚歌四起→多多益善→合圍夾擊。";
 const OFFICIAL_NOTE_VI = "Phương lược tác chiến: Mưu Toán. Thẻ Kỳ Lược (hiệp 2→6): Thiết Phục Thập Diện→Bối Thủy Liệt Trận→Sở Ca Tứ Khởi→Đa Đa Ích Thiện→Hợp Vi Giáp Kích.";
@@ -67,15 +68,21 @@ const detail = (record, locale = "vi", extra = {}) => recommendedTeamDetailConte
 const html = (trees) => [].concat(trees).map(treeToHtml).join("");
 const qilueHtml = (trees) => html([].concat(trees).filter((tree) => /\bdetail-qilue\b/.test(tree?.attrs?.class ?? "")));
 const hrefs = (markup) => [...markup.matchAll(/href="([^"]+)"/g)].map((match) => match[1]);
-const cardPath = (id, locale = "vi") => `${locale === "zh" ? "/zh" : ""}${lookupItemPath(id)}`;
+const cardPath = (id, locale = "vi") => `${locale === "vi" ? "" : `/${locale}`}${lookupItemPath(id)}`;
 const rounds = (markup) => [...markup.matchAll(/class="detail-qilue-round-label">([^<]+)</g)].map((match) => match[1]);
 
-test("bảng tra kỳ lược dựng từ lookup-catalog: đủ 5 phương lược + 40 thẻ, mỗi mã có tên vi/zh, loại và độ hiếm", () => {
+test("bảng tra kỳ lược dựng từ lookup-catalog: đủ 5 phương lược + 40 thẻ, mỗi mã có tên vi/zh/ja, loại và độ hiếm", () => {
   const ids = Object.keys(qilueTable);
   assert.equal(ids.filter((id) => id.startsWith("qilue-strategy:")).length, 5);
   assert.equal(ids.filter((id) => id.startsWith("qilue-card:")).length, 40);
-  assert.deepEqual(qilueTable["qilue-card:bo-tri-thap-dien"], { nameVi: "Bố Trí Thập Diện", nameZh: "設伏十面", type: "muu", rarity: "common" });
+  assert.deepEqual(qilueTable["qilue-card:bo-tri-thap-dien"], { nameVi: "Bố Trí Thập Diện", nameZh: "設伏十面", nameJa: "設伏十面", type: "muu", rarity: "common" });
   assert.equal(qilueTable["qilue-strategy:muu-tinh"].nameZh, "謀算");
+  assert.equal(qilueTable["qilue-strategy:chien-dau-lau-dai"].nameJa, "堅牢");
+  assert.ok(Object.values(qilueTable).every((row) => row.nameJa), "mọi mã có tên Nhật");
+  // Không truyền lớp ja: bản vi/zh vẫn dựng, bản ja dừng vì thiếu tên.
+  const noJa = qilueLookupTable(catalog);
+  assert.equal(noJa["qilue-card:bo-tri-thap-dien"].nameJa, null);
+  assert.throws(() => recommendedTeamDetailContent(official, { qilueTable: noJa, qilueTeams, locale: "ja" }), /no name for locale ja/);
   assert.throws(() => qilueLookupTable({ qilueStrategies: [] }), /qilueCards/);
 });
 
@@ -141,6 +148,19 @@ test("bản zh: nhãn 奇略/回合, tên thẻ và phương lược theo nameZh
   assert.ok(listedZh.includes("来源未注明回合顺序"));
   const copiedZh = qilueHtml(detail(copied, "zh"));
   assert.match(copiedZh, new RegExp(`href="/zh/doi-chuan/${SOURCE_SEGMENT}/"[^>]*>五謀臣</a>`));
+});
+
+test("bản ja: nhãn 奇略/ターン, tên Nhật của thẻ và phương lược, href có tiền tố /ja, không lộ chữ Việt hay chữ Hán nguồn", () => {
+  const markup = qilueHtml(detail(official, "ja"));
+  assert.match(markup, /<h2>奇略<\/h2>/);
+  assert.ok(markup.includes(">謀算<"));
+  assert.ok(markup.includes("設伏十面") && markup.includes("四面楚歌") && markup.includes("合囲夾撃"));
+  assert.deepEqual(rounds(markup), ["第2ターン", "第3ターン", "第4ターン", "第5ターン", "第6ターン"]);
+  assert.ok(markup.includes(">謀<") && markup.includes(">稀有<") && markup.includes(">方略<"));
+  assert.deepEqual(hrefs(markup), [cardPath("qilue-strategy:muu-tinh", "ja"), ...ORDERED_CARDS.map((id) => cardPath(id, "ja"))]);
+  for (const text of ["Kỳ lược", "Hiệp", "Mưu tính", "Bố Trí Thập Diện", "Hiếm", "楚歌四起", "合圍夾擊", "回合", "作戰方略"]) assert.ok(!markup.includes(text), text);
+  assert.ok(qilueHtml(detail(listed, "ja")).includes("出典にターン順の記載なし"));
+  assert.match(qilueHtml(detail(copied, "ja")), new RegExp(`href="/ja/doi-chuan/${SOURCE_SEGMENT}/"`));
 });
 
 test("đội không có qilue (hoặc build không truyền bảng tra) thì không có section, ghi chú giữ nguyên", () => {

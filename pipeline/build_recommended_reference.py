@@ -12,6 +12,7 @@ from pipeline.common import canonical_json, sha256_hex
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.tactic_summaries import build_tactic_summaries, validate_tactic_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
+from pipeline.recommended_jp_tiers import apply_jp_tiers
 from pipeline.recommended_qilue import compute_qilue
 from pipeline.recommended_identity import (
     build_display_mapping,
@@ -65,6 +66,8 @@ def raw_source_record(row):
         "listIndex",
         "tierOrder",
         "subcategoryRaw",
+        # Tier nguồn khác (bảng khớp JP đã review) là lớp hiển thị chiếu lên hàng, không thuộc dữ liệu SGSDeck.
+        "tierSources",
     }
     holder_display_fields = {
         "displayNameVi",
@@ -124,8 +127,11 @@ def _validated_display_notes(value, row):
 
 
 def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
-                               qilue_catalog_bytes=None, qilue_overrides_bytes=None):
+                               jp_tiers_bytes=None, qilue_catalog_bytes=None, qilue_overrides_bytes=None):
     """Re-derive display lineage from authoritative raw inputs at the publication boundary.
+
+    `jp_tiers_bytes` (tùy chọn) là bảng khớp tier JP đã review; có mặt thì hàng khớp nhận `tierSources` và hash bảng
+    vào descriptor, nên đổi bảng là sinh generation mới.
 
     `qilue_catalog_bytes` (lookup-catalog.json của CÙNG lookup candidate) và `qilue_overrides_bytes` đi cùng nhau:
     có thì mỗi đội thuộc mùa trong overrides nhận projection hiển thị `qilue` (xem `pipeline/recommended_qilue.py`),
@@ -301,6 +307,11 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
     # Hash kho Tra cứu (khóa nối) vào descriptor ⇒ đổi kho là generation đổi, không thể còn số liệu cũ.
     candidate["heroCatalogHash"] = "sha256:" + sha256_hex(bytes(catalog_bytes))
     candidate["tacticCatalogHash"] = "sha256:" + sha256_hex(bytes(tactic_catalog_bytes))
+    if jp_tiers_bytes is not None:
+        if not isinstance(jp_tiers_bytes, (bytes, bytearray)):
+            raise ValueError("Recommended JP tier table must be bytes")
+        apply_jp_tiers(candidate, jp_tiers_bytes)
+        candidate["jpTiersHash"] = "sha256:" + sha256_hex(bytes(jp_tiers_bytes))
     return candidate
 def _write(path, value):
     data = canonical_bytes(value)
@@ -376,6 +387,8 @@ def validate_generation_inputs(inputs):
                     raise ValueError("Recommended index/detail titles differ")
                 if index_row.get("legacyReferences") != detail_row.get("legacyReferences"):
                     raise ValueError("Recommended index/detail references differ")
+                if index_row.get("tierSources") != detail_row.get("tierSources"):
+                    raise ValueError("Recommended index/detail tierSources differ")
                 if index_row.get("displayNotes") is not None:
                     _validated_display_notes(index_row["displayNotes"], index_row)
                     if index_row["displayNotes"] != detail_row.get("displayNotes"):
@@ -456,6 +469,8 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "tacticSummaryCatalogHash": inputs["tacticCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
+    if inputs.get("jpTiersHash") is not None:
+        descriptor["jpTiersHash"] = inputs["jpTiersHash"]
     for key in ("qilueCatalogHash", "qilueOverridesHash"):
         if inputs.get(key) is not None:
             descriptor[key] = inputs[key]
@@ -487,7 +502,7 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     return selector
 
 def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
-                     qilue_catalog_bytes=None, qilue_overrides_bytes=None):
+                     jp_tiers_bytes=None, qilue_catalog_bytes=None, qilue_overrides_bytes=None):
     candidate = prepare_publication_inputs(
         inputs,
         teams_bytes=teams_bytes,
@@ -495,6 +510,7 @@ def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
         tactic_catalog_bytes=tactic_catalog_bytes,
+        jp_tiers_bytes=jp_tiers_bytes,
         qilue_catalog_bytes=qilue_catalog_bytes,
         qilue_overrides_bytes=qilue_overrides_bytes,
     )
@@ -842,6 +858,7 @@ def main():
     parser.add_argument("--tactic-catalog", type=Path, required=True)
     parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
     parser.add_argument("--default-season", type=Path, default=DEFAULT_SEASON_PATH)
+    parser.add_argument("--jp-tiers", type=Path, help="bảng khớp tier JP đã review (pipeline/recommended-jp-tiers.json)")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     teams_bytes = args.teams.read_bytes()
@@ -863,6 +880,7 @@ def main():
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
         tactic_catalog_bytes=args.tactic_catalog.read_bytes(),
+        jp_tiers_bytes=args.jp_tiers.read_bytes() if args.jp_tiers else None,
     )
 
 

@@ -106,3 +106,30 @@ test("searchDict trả nhiều kết quả xếp hạng", () => {
   assert.ok(res.length >= 1);
   assert.equal(res[0].record.viet, "Bát Môn Kim Tỏa Trận");
 });
+
+test("cjkAliases: chữ Hán truy vấn so cả bí danh chữ Hán; mặc định chỉ so `chinese` như cũ", () => {
+  const dict = [
+    { chinese: "靈機一動", aliases: ["灵机一动", "霊機一動"], viet: "Nhanh Trí Động Não" },
+    { chinese: "經天緯地", aliases: ["经天纬地", "経天緯地"], viet: "Dọc Ngang Trời Đất" },
+  ];
+  // Mặc định (bản vi/zh): bí danh không được xét, kết quả giữ nguyên như trước.
+  const plain = matchDict("霊気一動", dict);
+  assert.equal(plain.matched, false);
+  assert.equal(matchDict("経天緯地", dict).score, 0.75);
+  // Bật bí danh (bản ja): tên Nhật khớp chính xác, OCR lệch một chữ vẫn về đúng bản ghi.
+  const exact = matchDict("経天緯地", dict, { cjkAliases: true });
+  assert.equal(exact.record.viet, "Dọc Ngang Trời Đất");
+  assert.equal(exact.confidence, "high");
+  const fuzzy = matchDict("霊気一動", dict, { cjkAliases: true });
+  assert.equal(fuzzy.matched, true);
+  assert.equal(fuzzy.record.viet, "Nhanh Trí Động Não");
+  // Bí danh chữ Latin không bị so như chữ Hán.
+  assert.equal(matchDict("経天緯地", [{ chinese: "", aliases: ["kinh thien"], viet: "X" }], { cjkAliases: true }).matched, false);
+});
+
+test("searchDict cjkAliases: ứng viên chữ Hán xét cả bí danh chữ Hán; mặc định như cũ", () => {
+  const dict = [{ chinese: "陷陣營", aliases: ["陥陣営"], viet: "Hãm Trận Doanh" }];
+  assert.deepEqual(searchDict("陥陣〇", dict), []);
+  const hits = searchDict("陥陣〇", dict, { cjkAliases: true });
+  assert.deepEqual(hits.map((hit) => hit.record.viet), ["Hãm Trận Doanh"]);
+});

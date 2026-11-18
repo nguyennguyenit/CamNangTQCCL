@@ -410,3 +410,81 @@ export function createLookupPayloadLoader(fetchFn) {
     return Object.freeze(await verifiedDocument(pinned, name, bytes));
   });
 }
+
+/* ---------- Lớp tiếng Nhật (`data/lookup-ja.json`, hợp đồng ở docs/ja-lookup-data.md) ---------- */
+
+export const LOOKUP_JA_SOURCE_NAMES = Object.freeze(["data/books-dict.json", "data/heroes-dict.json", "data/ja-kanji-variants.json", "data/lookup-catalog.json", "data/tactics.json"]);
+const JA_ENTRY_KEYS = new Set(["name", "nameStatus", "nameOriginal", "nameOriginalLang", "texts", "translatedFromVi"]);
+const JA_NAME_STATUS = new Set(["verified", "derived"]);
+/** `lang` của tên gốc, tính lúc build theo lối viết (`pipeline/han_script.py`); vắng trường thì trang dùng `zh`. */
+const JA_NAME_ORIGINAL_LANGS = Object.freeze(["zh-Hans", "zh-Hant", "zh"]);
+const PIN = /^sha256:([0-9a-f]{64})$/;
+const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+
+/**
+ * Kiểm tài liệu `lookup-ja.json` đã parse: đúng schema, cùng `lookupGenerationId` với lookup manifest đang phát (`generationId`),
+ * mọi mục có tên/trạng thái/tên gốc (`nameOriginalLang`, nếu có, là một trong `JA_NAME_ORIGINAL_LANGS`), `texts` chỉ chứa chữ. Trả tài liệu (không đông cứng sâu; nơi gọi giữ nguyên, không sửa).
+ * @param {any} document
+ * @param {{lookupGenerationId: string}} expected
+ */
+export function validateLookupJaDocument(document, { lookupGenerationId }) {
+  if (!isPlainObject(document) || document.schemaVersion !== 1) throw new Error("lookup-ja.json schemaVersion không hợp lệ");
+  if (!keysEqual(document, ["schemaVersion", "lookupGenerationId", "sources", "notice", "payloadSha256", "prefixedTactics", "entries"])) {
+    throw new Error("lookup-ja.json có shape không hợp lệ");
+  }
+  if (typeof lookupGenerationId !== "string" || document.lookupGenerationId !== lookupGenerationId) {
+    throw new Error("lookup-ja.json không cùng thế hệ với lookup manifest");
+  }
+  if (!keysEqual(document.sources, LOOKUP_JA_SOURCE_NAMES) || !Object.values(document.sources).every((value) => HEX256.test(value))) {
+    throw new Error("lookup-ja.json sources không hợp lệ");
+  }
+  if (!isPlainObject(document.notice) || document.notice.machineTranslated !== true || !nonEmpty(document.notice.numbersEdition) || !HEX256.test(document.payloadSha256)) {
+    throw new Error("lookup-ja.json notice/payloadSha256 không hợp lệ");
+  }
+  if (!Array.isArray(document.prefixedTactics) || !document.prefixedTactics.every((row) => isPlainObject(row)
+    && keysEqual(row, ["baseId", "name", "prefix"]) && typeof row.baseId === "string" && row.baseId.startsWith("tactic:") && nonEmpty(row.name) && nonEmpty(row.prefix))) {
+    throw new Error("lookup-ja.json prefixedTactics không hợp lệ");
+  }
+  if (!isPlainObject(document.entries) || !Object.keys(document.entries).length) throw new Error("lookup-ja.json thiếu entries");
+  for (const [id, entry] of Object.entries(document.entries)) {
+    if (!isPlainObject(entry) || Object.keys(entry).some((key) => !JA_ENTRY_KEYS.has(key))
+      || !nonEmpty(entry.name) || !JA_NAME_STATUS.has(entry.nameStatus) || !nonEmpty(entry.nameOriginal)
+      || (entry.nameOriginalLang !== undefined && !JA_NAME_ORIGINAL_LANGS.includes(entry.nameOriginalLang))
+      || !isPlainObject(entry.texts) || !Object.values(entry.texts).every(nonEmpty)
+      || (entry.translatedFromVi !== undefined && !isStringList(entry.translatedFromVi))) {
+      throw new Error(`lookup-ja.json mục không hợp lệ: ${id}`);
+    }
+  }
+  return document;
+}
+
+/** Bytes `lookup-ja.json` khớp pin `sha256:<hex>` nhúng trong trang rồi đúng hợp đồng (`validateLookupJaDocument`). */
+export async function verifyLookupJa(bytes, pin, { lookupGenerationId }) {
+  const expected = PIN.exec(typeof pin === "string" ? pin : "")?.[1];
+  if (!expected) throw new Error("Pin lookup-ja.json không hợp lệ");
+  if (!(bytes instanceof Uint8Array)) throw new Error("lookup-ja.json phải là Uint8Array");
+  if (await digest(bytes) !== expected) throw new Error("lookup-ja.json không khớp pin");
+  return validateLookupJaDocument(parseJson("lookup-ja.json", bytes), { lookupGenerationId });
+}
+
+/** Bytes `ja-kanji-variants.json` khớp hash mà `lookup-ja.json` khai (`sources`); trả tài liệu đã parse. */
+export async function verifyKanjiVariants(bytes, jaDocument) {
+  if (!(bytes instanceof Uint8Array)) throw new Error("ja-kanji-variants.json phải là Uint8Array");
+  if (await digest(bytes) !== jaDocument?.sources?.["data/ja-kanji-variants.json"]) throw new Error("ja-kanji-variants.json không khớp lookup-ja.json");
+  return parseJson("ja-kanji-variants.json", bytes);
+}
+
+/**
+ * Nạp lớp ja của một trang `/ja/` qua bộ nạp byte dùng chung (`createByteLoader` của js/website-display.js): `lookup-ja.json`
+ * khớp `pin`, cùng thế hệ với `lookup-manifest.json` đang phát; `withVariants` tải thêm bảng tự dạng (khớp hash trong
+ * `sources`) cho tên thô chưa có trong từ điển. Trả `{document, variants}` (`variants` là tài liệu đã parse hoặc `null`).
+ */
+export async function loadLookupJa(loadBytes, pin, { withVariants = false } = {}) {
+  if (typeof loadBytes !== "function") throw new TypeError("loadBytes phải là hàm");
+  const [jaBytes, manifestBytes] = await Promise.all([loadBytes("data/lookup-ja.json"), loadBytes(`data/${MANIFEST_NAME}`)]);
+  const manifest = manifestFrom(manifestBytes);
+  await validateManifest(manifest);
+  const document = await verifyLookupJa(jaBytes, pin, { lookupGenerationId: manifest.generationId });
+  const variants = withVariants ? await verifyKanjiVariants(await loadBytes("data/ja-kanji-variants.json"), document) : null;
+  return { document, variants };
+}

@@ -6,10 +6,9 @@
  * scheme an toàn.
  */
 import { markdownToHtml } from 'satteri';
-import { localePath } from '../../js/i18n.js';
+import { SITE_LOCALES, isSiteLocale, localePath, pick } from '../../js/i18n.js';
 import { EXTERNAL_REL } from './official-links.ts';
-
-export type BlogLocale = 'vi' | 'zh';
+import type { SiteLocale } from './locale-routes.ts';
 
 export interface BlogFaq {
   q: string;
@@ -19,7 +18,7 @@ export interface BlogFaq {
 export interface BlogPost {
   id: string;
   slug: string;
-  lang: BlogLocale;
+  lang: SiteLocale;
   translationKey: string | null;
   title: string;
   description: string;
@@ -103,7 +102,7 @@ function validatePost(raw: unknown, index: number): BlogPost {
   const item = raw as Record<string, unknown>;
   const slug = item.slug;
   if (typeof slug !== 'string' || !POST_SLUG_PATTERN.test(slug)) fail(`${at}.slug is not a valid slug`);
-  if (item.lang !== 'vi' && item.lang !== 'zh') fail(`${at}.lang must be "vi" or "zh"`);
+  if (!isSiteLocale(item.lang)) fail(`${at}.lang must be ${SITE_LOCALES.map((locale) => `"${locale}"`).join(' or ')}`);
   if (item.status !== 'published') fail(`${at}.status must be "published"`);
   const translationKey = item.translationKey;
   if (translationKey !== null && (typeof translationKey !== 'string' || !TRANSLATION_KEY_PATTERN.test(translationKey))) {
@@ -356,11 +355,13 @@ export function renderBlogMarkdown(markdown: string, { siteOrigin = SITE_ORIGIN 
   return { html, headings, text: plain };
 }
 
-/** Phút đọc: tiếng Việt ~220 từ/phút, tiếng Trung ~400 chữ/phút; tối thiểu 1 phút. */
-export function readingMinutes(plain: string, lang: BlogLocale): number {
+/** Phút đọc: tiếng Việt ~220 từ/phút, tiếng Trung ~400 chữ/phút, tiếng Nhật ~500 chữ (Hán + kana)/phút; tối thiểu 1 phút. */
+export function readingMinutes(plain: string, lang: SiteLocale): number {
   const han = plain.match(/[\u3400-\u9fff\uf900-\ufaff]/gu)?.length ?? 0;
   const words = plain.replace(/[\u3400-\u9fff\uf900-\ufaff]/gu, ' ').split(/\s+/u).filter(Boolean).length;
-  const minutes = lang === 'zh' ? (han + words) / 400 : words / 220 + han / 400;
+  const kana = plain.match(/[\u3040-\u30ff]/gu)?.length ?? 0;
+  const latinWords = plain.replace(/[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff]/gu, ' ').split(/\s+/u).filter(Boolean).length;
+  const minutes = pick(lang, words / 220 + han / 400, (han + words) / 400, (han + kana) / 500 + latinWords / 220);
   return Math.max(1, Math.ceil(minutes));
 }
 
@@ -368,7 +369,7 @@ export function postPath(post: Pick<BlogPost, 'lang' | 'slug'>): string {
   return localePath(`${BLOG_BASE_PATH}${post.slug}/`, post.lang);
 }
 
-export function blogIndexPath(locale: BlogLocale): string {
+export function blogIndexPath(locale: SiteLocale): string {
   return localePath(BLOG_BASE_PATH, locale);
 }
 
@@ -441,14 +442,21 @@ export function loadBlogPosts(): Promise<RenderedBlogPost[]> {
   return memo.posts;
 }
 
-export async function postsForLocale(locale: BlogLocale): Promise<RenderedBlogPost[]> {
+export async function postsForLocale(locale: SiteLocale): Promise<RenderedBlogPost[]> {
   return (await loadBlogPosts()).filter((post) => post.lang === locale);
 }
 
-/** Bản dịch cùng translationKey ở ngôn ngữ còn lại (cho hreflang và nút chuyển ngôn ngữ). */
-export function translationOf(post: BlogPost, posts: readonly RenderedBlogPost[]): RenderedBlogPost | null {
-  if (!post.translationKey) return null;
-  return posts.find((other) => other.lang !== post.lang && other.translationKey === post.translationKey) ?? null;
+/**
+ * Mọi bản của một bài theo ngôn ngữ: chính bài cộng bản dịch cùng `translationKey` ở các ngôn ngữ khác (bản đầu tiên
+ * của mỗi ngôn ngữ). Hreflang, nút chuyển ngôn ngữ và sitemap dùng chung; chỉ có một khóa nghĩa là bài đơn ngữ.
+ */
+export function translationsOf<T extends BlogPost>(post: T, posts: readonly T[]): Partial<Record<SiteLocale, T>> {
+  const versions: Partial<Record<SiteLocale, T>> = { [post.lang]: post };
+  if (!post.translationKey) return versions;
+  for (const other of posts) {
+    if (other.lang !== post.lang && other.translationKey === post.translationKey && !versions[other.lang]) versions[other.lang] = other;
+  }
+  return versions;
 }
 
 /** Bài liên quan: cùng ngôn ngữ, chung nhiều thẻ nhất, rồi mới nhất. Không chung thẻ nào thì không tính. */
