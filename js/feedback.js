@@ -6,6 +6,7 @@ import { L, currentLocale } from './i18n.js';
 import { api, describeError, loadSession } from './community-api.js';
 import { initModalDialog } from './modal-dialog.js';
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from './turnstile.js';
+import { track } from './analytics.js';
 
 const PAGE_MAX_LENGTH = 300;
 
@@ -89,6 +90,7 @@ export function initFeedbackDialog(doc = document) {
     setStatus(L('Đang gửi…', '正在提交…', '送信中…'));
     try {
       await api('/api/feedback', { method: 'POST', json: payload });
+      track('feedback', { action: 'submit', kind: payload.kind });
       form.reset();
       email.value = accountEmail;
       setStatus(L('Cảm ơn bạn! Góp ý đã được gửi.', '感谢反馈！已成功提交。', 'ご意見ありがとうございます。送信が完了しました。'));
@@ -107,6 +109,7 @@ export function initFeedbackDialog(doc = document) {
   return initModalDialog('feedback-dialog', 'feedback', {
     doc,
     onOpen: () => {
+      track('feedback', { action: 'open', kind: kind.value });
       prepared ??= prepare();
     },
   });

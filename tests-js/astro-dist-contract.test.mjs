@@ -19,6 +19,7 @@ import {
 } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 import { DEFAULT_LOCALE, LOCALE_OG, LOCALE_PREFIX, localeFromPath, localePath, pick, stripLocale } from "../js/i18n.js";
+import { ANALYTICS_CONFIG } from "../js/config.js";
 import { HREFLANG, SITE_LOCALES } from "../src/lib/locale-routes.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
@@ -32,7 +33,7 @@ import {
   mirroredSitemapPaths,
   mirroredSitemapRoutes,
 } from "../src/pages/sitemap.xml.ts";
-import { COMMUNITY_PAGES, verifyAstroDist, verifyLanguageSwitcher } from "../scripts/verify-astro-dist.mjs";
+import { ADMIN_ANALYTICS_MARKER, COMMUNITY_PAGES, verifyAstroDist, verifyLanguageSwitcher } from "../scripts/verify-astro-dist.mjs";
 import { jsonLd } from "../src/lib/blog-posts.ts";
 import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
@@ -858,6 +859,12 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   await writeFile(adminPath, validAdmin.replace('<meta name="robots" content="noindex">', ""));
   await assert.rejects(verify(), /community page must declare robots=noindex/i);
   await writeFile(adminPath, validAdmin);
+  // Khu quản trị không nạp Google Analytics: script gtag hay id đo lọt vào HTML đều làm hỏng build (deploy chỉ chạy `verify`).
+  await writeFile(adminPath, `${validAdmin}<script>window.dataLayer = [];</script>`);
+  await assert.rejects(verify(), /admin console must carry no analytics/i);
+  await writeFile(adminPath, `${validAdmin}<span>${ANALYTICS_CONFIG.measurementId}</span>`);
+  await assert.rejects(verify(), /admin console must carry no analytics/i);
+  await writeFile(adminPath, validAdmin);
   // Đội của tôi (vi + zh) là trang cộng đồng noindex: bỏ noindex hoặc bỏ mount/entry đều làm hỏng build.
   const myTeamsPath = join(distDir, "zh", "doi-cua-toi", "index.html");
   const validMyTeams = await readFile(myTeamsPath, "utf8");
@@ -1144,6 +1151,73 @@ test("every built page runs the host bridge as the first head script", async () 
     const other = fakeWindow(href, { theme: "dark" });
     vm.runInNewContext(source, { window: other.window });
     assert.deepEqual(other.calls, [], href);
+  }
+});
+
+test("every built page except the admin console ships the analytics loader right after the host bridge, with the consent banner", async () => {
+  const distDir = new URL("../dist/", import.meta.url);
+  const pages = (await readdir(distDir, { recursive: true })).filter((path) => path.endsWith(".html"));
+  assert.ok(pages.length > 1500, `only ${pages.length} HTML pages`);
+  const adminPages = new Set(SITE_LOCALES.map((locale) => `${localePath("/quan-tri/", locale).slice(1)}index.html`));
+  const seenAdmin = new Set();
+  const sources = new Set();
+  for (const path of pages) {
+    const html = await readFile(new URL(path, distDir), "utf8");
+    if (adminPages.has(path)) {
+      // Khu quản trị không nạp GA: HTML không có gtag, thanh đồng ý, nút cookie hay id đo (SiteLayout `analytics={false}`).
+      seenAdmin.add(path);
+      assert.doesNotMatch(html, ADMIN_ANALYTICS_MARKER, `${path}: the admin console must carry no analytics`);
+      assert.ok(!html.includes(ANALYTICS_CONFIG.measurementId), `${path}: the admin console must not carry the measurement id`);
+      continue;
+    }
+    const head = html.match(/<head>([\s\S]*?)<\/head>/u)?.[1] ?? "";
+    const scripts = [...head.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gu)];
+    assert.match(scripts[0]?.[1] ?? "", /\bid="host-bridge"/u, `${path}: the host bridge stays the first head script`);
+    assert.match(scripts[1]?.[1] ?? "", /\bid="analytics-loader"/u, `${path}: the analytics loader must be the second head script`);
+    assert.equal((html.match(/id="analytics-loader"/gu) ?? []).length, 1, path);
+    sources.add(scripts[1][2]);
+    assert.match(html, /<div id="consent-banner"[^>]*\brole="region"[^>]*\baria-label="[^"]+"[^>]*\bhidden\b/u, `${path}: missing the consent banner`);
+    assert.match(html, /<button[^>]*\bdata-consent-open\b[^>]*\baria-controls="consent-banner"[^>]*\baria-expanded="false"[^>]*\bhidden\b/u, `${path}: missing the cookie settings button`);
+    assert.match(html, /<script[^>]*type="module"[^>]*src="\/js\/consent-banner\.js"/u, `${path}: missing the consent banner module`);
+    assert.match(html, /<p class="consent-banner-text">[^<]*<a href="[^"]*\/chinh-sach-bao-mat\/">/u, `${path}: the banner must link the privacy policy`);
+  }
+  assert.deepEqual([...seenAdmin].sort(), [...adminPages].sort(), "every locale's admin console is built");
+  assert.equal(sources.size, 1, "every page must ship the same loader");
+  const [source] = sources;
+
+  // Chạy đúng byte đã build trong cửa sổ giả: chỉ domain chính dựng gtag, lựa chọn đã lưu được áp trước config, và lượt xem
+  // trang đầu được gửi tường minh với URL ở <head> (kể cả utm_*/gclid mà js/app.js gỡ sau đó).
+  const run = (href, stored = null) => {
+    const url = new URL(href);
+    const appended = [];
+    const window = {
+      location: { hostname: url.hostname, pathname: url.pathname, href: url.href },
+      localStorage: { getItem: (key) => (key === "analyticsConsent" ? stored : null) },
+      document: { head: { appendChild: (node) => appended.push(node) }, createElement: (tag) => ({ tag }) },
+    };
+    vm.runInNewContext(source, { window });
+    return {
+      entries: window.dataLayer ? JSON.parse(JSON.stringify(window.dataLayer.map((entry) => Array.from(entry)))) : null,
+      appended,
+    };
+  };
+  const shape = (entries) => entries.map(([command, kind]) => (command === "consent" ? `${command}:${kind}` : command));
+  const landing = "https://tqccl.com/doi-chuan/?utm_source=newsletter&gclid=abc123";
+  const fresh = run(landing);
+  assert.deepEqual(shape(fresh.entries), ["consent:default", "js", "config", "event"]);
+  assert.deepEqual(fresh.entries[0][2], { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied", wait_for_update: 500 });
+  assert.match(fresh.entries[2][1], /^G-[0-9A-Z]{8,}$/u);
+  assert.deepEqual(fresh.entries[2][2], { send_page_view: false, allow_google_signals: false, allow_ad_personalization_signals: false });
+  assert.deepEqual(fresh.entries[3], ["event", "page_view", { page_location: landing }]);
+  assert.equal(fresh.appended.length, 1);
+  assert.equal(fresh.appended[0].src, `https://www.googletagmanager.com/gtag/js?id=${fresh.entries[2][1]}`);
+  const granted = run("https://tqccl.com/zh/doi-chuan/", JSON.stringify({ v: 1, choice: "granted", at: Date.now() }));
+  assert.deepEqual(shape(granted.entries), ["consent:default", "consent:update", "js", "config", "event"]);
+  assert.deepEqual(granted.entries[1][2], { analytics_storage: "granted" });
+  for (const href of ["http://127.0.0.1:4174/", "http://localhost:4321/", "https://tqccl.pages.dev/", "https://www.tqccl.com/", "https://tqccl.com/quan-tri/", "https://tqccl.com/ja/quan-tri/"]) {
+    const off = run(href, JSON.stringify({ v: 1, choice: "granted", at: Date.now() }));
+    assert.equal(off.entries, null, href);
+    assert.deepEqual(off.appended, [], href);
   }
 });
 

@@ -32,6 +32,7 @@ import { createScanWriter, reconcileScanWithCloud } from "./roster-scan-writer.j
 import { createRosterIdResolver } from "./roster-id-resolve.js";
 import { DEFAULT_KINDS, createRosterSync } from "./roster-sync.js";
 import { addPicked, buildCatalog, createPicker, removePicked } from "./roster-picker.js";
+import { track } from "./analytics.js";
 import { createSaveButton } from "./my-teams-save-button.js";
 
 // `<html lang>` cố định theo trang nên nhãn dịch lúc nạp module vẫn đúng ngôn ngữ.
@@ -932,7 +933,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   let runId = 0;
 
   /** Gợi ý lại trên kho hiện tại; dùng cho nút Gợi ý và cho các thao tác trong mục Thiếu món. */
-  async function runRecommend() {
+  async function runRecommend({ report = false } = {}) {
     const run = ++runId;
     await seasonReady;
     if (run !== runId || !state.confirmed || !scanned()) return false;
@@ -951,12 +952,14 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       fullBox: state.ownedHeroes.length > 40 && state.ownedTactics.length > 60,
     });
     resultsSlot.replaceChildren(renderRecommendation(result));
+    // Chỉ lượt người dùng bấm "Gợi ý" (không phải gợi ý lại sau thao tác ở mục Thiếu món); `team_count` là số đội được gợi ý (không tính đội đã khóa), kể cả 0.
+    if (report) track("suggest_teams", { season: season?.id || state.seasonId || "", team_count: result.addTeams.length });
     paintSummary();
     showStage("result");
     return true;
   }
   recommendBtn.addEventListener("click", async () => {
-    if (await runRecommend()) resultsSlot.querySelector("#roster-list-title")?.focus();
+    if (await runRecommend({ report: true })) resultsSlot.querySelector("#roster-list-title")?.focus();
   });
 
   /**
@@ -1079,6 +1082,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     if (!entry?.team || entry.locked || !(entry.source === "legacy" || entry.team.source === "season")) return null;
     return createSaveButton({
       className: "ana-btn mt-save-btn",
+      source: "goi-y-doi",
       build: async () => {
         const [{ createLookupIdResolver }, { fromRosterEntry }, { loadTeamBooks }, { loadSourceIndex }] = await Promise.all([
           import("./lookup-ids.js"),

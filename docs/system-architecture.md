@@ -215,6 +215,7 @@ Boundary này fail closed và có bounds trước xử lý: chuỗi/control char
 | Roster scan | `localStorage.tqccl.rosterRecommend.scanState.v1` | tướng, chiến pháp, team khóa, confirmed, updatedAt; khi đăng nhập và đồng ý gộp, đồng bộ lên D1 `roster_records` qua `/api/roster` (cache `tqccl.roster.cloud.v1`, hợp đồng `docs/roster-sync.md`) |
 | Đội của tôi | đội/nhóm không ghi `localStorage` (cache trong bộ nhớ trang); hộp kho (kể cả tên người dùng đặt) nằm trong cache `tqccl.roster.cloud.v1` khi đăng nhập ở `/goi-y-doi-tu-kho/`, xóa khi `signOut`; bản lưu dở OAuth ở `sessionStorage` 30 phút | đội, nhóm, hộp trong D1 `roster_records`; bắt buộc đăng nhập |
 | Ảnh | memory phiên UI | data URL preview/request; không serialize vào roster state |
+| Đồng ý phân tích (GA4) | `localStorage.analyticsConsent` | `{v: 1, choice: "granted" \| "denied", at: <ms>}`, hết hạn sau 12 tháng (hỏi lại); chỉ có trên `tqccl.com` (host duy nhất bật GA), không gửi đi đâu; `js/analytics.js` + `js/consent-banner.js`, script `<head>` ở `src/lib/analytics-loader.ts` |
 
 Roster serializer loại `image`, `imageDataUrl`, `base64`, `blob`, `turnstileToken`. Tracker có validate import, JSON export/import (nhập = gộp theo bản ghi) và, khi đã đăng nhập, đồng bộ `GET/POST /api/recruit`: kéo theo con trỏ `rev` của server, đẩy bản ghi sửa sau `pushedAt`, gộp "bản sửa sau cùng thắng" theo `updatedAt`. Store đóng dấu mọi thay đổi tại chỗ lớn hơn `updatedAt` lớn nhất nó đã thấy nên đồng hồ máy lệch không làm mất thay đổi.
 
@@ -226,7 +227,7 @@ localStorage gắn theo origin, nên khi `https://tqccl.com` thành domain chín
 - Hostname `tqccl.com` với fragment `#tqccl-migrate=`: kiểm `v === 1`, `hash` là chuỗi rỗng hoặc bắt đầu `#`, mọi khóa thuộc allowlist và mọi giá trị là chuỗi; ghi **chỉ** khóa tqccl.com chưa có (không đè dữ liệu mới hơn), rồi `history.replaceState` về `pathname + search + hash gốc` trước khi script theme, script hash cũ của Landing hay `app.js` đọc URL. Payload sai → chỉ bỏ fragment.
 - Host preview `*.tqccl.pages.dev`, `localhost`, `127.0.0.1` và host khác: không làm gì.
 
-Payload nằm trong fragment nên trình duyệt không gửi nó trong request HTTP: dữ liệu không tới server Pages, access log hay Worker. Allowlist khóa lấy từ hằng của `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, `js/team-view.js`, `js/analyze-state.js` cộng `theme`; thêm khóa localStorage bền mới phải thêm vào `HOST_BRIDGE_KEYS`.
+Payload nằm trong fragment nên trình duyệt không gửi nó trong request HTTP: dữ liệu không tới server Pages, access log hay Worker. Allowlist khóa lấy từ hằng của `js/recruit-tracker-store.js`, `js/roster-scan-state.js`, `js/team-view.js`, `js/analyze-state.js` cộng `theme`; thêm khóa localStorage bền mới phải thêm vào `HOST_BRIDGE_KEYS`. Ngoại lệ có chủ đích: `analyticsConsent` không nằm trong allowlist vì khóa chỉ được ghi trên `tqccl.com`, nơi duy nhất bật GA (host cũ không có thanh đồng ý nên không có gì để mang sang).
 
 ## Vision request flow
 

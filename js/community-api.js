@@ -3,6 +3,7 @@
 // theo mã trạng thái, giống cách js/analyze.js chặn văn bản upstream.
 
 import { L, LOCALE_INTL, LOCALE_LABEL, currentLocale, formatDate, isSiteLocale, localePath } from './i18n.js';
+import { track } from './analytics.js';
 import { el, icon, svgNode } from './render.js';
 
 /** Khoá localStorage ghi "có thể đang đăng nhập": trang thường chỉ hỏi `/api/me` khi có dấu này. */
@@ -229,11 +230,14 @@ export function loadSession({ probe = true, fresh = false } = {}) {
     if (fresh) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
     return Promise.resolve(null);
   }
+  // Hint `pending` do `signIn()` ghi trước khi rời sang Google: lần đầu thấy phiên sau lượt quay về là đăng nhập thành công (hint tự đổi thành '1', nên chỉ báo một lần).
+  const returningFromSignIn = readHint() === 'pending';
   const pending = api('/api/me').then(
     (body) => {
       const user = body?.user && typeof body.user === 'object' ? body.user : null;
       if (sessionPromise !== pending) return user;
       writeHint(user ? '1' : null);
+      if (user && returningFromSignIn) track('login', { method: 'google' });
       document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user } }));
       return user;
     },

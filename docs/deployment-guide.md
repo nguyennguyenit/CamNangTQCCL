@@ -230,6 +230,20 @@ Frontend public config trong `js/config.js`:
 
 Các giá trị này công khai, không phải secret.
 
+### Google Analytics 4 (`ANALYTICS_CONFIG`)
+
+`js/config.js` có thêm `ANALYTICS_CONFIG` (công khai, không phải secret): `measurementId` (id đo `G-…`, một nguồn cho script `<head>` ở `src/lib/analytics-loader.ts` và cho `js/analytics.js`) và `hosts` (host được gửi số liệu, hiện chỉ `tqccl.com`: localhost, `*.pages.dev`, `www.tqccl.com` và bản build test không nạp gì; `/quan-tri/` không bao giờ có GA). Chuyển sang property khác thì sửa `measurementId` rồi chạy gate; không có secret hay biến môi trường.
+
+Cài đặt phía GA4 nằm ở Admin của property: không có trong repo và test không kiểm được. Làm trước khi bật trên production, vì code và [chính sách bảo mật](../src/components/pages/PrivacyPage.astro) dựa vào chúng:
+
+1. Data streams → web stream → Enhanced measurement: tắt "Page changes based on browser history events" (site gọi `history.pushState/replaceState` khi lọc, đổi kiểu xem, mở hồ sơ và gõ tìm, nên mỗi thao tác sẽ thành một lượt xem trang; lượt xem trang đầu do loader gửi tường minh) và tắt "Site search" (hoặc đổi tham số tìm kiếm sang một tham số site không dùng): ô tìm của Đội chuẩn/Đội khác ghi `?q=` theo từng phím, không debounce.
+2. Cùng web stream → mục Events → Redact data → Query parameters: thêm `q`, để từ khoá tìm kiếm nằm trên URL trang danh sách đội bị che trong báo cáo (chính sách bảo mật nói như vậy). Sự kiện `search` của Tra cứu thì chỉ được gửi khi người dùng đã đồng ý.
+3. Configure tag settings → List unwanted referrals: thêm `accounts.google.com` (lần quay về sau đăng nhập Google không thành nguồn truy cập).
+4. Admin → Data collection and modification → Data collection: Google signals data collection tắt (code cũng đặt `allow_google_signals: false`). Admin → Product links: không liên kết Google Ads hay dịch vụ quảng cáo nào.
+5. Admin → Data collection and modification → Data retention: Event data retention 14 tháng.
+
+Kiểm sau deploy bằng Realtime/DebugView: `page_view` đầu mang `page_location` có `utm_*` (nếu URL vào trang có), không có `page_view` hay `view_search_results` thừa khi lọc hoặc gõ ở `/doi-chuan/`, và không có sự kiện `search` khi người dùng chưa đồng ý.
+
 ### Secrets
 
 ```bash

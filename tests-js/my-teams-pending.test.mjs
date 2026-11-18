@@ -301,3 +301,58 @@ test("pending: unresolved của bộ chuyển đi cùng bản lưu dở qua OAut
   storage.setItem(PENDING_KEY, JSON.stringify({ draft, createdAt: NOW }));
   assert.deepEqual(peekPendingUnresolved({ storage, now: () => NOW }), []);
 });
+
+/** `window` giả của domain chính có `gtag` (đủ để `track()` của js/analytics.js gửi); trả danh sách lệnh gtag và hàm khôi phục. */
+function spyGtag() {
+  const calls = [];
+  const original = Object.getOwnPropertyDescriptor(globalThis, "window");
+  globalThis.window = { location: { hostname: "tqccl.com", pathname: "/doi-chuan/" }, gtag: (...args) => calls.push(args) };
+  return {
+    calls,
+    restore() {
+      if (original) Object.defineProperty(globalThis, "window", original);
+      else delete globalThis.window;
+    },
+  };
+}
+
+test("save_my_team: nguồn suy từ loại đội nháp; nguồn riêng của Gợi ý đội thắng; nguồn lạ bị bỏ", async () => {
+  const { resolveTrackSource, trackSave, trackSourceOf } = await import("../js/my-teams-save-button.js");
+  const kinds = { recommended: "doi-chuan", legacy: "doi-khac", khaihoang: "khai-hoang", analyze: "soi-doi" };
+  for (const [kind, source] of Object.entries(kinds)) assert.equal(trackSourceOf({ source: { kind } }), source);
+  assert.equal(trackSourceOf(draftOf()), "doi-chuan", "đội dựng từ nguồn Đội chuẩn");
+  assert.equal(trackSourceOf({ source: { kind: "la" } }), "");
+
+  const spy = spyGtag();
+  try {
+    for (const source of ["doi-chuan", "doi-khac", "khai-hoang", "goi-y-doi", "soi-doi"]) trackSave(source);
+    for (const source of ["", undefined, "evil", "doi-chuan ", "<script>"]) trackSave(source);
+    assert.deepEqual(spy.calls, ["doi-chuan", "doi-khac", "khai-hoang", "goi-y-doi", "soi-doi"].map((source) => ["event", "save_my_team", { source }]));
+  } finally {
+    spy.restore();
+  }
+  assert.equal(resolveTrackSource("goi-y-doi", draftOf()), "goi-y-doi");
+  assert.equal(resolveTrackSource("evil", draftOf()), "doi-chuan");
+  assert.equal(resolveTrackSource("", { source: { kind: "analyze" } }), "soi-doi");
+});
+
+test("save_my_team: nguồn của nút đi cùng bản lưu dở qua OAuth; mục cũ hoặc bị sửa thì suy lại từ đội nháp", async () => {
+  const { peekPendingTrackSource } = await import("../js/my-teams-pending.js");
+  const { resolveTrackSource } = await import("../js/my-teams-save-button.js");
+  const storage = memoryStorage();
+  const draft = draftOf("team-goi-y");
+  const resumed = () => resolveTrackSource(peekPendingTrackSource({ storage, now: () => NOW + 1000 }), peekPendingSave({ storage, now: () => NOW + 1000 }));
+
+  stashPendingSave(draft, { trackSource: "goi-y-doi", storage, now: () => NOW });
+  assert.equal(resumed(), "goi-y-doi", "Gợi ý đội dựng đội từ nguồn Đội chuẩn nhưng vẫn báo goi-y-doi");
+  assert.equal(peekPendingTrackSource({ storage, now: () => NOW + PENDING_TTL_MS + 1 }), "", "hết hạn thì không còn");
+
+  stashPendingSave(draft, { storage, now: () => NOW });
+  assert.equal(JSON.parse(storage.getItem(PENDING_KEY)).trackSource, undefined, "không truyền thì không ghi trường");
+  assert.equal(resumed(), "doi-chuan", "mục không có trường: suy từ loại đội nháp");
+
+  storage.setItem(PENDING_KEY, JSON.stringify({ draft, createdAt: NOW, trackSource: "evil" }));
+  assert.equal(resumed(), "doi-chuan", "giá trị lạ trong storage bị bỏ");
+  storage.setItem(PENDING_KEY, JSON.stringify({ draft, createdAt: NOW, trackSource: 7 }));
+  assert.equal(resumed(), "doi-chuan");
+});

@@ -15,6 +15,7 @@ function entry(kind, routeParam, publicationClass = "runtime") {
 }
 
 export const PUBLIC_ARTIFACTS = Object.freeze([
+  entry("js", "analytics"),
   entry("js", "analyze-map"),
   entry("js", "analyze-state"),
   entry("js", "analyze"),
@@ -42,6 +43,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "community-team-ui"),
   entry("js", "community-teams"),
   entry("js", "config"),
+  entry("js", "consent-banner"),
   entry("js", "detail-actions"),
   entry("js", "donate"),
   entry("js", "feedback"),
@@ -68,6 +70,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "lookup-master"),
   entry("js", "lookup-page"),
   entry("js", "lookup-profile"),
+  entry("js", "lookup-search-tracking"),
   entry("js", "lookup-tactic-profile"),
   entry("js", "lookup-tactic-view"),
   entry("js", "modal-dialog"),
