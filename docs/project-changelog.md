@@ -1,5 +1,9 @@
 # Project Changelog
 
+## 2026-11-18 (MCP: Đội khác giữ nhãn Đề cử)
+
+- Fixed: projection Đội khác của `mcp-worker` (`publication-builder.ts`) bỏ field `recommended` của `other-teams.json`. Mỗi biến thể giờ có `recommended` (boolean, hàng thiếu field là `false`); `tqccl_find_teams` (collection `other`) và `tqccl_get_team` trả `recommended` để khớp nhãn "Đề cử" của website. Sinh lại `workflow-build` MCP.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
