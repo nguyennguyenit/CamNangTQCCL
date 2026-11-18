@@ -7,6 +7,8 @@ import { createTacticIdResolver } from "./lookup-ids.js";
 /** Chỉ cấu hình Giao chiến: Khai hoang có mục riêng và không dùng cho đội PK. */
 const BATTLE_CATEGORY = "交戰";
 const EMPTY_SLOTS = new Set(["", "—", "-"]);
+/** Số ô chiến pháp của mỗi tướng trong đội gốc `data/teams.json`. */
+const LEGACY_TACTICS_PER_HERO = 2;
 
 const rawKey = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
 
@@ -211,6 +213,9 @@ export function recommendRoster({
       ...shared,
       teams: legacyTeams.filter((team) => !chosenKeys.has(heroSetKey(team))),
       teamTier: legacyTier,
+      // Đội gốc mỗi tướng 2 ô chiến pháp; ô nguồn bỏ trống (chưa đọc được, ví dụ đội YouTube) là ô chưa đối chiếu,
+      // nên đội đó là "unreconciled", không bao giờ "build-now".
+      minTacticsPerHero: LEGACY_TACTICS_PER_HERO,
       maxTeams,
       seedEntries: season.addTeams,
     });

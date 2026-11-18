@@ -134,11 +134,27 @@ export async function recommendedDetailText(record: Json, lookupLinks: unknown, 
   return treeToText([...badges, ...body]);
 }
 
+let recommendedLegacyIds: Promise<Set<string>> | undefined;
+
+/** Mã đội gốc có ít nhất một hàng `recommended: true` trong `other-teams.json` đã pin (field vắng = không đề cử). */
+function recommendedLegacyTeamIds() {
+  return recommendedLegacyIds ??= (async () => {
+    const env = await prepare();
+    const admitted: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
+    return new Set<string>(admitted.filter((row) => row.recommended === true).map((row) => row.legacyTeamId));
+  })();
+}
+
 async function legacyDetailTrees(entry: LegacyRouteEntry, locale: SiteLocale) {
   const teams: Json[] = await localizedData('teams', locale);
   const matches = teams.filter((team) => team.id === entry.legacyTeamId);
   if (matches.length !== 1) throw new Error(`Legacy team must resolve to exactly one record: ${entry.legacyTeamId}`);
-  return { body: legacyOriginalDetailContent(matches[0], { locale }) as Tree[], badges: detailBadges(matches[0], null, { locale }) as Tree[] };
+  // Đề cử nằm ở hàng `other-teams.json` đã admit (không ở `teams.json`): đội có hàng đề cử nào thì hiện nhãn ở trạng thái không có biến thể.
+  const referenceRecommended = (await recommendedLegacyTeamIds()).has(entry.legacyTeamId);
+  return {
+    body: legacyOriginalDetailContent(matches[0], { locale }) as Tree[],
+    badges: detailBadges({ ...matches[0], referenceRecommended }, null, { locale }) as Tree[],
+  };
 }
 
 /** Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể). */

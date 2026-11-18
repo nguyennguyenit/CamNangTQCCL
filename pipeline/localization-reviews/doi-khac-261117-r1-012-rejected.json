@@ -1,0 +1,79 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-012-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-012",
+ "items": [
+  {
+   "entityId": "tactic:thai-binh-dao-phap",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "7cb705fec212772cc7c04d378d8f9058abafa8d927a48d7ebdbbd8b9add33dbb",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "b4d9e9d61779feddf5a796aa2bb522ff8b57a8ddc992c0a104ce41cf8a7cf05a",
+   "verdict": "rejected",
+   "errors": [
+    "黃巾之亂 rendered 'Loạn Hoàng Cân', contradicts the official client event name used in this same entity's exchange condition (pipeline/lookup-client-tactics.json: 'Sự kiện Chiến Loạn Khăn Vàng')."
+   ],
+   "notes": "Chiến Loạn Khăn Vàng"
+  },
+  {
+   "entityId": "tactic:thiet-ky-khu-tri",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "58ea9ff1eb5782e0bd4b9daeeaec61b7abb5c5a438182c0d8b0fed51da6e1f31",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "18ef9c22572e597f0a66c0671be3480d4cce354bfbf1f35aea818b88fa9d3838",
+   "verdict": "rejected",
+   "errors": [
+    "興兵雪恨 rendered as Hán-Việt 'Khởi Binh Tuyết Hận', contradicts the official client event name in this entity's exchange condition ('Sự kiện Cầm Binh Rửa Hận')."
+   ],
+   "notes": "Cầm Binh Rửa Hận"
+  },
+  {
+   "entityId": "tactic:thoi-phong-doan-nhan",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "50d288d5250238ea25cbc428e7b7f5664c30f992eb267633492d19b12c4ce583",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "155c2758ddfc1e8f6f4df6a4f3f864dff98ecde5d0b4f35d2dd90f35b1e4910f",
+   "verdict": "rejected",
+   "errors": [
+    "孫策遇刺 rendered 'Tôn Sách bị ám sát', differs from the official client event name in this entity's exchange condition ('Sự kiện Tôn Sách bị thích sát')."
+   ],
+   "notes": "Tôn Sách bị thích sát"
+  },
+  {
+   "entityId": "tactic:thuong-lam-phong-thuc",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "041ad1e1d0daba01753b8d7126f21e68e994b17b841935ba549b06f107d3d698",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "f3d2a6b87a4581eff87798ef3e6b32d0ba75ec0e4b77320f45e41fd94c5baf0a",
+   "verdict": "rejected",
+   "errors": [
+    "建置屯田 rendered as Hán-Việt 'Kiến Trí Đồn Điền', contradicts the official client event name in this entity's exchange condition ('Sự kiện Xây Dựng Đồn Điền')."
+   ],
+   "notes": "Xây Dựng Đồn Điền"
+  },
+  {
+   "entityId": "tactic:tiem-long-tran",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "f280a9d428660febd94384b95beaa7cc149c1396d23cc86d4830c814492abc96",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "c3981cbdac617e9eb4f950bb636d596db07479464067c5804debdf7041746ec0",
+   "verdict": "rejected",
+   "errors": [
+    "煮酒論英雄 rendered as Hán-Việt 'Chử Tửu Luận Anh Hùng', contradicts the official client event name in this entity's exchange condition ('Sự kiện Nấu rượu luận anh hùng')."
+   ],
+   "notes": "Nấu rượu luận anh hùng"
+  },
+  {
+   "entityId": "tactic:truyen-hich-tuyen-uy",
+   "fieldPath": "lookup.acquiredFromVi",
+   "inputFingerprint": "b4a0c2d2c671eca0ad2ba171c8d579e1093f0176b896ddeec76278557d242b71",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "160402183bfd21082b8fb7eadc2ef354ec546d9a40668670eadef529bca9956f",
+   "verdict": "rejected",
+   "errors": [
+    "群雄討董 rendered 'Quần Hùng Thảo Đổng', contradicts the official client event name in this entity's exchange condition ('Sự kiện Quần Hùng Manh Động')."
+   ],
+   "notes": "Quần Hùng Manh Động"
+  }
+ ]
+}

@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-010-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-010",
+ "items": [
+  {
+   "entityId": "tactic:dao-vien-ket-nghia",
+   "fieldPath": "lookup.exchangeConditionVi",
+   "inputFingerprint": "c5dbad400b0448c1b91d76fdad3bd07d17e3f4adfdedd92949b1df9c39afc04d",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "c0403f6c87498d203d22fab750924696b030b1cc095ba42c3b65645e53d2109e",
+   "verdict": "rejected",
+   "errors": [
+    "Name contradicts binding project decision and identity map: 桃園結義 = Kết Nghĩa Vườn Đào (pipeline/recommended-identity-map.json displayNameVi; client tactic nameVi for tactic:dao-vien-ket-nghia is also 'Kết Nghĩa Vườn Đào'). 'Đào Viên Kết Nghĩa' is only a listed alias."
+   ],
+   "notes": "Kết Nghĩa Vườn Đào"
+  }
+ ]
+}

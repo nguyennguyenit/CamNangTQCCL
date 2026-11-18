@@ -3980,15 +3980,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH19-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản lượng quặng sắt +1500/giờ, Quan luyện sắt"
+      "textVi": "Sản lượng quặng sắt +1500/giờ, Quan Sắt"
     },
     {
       "entityId": "building-level:da-thiet-dai:11",
@@ -5120,15 +5120,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH19-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản lượng tiền đồng +1000/giờ, Quan thuế vụ"
+      "textVi": "Sản lượng tiền đồng +1000/giờ, Quan Thuế"
     },
     {
       "entityId": "building-level:dan-cu:11",
@@ -5538,15 +5538,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH19-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Điện Quân Vương cấp 4"
+      "textVi": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Quân Vương Điện cấp 4"
     },
     {
       "entityId": "building-level:dan-cu:3",
@@ -6032,15 +6032,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH19-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ giả luyện binh"
+      "textVi": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ Luyện Binh"
     },
     {
       "entityId": "building-level:dien-vo-truong:2",
@@ -13195,15 +13195,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH22-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Mỗi ngày có thể tìm kiếm 4 lần, Sứ giả tìm kiếm"
+      "textVi": "Mỗi ngày có thể thăm hỏi 4 lần, Sứ Thăm Hỏi"
     },
     {
       "entityId": "building-level:tam-phong-dai:2",
@@ -13385,15 +13385,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH22-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Tỷ lệ thương mại 40%, Quan Thương Mại"
+      "textVi": "Tỷ lệ thương mại 40%, Quan giao dịch"
     },
     {
       "entityId": "building-level:tap-thi:2",
@@ -13537,15 +13537,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH22-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản lượng đá +1500/giờ, Quan khai thác đá"
+      "textVi": "Sản lượng đá +1500/giờ, Quan Đá"
     },
     {
       "entityId": "building-level:thai-thach-xu:11",
@@ -14639,15 +14639,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH23-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Giới hạn tài nguyên +20000; mở khóa: Điện Quân Vương cấp 1"
+      "textVi": "Giới hạn tài nguyên +20000; mở khóa: Quân Vương Điện cấp 1"
     },
     {
       "entityId": "building-level:thang-kho:10",
@@ -17071,15 +17071,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH23-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Mở khóa huấn luyện ngựa sơ cấp, Quan huấn luyện ngựa"
+      "textVi": "Mở khóa luyện ngựa sơ cấp, Quan Luyện Ngựa"
     },
     {
       "entityId": "building-level:tuan-ma-truong:2",
@@ -17413,15 +17413,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH23-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Quân Cơ Dinh/Công Sự Dinh)"
+      "textVi": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Lều cơ mật/Doanh trại công sự)"
     },
     {
       "entityId": "building:da-thiet-dai",
@@ -17432,15 +17432,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH23-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan luyện sắt, Lv20 đồn điền quặng sắt +50%"
+      "textVi": "Sản xuất quặng sắt; Lv10 mở khóa Quan Sắt, Lv20 đồn điền quặng sắt +50%"
     },
     {
       "entityId": "building:dan-cu",
@@ -17451,15 +17451,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH23-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan thuế vụ, Lv20 thu nhập thuế +2000"
+      "textVi": "Sản xuất tiền đồng; Lv10 mở khóa Quan Thuế, Lv20 thu nhập thuế +2000"
     },
     {
       "entityId": "building:diem-tuong-dai",
@@ -17774,15 +17774,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH24-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Sản xuất đá; Lv10 mở khóa Quan khai thác đá, Lv20 sản lượng đá đồn điền +50%"
+      "textVi": "Sản xuất đá; Lv10 mở khóa Quan Đá, Lv20 sản lượng đá đồn điền +50%"
     },
     {
       "entityId": "building:thang-kho",
@@ -18021,15 +18021,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH24-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Dành riêng cho Tử Kim Toan Nghê Giáp; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt"
+      "textVi": "Dành riêng cho Giáp Toan Nghê Tử Kim; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt"
     },
     {
       "entityId": "equipment-special:chuc-phuc",
@@ -18097,15 +18097,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH24-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Độc quyền của Huyền Thiết Liên Hoàn Giáp; ở lượt đầu chiến đấu, bản thân nhận hiệu quả phản kích (tỷ lệ sát thương 125%), hiệu quả này có hiệu lực tối đa 2 lần"
+      "textVi": "Độc quyền của Giáp Liên Hoàn sắt đen; ở lượt đầu chiến đấu, bản thân nhận hiệu quả phản kích (tỷ lệ sát thương 125%), hiệu quả này có hiệu lực tối đa 2 lần"
     },
     {
       "entityId": "equipment-special:co-muu",
@@ -18249,15 +18249,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH24-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Dành riêng cho Dưỡng Do Cơ Cung; khi Hoàng Trung trang bị, trong 2 lượt đầu của trận chiến, bản thân nhận trạng thái tất trúng (bỏ qua trạng thái né tránh và kháng cự để đánh trúng mục tiêu)"
+      "textVi": "Dành riêng cho Cung Dưỡng Do Cơ; khi Hoàng Trung trang bị, trong 2 lượt đầu của trận chiến, bản thân nhận trạng thái tất trúng (bỏ qua trạng thái né tránh và kháng cự để đánh trúng mục tiêu)"
     },
     {
       "entityId": "equipment-special:cuong-nghi",
@@ -18363,15 +18363,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH24-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Dành riêng cho Thanh Công Kiếm; khi Triệu Vân trang bị, tăng 5% xác suất hội tâm của bản thân (khi kích hoạt, sát thương binh khí tăng 100%)"
+      "textVi": "Dành riêng cho Kiếm Thanh Cang; khi Triệu Vân trang bị, tăng 5% xác suất hội tâm của bản thân (khi kích hoạt, sát thương binh khí tăng 100%)"
     },
     {
       "entityId": "equipment-special:dao-cuong",
@@ -35634,15 +35634,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH30-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Đào Viên Kết Nghĩa"
+      "textVi": "Kết Nghĩa Vườn Đào"
     },
     {
       "entityId": "tactic:dao-vien-ket-nghia",
@@ -41695,15 +41695,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH32-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Trận Tỷ Thủy Quan"
+      "textVi": "Trận Dĩ Thủy Quan"
     },
     {
       "entityId": "tactic:khi-lang-tam-quan",
@@ -42094,15 +42094,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH32-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Thủy Yêm Thất Quân"
+      "textVi": "Nước Ngập Thất Quân"
     },
     {
       "entityId": "tactic:khong-danh-ma-thang",
@@ -43462,15 +43462,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH33-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Cắt râu bỏ áo"
+      "textVi": "Cắt Râu Vứt Áo"
     },
     {
       "entityId": "tactic:lam-nguy-cuu-chu",
@@ -43576,15 +43576,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH33-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Loạn Chung Hội"
+      "textVi": "Chung Hội Chi Loạn"
     },
     {
       "entityId": "tactic:lam-phong-quyet-dich",
@@ -47509,15 +47509,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewI61-2026-11-04",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Bành Việt Nạo Sở"
+      "textVi": "Dương Đông Kích Tây"
     },
     {
       "entityId": "tactic:phi-hung-quan",
@@ -50682,15 +50682,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH35-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Loạn Hoàng Cân"
+      "textVi": "Chiến Loạn Khăn Vàng"
     },
     {
       "entityId": "tactic:thai-binh-dao-phap",
@@ -52962,15 +52962,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH36-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Khởi Binh Tuyết Hận"
+      "textVi": "Cầm Binh Rửa Hận"
     },
     {
       "entityId": "tactic:thiet-ky-khu-tri",
@@ -53361,15 +53361,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH36-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Tôn Sách bị ám sát"
+      "textVi": "Tôn Sách bị thích sát"
     },
     {
       "entityId": "tactic:thoi-phong-doan-nhan",
@@ -54159,15 +54159,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH36-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Kiến Trí Đồn Điền"
+      "textVi": "Xây Dựng Đồn Điền"
     },
     {
       "entityId": "tactic:thuong-lam-phong-thuc",
@@ -54805,15 +54805,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH37-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Chử Tửu Luận Anh Hùng"
+      "textVi": "Nấu rượu luận anh hùng"
     },
     {
       "entityId": "tactic:tiem-long-tran",
@@ -56819,15 +56819,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewH37-2026-11-03",
+        "reviewedAt": "2026-11-17T13:46:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r2-001",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Quần Hùng Thảo Đổng"
+      "textVi": "Quần Hùng Manh Động"
     },
     {
       "entityId": "tactic:truyen-hich-tuyen-uy",
@@ -67041,15 +67041,15 @@
           "captured SGSDeck field value",
           "independent exact-text Vietnamese semantic review"
         ],
-        "reviewedAt": "2026-11-04T16:53:52+07:00",
-        "reviewer": "reviewer:DcReviewK13-2026-11-04",
+        "reviewedAt": "2026-11-17T13:50:00+07:00",
+        "reviewer": "reviewer:RvDk261117-r3-000",
         "semanticChecks": [
           "numbers, ranges, units and percentages preserved",
           "targets, conditions, negation and revision labels reviewed"
         ]
       },
       "status": "reviewed",
-      "textVi": "Chuyển·Cử thuẫn"
+      "textVi": "Chuyển · Cử thuẫn"
     },
     {
       "entityId": "troop-option:tien-dang-tu-si:cuu-chien-advanced",

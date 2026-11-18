@@ -867,6 +867,87 @@ class LedgerCliTest(LedgerFixture):
         self.assertIn("refusing to reassign", err)
         self.assertEqual(self.ledger_path.read_bytes(), before)
 
+    # Legacy (Đội khác) teams added after the ledger was frozen: append-only handles.
+    appended_teams = (
+        {"id": "youtube-0", "nickname": None, "name": "Hổ Thần Cung"},  # live base -> id-suffixed
+        {"id": "youtube-1", "nickname": None, "name": "Đỗ Tử Mộng"},  # bare base is free (frozen rows are -23/-122)
+        {"id": "youtube-2", "nickname": None, "name": "Hổ Thần Cung Youtube 3"},  # takes youtube-3's suffixed form first
+        {"id": "youtube-3", "nickname": None, "name": "Hổ Thần Cung"},  # base and id-suffixed live -> -2
+    )
+
+    def test_rebind_refuses_a_legacy_change_without_append_legacy(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        before = self.ledger_path.read_bytes()
+        write_teams(self.teams_path, [*self.teams, *self.appended_teams])
+        code, _, err = run_cli(self.argv("--rebind"))
+        self.assertEqual(code, 1)
+        self.assertIn("the legacy teams changed", err)
+        self.assertEqual(self.ledger_path.read_bytes(), before)
+
+    def test_append_legacy_keeps_published_handles_and_adds_new_teams(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        frozen = json.loads(self.ledger_path.read_bytes())["handles"]
+        # A renamed published team must not move: its frozen handle is never re-derived.
+        renamed = [{**self.teams[2], "name": "Tên Mới"}, *self.teams[:2]]
+        write_teams(self.teams_path, [*renamed, *self.appended_teams])
+
+        code, out, err = run_cli(self.argv("--rebind", "--append-legacy"))
+        self.assertEqual(code, 0, err)
+        self.assertIn("legacy handles kept 3, added 4", out)
+        self.assertEqual(run_cli(self.argv("--check"))[0], 0)
+        ledger = json.loads(self.ledger_path.read_bytes())
+        legacy = ledger["handles"]["legacy"]
+        for team_id, handle in frozen["legacy"].items():
+            self.assertEqual(legacy[team_id], handle)
+        self.assertEqual(legacy["moi-phe-1"], "ho-than-cung")
+        self.assertEqual(legacy["youtube-0"], "ho-than-cung-youtube-0")
+        self.assertEqual(legacy["youtube-1"], "do-tu-mong")
+        self.assertEqual(legacy["youtube-2"], "ho-than-cung-youtube-3")
+        self.assertEqual(legacy["youtube-3"], "ho-than-cung-2")
+        self.assertEqual(len(set(legacy.values())), len(legacy))
+        self.assertEqual(ledger["handles"]["recommended"], frozen["recommended"])
+        self.assertEqual(ledger["handles"]["khaihoang"], frozen["khaihoang"])
+
+    def test_append_legacy_is_idempotent(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        write_teams(self.teams_path, [*self.teams, *self.appended_teams])
+        self.assertEqual(run_cli(self.argv("--rebind", "--append-legacy"))[0], 0)
+        first = self.ledger_path.read_bytes()
+        for argv in (self.argv("--rebind", "--append-legacy"), self.argv("--rebind")):
+            code, out, err = run_cli(argv)
+            self.assertEqual(code, 0, err)
+            self.assertIn("added 0", out)
+            self.assertEqual(self.ledger_path.read_bytes(), first)
+
+    def test_append_legacy_refuses_to_drop_a_published_legacy_team(self):
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        before = self.ledger_path.read_bytes()
+        write_teams(self.teams_path, [*self.teams[1:], *self.appended_teams])
+        code, _, err = run_cli(self.argv("--rebind", "--append-legacy"))
+        self.assertEqual(code, 1)
+        self.assertIn("dropped ids that hold published handles: team-intro-23", err)
+        self.assertEqual(self.ledger_path.read_bytes(), before)
+
+    def test_append_legacy_keeps_recommended_tombstones_out_of_reach(self):
+        # Legacy routes live under /doi-khac/, Recommended tombstones under /doi-chuan/: appending legacy teams
+        # leaves the tombstones and the Recommended assignment exactly as a plain rebind would.
+        self.assertEqual(run_cli(self.argv("--write"))[0], 0)
+        self.publish(list(self.records[:-1]), 1)
+        self.rebind()
+        write_teams(self.teams_path, [*self.teams, *self.appended_teams])
+        self.publish([*self.records[:-1], recommended_row("s2-relisted", "Đội B", season="PK-S2")], 2)
+        code, _, err = run_cli(self.argv("--rebind", "--append-legacy"))
+        self.assertEqual(code, 0, err)
+        ledger = json.loads(self.ledger_path.read_bytes())
+        self.assertEqual(ledger["retiredRecommended"], {"pk-s2-doi-b": "s2-solo"})
+        self.assertEqual(ledger["handles"]["recommended"]["s2-relisted"], "doi-b-relisted")
+        self.assertEqual(run_cli(self.argv("--check"))[0], 0)
+
+    def test_append_legacy_only_applies_to_rebind(self):
+        code, _, err = run_cli(self.argv("--check", "--append-legacy"))
+        self.assertEqual(code, 1)
+        self.assertIn("--append-legacy only applies to --rebind", err)
+
 
 class KhaiHoangOfflineContracts(LedgerFixture):
     """Offline gate for Khai hoang identity: ledger v3, injected source and frozen handles."""
@@ -1081,7 +1162,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(self.ledger["legacyTeamsSha256"], "sha256:" + hashlib.sha256(self.teams_bytes).hexdigest())
         self.assertEqual(self.ledger["khaihoangSha256"], "sha256:" + hashlib.sha256(self.khaihoang_bytes).hexdigest())
         self.assertEqual(len(self.ledger["handles"]["recommended"]), 1681)
-        self.assertEqual(len(self.ledger["handles"]["legacy"]), 166)
+        self.assertEqual(len(self.ledger["handles"]["legacy"]), 443)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), 18)
         self.assertEqual(len(self.ledger["handles"]["khaihoang"]), len(self.khaihoang_teams))
         self.assertEqual(len(self.ledger["handles"]["recommended"]), len(self.publication.records))
@@ -1138,8 +1219,8 @@ class PinnedLedgerTest(unittest.TestCase):
             with self.subTest(team_id=team_id):
                 self.assertTrue(is_routable_identifier(handle))
         self.assertEqual(khaihoang_stats, {"keys": 18, "distinctHandles": 18})
-        self.assertEqual(legacy_stats["keys"], 166)
-        self.assertEqual(legacy_stats["collisionGroups"], 14)
+        self.assertEqual(legacy_stats["keys"], 443)
+        self.assertEqual(legacy_stats["collisionGroups"], 30)
 
     def test_committed_ledger_reproduces_the_documented_ambiguous_groups(self):
         for season, expected in DOCUMENTED_AMBIGUOUS_GROUPS.items():
@@ -1153,7 +1234,7 @@ class PinnedLedgerTest(unittest.TestCase):
         self.assertEqual(code, 0, err)
         self.assertEqual(DEFAULT_LEDGER_PATH.read_bytes(), before)
         self.assertIn("matches generation " + self.publication.generation_id, out)
-        self.assertIn("recommended handles: 1681; legacy handles: 166; Khai hoang handles: 18", out)
+        self.assertIn("recommended handles: 1681; legacy handles: 443; Khai hoang handles: 18", out)
         # Diagnostics are informational after a rebind: they are printed, never gated on.
         self.assertIn("name-derived diagnostics:", out)
 

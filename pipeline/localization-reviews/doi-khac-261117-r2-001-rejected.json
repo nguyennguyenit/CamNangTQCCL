@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r2-001-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r2-001",
+ "items": [
+  {
+   "entityId": "troop-option:tien-dang-tu-si:chuyen-cu-my-special-shield",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "8b6d311cdade6dd36d9461b78bb3c412d185961b5baa8f841326688c54a3772e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "19bdde7fc276b6fbad3852d1d984dd8382d3d1765c320709d1556086f42d662b",
+   "verdict": "rejected",
+   "errors": [
+    "Variant prefix 轉· rendered unspaced 'Chuyển·'; binding rule 5 (resolutions doc rule table and line 196: 拓·/治·/轉·/精· = 'Thác · / Trị · / Chuyển · / Tinh ·', spaced) requires 'Chuyển · '. Not client text (client troopMods uses 'Chuyển.Khiên'), so the client exception does not apply. The same source option 轉·舉盾 in troop-option:vo-duong-phi-quan:chuyen-cu-my-special-shield is 'Chuyển · Cử thuẫn', so the ledger is inconsistent for an identical string. Commit 33e3830 only keeps Hán-Việt wording (vs client wording) for id stability; spacing around the dot does not affect the option id."
+   ],
+   "notes": "Chuyển · Cử thuẫn"
+  }
+ ]
+}

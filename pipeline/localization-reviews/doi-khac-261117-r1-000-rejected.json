@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-000-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-000",
+ "items": [
+  {
+   "entityId": "recommended:s-1b6c042f92688c9c041c5724898c2eb594da21e34fa3f5721c277f97a47e2daa/s27-ofw-pc3-ganning",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "49c5cf20a518db843ceb3cc0c036415a30a88d9832d8620178fe1c15461310af",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "c8fb380800c219c78d6e5ec2ea35385631973bb24c44151e1401c2b8fdf603dd",
+   "verdict": "rejected",
+   "errors": [
+    "Từ dùng sai: 收錄 (thu nhận/thu lục vào đồ giám) bị dịch thành \"thu nhập\" (= income), sai nghĩa; tiền lệ dự án và mục [356] cùng lô dùng \"chưa thu nhận\""
+   ],
+   "notes": "«Thành Vệ» là tướng thông dụng cấp sao thấp, đồ giám tướng của trang chưa thu nhận, chờ xác nhận"
+  },
+  {
+   "entityId": "recommended:s-1b6c042f92688c9c041c5724898c2eb594da21e34fa3f5721c277f97a47e2daa/s27-ofw-pc3-jiaxu",
+   "fieldPath": "displayNotes.blocks.p-4.textRaw",
+   "inputFingerprint": "cf6a83d316cf96b8b0adbdac38ea235a08d05a50850180551587d82e349d813c",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "4f6129800cd1d16a51679b8f0da272e73788c2b0fd7d3d5691ca0f1d66b5c500",
+   "verdict": "rejected",
+   "errors": [
+    "Từ dùng sai: 收錄 (thu nhận/thu lục vào đồ giám) bị dịch thành \"thu nhập\" (= income), sai nghĩa; tiền lệ dự án và mục [356] cùng lô dùng \"chưa thu nhận\""
+   ],
+   "notes": "«Tử Sĩ» là tướng thông dụng cấp sao thấp, đồ giám tướng của trang chưa thu nhận, chờ xác nhận"
+  },
+  {
+   "entityId": "recommended:s-1b6c042f92688c9c041c5724898c2eb594da21e34fa3f5721c277f97a47e2daa/s27-ofw-pc3-machao",
+   "fieldPath": "displayNotes.blocks.p-3.textRaw",
+   "inputFingerprint": "11e97bf8a5c66fd8a87d23e46f4d1732f3b98a565872332d80013dfdf7c9302d",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "0337a93cbbbe7d9836e5c513864d456b0e3bdf2d083f2c0bc5de0739963fbe88",
+   "verdict": "rejected",
+   "errors": [
+    "Từ dùng sai: 收錄 (thu nhận/thu lục vào đồ giám) bị dịch thành \"thu nhập\" (= income), sai nghĩa; tiền lệ dự án và mục [356] cùng lô dùng \"chưa thu nhận\""
+   ],
+   "notes": "Ô này trong ảnh gốc ghi «Tây Lương Thiết Kỵ/Đại Kích Sĩ», chọn một trong hai; «Thành Vệ» là tướng thông dụng cấp sao thấp, đồ giám tướng của trang chưa thu nhận, chờ xác nhận"
+  }
+ ]
+}

@@ -1,0 +1,31 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r1b-000-rejected",
+ "reviewerSession": "reviewer:RvDkKl261118-r1b-000",
+ "items": [
+  {
+   "entityId": "recommended:s-1b6c042f92688c9c041c5724898c2eb594da21e34fa3f5721c277f97a47e2daa/s27-kh-ma-fa-ke",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "25f10be0d12e29d8b4d314e225509f744314e7790f9814bc21cf56f11cbdce47",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "5b1aac90043bcecea1ac31ff6d6f4a229a59a403149dddbbef70849b6bfaa4e4",
+   "verdict": "rejected",
+   "errors": [
+    "'7 本過渡' is SGZ jargon for main-city (thành chính) level 7 transition; VI '7 bản quá độ' renders 本 literally as 'bản' (version/copy), so the reader gets '7 transitional versions' — meaning lost. Repo data expresses the same concept as mainCityLevel 7 / 'thành chính cấp 7' (data/khaihoang.json guide.transitions)."
+   ],
+   "notes": "Có thể dùng SP Hoàng Nguyệt Anh thay Pháp Chính; quá độ ở thành chính cấp 7: Vương Nguyên Cơ (trí lực, Tiềm Long Trận / Tạm Lánh Sóng Gió)+SP Mã Siêu+Gia Cát Khác (Giải Phiền Vệ / Thịnh Khí Linh Địch)"
+  },
+  {
+   "entityId": "recommended:s-1b6c042f92688c9c041c5724898c2eb594da21e34fa3f5721c277f97a47e2daa/s27-kh-zhang-guan-cai",
+   "fieldPath": "displayNotes.blocks.p-2.textRaw",
+   "inputFingerprint": "017fec7cd2fba9b30727810d36bc68bcf8b5152450cb8d8ff520de6d2e61fb62",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "4341f65b816d5d9459f295040b5a7c2bbad2dd446e154f0f9705a3665b3fb04b",
+   "verdict": "rejected",
+   "errors": [
+    "'7 本後' = after main city (thành chính) reaches level 7; VI 'sau 7 bản' reads as 'after 7 versions/copies' — meaning lost. Repo data uses 'thành chính cấp 7/8' for this concept."
+   ],
+   "notes": "Có thể dùng Trương Xuân Hoa thay Thái Văn Cơ (tổn thất chiến đấu cao hơn); sau khi thành chính đạt cấp 7, Hoàng Nguyệt Anh (thống soái, Thịnh Khí Linh Địch / Đại Kích Sĩ) thay Thái Văn Cơ chính là Thương nổi mạng xuất trận đầu mùa này"
+  }
+ ]
+}

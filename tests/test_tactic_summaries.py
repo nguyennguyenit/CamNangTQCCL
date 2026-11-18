@@ -82,6 +82,23 @@ class CountTest(unittest.TestCase):
         self.assertEqual(provenance["unmatchedSlots"], {"recommended": 1, "other": 0})
         self.assertEqual(provenance["ambiguousSlots"], {"recommended": 1, "other": 0})
 
+    def test_current_vietnamese_name_wins_over_other_tactics_han_viet(self):
+        # "Lập Lờ Đánh Tráo" là `viet` của 移花接木 và là `hanViet` cũ của 暗渡陳倉: ô Đội khác nối 移花接木.
+        tactics = encode([
+            {"id": "tactic:lap-lo-danh-trao", "chinese": "暗渡陳倉", "aliases": [], "hanViet": "Lập Lờ Đánh Tráo", "viet": "Ám Độ Trần Thương"},
+            {"id": "tactic:di-hoa-tiep-moc", "chinese": "移花接木", "aliases": [], "hanViet": "Di Hoa Tiếp Mộc", "viet": "Lập Lờ Đánh Tráo"},
+            {"id": "tactic:cu-ten-cu", "chinese": "舊名", "aliases": [], "hanViet": "Tên Cũ", "viet": "Tên Mới"},
+            {"id": "tactic:a", "chinese": "甲", "aliases": [], "hanViet": "Hai Mục", "viet": "A"},
+            {"id": "tactic:b", "chinese": "乙", "aliases": [], "hanViet": "Hai Mục", "viet": "B"},
+        ])
+        others = [other("y", [member("Tào Tháo", ["Lập Lờ Đánh Tráo", "Tên Cũ"]), member("Quách Gia", ["Hai Mục"])])]
+        payload = build_tactic_summaries(tactic_catalog_bytes=tactics, hero_catalog_bytes=HEROES, records=[], other_records=others)
+        self.assertEqual(payload["summaries"]["tactic:di-hoa-tiep-moc"]["other"], {"teams": 1, "positions": [1, 0, 0]})
+        self.assertNotIn("tactic:lap-lo-danh-trao", payload["summaries"])
+        # Không có `viet` nào khớp thì vẫn nối theo `hanViet`; trùng trong cùng tầng vẫn bị loại.
+        self.assertEqual(payload["summaries"]["tactic:cu-ten-cu"]["other"], {"teams": 1, "positions": [1, 0, 0]})
+        self.assertEqual(payload["provenance"]["ambiguousSlots"], {"recommended": 0, "other": 1})
+
     def test_catalog_hash_changes_payload(self):
         changed = build_tactic_summaries(tactic_catalog_bytes=TACTICS + b" ", hero_catalog_bytes=HEROES, records=RECORDS, other_records=OTHERS)
         self.assertNotEqual(changed["provenance"]["tacticCatalogSha256"], build()["provenance"]["tacticCatalogSha256"])
