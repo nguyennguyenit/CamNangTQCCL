@@ -11,6 +11,7 @@
 - Ghép `origin/main` lần hai (nhóm Tra cứu Kỳ lược, PR #132): `/ja/tra-cuu/ky-luoc/**` (46 trang), ô Kỳ lược trên trang đội ja dùng tên Nhật; `data/lookup-ja.json` thêm 45 mục Kỳ lược (27 tên `verified`, 18 `derived`; tên từ wiki 貂蝉の三国志真戦, 8 thẻ loại 補 chưa có tên Nhật) và bản dịch máy mô tả/hiệu ứng; thuật ngữ 奇略/方略/loại thẻ trong `pipeline/ja-glossary.json`.
 - Fixed: Soi đội bản ja khớp mờ theo tên Nhật (`createEntityIndex` bật `cjkAliases` cho từ điển qua `withLocaleAliases`); `build_lookup_ja --prune-orphans` chỉ ghi file khi dựng thành công; lỗi override ID không còn nêu cách gỡ; test danh sách cho phép tên Nhật trùng chữ Hán nguồn của mục khác.
 - Ghép `origin/main` (Cùng Tồn Hán Diễm Trường Minh, sửa bản dịch Đội chuẩn); re-pin hash nguồn, publish generation Recommended mới có `jpTiersHash`, rebind ledger route, sinh lại `workflow-build` của MCP. Bài nháp vi+ja nằm trong `plans/261117-0153-ja-locale/articles/`, chưa publish.
+- Ghép `origin/main` lần ba (Đội khác Hán Diễm Trường Minh, PR #131): `/ja/doi-khac/` một mùa với nhãn mùa tĩnh シーズン, nhãn おすすめ cho đội đề cử, nhãn ja cho phe 漢, binh chủng 器械 và nguồn YouTube; bộ tra tên Nhật xét `viet` trước `hanViet` như bản zh. `data/lookup-ja.json` dựng lại theo Tra cứu `lookup:2d9aeca6…` (1310 mục, tên và bản dịch không đổi). Generation Recommended mới có cả `jpTiersHash` lẫn 387 hàng Đội khác; handle giữ nguyên (1681/443/18).
 
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 

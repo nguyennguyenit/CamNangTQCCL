@@ -41,7 +41,7 @@ Snapshot dữ liệu công khai được chứng nhận local ngày 2026-09-13:
 | Tra cứu | 252 tướng / 412 chiến pháp / 114 trang bị / 39 quân sư / 16 cải tạo / 41 công trình |
 | Binh thư map | 66 |
 
-Build local ngày 2026-11-18 (dữ liệu hiện tại): 8836 trang HTML (mỗi bản `/zh/`, `/ja/` 2945 trang; gồm 3084 trang riêng Tra cứu = 1028 mục × vi/zh/ja, kể cả 45 mục Kỳ lược), sitemap 8823 URL, `/llms.txt` + 37 file `/llms/…` + `/llms-full.txt` (bộ llms chỉ có bản Việt).
+Build local ngày 2026-11-18 (dữ liệu hiện tại): 9667 trang HTML (mỗi bản `/zh/`, `/ja/` 3222 trang; gồm 3084 trang riêng Tra cứu = 1028 mục × vi/zh/ja, kể cả 45 mục Kỳ lược, và 443 trang Đội khác mỗi bản), sitemap 9654 URL, `/llms.txt` + 38 file `/llms/…` + `/llms-full.txt` (bộ llms chỉ có bản Việt).
 
 ## Chạy local
 
