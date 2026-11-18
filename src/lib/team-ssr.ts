@@ -150,22 +150,80 @@ function recommendedLegacyTeamIds() {
   })();
 }
 
+/** Binh thư tham khảo của một tướng: số đội có binh thư và top tên Việt (hình dạng `bookHint` của builder JS). */
+export interface LegacyBookHint {
+  teams: number;
+  items: string[];
+}
+
+let heroBookHintIndex: Promise<Map<string, LegacyBookHint>> | undefined;
+
+/**
+ * Tên Việt của tướng (`searchName` trong `hero-summaries.json` đã kiểm) → binh thư hay dùng. Tên trùng nhau giữa hai
+ * mục số liệu bị bỏ hẳn (không đoán tướng nào); tướng chưa có đội nào ghi binh thư không có gợi ý.
+ */
+function heroBookHints() {
+  return heroBookHintIndex ??= (async () => {
+    const { heroes } = await lookupSummaryTables();
+    const index = new Map<string, LegacyBookHint>();
+    const ambiguous = new Set<string>();
+    for (const summary of Object.values(heroes as Record<string, Json>)) {
+      const name = String(summary.searchName).trim();
+      if (index.has(name) || ambiguous.has(name)) {
+        index.delete(name);
+        ambiguous.add(name);
+        continue;
+      }
+      const items = (summary.books.items as Json[]).map((item) => String(item.name));
+      if (summary.books.teams > 0 && items.length) index.set(name, { teams: summary.books.teams, items });
+    }
+    return index;
+  })();
+}
+
+/**
+ * Gợi ý binh thư cho mọi tướng có thể hiện trên trang một đội khác: tướng của đội gốc và của các biến thể đã admit
+ * (nhánh `?variant=` dựng lại phía client bằng cùng bảng). Builder chỉ dùng gợi ý cho tướng mà nội dung không ghi binh thư.
+ */
+async function legacyBookHints(team: Json): Promise<Record<string, LegacyBookHint>> {
+  const env = await prepare();
+  const index = await heroBookHints();
+  const rows: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
+  const contents = [team, ...rows.filter((row) => row.legacyTeamId === team.id && row.legacyContent).map((row) => row.legacyContent)];
+  const hints: Record<string, LegacyBookHint> = {};
+  for (const content of contents) {
+    for (const hero of (content.heroes ?? []) as Json[]) {
+      const name = typeof hero?.name === 'string' ? hero.name.trim() : '';
+      const hint = name ? index.get(name) : undefined;
+      if (hint) hints[name] = hint;
+    }
+  }
+  return hints;
+}
+
 async function legacyDetailTrees(entry: LegacyRouteEntry, locale: SiteLocale) {
   const teams: Json[] = await localizedData('teams', locale);
   const matches = teams.filter((team) => team.id === entry.legacyTeamId);
   if (matches.length !== 1) throw new Error(`Legacy team must resolve to exactly one record: ${entry.legacyTeamId}`);
   // Đề cử nằm ở hàng `other-teams.json` đã admit (không ở `teams.json`): đội có hàng đề cử nào thì hiện nhãn ở trạng thái không có biến thể.
   const referenceRecommended = (await recommendedLegacyTeamIds()).has(entry.legacyTeamId);
+  const bookHints = await legacyBookHints(matches[0]);
+  // Tùy chọn của builder JS (không có kiểu JSDoc): `locale`/`bookHints` là khóa hợp lệ.
+  const options: Json = { locale, bookHints };
   return {
-    body: legacyOriginalDetailContent(matches[0], { locale }) as Tree[],
+    body: legacyOriginalDetailContent(matches[0], options) as Tree[],
     badges: detailBadges({ ...matches[0], referenceRecommended }, null, { locale }) as Tree[],
+    bookHints,
   };
 }
 
-/** Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể). */
-export async function legacyDetailParts(entry: LegacyRouteEntry, locale: SiteLocale): Promise<TeamDetailParts> {
-  const { body, badges } = await legacyDetailTrees(entry, locale);
-  return { bodyHtml: html(body), badgesHtml: html(badges) };
+/**
+ * Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể), kèm bảng gợi ý binh thư
+ * để trang nhúng vào `data-book-hints` cho nhánh biến thể phía client.
+ */
+export async function legacyDetailParts(entry: LegacyRouteEntry, locale: SiteLocale): Promise<TeamDetailParts & { bookHints: Record<string, LegacyBookHint> }> {
+  const { body, badges, bookHints } = await legacyDetailTrees(entry, locale);
+  return { bodyHtml: html(body), badgesHtml: html(badges), bookHints };
 }
 
 export async function legacyDetailText(entry: LegacyRouteEntry, locale: SiteLocale): Promise<string> {

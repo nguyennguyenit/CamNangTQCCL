@@ -6974,6 +6974,19 @@ main.layout:has(> .detail-content) {
   padding-bottom: 0;
 }
 
+/* Binh thư tham khảo theo tướng (Đội khác không ghi binh thư): chữ nhạt + ghi chú nghiêng để không lẫn với binh thư
+   của chính đội. */
+.detail-hero-books.is-hint .detail-hero-books-item {
+  color: var(--muted);
+}
+
+.detail-hero-hint-note {
+  margin: var(--space-4) 0 0;
+  font: var(--type-meta);
+  color: var(--muted);
+  font-style: italic;
+}
+
 /* ---------- Ô kỳ lược (trang chi tiết Đội chuẩn) ---------- */
 /* Section "Kỳ lược" giữa Đội hình và Ghi chú: chip phương lược, lưới "Hiệp 2…" đúng số thẻ (3–5 ô) tô theo loại thẻ
    (`data-tone`, bảng tint dùng chung với Tra cứu), nhãn loại + dấu Hiếm là class nhãn của Tra cứu. Dạng không thứ tự
