@@ -74,8 +74,10 @@ Chủ repo chốt ngày 18/11/2026:
 1. Đội không có nguồn PK-S27: **giữ nguyên**, URL không đổi; `seasonNote` nói rõ đội "Tiến cử" theo
    sách trắng PK-S27, các đội còn lại là cấu hình tham khảo mùa trước.
 2. Thêm **2 đội mới** (Trương Phi · Quan Ngân Bình · Thái Văn Cơ; Gia Cát Khác · Hà Thị · SP Lô Trực)
-   kèm handle mới, và **4 biến thể** "PK-S27 · Thu Thạch" cho Khương Thái Thái, Hạ Thái Hoàng,
-   Mã Pháp Khác, Khương Hạ Khác.
+   kèm handle mới, và **4 biến thể** `cn-pk-s27` (nhãn "CN · PK-S27", vùng Trung Quốc: nguồn là sách khai
+   hoang đăng ở Trung Quốc đại lục) cho Khương Thái Thái, Hạ Thái Hoàng, Mã Pháp Khác, Khương Hạ Khác.
+   Lúc đầu Mã Pháp Khác bị bỏ vì bản đảo lại trùng "CN · Thôi Phong"; sau review, chủ repo xác nhận lại trong
+   session này: thêm đúng như chữ in, kèm lưu ý nguồn tự ghi có thể in đảo.
 3. 5 đội cảm tử Thu Thạch **không** đưa lên bảng Chạm Sứ; giữ ở Đội chuẩn PK-S27.
 
 ## Rủi ro

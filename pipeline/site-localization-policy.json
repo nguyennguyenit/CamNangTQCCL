@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "a76a5952410af9f3fa2b613d6dbf07b112f1eb8f2b6d586ef638fc56594b71f2",
-      "concreteLocationCount": 75400,
+      "concreteInventorySha256": "f790a6aeabe671e2df88612d25dec8137159766d27311937a1e8156e95a5b89b",
+      "concreteLocationCount": 75429,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -761,7 +761,7 @@
   ],
   "sourceFiles": {
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
-    "data/khaihoang.json": "f952f175643ffffaa1587480a3e63d014f2f3bd49df77f96f1cad620d2f5a2ea",
+    "data/khaihoang.json": "2cad1454bc862788a1817f3f45fa863abdbabe0b38fdef54ac53398abe30a1dc",
     "data/season-content-links.json": "d9a3d4f9f4150724b4a87cd69942f89df74865fda9801a930f299bd8b8177bf2",
     "data/teams.json": "1fe35c58bfc99eec9c9d28bd34d85ec8926a693364d53fd277846803cabfe338",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
