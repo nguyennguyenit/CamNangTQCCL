@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { AiRoute } from "../../shared/ai-config";
-import { buildExplainRequestBody, buildRequestBody, callExplainModel, callModel, promptByMode } from "../src/model";
+import { createHash } from "node:crypto";
+import { buildExplainRequestBody, buildRequestBody, callExplainModel, callModel, explainPrompt, promptByMode } from "../src/model";
 import type { ExplainContext } from "../src/schema";
 
 function route(modelId: string, effort = "off"): AiRoute {
@@ -155,4 +156,86 @@ describe("explainSubstitute (chỉ văn bản)", () => {
       expect(error).toMatchObject({ status: 422, message: "Không giải thích được" });
     });
   }
+});
+
+const sha256 = (text: string) => createHash("sha256").update(text).digest("hex");
+const IMAGE_MODES = ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams"] as const;
+
+// Băm SHA-256 của prompt trước khi thêm locale: vắng locale hoặc vi/zh phải ra đúng từng byte.
+const FROZEN_PROMPT_SHA256: Record<(typeof IMAGE_MODES)[number], string> = {
+  analyzeTeamImage: "0f7ff25430cc4f9e146561f795c3702170380103dc464e94834625454a492170",
+  scanHeroes: "2a28aff8387d8539b19c0612b09d0cbc6f8cd277ff34f3470005a44e1a81fd90",
+  scanTactics: "8ce31580213c60450a05b2509c87109f808f10b96ead44f935aa481364c447f7",
+  scanBuiltTeams: "47c25ee807ef7096c0e136780fbaf6933c0ad2d0813567439333f8a4027ce47d",
+};
+
+describe("prompt theo locale", () => {
+  for (const mode of IMAGE_MODES) {
+    it(`${mode}: vắng locale, vi và zh giữ nguyên từng byte`, () => {
+      expect(sha256(promptByMode(mode))).toBe(FROZEN_PROMPT_SHA256[mode]);
+      expect(promptByMode(mode, "vi")).toBe(promptByMode(mode));
+      expect(promptByMode(mode, "zh")).toBe(promptByMode(mode));
+    });
+
+    it(`${mode}: locale ja nối đoạn client Nhật và không còn câu ép giản thể`, () => {
+      const text = promptByMode(mode, "ja");
+      expect(text).not.toBe(promptByMode(mode));
+      expect(text).toContain("三國志 真戦");
+      expect(text).toContain("tự dạng Nhật");
+      expect(text).not.toMatch(/PHẢI là chữ Hán giản thể|PHẢI là GIẢN THỂ|chữ Hán giản thể"/u);
+    });
+  }
+
+  it("analyzeTeamImage ja: chép nguyên tự dạng Nhật, nêu nhãn client Nhật, vẫn chỉ chép chữ in", () => {
+    const text = promptByMode("analyzeTeamImage", "ja");
+    expect(text).toContain("戦報");
+    expect(text).toContain("主将");
+    expect(text).toContain("味方");
+    expect(text).toContain("通常攻撃");
+    expect(text).toContain("kana");
+    expect(text).toContain("KHÔNG đổi sang giản thể");
+    expect(text).not.toContain("TUYỆT ĐỐI KHÔNG dùng phồn thể");
+    expect(text).toContain("không nhận diện tướng qua chân dung");
+    expect(text).toContain("TUYỆT ĐỐI KHÔNG thay tên in");
+    expect(text).toContain("chép CẢ HAI phe");
+  });
+
+  it("buildRequestBody truyền locale xuống prompt", () => {
+    const body = buildRequestBody("vision-model", "data:image/webp;base64,abc", "scanTactics", "ja");
+    expect((body.messages[0].content[0] as { text: string }).text).toBe(promptByMode("scanTactics", "ja"));
+  });
+
+  it("callModel gửi prompt ja khi có locale", async () => {
+    const sent: unknown[] = [];
+    const fetchImpl = (async (_url: RequestInfo | URL, init?: RequestInit) => {
+      sent.push(JSON.parse(String(init?.body)));
+      return Response.json({ choices: [{ message: { content: '{"tactics":[{"nameCn":"国の柱石"}]}' } }] });
+    }) as typeof fetch;
+    await callModel("data:image/webp;base64,abc", { route: route("vision-model"), fetchImpl }, "scanTactics", "ja");
+    expect(JSON.stringify(sent)).toContain("tự dạng Nhật");
+  });
+});
+
+describe("explainPrompt theo locale", () => {
+  const ctx: ExplainContext = {
+    locale: "vi",
+    hero: "Quan Vũ",
+    missing: { name: "A", effect: "e1" },
+    substitute: { name: "B", effect: "" },
+    configCount: 4,
+  };
+
+  it("vi và zh giữ nguyên từng byte", () => {
+    expect(sha256(explainPrompt({ ...ctx, locale: "vi" }))).toBe("a8f3e04355a61111e4de9d5f7cd699e6ea21259cff3e81a3ce99cd8266f6cf73");
+    expect(sha256(explainPrompt({ ...ctx, locale: "zh" }))).toBe("ae02da2e055e1a9d52d888835661ad9b9d92788529a878de5a380b12919de502");
+  });
+
+  it("ja yêu cầu trả lời bằng tiếng Nhật và không dính câu vi/zh", () => {
+    const text = explainPrompt({ ...ctx, locale: "ja" });
+    expect(text).toContain("日本語");
+    expect(text).not.toContain("Trả lời bằng tiếng Việt");
+    expect(text).not.toContain("简体中文");
+    expect(text).toContain('{"explanation"');
+    expect(text).not.toContain('"locale"');
+  });
 });

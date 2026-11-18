@@ -4,10 +4,10 @@
 // trang giữ nguyên. Trang trả về từ bfcache được vẽ lại: gỡ badge/tóm tắt cũ, hỏi lại phiên, đọc lại kho.
 import { loadSession } from "./community-api.js";
 import { createLookupPayloadLoader } from "./lookup-data.js";
-import { loadRecommendedReference, setTacticDisplayName } from "./recommended-reference-state.js";
+import { loadRecommendedReference, setTacticDisplayName, setZhNameResolver } from "./recommended-reference-state.js";
 import { buildListCoverage, readOwnedRoster } from "./roster-list-coverage.js";
 import { decorateCoverageBadges, rosterSummaryNode } from "./roster-list-badges.js";
-import { createByteLoader, readTacticDisplayTable } from "./website-display.js";
+import { createByteLoader, loadRawNameResolver, readLookupJaPin, readTacticDisplayTable } from "./website-display.js";
 
 function storage() {
   try {
@@ -32,6 +32,8 @@ function loadPageData(pinNode) {
       loadRecommendedReference(JSON.parse(pinNode.textContent), loadRecommendedBytes),
       loadLookupPayload("heroes-dict.json"),
       loadLookupPayload("tactics.json"),
+      // Bản ja (trang có pin `#lookup-ja-pin`): tên món thiếu hiện bằng tên Nhật; lỗi chỉ làm tên lùi về chữ Hán.
+      readLookupJaPin() ? loadRawNameResolver(loadBytes).then((names) => setZhNameResolver(names)).catch(() => null) : null,
     ]).catch((error) => {
       pageData = null;
       throw error;

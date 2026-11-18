@@ -9,6 +9,9 @@
  *   trang cũ của mùa mới hiện tại biến mất và được 301 về `/doi-chuan/` (`seasonRedirectRules`).
  * - Mùa 0 đội (chưa thu thập) không có trang; registry rỗng cho 0 trang.
  */
+import { LOCALE_PREFIX, SITE_LOCALES, pick } from '../../js/i18n.js';
+import { localRawName } from '../../js/website-display.js';
+import type { SiteLocale } from './locale-routes.ts';
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog, type RecommendedRouteEntry, type TeamDetailRouteCatalog } from './team-detail-routes.ts';
 
@@ -124,10 +127,10 @@ export function seasonPageCatalog(
   return { defaultSourceSeasonId, current, pages };
 }
 
-/** 301 của slug mùa hiện tại về trang danh sách (vi + zh): URL đã index của mùa vừa thành mùa mặc định không bị 404. */
+/** 301 của slug mùa hiện tại về trang danh sách (mọi locale): URL đã index của mùa vừa thành mùa mặc định không bị 404. */
 export function seasonRedirectRules(catalog: Pick<SeasonPageCatalog, 'current'>): SeasonRedirectRule[] {
   if (!catalog.current) return [];
-  return ['', '/zh'].map((prefix) => ({ from: `${prefix}/doi-chuan/${catalog.current!.slug}/`, to: `${prefix}/doi-chuan/`, status: 301 as const }));
+  return SITE_LOCALES.map((locale) => LOCALE_PREFIX[locale]).map((prefix) => ({ from: `${prefix}/doi-chuan/${catalog.current!.slug}/`, to: `${prefix}/doi-chuan/`, status: 301 as const }));
 }
 
 /** Danh mục của publication đã pin của repo (đúng bản mà trang dùng). */
@@ -137,9 +140,13 @@ export async function seasonPages(): Promise<SeasonPageCatalog> {
   return seasonPageCatalog(registry, await teamDetailCatalog());
 }
 
-/** Tên mùa hiển thị theo ngôn ngữ: bản zh dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
-export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: 'vi' | 'zh') {
-  return locale === 'zh' ? season.nameRaw : season.nameVi;
+/** Tên mùa hiển thị theo ngôn ngữ: bản zh và ja dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
+/**
+ * Tên mùa theo ngôn ngữ trang: bản Việt `nameVi`, bản Trung chữ Hán nguồn, bản Nhật chữ nguồn đổi tự dạng qua `resolver.fromRaw`
+ * (truyền `await lookupJaNameResolver()`; vắng thì giữ chữ nguồn).
+ */
+export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: SiteLocale, resolver: { fromRaw?: (raw: string) => string } | null = null) {
+  return pick(locale, season.nameVi, season.nameRaw, season.nameRaw ? localRawName(season.nameRaw, resolver, locale) : season.nameRaw);
 }
 
 export interface SeasonPageProps {

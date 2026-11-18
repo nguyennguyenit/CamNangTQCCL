@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import io
+import re
 import tempfile
 import shutil
 import unittest
@@ -10,6 +11,7 @@ from pathlib import Path
 
 from pipeline.lookup_translations import canonical_json_bytes
 from pipeline.site_localization import (
+    UI_LITERAL_OBLIGATIONS,
     _assert_lookup_publication,
     _data_classification,
     glossary_digest,
@@ -41,6 +43,20 @@ class KhaiHoangNoteClassificationTest(unittest.TestCase):
         self.assertEqual(_data_classification(("teams", 3, "buildNote"), "Cộng Trí Lực."), "authored-vi")
         self.assertEqual(_data_classification(("teams", 3, "openingNote"), "Ưu tiên đất Thương."), "authored-vi")
         self.assertEqual(_data_classification(("teams", 14, "buildNote"), "Chiến pháp 疾風豪雨"), "translate")
+
+
+class UiObligationOwnerTest(unittest.TestCase):
+    def test_constant_owner_symbols_exist_in_owner_file(self):
+        # Owner dạng hằng (`UPPER_SNAKE`) là tên biến thật trong file sở hữu: đổi tên biến thì obligation phải đổi theo.
+        stale = []
+        for obligation in UI_LITERAL_OBLIGATIONS:
+            entity_id, owner_file, owner_symbol = obligation[0], obligation[3], obligation[4]
+            if not re.fullmatch(r"[A-Z][A-Z0-9_]+", owner_symbol):
+                continue
+            text = (ROOT / owner_file).read_text(encoding="utf-8")
+            if not re.search(rf"(?<![\w$]){re.escape(owner_symbol)}(?![\w$])", text):
+                stale.append((entity_id, owner_file, owner_symbol))
+        self.assertEqual(stale, [])
 
 
 class YoutubeTeamFieldClassificationTest(unittest.TestCase):
@@ -491,10 +507,18 @@ class SiteLocalizationTest(unittest.TestCase):
             strict = check(ROOT, stage="all", candidate=full_candidate)
             self.assertEqual(strict["exitCode"], 0)
             self.assertEqual(strict["uiMissingSources"], [])
-            # Kỳ lược của đội được tính ở đường publish này (không qua capture), từ catalog của chính candidate.
-            selector = json.loads((full_candidate / "recommended" / "current.json").read_bytes())
+            # Bảng khớp tier JP nằm trong input hash và được chiếu lên đúng các hàng PK-S26 đã review.
+            self.assertIn("pipeline/recommended-jp-tiers.json", full_manifest["inputHashes"])
+            selector = json.loads((full_candidate / "recommended/current.json").read_bytes())
             generation = full_candidate / "recommended" / selector["generationId"]
+            manifest = json.loads((generation / "manifest.json").read_bytes())
+            jp_bytes = (ROOT / "pipeline/recommended-jp-tiers.json").read_bytes()
+            self.assertEqual(manifest["jpTiersHash"], "sha256:" + hashlib.sha256(jp_bytes).hexdigest())
             index = json.loads((generation / "index.json").read_bytes())["records"]
+            tiered = [row for row in index if row.get("tierSources")]
+            self.assertEqual(len(tiered), 7)
+            self.assertEqual({row["sourceSeasonId"] for row in tiered}, {"pk-s26"})
+            # Kỳ lược của đội được tính ở đường publish này (không qua capture), từ catalog của chính candidate.
             wumou = next(row for row in index if row["sourceConfigId"] == "s27-official-wumou-qi")
             self.assertEqual(wumou["qilue"]["cardIds"][0], "qilue-card:bo-tri-thap-dien")
             self.assertEqual(sum("qilue" in row for row in index), 59)

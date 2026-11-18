@@ -40,8 +40,10 @@ DEFAULT_DATA_DIR = REPO_ROOT / "data"
 DEFAULT_REDIRECTS_PATH = REPO_ROOT / "public" / "_redirects"
 DEFAULT_RECOMMENDED_ROOT = REPO_ROOT / "src" / "data" / "recommended-reference"
 REDIRECTS_HEADER = "# Sinh bởi python3 -m pipeline.lookup_route_handles --write; không sửa tay."
-# Locale prefixes of the tactic detail route (src/lib/lookup-detail-routes.ts); zh group slugs equal vi ones.
-REDIRECT_LOCALE_PREFIXES = ("", "/zh")
+# Locale prefixes of the tactic detail route (src/lib/lookup-detail-routes.ts); every locale reuses the vi group slugs.
+# Must list every prefix of LOCALE_PREFIX in js/i18n.js, including a locale declared before it is enabled
+# (tests-js/pages-headers-contract.test.mjs keeps the two in step, since Python cannot read the JS table).
+REDIRECT_LOCALE_PREFIXES = ("", "/zh", "/ja")
 
 LEDGER_NOTE = (
     "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong "

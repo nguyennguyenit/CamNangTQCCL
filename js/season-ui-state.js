@@ -5,7 +5,7 @@ import { L } from './i18n.js';
 
 export const SEASON_ARTIFACTS = Object.freeze(['season-registry', 'season-evidence', 'season-team-configs', 'season-team-evaluations', 'season-content-links', 'teams', 'coexist', 'heroes-dict', 'tactics', 'books-dict']);
 const QUERY_FILTERS = Object.freeze(['faction', 'unit', 'tier', 'source']);
-export const BUNDLE_NOTICE = L('Không xác thực được bộ dữ liệu mùa. Đang hiển thị dữ liệu cũ để tham khảo; tính năng theo mùa chưa khả dụng.', '无法验证赛季数据包。当前显示旧数据供参考；按赛季的功能暂不可用。');
+export const BUNDLE_NOTICE = L('Không xác thực được bộ dữ liệu mùa. Đang hiển thị dữ liệu cũ để tham khảo; tính năng theo mùa chưa khả dụng.', '无法验证赛季数据包。当前显示旧数据供参考；按赛季的功能暂不可用。', 'シーズンデータの検証に失敗しました。参考として以前のデータを表示しています。シーズン別の機能は現在ご利用いただけません。');
 export async function loadSeasonModel(hashes, loadBytes) {
   if (!hashes || Object.keys(hashes).length !== SEASON_ARTIFACTS.length) throw new Error(BUNDLE_NOTICE);
   const entries = await Promise.all(SEASON_ARTIFACTS.map(async name => {
@@ -38,7 +38,7 @@ export function readSeasonQuery(url, model) {
     filters: Object.fromEntries(QUERY_FILTERS.map(key => [key, [...new Set(params.getAll(key))]])),
     query: params.getAll('q').length === 1 ? params.get('q') : '', sort: params.getAll('sort').length === 1 ? params.get('sort') || 'tier' : 'tier',
     configId: params.getAll('config').length === 1 ? params.get('config') : null,
-    notices: [...(params.has('stars') ? [L('Bộ lọc sao cũ đã được bỏ.', '旧的星级筛选已移除。')] : []), ...(invalidScalar ? [L('Tham số tìm kiếm hoặc cấu hình không hợp lệ đã được bỏ.', '无效的搜索或配置参数已被忽略。')] : [])],
+    notices: [...(params.has('stars') ? [L('Bộ lọc sao cũ đã được bỏ.', '旧的星级筛选已移除。', '以前の星数フィルターは削除されました。')] : []), ...(invalidScalar ? [L('Tham số tìm kiếm hoặc cấu hình không hợp lệ đã được bỏ.', '无效的搜索或配置参数已被忽略。', '無効な検索または構成のパラメーターは無視されました。')] : [])],
   };
 }
 export function updateSeasonURL(url, changes) {

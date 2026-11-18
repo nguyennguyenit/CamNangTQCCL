@@ -3,22 +3,32 @@
 
 import { classifyName, createEntityIndex } from './analyze-map.js';
 import { heroFamilyId } from './hero-identity.js';
-import { L, currentLocale } from './i18n.js';
+import { L, currentLocale, normalizeLocale, pick } from './i18n.js';
 import { heroPortrait } from './hero-portrait.js';
 import { createLookupPayloadLoader } from './lookup-data.js';
 import { createTacticIdResolver } from './lookup-ids.js';
 import { el } from './render.js';
-import { createByteLoader } from './website-display.js';
+import { createByteLoader, loadRawNameResolver, localRawName, localRecordName, readLookupJaPin } from './website-display.js';
 
 let dictionaries = null;
 let booksDictionary = null;
+/**
+ * Bản ja: bộ tra tên Nhật (tên theo mã, tự dạng Nhật cho chữ Hán thô) nạp cùng từ điển ở trang có pin `#lookup-ja-pin`; bản
+ * khác `null` (nhãn bản Trung là chữ Hán nguồn nguyên văn). Nhãn tướng/chiến pháp/mùa của mọi trang cộng đồng đọc qua đây.
+ */
+let localNames = null;
 
 /** Từ điển tướng + chiến pháp; một lần tải cho cả trang, lỗi thì lần gọi sau tải lại. */
 export function loadTeamDictionaries(loadBytes = createByteLoader()) {
   if (!dictionaries) {
     const loadPayload = createLookupPayloadLoader(loadBytes);
-    const pending = Promise.all([loadPayload('heroes-dict.json'), loadPayload('tactics.json')])
-      .then(([heroes, tactics]) => ({ heroes, tactics }));
+    // Lớp tên Nhật lỗi thì nhãn lùi về chữ Hán nguồn, trang vẫn chạy.
+    const names = readLookupJaPin() ? loadRawNameResolver(loadBytes).catch((error) => { console.error(error); return null; }) : null;
+    const pending = Promise.all([loadPayload('heroes-dict.json'), loadPayload('tactics.json'), names])
+      .then(([heroes, tactics, resolver]) => {
+        localNames = resolver;
+        return { heroes, tactics };
+      });
     dictionaries = pending;
     pending.catch(() => { if (dictionaries === pending) dictionaries = null; });
   }
@@ -42,19 +52,22 @@ export function loadTeamBooks(loadBytes = createByteLoader()) {
   return booksDictionary;
 }
 
-/** Nhãn hiển thị của một mục từ điển: bản Việt tên Việt, bản Trung chữ Hán gốc (lùi về tên Việt khi thiếu). */
-export function recordLabel(record, locale = currentLocale()) {
-  if (!record) return '';
-  return locale === 'zh' ? String(record.chinese || '').trim() || record.viet || '' : record.viet || '';
+/**
+ * Nhãn hiển thị của một mục từ điển: bản Việt tên Việt, bản Trung chữ Hán gốc, bản Nhật tên Nhật theo mã (sau khi
+ * `loadTeamDictionaries` nạp xong; trước đó chữ Hán gốc). Thiếu chữ Hán thì lùi về tên Việt.
+ */
+export function recordLabel(record, locale = currentLocale(), names = localNames) {
+  return localRecordName(record, names, locale);
 }
 
 /**
  * Bộ tra tên theo id cho một locale. Id lạ (không có trong từ điển) hiện thô để không mất thông tin.
  * Chiến pháp đổi id (`formerIds`) được dẫn về id hiện hành qua `createTacticIdResolver`.
- * @param {{heroes?: unknown[], tactics?: unknown[], books?: unknown[]}} [dictionaries] từ điển JSON đã parse.
+ * @param {{heroes?: unknown[], tactics?: unknown[], books?: unknown[], names?: unknown}} [dictionaries] từ điển JSON đã parse;
+ *   `names` là bộ tra tên của bản ja (lúc build: `lookupJaNameResolver()`), vắng thì dùng bộ đã nạp cùng `loadTeamDictionaries`.
  * @param {string} [locale]
  */
-export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}, locale = currentLocale()) {
+export function createTeamLexicon({ heroes = [], tactics = [], books = [], names = localNames } = {}, locale = currentLocale()) {
   const indexes = Object.freeze({
     heroes: createEntityIndex(heroes, 'hero'),
     tactics: createEntityIndex(tactics, 'tactic'),
@@ -71,7 +84,7 @@ export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}
   const labelsOf = (index) => {
     const labels = new Map();
     for (const [id, record] of index.byId) {
-      const label = recordLabel(record, locale);
+      const label = recordLabel(record, locale, names);
       if (label && !labels.has(label)) labels.set(label, id);
     }
     return labels;
@@ -81,8 +94,8 @@ export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}
     indexes,
     heroRecord,
     tacticRecord,
-    heroName: (id) => recordLabel(heroRecord(id), locale) || String(id),
-    tacticName: (id) => recordLabel(tacticRecord(id), locale) || String(id),
+    heroName: (id) => recordLabel(heroRecord(id), locale, names) || String(id),
+    tacticName: (id) => recordLabel(tacticRecord(id), locale, names) || String(id),
     heroLabels: labelsOf(indexes.heroes),
     tacticLabels: labelsOf(indexes.tactics),
   });
@@ -90,17 +103,18 @@ export function createTeamLexicon({ heroes = [], tactics = [], books = [] } = {}
 
 /** `<datalist>` nhãn → id đã sắp theo nhãn, dùng chung cho các ô nhập tướng/chiến pháp. */
 export function datalistOptions(labels, locale = currentLocale()) {
-  return [...labels.keys()].sort((a, b) => a.localeCompare(b, locale === 'zh' ? 'zh' : 'vi'));
+  const collation = normalizeLocale(locale);
+  return [...labels.keys()].sort((a, b) => a.localeCompare(b, collation));
 }
 
 /** Nhãn binh chủng theo locale. */
 export function troopLabel(troop) {
   switch (troop) {
-    case 'cung': return L('Cung', '弓');
-    case 'khiGioi': return L('Khí giới', '器械');
-    case 'ky': return L('Kỵ', '骑');
-    case 'thuan': return L('Thuẫn', '盾');
-    case 'thuong': return L('Thương', '枪');
+    case 'cung': return L('Cung', '弓', '弓');
+    case 'khiGioi': return L('Khí giới', '器械', '器械');
+    case 'ky': return L('Kỵ', '骑', '騎');
+    case 'thuan': return L('Thuẫn', '盾', '盾');
+    case 'thuong': return L('Thương', '枪', '槍');
     default: return String(troop ?? '');
   }
 }
@@ -108,7 +122,8 @@ export function troopLabel(troop) {
 /** Nhãn mùa theo locale. */
 export function seasonLabel(season, locale = currentLocale()) {
   if (!season) return '';
-  return (locale === 'zh' ? season.labelZh : season.labelVi) || season.labelVi || season.labelZh || String(season.id ?? '');
+  const source = typeof season.labelZh === 'string' && season.labelZh ? localRawName(season.labelZh, localNames, locale) : season.labelZh;
+  return pick(locale, season.labelVi, season.labelZh, source) || season.labelVi || season.labelZh || String(season.id ?? '');
 }
 
 /** Ô tướng: chân dung + tên theo locale. `lexicon` null (từ điển chưa tải) → chỉ hiện id thô. */

@@ -144,7 +144,7 @@ async function controlledBundle(page, data = null) {
     if (key in routeBodies) return route.fulfill({contentType:'application/json',body:routeBodies[key]});
     return route.continue();
   });
-  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:doi-chuan|doi-khac|cung-ton|soi-doi-tu-anh|goi-y-doi-tu-kho)\/(?:\?.*)?$/, async route => {
+  await page.route(/^http:\/\/(?:localhost|127\.0\.0\.1):\d+\/(?:(?:zh|ja)\/)?(?:doi-chuan|doi-khac|cung-ton|soi-doi-tu-anh|goi-y-doi-tu-kho)\/(?:\?.*)?$/, async route => {
     const response = await route.fetch();
     const html = replaceWebsiteDisplayPin(
       (await response.text()).replace(/(<script[^>]*id="season-artifact-hashes"[^>]*>)[\s\S]*?(<\/script>)/, (_,start,end)=> start + JSON.stringify(hashes) + end),
@@ -275,6 +275,24 @@ test('configuration details retain raw effect labels, multiline mechanics and re
   await expect(page.locator('#season-config-detail')).toContainText('Dòng cơ chế một\nDòng cơ chế hai');
   await expect(page.locator('#season-config-detail')).toContainText('Điều kiện: Cần quân sư chưa có trong kho kiểm chứng');
   await expect(page.locator('#season-config-detail')).toContainText('Chưa xác minh điều kiện');
+});
+test('ja: panel cấu hình ẩn văn xuôi chữ Trung và hiện một dòng báo thiếu, phần đã dịch giữ nguyên',async({page})=>{
+  const data=await seasonConsumerFixture();const config=data['season-team-configs'].find(item=>item.id==='config-conditional');
+  config.requirements[0].descriptionRaw='需要军师才能发动';
+  config.effectBundles=[{id:'effect-a',labelRaw:'军师效果',effectsRaw:'机制第一行\n机制第二行',requirementIds:['advisor-condition'],evidenceRefs:['rule-proof']}];
+  config.notes='中文备注';
+  refreshConfigProofs(data);
+  data['season-team-evaluations'].find(item=>item.configId==='config-conditional').reviewNote='中文评价';
+  await controlledBundle(page,data);
+  await page.goto('/ja/doi-khac/?scenario=scenario-a&ruleset=rules-a&config=config-conditional');
+  const detail=page.locator('#season-config-detail');
+  await expect(detail).toBeVisible();
+  for (const hidden of ['需要军师才能发动','军师效果','机制第一行','中文备注','中文评价']) await expect(detail).not.toContainText(hidden);
+  await expect(detail.locator('.detail-note-missing')).toHaveCount(1);
+  await expect(detail.locator('.detail-note-missing')).toHaveText('中国語の原文しかない説明は、日本語訳がないため表示していません。');
+  // Nhãn UI tiếng Nhật và trạng thái điều kiện vẫn hiện; nút đối chiếu kho đứng sau dòng báo thiếu.
+  await expect(detail).toContainText('条件は未確認 · 必須');
+  await expect(detail.getByRole('button',{name:'自分の武将図鑑と照合'})).toBeVisible();
 });
 test('validated source score with unknown upstream season still opens its exact configuration',async({page})=>{
   const data=await seasonConsumerFixture();data['season-team-evaluations'][0].sourceScore.sourceSeason=null;data['season-evidence'].find(item=>item.id==='score-proof').sourceSeason=null;

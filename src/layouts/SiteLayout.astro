@@ -19,19 +19,19 @@ import {
 } from '../lib/official-links';
 import { POLICY_PAGES } from '../lib/policy-pages';
 import { SECTION_ICONS, type SectionIcon } from '../lib/section-icons';
-import { lookupGroupLinks, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
+import { lookupGroupLinks, lookupJaPin, lookupRouteHandles, type LookupGroup } from '../lib/lookup-pages';
 import { tacticDisplayTable } from '../lib/tactic-display';
-import { localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
+import { LOCALE_OG, localeFromPath, localePath, pick, stripLocale } from '../../js/i18n.js';
 import { FEEDBACK_KINDS } from '../../js/feedback-kinds.js';
-import { HREFLANG, LOCALE_LABEL, alternatePaths, mirroredAlternates, otherLocale } from '../lib/locale-routes';
+import { HREFLANG, LOCALE_LABEL, SITE_LOCALES, alternatePaths, languageSwitchAria, mirroredAlternates, switchTargets, type SiteLocale } from '../lib/locale-routes';
 // Cầu chuyển domain: script inline ĐẦU TIÊN của <head>, chạy trước mọi script đọc hash/storage.
 import { HOST_BRIDGE_SCRIPT } from '../lib/host-bridge';
 // Vỏ trang dùng chung: Landing, 8 trang mục và các trang chi tiết đều đi qua đây nên phần đầu
 // trang chỉ tồn tại một bản. Trang mục khai `data-page-section` để js/app.js biết mục cần mount.
 // Mọi trang dùng một bộ menu thả; trang con có thêm cột chuyển nhanh nổi ở mép phải (một chạm tới các mục).
 // Menu thả và menu mobile do `js/site-nav.js` điều khiển; chữ hiển thị khai obligation `authored-vi`.
-// Song ngữ: mọi chữ chọn đúng một ngôn ngữ qua `pick(locale, vi, zh)`, mọi link nội bộ qua `localePath`;
-// bản Trung (`/zh/…`) có `<html lang="zh-Hans">`, hreflang tới bản Việt và nút chuyển ngôn ngữ.
+// Đa ngôn ngữ: mọi chữ chọn đúng một ngôn ngữ qua `pick(locale, vi, zh, …)` (thứ tự `SITE_LOCALES`), mọi link nội bộ
+// qua `localePath`; mỗi bản (`/zh/…`) có `<html lang>` riêng, hreflang tới mọi bản khác và một nhóm chuyển ngôn ngữ có đủ mọi bản.
 interface Props {
   title: string;
   description: string;
@@ -43,14 +43,18 @@ interface Props {
   ogType?: 'website' | 'article';
   robots?: string;
   /** Ngôn ngữ trang; mặc định suy từ pathname (`/zh/…` → `zh`). */
-  locale?: 'vi' | 'zh';
+  locale?: SiteLocale;
   /**
-   * Khai cặp hreflang vi/zh-Hans/x-default. Mặc định bật (mọi route đều có bản gương cùng đường dẫn dưới `/zh`);
-   * 404 và bài viết không có bản dịch tắt đi (`false`); bài viết có bản dịch khác slug truyền cặp đường dẫn.
+   * Khai bộ hreflang của mọi locale + x-default. Mặc định bật (mọi route đều có bản gương cùng đường dẫn dưới tiền tố
+   * của từng locale); 404 và bài viết không có bản dịch tắt đi (`false`); bài viết có bản dịch khác slug truyền
+   * đường dẫn theo locale (chỉ các bản có thật).
    */
-  alternates?: boolean | {vi: string; zh: string};
-  /** Đường dẫn bản ngôn ngữ còn lại cho nút chuyển ngôn ngữ; mặc định là bản gương của pathname hiện tại. */
-  counterpartPath?: string;
+  alternates?: boolean | Partial<Record<SiteLocale, string>>;
+  /**
+   * Đích của link chuyển ngôn ngữ, theo locale (kể cả locale trang, link `aria-current`); mặc định là bản gương của
+   * pathname hiện tại. Một chuỗi đứng riêng là đường dẫn của đúng locale suy từ chính nó (`/zh/` → đích `zh`).
+   */
+  counterpartPath?: string | Partial<Record<SiteLocale, string>>;
   /** Ảnh OG tuyệt đối (ảnh bìa bài viết); vắng thì dùng `/og-image.png` 1200×630. */
   ogImage?: string;
   /** Trang nhóm Tra cứu (`/tra-cuu/<slug>/`): nhóm đang xem, gắn vào `<body data-lookup-group>` cho js/app.js. */
@@ -70,42 +74,50 @@ const {
   lookupGroup,
 } = Astro.props;
 const locale = Astro.props.locale ?? localeFromPath(Astro.url.pathname);
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const href = (path: string): string => localePath(path, locale);
-const switchLocale = otherLocale(locale);
-const counterpartPath = Astro.props.counterpartPath ?? localePath(stripLocale(Astro.url.pathname), switchLocale);
+/** Chữ của bản ghi theo locale (`{vi, zh, …}` của POLICY_PAGES, FEEDBACK_KINDS); thiếu bản của locale trang thì build lỗi. */
+const inLocale = (record: Readonly<Partial<Record<SiteLocale, string>>>): string => {
+  const value = record[locale];
+  if (typeof value !== 'string') throw new Error(`SiteLayout: bản ghi thiếu chữ cho locale "${locale}"`);
+  return value;
+};
+const counterpartProp = Astro.props.counterpartPath;
+const counterpartPaths: Partial<Record<SiteLocale, string>> = typeof counterpartProp === 'string'
+  ? {[localeFromPath(counterpartProp)]: counterpartProp}
+  : counterpartProp ?? {};
 const alternatesProp = Astro.props.alternates ?? pageKind !== 'not-found';
 const alternateLinks = (typeof alternatesProp === 'object'
-  ? alternatePaths(alternatesProp.vi, alternatesProp.zh)
+  ? alternatePaths(alternatesProp)
   : alternatesProp ? mirroredAlternates(Astro.url.pathname) : []
 ).map((link) => ({hreflang: link.hreflang, href: new URL(link.path, Astro.site).href}));
 
 // Chỉ trang có URL công khai ổn định mới khai canonical; 404 cố ý bỏ trống cả canonical lẫn og:url.
 const canonicalHref = canonicalUrl ? new URL(canonicalUrl).href : null;
 
-const LOGO_TITLE = t('Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册');
+const LOGO_TITLE = t('Cẩm Nang Game Tam Quốc Chí - Chiến Lược', '三国志战略版攻略手册', '三國志 真戦 攻略手帳');
 const SECTIONS = [
-  {id: 'team-chuan', label: t('Đội chuẩn', '推荐阵容'), path: '/doi-chuan/'},
-  {id: 'team-khac', label: t('Đội khác', '其他阵容'), path: '/doi-khac/'},
-  {id: 'coexist', label: t('Cùng Tồn', '共存阵容'), path: '/cung-ton/'},
-  {id: 'khaihoang', label: t('Khai hoang', '开荒'), path: '/khai-hoang/'},
-  {id: 'lookup', label: t('Tra cứu', '图鉴查询'), path: '/tra-cuu/'},
-  {id: 'recruit-tracker', label: t('Theo dõi chiêu mộ', '招募记录'), path: '/theo-doi-chieu-mo/', beta: true},
-  {id: 'analyze', label: t('Soi đội từ ảnh', '截图识阵'), path: '/soi-doi-tu-anh/', beta: true},
-  {id: 'roster-recommend', label: t('Gợi ý đội từ kho', '武将库配队'), path: '/goi-y-doi-tu-kho/', beta: true},
+  {id: 'team-chuan', label: t('Đội chuẩn', '推荐阵容', 'おすすめ編成'), path: '/doi-chuan/'},
+  {id: 'team-khac', label: t('Đội khác', '其他阵容', 'その他の編成'), path: '/doi-khac/'},
+  {id: 'coexist', label: t('Cùng Tồn', '共存阵容', '共存編成'), path: '/cung-ton/'},
+  {id: 'khaihoang', label: t('Khai hoang', '开荒', '開拓'), path: '/khai-hoang/'},
+  {id: 'lookup', label: t('Tra cứu', '图鉴查询', '図鑑検索'), path: '/tra-cuu/'},
+  {id: 'recruit-tracker', label: t('Theo dõi chiêu mộ', '招募记录', '登用記録'), path: '/theo-doi-chieu-mo/', beta: true},
+  {id: 'analyze', label: t('Soi đội từ ảnh', '截图识阵', 'スクショ編成解析'), path: '/soi-doi-tu-anh/', beta: true},
+  {id: 'roster-recommend', label: t('Gợi ý đội từ kho', '武将库配队', '武将図鑑から編成提案'), path: '/goi-y-doi-tu-kho/', beta: true},
 ];
 /** Mục có phạm vi mùa + chi tiết cấu hình: chỉ 3 trang này cần hai payload bên dưới. */
 const SEASON_SECTIONS = ['team-chuan', 'team-khac', 'coexist'];
 /** Mô tả một dòng cho mục menu (artboard LandingMenu · LandingMenuMobile). */
 const SECTION_DESCRIPTIONS: Record<string, string> = {
-  'team-chuan': t('Cấu hình đội theo từng mùa', '按赛季整理的阵容配置'),
-  'team-khac': t('Đội người chơi tổng hợp và đối chiếu', '玩家阵容汇总与对照'),
-  coexist: t('Các nhóm đội dùng cùng lúc', '可同时使用的阵容组合'),
-  khaihoang: t('Hướng dẫn đánh đất theo từng đội', '按队伍整理的打地攻略'),
-  lookup: t('Xem tướng, chiến pháp, trang bị, quân sư', '查看武将、战法、装备、军师'),
-  'recruit-tracker': t('Mốc bảo hiểm 5★, nhiều tài khoản', '5★ 保底进度，支持多账号'),
-  analyze: t('Đọc đội từ ảnh chụp màn hình', '从截图识别阵容'),
-  'roster-recommend': t('Tối đa 5 đội không trùng tài nguyên', '最多 5 队，武将战法不冲突'),
+  'team-chuan': t('Cấu hình đội theo từng mùa', '按赛季整理的阵容配置', 'シーズン別の編成構成'),
+  'team-khac': t('Đội người chơi tổng hợp và đối chiếu', '玩家阵容汇总与对照', 'プレイヤー編成のまとめと比較'),
+  coexist: t('Các nhóm đội dùng cùng lúc', '可同时使用的阵容组合', '同時に使える編成の組み合わせ'),
+  khaihoang: t('Hướng dẫn đánh đất theo từng đội', '按队伍整理的打地攻略', '部隊別の土地攻略'),
+  lookup: t('Xem tướng, chiến pháp, trang bị, quân sư', '查看武将、战法、装备、军师', '武将・戦法・装備・軍師を確認'),
+  'recruit-tracker': t('Mốc bảo hiểm 5★, nhiều tài khoản', '5★ 保底进度，支持多账号', '★5 天井の進捗、複数アカウント対応'),
+  analyze: t('Đọc đội từ ảnh chụp màn hình', '从截图识别阵容', 'スクリーンショットから編成を読み取り'),
+  'roster-recommend': t('Tối đa 5 đội không trùng tài nguyên', '最多 5 队，武将战法不冲突', '最大 5 部隊、武将と戦法が重複しない'),
 };
 /** Icon của từng mục trong menu mobile — cùng hình với lưới lối vào của Landing. */
 const SECTION_ICON: Record<string, SectionIcon> = {
@@ -118,73 +130,92 @@ const SECTION_ICON: Record<string, SectionIcon> = {
   analyze: 'analyze',
   'roster-recommend': 'roster',
 };
-const QUICK_NAV_LABEL = t('Chuyển nhanh', '快速切换');
+const QUICK_NAV_LABEL = t('Chuyển nhanh', '快速切换', 'クイック移動');
 const FOOTER_INTRO = t(
   'Cẩm nang cộng đồng cho người chơi Tam Quốc Chí Chiến Lược: đội hình theo mùa, tra cứu tướng và chiến pháp, cùng vài công cụ tính giúp.',
   '面向《三国志·战略版》玩家的社区攻略手册：分赛季阵容、武将与战法查询，以及若干实用工具。',
+  '『三國志 真戦』プレイヤー向けのコミュニティ攻略手帳です。シーズン別の編成、武将と戦法の検索、便利なツールを掲載しています。',
 );
 const COPYRIGHT = t(
   '© 2026 Cẩm Nang TQCCL · Cẩm nang tra cứu build tướng dành cho game Tam Quốc Chí - Chiến Lược',
   '© 2026 三国志战略版攻略手册 · 《三国志·战略版》武将搭配查询手册',
+  '© 2026 三國志 真戦 攻略手帳 · 『三國志 真戦』武将編成の検索ガイド',
 );
 /** Nhóm tác giả: tên người và tên bang giữ nguyên, chỉ phần mô tả ("Team 2 bang") theo ngôn ngữ trang. */
-const CREDIT = t('Nguyễn Nguyên · HLxThanos · Team 2 bang Huynh Đệ', 'Nguyễn Nguyên · HLxThanos · Huynh Đệ 帮会二队');
-const CREDIT_LABEL = t('Được xây dựng bởi', '制作');
-const STATS_LABEL = t('Số liệu cẩm nang', '手册数据');
-const STATS_DESCRIPTION = t('Quy mô dữ liệu của cẩm nang', '手册的数据规模');
-const OPEN_GUIDE_LABEL = t('Mở cẩm nang', '打开手册');
-const OPEN_GUIDE_MOBILE_LABEL = t('Mở Đội chuẩn', '打开推荐阵容');
-const ABOUT_LABEL = t('Về cẩm nang', '关于手册');
-const MENU_LABEL = t('Menu chính', '主菜单');
-const MENU_DIALOG_LABEL = t('Menu', '菜单');
-const MENU_OPEN_LABEL = t('Mở menu trang', '打开页面菜单');
-const MENU_CLOSE_LABEL = t('Đóng menu', '关闭菜单');
-const FIGURES_LABEL = t('Đội hình', '阵容');
-const TOOLS_LABEL = t('Công cụ', '工具');
-const TOOLS_TITLE = t('Công cụ · Beta', '工具 · Beta');
-const GAME_LABEL = t('Game', '游戏');
-const GAME_STRIP_TITLE = t('Game chính thức', '官方游戏');
-const GAME_STRIP_SUBTITLE = t('Liên kết của nhà phát hành', '发行商链接');
-const COMMUNITY_TITLE = t('Cộng đồng game', '游戏社区');
-const DOWNLOAD_TITLE = t('Tải game', '下载游戏');
-const GAME_LINKS_LABEL = t('Liên kết game', '游戏链接');
-const UPDATED_LABEL = t('Dữ liệu cập nhật', '数据更新于');
-const SKIP_LINK_LABEL = t('Bỏ qua điều hướng', '跳过导航');
-const NEW_TAB_LABEL = t('(mở tab mới)', '(在新标签页打开)');
-const SCOPE_GROUP_LABEL = t('Phạm vi đội hình', '阵容范围');
+const CREDIT = t('Nguyễn Nguyên · HLxThanos · Team 2 bang Huynh Đệ', 'Nguyễn Nguyên · HLxThanos · Huynh Đệ 帮会二队', 'Nguyễn Nguyên · HLxThanos · Huynh Đệ 同盟第2部隊');
+const CREDIT_LABEL = t('Được xây dựng bởi', '制作', '制作');
+const STATS_LABEL = t('Số liệu cẩm nang', '手册数据', '手帳データ');
+const STATS_DESCRIPTION = t('Quy mô dữ liệu của cẩm nang', '手册的数据规模', '手帳のデータ規模');
+const OPEN_GUIDE_LABEL = t('Mở cẩm nang', '打开手册', '手帳を開く');
+const OPEN_GUIDE_MOBILE_LABEL = t('Mở Đội chuẩn', '打开推荐阵容', 'おすすめ編成を開く');
+const ABOUT_LABEL = t('Về cẩm nang', '关于手册', 'この手帳について');
+const MENU_LABEL = t('Menu chính', '主菜单', 'メインメニュー');
+const MENU_DIALOG_LABEL = t('Menu', '菜单', 'メニュー');
+const MENU_OPEN_LABEL = t('Mở menu trang', '打开页面菜单', 'ページメニューを開く');
+const MENU_CLOSE_LABEL = t('Đóng menu', '关闭菜单', 'メニューを閉じる');
+const FIGURES_LABEL = t('Đội hình', '阵容', '編成');
+const TOOLS_LABEL = t('Công cụ', '工具', 'ツール');
+const TOOLS_TITLE = t('Công cụ · Beta', '工具 · Beta', 'ツール · Beta');
+const GAME_LABEL = t('Game', '游戏', 'ゲーム');
+const GAME_STRIP_TITLE = t('Game chính thức', '官方游戏', '公式ゲーム');
+const GAME_STRIP_SUBTITLE = t('Liên kết của nhà phát hành', '发行商链接', 'パブリッシャーのリンク');
+const COMMUNITY_TITLE = t('Cộng đồng game', '游戏社区', 'ゲームコミュニティ');
+const DOWNLOAD_TITLE = t('Tải game', '下载游戏', 'ゲームをダウンロード');
+const GAME_LINKS_LABEL = t('Liên kết game', '游戏链接', 'ゲームのリンク');
+const UPDATED_LABEL = t('Dữ liệu cập nhật', '数据更新于', 'データ更新日');
+const SKIP_LINK_LABEL = t('Bỏ qua điều hướng', '跳过导航', 'ナビゲーションをスキップ');
+const NEW_TAB_LABEL = t('(mở tab mới)', '(在新标签页打开)', '（新しいタブで開く）');
+const SCOPE_GROUP_LABEL = t('Phạm vi đội hình', '阵容范围', '編成の範囲');
 /** Nút đổi giao diện: tên nói hành động sẽ xảy ra (theo theme đang bật), không dùng `aria-pressed`. */
-const THEME_TO_DARK_LABEL = t('Chuyển sang giao diện tối', '切换到深色模式');
-const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅色模式');
-/** Nút chuyển ngôn ngữ: nhãn viết bằng ngôn ngữ đích, tên truy cập nói rõ hành động bằng ngôn ngữ trang. */
-const SWITCH_LABEL = LOCALE_LABEL[switchLocale];
-const SWITCH_ARIA = t('Xem bản tiếng Trung (中文)', '切换到越南语版本 (Tiếng Việt)');
+const THEME_TO_DARK_LABEL = t('Chuyển sang giao diện tối', '切换到深色模式', 'ダークモードに切り替え');
+const THEME_TO_LIGHT_LABEL = t('Chuyển sang giao diện sáng', '切换到浅色模式', 'ライトモードに切り替え');
+/**
+ * Nhóm chuyển ngôn ngữ (`nav[data-lang-switcher]`, header + chân menu mobile): một link cho mỗi locale theo thứ tự
+ * `SITE_LOCALES`, nhãn viết bằng chính ngôn ngữ đó. Link của bản đang xem trỏ về chính trang (không phải link chết),
+ * mang `aria-current="page"` và `data-lang-current`; link sang bản khác mang `data-lang-switch` và tên truy cập nói rõ
+ * hành động bằng ngôn ngữ trang (`languageSwitchAria`, thiếu cặp thì build lỗi). js/site-chrome.js giữ query/hash.
+ */
+const LANG_SWITCHER_LABEL = t('Ngôn ngữ', '语言', '言語');
+const languageLinks = SITE_LOCALES.map((target) => {
+  const current = target === locale;
+  return {
+    href: counterpartPaths[target] ?? localePath(stripLocale(Astro.url.pathname), target),
+    hreflang: HREFLANG[target],
+    label: LOCALE_LABEL[target],
+    current,
+    aria: current ? null : languageSwitchAria(locale, target),
+  };
+});
 /** Trang mục công cụ dựng nội dung bằng JavaScript: không có JS thì vẫn có tiêu đề mục và lời nhắn này (bốn mục đội và Tra cứu dựng sẵn nên không cần). */
 const SECTION_NOSCRIPT_MESSAGE = t(
   'Mục này cần JavaScript để hiển thị nội dung. Hãy bật JavaScript rồi tải lại trang.',
   '此栏目需要 JavaScript 才能显示内容。请启用 JavaScript 后重新加载页面。',
+  'このセクションの表示には JavaScript が必要です。JavaScript を有効にしてからページを再読み込みしてください。',
 );
 const OG_IMAGE_PATH = '/og-image.png';
-const COMMUNITY_SECTION_LABEL = pick(locale, 'Cộng đồng', '社区');
-const DONATE_LABEL = pick(locale, 'Ủng hộ tác giả', '支持作者');
+const COMMUNITY_SECTION_LABEL = pick(locale, 'Cộng đồng', '社区', 'コミュニティ');
+const DONATE_LABEL = pick(locale, 'Ủng hộ tác giả', '支持作者', '作者を応援');
 const DONATE_LEAD = pick(
   locale,
   'Cẩm nang miễn phí cho mọi người chơi. Nếu thấy hữu ích, bạn có thể ủng hộ tác giả qua mã QR dưới đây — cảm ơn bạn rất nhiều!',
   '本手册对所有玩家免费开放。如果觉得有帮助，欢迎扫描下方二维码支持作者——非常感谢！',
+  'この手帳はすべてのプレイヤーに無料で公開しています。役に立ったと感じたら、下の QR コードから作者を応援していただけると嬉しいです。ありがとうございます！',
 );
-const DONATE_NOTE = pick(locale, 'Quét mã bằng ứng dụng thanh toán trên điện thoại.', '请使用手机上的支付应用扫码。');
-const DONATE_QR_ALT = pick(locale, 'Mã QR ủng hộ tác giả Cẩm Nang TQCCL', '支持《三国志战略版攻略手册》作者的收款二维码');
-const DONATE_CLOSE_LABEL = pick(locale, 'Đóng', '关闭');
+const DONATE_NOTE = pick(locale, 'Quét mã bằng ứng dụng thanh toán trên điện thoại.', '请使用手机上的支付应用扫码。', 'スマートフォンの決済アプリで QR コードを読み取ってください。');
+const DONATE_QR_ALT = pick(locale, 'Mã QR ủng hộ tác giả Cẩm Nang TQCCL', '支持《三国志战略版攻略手册》作者的收款二维码', '『三國志 真戦 攻略手帳』の作者を応援する QR コード');
+const DONATE_CLOSE_LABEL = pick(locale, 'Đóng', '关闭', '閉じる');
 const DONATE_QR_PATH = '/donate-qr.png';
-const FEEDBACK_LABEL = t('Góp ý, sửa lỗi', '意见反馈');
+const FEEDBACK_LABEL = t('Góp ý, sửa lỗi', '意见反馈', 'ご意見・不具合報告');
 const FEEDBACK_LEAD = t(
   'Báo lỗi, thông tin sai hoặc đề xuất tính năng. Để lại email nếu bạn muốn nhận phản hồi.',
   '报告错误、指出信息有误或提出功能建议。如需回复，请留下邮箱。',
+  '不具合や誤った情報の報告、機能の提案をお送りください。返信を希望する場合はメールアドレスをご記入ください。',
 );
-const FEEDBACK_KIND_LABEL = t('Loại', '类型');
-const FEEDBACK_TITLE_LABEL = t('Tiêu đề', '标题');
-const FEEDBACK_BODY_LABEL = t('Nội dung', '内容');
-const FEEDBACK_EMAIL_LABEL = t('Email (tuỳ chọn, để trả lời)', '邮箱（选填，用于回复）');
-const FEEDBACK_SUBMIT_LABEL = t('Gửi góp ý', '提交反馈');
+const FEEDBACK_KIND_LABEL = t('Loại', '类型', '種類');
+const FEEDBACK_TITLE_LABEL = t('Tiêu đề', '标题', 'タイトル');
+const FEEDBACK_BODY_LABEL = t('Nội dung', '内容', '内容');
+const FEEDBACK_EMAIL_LABEL = t('Email (tuỳ chọn, để trả lời)', '邮箱（选填，用于回复）', 'メールアドレス（任意、返信用）');
+const FEEDBACK_SUBMIT_LABEL = t('Gửi góp ý', '提交反馈', '送信する');
 
 // `:root` không đặt sẵn data-theme: script inline dưới đây quyết định trước khi stylesheet chạy.
 const pageSection = pageKind === 'section' ? activeSection : null;
@@ -204,8 +235,9 @@ const seasonHashes = seasonScope ? await seasonArtifactHashes() : null;
 const booksPage = pageKind === 'section' && lookupGroup === 'books';
 const booksHash = booksPage ? await lookupBooksHash() : null;
 const bookAliasesJson = booksPage ? JSON.stringify(await lookupBookAliases()).replace(/</g, '\\u003c') : null;
-// Ngày build `dd/mm/yyyy` (giờ Việt Nam); bản Trung viết theo thứ tự năm-tháng-ngày.
-const updatedOn = locale === 'zh' ? buildDateVi().split('/').reverse().join('-') : buildDateVi();
+// Ngày build `dd/mm/yyyy` (giờ Việt Nam); bản Trung và bản Nhật viết theo thứ tự năm-tháng-ngày.
+const isoBuildDate = buildDateVi().split('/').reverse().join('-');
+const updatedOn = pick(locale, buildDateVi(), isoBuildDate, isoBuildDate);
 const topSections = SECTIONS.slice(0, 5);
 const toolSections = SECTIONS.slice(5);
 const landing = pageKind === 'landing';
@@ -226,23 +258,23 @@ const basePath = stripLocale(Astro.url.pathname);
 const pathMark = (path: string) => (basePath === path ? 'page' : basePath.startsWith(path) ? 'true' : null);
 const communityEntries: Entry[] = [
   {
-    label: pick(locale, 'Chiến báo', '战报'),
+    label: pick(locale, 'Chiến báo', '战报', '戦報'),
     href: localePath('/chien-bao/', locale),
-    description: pick(locale, 'Kết quả trận thật, AI phân tích, tỉ lệ thắng', '实战结果、AI 分析与胜率统计'),
+    description: pick(locale, 'Kết quả trận thật, AI phân tích, tỉ lệ thắng', '实战结果、AI 分析与胜率统计', '実戦結果、AI 分析と勝率'),
     ariaCurrent: pathMark('/chien-bao/'),
     icon: 'report',
   },
   {
-    label: pick(locale, 'Đội cộng đồng', '社区阵容'),
+    label: pick(locale, 'Đội cộng đồng', '社区阵容', 'コミュニティ編成'),
     href: localePath('/doi-cong-dong/', locale),
-    description: pick(locale, 'Đội người chơi đăng, bình chọn và chiến báo', '玩家发布的阵容、投票与战报'),
+    description: pick(locale, 'Đội người chơi đăng, bình chọn và chiến báo', '玩家发布的阵容、投票与战报', 'プレイヤーが投稿した編成、投票と戦報'),
     ariaCurrent: pathMark('/doi-cong-dong/'),
     icon: 'community',
   },
   {
-    label: pick(locale, 'Bài viết', '文章'),
+    label: pick(locale, 'Bài viết', '文章', '記事'),
     href: localePath('/bai-viet/', locale),
-    description: pick(locale, 'Phân tích meta và hướng dẫn mùa mới', '环境分析与新赛季指南'),
+    description: pick(locale, 'Phân tích meta và hướng dẫn mùa mới', '环境分析与新赛季指南', '環境分析と新シーズンのガイド'),
     ariaCurrent: pathMark('/bai-viet/'),
     icon: 'post',
   },
@@ -253,9 +285,9 @@ const communityMenuSection: MenuSection = {entries: communityEntries};
 const aboutEntries: Entry[] = [
   {label: STATS_LABEL, href: href(STATS_HREF), description: STATS_DESCRIPTION},
   ...POLICY_PAGES.map((page): Entry => ({
-    label: pick(locale, page.label.vi, page.label.zh),
+    label: inLocale(page.label),
     href: href(page.path),
-    description: pick(locale, page.description.vi, page.description.zh),
+    description: inLocale(page.description),
     ariaCurrent: pathMark(page.path),
   })),
 ];
@@ -352,7 +384,7 @@ const footerColumns: MenuSection[] = [
     title: COMMUNITY_SECTION_LABEL,
     entries: [
       ...communityEntries.map((entry) => ({...entry, description: undefined})),
-      {label: pick(locale, 'RSS bài viết', '文章 RSS'), href: localePath('/rss.xml', locale)},
+      {label: pick(locale, 'RSS bài viết', '文章 RSS', '記事 RSS'), href: localePath('/rss.xml', locale)},
     ],
   },
   {title: ABOUT_LABEL, entries: aboutEntries.map((entry) => ({...entry, description: undefined}))},
@@ -375,6 +407,9 @@ const routeHandles = pageKind === 'landing' || pageKind === 'not-found' || !embe
 const lookupRouteTable = routeHandles ? JSON.stringify(await lookupRouteHandles()) : null;
 // Bảng tên chiến pháp hiển thị (bản Việt): trang có dữ liệu đội/Tra cứu dựng lại ở trình duyệt dùng cùng bảng với bản dựng sẵn.
 const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? null : JSON.stringify(await tacticDisplayTable()).replace(/</g, '\\u003c');
+// Bản Nhật: pin byte của `data/lookup-ja.json` (tên Nhật, bản dịch máy) cho mọi trang dựng lại dữ liệu ở trình duyệt — trang đội,
+// Tra cứu, công cụ cùng nạp lớp ja qua `loadRawNameResolver`/`loadLookupJa`, chỉ nhận đúng bytes build đã kiểm. Bản khác không nhúng.
+const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await lookupJaPin()) : null;
 ---
 <!doctype html>
 <html lang={HREFLANG[locale]}>
@@ -391,8 +426,8 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
     <meta property="og:type" content={ogType} />
     {canonicalHref ? <meta property="og:url" content={canonicalHref} /> : null}
     <meta property="og:site_name" content={LOGO_TITLE} />
-    <meta property="og:locale" content={t('vi_VN', 'zh_CN')} />
-    <meta property="og:locale:alternate" content={t('zh_CN', 'vi_VN')} />
+    <meta property="og:locale" content={LOCALE_OG[locale]} />
+    {switchTargets(locale).map((other) => <meta property="og:locale:alternate" content={LOCALE_OG[other]} />)}
     {alternateLinks.map((link) => <link rel="alternate" hreflang={link.hreflang} href={link.href} />)}
     <meta property="og:image" content={ogImageHref} />
     {ogImage ? null : <meta property="og:image:width" content="1200" />}
@@ -479,7 +514,9 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
 
         <div class="header-actions">
           <!-- Chuyển ngôn ngữ: link thật tới bản gương của trang; js/site-chrome.js giữ lại query/hash hiện tại. -->
-          <a class="lang-switch" href={counterpartPath} hreflang={HREFLANG[switchLocale]} lang={HREFLANG[switchLocale]} aria-label={SWITCH_ARIA} data-lang-switch>{SWITCH_LABEL}</a>
+          <nav class="lang-switcher" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher>{languageLinks.map((item) => item.current
+            ? <a class="lang-switch" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-current="page" data-lang-current>{item.label}</a>
+            : <a class="lang-switch" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}</nav>
           <ThemeToggle id="theme-toggle" toDark={THEME_TO_DARK_LABEL} toLight={THEME_TO_LIGHT_LABEL} />
           <!-- Đăng nhập cộng đồng: js/community-auth.js dựng nút Đăng nhập hoặc ảnh đại diện + menu tài khoản. -->
           <div id="community-auth" class="cm-auth"></div>
@@ -575,7 +612,9 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
         })}
       </nav>
       <div class="site-menu-foot">
-        <a class="site-menu-lang" href={counterpartPath} hreflang={HREFLANG[switchLocale]} lang={HREFLANG[switchLocale]} aria-label={SWITCH_ARIA} data-lang-switch>{SWITCH_LABEL}</a>
+        <nav class="lang-switcher site-menu-langs" aria-label={LANG_SWITCHER_LABEL} data-lang-switcher>{languageLinks.map((item) => item.current
+          ? <a class="site-menu-lang" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-current="page" data-lang-current>{item.label}</a>
+          : <a class="site-menu-lang" href={item.href} hreflang={item.hreflang} lang={item.hreflang} aria-label={item.aria} data-lang-switch>{item.label}</a>)}</nav>
         <a class="header-cta" href={href('/doi-chuan/')}>{OPEN_GUIDE_MOBILE_LABEL}<svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg></a>
       </div>
     </div>
@@ -680,7 +719,7 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
         <div class="cm-field">
           <label class="cm-label" for="feedback-kind">{FEEDBACK_KIND_LABEL}</label>
           <select id="feedback-kind" class="cm-select" name="kind">
-            {FEEDBACK_KINDS.map((kind) => <option value={kind.id}>{t(kind.vi, kind.zh)}</option>)}
+            {FEEDBACK_KINDS.map((kind) => <option value={kind.id}>{inLocale(kind)}</option>)}
           </select>
         </div>
         <div class="cm-field">
@@ -711,6 +750,7 @@ const tacticDisplayJson = pageKind === 'landing' || pageKind === 'not-found' ? n
     {routeHandles && <script is:inline type="application/json" id="team-route-handles" set:html={JSON.stringify(routeHandles)}></script>}
     {lookupRouteTable && <script is:inline type="application/json" id="lookup-route-handles" set:html={lookupRouteTable}></script>}
     {tacticDisplayJson && <script is:inline type="application/json" id="tactic-display-names" set:html={tacticDisplayJson}></script>}
+    {lookupJaPinValue && <script is:inline type="application/json" id="lookup-ja-pin" set:html={JSON.stringify(lookupJaPinValue)}></script>}
     <script is:inline type="module">
       import { initSiteChrome } from '/js/site-chrome.js';
       initSiteChrome();

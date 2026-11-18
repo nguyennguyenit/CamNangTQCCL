@@ -1,6 +1,10 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { buildIndexes, scoreFixture, type Fixture } from "../eval/score";
+import { buildIndexes, isJaFixture, scoreFixture, type Fixture } from "../eval/score";
 import type { AnalyzeResult, HeroRead } from "../src/schema";
+
+const REPO = join(__dirname, "..", "..");
 
 const indexes = buildIndexes({
   heroes: [
@@ -65,5 +69,72 @@ describe("scoreFixture", () => {
     expect(score.heroes).toEqual({ hit: 0, total: 2 });
     expect(score.tactics).toEqual({ hit: 0, total: 3 });
     expect(score.books).toEqual({ hit: 0, total: 1 });
+  });
+});
+
+describe("fixture ảnh client Nhật (alias tên Nhật)", () => {
+  const read = (file: string) => JSON.parse(readFileSync(join(REPO, "data", file), "utf8"));
+  const dicts = { heroes: read("heroes-dict.json"), tactics: read("tactics.json"), books: read("books-dict.json") };
+  const lookupJa = read("lookup-ja.json");
+  const baseIndexes = buildIndexes(dicts);
+  const jaIndexes = buildIndexes(dicts, lookupJa.entries);
+  const fixtureOf = (name: string) => JSON.parse(readFileSync(join(__dirname, "..", "eval", "fixtures", `${name}.json`), "utf8")) as Fixture;
+
+  // Tên Nhật chép đúng chữ in trên ảnh: lấy `name` của mục lookup-ja theo ID canonical của đáp án.
+  const jaName = (id: string) => lookupJa.entries[id].name as string;
+  const canonicalName = (dict: Record<string, unknown>[], id: string) => (dict.find((r) => r.id === id) as { chinese: string }).chinese;
+
+  const readOf = (fixture: Fixture, nameOf: (kind: "hero" | "tactic", id: string) => string): AnalyzeResult => ({
+    screen: fixture.expected.screen!,
+    sides: fixture.expected.sides.map((side) => ({
+      side: side.side,
+      heroes: side.heroes.map((h) => hero(nameOf("hero", h.hero), h.tactics.filter((t): t is string => !!t).map((t) => nameOf("tactic", t)))),
+    })),
+  });
+
+  for (const name of ["battle-ja-1", "battle-ja-2"]) {
+    it(`${name}: output chép đúng tên Nhật (kể cả SP) chấm 100% với alias, và nhận ra là fixture Nhật`, () => {
+      const fixture = fixtureOf(name);
+      expect(isJaFixture(fixture, name)).toBe(true);
+      const got = readOf(fixture, (_, id) => jaName(id));
+      const score = scoreFixture(fixture, got, jaIndexes);
+      expect(score.heroes.hit).toBe(score.heroes.total);
+      expect(score.tactics.hit).toBe(score.tactics.total);
+      expect(score.heroes.total).toBeGreaterThan(0);
+      expect(score.screen).toEqual({ hit: 1, total: 1 });
+      // Không có alias thì chiến pháp tên Nhật (機転先決, 経天緯地...) không khớp: chính alias tạo ra điểm.
+      expect(scoreFixture(fixture, got, baseIndexes).tactics.hit).toBeLessThan(score.tactics.total);
+    });
+
+    it(`${name}: output chép chữ Hán canonical vẫn khớp như cũ với chỉ mục có alias`, () => {
+      const fixture = fixtureOf(name);
+      const got = readOf(fixture, (kind, id) => canonicalName(kind === "hero" ? dicts.heroes : dicts.tactics, id));
+      const withAlias = scoreFixture(fixture, got, jaIndexes);
+      expect(withAlias).toEqual(scoreFixture(fixture, got, baseIndexes));
+      expect(withAlias.heroes.hit).toBe(withAlias.heroes.total);
+      expect(withAlias.tactics.hit).toBe(withAlias.tactics.total);
+    });
+  }
+
+  it("fixture vi/zh: điểm không đổi giữa chỉ mục thường và chỉ mục alias; không bị coi là fixture Nhật", () => {
+    for (const name of ["battle-vi-1", "battle-simplified-1", "battle-trad-1", "battle-trad-2", "team-detail-1"]) {
+      const fixture = fixtureOf(name);
+      expect(isJaFixture(fixture, name)).toBe(false);
+      const got = readOf(fixture, (kind, id) => canonicalName(kind === "hero" ? dicts.heroes : dicts.tactics, id));
+      expect(scoreFixture(fixture, got, jaIndexes)).toEqual(scoreFixture(fixture, got, baseIndexes));
+    }
+  });
+
+  it("tên Nhật trùng chữ Hán nguồn của mục khác: chỉ mục ja chấm theo chủ tên Nhật, chỉ mục thường giữ như cũ", () => {
+    // Bản Nhật gọi 固若金湯 là 金城湯池; 金城湯池 cũng là chữ Hán nguồn của tactic:kim-thanh-thang-tri (bản Nhật: 湯池鉄城).
+    // `Indexes` giữ chỉ mục ở dạng `unknown` (hợp đồng của js/analyze-map.js không có kiểu); test chỉ đọc bảng tên chính xác.
+    const exactOf = (indexes: typeof jaIndexes) => (indexes.tactics as { exact: Map<string, string | null> }).exact;
+    expect(exactOf(jaIndexes).get("金城湯池")).toBe("tactic:co-nhuoc-kim-thang");
+    expect(exactOf(jaIndexes).get("湯池鉄城")).toBe("tactic:kim-thanh-thang-tri");
+    expect(exactOf(baseIndexes).get("金城湯池")).toBe("tactic:kim-thanh-thang-tri");
+  });
+
+  it("trường locale: ja đánh dấu fixture Nhật dù tên không có -ja-", () => {
+    expect(isJaFixture({ ...fixtureOf("battle-vi-1"), locale: "ja" }, "x")).toBe(true);
   });
 });

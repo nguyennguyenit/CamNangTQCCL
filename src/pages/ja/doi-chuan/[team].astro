@@ -1,0 +1,14 @@
+---
+// Route bản Nhật: cùng component với bản Việt, props (tiêu đề chữ Hán…) tính theo `ja`; trang mùa đi chung route.
+import RecommendedDetail from '../../../components/pages/RecommendedDetail.astro';
+import SeasonPage from '../../../components/pages/SeasonPage.astro';
+import { recommendedDetailPaths } from '../../../lib/team-detail-pages';
+import { seasonPagePaths } from '../../../lib/season-pages';
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  return [...(await recommendedDetailPaths('ja')), ...(await seasonPagePaths())];
+}
+---
+{Astro.props.season ? <SeasonPage {...Astro.props} locale="ja" /> : <RecommendedDetail {...Astro.props} locale="ja" />}

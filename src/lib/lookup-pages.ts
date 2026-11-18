@@ -1,4 +1,4 @@
-// Dữ liệu lúc build của các trang Tra cứu: 8 trang nhóm `/tra-cuu/<slug>/` (×2 ngôn ngữ) và trang mục lục
+// Dữ liệu lúc build của các trang Tra cứu: 8 trang nhóm `/tra-cuu/<slug>/` (× mỗi ngôn ngữ) và trang mục lục
 // `/tra-cuu/`. Kho Tra cứu đọc từ đúng snapshot byte mà publication phát (`lookupPublicationSnapshot`) và được
 // kiểm trọn bộ — shape lẫn tham chiếu chéo — trước khi dựng trang; trình duyệt chỉ còn kiểm từng payload.
 import { validateLookupBundle } from '../../js/lookup-data.js';
@@ -26,8 +26,10 @@ import {
 } from '../../js/lookup-master.js';
 import { treeToHtml } from '../../js/view-tree.js';
 import { localePath, pick } from '../../js/i18n.js';
+import { createJaNameResolver } from '../../js/website-display.js';
+import { PUBLIC_ARTIFACTS } from './public-artifact-manifest.mjs';
 import { lookupDisplayName } from '../../js/lookup-detail.js';
-import { lookupBookAliases, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts.ts';
+import { lookupBookAliases, lookupJaPublicationSnapshot, lookupPublicationSnapshot, readPublicArtifact } from './root-static-artifacts.ts';
 import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
 
@@ -37,19 +39,20 @@ export type LookupGroup = keyof typeof LOOKUP_GROUP_SLUGS;
 const GROUPS = LOOKUP_GROUPS as LookupGroup[];
 
 /** Mô tả ngắn của từng nhóm (menu, footer, thẻ mục lục, dòng dẫn trang nhóm). */
-const LOOKUP_DESCRIPTIONS: Record<LookupGroup, {vi: string; zh: string}> = {
-  heroes: {vi: 'Chỉ số, binh chủng và chiến pháp', zh: '属性、兵种与战法'},
-  tactics: {vi: 'Hiệu quả và cách dùng chiến pháp', zh: '战法效果与用法'},
-  equipment: {vi: 'Trang bị theo ô và phẩm chất', zh: '按部位与品质查看装备'},
-  advisors: {vi: 'Hiệu ứng và cách dùng quân sư', zh: '军师效果与用法'},
-  'troop-mods': {vi: 'Cải tạo binh chủng và gợi ý build', zh: '兵种进阶与搭配建议'},
-  buildings: {vi: 'Công trình theo cấp và hiệu quả', zh: '按等级查看建筑效果'},
-  books: {vi: 'Binh thư theo tên Việt và chữ Hán', zh: '按名称查询兵书'},
-  qilue: {vi: 'Phương lược và thẻ kỳ lược theo loại, độ hiếm', zh: '按类型与稀有度查看作战方略与奇略卡'},
+const LOOKUP_DESCRIPTIONS: Record<LookupGroup, {vi: string; zh: string; ja: string}> = {
+  heroes: {vi: 'Chỉ số, binh chủng và chiến pháp', zh: '属性、兵种与战法', ja: '能力値・兵種・戦法'},
+  tactics: {vi: 'Hiệu quả và cách dùng chiến pháp', zh: '战法效果与用法', ja: '戦法の効果と使い方'},
+  equipment: {vi: 'Trang bị theo ô và phẩm chất', zh: '按部位与品质查看装备', ja: '部位と品質で装備を探す'},
+  advisors: {vi: 'Hiệu ứng và cách dùng quân sư', zh: '军师效果与用法', ja: '軍師の効果と使い方'},
+  'troop-mods': {vi: 'Cải tạo binh chủng và gợi ý build', zh: '兵种进阶与搭配建议', ja: '兵種進階とおすすめ構成'},
+  buildings: {vi: 'Công trình theo cấp và hiệu quả', zh: '按等级查看建筑效果', ja: 'レベル別の施設効果'},
+  books: {vi: 'Binh thư theo tên Việt và chữ Hán', zh: '按名称查询兵书', ja: '名称で兵法書を探す'},
+  qilue: {vi: 'Phương lược và thẻ kỳ lược theo loại, độ hiếm', zh: '按类型与稀有度查看作战方略与奇略卡', ja: '種類とレア度で方略と奇略カードを探す'},
 };
 
 export function lookupDescription(group: LookupGroup, locale: SiteLocale) {
-  return pick(locale, LOOKUP_DESCRIPTIONS[group].vi, LOOKUP_DESCRIPTIONS[group].zh);
+  const row = LOOKUP_DESCRIPTIONS[group];
+  return pick(locale, row.vi, row.zh, row.ja);
 }
 
 /** Corpus Tra cứu (`buildLookupCorpus` của `js/unified-lookup.js`): mục theo nhóm và theo mã. */
@@ -72,12 +75,17 @@ async function loadCorpus(options: LookupCorpusOptions): Promise<LookupCorpus> {
     ['heroes-dict.json', 'tactics.json', 'lookup-catalog.json'].map((name) => [name, new Uint8Array(snapshot.files[name])]),
   );
   const bundle = await validateLookupBundle(structuredClone(snapshot.manifest), rawFiles);
-  const [{ bytes: bookBytes }, bookAliases] = await Promise.all([
+  // Lớp ja được kiểm cùng lúc: `lookupGenerationId`/`sources` lệch bốn payload hiện tại thì build dừng ở đây. Manifest artifact
+  // không phát `lookup-ja` (fixture của verifier/test) thì corpus không có lớp ja.
+  const publishesJa = ((options.manifest ?? PUBLIC_ARTIFACTS) as { kind?: string; routeParam?: string }[])
+    .some((artifact) => artifact.kind === 'data' && artifact.routeParam === 'lookup-ja');
+  const [{ bytes: bookBytes }, bookAliases, ja] = await Promise.all([
     readPublicArtifact({ kind: 'data', routeParam: 'books-dict', ...options } as Parameters<typeof readPublicArtifact>[0]),
     lookupBookAliases(options as Parameters<typeof lookupBookAliases>[0]),
+    publishesJa ? lookupJaPublicationSnapshot(options as Parameters<typeof lookupJaPublicationSnapshot>[0]) : null,
   ]);
   const books = JSON.parse(Buffer.from(bookBytes).toString('utf8'));
-  return buildLookupCorpus({ heroes: bundle.heroes, tactics: bundle.tactics, catalog: bundle.catalog, books, bookAliases });
+  return buildLookupCorpus({ heroes: bundle.heroes, tactics: bundle.tactics, catalog: bundle.catalog, books, bookAliases, ja: ja?.document ?? null });
 }
 
 /** Corpus đầy đủ của publication, kiểm trọn bộ một lần mỗi build (gốc dự án khác mặc định thì dựng riêng, không nhớ). */
@@ -85,6 +93,32 @@ export function lookupBuildCorpus(options: LookupCorpusOptions = {}) {
   if (options.rootDir !== undefined || options.manifest !== undefined) return loadCorpus(options);
   corpusPromise ??= loadCorpus(options);
   return corpusPromise;
+}
+
+/**
+ * Pin `sha256:<hex>` của `data/lookup-ja.json` cho trang `/ja/` (`#lookup-ja-pin`): trình duyệt chỉ nhận lớp ja có đúng bytes
+ * mà build đã kiểm. Trang vi/zh không nhúng.
+ */
+export async function lookupJaPin() {
+  return (await lookupJaPublicationSnapshot()).pin;
+}
+
+let jaNamesPromise: Promise<((viName: string) => string | null) & { fromRaw: (raw: string) => string }> | null = null;
+
+/**
+ * Bộ tra tên Nhật lúc build (`createJaNameResolver`): tên Việt/Hán-Việt của ba từ điển → tên Nhật theo ID, `fromRaw` đổi tự dạng
+ * chữ Hán thô. Cùng dữ liệu mà trang `/ja/` nạp ở trình duyệt (`loadRawNameResolver`), nên HTML dựng sẵn khớp DOM dựng lại.
+ */
+export function lookupJaNameResolver() {
+  jaNamesPromise ??= (async () => {
+    const [ja, ...dicts] = await Promise.all([
+      lookupJaPublicationSnapshot(),
+      ...['heroes-dict', 'tactics', 'books-dict'].map(async (routeParam) =>
+        JSON.parse(Buffer.from((await readPublicArtifact({ kind: 'data', routeParam } as Parameters<typeof readPublicArtifact>[0])).bytes).toString('utf8'))),
+    ]);
+    return createJaNameResolver(dicts, ja.document, ja.variants) as ((viName: string) => string | null) & { fromRaw: (raw: string) => string };
+  })();
+  return jaNamesPromise;
 }
 
 /** `getStaticPaths` của trang nhóm: slug đường dẫn → nhóm. */

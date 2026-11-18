@@ -440,6 +440,55 @@ curl -sS https://tqccl.com/api/recruit/pulls \
 
 Thứ tự: `npm run db:migrate:remote` (áp `0014_api_tokens.sql`) → `npm run deploy`. Không cần deploy Pages (proxy `/api/*` đã chuyển nguyên header `Authorization`). Rollback Worker: bản cũ không biết bảng `api_tokens` nên token ngừng chạy (`/api/recruit/pulls` → 404), dữ liệu tracker không đổi; để nguyên bảng.
 
+## Bản tiếng Nhật (`lang = ja`)
+
+Kế hoạch: [`plans/261117-0153-ja-locale/plan.md`](../plans/261117-0153-ja-locale/plan.md) (phase G). Danh sách ngôn ngữ nằm ở một chỗ: `LANGS = ["vi", "zh", "ja"]` trong [`src/validate.ts`](../community-worker/src/validate.ts); kiểu `Lang` và `parseLang` dẫn xuất từ đó. Mọi thao tác nhận `lang` đều nhận `ja`: bình luận, chiến báo, bài viết (`POST /api/admin/posts`, `GET /api/posts/ja/<slug>`; slug và `translationKey` duy nhất theo từng ngôn ngữ), góp ý, ảnh soi đội, đội cộng đồng (`text_lang`). Ngôn ngữ ngoài danh sách → 400 `invalid_lang`. `community_seasons` chỉ có `label_vi`/`label_zh`; bản `/ja/` lấy nhãn mùa từ danh mục mùa phía site, không thêm cột.
+
+Migration [`0015_lang_ja.sql`](../community-worker/migrations/0015_lang_ja.sql) mở `CHECK (lang in ('vi', 'zh'))` thành `('vi', 'zh', 'ja')` ở `comments`, `battle_reports`, `posts`, `feedback`, `scan_samples` và `community_teams.text_lang`. SQLite không sửa được CHECK tại chỗ nên migration dựng lại bảng (tạo `*_new`, chép, xoá bảng cũ, đổi tên, tạo lại index và trigger). Hai bảng con `community_team_images`, `community_team_votes` cũng được dựng lại: D1 luôn bật khoá ngoại, `DROP TABLE` chạy ngầm `DELETE FROM`, nên xoá `community_teams` cũ khi bảng con còn trỏ vào sẽ `ON DELETE CASCADE` xoá sạch ảnh và vote (`PRAGMA defer_foreign_keys` không chặn CASCADE). Migration gỡ 9 trigger của các bảng này bằng `drop trigger` không `if exists`: trigger nào thiếu (schema lệch khỏi `migrations/`, vd đã chạy `rollback/0009` mà chưa chạy `0010`) thì cả file dừng, D1 không đổi gì.
+
+Test [`test/lang-ja-migration.test.ts`](../community-worker/test/lang-ja-migration.test.ts) seed dữ liệu vi/zh vào mọi bảng liên quan, áp `0015` trong một transaction có khoá ngoại bật, rồi so toàn bộ dữ liệu mọi bảng (cả bộ đếm và cột sinh của `community_teams`) và `sqlite_master` trước/sau: chỉ đúng 6 CHECK được đổi. Test còn kiểm insert `ja`, từ chối ngôn ngữ lạ, cascade, trigger, dừng khi schema lệch, và rollback. Migration cũng đã chạy trên engine D1 cục bộ (`wrangler d1 migrations apply --local --persist-to <thư mục tạm>`) với dữ liệu seed: dữ liệu trước/sau trùng khớp, insert `ja` được, `foreign_key_check` rỗng, và khi lỗi giữa chừng thì D1 không đổi gì.
+
+### Thứ tự deploy
+
+Chủ repo làm tay, theo đúng thứ tự. Worker cũ chạy được trên schema mới (CHECK rộng hơn, cột giữ nguyên). Worker mới trên schema cũ thì mọi lần ghi `ja` lỗi 500 vì CHECK. Site có `/ja/` lên trước Worker mới thì mọi lần ghi ở `/ja/` trả 400 `invalid_lang`. Vì vậy: **sao lưu → migration → Worker → merge site có `/ja/`**.
+
+1. Kiểm schema production khớp `migrations/` (chỉ đọc):
+
+   ```bash
+   cd community-worker
+   npx wrangler d1 migrations list tqccl-community --remote        # chỉ còn 0015_lang_ja.sql chưa áp
+   npx wrangler d1 execute tqccl-community --remote --command \
+     "select name from sqlite_master where type = 'trigger' order by name"   # đủ 11 trigger của 0006 + 0008
+   npx wrangler d1 execute tqccl-community --remote --command \
+     "select (select count(*) from comments) comments, (select count(*) from battle_reports) reports, (select count(*) from posts) posts, (select count(*) from feedback) feedback, (select count(*) from scan_samples) scans, (select count(*) from community_teams) teams, (select count(*) from community_team_images) images, (select count(*) from community_team_votes) votes"
+   ```
+
+   Ghi lại các số đếm để so ở bước 4.
+2. Sao lưu D1 trước khi áp:
+
+   ```bash
+   npx wrangler d1 time-travel info tqccl-community                     # ghi bookmark hiện tại
+   npx wrangler d1 export tqccl-community --remote --output ~/tqccl-backups/tqccl-community-pre-0015.sql
+   ```
+
+   `d1 export` khoá DB trong lúc xuất, nên chạy lúc ít người dùng. File dump có email và dữ liệu cá nhân, phải lưu ngoài repo và không commit. (Đã thử `d1 export --local` trên schema sau `0015`: dump bỏ cột sinh và nạp lại được vào DB trống.)
+3. Áp migration: `npm run db:migrate:remote` (tức `wrangler d1 migrations apply tqccl-community --remote`). Wrangler gửi cả file kèm dòng ghi `d1_migrations` thành một query, D1 chạy mỗi query trong một transaction ngầm; lỗi thì không có gì đổi.
+4. Kiểm lại: chạy lại câu đếm ở bước 1 (số phải trùng) và
+
+   ```bash
+   npx wrangler d1 execute tqccl-community --remote --command \
+     "select name from sqlite_master where type = 'table' and sql like '%''ja''%' order by name"   # đủ 6 bảng
+   ```
+
+5. `npm run deploy` (Worker mới nhận `ja`).
+6. Merge PR site có `/ja/` vào `main` (push `main` tự chạy `pages-deploy.yml`).
+
+Rollback, theo chiều ngược lại:
+
+1. Revert merge site trên `main`, rồi `npx wrangler rollback` Worker.
+2. Schema nên để nguyên: CHECK rộng hơn vô hại với Worker cũ. Chỉ khi thật cần, chạy tay [`rollback/0015_restore_lang_vi_zh.sql`](../community-worker/rollback/0015_restore_lang_vi_zh.sql) (`npx wrangler d1 execute tqccl-community --remote --file rollback/0015_restore_lang_vi_zh.sql`). Còn dòng `ja` thì file này dừng vì vi phạm CHECK và DB giữ nguyên (đã kiểm trên D1 cục bộ; với `--remote --file` wrangler đi qua API import và báo "if the execution fails to complete, your DB will return to its original state"). Trước khi chạy, đếm các dòng `lang = 'ja'`/`text_lang = 'ja'` ở 6 bảng; còn dòng nào thì quyết trước số phận của chúng (xuất bằng `d1 export`, xoá có chủ đích). Roll-forward lại: chạy `migrations/0015_lang_ja.sql` bằng `--file` (`d1_migrations` vẫn ghi `0015` là đã áp).
+3. Dữ liệu sai nghiêm trọng: `npx wrangler d1 time-travel restore tqccl-community --bookmark=<bookmark bước 2>`. Lệnh này ghi đè mọi lần ghi sau bookmark. Nạp lại file dump chỉ dùng cho DB trống.
+
 ## Hành vi cần biết
 
 - Lỗi luôn có dạng `{error:{code,message}}`. `message` viết bằng tiếng Việt cho log, còn UI phải dựa vào `code` để dịch bằng `L()`. Các code gồm `unauthorized` (401), `forbidden`, `forbidden_origin`, `turnstile_required` và `turnstile_failed` (403), `not_found` (404), `rate_limited` (429, kèm `Retry-After`), `invalid_*`, `duplicate_id`, `duplicate_model`, `unknown_provider`, `unknown_model`, `model_not_vision` và `missing_api_key` (400), `invalid_upload`, `image_too_large`, `recruit_quota_exceeded` (413), `unsupported_media_type` và `invalid_image_type` (415), `slug_taken` và `translation_key_taken` (409), `feature_disabled`, `ai_not_configured`, `ai_secret_missing`, `ai_overloaded` và `feedback_unavailable` (503), `ai_unavailable` (502). Mã riêng của Đội cộng đồng (`own_team` 403; `image_missing`, `has_evidence`, `not_pending`, `vote_conflict` 409; `delete_incomplete` 502; `season_catalog_unavailable` 503; `invalid_season`, `invalid_heroes`, `invalid_tactics`, `invalid_troop`, `invalid_uploads`, `invalid_vote`, `invalid_sort`, `invalid_hero`, `invalid_page` 400) nằm ở mục [Đội cộng đồng](#đội-cộng-đồng).

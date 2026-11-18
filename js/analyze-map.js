@@ -9,6 +9,7 @@ import { matchDict, searchDict } from "./match-dict.js";
 import { toVietHanViet } from "./hanviet.js";
 import { L } from "./i18n.js";
 import { bookRowId } from "./lookup-ids.js";
+import { createExactNameIndex, hasLocaleAliases } from "./locale-name-aliases.js";
 
 // Chất tướng Hán -> Việt.
 const STAT_MAP = {
@@ -139,7 +140,7 @@ export function mapRead(read, { heroesDict, tacticsDict, booksDict = [] }) {
     .map((t) => mapName(t, tacticsDict, { kind: "tactic" }));
   const books = (read.booksCn || []).filter(named).map((b) => mapName(b, booksDict, { kind: "book" }));
   const hero = mapName(read.nameCn || "", heroesDict, {
-    unknownLabel: L("Chưa rõ", "未知"),
+    unknownLabel: L("Chưa rõ", "未知", "不明"),
     kind: "hero",
   });
   return {
@@ -162,26 +163,22 @@ export function mapTeamRead(heroes, dicts) {
 const compactCjk = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
 
 /**
- * Chỉ mục một từ điển (heroesDict/tacticsDict/booksDict) theo ID canonical, kèm bảng chữ Hán
- * chính xác (`chinese` + `aliases`, bỏ khoảng trắng) để tên Giản thể in trong ảnh khớp chắc ngay
- * dù `chinese` của từ điển là Phồn thể.
+ * Chỉ mục một từ điển (heroesDict/tacticsDict/booksDict) theo ID canonical, kèm bảng tên chính xác
+ * (`createExactNameIndex`: `chinese` + `aliases`, bỏ khoảng trắng) để tên Giản thể in trong ảnh khớp
+ * chắc ngay dù `chinese` của từ điển là Phồn thể. Từ điển đã qua `withLocaleAliases` (bản ja) thì tên
+ * Nhật thắng chữ Hán nguồn trùng của mục khác; một tên trỏ về hai ID trong cùng tầng là mơ hồ (`null`), và
+ * `cjkAliases` bật để bộ khớp mờ so cả bí danh chữ Hán (tên Nhật lệch một ký tự vẫn về đúng mục).
  * @param {"hero"|"tactic"|"book"} kind
  */
 export function createEntityIndex(dict, kind) {
   const records = (Array.isArray(dict) ? dict : []).filter((record) => recordEntityId(kind, record));
   const byId = new Map();
-  const exact = new Map();
   for (const record of records) {
     const id = recordEntityId(kind, record);
     if (!byId.has(id)) byId.set(id, record);
-    for (const name of [record.chinese, ...(record.aliases || [])]) {
-      const key = compactCjk(name);
-      if (!key) continue;
-      // Một chữ Hán trỏ về hai ID khác nhau thì không còn "chắc": đánh dấu mơ hồ.
-      exact.set(key, exact.has(key) && exact.get(key) !== id ? null : id);
-    }
   }
-  return Object.freeze({ kind, records, byId, exact });
+  const exact = createExactNameIndex(records, (record) => recordEntityId(kind, record));
+  return Object.freeze({ kind, records, byId, exact, cjkAliases: hasLocaleAliases(dict) });
 }
 
 /**
@@ -194,7 +191,8 @@ export function classifyName(raw, index, { candidateLimit = 3 } = {}) {
   if (UNKNOWN_TERMS.has(text)) return { state: "unknown", raw: text, id: null, candidates: [] };
   const exactId = index.exact.get(compactCjk(text));
   if (exactId) return { state: "sure", raw: text, id: exactId, candidates: [] };
-  const m = matchDict(text, index.records);
+  const cjkAliases = index.cjkAliases === true;
+  const m = matchDict(text, index.records, { cjkAliases });
   if (m.matched && !m.reviewRequired) {
     return { state: "sure", raw: text, id: recordEntityId(index.kind, m.record), candidates: [] };
   }
@@ -205,7 +203,7 @@ export function classifyName(raw, index, { candidateLimit = 3 } = {}) {
   };
   if (m.matched) push(m.record);
   if (m.ambiguous) push(m.secondRecord);
-  for (const { record } of searchDict(text, index.records, { limit: candidateLimit })) push(record);
+  for (const { record } of searchDict(text, index.records, { limit: candidateLimit, cjkAliases })) push(record);
   return candidates.length
     ? { state: "unsure", raw: text, id: null, candidates }
     : { state: "unknown", raw: text, id: null, candidates: [] };

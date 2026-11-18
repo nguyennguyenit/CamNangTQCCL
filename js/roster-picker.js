@@ -106,33 +106,33 @@ export function filterCatalog(items, filters = {}, policy = "inventory") {
 }
 
 const TYPE_LABELS = {
-  COMMAND: ["Chỉ huy", "指挥"],
-  ACTIVE: ["Chủ động", "主动"],
-  PASSIVE: ["Bị động", "被动"],
-  BURST: ["Bùng nổ", "突击"],
-  FORMATION: ["Trận pháp", "阵法"],
-  TROOP: ["Binh chủng", "兵种"],
-  INTERNAL: ["Nội chính", "内政"],
+  COMMAND: ["Chỉ huy", "指挥", "指揮"],
+  ACTIVE: ["Chủ động", "主动", "アクティブ"],
+  PASSIVE: ["Bị động", "被动", "パッシブ"],
+  BURST: ["Bùng nổ", "突击", "突撃"],
+  FORMATION: ["Trận pháp", "阵法", "陣形"],
+  TROOP: ["Binh chủng", "兵种", "兵種"],
+  INTERNAL: ["Nội chính", "内政", "内政"],
 };
 const SOURCE_LABELS = {
-  INHERITANCE: ["Truyền thừa", "传承"],
-  EVENT: ["Sự kiện", "活动"],
-  INNATE: ["Tự mang", "自带"],
-  other: ["Khác", "其他"],
+  INHERITANCE: ["Truyền thừa", "传承", "継承"],
+  EVENT: ["Sự kiện", "活动", "イベント"],
+  INNATE: ["Tự mang", "自带", "固有"],
+  other: ["Khác", "其他", "その他"],
 };
-const QUALITY_LABELS = { S: ["S", "S"], A: ["A", "A"], B: ["B", "B"], C: ["C", "C"], other: ["Khác", "其他"] };
-const FACTIONS = [["Ngụy", "魏"], ["Thục", "蜀"], ["Ngô", "吴"], ["Quần", "群"], ["Hán", "汉"]];
+const QUALITY_LABELS = { S: ["S", "S", "S"], A: ["A", "A", "A"], B: ["B", "B", "B"], C: ["C", "C", "C"], other: ["Khác", "其他", "その他"] };
+const FACTIONS = [["Ngụy", "魏", "魏"], ["Thục", "蜀", "蜀"], ["Ngô", "吴", "呉"], ["Quần", "群", "群"], ["Hán", "汉", "漢"]];
 
-const option = (value, pair) => ({ value, label: L(pair[0], pair[1]) });
+const option = (value, pair) => ({ value, label: L(pair[0], pair[1], pair[2]) });
 
 /** Các bộ lọc thả xuống của một loại theo policy: `{<tên bộ lọc>: [{value, label}]}` (bộ lọc không có thì vắng mặt). */
 export function filterOptions(policy, kind) {
   const rules = policyOf(policy);
   if (kind === "heroes") {
     return {
-      faction: FACTIONS.map(([value, zh]) => option(value, [value, zh])),
+      faction: FACTIONS.map(([value, zh, ja]) => option(value, [value, zh, ja])),
       stars: [5, 4, 3, 2, 1].map((n) => ({ value: String(n), label: `${n}★` })),
-      cost: [7, 6, 5, 4, 3, 2].map((n) => ({ value: String(n), label: L(`Cost ${n}`, `${n} 费`) })),
+      cost: [7, 6, 5, 4, 3, 2].map((n) => ({ value: String(n), label: L(`Cost ${n}`, `${n} 费`, `コスト ${n}`) })),
     };
   }
   if (kind === "tactics") {
@@ -147,12 +147,12 @@ export function filterOptions(policy, kind) {
 }
 
 const FILTER_LABELS = {
-  faction: ["Thế lực", "势力"],
-  stars: ["Số sao", "星级"],
-  cost: ["Cost", "费用"],
-  type: ["Loại", "类型"],
-  source: ["Nguồn", "来源"],
-  quality: ["Phẩm", "品质"],
+  faction: ["Thế lực", "势力", "勢力"],
+  stars: ["Số sao", "星级", "星"],
+  cost: ["Cost", "费用", "コスト"],
+  type: ["Loại", "类型", "種類"],
+  source: ["Nguồn", "来源", "入手元"],
+  quality: ["Phẩm", "品质", "品質"],
 };
 
 /* ---------- Chọn / bỏ chọn trên kho (dạng state `roster-scan-state`) ---------- */
@@ -218,9 +218,9 @@ export function pickerTree({ items, selected = new Set(), label, meta, limit = i
 /* ---------- DOM ---------- */
 
 const KIND_LABELS = {
-  heroes: ["Tướng", "武将"],
-  tactics: ["Chiến pháp", "战法"],
-  books: ["Binh thư", "兵书"],
+  heroes: ["Tướng", "武将", "武将"],
+  tactics: ["Chiến pháp", "战法", "戦法"],
+  books: ["Binh thư", "兵书", "兵法書"],
 };
 const PAGE_SIZE = 60;
 let pickerSeq = 0;
@@ -240,18 +240,18 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
   let shownCount = PAGE_SIZE;
   let disabled = false;
 
-  const search = el("input", { type: "search", class: "ana-input roster-picker-search", id: `${uid}-q`, autocomplete: "off", placeholder: L("Tìm tên Việt, Hán-Việt hoặc chữ Hán…", "搜索越南名、汉越音或汉字…"), "aria-label": L("Tìm trong danh mục", "搜索图鉴") });
+  const search = el("input", { type: "search", class: "ana-input roster-picker-search", id: `${uid}-q`, autocomplete: "off", placeholder: L("Tìm tên Việt, Hán-Việt hoặc chữ Hán…", "搜索越南名、汉越音或汉字…", "ベトナム語名・漢越音・漢字で検索…"), "aria-label": L("Tìm trong danh mục", "搜索图鉴", "図鑑内を検索") });
   const filterRow = el("div", { class: "roster-picker-filters" });
   const status = el("p", { class: "roster-picker-count", role: "status", tabindex: "-1", "aria-live": "polite" });
   const selectAllBtn = el("button", { type: "button", class: "ana-btn roster-picker-selectall" });
   const clearBtn = el("button", { type: "button", class: "roster-ghost roster-picker-clearall" });
   const moreBtn = el("button", { type: "button", class: "roster-ghost roster-more roster-picker-more" });
   const listSlot = el("div", { class: "roster-picker-slot" });
-  const emptyNote = el("p", { class: "roster-empty roster-picker-empty" }, L("Không có mục nào khớp bộ lọc.", "没有符合筛选条件的条目。"));
+  const emptyNote = el("p", { class: "roster-empty roster-picker-empty" }, L("Không có mục nào khớp bộ lọc.", "没有符合筛选条件的条目。", "条件に一致する項目がありません。"));
 
   const kindField = shownKinds.length > 1
     ? el("fieldset", { class: "roster-picker-kinds" }, [
-      el("legend", { class: "roster-field-label" }, L("Loại", "类别")),
+      el("legend", { class: "roster-field-label" }, L("Loại", "类别", "区分")),
       el("div", { class: "roster-seg" }, shownKinds.map((kind) => {
         const input = el("input", { type: "radio", name: `${uid}-kind`, value: kind, class: "roster-seg-input" });
         input.checked = kind === filters.kind;
@@ -273,7 +273,7 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
     filterRow.replaceChildren(...Object.entries(options).map(([name, list]) => {
       const id = `${uid}-${name}`;
       const select = el("select", { class: "ana-input", id, "aria-label": L(...FILTER_LABELS[name]) }, [
-        el("option", { value: "" }, L(`${FILTER_LABELS[name][0]}: tất cả`, `${FILTER_LABELS[name][1]}：全部`)),
+        el("option", { value: "" }, L(`${FILTER_LABELS[name][0]}: tất cả`, `${FILTER_LABELS[name][1]}：全部`, `${FILTER_LABELS[name][2]}：すべて`)),
         ...list.map((item) => el("option", { value: item.value }, item.label)),
       ]);
       select.value = filters[name] ?? "";
@@ -293,13 +293,13 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
     const chosen = selected();
     const picked = current.filter((item) => chosen.has(item.id));
     const visible = Math.min(shownCount, current.length);
-    status.textContent = L(`${current.length} mục · đã chọn ${picked.length}`, `${current.length} 项 · 已选 ${picked.length}`);
+    status.textContent = L(`${current.length} mục · đã chọn ${picked.length}`, `${current.length} 项 · 已选 ${picked.length}`, `${current.length} 件・選択中 ${picked.length}`);
     selectAllBtn.hidden = clearBtn.hidden = !rules.selectAll;
-    selectAllBtn.textContent = L(`Chọn tất cả ${current.length}`, `全选 ${current.length} 项`);
-    selectAllBtn.setAttribute("aria-label", L(`Chọn tất cả ${current.length} mục đang lọc`, `全选当前筛选的 ${current.length} 项`));
+    selectAllBtn.textContent = L(`Chọn tất cả ${current.length}`, `全选 ${current.length} 项`, `${current.length} 件をすべて選択`);
+    selectAllBtn.setAttribute("aria-label", L(`Chọn tất cả ${current.length} mục đang lọc`, `全选当前筛选的 ${current.length} 项`, `絞り込み中の ${current.length} 件をすべて選択`));
     selectAllBtn.disabled = disabled || current.length === 0 || picked.length === current.length;
-    clearBtn.textContent = L("Bỏ chọn tất cả", "取消全选");
-    clearBtn.setAttribute("aria-label", L(`Bỏ chọn tất cả, ${picked.length} mục đã chọn trong bộ lọc`, `取消全选，当前筛选中已选 ${picked.length} 项`));
+    clearBtn.textContent = L("Bỏ chọn tất cả", "取消全选", "選択をすべて解除");
+    clearBtn.setAttribute("aria-label", L(`Bỏ chọn tất cả, ${picked.length} mục đã chọn trong bộ lọc`, `取消全选，当前筛选中已选 ${picked.length} 项`, `選択をすべて解除（絞り込み中の選択 ${picked.length} 件）`));
     clearBtn.disabled = disabled || picked.length === 0;
     const tree = pickerTree({
       items: current,
@@ -308,16 +308,16 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
       limit: visible,
       disabled,
       meta: (item) => (item.type === "heroes"
-        ? `${L(...(FACTIONS.find(([vi]) => vi === item.faction) || [item.faction, item.faction]))} · ${item.stars}★ · ${item.cost}`
+        ? `${L(...(FACTIONS.find(([vi]) => vi === item.faction) || [item.faction, item.faction, item.faction]))} · ${item.stars}★ · ${item.cost}`
         : item.type === "tactics"
-          ? [L(...(TYPE_LABELS[item.tacticType] || [item.tacticType, item.tacticType])), item.quality !== "other" ? item.quality : ""].filter(Boolean).join(" · ")
+          ? [L(...(TYPE_LABELS[item.tacticType] || [item.tacticType, item.tacticType, item.tacticType])), item.quality !== "other" ? item.quality : ""].filter(Boolean).join(" · ")
           : ""),
     });
     listSlot.replaceChildren(treeToDom(tree));
     listSlot.hidden = current.length === 0;
     emptyNote.hidden = current.length > 0;
     moreBtn.hidden = current.length <= PAGE_SIZE;
-    moreBtn.textContent = visible < current.length ? L(`Hiện thêm (${visible}/${current.length})`, `显示更多（${visible}/${current.length}）`) : L("Thu gọn", "收起");
+    moreBtn.textContent = visible < current.length ? L(`Hiện thêm (${visible}/${current.length})`, `显示更多（${visible}/${current.length}）`, `さらに表示（${visible}/${current.length}）`) : L("Thu gọn", "收起", "折りたたむ");
   }
 
   listSlot.addEventListener("click", (event) => {

@@ -7,6 +7,7 @@ import { teamAuthorName, teamPageCopy } from "../src/lib/community-team-pages.ts
 import { validateTeamsExport } from "../src/lib/community-teams.ts";
 import { communityTeamJsonLd } from "../src/lib/structured-data.ts";
 import { communityTeamSitemapRoutes } from "../src/pages/sitemap.xml.ts";
+import { SITE_LOCALES, localePath } from "../js/i18n.js";
 
 const FIXTURE = JSON.parse(readFileSync(new URL("./fixtures/community-teams-export.json", import.meta.url), "utf8"));
 const TEAMS = validateTeamsExport(FIXTURE);
@@ -122,14 +123,16 @@ test("P3: sitemap trang đội — một URL/đội, ngưỡng 10 mới thêm c�
   const route = (team) => ({ path: `/doi-cong-dong/${team.id}/`, lastmod: team.approvedAt });
   const nine = communityTeamSitemapRoutes(TEAMS.slice(0, 9).map(route));
   assert.equal(nine.length, 9);
-  assert.ok(nine.every((entry) => entry.path !== "/doi-cong-dong/" && entry.path !== "/zh/doi-cong-dong/"));
+  const listingPaths = SITE_LOCALES.map((locale) => localePath("/doi-cong-dong/", locale));
+  assert.ok(nine.every((entry) => !listingPaths.includes(entry.path)));
   assert.ok(nine.every((entry) => entry.alternates === undefined && entry.lastmod));
 
   const ten = communityTeamSitemapRoutes(TEAMS.map(route));
-  assert.equal(ten.length, 12);
-  const listing = ten.filter((entry) => entry.path === "/doi-cong-dong/" || entry.path === "/zh/doi-cong-dong/");
-  assert.equal(listing.length, 2);
-  assert.ok(listing.every((entry) => entry.alternates?.length === 3));
+  assert.equal(ten.length, 10 + SITE_LOCALES.length);
+  const listing = ten.filter((entry) => listingPaths.includes(entry.path));
+  assert.equal(listing.length, SITE_LOCALES.length);
+  // Mỗi bản của trang danh sách khai hreflang của mọi locale cộng x-default.
+  assert.ok(listing.every((entry) => entry.alternates?.length === SITE_LOCALES.length + 1));
   assert.ok(ten.filter((entry) => !listing.includes(entry)).every((entry) => entry.alternates === undefined));
 });
 

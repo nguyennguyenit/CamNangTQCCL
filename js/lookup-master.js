@@ -5,8 +5,12 @@
 // ngoài các bản ghi truyền vào. Quy tắc render (plan.md quyết định #14): dữ liệu động chỉ qua cây view.
 
 import { h } from "./view-tree.js";
-import { formatNumber, localePath, normalizeLocale, pick } from "./i18n.js";
-import { QILUE_TYPE_ORDER, ZH_TRANSLATED_TAG_ATTRS, effectVersions, isTranslatedZhText, lookupDisplayName, qilueLabel, zhSafeValue, zhTranslatedTextNote } from "./lookup-detail.js";
+import { contentLocaleIsVietnamese, formatNumber, localePath, pick } from "./i18n.js";
+import {
+  MACHINE_TRANSLATION_NOTICE, NAME_ORIGINAL_LABEL, QILUE_TYPE_ORDER, ZH_TRANSLATED_TAG_ATTRS, contentMode, durationSourceText, effectVersions,
+  isTranslatedZhText, lookupDisplayName, lookupNameInfo, qilueLabel, sourceMissingNote, sourceTextMissing, sourceTextOf, zhSafeValue,
+  zhTranslatedTextNote,
+} from "./lookup-detail.js";
 import { lookupGroupPath, lookupHref, lookupSlug } from "./lookup-ids.js";
 import { portraitTree } from "./hero-portrait.js";
 
@@ -24,18 +28,22 @@ const TROOP_ORDER = ["Khiên binh", "Cung binh", "Thương binh", "Kỵ binh"];
 const TROOP_TIER_ORDER = ["Đặc biệt", "Sơ cấp", "Trung cấp", "Cao cấp"];
 /** Chữ Hán đại diện của hệ quân sư (ô chữ trên thẻ và chi tiết). */
 const ELEMENT_GLYPH = { Hỏa: "火", Phong: "風", Lâm: "林", Sơn: "山" };
-const TROOP_ZH = { "Khiên binh": "盾兵", "Cung binh": "弓兵", "Thương binh": "枪兵", "Kỵ binh": "骑兵" };
-const COST_KEYS = [["wood", "Gỗ", "木材"], ["stone", "Đá", "石料"], ["iron", "Sắt", "铁矿"]];
+/** Binh chủng của bộ lọc giới hạn: tên Việt → `[chữ Trung, chữ Nhật]`. */
+const TROOP_NAMES = { "Khiên binh": ["盾兵", "盾兵"], "Cung binh": ["弓兵", "弓兵"], "Thương binh": ["枪兵", "槍兵"], "Kỵ binh": ["骑兵", "騎兵"] };
+/** Tài nguyên xây dựng theo thứ tự cột, và nhãn `[vi, zh, ja]` của từng khóa. */
+const COST_KEYS = ["wood", "stone", "iron"];
+const COST_LABELS = { wood: ["Gỗ", "木材", "木材"], stone: ["Đá", "石料", "石材"], iron: ["Sắt", "铁矿", "鉄鉱"] };
 const GROUP_LABELS = {
-  equipment: ["Trang bị", "装备"],
-  advisors: ["Quân sư", "军师"],
-  "troop-mods": ["Cải tạo binh chủng", "兵种进阶"],
-  buildings: ["Công trình", "建筑"],
-  qilue: ["Kỳ lược", "奇略"],
+  equipment: ["Trang bị", "装备", "装備"],
+  advisors: ["Quân sư", "军师", "軍師"],
+  "troop-mods": ["Cải tạo binh chủng", "兵种进阶", "兵種進階"],
+  buildings: ["Công trình", "建筑", "施設"],
+  qilue: ["Kỳ lược", "奇略", "奇略"],
 };
 
-const isZh = (locale) => normalizeLocale(locale) === "zh";
-const text = (locale, vi, zh) => pick(locale, vi, zh);
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (bản zh: chữ Hán; bản ja: bản dịch máy) thay cho lớp dịch Việt.
+const sourceText = (locale) => !contentLocaleIsVietnamese(locale);
+const text = (locale, ...variants) => pick(locale, ...variants);
 /** Giá trị chữ của dữ liệu theo ngôn ngữ: bản zh chỉ giữ giá trị dịch được, còn lại rỗng. */
 const shown = (value, locale) => {
   if (value === null || value === undefined || value === "") return "";
@@ -63,6 +71,30 @@ function glyph(record, nameVi, count = 1) {
 const itemHref = (id, locale) => localePath(lookupHref(id), locale);
 
 /**
+ * Khối nhãn dịch máy của trang ja (nhãn 機械翻訳 + mốc số liệu "数値は中国大陸版に基づく"), dùng chung cho panel chi tiết và
+ * hồ sơ (`js/lookup-profile.js`): chỉ đặt khi trang có hiện bản dịch máy.
+ */
+export function machineTranslationNoticeTree() {
+  return h("p", { class: "lookup-child-row lookup-mt-notice", "data-machine-translated": "" }, [
+    h("span", { class: "lookup-version-tag" }, MACHINE_TRANSLATION_NOTICE.label),
+    ` ${MACHINE_TRANSLATION_NOTICE.edition}`,
+  ]);
+}
+/** Khối nhãn dịch máy khi `locale` là bản ja và một trong `texts` có chữ (đã hiện bản dịch máy); còn lại `null`. */
+const noticeIf = (locale, texts) => (contentMode(locale) === "ja" && texts.some((value) => (Array.isArray(value) ? value.length : value)) ? machineTranslationNoticeTree() : null);
+
+/** Dòng "原名" (tên chữ Hán gốc, `lang` theo lối viết) và nhãn trạng thái tên của trang ja; bản khác `[]`. */
+export function nameOriginalTrees(record, locale) {
+  const info = lookupNameInfo(record, locale);
+  if (!info) return [];
+  return [
+    // Tên gốc có thể là giản thể (nguồn đại lục) hoặc phồn thể: `lang` theo lối viết tính lúc build (`info.lang`).
+    h("span", { class: "lookup-dialog-zh lookup-name-original" }, [`${NAME_ORIGINAL_LABEL} `, h("span", { lang: info.lang }, info.original)]),
+    h("span", { class: "badge badge-outline lookup-name-status", "data-name-status": info.status, title: info.title }, info.label),
+  ];
+}
+
+/**
  * Mục thứ `index` (từ 0) của danh sách dựng sẵn: từ `visibleCount` trở đi mang `data-lookup-later` (HTML có đủ mục,
  * CSS ẩn phần sau trang đầu). `visibleCount` rỗng nghĩa là hiện hết.
  */
@@ -79,11 +111,11 @@ export function masterGroupLabel(group, locale) {
 
 export function masterPanelLabel(group, locale) {
   return {
-    equipment: text(locale, "Chi tiết trang bị", "装备详情"),
-    advisors: text(locale, "Chi tiết quân sư", "军师详情"),
-    "troop-mods": text(locale, "Chi tiết cải tạo binh chủng", "兵种进阶详情"),
-    buildings: text(locale, "Chi tiết công trình", "建筑详情"),
-    qilue: text(locale, "Chi tiết kỳ lược", "奇略详情"),
+    equipment: text(locale, "Chi tiết trang bị", "装备详情", "装備の詳細"),
+    advisors: text(locale, "Chi tiết quân sư", "军师详情", "軍師の詳細"),
+    "troop-mods": text(locale, "Chi tiết cải tạo binh chủng", "兵种进阶详情", "兵種進階の詳細"),
+    buildings: text(locale, "Chi tiết công trình", "建筑详情", "施設の詳細"),
+    qilue: text(locale, "Chi tiết kỳ lược", "奇略详情", "奇略の詳細"),
   }[group];
 }
 
@@ -106,8 +138,12 @@ function facetValues(key, record) {
 }
 
 function facetLabel(key, value, locale) {
-  if (key === "scope") return value === "main" ? text(locale, "Chỉ thành chính", "仅主城") : text(locale, "Mọi thành", "所有城池");
-  if (key === "limit") return value === "*" ? text(locale, "Khác", "其他") : isZh(locale) ? (TROOP_ZH[value] ?? "") : value;
+  if (key === "scope") return value === "main" ? text(locale, "Chỉ thành chính", "仅主城", "本城のみ") : text(locale, "Mọi thành", "所有城池", "すべての城");
+  if (key === "limit") {
+    if (value === "*") return text(locale, "Khác", "其他", "その他");
+    const [zh, ja] = TROOP_NAMES[value] ?? ["", ""];
+    return pick(locale, value, zh, ja);
+  }
   if (key === "type" || key === "rarity") return qilueLabel(key, value, locale) ?? "";
   return shown(value, locale);
 }
@@ -162,11 +198,11 @@ export function masterFilterHref(group, key, value) {
 }
 
 const FILTER_ARIA = {
-  equipment: ["Lọc trang bị", "筛选装备"],
-  advisors: ["Lọc quân sư", "筛选军师"],
-  "troop-mods": ["Lọc cải tạo binh chủng", "筛选兵种进阶"],
-  buildings: ["Lọc công trình", "筛选建筑"],
-  qilue: ["Lọc kỳ lược", "筛选奇略"],
+  equipment: ["Lọc trang bị", "筛选装备", "装備を絞り込む"],
+  advisors: ["Lọc quân sư", "筛选军师", "軍師を絞り込む"],
+  "troop-mods": ["Lọc cải tạo binh chủng", "筛选兵种进阶", "兵種進階を絞り込む"],
+  buildings: ["Lọc công trình", "筛选建筑", "施設を絞り込む"],
+  qilue: ["Lọc kỳ lược", "筛选奇略", "奇略を絞り込む"],
 };
 
 /** Hàng chip lọc; chip bật là `aria-pressed="true"`, nút "Tất cả" bật khi khía cạnh không có giá trị chọn. */
@@ -185,7 +221,7 @@ export function masterFilterTree(group, items, selected = {}, locale) {
       label,
       h("span", { class: "fchip-count" }, String(count)),
     ]);
-    if (facet.hasAll) chips.push(chip("", text(locale, "Tất cả", "全部"), items.length, null));
+    if (facet.hasAll) chips.push(chip("", text(locale, "Tất cả", "全部", "すべて"), items.length, null));
     for (const option of facet.options) chips.push(chip(option.value, option.label, option.count, option.tone));
   });
   return h("div", { class: "lookup-filters", role: "group", "aria-label": pick(locale, ...FILTER_ARIA[group]) }, chips);
@@ -236,8 +272,8 @@ function equipmentCardTree(item, locale, selectedId) {
       h("span", { class: "lookup-eq-name" }, lookupDisplayName(record, item.nameVi, locale)),
       meta ? h("span", { class: "lookup-eq-meta" }, meta) : null,
       h("span", { class: exclusive ? "lookup-eq-specials is-exclusive" : "lookup-eq-specials" }, exclusive
-        ? text(locale, `${exclusive} đặc kỹ độc quyền`, `${exclusive} 个专属特技`)
-        : text(locale, "Chỉ đặc kỹ chung", "仅通用特技")),
+        ? text(locale, `${exclusive} đặc kỹ độc quyền`, `${exclusive} 个专属特技`, `専用特技 ${exclusive}件`)
+        : text(locale, "Chỉ đặc kỹ chung", "仅通用特技", "共通特技のみ")),
     ]),
   ]);
 }
@@ -257,9 +293,9 @@ function advisorCardTree(item, locale, selectedId, byId) {
   const record = item.record ?? {};
   const element = shown(record.elementVi, locale);
   const heroes = advisorHeroes(record, byId, locale).map((hero) => hero.name);
-  const owner = [heroes.join(", "), element ? text(locale, `hệ ${element}`, `${element}系`) : ""].filter(Boolean).join(" · ");
+  const owner = [heroes.join(text(locale, ", ", ", ", "、")), element ? text(locale, `hệ ${element}`, `${element}系`, `${element}属性`) : ""].filter(Boolean).join(" · ");
   const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
-  const effect = String((isZh(locale) ? record.effectZh : record.effectVi) ?? "").trim();
+  const effect = sourceText(locale) ? sourceTextOf(record, "effect", record.effectZh, locale) : String(record.effectVi ?? "").trim();
   return h("a", {
     class: "lookup-master-item lookup-adv-card",
     href: itemHref(item.id, locale),
@@ -275,14 +311,14 @@ function advisorCardTree(item, locale, selectedId, byId) {
       ]),
       points === null ? null : h("span", { class: "lookup-adv-points" }, [
         h("strong", {}, String(points)),
-        text(locale, "điểm", "点"),
+        text(locale, "điểm", "点", "pt"),
       ]),
     ]),
     effect ? h("span", { class: "lookup-adv-effect" }, effect) : null,
-    effect && isZh(locale) && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
+    effect && sourceText(locale) && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
     h("span", { class: "lookup-adv-foot" }, [
-      h("span", {}, points === null ? "" : text(locale, `${points} điểm chiến pháp`, `${points} 战法点`)),
-      h("span", { class: "lookup-adv-more" }, text(locale, "Chi tiết →", "详情 →")),
+      h("span", {}, points === null ? "" : text(locale, `${points} điểm chiến pháp`, `${points} 战法点`, `戦法ポイント ${points}`)),
+      h("span", { class: "lookup-adv-more" }, text(locale, "Chi tiết →", "详情 →", "詳細 →")),
     ]),
   ]);
 }
@@ -302,13 +338,13 @@ function rowTree(item, locale, selectedId, { sub, aside }) {
       sub ? h("span", { class: "lookup-row-sub" }, sub) : null,
     ]),
     // Bản zh: tên hiển thị đã là chữ Hán, không lặp lại.
-    han && !isZh(locale) && !aside ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
+    han && !sourceText(locale) && !aside ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
     aside ? h("span", { class: "lookup-row-aside" }, aside) : null,
   ]);
 }
 
 function troopRowTree(item, locale, selectedId) {
-  if (isZh(locale)) return rowTree(item, locale, selectedId, { sub: String(item.record?.appliesToZh ?? "").trim() });
+  if (sourceText(locale)) return rowTree(item, locale, selectedId, { sub: sourceTextOf(item.record, "appliesTo", item.record?.appliesToZh, locale) });
   const applies = String(item.record?.appliesToVi ?? "").trim();
   return rowTree(item, locale, selectedId, { sub: applies || "Chưa có đội hình tham khảo" });
 }
@@ -318,7 +354,7 @@ function buildingRowTree(item, locale, selectedId) {
   const max = Number.isFinite(Number(record.maxLevel)) ? Number(record.maxLevel) : null;
   return rowTree(item, locale, selectedId, {
     sub: facetLabel("scope", record.mainCityOnly ? "main" : "all", locale),
-    aside: max === null ? "" : text(locale, `Lv ${max}`, `${max} 级`),
+    aside: max === null ? "" : text(locale, `Lv ${max}`, `${max} 级`, `Lv ${max}`),
   });
 }
 
@@ -343,19 +379,21 @@ export function masterResultTrees(group, items, locale, { selectedId = null, byI
 export function masterSummaryTrees(group, total, locale, selected = {}) {
   const slot = group === "equipment" && selected.slot ? facetLabel("slot", selected.slot, locale) : "";
   const tail = {
-    equipment: text(locale, " · màu thẻ theo phẩm chất", " · 卡片颜色按品质"),
-    advisors: text(locale, " · chia theo hệ", " · 按属性分类"),
-    "troop-mods": text(locale, " · chia theo binh chủng · dòng phụ là đội hình hay dùng", " · 按兵种分类"),
-    buildings: text(locale, " · cấp tối đa bên phải", " · 右侧为最高等级"),
-    qilue: text(locale, " · màu theo loại thẻ", " · 颜色按卡牌类型"),
+    equipment: text(locale, " · màu thẻ theo phẩm chất", " · 卡片颜色按品质", " · カードの色は品質"),
+    advisors: text(locale, " · chia theo hệ", " · 按属性分类", " · 属性別"),
+    "troop-mods": text(locale, " · chia theo binh chủng · dòng phụ là đội hình hay dùng", " · 按兵种分类", " · 兵種別 · 補足はよく使う編成"),
+    buildings: text(locale, " · cấp tối đa bên phải", " · 右侧为最高等级", " · 右は最大レベル"),
+    qilue: text(locale, " · màu theo loại thẻ", " · 颜色按卡牌类型", " · 色はカードの種類別"),
   }[group];
   const cardType = group === "qilue" && selected.type ? qilueLabel("type", selected.type, locale) : null;
   const unit = {
-    equipment: slot ? text(locale, slot.toLowerCase(), `件${slot}`) : text(locale, "trang bị", "件装备"),
-    advisors: text(locale, "kỹ năng quân sư", "位军师"),
-    "troop-mods": text(locale, "cải tạo", "项兵种进阶"),
-    buildings: text(locale, "công trình", "座建筑"),
-    qilue: cardType ? text(locale, `thẻ ${cardType}`, `张${cardType}卡`) : text(locale, "kỳ lược", "项奇略"),
+    equipment: slot ? text(locale, slot.toLowerCase(), `件${slot}`, `件の${slot}`) : text(locale, "trang bị", "件装备", "件の装備"),
+    advisors: text(locale, "kỹ năng quân sư", "位军师", "件の軍師技"),
+    "troop-mods": text(locale, "cải tạo", "项兵种进阶", "件の兵種進階"),
+    buildings: text(locale, "công trình", "座建筑", "件の施設"),
+    qilue: cardType
+      ? text(locale, `thẻ ${cardType}`, `张${cardType}卡`, `枚の${cardType}カード`)
+      : text(locale, "kỳ lược", "项奇略", "件の奇略"),
   }[group];
   return [h("strong", {}, String(total)), ` ${unit}`, h("span", { class: "lookup-summary-tail" }, tail)];
 }
@@ -375,7 +413,7 @@ function backLink(group, locale) {
 const badge = (className, label, attrs = {}) => h("span", { class: `badge ${className}`, ...attrs }, label);
 
 /** Đầu chi tiết dùng chung: ô chữ, dòng nhãn nhóm (mobile), tên + chữ Hán, huy hiệu. */
-function headTree({ tile, tone, eyebrow, title, han, badges }) {
+function headTree({ tile, tone, eyebrow, title, han, original = [], badges }) {
   return h("header", { class: "lookup-detail-head" }, [
     h("span", { class: "lookup-detail-tile", lang: "zh-Hant", "aria-hidden": "true", "data-tone": tone }, tile),
     h("div", { class: "lookup-detail-ident" }, [
@@ -383,6 +421,8 @@ function headTree({ tile, tone, eyebrow, title, han, badges }) {
       h("div", { class: "lookup-detail-titles" }, [
         h("h2", { class: "lookup-detail-title", id: "lookup-detail-title" }, title),
         han ? h("span", { class: "lookup-detail-zh", lang: "zh-Hant" }, han) : null,
+        // Bản ja: tên chữ Hán gốc ("原名") và nhãn trạng thái tên Nhật.
+        ...original,
       ]),
       badges.length ? h("div", { class: "lookup-detail-badges" }, badges) : null,
     ]),
@@ -394,8 +434,8 @@ const sectionTree = (className, heading, body) => h("section", { class: `lookup-
   ...body,
 ]);
 
-/** Bản zh bỏ phần chỉ có chữ Việt; báo một dòng để người đọc biết chi tiết chưa đầy đủ. */
-const zhNoteTree = () => h("p", { class: "lookup-detail-note" }, "部分说明暂无中文原文，未在此显示。");
+/** Bản không phải tiếng Việt bỏ phần chưa có chữ ở bản đó; báo một dòng để người đọc biết chi tiết chưa đầy đủ. */
+const zhNoteTree = (locale) => h("p", { class: "lookup-detail-note" }, sourceMissingNote(locale));
 /** Cờ chữ Hán dịch từ tiếng Việt (`zhSource.kind === "translation"`), chỉ gắn ở bản zh. */
 const zhTranslatedTree = (locale) => h("span", { ...ZH_TRANSLATED_TAG_ATTRS }, zhTranslatedTextNote(locale));
 
@@ -406,9 +446,9 @@ function heroLink(hero, locale) {
 function specialCardTree(special, byId, locale, targetId) {
   const hero = special.exclusiveHeroId ? byId?.get(special.exclusiveHeroId) : null;
   const heroInfo = hero ? { id: hero.id, name: lookupDisplayName(hero.record, hero.nameVi, locale) } : null;
-  const description = isZh(locale) ? "" : String(special.descriptionVi ?? "").trim();
-  const sources = isZh(locale) ? [] : (special.acquisitionVi ?? []).filter(Boolean);
-  const han = isZh(locale) ? "" : zhName(special);
+  const description = sourceText(locale) ? "" : String(special.descriptionVi ?? "").trim();
+  const sources = sourceText(locale) ? [] : (special.acquisitionVi ?? []).filter(Boolean);
+  const han = sourceText(locale) ? "" : zhName(special);
   return h("article", {
     class: special.id === targetId ? "lookup-special is-target" : "lookup-special",
     "data-tier": special.tierVi ?? null,
@@ -419,16 +459,17 @@ function specialCardTree(special, byId, locale, targetId) {
       h("span", { class: "lookup-special-name" }, lookupDisplayName(special, special.nameVi, locale)),
       han ? h("span", { class: "lookup-special-zh", lang: "zh-Hant" }, han) : null,
     ]),
-    heroInfo ? h("span", { class: "lookup-special-hero" }, isZh(locale)
-      ? [heroLink(heroInfo, locale), "装备时专属"]
-      : ["Độc quyền khi ", heroLink(heroInfo, locale), " trang bị"]) : null,
+    heroInfo ? h("span", { class: "lookup-special-hero" }, pick(locale,
+      ["Độc quyền khi ", heroLink(heroInfo, locale), " trang bị"],
+      [heroLink(heroInfo, locale), "装备时专属"],
+      [heroLink(heroInfo, locale), "の装備時専用"])) : null,
     description ? h("p", { class: "lookup-special-desc" }, description) : null,
     sources.length ? h("span", { class: "lookup-special-source" }, `Nguồn: ${sources.join(", ")}`) : null,
   ]);
 }
 
 function commonSpecialRow(special, locale) {
-  const description = isZh(locale) ? "" : String(special.descriptionVi ?? "").trim();
+  const description = sourceText(locale) ? "" : String(special.descriptionVi ?? "").trim();
   return h("li", { class: "lookup-special-row", "data-special-id": special.id }, [
     badge("badge-tier", shown(special.tierVi, locale), { "data-tier": special.tierVi ?? null }),
     h("span", { class: "lookup-special-row-body" }, [
@@ -454,28 +495,30 @@ function equipmentDetail(item, corpus, locale, targetId) {
   const quality = shown(record.qualityVi, locale);
   const exclusives = [...(item.exclusives ?? [])].sort(byTier);
   const common = commonSpecialsFor(record, corpus.catalog?.specials ?? []);
-  const hidden = isZh(locale) && [...exclusives, ...common].some((special) => special.descriptionVi);
+  const hidden = sourceText(locale) && [...exclusives, ...common].some((special) => special.descriptionVi);
   return [
     headTree({
       tile: glyph(record, item.nameVi),
       tone: record.qualityVi ? lookupSlug(record.qualityVi) : null,
       eyebrow: [masterGroupLabel("equipment", locale), slot].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
         slot ? badge("unit", slot) : null,
         quality ? badge("badge-tone", quality, { "data-tone": lookupSlug(record.qualityVi) }) : null,
       ].filter(Boolean),
     }),
-    exclusives.length ? sectionTree("lookup-eq-exclusive", text(locale, "Đặc kỹ độc quyền", "专属特技"),
+    exclusives.length ? sectionTree("lookup-eq-exclusive", text(locale, "Đặc kỹ độc quyền", "专属特技", "専用特技"),
       exclusives.map((special) => specialCardTree(special, byId, locale, targetId))) : null,
-    common.length ? sectionTree("lookup-eq-common", text(locale, "Đặc kỹ chung có thể rèn", "可锻造通用特技"), [
+    common.length ? sectionTree("lookup-eq-common", text(locale, "Đặc kỹ chung có thể rèn", "可锻造通用特技", "鍛造できる共通特技"), [
       h("ul", { class: "lookup-special-list" }, common.map((special) => commonSpecialRow(special, locale))),
       h("span", { class: "lookup-detail-footnote" }, text(locale,
         `Bậc T0 mạnh nhất → T3. ${common.length} đặc kỹ chung dùng cho mọi trang bị cùng loại.`,
-        `T0 最强 → T3。共 ${common.length} 个通用特技，同类装备均可使用。`)),
+        `T0 最强 → T3。共 ${common.length} 个通用特技，同类装备均可使用。`,
+        `T0 が最強 → T3。共通特技 ${common.length}件は同じ種類の装備すべてで使えます。`)),
     ]) : null,
-    hidden ? zhNoteTree() : null,
+    hidden ? zhNoteTree(locale) : null,
   ];
 }
 
@@ -488,19 +531,20 @@ function specialDetail(item, corpus, locale) {
     headTree({
       tile: glyph(record, item.nameVi),
       tone: null,
-      eyebrow: [masterGroupLabel("equipment", locale), text(locale, "Đặc kỹ", "特技")].join(" · "),
+      eyebrow: [masterGroupLabel("equipment", locale), text(locale, "Đặc kỹ", "特技", "特技")].join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
         record.tierVi ? badge("badge-tier", shown(record.tierVi, locale), { "data-tier": record.tierVi }) : null,
         slot ? badge("unit", slot) : null,
       ].filter(Boolean),
     }),
-    sectionTree("lookup-eq-exclusive", text(locale, "Đặc kỹ", "特技"), [
+    sectionTree("lookup-eq-exclusive", text(locale, "Đặc kỹ", "特技", "特技"), [
       specialCardTree(record, corpus.byId, locale, record.id),
       parent ? h("a", { class: "lookup-detail-link", href: itemHref(parent.id, locale) }, lookupDisplayName(parent.record, parent.nameVi, locale)) : null,
     ]),
-    isZh(locale) && record.descriptionVi ? zhNoteTree() : null,
+    sourceText(locale) && record.descriptionVi ? zhNoteTree(locale) : null,
   ];
 }
 
@@ -509,9 +553,10 @@ function advisorDetail(item, corpus, locale) {
   const element = shown(record.elementVi, locale);
   const heroes = advisorHeroes(record, corpus.byId, locale);
   const points = Number.isFinite(Number(record.tacticPoints)) ? Number(record.tacticPoints) : null;
-  const zh = isZh(locale);
-  const effect = effectVersions(zh ? record.effectZh : record.effectVi);
-  const usage = String((zh ? record.usageZh : record.usageVi) ?? "").trim();
+  const zh = sourceText(locale);
+  const effectSource = zh ? sourceTextOf(record, "effect", record.effectZh, locale) : "";
+  const effect = effectVersions(zh ? effectSource : record.effectVi);
+  const usage = zh ? sourceTextOf(record, "usage", record.usageZh, locale) : String(record.usageVi ?? "").trim();
   const effectBoxes = effect.map((block) => h("div", { class: "lookup-effect-box" }, [
     block.labelVi ? h("span", { class: "lookup-version-tag" }, block.labelVi) : null,
     ...block.paragraphs.map((paragraph) => h("p", {}, paragraph)),
@@ -520,41 +565,44 @@ function advisorDetail(item, corpus, locale) {
     headTree({
       tile: ELEMENT_GLYPH[record.elementVi] ?? glyph(record, item.nameVi),
       tone: record.elementVi ? lookupSlug(record.elementVi) : null,
-      eyebrow: [masterGroupLabel("advisors", locale), element ? text(locale, `Hệ ${element}`, `${element}系`) : ""].filter(Boolean).join(" · "),
+      eyebrow: [masterGroupLabel("advisors", locale), element ? text(locale, `Hệ ${element}`, `${element}系`, `${element}属性`) : ""].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
-      han: isZh(locale) ? "" : zhName(record),
+      han: sourceText(locale) ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
-        element ? badge("badge-tone", text(locale, `Hệ ${element}`, `${element}系`), { "data-tone": lookupSlug(record.elementVi) }) : null,
-        badge("unit", text(locale, "Kỹ năng quân sư", "军师技能")),
-        points === null ? null : badge("badge-outline lookup-detail-badge-extra", text(locale, `${points} điểm chiến pháp`, `${points} 战法点`)),
+        element ? badge("badge-tone", text(locale, `Hệ ${element}`, `${element}系`, `${element}属性`), { "data-tone": lookupSlug(record.elementVi) }) : null,
+        badge("unit", text(locale, "Kỹ năng quân sư", "军师技能", "軍師技")),
+        points === null ? null : badge("badge-outline lookup-detail-badge-extra", text(locale, `${points} điểm chiến pháp`, `${points} 战法点`, `戦法ポイント ${points}`)),
       ].filter(Boolean),
     }),
+    noticeIf(locale, [effectSource, usage]),
     heroes.length || points !== null ? h("dl", { class: "lookup-detail-facts" }, [
       heroes.length ? h("div", { class: "lookup-detail-fact" }, [
-        h("dt", {}, text(locale, "Võ tướng", "武将")),
+        h("dt", {}, text(locale, "Võ tướng", "武将", "武将")),
         h("dd", {}, heroes.flatMap((hero, index) => [index ? ", " : null, heroLink(hero, locale)])),
       ]) : null,
       points === null ? null : h("div", { class: "lookup-detail-fact" }, [
-        h("dt", {}, text(locale, "Điểm chiến pháp", "战法点")),
+        h("dt", {}, text(locale, "Điểm chiến pháp", "战法点", "戦法ポイント")),
         h("dd", { class: "lookup-detail-fact-strong" }, String(points)),
       ]),
     ]) : null,
-    heroes.length ? sectionTree("lookup-adv-heroes", text(locale, "Võ tướng", "武将"), heroes.map((hero) => h("a", {
+    heroes.length ? sectionTree("lookup-adv-heroes", text(locale, "Võ tướng", "武将", "武将"), heroes.map((hero) => h("a", {
       class: "lookup-hero-row",
       href: itemHref(hero.id, locale),
     }, [
       portraitTree({ chinese: hero.chinese, nameVi: hero.nameVi, iconUrl: hero.iconUrl, className: "lookup-hero-row-portrait", alt: hero.name }),
       h("span", { class: "lookup-hero-row-body" }, [
         h("span", { class: "lookup-hero-row-name" }, hero.name),
-        h("span", { class: "lookup-hero-row-note" }, text(locale, "Võ tướng mang kỹ năng này", "携带此技能的武将")),
+        h("span", { class: "lookup-hero-row-note" }, text(locale, "Võ tướng mang kỹ năng này", "携带此技能的武将", "この軍師技を持つ武将")),
       ]),
     ]))) : null,
-    effectBoxes.length ? sectionTree("lookup-adv-effect", text(locale, "Hiệu quả", "效果"), [
+    effectBoxes.length ? sectionTree("lookup-adv-effect", text(locale, "Hiệu quả", "效果", "効果"), [
       zh && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
       h("div", { class: "lookup-effect-boxes" }, effectBoxes),
     ]) : null,
-    usage ? sectionTree("lookup-adv-usage", text(locale, "Cách dùng", "用法"), [h("p", { class: "lookup-detail-prose" }, usage)]) : null,
-    zh && ((record.effectVi && !record.effectZh) || (record.usageVi && !record.usageZh)) ? zhNoteTree() : null,
+    usage ? sectionTree("lookup-adv-usage", text(locale, "Cách dùng", "用法", "使い方"), [h("p", { class: "lookup-detail-prose" }, usage)]) : null,
+    zh && ((record.effectVi && !record.effectZh) || (record.usageVi && !record.usageZh)
+      || sourceTextMissing(record, "effect", record.effectZh, locale) || sourceTextMissing(record, "usage", record.usageZh, locale)) ? zhNoteTree(locale) : null,
   ];
 }
 
@@ -584,58 +632,64 @@ export function troopEffectVersions(record) {
 }
 
 function optionCardTree(option, suggested, locale) {
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const converts = zh ? shown(option.convertsToVi, locale) : String(option.convertsToVi ?? "").trim();
-  const description = String((zh ? option.descriptionZh : option.descriptionVi) ?? "").trim();
+  const description = zh ? sourceTextOf(option, "description", option.descriptionZh, locale) : String(option.descriptionVi ?? "").trim();
+  const name = pick(locale, option.nameVi, option.nameZh, lookupDisplayName(option, option.nameVi, locale));
   return h("div", { class: suggested ? "lookup-option-card is-suggested" : "lookup-option-card" }, [
     h("span", { class: "lookup-option-card-head" }, [
-      h("span", { class: "lookup-option-card-name" }, zh ? option.nameZh : option.nameVi),
-      suggested ? badge("badge-suggest", text(locale, "Gợi ý", "推荐")) : null,
+      h("span", { class: "lookup-option-card-name" }, name),
+      suggested ? badge("badge-suggest", text(locale, "Gợi ý", "推荐", "おすすめ")) : null,
     ]),
     description ? h("span", { class: "lookup-option-card-desc" }, description) : null,
-    converts ? h("span", { class: "lookup-option-card-convert" }, text(locale, `Chuyển thành ${converts}`, `转为${converts}`)) : null,
+    converts ? h("span", { class: "lookup-option-card-convert" }, text(locale, `Chuyển thành ${converts}`, `转为${converts}`, `${converts}に変化`)) : null,
   ]);
 }
 
 function troopDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const limits = (record.troopLimitVi ?? []).map((limit) => facetLabel("limit", limit, locale)).filter(Boolean);
   const conditionsVi = (record.conditions ?? []).map((row) => (typeof row === "string" ? row : row?.textVi)).filter(Boolean);
   // Bản zh: điều kiện hiện khi dịch được hết (mùa "Binh Diễn Xuân Thu"…), chữ Hán do bộ giá trị đóng của lookup-detail.
   const conditionsZh = conditionsVi.map((row) => shown(row, locale));
   const conditions = !zh ? conditionsVi : conditionsZh.every(Boolean) ? conditionsZh : [];
-  const applies = String((zh ? record.appliesToZh : record.appliesToVi) ?? "").trim();
+  const applies = zh ? sourceTextOf(record, "appliesTo", record.appliesToZh, locale) : String(record.appliesToVi ?? "").trim();
+  const effectSource = zh ? sourceTextOf(record, "effect", record.effectZh, locale) : "";
   const versions = !zh ? troopEffectVersions(record)
-    : effectVersions(record.effectZh).map((block, index) => ({ label: block.labelVi ?? "", paragraphs: block.paragraphs, index }));
+    : effectVersions(effectSource).map((block, index) => ({ label: block.labelVi ?? "", paragraphs: block.paragraphs, index }));
   const options = zh ? (record.options ?? []).filter((option) => option.nameZh) : record.options ?? [];
   const suggested = troopSuggestedIds(record);
   const tiers = unique(options.map((option) => option.tierVi ?? ""));
   const columns = [...TROOP_TIER_ORDER.filter((tier) => tiers.includes(tier)), ...tiers.filter((tier) => !TROOP_TIER_ORDER.includes(tier))];
-  const build = String((zh ? record.suggestedBuildZh : record.suggestedBuildVi) ?? "").trim();
+  const build = zh ? sourceTextOf(record, "suggestedBuild", record.suggestedBuildZh, locale) : String(record.suggestedBuildVi ?? "").trim();
   const translated = zh && (isTranslatedZhText(record) || options.some(isTranslatedZhText));
   const hidden = zh && ((record.effectVi && !record.effectZh) || options.length < (record.options ?? []).length
-    || (record.appliesToVi && !applies) || (record.suggestedBuildVi && !build) || conditions.length < conditionsVi.length);
-  const troopVersionLabel = (version, index) => version.label || text(locale, `Bản ${index + 1}`, `版本 ${index + 1}`);
+    || (record.appliesToVi && !applies) || (record.suggestedBuildVi && !build) || conditions.length < conditionsVi.length
+    || sourceTextMissing(record, "effect", record.effectZh, locale)
+    || options.some((option) => sourceTextMissing(option, "description", option.descriptionZh, locale)));
+  const troopVersionLabel = (version, index) => version.label || text(locale, `Bản ${index + 1}`, `版本 ${index + 1}`, `バージョン${index + 1}`);
   return [
     headTree({
       tile: glyph(record, item.nameVi),
       tone: "accent",
-      eyebrow: [text(locale, "Cải tạo", "进阶"), limits.join(", ")].filter(Boolean).join(" · "),
+      eyebrow: [text(locale, "Cải tạo", "进阶", "進階"), limits.join(text(locale, ", ", ", ", "、"))].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
       han: zh ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
         ...limits.map((limit) => badge("unit", limit)),
         ...conditions.map((condition) => badge("badge-scenario", condition)),
       ],
     }),
+    noticeIf(locale, [applies, effectSource, build, ...options.map((option) => sourceTextOf(option, "description", option.descriptionZh, locale))]),
     translated ? h("p", {}, [zhTranslatedTree(locale)]) : null,
-    applies ? sectionTree("lookup-troop-applies", text(locale, "Thường dùng cho", "常用于"), [h("p", { class: "lookup-detail-prose" }, applies)]) : null,
-    versions.length ? sectionTree("lookup-troop-effect", text(locale, "Hiệu quả", "效果"), [
+    applies ? sectionTree("lookup-troop-applies", text(locale, "Thường dùng cho", "常用于", "よく使う編成"), [h("p", { class: "lookup-detail-prose" }, applies)]) : null,
+    versions.length ? sectionTree("lookup-troop-effect", text(locale, "Hiệu quả", "效果", "効果"), [
       versions.length > 1 ? h("div", {
         class: "lookup-effect-tabs",
         role: "group",
-        "aria-label": text(locale, "Phiên bản hiệu quả", "效果版本"),
+        "aria-label": text(locale, "Phiên bản hiệu quả", "效果版本", "効果のバージョン"),
       }, versions.map((version, index) => h("button", {
         type: "button",
         class: "fchip",
@@ -654,8 +708,8 @@ function troopDetail(item, corpus, locale) {
     ]) : null,
     options.length ? sectionTree("lookup-troop-tree", "", [
       h("div", { class: "lookup-tree-head" }, [
-        h("h3", { class: "lookup-detail-heading" }, text(locale, `Cây cải tạo · ${options.length} lựa chọn`, `进阶树 · ${options.length} 个选项`)),
-        suggested.size ? h("span", { class: "lookup-tree-hint" }, text(locale, "Khung son = lộ trình gợi ý", "红框 = 推荐路线")) : null,
+        h("h3", { class: "lookup-detail-heading" }, text(locale, `Cây cải tạo · ${options.length} lựa chọn`, `进阶树 · ${options.length} 个选项`, `進階ツリー · 選択肢 ${options.length}件`)),
+        suggested.size ? h("span", { class: "lookup-tree-hint" }, text(locale, "Khung son = lộ trình gợi ý", "红框 = 推荐路线", "赤枠 = おすすめルート")) : null,
       ]),
       h("div", { class: "lookup-tree" }, columns.map((tier) => {
         const rows = options.filter((option) => (option.tierVi ?? "") === tier);
@@ -666,22 +720,21 @@ function troopDetail(item, corpus, locale) {
       })),
     ]) : null,
     build ? h("div", { class: "lookup-build-bar" }, [
-      h("span", { class: "lookup-build-label" }, text(locale, "Gợi ý build", "推荐搭配")),
+      h("span", { class: "lookup-build-label" }, text(locale, "Gợi ý build", "推荐搭配", "おすすめ構成")),
       h("span", { class: "lookup-build-text" }, build),
     ]) : null,
-    hidden ? zhNoteTree() : null,
+    hidden ? zhNoteTree(locale) : null,
   ];
 }
 
 /* ---------- Công trình ---------- */
 
-/** Thời lượng dạng "2 giờ"; bản zh đổi đơn vị, dạng lạ trả `null` (hiện "—"). */
+/** Thời lượng dạng "2 giờ"; bản khác đổi đơn vị theo ngôn ngữ, dạng lạ trả `null` (hiện "—"). */
 function durationLabel(value, locale) {
   const raw = String(value ?? "").trim();
   if (!raw) return null;
-  if (!isZh(locale)) return raw;
-  const match = /^(\d+(?:[.,]\d+)?)\s*(giờ|phút|ngày|giây)$/u.exec(raw);
-  return match ? `${match[1]} ${{ "giờ": "小时", "phút": "分钟", "ngày": "天", "giây": "秒" }[match[2]]}` : null;
+  if (!sourceText(locale)) return raw;
+  return durationSourceText(raw, locale);
 }
 
 const costValue = (costs, key) => (costs && costs[key] !== null && costs[key] !== undefined && costs[key] !== "" ? Number(costs[key]) : null);
@@ -689,7 +742,7 @@ const costValue = (costs, key) => (costs && costs[key] !== null && costs[key] !=
 /** Tổng tài nguyên qua mọi cấp (ô không có giá trị bỏ qua); khóa không có giá trị nào thì `null`. */
 export function buildingTotals(levels) {
   const totals = {};
-  for (const [key] of COST_KEYS) {
+  for (const key of COST_KEYS) {
     const values = levels.map((level) => costValue(level.costs, key)).filter((value) => Number.isFinite(value));
     totals[key] = values.length ? values.reduce((sum, value) => sum + value, 0) : null;
   }
@@ -706,33 +759,48 @@ export function buildingHeadline(levels, field = "effectVi") {
   return match ? match[0].replace(/\s+/gu, "") : null;
 }
 
-function levelRowTree(level, isMax, locale) {
-  const zh = isZh(locale);
+/**
+ * Chữ hiệu ứng và thời lượng của một cấp theo ngôn ngữ: bản Việt dùng chữ Việt, bản zh chữ Hán nguồn, bản ja bản dịch máy
+ * khóa `levels.N.*` (N là vị trí cấp trong dữ liệu, `level.sourceIndex`).
+ */
+function levelTexts(record, level, locale) {
+  if (!sourceText(locale)) return { effect: String(level.effectVi ?? "").trim(), duration: durationLabel(level.durationVi, locale) };
+  const effect = sourceTextOf(record, `levels.${level.sourceIndex}.effect`, level.effectZh, locale);
+  const durationZh = contentMode(locale) === "ja" ? sourceTextOf(record, `levels.${level.sourceIndex}.duration`, level.durationZh, locale) : level.durationZh;
+  return { effect, duration: durationZh || durationLabel(level.durationVi, locale) };
+}
+
+function levelRowTree(record, level, isMax, locale) {
   const cell = (className, label, value) => h("td", { class: className, "data-label": label }, value);
+  const shownTexts = levelTexts(record, level, locale);
   return h("tr", { class: isMax ? "lookup-level-row is-max" : "lookup-level-row" }, [
-    h("th", { scope: "row", class: "lookup-level-num", "data-label": text(locale, "Cấp", "等级") }, String(level.level)),
-    cell("lookup-level-effect", text(locale, "Hiệu quả", "效果"), String((zh ? level.effectZh : level.effectVi) ?? "").trim() || MISSING),
-    ...COST_KEYS.map(([key, vi, zhLabel]) => {
+    h("th", { scope: "row", class: "lookup-level-num", "data-label": text(locale, "Cấp", "等级", "レベル") }, String(level.level)),
+    cell("lookup-level-effect", text(locale, "Hiệu quả", "效果", "効果"), shownTexts.effect || MISSING),
+    ...COST_KEYS.map((key) => {
       const value = costValue(level.costs, key);
-      return cell("lookup-level-cost", pick(locale, vi, zhLabel), Number.isFinite(value) ? formatNumber(value, locale) : MISSING);
+      return cell("lookup-level-cost", pick(locale, ...COST_LABELS[key]), Number.isFinite(value) ? formatNumber(value, locale) : MISSING);
     }),
-    cell("lookup-level-time", text(locale, "Thời gian", "耗时"), (zh && level.durationZh) || durationLabel(level.durationVi, locale) || MISSING),
+    cell("lookup-level-time", text(locale, "Thời gian", "耗时", "所要時間"), shownTexts.duration || MISSING),
   ]);
 }
 
 function buildingDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
-  const levels = [...(record.levels ?? [])].sort((a, b) => a.level - b.level);
+  const zh = sourceText(locale);
+  // Cấp sắp theo số cấp, giữ vị trí trong dữ liệu (`sourceIndex`) để tra khóa bản dịch `levels.N.*` của bản ja.
+  const levels = (record.levels ?? []).map((level, sourceIndex) => ({ ...level, sourceIndex })).sort((a, b) => a.level - b.level);
   const last = levels.at(-1);
   const max = Number.isFinite(Number(record.maxLevel)) ? Number(record.maxLevel) : last?.level ?? null;
   const scope = facetLabel("scope", record.mainCityOnly ? "main" : "all", locale);
-  const headline = buildingHeadline(levels, zh ? "effectZh" : "effectVi");
-  const duration = last ? (zh && last.durationZh) || durationLabel(last.durationVi, locale) : null;
+  const shownLevels = levels.map((level) => ({ ...level, effectShown: levelTexts(record, level, locale).effect }));
+  const headline = buildingHeadline(shownLevels, "effectShown");
+  const duration = last ? levelTexts(record, last, locale).duration : null;
   const totals = buildingTotals(levels);
-  const totalParts = COST_KEYS.filter(([key]) => Number.isFinite(totals[key]) && totals[key] > 0)
-    .map(([key, vi, zhLabel]) => `${pick(locale, vi.toLowerCase(), zhLabel)} ${formatNumber(totals[key], locale)}`);
-  const summary = String((zh ? record.summaryZh : record.summaryVi) ?? "").trim();
+  const totalParts = COST_KEYS.filter((key) => Number.isFinite(totals[key]) && totals[key] > 0).map((key) => {
+    const [vi, zhLabel, jaLabel] = COST_LABELS[key];
+    return `${pick(locale, vi.toLowerCase(), zhLabel, jaLabel)} ${formatNumber(totals[key], locale)}`;
+  });
+  const summary = zh ? sourceTextOf(record, "summary", record.summaryZh, locale) : String(record.summaryVi ?? "").trim();
   const tile = (label, value, className = "") => h("div", { class: `lookup-stat-tile ${className}`.trim() }, [
     h("span", { class: "lookup-stat-tile-label" }, label),
     h("span", { class: "lookup-stat-tile-value" }, value),
@@ -744,34 +812,39 @@ function buildingDetail(item, corpus, locale) {
       eyebrow: [masterGroupLabel("buildings", locale), scope.toLowerCase()].filter(Boolean).join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
       han: zh ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
-        max === null ? null : badge("badge-fill lookup-detail-badge-extra", text(locale, `Cấp tối đa ${max}`, `最高等级 ${max}`)),
+        max === null ? null : badge("badge-fill lookup-detail-badge-extra", text(locale, `Cấp tối đa ${max}`, `最高等级 ${max}`, `最大レベル ${max}`)),
         badge("badge-outline lookup-detail-badge-extra", scope),
       ].filter(Boolean),
     }),
+    noticeIf(locale, [summary, ...shownLevels.map((level) => level.effectShown)]),
     h("div", { class: "lookup-stat-tiles" }, [
-      max === null ? null : tile(text(locale, "Cấp tối đa", "最高等级"), String(max), "lookup-stat-tile-wide"),
-      tile(text(locale, "Xây ở", "建造于"), scope, "lookup-stat-tile-wide"),
-      headline ? tile(text(locale, "Hiệu quả cấp max", "满级效果"), headline) : null,
-      duration ? tile(text(locale, "Thời gian cấp max", "满级耗时"), duration) : null,
+      max === null ? null : tile(text(locale, "Cấp tối đa", "最高等级", "最大レベル"), String(max), "lookup-stat-tile-wide"),
+      tile(text(locale, "Xây ở", "建造于", "建設場所"), scope, "lookup-stat-tile-wide"),
+      headline ? tile(text(locale, "Hiệu quả cấp max", "满级效果", "最大レベルの効果"), headline) : null,
+      duration ? tile(text(locale, "Thời gian cấp max", "满级耗时", "最大レベルの所要時間"), duration) : null,
     ]),
     summary && zh && isTranslatedZhText(record) ? h("p", {}, [zhTranslatedTree(locale)]) : null,
     summary ? h("p", { class: "lookup-detail-prose lookup-detail-summary" }, summary) : null,
-    levels.length ? sectionTree("lookup-building-levels", text(locale, "Theo cấp", "按等级"), [
+    levels.length ? sectionTree("lookup-building-levels", text(locale, "Theo cấp", "按等级", "レベル別"), [
       h("div", { class: "lookup-levels-panel" }, [h("table", { class: "lookup-levels-table" }, [
         h("thead", {}, [h("tr", {}, [
-          h("th", { scope: "col" }, text(locale, "Cấp", "等级")),
-          h("th", { scope: "col" }, text(locale, "Hiệu quả", "效果")),
-          ...COST_KEYS.map(([, vi, zhLabel]) => h("th", { scope: "col", class: "lookup-level-cost" }, pick(locale, vi, zhLabel))),
-          h("th", { scope: "col", class: "lookup-level-time" }, text(locale, "Thời gian", "耗时")),
+          h("th", { scope: "col" }, text(locale, "Cấp", "等级", "レベル")),
+          h("th", { scope: "col" }, text(locale, "Hiệu quả", "效果", "効果")),
+          ...COST_KEYS.map((key) => h("th", { scope: "col", class: "lookup-level-cost" }, pick(locale, ...COST_LABELS[key]))),
+          h("th", { scope: "col", class: "lookup-level-time" }, text(locale, "Thời gian", "耗时", "所要時間")),
         ])]),
-        h("tbody", {}, levels.map((level) => levelRowTree(level, level === last, locale))),
+        h("tbody", {}, levels.map((level) => levelRowTree(record, level, level === last, locale))),
       ])]),
       totalParts.length && max !== null ? h("span", { class: "lookup-detail-footnote" }, text(locale,
         `Tổng tài nguyên lên cấp ${max}: ${totalParts.join(" · ")}`,
-        `升至 ${max} 级总资源：${totalParts.join(" · ")}`)) : null,
+        `升至 ${max} 级总资源：${totalParts.join(" · ")}`,
+        `レベル${max}までの総資源：${totalParts.join(" · ")}`)) : null,
     ]) : null,
-    zh && ((record.summaryVi && !record.summaryZh) || levels.some((level) => level.effectVi && !level.effectZh)) ? zhNoteTree() : null,
+    zh && ((record.summaryVi && !record.summaryZh) || levels.some((level) => level.effectVi && !level.effectZh)
+      || sourceTextMissing(record, "summary", record.summaryZh, locale)
+      || levels.some((level) => sourceTextMissing(record, `levels.${level.sourceIndex}.effect`, level.effectZh, locale))) ? zhNoteTree(locale) : null,
   ];
 }
 
@@ -814,8 +887,8 @@ function qilueRowTree(item, locale, selectedId) {
   const types = qilueTypeNames(record, locale);
   // Dòng phụ luôn ghi nhãn mục (phương lược / thẻ kỳ lược): tên client trùng nhóm khác (Cường Công là cả chiến pháp).
   const sub = strategy
-    ? text(locale, `Phương lược · thẻ ${types.join(", ")}`, `作战方略 · ${types.join("、")}卡`)
-    : [text(locale, "Thẻ kỳ lược", "奇略卡"), qilueLabel("target", record.targetVi, locale)].filter(Boolean).join(" · ");
+    ? text(locale, `Phương lược · thẻ ${types.join(", ")}`, `作战方略 · ${types.join("、")}卡`, `方略 · ${types.join("・")}カード`)
+    : [text(locale, "Thẻ kỳ lược", "奇略卡", "奇略カード"), qilueLabel("target", record.targetVi, locale)].filter(Boolean).join(" · ");
   const marks = strategy ? [] : [qilueTypeTag(record.type, locale), record.rarity === "rare" ? h("span", { class: "lookup-qilue-rare" }, qilueLabel("rarity", "rare", locale)) : null].filter(Boolean);
   return h("a", {
     class: "lookup-master-item lookup-row lookup-qilue-row",
@@ -829,16 +902,16 @@ function qilueRowTree(item, locale, selectedId) {
       h("span", { class: "lookup-row-sub" }, sub),
     ]),
     marks.length ? h("span", { class: "lookup-qilue-marks" }, marks) : null,
-    han && !isZh(locale) ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
+    han && !sourceText(locale) ? h("span", { class: "lookup-row-zh", lang: "zh-Hant" }, han) : null,
   ]);
 }
 
 /** Danh sách Kỳ lược chia khối: "Phương lược" rồi một khối cho mỗi loại thẻ có mặt (theo thứ tự loại). */
 function qilueResultTrees(items, locale, selectedId, later) {
   const sections = [
-    { title: text(locale, "Phương lược", "作战方略"), items: items.filter((item) => isQilueStrategy(item.record)) },
+    { title: text(locale, "Phương lược", "作战方略", "方略"), items: items.filter((item) => isQilueStrategy(item.record)) },
     ...QILUE_TYPE_ORDER.map((type) => ({
-      title: text(locale, `Thẻ ${qilueLabel("type", type, "vi")}`, `${qilueLabel("type", type, "zh")}卡`),
+      title: text(locale, `Thẻ ${qilueLabel("type", type, "vi")}`, `${qilueLabel("type", type, "zh")}卡`, `${qilueLabel("type", type, "ja")}のカード`),
       items: items.filter((item) => !isQilueStrategy(item.record) && item.record?.type === type),
     })),
   ].filter((section) => section.items.length);
@@ -848,9 +921,13 @@ function qilueResultTrees(items, locale, selectedId, later) {
   ]));
 }
 
-/** Điều kiện mùa của hàng kỳ lược: bản zh dùng `textZh` của hợp đồng catalog, thiếu thì bỏ dòng. */
+/**
+ * Điều kiện mùa của hàng kỳ lược: bản zh dùng `textZh` của hợp đồng catalog, bản ja dùng bản dịch máy của nó (khóa
+ * `conditions.N` của lookup-ja); thiếu thì bỏ dòng.
+ */
 const qilueSeasons = (record, locale) => (record.conditions ?? [])
-  .map((row) => String((isZh(locale) ? row?.textZh : row?.textVi) ?? "").trim()).filter(Boolean);
+  .map((row, index) => (sourceText(locale) ? sourceTextOf(record, `conditions.${index}`, row?.textZh, locale) : String(row?.textVi ?? "").trim()))
+  .filter(Boolean);
 
 function qilueFact(label, value) {
   return value ? h("div", { class: "lookup-detail-fact" }, [h("dt", {}, label), h("dd", {}, value)]) : null;
@@ -858,46 +935,50 @@ function qilueFact(label, value) {
 
 function qilueCardDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
+  const zh = sourceText(locale);
   const type = qilueLabel("type", record.type, locale);
-  const effect = String((zh ? record.effectZh : record.effectVi) ?? "").trim();
+  const effect = zh ? sourceTextOf(record, "effect", record.effectZh, locale) : String(record.effectVi ?? "").trim();
+  const seasons = qilueSeasons(record, locale);
   const strategies = qilueStrategiesForCard(corpus, record);
   return [
     headTree({
       tile: glyph(record, item.nameVi),
       tone: record.type ?? null,
-      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Thẻ kỳ lược", "奇略卡")].join(" · "),
+      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Thẻ kỳ lược", "奇略卡", "奇略カード")].join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
       han: zh ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
         type ? badge("badge-tone", type, { "data-tone": record.type }) : null,
         record.rarity === "rare" ? badge("lookup-qilue-rare", qilueLabel("rarity", "rare", locale)) : null,
-        ...qilueSeasons(record, locale).map((season) => badge("badge-scenario", season)),
+        ...seasons.map((season) => badge("badge-scenario", season)),
       ].filter(Boolean),
     }),
+    noticeIf(locale, [effect, ...seasons]),
     h("dl", { class: "lookup-detail-facts" }, [
-      qilueFact(text(locale, "Loại", "类型"), qilueTypeTag(record.type, locale)),
-      qilueFact(text(locale, "Độ hiếm", "稀有度"), qilueLabel("rarity", record.rarity, locale)),
-      qilueFact(text(locale, "Đối tượng", "目标"), qilueLabel("target", record.targetVi, locale)),
+      qilueFact(text(locale, "Loại", "类型", "種類"), qilueTypeTag(record.type, locale)),
+      qilueFact(text(locale, "Độ hiếm", "稀有度", "レア度"), qilueLabel("rarity", record.rarity, locale)),
+      qilueFact(text(locale, "Đối tượng", "目标", "対象"), qilueLabel("target", record.targetVi, locale)),
     ]),
-    effect ? sectionTree("lookup-qilue-effect", text(locale, "Hiệu ứng", "效果"), [
+    effect ? sectionTree("lookup-qilue-effect", text(locale, "Hiệu ứng", "效果", "効果"), [
       zh && isTranslatedZhText(record) ? zhTranslatedTree(locale) : null,
       h("p", { class: "lookup-detail-prose" }, effect),
     ]) : null,
-    strategies.length ? sectionTree("lookup-qilue-strategies", text(locale, "Dùng được với phương lược", "可用作战方略"), [
+    strategies.length ? sectionTree("lookup-qilue-strategies", text(locale, "Dùng được với phương lược", "可用作战方略", "使える方略"), [
       h("ul", { class: "lookup-qilue-links" }, strategies.map((strategy) => h("li", {}, [
         h("a", { class: "lookup-detail-link", href: itemHref(strategy.id, locale) }, lookupDisplayName(strategy.record, strategy.nameVi, locale)),
       ]))),
     ]) : null,
-    zh && record.effectVi && !record.effectZh ? zhNoteTree() : null,
+    zh && ((record.effectVi && !record.effectZh) || sourceTextMissing(record, "effect", record.effectZh, locale)) ? zhNoteTree(locale) : null,
   ];
 }
 
 function qilueStrategyDetail(item, corpus, locale) {
   const record = item.record ?? {};
-  const zh = isZh(locale);
-  const description = String((zh ? record.descriptionZh : record.descriptionVi) ?? "").trim();
-  const buff = String((zh ? record.buffZh : record.buffVi) ?? "").trim();
+  const zh = sourceText(locale);
+  const description = zh ? sourceTextOf(record, "description", record.descriptionZh, locale) : String(record.descriptionVi ?? "").trim();
+  const buff = zh ? sourceTextOf(record, "buff", record.buffZh, locale) : String(record.buffVi ?? "").trim();
+  const seasons = qilueSeasons(record, locale);
   // Tên trong Hướng dẫn (`aliasesVi`) chỉ ở bản Việt: giúp người đọc nhận ra phương lược khi bài viết dùng tên cũ.
   const aliases = zh ? [] : (record.aliasesVi ?? []).filter(Boolean);
   const cards = (corpus?.groups?.qilue ?? []).filter((entry) => !isQilueStrategy(entry.record));
@@ -906,28 +987,31 @@ function qilueStrategyDetail(item, corpus, locale) {
     headTree({
       tile: glyph(record, item.nameVi),
       tone: "accent",
-      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Phương lược", "作战方略")].join(" · "),
+      eyebrow: [masterGroupLabel("qilue", locale), text(locale, "Phương lược", "作战方略", "方略")].join(" · "),
       title: lookupDisplayName(record, item.nameVi, locale),
       han: zh ? "" : zhName(record),
+      original: nameOriginalTrees(record, locale),
       badges: [
         ...types.map((type) => badge("badge-tone", qilueLabel("type", type, locale), { "data-tone": type })),
-        ...qilueSeasons(record, locale).map((season) => badge("badge-scenario", season)),
+        ...seasons.map((season) => badge("badge-scenario", season)),
       ],
     }),
+    noticeIf(locale, [description, buff, ...seasons]),
     zh && (description || buff) && isTranslatedZhText(record) ? h("p", {}, [zhTranslatedTree(locale)]) : null,
     description ? h("p", { class: "lookup-detail-prose lookup-detail-summary" }, description) : null,
     aliases.length ? h("p", { class: "lookup-detail-note" }, `Tên khác: ${aliases.join(", ")}`) : null,
-    buff ? sectionTree("lookup-qilue-buff", text(locale, "Hiệu quả mỗi thẻ", "每张奇略加成"), [h("p", { class: "lookup-detail-prose" }, buff)]) : null,
-    types.length ? sectionTree("lookup-qilue-types", text(locale, "Loại thẻ dùng được", "可用卡牌类型"), [
+    buff ? sectionTree("lookup-qilue-buff", text(locale, "Hiệu quả mỗi thẻ", "每张奇略加成", "奇略カード1枚ごとの効果"), [h("p", { class: "lookup-detail-prose" }, buff)]) : null,
+    types.length ? sectionTree("lookup-qilue-types", text(locale, "Loại thẻ dùng được", "可用卡牌类型", "使えるカードの種類"), [
       h("div", { class: "lookup-qilue-type-links" }, types.map((type) => {
         const count = cards.filter((entry) => entry.record?.type === type).length;
         return h("a", { class: "lookup-qilue-type-link", href: localePath(masterFilterHref("qilue", "type", type), locale), "data-tone": type }, [
           qilueTypeTag(type, locale),
-          text(locale, ` · ${count} thẻ`, ` · ${count} 张`),
+          text(locale, ` · ${count} thẻ`, ` · ${count} 张`, ` · ${count} 枚`),
         ]);
       })),
     ]) : null,
-    zh && ((record.descriptionVi && !record.descriptionZh) || (record.buffVi && !record.buffZh)) ? zhNoteTree() : null,
+    zh && ((record.descriptionVi && !record.descriptionZh) || (record.buffVi && !record.buffZh)
+      || sourceTextMissing(record, "description", record.descriptionZh, locale) || sourceTextMissing(record, "buff", record.buffZh, locale)) ? zhNoteTree(locale) : null,
   ];
 }
 

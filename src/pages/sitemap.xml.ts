@@ -1,10 +1,9 @@
 import type { APIContext, APIRoute } from "astro";
 import { teamDetailCatalog } from "../lib/team-detail-routes.ts";
 import { lookupDetailRoutes } from "../lib/lookup-detail-routes.ts";
-import { blogIndexPath, loadBlogPosts, translationOf, type BlogLocale } from "../lib/blog-posts.ts";
+import { blogIndexPath, loadBlogPosts, translationsOf } from "../lib/blog-posts.ts";
 import { canonicalTeamPath, communityTeamsIndexable, loadCommunityTeams } from "../lib/community-teams.ts";
-import { alternatePaths, type AlternateLink } from "../lib/locale-routes.ts";
-import { localePath } from "../../js/i18n.js";
+import { SITE_LOCALES, alternatePaths, mirroredPaths, type AlternateLink, type SiteLocale } from "../lib/locale-routes.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../../js/lookup-ids.js";
 import { POLICY_PAGES } from "../lib/policy-pages.ts";
 import { seasonPages } from "../lib/season-pages.ts";
@@ -28,12 +27,12 @@ export const SECTION_PATHS = [
 /** Bảy trang nhóm Tra cứu (`/tra-cuu/<slug>/`), cùng cấp với trang mục. */
 export const LOOKUP_GROUP_PATHS: readonly string[] = Object.keys(LOOKUP_GROUP_SLUGS).map((group) => lookupGroupPath(group) as string);
 
-/** Trang nội dung tĩnh có bản gương `/zh`, được index (không phải trang mục của app.js): các trang chính sách. */
+/** Trang nội dung tĩnh có bản gương ở mọi locale, được index (không phải trang mục của app.js): các trang chính sách. */
 export const STATIC_PAGE_PATHS: readonly string[] = POLICY_PAGES.map((page) => page.path);
 
 /**
  * Một URL của sitemap; `lastmod` (ISO 8601) chỉ khai khi biết chắc thời điểm sửa — hiện là blog.
- * `alternates` là cặp hreflang (`xhtml:link`) khi trang có bản ngôn ngữ còn lại.
+ * `alternates` là bộ hreflang (`xhtml:link`) khi trang có bản ở ngôn ngữ khác.
  */
 export interface SitemapRoute {
   path: string;
@@ -41,23 +40,26 @@ export interface SitemapRoute {
   alternates?: AlternateLink[];
 }
 
-/** Bài viết như sitemap cần: pathname công khai, ngôn ngữ, thời điểm cập nhật và bản dịch (nếu có). */
+/**
+ * Bài viết như sitemap cần: pathname công khai, ngôn ngữ, thời điểm cập nhật và đường dẫn mọi bản cùng
+ * `translationKey` theo ngôn ngữ (gồm chính bài; vắng hoặc chỉ một bản là bài đơn ngữ).
+ */
 export interface SitemapPost {
   path: string;
-  lang: BlogLocale;
+  lang: SiteLocale;
   updatedAt: string;
-  translationPath?: string | null;
+  translationPaths?: Partial<Record<SiteLocale, string>> | null;
 }
 
 /**
- * Route có bản gương `/zh`: mỗi đường dẫn bản Việt sinh hai URL (vi + zh) cùng một bộ hreflang.
- * Nhận cả `/` (Landing); build và verifier dùng chung để sitemap khớp từng byte.
+ * Route có bản gương ở mọi locale: mỗi đường dẫn bản Việt sinh một URL cho mỗi locale (thứ tự `SITE_LOCALES`) cùng một
+ * bộ hreflang. Nhận cả `/` (Landing); build và verifier dùng chung để sitemap khớp từng byte.
  */
 export function mirroredSitemapRoutes(viPaths: readonly string[]): SitemapRoute[] {
   return viPaths.flatMap((path) => {
-    const zhPath = localePath(path, "zh");
-    const alternates = alternatePaths(path, zhPath);
-    return [{ path, alternates }, { path: zhPath, alternates }];
+    const paths = mirroredPaths(path);
+    const alternates = alternatePaths(paths);
+    return SITE_LOCALES.map((locale) => ({ path: paths[locale], alternates }));
   });
 }
 
@@ -67,22 +69,22 @@ export function mirroredSitemapPaths(detailRoutePaths: readonly string[]): strin
 }
 
 /**
- * Hai trang danh sách blog (luôn có, kể cả khi rỗng) cộng mọi bài. Trang danh sách lấy `lastmod` của bài
+ * Trang danh sách blog của mọi locale (luôn có, kể cả khi rỗng) cộng mọi bài. Trang danh sách lấy `lastmod` của bài
  * mới sửa nhất cùng ngôn ngữ. Build và verifier dùng chung hàm này để sitemap khớp từng byte.
  */
 export function blogSitemapRoutes(posts: readonly SitemapPost[]): SitemapRoute[] {
   const routes: SitemapRoute[] = [];
-  for (const lang of ["vi", "zh"] as const) {
+  const indexAlternates = alternatePaths(Object.fromEntries(SITE_LOCALES.map((locale) => [locale, blogIndexPath(locale)])));
+  for (const lang of SITE_LOCALES) {
     const own = posts.filter((post) => post.lang === lang);
     const latest = own.reduce<string | undefined>((max, post) => (max === undefined || post.updatedAt > max ? post.updatedAt : max), undefined);
-    const alternates = alternatePaths(blogIndexPath("vi"), blogIndexPath("zh"));
+    const alternates = indexAlternates;
     routes.push(latest ? { path: blogIndexPath(lang), lastmod: latest, alternates } : { path: blogIndexPath(lang), alternates });
     for (const post of own) {
       const route: SitemapRoute = { path: post.path, lastmod: post.updatedAt };
       // Chỉ bài có bản dịch (cùng translationKey) mới khai hreflang; bài đơn ngữ đứng riêng.
-      if (post.translationPath) {
-        route.alternates = lang === "vi" ? alternatePaths(post.path, post.translationPath) : alternatePaths(post.translationPath, post.path);
-      }
+      const versions = { ...post.translationPaths, [lang]: post.path };
+      if (Object.keys(versions).length > 1) route.alternates = alternatePaths(versions);
       routes.push(route);
     }
   }
@@ -179,7 +181,10 @@ export const GET: APIRoute = async ({ site }: APIContext) => {
       ...lookup.entries.map((entry) => entry.path),
       ...seasons.pages.map((season) => season.routePath),
     ])),
-    ...blogSitemapRoutes(posts.map((post) => ({ ...post, translationPath: translationOf(post, posts)?.path ?? null }))),
+    ...blogSitemapRoutes(posts.map((post) => ({
+      ...post,
+      translationPaths: Object.fromEntries(Object.entries(translationsOf(post, posts)).map(([lang, version]) => [lang, version.path])),
+    }))),
     ...communityTeamSitemapRoutes(teams.map((team) => ({ path: canonicalTeamPath(team), lastmod: team.approvedAt }))),
   ];
   return new Response(sitemapDocument(site, routes), {
