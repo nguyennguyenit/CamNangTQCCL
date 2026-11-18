@@ -219,7 +219,7 @@ export function coexistQilueTableJson(): Promise<string> {
     const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
     const rows = Array.isArray(catalog?.qilueCards) ? catalog.qilueCards : [];
     const jaEntries = (await lookupJaPublicationSnapshot()).document?.entries ?? {};
-    const jaNames = Object.fromEntries(rows
+    const jaNames: Json = Object.fromEntries(rows
       .filter(({ id }: Json) => typeof jaEntries[id]?.name === 'string' && jaEntries[id].name.trim())
       .map(({ id }: Json) => [id, { name: jaEntries[id].name }]));
     const compact = {
