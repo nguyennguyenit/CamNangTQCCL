@@ -18,6 +18,13 @@
 - Changed: 35 `heroNotes` trong `pipeline/lookup-client-heroes.json` (4 mẫu câu, cả `textVi`/`textZh`) bỏ lời "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547): phe Hán…", ghi phe Hán là thay đổi vĩnh viễn từ bản cập nhật 4/11/2026; chỉ việc đổi phe ở Sảnh Chính › Hán Thất là theo mùa. Kiểm tay trên client sau khai mùa PK-S27 (17/11/2026) khớp nên `faction` toàn cục giữ nguyên. Giữ `50K「Châu」` (chờ nguồn, #87/#130).
 - Promote Tra cứu `lookup:1b96b789…` (transaction `lookup-261118-hero-notes-phe-han`; chỉ `heroes-dict.json` đổi, 35 tướng ở `lookup.conditions`), ledger route giữ 1028 handle. Publish generation Đội chuẩn `6b47bccb…` (prune `95de17f0…`), rebind giữ nguyên handle (1681/443/18, 46 tombstone). Receipt dịch không đổi (6409/6409); 4 mẫu câu mới được reviewer độc lập chấp nhận.
 
+## 2026-11-18 (Tra cứu: Hành Ách Trận — #125)
+
+- Added: chiến pháp `tactic:hanh-ach-tran` (衡軛陣, Hành Ách Trận), trận pháp mới mùa Hán Diễm Trường Minh, qua `newTactics` + `tactics` của `pipeline/lookup-client-tactics.json`: phẩm S, Pháp trận, 100%, đủ 5 binh chủng, Mục tiêu "Tập thể quân ta (3 người)", Buff Tăng ích, chữ Việt theo thẻ Xem Chiến Pháp của client Global; `zhEffects` kind `translation`. `data/tactics.json` 422 → 423, ledger route cấp 1 handle mới.
+- Đội chuẩn: ô 衡軛陣 của 2 đội PK-S27 (Trình Phổ Đô Đốc Cung, đội Tả Từ) nối được hồ sơ Tra cứu; `tactic-summaries.json` có mục Hành Ách Trận. Publish generation hiển thị mới, rebind `team-route-handles.json`, sinh lại `docs/zh-gaps.md`.
+- Merge `origin/main` (Đội khác Hán Diễm Trường Minh #131, Kỳ lược #132): promote lại Tra cứu `lookup:48af6eb3…` (transaction `lookup-261118-hanh-ach-tran`; so với main chỉ thêm `tactic:hanh-ach-tran`), ledger route 1029 handle. Publish generation Đội chuẩn `b2baddfc…` (prune `95de17f0…`), rebind giữ nguyên handle (1681/443/18, 46 tombstone), receipt dịch không đổi (6409/6409). Test: bỏ "Hành Ách Trận" khỏi danh sách chiến pháp chờ nguồn; sitemap 6386 + trang mùa.
+- Chưa làm ở đây (#141): `stableId` cho 衡軛陣 trong `pipeline/recommended-identity-map.json` và ledger Đội khác. Identity map là nguồn glossary của gate dịch, đổi nó làm stale cả 6409 receipt; chạy thử cho 12 đội dùng 衡軛陣 thành `distinct` (pending 20 → 9). Gom với lần đổi glossary kế tiếp để chỉ duyệt lại một lần.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
