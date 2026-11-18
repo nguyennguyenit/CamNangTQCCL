@@ -172,6 +172,7 @@ const teamHeaderShape = {
   translationStatus: text2k("Trạng thái bản dịch của tên đội."),
   pagePath: z.string().max(512).optional().describe("Trang đội trên website theo locale; engine không có."),
   configId: seasonId.optional().describe("engine + seasonContext: configId của mục này."),
+  recommended: z.boolean().optional().describe("Chỉ other: true nếu là đội Đề cử trên website."),
 };
 
 const teamItemSchema = z
@@ -280,6 +281,7 @@ function expandedItems(pub: PublicationReadModel, views: readonly TeamSummaryVie
         ...item,
         ...(typeof variant.name === "string" ? { name: variant.name, nameVi: variant.name } : {}),
         nickname: typeof variant.nickname === "string" ? variant.nickname : null,
+        recommended: variant.recommended === true,
         tierRaw: typeof variant.historicalTier === "string" ? variant.historicalTier : null,
         factionRaw: typeof variant.faction === "string" ? variant.faction : null,
         unitTypes: Array.isArray(variant.unit) ? variant.unit.filter((entry): entry is string => typeof entry === "string") : [],
@@ -995,6 +997,7 @@ function buildOther(pub: PublicationReadModel, selector: ReferenceSelector, loc:
     team: {
       ...itemHeader(summary, loc, { ...selector, legacyVariantId: publicVariantId(String(variant.variantId)) }),
       nickname: nullableString(variant.nickname),
+      recommended: variant.recommended === true,
       context,
       tierRankings: asRecords(variant.historicalRankings).slice(0, 20).map(allowTierRanking),
       heroes,

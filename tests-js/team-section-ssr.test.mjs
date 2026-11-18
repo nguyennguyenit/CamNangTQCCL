@@ -54,16 +54,19 @@ test("Đội khác dựng sẵn: xem mọi mùa, mỗi thẻ có link tới tran
 });
 
 test("Cùng Tồn dựng sẵn: nhóm đầu của mùa mới nhất, năm đội, mỗi đội ba tướng", async () => {
-  for (const locale of ["vi", "zh"]) {
+  for (const locale of ["vi", "zh", "ja"]) {
     const { html } = await teamSectionParts("coexist", locale);
     assert.equal(count(html, /coexist-team-card/gu) >= 5, true, `${locale}: thiếu thẻ đội`);
     assert.equal(count(html, /class="coexist-group-view" data-ssr-signature=/gu), 1);
     assert.equal(count(html, /<h1\b/gu), 1);
     const firstCard = html.split("coexist-team-card")[1];
     assert.equal(count(firstCard.split("</article>")[0], /class="hero reference-holder"/gu), 3, `${locale}: đội đầu phải có ba tướng`);
-    // Nguồn bảng 11 cột: bản vi dựng sẵn Trang bị từng tướng và Thẻ Kỳ Lược từng đội; bản zh không có.
+    // Nguồn bảng 11 cột: bản vi dựng sẵn Trang bị từng tướng (bản zh, ja không có). Thẻ Kỳ Lược từng đội có ở mọi bản:
+    // năm thẻ theo hiệp, mỗi thẻ link trang riêng Tra cứu Kỳ lược theo bản ngôn ngữ (bản ja dùng tên Nhật của lookup-ja).
     assert.equal(count(html, /coexist-hero-equipment/gu), locale === "vi" ? 15 : 0, `${locale}: số dòng Trang bị`);
-    assert.equal(count(html, /coexist-card-strategy/gu), locale === "vi" ? 5 : 0, `${locale}: số dòng Thẻ Kỳ Lược`);
+    assert.equal(count(html, /class="detail-qilue coexist-qilue"/gu), 5, `${locale}: số ô Thẻ Kỳ Lược`);
+    assert.equal(count(html, new RegExp(`class="detail-qilue-card is-link"[^>]*href="${locale === "vi" ? "" : `/${locale}`}/tra-cuu/ky-luoc/`, "gu")), 25, `${locale}: link thẻ`);
+    assert.equal(count(html, /coexist-card-strategy/gu), 0, `${locale}: không còn dòng chữ thô`);
   }
 });
 

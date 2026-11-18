@@ -84,10 +84,15 @@ export async function seasonFingerprint(value) {
   return `sha256:${[...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('')}`;
 }
 export function configFingerprintProjection(config) { return Object.fromEntries(CONFIG_KEYS.map(key => [key, config[key]])); }
+// Định danh/tọa độ và projection tính từ catalog (mã Thẻ Kỳ Lược Cùng Tồn) không phải nội dung nguồn nên không vào
+// fingerprint; cùng tập với `FINGERPRINT_EXCLUDED` của pipeline/season_validation.py.
+const FINGERPRINT_EXCLUDED = ['sourceLocator', 'contentFingerprint', 'recordId', 'strategyCardIds'];
+/** Mã thẻ kỳ lược của catalog Tra cứu; cùng mẫu với `QILUE_CARD_ID` của pipeline/season_validation.py. */
+const QILUE_CARD_ID = /^qilue-card:[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function contentFingerprintProjection(value) {
   if (Array.isArray(value)) return value.map(contentFingerprintProjection);
   if (!value || typeof value !== 'object') return value;
-  return Object.fromEntries(Object.entries(value).filter(([key]) => !['sourceLocator', 'contentFingerprint', 'recordId'].includes(key)).map(([key, item]) => [key, contentFingerprintProjection(item)]));
+  return Object.fromEntries(Object.entries(value).filter(([key]) => !FINGERPRINT_EXCLUDED.includes(key)).map(([key, item]) => [key, contentFingerprintProjection(item)]));
 }
 function sourceSeason(value) {
   if (value === null) return;
@@ -287,9 +292,15 @@ async function validateContent(state) {
       const effectFields = ['unitTacticEffectsRaw', 'strategyCardsRaw'];
       const shapes = new Set();
       for (const team of payload.teams) {
-        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'heroes'], effectFields); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
+        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'heroes'], [...effectFields, 'strategyCardIds']); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
         const effects = effectFields.filter(key => Object.hasOwn(team, key)); ensure(effects.length === 1); shapes.add(effects[0]);
         const equipment = effects[0] === 'strategyCardsRaw';
+        // Mã Thẻ Kỳ Lược (`strategyCardIds`, projection của `strategyCardsRaw` lúc dựng dữ liệu): chỉ ở bảng 11 cột.
+        if (Object.hasOwn(team, 'strategyCardIds')) {
+          const cards = list(team.strategyCardIds); ensure(equipment && typeof team.strategyCardsRaw === 'string' && team.strategyCardsRaw.trim() && cards.length > 0);
+          for (const card of cards) ensure(typeof card === 'string' && QILUE_CARD_ID.test(card));
+          ensure(new Set(cards).size === cards.length);
+        }
         sourceLocator(team.sourceLocator); hash(team.contentFingerprint);
         text(team.teamName); for (const key of ['teamNameRaw', effects[0]]) text(team[key], 20000, true); ensure(team.teamNameRaw.trim());
         for (const hero of list(team.heroes, 3)) {

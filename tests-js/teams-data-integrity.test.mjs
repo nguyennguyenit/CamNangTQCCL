@@ -25,8 +25,6 @@ const PENDING_SOURCE_NAMES = new Map([
   ["Bái Sư SP Tuân Úc", MASTER_DISCIPLE],
   ["Bái Sư Hứa Du", MASTER_DISCIPLE],
   ["Tinh·Phong Thi Trận", REFINED_TACTIC],
-  // Chiến pháp mùa PK-S27 của đội YouTube; tên Việt theo recommended-identity-map, Tra cứu chưa có bản ghi.
-  ["Hành Ách Trận", NO_DICTIONARY_RECORD],
 ]);
 
 function strings(value, path = "$", out = []) {

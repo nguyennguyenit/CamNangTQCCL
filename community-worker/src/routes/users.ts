@@ -216,6 +216,8 @@ users.get("/api/admin/users/:id", async (c) => {
       createdAt: iso(r.created_at),
     })),
     audit: log.results.map(toAuditItem),
+    // Số mục tối đa của từng danh sách: client hiện "N mục mới nhất" theo đúng giới hạn này, không chép tay.
+    limits: { comments: DETAIL_ITEMS, reports: DETAIL_ITEMS, audit: DETAIL_AUDIT },
   });
 });
 

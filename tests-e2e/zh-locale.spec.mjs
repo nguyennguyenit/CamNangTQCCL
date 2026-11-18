@@ -62,6 +62,8 @@ test('Landing bản Trung chỉ có chữ Trung, lang zh-Hans, hreflang và nút
     links.filter((link) => !link.hasAttribute('data-lang-switch')).map((link) => link.getAttribute('href')));
   expect(internal.length).toBeGreaterThan(5);
   expect(internal.filter((href) => !href.startsWith('/zh/'))).toEqual([]);
+  // Link ngôn ngữ nằm trong menu thả của nút chọn ngôn ngữ: mở rồi mới bấm.
+  await page.locator('#lang-picker-toggle').click();
   await page.locator('.header-actions [data-lang-switch][hreflang="vi"]').click();
   await expect(page).toHaveURL(/\/$/u);
   await expect(page.locator('html')).toHaveAttribute('lang', 'vi');

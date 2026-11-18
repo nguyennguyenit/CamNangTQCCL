@@ -156,6 +156,24 @@ describe("tqccl_get_team", () => {
     expect(detail.team!.sourceScore).toBeUndefined();
   });
 
+  it("keeps the Đề cử flag of each other variant from other-teams.json through find/get", async () => {
+    const pub = await publication();
+    const others = pub.teams.filter((team) => team.collection === "other");
+    const flags = others.flatMap((team) => (pub.getTeam(team.ref) as unknown as { variants: Array<{ recommended: unknown }> }).variants.map((variant) => variant.recommended));
+    // Projection luôn ghi boolean, kể cả hàng nguồn không có field (mặc định false).
+    expect(flags.every((flag) => typeof flag === "boolean")).toBe(true);
+    expect(flags.filter((flag) => flag === true).length).toBeGreaterThan(0);
+    expect(flags.filter((flag) => flag === false).length).toBeGreaterThan(0);
+    for (const wanted of [true, false]) {
+      const team = others.find((candidate) => (pub.getTeam(candidate.ref) as unknown as { variants: Array<{ recommended: boolean }> }).variants[0]!.recommended === wanted)!;
+      const listed = await handlers.call("tqccl_find_teams", { collection: "other", query: team.nameVi, limit: 50 });
+      const item = listed.items.find((entry) => entry.ref === team.ref)!;
+      expect(item.recommended).toBe(wanted);
+      const detail = await handlers.call("tqccl_get_team", { reference: item.reference });
+      expect(detail.team!.recommended).toBe(wanted);
+    }
+  });
+
   it("exposes scrub-safe variant ids for other and accepts both short and full forms", async () => {
     const pub = await publication();
     const team = pub.teams.find((candidate) => candidate.collection === "other")!;

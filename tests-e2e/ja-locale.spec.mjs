@@ -83,9 +83,12 @@ test('Landing bản Nhật chỉ có chữ Nhật, lang ja, đủ hreflang và n
   await expect(page.locator('meta[property="og:locale:alternate"]')).toHaveCount(SITE_LOCALES.length - 1);
   // Bản Nhật không tải subset tiếng Việt.
   await expect(page.locator('link[rel="preload"][href*="vietnamese"]')).toHaveCount(0);
-  // Header desktop chỉ hiện link sang bản khác (đủ chỗ ở 1280px); link bản đang xem vẫn có trong DOM.
-  await expect(page.locator('.header-actions [data-lang-current]')).toBeHidden();
-  await expect(page.locator('.header-actions [data-lang-switch]:visible')).toHaveCount(SITE_LOCALES.length - 1);
+  // Header chỉ có một nút chọn ngôn ngữ (mã bản đang xem); menu thả đóng sẵn, mọi link vẫn có trong DOM.
+  const picker = page.locator('#lang-picker-toggle');
+  await expect(picker).toBeVisible();
+  await expect(picker).toContainText('JA');
+  await expect(picker).toHaveAttribute('aria-expanded', 'false');
+  await expect(page.locator('#lang-picker-menu')).toBeHidden();
   await expectJapaneseOnly(page, 'header.site-header');
   await expectJapaneseOnly(page, 'main');
   await expectJapaneseOnly(page, 'footer.site-footer');
@@ -95,6 +98,14 @@ test('Landing bản Nhật chỉ có chữ Nhật, lang ja, đủ hreflang và n
     links.filter((link) => !link.closest('[data-lang-switcher]')).map((link) => link.getAttribute('href')));
   expect(internal.length).toBeGreaterThan(5);
   expect(internal.filter((href) => !href.startsWith('/ja/'))).toEqual([]);
+  // Bấm nút mở menu thả đủ ba bản; Escape đóng và trả focus về nút; chọn một bản thì chuyển trang.
+  await picker.click();
+  await expect(picker).toHaveAttribute('aria-expanded', 'true');
+  await expect(page.locator('.header-actions [data-lang-switcher] a:visible')).toHaveCount(SITE_LOCALES.length);
+  await page.keyboard.press('Escape');
+  await expect(page.locator('#lang-picker-menu')).toBeHidden();
+  await expect(picker).toBeFocused();
+  await picker.click();
   await page.locator('.header-actions [data-lang-switcher] a[hreflang="zh-Hans"]').click();
   await expect(page).toHaveURL(/\/zh\/$/u);
   await expect(page.locator('html')).toHaveAttribute('lang', 'zh-Hans');
@@ -243,11 +254,19 @@ test('Soi đội từ ảnh và Gợi ý đội từ kho bản Nhật mở đư�
   }
 });
 
-test('menu mobile bản Nhật có nhóm chuyển ngôn ngữ ba lựa chọn; header mobile chỉ giữ link sang bản khác', async ({ page }) => {
+test('menu mobile bản Nhật có nhóm chuyển ngôn ngữ ba lựa chọn; header mobile chỉ có một nút chọn ngôn ngữ', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/ja/khai-hoang/');
-  await expect(page.locator('.header-actions [data-lang-switcher] a[aria-current="page"]')).toBeHidden();
+  await expect(page.locator('#lang-picker-toggle')).toBeVisible();
+  await expect(page.locator('#lang-picker-menu')).toBeHidden();
   await expect(page.locator('.header-actions [data-lang-switch]')).toHaveCount(SITE_LOCALES.length - 1);
+  // Menu thả của nút nằm trọn trong màn 390px, không làm trang cuộn ngang.
+  await page.locator('#lang-picker-toggle').click();
+  const menuBox = await page.locator('#lang-picker-menu').boundingBox();
+  expect(menuBox.x).toBeGreaterThanOrEqual(0);
+  expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(390);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.keyboard.press('Escape');
   await page.locator('#section-menu-toggle').click();
   const menuLinks = page.locator('#section-menu-items [data-lang-switcher] a');
   await expect(menuLinks).toHaveCount(SWITCHER.length);

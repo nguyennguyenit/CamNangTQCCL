@@ -93,6 +93,8 @@
   --tint-lam-ink: #2F6B2A;
   --tint-son: #EFE4D6;
   --tint-son-ink: #7A5230;
+  --tint-avatar: #EAD9C0;
+  --tint-avatar-ink: #6B4A1E;
   --font-han: system-ui;
   --font-han-serif: Georgia;
   --font-sans: 'Be Vietnam Pro', var(--font-han), sans-serif;
@@ -268,8 +270,6 @@
   --type-admin-lead: 400 14px/1.55 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-admin-text: 400 14.5px/1.65 'Be Vietnam Pro', var(--font-han), sans-serif;
   --type-admin-label: 600 13px/1.35 'Be Vietnam Pro', var(--font-han), sans-serif;
-  --type-admin-card-name: 700 16.5px/1.3 'Be Vietnam Pro', var(--font-han), sans-serif;
-  --type-admin-rank: 700 26px/1 'Noto Serif Display', var(--font-han-serif), serif;
   --type-admin-mono: 400 12.5px/1.45 ui-monospace, Menlo, monospace;
   --type-admin-mono-input: 400 13.5px/1.4 ui-monospace, Menlo, monospace;
   --type-admin-code: 400 13.5px/1.7 ui-monospace, Menlo, monospace;
@@ -530,6 +530,8 @@
   --tint-lam-ink: #8FD08A;
   --tint-son: #3A2D20;
   --tint-son-ink: #D2A67C;
+  --tint-avatar: #4A3820;
+  --tint-avatar-ink: #EAD9C0;
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.35);
   --shadow-header-edge: inset 0 -1px 0 var(--line);
   --shadow-footer-edge: inset 0 1px 0 var(--line);
@@ -1264,7 +1266,9 @@ a.lookup-more:hover {
 /* ---------- Select và nhãn caps ---------- */
 .season-slot select,
 .reference-scope-controls select,
-.rt-select {
+.rt-select,
+.building-calc-select,
+.building-calc-input {
   min-height: var(--control-44);
   padding: 0 var(--space-14);
   border: var(--border-hair) solid var(--line);
@@ -1566,21 +1570,83 @@ a.lookup-more:hover {
 /* Cụm nút header (ngôn ngữ, sáng/tối, đăng nhập): nút ma không viền, cùng cao 44px, nền sáng lên khi rê;
    chỉ CTA "Mở cẩm nang" là nút tô màu. Từ 821px nút Đăng nhập có chữ và viền đỏ dải (`--nav-underline`,
    ≥3:1 trên `--band` ở cả hai theme; `--accent` sáng chỉ 2.4:1) để nổi lên mà không tranh CTA. */
-.header-actions .icon-btn,
-.header-actions .lang-switch {
+.header-actions .icon-btn {
   border-color: transparent;
 }
 
 .header-actions .icon-btn:hover,
-.header-actions .lang-switch:hover {
+.header-actions .lang-picker.open .lang-picker-toggle {
   border-color: transparent;
   background-color: var(--band-active);
 }
 
-/* Nhóm chuyển ngôn ngữ trên header chỉ giữ link sang bản khác: ở 1280px header desktop không đủ chỗ cho cả ba nút
-   (font rộng như trên Linux/Windows làm trang cuộn ngang). Đủ mọi bản, kể cả bản đang xem, nằm ở chân menu mobile. */
-.header-actions .lang-switch[aria-current="page"] {
+/* Nút chọn ngôn ngữ trên header: một nút gọn (địa cầu + mã bản đang xem + mũi tên) thay cho hàng link, nên header
+   không phình theo số locale. Bấm mở menu thả căn phải liệt kê mọi bản, bản đang xem có dấu ✓. */
+.lang-picker {
+  position: relative;
+  display: flex;
+}
+
+.header-actions .lang-picker-toggle {
+  width: auto;
+  gap: var(--space-4);
+  padding-inline: var(--space-8);
+  font: var(--type-control);
+}
+
+.lang-picker-chevron {
+  transition: transform var(--motion-fast) ease;
+}
+
+.lang-picker.open .lang-picker-chevron {
+  transform: rotate(180deg);
+}
+
+.lang-picker-menu {
+  position: absolute;
+  top: calc(100% + var(--space-6));
+  right: 0;
+  z-index: var(--z-3);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  padding: var(--space-6);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background-color: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow-menu);
+}
+
+.lang-picker-menu[hidden] {
   display: none;
+}
+
+.lang-picker-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-16);
+  padding: var(--space-10) var(--space-12);
+  border-radius: var(--radius-10);
+  color: var(--ink);
+  font: var(--type-control);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lang-picker-item:hover,
+.lang-picker-item:focus-visible {
+  background-color: var(--accent-soft);
+}
+
+.lang-picker-item[aria-current="page"] {
+  color: var(--accent);
+}
+
+.lang-picker-item[aria-current="page"]::after {
+  content: "✓";
 }
 
 .header-actions .cm-auth-login {
@@ -1595,15 +1661,14 @@ a.lookup-more:hover {
 /* Desktop (chuột): cụm nút header gọn 36px, chữ 13px — không lấn thanh menu. Màn cảm ứng (≤820px) giữ
    vùng bấm 44px của các quy tắc gốc. */
 @media (min-width: 821px) {
-  .header-actions .icon-btn,
-  .header-actions .lang-switch {
+  .header-actions .icon-btn {
     width: auto;
     min-width: var(--control-36);
     height: var(--control-36);
     border-radius: var(--radius-8);
   }
 
-  .header-actions .lang-switch,
+  .header-actions .lang-picker-toggle,
   .header-actions .cm-auth-login {
     padding-inline: var(--space-8);
     font: var(--type-header-action);
@@ -2062,8 +2127,7 @@ a.lookup-more:hover {
   color: var(--band-faint);
 }
 
-/* Chân menu: nhóm chuyển ngôn ngữ + CTA son cùng một hàng, luôn nằm trong tầm ngón cái; màn hẹp không đủ chỗ
-   thì CTA xuống hàng riêng. */
+/* Chân menu: hàng chọn ngôn ngữ (đủ mọi bản, chia đều bề ngang) rồi CTA son ở hàng dưới, luôn trong tầm ngón cái. */
 .site-menu-foot {
   display: flex;
   flex-wrap: wrap;
@@ -2093,11 +2157,16 @@ a.lookup-more:hover {
   background-color: var(--band-active);
 }
 
-/* Nhóm ngôn ngữ ở chân menu: nút 52px cách nhau như hàng nút chân (đè khoảng sát của `.lang-switcher`). */
+/* Nhóm ngôn ngữ ở chân menu: chiếm trọn một hàng, mỗi bản một ô bằng nhau;
+   thêm locale chỉ làm ô hẹp lại chứ không đẩy CTA xuống hàng lộn xộn. */
 .site-menu-foot .site-menu-langs {
   display: flex;
-  flex: 0 0 auto;
+  flex: 1 1 100%;
   gap: var(--space-8);
+}
+
+.site-menu-foot .site-menu-lang {
+  flex: 1 1 0;
 }
 
 .site-menu-foot .header-cta {
@@ -7684,6 +7753,167 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   gap: var(--space-24);
 }
 
+/* ---------- Máy tính nâng cấp công trình (trang nhóm Công trình, js/building-upgrade-calculator.js) ----------
+   Khối gập đặt trên danh sách; mỗi dòng là công trình + cấp hiện tại + cấp đích, khối tổng dùng lại ô số liệu
+   `.lookup-stat-tile` của panel chi tiết. Hẹp thì ô chọn công trình chiếm cả hàng, hai ô cấp chia đôi hàng dưới. */
+.building-calc {
+  margin: 0 0 var(--space-24);
+}
+
+.building-calc-box {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.building-calc-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--control-56);
+  padding: var(--space-12) var(--space-48) var(--space-12) var(--space-16);
+  cursor: pointer;
+  list-style: none;
+}
+
+.building-calc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.building-calc-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.building-calc-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-lead,
+.building-calc-note,
+.building-calc-empty {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.building-calc-chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--space-16);
+  display: inline-flex;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.building-calc-box[open] > .building-calc-summary .building-calc-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.building-calc-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-4) var(--space-16) var(--space-16);
+}
+
+.building-calc-empty,
+.building-calc-note,
+.building-calc-missing,
+.building-calc-result-title {
+  margin: 0;
+}
+
+.building-calc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.building-calc-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-bottom: var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line-2);
+}
+
+.building-calc-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--size-col-120) var(--size-col-120) auto;
+  align-items: end;
+  gap: var(--space-12);
+}
+
+.building-calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.building-calc-select,
+.building-calc-input {
+  width: 100%;
+}
+
+.building-calc-row-result p {
+  margin: 0;
+}
+
+.building-calc-row-totals {
+  font: var(--type-small);
+}
+
+.building-calc-row-result.is-empty,
+.building-calc-missing {
+  color: var(--warn);
+  font: var(--type-small);
+}
+
+.building-calc-actions {
+  display: flex;
+}
+
+.building-calc-add:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.building-calc-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.building-calc-result-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-totals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-10);
+}
+
+@media (max-width: 680px) {
+  .building-calc-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .building-calc-field-building {
+    grid-column: 1 / -1;
+  }
+
+  .building-calc-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Màu theo phẩm chất / hệ: thẻ, ô chữ và huy hiệu đọc cùng ba biến này. */
 .lookup-master [data-tone] {
   --tone-bg: var(--panel-2);
@@ -9089,6 +9319,7 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   #section-lookup[data-lookup-detail-open="true"] .lookup-head,
   #section-lookup[data-lookup-detail-open="true"] .lookup-search,
   #section-lookup[data-lookup-detail-open="true"] .lookup-chips,
+  #section-lookup[data-lookup-detail-open="true"] .building-calc,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master > .lookup-filters,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master-list {
     display: none;
@@ -10813,6 +11044,51 @@ body[data-page-section="khaihoang"] .layout {
   white-space: pre-line;
 }
 
+/* Ghi chú phụ của tên đội (dòng trong ngoặc của nguồn, vd. "Kỹ Năng Quân Sư Điêu Thuyền") cạnh nhãn cấp đội. */
+.coexist-team-note {
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+/* Thẻ Kỳ Lược ở chân thẻ Cùng Tồn: cùng ô thẻ của Đội chuẩn (`.detail-qilue-card`, tô theo loại thẻ, nhãn loại + Hiếm,
+   link Tra cứu) nhưng xếp dọc từng hiệp vì thẻ đội hẹp; cột nhãn "Hiệp N" thẳng hàng qua subgrid. */
+.coexist-qilue {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  padding: var(--space-12) 0;
+}
+
+.coexist-qilue-rounds {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-6) var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coexist-qilue-round {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.coexist-qilue .detail-qilue-card {
+  flex-direction: row;
+  align-items: center;
+  min-height: 0;
+  padding: var(--space-6) var(--space-10);
+}
+
+.coexist-qilue .detail-qilue-card-name {
+  font: var(--type-small);
+  font-weight: var(--weight-semibold);
+}
+
 .coexist-card-strategy {
   flex: 1 1 auto;
   min-width: 0;
@@ -12373,6 +12649,51 @@ body[data-page-section="roster-recommend"] .layout {
   border-color: var(--avoid);
   background: var(--avoid);
   color: var(--on-accent);
+}
+
+/* Hộp thoại Token API (Theo dõi chiêu mộ): token mới hiện một lần + danh sách token đã tạo. */
+.rt-token-secret-row {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.rt-token-secret-row .cm-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+}
+
+.rt-token-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rt-token-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-12);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-8);
+}
+
+.rt-token-item[data-status="revoked"],
+.rt-token-item[data-status="expired"] {
+  color: var(--muted);
+}
+
+.rt-token-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Soi đội (Analyze, AnalyzeReview, AnalyzeResult + bản Mobile) ---------- */
@@ -14326,6 +14647,165 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-small);
 }
 
+/* ---------- Dán danh sách tên (js/roster-pasted-name-list-panel.js): dán → đối chiếu → xác nhận rồi mới ghi kho ---------- */
+.roster-paste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.roster-paste-toggle {
+  align-self: flex-start;
+}
+
+.roster-paste-panel,
+.roster-paste-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.roster-paste-panel {
+  padding: var(--space-12);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+}
+
+.roster-paste-panel[hidden],
+.roster-paste-review[hidden] {
+  display: none;
+}
+
+.roster-paste-panel .roster-field-label {
+  margin: 0;
+}
+
+.roster-paste-input {
+  width: 100%;
+  min-height: var(--size-col-120);
+  padding: var(--space-10) var(--space-14);
+  resize: vertical;
+}
+
+.roster-paste-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.roster-paste-status,
+.roster-paste-summary {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-control);
+}
+
+.roster-paste-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.roster-paste-group-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.roster-paste-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--space-6);
+  max-height: 18rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.roster-paste-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4) var(--space-8);
+  min-width: 0;
+  padding: var(--space-8) var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+}
+
+.roster-paste-choice {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.roster-paste-choice select {
+  width: 100%;
+  min-width: 0;
+}
+
+.roster-paste-name {
+  min-width: 0;
+  color: var(--ink);
+  font: var(--type-tactic);
+  overflow-wrap: anywhere;
+}
+
+.roster-paste-group[data-group="unrecognized"] .roster-paste-name {
+  color: var(--warn);
+}
+
+.roster-paste-meta {
+  min-width: 0;
+  color: var(--muted);
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Tôi có tất cả món thiếu của đội này + Hoàn tác ---------- */
+.roster-add-all-row {
+  display: flex;
+}
+
+.roster-add-all {
+  gap: var(--space-8);
+  padding: 0 var(--space-12);
+}
+
+.roster-undo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8) var(--space-12);
+  padding: var(--space-10) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+}
+
+.roster-undo-bar[hidden] {
+  display: none;
+}
+
+.roster-undo-text {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.roster-undo-text svg {
+  flex: none;
+  color: var(--good);
+}
+
 .roster-locked-list {
   display: flex;
   flex-direction: column;
@@ -15120,6 +15600,20 @@ body[data-page-section="roster-recommend"] .layout {
     flex: 1 1 auto;
   }
 
+  .roster-paste-toggle {
+    align-self: stretch;
+  }
+
+  .roster-paste-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster-paste-bar .ana-btn,
+  .roster-paste-bar .roster-ghost,
+  .roster-add-all {
+    flex: 1 1 auto;
+  }
+
   /* Dải bước mobile vẫn giữ chữ cả ba bước (RosterMobile.dc.html). */
   .roster-flow .ana-flow-step:not([data-state="current"]) .ana-flow-label {
     display: inline;
@@ -15454,8 +15948,8 @@ body[data-page-section="roster-recommend"] .layout {
   height: var(--control-32);
   border-radius: var(--radius-round);
   object-fit: cover;
-  background-color: var(--panel-2);
-  color: var(--ink-2);
+  background-color: var(--tint-avatar);
+  color: var(--tint-avatar-ink);
   font: var(--type-badge);
 }
 
@@ -16058,7 +16552,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-filters .adm-field { width: var(--size-col-220); }
 
-.adm-filters-top { align-items: start; }
 
 /* Khu Người dùng + Nhật ký (js/community-admin-users.js). */
 .adm-user,
@@ -16134,7 +16627,6 @@ body[data-page-section="roster-recommend"] .layout {
 
 .adm-team-images { display: flex; flex-wrap: wrap; gap: var(--space-10); }
 
-.adm-team-field { white-space: pre-wrap; overflow-wrap: anywhere; }
 
 .adm-report-image {
   position: relative;
@@ -16579,8 +17071,8 @@ body[data-page-section="roster-recommend"] .layout {
   width: var(--control-28);
   height: var(--control-28);
   border-radius: var(--radius-round);
-  background-color: var(--panel-2);
-  color: var(--ink-2);
+  background-color: var(--tint-avatar);
+  color: var(--tint-avatar-ink);
   font: var(--type-nav-badge);
   font-weight: var(--weight-bold);
   object-fit: cover;
@@ -19380,33 +19872,6 @@ a.cm-team-tactic-link:hover { border-color: var(--accent-line); background-color
   .cm-auth-notice-link { min-height: var(--control-44); }
 }
 /* moi:doi-cong-dong:end */
-
-/* Nút chuyển ngôn ngữ (header + menu mobile): link thật tới bản gương ở từng ngôn ngữ, nhãn viết bằng ngôn ngữ đích. */
-.lang-switch {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: var(--control-44);
-  height: var(--control-44);
-  padding-inline: var(--space-10);
-  border: var(--border-hair) solid var(--band-control-line);
-  border-radius: var(--radius-10);
-  color: var(--band-ink);
-  font: var(--type-control);
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-.lang-switch:hover {
-  border-color: var(--band-ink);
-}
-
-/* Nhóm chuyển ngôn ngữ (`nav[data-lang-switcher]`): một link cho mỗi bản, xếp sát nhau thành một cụm. */
-.lang-switcher {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-}
 
 /* ---------- Đội của tôi (/doi-cua-toi/) và nút "Lưu vào đội của tôi" ---------- */
 

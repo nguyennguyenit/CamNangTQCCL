@@ -1,8 +1,9 @@
 {
-  "generationId": "0542508115f57ee36845564f4b812692ea5e0da854a27ba668335be5c22f0eb7",
+  "generationId": "2ab7828a4c1d7c385e42e5340736dfac5bdb74da9fce0c765c8a0c3898d0012a",
   "handles": {
     "khaihoang": {
       "chu-thai-truong-phi-truong-xuan-hoa": "chu-thai-truong-phi-truong-xuan-hoa",
+      "gia-cat-khac-ha-thi-sp-lo-truc": "gia-cat-khac-ha-thi-sp-lo-truc",
       "gia-cat-khac-quan-ngan-binh-nhac-tien": "gia-cat-khac-quan-ngan-binh-nhac-tien",
       "gia-cat-khac-sp-ma-sieu-phap-chinh": "gia-cat-khac-sp-ma-sieu-phap-chinh",
       "gia-cat-khac-thai-su-tu-ta-tu": "gia-cat-khac-thai-su-tu-ta-tu",
@@ -19,6 +20,7 @@
       "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa": "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
       "thai-van-co-khuong-duy-thai-su-tu": "thai-van-co-khuong-duy-thai-su-tu",
       "ton-thuong-huong-tran-cung-hoang-nguyet-anh": "ton-thuong-huong-tran-cung-hoang-nguyet-anh",
+      "truong-phi-quan-ngan-binh-thai-van-co": "truong-phi-quan-ngan-binh-thai-van-co",
       "truong-xuan-hoa-lu-bo-ta-tu": "truong-xuan-hoa-lu-bo-ta-tu"
     },
     "legacy": {
@@ -2150,7 +2152,7 @@
       "yxms-067-張關蔡": "truong-quan-thai"
     }
   },
-  "khaihoangSha256": "sha256:70b9f49c4e13dcbc71517fc805b3ed777baac2847a5e2c62d21208cd68746687",
+  "khaihoangSha256": "sha256:2cad1454bc862788a1817f3f45fa863abdbabe0b38fdef54ac53398abe30a1dc",
   "legacyTeamsSha256": "sha256:1fe35c58bfc99eec9c9d28bd34d85ec8926a693364d53fd277846803cabfe338",
   "note": "Handle URL đã review; gán một lần, không suy lại từ displayNameVi.",
   "recommendedSeasons": {
