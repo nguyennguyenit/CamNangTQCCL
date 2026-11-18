@@ -493,3 +493,64 @@ describe("POST /analyze mode explainSubstitute (chỉ văn bản, không ảnh)"
     expect(await expectJson(response, 422)).toEqual({ error: "Không giải thích được" });
   });
 });
+
+describe("POST /analyze nhận locale tuỳ chọn cho mode ảnh", () => {
+  const MODES = ["analyzeTeamImage", "scanHeroes", "scanTactics", "scanBuiltTeams"] as const;
+
+  /** fetch giả ghi lại prompt gửi model. */
+  const MODEL_REPLY: Record<(typeof MODES)[number], unknown> = {
+    analyzeTeamImage: { screen: "other", sides: [{ side: "left", heroes: [{ nameCn: "关羽", tacticsCn: [] }] }] },
+    scanHeroes: { heroes: [{ nameCn: "关羽" }] },
+    scanTactics: { tactics: [{ nameCn: "草船借箭" }] },
+    scanBuiltTeams: { teams: [{ teamName: "a", heroesCn: ["关羽"], tacticsCn: [] }] },
+  };
+  function stubPromptFetch(reply: unknown) {
+    const prompts: string[] = [];
+    vi.stubGlobal("fetch", async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input);
+      if (url === SITEVERIFY) return Response.json({ success: true, hostname: "tqccl.com" });
+      if (url === MODEL) {
+        const body = JSON.parse(String(init?.body));
+        prompts.push(body.messages[0].content[0].text);
+        return Response.json({ choices: [{ message: { content: JSON.stringify(reply) } }] });
+      }
+      throw new Error(`unexpected fetch ${url}`);
+    });
+    return prompts;
+  }
+  const imageBody = (mode: string, locale?: unknown) => ({
+    image: PNG,
+    turnstileToken: `token-${++issuedTokens}`,
+    mode,
+    ...(locale === undefined ? {} : { locale }),
+  });
+
+  for (const mode of MODES) {
+    it(`${mode}: locale ja -> prompt có đoạn tự dạng Nhật; vắng locale -> prompt cũ`, async () => {
+      const prompts = stubPromptFetch(MODEL_REPLY[mode]);
+      expect((await worker.fetch(analyzeRequest(imageBody(mode, "ja")), env(fakeKV()))).status).toBe(200);
+      expect((await worker.fetch(analyzeRequest(imageBody(mode)), env(fakeKV()))).status).toBe(200);
+      expect(prompts[0]).toContain("tự dạng Nhật");
+      expect(prompts[1]).not.toContain("tự dạng Nhật");
+      expect(prompts[1]).toMatch(/giản thể|GIẢN THỂ/);
+    });
+
+    it(`${mode}: locale sai -> 400 có CORS, không gọi siteverify, model hay KV`, async () => {
+      const calls = stubFetch();
+      const kv = fakeKV();
+      const response = await worker.fetch(analyzeRequest(imageBody(mode, "ko")), env(kv));
+      expect(await expectJson(response, 400)).toEqual({ error: "Locale không hợp lệ" });
+      expect(calls).toEqual([]);
+      expect(kv.puts).toEqual([]);
+    });
+  }
+
+  it("explainSubstitute không đọc locale cấp ngoài (locale nằm trong context)", async () => {
+    stubFetch();
+    const response = await worker.fetch(
+      analyzeRequest({ mode: "explainSubstitute", turnstileToken: `token-${++issuedTokens}`, locale: "ko", context: { locale: "vi" } }),
+      env(fakeKV()),
+    );
+    expect(await expectJson(response, 400)).toEqual({ error: "Ngữ cảnh không hợp lệ" });
+  });
+});

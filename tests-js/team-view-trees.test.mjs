@@ -72,6 +72,33 @@ const heroValues = (record, locale) => record.heroes.flatMap((hero) => locale ==
 /** Tên chiến pháp bỏ tiền tố cải tạo ("Tinh · X") vì thẻ ghép tiền tố vào chữ hiển thị. */
 const bare = (value) => value.replace(/^(Tinh|Chuyển|Thác|精|轉|拓)\s*[·・]\s*/u, "");
 
+test("tier JP: huy hiệu cạnh tier SGSDeck trên thẻ/bảng, khối nguồn có link trên trang chi tiết, đủ ba ngôn ngữ", () => {
+  const source = { source: "jp", url: "https://kazten.com/entry/2026/06/19/180000", publishedAt: "2026-06-19" };
+  const exact = { ...fullRecord, tierSources: [{ ...source, tierRaw: "T0", matchKind: "exact" }] };
+  const heroesOnly = { ...fullRecord, tierSources: [{ ...source, tierRaw: "T0.5", matchKind: "heroes-only" }] };
+  const notes = { vi: "khác chiến pháp", zh: "战法不同", ja: "戦法違い" };
+  for (const locale of ["vi", "zh", "ja"]) {
+    const card = treeToHtml(recommendedTeamCard(exact, { href: "/doi-chuan/x/", labels, locale }));
+    assert.match(card, /data-tier-source="jp"/, `thẻ ${locale}`);
+    assert.ok(textOf(recommendedTeamCard(exact, { href: "/doi-chuan/x/", labels, locale })).includes("JP T0"), `thẻ ${locale}`);
+    assert.ok(!card.includes(notes[locale]), `đội khớp đủ không mang nhãn khác chiến pháp (${locale})`);
+    // Tier SGSDeck vẫn hiện nguyên bên cạnh.
+    assert.ok(textOf(recommendedTeamCard(exact, { labels, locale })).includes(fullRecord.tierRaw));
+    assert.ok(textOf(recommendedTeamCard(heroesOnly, { labels, locale })).includes(notes[locale]), `nhãn phụ ${locale}`);
+    assert.ok(textOf(recommendedTeamTable([heroesOnly], { labels, locale })).includes("JP T0.5"), `bảng ${locale}`);
+    const detail = treeToHtml(h("div", {}, recommendedTeamDetailContent(heroesOnly, { labels, locale })));
+    assert.match(detail, /class="detail-section detail-tier-source"/);
+    assert.match(detail, /href="https:\/\/kazten\.com\/entry\/2026\/06\/19\/180000"[^>]*rel="noopener noreferrer"/);
+    assert.ok(detail.includes("2026-06-19"), `ngày đăng ${locale}`);
+  }
+  // Hàng không có tier JP giữ nguyên thẻ và trang chi tiết.
+  assert.doesNotMatch(treeToHtml(recommendedTeamCard(fullRecord, { labels })), /data-tier-source/);
+  assert.doesNotMatch(treeToHtml(h("div", {}, recommendedTeamDetailContent(fullRecord, { labels }))), /detail-tier-source/);
+  // URL không phải http(s) không thành link.
+  const unsafe = { ...fullRecord, tierSources: [{ ...source, url: "javascript:alert(1)", tierRaw: "T0", matchKind: "exact" }] };
+  assert.doesNotMatch(treeToHtml(h("div", {}, recommendedTeamDetailContent(unsafe, { labels }))), /javascript:/);
+});
+
 test("ngoài trình duyệt locale mặc định là vi và locale tường minh không rò sang lần gọi sau", () => {
   const zhHtml = textOf(recommendedTeamCard(fullRecord, { href: "/doi-chuan/x/", labels, locale: "zh" }));
   assert.match(zhHtml, /详情/);

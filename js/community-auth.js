@@ -27,17 +27,17 @@ let loginNotice = null;
 
 function renderSignedOut(mount) {
   currentMenu = null;
-  const label = L('Đăng nhập', '登录');
+  const label = L('Đăng nhập', '登录', 'ログイン');
   const button = el('button', {
     class: 'icon-btn cm-auth-login',
     type: 'button',
-    'aria-label': L('Đăng nhập bằng Google', '使用 Google 登录'),
-    title: L('Đăng nhập bằng Google', '使用 Google 登录'),
+    'aria-label': L('Đăng nhập bằng Google', '使用 Google 登录', 'Googleでログイン'),
+    title: L('Đăng nhập bằng Google', '使用 Google 登录', 'Googleでログイン'),
   }, [userIcon(), el('span', { class: 'cm-auth-label', 'aria-hidden': 'true' }, label)]);
   const status = el('span', { class: 'visually-hidden', role: 'status', 'aria-live': 'polite' });
   button.addEventListener('click', async () => {
     button.disabled = true;
-    status.textContent = L('Đang chuyển tới Google…', '正在跳转到 Google…');
+    status.textContent = L('Đang chuyển tới Google…', '正在跳转到 Google…', 'Googleに移動しています…');
     try {
       await signIn();
     } catch (error) {
@@ -56,18 +56,18 @@ function renderSignedIn(mount, user) {
     type: 'button',
     'aria-expanded': 'false',
     'aria-controls': MENU_ID,
-    'aria-label': L(`Tài khoản: ${name}`, `账户：${name}`),
+    'aria-label': L(`Tài khoản: ${name}`, `账户：${name}`, `アカウント：${name}`),
   }, [avatar(user, 'cm-avatar cm-auth-avatar')]);
   const status = el('p', { class: 'cm-auth-status', role: 'status', 'aria-live': 'polite', hidden: '' });
-  const signOutButton = el('button', { class: 'cm-auth-item', type: 'button' }, L('Đăng xuất', '退出登录'));
+  const signOutButton = el('button', { class: 'cm-auth-item', type: 'button' }, L('Đăng xuất', '退出登录', 'ログアウト'));
   const panel = el('div', { id: MENU_ID, class: 'cm-auth-menu', hidden: '' }, [
     el('p', { class: 'cm-auth-name' }, name),
     el('ul', { class: 'cm-auth-list' }, [
-      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cua-toi/') }, L('Đội của tôi', '我的阵容'))),
-      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/chien-bao/') }, L('Chiến báo của tôi', '我的战报'))),
-      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/') }, L('Đội cộng đồng', '社区阵容'))),
-      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/?mine=1') }, L('Đội đã đăng', '我发布的阵容'))),
-      user.role === 'root' || user.role === 'moderator' ? el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/quan-tri/') }, L('Quản trị', '管理后台'))) : null,
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cua-toi/') }, L('Đội của tôi', '我的阵容', 'マイ編成'))),
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/chien-bao/') }, L('Chiến báo của tôi', '我的战报', 'マイ戦報'))),
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/') }, L('Đội cộng đồng', '社区阵容', 'コミュニティ編成'))),
+      el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/doi-cong-dong/?mine=1') }, L('Đội đã đăng', '我发布的阵容', '投稿した編成'))),
+      user.role === 'root' || user.role === 'moderator' ? el('li', {}, el('a', { class: 'cm-auth-item', href: localePath('/quan-tri/') }, L('Quản trị', '管理后台', '管理画面'))) : null,
       el('li', {}, signOutButton),
     ]),
     status,
@@ -104,11 +104,11 @@ const BAN_ERROR_CODES = new Set(['ACCOUNT_BANNED', 'ACCOUNT_UNAVAILABLE']);
  * dòng lý do nếu có. Tài khoản đang xoá chỉ có dòng đậm. `until` là ISO từ server hoặc `null` = vĩnh viễn.
  */
 export function banNoticeContent(body) {
-  if (body?.deleting === true) return { title: L('Tài khoản đang được xoá.', '账号正在删除中。'), reason: '', banned: false };
+  if (body?.deleting === true) return { title: L('Tài khoản đang được xoá.', '账号正在删除中。', 'アカウントを削除中です。'), reason: '', banned: false };
   const until = typeof body?.until === 'string' ? formatDateTime(body.until) : '';
   const title = until
-    ? L(`Tài khoản đã bị khoá đến ${until}.`, `账号已被封禁至 ${until}。`)
-    : L('Tài khoản đã bị khoá vĩnh viễn.', '账号已被永久封禁。');
+    ? L(`Tài khoản đã bị khoá đến ${until}.`, `账号已被封禁至 ${until}。`, `アカウントは ${until} まで停止されています。`)
+    : L('Tài khoản đã bị khoá vĩnh viễn.', '账号已被永久封禁。', 'アカウントは永久に停止されています。');
   const reason = typeof body?.reason === 'string' && body.reason.trim() ? body.reason.trim() : '';
   return { title, reason, banned: true };
 }
@@ -118,7 +118,7 @@ const noticeIcon = (paths, size) => icon(paths.map((d) => svgNode('path', { d })
 /** Hộp thông báo dưới nút đăng nhập: icon khoá | chữ (role=alert) + gợi ý + link quy tắc | nút đóng cùng hàng. */
 function showLoginNotice(mount, { title, reason = '', banned = false }) {
   if (currentMenu) return;
-  const close = el('button', { class: 'cm-auth-notice-close', type: 'button', 'aria-label': L('Đóng thông báo', '关闭提示') },
+  const close = el('button', { class: 'cm-auth-notice-close', type: 'button', 'aria-label': L('Đóng thông báo', '关闭提示', '通知を閉じる') },
     noticeIcon(['M18 6L6 18', 'M6 6l12 12'], 18));
   loginNotice = el('div', { class: 'cm-auth-menu cm-auth-notice' }, [
     el('span', { class: 'cm-auth-notice-ico', 'aria-hidden': 'true' },
@@ -127,11 +127,11 @@ function showLoginNotice(mount, { title, reason = '', banned = false }) {
       el('p', { class: 'cm-auth-notice-msg', role: 'alert' }, [
         el('strong', { class: 'cm-auth-notice-title' }, title),
         reason
-          ? el('span', { class: 'cm-auth-notice-text' }, [el('span', { class: 'cm-auth-notice-key' }, L('Lý do:', '理由：')), ` ${reason}`])
+          ? el('span', { class: 'cm-auth-notice-text' }, [el('span', { class: 'cm-auth-notice-key' }, L('Lý do:', '理由：', '理由：')), ` ${reason}`])
           : null,
       ]),
-      banned ? el('p', { class: 'cm-auth-notice-hint' }, L('Bạn vẫn đọc được cẩm nang khi chưa đăng nhập.', '未登录也可以继续阅读攻略手册。')) : null,
-      banned ? el('a', { class: 'cm-auth-notice-link', href: localePath('/quy-tac-cong-dong/') }, L('Xem Quy tắc cộng đồng', '查看社区规则')) : null,
+      banned ? el('p', { class: 'cm-auth-notice-hint' }, L('Bạn vẫn đọc được cẩm nang khi chưa đăng nhập.', '未登录也可以继续阅读攻略手册。', 'ログインしなくても攻略ガイドは閲覧できます。')) : null,
+      banned ? el('a', { class: 'cm-auth-notice-link', href: localePath('/quy-tac-cong-dong/') }, L('Xem Quy tắc cộng đồng', '查看社区规则', 'コミュニティルールを見る')) : null,
     ]),
     close,
   ]);
@@ -148,7 +148,7 @@ async function handleBanRedirect(mount) {
   if (!BAN_ERROR_CODES.has(params.get('error') || '')) return;
   const token = params.get('error_description') || '';
   history.replaceState(history.state, '', urlWithoutAuthError().href);
-  let content = { title: L('Không đăng nhập được. Thử lại sau.', '无法登录，请稍后再试。') };
+  let content = { title: L('Không đăng nhập được. Thử lại sau.', '无法登录，请稍后再试。', 'ログインできませんでした。しばらくしてからもう一度お試しください。') };
   try {
     if (token) {
       const body = await api(`/api/ban-notice?token=${encodeURIComponent(token)}`);

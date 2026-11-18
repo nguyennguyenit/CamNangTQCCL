@@ -121,7 +121,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     title,
     message,
     confirmLabel,
-    cancelLabel: L("Hủy", "取消"),
+    cancelLabel: L("Hủy", "取消", "キャンセル"),
     onConfirm: async () => {
       clearMessages();
       const result = await operation();
@@ -172,15 +172,15 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
    */
   async function discardOk() {
     if (view.editor?.isSaving()) {
-      say(L("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.", "正在保存当前编辑的阵容，请保存完成后再试。"));
+      say(L("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.", "正在保存当前编辑的阵容，请保存完成后再试。", "編集中の編成を保存しています。保存が完了してからもう一度お試しください。"));
       return false;
     }
     if (!view.editor?.isDirty()) return true;
     return confirmInPage({
-      title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？"),
-      message: L("Đội đang sửa có thay đổi chưa lưu. Tiếp tục thì các thay đổi này mất.", "正在编辑的阵容有未保存的更改，继续将丢失这些更改。"),
-      confirmLabel: L("Bỏ thay đổi", "放弃更改"),
-      cancelLabel: L("Hủy", "取消"),
+      title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？", "未保存の変更を破棄しますか？"),
+      message: L("Đội đang sửa có thay đổi chưa lưu. Tiếp tục thì các thay đổi này mất.", "正在编辑的阵容有未保存的更改，继续将丢失这些更改。", "編集中の編成に未保存の変更があります。続行するとこれらの変更は失われます。"),
+      confirmLabel: L("Bỏ thay đổi", "放弃更改", "変更を破棄"),
+      cancelLabel: L("Hủy", "取消", "キャンセル"),
     });
   }
 
@@ -198,7 +198,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     input.value = value;
     const alert = el("p", { class: "mt-alert", role: "alert", hidden: "" });
     const confirm = el("button", { type: "submit", class: "ana-btn primary" }, confirmLabel);
-    const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消"));
+    const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消", "キャンセル"));
     const form = el("form", { class: "mt-prompt", novalidate: "" }, [
       el("div", { class: "mt-field" }, [el("label", { for: "mt-prompt-input" }, label), input]),
       alert,
@@ -248,17 +248,17 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       }
       openEditor(fresh);
     },
-    onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。")).then((result) => {
+    onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。", "グループを移動しました。")).then((result) => {
       if (!result.ok) paint();
     }),
     onDelete: async (team) => {
       const groupId = team.groupId;
       const done = await confirmDelete({
-        title: L(`Xóa đội “${team.name}”?`, `删除阵容“${team.name}”？`),
-        message: L(`Đội bị xóa khỏi Đội của tôi trên mọi máy. Việc này không hoàn tác được.`, `该阵容将从所有设备的“我的阵容”中删除。此操作无法撤销。`),
-        confirmLabel: L("Xóa đội", "删除阵容"),
+        title: L(`Xóa đội “${team.name}”?`, `删除阵容“${team.name}”？`, `編成「${team.name}」を削除しますか？`),
+        message: L(`Đội bị xóa khỏi Đội của tôi trên mọi máy. Việc này không hoàn tác được.`, `该阵容将从所有设备的“我的阵容”中删除。此操作无法撤销。`, `この編成はすべての端末の「マイ編成」から削除されます。この操作は元に戻せません。`),
+        confirmLabel: L("Xóa đội", "删除阵容", "編成を削除"),
         operation: () => api.deleteTeam(team.id),
-        success: L("Đã xóa đội.", "已删除阵容。"),
+        success: L("Đã xóa đội.", "已删除阵容。", "編成を削除しました。"),
       });
       if (done) (body.querySelector(`.mt-group[data-group-id="${CSS.escape(groupId)}"] .mt-group-name`) ?? body.querySelector(".mt-group-name"))?.focus();
     },
@@ -298,25 +298,25 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         focusLater("#mt-box");
       },
       onCreate: async () => (await discardOk()) && promptDialog({
-        title: L("Tạo hộp", "新建仓库"),
-        label: L("Tên hộp", "仓库名称"),
-        confirmLabel: L("Tạo hộp", "新建"),
+        title: L("Tạo hộp", "新建仓库", "倉庫を作成"),
+        label: L("Tên hộp", "仓库名称", "倉庫名"),
+        confirmLabel: L("Tạo hộp", "新建", "作成"),
         submit: async (name) => {
           const result = await api.createBox(name);
           if (result.ok) {
             closeEditor();
             view.boxId = result.boxId;
-            say(L("Đã tạo hộp.", "已新建仓库。"));
+            say(L("Đã tạo hộp.", "已新建仓库。", "倉庫を作成しました。"));
             paint();
           }
           return result;
         },
       }),
       onRename: () => promptDialog({
-        title: L("Đổi tên hộp", "重命名仓库"),
-        label: L("Tên hộp", "仓库名称"),
+        title: L("Đổi tên hộp", "重命名仓库", "倉庫名を変更"),
+        label: L("Tên hộp", "仓库名称", "倉庫名"),
         value: boxLabel(box),
-        confirmLabel: L("Lưu tên", "保存名称"),
+        confirmLabel: L("Lưu tên", "保存名称", "名前を保存"),
         submit: async (name) => {
           const result = await api.renameBox(box.id, name);
           if (result.ok) paint();
@@ -326,9 +326,9 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       onDelete: async () => {
         if (!(await discardOk())) return;
         const done = await confirmDelete({
-          title: L(`Xóa hộp “${boxLabel(box)}”?`, `删除仓库“${boxLabel(box)}”？`),
-          message: L(`Xóa hộp sẽ mất ${teams.length} đội, các nhóm và kho của hộp này. Không hoàn tác được.`, `删除仓库将同时失去 ${teams.length} 个阵容及该仓库的分组和库存，且无法撤销。`),
-          confirmLabel: L("Xóa hộp", "删除仓库"),
+          title: L(`Xóa hộp “${boxLabel(box)}”?`, `删除仓库“${boxLabel(box)}”？`, `倉庫「${boxLabel(box)}」を削除しますか？`),
+          message: L(`Xóa hộp sẽ mất ${teams.length} đội, các nhóm và kho của hộp này. Không hoàn tác được.`, `删除仓库将同时失去 ${teams.length} 个阵容及该仓库的分组和库存，且无法撤销。`, `倉庫を削除すると、この倉庫の編成 ${teams.length} 件、グループ、所持データも失われます。元に戻せません。`),
+          confirmLabel: L("Xóa hộp", "删除仓库", "倉庫を削除"),
           operation: async () => {
             const result = await api.deleteBox(box.id);
             if (result.ok) {
@@ -337,23 +337,21 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
             }
             return result;
           },
-          success: L("Đã xóa hộp.", "已删除仓库。"),
+          success: L("Đã xóa hộp.", "已删除仓库。", "倉庫を削除しました。"),
         });
         if (done) focusLater("#mt-box");
       },
     });
 
     const notices = [];
-    if (!lexicon.ready) notices.push(el("p", { class: "mt-notice", role: "status" }, L("Chưa tải được danh mục tướng và chiến pháp: tên hiện tạm dưới dạng mã và chưa thể sửa đội.", "未能加载武将与战法图鉴：名称暂以编号显示，暂时无法编辑阵容。")));
+    if (!lexicon.ready) notices.push(el("p", { class: "mt-notice", role: "status" }, L("Chưa tải được danh mục tướng và chiến pháp: tên hiện tạm dưới dạng mã và chưa thể sửa đội.", "未能加载武将与战法图鉴：名称暂以编号显示，暂时无法编辑阵容。", "武将と戦法の図鑑を読み込めませんでした。名前は一時的にコードで表示され、編成は編集できません。")));
     const skipped = snapshot.skipped.filter((item) => item.boxId === view.boxId);
-    if (skipped.length) notices.push(el("p", { class: "mt-notice", role: "status", dataset: { skipped: String(skipped.length) } }, L(`${skipped.length} bản ghi đội bị hỏng nên không hiển thị; các đội khác không bị ảnh hưởng.`, `${skipped.length} 条阵容记录已损坏，未显示；其他阵容不受影响。`)));
-    if (snapshot.rejected.length) notices.push(el("p", { class: "mt-alert", role: "alert" }, L(`${snapshot.rejected.length} thay đổi bị máy chủ từ chối: ${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 项更改被服务器拒绝：${describeFailure({ code: snapshot.rejected[0].code })}`)));
+    if (skipped.length) notices.push(el("p", { class: "mt-notice", role: "status", dataset: { skipped: String(skipped.length) } }, L(`${skipped.length} bản ghi đội bị hỏng nên không hiển thị; các đội khác không bị ảnh hưởng.`, `${skipped.length} 条阵容记录已损坏，未显示；其他阵容不受影响。`, `編成レコード ${skipped.length} 件が破損しているため表示されません。他の編成には影響ありません。`)));
+    if (snapshot.rejected.length) notices.push(el("p", { class: "mt-alert", role: "alert" }, L(`${snapshot.rejected.length} thay đổi bị máy chủ từ chối: ${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 项更改被服务器拒绝：${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 件の変更がサーバーに拒否されました：${describeFailure({ code: snapshot.rejected[0].code })}`)));
     if (warnings.length) notices.push(dupsSection(warnings, teams, nameOf));
     const orphan = orphaned
-      ? el("section", { class: "mt-group mt-orphan", dataset: { orphan: "" }, "aria-label": L("Đội đang sửa", "正在编辑的阵容") }, [
-        el("p", { class: "mt-notice", role: "status" }, L(
-          "Đội này đã bị xóa hoặc chuyển hộp ở thiết bị khác. Bản đang soạn vẫn còn: bấm Lưu để lưu thành đội mới trong hộp đang xem, hoặc Hủy để bỏ.",
-          "此阵容已在其他设备上被删除或移到别的仓库。你正在编辑的内容仍保留：点击“保存”将在当前仓库保存为新阵容，或点击“取消”放弃。",
+      ? el("section", { class: "mt-group mt-orphan", dataset: { orphan: "" }, "aria-label": L("Đội đang sửa", "正在编辑的阵容", "編集中の編成") }, [
+        el("p", { class: "mt-notice", role: "status" }, L("Đội này đã bị xóa hoặc chuyển hộp ở thiết bị khác. Bản đang soạn vẫn còn: bấm Lưu để lưu thành đội mới trong hộp đang xem, hoặc Hủy để bỏ.", "此阵容已在其他设备上被删除或移到别的仓库。你正在编辑的内容仍保留：点击“保存”将在当前仓库保存为新阵容，或点击“取消”放弃。", "この編成は他の端末で削除されたか、別の倉庫に移動されました。編集中の内容は残っています。「保存」を押すと表示中の倉庫に新しい編成として保存され、「キャンセル」で破棄されます。",
         )),
         el("div", { class: "mt-teams" }, [view.editor]),
       ])
@@ -365,10 +363,10 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       const isDefault = /~(?:khai-hoang|ghep-team)$/u.test(group.id);
       const head = groupHead(group, own.length, isDefault, {
         onRename: () => promptDialog({
-          title: L("Đổi tên nhóm", "重命名分组"),
-          label: L("Tên nhóm", "分组名称"),
+          title: L("Đổi tên nhóm", "重命名分组", "グループ名を変更"),
+          label: L("Tên nhóm", "分组名称", "グループ名"),
           value: group.name,
-          confirmLabel: L("Lưu tên", "保存名称"),
+          confirmLabel: L("Lưu tên", "保存名称", "名前を保存"),
           submit: async (name) => {
             const result = await api.renameGroup(group.id, name);
             if (result.ok) paint();
@@ -377,11 +375,11 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         }),
         onDelete: async () => {
           const done = await confirmDelete({
-            title: L(`Xóa nhóm “${groupLabel(group)}”?`, `删除分组“${groupLabel(group)}”？`),
-            message: L(`${own.length} đội trong nhóm sẽ chuyển về Ghép Team. Nhóm bị xóa không khôi phục được.`, `组内 ${own.length} 个阵容将移至“组队”。分组删除后无法恢复。`),
-            confirmLabel: L("Xóa nhóm", "删除分组"),
+            title: L(`Xóa nhóm “${groupLabel(group)}”?`, `删除分组“${groupLabel(group)}”？`, `グループ「${groupLabel(group)}」を削除しますか？`),
+            message: L(`${own.length} đội trong nhóm sẽ chuyển về Ghép Team. Nhóm bị xóa không khôi phục được.`, `组内 ${own.length} 个阵容将移至“组队”。分组删除后无法恢复。`, `グループ内の編成 ${own.length} 件は「チーム編成」に移動されます。削除したグループは復元できません。`),
+            confirmLabel: L("Xóa nhóm", "删除分组", "グループを削除"),
             operation: () => api.deleteGroup(group.id),
-            success: L("Đã xóa nhóm.", "已删除分组。"),
+            success: L("Đã xóa nhóm.", "已删除分组。", "グループを削除しました。"),
           });
           if (done) focusLater(`.mt-group[data-group-id="${CSS.escape(`${view.boxId}~ghep-team`)}"] .mt-group-name`);
         },
@@ -391,7 +389,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         head,
         own.length
           ? el("div", { class: "mt-teams" }, items)
-          : el("p", { class: "mt-empty" }, L("Chưa có đội trong nhóm này. Khi lưu đội, chọn nhóm này trong hộp thoại lưu hoặc dùng ô “Nhóm” trên thẻ đội để chuyển sang.", "此分组暂无阵容。保存阵容时在保存对话框中选择此分组，或用阵容卡片上的“分组”移入。")),
+          : el("p", { class: "mt-empty" }, L("Chưa có đội trong nhóm này. Khi lưu đội, chọn nhóm này trong hộp thoại lưu hoặc dùng ô “Nhóm” trên thẻ đội để chuyển sang.", "此分组暂无阵容。保存阵容时在保存对话框中选择此分组，或用阵容卡片上的“分组”移入。", "このグループにはまだ編成がありません。編成を保存するときに保存ダイアログでこのグループを選ぶか、編成カードの「グループ」欄で移動してください。")),
       ]);
     });
 
@@ -399,7 +397,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       if (submit.disabled) return;
       submit.disabled = true;
       try {
-        const result = await run(() => api.createGroup(view.boxId, input.value), () => L("Đã thêm nhóm.", "已添加分组。"));
+        const result = await run(() => api.createGroup(view.boxId, input.value), () => L("Đã thêm nhóm.", "已添加分组。", "グループを追加しました。"));
         if (result.ok) body.querySelector("#mt-new-group").value = "";
       } finally {
         submit.disabled = false;
@@ -410,7 +408,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       bar,
       ...notices,
       orphan,
-      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。")) : null,
+      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。", "この倉庫にはまだ編成がありません。おすすめ編成、その他の編成、開拓、武将図鑑の編成提案、スクショ編成解析で「マイ編成に保存」を押すと追加できます。")) : null,
       ...sections,
       addGroup,
       privacyNote(),
@@ -514,12 +512,12 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         const asNew = saved.id !== team.id;
         view.boxId = saved.boxId;
         leave(saved.id);
-        say(asNew ? L("Đã lưu thành đội mới.", "已保存为新阵容。") : L("Đã lưu thay đổi.", "已保存更改。"));
+        say(asNew ? L("Đã lưu thành đội mới.", "已保存为新阵容。", "新しい編成として保存しました。") : L("Đã lưu thay đổi.", "已保存更改。", "変更を保存しました。"));
       },
       onCancel: () => leave(),
       onKeepServer: () => {
         if (view.editor !== editor) return;
-        say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。"));
+        say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。", "サーバー版を残しました。"));
         leave();
       },
     });
@@ -529,7 +527,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
 
   /* ---------- Khởi động ---------- */
 
-  mount.replaceChildren(el("p", { class: "mt-loading", role: "status" }, L("Đang tải đội của bạn…", "正在加载你的阵容…")));
+  mount.replaceChildren(el("p", { class: "mt-loading", role: "status" }, L("Đang tải đội của bạn…", "正在加载你的阵容…", "あなたの編成を読み込み中…")));
   try {
     api = await myTeamsApi();
     const [loaded, names, index] = await Promise.all([api.load(), loadNames(locale), loadSourceIndex()]);

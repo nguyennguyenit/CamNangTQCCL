@@ -4,8 +4,9 @@
 // thập phân) và dòng phụ là chữ HTML thật — logo gốc thu về cao 40–52px thì dòng phụ vẽ sẵn chỉ còn ~5px,
 // không đọc được. Tên truy cập ghép từ `alt` + dòng phụ = tên đầy đủ (anchor text của link về trang chủ).
 // Bản zh chưa có logo chữ nên in chữ.
+import type { SiteLocale } from '../lib/locale-routes';
 interface Props {
-  locale: 'vi' | 'zh';
+  locale: SiteLocale;
   title: string;
 }
 const { locale, title } = Astro.props;

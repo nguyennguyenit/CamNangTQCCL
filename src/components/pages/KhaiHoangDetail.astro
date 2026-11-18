@@ -13,31 +13,34 @@ import type { SiteLocale } from '../../lib/locale-routes';
 type Props = KhaiHoangDetailProps & { locale: SiteLocale };
 
 const {entry, title, pageLabel, khaiHoangSha256, heroes, savePayload, locale} = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 // Canonical bỏ query/hash: `variant` và `from` là trạng thái deep-link, không phải URL riêng.
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('khaihoang', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await khaiHoangDetailParts(entry, locale);
-const description = locale === 'zh'
-  ? `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`
-  : `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`;
+const description = pick(
+  locale,
+  `Hướng dẫn khai hoang của đội ${pageLabel}: cấu hình đang chọn và toàn bộ ghi chú đã xác minh.`,
+  `「${pageLabel}」开荒攻略：当前配置与全部已验证的备注。`,
+  `「${pageLabel}」の開拓攻略：選択中の編成と、確認済みのメモをすべて掲載しています。`,
+);
 const structured = teamDetailJsonLd({
   locale,
   site: Astro.site!,
   path: Astro.url.pathname,
   name: pageLabel,
   description,
-  family: {name: t('Khai hoang', '开荒'), path: localePath('/khai-hoang/', locale)},
+  family: {name: t('Khai hoang', '开荒', '開拓'), path: localePath('/khai-hoang/', locale)},
   heroes,
 });
 ---
 <SiteLayout
-  title={`${pageLabel}${t(' — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 开荒 — 三国志战略版攻略手册')}`}
+  title={`${pageLabel}${t(' — Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược', ' — 开荒 — 三国志战略版攻略手册', ' — 開拓 — 三國志 真戦 攻略手帳')}`}
   description={description}
   pageKind="detail"
   activeSection="khaihoang"
-  tagline={t('Chi tiết Khai hoang', '开荒详情')}
+  tagline={t('Chi tiết Khai hoang', '开荒详情', '開拓の詳細')}
   canonicalUrl={canonicalUrl}
   ogType="article"
   locale={locale}
@@ -45,10 +48,10 @@ const structured = teamDetailJsonLd({
   <Fragment slot="head">
     {structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
-  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Khai hoang', '返回开荒列表')}>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Khai hoang', '返回开荒列表', '開拓一覧へ戻る')}>
     <a id="team-return-link" class="detail-link detail-back-link" href={fallbackReturn} data-family-href={fallbackReturn}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {t('Quay lại Khai hoang', '返回开荒')}
+      {t('Quay lại Khai hoang', '返回开荒', '開拓へ戻る')}
     </a>
   </nav>
 

@@ -1,39 +1,74 @@
 ---
 import SiteLayout from '../layouts/SiteLayout.astro';
+import { DEFAULT_LOCALE, LOCALE_PREFIX, localePath, pick } from '../../js/i18n.js';
+import { HREFLANG, SITE_LOCALES, languageSwitchAria, switchTargets, type SiteLocale } from '../lib/locale-routes';
 export const prerender = true;
 
-// Cloudflare Pages chỉ phục vụ một 404.html cho mọi đường dẫn: trang dựng sẵn cả khối Việt lẫn khối Trung,
-// script nhỏ dưới đây chọn khối Trung khi đường dẫn nằm dưới `/zh/` (chỉ một khối được hiển thị).
-const ZH_TITLE = '页面不存在 — 三国志战略版攻略手册';
-const pickZh = `(function(){if(!/^\\/zh(\\/|$)/.test(location.pathname))return;var root=document.documentElement;root.lang='zh-Hans';document.title=${JSON.stringify(ZH_TITLE)};var vi=document.querySelector('[data-not-found="vi"]');var zh=document.querySelector('[data-not-found="zh"]');if(vi)vi.remove();if(zh){zh.hidden=false;zh.removeAttribute('lang');}var sw=document.querySelectorAll('[data-lang-switch]');for(var i=0;i<sw.length;i++){sw[i].href='/';sw[i].hreflang='vi';sw[i].lang='vi';sw[i].textContent='Tiếng Việt';}})();`;
+// Cloudflare Pages chỉ phục vụ một 404.html cho mọi đường dẫn: trang dựng sẵn một khối cho mỗi locale (khối Việt hiện,
+// các khối khác ẩn); script nhỏ dưới đây chọn khối theo tiền tố đường dẫn (`/zh/`, `/ja/`…, sinh từ `SITE_LOCALES`),
+// đặt `lang`/tiêu đề và chuyển dấu "bản đang xem" của nhóm chuyển ngôn ngữ (chỉ một khối được hiển thị).
+const copyOf = (locale: SiteLocale) => ({
+  title: pick(locale, 'Không tìm thấy trang', '页面不存在', 'ページが見つかりません'),
+  documentTitle: pick(
+    locale,
+    'Không tìm thấy trang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược',
+    '页面不存在 — 三国志战略版攻略手册',
+    'ページが見つかりません — 三國志 真戦 攻略手帳',
+  ),
+  body: pick(
+    locale,
+    'Đường dẫn này không có trong cẩm nang. Đội hình có thể đã đổi mã hoặc liên kết bị sao chép thiếu.',
+    '手册中没有这个地址。阵容可能已更换编号，或链接复制不完整。',
+    'このアドレスは手帳にありません。編成のコードが変わったか、リンクのコピーが不完全な可能性があります。',
+  ),
+  home: pick(locale, 'Về trang chủ', '返回首页', 'トップページへ戻る'),
+  standard: pick(locale, 'Danh sách đội chuẩn', '推荐阵容列表', 'おすすめ編成の一覧'),
+  other: pick(locale, 'Danh sách đội khác', '其他阵容列表', 'その他の編成の一覧'),
+});
+const blocks = SITE_LOCALES.map((locale) => ({
+  locale,
+  isDefault: locale === DEFAULT_LOCALE,
+  titleId: locale === DEFAULT_LOCALE ? 'not-found-title' : `not-found-title-${locale}`,
+  copy: copyOf(locale),
+}));
+const viCopy = copyOf(DEFAULT_LOCALE);
+/** Nhóm chuyển ngôn ngữ của 404 trỏ trang chủ từng bản (đường dẫn hỏng không có bản gương). */
+const homes = Object.fromEntries(SITE_LOCALES.map((locale) => [locale, localePath('/', locale)])) as Record<SiteLocale, string>;
+/** Dữ liệu cho script: mỗi locale có tiền tố → tiền tố, `lang`, tiêu đề, tên truy cập link sang từng bản khác (theo hreflang). */
+const prefixed = Object.fromEntries(SITE_LOCALES.filter((locale) => LOCALE_PREFIX[locale]).map((locale) => [locale, {
+  prefix: LOCALE_PREFIX[locale],
+  lang: HREFLANG[locale],
+  title: copyOf(locale).documentTitle,
+  aria: Object.fromEntries(switchTargets(locale).map((target) => [HREFLANG[target], languageSwitchAria(locale, target)])),
+}]));
+const pickLocale = `(function(){var L=${JSON.stringify(prefixed).replace(/</g, '\\u003c')};var path=location.pathname;var code=null;for(var k in L){var p=L[k].prefix;if(path===p||path.indexOf(p+'/')===0){code=k;break;}}if(!code)return;var c=L[code];document.documentElement.lang=c.lang;document.title=c.title;var blocks=document.querySelectorAll('[data-not-found]');for(var i=0;i<blocks.length;i++){var b=blocks[i];if(b.getAttribute('data-not-found')===code){b.hidden=false;b.removeAttribute('lang');}else{b.remove();}}var links=document.querySelectorAll('[data-lang-switcher] a');for(var j=0;j<links.length;j++){var a=links[j];if(a.getAttribute('hreflang')===c.lang){a.setAttribute('aria-current','page');a.setAttribute('data-lang-current','');a.removeAttribute('data-lang-switch');a.removeAttribute('aria-label');}else{a.removeAttribute('aria-current');a.removeAttribute('data-lang-current');a.setAttribute('data-lang-switch','');a.setAttribute('aria-label',c.aria[a.getAttribute('hreflang')]||'');}}})();`;
 ---
 <SiteLayout
-  title="Không tìm thấy trang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược"
+  title={viCopy.documentTitle}
   description="Đường dẫn không tồn tại trên Cẩm Nang Game Tam Quốc Chí - Chiến Lược."
   pageKind="not-found"
-  tagline="Không tìm thấy trang"
+  tagline={viCopy.title}
   robots="noindex"
   locale="vi"
   alternates={false}
-  counterpartPath="/zh/"
+  counterpartPath={homes}
 >
-  <section class="season-config-detail detail-state" aria-labelledby="not-found-title" data-not-found="vi">
-    <h1 id="not-found-title" class="detail-title">Không tìm thấy trang</h1>
-    <p>Đường dẫn này không có trong cẩm nang. Đội hình có thể đã đổi mã hoặc liên kết bị sao chép thiếu.</p>
-    <div class="detail-actions">
-      <a class="detail-action" href="/">Về trang chủ</a>
-      <a class="detail-link" href="/doi-chuan/">Danh sách đội chuẩn</a>
-      <a class="detail-link" href="/doi-khac/">Danh sách đội khác</a>
-    </div>
-  </section>
-  <section class="season-config-detail detail-state" aria-labelledby="not-found-title-zh" data-not-found="zh" lang="zh-Hans" hidden>
-    <h1 id="not-found-title-zh" class="detail-title">页面不存在</h1>
-    <p>手册中没有这个地址。阵容可能已更换编号，或链接复制不完整。</p>
-    <div class="detail-actions">
-      <a class="detail-action" href="/zh/">返回首页</a>
-      <a class="detail-link" href="/zh/doi-chuan/">推荐阵容列表</a>
-      <a class="detail-link" href="/zh/doi-khac/">其他阵容列表</a>
-    </div>
-  </section>
-  <script is:inline id="not-found-locale" set:html={pickZh}></script>
+  {blocks.map(({locale, isDefault, titleId, copy}) => (
+    <section
+      class="season-config-detail detail-state"
+      aria-labelledby={titleId}
+      data-not-found={locale}
+      lang={isDefault ? null : HREFLANG[locale]}
+      hidden={!isDefault}
+    >
+      <h1 id={titleId} class="detail-title">{copy.title}</h1>
+      <p>{copy.body}</p>
+      <div class="detail-actions">
+        <a class="detail-action" href={localePath('/', locale)}>{copy.home}</a>
+        <a class="detail-link" href={localePath('/doi-chuan/', locale)}>{copy.standard}</a>
+        <a class="detail-link" href={localePath('/doi-khac/', locale)}>{copy.other}</a>
+      </div>
+    </section>
+  ))}
+  <script is:inline id="not-found-locale" set:html={pickLocale}></script>
 </SiteLayout>

@@ -58,7 +58,7 @@ comments.get("/api/comments", async (c) => {
   const now = c.get("deps").now();
   const teamId = communityTeamIdFromPage(page);
   if (teamId) {
-    // Trang đội cộng đồng: đội không hiển thị -> rỗng (không lộ trạng thái); kho chung vi/zh nên bỏ lọc lang.
+    // Trang đội cộng đồng: đội không hiển thị -> rỗng (không lộ trạng thái); kho chung mọi ngôn ngữ nên bỏ lọc lang.
     const visible = await c.env.DB.prepare(`select ${communityTeamVisibleSql} as ok`).bind(teamId, now).first<{ ok: number }>();
     if (visible?.ok !== 1) return c.json({ items: [], nextCursor: null });
   }

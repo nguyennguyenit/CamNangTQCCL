@@ -129,6 +129,23 @@ describe("POST /api/reports/analyze", () => {
 });
 
 describe("gửi + kiểm duyệt chiến báo", () => {
+  it("lang=ja: gửi, duyệt, hiện ở danh sách ja và không lẫn sang vi; lang ngoài danh sách -> 400", async () => {
+    const h = createHarness();
+    h.setFetch(() => modelReply("{}"));
+    const id = await submitReport(h, "bob", { lang: "ja" });
+    await h.request(`/api/admin/reports/${id}/approve`, { as: "admin", method: "POST" });
+    const ja = await (await h.request(`/api/reports?page=${PAGE}&lang=ja`)).json<ApiJson>();
+    expect(ja.items).toEqual([expect.objectContaining({ id, lang: "ja" })]);
+    expect((await (await h.request(`/api/reports?page=${PAGE}&lang=vi`)).json<ApiJson>()).items).toEqual([]);
+    expect((await h.request(`/api/reports?page=${PAGE}&lang=ko`)).status).toBe(400);
+    const { uploadId } = await (await analyze(h, "bob")).json<ApiJson>();
+    const ko = await h.request("/api/reports", {
+      as: "bob",
+      json: { page: PAGE, lang: "ko", uploadId, result: "win", allyHeroes: ["曹操"], enemyHeroes: [] },
+    });
+    expect((await ko.json<ApiJson>()).error.code).toBe("invalid_lang");
+  });
+
   it("upload của người khác không dùng được; gửi xong ảnh chuyển khỏi pending", async () => {
     const h = createHarness();
     h.setFetch(() => modelReply("{}"));

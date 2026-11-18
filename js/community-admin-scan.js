@@ -7,7 +7,7 @@
 // "chưa tra được" để không mất thông tin. Module không có hiệu ứng khi nạp: chỉ community-admin.js gọi `openScanPanel`
 // (import vòng an toàn, hàm dùng chung chỉ được gọi lúc chạy).
 
-import { L, currentLocale } from './i18n.js';
+import { L, LOCALE_INTL, currentLocale } from './i18n.js';
 import { el } from './render.js';
 import { api, avatar, describeError, displayName, timeNode } from './community-api.js';
 import { draftFromRead } from './analyze-map.js';
@@ -15,15 +15,15 @@ import { createTeamLexicon, loadTeamBooks, loadTeamDictionaries, recordLabel } f
 import { adminIconStatus, button, emptyNote, formField, glyph, pagedList, selectInput } from './community-admin.js';
 
 const SCAN_SCREEN_LABEL = {
-  battleReport: L('Chiến báo', '战报'),
-  teamDetail: L('Chi tiết đội', '队伍详情'),
-  other: L('Khác', '其他'),
+  battleReport: L('Chiến báo', '战报', '戦報'),
+  teamDetail: L('Chi tiết đội', '队伍详情', '部隊詳細'),
+  other: L('Khác', '其他', 'その他'),
 };
-const SCAN_SIDE_LABEL = { left: L('Trái (ta)', '左（我方）'), right: L('Phải (đối thủ)', '右（对手）') };
+const SCAN_SIDE_LABEL = { left: L('Trái (ta)', '左（我方）', '左（自軍）'), right: L('Phải (đối thủ)', '右（对手）', '右（相手）') };
 export const SCAN_STATUS_LABEL = {
-  pending: L('Chờ duyệt', '待审核'),
-  approved: L('Đã duyệt', '已通过'),
-  rejected: L('Đã từ chối', '已拒绝'),
+  pending: L('Chờ duyệt', '待审核', '承認待ち'),
+  approved: L('Đã duyệt', '已通过', '承認済み'),
+  rejected: L('Đã từ chối', '已拒绝', '却下済み'),
 };
 
 /* ---------- Tỷ lệ sửa / không rõ ---------- */
@@ -31,19 +31,19 @@ export const SCAN_STATUS_LABEL = {
 /** Phần trăm một chữ số thập phân theo locale (vi: `6,8%`, zh: `6.8%`); không có ô nào thì `—`. */
 function percent(part, whole) {
   if (!(whole > 0)) return '—';
-  return new Intl.NumberFormat(currentLocale() === 'zh' ? 'zh-CN' : 'vi-VN', {
+  return new Intl.NumberFormat(LOCALE_INTL[currentLocale()], {
     style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1,
   }).format(Number(part) / Number(whole));
 }
 
-const count = (value) => new Intl.NumberFormat(currentLocale() === 'zh' ? 'zh-CN' : 'vi-VN').format(Number(value) || 0);
+const count = (value) => new Intl.NumberFormat(LOCALE_INTL[currentLocale()]).format(Number(value) || 0);
 
 /**
  * Bảng tỷ lệ: một DOM cho cả hai bề rộng. Desktop là bảng 5 cột (số căn phải); ≤680px mỗi dòng thành một thẻ
  * "Màn · Phe" + 3 ô số có nhãn (`data-label`, CSS hiện nhãn).
  */
 function scanStatsTable(rows) {
-  const heads = [L('Màn hình', '界面'), L('Phe', '阵营'), L('Số lượt', '次数'), L('% ô sửa', '修改占比'), L('% ô không rõ', '不确定占比')];
+  const heads = [L('Màn hình', '界面', '画面'), L('Phe', '阵营', '陣営'), L('Số lượt', '次数', '回数'), L('% ô sửa', '修改占比', '修正率'), L('% ô không rõ', '不确定占比', '不明率')];
   const numeric = (label, value, extra = '') => el('td', { class: `adm-scan-num${extra}`, 'data-label': label }, value);
   return el('div', { class: 'adm-scan-stats-wrap' }, el('table', { class: 'adm-scan-stats' }, [
     el('thead', {}, el('tr', {}, heads.map((text, index) => el('th', { scope: 'col', class: index > 1 ? 'adm-scan-num' : null }, text)))),
@@ -104,12 +104,12 @@ function aiChip(text, { hero = false } = {}) {
   return el('li', { class: hero ? 'adm-scan-chip is-hero' : 'adm-scan-chip', lang: 'zh' }, String(text));
 }
 
-const editedFlag = (edited) => (edited ? [' ', el('span', { class: 'adm-scan-flag' }, L('đã sửa', '已修改'))] : []);
+const editedFlag = (edited) => (edited ? [' ', el('span', { class: 'adm-scan-flag' }, L('đã sửa', '已修改', '修正済み'))] : []);
 
 /** Ô xác nhận: tên Việt, "Để trống" (null), hoặc id thô + nhãn "chưa tra được" khi từ điển không có id. */
 function confirmedChip(resolve, kind, id, edited, { hero = false } = {}) {
   if (id == null) {
-    return el('li', { class: 'adm-scan-chip is-blank' }, [L('Để trống', '留空'), ...editedFlag(edited)]);
+    return el('li', { class: 'adm-scan-chip is-blank' }, [L('Để trống', '留空', '空欄'), ...editedFlag(edited)]);
   }
   const { label, record } = resolve(kind, id);
   const classes = ['adm-scan-chip'];
@@ -120,13 +120,13 @@ function confirmedChip(resolve, kind, id, edited, { hero = false } = {}) {
     if (edited) classes.push('is-edited');
     return el('li', {
       class: classes.join(' '),
-      title: L('Không tra được tên của id này trong dữ liệu.', '数据中查不到此 ID 的名称。'),
+      title: L('Không tra được tên của id này trong dữ liệu.', '数据中查不到此 ID 的名称。', 'このIDの名称はデータに見つかりません。'),
       dataset: { id: String(id) },
     }, [
       el('code', { class: 'adm-scan-chip-id' }, String(id)),
       // Khoảng trắng giữa id và nhãn chỉ cho chữ đọc ra (flex bỏ qua nút chữ chỉ có khoảng trắng).
       ' ',
-      el('span', { class: 'adm-scan-flag' }, [glyph('warning', 14), L('chưa tra được', '未能识别')]),
+      el('span', { class: 'adm-scan-flag' }, [glyph('warning', 14), L('chưa tra được', '未能识别', '未判別')]),
       ...editedFlag(edited),
     ]);
   }
@@ -162,18 +162,19 @@ export function scanCompareTable(sample, lexicon) {
   const ai = list(sample.aiRead?.heroes);
   const initial = lexicon ? draftFromRead(sample.aiRead, lexicon.indexes) : null;
   const confirmed = list(sample.confirmed?.heroes);
-  const aiLabel = L('AI đọc', 'AI 识别');
-  const userLabel = L('Người dùng xác nhận', '用户确认');
+  const aiLabel = L('AI đọc', 'AI 识别', 'AI認識');
+  const userLabel = L('Người dùng xác nhận', '用户确认', 'ユーザー確認');
   return el('div', { class: 'adm-scan-compare' }, el('table', {}, [
     el('caption', {}, [
       el('span', { class: 'adm-scan-caption-wide' }, L(
         'So theo thứ tự ô: AI chép chữ in trong ảnh (chữ Hán) · đội người dùng xác nhận ở Soi đội.',
         '按格子顺序对照：AI 抄录图中印刷文字（汉字）· 用户在识阵中确认的队伍。',
+        '枠の順に比較：AIが画像内の印字（漢字）を書き起こした内容 · ユーザーが編成解析で確認した編成。',
       )),
-      el('span', { class: 'adm-scan-caption-narrow' }, L('AI đọc · người dùng xác nhận', 'AI 识别 · 用户确认')),
+      el('span', { class: 'adm-scan-caption-narrow' }, L('AI đọc · người dùng xác nhận', 'AI 识别 · 用户确认', 'AI認識 · ユーザー確認')),
     ]),
     el('thead', {}, el('tr', {}, [
-      el('th', { scope: 'col' }, el('span', { class: 'visually-hidden' }, L('Tướng', '武将'))),
+      el('th', { scope: 'col' }, el('span', { class: 'visually-hidden' }, L('Tướng', '武将', '武将'))),
       el('th', { scope: 'col' }, aiLabel),
       el('th', { scope: 'col' }, userLabel),
     ])),
@@ -192,7 +193,7 @@ export function scanCompareTable(sample, lexicon) {
         showBook ? confirmedChip(resolve, 'book', entry?.book ?? null, edited('book', member?.book, entry?.book)) : null,
       ].filter(Boolean);
       return el('tr', {}, [
-        el('th', { scope: 'row' }, [el('span', { class: 'adm-scan-row-word' }, `${L('Tướng', '武将')} `), String(index + 1)]),
+        el('th', { scope: 'row' }, [el('span', { class: 'adm-scan-row-word' }, `${L('Tướng', '武将', '武将')} `), String(index + 1)]),
         el('td', { 'data-label': aiLabel }, chipList(aiChips(ai[index], member))),
         el('td', { 'data-label': userLabel }, chipList(userChips)),
       ]);
@@ -205,12 +206,12 @@ export function scanCompareTable(sample, lexicon) {
 /** Ô ảnh mở ảnh gốc ở tab mới, nhãn "Ảnh gốc" ở góc; ảnh đã xoá (mẫu bị từ chối) thì ô trống nét đứt. */
 function sampleImage(sample) {
   if (!sample.hasImage) {
-    return el('div', { class: 'adm-scan-image is-gone' }, [glyph('image', 28), el('span', {}, L('Ảnh đã bị xoá.', '图片已删除。'))]);
+    return el('div', { class: 'adm-scan-image is-gone' }, [glyph('image', 28), el('span', {}, L('Ảnh đã bị xoá.', '图片已删除。', '画像は削除されました。'))]);
   }
   const href = `/api/admin/scan-samples/${encodeURIComponent(sample.id)}/image`;
   return el('a', { class: 'adm-scan-image', href, target: '_blank', rel: 'noopener' }, [
-    el('img', { src: href, alt: L('Ảnh soi đội người dùng gửi (mở ảnh gốc ở tab mới)', '用户提交的识阵截图（在新标签页打开原图）'), loading: 'lazy' }),
-    el('span', { class: 'adm-scan-image-open', 'aria-hidden': 'true' }, [glyph('external', 14), L('Ảnh gốc', '原图')]),
+    el('img', { src: href, alt: L('Ảnh soi đội người dùng gửi (mở ảnh gốc ở tab mới)', '用户提交的识阵截图（在新标签页打开原图）', 'ユーザーが送信した編成解析のスクリーンショット（元画像を新しいタブで開く）'), loading: 'lazy' }),
+    el('span', { class: 'adm-scan-image-open', 'aria-hidden': 'true' }, [glyph('external', 14), L('Ảnh gốc', '原图', '元画像')]),
   ]);
 }
 
@@ -241,22 +242,23 @@ function scanSampleItem(sample, { status, lexicon, onChange }) {
     }
   };
   if (sample.status === 'pending') {
-    const approve = button(L('Duyệt', '通过'), { variant: 'primary', iconName: 'check' });
-    const reject = button(L('Từ chối', '拒绝'));
-    approve.addEventListener('click', () => act('approve', L('Đã duyệt mẫu.', '样本已通过。')));
-    reject.addEventListener('click', () => act('reject', L('Đã từ chối mẫu và xoá ảnh.', '样本已拒绝并删除图片。')));
+    const approve = button(L('Duyệt', '通过', '承認'), { variant: 'primary', iconName: 'check' });
+    const reject = button(L('Từ chối', '拒绝', '却下'));
+    approve.addEventListener('click', () => act('approve', L('Đã duyệt mẫu.', '样本已通过。', 'サンプルを承認しました。')));
+    reject.addEventListener('click', () => act('reject', L('Đã từ chối mẫu và xoá ảnh.', '样本已拒绝并删除图片。', 'サンプルを却下し、画像を削除しました。')));
     buttons.append(approve, reject);
     actions.append(buttons, el('p', { class: 'adm-hint' }, L(
       'Duyệt khi ảnh rõ và đội xác nhận đúng với ảnh. Từ chối sẽ xoá ảnh khỏi máy chủ, không hoàn tác.',
       '图片清晰且确认的队伍与图片一致时再通过。拒绝会从服务器删除图片，无法撤销。',
+      '画像が鮮明で、確認された編成が画像と一致する場合のみ承認してください。却下するとサーバーから画像が削除され、元に戻せません。',
     )));
   } else if (sample.status === 'approved') {
-    const download = button(L('Tải fixture', '下载 fixture'), { variant: 'primary', iconName: 'download' });
+    const download = button(L('Tải fixture', '下载 fixture', 'fixtureをダウンロード'), { variant: 'primary', iconName: 'download' });
     download.addEventListener('click', async () => {
       download.disabled = true;
       try {
         await downloadFixture(sample);
-        status.set(L('Đã tải fixture.', '已下载 fixture。'));
+        status.set(L('Đã tải fixture.', '已下载 fixture。', 'fixtureをダウンロードしました。'));
       } catch (error) {
         status.set(describeError(error), 'error');
       } finally {
@@ -265,14 +267,15 @@ function scanSampleItem(sample, { status, lexicon, onChange }) {
     });
     buttons.append(download);
     actions.append(buttons, el('p', { class: 'adm-hint' }, [
-      L('Nhớ tải ảnh, che tên tài khoản, đặt vào ', '记得下载图片，遮住账号名，放入 '),
+      L('Nhớ tải ảnh, che tên tài khoản, đặt vào ', '记得下载图片，遮住账号名，放入 ', '画像をダウンロードし、アカウント名を隠して '),
       el('code', {}, 'worker/eval/images/'),
-      L('.', '。'),
+      L('.', '。', 'に置いてください。'),
     ]));
   } else {
     actions.append(el('p', { class: 'adm-hint' }, L(
       'Mẫu đã từ chối: ảnh đã xoá nên không duyệt lại được.',
       '样本已拒绝：图片已删除，无法再次审核。',
+      '却下済みサンプル：画像は削除済みのため、再審査できません。',
     )));
   }
   const item = el('li', { class: 'adm-scan-sample', dataset: { sampleId: String(sample.id), status: String(sample.status) } }, [
@@ -284,8 +287,8 @@ function scanSampleItem(sample, { status, lexicon, onChange }) {
       timeNode(sample.createdAt),
     ]),
     el('p', { class: 'adm-scan-tags' }, [
-      el('span', { class: 'cm-badge' }, `${L('Màn', '界面')}: ${SCAN_SCREEN_LABEL[sample.screen] || String(sample.screen)}`),
-      el('span', { class: 'cm-badge' }, `${L('Phe', '阵营')}: ${SCAN_SIDE_LABEL[sample.side] || String(sample.side)}`),
+      el('span', { class: 'cm-badge' }, `${L('Màn', '界面', '画面')}: ${SCAN_SCREEN_LABEL[sample.screen] || String(sample.screen)}`),
+      el('span', { class: 'cm-badge' }, `${L('Phe', '阵营', '陣営')}: ${SCAN_SIDE_LABEL[sample.side] || String(sample.side)}`),
     ]),
     scanCompareTable(sample, lexicon),
     actions,
@@ -310,7 +313,7 @@ function statusFilter(onPick) {
   });
   return {
     node: el('div', { class: 'adm-field adm-scan-filter' }, [
-      el('span', { id: labelId, class: 'adm-label' }, L('Trạng thái', '状态')),
+      el('span', { id: labelId, class: 'adm-label' }, L('Trạng thái', '状态', '状態')),
       el('div', { class: 'adm-seg', role: 'group', 'aria-labelledby': labelId }, buttons),
     ]),
     get value() {
@@ -339,13 +342,14 @@ export function openScanPanel(panel, { head, counts }) {
   const dictNote = el('p', { class: 'cm-notice', hidden: '' }, L(
     'Không tải được từ điển tên — bảng đối chiếu đang hiện id và không gắn nhãn "đã sửa".',
     '未能加载名称词典——对照表显示的是 ID，且不标记“已修改”。',
+    '名称辞書を読み込めませんでした。照合表にはIDを表示し、「修正済み」は付けません。',
   ));
 
   // (a) Tỷ lệ theo màn hình × phe.
   const daysSelect = selectInput('cm-scan-days', [
-    ['7', L('7 ngày', '7 天')],
-    ['30', L('30 ngày', '30 天')],
-    ['90', L('90 ngày', '90 天')],
+    ['7', L('7 ngày', '7 天', '7日')],
+    ['30', L('30 ngày', '30 天', '30日')],
+    ['90', L('90 ngày', '90 天', '90日')],
   ], '30');
   const statsBox = el('div', { class: 'adm-scan-stats-box' });
   let statsGeneration = 0;
@@ -356,7 +360,7 @@ export function openScanPanel(panel, { head, counts }) {
     const rows = Array.isArray(body?.rows) ? body.rows : [];
     statsBox.replaceChildren(rows.length
       ? scanStatsTable(rows)
-      : el('p', { class: 'adm-empty' }, L('Chưa có lượt đối chiếu nào trong khoảng này.', '该时间段内还没有对照记录。')));
+      : el('p', { class: 'adm-empty' }, L('Chưa có lượt đối chiếu nào trong khoảng này.', '该时间段内还没有对照记录。', 'この期間の照合記録はまだありません。')));
   };
   const reloadStats = () => {
     statsStatus.set('');
@@ -367,13 +371,14 @@ export function openScanPanel(panel, { head, counts }) {
   const statsCard = el('section', { class: 'adm-scan-card', 'aria-labelledby': statsTitleId }, [
     el('div', { class: 'adm-scan-head' }, [
       el('div', { class: 'adm-scan-heading' }, [
-        el('h3', { id: statsTitleId, class: 'adm-subtitle' }, L('Tỷ lệ sửa / không rõ (ẩn danh)', '修改 / 不确定占比（匿名）')),
+        el('h3', { id: statsTitleId, class: 'adm-subtitle' }, L('Tỷ lệ sửa / không rõ (ẩn danh)', '修改 / 不确定占比（匿名）', '修正／不明率（匿名）')),
         el('p', { class: 'adm-hint' }, L(
           'Đếm lần Đối chiếu đầu tiên của mỗi lượt đọc từ ảnh: chỉ số ô, không ảnh, không tên.',
           '统计每次读图后的第一次对照：只记格子数，不存图片、不存名字。',
+          '画像の読み取り後、最初の照合のみ集計します。記録するのは枠の数だけで、画像も名前も保存しません。',
         )),
       ]),
-      el('div', { class: 'adm-scan-days' }, formField('cm-scan-days', L('Khoảng thời gian', '时间范围'), daysSelect)),
+      el('div', { class: 'adm-scan-days' }, formField('cm-scan-days', L('Khoảng thời gian', '时间范围', '期間'), daysSelect)),
     ]),
     statsStatus,
     statsBox,
@@ -381,11 +386,11 @@ export function openScanPanel(panel, { head, counts }) {
 
   // (b) Mẫu theo trạng thái; duyệt/từ chối xong thì mẫu rời danh sách trạng thái đang xem.
   const list = el('ol', { class: 'adm-scan-samples', 'aria-labelledby': 'adm-scan-samples-title' });
-  const empty = emptyNote(L('Không có mẫu nào.', '没有样本。'));
+  const empty = emptyNote(L('Không có mẫu nào.', '没有样本。', 'サンプルがありません。'));
   const pending = el('p', { class: 'adm-scan-pending', hidden: '' });
   counts.subscribe((values) => {
     const value = Number(values?.scanPending) || 0;
-    pending.textContent = L(`${value} ảnh chờ duyệt`, `${value} 张截图待审核`);
+    pending.textContent = L(`${value} ảnh chờ duyệt`, `${value} 张截图待审核`, `承認待ちのスクリーンショット：${value}件`);
     pending.hidden = false;
   });
   let filter = null;
@@ -417,18 +422,19 @@ export function openScanPanel(panel, { head, counts }) {
   const samples = el('section', { class: 'adm-scan-block', 'aria-labelledby': 'adm-scan-samples-title' }, [
     el('div', { class: 'adm-scan-head' }, [
       el('div', { class: 'adm-scan-heading' }, [
-        el('h3', { id: 'adm-scan-samples-title', class: 'adm-subtitle' }, L('Ảnh người dùng gửi', '用户提交的截图')),
+        el('h3', { id: 'adm-scan-samples-title', class: 'adm-subtitle' }, L('Ảnh người dùng gửi', '用户提交的截图', 'ユーザー送信のスクリーンショット')),
         el('p', { class: 'adm-hint' }, L(
           'Người dùng bấm Gửi ảnh này sau khi đã xác nhận đội. Duyệt xong, tải fixture để thêm vào bộ ảnh chuẩn chấm AI.',
           '用户确认队伍后点击“提交这张图”。通过后下载 fixture，加入用于给 AI 评分的基准图集。',
+          'ユーザーが編成を確認して「この画像を送信」を押したものです。承認後にfixtureをダウンロードし、AIの採点に使う基準画像セットに追加してください。',
         )),
         pending,
       ]),
       filter.node,
     ]),
     el('p', { class: 'adm-scan-legend' }, [
-      el('span', {}, [el('span', { class: 'adm-scan-swatch is-edited', 'aria-hidden': 'true' }), L('đã sửa: khác ô AI đọc, tính vào % ô sửa', '已修改：与 AI 识别的格子不同，计入修改占比')]),
-      el('span', {}, [el('span', { class: 'adm-scan-swatch is-blank', 'aria-hidden': 'true' }), L('Để trống: người dùng cố ý bỏ ô', '留空：用户有意不填此格')]),
+      el('span', {}, [el('span', { class: 'adm-scan-swatch is-edited', 'aria-hidden': 'true' }), L('đã sửa: khác ô AI đọc, tính vào % ô sửa', '已修改：与 AI 识别的格子不同，计入修改占比', '修正済み：AI認識の枠と異なり、修正率に計上')]),
+      el('span', {}, [el('span', { class: 'adm-scan-swatch is-blank', 'aria-hidden': 'true' }), L('Để trống: người dùng cố ý bỏ ô', '留空：用户有意不填此格', '空欄：ユーザーが意図的に枠を空けた')]),
     ]),
     dictNote,
     status,

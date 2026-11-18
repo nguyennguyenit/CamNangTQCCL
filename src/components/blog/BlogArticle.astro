@@ -10,13 +10,13 @@ import {
   jsonLd,
   loadBlogPosts,
   relatedPosts,
-  translationOf,
+  translationsOf,
   type RenderedBlogPost,
 } from '../../lib/blog-posts.ts';
 import { articleJsonLd, blogCopy, breadcrumbJsonLd, faqJsonLd, formatPostDate, postImage } from '../../lib/blog-seo.ts';
 import { blogGuideLink } from '../../lib/blog-guide-link.ts';
 import { localePath } from '../../../js/i18n.js';
-import { otherLocale } from '../../lib/locale-routes';
+import { HREFLANG, switchTargets, type SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
   post: RenderedBlogPost;
@@ -27,7 +27,16 @@ const locale = post.lang;
 const copy = blogCopy(locale);
 const site = Astro.site!;
 const allPosts = await loadBlogPosts();
-const translation = translationOf(post, allPosts);
+const versions = translationsOf(post, allPosts);
+/** Bản dịch có thật của bài, theo thứ tự `SITE_LOCALES`; bài đơn ngữ thì rỗng. */
+const translations = switchTargets(locale).flatMap((target) => {
+  const other = versions[target];
+  return other ? [{locale: target, path: other.path}] : [];
+});
+/** Nút chuyển ngôn ngữ: tới bản dịch nếu có, không thì về danh sách bài của ngôn ngữ đích. */
+const counterpartPaths = Object.fromEntries(
+  switchTargets(locale).map((target) => [target, versions[target]?.path ?? blogIndexPath(target)]),
+) as Partial<Record<SiteLocale, string>>;
 const related = relatedPosts(post, allPosts);
 const canonicalUrl = new URL(post.path, site);
 const indexPath = blogIndexPath(locale);
@@ -58,8 +67,8 @@ const showToc = post.headings.length > 1;
   ogType="article"
   ogImage={post.coverImage ? image : undefined}
   locale={locale}
-  alternates={translation ? {vi: (locale === 'vi' ? post : translation).path, zh: (locale === 'zh' ? post : translation).path} : false}
-  counterpartPath={translation ? translation.path : blogIndexPath(otherLocale(locale))}
+  alternates={translations.length ? Object.fromEntries(Object.entries(versions).map(([lang, version]) => [lang, version.path])) : false}
+  counterpartPath={counterpartPaths}
 >
   <!-- Hreflang chỉ khi có bản dịch cùng translationKey (SiteLayout khai); không có thì nút chuyển ngôn ngữ về danh sách bài bản kia. -->
   <Fragment slot="head">
@@ -105,16 +114,16 @@ const showToc = post.headings.length > 1;
               {copy.readingTime(post.readingMinutes)}
             </span>
           </p>
-          {(post.tags.length > 0 || translation) && (
+          {(post.tags.length > 0 || translations.length > 0) && (
             <div class="bv-head-row">
               {post.tags.length > 0 && (
                 <ul class="bv-tags" aria-label={copy.tags}>
                   {post.tags.map((tag) => <li class="bv-tag">{tag}</li>)}
                 </ul>
               )}
-              {translation && (
-                <a class="bv-translation" href={translation.path} hreflang={copy.translationLang} lang={copy.translationLang}>{copy.translation}</a>
-              )}
+              {translations.map((item) => (
+                <a class="bv-translation" href={item.path} hreflang={HREFLANG[item.locale]} lang={HREFLANG[item.locale]}>{copy.translation(item.locale)}</a>
+              ))}
             </div>
           )}
         </header>
