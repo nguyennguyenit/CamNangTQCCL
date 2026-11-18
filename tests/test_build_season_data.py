@@ -352,6 +352,24 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         self.assertTrue(all(link['reviewStatus']=='reviewed' and link['scenarioId']=='anh-hung-menh-the' for link in legacy))
         self.assertTrue(all(link['rulesetId'] is None and not link['configIds'] for link in links))
 
+    def test_coexist_strategy_card_ids_must_match_the_pinned_qilue_catalog(self):
+        from pipeline.coexist_qilue import read_catalog
+        registry,evidence,options=self.bundle()
+        self.assertEqual(sum(len(team.get('strategyCardIds',[]))>0 for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh' for team in link['target']['payload']['teams']),25)
+        catalog=read_catalog();catalog['qilueCards']=[row for row in catalog['qilueCards'] if row['id']!='qilue-card:phong-lang-cu-tu']
+        with self.assertRaisesRegex(ValueError,'Phong Lang Cư Tế'):seasons.build_season_data(registry,evidence,**options,qilue_catalog=catalog)
+        # Sửa tay mã thẻ (fingerprint không đổi vì mã là projection) vẫn bị bắt khi nối lại từ chữ nguồn.
+        team=next(link for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh')['target']['payload']['teams'][0]
+        team['strategyCardIds']=list(reversed(team['strategyCardIds']))
+        with self.assertRaisesRegex(ValueError,'strategyCardIds differ'):seasons.build_season_data(registry,evidence,**options)
+        for change in (lambda team:team.update(strategyCardIds=[]),lambda team:team.update(strategyCardIds=['qilue-card:Sai Ma']),lambda team:team.update(strategyCardIds=['qilue-card:a','qilue-card:a']),lambda team:team.update(strategyCardIds=[['qilue-card:a']]),lambda team:team.update(strategyCardsRaw='')):
+            registry,evidence,options=self.bundle()
+            change(next(link for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh')['target']['payload']['teams'][0])
+            with self.subTest(change=change),self.assertRaisesRegex(ValueError,'invalid source strategy card ids'):seasons.build_season_data(registry,evidence,**options)
+        registry,evidence,options=self.bundle()
+        options['content_links'][0]['target']['payload']['teams'][0]['strategyCardIds']=['qilue-card:can-quet-tay-ha']
+        with self.assertRaisesRegex(ValueError,'invalid source strategy card ids'):seasons.build_season_data(registry,evidence,**options)
+
     def test_source_snapshot_url_and_observation_evidence_must_match(self):
         for mode in ('hash','url','no-observation'):
             registry,evidence,options=self.bundle();link=options['content_links'][0]

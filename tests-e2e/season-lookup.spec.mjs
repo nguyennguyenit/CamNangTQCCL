@@ -36,10 +36,11 @@ test('real scenario-only scope remains reference and preserves Khai hoang', asyn
   await expect.poll(() => page.evaluate(() => new URL(location.href).searchParams.get('scenario'))).toBe('han-diem-truong-minh');
   await expect(season).toHaveValue('han-diem-truong-minh');
   await expect(page.locator('#section-coexist .reference-season-status')).toBeVisible();
-  // Bảng 11 cột: mỗi tướng một dòng Trang bị, mỗi đội một dòng Thẻ Kỳ Lược ở chân thẻ.
+  // Bảng 11 cột: mỗi tướng một dòng Trang bị, mỗi đội một ô Thẻ Kỳ Lược (5 thẻ theo hiệp) ở chân thẻ.
   await expect(page.locator('#section-coexist .coexist-team-card .coexist-hero-equipment')).toHaveCount(15);
-  await expect(page.locator('#section-coexist .coexist-team-card > .reference-card-foot .coexist-card-strategy')).toHaveCount(5);
-  await expect(page.locator('#section-coexist .coexist-card-strategy').first()).toContainText('Thẻ Kỳ Lược: ');
+  await expect(page.locator('#section-coexist .coexist-team-card > .reference-card-foot .coexist-qilue')).toHaveCount(5);
+  await expect(page.locator('#section-coexist .coexist-qilue').first()).toContainText('Thẻ Kỳ Lược');
+  await expect(page.locator('#section-coexist .coexist-qilue a.detail-qilue-card')).toHaveCount(25);
   await expect(page.locator('#season-summary')).toBeHidden();
   await expect(page.locator('#section-coexist input[type="search"], #section-coexist .clear-btn, #section-coexist .fchip, #section-coexist > .scope-note')).toHaveCount(0);
   await expect(page.locator('#section-coexist')).not.toContainText('Chưa xác định kịch bản');
@@ -67,6 +68,42 @@ test('real scenario-only scope remains reference and preserves Khai hoang', asyn
   await expect(page).toHaveURL('/khai-hoang/');
   await expect(navLink(page, 'Khai hoang')).toHaveAttribute('aria-current','page');
 });
+
+/** Thẻ Kỳ Lược Cùng Tồn PK-S27 của nhóm đang xem: [href, tên] theo thứ tự hiệp của từng đội. */
+function coexistQilueLinks(page) {
+  return page.locator('#section-coexist .coexist-qilue a.detail-qilue-card').evaluateAll(links => links.map(link => [
+    link.getAttribute('href'), link.querySelector('.detail-qilue-card-name')?.textContent,
+  ]));
+}
+
+for (const [locale, prefix, label, firstName, aliasName] of [
+  ['vi', '', 'Thẻ Kỳ Lược', 'Ẩn Tích Mang Thương', 'Phong Lang Cư Tư'],
+  ['zh', '/zh', '奇略卡', '芒碭隱蹤', '封狼居胥'],
+]) {
+  test(`Cùng Tồn PK-S27 (${locale}): Thẻ Kỳ Lược theo hiệp link sang Tra cứu Kỳ lược, cả bản dựng sẵn lẫn khi đổi nhóm`, async ({page}) => {
+    const response = await page.request.get(`${prefix}/cung-ton/`);
+    const html = await response.text();
+    // Bản dựng sẵn (không cần JavaScript) đã có link thẻ, bảng tra nhúng cho trình duyệt dựng lại.
+    expect(html).toContain(`href="${prefix}/tra-cuu/ky-luoc/an-tich-mang-thuong/"`);
+    expect(html).toContain('id="coexist-qilue-table"');
+    await page.goto(`${prefix}/cung-ton/`);
+    await expect.poll(() => page.evaluate(() => new URL(location.href).searchParams.get('scenario'))).toBe('han-diem-truong-minh');
+    await expect(page.locator('#section-coexist .coexist-qilue')).toHaveCount(5);
+    await expect(page.locator('#section-coexist .coexist-qilue').first()).toContainText(label);
+    const first = await coexistQilueLinks(page);
+    expect(first).toHaveLength(25);
+    expect(first[0]).toEqual([`${prefix}/tra-cuu/ky-luoc/an-tich-mang-thuong/`, firstName]);
+    expect(first.every(([href]) => href.startsWith(`${prefix}/tra-cuu/ky-luoc/`))).toBe(true);
+    await expect(page.locator('#section-coexist .coexist-qilue .detail-qilue-round-label').first()).toHaveText(locale === 'zh' ? '第2回合' : 'Hiệp 2');
+    await expect(page.locator('#section-coexist .coexist-card-strategy')).toHaveCount(0);
+    // Nhóm 5 dựng lại bằng JavaScript: thẻ "Phong Lang Cư Tế" của sheet hiện bằng tên client/chữ Hán và link đúng trang.
+    await page.locator('#section-coexist .coexist-group-chip').nth(4).click();
+    await expect.poll(async () => (await coexistQilueLinks(page))[0]).toEqual([`${prefix}/tra-cuu/ky-luoc/phong-lang-cu-tu/`, aliasName]);
+    await expect(page.locator('#section-coexist')).not.toContainText('Phong Lang Cư Tế');
+    await page.locator('#section-coexist .coexist-qilue a.detail-qilue-card').first().click();
+    await expect(page).toHaveURL(`${prefix}/tra-cuu/ky-luoc/phong-lang-cu-tu/`);
+  });
+}
 
 import { createHash } from 'node:crypto';
 import { seasonConsumerFixture } from '../tests-js/fixtures/season-fixtures.mjs';

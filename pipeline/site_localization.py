@@ -268,6 +268,7 @@ EXEMPT_DATA_FIELDS = {
     "sourceConfigId",
     "sourceScopeId",
     "status",
+    "strategyCardIds",
     "type",
     "url",
     "variant",
@@ -365,6 +366,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:coexist/advisor-line", "advisorLine", "`QS: ${hero.advisorSkill}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/equipment-line", "equipmentLine", "`Trang bị: ${hero.equipment}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/strategy-cards-line", "strategyCardsLine", "`Thẻ Kỳ Lược: ${team.strategyCards}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
+    ("ui:coexist/strategy-cards-label", "label", "L('Thẻ Kỳ Lược','奇略卡')", "js/recommended-reference-render.js", "coexistQilueTree", "data", "authored-vi"),
     ("ui:coexist/books-missing", "emptyLabel", "'Chưa ghi'", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/slot-missing", "missing", "Chưa có dữ liệu", "js/render.js", "coexistModel", "data", "authored-vi"),
     # Khai hoang: danh sách mang đội + phiên bản và tham khảo chung (Chạm Sứ, quân thủ mỏ); trang chi tiết mang đội hình, ghi chú, điểm, hướng dẫn.

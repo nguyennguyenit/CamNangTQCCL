@@ -127,7 +127,7 @@ const sourceFieldText = (value) => {
 };
 
 /**
- * Tên nguồn Cùng Tồn ghi phần phụ ở dòng cuối (`"Hoàng Mã Thương\n19C"`, `"Hứa Du\n(Thương S)"`).
+ * Tên tướng của nguồn Cùng Tồn ghi phần phụ ở dòng cuối (`"Hứa Du\n(Thương S)"`).
  * Chỉ tách để hiện: dòng cuối khớp `pattern` thành pill, các dòng còn lại nối bằng dấu cách như trước.
  */
 function splitSourceTag(value, pattern) {
@@ -137,6 +137,27 @@ function splitSourceTag(value, pattern) {
 }
 const TEAM_LEVEL_TAG = /^(\d+C)$/;
 const HERO_NOTE_TAG = /^[(（](.+)[)）]$/u;
+
+/**
+ * Tên đội Cùng Tồn của nguồn: dòng đầu luôn là tên; các dòng sau có thể là cấp đội (`19C`), ghi chú phụ trong ngoặc
+ * (`(Kỹ Năng Quân Sư Điêu Thuyền)`) hoặc phần tên viết xuống dòng. Cấp và ghi chú nhận ở bất kỳ vị trí nào sau dòng đầu
+ * (`"Tiềm Long Lữ Bố Cung\n19C\n(Kỹ Năng Quân Sư Điêu Thuyền)"` → tên + `19C` + ghi chú); dòng còn lại nối vào tên bằng
+ * dấu cách như trước. Chỉ lấy cấp đầu tiên; dòng cấp thứ hai (nguồn chưa có) giữ nguyên trong tên để không mất chữ.
+ */
+function splitTeamName(value) {
+  const [first = "", ...rest] = String(value || "").split("\n").map((line) => line.trim()).filter(Boolean);
+  const name = [first];
+  const notes = [];
+  let level = "";
+  for (const line of rest) {
+    const levelMatch = level ? null : line.match(TEAM_LEVEL_TAG);
+    const noteMatch = line.match(HERO_NOTE_TAG);
+    if (levelMatch) level = levelMatch[1];
+    else if (noteMatch) notes.push(noteMatch[1].trim());
+    else name.push(line);
+  }
+  return { name: name.join(" "), level, note: notes.join(" · ") };
+}
 
 /**
  * Số liệu kiểm tra trùng của một nhóm: số đội, số tướng khác nhau và tên tướng xuất hiện hơn một lần
@@ -159,11 +180,12 @@ export function coexistCounts(teams = []) {
 
 /**
  * Chuẩn hóa hai nhánh dữ liệu Cùng Tồn về cùng một khung hiển thị: nhánh bảng gốc giữ nguyên văn
- * mọi trường nội dung, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội/tướng tách phần phụ ở
- * dòng cuối (`level` "19C", `tag` "Thương S") để thẻ hiện thành nhãn riêng.
+ * mọi trường nội dung, nhánh legacy chỉ dùng đúng những trường nó có. Tên đội tách cấp (`level` "19C") và ghi chú
+ * phụ trong ngoặc (`note`) ở mọi dòng sau tên; tên tướng tách phần phụ ở dòng cuối (`tag` "Thương S").
  * Cả hai nhánh đều ghi bằng tiếng Việt: bản zh đổi tên tướng/chiến pháp/binh thư sang chữ Hán gốc, tên đội
- * dựng lại từ tên tướng, còn văn xuôi, thích tính, cải tạo, Trang Bị, Thẻ Kỳ Lược và ghi chú tướng (chưa có
- * bản Trung) bị bỏ. Trang Bị (`equipmentRaw`) và Thẻ Kỳ Lược (`strategyCardsRaw`) chỉ có ở bảng 11 cột.
+ * dựng lại từ tên tướng, còn văn xuôi, thích tính, cải tạo, Trang Bị, ghi chú đội/tướng (chưa có bản Trung) bị bỏ.
+ * Trang Bị (`equipmentRaw`) và Thẻ Kỳ Lược (`strategyCardsRaw` + mã `strategyCardIds`) chỉ có ở bảng 11 cột; thẻ có
+ * mã hiện ở cả hai bản bằng tên client/chữ Hán của catalog Kỳ lược.
  */
 function coexistModel(reference) {
   const content = reference?.content || {};
@@ -190,12 +212,17 @@ function coexistModel(reference) {
             equipment: zh ? "" : publicText(sourceLines(hero.equipmentRaw), ""),
           };
         });
-        const { name, level } = splitTeamName(publicText(team.teamNameRaw));
+        const { name, level, note } = splitTeamName(publicText(team.teamNameRaw));
+        const strategyCardIds = Array.isArray(team.strategyCardIds) ? [...team.strategyCardIds] : [];
         return {
           name: zh ? heroes.map((hero) => hero.name).filter((value) => value !== UNRESOLVED_NAME).join(" · ") || UNRESOLVED_NAME : name,
           level,
+          note: zh ? "" : note,
           unitTacticEffects: zh ? "" : publicText(team.unitTacticEffectsRaw, ""),
-          strategyCards: zh ? "" : publicText(sourceLines(team.strategyCardsRaw), ""),
+          // Thẻ đã nối với catalog Kỳ lược lúc dựng dữ liệu (`strategyCardIds`) hiện ở cả hai bản theo bảng tra;
+          // chữ thô của nguồn chỉ còn là đường lui ở bản vi khi đội chưa có mã thẻ.
+          strategyCardIds,
+          strategyCards: zh || strategyCardIds.length ? "" : publicText(sourceLines(team.strategyCardsRaw), ""),
           heroes,
         };
       }),
@@ -209,6 +236,7 @@ function coexistModel(reference) {
       ...splitTeamName(zh
         ? (team.heroes || []).map((hero) => sourceName(hero.name || "")).filter(Boolean).join(" · ") || UNRESOLVED_NAME
         : team.teamName || ""),
+      strategyCardIds: [],
       unitTacticEffects: viProse(team.unitTacticEffects || ""),
       heroes: (team.heroes || []).map((hero) => ({
         ...splitHeroName(seatName(hero.name || "")),
@@ -221,10 +249,6 @@ function coexistModel(reference) {
   };
 }
 
-const splitTeamName = (value) => {
-  const { name, tag } = splitSourceTag(value, TEAM_LEVEL_TAG);
-  return { name, level: tag };
-};
 const splitHeroName = (value) => splitSourceTag(value, HERO_NOTE_TAG);
 
 /** Tiền tố bản cải tạo của chiến pháp theo chữ Hán của nguồn (cùng tập với `formatModifiedTactic`). */

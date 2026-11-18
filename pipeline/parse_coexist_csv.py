@@ -90,9 +90,17 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
     return dict(disclaimerRaw='\n'.join(disclaimer),groups=groups)
 
 
-def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs):
-    """Attach reviewed opaque record IDs to exact content revisions, never rows."""
+def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs,qilue_catalog=None,qilue_aliases=None):
+    """Attach reviewed opaque record IDs to exact content revisions, never rows.
+
+    Bảng 11 cột: mỗi đội có chữ Thẻ Kỳ Lược nhận thêm `strategyCardIds` (mã `qilue-card:*` theo thứ tự hiệp), nối với
+    `qilue_catalog` (lookup-catalog.json) qua bảng alias đã duyệt (`pipeline/coexist_qilue.py`); tên lạ làm build dừng.
+    Mặc định đọc catalog/alias đang commit. Mã thẻ là projection nên không vào content fingerprint."""
     parsed=parse_coexist_csv(csv_text,expected_hash=source['snapshotHash'])
+    card_lookup=None
+    if any('strategyCardsRaw' in team for group in parsed['groups'] for team in group['teams']):
+        from .coexist_qilue import card_index,read_aliases,read_catalog
+        card_lookup=card_index(read_catalog() if qilue_catalog is None else qilue_catalog,read_aliases() if qilue_aliases is None else qilue_aliases)
     record(identity_map,('schemaVersion','sourceId','reviewStatus','groups'))
     version(identity_map['schemaVersion'])
     if identity_map['reviewStatus']!='reviewed' or identity_map['sourceId']!=source['id']:
@@ -121,6 +129,10 @@ def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs
             if revision not in teams_by_revision or revision in team_used:raise ValueError('unreviewed or duplicate team revision')
             team_used.add(revision)
             team.update(recordId=teams_by_revision[revision]['recordId'],contentFingerprint=revision)
+            if card_lookup is not None:
+                from .coexist_qilue import resolve_strategy_cards
+                cards=resolve_strategy_cards(team['strategyCardsRaw'],*card_lookup,label=team['recordId'])
+                if cards:team['strategyCardIds']=cards
         if team_used!=set(teams_by_revision):raise ValueError('missing reviewed teams')
         source_copy=copy.deepcopy(source);source_copy['disclaimerRaw']=parsed['disclaimerRaw']
         links.append(dict(schemaVersion=1,id='link:'+mapping['recordId'],kind='coexist',recordId=mapping['recordId'],scenarioId=scenario_id,rulesetId=None,configIds=[],reviewStatus='reviewed',evidenceRefs=list(evidence_refs),target=dict(type='source-owned-coexist',source=source_copy,contentFingerprint=digest,payload=payload)))
