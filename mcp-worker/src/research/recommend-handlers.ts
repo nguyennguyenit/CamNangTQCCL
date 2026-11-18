@@ -52,7 +52,7 @@ export const recommendTeamsInputSchema = z
       .optional()
       .describe("teamId trong canonicalState.lockedTeams cần giữ; bỏ trống = giữ mọi đội đã khóa."),
     maxTeams: z.number().int().min(1).max(10).optional().describe("Số đội tối đa; mặc định 5."),
-    mode: z.enum(["meta", "redStars"]).optional().describe("meta = bậc T0→T1; redStars = nhiều hột. Mặc định meta."),
+    mode: z.enum(["meta", "redStars"]).optional().describe("meta = nhiều T0/T0.5; redStars = nhiều hột. Mặc định meta."),
     tacticOverrides: z
       .array(tacticOverrideSchema)
       .max(MAX_TACTIC_OVERRIDES)
@@ -339,6 +339,8 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     keepExistingTeams: true,
     tacticsDict,
     fullBox,
+    // Mode meta: tìm danh sách theo khóa (số T0+T0.5, số T0, số đội, điểm nguồn, hột) thay vì tham lam. Website chưa bật.
+    metaSearch: mode === "meta",
     maxTeams,
   } as never) as Rec;
 
@@ -465,6 +467,8 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   if (season.teams.length === 0) warnings.push("season-has-no-mapped-source-teams");
   if (result.legacyUsed === true) warnings.push("legacy-engine-teams-used");
   if (ignored.length > 0) warnings.push("tactic-overrides-ignored");
+  // Tìm danh sách chạm trần nút: kết quả là danh sách tốt nhất đã thấy, chưa chắc tối ưu.
+  if (result.diagnostics?.searchCapped === true) warnings.push("portfolio-search-capped");
 
   const output: RecommendTeamsOutput = {
     ...ctx.commonResult([

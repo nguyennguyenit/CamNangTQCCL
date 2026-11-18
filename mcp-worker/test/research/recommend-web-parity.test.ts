@@ -105,7 +105,11 @@ function webOverrides(overrides: Rec[] = []): Rec[] {
   return (deserializeRosterScanState({ tacticOverrides: overrides }) as { tacticOverrides: Rec[] }).tacticOverrides;
 }
 
-/** The website call of `js/roster-recommend-ui.js:544-556`, on the same roster/season/generation. */
+/**
+ * The website call of `js/roster-recommend-ui.js` (`runRecommend`), on the same roster/season/generation.
+ * Mode meta: the tool searches the portfolio (`metaSearch`); the website has not turned that on yet, so the
+ * parity call passes the same flag and compares the shared adapter, not today's website greedy result.
+ */
 function websiteCall(seasonId: string, roster: Roster, mode: "meta" | "redStars", extra: Extra = {}) {
   const season = seasonFrom(seasonId);
   const fullBox = extra.fullBox ?? (roster.ownedHeroes.length > 40 && roster.ownedTactics.length > 60);
@@ -122,6 +126,7 @@ function websiteCall(seasonId: string, roster: Roster, mode: "meta" | "redStars"
     keepExistingTeams: true,
     tacticsDict: data.tacticsDict,
     fullBox,
+    metaSearch: mode === "meta",
   } as never) as Direct;
   return { result, season, fullBox };
 }

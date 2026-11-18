@@ -4,7 +4,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { z } from "zod";
 
 import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
-import { buildSeasonCandidates } from "../../../js/roster-season-candidates.js";
+import { buildSeasonCandidates, recommendRoster } from "../../../js/roster-season-candidates.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { publicSnapshotView } from "../../src/data/public-snapshot-view.js";
@@ -276,6 +276,28 @@ describe("tqccl_recommend_teams output", () => {
       expect(item.reference).toMatchObject({ collection: "engine" });
       expect(item.sourceScore).toBeNull();
     }
+  });
+
+  it("mode meta searches the portfolio: the PK-S27 case of the issue gets 4 T0/T0.5 teams instead of greedy's fewer", async () => {
+    // Đội nêu trong issue: tham lam lấy Ôn Hầu Cung (T0, giữ Hứa Du) nên mất các bộ Hoàng Mã.
+    const ids = ["s27-wenhou-gong-hun", "s27-han-xunyu-rou-gong", "s27-kongzhi-qiang", "s27-funu-qiang", "s27-lp-huangma-qiang-ay", "s27-huchen-gong"];
+    const teams = seasonTeams("pk-s27", ids);
+    expect(teams.map((team) => team.id).sort()).toEqual([...ids].sort());
+    const body = await confirmed(ctx, rosterOfTeams(teams));
+    const top = (tiers: string[]) => tiers.filter((tier) => tier === "T0" || tier === "T0.5").length;
+    // Website (chưa bật metaSearch) trên cùng kho: tham lam theo đội đầu bảng.
+    const records = ctx.publication().recommendSourceRecords("pk-s27");
+    const dicts = { heroesDict: ctx.snapshot.artifacts["heroes-dict"] as never, tacticsDict: ctx.snapshot.artifacts.tactics as never };
+    const built = buildSeasonCandidates(records as never, "pk-s27", dicts) as { teams: unknown[]; teamTier: unknown[] };
+    const roster = rosterOfTeams(teams);
+    const website = recommendRoster({ seasonTeams: built.teams, seasonTier: built.teamTier, ...roster, mode: "meta", keepExistingTeams: true, tacticsDict: dicts.tacticsDict, maxTeams: 5 } as never) as { portfolioTeams: Array<{ tier: string; source?: string }> };
+    const output = await handleRecommendTeams(ctx, { ...body, sourceSeasonId: "pk-s27", maxTeams: 5 });
+    expect(output.mode).toBe("meta");
+    expect(output.warnings).not.toContain("portfolio-search-capped");
+    const season = output.portfolioTeams.filter((entry) => entry.source === "season");
+    expect(top(season.map((entry) => entry.tier))).toBe(4);
+    expect(season.map((entry) => entry.teamId).sort()).toEqual(["s27-han-xunyu-rou-gong", "s27-huchen-gong", "s27-kongzhi-qiang", "s27-lp-huangma-qiang-ay"]);
+    expect(top(website.portfolioTeams.filter((entry) => entry.source !== "legacy").map((entry) => entry.tier))).toBeLessThan(4);
   });
 
   it("stays bounded for a full box without silently dropping slots of returned teams", async () => {

@@ -83,6 +83,8 @@ export function buildSeasonCandidates(records, seasonId, { heroesDict, tacticsDi
       source: "season",
       seasonId,
       tier,
+      // Điểm nguyên bản của nguồn (khóa phụ của mục tiêu meta khi tìm danh sách); null khi nguồn không ghi.
+      score: Number.isFinite(record.value) ? record.value : null,
       unitType: unitTypesRaw.map((raw) => UNIT_LABELS[raw]).filter(Boolean),
       unitTypesRaw,
       heroes,
@@ -166,6 +168,8 @@ const heroSetKey = (team) => (team.heroes || [])
  * @param {number} [input.poolLimit=60]  số đội (đã qua kiểm kho) mà DFS fullBox duyệt; đội ngoài giới hạn vẫn được bước tham lam xét
  * @param {boolean} [input.fullBox]
  * @param {"meta"|"redStars"} [input.mode]
+ * @param {boolean} [input.metaSearch]  mode meta: tìm danh sách theo khóa (số T0+T0.5, số T0, số đội, điểm nguồn, hột)
+ *   thay vì tham lam; MCP bật, website chưa bật
  * @param {Array} input.ownedHeroes  `string | {name, canonicalId?, redStars?}`
  * @param {Array} input.ownedTactics  `string | {name, canonicalId?}`
  * @param {object[]} [input.lockedTeams]

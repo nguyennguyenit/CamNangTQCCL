@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-18 (MCP: Gợi ý đội mode meta tìm danh sách thay vì tham lam)
+
+- Changed: `tqccl_recommend_teams` mode `meta` tìm danh sách bằng DFS cắt nhánh theo khóa thứ tự (số đội T0+T0.5, số T0, số đội, tổng điểm nguồn, tổng hột) thay vì lấy đội đầu bảng trước. Ca PK-S27 của issue: 4 đội T0/T0.5 (Hoàng Mã Thương bản cùng tồn A Diễm, SP Tuân Úc Cung chống chịu, Hổ Thần Cung, Khống Chế Thương) thay vì đội T0 Ôn Hầu Cung chặn các bộ Hoàng Mã. Trần 250000 nút giữ nguyên; chạm trần trả danh sách tốt nhất đã thấy kèm cảnh báo `portfolio-search-capped` (engine: `diagnostics.searchCapped`). Đo trên dữ liệu thật: roster 61 tướng tối đa ~70 ms, cả kho với `maxTeams` 10 tối đa ~0,45 s (145k nút).
+- Engine dùng chung: tuỳ chọn mới `metaSearch` (mặc định tắt) của `recommendTeams`; đội mùa mang `score` (điểm nguồn). Trang Gợi ý kho chưa bật nên hành vi web không đổi.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).

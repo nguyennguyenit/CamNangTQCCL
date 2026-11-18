@@ -19,11 +19,18 @@ const DEFAULT_DIAGNOSTICS = () => ({
   tacticConflicts: [],
   heroConflicts: [],
   searchedCandidates: 0,
+  searchCapped: false,
   prunedCandidates: [],
 });
 
 /** Số đội tối đa DFS toàn kho (fullBox) duyệt; phần còn lại vẫn được xét bởi bước tham lam dự phòng. */
 export const DEFAULT_POOL_LIMIT = 60;
+
+/** Trần số nút DFS của `searchPortfolio`; chạm trần thì trả danh sách tốt nhất đã thấy (`diagnostics.searchCapped`). */
+export const SEARCH_NODE_LIMIT = 250000;
+
+/** Bậc "đỉnh" của mục tiêu meta: số đội T0 + T0.5 là khóa đầu tiên. */
+const TOP_TIERS = new Set(["T0", "T0.5"]);
 
 const unitKey = (value) => normalizeText(String(value ?? "")).replace(/\s*binh$/u, "");
 
@@ -540,11 +547,27 @@ function searchPortfolio(
   seasonContext,
   mode,
   poolLimit = DEFAULT_POOL_LIMIT,
+  metaObjective = false,
+  nodeLimit = SEARCH_NODE_LIMIT,
 ) {
   // Dự phòng: kết quả khả thi trên TOÀN danh sách đã qua kiểm kho, kể cả khi DFS chỉ duyệt `poolLimit` đội đầu.
   let best = greedy(candidates, seed, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered);
   let searched = 0;
+  let capped = false;
   const limited = candidates.slice(0, poolLimit);
+  // Cận trên cho mục tiêu meta, tính từ vị trí `index` trở đi: số đội T0/T0.5, số đội T0, điểm nguồn lớn nhất,
+  // hột lớn nhất của một đội còn lại.
+  const topFrom = new Array(limited.length + 1).fill(0);
+  const t0From = new Array(limited.length + 1).fill(0);
+  const scoreMaxFrom = new Array(limited.length + 1).fill(0);
+  const redMaxFrom = new Array(limited.length + 1).fill(0);
+  for (let index = limited.length - 1; index >= 0; index--) {
+    const candidate = limited[index];
+    topFrom[index] = topFrom[index + 1] + Number(TOP_TIERS.has(candidate.tier));
+    t0From[index] = t0From[index + 1] + Number(candidate.tier === "T0");
+    scoreMaxFrom[index] = Math.max(scoreMaxFrom[index + 1], Number.isFinite(candidate.team?.score) ? candidate.team.score : 0);
+    redMaxFrom[index] = Math.max(redMaxFrom[index + 1], candidate.redCopyScore || 0);
+  }
 
   function compareTuple(left, right) {
     for (let index = 0; index < Math.max(left.length, right.length); index++) {
@@ -560,6 +583,9 @@ function searchPortfolio(
   }
 
   function portfolioIsBetter(portfolio, currentBest) {
+    // Meta: chỉ nhận danh sách hơn hẳn theo khóa; hòa thì giữ danh sách tìm thấy trước (ưu tiên đội xếp trên,
+    // đầu tiên là kết quả tham lam), nên kết quả xác định.
+    if (metaObjective) return compareMetaKeys(metaKey(portfolio), metaKey(currentBest)) > 0;
     if (portfolio.length !== currentBest.length) {
       return portfolio.length > currentBest.length;
     }
@@ -584,16 +610,35 @@ function searchPortfolio(
     return false;
   }
 
+  /** Cắt nhánh meta: cận trên khóa của mọi cách đi tiếp không hơn được nghiệm tốt nhất (hòa cũng cắt, xem trên). */
+  function metaBoundNotAboveBest(index, portfolio) {
+    const [top, t0, teams, score, red] = metaKey(portfolio);
+    const slots = Math.min(Math.max(0, maxTeams - portfolio.length), limited.length - index);
+    const bound = [
+      top + Math.min(slots, topFrom[index]),
+      t0 + Math.min(slots, t0From[index]),
+      teams + slots,
+      score + slots * scoreMaxFrom[index],
+      red + slots * redMaxFrom[index],
+    ];
+    return compareMetaKeys(bound, metaKey(best)) <= 0;
+  }
+
   function visit(index, portfolio, usedHeroes, usedTactics) {
+    if (capped) return;
     searched++;
-    if (searched > 250000) return;
+    if (searched > nodeLimit) {
+      capped = true;
+      return;
+    }
     if (portfolio.length >= maxTeams || index >= limited.length) {
       if (portfolioIsBetter(portfolio, best)) {
         best = portfolio;
       }
       return;
     }
-    if (portfolio.length + limited.length - index < best.length) return;
+    if (portfolio.length + limited.length - index < best.length && !metaObjective) return;
+    if (metaObjective && metaBoundNotAboveBest(index, portfolio)) return;
 
     const alreadySelected = limited[index].seasonContext && portfolio.some((entry) => entry.team.id === limited[index].team.id);
     const built = alreadySelected ? { entry: null } : buildCandidate(
@@ -624,7 +669,36 @@ function searchPortfolio(
     new Set(seed.usedHeroes),
     new Set(seed.usedTactics),
   );
-  return { portfolio: best.slice(0, maxTeams), searched };
+  return { portfolio: best.slice(0, maxTeams), searched, capped };
+}
+
+/**
+ * Khóa mục tiêu meta của một danh sách đội, so theo thứ tự (lớn hơn là tốt hơn): số đội T0 + T0.5, số đội T0,
+ * số đội, tổng điểm nguồn (`team.score`, chỉ đội chưa thay món), tổng hột đỏ. Đội đã khóa không có bậc nên chỉ
+ * tính vào số đội.
+ */
+function metaKey(portfolio) {
+  let top = 0;
+  let t0 = 0;
+  let score = 0;
+  let red = 0;
+  for (const entry of portfolio) {
+    if (entry.locked) continue;
+    if (TOP_TIERS.has(entry.tier)) top++;
+    if (entry.tier === "T0") t0++;
+    const modified = entry.variantUnrated === true || (entry.usedAlternatives || []).length > 0;
+    if (!modified && Number.isFinite(entry.team?.score)) score += entry.team.score;
+    // rankingTuple[2] = -redCopyScore (xem normalizeTeamCandidate/makeEntry).
+    red -= entry.rankingTuple?.[2] ?? 0;
+  }
+  return [top, t0, portfolio.length, score, red];
+}
+
+function compareMetaKeys(left, right) {
+  for (let index = 0; index < Math.min(left.length, right.length); index++) {
+    if (left[index] !== right[index]) return left[index] > right[index] ? 1 : -1;
+  }
+  return 0;
 }
 
 // Đường `seasonContext` (candidateKey/compareSeasonIds) chưa có nơi gọi production: giữ cho chấm điểm theo luật mùa (`rulesetScoringReady`) về sau.
@@ -645,8 +719,13 @@ export function recommendTeams({
   tacticRules = null,
   tacticIdOf = null,
   minTacticsPerHero = 0,
+  metaSearch = false,
+  searchNodeLimit = SEARCH_NODE_LIMIT,
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
+  // `metaSearch` (mode meta): luôn tìm danh sách bằng DFS cắt nhánh theo khóa meta (xem `metaKey`) thay vì tham lam
+  // theo đội đầu bảng. Website chưa bật; MCP bật cho mode meta.
+  const metaObjective = metaSearch === true && mode === "meta";
   if (seasonContext) {
     const validId = (value) => typeof value === "string" && value.length > 0 && [...value].length <= 128 && value.trim() === value && !/[\p{C}]/u.test(value);
     if (!validId(seasonContext.scenarioId) || !validId(seasonContext.rulesetId) || Object.keys(seasonContext).some((key) => !["scenarioId", "rulesetId"].includes(key))) throw new TypeError("Invalid seasonal context");
@@ -784,7 +863,7 @@ export function recommendTeams({
   eligible.sort((a, b) => compareCandidates(a, b, mode));
 
   let portfolio;
-  if (fullBox) {
+  if (fullBox || metaObjective) {
     const searched = searchPortfolio(
       eligible,
       seed,
@@ -795,9 +874,12 @@ export function recommendTeams({
       seasonContext,
       mode,
       poolLimit,
+      metaObjective,
+      searchNodeLimit,
     );
     portfolio = searched.portfolio;
     diagnostics.searchedCandidates = searched.searched;
+    diagnostics.searchCapped = searched.capped;
   } else {
     portfolio = greedy(
       eligible,
