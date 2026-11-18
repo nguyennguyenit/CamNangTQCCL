@@ -125,6 +125,8 @@ node scripts/report-zh-gaps.mjs                     # sinh lại docs/zh-gaps.md
 
 Local test chỉ xác nhận syntax, coverage của mọi shell/trang mục/trang chi tiết/raw asset (gồm `fonts/`) đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
 
+Header trên `*.pages.dev` chưa chứng minh được header trên custom domain. Zone `tqccl.com` có Browser Cache TTL riêng: để mặc định (4 giờ) thì Cloudflare đè `max-age=0` của JS/CSS/font/ảnh (các đuôi file Cloudflare cache mặc định) thành `max-age=14400`, còn HTML và JSON vẫn `max-age=0`. Hậu quả sau mỗi deploy: trình duyệt đã vào site trong 4 giờ trước đó nhận HTML mới nhưng chạy module JS cũ. Sự cố 18/11/2026: `/ja/…` render lại toàn bộ nội dung bằng tiếng Việt vì `js/i18n.js` cũ chưa có `ja`, header vẫn tiếng Nhật. Zone phải đặt Browser Cache TTL là **Respect Existing Headers**, và sau mỗi lần promote phải kiểm header thật trên `tqccl.com` (bước 10 ở mục dưới).
+
 Trước deploy:
 
 - có ủy quyền release riêng; review diff source/artifact/docs;
@@ -147,6 +149,11 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
 8. Production origin là `https://tqccl.com`; dữ liệu localStorage của người dùng trên hai host cũ được cầu chuyển domain mang sang (không đè khóa đã có trên tqccl.com). Preview `*.tqccl.pages.dev` có storage origin riêng và không bị cầu chuyển đụng tới.
 9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
+10. Sau promotion, kiểm `Cache-Control` trên chính domain production cho JS, CSS, một JSON và một trang HTML. Mỗi dòng phải in `max-age=0`; thấy `max-age=14400` (hay số khác 0) nghĩa là Browser Cache TTL của zone đang đè `_headers` (xem đoạn về custom domain ở trên), sửa trên dashboard rồi kiểm lại:
+
+   ```bash
+   for asset in /js/i18n.js /js/app.js /css/styles.css /data/facets.json /ja/doi-chuan/; do printf '%s ' "$asset"; curl -sI "https://tqccl.com$asset" | grep -i '^cache-control'; done
+   ```
 
 ## Chuyển domain chính sang tqccl.com
 
@@ -156,6 +163,7 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 
 - **Turnstile widget hostnames phải gồm `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`.** Thiếu hostname nào thì widget trên host đó không cấp token, hoặc siteverify trả hostname mà Worker không nhận.
 - Custom domain `tqccl.com` và `www.tqccl.com` của Pages project ở trạng thái Active (SSL đã cấp).
+- **Zone `tqccl.com` → Caching → Configuration → Browser Cache TTL = Respect Existing Headers.** Giá trị mặc định 4 giờ đè `max-age=0` của `_headers` cho JS/CSS/font/ảnh, làm trình duyệt chạy JS cũ trên HTML mới sau mỗi deploy.
 
 Thứ tự release:
 
