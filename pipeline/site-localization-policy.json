@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "ae77980621d1232a8e5be4bbc4005ec25aaf3f5c790c41b862b7ed81074a16ae",
-      "concreteLocationCount": 75267,
+      "concreteInventorySha256": "807e302d843ab4828e1157a84338b3153414053e01d98bcef46b84c45bcab089",
+      "concreteLocationCount": 75294,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261118-doi-khac-ky-luoc",
+  "policyVersion": "site-vi-261118-may-tinh-cong-trinh",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -516,7 +516,8 @@
         "src/pages/tra-cuu/[group]/[slug].astro",
         "src/components/pages/LookupItemPage.astro",
         "src/lib/lookup-item-pages.ts",
-        "js/lookup-master.js"
+        "js/lookup-master.js",
+        "js/building-upgrade-calculator.js"
       ],
       "id": "lookup",
       "label": "Tra cứu",
@@ -766,7 +767,8 @@
     "data/teams.json": "1fe35c58bfc99eec9c9d28bd34d85ec8926a693364d53fd277846803cabfe338",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
     "js/analyze.js": "874ab6fa9048d969c272419d5c37fb9fe7f2f016a5f3e84d04d1ecb3bb47e708",
-    "js/app.js": "2487c4ca4df2c3a4db641b1009fde04f897cb094dc0577a8e02b52f999a68172",
+    "js/app.js": "649f928489350f74301160581117ce00ca45f2ef94041fc9c3cd5af90ffa69d3",
+    "js/building-upgrade-calculator.js": "1f08eaccd75e8eb053d30f644b3efe3647eeedc1a8bc9349ee09f2915931d3b5",
     "js/detail-actions.js": "835391dcfd203b0c21bcf9eaca3cbdc7a87162c5736ed9c771d41ea7c4cf6259",
     "js/hero-portrait.js": "36d7c01ef8e6a969732696acdb5f5bc027901104ff6b0bfb403335cf035d57ff",
     "js/hero-summaries.js": "6853ba62d68d4185d11044edca7a6c53b9c6a16aaf6228cd4f86f2b3d66bab9a",
@@ -805,7 +807,7 @@
     "src/components/landing/Landing.astro": "63772883637328c0fc190dda1ad024879d23324ea868e15620474bb94fbc9126",
     "src/components/pages/KhaiHoangDetail.astro": "8ff06a854a4e607435321dd897ce98f2a3ca9af7ce0c33cd6239f865956ab722",
     "src/components/pages/LegacyDetail.astro": "eba9358edbd99dae6b25411693db210765bd3f58f8497da2274682af6345eb6c",
-    "src/components/pages/LookupGroupPage.astro": "99de8cb8a369c7eab3211acb57a7a2101102cbb1d3215733d81028c436e8eaa8",
+    "src/components/pages/LookupGroupPage.astro": "d4469ad154659447191aeae21e4dd1618f409d3e51c64f0ae325b29f49600d2c",
     "src/components/pages/LookupHubPage.astro": "12f6d909450984d2a9b1f9115c168c11fbb93ab782e12979351d152634e4a32a",
     "src/components/pages/LookupItemPage.astro": "d91a7ccf60356c27f198e6fc469a0aa1d858c662e6b7798aa634188337c43f8c",
     "src/components/pages/RecommendedDetail.astro": "7bd2fda7ade68cf457d29a122ac0e61d400017b6839cd98f237b6f5ed5f6586d",

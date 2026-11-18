@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-18 (Tra cứu Công trình: máy tính nâng cấp nhiều công trình, #60)
+
+- Added: khối gập "Tính tài nguyên nâng cấp" trên danh sách `/tra-cuu/cong-trinh/` (và `/zh/`), không có route mới. Mỗi dòng chọn công trình, cấp hiện tại, cấp đích; thêm/bỏ dòng; tổng gỗ/đá/sắt và thời gian (ngày/giờ/phút/giây). Cấp thiếu `costs` hoặc thời gian ghi "Thiếu dữ liệu cấp N" (Quân Xá cấp 1–2) và không cộng vào tổng. Các dòng nằm trên query `?nang=<công trình>.<cấp hiện tại>.<cấp đích>` (replaceState, giữ `?id=`).
+- Hàm thuần `js/building-upgrade-totals.js` (khoảng 0 → cấp tối đa bằng đúng `buildingTotals` cho cả 41 công trình), giao diện `js/building-upgrade-calculator.js`; test node + e2e (query, zh, mobile 390px).
+- 27 obligation `authored-vi` `ui:building-calc/*`, duyệt độc lập (`plans/reports/review-261118-1843-may-tinh-cong-trinh-ban-dich.md`). Re-pin hash nguồn (`js/app.js`, `js/building-upgrade-calculator.js` mới, `LookupGroupPage.astro`), baseline inventory 75294 location (= 75267 + 27), policy `site-vi-261118-may-tinh-cong-trinh`, publish generation Đội chuẩn `9e28aa11…` (prune `95de17f0…`), rebind giữ nguyên mọi handle (1681/443/18, 46 tombstone). Receipt dịch không đổi (6409/6409).
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
