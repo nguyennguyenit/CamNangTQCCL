@@ -6,6 +6,7 @@ import { z } from "zod";
 import { canonicalHeroId, heroFamilyId } from "../../../js/hero-identity.js";
 import { buildSeasonCandidates, recommendRoster } from "../../../js/roster-season-candidates.js";
 import { canonicalTacticId } from "../../../js/team-recommend-engine.js";
+import { createTacticNameResolver } from "../../src/data/entity-identity.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { publicSnapshotView } from "../../src/data/public-snapshot-view.js";
 import { buildSnapshotIndex } from "../../src/data/snapshot-index.js";
@@ -49,7 +50,8 @@ async function confirmed(ctx: ToolContext, roster: Roster) {
       ...roster.ownedTactics.map((name, index) => ({
         observationId: `t${index}`,
         entityKind: "tactic" as const,
-        canonicalId: canonicalTacticId(name),
+        // Id catalog như client MCP nhận (tên đã đổi không còn slug ra id); tên ngoài catalog giữ slug.
+        canonicalId: createTacticNameResolver(ctx.snapshot.artifacts.tactics)(name) ?? canonicalTacticId(name),
         displayName: name,
         evidence,
       })),
@@ -300,9 +302,16 @@ describe("tqccl_recommend_teams output", () => {
     expect(top(website.portfolioTeams.filter((entry) => entry.source !== "legacy").map((entry) => entry.tier))).toBeLessThan(4);
   });
 
-  it("warns when the box builds more teams than the search pool (full PK-S27 box, 10 teams)", async () => {
+  it("full PK-S27 box, 10 teams: every T0/T0.5 team is searched, 8 T0/T0.5 teams, capped search is reported", async () => {
     const body = await confirmed(ctx, rosterOfTeams(seasonTeams("pk-s27")));
     const output = await handleRecommendTeams(ctx, { ...body, sourceSeasonId: "pk-s27", maxTeams: 10 });
+    const season = output.portfolioTeams.filter((entry) => entry.source === "season");
+    // Duyệt hết (~1,14 triệu nút) cho cùng kết quả: 8 đội T0/T0.5, 3 T0, tổng điểm nguồn 862; trần 250000 nút dừng sớm.
+    expect(season.filter((entry) => entry.tier === "T0" || entry.tier === "T0.5")).toHaveLength(8);
+    expect(season.filter((entry) => entry.tier === "T0")).toHaveLength(3);
+    expect(season.reduce((sum, entry) => sum + (entry.sourceScore ?? 0), 0)).toBe(862);
+    expect(output.warnings).toContain("portfolio-search-capped");
+    // Đội bậc thấp hơn vượt pool 60 vẫn bị cắt (đội T0/T0.5 thì không).
     expect(output.warnings).toContain("portfolio-search-pool-truncated");
     // Roster nhỏ của ca issue không vượt pool nên không có cảnh báo này.
     const small = await confirmed(ctx, rosterOfTeams(seasonTeams("pk-s27", ["s27-huchen-gong"])));

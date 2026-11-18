@@ -98,13 +98,15 @@ test("chạm trần nút thì trả danh sách tốt nhất đã thấy và báo
   assert.deepEqual(ids(partial), ["b-t05", "c-t05", "d-t1"]);
 });
 
-test("kho dựng được nhiều đội hơn poolLimit: báo searchPoolTruncated, đội ngoài pool chỉ được xét tham lam", () => {
+test("pool của metaSearch luôn gồm mọi đội T0/T0.5; đội bậc khác vượt poolLimit thì báo searchPoolTruncated", () => {
   assert.equal(call(blocking, blockingTier, { metaSearch: true }).diagnostics.searchPoolTruncated, false);
+  // poolLimit 2 nhưng có 3 đội T0/T0.5: pool vẫn gồm cả ba, chỉ đội T1 bị cắt rồi được lấp lại sau tìm kiếm.
   const truncated = call(blocking, blockingTier, { metaSearch: true, poolLimit: 2 });
   assert.equal(truncated.diagnostics.searchPoolTruncated, true);
-  // Pool chỉ có a-t0, b-t05: DFS chọn b-t05 (giữ X) nhưng c-t05 ngoài pool không được ghép lại; không kém tham lam.
-  assert.ok(truncated.portfolioTeams.length >= call(blocking, blockingTier).portfolioTeams.length);
-  // Ca thật vượt pool mặc định: 61 đội T1 độc lập.
+  assert.deepEqual(ids(truncated), ["b-t05", "c-t05", "d-t1"]);
+  // 61 đội T0.5 độc lập vượt poolLimit nhưng đều vào pool; 61 đội T1 thì bị cắt.
+  const tops = Array.from({ length: DEFAULT_POOL_LIMIT + 1 }, (_, index) => team(`q-${String(index).padStart(2, "0")}`, [`q${index}-1`, `q${index}-2`, `q${index}-3`]));
+  assert.equal(call(tops, tops.map((entry) => tier(entry.id, "T0.5")), { metaSearch: true }).diagnostics.searchPoolTruncated, false);
   const many = Array.from({ length: DEFAULT_POOL_LIMIT + 1 }, (_, index) => team(`p-${String(index).padStart(2, "0")}`, [`p${index}-1`, `p${index}-2`, `p${index}-3`]));
   assert.equal(call(many, many.map((entry) => tier(entry.id, "T1")), { metaSearch: true }).diagnostics.searchPoolTruncated, true);
 });

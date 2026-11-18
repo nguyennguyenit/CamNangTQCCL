@@ -26,7 +26,8 @@ const DEFAULT_DIAGNOSTICS = () => ({
 
 /**
  * Số đội tối đa (đã qua kiểm kho, theo thứ tự xếp hạng) mà DFS duyệt; phần còn lại chỉ được bước tham lam dự phòng
- * xét, nên kết quả không chắc tối ưu khi kho dựng được nhiều đội hơn (`diagnostics.searchPoolTruncated`).
+ * xét, nên kết quả không chắc tối ưu khi kho dựng được nhiều đội hơn (`diagnostics.searchPoolTruncated`). Với
+ * `metaSearch`, pool không bao giờ cắt đội T0/T0.5: giới hạn này chỉ áp cho các đội bậc thấp hơn.
  */
 export const DEFAULT_POOL_LIMIT = 60;
 
@@ -560,7 +561,10 @@ function searchPortfolio(
   let bestKey = metaObjective ? metaKey(best) : null;
   let searched = 0;
   let capped = false;
-  const limited = candidates.slice(0, poolLimit);
+  // Meta: pool luôn gồm MỌI đội T0/T0.5 đủ kho (danh sách đã xếp theo bậc nên chúng đứng đầu), rồi đội khác tới
+  // `poolLimit` nếu còn chỗ; trần nút vẫn giữ thời gian chạy. Đường cũ (fullBox) chỉ duyệt `poolLimit` đội đầu.
+  const topCount = metaObjective ? candidates.filter((candidate) => TOP_TIERS.has(candidate.tier)).length : 0;
+  const limited = candidates.slice(0, Math.max(poolLimit, topCount));
   // Cận trên cho mục tiêu meta, tính từ vị trí `index` trở đi: số đội T0/T0.5, số đội T0, điểm nguồn lớn nhất,
   // hột lớn nhất của một đội còn lại.
   const topFrom = new Array(limited.length + 1).fill(0);
@@ -677,7 +681,15 @@ function searchPortfolio(
     new Set(seed.usedHeroes),
     new Set(seed.usedTactics),
   );
-  return { portfolio: best.slice(0, maxTeams), searched, capped, poolTruncated: candidates.length > limited.length };
+  // Đội ngoài pool chưa được DFS xét: lấp chỗ còn trống theo thứ tự xếp hạng (chỉ thêm đội, khóa không giảm).
+  const outside = candidates.slice(limited.length);
+  if (metaObjective && outside.length && best.length < maxTeams) {
+    const usedHeroes = new Set(seed.usedHeroes);
+    const usedTactics = new Set(seed.usedTactics);
+    for (const entry of best.slice(seed.portfolio.length)) addEntry(entry, usedHeroes, usedTactics);
+    best = greedy(outside, { portfolio: best, usedHeroes, usedTactics }, ownedHeroes, ownedTactics, maxTeams, experimentalUntiered);
+  }
+  return { portfolio: best.slice(0, maxTeams), searched, capped, poolTruncated: outside.length > 0 };
 }
 
 /**
