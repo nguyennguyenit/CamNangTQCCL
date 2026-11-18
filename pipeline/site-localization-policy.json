@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "2afd3ac824bcc3301d8668c65d1fc9b60d6af02893e09a4d2ce96caaf32f5bdf",
-      "concreteLocationCount": 68205,
+      "concreteInventorySha256": "ae77980621d1232a8e5be4bbc4005ec25aaf3f5c790c41b862b7ed81074a16ae",
+      "concreteLocationCount": 75267,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -23,7 +23,7 @@
     },
     "recommended": {
       "generationId": "c1a78d1bf52a64f0d889e73f636efe6338f01ac1f705b0250360ed14acefc74e",
-      "otherTeams": 40,
+      "otherTeams": 387,
       "records": 1681
     },
     "sourcePins": {
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261118-ky-luoc",
+  "policyVersion": "site-vi-261118-doi-khac-ky-luoc",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -763,7 +763,7 @@
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
     "data/khaihoang.json": "70b9f49c4e13dcbc71517fc805b3ed777baac2847a5e2c62d21208cd68746687",
     "data/season-content-links.json": "d9a3d4f9f4150724b4a87cd69942f89df74865fda9801a930f299bd8b8177bf2",
-    "data/teams.json": "bd6b4925ad4d20620951d304358d39313031db0d9859e81ec9049c5370e1ed2f",
+    "data/teams.json": "1fe35c58bfc99eec9c9d28bd34d85ec8926a693364d53fd277846803cabfe338",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
     "js/analyze.js": "874ab6fa9048d969c272419d5c37fb9fe7f2f016a5f3e84d04d1ecb3bb47e708",
     "js/app.js": "2487c4ca4df2c3a4db641b1009fde04f897cb094dc0577a8e02b52f999a68172",
@@ -780,11 +780,11 @@
     "js/lookup-profile.js": "5b52775ab277347d89be2eceb2427cbffdbcde7a3976c7e4103018c15ef06564",
     "js/lookup-tactic-profile.js": "c4c933b2eee7905b54ed7149d80da847adc313e135ed51b180663501bdaa3ce7",
     "js/lookup-tactic-view.js": "e79e519d95b216ada53ac884414d51e8ba6d0adb29944edba5ed542a3d8b20ab",
-    "js/recommended-reference-render.js": "7140f681ffd1a9d20473a7bd09f92e2ef8a5bcfb0a6e8189ace3bf23cdb258e4",
-    "js/recommended-reference-state.js": "12b65318f56d0a5e770684016fd5ab0948bede7b55b5fc57c3d6e199a0f90895",
+    "js/recommended-reference-render.js": "aaa82edcfcae9372fc5756c46f9fc9c654c65b13f1934edc56407f797b18ebcb",
+    "js/recommended-reference-state.js": "ba2060bdcd1ae4ee1f370f2973f545a432d5ef3b59dffc539d973b15c4d58119",
     "js/recruit-tracker-store.js": "4bb2d985549e382c23e77586282db86daa466e4f7b1d6c0c3edf8dfbcf566668",
     "js/recruit-tracker.js": "0fe5de0ed556931e05535c65c36fa40a506515806324ab1d8d2d951975ccb67f",
-    "js/render.js": "d1e2498f8dddc0fe0b058776f79fb86068d52a921527c5dbb06c967ac7de3c45",
+    "js/render.js": "d929e2f888c42ba6ef8a0c417e50aff89279186740b0dd7d4ec81c54fc3a2bdb",
     "js/roster-picker.js": "93f68a58639433c5609787c04a32658decb693b3bbd72f3be8b0a1013dce1ceb",
     "js/roster-recommend-ui.js": "ce02ee31ae796991a7bd80dbbfccd62a55aa2def8783aa25313b412dfab5c6fa",
     "js/roster-scan-map.js": "b503cab367887d5f0d97acaaf493649b1919b55ec127b85690b37709278e4619",
@@ -792,15 +792,15 @@
     "js/site-chrome.js": "067886ae9ea13e635cf3fbca1d0de2a149eef80d79bf758aa1839b3fbf695c88",
     "js/site-nav.js": "4fe3f040f599dbd15b4eb2d734d7ce82281c887a399a4f7691769f4705c358aa",
     "js/tactic-summaries.js": "19c2baa46f3e3db9c82b544c64f514cb62891eea01b47819afff654fbc281e76",
-    "js/team-detail-navigation.js": "883f8c06545cfbda7cb19186e1ec66563f97826f1d4b6a52ca5c144997e9b770",
-    "js/team-detail.js": "9cb8bd6ff244e149213855e173c2e54d41fc7049d44c3779c9d85491e79b9889",
-    "js/team-filter-section.js": "f27e39c27368a8af964c3e9f3c7e816cf8fa4a80e988600bfc2ad70fb2dadc54",
+    "js/team-detail-navigation.js": "7748e7e94bfa4a6fbc3cdba1242985f2df0032eadfc6047decf2df7ddd5be7bf",
+    "js/team-detail.js": "24319189af6867f2704a19e342e3edf005998a8f3afedded5b70b8ee59ff5b91",
+    "js/team-filter-section.js": "72dbae009dd9616be2a94d84ab2f6270061c0383913a768e57780d8d95b081ab",
     "js/turnstile.js": "df16e104800e4b50ef22d306309d8287423fb2bae19947dd89ce508e8825e23f",
     "js/unified-lookup.js": "5c19db1484d8879630dc312d599b5ad49da4525b458f3f81d2ad463ed57b01b4",
-    "js/website-display.js": "63990c85064dc0c707e865b924d2c9d951ab4e002f8fbdc947fdb512f93fc05c",
+    "js/website-display.js": "f9a04ae368137e8020ed56a66ee06b7a275287e83bfee41d77e3ea082e67b0e4",
     "pipeline/lookup-identity.json": "cff3228ddcfd4be39fa7c0ad3746d18a6495fa11fc6d8e4480795181f82f38b1",
     "pipeline/recommended-display-map.json": "531982ffbbb09f0b3de6cefce1ac35d881d618b90ea043702ce0c9318db44eb9",
-    "pipeline/recommended-identity-map.json": "2791a3b5e70eb0fd8d23fb6b2d74ecaafd98ce59d3833a30d67bddf7117b45c8",
+    "pipeline/recommended-identity-map.json": "b7554bb819531c33c26b5e193985258225d84d15dfd621327543242c4c2df3e7",
     "pipeline/sgsdeck-name-map.json": "0d178ea02ec9a58bbb35382fe6d0c4d93ab8f1952658b60fe61c87b787eb15cc",
     "src/components/landing/Landing.astro": "63772883637328c0fc190dda1ad024879d23324ea868e15620474bb94fbc9126",
     "src/components/pages/KhaiHoangDetail.astro": "8ff06a854a4e607435321dd897ce98f2a3ca9af7ce0c33cd6239f865956ab722",

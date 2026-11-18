@@ -49,7 +49,7 @@ class TestParseTeamIntro(unittest.TestCase):
 
     def test_real_counts(self):
         counts = {
-            "Team giới thiệu(mới).html": ("team-intro", 50),
+            "Team giới thiệu(mới).html": ("team-intro", 60),
             "Team Đô Úy.html": ("do-uy", 12),
             "Meta mỗi phe (cũ).html": ("moi-phe", 110),
         }

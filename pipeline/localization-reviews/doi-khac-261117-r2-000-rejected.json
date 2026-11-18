@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r2-000-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r2-000",
+ "items": [
+  {
+   "entityId": "recommended:s-7a1e33bfc0ac6fff929a64590c51e861b7118dfbe2150febbccc4f2105a9da15/s28-kh-zuo-tai-ke",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2c21effa7c2fdc2e8e24198ed3ef894738993a39abd30578667b8df59265c250",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "77e2b149fd060756fe2074355e608ef3359f59828da9cce4069f67f2f1e8fe2a",
+   "verdict": "rejected",
+   "errors": [
+    "四五級地 (đất cấp 4–5) rendered as bare 'Cấp 4, 5', dropping 地: in a note where 'cấp N' otherwise means player level (cấp 20…), the VI reads as player level 4/5 instead of land level 4/5 — referent changed."
+   ],
+   "notes": "Đội khai hoang gồm Gia Cát Khác, Thái Sử Từ, Tả Từ, mục “Đội hình ưu tiên→Kỳ Lân Cung” trong bảng cùng tồn Cửu Châu Binh Khởi của Đại Bạch Tam Chiến không nạp tiền. Giải thích bảng gốc: “Đất cấp 4, 5 ưu tiên chọn Trương Lương Thương, Phan Chương Thương, Chu Hằng Thương, bắt buộc mang Thịnh Khí Linh Địch. Khi mở đất cấp 4 gặp khiên cũng có thể chuyển sang Thái Sử Từ kỵ làm chủ trận pháp mang Phong Thi Trận➕Hổ Báo Kỵ.” Kèm bảng độ khó quân thủ đất cấp 4–8, “Khi cấp độ chưa lên, chọn ô đánh dấu xanh để mở là được”."
+  }
+ ]
+}

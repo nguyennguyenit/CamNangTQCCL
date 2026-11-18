@@ -395,6 +395,21 @@ def validate_generation_inputs(inputs):
             raise ValueError("Public Team khác legacy content identity differs")
         if row.get("legacyContentSha256") != canonical_object_hash(row["legacyContent"]):
             raise ValueError("Public Team khác legacy content fingerprint differs")
+    validate_other_team_flags(admitted)
+
+
+def validate_other_team_flags(admitted):
+    """Đội đề cử (``recommended``) là boolean và đứng đầu; ``sourceSeasonIds`` null hoặc danh sách mã mùa."""
+    for row in admitted:
+        if not isinstance(row.get("recommended", False), bool):
+            raise ValueError("Public Team khác recommended flag must be boolean")
+        seasons = row.get("sourceSeasonIds")
+        if seasons is not None and (not isinstance(seasons, list) or not seasons
+                                    or any(not isinstance(item, str) or not item for item in seasons)):
+            raise ValueError("Public Team khác sourceSeasonIds must be null or a non-empty list")
+    flags = [bool(row.get("recommended")) for row in admitted]
+    if flags != sorted(flags, reverse=True):
+        raise ValueError("Public Team khác recommended rows must come first")
 
 
 # Trường chỉ phục vụ đối chiếu nội bộ (URL trang nguồn): kiểm ở validate_generation_inputs rồi bỏ khỏi bản phát công khai.

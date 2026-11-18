@@ -1,0 +1,211 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-008-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-008",
+ "items": [
+  {
+   "entityId": "building-level:da-thiet-dai:10",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "2fd47a71c7ad98a8f7318139531bb96edf5d42fc9120be4d56dd1664e9f7ccd8",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "ac348cfd74b965f81f33201c069e2e6a0f313c6e0ec99f9903ad860729132421",
+   "verdict": "rejected",
+   "errors": [
+    "冶鐵官 rendered \"Quan luyện sắt\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Sắt\""
+   ],
+   "notes": "Sản lượng quặng sắt +1500/giờ, Quan Sắt"
+  },
+  {
+   "entityId": "building-level:dan-cu:10",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "226e9deb73f1a37993fc872f3c0e7913cab637f54109a456ff14346b42dac8ed",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "c5c4fe8fff163c567ccffb2523dd90dedf21f031123e18b49ef6fe829341b505",
+   "verdict": "rejected",
+   "errors": [
+    "稅務官 rendered \"Quan thuế vụ\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Thuế\""
+   ],
+   "notes": "Sản lượng tiền đồng +1000/giờ, Quan Thuế"
+  },
+  {
+   "entityId": "building-level:dan-cu:20",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "5a539b640ef3ad5a3da6aa373c57905643be1e3013d3a838f6224f22d984edac",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "79b483fb458eaae3bb56e8db2a8c94fa9e8e3999a4b027a93459de280f025403",
+   "verdict": "rejected",
+   "errors": [
+    "君王殿 rendered \"Điện Quân Vương\"; lookup-catalog building name is \"Quân Vương Điện\" (used in items 443/762)"
+   ],
+   "notes": "Sản lượng tiền đồng +2500/giờ, mỗi lần thu thuế nhận tiền đồng +2000; mở khóa: Quân Vương Điện cấp 4"
+  },
+  {
+   "entityId": "building-level:dien-vo-truong:1",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "ccd73595f6e4851e3326420d66af2c608e345f956faa88f22ace6cabffbe1012",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "1dc537ef2ff1b48a19e413bec81c79830b1a5eef86d8426ea7d0c5439a757dae",
+   "verdict": "rejected",
+   "errors": [
+    "練兵使 rendered \"Sứ giả luyện binh\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Sứ Luyện Binh\""
+   ],
+   "notes": "Kinh nghiệm luyện binh của võ tướng 80000, Sứ Luyện Binh"
+  },
+  {
+   "entityId": "building-level:tam-phong-dai:1",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "23385209aea1b27347c52b2f6be3142d17290666a018a6187757c849cb623654",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "739add9aae4829b77619e5e0c30ea9dba2942ee3767d7fb378cca37ae483dedf",
+   "verdict": "rejected",
+   "errors": [
+    "尋訪使 rendered \"Sứ giả tìm kiếm\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Sứ Thăm Hỏi\" (building 尋訪臺 = Đài thăm hỏi)"
+   ],
+   "notes": "Mỗi ngày có thể thăm hỏi 4 lần, Sứ Thăm Hỏi"
+  },
+  {
+   "entityId": "building-level:tap-thi:1",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "db39f895bbbf5c5e6db1429203ac6261130fe8c0be0cf6d9b4e13a2d67ffa25c",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "4823fab300eddcc92b799fa3c5e3cc16f7a052665a7e5916cb859d4c7bde197e",
+   "verdict": "rejected",
+   "errors": [
+    "貿易官 rendered \"Quan Thương Mại\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan giao dịch\""
+   ],
+   "notes": "Tỷ lệ thương mại 40%, Quan giao dịch"
+  },
+  {
+   "entityId": "building-level:thai-thach-xu:10",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "cd120ba54e4a29bb4fc6f7b0e50050a40c2455c5a5a6a0d290808f63926a608f",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "fd628ff8b7141a58c5481d7adb88957c81949bc65d97b9a6f99e664d5bbb37cc",
+   "verdict": "rejected",
+   "errors": [
+    "採石官 rendered \"Quan khai thác đá\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Đá\""
+   ],
+   "notes": "Sản lượng đá +1500/giờ, Quan Đá"
+  },
+  {
+   "entityId": "building-level:thang-kho:1",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "33def58c5266db036b29a27c462da5e6739bcb3e1ebd2f9dfe0a888f81e810f8",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "4d6638ac40f58703baf7ed7b8786a0bf925917ce221ad8970f76c523348fe1ce",
+   "verdict": "rejected",
+   "errors": [
+    "君王殿 rendered \"Điện Quân Vương\"; lookup-catalog building name is \"Quân Vương Điện\""
+   ],
+   "notes": "Giới hạn tài nguyên +20000; mở khóa: Quân Vương Điện cấp 1"
+  },
+  {
+   "entityId": "building-level:tuan-ma-truong:1",
+   "fieldPath": "effectVi",
+   "inputFingerprint": "408823fc3eeaad19917c198c80f61fa84652956b5332bb15bfe2824faebd4b67",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "41595d85a22a51d32f41ea25dc76fe7562b97244b6df083cf9468a1fd2b64b4e",
+   "verdict": "rejected",
+   "errors": [
+    "馴馬官 rendered \"Quan huấn luyện ngựa\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Luyện Ngựa\""
+   ],
+   "notes": "Mở khóa luyện ngựa sơ cấp, Quan Luyện Ngựa"
+  },
+  {
+   "entityId": "building:cong-trinh-dinh",
+   "fieldPath": "summaryVi",
+   "inputFingerprint": "dd64730403268c2cad4e2c748fe588049095f121475e4f2bca40975aeb892d5e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "cc6e8ba9eefa040d71f6a735a38ab520323608dba92350ff5428bd940aac6c20",
+   "verdict": "rejected",
+   "errors": [
+    "軍機營/工事營 rendered \"Quân Cơ Dinh/Công Sự Dinh\"; official client building names are \"Lều cơ mật\" (building:quan-co-dinh) and \"Doanh trại công sự\" (building:cong-su-dinh)"
+   ],
+   "notes": "Tăng giới hạn cấp xây dựng của công trình chiến lược (Lều cơ mật/Doanh trại công sự)"
+  },
+  {
+   "entityId": "building:da-thiet-dai",
+   "fieldPath": "summaryVi",
+   "inputFingerprint": "cb9095e9645da66c81a8df3ea824722411bbb14488d49914044a7e0927dcb3c5",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "2a7b8de3665b04084ff403e1b41984b7fa2badf504b84e82a78cba86fb4935ca",
+   "verdict": "rejected",
+   "errors": [
+    "冶鐵官 rendered \"Quan luyện sắt\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Sắt\""
+   ],
+   "notes": "Sản xuất quặng sắt; Lv10 mở khóa Quan Sắt, Lv20 đồn điền quặng sắt +50%"
+  },
+  {
+   "entityId": "building:dan-cu",
+   "fieldPath": "summaryVi",
+   "inputFingerprint": "c5b36646092258f98dcf45a31d13fba4423e4d6fee766a6c764e2da86077a56e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "016a4fdad24f5f7e7bebaf255b00d8bcc0217a66036f6ea5882a9f6c6177ddb0",
+   "verdict": "rejected",
+   "errors": [
+    "稅務官 rendered \"Quan thuế vụ\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Thuế\""
+   ],
+   "notes": "Sản xuất tiền đồng; Lv10 mở khóa Quan Thuế, Lv20 thu nhập thuế +2000"
+  },
+  {
+   "entityId": "building:thai-thach-xu",
+   "fieldPath": "summaryVi",
+   "inputFingerprint": "328a568a9a5a4836b4a52c4d7479e9ca5db68e19e3dec68be5bef33541c25c50",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "3788625d94e70bde7e4061e0cde02de0fdeed01a2e7cfdbee999fca202cdf7f4",
+   "verdict": "rejected",
+   "errors": [
+    "採石官 rendered \"Quan khai thác đá\"; official VN client name (pipeline/lookup-client-tactics.json, internal-affairs tactic effects) is \"Quan Đá\""
+   ],
+   "notes": "Sản xuất đá; Lv10 mở khóa Quan Đá, Lv20 sản lượng đá đồn điền +50%"
+  },
+  {
+   "entityId": "equipment-special:chu-toan",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "14b2892aeb0009628a47c2e2d1d47c0614eeadb522c84aa7fa46d3c30cc957e4",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "4ebe9d97a29eb5dd5922f9c7272ce64434d6940e94db3a95ba2bf748324529f9",
+   "verdict": "rejected",
+   "errors": [
+    "紫金狻猊甲 rendered \"Tử Kim Toan Nghê Giáp\"; official VN client equipment name (pipeline/lookup-client-tactics.json equipment / lookup-catalog nameVi) is \"Giáp Toan Nghê Tử Kim\""
+   ],
+   "notes": "Dành riêng cho Giáp Toan Nghê Tử Kim; khi binh lực bản thân lần đầu thấp hơn 70%, bản thân nhận hiệu ứng hút máu binh khí 9% (khi gây sát thương binh khí, hồi phục cho bản thân một lượng binh lực nhất định dựa trên lượng sát thương), kéo dài 2 lượt"
+  },
+  {
+   "entityId": "equipment-special:chuoc-liet",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "10c5e52547a390f2fc65f7bc1da7fedb057b32378947bf7d0c4621975b7c1c71",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "3a97571ea86de9b3cf421451c3bf1e7ed605a4eeff95a80ac719a849def15c85",
+   "verdict": "rejected",
+   "errors": [
+    "玄鐵連環甲 rendered \"Huyền Thiết Liên Hoàn Giáp\"; official VN client equipment name (pipeline/lookup-client-tactics.json equipment / lookup-catalog nameVi) is \"Giáp Liên Hoàn sắt đen\""
+   ],
+   "notes": "Độc quyền của Giáp Liên Hoàn sắt đen; ở lượt đầu chiến đấu, bản thân nhận hiệu quả phản kích (tỷ lệ sát thương 125%), hiệu quả này có hiệu lực tối đa 2 lần"
+  },
+  {
+   "entityId": "equipment-special:cung-than",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "227d728883a93968c6c34920e04c942718dda5d03145356caa83f4ce4e542e9b",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "b6c06e98c6acac3c9b52ce54683af701e5e72b67732bd1621df46b90f33d05ec",
+   "verdict": "rejected",
+   "errors": [
+    "養由基弓 rendered \"Dưỡng Do Cơ Cung\"; official VN client equipment name (pipeline/lookup-client-tactics.json equipment / lookup-catalog nameVi) is \"Cung Dưỡng Do Cơ\""
+   ],
+   "notes": "Dành riêng cho Cung Dưỡng Do Cơ; khi Hoàng Trung trang bị, trong 2 lượt đầu của trận chiến, bản thân nhận trạng thái tất trúng (bỏ qua trạng thái né tránh và kháng cự để đánh trúng mục tiêu)"
+  },
+  {
+   "entityId": "equipment-special:dam-luoc",
+   "fieldPath": "descriptionVi",
+   "inputFingerprint": "7c2a7de98290db2e8704bb277e61bff97c2081758adf1f1a2fc402432da1f755",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "802bcf64de2ff4eb820bf78893128c6e7158b3de23b1e2da53877140612a446f",
+   "verdict": "rejected",
+   "errors": [
+    "青釭劍 rendered \"Thanh Công Kiếm\"; official VN client equipment name (pipeline/lookup-client-tactics.json equipment / lookup-catalog nameVi) is \"Kiếm Thanh Cang\""
+   ],
+   "notes": "Dành riêng cho Kiếm Thanh Cang; khi Triệu Vân trang bị, tăng 5% xác suất hội tâm của bản thân (khi kích hoạt, sát thương binh khí tăng 100%)"
+  }
+ ]
+}

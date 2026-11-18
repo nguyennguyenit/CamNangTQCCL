@@ -51,9 +51,9 @@ export function sourceName(value, locale = currentLocale()) {
 
 /** Nhãn tiếng Trung của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
 const LEGACY_LABEL_ZH = {
-  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hỗn hợp':'混合'},
-  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾'},
-  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）'},
+  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hán':'汉','Hỗn hợp':'混合'},
+  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾','Khí giới':'器械'},
+  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）','youtube':'YouTube'},
 };
 
 /** Bản zh: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
@@ -113,16 +113,27 @@ export function readRecommendedQuery(href, registry = {}) {
 
 /**
  * Trạng thái đưa vào danh sách Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): query của URL cộng
- * kiểu hiển thị (URL > `storage` > Thẻ). Đội khác chưa chọn mùa tường minh thì xem mọi mùa. Hàm thuần: trình
+ * kiểu hiển thị (URL > `storage` > Thẻ). Đội khác chỉ có một mùa (mùa mặc định của registry, hiện nhãn tĩnh) nên
+ * mọi `?season=` bị bỏ qua: danh sách luôn đủ đội, không lọc mùa, không thông báo mùa lạ. Hàm thuần: trình
  * duyệt gọi với URL thật, bản dựng sẵn gọi với URL trang trống và `storage` rỗng — cùng một đường chọn mặc định.
  */
 export function referenceSectionState(family, href, registry, storage = null) {
+  if (family === 'other') {
+    const url = new URL(href);
+    url.searchParams.delete('season');
+    const state = readRecommendedQuery(url.href, registry);
+    // Lọc/sắp theo kho chỉ thuộc Đội chuẩn: Đội khác không có độ phủ kho.
+    return {...state, season: 'all', view: resolveTeamView(state.view, storage), rosterFilter: null, rosterSort: null};
+  }
   const state = readRecommendedQuery(href, registry);
-  const resolved = {...state, view: resolveTeamView(state.view, storage)};
-  // Lọc/sắp theo kho chỉ thuộc Đội chuẩn: Đội khác không có độ phủ kho.
-  if (family === 'other') return {...resolved, rosterFilter: null, rosterSort: null, ...(new URL(href).searchParams.has('season') ? {} : {season: 'all'})};
-  return resolved;
+  return {...state, view: resolveTeamView(state.view, storage)};
 }
+
+/**
+ * Hàng Đội khác được đề cử (`recommended: true` do pipeline ghi, hiện cho nguồn YouTube). Chỉ hàng đội gốc
+ * (không có `sourceConfigId`) mới tính; field vắng nghĩa là không đề cử.
+ */
+export const isRecommendedOtherRow = row => row?.recommended === true && !row.sourceConfigId;
 
 /** Facet lặp: giữ nguyên giá trị nguồn, bỏ trùng, không diễn giải. */
 function readFacet(url,key) {
@@ -207,6 +218,10 @@ export const SOURCE_TIER_ORDER = ['T0','T0.5','T1','T1.5','T2','T3','FUNC','功�
 export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队') : value;
 
 function fixedRank(a,b) {
+  // Đội khác: hàng đề cử đứng trước. Trong mỗi nhóm, hàng Đội khác không có `tierOrder`/`value`/`listIndex` nên thứ tự
+  // rơi xuống tie-break cuối theo `legacyVariantId` (hash), KHÔNG phải thứ tự trong `other-teams.json` (xem #129).
+  const recommended = Number(isRecommendedOtherRow(b)) - Number(isRecommendedOtherRow(a));
+  if (recommended) return recommended;
   const tier = (a.tierOrder ?? 999) - (b.tierOrder ?? 999);
   if (tier) return tier;
   if (a.value == null && b.value != null) return 1;

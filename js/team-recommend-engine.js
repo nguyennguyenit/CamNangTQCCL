@@ -112,9 +112,19 @@ function bestTier(rankings) {
   )[0]?.tier || "";
 }
 
-function tacticSlots(team, heroSlots, idOf) {
+/** Tên của ô chiến pháp nguồn không ghi (chưa đọc được): ký hiệu trung lập, hiện được ở cả bản vi và zh. */
+export const UNREAD_TACTIC_NAME = "?";
+
+/**
+ * Ô chiến pháp của đội. `minTacticsPerHero` (đội gốc `data/teams.json`: 2) bù ô nguồn bỏ trống thành ô `unresolved`
+ * tên `UNREAD_TACTIC_NAME`: đội thiếu chiến pháp vì nguồn chưa đọc được không được coi là "không cần chiến pháp".
+ */
+function tacticSlots(team, heroSlots, idOf, minTacticsPerHero = 0) {
   return (team.heroes || []).flatMap((hero, heroIndex) =>
-    (hero.tactics || []).map((slot, slotIndex) => ({
+    [
+      ...(hero.tactics || []),
+      ...Array.from({ length: Math.max(0, minTacticsPerHero - (hero.tactics || []).length) }, () => ({ name: UNREAD_TACTIC_NAME, unresolved: true })),
+    ].map((slot, slotIndex) => ({
       holderSlotId: heroSlots[heroIndex].slotId,
       slotIndex,
       primary: slot.name,
@@ -147,6 +157,7 @@ export function normalizeTeamCandidate(
   redByHero = new Map(),
   seasonContext = null,
   tacticIdOf = null,
+  minTacticsPerHero = 0,
 ) {
   const key = seasonContext ? team.candidateKey : team.id;
   const rankings = tierByTeam.get(key) || [];
@@ -163,7 +174,7 @@ export function normalizeTeamCandidate(
     tierRankings: [...rankings],
     heroSlots,
     requiredHeroes: heroSlots.map((slot) => slot.alternatives[0].displayName),
-    tacticSlots: tacticSlots(team, heroSlots, tacticIdOf),
+    tacticSlots: tacticSlots(team, heroSlots, tacticIdOf, minTacticsPerHero),
     redCopyScore,
     rankingTuple: [TIER_RANK.get(tier) ?? Number.MAX_SAFE_INTEGER, -redCopyScore, String(key || "")],
   };
@@ -633,6 +644,7 @@ export function recommendTeams({
   poolLimit = DEFAULT_POOL_LIMIT,
   tacticRules = null,
   tacticIdOf = null,
+  minTacticsPerHero = 0,
 } = {}) {
   const diagnostics = DEFAULT_DIAGNOSTICS();
   if (seasonContext) {
@@ -693,7 +705,7 @@ export function recommendTeams({
   }
 
   const candidates = candidatePool(
-    teams.map((team) => ({ ...normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext, tacticIdOf), tacticRules })),
+    teams.map((team) => ({ ...normalizeTeamCandidate(team, tierByTeam, redByHero, seasonContext, tacticIdOf, minTacticsPerHero), tacticRules })),
     { mode, experimentalUntiered },
   );
 
