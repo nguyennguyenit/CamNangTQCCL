@@ -162,21 +162,23 @@ function detailLists(body) {
   const comments = Array.isArray(body.comments) ? body.comments : [];
   const reports = Array.isArray(body.reports) ? body.reports : [];
   const audit = Array.isArray(body.audit) ? body.audit : [];
-  const latest = (n) => L(`${n} mục mới nhất`, `最新 ${n} 条`);
+  // Giới hạn của từng danh sách do API trả (`limits`); worker cũ chưa trả thì hiện nhãn không có số.
+  const limits = body.limits && typeof body.limits === 'object' ? body.limits : {};
+  const latest = (n) => (Number.isInteger(n) && n > 0 ? L(`${n} mục mới nhất`, `最新 ${n} 条`) : L('Mục mới nhất', '最新条目'));
   return el('div', { class: 'adm-user-columns' }, [
-    section(L('Bình luận gần đây', '最近评论'), latest(10), comments, (comment) => el('li', { class: 'adm-user-card' }, [
+    section(L('Bình luận gần đây', '最近评论'), latest(limits.comments), comments, (comment) => el('li', { class: 'adm-user-card' }, [
       el('p', { class: 'adm-user-card-meta' }, [timeNode(comment.createdAt), pagePath(comment.page, comment.lang)]),
       el('p', { class: 'adm-body', lang: comment.lang === 'zh' ? 'zh-Hans' : 'vi' }, String(comment.body || '')),
     ]), L('Chưa có bình luận.', '暂无评论。')),
     el('div', { class: 'adm-user-aside' }, [
-      section(L('Chiến báo gần đây', '最近战报'), latest(10), reports, (report) => el('li', { class: 'adm-user-card' }, [
+      section(L('Chiến báo gần đây', '最近战报'), latest(limits.reports), reports, (report) => el('li', { class: 'adm-user-card' }, [
         el('p', { class: 'adm-user-card-meta' }, [
           timeNode(report.createdAt),
           pagePath(report.page, report.lang),
           el('span', { class: 'cm-badge', dataset: { status: report.status } }, SCAN_STATUS_LABEL[report.status] || String(report.status || '')),
         ]),
       ]), L('Chưa có chiến báo.', '暂无战报。')),
-      section(L('Nhật ký về người này', '涉及此用户的日志'), latest(20), audit, auditBrief, L('Chưa có thao tác nào.', '暂无操作记录。')),
+      section(L('Nhật ký về người này', '涉及此用户的日志'), latest(limits.audit), audit, auditBrief, L('Chưa có thao tác nào.', '暂无操作记录。')),
     ]),
   ]);
 }

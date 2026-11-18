@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-18 (Dọn khu Quản trị: CSS chết, giới hạn chi tiết người dùng, token avatar)
+
+- Removed: CSS không còn ai dùng `.adm-filters-top`, `.adm-team-field` và token chữ `--type-admin-card-name`, `--type-admin-rank` (`tokens.json` + `css/styles.css`).
+- Changed: `GET /api/admin/users/:id` trả `limits: {comments, reports, audit}`; khu Quản trị hiện "N mục mới nhất" theo đúng giới hạn đó thay vì chép tay 10/20 (worker cũ chưa trả thì hiện "Mục mới nhất").
+- Added: token màu avatar chữ đầu `--tint-avatar` / `--tint-avatar-ink` (sáng `#EAD9C0`/`#6B4A1E` theo artboard; tối tự suy `#4A3820`/`#EAD9C0`, 8,09:1), nối vào `.cm-avatar` và `.adm-initials` thay cho `panel-2`/`ink-2` tạm; ngưỡng tương phản 4,5:1 khai ở `meta.contrast` cho cả hai theme.
+
 ## 2026-11-18 (Đội khác: nhãn zh của facet, khớp tên chiến pháp theo `viet` trước `hanViet`)
 
 - Fixed: `/zh/doi-khac/` còn chip "Khí giới" và "Hán": bảng nhãn zh của giá trị đội gốc (`LEGACY_LABEL_ZH` trong `js/recommended-reference-state.js`) thêm 器械 và 汉; nguồn `youtube` hiện "YouTube" ở cả hai bản (trước là mã thô).
