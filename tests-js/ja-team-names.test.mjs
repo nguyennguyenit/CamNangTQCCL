@@ -43,6 +43,21 @@ test("bộ tra tên Nhật: chữ Hán nguồn về tên Nhật theo mã, tiền
   assert.equal(resolve.nameOf("hero:zzz"), null);
 });
 
+test("bộ tra tên Nhật: tên Việt hiện hành thắng tên Hán-Việt trùng chữ của mục khác", () => {
+  // "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là `hanViet` cũ của 暗渡陳倉 (đứng trước trong danh mục).
+  const resolve = createJaNameResolver(
+    [
+      [{ id: "tactic:x", chinese: "暗渡陳倉", viet: "Ám Độ Trần Thương", hanViet: "Lập Lờ Đánh Tráo" }],
+      [{ id: "tactic:y", chinese: "移花接木", viet: "Lập Lờ Đánh Tráo", hanViet: "Di Hoa Tiếp Mộc" }],
+    ],
+    { entries: {} },
+    VARIANTS,
+  );
+  assert.equal(resolve("Lập Lờ Đánh Tráo"), "移花接木");
+  assert.equal(resolve("Ám Độ Trần Thương"), "暗渡陳倉");
+  assert.equal(resolve("Di Hoa Tiếp Mộc"), "移花接木");
+});
+
 test("bộ tra theo locale: build đăng ký zh và ja riêng, sourceName chọn đúng bộ của bản đang dựng", () => {
   setZhNameResolver(createRawNameResolver(...DICTS), "zh");
   setZhNameResolver(createJaNameResolver(DICTS, JA, VARIANTS), "ja");

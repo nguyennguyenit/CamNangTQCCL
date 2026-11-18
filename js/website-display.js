@@ -229,6 +229,7 @@ export function createJaNameResolver(dicts, jaDocument, variants) {
   const viIndex = new Map();
   const rawIndex = new Map();
   const names = new Map();
+  const indexed = [];
   for (const dict of dicts) {
     for (const entry of Array.isArray(dict) ? dict : []) {
       const chinese = blank(entry?.chinese) ? null : entry.chinese.trim();
@@ -236,10 +237,15 @@ export function createJaNameResolver(dicts, jaDocument, variants) {
       const name = id && Object.hasOwn(entries, id) ? entries[id].name : chinese ? shinjitai(chinese) : null;
       if (!name) continue;
       if (!names.has(id)) names.set(id, name);
-      for (const key of [entry.viet, entry.hanViet]) {
-        if (!blank(key) && !viIndex.has(nameKey(key))) viIndex.set(nameKey(key), id);
-      }
+      indexed.push([entry, id]);
       for (const key of [chinese, shinjitai(chinese)]) if (!rawIndex.has(key)) rawIndex.set(key, id);
+    }
+  }
+  // `viet` của mọi mục thắng `hanViet` trùng chữ của mục khác, cùng thứ tự với `createRawNameResolver`.
+  for (const field of ["viet", "hanViet"]) {
+    for (const [entry, id] of indexed) {
+      const key = entry[field];
+      if (!blank(key) && !viIndex.has(nameKey(key))) viIndex.set(nameKey(key), id);
     }
   }
   const viId = name => viIndex.get(nameKey(name)) ?? viIndex.get(nameKey(name.replace(/\s*\([^()]*\)\s*$/u, ""))) ?? null;
