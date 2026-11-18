@@ -1,6 +1,6 @@
 {
   "booksSha256": "128cdfc1f2ef8b677b1c8f266e95975a32a31d5357755a1171971201f33cda72",
-  "generationId": "lookup:2d9aeca6e53a460031fd3abe916790524323bd55773ea428c5d6cf72a349dd12",
+  "generationId": "lookup:48af6eb3bb4b8d717d8d64e5b092602645982cf6177709142787de1f2d2fba77",
   "handles": {
     "advisors": {
       "advisor:an-nhan-doat-quyen": "an-nhan-doat-quyen",
@@ -721,6 +721,7 @@
       "tactic:ham-tran-doanh": "ham-tran-doanh",
       "tactic:ham-tran-dot-tap": "ham-tran-dot-tap",
       "tactic:han-thien-si-dia": "han-thien-si-dia",
+      "tactic:hanh-ach-tran": "hanh-ach-tran",
       "tactic:hao-hung-so": "hao-hung-so",
       "tactic:hau-phat-che-nhan": "hau-phat-che-nhan",
       "tactic:hiep-the-long-quyen": "hiep-the-long-quyen",
@@ -1047,7 +1048,7 @@
       "troop-mod:vo-duong-phi-quan": "vo-duong-phi-quan"
     }
   },
-  "handlesSha256": "83c4de24a7067bf127f5b0ee2e3fa7f5b77e7dd4af2bb4a4d642b0db575bbf95",
+  "handlesSha256": "543b6a765b559e87e7086b804db3a869e0c275e6a8452681a3b160a035944f67",
   "note": "Slug URL gán một lần cho mỗi id, tên đổi không đổi slug. Id binh thư ghi cố định trong pipeline/books-han-viet-map.json (viết tay, không suy từ tên Việt); id binh thư mới do người thêm viết.",
   "retired": {
     "advisors": {},
