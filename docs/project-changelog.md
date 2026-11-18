@@ -8,6 +8,11 @@
 - Added: bản ja cho chuỗi UI mới của lô (hộp thoại Token API, máy tính công trình, ô dán danh sách tên, nút thêm hết món thiếu, nhãn Thẻ Kỳ Lược), qua review dịch độc lập (`plans/reports/translation-review-261118-2030-ja-release-ui.md`).
 - Fixed: `/ja/cung-ton/` dừng build vì bảng tra Thẻ Kỳ Lược thiếu tên Nhật; bảng nhúng thêm `jaNames` từ lớp lookup-ja.
 
+## 2026-11-18 (MCP: Gợi ý đội mode meta tìm danh sách thay vì tham lam)
+
+- Changed: `tqccl_recommend_teams` mode `meta` tìm danh sách bằng DFS cắt nhánh theo khóa thứ tự (số đội T0+T0.5, số T0, số đội, tổng điểm nguồn, tổng hột) thay vì lấy đội đầu bảng trước. Ca PK-S27 của issue: 4 đội T0/T0.5 (Hoàng Mã Thương bản cùng tồn A Diễm, SP Tuân Úc Cung chống chịu, Hổ Thần Cung, Khống Chế Thương) thay vì đội T0 Ôn Hầu Cung chặn các bộ Hoàng Mã. Pool tìm kiếm luôn gồm mọi đội T0/T0.5 đủ kho, cộng đội bậc khác tới 60; đội bậc khác ngoài pool được lấp chỗ trống sau khi tìm, kèm cảnh báo `portfolio-search-pool-truncated`. Kho đủ cả mùa PK-S27, 10 đội: 8 đội T0/T0.5 (3 T0, điểm nguồn 862; pool 60 cũ chỉ ra 6). Trần 250000 nút giữ nguyên; chạm trần trả danh sách tốt nhất đã thấy kèm cảnh báo `portfolio-search-capped` (ca PK-S27 trên chạm trần nhưng trùng kết quả duyệt hết 1,14 triệu nút). Hai cảnh báo tính cả lượt bù đội cũ. Đo CPU local: roster 61 tướng tối đa ~30 ms; cả kho `maxTeams` 10 tối đa ~0,6 s (PK-S27, chạm trần), PK-S26 ~0,5 s. mcp-worker cần gói Workers trả phí.
+- Engine dùng chung: tuỳ chọn mới `metaSearch` (mặc định tắt) của `recommendTeams`; đội mùa mang `score` (điểm nguồn). Trang Gợi ý kho chưa bật nên hành vi web không đổi.
+
 ## 2026-11-18 (Dọn khu Quản trị: CSS chết, giới hạn chi tiết người dùng, token avatar)
 
 - Removed: CSS không còn ai dùng `.adm-filters-top`, `.adm-team-field` và token chữ `--type-admin-card-name`, `--type-admin-rank` (`tokens.json` + `css/styles.css`).
