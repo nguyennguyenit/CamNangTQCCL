@@ -1,5 +1,9 @@
 # Project Changelog
 
+## 2026-11-18 (MCP: Đội khác giữ nhãn Đề cử)
+
+- Fixed: projection Đội khác của `mcp-worker` (`publication-builder.ts`) bỏ field `recommended` của `other-teams.json`. Mỗi biến thể giờ có `recommended` (boolean, hàng thiếu field là `false`); `tqccl_find_teams` (collection `other`) và `tqccl_get_team` trả `recommended` để khớp nhãn "Đề cử" của website. Sinh lại `workflow-build` MCP.
+
 ## 2026-11-18 (Bản tiếng Nhật `/ja/`, issue #113)
 
 - Added: locale `ja` (`SITE_LOCALES = ['vi', 'zh', 'ja']`): mọi route có bản `/zh/` có bản `/ja/` cùng đường dẫn (2945 trang; build 8836 trang HTML, sitemap 8823 URL), `<html lang="ja">`, `og:locale` `ja_JP`, hreflang vi/zh-Hans/ja/x-default, cụm nút chuyển ngôn ngữ, khối ja trong `404.html`, luật `/ja/*` trong `_headers`, `_redirects`, `robots.txt`, mục ja trong `llms.txt`.
