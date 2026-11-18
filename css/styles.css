@@ -1577,9 +1577,10 @@ a.lookup-more:hover {
   background-color: var(--band-active);
 }
 
-/* Nhóm chuyển ngôn ngữ trên header: bản đang xem giữ nền sáng như lúc rê (vẫn là nút ma, không viền). */
+/* Nhóm chuyển ngôn ngữ trên header chỉ giữ link sang bản khác: ở 1280px header desktop không đủ chỗ cho cả ba nút
+   (font rộng như trên Linux/Windows làm trang cuộn ngang). Đủ mọi bản, kể cả bản đang xem, nằm ở chân menu mobile. */
 .header-actions .lang-switch[aria-current="page"] {
-  background-color: var(--band-active);
+  display: none;
 }
 
 .header-actions .cm-auth-login {
@@ -2596,10 +2597,8 @@ a.lookup-more:hover {
   }
 
   /* Header mobile: ☰, thương hiệu và ba nút ngôn ngữ · sáng/tối · đăng nhập; CTA "Mở cẩm nang" chỉ ở desktop
-     (menu mobile đã có nút "Mở Đội chuẩn" ở chân). Nhóm ngôn ngữ chỉ giữ link sang bản khác cho gọn; đủ mọi bản
-     (kể cả bản đang xem) nằm ở chân menu mobile. */
-  .header-actions .header-cta,
-  .header-actions .lang-switch[aria-current="page"] {
+     (menu mobile đã có nút "Mở Đội chuẩn" ở chân). */
+  .header-actions .header-cta {
     display: none;
   }
 

@@ -83,6 +83,9 @@ test('Landing bản Nhật chỉ có chữ Nhật, lang ja, đủ hreflang và n
   await expect(page.locator('meta[property="og:locale:alternate"]')).toHaveCount(SITE_LOCALES.length - 1);
   // Bản Nhật không tải subset tiếng Việt.
   await expect(page.locator('link[rel="preload"][href*="vietnamese"]')).toHaveCount(0);
+  // Header desktop chỉ hiện link sang bản khác (đủ chỗ ở 1280px); link bản đang xem vẫn có trong DOM.
+  await expect(page.locator('.header-actions [data-lang-current]')).toBeHidden();
+  await expect(page.locator('.header-actions [data-lang-switch]:visible')).toHaveCount(SITE_LOCALES.length - 1);
   await expectJapaneseOnly(page, 'header.site-header');
   await expectJapaneseOnly(page, 'main');
   await expectJapaneseOnly(page, 'footer.site-footer');

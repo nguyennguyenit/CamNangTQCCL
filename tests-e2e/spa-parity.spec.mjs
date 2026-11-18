@@ -1136,7 +1136,8 @@ test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không
   const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
   for (const width of [1280, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/", "/doi-chuan/", detail]) {
+    // Cả bản zh/ja: nhãn nav và nhóm chuyển ngôn ngữ mỗi bản một độ rộng khác nhau.
+    for (const path of ["/", "/doi-chuan/", detail, "/zh/", "/ja/", "/ja/doi-chuan/"]) {
       await page.goto(path);
       await expect(page.locator("#nav-toggle-game")).toBeVisible();
       const buttons = await page.locator(".site-nav [data-dropdown-button]").all();
