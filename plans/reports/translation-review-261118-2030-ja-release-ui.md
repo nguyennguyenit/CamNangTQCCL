@@ -144,3 +144,27 @@ tham số đếm), nên không tính.
    Có nên thống nhất về một chữ không?
 
 Nguồn web: [電撃オンライン — 三國志真戦日記#04](https://dengekionline.com/articles/81266/)
+
+## Bổ sung: 5 bản dịch dữ liệu Tra cứu (ja-translations.json)
+
+Người duyệt độc lập, 18/11/2026. Đối chiếu `pipeline/ja-glossary.json` và các bản dịch có sẵn trong file:
+攜帶者 → `装備者` (đa số, 1 chỗ `携帯者`), 友軍群體 → `友軍群体`, 統御/统御 → `コスト`, 疊加 → `重複`,
+陣營 → `陣営`, 賽季 → `シーズン`. 內政廳, 漢室, 群雄並起, 輔佐漢室 chưa xuất hiện ở `src` nào khác.
+Chữ Hán của ghi chú phe được dịch từ bản Việt ("Sảnh Chính › Hán Thất › Phò Tá Hán Thất" / "… › Quần Hùng Tịnh Khởi").
+
+| khóa | src | ja hiện tại | KL | ja đề xuất | lý do |
+|---|---|---|---|---|---|
+| 059153a86f87 | 我軍武將統御各不相同時，敵軍普通攻擊有70%機率選擇我軍兵力最高的單體；且我軍武將造成傷害後，有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）造成傷害提升2.5%→5%，受到傷害後有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）受到傷害降低2.5%→5%（每種效果皆可疊加，最多4次，持續3回合） | 自軍武将のコストがすべて異なる時、敵軍の通常攻撃は70%の確率で自軍の兵力が最も高い単体を選択する；さらに自軍武将がダメージを与えた後、60%の確率（装備者の最高属性の影響を受ける）で友軍群体（2人）の与ダメージが2.5%→5%上昇し、ダメージを受けた後、60%の確率（装備者の最高属性の影響を受ける）で友軍群体（2人）の被ダメージが2.5%→5%低下する（各効果は重複可、最大4回、3ターン持続） | OK | | Đủ số 70%/60%/2.5%→5%/4/3 và `→`. 統御→コスト, 造成傷害→与ダメージ, 受到傷害→被ダメージ, 回合→ターン, 機率→確率, 疊加→重複, 攜帶者→装備者 đều khớp glossary và bản có sẵn. Dấu `；` giống các mô tả khác trong file. |
+| 0f9fc51142ce | 自2026年11月4日更新起為漢陣營，此前為群雄陣營。每賽季可在內政廳 › 漢室 › 群雄並起轉回群雄陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。 | 2026年11月4日のアップデート以降は漢陣営、それ以前は群雄陣営。シーズンごとに内政庁 › 漢室 › 群雄並起で群雄陣営に戻せる（最大3名の武将；再設定には50K「Châu」の消費と1時間の待機が必要）。 | OK | | Đúng nghĩa, giữ ngày, 3, 50K, 1 giờ, `›` và tên menu 群雄並起 nguyên văn. 陣營→陣営, 賽季→シーズン khớp bản có sẵn. |
+| 329585760a3e | 自2026年11月4日更新起為漢陣營，此前為魏陣營。 | 2026年11月4日のアップデート以降は漢陣営、それ以前は魏陣営。 | OK | | Cùng mẫu câu với 0f9fc51142ce. |
+| ac3044c71d0f | 自2026年11月4日更新起為漢陣營，此前為群雄陣營。 | 2026年11月4日のアップデート以降は漢陣営、それ以前は群雄陣営。 | OK | | Cùng mẫu câu với 0f9fc51142ce. |
+| d5b312ae6946 | 自2026年11月4日更新起，每賽季可在內政廳 › 漢室 › 輔佐漢室轉為漢陣營（最多 3 名武將；重新設定需消耗 50K「Châu」並等待 1 小時）。 | 2026年11月4日のアップデート以降、シーズンごとに内政庁 › 漢室 › 漢室補佐で漢陣営に転換できる（最大3名の武将；再設定には50K「Châu」の消費と1時間の待機が必要）。 | SỬA | 2026年11月4日のアップデート以降、シーズンごとに内政庁 › 漢室 › 輔佐漢室で漢陣営に転換できる（最大3名の武将；再設定には50K「Châu」の消費と1時間の待機が必要）。 | Tên menu bị đảo thành `漢室補佐`, trong khi chuỗi anh em 0f9fc51142ce giữ nguyên `群雄並起`. Chưa có nguồn Nhật xác nhận tên `漢室補佐`, nên giữ đúng chữ của `src` là `輔佐漢室` (cũng khớp thứ tự "Phò Tá Hán Thất"). 輔佐 là chữ dùng được trong tiếng Nhật. Phần còn lại giữ nguyên. |
+
+Kết quả: **OK 4 / SỬA 1**.
+
+Câu hỏi chưa giải quyết:
+
+1. Tên menu chính thức trong bản Nhật của 內政廳 / 輔佐漢室 / 群雄並起 (mùa 漢焔不滅) chưa xác minh được. Trang
+   sangokushi-shinsen.com/season/ không ghi tên các menu này. Khi có ảnh chụp màn hình bản Nhật thì nên chốt và thêm vào
+   `ja-glossary.json` (liên quan #87).
+2. Sau khi sửa d5b312ae6946, cần chạy lại pipeline để `data/lookup-ja.json` (hiện vẫn chứa `漢室補佐`) nhận bản mới.
