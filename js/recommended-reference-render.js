@@ -532,12 +532,58 @@ function teamCardTree(row,href,labels) {
 /** Nguồn Cùng Tồn ghi biến thể 40 năm dạng hậu tố ("Lữ Bố 40th"): đưa về tiền tố `40Y` để dùng chung chip biến thể. */
 const coexistHeroName=name=>String(name ?? '').replace(/^(.+?)\s*40th$/iu,'40Y $1');
 
+/** Id của bảng tra kỳ lược nhúng trong trang Cùng Tồn (`src/components/pages/SectionPage.astro`). */
+export const COEXIST_QILUE_TABLE_ID='coexist-qilue-table';
+let coexistQilueTableValue=null;
+
+/**
+ * Đăng ký bảng tra kỳ lược (`qilueLookupTable`) cho thẻ Cùng Tồn. Build gọi một lần từ lookup-catalog đã pin trước khi
+ * dựng; trình duyệt không gọi mà đọc bảng nhúng `#coexist-qilue-table` (kèm tên Nhật `jaNames`) lần đầu cần (cùng nguồn
+ * với bản dựng sẵn).
+ */
+export function setCoexistQilueTable(table) {
+  coexistQilueTableValue=table;
+}
+
+/**
+ * Bảng tra cho thẻ Cùng Tồn có mã thẻ. Thiếu bảng (build quên đăng ký, trang thiếu payload nhúng) là lỗi dựng: ném lỗi
+ * thay vì lặng lẽ bỏ ô kỳ lược.
+ */
+function coexistQilueTable() {
+  if (!coexistQilueTableValue) {
+    const raw=globalThis.document?.getElementById?.(COEXIST_QILUE_TABLE_ID)?.textContent;
+    if (raw) {
+      const data=JSON.parse(raw);
+      coexistQilueTableValue=qilueLookupTable(data,data.jaNames ?? null);
+    }
+  }
+  if (!coexistQilueTableValue) throw new Error('Coexist qilue table is not registered');
+  return coexistQilueTableValue;
+}
+
+/**
+ * Ô "Thẻ Kỳ Lược" ở chân thẻ Cùng Tồn: thẻ theo thứ tự hiệp của nguồn (thẻ đầu dùng ở hiệp 2), mỗi thẻ là ô của Đội chuẩn
+ * (`qilueCard`: tên client hoặc chữ Hán, nhãn loại, dấu Hiếm, link trang riêng Tra cứu). Nguồn không ghi phương lược nên
+ * không có chip phương lược.
+ */
+function coexistQilueTree(ids) {
+  const table=coexistQilueTable();
+  const cards=ids.map(id=>qilueItem(table,id,'qilue-card:'));
+  return t('div',{class:'detail-qilue coexist-qilue'},[
+    t('p',{class:'detail-qilue-label'},L('Thẻ Kỳ Lược','奇略卡','奇略カード')),
+    t('ol',{class:'coexist-qilue-rounds'},cards.map((card,index)=>t('li',{class:'coexist-qilue-round'},[
+      t('span',{class:'detail-qilue-round-label'},qilueRound(index)),
+      qilueCard(card),
+    ]))),
+  ]);
+}
+
 /**
  * Thẻ một đội Cùng Tồn (cây view): cùng khung và dòng tướng (vai trò · tên · chiến pháp · binh thư) với thẻ Đội chuẩn.
- * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, unitTacticEffects, strategyCards, heroes:[{name,
- * tag, tactics, books, statFocus, equipment, advisorSkill}]}`; chiến pháp chỉ hiển thị, không bấm tìm như Đội chuẩn.
- * Trang bị (dưới dòng cộng điểm) và Thẻ Kỳ Lược (chân thẻ) chỉ có ở bản vi: bản zh nhận chuỗi rỗng nên không dựng,
- * vì vậy nhãn của hai dòng này chỉ viết tiếng Việt. Chuỗi nhiều dòng của nguồn giữ ngắt dòng (CSS `pre-line`).
+ * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, note, unitTacticEffects, strategyCardIds,
+ * strategyCards, heroes:[{name, tag, tactics, books, statFocus, equipment, advisorSkill}]}`; chiến pháp chỉ hiển thị, không
+ * bấm tìm như Đội chuẩn. Ghi chú đội, Trang bị và chữ thô Thẻ Kỳ Lược chỉ có ở bản vi (bản zh, ja nhận chuỗi rỗng nên không
+ * dựng). Thẻ Kỳ Lược có mã (`strategyCardIds`) dựng ô theo hiệp ở mọi bản. Chuỗi nhiều dòng giữ ngắt dòng (`pre-line`).
  */
 export function coexistTeamCard(team,{locale}={}) {
   return withLocale(locale,()=>coexistCardTree(team));
@@ -546,8 +592,10 @@ export function coexistTeamCard(team,{locale}={}) {
 function coexistCardTree(team) {
   const meta=[
     team.level ? t('span',{class:'badge tier reference-tier',title:L('Cấp độ đội','阵容等级','編成レベル')},team.level) : null,
+    team.note ? t('span',{class:'coexist-team-note'},team.note) : null,
     team.unitTacticEffects ? t('span',{class:'coexist-card-upgrade'},L(`Cải tạo: ${team.unitTacticEffects}`,`改造：${team.unitTacticEffects}`,`改造：${team.unitTacticEffects}`)) : null,
   ].filter(Boolean);
+  const strategyCardIds=Array.isArray(team.strategyCardIds) ? team.strategyCardIds : [];
   return t('article',{class:'team-card reference-team-card coexist-team-card',dataset:{factionCode:'none'}},[
     t('header',{class:'reference-card-head'},[
       t('div',{class:'reference-card-title'},[
@@ -574,7 +622,9 @@ function coexistCardTree(team) {
         hero.equipment ? t('p',{class:'line books coexist-hero-equipment'},`Trang bị: ${hero.equipment}`) : null,
       ].filter(Boolean));
     })),
-    team.strategyCards ? t('footer',{class:'reference-card-foot'},t('p',{class:'coexist-card-strategy'},`Thẻ Kỳ Lược: ${team.strategyCards}`)) : null,
+    strategyCardIds.length
+      ? t('footer',{class:'reference-card-foot'},coexistQilueTree(strategyCardIds))
+      : team.strategyCards ? t('footer',{class:'reference-card-foot'},t('p',{class:'coexist-card-strategy'},`Thẻ Kỳ Lược: ${team.strategyCards}`)) : null,
   ].filter(Boolean));
 }
 

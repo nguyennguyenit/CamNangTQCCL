@@ -1266,7 +1266,9 @@ a.lookup-more:hover {
 /* ---------- Select và nhãn caps ---------- */
 .season-slot select,
 .reference-scope-controls select,
-.rt-select {
+.rt-select,
+.building-calc-select,
+.building-calc-input {
   min-height: var(--control-44);
   padding: 0 var(--space-14);
   border: var(--border-hair) solid var(--line);
@@ -7686,6 +7688,167 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   gap: var(--space-24);
 }
 
+/* ---------- Máy tính nâng cấp công trình (trang nhóm Công trình, js/building-upgrade-calculator.js) ----------
+   Khối gập đặt trên danh sách; mỗi dòng là công trình + cấp hiện tại + cấp đích, khối tổng dùng lại ô số liệu
+   `.lookup-stat-tile` của panel chi tiết. Hẹp thì ô chọn công trình chiếm cả hàng, hai ô cấp chia đôi hàng dưới. */
+.building-calc {
+  margin: 0 0 var(--space-24);
+}
+
+.building-calc-box {
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-12);
+  background: var(--panel);
+}
+
+.building-calc-summary {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: var(--control-56);
+  padding: var(--space-12) var(--space-48) var(--space-12) var(--space-16);
+  cursor: pointer;
+  list-style: none;
+}
+
+.building-calc-summary::-webkit-details-marker {
+  display: none;
+}
+
+.building-calc-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.building-calc-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-lead,
+.building-calc-note,
+.building-calc-empty {
+  color: var(--muted);
+  font: var(--type-small);
+}
+
+.building-calc-chevron {
+  position: absolute;
+  top: 50%;
+  right: var(--space-16);
+  display: inline-flex;
+  color: var(--muted);
+  transform: translateY(-50%);
+}
+
+.building-calc-box[open] > .building-calc-summary .building-calc-chevron {
+  transform: translateY(-50%) rotate(180deg);
+}
+
+.building-calc-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-4) var(--space-16) var(--space-16);
+}
+
+.building-calc-empty,
+.building-calc-note,
+.building-calc-missing,
+.building-calc-result-title {
+  margin: 0;
+}
+
+.building-calc-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.building-calc-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding-bottom: var(--space-12);
+  border-bottom: var(--border-hair) solid var(--line-2);
+}
+
+.building-calc-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) var(--size-col-120) var(--size-col-120) auto;
+  align-items: end;
+  gap: var(--space-12);
+}
+
+.building-calc-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.building-calc-select,
+.building-calc-input {
+  width: 100%;
+}
+
+.building-calc-row-result p {
+  margin: 0;
+}
+
+.building-calc-row-totals {
+  font: var(--type-small);
+}
+
+.building-calc-row-result.is-empty,
+.building-calc-missing {
+  color: var(--warn);
+  font: var(--type-small);
+}
+
+.building-calc-actions {
+  display: flex;
+}
+
+.building-calc-add:disabled {
+  opacity: .55;
+  cursor: default;
+}
+
+.building-calc-result {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.building-calc-result-title {
+  font: var(--type-list-title);
+}
+
+.building-calc-totals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-10);
+}
+
+@media (max-width: 680px) {
+  .building-calc-fields {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  }
+
+  .building-calc-field-building {
+    grid-column: 1 / -1;
+  }
+
+  .building-calc-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 /* Màu theo phẩm chất / hệ: thẻ, ô chữ và huy hiệu đọc cùng ba biến này. */
 .lookup-master [data-tone] {
   --tone-bg: var(--panel-2);
@@ -9091,6 +9254,7 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   #section-lookup[data-lookup-detail-open="true"] .lookup-head,
   #section-lookup[data-lookup-detail-open="true"] .lookup-search,
   #section-lookup[data-lookup-detail-open="true"] .lookup-chips,
+  #section-lookup[data-lookup-detail-open="true"] .building-calc,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master > .lookup-filters,
   #section-lookup[data-lookup-detail-open="true"] .lookup-master-list {
     display: none;
@@ -10815,6 +10979,51 @@ body[data-page-section="khaihoang"] .layout {
   white-space: pre-line;
 }
 
+/* Ghi chú phụ của tên đội (dòng trong ngoặc của nguồn, vd. "Kỹ Năng Quân Sư Điêu Thuyền") cạnh nhãn cấp đội. */
+.coexist-team-note {
+  color: var(--ink-2);
+  font: var(--type-small);
+}
+
+/* Thẻ Kỳ Lược ở chân thẻ Cùng Tồn: cùng ô thẻ của Đội chuẩn (`.detail-qilue-card`, tô theo loại thẻ, nhãn loại + Hiếm,
+   link Tra cứu) nhưng xếp dọc từng hiệp vì thẻ đội hẹp; cột nhãn "Hiệp N" thẳng hàng qua subgrid. */
+.coexist-qilue {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-8);
+  min-width: 0;
+  padding: var(--space-12) 0;
+}
+
+.coexist-qilue-rounds {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: var(--space-6) var(--space-10);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coexist-qilue-round {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+}
+
+.coexist-qilue .detail-qilue-card {
+  flex-direction: row;
+  align-items: center;
+  min-height: 0;
+  padding: var(--space-6) var(--space-10);
+}
+
+.coexist-qilue .detail-qilue-card-name {
+  font: var(--type-small);
+  font-weight: var(--weight-semibold);
+}
+
 .coexist-card-strategy {
   flex: 1 1 auto;
   min-width: 0;
@@ -12375,6 +12584,51 @@ body[data-page-section="roster-recommend"] .layout {
   border-color: var(--avoid);
   background: var(--avoid);
   color: var(--on-accent);
+}
+
+/* Hộp thoại Token API (Theo dõi chiêu mộ): token mới hiện một lần + danh sách token đã tạo. */
+.rt-token-secret-row {
+  display: flex;
+  gap: var(--space-8);
+}
+
+.rt-token-secret-row .cm-input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+}
+
+.rt-token-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rt-token-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-12);
+  padding: var(--space-10) var(--space-12);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-8);
+}
+
+.rt-token-item[data-status="revoked"],
+.rt-token-item[data-status="expired"] {
+  color: var(--muted);
+}
+
+.rt-token-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-8);
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 /* ---------- Soi đội (Analyze, AnalyzeReview, AnalyzeResult + bản Mobile) ---------- */
@@ -14328,6 +14582,165 @@ body[data-page-section="roster-recommend"] .layout {
   font: var(--type-small);
 }
 
+/* ---------- Dán danh sách tên (js/roster-pasted-name-list-panel.js): dán → đối chiếu → xác nhận rồi mới ghi kho ---------- */
+.roster-paste {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.roster-paste-toggle {
+  align-self: flex-start;
+}
+
+.roster-paste-panel,
+.roster-paste-review {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-10);
+}
+
+.roster-paste-panel {
+  padding: var(--space-12);
+  border: var(--border-hair) solid var(--line-2);
+  border-radius: var(--radius-10);
+  background: var(--panel-2);
+}
+
+.roster-paste-panel[hidden],
+.roster-paste-review[hidden] {
+  display: none;
+}
+
+.roster-paste-panel .roster-field-label {
+  margin: 0;
+}
+
+.roster-paste-input {
+  width: 100%;
+  min-height: var(--size-col-120);
+  padding: var(--space-10) var(--space-14);
+  resize: vertical;
+}
+
+.roster-paste-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-8);
+}
+
+.roster-paste-status,
+.roster-paste-summary {
+  margin: 0;
+  color: var(--ink-2);
+  font: var(--type-control);
+}
+
+.roster-paste-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.roster-paste-group-title {
+  margin: 0;
+  color: var(--muted);
+  font: var(--type-field-caps);
+  letter-spacing: var(--type-field-caps-spacing);
+  text-transform: uppercase;
+}
+
+.roster-paste-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  gap: var(--space-6);
+  max-height: 18rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.roster-paste-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-4) var(--space-8);
+  min-width: 0;
+  padding: var(--space-8) var(--space-10);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+  background: var(--panel);
+}
+
+.roster-paste-choice {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.roster-paste-choice select {
+  width: 100%;
+  min-width: 0;
+}
+
+.roster-paste-name {
+  min-width: 0;
+  color: var(--ink);
+  font: var(--type-tactic);
+  overflow-wrap: anywhere;
+}
+
+.roster-paste-group[data-group="unrecognized"] .roster-paste-name {
+  color: var(--warn);
+}
+
+.roster-paste-meta {
+  min-width: 0;
+  color: var(--muted);
+  font: var(--type-small);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Tôi có tất cả món thiếu của đội này + Hoàn tác ---------- */
+.roster-add-all-row {
+  display: flex;
+}
+
+.roster-add-all {
+  gap: var(--space-8);
+  padding: 0 var(--space-12);
+}
+
+.roster-undo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-8) var(--space-12);
+  padding: var(--space-10) var(--space-16);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-14);
+  background: var(--panel);
+}
+
+.roster-undo-bar[hidden] {
+  display: none;
+}
+
+.roster-undo-text {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-8);
+  min-width: 0;
+  color: var(--ink);
+  font: var(--type-control);
+}
+
+.roster-undo-text svg {
+  flex: none;
+  color: var(--good);
+}
+
 .roster-locked-list {
   display: flex;
   flex-direction: column;
@@ -15119,6 +15532,20 @@ body[data-page-section="roster-recommend"] .layout {
 
   .roster-picker-bar .ana-btn,
   .roster-picker-bar .roster-ghost {
+    flex: 1 1 auto;
+  }
+
+  .roster-paste-toggle {
+    align-self: stretch;
+  }
+
+  .roster-paste-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .roster-paste-bar .ana-btn,
+  .roster-paste-bar .roster-ghost,
+  .roster-add-all {
     flex: 1 1 auto;
   }
 

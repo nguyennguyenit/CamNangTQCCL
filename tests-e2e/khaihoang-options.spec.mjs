@@ -850,7 +850,7 @@ test("panel hành động của chi tiết Khai hoang và Đội khác không tr
   test.slow();
   const handles = await routeHandles(request);
   const ids = data.teams.map((team) => team.id);
-  expect(ids.length).toBe(18);
+  expect(ids.length).toBe(20);
   const boxes = () => page.evaluate(() => [...document.querySelectorAll(".detail-score-panel a, .detail-score-panel button, .detail-score-panel input")]
     .map((node) => { const rect = node.getBoundingClientRect(); return { text: node.textContent.trim().slice(0, 24) || node.type, left: Math.round(rect.left), right: Math.round(rect.right) }; }));
   /** Hai hộp có giao nhau theo cả hai trục (bàn đo không bắt được tràn sang trái). */

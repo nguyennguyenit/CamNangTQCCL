@@ -1703,6 +1703,13 @@
               "lineEnd": 15,
               "lineStart": 6
             },
+            "strategyCardIds": [
+              "qilue-card:an-tich-mang-thuong",
+              "qilue-card:bai-huyen-tu-nghia",
+              "qilue-card:uoc-phap-tam-chuong",
+              "qilue-card:lanh-hiem-hong-mon",
+              "qilue-card:nhuong-com-se-ao"
+            ],
             "strategyCardsRaw": "Ẩn Tích Mang Thương → Bái Huyện Tụ Nghĩa → Ước Pháp Tam Chương → Lánh Hiểm Hồng Môn → Nhường Cơm Sẻ Áo",
             "teamName": "Đại Hán Cung",
             "teamNameRaw": "Đại Hán Cung\n19C"
@@ -1760,6 +1767,13 @@
               "lineEnd": 25,
               "lineStart": 16
             },
+            "strategyCardIds": [
+              "qilue-card:can-quet-tay-ha",
+              "qilue-card:truy-kich-tu-tran",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:khong-so-lam-nguy",
+              "qilue-card:chi-khi-ngap-tran"
+            ],
             "strategyCardsRaw": "Càn Quét Tây Hà → Truy Kích Tử Trận → Bác Lãng Chuy Tần → Không Sợ Lâm Nguy → Chí Khí Ngập Tràn",
             "teamName": "Tam Thế Lữ Bố 40 Khiên",
             "teamNameRaw": "Tam Thế Lữ Bố 40 Khiên\n19C"
@@ -1817,6 +1831,13 @@
               "lineEnd": 30,
               "lineStart": 26
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Sở Ca Tứ Khởi → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Ngũ Mưu Kỵ",
             "teamNameRaw": "Ngũ Mưu Kỵ\n20C"
@@ -1874,6 +1895,13 @@
               "lineEnd": 41,
               "lineStart": 31
             },
+            "strategyCardIds": [
+              "qilue-card:can-quet-tay-ha",
+              "qilue-card:ky-cong-gian-phong",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:truy-kich-tu-tran"
+            ],
             "strategyCardsRaw": "Càn Quét Tây Hà → Kỳ Công Gián Phong → Bác Lãng Chuy Tần → Phong Lang Cư Tế → Truy Kích Tử Trận",
             "teamName": "Ngô Nữ Cung",
             "teamNameRaw": "Ngô Nữ Cung\n18C"
@@ -1931,6 +1959,13 @@
               "lineEnd": 45,
               "lineStart": 42
             },
+            "strategyCardIds": [
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:don-doc-tham-nhap",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:chi-khi-ngap-tran"
+            ],
             "strategyCardsRaw": "Phong Lang Cư Tế → Bác Lãng Chuy Tần → Đơn Độc Thâm Nhập → Phá Mũi Giáp Địch → Chí Khí Ngập Tràn",
             "teamName": "Quyền Kỵ",
             "teamNameRaw": "Quyền Kỵ\n18C"
@@ -2023,6 +2058,13 @@
               "lineEnd": 63,
               "lineStart": 50
             },
+            "strategyCardIds": [
+              "qilue-card:an-tich-mang-thuong",
+              "qilue-card:bai-huyen-tu-nghia",
+              "qilue-card:uoc-phap-tam-chuong",
+              "qilue-card:lanh-hiem-hong-mon",
+              "qilue-card:nhuong-com-se-ao"
+            ],
             "strategyCardsRaw": "Ẩn Tích Mang Thương → Bái Huyện Tụ Nghĩa → Ước Pháp Tam Chương → Lánh Hiểm Hồng Môn → Nhường Cơm Sẻ Áo",
             "teamName": "Đại Hán Cung",
             "teamNameRaw": "Đại Hán Cung\n19C"
@@ -2080,6 +2122,13 @@
               "lineEnd": 68,
               "lineStart": 64
             },
+            "strategyCardIds": [
+              "qilue-card:can-quet-tay-ha",
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:tram-dich-chieu-hang",
+              "qilue-card:truy-kich-tu-tran"
+            ],
             "strategyCardsRaw": "Càn Quét Tây Hà → Phong Lang Cư Tế → Phá Mũi Giáp Địch → Trảm Địch Chiêu Hàng → Truy Kích Tử Trận",
             "teamName": "Hoàng Mã Thương",
             "teamNameRaw": "Hoàng Mã Thương\n19C"
@@ -2137,6 +2186,13 @@
               "lineEnd": 73,
               "lineStart": 69
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:tri-duyen-quan-the",
+              "qilue-card:cang-nhieu-cang-tot"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Sở Ca Tứ Khởi → Trấn Giữ Quân Diên → Càng Nhiều Càng Tốt",
             "teamName": "Tinh Thái Pháp Quan Khiên",
             "teamNameRaw": "Tinh Thái Pháp Quan Khiên\n19C"
@@ -2194,6 +2250,13 @@
               "lineEnd": 81,
               "lineStart": 74
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Sở Ca Tứ Khởi → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Ngũ Mưu Kỵ",
             "teamNameRaw": "Ngũ Mưu Kỵ\n20C"
@@ -2251,6 +2314,13 @@
               "lineEnd": 87,
               "lineStart": 82
             },
+            "strategyCardIds": [
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:don-doc-tham-nhap",
+              "qilue-card:chi-khi-ngap-tran",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:can-quet-tay-ha"
+            ],
             "strategyCardsRaw": "Phá Mũi Giáp Địch → Đơn Độc Thâm Nhập → Chí Khí Ngập Tràn → Bác Lãng Chuy Tần → Càn Quét Tây Hà",
             "teamName": "Ngô Kỵ",
             "teamNameRaw": "Ngô Kỵ\n19C"
@@ -2343,6 +2413,13 @@
               "lineEnd": 99,
               "lineStart": 92
             },
+            "strategyCardIds": [
+              "qilue-card:can-quet-tay-ha",
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:tram-dich-chieu-hang",
+              "qilue-card:truy-kich-tu-tran"
+            ],
             "strategyCardsRaw": "Càn Quét Tây Hà → Phong Lang Cư Tế → Phá Mũi Giáp Địch → Trảm Địch Chiêu Hàng → Truy Kích Tử Trận",
             "teamName": "Hoàng Mã Thương",
             "teamNameRaw": "Hoàng Mã Thương\n19C"
@@ -2400,6 +2477,13 @@
               "lineEnd": 104,
               "lineStart": 100
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Sở Ca Tứ Khởi → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Ngũ Mưu Kỵ",
             "teamNameRaw": "Ngũ Mưu Kỵ\n20C"
@@ -2457,6 +2541,13 @@
               "lineEnd": 108,
               "lineStart": 105
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:tri-duyen-quan-the",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Trấn Giữ Quân Diên → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Đô Đốc Cung",
             "teamNameRaw": "Đô Đốc Cung\n20C"
@@ -2514,6 +2605,13 @@
               "lineEnd": 115,
               "lineStart": 109
             },
+            "strategyCardIds": [
+              "qilue-card:an-tich-mang-thuong",
+              "qilue-card:nhuong-com-se-ao",
+              "qilue-card:bai-huyen-tu-nghia",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:song-trong-that-bai"
+            ],
             "strategyCardsRaw": "Ẩn Tích Mang Thương → Nhường Cơm Sẻ Áo → Bái Huyện Tụ Nghĩa → Bác Lãng Chuy Tần → Sống Trong Thất Bại",
             "teamName": "Thái Úy Khiên",
             "teamNameRaw": "Thái Úy Khiên\n19C"
@@ -2571,6 +2669,13 @@
               "lineEnd": 119,
               "lineStart": 116
             },
+            "strategyCardIds": [
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:don-doc-tham-nhap",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:chi-khi-ngap-tran"
+            ],
             "strategyCardsRaw": "Phong Lang Cư Tế → Bác Lãng Chuy Tần → Đơn Độc Thâm Nhập → Phá Mũi Giáp Địch → Chí Khí Ngập Tràn",
             "teamName": "Quyền Kỵ",
             "teamNameRaw": "Quyền Kỵ\n18C"
@@ -2663,6 +2768,13 @@
               "lineEnd": 137,
               "lineStart": 123
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Bác Lãng Chuy Tần → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Tiềm Long Lữ Bố Cung 19C (Kỹ Năng Quân Sư Điêu Thuyền)",
             "teamNameRaw": "Tiềm Long Lữ Bố Cung\n19C\n(Kỹ Năng Quân Sư Điêu Thuyền)"
@@ -2720,6 +2832,13 @@
               "lineEnd": 141,
               "lineStart": 138
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Sở Ca Tứ Khởi → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Trình Dục Ngũ Mưu Kỵ",
             "teamNameRaw": "Trình Dục Ngũ Mưu Kỵ\n19C"
@@ -2777,6 +2896,13 @@
               "lineEnd": 149,
               "lineStart": 142
             },
+            "strategyCardIds": [
+              "qilue-card:bai-huyen-tu-nghia",
+              "qilue-card:an-tich-mang-thuong",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:lap-ke-an-tru",
+              "qilue-card:song-trong-that-bai"
+            ],
             "strategyCardsRaw": "Bái Huyện Tụ Nghĩa → Ẩn Tích Mang Thương → Bác Lãng Chuy Tần → Lập Kế An Trữ → Sống Trong Thất Bại",
             "teamName": "Bắc Phạt Khiên",
             "teamNameRaw": "Bắc Phạt Khiên\n18C"
@@ -2834,6 +2960,13 @@
               "lineEnd": 155,
               "lineStart": 150
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:tri-duyen-quan-the",
+              "qilue-card:cang-nhieu-cang-tot",
+              "qilue-card:hop-vay-giap-kich"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Trấn Giữ Quân Diên → Càng Nhiều Càng Tốt → Hợp Vây Giáp Kích",
             "teamName": "Đô Đốc Cung",
             "teamNameRaw": "Đô Đốc Cung\n20C"
@@ -2891,6 +3024,13 @@
               "lineEnd": 159,
               "lineStart": 156
             },
+            "strategyCardIds": [
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:chi-khi-ngap-tran",
+              "qilue-card:can-quet-tay-ha",
+              "qilue-card:bac-lang-chuy-tan"
+            ],
             "strategyCardsRaw": "Phong Lang Cư Tế → Phá Mũi Giáp Địch → Chí Khí Ngập Tràn → Càn Quét Tây Hà → Bác Lãng Chuy Tần",
             "teamName": "Trương Quan Hoàng",
             "teamNameRaw": "Trương Quan Hoàng\n16C"
@@ -2983,6 +3123,13 @@
               "lineEnd": 174,
               "lineStart": 163
             },
+            "strategyCardIds": [
+              "qilue-card:phong-lang-cu-tu",
+              "qilue-card:pha-mui-giap-dich",
+              "qilue-card:lap-ke-an-tru",
+              "qilue-card:chi-khi-ngap-tran",
+              "qilue-card:truy-kich-tu-tran"
+            ],
             "strategyCardsRaw": "Phong Lang Cư Tế → Phá Mũi Giáp Địch → Lập Kế An Trữ → Chí Khí Ngập Tràn → Truy Kích Tử Trận",
             "teamName": "Khảng Khái Cung",
             "teamNameRaw": "Khảng Khái Cung\n19C"
@@ -3040,6 +3187,13 @@
               "lineEnd": 181,
               "lineStart": 175
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:lap-ke-an-tru"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Dàn Trận Tử Chiến → Bác Lãng Chuy Tần → Sở Ca Tứ Khởi → Lập Kế An Trữ",
             "teamName": "Hạch Đạn Trương Phi",
             "teamNameRaw": "Hạch Đạn Trương Phi\n19C"
@@ -3097,6 +3251,13 @@
               "lineEnd": 186,
               "lineStart": 182
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:dan-tran-tu-chien",
+              "qilue-card:am-do-tran-thuong",
+              "qilue-card:lui-buoc-cong-thanh"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Sở Ca Tứ Khởi → Dàn Trận Tử Chiến → Ám Độ Trần Thương → Lui Bước Công Thành",
             "teamName": "Trương Giác Bế Nguyệt Khiên",
             "teamNameRaw": "Trương Giác Bế Nguyệt Khiên\n16C"
@@ -3154,6 +3315,13 @@
               "lineEnd": 192,
               "lineStart": 187
             },
+            "strategyCardIds": [
+              "qilue-card:bo-tri-thap-dien",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:so-ca-tu-khoi",
+              "qilue-card:lui-buoc-cong-thanh",
+              "qilue-card:dan-tran-tu-chien"
+            ],
             "strategyCardsRaw": "Bố Trí Thập Diện → Bác Lãng Chuy Tần → Sở Ca Tứ Khởi → Lui Bước Công Thành → Dàn Trận Tử Chiến",
             "teamName": "Viên Thuật Quần Cung",
             "teamNameRaw": "Viên Thuật Quần Cung\n19C"
@@ -3211,6 +3379,13 @@
               "lineEnd": 196,
               "lineStart": 193
             },
+            "strategyCardIds": [
+              "qilue-card:bai-huyen-tu-nghia",
+              "qilue-card:an-tich-mang-thuong",
+              "qilue-card:bac-lang-chuy-tan",
+              "qilue-card:lap-ke-an-tru",
+              "qilue-card:song-trong-that-bai"
+            ],
             "strategyCardsRaw": "Bái Huyện Tụ Nghĩa → Ẩn Tích Mang Thương → Bác Lãng Chuy Tần → Lập Kế An Trữ → Sống Trong Thất Bại",
             "teamName": "Bắc Phạt Thương",
             "teamNameRaw": "Bắc Phạt Thương\n18C"

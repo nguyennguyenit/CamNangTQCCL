@@ -32,6 +32,7 @@ import { createScanWriter, reconcileScanWithCloud } from "./roster-scan-writer.j
 import { createRosterIdResolver } from "./roster-id-resolve.js";
 import { DEFAULT_KINDS, createRosterSync } from "./roster-sync.js";
 import { addPicked, buildCatalog, createPicker, removePicked } from "./roster-picker.js";
+import { addMissingItems, teamMissingItems, undoAddedItems } from "./roster-team-missing-items-bulk-add.js";
 import { createSaveButton } from "./my-teams-save-button.js";
 
 // `<html lang>` cố định theo trang nên nhãn dịch lúc nạp module vẫn đúng ngôn ngữ.
@@ -918,7 +919,36 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     reviewArea,
     actionBar,
   ]);
-  const resultStage = el("div", { class: "roster-stage", dataset: { stage: "result" }, hidden: "" }, [summary, resultsSlot]);
+  /* ---------- Hoàn tác "Tôi có tất cả món thiếu của đội này": nằm ngoài kết quả vì thẻ đội biến mất sau khi gợi ý lại ---------- */
+  const undoBar = el("div", { class: "roster-undo-bar", role: "status", tabindex: "-1", hidden: "" });
+  function clearUndo() {
+    undoBar.hidden = true;
+    undoBar.replaceChildren();
+  }
+  /** Hộp đang ghi khi tài khoản có nhiều hộp; khách và tài khoản một hộp không cần nêu. */
+  const targetBoxName = () => {
+    if (mode !== "cloud") return "";
+    const list = sync.state() ? boxes(sync.state()) : [];
+    return list.length > 1 ? list.find((box) => box.id === boxId)?.name || "" : "";
+  };
+  function showUndo({ added, label }) {
+    const box = targetBoxName();
+    const undoBtn = el("button", { type: "button", class: "roster-ghost roster-undo", onClick: () => {
+      if (!guardEdit()) return;
+      applyFromResults(undoAddedItems(state, added));
+      undoBar.replaceChildren(el("span", { class: "roster-undo-text" }, L(`Đã gỡ ${added.length} món vừa thêm.`, `已移除刚添加的 ${added.length} 项。`, `追加したばかりの ${added.length} 件を取り消しました。`)));
+      undoBar.hidden = false;
+    } }, L("Hoàn tác", "撤销", "元に戻す"));
+    undoBar.replaceChildren(
+      el("span", { class: "roster-undo-text" }, [checkIcon(), el("span", {}, box
+        ? L(`Đã thêm ${added.length} món của đội ${label} vào hộp “${box}”.`, `已将 ${label} 缺少的 ${added.length} 项加入库存盒“${box}”。`, `${label} に不足していた ${added.length} 件を在庫ボックス「${box}」に追加しました。`)
+        : L(`Đã thêm ${added.length} món của đội ${label} vào kho.`, `已将 ${label} 缺少的 ${added.length} 项加入库存。`, `${label} に不足していた ${added.length} 件を在庫に追加しました。`))]),
+      undoBtn,
+    );
+    undoBar.hidden = false;
+  }
+
+  const resultStage = el("div", { class: "roster-stage", dataset: { stage: "result" }, hidden: "" }, [summary, undoBar, resultsSlot]);
 
   function showStage(next) {
     stage = next;
@@ -963,13 +993,21 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
    * Hành động trong mục Thiếu món sửa kho theo đúng kết quả người dùng đang xem: giữ trạng thái đã xác
    * nhận và gợi ý lại ngay. Nút vừa bấm biến mất theo lượt vẽ mới: focus về đầu mục Thiếu món.
    */
-  async function applyFromResults(next) {
+  async function applyFromResults(next, { undo = null } = {}) {
     if (!guardEdit()) return;
+    clearUndo();
     state = { ...next, confirmed: true, updatedAt: new Date().toISOString() };
     persist(state);
     syncReview();
     refreshRecommend();
-    if (await runRecommend()) resultsSlot.querySelector(".roster-missing-section h2")?.focus();
+    if (!(await runRecommend())) return;
+    if (!undo) {
+      resultsSlot.querySelector(".roster-missing-section h2")?.focus();
+      return;
+    }
+    // Thêm cả đội: báo số món và mời Hoàn tác ngay trên đầu kết quả; focus về thông báo để bàn phím tới được nút.
+    showUndo(undo);
+    undoBar.focus();
   }
 
   const refreshRecommend = () => {
@@ -979,6 +1017,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
 
   const rerender = () => {
     runId++;
+    clearUndo();
     syncReview();
     refreshRecommend();
     if (stage !== "review") showStage("review");
@@ -1253,16 +1292,37 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
       ]);
     }
 
+    /**
+     * "Tôi có tất cả món thiếu của đội này": thêm đúng các món thẻ đang liệt kê, chỉ khi từ 2 món trở lên
+     * (thiếu 1 món đã có nút "Tôi có…" của món đó).
+     */
+    const addAllButton = (entry) => {
+      const items = teamMissingItems(entry);
+      if (items.length < 2) return null;
+      const label = teamLabel(entry.team);
+      return el("div", { class: "roster-add-all-row" }, el("button", {
+        type: "button",
+        class: "ana-btn roster-add-all",
+        // Tên truy cập chứa nguyên nhãn hiển thị (WCAG 2.5.3), thêm tên đội và số món.
+        "aria-label": L(`Tôi có tất cả món thiếu của đội này: ${label}, ${items.length} món`, `这支队伍缺的我都有：${label}，共 ${items.length} 项`, `この編成に不足しているものはすべて持っている：${label}、${items.length} 件`),
+        onClick: () => {
+          const { state: next, added } = addMissingItems(state, items);
+          if (added.length) applyFromResults(next, { undo: { added, label } });
+        },
+      }, [checkIcon(), L("Tôi có tất cả món thiếu của đội này", "这支队伍缺的我都有", "この編成に不足しているものはすべて持っている")]));
+    };
+
     const missingCard = (entry) => {
       const heroSlots = entry.status === "missing-hero" ? entry.missingHeroSlotNames || [] : [];
       const tacticSlots = entry.status === "missing-hero" ? [] : entry.missingTacticSlots || [];
       const total = heroSlots.length + tacticSlots.length;
-      return el("article", { class: "roster-missing" }, [
+      return el("article", { class: "roster-missing", dataset: { teamId: entry.team?.id } }, [
         el("div", { class: "roster-result-head" }, [
           el("strong", { class: "roster-result-name" }, teamLabel(entry.team)),
           tierPill(entry),
           pill(L(`Thiếu ${total} món`, `缺 ${total} 项`, `${total}件不足`), "warn"),
         ]),
+        addAllButton(entry),
         ...heroSlots.map((names) => el("div", { class: "roster-missing-slot" }, [
           missingLine(L(`Thiếu tướng ${names.join(" / ")}`, `缺少武将 ${names.map(shown).join(" / ")}`, `武将${names.map(shown).join(" / ")}が不足`), haveButton("heroes", names[0])),
         ])),
