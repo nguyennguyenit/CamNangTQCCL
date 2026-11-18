@@ -1,4 +1,4 @@
-// js/building-upgrade-calculator.js — cây view của máy tính nâng cấp công trình (vi/zh): thời lượng, câu "thiếu dữ liệu
+// js/building-upgrade-calculator.js — cây view của máy tính nâng cấp công trình (vi/zh/ja): thời lượng, câu "thiếu dữ liệu
 // cấp N", dòng, khối tổng và dòng mới mặc định.
 import { test } from "node:test";
 import assert from "node:assert/strict";
@@ -35,6 +35,8 @@ test("formatUpgradeDuration hiện ngày/giờ/phút/giây theo ngôn ngữ", ()
   assert.equal(formatUpgradeDuration(0, "vi"), "0 phút");
   assert.equal(formatUpgradeDuration(90060, "zh"), "1天1小时1分钟");
   assert.equal(formatUpgradeDuration(0, "zh"), "0分钟");
+  assert.equal(formatUpgradeDuration(90061, "ja"), "1日1時間1分1秒");
+  assert.equal(formatUpgradeDuration(0, "ja"), "0分");
 });
 
 test("missingLevelMessages nêu rõ cấp thiếu tài nguyên và/hoặc thời gian", () => {
@@ -45,6 +47,7 @@ test("missingLevelMessages nêu rõ cấp thiếu tài nguyên và/hoặc thời
     "Thiếu dữ liệu cấp 4: thời gian",
   ]);
   assert.deepEqual(missingLevelMessages({ missingCostLevels: [1, 2], missingTimeLevels: [1, 2] }, "zh"), ["缺少第 1、2 级数据：资源和耗时"]);
+  assert.deepEqual(missingLevelMessages({ missingCostLevels: [1, 2], missingTimeLevels: [1, 2] }, "ja"), ["Lv 1、2 のデータがありません：資源と時間"]);
   assert.deepEqual(missingLevelMessages(sumLevelRange(STORE.levels, 0, 2), "vi"), []);
 });
 
@@ -84,4 +87,14 @@ test("nextUpgradeRow ưu tiên công trình đang mở, rồi công trình chưa
   assert.deepEqual(nextUpgradeRow([{ buildingId: BARRACKS.id, from: 0, to: 3 }], RECORDS), { buildingId: STORE.id, from: 0, to: 2 });
   assert.deepEqual(nextUpgradeRow([{ buildingId: STORE.id, from: 0, to: 2 }], RECORDS, STORE.id), { buildingId: BARRACKS.id, from: 0, to: 3 });
   assert.equal(nextUpgradeRow([], []), null);
+});
+
+test("bản ja: nhãn, đơn vị và khối tổng bằng tiếng Nhật, không lộ chữ Việt", () => {
+  const ja = plain(buildingCalculatorBodyTree([{ buildingId: STORE.id, from: 0, to: 2 }], RECORDS, "ja"));
+  assert.match(ja, /Lv 0 → 2 · 木材 30 · 石材 30 · 鉄鉱 30 · 2分30秒/u);
+  assert.match(ja, /合計 木材 30 石材 30 鉄鉱 30 時間 2分30秒/u);
+  assert.match(ja, /現在のレベル/u);
+  assert.match(plain(buildingCalculatorBodyTree([], RECORDS, "ja")), /施設がまだありません/u);
+  assert.doesNotMatch(ja, /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/u);
+  assert.match(treeToHtml(buildingCalculatorShellTree("ja")), /強化資源の計算/u);
 });

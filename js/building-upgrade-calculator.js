@@ -1,11 +1,11 @@
-// Máy tính nâng cấp nhiều công trình trong trang nhóm Tra cứu Công trình (`/tra-cuu/cong-trinh/`, bản zh
-// `/zh/tra-cuu/cong-trinh/`): mỗi dòng chọn công trình, cấp hiện tại và cấp đích; khối kết quả cộng từng loại tài nguyên và
+// Máy tính nâng cấp nhiều công trình trong trang nhóm Tra cứu Công trình (`/tra-cuu/cong-trinh/`, bản zh, ja
+// `/zh/tra-cuu/cong-trinh/`, `/ja/tra-cuu/cong-trinh/`): mỗi dòng chọn công trình, cấp hiện tại và cấp đích; khối kết quả cộng từng loại tài nguyên và
 // tổng thời gian. Thuần client, dữ liệu là `catalog.buildings` trang đã tải. Các dòng nằm trên query (`?nang=`, ghi bằng
 // replaceState, giữ `?id=` của panel chi tiết). Phép tính ở `js/building-upgrade-totals.js`; ở đây chỉ có cây view
 // (dựng được trong node để test) và phần gắn DOM.
 
 import { h, treeToDom } from "./view-tree.js";
-import { formatNumber, normalizeLocale, pick } from "./i18n.js";
+import { contentLocaleIsVietnamese, formatNumber, pick } from "./i18n.js";
 import { lookupDisplayName } from "./lookup-detail.js";
 import {
   BUILDING_COST_KEYS,
@@ -19,26 +19,30 @@ import {
   upgradeRowsSearch,
 } from "./building-upgrade-totals.js";
 
-const isZh = (locale) => normalizeLocale(locale) === "zh";
-const text = (locale, vi, zh) => pick(locale, vi, zh);
-const COST_LABELS = { wood: ["Gỗ", "木材"], stone: ["Đá", "石料"], iron: ["Sắt", "铁矿"] };
+/** Bản chữ Hán (zh, ja) viết đơn vị liền số và nối danh sách bằng "、"; bản Việt cách bằng dấu cách và ", ". */
+const cjkUnits = (locale) => !contentLocaleIsVietnamese(locale);
+const text = (locale, vi, zh, ja) => pick(locale, vi, zh, ja);
+const COST_LABELS = { wood: ["Gỗ", "木材", "木材"], stone: ["Đá", "石料", "石材"], iron: ["Sắt", "铁矿", "鉄鉱"] };
 const costLabel = (key, locale) => pick(locale, ...COST_LABELS[key]);
 
-/** Tên công trình theo ngôn ngữ trang (bản zh dùng tên chữ Hán nguồn). */
+/** Tên công trình theo ngôn ngữ trang (bản zh dùng tên chữ Hán nguồn, bản ja tên Nhật của Tra cứu). */
 const buildingName = (record, locale) => lookupDisplayName(record, record?.nameVi ?? "", locale);
 
-/** Thời lượng từ số giây: "2 ngày 3 giờ 15 phút" / "2天3小时15分钟"; phần bằng 0 bị bỏ, 0 giây là "0 phút" / "0分钟". */
+/**
+ * Thời lượng từ số giây: "2 ngày 3 giờ 15 phút" / "2天3小时15分钟" / "2日3時間15分"; phần bằng 0 bị bỏ, 0 giây là "0 phút" /
+ * "0分钟" / "0分".
+ */
 export function formatUpgradeDuration(totalSeconds, locale) {
   const { days, hours, minutes, seconds } = splitDuration(totalSeconds);
   const parts = [
-    [days, "ngày", "天"],
-    [hours, "giờ", "小时"],
-    [minutes, "phút", "分钟"],
-    [seconds, "giây", "秒"],
+    [days, "ngày", "天", "日"],
+    [hours, "giờ", "小时", "時間"],
+    [minutes, "phút", "分钟", "分"],
+    [seconds, "giây", "秒", "秒"],
   ].filter(([value]) => value > 0);
-  if (!parts.length) return text(locale, "0 phút", "0分钟");
-  return isZh(locale)
-    ? parts.map(([value, , zh]) => `${value}${zh}`).join("")
+  if (!parts.length) return text(locale, "0 phút", "0分钟", "0分");
+  return cjkUnits(locale)
+    ? parts.map(([value, vi, zh, ja]) => `${value}${pick(locale, vi, zh, ja)}`).join("")
     : parts.map(([value, vi]) => `${value} ${vi}`).join(" ");
 }
 
@@ -52,11 +56,11 @@ export function missingLevelMessages(result, locale) {
   const both = result.missingCostLevels.filter((level) => time.has(level));
   const costOnly = result.missingCostLevels.filter((level) => !time.has(level));
   const timeOnly = result.missingTimeLevels.filter((level) => !cost.has(level));
-  const list = (levels) => levels.join(isZh(locale) ? "、" : ", ");
+  const list = (levels) => levels.join(cjkUnits(locale) ? "、" : ", ");
   return [
-    both.length ? text(locale, `Thiếu dữ liệu cấp ${list(both)}: tài nguyên và thời gian`, `缺少第 ${list(both)} 级数据：资源和耗时`) : null,
-    costOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(costOnly)}: tài nguyên`, `缺少第 ${list(costOnly)} 级数据：资源`) : null,
-    timeOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(timeOnly)}: thời gian`, `缺少第 ${list(timeOnly)} 级数据：耗时`) : null,
+    both.length ? text(locale, `Thiếu dữ liệu cấp ${list(both)}: tài nguyên và thời gian`, `缺少第 ${list(both)} 级数据：资源和耗时`, `Lv ${list(both)} のデータがありません：資源と時間`) : null,
+    costOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(costOnly)}: tài nguyên`, `缺少第 ${list(costOnly)} 级数据：资源`, `Lv ${list(costOnly)} のデータがありません：資源`) : null,
+    timeOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(timeOnly)}: thời gian`, `缺少第 ${list(timeOnly)} 级数据：耗时`, `Lv ${list(timeOnly)} のデータがありません：時間`) : null,
   ].filter(Boolean);
 }
 
@@ -74,10 +78,11 @@ export function buildingCalculatorShellTree(locale) {
     h("details", { class: "building-calc-box" }, [
       h("summary", { class: "building-calc-summary" }, [
         h("span", { class: "building-calc-heading" }, [
-          h("span", { class: "building-calc-title", id: "building-calc-title" }, text(locale, "Tính tài nguyên nâng cấp", "升级资源计算")),
+          h("span", { class: "building-calc-title", id: "building-calc-title" }, text(locale, "Tính tài nguyên nâng cấp", "升级资源计算", "強化資源の計算")),
           h("span", { class: "building-calc-lead" }, text(locale,
             "Cộng gỗ, đá, sắt và thời gian cần để nâng cấp nhiều công trình",
-            "合计多座建筑升级所需的木材、石料、铁矿和耗时")),
+            "合计多座建筑升级所需的木材、石料、铁矿和耗时",
+            "複数の施設の強化に必要な木材・石材・鉄鉱と時間を合計します")),
         ]),
         h("span", { class: "building-calc-chevron", "aria-hidden": "true" }, [
           h("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }, [
@@ -115,23 +120,24 @@ function rowTree(row, index, records, byId, locale) {
   return h("li", { class: "building-calc-row" }, [
     h("div", { class: "building-calc-fields" }, [
       h("label", { class: "building-calc-field building-calc-field-building" }, [
-        h("span", { class: "flabel" }, text(locale, "Công trình", "建筑")),
+        h("span", { class: "flabel" }, text(locale, "Công trình", "建筑", "施設")),
         h("select", { class: "building-calc-select", "data-field": "building", "data-row": String(index) }, records.map((item) => {
           const itemMax = buildingMaxLevel(item);
           return h("option", { value: item.id, selected: item.id === row.buildingId }, text(locale,
             `${buildingName(item, locale)} · Lv ${itemMax}`,
-            `${buildingName(item, locale)} · ${itemMax} 级`));
+            `${buildingName(item, locale)} · ${itemMax} 级`,
+            `${buildingName(item, locale)} · Lv ${itemMax}`));
         })),
       ]),
-      levelFieldTree(locale, { label: text(locale, "Cấp hiện tại", "当前等级"), field: "from", value: row.from, max, index }),
-      levelFieldTree(locale, { label: text(locale, "Cấp đích", "目标等级"), field: "to", value: row.to, max, index }),
+      levelFieldTree(locale, { label: text(locale, "Cấp hiện tại", "当前等级", "現在のレベル"), field: "from", value: row.from, max, index }),
+      levelFieldTree(locale, { label: text(locale, "Cấp đích", "目标等级", "目標レベル"), field: "to", value: row.to, max, index }),
       h("button", {
         type: "button",
         class: "clear-btn building-calc-remove",
         "data-action": "remove",
         "data-row": String(index),
-        "aria-label": text(locale, `Bỏ dòng ${name}`, `移除${name}`),
-      }, text(locale, "Bỏ", "移除")),
+        "aria-label": text(locale, `Bỏ dòng ${name}`, `移除${name}`, `${name}の行を削除`),
+      }, text(locale, "Bỏ", "移除", "削除")),
     ]),
     rowResultTree(row, result, locale),
   ]);
@@ -139,12 +145,12 @@ function rowTree(row, index, records, byId, locale) {
 
 function rowResultTree(row, result, locale) {
   if (row.to <= row.from) {
-    return h("p", { class: "building-calc-row-result is-empty" }, text(locale, "Cấp đích cần lớn hơn cấp hiện tại.", "目标等级需高于当前等级。"));
+    return h("p", { class: "building-calc-row-result is-empty" }, text(locale, "Cấp đích cần lớn hơn cấp hiện tại.", "目标等级需高于当前等级。", "目標レベルは現在のレベルより高くしてください。"));
   }
   const totals = rowTotalsText(result, locale);
   return h("div", { class: "building-calc-row-result" }, [
     h("p", { class: "building-calc-row-totals" }, [
-      h("strong", { class: "building-calc-row-range" }, text(locale, `Lv ${row.from} → ${row.to}`, `${row.from} 级 → ${row.to} 级`)),
+      h("strong", { class: "building-calc-row-range" }, text(locale, `Lv ${row.from} → ${row.to}`, `${row.from} 级 → ${row.to} 级`, `Lv ${row.from} → ${row.to}`)),
       totals ? ` · ${totals}` : null,
     ]),
     ...missingLevelMessages(result, locale).map((message) => h("p", { class: "building-calc-missing" }, message)),
@@ -159,17 +165,19 @@ function totalsTree(rows, byId, locale) {
     h("span", { class: "lookup-stat-tile-value" }, value),
   ]);
   return h("div", { class: "building-calc-result", "aria-live": "polite" }, [
-    h("h3", { class: "building-calc-result-title" }, text(locale, "Tổng cộng", "合计")),
+    h("h3", { class: "building-calc-result-title" }, text(locale, "Tổng cộng", "合计", "合計")),
     h("div", { class: "building-calc-totals" }, [
       ...BUILDING_COST_KEYS.map((key) => tile(costLabel(key, locale), formatNumber(total.costs[key] ?? 0, locale))),
-      tile(text(locale, "Thời gian", "耗时"), formatUpgradeDuration(total.seconds, locale)),
+      tile(text(locale, "Thời gian", "耗时", "時間"), formatUpgradeDuration(total.seconds, locale)),
     ]),
     total.missingLevelCount ? h("p", { class: "building-calc-missing" }, text(locale,
       `Tổng chưa gồm ${total.missingLevelCount} cấp thiếu dữ liệu.`,
-      `合计未计入 ${total.missingLevelCount} 个缺少数据的等级。`)) : null,
+      `合计未计入 ${total.missingLevelCount} 个缺少数据的等级。`,
+      `データのない ${total.missingLevelCount} レベル分は合計に含まれていません。`)) : null,
     h("p", { class: "building-calc-note" }, text(locale,
       "Thời gian là tổng thời gian nâng lần lượt từng cấp, chưa trừ hiệu quả giảm thời gian nâng cấp.",
-      "耗时为逐级升级的总和，未扣除升级时间降低效果。")),
+      "耗时为逐级升级的总和，未扣除升级时间降低效果。",
+      "時間は1レベルずつ強化した場合の合計で、強化時間短縮の効果は差し引いていません。")),
   ]);
 }
 
@@ -181,9 +189,10 @@ export function buildingCalculatorBodyTree(rows, records, locale) {
       ? h("ol", { class: "building-calc-rows" }, rows.map((row, index) => rowTree(row, index, records, byId, locale)))
       : h("p", { class: "building-calc-empty" }, text(locale,
         "Chưa có công trình nào. Bấm “Thêm công trình” để bắt đầu.",
-        "尚未添加建筑。点击“添加建筑”开始计算。")),
+        "尚未添加建筑。点击“添加建筑”开始计算。",
+        "施設がまだありません。「施設を追加」を押して始めてください。")),
     h("div", { class: "building-calc-actions" }, [
-      h("button", { type: "button", class: "detail-link building-calc-add", "data-action": "add", disabled: rows.length >= MAX_UPGRADE_ROWS }, text(locale, "+ Thêm công trình", "+ 添加建筑")),
+      h("button", { type: "button", class: "detail-link building-calc-add", "data-action": "add", disabled: rows.length >= MAX_UPGRADE_ROWS }, text(locale, "+ Thêm công trình", "+ 添加建筑", "+ 施設を追加")),
     ]),
     rows.length ? totalsTree(rows, byId, locale) : null,
   ];

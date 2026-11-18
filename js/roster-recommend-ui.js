@@ -936,13 +936,13 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     const undoBtn = el("button", { type: "button", class: "roster-ghost roster-undo", onClick: () => {
       if (!guardEdit()) return;
       applyFromResults(undoAddedItems(state, added));
-      undoBar.replaceChildren(el("span", { class: "roster-undo-text" }, L(`Đã gỡ ${added.length} món vừa thêm.`, `已移除刚添加的 ${added.length} 项。`)));
+      undoBar.replaceChildren(el("span", { class: "roster-undo-text" }, L(`Đã gỡ ${added.length} món vừa thêm.`, `已移除刚添加的 ${added.length} 项。`, `追加したばかりの ${added.length} 件を取り消しました。`)));
       undoBar.hidden = false;
-    } }, L("Hoàn tác", "撤销"));
+    } }, L("Hoàn tác", "撤销", "元に戻す"));
     undoBar.replaceChildren(
       el("span", { class: "roster-undo-text" }, [checkIcon(), el("span", {}, box
-        ? L(`Đã thêm ${added.length} món của đội ${label} vào hộp “${box}”.`, `已将 ${label} 缺少的 ${added.length} 项加入库存盒“${box}”。`)
-        : L(`Đã thêm ${added.length} món của đội ${label} vào kho.`, `已将 ${label} 缺少的 ${added.length} 项加入库存。`))]),
+        ? L(`Đã thêm ${added.length} món của đội ${label} vào hộp “${box}”.`, `已将 ${label} 缺少的 ${added.length} 项加入库存盒“${box}”。`, `${label} に不足していた ${added.length} 件をボックス「${box}」に追加しました。`)
+        : L(`Đã thêm ${added.length} món của đội ${label} vào kho.`, `已将 ${label} 缺少的 ${added.length} 项加入库存。`, `${label} に不足していた ${added.length} 件を在庫に追加しました。`))]),
       undoBtn,
     );
     undoBar.hidden = false;
@@ -1304,12 +1304,12 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
         type: "button",
         class: "ana-btn roster-add-all",
         // Tên truy cập chứa nguyên nhãn hiển thị (WCAG 2.5.3), thêm tên đội và số món.
-        "aria-label": L(`Tôi có tất cả món thiếu của đội này: ${label}, ${items.length} món`, `这支队伍缺的我都有：${label}，共 ${items.length} 项`),
+        "aria-label": L(`Tôi có tất cả món thiếu của đội này: ${label}, ${items.length} món`, `这支队伍缺的我都有：${label}，共 ${items.length} 项`, `この編成に不足しているものはすべて持っている：${label}、${items.length} 件`),
         onClick: () => {
           const { state: next, added } = addMissingItems(state, items);
           if (added.length) applyFromResults(next, { undo: { added, label } });
         },
-      }, [checkIcon(), L("Tôi có tất cả món thiếu của đội này", "这支队伍缺的我都有")]));
+      }, [checkIcon(), L("Tôi có tất cả món thiếu của đội này", "这支队伍缺的我都有", "この編成に不足しているものはすべて持っている")]));
     };
 
     const missingCard = (entry) => {
