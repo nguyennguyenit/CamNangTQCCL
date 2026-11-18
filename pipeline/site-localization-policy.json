@@ -698,6 +698,7 @@
       "entrypoints": [
         "src/pages/goi-y-doi-tu-kho/index.astro",
         "src/components/pages/SectionPage.astro",
+        "js/roster-pasted-name-list-panel.js",
         "js/roster-picker.js",
         "js/roster-recommend-ui.js",
         "js/roster-scan-map.js",
@@ -787,6 +788,7 @@
     "js/recruit-tracker-store.js": "71b85848b01e6c70586e8a56dacfe7816dbacf4a8513127e25a2d2bd5e4c7183",
     "js/recruit-tracker.js": "e19ba850fa486236d79fe4622e2b7f3e9d6e6080f1331917706784100bcd0a53",
     "js/render.js": "15f0308255b5f2d40e40c1ee63e726f9a0b24aa9c7052213288b09fdc1805a49",
+    "js/roster-pasted-name-list-panel.js": "ccdf98d861d77c39c6104d66bbf6b731348511ac7b60e700542c909cf8512382",
     "js/roster-picker.js": "1f1e8ba0620235199de272a595b641fccd65cb4704f323cfbf31d3ee6d034b69",
     "js/roster-recommend-ui.js": "3149c87ddb651e6992893c11a1c4c3c9a79641f74c8595aaf83bee875b02c2cd",
     "js/roster-scan-map.js": "b92705df103735ef6701bc2cff3397374f7cfb3a8688cd9468451297f885d028",
