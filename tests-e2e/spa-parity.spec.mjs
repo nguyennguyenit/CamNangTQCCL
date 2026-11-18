@@ -1132,12 +1132,12 @@ test("rời trang bằng điều hướng khác tài liệu rồi quay lại kh�
 
 /* ---------- Vòng sửa Opus (P3-B1…B3, N1…N5) ---------- */
 
-test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang", async ({ page }) => {
-  const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
-  for (const width of [1280, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    // Cả bản zh/ja: nhãn nav và nhóm chuyển ngôn ngữ mỗi bản một độ rộng khác nhau.
-    for (const path of ["/", "/doi-chuan/", detail, "/zh/", "/ja/", "/ja/doi-chuan/"]) {
+// Một test cho mỗi trang (kể cả bản zh/ja: nhãn nav và nhóm chuyển ngôn ngữ mỗi bản một độ rộng khác nhau);
+// gộp chung một test thì trên runner CI vượt giới hạn 30 s.
+for (const path of ["/", "/doi-chuan/", legacyRoute(teamsFixture[0].id), "/zh/", "/ja/", "/ja/doi-chuan/"]) {
+  test(`menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang: ${path}`, async ({ page }) => {
+    for (const width of [1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
       await expect(page.locator("#nav-toggle-game")).toBeVisible();
       const buttons = await page.locator(".site-nav [data-dropdown-button]").all();
@@ -1155,8 +1155,8 @@ test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không
       // Nhóm Game neo theo mép phải nút (artboard LandingMenu: right 0, width 500).
       expect(await page.locator("#nav-toggle-game").evaluate((node) => node.closest("[data-dropdown]").classList.contains("nav-dropdown-game"))).toBe(true);
     }
-  }
-});
+  });
+}
 
 test("header 821–1279px dùng ☰ thay nav ngang; 1280px mọi nhãn nav một dòng", async ({ page }) => {
   for (const width of [821, 1024, 1180, 1279]) {
