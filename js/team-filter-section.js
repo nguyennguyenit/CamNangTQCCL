@@ -244,7 +244,7 @@ export function referenceSeasonLabelTree(registry,rows) {
 }
 
 /** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
-export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigate,adopt=false}) {
+export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=onQuery,hrefFor,onNavigate,adopt=false}) {
   let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
   // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
   let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
@@ -604,9 +604,14 @@ export function createRecommendedSection({mount,family,onQuery,hrefFor,onNavigat
     if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
     else renderView();
     // Máy có kho nhưng mùa đang xem không có độ phủ: `kho`/`xep` không có tác dụng, thanh kho ẩn và "Xóa lọc" không gỡ được
-    // chúng. Gỡ khỏi URL (replaceState) để đổi sang mùa có độ phủ không bật lại một bộ lọc người dùng đã quên. Chưa biết kho
+    // chúng. Gỡ khỏi URL để đổi sang mùa có độ phủ không bật lại một bộ lọc người dùng đã quên. Chưa biết kho
     // (`undefined`, đang tải/hỏi lại phiên) hay máy chưa có kho (`null`) thì giữ nguyên: lúc đó chưa biết mùa có độ phủ hay không.
-    if (family==='recommended' && typeof rosterSource==='function' && !coverage && (state.rosterFilter || state.rosterSort)) onQuery({kho:null,xep:null});
+    // Không có độ phủ thì hai khóa này không nằm trong `listKey`, nên chỉ bỏ khỏi trạng thái của mục và sửa URL (không vẽ lại):
+    // danh sách dựng sẵn, `details` đang mở và focus khôi phục khi quay lại được giữ nguyên.
+    if (family==='recommended' && typeof rosterSource==='function' && !coverage && (state.rosterFilter || state.rosterSort)) {
+      state={...state,rosterFilter:null,rosterSort:null};
+      onReplaceQuery({kho:null,xep:null});
+    }
   }
   return {
     update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();},

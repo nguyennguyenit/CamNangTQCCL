@@ -340,16 +340,22 @@ async function main() {
       if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
     };
-    const navigateReference = (changes, push = false) => {
-      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
-      if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
+    /** URL hiện tại sau khi áp `changes` (null/"" = gỡ khóa, mảng = lặp khóa). */
+    const referenceQueryURL = changes => {
       const url = new URL(location.href);
       for (const [key,value] of Object.entries(changes)) {
         url.searchParams.delete(key);
         if (Array.isArray(value)) value.forEach(item=>url.searchParams.append(key,item));
         else if (value !== null && value !== undefined && value !== '') url.searchParams.set(key,value);
       }
-      history[push ? 'pushState' : 'replaceState'](history.state, '', url);
+      return url;
+    };
+    /** Chỉ sửa URL (replaceState), không vẽ lại: cho khóa không còn tác dụng mà mục đã tự bỏ khỏi trạng thái của nó. */
+    const replaceReferenceQuery = changes => history.replaceState(history.state, '', referenceQueryURL(changes));
+    const navigateReference = (changes, push = false) => {
+      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
+      if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
+      history[push ? 'pushState' : 'replaceState'](history.state, '', referenceQueryURL(changes));
       renderReference();
       const params = new URL(location.href).searchParams;
       if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
@@ -508,11 +514,11 @@ async function main() {
     }
     if (pageSection === 'team-chuan') {
       sections['team-chuan'] = recommendedModel
-        ? createRecommendedSection({mount,family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
+        ? createRecommendedSection({mount,family:'recommended',onQuery:navigateReference,onReplaceQuery:replaceReferenceQuery,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     } else if (pageSection === 'team-khac') {
       sections['team-khac'] = recommendedModel
-        ? createRecommendedSection({mount,family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
+        ? createRecommendedSection({mount,family:'other',onQuery:navigateReference,onReplaceQuery:replaceReferenceQuery,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {

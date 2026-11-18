@@ -505,8 +505,13 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     else {
       dialog.removeAttribute("open");
       restoreDialogFocus();
+      dropTokenPanel();
     }
   };
+  /** Token thô chỉ sống khi hộp thoại token đang mở: đóng (kể cả do đăng xuất) là bỏ cả nội dung, không để lại trong DOM. */
+  function dropTokenPanel() {
+    if (dialog.querySelector("#rt-token-secret")) dialog.replaceChildren();
+  }
   /** Trả focus về nút đã mở; nút đó bị vẽ lại, khoá hoặc ẩn (sửa dòng nhật ký, hết lượt, xóa gói) thì chọn chỗ hợp lý. */
   function restoreDialogFocus() {
     const opener = dialogOpener;
@@ -520,6 +525,7 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     if (event.target === dialog || event.target.closest?.("[data-rt-dialog-close]")) closeDialog();
   });
   dialog.addEventListener("close", restoreDialogFocus);
+  dialog.addEventListener("close", dropTokenPanel);
 
   const numberValue = (value, fallback = 0) => {
     const number = Number(value);
@@ -1068,6 +1074,8 @@ export function initRecruitTracker({ heroesDict = [], mount, storage = localStor
     syncText.textContent = SYNC_TEXT[syncStatus] || SYNC_TEXT.guest;
     syncSignIn.hidden = syncStatus !== "guest";
     tokenMenuItem.hidden = syncStatus === "guest";
+    // Đăng xuất khi hộp thoại token đang mở: đóng luôn (token của tài khoản cũ không còn hiện).
+    if (syncStatus === "guest" && dialog.querySelector("#rt-token-secret")) closeDialog();
     // Đã đăng nhập và đồng bộ: dữ liệu không còn chỉ nằm trong trình duyệt này.
     notice.hidden = syncStatus === "synced" || syncStatus === "syncing";
   }

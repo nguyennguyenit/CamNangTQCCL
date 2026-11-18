@@ -128,7 +128,7 @@ test("6b. mùa mặc định có hơn 60 đội: /doi-chuan/ không JS liệt k�
     const keys = [...html.matchAll(/data-reference-key="([^"]*)"/gu)].map((match) => match[1]);
     assert.equal(keys.length, big.n, `${locale}: SSR phải đủ ${big.n} đội`);
     assert.equal(new Set(keys).size, big.n);
-    // Dấu danh sách mang tổng số đội đã dựng (n > 60): client thử dấu này sau dấu lượt đầu để nhận lại cả danh sách (#88).
+    // Dấu danh sách mang tổng số đội đã dựng (n > 60): client thử dấu này sau dấu lượt đầu để nhận lại cả danh sách.
     assert.match(html, new RegExp(`data-ssr-signature="[^"]*,${big.n}\\]"`, "u"));
   }
   // Mùa mặc định ≤ 60 đội: dấu danh sách giữ nguyên `PAGE_SIZE` (khớp ngay lượt đầu của client).

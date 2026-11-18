@@ -42,7 +42,7 @@ const pageUrl = (path, locale) => new URL(localePath(path, locale), PAGE_ORIGIN)
  * đã xác minh; `registry`: `seasons.json`.
  *
  * Dấu danh sách ghi số đội đã dựng: tối thiểu `PAGE_SIZE` (khớp lượt đầu của client nên DOM được nhận lại); mùa hơn
- * `PAGE_SIZE` đội thì dấu mang tổng số đội, client thử dấu này sau dấu lượt đầu và nhận lại cả danh sách (#88); phân
+ * `PAGE_SIZE` đội thì dấu mang tổng số đội, client thử dấu này sau dấu lượt đầu và nhận lại cả danh sách; phân
  * trang phía client chỉ áp từ lần đổi trạng thái kế tiếp.
  */
 export function recommendedSectionTrees({ family, rows, registry, locale }) {
