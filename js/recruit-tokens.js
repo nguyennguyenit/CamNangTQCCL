@@ -26,7 +26,7 @@ export function tokenRowView(item, now = Date.now()) {
   if (item.revokedAt !== null) status = "revoked";
   else if (item.expiresAt !== null && item.expiresAt <= now) status = "expired";
   let statusText;
-  if (status === "revoked") statusText = L(`Đã thu hồi ${formatDate(item.revokedAt)}`, `已于 ${formatDate(item.revokedAt)} 撤销`, `${formatDate(item.revokedAt)} に失効済み`);
+  if (status === "revoked") statusText = L(`Đã thu hồi ${formatDate(item.revokedAt)}`, `已于 ${formatDate(item.revokedAt)} 撤销`, `${formatDate(item.revokedAt)} に無効化済み`);
   else if (status === "expired") statusText = L(`Hết hạn ${formatDate(item.expiresAt)}`, `已于 ${formatDate(item.expiresAt)} 过期`, `${formatDate(item.expiresAt)} に期限切れ`);
   else if (item.expiresAt === null) statusText = L("Không hạn", "永不过期", "無期限");
   else statusText = L(`Hạn đến ${formatDate(item.expiresAt)}`, `有效期至 ${formatDate(item.expiresAt)}`, `有効期限 ${formatDate(item.expiresAt)}`);
@@ -94,9 +94,9 @@ export function createTokenPanel({ api = defaultApi, closeIcon, now = () => Date
       const revoke = row.revocable ? el("button", {
         class: "tool-text-action rt-menu-danger",
         type: "button",
-        "aria-label": L(`Thu hồi token ${row.name}`, `撤销令牌 ${row.name}`, `トークン ${row.name} を失効`),
+        "aria-label": L(`Thu hồi token ${row.name}`, `撤销令牌 ${row.name}`, `トークン ${row.name} を無効化`),
         onclick: (event) => revokeToken(row, event.currentTarget),
-      }, L("Thu hồi", "撤销", "失効")) : null;
+      }, L("Thu hồi", "撤销", "無効化")) : null;
       return el("li", { class: "rt-token-item", "data-status": row.status }, [
         el("div", { class: "rt-token-main" }, [
           el("strong", {}, row.name),
@@ -121,13 +121,13 @@ export function createTokenPanel({ api = defaultApi, closeIcon, now = () => Date
   async function revokeToken(row, button) {
     if (button.dataset.confirm !== "1") {
       button.dataset.confirm = "1";
-      button.textContent = L("Xác nhận thu hồi", "确认撤销", "失効を確定");
+      button.textContent = L("Xác nhận thu hồi", "确认撤销", "無効化を確定");
       return;
     }
     button.disabled = true;
     try {
       await api(`${ENDPOINT}/${encodeURIComponent(row.id)}`, { method: "DELETE" });
-      say(L(`Đã thu hồi token ${row.name}.`, `已撤销令牌 ${row.name}。`, `トークン ${row.name} を失効させました。`));
+      say(L(`Đã thu hồi token ${row.name}.`, `已撤销令牌 ${row.name}。`, `トークン ${row.name} を無効化しました。`));
       await refresh();
     } catch (error) {
       button.disabled = false;
@@ -139,7 +139,7 @@ export function createTokenPanel({ api = defaultApi, closeIcon, now = () => Date
     el("div", { class: "rt-dialog-head" }, [
       el("div", { class: "rt-dialog-heading" }, [
         el("span", { class: "rt-dialog-kicker" }, L("Công cụ tự động", "自动化工具", "自動化ツール")),
-        el("h2", { id: "rt-dialog-title", class: "rt-dialog-title" }, L("Token API", "API 令牌", "API トークン")),
+        el("h2", { id: "rt-dialog-title", class: "rt-dialog-title" }, L("Token API", "API 令牌", "APIトークン")),
       ]),
       el("button", { class: "rt-icon-btn rt-dialog-close", type: "button", "data-rt-dialog-close": "", "aria-label": L("Đóng", "关闭", "閉じる") }, [closeIcon?.()]),
     ]),

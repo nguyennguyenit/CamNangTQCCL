@@ -58,9 +58,9 @@ export function missingLevelMessages(result, locale) {
   const timeOnly = result.missingTimeLevels.filter((level) => !cost.has(level));
   const list = (levels) => levels.join(cjkUnits(locale) ? "、" : ", ");
   return [
-    both.length ? text(locale, `Thiếu dữ liệu cấp ${list(both)}: tài nguyên và thời gian`, `缺少第 ${list(both)} 级数据：资源和耗时`, `Lv ${list(both)} のデータがありません：資源と時間`) : null,
-    costOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(costOnly)}: tài nguyên`, `缺少第 ${list(costOnly)} 级数据：资源`, `Lv ${list(costOnly)} のデータがありません：資源`) : null,
-    timeOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(timeOnly)}: thời gian`, `缺少第 ${list(timeOnly)} 级数据：耗时`, `Lv ${list(timeOnly)} のデータがありません：時間`) : null,
+    both.length ? text(locale, `Thiếu dữ liệu cấp ${list(both)}: tài nguyên và thời gian`, `缺少第 ${list(both)} 级数据：资源和耗时`, `Lv ${list(both)} の資源・所要時間データがありません`) : null,
+    costOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(costOnly)}: tài nguyên`, `缺少第 ${list(costOnly)} 级数据：资源`, `Lv ${list(costOnly)} の資源データがありません`) : null,
+    timeOnly.length ? text(locale, `Thiếu dữ liệu cấp ${list(timeOnly)}: thời gian`, `缺少第 ${list(timeOnly)} 级数据：耗时`, `Lv ${list(timeOnly)} の所要時間データがありません`) : null,
   ].filter(Boolean);
 }
 
@@ -78,11 +78,11 @@ export function buildingCalculatorShellTree(locale) {
     h("details", { class: "building-calc-box" }, [
       h("summary", { class: "building-calc-summary" }, [
         h("span", { class: "building-calc-heading" }, [
-          h("span", { class: "building-calc-title", id: "building-calc-title" }, text(locale, "Tính tài nguyên nâng cấp", "升级资源计算", "強化資源の計算")),
+          h("span", { class: "building-calc-title", id: "building-calc-title" }, text(locale, "Tính tài nguyên nâng cấp", "升级资源计算", "レベルアップ資源の計算")),
           h("span", { class: "building-calc-lead" }, text(locale,
             "Cộng gỗ, đá, sắt và thời gian cần để nâng cấp nhiều công trình",
             "合计多座建筑升级所需的木材、石料、铁矿和耗时",
-            "複数の施設の強化に必要な木材・石材・鉄鉱と時間を合計します")),
+            "複数の施設のレベルアップに必要な木材・石材・鉄鉱と所要時間を合計します")),
         ]),
         h("span", { class: "building-calc-chevron", "aria-hidden": "true" }, [
           h("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", "stroke-width": "2", "stroke-linecap": "round", "stroke-linejoin": "round" }, [
@@ -168,7 +168,7 @@ function totalsTree(rows, byId, locale) {
     h("h3", { class: "building-calc-result-title" }, text(locale, "Tổng cộng", "合计", "合計")),
     h("div", { class: "building-calc-totals" }, [
       ...BUILDING_COST_KEYS.map((key) => tile(costLabel(key, locale), formatNumber(total.costs[key] ?? 0, locale))),
-      tile(text(locale, "Thời gian", "耗时", "時間"), formatUpgradeDuration(total.seconds, locale)),
+      tile(text(locale, "Thời gian", "耗时", "所要時間"), formatUpgradeDuration(total.seconds, locale)),
     ]),
     total.missingLevelCount ? h("p", { class: "building-calc-missing" }, text(locale,
       `Tổng chưa gồm ${total.missingLevelCount} cấp thiếu dữ liệu.`,
@@ -177,7 +177,7 @@ function totalsTree(rows, byId, locale) {
     h("p", { class: "building-calc-note" }, text(locale,
       "Thời gian là tổng thời gian nâng lần lượt từng cấp, chưa trừ hiệu quả giảm thời gian nâng cấp.",
       "耗时为逐级升级的总和，未扣除升级时间降低效果。",
-      "時間は1レベルずつ強化した場合の合計で、強化時間短縮の効果は差し引いていません。")),
+      "所要時間は1レベルずつ上げた場合の合計で、レベルアップ時間短縮の効果は差し引いていません。")),
   ]);
 }
 

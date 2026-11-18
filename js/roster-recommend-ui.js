@@ -941,7 +941,7 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     } }, L("Hoàn tác", "撤销", "元に戻す"));
     undoBar.replaceChildren(
       el("span", { class: "roster-undo-text" }, [checkIcon(), el("span", {}, box
-        ? L(`Đã thêm ${added.length} món của đội ${label} vào hộp “${box}”.`, `已将 ${label} 缺少的 ${added.length} 项加入库存盒“${box}”。`, `${label} に不足していた ${added.length} 件をボックス「${box}」に追加しました。`)
+        ? L(`Đã thêm ${added.length} món của đội ${label} vào hộp “${box}”.`, `已将 ${label} 缺少的 ${added.length} 项加入库存盒“${box}”。`, `${label} に不足していた ${added.length} 件を在庫ボックス「${box}」に追加しました。`)
         : L(`Đã thêm ${added.length} món của đội ${label} vào kho.`, `已将 ${label} 缺少的 ${added.length} 项加入库存。`, `${label} に不足していた ${added.length} 件を在庫に追加しました。`))]),
       undoBtn,
     );

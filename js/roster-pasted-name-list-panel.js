@@ -51,7 +51,7 @@ export function createPastedNameListPanel({ uid, catalog, label, selected, onAdd
     el("p", { class: "roster-field-hint", id: hintId }, L(
       "Chép từ game, Zalo hoặc Excel: mỗi tên một dòng, hoặc ngăn bằng dấu phẩy, dấu chấm phẩy. Nhận tên Việt, Hán-Việt hoặc chữ Hán. Chưa ghi vào kho cho tới khi bạn xác nhận.",
       "可从游戏、Zalo 或 Excel 复制：每行一个名称，或用逗号、分号分隔。支持越南名、汉越音或汉字。确认之前不会写入库存。",
-      "ゲーム、Zalo、Excel からコピーできます。1行に1つの名前、またはカンマ・セミコロン区切りで入力してください。ベトナム語名、漢越音、漢字に対応しています。確認するまで在庫には書き込みません。",
+      "ゲーム・Zalo・Excel からコピーして貼り付けられます。1行に1つの名前、またはカンマ・セミコロン区切りで入力してください。ベトナム語名、漢越音、漢字に対応しています。確認するまで在庫には書き込みません。",
     )),
     input,
     el("div", { class: "roster-paste-bar" }, [matchBtn]),

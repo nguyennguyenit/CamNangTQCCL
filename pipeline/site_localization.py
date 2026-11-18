@@ -807,7 +807,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:building-calc/range-invalid", "warning", '"Cấp đích cần lớn hơn cấp hiện tại."', "js/building-upgrade-calculator.js", "rowResultTree", "empty", "authored-vi"),
     ("ui:building-calc/row-range", "label", "`Lv ${row.from} → ${row.to}`", "js/building-upgrade-calculator.js", "rowResultTree", "data", "authored-vi"),
     ("ui:building-calc/totals-heading", "heading", 'text(locale, "Tổng cộng", "合计")', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi", 'text(locale, "Tổng cộng", "合计", "合計")'),
-    ("ui:building-calc/totals-time", "label", 'text(locale, "Thời gian", "耗时")', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi", 'text(locale, "Thời gian", "耗时", "時間")'),
+    ("ui:building-calc/totals-time", "label", 'text(locale, "Thời gian", "耗时")', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi", 'text(locale, "Thời gian", "耗时", "所要時間")'),
     ("ui:building-calc/totals-missing", "warning", "`Tổng chưa gồm ${total.missingLevelCount} cấp thiếu dữ liệu.`", "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi"),
     ("ui:building-calc/totals-note", "note", '"Thời gian là tổng thời gian nâng lần lượt từng cấp, chưa trừ hiệu quả giảm thời gian nâng cấp."', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi"),
     ("ui:building-calc/empty", "empty", '"Chưa có công trình nào. Bấm “Thêm công trình” để bắt đầu."', "js/building-upgrade-calculator.js", "buildingCalculatorBodyTree", "empty", "authored-vi"),

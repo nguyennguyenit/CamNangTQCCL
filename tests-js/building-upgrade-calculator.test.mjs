@@ -47,7 +47,7 @@ test("missingLevelMessages nêu rõ cấp thiếu tài nguyên và/hoặc thời
     "Thiếu dữ liệu cấp 4: thời gian",
   ]);
   assert.deepEqual(missingLevelMessages({ missingCostLevels: [1, 2], missingTimeLevels: [1, 2] }, "zh"), ["缺少第 1、2 级数据：资源和耗时"]);
-  assert.deepEqual(missingLevelMessages({ missingCostLevels: [1, 2], missingTimeLevels: [1, 2] }, "ja"), ["Lv 1、2 のデータがありません：資源と時間"]);
+  assert.deepEqual(missingLevelMessages({ missingCostLevels: [1, 2], missingTimeLevels: [1, 2] }, "ja"), ["Lv 1、2 の資源・所要時間データがありません"]);
   assert.deepEqual(missingLevelMessages(sumLevelRange(STORE.levels, 0, 2), "vi"), []);
 });
 
@@ -92,9 +92,9 @@ test("nextUpgradeRow ưu tiên công trình đang mở, rồi công trình chưa
 test("bản ja: nhãn, đơn vị và khối tổng bằng tiếng Nhật, không lộ chữ Việt", () => {
   const ja = plain(buildingCalculatorBodyTree([{ buildingId: STORE.id, from: 0, to: 2 }], RECORDS, "ja"));
   assert.match(ja, /Lv 0 → 2 · 木材 30 · 石材 30 · 鉄鉱 30 · 2分30秒/u);
-  assert.match(ja, /合計 木材 30 石材 30 鉄鉱 30 時間 2分30秒/u);
+  assert.match(ja, /合計 木材 30 石材 30 鉄鉱 30 所要時間 2分30秒/u);
   assert.match(ja, /現在のレベル/u);
   assert.match(plain(buildingCalculatorBodyTree([], RECORDS, "ja")), /施設がまだありません/u);
   assert.doesNotMatch(ja, /[ăâđêôơưạảấầẩẫậắằẳẵặẹẻẽếềểễệỉịọỏốồổỗộớờởỡợụủứừửữựỳỵỷỹ]/u);
-  assert.match(treeToHtml(buildingCalculatorShellTree("ja")), /強化資源の計算/u);
+  assert.match(treeToHtml(buildingCalculatorShellTree("ja")), /レベルアップ資源の計算/u);
 });
