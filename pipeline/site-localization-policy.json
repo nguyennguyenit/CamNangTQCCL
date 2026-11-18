@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "ae77980621d1232a8e5be4bbc4005ec25aaf3f5c790c41b862b7ed81074a16ae",
-      "concreteLocationCount": 75267,
+      "concreteInventorySha256": "acfc274358f66e149649c91d24ce2fa1e0a99d02ae40905784355a3d17ed184f",
+      "concreteLocationCount": 75393,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -75,7 +75,7 @@
       "hột": "red-copy count"
     }
   },
-  "policyVersion": "site-vi-261118-doi-khac-ky-luoc",
+  "policyVersion": "site-vi-261118-cung-ton-ky-luoc",
   "routeFamilies": [
     {
       "entrypoints": [
@@ -762,7 +762,7 @@
   "sourceFiles": {
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
     "data/khaihoang.json": "70b9f49c4e13dcbc71517fc805b3ed777baac2847a5e2c62d21208cd68746687",
-    "data/season-content-links.json": "d9a3d4f9f4150724b4a87cd69942f89df74865fda9801a930f299bd8b8177bf2",
+    "data/season-content-links.json": "8b0bb738032214f0ec1feca7967862d6547021a67ab366db82362e6c8330daf9",
     "data/teams.json": "1fe35c58bfc99eec9c9d28bd34d85ec8926a693364d53fd277846803cabfe338",
     "js/analyze-map.js": "380c2e11730e1fd84ee8c96d8d9e0b38c6eb7f7bc583924bcbbdc5cedc5728d2",
     "js/analyze.js": "874ab6fa9048d969c272419d5c37fb9fe7f2f016a5f3e84d04d1ecb3bb47e708",
@@ -780,11 +780,11 @@
     "js/lookup-profile.js": "5b52775ab277347d89be2eceb2427cbffdbcde7a3976c7e4103018c15ef06564",
     "js/lookup-tactic-profile.js": "c4c933b2eee7905b54ed7149d80da847adc313e135ed51b180663501bdaa3ce7",
     "js/lookup-tactic-view.js": "e79e519d95b216ada53ac884414d51e8ba6d0adb29944edba5ed542a3d8b20ab",
-    "js/recommended-reference-render.js": "aaa82edcfcae9372fc5756c46f9fc9c654c65b13f1934edc56407f797b18ebcb",
+    "js/recommended-reference-render.js": "3437369b66f7ac6467e01daa46af18be69f958338ffb359e9609a147d0a7e2bf",
     "js/recommended-reference-state.js": "ba2060bdcd1ae4ee1f370f2973f545a432d5ef3b59dffc539d973b15c4d58119",
     "js/recruit-tracker-store.js": "4bb2d985549e382c23e77586282db86daa466e4f7b1d6c0c3edf8dfbcf566668",
     "js/recruit-tracker.js": "0fe5de0ed556931e05535c65c36fa40a506515806324ab1d8d2d951975ccb67f",
-    "js/render.js": "d929e2f888c42ba6ef8a0c417e50aff89279186740b0dd7d4ec81c54fc3a2bdb",
+    "js/render.js": "ba1341341d4511c26dada1134767ac60cefc340453e38319f23a4904ccd5cbf0",
     "js/roster-picker.js": "93f68a58639433c5609787c04a32658decb693b3bbd72f3be8b0a1013dce1ceb",
     "js/roster-recommend-ui.js": "ce02ee31ae796991a7bd80dbbfccd62a55aa2def8783aa25313b412dfab5c6fa",
     "js/roster-scan-map.js": "b503cab367887d5f0d97acaaf493649b1919b55ec127b85690b37709278e4619",
@@ -809,7 +809,7 @@
     "src/components/pages/LookupHubPage.astro": "12f6d909450984d2a9b1f9115c168c11fbb93ab782e12979351d152634e4a32a",
     "src/components/pages/LookupItemPage.astro": "d91a7ccf60356c27f198e6fc469a0aa1d858c662e6b7798aa634188337c43f8c",
     "src/components/pages/RecommendedDetail.astro": "7bd2fda7ade68cf457d29a122ac0e61d400017b6839cd98f237b6f5ed5f6586d",
-    "src/components/pages/SectionPage.astro": "4072cc460cc88eec10ed607009f8d019d8eafeebb04ace758ade3efd75d72a1c",
+    "src/components/pages/SectionPage.astro": "56d15bb04d9da88fe17e1a87453a68d229da53fd1f685b3bcd2d577de6320d75",
     "src/layouts/SiteLayout.astro": "d2f5f5ea16b10b5db92677e736c1bc2c1f90e2378a764d8ae53967453da6c3fd",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "9b1a0b06acb68961197a5271ee5b0a46805a69c8ec6f319f641a139529f892a4",
