@@ -783,7 +783,7 @@
     "js/lookup-profile.js": "f288ade64066b65fa0dffd4b2a3236ee5edd7ed6feb248423ca79c2e4e67223b",
     "js/lookup-tactic-profile.js": "3fe16e95bee481d689b172bf7aabe0a01b007eba38b021f02a9857e7ce7219b0",
     "js/lookup-tactic-view.js": "1c35fe26fc6f4cf3841b383f76905bb73e2384db06e362cd680c6ec8fa2ac1c8",
-    "js/recommended-reference-render.js": "b4342ff07023b6954a73d3dca2048237eab5844e759f475518510260fbe8f223",
+    "js/recommended-reference-render.js": "a11a67271cb7b62cd2d13735de6891188de24f6e71c43a15dc04bb25f50a1fa5",
     "js/recommended-reference-state.js": "f4f4e8681b73990e8f5fa5aefd6f612db4daf6b53bc8bf26c3386a7ee31a5ae8",
     "js/recruit-tracker-store.js": "71b85848b01e6c70586e8a56dacfe7816dbacf4a8513127e25a2d2bd5e4c7183",
     "js/recruit-tracker.js": "34f07a10cd39b45af7a08ac6b75c680d5d88864dc721a7af9c875d7942c0bbe0",
