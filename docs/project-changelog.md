@@ -1,5 +1,10 @@
 # Project Changelog
 
+## 2026-11-19 (Đội khác: binh thư tham khảo theo tướng)
+
+- Added: trang chi tiết Đội khác (`/doi-khac/<handle>/`, `/zh/`) hiện binh thư tham khảo cho tướng mà đội không ghi binh thư: top binh thư tướng hay dùng trong các đội có nguồn, lấy từ `hero-summaries.json` của generation đang pin (nối theo tên Việt `searchName`, tên trùng giữa hai mục thì bỏ), chữ nhạt kèm ghi chú "Tham khảo theo tướng: binh thư hay dùng trong N đội có nguồn" để không lẫn với binh thư của đội. SSR tính bảng (`legacyBookHints` ở `src/lib/team-ssr.ts`) và nhúng vào `data-book-hints`; nhánh `?variant=` của `js/team-detail.js` dựng lại bằng cùng bảng. Đội chuẩn không đổi.
+- Tests: `tests-js/team-view-trees.test.mjs` (vi/zh: tướng thiếu binh thư có khối tham khảo, tướng có binh thư thì không, gợi ý rỗng giữ "Chưa có dữ liệu").
+
 ## 2026-11-18 (Google Analytics 4 + Consent Mode v2)
 
 - Added: Google Analytics 4 (`G-0K23EKM76G` ở `ANALYTICS_CONFIG` của `js/config.js`) ở Consent Mode v2 chế độ advanced. Script inline thứ hai của `<head>` (`src/lib/analytics-loader.ts`, do `SiteLayout` phát ngay sau cầu chuyển domain) dựng `dataLayer`/`gtag`, khai consent mặc định từ chối (`analytics_storage`, `ad_storage`, `ad_user_data`, `ad_personalization`, `wait_for_update` 500), áp lựa chọn đã lưu nếu là "granted" (chỉ `analytics_storage`), rồi `js` + `config` (`send_page_view: false`; Google Signals và cá nhân hoá quảng cáo tắt), gửi `page_view` đầu tường minh với `page_location` chụp ở `<head>` (vì `js/app.js` gỡ `utm_*`/`gclid` khỏi URL trước khi gtag.js tải xong) và nạp gtag.js bất đồng bộ. Chỉ `tqccl.com` gửi số liệu (localhost, `*.pages.dev`, `www.tqccl.com`, bản build test thì không); `/quan-tri/` ở mọi locale không có gtag, thanh đồng ý hay nút cookie trong HTML (`SiteLayout analytics={false}`), `scripts/verify-astro-dist.mjs` chặn bằng `ADMIN_ANALYTICS_MARKER`.

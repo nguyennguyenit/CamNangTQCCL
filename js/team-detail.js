@@ -88,6 +88,15 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   };
 
   const {family, generationId, manifestSha256, legacyTeamId, legacyTeamsSha256} = root.dataset;
+  // Binh thư tham khảo theo tướng do SSR tính (`data-book-hints`): nhánh biến thể dựng lại bằng đúng bảng này.
+  const bookHints = (() => {
+    try {
+      const parsed = JSON.parse(root.dataset.bookHints || 'null');
+      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+    } catch {
+      return null;
+    }
+  })();
   const pin = {schemaVersion: 1, generationId, manifestSha256};
   const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
   let websiteDisplay;
@@ -170,7 +179,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     const content = {...(admitted.legacyContent || team), notes: team.notes};
     // Nhãn "Đề cử" theo đúng hàng biến thể đã admit; `content` (đưa vào builder lưu đội) không mang field hiển thị này.
     paintHeader({...content, referenceRecommended: admitted.recommended === true}, null, legacyVariantBuilder(content, requestedVariant));
-    showContent(legacyOriginalDetailContent(content, {variant: admitted}));
+    showContent(legacyOriginalDetailContent(content, {variant: admitted, bookHints}));
   }
 
   async function load() {

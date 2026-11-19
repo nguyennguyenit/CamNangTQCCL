@@ -271,12 +271,35 @@ function beforeLevel20Block(holder,links) {
 }
 
 /**
+ * Binh thư tham khảo theo tướng cho ô binh thư trống của Đội khác: top binh thư tướng hay dùng trong các đội
+ * có nguồn (`hero-summaries.json` của generation đang pin), ghi rõ là tham khảo để không lẫn với binh thư của
+ * chính đội. Tên Việt đi qua `text` nên bản zh hiện chữ Hán; tên không tra được bị bỏ. Không còn tên nào ⇒ null.
+ * Hình dạng `hint`: `{teams: số đội có binh thư, items: [tên Việt]}` (xem `legacyBookHints` ở src/lib/team-ssr.ts).
+ */
+function bookReferenceBlock(hint) {
+  const teams=Number.isInteger(hint?.teams) && hint.teams > 0 ? hint.teams : 0;
+  const names=(Array.isArray(hint?.items) ? hint.items : [])
+    .map(name=>typeof name === 'string' ? text(name) : UNRESOLVED_NAME)
+    .filter(name=>name !== UNRESOLVED_NAME && name !== unavailable());
+  if (!teams || !names.length) return null;
+  return t('div',{class:'detail-hero-book-hint'},[
+    t('ul',{class:'detail-hero-books is-hint'},names.map(name=>t('li',{},t('span',{class:'detail-hero-books-item'},t('span',{class:'detail-hero-books-vi'},name))))),
+    t('p',{class:'detail-hero-hint-note'},L(
+      ['Tham khảo theo tướng: binh thư hay dùng trong ',String(teams),' đội có nguồn'],
+      `按武将参考：${teams} 支有来源阵容中的常用兵书`,
+      `武将別の参考：出典のある${teams}件の編成でよく使う兵法書`,
+    )),
+  ]);
+}
+
+/**
  * Một thẻ tướng của trang chi tiết (artboard TeamDetail): đầu thẻ vai trò + chỉ số, tên, chiến pháp có số
  * thứ tự, duyên phận, binh thư. Chiến pháp / binh thư có hồ sơ Tra cứu thì là link. Chỉ một ngôn ngữ mỗi
  * trang: bản vi không kèm chữ Hán, bản zh không kèm tên Việt. Ghi chú tướng không nằm trong thẻ mà gom xuống
  * khối "Ghi chú" bên dưới (`detailNotes`).
+ * `bookHint` (chỉ Đội khác): binh thư tướng hay dùng, hiện thay "Chưa có dữ liệu" khi đội không ghi binh thư.
  */
-function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,links=null}={}) {
+function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,links=null,bookHint=null}={}) {
   if (!legacy && isSourceEmpty(holder)) {
     return t('section',{class:'reference-detail-holder detail-hero-card is-empty'},[
       role ? t('header',{class:'detail-hero-head'},t('span',{class:'detail-hero-role'},role)) : null,
@@ -315,7 +338,7 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
       lookupHref(links,'book',item.raw,item.vi),
       [t('span',{class:'detail-hero-books-vi'},item.value)],
     ))))
-    : missing();
+    : (legacy && bookReferenceBlock(bookHint)) || missing();
   const block=(label,body,cls)=>t('div',{class:`detail-hero-block ${cls}`},[t('span',{class:'detail-hero-label'},label),body]);
   const head=[role ? t('span',{class:'detail-hero-role'},role) : null,statText ? t('span',{class:'detail-hero-stat'},statText) : null].filter(Boolean);
   const mainLabel=L('Chủ tướng','主将','主将');
@@ -760,7 +783,7 @@ function notesByOwner(record,hiddenBlockId=null) {
   return {team,primary,alternative,projected:true,hiddenSource};
 }
 
-function legacyContentSections(content,{title,provenance=[],links=null}={}) {
+function legacyContentSections(content,{title,provenance=[],links=null,bookHints=null}={}) {
   const counters=content.counters || {};
   const counterList=(values,cls)=>t('ul',{class:'counters'},values.map(value=>t('li',{class:`chip ${cls}`},String(value))));
   const good=alternativeNames(counters.good);
@@ -776,7 +799,7 @@ function legacyContentSections(content,{title,provenance=[],links=null}={}) {
   });
   const heroCards=(content.heroes || []).map((hero,index)=>detailHeroCard({
     name: hero.name, tactics: hero.tactics, books: hero.books,
-  },{isMain: index === 0, legacy: true, links}));
+  },{isMain: index === 0, legacy: true, links, bookHint: bookHintFor(bookHints,hero.name)}));
   const heroNotes=(content.heroes || []).filter(hero=>hero.note).map(hero=>({label:holderLabel(hero,{legacy:true}),values:[hero.note]}));
   return [
     title ? t('h3',{class:'legacy-content-title'},title) : null,
@@ -1054,12 +1077,20 @@ const rawTypeLabel=value=>sourceText()
   : value;
 
 /** Nội dung đội gốc; dùng cho trang original và cho biến thể đã được admit. */
-export function legacyOriginalDetailContent(team,{variant,locale}={}) {
-  return withLocale(locale,()=>legacyOriginalTrees(team,variant));
+/** Gợi ý binh thư của một tướng theo tên Việt (own-property; bảng do SSR dựng, client đọc lại từ trang). */
+const bookHintFor=(hints,name)=>(hints && typeof hints === 'object' && typeof name === 'string' && Object.hasOwn(hints,name.trim()) ? hints[name.trim()] : null);
+
+/**
+ * Thân trang chi tiết Đội khác. `bookHints` `{tênTướngViệt: {teams, items}}` là binh thư tham khảo theo tướng
+ * cho tướng mà đội không ghi binh thư (SSR tính từ `hero-summaries.json`; nhánh biến thể phía client đọc lại
+ * cùng bảng từ `data-book-hints` của trang nên hai đường dựng ra cùng nội dung).
+ */
+export function legacyOriginalDetailContent(team,{variant,locale,bookHints=null}={}) {
+  return withLocale(locale,()=>legacyOriginalTrees(team,variant,bookHints));
 }
 
-function legacyOriginalTrees(team,variant) {
-  const out=[...legacyContentSections(team,{})];
+function legacyOriginalTrees(team,variant,bookHints) {
+  const out=[...legacyContentSections(team,{bookHints})];
   out.push(t('section',{class:'detail-section detail-source'},[
     t('h2',{},L('Phạm vi','范围','範囲')),
     t('dl',{class:'detail-facts'},[
