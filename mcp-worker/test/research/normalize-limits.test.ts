@@ -24,13 +24,16 @@ const handlers = realHandlers();
 const roster = loadRosterFixture();
 const evidence = { sourceScope: "currentTurnImage" as const, batchId: "limits" };
 const WORKER_RESULT_BYTES = 98_304;
-/** K đã đo (TQCCL_MEASURE=1): 300 mục, id 32 ký tự, unresolved xấu nhất từ catalog; K lớn nhất ≤ 36 000 ký tự là 69. */
+/** K đã đo (TQCCL_MEASURE=1): 300 mục, id 32 ký tự, unresolved xấu nhất từ catalog; xem `research/size-measurement.md`. */
 const GUARANTEED_UNRESOLVED = 60;
 
 const normalize = (observations: unknown[]) => handlers.call("tqccl_normalize_entities", { observations: observations as never });
 const failureOf = (promise: Promise<unknown>) => promise.then(() => null, (error: unknown) => error as ResearchHandlerError);
 
-/** observationId dài đúng 32 ký tự (trần của schema): ca xấu nhất cho phần echo `unresolved`. */
+/**
+ * observationId 32 ký tự: ca bảo đảm kích thước. Schema nhận tới 64 ký tự, nhưng ở 300 mục thì id 64 ký tự làm request
+ * vượt `MAX_NORMALIZE_REQUEST_BYTES` trước khi tới trần kết quả, nên bảo đảm 300 mục được ghim ở id 32.
+ */
 const longId = (prefix: string, index: number) => `${prefix}${index}-`.padEnd(32, "x");
 
 /**

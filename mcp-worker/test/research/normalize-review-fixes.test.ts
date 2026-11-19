@@ -15,7 +15,7 @@ const byName = (observationId: string, entityKind: "hero" | "tactic", observedTe
 });
 const normalize = (observations: unknown[]) => handlers.call("tqccl_normalize_entities", { observations: observations as never });
 
-describe("review H1: resolvedIds chỉ có canonicalId server tra tên; observationId ≤ 32", () => {
+describe("review H1: resolvedIds chỉ có canonicalId server tra tên; observationId ≤ 64", () => {
   it("mục client gửi sẵn canonicalId không được echo; mục tra tên thì có", async () => {
     const result = await normalize([
       { observationId: "given", entityKind: "hero", canonicalId: "hero:vuong-di", evidence: evidence() },
@@ -27,10 +27,10 @@ describe("review H1: resolvedIds chỉ có canonicalId server tra tên; observat
     expect(result.resolvedIds).toEqual([null, "hero:40y-lu-bo", "tactic:me-hoac"]);
   });
 
-  it("observationId dài đúng 32 ký tự được nhận, 33 bị từ chối kèm tên field", async () => {
-    const ok = await normalize([byName("a".repeat(32), "hero", "Vương Dị")]);
+  it("observationId dài đúng 64 ký tự được nhận, 65 bị từ chối kèm tên field", async () => {
+    const ok = await normalize([byName("a".repeat(64), "hero", "Vương Dị")]);
     expect(ok.resolvedIds).toEqual(["hero:vuong-di"]);
-    const failure = await normalize([byName("a".repeat(33), "hero", "Vương Dị")]).catch((error: unknown) => error);
+    const failure = await normalize([byName("a".repeat(65), "hero", "Vương Dị")]).catch((error: unknown) => error);
     expect(failure).toBeInstanceOf(ResearchHandlerError);
     expect(failure).toMatchObject({ code: "INVALID_REQUEST", fields: ["observations[0].observationId"] });
   });

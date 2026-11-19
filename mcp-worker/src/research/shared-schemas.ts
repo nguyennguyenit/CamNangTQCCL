@@ -5,12 +5,12 @@ export const seasonContextSchema = z.object({scenarioId:seasonId,rulesetId:seaso
 export const MAX_REQUEST_BYTES = 256 * 1024;
 /**
  * Trần normalize (#165, số đo ở `plans/261118-1942-normalize-full-roster/research/size-measurement.md`): kho ≤ 300 mục
- * với ≤ K mục chưa rõ (xem docs) lọt 40.000 ký tự kết quả khi `observationId` ≤ 32 ký tự; vượt → `RESULT_TOO_LARGE` có kiểu.
+ * với ≤ K mục chưa rõ (xem docs) lọt 40.000 ký tự kết quả khi `observationId` ≤ 64 ký tự; vượt → `RESULT_TOO_LARGE` có kiểu.
  * Byte request: `1,07 × 60.770 + 512 ≤ 65.536` (body HTTP 64 KiB, escape ASCII của client +~7 % với tiếng Việt).
  */
 export const MAX_NORMALIZE_OBSERVATIONS = 300;
-/** `observationId` dài làm kết quả phình (id được echo ở observations/unresolved), nên normalize giới hạn riêng. */
-export const MAX_NORMALIZE_OBSERVATION_ID_LENGTH = 32;
+/** `observationId` chỉ còn được echo ở `unresolved`, nhưng id dài vẫn làm kết quả phình, nên normalize giới hạn riêng (64: đủ cho id mô tả như fixture release). */
+export const MAX_NORMALIZE_OBSERVATION_ID_LENGTH = 64;
 export const MAX_NORMALIZE_REQUEST_BYTES = 60_770;
 export const boundedText = z
   .string()

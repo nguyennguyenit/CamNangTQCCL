@@ -40,7 +40,7 @@ Scope: HOLD. Ngoài phạm vi: #164 (tên Hán-Việt), phân trang normalize, n
 - [ ] Kho 238 mục gửi bằng tên (và biến thể có 25 mục mơ hồ/không biết) chạy `normalize → recommend` qua handler, CLI `--input -` và HTTP production workerd; recommend trả tên catalog.
 - [ ] Digest handler = digest domain cho cùng đầu vào; đổi sao đỏ/danh tính/`familyId`/đội khoá vẫn làm binding cũ hỏng.
 - [ ] Không mất `unresolved`, `candidates`, cảnh báo, ưu tiên `manualCorrection` (`manual: true`), dấu untrusted.
-- [ ] ≤ 300 mục với ≤ 60 mục chưa rõ (tỉ lệ tướng/chiến pháp như kho thật, `observationId` 32 ký tự) lọt < 40 000 ký tự kết quả (đo 34 931; K tối đa 69); vượt → `RESULT_TOO_LARGE` có kiểu; `tools/list` < 90 KiB; ngân sách `normalizeMs`/`recommendMs` xanh. <!-- Updated: Code review 2026-11-19 -->
+- [ ] ≤ 300 mục (id ≤ 32 ký tự; schema nhận tới 64) với ≤ 60 mục chưa rõ (tỉ lệ tướng/chiến pháp như kho thật) lọt < 40 000 ký tự kết quả (đo 34 931; K tối đa 69); vượt → `RESULT_TOO_LARGE` có kiểu; `tools/list` < 90 KiB; ngân sách `normalizeMs`/`recommendMs` xanh. <!-- Updated: Code review 2026-11-19; CI 2026-11-20 -->
 - [ ] `npm run test:coverage` và `npm run check:repository` xanh; tqccl-auto test xanh.
 
 ## Dependencies

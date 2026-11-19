@@ -15,7 +15,7 @@ const normalizeInputSchema = z
     observations: z
       .array(
         structuredObservationSchema.extend({
-          observationId: z.string().min(1).max(MAX_NORMALIZE_OBSERVATION_ID_LENGTH).describe("ID observation duy nhất (tối đa 32 ký tự)."),
+          observationId: z.string().min(1).max(MAX_NORMALIZE_OBSERVATION_ID_LENGTH).describe(`ID observation duy nhất (tối đa ${MAX_NORMALIZE_OBSERVATION_ID_LENGTH} ký tự).`),
         }),
       )
       .max(MAX_NORMALIZE_OBSERVATIONS)
