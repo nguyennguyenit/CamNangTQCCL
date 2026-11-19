@@ -1,0 +1,1052 @@
+{
+ "source": "Kho thật một tài khoản (ẩn danh), chụp client 2026-11-19",
+ "heroes": [
+  {
+   "observedText": "Lữ Bố",
+   "canonicalId": "hero:lu-bo",
+   "redStars": 5
+  },
+  {
+   "observedText": "40Y Lữ Bố",
+   "canonicalId": "hero:40y-lu-bo",
+   "redStars": 0
+  },
+  {
+   "observedText": "Tả Từ",
+   "canonicalId": "hero:ta-tu",
+   "redStars": 2
+  },
+  {
+   "observedText": "Trương Xuân Hoa",
+   "canonicalId": "hero:truong-xuan-hoa",
+   "redStars": 5
+  },
+  {
+   "observedText": "Lữ Mông",
+   "canonicalId": "hero:lu-mong",
+   "redStars": 5
+  },
+  {
+   "observedText": "SP Lữ Mông",
+   "canonicalId": "hero:sp-lu-mong",
+   "redStars": 0
+  },
+  {
+   "observedText": "SP Lưu Diệp",
+   "canonicalId": "hero:sp-luu-diep",
+   "redStars": 1
+  },
+  {
+   "observedText": "Tào Phi",
+   "canonicalId": "hero:tao-phi",
+   "redStars": 3
+  },
+  {
+   "observedText": "Chân Cơ",
+   "canonicalId": "hero:chan-co",
+   "redStars": 0
+  },
+  {
+   "observedText": "CO Chân Cơ",
+   "canonicalId": "hero:co-chan-co",
+   "redStars": 1
+  },
+  {
+   "observedText": "Tiểu Kiều",
+   "canonicalId": "hero:tieu-kieu",
+   "redStars": 4
+  },
+  {
+   "observedText": "CO Tiểu Kiều",
+   "canonicalId": "hero:co-tieu-kieu",
+   "redStars": 2
+  },
+  {
+   "observedText": "Tư Mã Ý",
+   "canonicalId": "hero:tu-ma-y",
+   "redStars": 0
+  },
+  {
+   "observedText": "Hạ Hầu Đôn",
+   "canonicalId": "hero:ha-hau-don",
+   "redStars": 3
+  },
+  {
+   "observedText": "SP Pháp Chính",
+   "canonicalId": "hero:sp-phap-chinh",
+   "redStars": 0
+  },
+  {
+   "observedText": "Pháp Chính",
+   "canonicalId": "hero:phap-chinh",
+   "redStars": 0
+  },
+  {
+   "observedText": "Mãn Sủng",
+   "canonicalId": "hero:man-sung",
+   "redStars": 4
+  },
+  {
+   "observedText": "Vương Song",
+   "canonicalId": "hero:vuong-song",
+   "redStars": 0
+  },
+  {
+   "observedText": "Điêu Thuyền",
+   "canonicalId": "hero:dieu-thuyen",
+   "redStars": 3
+  },
+  {
+   "observedText": "SP Điêu Thuyền",
+   "canonicalId": "hero:sp-dieu-thuyen",
+   "redStars": 1
+  },
+  {
+   "observedText": "SP Tuân Úc",
+   "canonicalId": "hero:sp-tuan-uc",
+   "redStars": 1
+  },
+  {
+   "observedText": "Tào Tháo",
+   "canonicalId": "hero:tao-thao",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trương Liêu",
+   "canonicalId": "hero:truong-lieu",
+   "redStars": 0
+  },
+  {
+   "observedText": "Lưu Bị",
+   "canonicalId": "hero:luu-bi",
+   "redStars": 0
+  },
+  {
+   "observedText": "Bàng Thống",
+   "canonicalId": "hero:bang-thong",
+   "redStars": 1
+  },
+  {
+   "observedText": "Mã Siêu",
+   "canonicalId": "hero:ma-sieu",
+   "redStars": 0
+  },
+  {
+   "observedText": "SP Mã Siêu",
+   "canonicalId": "hero:sp-ma-sieu",
+   "redStars": 0
+  },
+  {
+   "observedText": "Gia Cát Lượng",
+   "canonicalId": "hero:gia-cat-luong",
+   "redStars": 3
+  },
+  {
+   "observedText": "SP Gia Cát Lượng",
+   "canonicalId": "hero:sp-gia-cat-luong",
+   "redStars": 0
+  },
+  {
+   "observedText": "Quan Vũ",
+   "canonicalId": "hero:quan-vu",
+   "redStars": 4
+  },
+  {
+   "observedText": "SP Tôn Kiên",
+   "canonicalId": "hero:sp-ton-kien",
+   "redStars": 1
+  },
+  {
+   "observedText": "Tôn Kiên",
+   "canonicalId": "hero:ton-kien",
+   "redStars": 1
+  },
+  {
+   "observedText": "Tôn Thượng Hương",
+   "canonicalId": "hero:ton-thuong-huong",
+   "redStars": 1
+  },
+  {
+   "observedText": "Trương Chiêu",
+   "canonicalId": "hero:truong-chieu",
+   "redStars": 0
+  },
+  {
+   "observedText": "Lục Tốn",
+   "canonicalId": "hero:luc-ton",
+   "redStars": 0
+  },
+  {
+   "observedText": "SP Viên Thiệu",
+   "canonicalId": "hero:sp-vien-thieu",
+   "redStars": 2
+  },
+  {
+   "observedText": "Vu Cát",
+   "canonicalId": "hero:vu-cat",
+   "redStars": 1
+  },
+  {
+   "observedText": "Đổng Trác",
+   "canonicalId": "hero:dong-trac",
+   "redStars": 1
+  },
+  {
+   "observedText": "SP Bàng Đức",
+   "canonicalId": "hero:sp-bang-duc",
+   "redStars": 4
+  },
+  {
+   "observedText": "SP Quách Gia",
+   "canonicalId": "hero:sp-quach-gia",
+   "redStars": 0
+  },
+  {
+   "observedText": "Quách Gia",
+   "canonicalId": "hero:quach-gia",
+   "redStars": 5
+  },
+  {
+   "observedText": "Tào Thực",
+   "canonicalId": "hero:tao-thuc",
+   "redStars": 0
+  },
+  {
+   "observedText": "Hác Chiêu",
+   "canonicalId": "hero:hac-chieu",
+   "redStars": 0
+  },
+  {
+   "observedText": "Tào Nhân",
+   "canonicalId": "hero:tao-nhan",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trình Dục",
+   "canonicalId": "hero:trinh-duc",
+   "redStars": 5
+  },
+  {
+   "observedText": "Tuân Du",
+   "canonicalId": "hero:tuan-du",
+   "redStars": 4
+  },
+  {
+   "observedText": "Điển Vi",
+   "canonicalId": "hero:dien-vi",
+   "redStars": 0
+  },
+  {
+   "observedText": "Từ Hoảng",
+   "canonicalId": "hero:tu-hoang",
+   "redStars": 1
+  },
+  {
+   "observedText": "Chung Hội",
+   "canonicalId": "hero:chung-hoi",
+   "redStars": 2
+  },
+  {
+   "observedText": "Trương Bào",
+   "canonicalId": "hero:truong-bao",
+   "redStars": 1
+  },
+  {
+   "observedText": "Quan Hưng",
+   "canonicalId": "hero:quan-hung",
+   "redStars": 0
+  },
+  {
+   "observedText": "Quan Ngân Bình",
+   "canonicalId": "hero:quan-ngan-binh",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trần Đáo",
+   "canonicalId": "hero:tran-dao",
+   "redStars": 0
+  },
+  {
+   "observedText": "Khương Duy",
+   "canonicalId": "hero:khuong-duy",
+   "redStars": 0
+  },
+  {
+   "observedText": "Hoàng Trung",
+   "canonicalId": "hero:hoang-trung",
+   "redStars": 1
+  },
+  {
+   "observedText": "Triệu Vân",
+   "canonicalId": "hero:trieu-van",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trương Phi",
+   "canonicalId": "hero:truong-phi",
+   "redStars": 5
+  },
+  {
+   "observedText": "SP Chu Du",
+   "canonicalId": "hero:sp-chu-du",
+   "redStars": 1
+  },
+  {
+   "observedText": "Chu Du",
+   "canonicalId": "hero:chu-du",
+   "redStars": 0
+  },
+  {
+   "observedText": "Mã Trung",
+   "canonicalId": "hero:ma-trung",
+   "redStars": 0
+  },
+  {
+   "observedText": "Lăng Thống",
+   "canonicalId": "hero:lang-thong",
+   "redStars": 0
+  },
+  {
+   "observedText": "Tôn Quyền",
+   "canonicalId": "hero:ton-quyen",
+   "redStars": 1
+  },
+  {
+   "observedText": "Cam Ninh",
+   "canonicalId": "hero:cam-ninh",
+   "redStars": 5
+  },
+  {
+   "observedText": "Chu Thái",
+   "canonicalId": "hero:chu-thai",
+   "redStars": 1
+  },
+  {
+   "observedText": "Thái Sử Từ",
+   "canonicalId": "hero:thai-su-tu",
+   "redStars": 0
+  },
+  {
+   "observedText": "Lục Kháng",
+   "canonicalId": "hero:luc-khang",
+   "redStars": 5
+  },
+  {
+   "observedText": "SP Trương Bảo",
+   "canonicalId": "hero:sp-truong-bao",
+   "redStars": 0
+  },
+  {
+   "observedText": "Hứa Du",
+   "canonicalId": "hero:hua-du",
+   "redStars": 0
+  },
+  {
+   "observedText": "Thư Thụ",
+   "canonicalId": "hero:thu-thu",
+   "redStars": 2
+  },
+  {
+   "observedText": "Lữ Linh Ỷ",
+   "canonicalId": "hero:lu-linh-y",
+   "redStars": 4
+  },
+  {
+   "observedText": "Chúc Dung",
+   "canonicalId": "hero:chuc-dung-phu-nhan",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trương Giác",
+   "canonicalId": "hero:truong-giac",
+   "redStars": 1
+  },
+  {
+   "observedText": "SP Hoàng Phủ Tung",
+   "canonicalId": "hero:sp-hoang-phu-tung",
+   "redStars": 0
+  },
+  {
+   "observedText": "Thái Ung",
+   "canonicalId": "hero:thai-ung",
+   "redStars": 0
+  },
+  {
+   "observedText": "Vương Nguyên Cơ",
+   "canonicalId": "hero:vuong-nguyen-co",
+   "redStars": 2
+  },
+  {
+   "observedText": "Nhạc Tiến",
+   "canonicalId": "hero:nhac-tien",
+   "redStars": 1
+  },
+  {
+   "observedText": "Đặng Ngải",
+   "canonicalId": "hero:dang-ngai",
+   "redStars": 2
+  },
+  {
+   "observedText": "Hạ Hầu Uyên",
+   "canonicalId": "hero:ha-hau-uyen",
+   "redStars": 4
+  },
+  {
+   "observedText": "Tưởng Uyển",
+   "canonicalId": "hero:tuong-uyen",
+   "redStars": 0
+  },
+  {
+   "observedText": "Hoàng Cái",
+   "canonicalId": "hero:hoang-cai",
+   "redStars": 4
+  },
+  {
+   "observedText": "Trình Phổ",
+   "canonicalId": "hero:trinh-pho",
+   "redStars": 3
+  },
+  {
+   "observedText": "Tôn Sách",
+   "canonicalId": "hero:ton-sach",
+   "redStars": 0
+  },
+  {
+   "observedText": "Lý Nho",
+   "canonicalId": "hero:ly-nho",
+   "redStars": 0
+  },
+  {
+   "observedText": "Nhan Lương",
+   "canonicalId": "hero:nhan-luong",
+   "redStars": 0
+  },
+  {
+   "observedText": "Trương Nhượng",
+   "canonicalId": "hero:truong-nhuong",
+   "redStars": 2
+  },
+  {
+   "observedText": "SP Hoàng Nguyệt Anh",
+   "canonicalId": "hero:sp-hoang-nguyet-anh",
+   "redStars": 1
+  },
+  {
+   "observedText": "Hoàng Nguyệt Anh",
+   "canonicalId": "hero:hoang-nguyet-anh",
+   "redStars": 5
+  },
+  {
+   "observedText": "Gia Cát Khác",
+   "canonicalId": "hero:gia-cat-khac",
+   "redStars": 4
+  },
+  {
+   "observedText": "Đại Kiều",
+   "canonicalId": "hero:dai-kieu",
+   "redStars": 2
+  },
+  {
+   "observedText": "Trần Cung",
+   "canonicalId": "hero:tran-cung",
+   "redStars": 0
+  },
+  {
+   "observedText": "Tư Mã Huy",
+   "canonicalId": "hero:tu-ma-huy",
+   "redStars": 5
+  },
+  {
+   "observedText": "Hà Thị",
+   "canonicalId": "hero:ha-thi",
+   "redStars": 0
+  },
+  {
+   "observedText": "Viên Thuật",
+   "canonicalId": "hero:vien-thuat",
+   "redStars": 1
+  }
+ ],
+ "tactics": [
+  {
+   "observedText": "Đánh Đâu Thắng Đó",
+   "canonicalId": "tactic:danh-dau-thang-do"
+  },
+  {
+   "observedText": "Thịnh Khí Linh Địch",
+   "canonicalId": "tactic:thinh-khi-linh-dich"
+  },
+  {
+   "observedText": "Phá Trận Thôi Kiên",
+   "canonicalId": "tactic:pha-tran-thoi-kien"
+  },
+  {
+   "observedText": "Sợ Bóng Sợ Gió",
+   "canonicalId": "tactic:so-bong-so-gio"
+  },
+  {
+   "observedText": "Tứ Diện Sở Ca",
+   "canonicalId": "tactic:tu-dien-so-ca"
+  },
+  {
+   "observedText": "Bát Môn Kim Tỏa Trận",
+   "canonicalId": "tactic:bat-mon-kim-toa-tran"
+  },
+  {
+   "observedText": "Trầm Sa Quyết Thủy",
+   "canonicalId": "tactic:tram-sa-quyet-thuy"
+  },
+  {
+   "observedText": "Dụ Địch Thâm Nhập",
+   "canonicalId": "tactic:du-dich-tham-nhap"
+  },
+  {
+   "observedText": "Nhất Kỵ Đương Thiên",
+   "canonicalId": "tactic:nhat-ky-duong-thien"
+  },
+  {
+   "observedText": "Thừa Địch Bất Ngu",
+   "canonicalId": "tactic:thua-dich-bat-ngu"
+  },
+  {
+   "observedText": "Bách Kỵ Kiếp Doanh",
+   "canonicalId": "tactic:bach-ky-kiep-doanh"
+  },
+  {
+   "observedText": "Đánh Bại Quân Địch",
+   "canonicalId": "tactic:danh-bai-quan-dich"
+  },
+  {
+   "observedText": "Hợp Quân Tụ Chúng",
+   "canonicalId": "tactic:hop-quan-tu-chung"
+  },
+  {
+   "observedText": "Tỏa Nhuệ",
+   "canonicalId": "tactic:toa-nhue"
+  },
+  {
+   "observedText": "Khắc Địch Chế Thắng",
+   "canonicalId": "tactic:khac-dich-che-thang"
+  },
+  {
+   "observedText": "Bình Phong",
+   "canonicalId": "tactic:binh-phong"
+  },
+  {
+   "observedText": "Hoành Qua Dược Mã",
+   "canonicalId": "tactic:hoanh-qua-duoc-ma"
+  },
+  {
+   "observedText": "Phong Trợ Hỏa Thế",
+   "canonicalId": "tactic:phong-tro-hoa-the"
+  },
+  {
+   "observedText": "Trí Kế",
+   "canonicalId": "tactic:tri-ke"
+  },
+  {
+   "observedText": "Tạm Lánh Sóng Gió",
+   "canonicalId": "tactic:tam-lanh-song-gio"
+  },
+  {
+   "observedText": "Phong Thỉ Trận",
+   "canonicalId": "tactic:phong-thi-tran"
+  },
+  {
+   "observedText": "Dũng Giả Hàng Đầu",
+   "canonicalId": "tactic:dung-gia-dac-tien"
+  },
+  {
+   "observedText": "Mê Hoặc",
+   "canonicalId": "tactic:me-hoac"
+  },
+  {
+   "observedText": "Bạch Mã Nghĩa Tòng",
+   "canonicalId": "tactic:bach-ma-nghia-tong"
+  },
+  {
+   "observedText": "Văn Võ Song Toàn",
+   "canonicalId": "tactic:van-vo-song-toan"
+  },
+  {
+   "observedText": "Bình Vô Thường Thế",
+   "canonicalId": "tactic:binh-vo-thuong-the"
+  },
+  {
+   "observedText": "Lính Giáp Mây",
+   "canonicalId": "tactic:linh-giap-may"
+  },
+  {
+   "observedText": "Hãm Trận Doanh",
+   "canonicalId": "tactic:ham-tran-doanh"
+  },
+  {
+   "observedText": "Hổ Báo Kỵ",
+   "canonicalId": "tactic:ho-bao-ky"
+  },
+  {
+   "observedText": "Bạch Nhị Binh",
+   "canonicalId": "tactic:bach-nhi-binh"
+  },
+  {
+   "observedText": "Vô Đương Phi Quân",
+   "canonicalId": "tactic:vo-duong-phi-quan"
+  },
+  {
+   "observedText": "Hoành Tảo Thiên Quân",
+   "canonicalId": "tactic:hoanh-tao-thien-quan"
+  },
+  {
+   "observedText": "Tuyệt Địa Phản Kích",
+   "canonicalId": "tactic:tuyet-dia-phan-kich"
+  },
+  {
+   "observedText": "Sĩ Biệt Tam Nhật",
+   "canonicalId": "tactic:si-biet-tam-nhat"
+  },
+  {
+   "observedText": "Kế Hay Mưu Giỏi",
+   "canonicalId": "tactic:ke-hay-muu-gioi"
+  },
+  {
+   "observedText": "Đoạt Hồn Hiệp Phách",
+   "canonicalId": "tactic:doat-hon-hiep-phach"
+  },
+  {
+   "observedText": "Vạn Tiễn Tề Phát",
+   "canonicalId": "tactic:van-tien-te-phat"
+  },
+  {
+   "observedText": "Đại Kích Sĩ",
+   "canonicalId": "tactic:dai-kich-si"
+  },
+  {
+   "observedText": "Liên Minh",
+   "canonicalId": "tactic:ket-minh"
+  },
+  {
+   "observedText": "Cắt Xương Trị Độc",
+   "canonicalId": "tactic:cat-xuong-tri-doc"
+  },
+  {
+   "observedText": "Thuyền Cỏ Mượn Tên",
+   "canonicalId": "tactic:thuyen-co-muon-ten"
+  },
+  {
+   "observedText": "Đẹp Động Lòng Người",
+   "canonicalId": "tactic:khuynh-quoc-khuynh-thanh"
+  },
+  {
+   "observedText": "Tượng Binh",
+   "canonicalId": "tactic:tuong-binh"
+  },
+  {
+   "observedText": "Quân Hổ Vệ",
+   "canonicalId": "tactic:ho-ve-quan"
+  },
+  {
+   "observedText": "Quân Cẩm Phàm",
+   "canonicalId": "tactic:quan-cam-pham"
+  },
+  {
+   "observedText": "Lính Thanh Châu",
+   "canonicalId": "tactic:linh-thanh-chau"
+  },
+  {
+   "observedText": "Thừa Thắng Trường Khu",
+   "canonicalId": "tactic:thua-thang-truong-khu"
+  },
+  {
+   "observedText": "Nhất Lực Cự Thủ",
+   "canonicalId": "tactic:nhat-luc-cu-thu"
+  },
+  {
+   "observedText": "Vận Trù Quyết Toán",
+   "canonicalId": "tactic:van-tru-quyet-toan"
+  },
+  {
+   "observedText": "Thiết Kỵ Khu Trì",
+   "canonicalId": "tactic:thiet-ky-khu-tri"
+  },
+  {
+   "observedText": "Hình Cơ Quân Lược",
+   "canonicalId": "tactic:hinh-co-quan-luoc"
+  },
+  {
+   "observedText": "Cơ Hình Trận",
+   "canonicalId": "tactic:co-hinh-tran"
+  },
+  {
+   "observedText": "Uy Mưu Vô Địch",
+   "canonicalId": "tactic:uy-muu-vo-dich"
+  },
+  {
+   "observedText": "Phá Quân Uy Thắng",
+   "canonicalId": "tactic:pha-quan-uy-thang"
+  },
+  {
+   "observedText": "Mau Giành Lợi Thế",
+   "canonicalId": "tactic:mau-gianh-loi-the"
+  },
+  {
+   "observedText": "Tiên Thành Kỳ Lự",
+   "canonicalId": "tactic:tien-thanh-ky-lu"
+  },
+  {
+   "observedText": "Ích Kỉ Kim Cổ",
+   "canonicalId": "tactic:ich-ky-kim-co"
+  },
+  {
+   "observedText": "Chúng Động Vạn Kế",
+   "canonicalId": "tactic:chung-dong-van-ke"
+  },
+  {
+   "observedText": "Dốc Sức Tính Kế",
+   "canonicalId": "tactic:doc-suc-tinh-ke"
+  },
+  {
+   "observedText": "Thời Cơ Chiến Thắng",
+   "canonicalId": "tactic:thoi-co-chien-thang"
+  },
+  {
+   "observedText": "Trung Dũng Nghĩa Liệt",
+   "canonicalId": "tactic:trung-dung-nghia-liet"
+  },
+  {
+   "observedText": "Nhân Lợi Chế Quyền",
+   "canonicalId": "tactic:nhan-loi-che-quyen"
+  },
+  {
+   "observedText": "Gió Táp Mưa Sa",
+   "canonicalId": "tactic:tat-phong-sau-vu"
+  },
+  {
+   "observedText": "Đích Đến Cuối Cùng",
+   "canonicalId": "tactic:chung-vong-so-quy"
+  },
+  {
+   "observedText": "Lính Đan Dương",
+   "canonicalId": "tactic:dan-duong-binh"
+  },
+  {
+   "observedText": "Tử Sĩ Tiên Phong",
+   "canonicalId": "tactic:tien-dang-tu-si"
+  },
+  {
+   "observedText": "Phi Hùng Quân",
+   "canonicalId": "tactic:phi-hung-quan"
+  },
+  {
+   "observedText": "Giải Phiền Vệ",
+   "canonicalId": "tactic:giai-phien-ve"
+  },
+  {
+   "observedText": "Lâm Nguy Cứu Chủ",
+   "canonicalId": "tactic:lam-nguy-cuu-chu"
+  },
+  {
+   "observedText": "Công Bất Đường Quyên",
+   "canonicalId": "tactic:cong-bat-duong-quyen"
+  },
+  {
+   "observedText": "Toàn Quân Đồng Lòng",
+   "canonicalId": "tactic:toan-quan-dong-long"
+  },
+  {
+   "observedText": "Xông Pha Khói Lửa",
+   "canonicalId": "tactic:pho-thang-dao-hoa"
+  },
+  {
+   "observedText": "Nhanh Trí Động Não",
+   "canonicalId": "tactic:nhanh-tri-dong-nao"
+  },
+  {
+   "observedText": "Ngư Lân Trận",
+   "canonicalId": "tactic:ngu-lan-tran"
+  },
+  {
+   "observedText": "Dưỡng Sức Đợi Chiến",
+   "canonicalId": "tactic:duong-suc-doi-chien"
+  },
+  {
+   "observedText": "Thôi Phong Đoạn Nhẫn",
+   "canonicalId": "tactic:thoi-phong-doan-nhan"
+  },
+  {
+   "observedText": "Thái Bình Đạo Pháp",
+   "canonicalId": "tactic:thai-binh-dao-phap"
+  },
+  {
+   "observedText": "Khí Lăng Tam Quân",
+   "canonicalId": "tactic:khi-lang-tam-quan"
+  },
+  {
+   "observedText": "Quỷ Thần Đình Uy",
+   "canonicalId": "tactic:quy-than-dinh-uy"
+  },
+  {
+   "observedText": "Thiêu Đốt Doanh Lũy",
+   "canonicalId": "tactic:thieu-dot-doanh-luy"
+  },
+  {
+   "observedText": "An Ủi Quân Dân",
+   "canonicalId": "tactic:an-ui-quan-dan"
+  },
+  {
+   "observedText": "Lửa Lan Khắp Chốn",
+   "canonicalId": "tactic:hoa-si-nguyen-lieu"
+  },
+  {
+   "observedText": "Tam Thế Trận",
+   "canonicalId": "tactic:tam-the-tran"
+  },
+  {
+   "observedText": "Đương Phong Thôi Quyết",
+   "canonicalId": "tactic:duong-phong-thoi-quyet"
+  },
+  {
+   "observedText": "Vô Địch Can Trường",
+   "canonicalId": "tactic:cuong-dung-vo-tien"
+  },
+  {
+   "observedText": "Dẫn Huyền Lực Chiến",
+   "canonicalId": "tactic:dan-huyen-luc-chien"
+  },
+  {
+   "observedText": "Quyết Thủy Hội Thành",
+   "canonicalId": "tactic:quyet-thuy-hoi-thanh"
+  },
+  {
+   "observedText": "Lõa Y Huyết Chiến",
+   "canonicalId": "tactic:loa-y-huyet-chien"
+  },
+  {
+   "observedText": "Sơ Trang Chiến Kích",
+   "canonicalId": "tactic:so-trang-trich-kich"
+  },
+  {
+   "observedText": "Dùng Nước Đẩy Cầu",
+   "canonicalId": "tactic:cu-thuy-doan-kieu"
+  },
+  {
+   "observedText": "Võ Phong Trận",
+   "canonicalId": "tactic:vo-phong-tran"
+  },
+  {
+   "observedText": "Tuyệt Kỳ Cấp Đạo",
+   "canonicalId": "tactic:tuyet-ky-cap-dao"
+  },
+  {
+   "observedText": "Kích Kỳ Nọa Quy",
+   "canonicalId": "tactic:kich-ky-noa-quy"
+  },
+  {
+   "observedText": "Hình Nhất Trận",
+   "canonicalId": "tactic:hinh-nhat-tran"
+  },
+  {
+   "observedText": "Tiềm Long Trận",
+   "canonicalId": "tactic:tiem-long-tran"
+  },
+  {
+   "observedText": "Huy Quân Kết Trận",
+   "canonicalId": "tactic:huy-quan-ket-tran"
+  },
+  {
+   "observedText": "Dày Công Tôi Luyện",
+   "canonicalId": "tactic:bach-luyen-thanh-cuong"
+  },
+  {
+   "observedText": "Cường Công",
+   "canonicalId": "tactic:cuong-cong"
+  },
+  {
+   "observedText": "Tịnh Hóa",
+   "canonicalId": "tactic:tinh-hoa"
+  },
+  {
+   "observedText": "Ỷ Thế Cầm Quyền",
+   "canonicalId": "tactic:hiep-the-long-quyen"
+  },
+  {
+   "observedText": "Truyền Hịch Tuyên Uy",
+   "canonicalId": "tactic:truyen-hich-tuyen-uy"
+  },
+  {
+   "observedText": "Chờ Đợi Xuất Phát",
+   "canonicalId": "tactic:cho-doi-xuat-phat"
+  },
+  {
+   "observedText": "Đánh Vào Chỗ Đông",
+   "canonicalId": "tactic:liem-chung-nhi-kich"
+  },
+  {
+   "observedText": "Yêu Thuật",
+   "canonicalId": "tactic:yeu-thuat"
+  },
+  {
+   "observedText": "Nhất Cử Tiêm Diệt",
+   "canonicalId": "tactic:nhat-cu-tiem-diet"
+  },
+  {
+   "observedText": "Ám Triều Dũng Động",
+   "canonicalId": "tactic:am-trieu-hung-dung"
+  },
+  {
+   "observedText": "Bất Nhục Sứ Mệnh",
+   "canonicalId": "tactic:bat-nhuc-su-menh"
+  },
+  {
+   "observedText": "Ám Tàng Huyền Cơ",
+   "canonicalId": "tactic:am-tang-huyen-co"
+  },
+  {
+   "observedText": "Đồ Kỳ Thượng Nhục",
+   "canonicalId": "tactic:do-ky-thuong-nhuc"
+  },
+  {
+   "observedText": "Tả Hữu Khai Cung",
+   "canonicalId": "tactic:ta-huu-khai-cung"
+  },
+  {
+   "observedText": "Đoản Binh Tương Kiến",
+   "canonicalId": "tactic:doan-binh-tuong-tiep"
+  },
+  {
+   "observedText": "Kiêu Dũng Thiện Chiến",
+   "canonicalId": "tactic:kieu-dung-thien-chien"
+  },
+  {
+   "observedText": "Ngự Địch Bình Chướng",
+   "canonicalId": "tactic:ngu-dich-binh-chuong"
+  },
+  {
+   "observedText": "Liệu Sự Như Thần",
+   "canonicalId": "tactic:lieu-su-nhu-than"
+  },
+  {
+   "observedText": "Tỏa Chí Nộ Tập",
+   "canonicalId": "tactic:toa-chi-no-tap"
+  },
+  {
+   "observedText": "Trưởng Giả Chi Phong",
+   "canonicalId": "tactic:truong-gia-chi-phong"
+  },
+  {
+   "observedText": "Tị Thực Kích Hư",
+   "canonicalId": "tactic:ti-thuc-kich-hu"
+  },
+  {
+   "observedText": "Phấn Đột",
+   "canonicalId": "tactic:phan-dot"
+  },
+  {
+   "observedText": "Kỵ Hổ Nan Hạ",
+   "canonicalId": "tactic:ky-ho-nan-ha"
+  },
+  {
+   "observedText": "Loan Cung Ẩm Vũ",
+   "canonicalId": "tactic:loan-cung-am-vu"
+  },
+  {
+   "observedText": "Tiến Ngôn",
+   "canonicalId": "tactic:tien-ngon"
+  },
+  {
+   "observedText": "Lạc Phượng",
+   "canonicalId": "tactic:lac-phuong"
+  },
+  {
+   "observedText": "Lỗ Mãng",
+   "canonicalId": "tactic:lo-mang"
+  },
+  {
+   "observedText": "Lạc Lôi",
+   "canonicalId": "tactic:lac-loi"
+  },
+  {
+   "observedText": "Dương Đông Kích Tây",
+   "canonicalId": "tactic:thanh-dong-kich-tay"
+  },
+  {
+   "observedText": "Yển Kỳ Tức Cổ",
+   "canonicalId": "tactic:yen-ky-tuc-co"
+  },
+  {
+   "observedText": "Xuất Kỳ Bất Ý",
+   "canonicalId": "tactic:xuat-ky-bat-y"
+  },
+  {
+   "observedText": "Phong Thanh Hạc Lệ",
+   "canonicalId": "tactic:phong-thanh-hac-le"
+  },
+  {
+   "observedText": "Thiên Giáng Hỏa Vũ",
+   "canonicalId": "tactic:thien-hang-hoa-vu"
+  },
+  {
+   "observedText": "Thủ Khởi Đao Lạc",
+   "canonicalId": "tactic:thu-khoi-dao-lac"
+  },
+  {
+   "observedText": "Hậu Phát Chế Nhân",
+   "canonicalId": "tactic:hau-phat-che-nhan"
+  },
+  {
+   "observedText": "Bạch Mi",
+   "canonicalId": "tactic:bach-my"
+  },
+  {
+   "observedText": "Thiên Lý Trì Viện",
+   "canonicalId": "tactic:thien-ly-tri-vien"
+  },
+  {
+   "observedText": "Tọa Thủ Cô Thành",
+   "canonicalId": "tactic:toa-thu-co-thanh"
+  },
+  {
+   "observedText": "Khinh Dũng Phi Yến",
+   "canonicalId": "tactic:khinh-dung-phi-yen"
+  },
+  {
+   "observedText": "Thả Lính Cướp Đoạt",
+   "canonicalId": "tactic:tung-binh-kiep-luoc"
+  },
+  {
+   "observedText": "Thần Thương Thiệt Chiến",
+   "canonicalId": "tactic:than-thuong-thiet-chien"
+  },
+  {
+   "observedText": "Mưu Lược Tung Hoành",
+   "canonicalId": "tactic:co-luoc-tung-hoanh"
+  },
+  {
+   "observedText": "Lư Giang Thượng Giáp",
+   "canonicalId": "tactic:lu-giang-thuong-giap"
+  },
+  {
+   "observedText": "Thi Chí Bất Di",
+   "canonicalId": "tactic:thi-chi-bat-di"
+  },
+  {
+   "observedText": "Thần Thượng Sứ",
+   "canonicalId": "tactic:than-thuong-su"
+  },
+  {
+   "observedText": "Tự Lành",
+   "canonicalId": "tactic:tu-du"
+  },
+  {
+   "observedText": "Kiêu Kiện Thần Hành",
+   "canonicalId": "tactic:kieu-kien-than-hanh"
+  },
+  {
+   "observedText": "Khiêm Nhường",
+   "canonicalId": "tactic:khiem-nhuong"
+  },
+  {
+   "observedText": "Bạo Liễm Tứ Phương",
+   "canonicalId": "tactic:bao-liem-tu-phuong"
+  }
+ ]
+}

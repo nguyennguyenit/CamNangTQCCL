@@ -114,7 +114,12 @@ describe("research runtime contracts", () => {
     const hero = (await handlers.call("tqccl_search", { query: "", kinds: ["hero"], limit: 1 })).items[0]!;
     const requests: Partial<Record<ResearchToolName, unknown>> = {
       tqccl_get_playbook: { intent: "lookup" },
-      tqccl_normalize_entities: { observations: [] },
+      tqccl_normalize_entities: { observations: [
+        { observationId: "ok", entityKind: "hero", canonicalId: "hero:tao-thao", evidence: { sourceScope: "currentTurnImage", batchId: "roster" } },
+        { observationId: "amb", entityKind: "hero", observedText: "Lữ Bố", evidence: { sourceScope: "currentTurnImage", batchId: "roster" } },
+        { observationId: "unk", entityKind: "tactic", observedText: "Không Có Chiến Pháp Này", evidence: { sourceScope: "currentTurnImage", batchId: "roster" } },
+        { observationId: "lock", entityKind: "team", canonicalId: "team:locked-a", heroIds: ["hero:tao-thao"], tacticIds: [], evidence: { sourceScope: "manualCorrection", batchId: "roster" } },
+      ] },
       tqccl_search: { query: "Tướng" },
       tqccl_get_entity: { entityId: hero.entityId },
       tqccl_find_teams: { collection: "other" },

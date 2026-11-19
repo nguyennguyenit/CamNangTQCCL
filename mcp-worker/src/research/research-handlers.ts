@@ -7,7 +7,7 @@ import { buildSnapshotIndex, type SnapshotIndex } from "../data/snapshot-index.j
 import type { DataSnapshot } from "../data/artifact-contracts.js";
 import type { DataSource } from "../data/data-source.js";
 import { createWorkflowVersion } from "../domain/canonical-state.js";
-import { normalizeObservations } from "../domain/normalization-service.js";
+import { normalizeObservations, type NormalizationResult } from "../domain/normalization-service.js";
 import { WORKFLOW_BUILD_ID } from "../generated/workflow-build.js";
 import { handleGetEntity, handleSearch } from "./catalog-handlers.js";
 import { PUBLIC_ERRORS, ResearchHandlerError } from "./handler-error.js";
@@ -35,7 +35,7 @@ export interface ResearchHandlers {
   ): Promise<ResearchOutput<Name>>;
 }
 
-interface HeroObservationInput {
+export interface HeroObservationInput {
   entityKind?: unknown;
   canonicalId?: unknown;
   familyId?: unknown;
@@ -53,7 +53,7 @@ const MAX_NAME_SUGGESTIONS = 5;
  * kèm mọi bản; không khớp đúng → unknown kèm tối đa 5 gợi ý khớp một phần, không có thì tên gần (`similarCatalog`). Agent gửi canonicalId, candidates
  * hay reviewRequired thì giữ nguyên. Chỉ tra trong ID mà snapshot nhận (searchEntries).
  */
-function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+export function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
   const needsLookup = (observation: HeroObservationInput) =>
     (observation.entityKind === "hero" || observation.entityKind === "tactic") &&
     observation.canonicalId === undefined &&
@@ -102,7 +102,7 @@ function withResolvedNames(ctx: ToolContext, observations: readonly HeroObservat
  * Agent biết `canonicalId` (từ tqccl_search) nhưng không biết `hero-family:`; family là dữ liệu của snapshot
  * nên server suy từ tên tướng trong heroes-dict. familyId gửi lên phải khớp, không tự sửa.
  */
-function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
+export function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservationInput[]): HeroObservationInput[] {
   const heroNames = new Map<string, string>();
   for (const entry of ctx.index.searchEntries) {
     if (entry.kind === "hero") heroNames.set(entry.canonicalId, entry.displayName);
@@ -125,6 +125,81 @@ function withHeroFamilies(ctx: ToolContext, observations: readonly HeroObservati
   });
 }
 
+/** Schema cho phép tối đa 100 cảnh báo; vượt thì gộp theo loại để không vỡ output (300 mục có thể sinh > 600). */
+const MAX_WARNING_DETAILS = 100;
+
+/**
+ * Vượt 100 cảnh báo: giữ chi tiết của `100 − số loại` cảnh báo đầu, cuối danh sách thêm một dòng đếm mỗi loại dạng
+ * `summary:<loại>:<n>` (n = tổng số cảnh báo loại đó, kể cả phần đã hiển thị). Không đổi khi ≤ 100.
+ */
+export function summarizeWarnings(warnings: readonly string[]): string[] {
+  if (warnings.length <= MAX_WARNING_DETAILS) return [...warnings];
+  const counts = new Map<string, number>();
+  for (const warning of warnings) {
+    const kind = warning.split(":", 1)[0]!;
+    counts.set(kind, (counts.get(kind) ?? 0) + 1);
+  }
+  const summaries = [...counts].map(([kind, count]) => `summary:${kind}:${count}`);
+  return [...warnings.slice(0, Math.max(0, MAX_WARNING_DETAILS - summaries.length)), ...summaries].slice(0, MAX_WARNING_DETAILS);
+}
+
+/**
+ * Hình chiếu gọn của kết quả domain (#165): digest/thuật toán không đổi vì digest chỉ dùng canonicalId, familyId,
+ * redStars, level, tactic id, lockedTeams và số `unresolved`. `unresolved` là nguồn duy nhất cho mục cần rà soát
+ * (không còn `observedText`/`evidence`: client biết text mình gửi qua `observationId`); `resolvedIds` (theo vị trí
+ * của observations đầu vào) cho canonicalId server tra tên. `manual: true` giữ dấu manualCorrection; tên lấy từ catalog ở recommend.
+ */
+export function compactNormalizeResult(
+  normalized: NormalizationResult,
+  prepared: readonly HeroObservationInput[],
+  lookedUp: readonly boolean[],
+) {
+  const state = normalized.canonicalState;
+  const warnings = summarizeWarnings(normalized.warnings);
+  const unresolved = (state.unresolved ?? []).map((entry) => {
+    const { observationId, entityKind, reason, candidates, trust } = entry as Record<string, unknown>;
+    // Identity conflict dồn mọi canonicalId của các observation trùng id: loại trùng để vừa `max(20)` của schema.
+    return { observationId, entityKind, reason, candidates: [...new Set(candidates as unknown[])], trust };
+  });
+  const finalIds = new Set<string>([
+    ...state.heroes.map(({ canonicalId }) => canonicalId as string),
+    ...state.tactics.map(({ canonicalId }) => canonicalId as string),
+    ...state.lockedTeams.map(({ teamId }) => teamId as string),
+  ]);
+  const unresolvedIds = new Set(unresolved.map(({ observationId }) => observationId));
+  // Positional: phần tử i = canonicalId server tra tên cho observation i. null nếu client đã gửi canonicalId, mục chưa
+  // rõ, bị thay/xung đột (canonicalId không còn trong state cuối, hoặc observationId nằm trong unresolved).
+  const resolvedIds = prepared.map((observation, index) => {
+    const canonicalId = observation.canonicalId;
+    if (!lookedUp[index] || typeof canonicalId !== "string") return null;
+    if (!finalIds.has(canonicalId) || unresolvedIds.has(String((observation as { observationId?: unknown }).observationId))) return null;
+    return canonicalId;
+  });
+  return {
+    canonicalState: {
+      ...(state.seasonContext === undefined ? {} : { seasonContext: state.seasonContext }),
+      heroes: state.heroes.map((hero) => ({
+        canonicalId: hero.canonicalId,
+        familyId: hero.familyId,
+        ...(hero.redStars === undefined ? {} : { redStars: hero.redStars }),
+        ...(hero.level === undefined ? {} : { level: hero.level }),
+        ...(hero.confidence === "manual" ? { manual: true as const } : {}),
+      })),
+      tactics: state.tactics.map((tactic) => ({
+        canonicalId: tactic.canonicalId,
+        ...(tactic.confidence === "manual" ? { manual: true as const } : {}),
+      })),
+      unresolved,
+      lockedTeams: state.lockedTeams,
+      ...(state.warnings === undefined ? {} : { warnings: summarizeWarnings(state.warnings) }),
+    },
+    resolvedIds,
+    reviewRequired: normalized.reviewRequired,
+    warnings,
+    confirmationBinding: normalized.confirmationBinding,
+  };
+}
+
 async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unknown> {
   const input = parseToolInput(RESEARCH_CONTRACTS.tqccl_normalize_entities.input as ZodType<Record<string, unknown>>, rawInput);
   ctx.ensureExpectedWorkflow(input.expectedWorkflowVersion as string | undefined);
@@ -135,14 +210,23 @@ async function handleNormalize(ctx: ToolContext, rawInput: unknown): Promise<unk
       throw new ResearchHandlerError("SEASON_CONTEXT_INVALID", PUBLIC_ERRORS.SEASON_CONTEXT_INVALID.message);
     }
   }
+  const submitted = input.observations as HeroObservationInput[];
+  const prepared = withHeroFamilies(ctx, withResolvedNames(ctx, submitted));
   const normalized = await normalizeObservations({
     workflowVersion: ctx.workflowVersion,
-    observations: withHeroFamilies(ctx, withResolvedNames(ctx, input.observations as HeroObservationInput[])) as never,
+    observations: prepared as never,
     ...(seasonContext ? { seasonContext } : {}),
   });
+  const compact = compactNormalizeResult(
+    normalized,
+    prepared,
+    submitted.map((observation) => observation.canonicalId === undefined),
+  );
   return {
-    ...ctx.commonResult([{ artifact: "canonical-state", recordId: normalized.confirmationBinding.normalizationDigest }]),
-    ...normalized,
+    ...ctx.commonResult([
+      { artifact: "canonical-state", recordId: normalized.confirmationBinding.normalizationDigest, trust: "untrusted" },
+    ]),
+    ...compact,
     ...(seasonContext ? { seasonContext } : {}),
   };
 }

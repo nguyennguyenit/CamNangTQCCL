@@ -1,5 +1,13 @@
 # Project Changelog
 
+## 2026-11-19 (Normalize nhận đủ kho thật, #165, #166)
+
+- Changed: `tqccl_normalize_entities` trả kết quả gọn: state không còn tên/`evidence`/`confidence`; `unresolved` không còn `observedText`/`evidence`, `candidates` khử trùng; `observations[]` thay bằng `resolvedIds` theo vị trí đầu vào (`null` khi client gửi sẵn id hoặc mục chưa rõ/bị thay thế/xung đột); `manual: true` cho mục sửa tay; provenance `canonical-state` mang `trust: "untrusted"`; quá 100 cảnh báo thì gộp phần dư thành `summary:<loại>:<số>`. Thuật toán chuẩn hoá và digest không đổi. Trần đầu vào 100 mục / 16 KiB → 300 mục / 60 770 B, `observationId` ≤ 64 ký tự; kho ≤ 300 mục (id ≤ 32 ký tự) với ≤ 60 mục chưa rõ (tỉ lệ tướng/chiến pháp như kho thật) lọt trần kết quả 40 000 ký tự. `--input -` từ chối stdin TTY.
+- Changed: `tqccl_recommend_teams` lấy tên tướng/chiến pháp từ catalog theo `canonicalId`; `displayName` trong `canonicalState` thành tuỳ chọn và bị bỏ qua (#166: tướng chọn danh tính bằng `canonicalId` không còn tên rỗng).
+- Added: CLI `--input -` (stdin) và `--input-file <path>`, đọc có giới hạn 256 KiB, chỉ nhận regular file, UTF-8 không BOM.
+- Breaking: output schema normalize và `WORKFLOW_BUILD_ID` đổi → consumer MCP refresh `tools/list`; mọi binding đã xác nhận phải normalize + xác nhận lại. Release không dùng `rehearse_rollback` (catalog bản trước khác); rollback cũng làm binding mất hiệu lực lần nữa.
+- Docs: `docs/goclaw-mcp-skill-handoff.md` sửa trần phản hồi ghi nhầm 131072 → 98304.
+
 ## 2026-11-19 (Đội khác: binh thư tham khảo theo tướng)
 
 - Added: trang chi tiết Đội khác (`/doi-khac/<handle>/`, `/zh/`) hiện binh thư tham khảo cho tướng mà đội không ghi binh thư: top binh thư tướng hay dùng trong các đội có nguồn, lấy từ `hero-summaries.json` của generation đang pin (nối theo tên Việt `searchName`, tên trùng giữa hai mục thì bỏ), chữ nhạt kèm ghi chú "Tham khảo theo tướng: binh thư hay dùng trong N đội có nguồn" để không lẫn với binh thư của đội. SSR tính bảng (`legacyBookHints` ở `src/lib/team-ssr.ts`) và nhúng vào `data-book-hints`; nhánh `?variant=` của `js/team-detail.js` dựng lại bằng cùng bảng. Đội chuẩn không đổi.

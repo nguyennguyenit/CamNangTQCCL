@@ -3,7 +3,15 @@ export const seasonId = z.string().min(1).max(128).regex(/^[^\u0000-\u001f\u007f
 export const seasonContextSchema = z.object({scenarioId:seasonId,rulesetId:seasonId}).strict().describe("Cặp ID đã xác minh.");
 
 export const MAX_REQUEST_BYTES = 256 * 1024;
-export const MAX_NORMALIZE_REQUEST_BYTES = 16 * 1024;
+/**
+ * Trần normalize (#165, số đo ở `plans/261118-1942-normalize-full-roster/research/size-measurement.md`): kho ≤ 300 mục
+ * với ≤ K mục chưa rõ (xem docs) lọt 40.000 ký tự kết quả khi `observationId` ≤ 64 ký tự; vượt → `RESULT_TOO_LARGE` có kiểu.
+ * Byte request: `1,07 × 60.770 + 512 ≤ 65.536` (body HTTP 64 KiB, escape ASCII của client +~7 % với tiếng Việt).
+ */
+export const MAX_NORMALIZE_OBSERVATIONS = 300;
+/** `observationId` chỉ còn được echo ở `unresolved`, nhưng id dài vẫn làm kết quả phình, nên normalize giới hạn riêng (64: đủ cho id mô tả như fixture release). */
+export const MAX_NORMALIZE_OBSERVATION_ID_LENGTH = 64;
+export const MAX_NORMALIZE_REQUEST_BYTES = 60_770;
 export const boundedText = z
   .string()
   .max(256)
@@ -263,7 +271,8 @@ export const canonicalHeroSchema = z
   .object({
     canonicalId: heroId,
     familyId,
-    displayName: boundedText.describe("Tên tướng canonical."),
+    displayName: boundedText.optional().describe("Tên tướng (tùy chọn; recommend dùng tên catalog)."),
+    manual: z.literal(true).optional().describe("Có manualCorrection."),
     redStars: z
       .number()
       .finite()
@@ -285,9 +294,8 @@ export const canonicalHeroSchema = z
 export const canonicalTacticSchema = z
   .object({
     canonicalId: tacticId,
-    displayName: boundedText.describe(
-      "Tên chiến pháp canonical.",
-    ),
+    displayName: boundedText.optional().describe("Tên chiến pháp (tùy chọn; recommend dùng tên catalog)."),
+    manual: z.literal(true).optional().describe("Có manualCorrection."),
     confidence: boundedText
       .optional()
       .describe("Độ tin cậy identity."),
@@ -361,6 +369,25 @@ export const canonicalStateSchema = z
   })
   .strict()
   .describe("State đã chuẩn hóa.");
+
+/** Mục chưa rõ trong kết quả normalize: không còn `observedText`/`evidence` (client biết text mình gửi qua `observationId`). */
+export const compactUnresolvedSchema = z
+  .object({
+    observationId: nonEmptyText.describe("ID observation chưa rõ."),
+    entityKind: z.enum(["hero", "tactic", "team"]).describe("Loại thực thể."),
+    reason: z.enum(["ambiguous", "unknown"]).describe("Lý do chưa rõ."),
+    candidates: z.array(canonicalId).max(20).describe("ID ứng viên."),
+    trust: z.literal("untrusted").describe("Dữ liệu từ client, không tin."),
+  })
+  .strict()
+  .describe("Observation chưa rõ, cần rà soát.");
+
+/** State trong output normalize: `unresolved` là danh sách gọn; recommend vẫn nhận `canonicalStateSchema` rộng hơn. */
+export const normalizedCanonicalStateSchema = canonicalStateSchema.extend({
+  heroes: z.array(canonicalHeroSchema.omit({ displayName: true, confidence: true, evidence: true })).max(500).describe("Danh sách canonical hero hiện có."),
+  tactics: z.array(canonicalTacticSchema.omit({ displayName: true, confidence: true, evidence: true })).max(1_000).describe("Danh sách canonical tactic hiện có."),
+  unresolved: z.array(compactUnresolvedSchema).max(500).optional().describe("Observation chưa rõ."),
+}).describe("State đã chuẩn hóa.");
 
 export const provenanceSchema = z
   .object({
