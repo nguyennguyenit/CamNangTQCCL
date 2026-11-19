@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { otherTeamFacetValues, otherTeamListEntries } from '../js/other-team-groups.js';
+import { otherTeamFacetValues, otherTeamListEntries, websiteOtherRecords } from '../js/other-team-groups.js';
 import { TIER_SOURCE_JP, jpTierMatchNote, jpTierSource, projectRecommendedRows, readRecommendedQuery, referenceFacetValues } from '../js/recommended-reference-state.js';
 import { validateHttpSourceUrl } from '../js/http-source-url.js';
 
@@ -294,6 +294,11 @@ test('Đội khác theo team: lọc khớp khi bất kỳ phương án đủ d�
     ['gA', 'a1', '/doi-khac/a1/', 3],
     ['gB', 'b1', '/doi-khac/b1/', 1],
   ]);
+});
+
+test('Đội khác cho bề mặt đối chiếu (Soi đội): chỉ phương án đủ dữ liệu của team có đại diện, theo thứ tự team rồi optionRank', () => {
+  assert.deepEqual(websiteOtherRecords(otherPayload).map((row) => row.legacyTeamId), ['a1', 'a2', 'a4', 'b1']);
+  assert.deepEqual(websiteOtherRecords(null), []);
 });
 
 test('Đội khác theo team: giá trị facet của team là hợp giá trị của các phương án đủ dữ liệu', () => {

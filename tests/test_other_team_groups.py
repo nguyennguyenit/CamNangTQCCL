@@ -102,6 +102,25 @@ class AnnotateTest(unittest.TestCase):
             annotate_other_teams(duplicate)
 
 
+class SlotAlignmentTest(unittest.TestCase):
+    def test_blank_slot_before_filled_one_is_rejected(self):
+        for field, value in (("tacticSlotsRaw", ["", "t2"]), ("bookSlotsRaw", ["", "b1"])):
+            broken = row("a")
+            broken["holders"][0][field] = value
+            with self.assertRaises(ValueError):
+                annotate_other_teams([broken])
+
+    def test_trailing_blank_slots_are_fine(self):
+        ok = row("a", h1={"books": ("b1", "", "")})
+        annotate_other_teams([ok])
+
+    def test_tactic_identities_must_match_filled_slots(self):
+        broken = row("a")
+        broken["holders"][1]["tacticIdentityIds"] = ["t1"]
+        with self.assertRaises(ValueError):
+            annotate_other_teams([broken])
+
+
 class ValidateTeamGroupsTest(unittest.TestCase):
     def setUp(self):
         self.records, self.groups = annotate_other_teams([row("a"), row("b", h1={"books": ()}), row("c", unit=("Kỵ",))])

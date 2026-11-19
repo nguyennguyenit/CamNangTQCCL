@@ -75,6 +75,14 @@ export function otherTeamListEntries(payload, state, labels, { hrefFor } = {}) {
   return entries;
 }
 
+/**
+ * Mọi phương án Đội khác mà website hiện (admitted + đủ dữ liệu, thuộc team có đại diện), theo thứ tự team rồi
+ * `optionRank`. Dùng cho bề mặt đối chiếu khác (Soi đội) để không trỏ tới phương án không có trang.
+ */
+export function websiteOtherRecords(payload) {
+  return teamIndex(payload).completeRecords;
+}
+
 /** Giá trị facet `key` của một mục team: hợp giá trị của mọi phương án đủ dữ liệu (bộ đếm facet đếm theo team). */
 export function otherTeamFacetValues(entry, key) {
   return [...new Set((entry?.completeRecords || []).flatMap((record) => referenceFacetValues(record, key)))];

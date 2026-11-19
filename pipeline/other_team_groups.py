@@ -35,6 +35,22 @@ def _hero_ids(row) -> list[str]:
     return sorted(ids)
 
 
+def _check_slot_alignment(row) -> None:
+    """Ô chiến pháp/binh thư có chữ phải nằm liền từ đầu, và số chiến pháp có chữ bằng số ``tacticIdentityIds``.
+
+    So sánh phương án (``js/other-team-groups.js``) ghép identity theo chỉ số ô, và khóa gộp lấy ô đầu làm binh thư
+    chính; ô trống ở giữa/đầu làm hai quy ước đó lệch âm thầm, nên dừng build thay vì đoán.
+    """
+    for holder in row.get("holders") or []:
+        for field in ("tacticSlotsRaw", "bookSlotsRaw"):
+            values = [value if isinstance(value, str) else "" for value in holder.get(field) or []]
+            filled = [bool(value.strip()) for value in values]
+            if filled != sorted(filled, reverse=True):
+                raise ValueError(f"Team khác {field} has a blank slot before a filled one: " + str(row.get("legacyTeamId")))
+        if len(_filled(holder.get("tacticSlotsRaw"))) != len(holder.get("tacticIdentityIds") or []):
+            raise ValueError("Team khác tactic identities do not align with tactic slots: " + str(row.get("legacyTeamId")))
+
+
 def team_group_key(row) -> str:
     """Khóa team: 3 hero identity đã sort + binh chủng (rỗng ghi ``?``)."""
     return "heroes:" + ",".join(_hero_ids(row)) + "|unit:" + _unit_token(row)
@@ -82,6 +98,7 @@ def annotate_other_teams(rows):
         if team_id in seen_teams:
             raise ValueError("Team khác needs exactly one variant per legacy team: " + str(team_id))
         seen_teams.add(team_id)
+        _check_slot_alignment(row)
         key = team_group_key(row)
         record = {**copy.deepcopy(row), "teamGroupKey": key, "teamGroupId": team_group_id(key),
                   "dataComplete": data_complete(row), "optionRank": rank}
