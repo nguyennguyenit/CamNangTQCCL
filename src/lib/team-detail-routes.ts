@@ -55,6 +55,23 @@ export interface LegacyRouteEntry {
   variantIds: string[];
 }
 
+/** Lý do một đội gốc có handle nhưng không có trang: không admitted (trùng/chờ danh tính) hoặc admitted mà thiếu dữ liệu. */
+export type HiddenLegacyReason = 'not-admitted' | 'incomplete';
+
+/**
+ * Handle tạm ẩn: đội gốc giữ handle đóng băng trong ledger (không tombstone) nhưng generation đang pin không có phương án
+ * admitted + đủ dữ liệu của nó, nên không dựng trang (URL trả 404 tĩnh). Khi phương án đủ dữ liệu, trang quay lại đúng URL cũ.
+ */
+export interface HiddenLegacyRouteEntry {
+  legacyTeamId: string;
+  routeSegment: string;
+  routePath: string;
+  name: string | null;
+  nickname: string | null;
+  source: string | null;
+  reason: HiddenLegacyReason;
+}
+
 export interface AdmittedVariantEntry {
   legacyTeamId: string;
   legacyVariantId: string;
@@ -77,7 +94,10 @@ export interface TeamDetailRouteCatalog {
   legacyTeamsSha256: string;
   khaiHoangSha256: string;
   recommended: RecommendedRouteEntry[];
+  /** Trang Đội khác: chỉ đội gốc có phương án admitted + đủ dữ liệu (`dataComplete`) trong `other-teams.json` đang pin. */
   legacy: LegacyRouteEntry[];
+  /** Đội gốc còn lại của `teams.json`: handle giữ trong ledger, không có trang. */
+  hiddenLegacy: HiddenLegacyRouteEntry[];
   /** Frozen Khai hoang routes emitted with Recommended and legacy detail pages. */
   khaiHoang: KhaiHoangRouteEntry[];
   variants: AdmittedVariantEntry[];
@@ -340,6 +360,8 @@ async function buildCatalogFromSnapshot(
   });
 
   const variantsByTeam = new Map<string, string[]>();
+  /** Đội gốc có phương án admitted đủ dữ liệu (`dataComplete: true`), cờ do builder tính. */
+  const completeTeams = new Set<string>();
   const seenPairs = new Set<string>();
   const variants: AdmittedVariantEntry[] = other.records.map((row: Record<string, unknown>) => {
     const legacyTeamId = row.legacyTeamId;
@@ -350,11 +372,15 @@ async function buildCatalogFromSnapshot(
     const pair = `${legacyTeamId}|${legacyVariantId}`;
     if (seenPairs.has(pair)) throw new Error(`Duplicate admitted variant pair: ${pair}`);
     seenPairs.add(pair);
+    if (typeof row.dataComplete !== 'boolean') {
+      throw new Error(`Admitted variant ${pair} has no boolean dataComplete flag`);
+    }
+    if (row.dataComplete) completeTeams.add(legacyTeamId);
     return { legacyTeamId, legacyVariantId, legacyContentSha256: text(row.legacyContentSha256) };
   });
 
   const seenLegacy = new Set<string>();
-  const legacy: LegacyRouteEntry[] = teams.map((team: Record<string, unknown>) => {
+  const legacyIdentities = teams.map((team: Record<string, unknown>) => {
     const legacyTeamId = team.id;
     if (!isRoutableIdentifier(legacyTeamId)) throw new Error(`Unroutable legacy identifier: ${String(legacyTeamId)}`);
     if (seenLegacy.has(legacyTeamId)) throw new Error(`Duplicate legacy identifier: ${legacyTeamId}`);
@@ -367,16 +393,15 @@ async function buildCatalogFromSnapshot(
       legacyTeamId,
       routeSegment,
       routePath: legacyRoutePath(routeSegment),
-      htmlPath: `doi-khac/${routeSegment}/index.html`,
       name: text(team.name),
       nickname: text(team.nickname),
       source: text(team.source),
-      variantIds: [],
     };
   });
 
   distinctRoutePaths(recommended.map((entry) => ({ routePath: entry.routePath, key: entry.sourceConfigId })), 'Recommended');
-  distinctRoutePaths(legacy.map((entry) => ({ routePath: entry.routePath, key: entry.legacyTeamId })), 'legacy');
+  // Handle tạm ẩn vẫn chiếm URL của nó: không đội nào khác được dùng lại.
+  distinctRoutePaths(legacyIdentities.map((entry) => ({ routePath: entry.routePath, key: entry.legacyTeamId })), 'legacy');
 
   for (const variant of variants) {
     if (!seenLegacy.has(variant.legacyTeamId)) {
@@ -386,7 +411,27 @@ async function buildCatalogFromSnapshot(
     bucket.push(variant.legacyVariantId);
     variantsByTeam.set(variant.legacyTeamId, bucket);
   }
-  for (const entry of legacy) entry.variantIds = variantsByTeam.get(entry.legacyTeamId) ?? [];
+  // Một đội gốc ↔ đúng một phương án: link trang chi tiết Đội khác không mang `?variant=` (js/team-detail-navigation.js),
+  // nên đội gốc thứ hai biến thể phải dừng build thay vì để link mở lặng lẽ một biến thể.
+  for (const [legacyTeamId, variantIds] of variantsByTeam) {
+    if (variantIds.length > 1) {
+      throw new Error(`Legacy team ${legacyTeamId} has more than one admitted variant: ${variantIds.join(', ')}`);
+    }
+  }
+
+  const legacy: LegacyRouteEntry[] = [];
+  const hiddenLegacy: HiddenLegacyRouteEntry[] = [];
+  for (const identity of legacyIdentities) {
+    if (completeTeams.has(identity.legacyTeamId)) {
+      legacy.push({
+        ...identity,
+        htmlPath: `doi-khac/${identity.routeSegment}/index.html`,
+        variantIds: variantsByTeam.get(identity.legacyTeamId) ?? [],
+      });
+    } else {
+      hiddenLegacy.push({ ...identity, reason: variantsByTeam.has(identity.legacyTeamId) ? 'incomplete' : 'not-admitted' });
+    }
+  }
 
   // All three families are emitted: the Khai hoang routes ship together with their page, entry
   // and asset registration, so the inventory and the dist verifier stay in one contract.
@@ -404,6 +449,7 @@ async function buildCatalogFromSnapshot(
     khaiHoangSha256,
     recommended,
     legacy,
+    hiddenLegacy,
     khaiHoang,
     variants,
     htmlPaths,

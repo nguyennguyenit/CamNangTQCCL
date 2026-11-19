@@ -12,6 +12,7 @@ import { projectRecommendedRows, setZhNameResolver } from '../../js/recommended-
 import { setTeamRouteHandles } from '../../js/team-detail-navigation.js';
 import { detailBadges, legacyOriginalDetailContent, qilueLookupTable, recommendedTeamDetailContent, setCoexistQilueTable } from '../../js/recommended-reference-render.js';
 import { khaihoangDetailTrees } from '../../js/render.js';
+import { otherTeamOptions } from '../../js/other-team-groups.js';
 import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees, seasonPageTrees } from './team-section-ssr.js';
 import { loadSeasonModel } from '../../js/season-ui-state.js';
 import { HERO_SUMMARY_FILE, parseHeroSummaries } from '../../js/hero-summaries.js';
@@ -139,85 +140,21 @@ export async function recommendedDetailText(record: Json, lookupLinks: unknown, 
   return treeToText([...badges, ...body]);
 }
 
+let otherTeams: Promise<Json> | undefined;
+
+/** `other-teams.json` đã pin, parse một lần cho cả lần build (file ~1 MB, trang Đội khác dựng hàng trăm lần mỗi locale). */
+function otherTeamsPayload() {
+  return otherTeams ??= (async () => parse((await prepare()).website.recommended.files['other-teams.json']))();
+}
+
 let recommendedLegacyIds: Promise<Set<string>> | undefined;
 
 /** Mã đội gốc có ít nhất một hàng `recommended: true` trong `other-teams.json` đã pin (field vắng = không đề cử). */
 function recommendedLegacyTeamIds() {
   return recommendedLegacyIds ??= (async () => {
-    const env = await prepare();
-    const admitted: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
+    const admitted: Json[] = (await otherTeamsPayload())?.records ?? [];
     return new Set<string>(admitted.filter((row) => row.recommended === true).map((row) => row.legacyTeamId));
   })();
-}
-
-/** Binh thư tham khảo của một tướng: số đội có binh thư và top tên Việt (hình dạng `bookHint` của builder JS). */
-export interface LegacyBookHint {
-  teams: number;
-  items: string[];
-}
-
-let heroBookHintIndex: Promise<Map<string, LegacyBookHint>> | undefined;
-
-/**
- * Tên Việt của tướng (`searchName` trong `hero-summaries.json` đã kiểm) → binh thư hay dùng. Tên trùng nhau giữa hai
- * mục số liệu bị bỏ hẳn (không đoán tướng nào); tướng chưa có đội nào ghi binh thư không có gợi ý.
- */
-function heroBookHints() {
-  return heroBookHintIndex ??= (async () => {
-    const { heroes } = await lookupSummaryTables();
-    const index = new Map<string, LegacyBookHint>();
-    const ambiguous = new Set<string>();
-    for (const summary of Object.values(heroes as Record<string, Json>)) {
-      const name = String(summary.searchName).trim();
-      if (index.has(name) || ambiguous.has(name)) {
-        index.delete(name);
-        ambiguous.add(name);
-        continue;
-      }
-      const items = (summary.books.items as Json[]).map((item) => String(item.name));
-      if (summary.books.teams > 0 && items.length) index.set(name, { teams: summary.books.teams, items });
-    }
-    return index;
-  })();
-}
-
-let admittedVariantIndex: Promise<Map<string, Json[]>> | undefined;
-
-/**
- * `legacyTeamId` → nội dung các biến thể đã admit trong `other-teams.json` đã pin. Parse một lần cho cả lần build (file
- * ~1 MB, trang Đội khác dựng hàng trăm lần mỗi locale), mỗi trang chỉ tra đúng đội của mình.
- */
-function admittedVariantContents() {
-  return admittedVariantIndex ??= (async () => {
-    const env = await prepare();
-    const rows: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
-    const index = new Map<string, Json[]>();
-    for (const row of rows) {
-      if (typeof row?.legacyTeamId !== 'string' || !row.legacyContent) continue;
-      const list = index.get(row.legacyTeamId);
-      if (list) list.push(row.legacyContent);
-      else index.set(row.legacyTeamId, [row.legacyContent]);
-    }
-    return index;
-  })();
-}
-
-/**
- * Gợi ý binh thư cho mọi tướng có thể hiện trên trang một đội khác: tướng của đội gốc và của các biến thể đã admit
- * (nhánh `?variant=` dựng lại phía client bằng cùng bảng). Builder chỉ dùng gợi ý cho tướng mà nội dung không ghi binh thư.
- */
-async function legacyBookHints(team: Json): Promise<Record<string, LegacyBookHint>> {
-  const index = await heroBookHints();
-  const contents = [team, ...((await admittedVariantContents()).get(team.id) ?? [])];
-  const hints: Record<string, LegacyBookHint> = {};
-  for (const content of contents) {
-    for (const hero of (content.heroes ?? []) as Json[]) {
-      const name = typeof hero?.name === 'string' ? hero.name.trim() : '';
-      const hint = name ? index.get(name) : undefined;
-      if (hint) hints[name] = hint;
-    }
-  }
-  return hints;
 }
 
 async function legacyDetailTrees(entry: LegacyRouteEntry, locale: SiteLocale) {
@@ -226,23 +163,21 @@ async function legacyDetailTrees(entry: LegacyRouteEntry, locale: SiteLocale) {
   if (matches.length !== 1) throw new Error(`Legacy team must resolve to exactly one record: ${entry.legacyTeamId}`);
   // Đề cử nằm ở hàng `other-teams.json` đã admit (không ở `teams.json`): đội có hàng đề cử nào thì hiện nhãn ở trạng thái không có biến thể.
   const referenceRecommended = (await recommendedLegacyTeamIds()).has(entry.legacyTeamId);
-  const bookHints = await legacyBookHints(matches[0]);
-  // Tùy chọn của builder JS (không có kiểu JSDoc): `locale`/`bookHints` là khóa hợp lệ.
-  const options: Json = { locale, bookHints };
+  // Các phương án đủ dữ liệu khác cùng team (link thật tới trang của từng phương án); nhánh `?variant=` phía client dựng lại
+  // bằng cùng hàm trên cùng payload đã pin.
+  const teamOptions = otherTeamOptions(await otherTeamsPayload(), entry.legacyTeamId);
+  // Tùy chọn của builder JS (không có kiểu JSDoc): `locale`/`teamOptions` là khóa hợp lệ.
+  const options: Json = { locale, teamOptions };
   return {
     body: legacyOriginalDetailContent(matches[0], options) as Tree[],
     badges: detailBadges({ ...matches[0], referenceRecommended }, null, { locale }) as Tree[],
-    bookHints,
   };
 }
 
-/**
- * Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể), kèm bảng gợi ý binh thư
- * để trang nhúng vào `data-book-hints` cho nhánh biến thể phía client.
- */
-export async function legacyDetailParts(entry: LegacyRouteEntry, locale: SiteLocale): Promise<TeamDetailParts & { bookHints: Record<string, LegacyBookHint> }> {
-  const { body, badges, bookHints } = await legacyDetailTrees(entry, locale);
-  return { bodyHtml: html(body), badgesHtml: html(badges), bookHints };
+/** Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể, kèm các phương án khác của team). */
+export async function legacyDetailParts(entry: LegacyRouteEntry, locale: SiteLocale): Promise<TeamDetailParts> {
+  const { body, badges } = await legacyDetailTrees(entry, locale);
+  return { bodyHtml: html(body), badgesHtml: html(badges) };
 }
 
 export async function legacyDetailText(entry: LegacyRouteEntry, locale: SiteLocale): Promise<string> {

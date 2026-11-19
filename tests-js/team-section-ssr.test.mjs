@@ -58,8 +58,11 @@ test("Đội khác dựng sẵn: 60 team đầu theo optionRank của đại di�
       assert.equal(record.dataComplete, true, `${locale}: ${key} thiếu dữ liệu`);
       const entry = catalog.legacy.find((candidate) => candidate.legacyTeamId === record.legacyTeamId);
       assert.ok(entry, `${locale}: ${key} không phải đội gốc có route`);
-      assert.ok(html.includes(`href="${locale === "vi" ? "" : `/${locale}`}${entry.routePath}?variant=${encodeURIComponent(key)}`), `${locale}: ${key} thiếu link tới trang của chính nó`);
+      const path = `${locale === "vi" ? "" : `/${locale}`}${entry.routePath}`;
+      assert.ok(html.includes(`href="${path}"`) || html.includes(`href="${path}?from=`), `${locale}: ${key} thiếu link tới trang của chính nó`);
     }
+    // Mỗi đội gốc đúng một phương án: link tới trang Đội khác không mang `?variant=`.
+    assert.doesNotMatch(html, /[?&]variant=/u, `${locale}: link danh sách không mang ?variant=`);
     // Mỗi team nhiều phương án ghi đúng số phương án đủ dữ liệu; team một phương án không ghi.
     const cards = html.split(/(?=<article\b)/u).slice(1);
     for (const group of firstPage) {

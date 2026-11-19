@@ -1,8 +1,13 @@
 import { test, expect } from "@playwright/test";
+import { readFileSync } from "node:fs";
 
 // Trang đội dựng sẵn: mở với JavaScript tắt hẳn vẫn thấy nội dung đội (HTML tĩnh), không câu chờ/yêu cầu JS.
 const WAITING = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
 const LOCALES = [["vi", ""], ["zh", "/zh"]];
+/** Ledger handle đóng băng: `handle → legacyTeamId` để đọc ngược link trang Đội khác (link không mang `?variant=`). */
+const LEGACY_BY_HANDLE = new Map(Object.entries(JSON.parse(readFileSync(new URL("../pipeline/team-route-handles.json", import.meta.url), "utf8")).handles.legacy)
+  .map(([legacyTeamId, handle]) => [handle, legacyTeamId]));
+const OPTIONS_TITLE = { vi: "Các phương án khác của team", zh: "本队其他方案" };
 const LISTS = [
   { path: "/doi-chuan/", team: ".reference-team-card", detail: true },
   { path: "/doi-khac/", team: ".reference-team-card", detail: true },
@@ -35,7 +40,7 @@ test.describe("không có JavaScript", () => {
     test(`${locale} /doi-khac/: mỗi thẻ là một team có phương án đủ dữ liệu, không link nào tới phương án bị loại`, async ({ page, request }) => {
       const pin = await (await request.get("/data/recommended/current.json")).json();
       const other = await (await request.get(`/data/recommended/${pin.generationId}/other-teams.json`)).json();
-      const complete = new Set(other.records.filter((row) => row.dataComplete === true).map((row) => row.legacyVariantId));
+      const complete = new Set(other.records.filter((row) => row.dataComplete === true).map((row) => row.legacyTeamId));
       const teams = other.teamGroups.filter((group) => group.representativeVariantId !== null);
       await page.goto(`${prefix}/doi-khac/`, { waitUntil: "domcontentloaded" });
       const cards = page.locator("main .reference-team-card");
@@ -45,9 +50,29 @@ test.describe("không có JavaScript", () => {
       const hrefs = await page.locator("main a[data-team-detail-link]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
       expect(hrefs.length).toBeGreaterThan(0);
       for (const href of hrefs) {
-        const variant = new URL(href, "https://x.test").searchParams.get("variant");
-        expect(complete.has(variant), href).toBe(true);
+        const url = new URL(href, "https://x.test");
+        // Mỗi đội gốc một phương án: link không mang `?variant=`, handle trỏ đúng đội gốc của phương án đủ dữ liệu.
+        expect(url.searchParams.has("variant"), href).toBe(false);
+        const handle = decodeURIComponent(url.pathname.replace(/^(?:\/zh)?\/doi-khac\//u, "").replace(/\/$/u, ""));
+        expect(complete.has(LEGACY_BY_HANDLE.get(handle)), href).toBe(true);
       }
+    });
+
+    test(`${locale} trang Đội khác: khối các phương án khác của team đọc được khi không có JS, mỗi link mở trang 200`, async ({ page, request }) => {
+      const pin = await (await request.get("/data/recommended/current.json")).json();
+      const other = await (await request.get(`/data/recommended/${pin.generationId}/other-teams.json`)).json();
+      const byVariant = new Map(other.records.map((row) => [row.legacyVariantId, row]));
+      const group = other.teamGroups.find((item) => item.completeVariantIds.length >= 2);
+      const [current, ...rest] = group.completeVariantIds.map((id) => byVariant.get(id)).sort((a, b) => a.optionRank - b.optionRank);
+      const handles = Object.fromEntries([...LEGACY_BY_HANDLE].map(([handle, id]) => [id, handle]));
+      await page.goto(`${prefix}/doi-khac/${encodeURIComponent(handles[current.legacyTeamId])}/`, { waitUntil: "domcontentloaded" });
+      const section = page.locator("#team-detail-body .detail-team-options");
+      await expect(section).toBeVisible();
+      await expect(section.locator("h2")).toHaveText(OPTIONS_TITLE[locale]);
+      const hrefs = await section.locator("a.detail-team-option-link").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+      expect(hrefs).toEqual(rest.map((row) => `${prefix}/doi-khac/${encodeURIComponent(handles[row.legacyTeamId])}/`));
+      for (const href of hrefs) expect((await request.get(href)).status(), href).toBe(200);
+      expect(await section.locator(".detail-team-option-item.is-diff").count()).toBeGreaterThan(0);
     });
 
     for (const { path } of LISTS.filter((item) => item.detail)) {
