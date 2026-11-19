@@ -414,8 +414,16 @@ function factionOf(row,labels) {
   return {label:kindLabel(labels,'faction',raw) ?? '',code:factionCode(labels,raw) || 'none'};
 }
 
-/** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. */
-function metaLine(row,labels) {
+/**
+ * Nhãn "N phương án" của team Đội khác có nhiều phương án đủ dữ liệu (cùng bộ tướng + binh chủng, khác chiến pháp/binh thư);
+ * team một phương án không ghi.
+ */
+const optionCountBadge=count=>Number.isInteger(count) && count>1
+  ? t('span',{class:'reference-option-count'},L(`${count} phương án`,`${count} 种方案`,`${count} 通りの構成`))
+  : null;
+
+/** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. `optionCount`: số phương án của team Đội khác. */
+function metaLine(row,labels,optionCount=0) {
   const faction=factionOf(row,labels);
   const units=(row.unitTypesRaw?.length ? row.unitTypesRaw : (row.unit || []))
     .map(value=>kindLabel(labels,'unit',value))
@@ -427,6 +435,8 @@ function metaLine(row,labels) {
   if (jp) nodes.push(jp);
   if (faction.label) nodes.push(t('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(t('span',{class:'reference-units'},units.join(' · ')));
+  const options=optionCountBadge(optionCount);
+  if (options) nodes.push(options);
   if (!nodes.length) return null;
   return t('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
 }
@@ -532,14 +542,14 @@ export function recommendedTeamCard(row,{href,labels,locale}={}) {
   return withLocale(locale,()=>teamCardTree(row,href,labels));
 }
 
-function teamCardTree(row,href,labels) {
+function teamCardTree(row,href,labels,optionCount=0) {
   const name=rowDisplayName(row);
   const fear=fearLine(row);
   return t('article',{class:'team-card reference-team-card',dataset:{referenceKey:referenceRowKey(row),sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || '',factionCode:factionOf(row,labels).code}},[
     t('header',{class:'reference-card-head'},[
       t('div',{class:'reference-card-title'},[
         t('h3',{class:'team-name'},href ? t('a',{href,dataset:{teamDetailLink:''}},name) : name),
-        metaLine(row,labels),
+        metaLine(row,labels,optionCount),
       ]),
       scoreBadge(row),
     ]),
@@ -670,32 +680,34 @@ function tableHeroCell(holder) {
  * Hàng mang `data-reference-key` để test bám danh tính bản ghi, không bám số lượng.
  */
 export function recommendedTeamTable(rows,{hrefFor,labels,locale}={}) {
-  return withLocale(locale,()=>{
-    const head=t('tr',{},[
-      t('th',{scope:'col',class:'reference-table-team'},L('Đội','队伍','編成')),
-      t('th',{scope:'col'},L('Chủ tướng','主将','主将')),
-      t('th',{scope:'col'},L('Phó 1','副将1','副将1')),
-      t('th',{scope:'col'},L('Phó 2','副将2','副将2')),
-      t('th',{scope:'col',class:'reference-table-score-head'},L('Điểm','评分','スコア')),
-    ]);
-    return t('table',{class:'reference-table'},[t('thead',{},head),t('tbody',{},rows.map(row=>tableRowTree(row,hrefFor,labels)))]);
-  });
+  return withLocale(locale,()=>teamTableTree(rows.map(row=>tableRowTree(row,hrefFor?.(row),labels))));
+}
+
+/** Khung bảng 5 cột quanh các hàng đã dựng (`tableRowTree`); dùng chung cho hàng đội và hàng team Đội khác. */
+function teamTableTree(rowTrees) {
+  const head=t('tr',{},[
+    t('th',{scope:'col',class:'reference-table-team'},L('Đội','队伍','編成')),
+    t('th',{scope:'col'},L('Chủ tướng','主将','主将')),
+    t('th',{scope:'col'},L('Phó 1','副将1','副将1')),
+    t('th',{scope:'col'},L('Phó 2','副将2','副将2')),
+    t('th',{scope:'col',class:'reference-table-score-head'},L('Điểm','评分','スコア')),
+  ]);
+  return t('table',{class:'reference-table'},[t('thead',{},head),t('tbody',{},rowTrees)]);
 }
 
 /** Một hàng của bảng; danh sách dựng theo lượt nối thêm hàng vào `tbody` sẵn có. */
 export function recommendedTeamTableRow(row,{hrefFor,labels,locale}={}) {
-  return withLocale(locale,()=>tableRowTree(row,hrefFor,labels));
+  return withLocale(locale,()=>tableRowTree(row,hrefFor?.(row),labels));
 }
 
-function tableRowTree(row,hrefFor,labels) {
-  const href=hrefFor?.(row);
+function tableRowTree(row,href,labels,optionCount=0) {
   const name=rowDisplayName(row);
   const holders=(row.heroes || row.holders || []).slice(0,3);
   const lineup=holders.filter(holder=>!isSourceEmpty(holder)).map(holderName).filter(Boolean).join(' · ');
   return t('tr',{dataset:{referenceKey:referenceRowKey(row)}},[
     t('th',{scope:'row',class:'reference-table-team'},[
       detailHrefFor(href,name,'reference-table-name'),
-      metaLine(row,labels),
+      metaLine(row,labels,optionCount),
       t('span',{class:'reference-table-lineup'},lineup),
     ]),
     ...Array.from({length:3},(_,index)=>tableHeroCell(holders[index])),
@@ -710,11 +722,21 @@ export function teamItemTree(row,mode,{hrefFor,labels,locale}={}) {
     : recommendedTeamCard(row,{href:hrefFor?.(row),labels,locale});
 }
 
-/** Khối các mục: bảng trong khung, hoặc lưới thẻ (`luoi` là lưới gọn). */
-function teamRowsTree(items,mode,{hrefFor,labels,locale}={}) {
+/**
+ * Một mục team của Đội khác (`otherTeamListEntries`): thẻ hoặc hàng bảng dựng bằng phương án đại diện, link là `entry.href`
+ * (trang của phương án khớp bộ lọc), dòng meta ghi số phương án đủ dữ liệu khi team có hơn một.
+ */
+export function otherTeamItemTree(entry,mode,{labels,locale}={}) {
+  return withLocale(locale,()=>mode===TEAM_VIEW_TABLE
+    ? tableRowTree(entry.displayRecord,entry.href,labels,entry.optionCount)
+    : teamCardTree(entry.displayRecord,entry.href,labels,entry.optionCount));
+}
+
+/** Khối các mục: bảng trong khung, hoặc lưới thẻ (`luoi` là lưới gọn). `itemTree(item, mode)` dựng một mục. */
+function teamRowsTree(items,mode,itemTree) {
   return mode===TEAM_VIEW_TABLE
-    ? t('div',{class:'reference-table-frame'},recommendedTeamTable(items,{hrefFor,labels,locale}))
-    : t('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(row=>teamItemTree(row,mode,{hrefFor,labels,locale})));
+    ? t('div',{class:'reference-table-frame'},teamTableTree(items.map(item=>itemTree(item,mode))))
+    : t('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(item=>itemTree(item,mode)));
 }
 
 /** Tier của một đội; đội chưa xếp hạng thuộc nhóm `unranked`. */
@@ -740,18 +762,19 @@ export function tierSectionTree(tier,items,{index,total,mode,mountId,hrefFor,lab
         t('span',{},label),
         t('span',{class:'reference-tier-count'},L(` · ${total} đội`,` · ${total} 队`,` · ${total}編成`)),
       ]),
-      teamRowsTree(items,mode,{hrefFor,labels,locale}),
+      teamRowsTree(items,mode,(row,itemMode)=>teamItemTree(row,itemMode,{hrefFor,labels,locale})),
     ]);
   });
 }
 
 /**
  * Phần thân danh sách đội (cây view) của `rows` đã lọc: Đội chuẩn nhóm theo Tier, Đội khác một khối. Chỉ dựng
- * `limit` đội đầu (mặc định tất cả); số đội của từng nhóm Tier vẫn đếm trên toàn bộ `rows`.
+ * `limit` mục đầu (mặc định tất cả); số đội của từng nhóm Tier vẫn đếm trên toàn bộ `rows`. Đội khác: `rows` là mục team
+ * của `otherTeamListEntries` (đã mang link của từng mục nên không dùng `hrefFor`).
  */
 export function recommendedListTrees(rows,{family,mode,limit=rows.length,labels,hrefFor,mountId,locale}={}) {
   const visible=rows.slice(0,limit);
-  if (family!=='recommended') return [teamRowsTree(visible,mode,{hrefFor,labels,locale})];
+  if (family!=='recommended') return [withLocale(locale,()=>teamRowsTree(visible,mode,(entry,itemMode)=>otherTeamItemTree(entry,itemMode,{labels})))];
   return [...groupRowsByTier(visible)].map(([tier,items],index)=>tierSectionTree(tier,items,{
     index,mode,mountId,hrefFor,labels,locale,
     total:rows.filter(row=>tierOf(row)===tier).length,

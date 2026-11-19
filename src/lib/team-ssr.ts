@@ -322,8 +322,12 @@ export async function teamSectionParts(section: TeamSection, locale: SiteLocale)
   if (section === 'team-chuan' || section === 'team-khac') {
     const registry = parse(env.website.recommended.files['seasons.json']);
     const family = section === 'team-khac' ? 'other' : 'recommended';
-    const rows = parse(env.website.recommended.files[family === 'other' ? 'other-teams.json' : 'index.json']).records;
-    return { html: html(recommendedSectionTrees({ family, rows, registry, locale })), source };
+    // Đội khác dựng theo team nên cần cả payload (`records` + `teamGroups`); Đội chuẩn chỉ cần `records`.
+    const data = parse(env.website.recommended.files[family === 'other' ? 'other-teams.json' : 'index.json']);
+    const trees = family === 'other'
+      ? recommendedSectionTrees({ family, payload: data, registry, locale })
+      : recommendedSectionTrees({ family, rows: data.records, registry, locale });
+    return { html: html(trees), source };
   }
   if (section === 'coexist') {
     await coexistQilueTableJson();

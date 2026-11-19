@@ -133,7 +133,8 @@ export function createSeasonCoexistSection({mount, scenarioLabel = () => '', onG
 }
 
 import { SOURCE_TIER_ORDER, TIER_SOURCE_JP, jpTierSourceLabel, sourceTierLabel, legacyLabelZh, projectRecommendedRows, referenceFacetValues } from './recommended-reference-state.js';
-import { bindTacticTags, coexistTeamCard, groupRowsByTier, recommendedListTrees, referenceRowKey, teamItemTree, tierOf, tierSectionTree } from './recommended-reference-render.js';
+import { bindTacticTags, coexistTeamCard, groupRowsByTier, otherTeamItemTree, recommendedListTrees, referenceRowKey, teamItemTree, tierOf, tierSectionTree } from './recommended-reference-render.js';
+import { otherTeamFacetValues, otherTeamListEntries } from './other-team-groups.js';
 import { decorateCoverageBadges, rosterControlNodes, rosterHintNode, rosterSummaryNode } from './roster-list-badges.js';
 import { treeToDom } from './view-tree.js';
 import { icon, svgNode } from './render.js';
@@ -258,11 +259,25 @@ export function referenceSeasonLabelTree(registry,rows) {
   ]);
 }
 
-/** Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. */
+/**
+ * Shared-style Team chuẩn/Team khác browser: sidebar lọc, thẻ gọn và chế độ Bảng. Đội chuẩn liệt kê từng đội (hàng của
+ * `index.json`); Đội khác liệt kê team (mục `otherTeamListEntries` của cả payload `other-teams.json`): đếm, facet, phân
+ * trang đều theo team, cùng tập và thứ tự với bản dựng sẵn.
+ */
 export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=onQuery,hrefFor,onNavigate,adopt=false}) {
-  let rows=[], state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
+  const other=family==='other';
+  // `rows`: hàng nguồn (Đội chuẩn: `index.json`; Đội khác: `records` của `payload`, dùng cho nhãn mùa tĩnh).
+  let rows=[], payload=null, state={query:'',filters:{},view:TEAM_VIEW_CARDS}, registry={seasonOptions:[]}, currentScopeRows=[];
   // Lượt đang hiện chỉ giữ khi danh sách không đổi (cùng mùa, lọc, từ khóa, kiểu hiển thị).
+  // `filteredRows`/`currentScopeRows`: mục của danh sách (Đội chuẩn: hàng đội; Đội khác: mục team).
   let filteredRows=[], viewLabels={}, emptyText='', shown=PAGE_SIZE, listKey=null, openedKey=null;
+  /** Mục danh sách của `listState`: Đội khác theo team (link đã gắn theo phương án khớp), Đội chuẩn theo đội. */
+  const projectItems=(listState,labels,byConfigId=null)=>other
+    ? otherTeamListEntries(payload,listState,labels,{hrefFor})
+    : projectRecommendedRows(rows,listState,labels,byConfigId);
+  const itemFacetValues=other ? otherTeamFacetValues : referenceFacetValues;
+  /** Khóa `data-reference-key` của một mục: thẻ team Đội khác mang khóa của phương án đại diện. */
+  const itemKey=item=>referenceRowKey(other ? item.displayRecord : item);
   // Kho của người xem (chỉ Đội chuẩn): `undefined` = chưa biết, `null` = máy chưa có kho, hàm = mùa → độ phủ kho
   // (`buildListCoverage`). `coverage` là độ phủ của mùa đang xem; `null` khi không gắn badge được.
   let rosterSource, coverage=null, updated=false;
@@ -391,7 +406,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
   // giá trị đang chọn vẫn có mặt khi phạm vi hiện tại không đếm được nó.
   const facetEntries=(scopeRows,key)=>{
     const counts=new Map();
-    for (const row of scopeRows) for (const value of referenceFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
+    for (const row of scopeRows) for (const value of itemFacetValues(row,key)) counts.set(value,(counts.get(value) || 0)+1);
     for (const value of state.filters?.[key] || []) if (!counts.has(value)) counts.set(value,0);
     const locale=currentLocale();
     if (key==='tier') return [...counts].sort(([a],[b])=>(SOURCE_TIER_ORDER.indexOf(a)<0?999:SOURCE_TIER_ORDER.indexOf(a))-(SOURCE_TIER_ORDER.indexOf(b)<0?999:SOURCE_TIER_ORDER.indexOf(b)) || a.localeCompare(b));
@@ -500,7 +515,9 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     bindTacticTags(node,value=>onQuery({q:value}));
     return node;
   };
-  const itemNode=(row,mode)=>toNode(teamItemTree(row,mode,{hrefFor,labels:viewLabels}));
+  const itemNode=(item,mode)=>toNode(other
+    ? otherTeamItemTree(item,mode,{labels:viewLabels})
+    : teamItemTree(item,mode,{hrefFor,labels:viewLabels}));
 
   /** Focus vào link chi tiết của thẻ/hàng; thẻ không có link thì chính thẻ nhận focus. */
   function focusItem(node,options) {
@@ -590,7 +607,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     if (searchInput.value!==state.query) searchInput.value=state.query || '';
     renderSeasonOptions();
     const labels=registry.displayLabels || {};
-    const scopeRows=projectRecommendedRows(rows,{...state,query:'',filters:{}},labels);
+    const scopeRows=projectItems({...state,query:'',filters:{}},labels);
     currentScopeRows=scopeRows;
     // Độ phủ kho của mùa đang xem; mùa không có đội nào tính được (tổng 0) thì coi như không có độ phủ.
     // Lỗi khi tính độ phủ (dữ liệu mùa lạ) không được làm hỏng cả lượt vẽ: coi như mùa đó không có độ phủ.
@@ -601,7 +618,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     coverage=seasonCoverage?.summary.total ? seasonCoverage : null;
     paintRosterBar();
     renderFacets(scopeRows);
-    const filtered=projectRecommendedRows(rows,state,labels,coverage?.byConfigId);
+    const filtered=projectItems(state,labels,coverage?.byConfigId);
     const rosterOrder=coverage && (state.rosterFilter || state.rosterSort) ? [state.rosterFilter ?? null,state.rosterSort ?? null] : null;
     const key=JSON.stringify([state.season ?? null,state.query || '',state.filters || {},currentView(),rosterOrder]);
     const sameList=keepSameList && key===listKey && filtered.length===filteredRows.length && filtered.every((row,index)=>row===filteredRows[index]);
@@ -629,7 +646,12 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     }
   }
   return {
-    update(nextRows,nextState,nextRegistry){rows=nextRows;state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();},
+    /** `data`: Đội chuẩn là mảng hàng `index.json`; Đội khác là cả payload `other-teams.json` (`records` + `teamGroups`). */
+    update(data,nextState,nextRegistry){
+      if (other) { payload=data; rows=Array.isArray(data?.records) ? data.records : []; }
+      else rows=data;
+      state=nextState;registry=nextRegistry;updated=true;restoredDisclosures=null;render();
+    },
     /** Trao kho của người xem: `null` = máy chưa có kho; hàm `seasonId => độ phủ` = có kho. Vẽ lại nếu danh sách đã dựng. */
     setRoster(source){
       rosterSource=source;
@@ -660,7 +682,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
   function applyDisclosures(disclosures={}) {
       setFiltersExpanded(disclosures.filters);
       // Thẻ đã mở chi tiết nằm sau các lượt đầu: dựng đủ lượt tới nó để focus và mốc cuộn còn đúng chỗ.
-      const target=disclosures.target ? filteredRows.findIndex(row=>referenceRowKey(row)===disclosures.target) : -1;
+      const target=disclosures.target ? filteredRows.findIndex(item=>itemKey(item)===disclosures.target) : -1;
       if (target>=shown) {
         shown=Math.ceil((target+1)/PAGE_SIZE)*PAGE_SIZE;
         renderView();

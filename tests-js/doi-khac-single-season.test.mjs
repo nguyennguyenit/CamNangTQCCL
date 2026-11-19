@@ -1,11 +1,13 @@
-// Đội khác chỉ có một mùa (mùa ghi trên các hàng `other-teams.json`): nhãn tĩnh thay ô chọn mùa, `?season=` bị bỏ qua,
-// hàng `recommended` có nhãn "Đề cử" và đứng đầu; field vắng thì hành vi như cũ. Dữ liệu là bản ghi thật của
-// generation đang pin được sao chép kèm field giả lập (không sửa generation).
+// Đội khác chỉ có một mùa (mùa ghi trên các hàng `other-teams.json`): nhãn tĩnh thay ô chọn mùa, `?season=` bị bỏ qua.
+// Danh sách là team (bộ 3 tướng + binh chủng) dựng từ phương án đại diện; thứ tự là `optionRank` của đại diện do builder
+// tính (Đề cử trước), nên team có đại diện đề cử đứng đầu và mang nhãn "Đề cử". Dữ liệu là bản ghi thật của generation
+// đang pin; mẫu nhỏ chỉ lấy một phần team thật (không sửa generation).
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { treeToHtml } from "../js/view-tree.js";
 import { projectRecommendedRows, readRecommendedQuery, referenceSectionState } from "../js/recommended-reference-state.js";
+import { otherTeamListEntries } from "../js/other-team-groups.js";
 import { detailBadges, recommendedListTrees } from "../js/recommended-reference-render.js";
 import { otherTeamsSeasonId, referenceSeasonLabelTree } from "../js/team-filter-section.js";
 import { safeReturnUrl } from "../js/team-detail-navigation.js";
@@ -17,34 +19,44 @@ const GENERATION = json("src/data/recommended-reference/current.json").generatio
 const REFERENCE = `src/data/recommended-reference/${GENERATION}`;
 const registry = json(`${REFERENCE}/seasons.json`);
 const labels = registry.displayLabels;
-// Generation thật đã mang `recommended`/`sourceSeasonIds`; bỏ hai field để có mẫu "field vắng", rồi gắn lại có kiểm soát.
-const base = json(`${REFERENCE}/other-teams.json`).records
-  .filter((row) => row.holders?.length)
-  .slice(0, 6)
-  .map(({ recommended, sourceSeasonIds, ...row }) => row);
-assert.ok(base.length === 6, "cần đủ 6 hàng Đội khác mẫu");
+const payload = json(`${REFERENCE}/other-teams.json`);
+const byVariant = new Map(payload.records.map((row) => [row.legacyVariantId, row]));
+const repOf = (group) => byVariant.get(group.representativeVariantId);
+// Kỳ vọng dựng thẳng từ `teamGroups`: team có đại diện, theo optionRank của đại diện.
+const teams = payload.teamGroups.filter((group) => group.representativeVariantId !== null).sort((a, b) => repOf(a).optionRank - repOf(b).optionRank);
+const recommendedTeams = teams.filter((group) => repOf(group).recommended === true);
+assert.ok(recommendedTeams.length >= 2 && teams.length - recommendedTeams.length >= 6, "cần team đề cử và team thường trong dữ liệu thật");
+
+/** Payload con giữ nguyên record và group thật của `groups` (mọi phương án của team, cả phương án thiếu dữ liệu). */
+const subPayload = (groups, mapRecord = (row) => row) => {
+  const ids = new Set(groups.map((group) => group.teamGroupId));
+  return { ...payload, records: payload.records.filter((row) => ids.has(row.teamGroupId)).map(mapRecord), teamGroups: groups };
+};
+// Hai team đề cử + sáu team thường, cố ý xếp team thường lên trước trong `teamGroups`: thứ tự phải theo optionRank.
+const sampleGroups = [...teams.filter((group) => !recommendedTeams.includes(group)).slice(0, 6), ...recommendedTeams.slice(0, 2)];
+const sample = subPayload(sampleGroups);
+const sampleOrder = [...sampleGroups].sort((a, b) => repOf(a).optionRank - repOf(b).optionRank).map((group) => group.representativeVariantId);
+const flaggedIds = recommendedTeams.slice(0, 2).map((group) => group.representativeVariantId);
+// Field `recommended` vắng (generation cũ): không nhãn Đề cử, thứ tự vẫn là optionRank.
+const bare = subPayload(sampleGroups, ({ recommended, ...row }) => row);
+const rows = sample.records;
 const season = registry.seasonOptions.find((item) => item.sourceSeasonId === registry.defaultSourceSeasonId);
-const key = (row) => row.legacyVariantId;
+const key = (entry) => entry.displayRecord.legacyVariantId;
 const html = (trees) => [].concat(trees).map(treeToHtml).join("");
 const badgeCount = (markup) => (markup.match(/class="badge badge-band reference-recommended"/g) ?? []).length;
 const keysIn = (markup) => [...markup.matchAll(/data-reference-key="([^"]*)"/g)].map((match) => match[1]);
+const SEASON_PREFIX = { vi: "Mùa", zh: "赛季", ja: "シーズン" };
+const RECOMMENDED = { vi: "Đề cử", zh: "推荐", ja: "おすすめ" };
 
-// Hai hàng cuối (theo thứ tự nguồn) được đề cử: phải nhảy lên đầu, còn lại giữ thứ tự cũ.
-const withFlags = (flagged) => base.map((row) => ({ ...row, sourceSeasonIds: [registry.defaultSourceSeasonId], recommended: flagged.includes(row) }));
-const flagged = [base[4], base[5]];
-const rows = withFlags(flagged);
-const plainState = { season: "all", query: "", filters: {} };
-const oldOrder = projectRecommendedRows(base.map((row) => ({ ...row })), plainState, labels).map(key);
-const flaggedIds = oldOrder.filter((id) => flagged.some((row) => key(row) === id));
-
-test("?season= bất kỳ trên Đội khác bị bỏ qua: đủ đội, không thông báo mùa, đủ kiểu giá trị lạ", () => {
+test("?season= bất kỳ trên Đội khác bị bỏ qua: đủ team, không thông báo mùa, đủ kiểu giá trị lạ", () => {
   const plain = referenceSectionState("other", "https://x.test/doi-khac/", registry, null);
+  const expected = otherTeamListEntries(payload, plain, labels).map(key);
+  assert.deepEqual(expected, teams.map((group) => group.representativeVariantId));
   for (const query of ["?season=pk-s24", "?season=khong-ton-tai", "?season=all", "?season=unknown", "?season=a&season=b", "?season="]) {
     const state = referenceSectionState("other", `https://x.test/doi-khac/${query}`, registry, null);
     assert.equal(state.season, "all", query);
     assert.deepEqual(state.notices, plain.notices, `${query}: không thêm thông báo mùa`);
-    assert.deepEqual(projectRecommendedRows(rows, state, labels).map(key), projectRecommendedRows(rows, plain, labels).map(key), query);
-    assert.equal(projectRecommendedRows(rows, state, labels).length, rows.length, `${query}: trang không rỗng`);
+    assert.deepEqual(otherTeamListEntries(payload, state, labels).map(key), expected, `${query}: đủ team, cùng thứ tự`);
   }
   // Đội chuẩn giữ hành vi mùa: mùa có thật được giữ, mùa lạ lùi về mặc định kèm thông báo.
   const other = registry.seasonOptions.find((item) => item.sourceSeasonId !== registry.defaultSourceSeasonId);
@@ -61,58 +73,55 @@ test("URL quay lại không mang season của Đội khác, Đội chuẩn vẫn
   assert.equal(safeReturnUrl("/doi-chuan/?season=pk-s24&q=vien"), "/doi-chuan/?season=pk-s24&q=vien");
 });
 
-test("hàng recommended đứng đầu, thứ tự cũ giữ trong mỗi nhóm; field vắng thì không đổi thứ tự", () => {
+test("team có đại diện đề cử đứng đầu theo optionRank; field recommended vắng thì không đổi thứ tự", () => {
   const state = referenceSectionState("other", "https://x.test/doi-khac/", registry, null);
-  const ordered = projectRecommendedRows(rows, state, labels).map(key);
-  assert.deepEqual(ordered.slice(0, 2), flaggedIds);
-  assert.deepEqual(ordered.slice(2), oldOrder.filter((id) => !flaggedIds.includes(id)));
-  // Không có field `recommended` / `sourceSeasonIds` (generation chưa cập nhật): y như trước.
-  const legacy = base.map((row) => { const { recommended, sourceSeasonIds, ...rest } = row; return rest; });
-  assert.deepEqual(projectRecommendedRows(legacy, state, labels).map(key), oldOrder);
-  // `recommended: false` cũng không đổi thứ tự.
-  assert.deepEqual(projectRecommendedRows(withFlags([]), state, labels).map(key), oldOrder);
+  const entries = otherTeamListEntries(payload, state, labels);
+  const flags = entries.map((entry) => entry.displayRecord.recommended === true);
+  assert.equal(flags.filter(Boolean).length, recommendedTeams.length);
+  assert.equal(flags.indexOf(false), recommendedTeams.length, "mọi team đề cử đứng trước team thường");
+  assert.deepEqual(otherTeamListEntries(sample, state, labels).map(key), sampleOrder);
+  assert.deepEqual(sampleOrder.slice(0, 2), flaggedIds);
+  assert.deepEqual(otherTeamListEntries(bare, state, labels).map(key), sampleOrder, "không có field recommended: vẫn optionRank");
   // Hàng Đội chuẩn (có `sourceConfigId`) không bị tác động dù mang field này.
   const standard = [
     { sourceConfigId: "b", tierOrder: 2, listIndex: 1, value: 1, recommended: true, heroes: [] },
     { sourceConfigId: "a", tierOrder: 1, listIndex: 0, value: 1, heroes: [] },
   ];
-  assert.deepEqual(projectRecommendedRows(standard, plainState, labels).map((row) => row.sourceConfigId), ["a", "b"]);
+  assert.deepEqual(projectRecommendedRows(standard, { season: "all", query: "", filters: {} }, labels).map((row) => row.sourceConfigId), ["a", "b"]);
 });
 
-for (const locale of ["vi", "zh"]) {
-  test(`Đội khác dựng sẵn (${locale}): nhãn mùa tĩnh từ registry, không ô chọn, nhãn Đề cử trên đúng hàng, hàng đề cử đứng đầu`, () => {
-    const markup = html(recommendedSectionTrees({ family: "other", rows, registry, locale }));
-    const name = locale === "zh" ? season.nameRaw : season.displayNameVi;
-    const prefix = locale === "zh" ? "赛季" : "Mùa";
-    assert.ok(markup.includes(`<div class="reference-season-field reference-season-static"><span class="reference-season-label">${prefix}</span> <span class="reference-season-name">${name}</span></div>`));
+for (const locale of ["vi", "zh", "ja"]) {
+  test(`Đội khác dựng sẵn (${locale}): nhãn mùa tĩnh từ registry, không ô chọn, nhãn Đề cử trên đúng team, team đề cử đứng đầu`, () => {
+    const markup = html(recommendedSectionTrees({ family: "other", payload: sample, registry, locale }));
+    const name = locale === "vi" ? season.displayNameVi : season.nameRaw;
+    assert.ok(markup.includes(`<div class="reference-season-field reference-season-static"><span class="reference-season-label">${SEASON_PREFIX[locale]}</span> <span class="reference-season-name">${name}</span></div>`));
     assert.doesNotMatch(markup, /<select|<option|Tất cả|Chưa rõ mùa|全部|赛季不明/u);
-    assert.equal(badgeCount(markup), flagged.length);
-    assert.ok(markup.includes(`reference-recommended">${locale === "zh" ? "推荐" : "Đề cử"}</span>`));
-    const keys = keysIn(markup);
-    assert.deepEqual(keys.slice(0, 2), flaggedIds);
-    assert.equal(keys.length, rows.length);
-    // Không có field: không nhãn Đề cử, thứ tự cũ.
-    const bare = html(recommendedSectionTrees({ family: "other", rows: base, registry, locale }));
-    assert.equal(badgeCount(bare), 0);
-    assert.deepEqual(keysIn(bare), oldOrder);
+    assert.equal(badgeCount(markup), flaggedIds.length);
+    assert.ok(markup.includes(`reference-recommended">${RECOMMENDED[locale]}</span>`));
+    assert.deepEqual(keysIn(markup), sampleOrder);
+    // Không có field: không nhãn Đề cử, cùng thứ tự.
+    const plain = html(recommendedSectionTrees({ family: "other", payload: bare, registry, locale }));
+    assert.equal(badgeCount(plain), 0);
+    assert.deepEqual(keysIn(plain), sampleOrder);
   });
 
   test(`nhãn Đề cử có ở thẻ, thẻ gọn và bảng (${locale})`, () => {
     const state = referenceSectionState("other", "https://x.test/doi-khac/", registry, null);
-    const filtered = projectRecommendedRows(rows, state, labels);
+    const entries = otherTeamListEntries(sample, state, labels);
     for (const mode of [null, TEAM_VIEW_GRID, TEAM_VIEW_TABLE]) {
-      const markup = html(recommendedListTrees(filtered, { family: "other", mode, labels, mountId: "m", locale }));
-      assert.equal(badgeCount(markup), flagged.length, `${locale}/${mode}`);
-      assert.ok(markup.replace(/<[^>]+>/g, " ").includes(locale === "zh" ? "推荐" : "Đề cử"));
+      const markup = html(recommendedListTrees(entries, { family: "other", mode, labels, mountId: "m", locale }));
+      assert.equal(badgeCount(markup), flaggedIds.length, `${locale}/${mode}`);
+      assert.ok(markup.replace(/<[^>]+>/g, " ").includes(RECOMMENDED[locale]));
+      assert.deepEqual(keysIn(markup), sampleOrder, `${locale}/${mode}: mỗi team một mục`);
     }
   });
 
   test(`huy hiệu trang chi tiết Đội khác (${locale}): chỉ hiện khi đội được đề cử`, () => {
-    const on = html(detailBadges({ ...base[0], referenceRecommended: true }, null, { locale }));
-    const off = html(detailBadges({ ...base[0] }, null, { locale }));
+    const on = html(detailBadges({ ...rows[0], referenceRecommended: true }, null, { locale }));
+    const off = html(detailBadges({ ...rows[0], referenceRecommended: undefined }, null, { locale }));
     assert.equal(badgeCount(on), 1);
     assert.equal(badgeCount(off), 0);
-    assert.ok(on.includes(locale === "zh" ? "推荐" : "Đề cử"));
+    assert.ok(on.includes(RECOMMENDED[locale]));
   });
 }
 
@@ -122,11 +131,11 @@ test("Đội chuẩn dựng sẵn không có nhãn mùa tĩnh; mùa Đội khác
   assert.equal(referenceSeasonLabelTree({ defaultSourceSeasonId: "khong-co", seasonOptions: [] }, rows), null);
   assert.equal(referenceSeasonLabelTree({}, rows), null);
   assert.equal(referenceSeasonLabelTree(registry, []), null);
-  assert.equal(referenceSeasonLabelTree(registry, base), null, "hàng chưa gắn mùa");
+  assert.equal(referenceSeasonLabelTree(registry, rows.map(({ sourceSeasonIds, ...row }) => row)), null, "hàng chưa gắn mùa");
   const mixed = rows.map((row, index) => (index ? row : { ...row, sourceSeasonIds: ["pk-s26"] }));
   assert.equal(otherTeamsSeasonId(mixed), null, "hai mùa thì không có nhãn");
-  const unknown = rows.map((row) => ({ ...row, sourceSeasonIds: ["khong-co"] }));
-  const other = html(recommendedSectionTrees({ family: "other", rows: unknown, registry, locale: "vi" }));
+  const unknown = subPayload(sampleGroups, (row) => ({ ...row, sourceSeasonIds: ["khong-co"] }));
+  const other = html(recommendedSectionTrees({ family: "other", payload: unknown, registry, locale: "vi" }));
   assert.doesNotMatch(other, /reference-season-static/);
 });
 
@@ -135,9 +144,8 @@ test("nhãn mùa Đội khác đi theo mùa của dữ liệu Đội khác, khô
   const other = registry.seasonOptions.find((item) => item.sourceSeasonId !== registry.defaultSourceSeasonId && item.displayNameVi);
   // Biên tập đổi mùa mặc định sang mùa khác mà chưa chạy lại dedup: nhãn vẫn là mùa của các hàng Đội khác.
   const moved = { ...registry, defaultSourceSeasonId: other.sourceSeasonId };
-  const markup = html(recommendedSectionTrees({ family: "other", rows, registry: moved, locale: "vi" }));
+  const markup = html(recommendedSectionTrees({ family: "other", payload: sample, registry: moved, locale: "vi" }));
   assert.ok(markup.includes(`<span class="reference-season-name">${season.displayNameVi}</span>`));
   assert.ok(!markup.includes(`<span class="reference-season-name">${other.displayNameVi}</span>`));
-  const real = json(`${REFERENCE}/other-teams.json`).records;
-  assert.equal(otherTeamsSeasonId(real), "pk-s27");
+  assert.equal(otherTeamsSeasonId(payload.records), "pk-s27");
 });

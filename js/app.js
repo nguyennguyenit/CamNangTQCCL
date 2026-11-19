@@ -444,7 +444,7 @@ async function main() {
       const registry = recommendedModel.seasons || {};
       // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn (cùng hàm với bản dựng sẵn).
       sections['team-chuan']?.update(recommendedModel.index.records,referenceSectionState('recommended',location.href,registry,localStore()),registry);
-      sections['team-khac']?.update(recommendedModel.other.records,referenceSectionState('other',location.href,registry,localStore()),registry);
+      sections['team-khac']?.update(recommendedModel.other,referenceSectionState('other',location.href,registry,localStore()),registry);
       canonicaliseView();
       canonicaliseRosterParams();
     }

@@ -32,6 +32,24 @@ test.describe("không có JavaScript", () => {
       });
     }
 
+    test(`${locale} /doi-khac/: mỗi thẻ là một team có phương án đủ dữ liệu, không link nào tới phương án bị loại`, async ({ page, request }) => {
+      const pin = await (await request.get("/data/recommended/current.json")).json();
+      const other = await (await request.get(`/data/recommended/${pin.generationId}/other-teams.json`)).json();
+      const complete = new Set(other.records.filter((row) => row.dataComplete === true).map((row) => row.legacyVariantId));
+      const teams = other.teamGroups.filter((group) => group.representativeVariantId !== null);
+      await page.goto(`${prefix}/doi-khac/`, { waitUntil: "domcontentloaded" });
+      const cards = page.locator("main .reference-team-card");
+      await expect(cards).toHaveCount(Math.min(60, teams.length));
+      const keys = await cards.evaluateAll((nodes) => nodes.map((node) => node.dataset.referenceKey));
+      expect(keys.every((key) => teams.some((group) => group.representativeVariantId === key))).toBe(true);
+      const hrefs = await page.locator("main a[data-team-detail-link]").evaluateAll((nodes) => nodes.map((node) => node.getAttribute("href")));
+      expect(hrefs.length).toBeGreaterThan(0);
+      for (const href of hrefs) {
+        const variant = new URL(href, "https://x.test").searchParams.get("variant");
+        expect(complete.has(variant), href).toBe(true);
+      }
+    });
+
     for (const { path } of LISTS.filter((item) => item.detail)) {
       test(`${locale} ${path}: bấm đội đầu mở trang chi tiết có thân dựng sẵn`, async ({ page }) => {
         await page.goto(`${prefix}${path}`, { waitUntil: "domcontentloaded" });

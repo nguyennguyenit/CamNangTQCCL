@@ -6,6 +6,7 @@
 import { localePath, withLocale } from '../../js/i18n.js';
 import { khaihoangTableTree, seasonCoexistGroup, t } from '../../js/render.js';
 import { projectRecommendedRows, referenceSectionState } from '../../js/recommended-reference-state.js';
+import { otherTeamListEntries } from '../../js/other-team-groups.js';
 import { coexistTeamCard, recommendedListTrees } from '../../js/recommended-reference-render.js';
 import { coexistGroups, coexistScenarioIds, readSeasonQuery } from '../../js/season-ui-state.js';
 import { projectSeasonBrowse } from '../../js/season-context.js';
@@ -38,27 +39,30 @@ const pageUrl = (path, locale) => new URL(localePath(path, locale), PAGE_ORIGIN)
 /**
  * Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): đầu mục + `.reference-view` của mùa mặc định, mỗi đội
  * 3 tướng + link chi tiết. Đội chuẩn dựng ĐỦ mọi đội của mùa mặc định (mùa hiện tại không có trang riêng, có thể hơn
- * `PAGE_SIZE` đội khi đổi mùa mặc định); Đội khác tối đa `PAGE_SIZE` đội đầu. `rows`: `index.json` / `other-teams.json`
- * đã xác minh; `registry`: `seasons.json`.
+ * `PAGE_SIZE` đội khi đổi mùa mặc định); `rows`: `records` của `index.json` đã xác minh. Đội khác dựng tối đa `PAGE_SIZE`
+ * team đầu (`otherTeamListEntries`, cùng hàm với trình duyệt); `payload`: cả `other-teams.json` đã xác minh (`records` +
+ * `teamGroups`). `registry`: `seasons.json`.
  *
  * Dấu danh sách ghi số đội đã dựng: tối thiểu `PAGE_SIZE` (khớp lượt đầu của client nên DOM được nhận lại); mùa hơn
  * `PAGE_SIZE` đội thì dấu mang tổng số đội, client thử dấu này sau dấu lượt đầu và nhận lại cả danh sách; phân
  * trang phía client chỉ áp từ lần đổi trạng thái kế tiếp.
  */
-export function recommendedSectionTrees({ family, rows, registry, locale }) {
+export function recommendedSectionTrees({ family, rows, payload, registry, locale }) {
   return withLocale(locale, () => {
-    const url = pageUrl(family === 'other' ? '/doi-khac/' : '/doi-chuan/', locale);
+    const other = family === 'other';
+    const url = pageUrl(other ? '/doi-khac/' : '/doi-chuan/', locale);
     const state = referenceSectionState(family, url.href, registry, null);
     const labels = registry.displayLabels || {};
-    const filtered = projectRecommendedRows(rows, state, labels);
     const hrefFor = (row) => referenceDetailHref(row, { from: url.href, origin: url.origin, locale });
+    const records = other ? (Array.isArray(payload?.records) ? payload.records : []) : rows;
+    const filtered = other ? otherTeamListEntries(payload, state, labels, { hrefFor }) : projectRecommendedRows(records, state, labels);
     const mountId = family === 'other' ? 'section-team-khac' : 'section-team-chuan';
     const title = referenceSectionTitle(family);
     const limit = family === 'other' ? PAGE_SIZE : filtered.length;
     const signature = referenceViewSignature(state, state.view, safeReturnUrl(url.href, { origin: url.origin }), Math.max(PAGE_SIZE, limit));
     return inertUntilBound([
       // Đội khác: nhãn mùa tĩnh cùng cây với trình duyệt (`referenceSeasonLabelTree`); Đội chuẩn không dựng sẵn ô chọn mùa.
-      t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family), family === 'other' ? referenceSeasonLabelTree(registry, rows) : null].filter(Boolean)),
+      t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family), other ? referenceSeasonLabelTree(registry, records) : null].filter(Boolean)),
       t('div', { class: 'reference-view', dataset: { ssrSignature: signature } },
         recommendedListTrees(filtered, { family, mode: state.view, limit, labels, hrefFor, mountId, locale })),
     ]);

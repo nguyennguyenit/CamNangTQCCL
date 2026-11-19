@@ -96,6 +96,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "recruit-tokens"),
   entry("js", "recruit-tracker-store"),
   entry("js", "recruit-tracker"),
+  entry("js", "other-team-groups"),
   entry("js", "recommended-reference-render"),
   entry("js", "recommended-reference-state"),
   entry("js", "render"),
