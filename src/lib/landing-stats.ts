@@ -12,8 +12,8 @@ import { recommendedRoutePath, teamDetailCatalog } from './team-detail-routes';
  * Nguồn (một snapshot duy nhất, đã xác minh hash ở cả `website-display.json` và generation Recommended):
  * - `recommended/index.json` — cấu hình Đội chuẩn, hạng T0, mùa nguồn, thẻ/bảng xem trước.
  * - `recommended/seasons.json` — mùa mặc định + nhãn Việt của phe/loại binh/mục.
- * - `recommended/other-teams.json` — đúng tập trang `/doi-khac/` hiển thị (40), không phải `data/teams.json` (166,
- *   kho gốc trước khi khử trùng).
+ * - `recommended/other-teams.json` — bảng `teamGroups` (team = bộ 3 tướng + binh chủng, builder tính) và phương án đủ
+ *   dữ liệu: đúng tập thẻ `/doi-khac/` hiển thị, không phải `data/teams.json` (kho gốc trước khi khử trùng).
  * - `publicFiles/*.json` — `heroes-dict.json`, `tactics.json` (kho Tra cứu), `coexist.json`, `khaihoang.json`.
  *
  * Mẫu số của từng số ghi ngay ở trường tương ứng; số nào không có nguồn thì câu chứa nó không được dựng.
@@ -30,11 +30,11 @@ export interface LandingStatistics {
   heroes: number;
   /** Chiến pháp = phần tử `tactics.json`. */
   tactics: number;
-  /** Đội khác = bản ghi `other-teams.json` (tập trang `/doi-khac/`). */
+  /** Đội khác = số team có phương án đủ dữ liệu (`teamGroups` có đại diện) — đúng số thẻ `/doi-khac/`. */
   otherTeams: number;
-  /** Đội khác có ghi đội sợ = `legacyContent.counters.avoid` không rỗng. */
+  /** Team Đội khác có ít nhất một phương án đủ dữ liệu ghi đội sợ (`legacyContent.counters.avoid` không rỗng). */
   otherTeamsWithCounters: number;
-  /** Đội khác có ít nhất một phương án thay thế trong `legacyContent`. */
+  /** Team Đội khác có ít nhất một phương án đủ dữ liệu ghi tướng/chiến pháp/binh thư thay thế trong `legacyContent`. */
   otherTeamsWithAlternatives: number;
   /** Cùng Tồn: số nhóm, số đội mỗi nhóm, số tướng không trùng mỗi nhóm (dữ liệu phải đồng nhất giữa các nhóm). */
   coexist: { groups: number; teamsPerGroup: number; heroesPerGroup: number };
@@ -154,7 +154,7 @@ export function localeNumber(value: number, locale: LandingLocale): string {
   return pick(locale, vi, vi.replaceAll('.', ','), vi.replaceAll('.', ','));
 }
 
-/** Số phương án thay thế trong `legacyContent` của một đội (tướng, chiến pháp, binh thư). */
+/** Số tướng/chiến pháp/binh thư thay thế ghi trong `legacyContent` của một phương án. */
 function alternativeSlots(legacyContent: unknown): number {
   const heroes = (legacyContent as Record<string, unknown> | null)?.heroes;
   if (!Array.isArray(heroes)) return 0;
@@ -177,17 +177,34 @@ function alternativeSlots(legacyContent: unknown): number {
   return total;
 }
 
-/** Bản ghi Đội khác chỉ dùng `legacyContent`: số đội sợ và số phương án thay thế. */
-function parseOtherTeamLegends(value: unknown) {
-  return fieldArray(value, 'records', 'other-teams.json').map((row) => {
-    const legacyContent = field(row, 'legacyContent');
-    const counters = field(legacyContent, 'counters');
-    const avoid = field(counters, 'avoid');
-    return {
-      avoidCount: Array.isArray(avoid) ? avoid.length : 0,
-      alternativeCount: alternativeSlots(legacyContent),
-    };
-  });
+/**
+ * Team Đội khác hiển thị trên website: mỗi `teamGroups` có đại diện (`representativeVariantId`) là một team, kèm cờ đội sợ
+ * và thay thế gộp trên mọi phương án đủ dữ liệu (`completeVariantIds`) của team. Bảng do builder tính và kiểm; phương án
+ * trỏ tới không có trong `records` hoặc không đủ dữ liệu là lỗi build, không lặng lẽ bỏ team.
+ */
+function parseOtherTeamGroups(value: unknown) {
+  const byVariant = new Map(
+    fieldArray(value, 'records', 'other-teams.json').map((row) => [field(row, 'legacyVariantId'), row]),
+  );
+  return fieldArray(value, 'teamGroups', 'other-teams.json')
+    .filter((group) => field(group, 'representativeVariantId') !== null)
+    .map((group) => {
+      const options = fieldArray(group, 'completeVariantIds', 'other-teams.teamGroups[]').map((variantId) => {
+        const row = byVariant.get(variantId);
+        if (!row || field(row, 'dataComplete') !== true) {
+          throw new Error(`Số liệu Landing: phương án ${String(variantId)} của team Đội khác không có hoặc thiếu dữ liệu`);
+        }
+        return field(row, 'legacyContent');
+      });
+      if (!options.length) throw new Error(`Số liệu Landing: team Đội khác ${String(field(group, 'teamGroupId'))} không có phương án đủ dữ liệu`);
+      return {
+        hasCounters: options.some((content) => {
+          const avoid = field(field(content, 'counters'), 'avoid');
+          return Array.isArray(avoid) && avoid.length > 0;
+        }),
+        hasAlternatives: options.some((content) => alternativeSlots(content) > 0),
+      };
+    });
 }
 
 /** Cùng Tồn: số đội và số tướng không trùng của từng nhóm; các nhóm phải đồng nhất để câu chữ đúng. */
@@ -264,7 +281,7 @@ export async function landingStatistics(): Promise<LandingStatistics> {
   const snapshot = await websiteDisplayPublicationSnapshot();
 
   const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'));
-  const legends = parseOtherTeamLegends(publishedJson(snapshot.recommended.files, 'other-teams.json'));
+  const otherTeams = parseOtherTeamGroups(publishedJson(snapshot.recommended.files, 'other-teams.json'));
   const heroes = publishedArray(publishedJson(snapshot.publicFiles, 'heroes-dict.json'), 'heroes-dict.json');
   const tactics = publishedArray(publishedJson(snapshot.publicFiles, 'tactics.json'), 'tactics.json');
 
@@ -283,9 +300,9 @@ export async function landingStatistics(): Promise<LandingStatistics> {
     sourceSeasons: new Set(recommended.map((row) => row.sourceSeasonId)).size,
     heroes: heroes.length,
     tactics: tactics.length,
-    otherTeams: legends.length,
-    otherTeamsWithCounters: legends.filter((legend) => legend.avoidCount > 0).length,
-    otherTeamsWithAlternatives: legends.filter((legend) => legend.alternativeCount > 0).length,
+    otherTeams: otherTeams.length,
+    otherTeamsWithCounters: otherTeams.filter((team) => team.hasCounters).length,
+    otherTeamsWithAlternatives: otherTeams.filter((team) => team.hasAlternatives).length,
     coexist: { groups: groups.length, teamsPerGroup: firstGroup.teams, heroesPerGroup: firstGroup.heroes },
     khaiHoang: {
       teams: khaiHoangTeams.length,
@@ -389,7 +406,7 @@ const LANDING_COPY: Record<SiteLocale, (stats: LandingStatistics) => LandingCopy
       standardCount: `${viNumber(stats.standardConfigs)} cấu hình`,
       standardNote: 'theo mùa và danh mục, kèm điểm tham khảo.',
       otherCount: `${viNumber(stats.otherTeams)} đội`,
-      otherNote: `người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có phương án thay thế.`,
+      otherNote: `người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có tướng/chiến pháp thay thế.`,
       coexistNote: `${viNumber(coexist.groups)} nhóm, mỗi nhóm ${viNumber(coexist.teamsPerGroup)} đội dùng cùng lúc — ${viNumber(coexist.heroesPerGroup)} tướng không trùng nhau.`,
       khaiHoangNote: `${viNumber(khaiHoang.teams)} đội mở đất, ${viNumber(khaiHoang.beforeAfterTeams)} đội có đủ cấu hình trước/sau, ${viNumber(khaiHoang.chamSuTeams)} đội Chạm Sứ, cùng quân thủ của ${viNumber(khaiHoang.mines)} mỏ.`,
     };
@@ -402,7 +419,7 @@ const LANDING_COPY: Record<SiteLocale, (stats: LandingStatistics) => LandingCopy
       standardCount: `${n(stats.standardConfigs)} 套配将`,
       standardNote: '，按赛季与分类整理，附参考评分。',
       otherCount: `${n(stats.otherTeams)} 支阵容`,
-      otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换方案。`,
+      otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换武将/战法。`,
       coexistNote: `${n(coexist.groups)} 组，每组 ${n(coexist.teamsPerGroup)} 支队伍可同时上阵——共 ${n(coexist.heroesPerGroup)} 名武将互不重复。`,
       khaiHoangNote: `${n(khaiHoang.teams)} 支开荒队伍，其中 ${n(khaiHoang.beforeAfterTeams)} 支配有完整的前后期配置、${n(khaiHoang.chamSuTeams)} 支碰瓷队，另附 ${n(khaiHoang.mines)} 座矿的守军信息。`,
     };
@@ -415,7 +432,7 @@ const LANDING_COPY: Record<SiteLocale, (stats: LandingStatistics) => LandingCopy
       standardCount: `${n(stats.standardConfigs)}件の編成`,
       standardNote: '。シーズンとカテゴリ別に整理し、参考スコアを付けています。',
       otherCount: `${n(stats.otherTeams)}編成`,
-      otherNote: `。いずれもプレイヤーの集計で、${n(stats.otherTeamsWithCounters)}編成に苦手な編成の記載、${n(stats.otherTeamsWithAlternatives)}編成に代替案を掲載しています。`,
+      otherNote: `。いずれもプレイヤーの集計で、${n(stats.otherTeamsWithCounters)}編成に苦手な編成の記載、${n(stats.otherTeamsWithAlternatives)}編成に代替の武将・戦法を掲載しています。`,
       coexistNote: `${n(coexist.groups)}組。各組${n(coexist.teamsPerGroup)}部隊を同時に運用でき、計${n(coexist.heroesPerGroup)}名の武将が重複しません。`,
       khaiHoangNote: `開拓用${n(khaiHoang.teams)}編成（うち${n(khaiHoang.beforeAfterTeams)}編成は前期・後期の構成が揃い、${n(khaiHoang.chamSuTeams)}編成は当たり屋編成）と、${n(khaiHoang.mines)}か所の鉱山の守備情報を掲載しています。`,
     };

@@ -817,7 +817,7 @@
     "src/components/pages/SectionPage.astro": "8cc175c3b1ba45df31a77097cc7de89461889bca5fffe4011b1a439f4cca4c55",
     "src/layouts/SiteLayout.astro": "58c80a3a6304d86840bb4af022d25c9067c06695d1aaf0e32e40f10334252774",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
-    "src/lib/landing-stats.ts": "f641c032dd45e7255f8440a88a1aea21c0c0aa8bd3353e4364d3e939190f53bd",
+    "src/lib/landing-stats.ts": "0aaf3e3ef6ca6a2d091552917ff200014ade124c5fb3d2f41941ba39de21f4e4",
     "src/lib/lookup-item-pages.ts": "e277f6ec32f8f756227990d145122706c436f01b6ae3d14a7739b8419b76d5a6",
     "src/lib/lookup-pages.ts": "1bc48fe998469f96bcfa0b6c0ad8621385f79a7c837103e2c5d5e41a19da510d",
     "src/lib/official-links.ts": "4e3b18938600000e6d7b353f46701caf5f69c908afb77f63dec34c46c0e621d6",

@@ -143,7 +143,7 @@ export async function recommendedDetailText(record: Json, lookupLinks: unknown, 
 let otherTeams: Promise<Json> | undefined;
 
 /** `other-teams.json` đã pin, parse một lần cho cả lần build (file ~1 MB, trang Đội khác dựng hàng trăm lần mỗi locale). */
-function otherTeamsPayload() {
+export function otherTeamsPayload() {
   return otherTeams ??= (async () => parse((await prepare()).website.recommended.files['other-teams.json']))();
 }
 

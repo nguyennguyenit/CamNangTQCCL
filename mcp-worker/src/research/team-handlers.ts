@@ -14,7 +14,7 @@ import type {
 import type { SeasonContext } from "../domain/canonical-state.js";
 import { legacyDomainAdapter } from "../domain/legacy-domain-adapter.js";
 import { seasonDomain, type BrowseEntry } from "../domain/season-domain-adapter.js";
-import { allowGuide, allowTierRanking } from "../data/team-source-allowlist.js";
+import { allowGuide, allowOtherTeamGroup, allowTierRanking } from "../data/team-source-allowlist.js";
 import { decodeCursor, encodeCursor, type CursorBinding } from "./cursor.js";
 import { PUBLIC_ERRORS, ResearchHandlerError, type ResearchErrorCode } from "./handler-error.js";
 import { fitPage } from "./page.js";
@@ -173,6 +173,8 @@ const teamHeaderShape = {
   pagePath: z.string().max(512).optional().describe("Trang đội trên website theo locale; engine không có."),
   configId: seasonId.optional().describe("engine + seasonContext: configId của mục này."),
   recommended: z.boolean().optional().describe("Chỉ other: true nếu là đội Đề cử trên website."),
+  teamGroupId: z.string().max(64).optional().describe("Chỉ other: team (bộ 3 tướng + binh chủng) của phương án; cùng giá trị là cùng team."),
+  optionCount: count("Chỉ other: số phương án đủ dữ liệu của team trên website.").optional(),
 };
 
 const teamItemSchema = z
@@ -262,7 +264,13 @@ function publicTeamsFor(pub: PublicationReadModel, filter: Parameters<Publicatio
   }
 }
 
-/** Mỗi biến thể `other` đã nhận là một mục có selector riêng. */
+/** `teamGroupId` + `optionCount` của một phương án `other` (allowlist ở biên output; `optionRank` chỉ nằm trong artifact). */
+function otherTeamFields(variant: ArtifactRecord): { teamGroupId?: string; optionCount?: number } {
+  const { teamGroupId, optionCount } = allowOtherTeamGroup(variant);
+  return { ...(teamGroupId === undefined ? {} : { teamGroupId }), ...(optionCount === undefined ? {} : { optionCount }) };
+}
+
+/** Mỗi phương án `other` (admitted + đủ dữ liệu như website) là một mục có selector và trang riêng. */
 function expandedItems(pub: PublicationReadModel, views: readonly TeamSummaryView[], loc: Locale): TeamItem[] {
   const items: TeamItem[] = [];
   for (const view of views) {
@@ -282,6 +290,7 @@ function expandedItems(pub: PublicationReadModel, views: readonly TeamSummaryVie
         ...(typeof variant.name === "string" ? { name: variant.name, nameVi: variant.name } : {}),
         nickname: typeof variant.nickname === "string" ? variant.nickname : null,
         recommended: variant.recommended === true,
+        ...otherTeamFields(variant),
         tierRaw: typeof variant.historicalTier === "string" ? variant.historicalTier : null,
         factionRaw: typeof variant.faction === "string" ? variant.faction : null,
         unitTypes: Array.isArray(variant.unit) ? variant.unit.filter((entry): entry is string => typeof entry === "string") : [],
@@ -998,6 +1007,7 @@ function buildOther(pub: PublicationReadModel, selector: ReferenceSelector, loc:
       ...itemHeader(summary, loc, { ...selector, legacyVariantId: publicVariantId(String(variant.variantId)) }),
       nickname: nullableString(variant.nickname),
       recommended: variant.recommended === true,
+      ...otherTeamFields(variant),
       context,
       tierRankings: asRecords(variant.historicalRankings).slice(0, 20).map(allowTierRanking),
       heroes,
