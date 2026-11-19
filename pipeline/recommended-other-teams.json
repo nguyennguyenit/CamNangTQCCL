@@ -20873,6 +20873,102 @@
     },
     {
       "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [
+        {
+          "tier": "T0",
+          "updatedAt": "2026-07-03"
+        },
+        {
+          "tier": "T0",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Man Dũng Phi Dũng",
+            "Thắng Trận",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Khương Duy",
+          "faction": "Thục",
+          "heroIdentityId": "hero:0c61d8ccd98726c3e4fd4861",
+          "nameRaw": "Khương Duy",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:2b52cf9439f3dd4913ba022b",
+            "tactic:41c42919908588ff170a415a"
+          ],
+          "tacticSlotsRaw": [
+            "Đoạt Hồn Hiệp Phách",
+            "Toàn Quân Đồng Lòng"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Đánh Sau Trúng Trước",
+            "Tướng Uy",
+            "Xem Bói"
+          ],
+          "displayNameVi": "Bàng Thống",
+          "faction": "Thục",
+          "heroIdentityId": "hero:d04269a972ec14e0c95efdec",
+          "nameRaw": "Bàng Thống",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:f7b8cbb1d2c08f57b4b800cc",
+            "tactic:86e16d1572182950b52b68a4"
+          ],
+          "tacticSlotsRaw": [
+            "Thái Bình Đạo Pháp",
+            "Thượng Binh Phạt Mưu"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Giấu Đao"
+          ],
+          "displayNameVi": "Gia Cát Lượng",
+          "faction": "Thục",
+          "heroIdentityId": "hero:53081486f9dbff9359d80832",
+          "nameRaw": "Gia Cát Lượng",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:a3a5a1e8340ca9e23501b480"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Thịnh Khí Linh Địch"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-21",
+      "legacyVariantId": "v-776634185102d4e935af8bfcc21b5aa436adba78073fb4587074e0f4e205ffe8",
+      "name": "Duy Thống Lượng",
+      "nickname": "Kỳ Lân Cung",
+      "origin": "existing-local",
+      "recommended": false,
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": [
+        "pk-s27"
+      ],
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
       "faction": "Ngô",
       "historicalRankings": [
         {
@@ -27664,6 +27760,93 @@
       "holders": [
         {
           "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "SP Lữ Mông",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:e351aaeb0ddd2d6aab11bf2f",
+          "nameRaw": "SP Lữ Mông",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Kỳ Chính Tương Sinh",
+            "Văn Thao",
+            "Thắng Trận"
+          ],
+          "displayNameVi": "Lục Tốn",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:f88e20a568d008a29c2de19b",
+          "nameRaw": "Lục Tốn(S)",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:93eee8cd629e425e57230f0b",
+            "tactic:6db4c47073e9e3772afd2f5a"
+          ],
+          "tacticSlotsRaw": [
+            "Tiên Thành Kỳ Lự",
+            "Cắt Xương Trị Độc"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:a4a3776833b44770b1a8cee1"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Bạch Nhị Binh"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-115",
+      "legacyVariantId": "v-ebace4ae8e464c682d37eb195e783d930ebd2495f7d7556d69f9e7ea10ab4a64",
+      "name": "Mông Tốn Túc",
+      "nickname": null,
+      "origin": "existing-local",
+      "recommended": false,
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": [
+        "pk-s27"
+      ],
+      "sourceState": "known",
+      "unit": [
+        "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
             "Yêu Lính Thương Dân",
             "Thế Phòng Thủ",
             "Phòng Bị"
@@ -27741,6 +27924,93 @@
       "sourceState": "known",
       "unit": [
         "Thương"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Quỷ Mưu",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Cam Ninh",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2665384131699d31ae0de21b",
+          "nameRaw": "Cam Ninh",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a36489312087f247e62d57dc",
+            "tactic:c737dd6eca594efc9c5c4fcd"
+          ],
+          "tacticSlotsRaw": [
+            "Phá Quân Uy Thắng",
+            "Hoành Tảo Thiên Quân"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Lấy Võ Dẹp Loạn",
+            "Diệu Toán",
+            "Tướng Uy"
+          ],
+          "displayNameVi": "Thái Sử Từ",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:5ba7e78c435dbbbe3d6692fd",
+          "nameRaw": "Thái Sử Từ",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:14dfb8e6574492c0e05ab927",
+            "tactic:33b07e59ae742d654310b502"
+          ],
+          "tacticSlotsRaw": [
+            "Đánh Bại Quân Địch",
+            "Mau Giành Lợi Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Biết Cách Phòng Thủ",
+            "Thế Phòng Thủ",
+            "Phòng Bị"
+          ],
+          "displayNameVi": "Chu Thái",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:97faa2c456a914aded58ee89",
+          "nameRaw": "Chu Thái",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:a3a5a1e8340ca9e23501b480",
+            "tactic:a1487f4f5d64dead9febe533"
+          ],
+          "tacticSlotsRaw": [
+            "Thịnh Khí Linh Địch",
+            "Bạch Mã Nghĩa Tòng"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-118",
+      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9",
+      "name": "Ninh Từ Thái",
+      "nickname": "Hổ Thần Cung",
+      "origin": "existing-local",
+      "recommended": false,
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": [
+        "pk-s27"
+      ],
+      "sourceState": "known",
+      "unit": [
+        "Cung"
       ]
     },
     {
@@ -28686,6 +28956,93 @@
       "legacyTeamId": "moi-phe-129",
       "legacyVariantId": "v-84bde414b1bd2d4aca07145fe12b1c0954052842b2e1566063229fcba075c9df",
       "name": "Du Từ Phổ",
+      "nickname": null,
+      "origin": "existing-local",
+      "recommended": false,
+      "seasonAttribution": [],
+      "source": "moi-phe",
+      "sourceLabel": "moi-phe",
+      "sourceSeasonIds": [
+        "pk-s27"
+      ],
+      "sourceState": "known",
+      "unit": [
+        "Cung"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
+      "faction": "Ngô",
+      "historicalRankings": [],
+      "historicalTier": null,
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Thắng Sẽ Càng Mạnh",
+            "Văn Thao",
+            "Cầm Binh Khí"
+          ],
+          "displayNameVi": "Tôn Quyền",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:2d0b5eef6609451091610e38",
+          "nameRaw": "Tôn Quyền",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:c6f7f51b6bf1df01ac4f48b8",
+            "tactic:5a3330204c026f7ca0eb4247"
+          ],
+          "tacticSlotsRaw": [
+            "Đương Phong Thôi Quyết",
+            "Binh Vô Thường Thế"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Yêu Lính Thương Dân",
+            "Phòng Bị",
+            "Thế Phòng Thủ"
+          ],
+          "displayNameVi": "Lỗ Túc",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:8dc0bfe19c5d81dc129c8549",
+          "nameRaw": "Lỗ Túc(S)",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4317628fd1df0a24a366bb98",
+            "tactic:22b1c8027866a834bf3c859d"
+          ],
+          "tacticSlotsRaw": [
+            "Tạm Lánh Sóng Gió",
+            "Hình Nhất Trận"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Gặp Địch Không Loạn",
+            "Cứu Chủ",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "SP Chu Du",
+          "faction": "Ngô",
+          "heroIdentityId": "hero:6e4895ff6d12ab9636cec0cf",
+          "nameRaw": "SP Chu Du",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:e9ef6360c4ba122bfa3a0d8a",
+            "tactic:b8b9d6c27fedfd90f8d9bc1c"
+          ],
+          "tacticSlotsRaw": [
+            "Sợ Bóng Sợ Gió",
+            "Thuyền Cỏ Mượn Tên"
+          ]
+        }
+      ],
+      "legacyTeamId": "moi-phe-130",
+      "legacyVariantId": "v-fd0e62826bd267737449d6804a99d81e16382eedc243fd1ea0a0df8da6869d81",
+      "name": "Quyền Túc Du",
       "nickname": null,
       "origin": "existing-local",
       "recommended": false,
@@ -31753,6 +32110,98 @@
     },
     {
       "dedupKeyVersion": 1,
+      "faction": "Thục",
+      "historicalRankings": [
+        {
+          "tier": "T0",
+          "updatedAt": "2026-07-03"
+        }
+      ],
+      "historicalTier": "T0",
+      "holders": [
+        {
+          "bookSlotsRaw": [
+            "Chia Nhỏ Đánh Nhanh",
+            "Bách Chiến",
+            "Khép Hờ"
+          ],
+          "displayNameVi": "SP Quan Vũ",
+          "faction": "Thục",
+          "heroIdentityId": "hero:f486e367b33b3655de46cfe9",
+          "nameRaw": "SP Quan Vũ (S)",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:4c57cbd1b7a99df2616456d2",
+            "tactic:7218b1f17abddf956fb945ff"
+          ],
+          "tacticSlotsRaw": [
+            "Lấy Ít Đánh Nhiều",
+            "Kích Kỳ Nọa Quy"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Dẫn Quân",
+            "Rèn Luyện"
+          ],
+          "displayNameVi": "Mã Đại",
+          "faction": "Thục",
+          "heroIdentityId": "hero:b886eac4f8d767a0a28edc71",
+          "nameRaw": "Mã Đại",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:46a2ce64d98cbe00c3d93035",
+            "tactic:20c50776d74518445de1ba51"
+          ],
+          "tacticSlotsRaw": [
+            "Ngư Lân Trận",
+            "Lính Giáp Mây"
+          ]
+        },
+        {
+          "bookSlotsRaw": [
+            "Tam Quân Chi Chúng",
+            "Rèn Luyện",
+            "Dẫn Quân"
+          ],
+          "displayNameVi": "SP Pháp Chính",
+          "faction": "Thục",
+          "heroIdentityId": "hero:978506f95a35fb46d6319bbb",
+          "nameRaw": "SP Pháp Chính",
+          "notesRaw": "",
+          "statFocusRaw": "",
+          "tacticIdentityIds": [
+            "tactic:62bbd903f61b9c8f919fdca7",
+            "tactic:642057bf9b5ab5072e02331a"
+          ],
+          "tacticSlotsRaw": [
+            "Dưỡng Sức Đợi Chiến",
+            "Không Đánh Mà Thắng"
+          ]
+        }
+      ],
+      "legacyTeamId": "team-intro-51",
+      "legacyVariantId": "v-e3180002e27188484cb6e11002a615038e94f5a534a3210716a03ec599cdd923",
+      "name": "Pháp Quan Mã Đại",
+      "nickname": "Pháp Quan Khiên Mã Đại",
+      "origin": "existing-local",
+      "recommended": false,
+      "seasonAttribution": [],
+      "source": "team-intro",
+      "sourceLabel": "team-intro",
+      "sourceSeasonIds": [
+        "pk-s27"
+      ],
+      "sourceState": "known",
+      "unit": [
+        "Khiên"
+      ]
+    },
+    {
+      "dedupKeyVersion": 1,
       "faction": "Hỗn hợp",
       "historicalRankings": [
         {
@@ -31842,8 +32291,8 @@
     }
   ],
   "counts": {
-    "distinct": 387,
-    "duplicate": 36,
+    "distinct": 392,
+    "duplicate": 31,
     "pendingIdentity": 20,
     "pendingSource": 0
   },
@@ -31939,11 +32388,10 @@
       "legacyVariantId": "v-62710d65c5c12e9cd4029e4d5c8216661b4a14501210db0477a670a6abc20141"
     },
     {
-      "classification": "duplicate",
+      "classification": "distinct",
       "dedupKey": "sha256:bdc19646b5f53e6404c3bcb7e76d8e56e98bc29d545de5682dea68d805578cc9",
       "legacyTeamId": "moi-phe-115",
-      "legacyVariantId": "v-ebace4ae8e464c682d37eb195e783d930ebd2495f7d7556d69f9e7ea10ab4a64",
-      "matchingLocal": "team-intro-4"
+      "legacyVariantId": "v-ebace4ae8e464c682d37eb195e783d930ebd2495f7d7556d69f9e7ea10ab4a64"
     },
     {
       "classification": "distinct",
@@ -31961,11 +32409,10 @@
       ]
     },
     {
-      "classification": "duplicate",
+      "classification": "distinct",
       "dedupKey": "sha256:48a884fa31aee85a37fab228d9ed8dce41332c38af3be0e9ecd5df8c782547c0",
       "legacyTeamId": "moi-phe-118",
-      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9",
-      "matchingLocal": "team-intro-26"
+      "legacyVariantId": "v-094cb7266b9672293927e3f9b0b975cca7ea7039da87d8bc8885bc04be0ac2f9"
     },
     {
       "classification": "distinct",
@@ -32034,11 +32481,10 @@
       "legacyVariantId": "v-84bde414b1bd2d4aca07145fe12b1c0954052842b2e1566063229fcba075c9df"
     },
     {
-      "classification": "duplicate",
+      "classification": "distinct",
       "dedupKey": "sha256:a6fb0a3cd66bf5caa8259c2d124acee492d7a11923f9d73aee1d7fbc6f99e668",
       "legacyTeamId": "moi-phe-130",
-      "legacyVariantId": "v-fd0e62826bd267737449d6804a99d81e16382eedc243fd1ea0a0df8da6869d81",
-      "matchingLocal": "team-intro-36"
+      "legacyVariantId": "v-fd0e62826bd267737449d6804a99d81e16382eedc243fd1ea0a0df8da6869d81"
     },
     {
       "classification": "distinct",
@@ -32614,11 +33060,10 @@
       "legacyVariantId": "v-bbdc4d26abbb973b65f49e432b4d49d348a6629467dee6aa9fd4717680b1f899"
     },
     {
-      "classification": "duplicate",
+      "classification": "distinct",
       "dedupKey": "sha256:b77cbb023bb0ab5a77cf8bc41085c25f1854f8bc21e923f805be8176d314e339",
       "legacyTeamId": "team-intro-21",
-      "legacyVariantId": "v-776634185102d4e935af8bfcc21b5aa436adba78073fb4587074e0f4e205ffe8",
-      "matchingLocal": "youtube-162"
+      "legacyVariantId": "v-776634185102d4e935af8bfcc21b5aa436adba78073fb4587074e0f4e205ffe8"
     },
     {
       "classification": "distinct",
@@ -32816,11 +33261,10 @@
       "legacyVariantId": "v-f67a706a26e0c11fc712f47d0c4066e628adfae00e9673ee2e37a66b7cd0d6b2"
     },
     {
-      "classification": "duplicate",
+      "classification": "distinct",
       "dedupKey": "sha256:4381853959920aba3ccd4bf943ba496628c1b87f9dc5f3e5c973c76c2448d1d7",
       "legacyTeamId": "team-intro-51",
-      "legacyVariantId": "v-e3180002e27188484cb6e11002a615038e94f5a534a3210716a03ec599cdd923",
-      "matchingLocal": "youtube-216"
+      "legacyVariantId": "v-e3180002e27188484cb6e11002a615038e94f5a534a3210716a03ec599cdd923"
     },
     {
       "classification": "duplicate",
@@ -34613,6 +35057,7 @@
   ],
   "dedupKeyVersion": 1,
   "inputTeamRows": 443,
+  "localMergeKeyVersion": 2,
   "localTeamsSha256": "sha256:f082c2bb4a489ff24bbf43d4230b4087c9679057d24781730ed42ac36f768c30",
   "mappingFileSha256": "sha256:b7554bb819531c33c26b5e193985258225d84d15dfd621327543242c4c2df3e7",
   "pending": [

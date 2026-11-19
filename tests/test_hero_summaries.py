@@ -255,7 +255,9 @@ class ValidationTest(unittest.TestCase):
         generation = root / "src/data/recommended-reference" / current["generationId"]
         catalog = json.loads((root / "data/heroes-dict.json").read_text())
         records = json.loads((generation / "index.json").read_text())["records"]
-        others = json.loads((generation / "other-teams.json").read_text())["records"]
+        # Số liệu chỉ tính phương án Đội khác đủ dữ liệu (cùng tập mà website hiện).
+        others = [row for row in json.loads((generation / "other-teams.json").read_text())["records"]
+                  if row.get("dataComplete")]
         payload = json.loads((generation / "hero-summaries.json").read_text())
 
         def strip(value):
