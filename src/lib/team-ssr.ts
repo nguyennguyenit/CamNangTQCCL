@@ -181,15 +181,34 @@ function heroBookHints() {
   })();
 }
 
+let admittedVariantIndex: Promise<Map<string, Json[]>> | undefined;
+
+/**
+ * `legacyTeamId` → nội dung các biến thể đã admit trong `other-teams.json` đã pin. Parse một lần cho cả lần build (file
+ * ~1 MB, trang Đội khác dựng hàng trăm lần mỗi locale), mỗi trang chỉ tra đúng đội của mình.
+ */
+function admittedVariantContents() {
+  return admittedVariantIndex ??= (async () => {
+    const env = await prepare();
+    const rows: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
+    const index = new Map<string, Json[]>();
+    for (const row of rows) {
+      if (typeof row?.legacyTeamId !== 'string' || !row.legacyContent) continue;
+      const list = index.get(row.legacyTeamId);
+      if (list) list.push(row.legacyContent);
+      else index.set(row.legacyTeamId, [row.legacyContent]);
+    }
+    return index;
+  })();
+}
+
 /**
  * Gợi ý binh thư cho mọi tướng có thể hiện trên trang một đội khác: tướng của đội gốc và của các biến thể đã admit
  * (nhánh `?variant=` dựng lại phía client bằng cùng bảng). Builder chỉ dùng gợi ý cho tướng mà nội dung không ghi binh thư.
  */
 async function legacyBookHints(team: Json): Promise<Record<string, LegacyBookHint>> {
-  const env = await prepare();
   const index = await heroBookHints();
-  const rows: Json[] = parse(env.website.recommended.files['other-teams.json'])?.records ?? [];
-  const contents = [team, ...rows.filter((row) => row.legacyTeamId === team.id && row.legacyContent).map((row) => row.legacyContent)];
+  const contents = [team, ...((await admittedVariantContents()).get(team.id) ?? [])];
   const hints: Record<string, LegacyBookHint> = {};
   for (const content of contents) {
     for (const hero of (content.heroes ?? []) as Json[]) {
