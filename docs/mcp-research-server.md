@@ -7,7 +7,7 @@
 - `tqccl_get_playbook` — version, capabilities, mùa nguồn, luật bắt buộc và tool kế tiếp.
 - `tqccl_search` — tìm tướng, chiến pháp, trang bị, quân sư, cải tạo, công trình, binh thư, đội (có `pagePath` vi/zh: trang riêng `/tra-cuu/<nhóm>/<slug>/`, riêng `equipment-special:*` chưa có trang nên giữ `/tra-cuu/trang-bi/?id=…`; slug đọc từ `pipeline/lookup-route-handles.json` lúc build).
 - `tqccl_get_entity` — hồ sơ như trang Tra cứu; specials/options/levels/revisions phân trang bằng `section`/cursor.
-- `tqccl_find_teams` — duyệt/đối chiếu đội tham khảo theo `collection` ∈ recommended, other, khaihoang, engine.
+- `tqccl_find_teams` — duyệt/đối chiếu đội tham khảo theo `collection` ∈ recommended, other, khaihoang, engine. `other` trả đúng tập phương án Đội khác của website (admitted + đủ dữ liệu), mỗi phương án một mục với ref `other:<legacyTeamId>`, trang riêng và `teamGroupId`/`optionCount` của team (bộ 3 tướng + binh chủng); parity với danh sách web ghim ở `mcp-worker/test/research/doi-khac-web-parity.test.ts`.
 - `tqccl_get_team` — chi tiết một đội theo selector `reference`; ghi chú/biến thể phân trang.
 - `tqccl_normalize_entities`
 - `tqccl_recommend_teams` — ghép đội từ kho bằng đúng `recommendRoster` của trang Gợi ý kho (`basis:"source-reference-fit"`, `rulesetVerified:false`).

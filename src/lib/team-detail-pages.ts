@@ -18,6 +18,7 @@ import { readPublicArtifact, websiteDisplayPublicationSnapshot } from './root-st
 import {
   detailTitleRanks,
   teamDetailCatalog,
+  type HiddenLegacyRouteEntry,
   type KhaiHoangRouteEntry,
   type LegacyRouteEntry,
   type RecommendedRouteEntry,
@@ -380,7 +381,8 @@ export async function legacyDetailPaths(locale: SiteLocale) {
   const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
   const resolve = await sourceNameResolver(locale);
   const links = await heroLinkBuilder(locale);
-  let title: (entry: LegacyRouteEntry) => string;
+  type LegacyIdentity = LegacyRouteEntry | HiddenLegacyRouteEntry;
+  let title: (entry: LegacyIdentity) => string;
   if (!contentLocaleIsVietnamese(locale)) {
     title = (entry) => lineupTitleZh(heroesById.get(entry.legacyTeamId) ?? [], resolve) ?? entry.legacyTeamId;
   } else {
@@ -390,10 +392,12 @@ export async function legacyDetailPaths(locale: SiteLocale) {
     };
   }
   // Tên đội trùng nhau giữa các nguồn (và cả trong một nguồn): tiêu đề mang nhãn nguồn, còn trùng thì số thứ tự.
-  // Bản vi giữ khoá cũ (tên gốc) để tiêu đề đã phát hành không đổi.
-  const nameKey = !contentLocaleIsVietnamese(locale) ? title : (entry: LegacyRouteEntry) => entry.nickname || entry.name || entry.legacyTeamId;
-  const byName = detailTitleRanks(catalog.legacy, nameKey);
-  const bySource = detailTitleRanks(catalog.legacy, (entry) => JSON.stringify([nameKey(entry), entry.source]));
+  // Bản vi giữ khoá cũ (tên gốc) để tiêu đề đã phát hành không đổi. Thứ hạng tính trên mọi handle, gồm handle tạm ẩn
+  // (đội chưa đủ dữ liệu không có trang): tiêu đề trang còn dựng không đổi khi một đội cùng tên bị ẩn hay quay lại.
+  const nameKey = !contentLocaleIsVietnamese(locale) ? title : (entry: LegacyIdentity) => entry.nickname || entry.name || entry.legacyTeamId;
+  const identities: LegacyIdentity[] = [...catalog.legacy, ...catalog.hiddenLegacy];
+  const byName = detailTitleRanks(identities, nameKey);
+  const bySource = detailTitleRanks(identities, (entry) => JSON.stringify([nameKey(entry), entry.source]));
   return catalog.legacy.map((entry) => {
     const ordinal = bySource(entry).ordinal;
     const pageLabel = [

@@ -20,7 +20,8 @@ import {
   recommendedDetailPlainText,
   recommendedSeasonOrder,
 } from './team-detail-pages.ts';
-import { coexistScenarioTexts, khaiHoangDetailText, legacyDetailText } from './team-ssr.ts';
+import { coexistScenarioTexts, khaiHoangDetailText, legacyDetailText, otherTeamsPayload } from './team-ssr.ts';
+import { otherTeamListEntries } from '../../js/other-team-groups.js';
 
 /** Quá ngưỡng này thì `doi-chuan` tách theo mùa (byte UTF-8 của mọi mùa cộng lại). */
 export const LLMS_SPLIT_BYTES = 300 * 1024;
@@ -103,11 +104,24 @@ async function recommendedFiles(absolute: (path: string) => string): Promise<Llm
   });
 }
 
+/**
+ * Đội khác nhóm theo team (bộ 3 tướng + binh chủng, `otherTeamListEntries` như danh sách `/doi-khac/`): team theo thứ tự thẻ,
+ * phương án cùng team đứng liền nhau theo `optionRank`. Trang dựng và phương án đủ dữ liệu của `teamGroups` phải trùng nhau.
+ */
 async function legacyFile(absolute: (path: string) => string): Promise<LlmsFile> {
   const rows = await legacyDetailPaths('vi');
+  const teams = otherTeamListEntries(await otherTeamsPayload(), { season: 'all', query: '', filters: {} }, {});
+  const order = new Map<string, number>(
+    teams.flatMap((team: { completeRecords: Array<{ legacyTeamId: string }> }) => team.completeRecords.map((record) => record.legacyTeamId))
+      .map((legacyTeamId: string, index: number) => [legacyTeamId, index]),
+  );
+  if (order.size !== rows.length || rows.some(({ props }) => !order.has(props.entry.legacyTeamId))) {
+    throw new Error('llms Đội khác: trang dựng lệch phương án đủ dữ liệu của teamGroups');
+  }
+  const sorted = [...rows].sort((left, right) => order.get(left.props.entry.legacyTeamId)! - order.get(right.props.entry.legacyTeamId)!);
   const entries: string[] = [];
-  for (const { props } of rows) entries.push(entry(props.pageLabel, absolute(props.entry.routePath), await legacyDetailText(props.entry, 'vi')));
-  const note = `${rows.length} đội do người chơi tổng hợp, nội dung gốc của từng đội, mỗi đội một mục có link trang chi tiết.`;
+  for (const { props } of sorted) entries.push(entry(props.pageLabel, absolute(props.entry.routePath), await legacyDetailText(props.entry, 'vi')));
+  const note = `${teams.length} team do người chơi tổng hợp (team = bộ 3 tướng + binh chủng), ${rows.length} phương án đủ dữ liệu; phương án cùng team đứng liền nhau, mỗi phương án một mục có link trang chi tiết.`;
   return { path: '/llms/doi-khac.txt', label: 'Đội khác', note, section: 'doi-khac', text: fileText(`Đội khác — ${SITE_TITLE}`, note, entries) };
 }
 

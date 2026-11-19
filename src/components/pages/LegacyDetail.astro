@@ -18,7 +18,7 @@ const t = (...variants: string[]): string => pick(locale, ...variants);
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('legacy', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
-const {bodyHtml, badgesHtml, bookHints} = await legacyDetailParts(entry, locale);
+const {bodyHtml, badgesHtml} = await legacyDetailParts(entry, locale);
 const description = pick(locale, `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`, `现有阵容数据中「${pageLabel}」的原始内容。`, `既存の編成データにある「${pageLabel}」の元の内容です。`);
 const structured = teamDetailJsonLd({
   locale,
@@ -60,7 +60,6 @@ const structured = teamDetailJsonLd({
     data-legacy-teams-sha256={legacyTeamsSha256}
     data-generation-id={generationId}
     data-manifest-sha256={manifestSha256}
-    data-book-hints={JSON.stringify(bookHints)}
   >
     <div class="detail-header">
       <div class="detail-head-main">

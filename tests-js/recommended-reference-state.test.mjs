@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { otherTeamFacetValues, otherTeamListEntries, websiteOtherRecords } from '../js/other-team-groups.js';
 import { TIER_SOURCE_JP, jpTierMatchNote, jpTierSource, projectRecommendedRows, readRecommendedQuery, referenceFacetValues } from '../js/recommended-reference-state.js';
 import { validateHttpSourceUrl } from '../js/http-source-url.js';
 
@@ -226,4 +227,104 @@ test('tier JP là giá trị `jp` của facet nguồn: đếm theo mùa, OR vớ
   assert.equal(jpTierMatchNote(jpTierSource(tiered[0])), null);
   assert.equal(jpTierMatchNote(jpTierSource(tiered[1])), 'khác chiến pháp');
   assert.equal(jpTierSource({tierSources:[{source:'other',tierRaw:'T0'}]}), null);
+});
+
+// Đội khác theo team (bộ 3 tướng + binh chủng): mỗi team một mục dựng từ phương án đại diện; chỉ phương án đủ dữ liệu
+// được tính. Payload giả lập theo đúng hình `other-teams.json` của builder (`teamGroups`, `optionRank`, `dataComplete`).
+const otherRecord = (legacyTeamId, teamGroupId, optionRank, {complete = true, recommended = false, faction = 'Thục', source = 'youtube', tactic = 'Thần Binh'} = {}) => ({
+  legacyTeamId, legacyVariantId: `v-${legacyTeamId}`, teamGroupId, teamGroupKey: `key-${teamGroupId}`, optionRank,
+  dataComplete: complete, recommended, faction, unit: ['Kỵ'], source, sourceSeasonIds: ['s27'], name: legacyTeamId,
+  holders: [{nameRaw: 'Lưu Bị', displayNameVi: 'Lưu Bị', tacticSlotsRaw: [tactic], tacticSlotsVi: [tactic], bookSlotsRaw: ['Phá Trận']}],
+});
+const otherGroup = (teamGroupId, members) => {
+  const complete = members.filter((row) => row.dataComplete);
+  return {
+    teamGroupId, teamGroupKey: `key-${teamGroupId}`,
+    memberVariantIds: members.map((row) => row.legacyVariantId),
+    completeVariantIds: complete.map((row) => row.legacyVariantId),
+    representativeVariantId: complete[0]?.legacyVariantId ?? null,
+  };
+};
+// gA: ba phương án đủ (A1 đề cử, A2 có chiến pháp riêng, A4) + A3 thiếu dữ liệu; gB: B1 đủ + B2 thiếu (có chiến pháp riêng);
+// gC: chỉ phương án thiếu. `teamGroups` cố ý không theo thứ tự hiển thị.
+const A1 = otherRecord('a1', 'gA', 0, {recommended: true});
+const B1 = otherRecord('b1', 'gB', 1, {faction: 'Ngụy', source: 'team-intro'});
+const A2 = otherRecord('a2', 'gA', 2, {tactic: 'Độc Nhất Vô Nhị', source: 'team-intro'});
+const C1 = otherRecord('c1', 'gC', 3, {complete: false});
+const A3 = otherRecord('a3', 'gA', 4, {complete: false, tactic: 'Bí Mật Phương Án'});
+const B2 = otherRecord('b2', 'gB', 5, {complete: false, tactic: 'Ẩn Giấu Chiến Thuật'});
+const A4 = otherRecord('a4', 'gA', 6);
+const otherPayload = {
+  schemaVersion: 1,
+  records: [A1, B1, A2, C1, A3, B2, A4],
+  teamGroups: [otherGroup('gC', [C1]), otherGroup('gB', [B1, B2]), otherGroup('gA', [A1, A2, A3, A4])],
+};
+const otherState = (query = '', filters = {}) => ({season: 'all', query, filters});
+const hrefFor = (row) => `/doi-khac/${row.legacyTeamId}/`;
+const entryShape = (entry) => [entry.group.teamGroupId, entry.displayRecord.legacyTeamId, entry.href, entry.optionCount];
+
+test('Đội khác theo team: mỗi team có đại diện là một mục, thứ tự theo optionRank của đại diện, team không đủ dữ liệu không hiện', () => {
+  const entries = otherTeamListEntries(otherPayload, otherState(), {}, {hrefFor});
+  assert.deepEqual(entries.map(entryShape), [
+    ['gA', 'a1', '/doi-khac/a1/', 3],
+    ['gB', 'b1', '/doi-khac/b1/', 1],
+  ]);
+  // Phương án đủ dữ liệu của team theo optionRank; phương án thiếu không có mặt.
+  assert.deepEqual(entries[0].completeRecords.map((row) => row.legacyTeamId), ['a1', 'a2', 'a4']);
+  assert.equal(entries[0].linkRecord, A1);
+  // Không truyền `hrefFor` thì không có link.
+  assert.equal(otherTeamListEntries(otherPayload, otherState(), {})[0].href, null);
+});
+
+test('Đội khác theo team: lọc khớp khi bất kỳ phương án đủ dữ liệu nào khớp; khớp nhờ phương án phụ thì link trỏ trang phương án đó', () => {
+  const byQuery = otherTeamListEntries(otherPayload, otherState('doc nhat vo nhi'), {}, {hrefFor});
+  assert.deepEqual(byQuery.map(entryShape), [['gA', 'a1', '/doi-khac/a2/', 3]], 'thẻ vẫn dựng bằng đại diện, link tới phương án khớp');
+  assert.equal(byQuery[0].linkRecord, A2);
+  // Facet nguồn chỉ có ở A2 (phương án phụ) và B1 (đại diện).
+  assert.deepEqual(otherTeamListEntries(otherPayload, otherState('', {source: ['team-intro']}), {}, {hrefFor}).map(entryShape), [
+    ['gA', 'a1', '/doi-khac/a2/', 3],
+    ['gB', 'b1', '/doi-khac/b1/', 1],
+  ]);
+  assert.deepEqual(otherTeamListEntries(otherPayload, otherState('', {faction: ['Ngụy']}), {}, {hrefFor}).map(entryShape), [['gB', 'b1', '/doi-khac/b1/', 1]]);
+  // Chiến pháp chỉ có ở phương án thiếu dữ liệu: không khớp team nào.
+  assert.deepEqual(otherTeamListEntries(otherPayload, otherState('bi mat phuong an'), {}), []);
+  assert.deepEqual(otherTeamListEntries(otherPayload, otherState('an giau chien thuat'), {}), []);
+  // Đại diện khớp thì link là đại diện dù phương án phụ cũng khớp.
+  assert.deepEqual(otherTeamListEntries(otherPayload, otherState('than binh'), {}, {hrefFor}).map(entryShape), [
+    ['gA', 'a1', '/doi-khac/a1/', 3],
+    ['gB', 'b1', '/doi-khac/b1/', 1],
+  ]);
+});
+
+test('Đội khác cho bề mặt đối chiếu (Soi đội): chỉ phương án đủ dữ liệu của team có đại diện, theo thứ tự team rồi optionRank', () => {
+  assert.deepEqual(websiteOtherRecords(otherPayload).map((row) => row.legacyTeamId), ['a1', 'a2', 'a4', 'b1']);
+  assert.deepEqual(websiteOtherRecords(null), []);
+});
+
+test('Đội khác theo team: giá trị facet của team là hợp giá trị của các phương án đủ dữ liệu', () => {
+  const [teamA, teamB] = otherTeamListEntries(otherPayload, otherState(), {});
+  assert.deepEqual(otherTeamFacetValues(teamA, 'source').sort(), ['team-intro', 'youtube']);
+  assert.deepEqual(otherTeamFacetValues(teamB, 'source'), ['team-intro'], 'B2 thiếu dữ liệu không góp giá trị');
+  assert.deepEqual(otherTeamFacetValues(teamA, 'faction'), ['Thục']);
+});
+
+test('Đội khác theo team: payload thiếu teamGroups thì không có mục; teamGroups không khớp record thì báo lỗi', () => {
+  assert.deepEqual(otherTeamListEntries({records: [A1]}, otherState(), {}), []);
+  assert.deepEqual(otherTeamListEntries(null, otherState(), {}), []);
+  const broken = (patch) => ({...otherPayload, teamGroups: [{...otherGroup('gA', [A1, A2, A3, A4]), ...patch}]});
+  assert.throws(() => otherTeamListEntries(broken({completeVariantIds: ['v-a1', 'v-khong-co']}), otherState(), {}), /v-khong-co/);
+  assert.throws(() => otherTeamListEntries(broken({completeVariantIds: ['v-a1', 'v-a3']}), otherState(), {}), /v-a3/, 'phương án thiếu dữ liệu trong completeVariantIds');
+  assert.throws(() => otherTeamListEntries(broken({representativeVariantId: 'v-b1'}), otherState(), {}), /v-b1/, 'đại diện ngoài phương án đủ dữ liệu');
+  assert.throws(() => otherTeamListEntries(broken({completeVariantIds: ['v-a1', 'v-b1'], representativeVariantId: 'v-a1'}), otherState(), {}), /v-b1/, 'phương án của team khác');
+});
+
+test('thứ tự cố định của hàng Đội khác là optionRank, không phải hash legacyVariantId; hàng không có optionRank giữ thứ tự cũ', () => {
+  const ranked = [
+    {legacyTeamId: 'z', legacyVariantId: 'v-0', optionRank: 2, holders: []},
+    {legacyTeamId: 'y', legacyVariantId: 'v-1', optionRank: 0, recommended: true, holders: []},
+    {legacyTeamId: 'x', legacyVariantId: 'v-2', optionRank: 1, holders: []},
+  ];
+  assert.deepEqual(projectRecommendedRows(ranked, otherState()).map((row) => row.legacyTeamId), ['y', 'x', 'z']);
+  const unranked = ranked.map(({optionRank, ...row}) => row);
+  assert.deepEqual(projectRecommendedRows(unranked, otherState()).map((row) => row.legacyTeamId), ['y', 'z', 'x']);
 });

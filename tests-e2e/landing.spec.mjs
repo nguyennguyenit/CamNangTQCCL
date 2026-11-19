@@ -12,7 +12,7 @@ const readGeneration = async (name) =>
 const readData = async (name) => JSON.parse(await readFile(new URL(`../data/${name}`, import.meta.url), 'utf8'));
 
 const recommended = (await readGeneration('index.json')).records;
-const otherTeams = (await readGeneration('other-teams.json')).records;
+const otherPayload = await readGeneration('other-teams.json');
 const seasonRegistry = await readGeneration('seasons.json');
 const heroes = await readData('heroes-dict.json');
 const tactics = await readData('tactics.json');
@@ -22,13 +22,20 @@ const khaiHoang = await readData('khaihoang.json');
 const vi = (value) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 const tier0 = recommended.filter((row) => row.tierRaw === 'T0').length;
 const seasons = new Set(recommended.map((row) => row.sourceSeasonId)).size;
-const avoidCount = otherTeams.filter((row) => (row.legacyContent?.counters?.avoid ?? []).length > 0).length;
-const alternativeCount = otherTeams.filter((row) => {
-  const holders = row.legacyContent?.heroes ?? [];
-  return holders.some((holder) => (holder.alternatives ?? []).length
-    || (holder.tactics ?? []).some((tactic) => (tactic.alternatives ?? []).length)
-    || (holder.books ?? []).some((book) => (book.alternatives ?? []).length));
-}).length;
+/**
+ * Đội khác đếm theo team (bộ 3 tướng + binh chủng, bảng `teamGroups` của builder): chỉ team có phương án đủ dữ liệu, đúng tập
+ * thẻ `/doi-khac/` hiển thị. Đội sợ/tướng-chiến pháp thay thế cũng đếm theo team: team có ít nhất một phương án đủ dữ liệu
+ * mang thông tin đó.
+ */
+const otherByVariant = new Map(otherPayload.records.map((row) => [row.legacyVariantId, row]));
+const otherTeams = otherPayload.teamGroups
+  .filter((group) => group.representativeVariantId)
+  .map((group) => group.completeVariantIds.map((variantId) => otherByVariant.get(variantId)));
+const rowHasAlternatives = (row) => (row.legacyContent?.heroes ?? []).some((holder) => (holder.alternatives ?? []).length
+  || (holder.tactics ?? []).some((tactic) => (tactic.alternatives ?? []).length)
+  || (holder.books ?? []).some((book) => (book.alternatives ?? []).length));
+const avoidCount = otherTeams.filter((rows) => rows.some((row) => (row.legacyContent?.counters?.avoid ?? []).length > 0)).length;
+const alternativeCount = otherTeams.filter((rows) => rows.some(rowHasAlternatives)).length;
 
 /**
  * Đội Khai hoang có ĐỦ cấu hình trước/sau: MỌI tướng đều có bộ trước (`unitTypeBefore` + `tacticBefore`)
@@ -120,7 +127,7 @@ test('số liệu Landing khớp dữ liệu đã publish', async ({ page }) => 
   );
   await expect(vaults.nth(1)).toHaveText(
     `${EXPECTED.otherTeams} đội người chơi tổng hợp: ${EXPECTED.avoid} đội ghi đội sợ, `
-    + `${EXPECTED.alternatives} đội có phương án thay thế.`,
+    + `${EXPECTED.alternatives} đội có tướng/chiến pháp thay thế.`,
   );
 
   await expect(page.locator('#landing-sections .landing-tile-desc').nth(2)).toHaveText(
