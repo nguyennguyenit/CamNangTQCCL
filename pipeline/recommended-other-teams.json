@@ -18841,7 +18841,7 @@
           "faction": "Ngụy",
           "heroIdentityId": "hero:32ae32453c0b8b8c5e3ab54e",
           "nameRaw": "Tư Mã Ý",
-          "notesRaw": "",
+          "notesRaw": "Phương án binh thư khác (creator khác): Tam Quân Chi Chúng, Chiến Đấu Trường Kỳ, Dẫn Quân.",
           "statFocusRaw": "",
           "tacticIdentityIds": [
             "tactic:41c42919908588ff170a415a",
@@ -18896,7 +18896,7 @@
         }
       ],
       "legacyTeamId": "youtube-265",
-      "legacyVariantId": "v-02b4c20add2099cc79bbbf631cd67ba115049489aaa23d0d3166c835892f7e07",
+      "legacyVariantId": "v-ff31da66da7867761b660d25bd9845f7f43f40bb0ab9040631aab06e8a47b279",
       "name": "Tuân Thái Úy",
       "nickname": null,
       "origin": "existing-local",
@@ -33846,7 +33846,7 @@
       "classification": "duplicate",
       "dedupKey": "sha256:455d6d1314e9e417dc2f66c0a3681fce558f97ad6fb028246c09202049ab68fc",
       "legacyTeamId": "youtube-227",
-      "legacyVariantId": "v-11155ad51fc1b24a624348c14d0cc1db84de1edab4f95539008c28c1581272b9",
+      "legacyVariantId": "v-ee3f4b1f2b747286c5507f3e044a2c79d458aefb1e0738d4f2acfe35b3fec59a",
       "matchingRecommended": [
         "s27-lp-huangma-qiang-sr",
         "s27-lp-huangma-qiang-xbs",
@@ -33992,7 +33992,7 @@
       "classification": "duplicate",
       "dedupKey": "sha256:22300c923baf165a6e58c9c56e5d590732dec0e3ea0661b3ef2bfd3aed92879d",
       "legacyTeamId": "youtube-248",
-      "legacyVariantId": "v-ba133be9dd7f4f75da19d003404e30620706511e7f06cfafcc772878a39747d3",
+      "legacyVariantId": "v-7181e404ea881580f9a19c7e8ae6bcfe14abf1ec60ebac17aa61d752749ddb4e",
       "matchingRecommended": [
         "s27-quan-qi"
       ]
@@ -34119,7 +34119,7 @@
       "classification": "distinct",
       "dedupKey": "sha256:e080f15de503751599876188c5a0d650e59c726f79b170c7a66c00c7614cc6cc",
       "legacyTeamId": "youtube-265",
-      "legacyVariantId": "v-02b4c20add2099cc79bbbf631cd67ba115049489aaa23d0d3166c835892f7e07"
+      "legacyVariantId": "v-ff31da66da7867761b660d25bd9845f7f43f40bb0ab9040631aab06e8a47b279"
     },
     {
       "classification": "duplicate",
@@ -34613,7 +34613,7 @@
   ],
   "dedupKeyVersion": 1,
   "inputTeamRows": 443,
-  "localTeamsSha256": "sha256:a201f82795cb0dbdec285295e459629ad463c53e28eb521585243fe8c7dbfb3f",
+  "localTeamsSha256": "sha256:f082c2bb4a489ff24bbf43d4230b4087c9679057d24781730ed42ac36f768c30",
   "mappingFileSha256": "sha256:b7554bb819531c33c26b5e193985258225d84d15dfd621327543242c4c2df3e7",
   "pending": [
     {
@@ -35321,7 +35321,7 @@
     {
       "classification": "pendingAlternative",
       "legacyTeamId": "youtube-248",
-      "legacyVariantId": "v-ba133be9dd7f4f75da19d003404e30620706511e7f06cfafcc772878a39747d3"
+      "legacyVariantId": "v-7181e404ea881580f9a19c7e8ae6bcfe14abf1ec60ebac17aa61d752749ddb4e"
     },
     {
       "classification": "pendingAlternative",

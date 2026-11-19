@@ -27,6 +27,8 @@ Nguồn: `pipeline/team-youtube-pk-s27.json`. Binh thư đọc lại từ 30 vid
 
 ## Lệch giữa các video (đã chọn nguồn chính)
 
+Anh xác nhận giữ bản đang hiển thị (19/11/2026). 4 tướng khác binh thư chính (SP Mã Siêu đội Hoàng Mã Thương, Lăng Thống và Chu Thái đội Quyền Kỵ, Tư Mã Ý đội Tuân Thái Úy) có ghi chú "Phương án binh thư khác" trong `heroes[].note`, hiện ở khối Ghi chú của trang chi tiết.
+
 | Đội | Tướng | Đã chọn | Bản khác |
 |---|---|---|---|
 | [Pháp Quan Thuẫn (Khương Duy)](https://tqccl.com/doi-khac/phap-quan-thuan-khuong-duy/) | SP Quan Vũ | Yêu Lính Thương Dân, Giáp Sắt, Tĩnh Tâm ([ryQDIKf6crg@26s](https://youtu.be/ryQDIKf6crg?t=26)) | Yêu Lính Thương Dân, Tĩnh Tâm, Nghĩa Dũng ([c2etTumCOjA@92s](https://youtu.be/c2etTumCOjA?t=92)) |
