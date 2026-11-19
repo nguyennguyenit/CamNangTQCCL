@@ -568,7 +568,6 @@
     "归心": {
       "id": "book:quy-thuan",
       "viet": "Quy Thuận",
-      "outsideTeams": true,
       "effect": "自身準備戰法發動率提升3%",
       "effectViet": "Xác suất phát động Chiến Pháp chuẩn bị của bản thân tăng 3%.",
       "effectVersion": "2024-07",

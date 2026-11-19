@@ -167,6 +167,33 @@ for (const locale of ["vi", "zh"]) {
     includesAll(text, locale === "zh" ? names.map((name) => resolveZh(name)) : names.map(bare), `đội gốc ${locale}`);
   });
 
+  test(`Đội khác (${locale}): tướng không ghi binh thư hiện binh thư tham khảo theo tướng, tướng có binh thư thì không`, () => {
+    // Đội thật có đủ binh thư, bỏ binh thư của chủ tướng để có một tướng thiếu và hai tướng còn binh thư của đội.
+    const source = teams.find((item) => item.heroes.length === 3 && item.heroes.every((hero) => hero.books?.length
+      && [hero.name, ...hero.books.map((b) => b.name)].every((name) => resolveZh(name) || locale === "vi")));
+    assert.ok(source, "đội gốc mẫu");
+    const team = { ...source, heroes: source.heroes.map((hero, index) => (index === 0 ? { ...hero, books: [] } : hero)) };
+    const [empty, filled] = team.heroes;
+    const hintNames = ["Tam Quân Chi Chúng", "Dẫn Quân", "Rèn Luyện"];
+    const bookHints = {
+      [empty.name]: { teams: 7, items: hintNames },
+      [filled.name]: { teams: 9, items: ["Giáp Sắt"] },
+    };
+    const body = run(() => legacyOriginalDetailContent(team, { locale, bookHints }));
+    assertPlain(body);
+    const html = [].concat(body).map(treeToHtml).join("");
+    // Đúng một khối tham khảo (của tướng thiếu binh thư); tướng đã có binh thư giữ binh thư của đội.
+    assert.equal((html.match(/detail-hero-book-hint/g) || []).length, 1, `một khối tham khảo ${locale}`);
+    const text = textOf(body);
+    includesAll(text, locale === "zh" ? hintNames.map((name) => resolveZh(name)) : hintNames, `binh thư tham khảo ${locale}`);
+    assert.ok(text.includes(locale === "zh" ? "按武将参考" : "Tham khảo theo tướng"), `nhãn tham khảo ${locale}`);
+    assert.ok(text.includes("7"), `số đội có nguồn ${locale}`);
+
+    // Không có gợi ý (hoặc gợi ý rỗng) thì giữ "Chưa có dữ liệu" như cũ.
+    const plain = textOf(run(() => legacyOriginalDetailContent(team, { locale, bookHints: { [empty.name]: { teams: 0, items: [] } } })));
+    assert.ok(!plain.includes(locale === "zh" ? "按武将参考" : "Tham khảo theo tướng"), `không gợi ý rỗng ${locale}`);
+  });
+
   test(`Cùng Tồn (${locale}): nhóm có đội, tướng, chiến pháp, binh thư; nhánh bảng nguồn cũng dựng được`, () => {
     const group = { content: coexist[0], source: null };
     const tree = run(() => seasonCoexistGroup(group, { teamCard: (team) => coexistTeamCard(team, { locale }), locale }));
