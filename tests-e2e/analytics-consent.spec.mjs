@@ -312,7 +312,7 @@ for (const [prefix, text, deny, allow, settings] of [
   });
 }
 
-test('thanh đồng ý: hai nút ngang vai, không đẩy nội dung, theme sáng/tối theo token, link bỏ qua điều hướng vẫn là Tab đầu tiên', async ({ page }) => {
+test('thanh đồng ý: hai nút cùng cỡ, Đồng ý là nút chính, không đẩy nội dung, theme sáng/tối theo token, link bỏ qua điều hướng vẫn là Tab đầu tiên', async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto(`${PRODUCTION_ORIGIN}${SHELL_PATH}`);
   await ready(page);
@@ -321,7 +321,17 @@ test('thanh đồng ý: hai nút ngang vai, không đẩy nội dung, theme sán
   const [denyBox, allowBox] = [await choice(page, 'denied').boundingBox(), await choice(page, 'granted').boundingBox()];
   expect(denyBox.height).toBe(allowBox.height);
   expect(denyBox.height).toBeGreaterThanOrEqual(44);
-  await expect(choice(page, 'denied')).toHaveClass(await choice(page, 'granted').getAttribute('class'));
+  // Đồng ý nổi bật bằng nền chọn của nút chính (`--select`); Từ chối giữ nút thường.
+  const selectColor = await page.evaluate(() => {
+    const probe = document.createElement('div');
+    probe.style.backgroundColor = 'var(--select)';
+    document.body.append(probe);
+    const color = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return color;
+  });
+  await expect(choice(page, 'granted')).toHaveCSS('background-color', selectColor);
+  await expect(choice(page, 'denied')).not.toHaveCSS('background-color', selectColor);
 
   const bar = await banner(page).boundingBox();
   expect(bar.y + bar.height).toBe(800);

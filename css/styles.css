@@ -11684,8 +11684,10 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 /* Nút chính của công cụ dùng cặp nền chọn của `nut-chinh`; nút đã ghi trạng thái (`aria-pressed`) giữ nguyên
-   cặp nền chọn kể cả khi trỏ chuột còn trên nút vừa bấm (nút lúc đó đã khoá). */
+   cặp nền chọn kể cả khi trỏ chuột còn trên nút vừa bấm (nút lúc đó đã khoá). Nút Đồng ý của thanh đồng ý phân tích
+   cũng là nút chính nhưng chọn bằng thuộc tính: SiteLayout.astro nằm trong gate dịch, thêm class ở đó phải publish lại. */
 .ana-btn.primary,
+.consent-banner-actions .ana-btn[data-consent-choice="granted"],
 .rt-btn.rt-primary,
 .rt-btn[aria-pressed="true"],
 .rt-btn[aria-pressed="true"]:hover {
@@ -11695,6 +11697,7 @@ body[data-page-section="roster-recommend"] .layout {
 }
 
 .ana-btn.primary:hover,
+.consent-banner-actions .ana-btn[data-consent-choice="granted"]:hover,
 .rt-btn.rt-primary:hover {
   background: var(--select-hover);
   border-color: var(--select-hover);
@@ -18727,7 +18730,7 @@ body[data-page-section="roster-recommend"] .layout {
    ở footer). js/consent-banner.js ghi chiều cao thật vào `--consent-banner-height` và `data-consent-banner` trên <html>,
    nên khi thanh mở: cuối trang có đệm (`body`) và `scroll-padding` đúng bằng chiều cao thanh (footer, nút Tab tới và đích
    cuộn không nằm dưới thanh); nút chuyển nhanh, danh sách của nó, thanh dính đáy (Đối chiếu, thao tác kho) và các thông báo
-   nổi nâng lên trên thanh. Màu theo theme qua token; hai nút dùng chung kiểu `.ana-btn` nên Từ chối và Đồng ý ngang vai. */
+   nổi nâng lên trên thanh. Màu theo theme qua token; Từ chối là `.ana-btn` thường, Đồng ý mang kiểu nút chính (nền chọn, khai báo cùng `.ana-btn.primary`) cho nổi bật. */
 .consent-banner {
   position: fixed;
   right: 0;
