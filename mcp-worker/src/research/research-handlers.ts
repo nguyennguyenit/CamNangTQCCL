@@ -172,10 +172,11 @@ export function compactNormalizeResult(
   ]);
   const unresolvedIds = new Set(unresolved.map(({ observationId }) => observationId));
   // Positional: phần tử i = canonicalId server tra tên cho observation i. null nếu client đã gửi canonicalId, mục chưa
-  // rõ, bị thay/xung đột (canonicalId không còn trong state cuối, hoặc observationId nằm trong unresolved).
+  // rõ, bị thay/xung đột: domain đã loại chính observation đó (effectiveObservations), canonicalId không còn trong state
+  // cuối, hoặc observationId nằm trong unresolved. Chỉ xét state cuối là chưa đủ vì id có thể còn qua mục khác.
   const resolvedIds = prepared.map((observation, index) => {
     const canonicalId = observation.canonicalId;
-    if (!lookedUp[index] || typeof canonicalId !== "string") return null;
+    if (!lookedUp[index] || !normalized.effectiveObservations[index] || typeof canonicalId !== "string") return null;
     if (!finalIds.has(canonicalId) || unresolvedIds.has(String((observation as { observationId?: unknown }).observationId))) return null;
     return canonicalId;
   });

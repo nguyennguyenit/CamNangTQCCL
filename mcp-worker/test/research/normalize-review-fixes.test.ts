@@ -51,6 +51,22 @@ describe("review M1: resolvedIds khớp state cuối theo vị trí", () => {
     expect(result.resolvedIds).toEqual([null, "hero:vuong-di"]);
   });
 
+  it("mục bị loại vì độ ưu tiên thấp hơn cùng id → null, dù canonicalId vẫn còn trong state qua mục khác", async () => {
+    const result = await normalize([
+      { ...byName("a", "hero", "Vương Dị"), evidence: { sourceScope: "priorConfirmedNote", batchId: "review" } },
+      byName("a", "hero", "40Y Lữ Bố"),
+      byName("b", "hero", "Vương Dị"),
+    ]);
+    expect(result.canonicalState.heroes.map((hero) => hero.canonicalId)).toEqual(["hero:40y-lu-bo", "hero:vuong-di"]);
+    expect(result.resolvedIds).toEqual([null, "hero:40y-lu-bo", "hero:vuong-di"]);
+  });
+
+  it("ảnh rồi manual cùng id, cùng tên: mục ảnh bị manual thay → null", async () => {
+    const result = await normalize([byName("a", "hero", "Vương Dị"), byName("a", "hero", "Vương Dị", "manualCorrection", { redStars: 3 })]);
+    expect(result.canonicalState.heroes).toEqual([expect.objectContaining({ canonicalId: "hero:vuong-di", redStars: 3, manual: true })]);
+    expect(result.resolvedIds).toEqual([null, "hero:vuong-di"]);
+  });
+
   it("replacesCanonicalId: mục bị thay không còn trong observations", async () => {
     const result = await normalize([
       byName("a", "hero", "40Y Lữ Bố"),
