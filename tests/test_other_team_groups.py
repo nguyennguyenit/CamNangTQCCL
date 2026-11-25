@@ -2,8 +2,8 @@
 import copy
 import unittest
 
-from pipeline.other_team_groups import (annotate_other_teams, data_complete, local_merge_key, team_group_key,
-                                        validate_team_groups)
+from pipeline.other_team_groups import (annotate_other_teams, data_complete, local_merge_key, team_group_id,
+                                        team_group_key, validate_team_groups)
 
 
 def holder(hero, tactics=("t1", "t2"), books=("b1",)):
@@ -148,6 +148,16 @@ class ValidateTeamGroupsTest(unittest.TestCase):
 
     def test_representative_required_when_group_has_complete_member(self):
         self.broken(lambda r, g: g[0].update(representativeVariantId=None))
+
+    def test_duplicate_group_is_rejected(self):
+        self.broken(lambda r, g: g.append(copy.deepcopy(g[0])))
+
+    def test_record_key_must_match_its_holders_and_unit(self):
+        def forge(r, g):
+            # Khóa giả nhưng id vẫn khớp hash của khóa giả: chỉ kiểm khóa theo tướng + binh chủng thật mới bắt được.
+            forged = r[0]["teamGroupKey"].replace("|unit:Cung", "|unit:Kỵ")
+            r[0].update(teamGroupKey=forged, teamGroupId=team_group_id(forged))
+        self.broken(forge)
 
 
 if __name__ == "__main__":

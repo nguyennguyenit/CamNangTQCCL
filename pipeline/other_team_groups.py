@@ -126,13 +126,18 @@ def validate_team_groups(records, groups):
         if variant in by_variant:
             raise ValueError("Team khác variant appears twice: " + str(variant))
         by_variant[variant] = record
+        if record.get("teamGroupKey") != team_group_key(record):
+            raise ValueError("Team khác teamGroupKey differs from holders and unit: " + str(variant))
         if record.get("teamGroupId") != team_group_id(record.get("teamGroupKey") or ""):
             raise ValueError("Team khác teamGroupId differs from its key: " + str(variant))
         if record.get("dataComplete") is not data_complete(record):
             raise ValueError("Team khác dataComplete flag differs from holders: " + str(variant))
-    grouped = set()
+    grouped, seen_groups = set(), set()
     for group in groups:
         group_id = group.get("teamGroupId")
+        if group_id in seen_groups:
+            raise ValueError("Team khác group appears twice: " + str(group_id))
+        seen_groups.add(group_id)
         if group_id != team_group_id(group.get("teamGroupKey") or ""):
             raise ValueError("Team khác group id differs from its key: " + str(group_id))
         members = group.get("memberVariantIds") or []

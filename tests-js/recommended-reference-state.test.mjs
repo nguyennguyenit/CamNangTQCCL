@@ -296,6 +296,12 @@ test('Đội khác theo team: lọc khớp khi bất kỳ phương án đủ d�
   ]);
 });
 
+test('Đội khác theo team: group lặp trong teamGroups thì báo lỗi, không đếm team hai lần', () => {
+  const duplicated = {...otherPayload, teamGroups: [...otherPayload.teamGroups, otherPayload.teamGroups[2]]};
+  assert.throws(() => otherTeamListEntries(duplicated, otherState(), {}), /lặp/);
+  assert.throws(() => websiteOtherRecords(duplicated), /lặp/);
+});
+
 test('Đội khác cho bề mặt đối chiếu (Soi đội): chỉ phương án đủ dữ liệu của team có đại diện, theo thứ tự team rồi optionRank', () => {
   assert.deepEqual(websiteOtherRecords(otherPayload).map((row) => row.legacyTeamId), ['a1', 'a2', 'a4', 'b1']);
   assert.deepEqual(websiteOtherRecords(null), []);

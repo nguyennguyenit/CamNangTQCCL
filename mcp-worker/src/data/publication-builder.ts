@@ -177,6 +177,15 @@ function otherDataComplete(record: Json): boolean {
   });
 }
 
+/** Khóa team tính lại từ holders + binh chủng (`team_group_key` của builder): 3 hero identity đã sort + unit đã sort. */
+function otherTeamGroupKey(record: Json): string | null {
+  const holders = Array.isArray(record.holders) ? record.holders : [];
+  const heroes = holders.map((holder) => (typeof holder === "object" && holder !== null ? (holder as Json).heroIdentityId : null));
+  if (heroes.length !== 3 || heroes.some((hero) => typeof hero !== "string" || !hero)) return null;
+  const units = [...new Set(strings(record.unit).map((unit) => unit.trim()))].sort();
+  return `heroes:${(heroes as string[]).sort().join(",")}|unit:${units.length ? units.join("+") : "?"}`;
+}
+
 /** `teamGroupId` = `g-` + 16 hex đầu của sha256 khóa team (`team_group_id` của builder). */
 async function teamGroupIdOf(key: unknown): Promise<string> {
   return `g-${(await sha256Hex(encoder.encode(typeof key === "string" ? key : ""))).slice(0, 16)}`;
@@ -193,13 +202,17 @@ export async function verifyOtherTeamGroups(records: readonly Json[], groups: re
     const variant = record.legacyVariantId;
     if (byVariant.has(variant)) fail(`Team khác variant appears twice: ${String(variant)}`);
     byVariant.set(variant, record);
+    if (record.teamGroupKey !== otherTeamGroupKey(record)) fail(`Team khác teamGroupKey differs from holders and unit: ${String(variant)}`);
     if (record.teamGroupId !== (await teamGroupIdOf(record.teamGroupKey))) fail(`Team khác teamGroupId differs from its key: ${String(variant)}`);
     if (record.dataComplete !== otherDataComplete(record)) fail(`Team khác dataComplete flag differs from holders: ${String(variant)}`);
     if (!Number.isInteger(record.optionRank)) fail(`Team khác variant has no optionRank: ${String(variant)}`);
   }
   const grouped = new Set<unknown>();
+  const seenGroups = new Set<unknown>();
   for (const group of groups) {
     const groupId = group.teamGroupId;
+    if (seenGroups.has(groupId)) fail(`Team khác group appears twice: ${String(groupId)}`);
+    seenGroups.add(groupId);
     if (groupId !== (await teamGroupIdOf(group.teamGroupKey))) fail(`Team khác group id differs from its key: ${String(groupId)}`);
     const members: unknown[] = Array.isArray(group.memberVariantIds) ? group.memberVariantIds : [];
     const expected = [...byVariant].filter(([, record]) => record.teamGroupId === groupId).map(([variant]) => variant);

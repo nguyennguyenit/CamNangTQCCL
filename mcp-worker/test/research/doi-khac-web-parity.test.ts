@@ -5,6 +5,7 @@ import { beforeAll, describe, expect, it } from "vitest";
 
 // Cùng hàm dựng danh sách `/doi-khac/` của website (bản dựng sẵn và trình duyệt).
 import { otherTeamListEntries } from "../../../js/other-team-groups.js";
+import { createHash } from "node:crypto";
 import { verifyOtherTeamGroups } from "../../src/data/publication-builder.js";
 import { publicVariantId } from "../../src/research/team-handlers.js";
 import { repositoryRoot } from "../fixtures/publication-sources.js";
@@ -168,6 +169,18 @@ describe("Đội khác: validator MCP kiểm cùng bất biến teamGroups với
     const twice = clone();
     twice.records.push(structuredClone(twice.records[0]!));
     await expect(verifyOtherTeamGroups(twice.records, twice.teamGroups)).rejects.toThrow(/twice/u);
+  });
+
+  it("từ chối group lặp và khóa team không khớp tướng + binh chủng thật", async () => {
+    const duplicate = clone();
+    duplicate.teamGroups.push(structuredClone(duplicate.teamGroups[0]!));
+    await expect(verifyOtherTeamGroups(duplicate.records, duplicate.teamGroups)).rejects.toThrow(/group appears twice/u);
+    const forged = clone();
+    const record = forged.records[0]!;
+    const key = `${record.teamGroupKey}x`;
+    record.teamGroupKey = key;
+    record.teamGroupId = `g-${createHash("sha256").update(key).digest("hex").slice(0, 16)}`;
+    await expect(verifyOtherTeamGroups(forged.records, forged.teamGroups)).rejects.toThrow(/teamGroupKey differs from holders/u);
   });
 
   it("từ chối member sai thứ tự optionRank", async () => {

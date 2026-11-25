@@ -26,7 +26,11 @@ function teamIndex(payload) {
   const groups = Array.isArray(payload.teamGroups) ? payload.teamGroups : [];
   const byVariant = new Map(records.map((record) => [record?.legacyVariantId, record]));
   const teams = [];
+  const seenGroups = new Set();
   for (const group of groups) {
+    // Một team đúng một group: group lặp sẽ làm team hiện hai lần, nên báo lỗi publish thay vì đếm trùng.
+    if (seenGroups.has(group?.teamGroupId)) fail(`team ${group?.teamGroupId} bị lặp trong teamGroups`);
+    seenGroups.add(group?.teamGroupId);
     if (group?.representativeVariantId === null || group?.representativeVariantId === undefined) continue;
     const completeRecords = (Array.isArray(group.completeVariantIds) ? group.completeVariantIds : []).map((variantId) => {
       const record = byVariant.get(variantId);
