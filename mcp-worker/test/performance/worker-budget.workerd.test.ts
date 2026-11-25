@@ -102,22 +102,25 @@ describe("budget production-shaped trong workerd", () => {
   });
 });
 
-// Ngưỡng workerd (#165): chưa đo được trên máy dev Windows (build assets production cần symlink); đặt ở trần 2 s của
-// kế hoạch, siết lại bằng số đo CI đầu tiên (log TQCCL_WORKER_ROSTER_BUDGET) × ~3.
-const ROSTER_NORMALIZE_BUDGET_MS = 2_000;
-const ROSTER_RECOMMEND_BUDGET_MS = 2_000;
+// Ngưỡng workerd (#165). Số đo 2026-11-25 trên macOS (log TQCCL_WORKER_ROSTER_BUDGET, 3 lần): normalize 16-19 ms,
+// recommend 20-22 ms. Runner CI chậm ~3× máy dev (xem domain-budget.test.ts) và đồng hồ workerd thô, nên lấy ≈ 8× số
+// đo CI ước tính (~70 ms) thay vì trần tạm 2 s của kế hoạch.
+const ROSTER_NORMALIZE_BUDGET_MS = 500;
+const ROSTER_RECOMMEND_BUDGET_MS = 500;
 
 /** Tên catalog (hero + tactic) theo canonicalId, duyệt bằng tqccl_search trên dữ liệu production. */
 async function catalogNames(): Promise<Map<string, string>> {
   const names = new Map<string, string>();
   let id = 100;
   for (const kind of ["hero", "tactic"]) {
-    let cursor: string | undefined;
+    // Trang sau gửi `cursor` thì bắt buộc kèm `expectedWorkflowVersion` (lấy từ trang trước).
+    let next: { cursor: string; expectedWorkflowVersion: string } | undefined;
     do {
-      const page = await callTool(id++, "tqccl_search", { query: "", kinds: [kind], limit: 50, ...(cursor === undefined ? {} : { cursor }) });
+      const page = await callTool(id++, "tqccl_search", { query: "", kinds: [kind], limit: 50, ...next });
       for (const item of page.result.items as Array<{ entityId: string; displayName: string }>) names.set(item.entityId, item.displayName);
-      cursor = page.result.nextCursor as string | undefined;
-    } while (cursor !== undefined);
+      const cursor = page.result.nextCursor as string | undefined;
+      next = cursor === undefined ? undefined : { cursor, expectedWorkflowVersion: page.result.workflowVersion as string };
+    } while (next !== undefined);
   }
   return names;
 }
