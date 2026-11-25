@@ -746,9 +746,18 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   // Kho dựng từ đội cũ: đội cũ lấp chỗ trống sau đội của mùa và mang nhãn "Tham khảo – đội cũ".
-  const recommendation = page.locator(".roster-team-list .roster-result-team").filter({
+  const legacyCards = page.locator(".roster-team-list .roster-result-team").filter({
     has: page.locator('.roster-status[data-status="legacy"]'),
-  }).first();
+  });
+  await expect(legacyCards.first()).toBeVisible();
+  // Đội cũ chỉ có trang Đội khác khi có phương án đủ dữ liệu: thẻ không có nút "Mở đội" là đội mà trang trả 404.
+  for (const card of await legacyCards.filter({ hasNot: page.locator(".roster-open") }).all()) {
+    const name = await card.locator(".roster-result-name").textContent();
+    const team = teamsFixture.find((entry) => entry.name === name);
+    expect(team, name).toBeTruthy();
+    expect((await page.request.get(legacyRoute(team.id))).status(), name).toBe(404);
+  }
+  const recommendation = legacyCards.filter({ has: page.locator(".roster-open") }).first();
   const selectedName = await recommendation.locator(".roster-result-name").textContent();
   const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
   expect(selectedTeam).toBeTruthy();

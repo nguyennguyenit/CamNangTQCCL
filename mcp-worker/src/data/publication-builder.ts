@@ -11,7 +11,7 @@ import { localePath } from "../../../js/i18n.js";
 import { stableStringify } from "../domain/contracts.js";
 
 import { MAX_ARTIFACT_BYTES, type ArtifactBytes, type ArtifactName, type ArtifactRecord } from "./artifact-contracts.js";
-import { allowKhaiHoangTeam, allowOtherHolder, allowTierRanking } from "./team-source-allowlist.js";
+import { allowKhaiHoangTeam, allowOtherHolder, allowOtherTeamGroup, allowTierRanking } from "./team-source-allowlist.js";
 import { verifyLookupPayloads } from "./lookup-bundle.js";
 import {
   KIND_GROUP,
@@ -102,6 +102,8 @@ interface VerifiedRecommended {
   manifest: Json;
   index: Json[];
   other: Json[];
+  /** `teamGroups` của `other-teams.json`, đã kiểm chéo với `other` (`verifyOtherTeamGroups`). */
+  otherGroups: Json[];
   seasons: Json;
   detailsByScope: Map<string, Json[]>;
 }
@@ -143,7 +145,10 @@ async function verifyRecommended(source: RecommendedGenerationBytes): Promise<Ve
   }
   const file = (name: string) => obj(parseJson(source.files.get(name)!, name), name);
   const index = list(file("index.json").records, "index.records").map((row, i) => obj(row, `index.records[${i}]`));
-  const other = list(file("other-teams.json").records, "other-teams.records").map((row, i) => obj(row, `other-teams.records[${i}]`));
+  const otherDocument = file("other-teams.json");
+  const other = list(otherDocument.records, "other-teams.records").map((row, i) => obj(row, `other-teams.records[${i}]`));
+  const otherGroups = list(otherDocument.teamGroups, "other-teams.teamGroups").map((row, i) => obj(row, `other-teams.teamGroups[${i}]`));
+  await verifyOtherTeamGroups(other, otherGroups);
   const detailsByScope = new Map<string, Json[]>();
   for (const key of scopes) {
     detailsByScope.set(key, list(file(`details-${key}.json`).records, `details-${key}.records`).map((row, i) => obj(row, `details-${key}.records[${i}]`)));
@@ -153,9 +158,79 @@ async function verifyRecommended(source: RecommendedGenerationBytes): Promise<Ve
     manifest,
     index,
     other,
+    otherGroups,
     seasons: file("seasons.json"),
     detailsByScope,
   };
+}
+
+// ---------------------------------------------------------------------------------------------
+// Đội khác: team và phương án (cùng bất biến `validate_team_groups` của pipeline/other_team_groups.py)
+// ---------------------------------------------------------------------------------------------
+
+/** Đủ dữ liệu: đúng 3 tướng, mỗi tướng ≥2 chiến pháp và ≥1 binh thư không rỗng (`data_complete` của builder). */
+function otherDataComplete(record: Json): boolean {
+  const holders = Array.isArray(record.holders) ? record.holders : [];
+  return holders.length === 3 && holders.every((holder) => {
+    const item = typeof holder === "object" && holder !== null ? (holder as Json) : {};
+    return strings(item.tacticSlotsRaw).length >= 2 && strings(item.bookSlotsRaw).length >= 1;
+  });
+}
+
+/** Khóa team tính lại từ holders + binh chủng (`team_group_key` của builder): 3 hero identity đã sort + unit đã sort. */
+function otherTeamGroupKey(record: Json): string | null {
+  const holders = Array.isArray(record.holders) ? record.holders : [];
+  const heroes = holders.map((holder) => (typeof holder === "object" && holder !== null ? (holder as Json).heroIdentityId : null));
+  if (heroes.length !== 3 || heroes.some((hero) => typeof hero !== "string" || !hero)) return null;
+  const units = [...new Set(strings(record.unit).map((unit) => unit.trim()))].sort();
+  return `heroes:${(heroes as string[]).sort().join(",")}|unit:${units.length ? units.join("+") : "?"}`;
+}
+
+/** `teamGroupId` = `g-` + 16 hex đầu của sha256 khóa team (`team_group_id` của builder). */
+async function teamGroupIdOf(key: unknown): Promise<string> {
+  return `g-${(await sha256Hex(encoder.encode(typeof key === "string" ? key : ""))).slice(0, 16)}`;
+}
+
+/**
+ * Bất biến giữa `records` và `teamGroups` của `other-teams.json` (fail loud), kiểm lại ở MCP vì publication tin bảng này
+ * tuyệt đối: mỗi record thuộc đúng một group; member = tập record của group, theo `optionRank`; `completeVariantIds` = member
+ * có cờ `dataComplete` (cờ khớp holders); đại diện = phương án đủ dữ liệu đầu tiên hoặc `null`; `teamGroupId` khớp khóa.
+ */
+export async function verifyOtherTeamGroups(records: readonly Json[], groups: readonly Json[]): Promise<void> {
+  const byVariant = new Map<unknown, Json>();
+  for (const record of records) {
+    const variant = record.legacyVariantId;
+    if (byVariant.has(variant)) fail(`Team khác variant appears twice: ${String(variant)}`);
+    byVariant.set(variant, record);
+    // Khóa tính lại là null khi tướng thiếu identity: luôn từ chối, kể cả record cũng ghi khóa null (khớp builder Python).
+    const expectedKey = otherTeamGroupKey(record);
+    if (expectedKey === null || record.teamGroupKey !== expectedKey) fail(`Team khác teamGroupKey differs from holders and unit: ${String(variant)}`);
+    if (record.teamGroupId !== (await teamGroupIdOf(record.teamGroupKey))) fail(`Team khác teamGroupId differs from its key: ${String(variant)}`);
+    if (record.dataComplete !== otherDataComplete(record)) fail(`Team khác dataComplete flag differs from holders: ${String(variant)}`);
+    if (!Number.isInteger(record.optionRank)) fail(`Team khác variant has no optionRank: ${String(variant)}`);
+  }
+  const grouped = new Set<unknown>();
+  const seenGroups = new Set<unknown>();
+  for (const group of groups) {
+    const groupId = group.teamGroupId;
+    if (seenGroups.has(groupId)) fail(`Team khác group appears twice: ${String(groupId)}`);
+    seenGroups.add(groupId);
+    if (groupId !== (await teamGroupIdOf(group.teamGroupKey))) fail(`Team khác group id differs from its key: ${String(groupId)}`);
+    const members: unknown[] = Array.isArray(group.memberVariantIds) ? group.memberVariantIds : [];
+    const expected = [...byVariant].filter(([, record]) => record.teamGroupId === groupId).map(([variant]) => variant);
+    const sameMembers = members.length === expected.length && new Set(members).size === members.length && members.every((variant) => expected.includes(variant));
+    if (!members.length || !sameMembers) fail(`Team khác group members differ from records: ${String(groupId)}`);
+    const ranks = members.map((variant) => byVariant.get(variant)!.optionRank as number);
+    if (ranks.some((rank, index) => index > 0 && rank < ranks[index - 1]!)) fail(`Team khác group members must follow optionRank: ${String(groupId)}`);
+    const complete = members.filter((variant) => byVariant.get(variant)!.dataComplete === true);
+    const declared: unknown[] = Array.isArray(group.completeVariantIds) ? group.completeVariantIds : [];
+    if (declared.length !== complete.length || declared.some((variant, index) => variant !== complete[index])) {
+      fail(`Team khác group complete set differs from flags: ${String(groupId)}`);
+    }
+    if (group.representativeVariantId !== (complete[0] ?? null)) fail(`Team khác group representative must be its first complete option: ${String(groupId)}`);
+    for (const variant of members) grouped.add(variant);
+  }
+  if (grouped.size !== byVariant.size) fail("Team khác record outside any group");
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -520,17 +595,23 @@ function resolveLegacyContent(content: Json, heroOf: HeroResolver, resolver: Res
   });
 }
 
+/**
+ * Đội khác như website: chỉ phương án admitted + đủ dữ liệu (`dataComplete`), mỗi phương án một ref `other:<legacyTeamId>`
+ * và trang riêng của nó. Phương án thiếu dữ liệu không có trang (404) nên cũng không vào publication.
+ */
 function otherTeams(
   rows: Json[],
+  groups: Json[],
   visibleLegacy: Set<string>,
   ledger: Ledger,
   heroOf: HeroResolver,
   resolver: Resolver,
 ): TeamBuild[] {
+  const optionCount = new Map(groups.map((group) => [group.teamGroupId, list(group.completeVariantIds, "teamGroups.completeVariantIds").length]));
   const byTeam = new Map<string, Json[]>();
   for (const row of rows) {
     const teamId = String(row.legacyTeamId);
-    if (!visibleLegacy.has(teamId)) continue;
+    if (!visibleLegacy.has(teamId) || row.dataComplete !== true) continue;
     byTeam.set(teamId, [...(byTeam.get(teamId) ?? []), row]);
   }
   return [...byTeam].map(([teamId, variants]) => {
@@ -577,6 +658,7 @@ function otherTeams(
           const content = obj(variant.legacyContent, `${teamId}.legacyContent`);
           return {
             variantId: String(variant.legacyVariantId),
+            ...allowOtherTeamGroup({ ...variant, optionCount: optionCount.get(variant.teamGroupId) }),
             contentSha256: text(variant.legacyContentSha256),
             classification: text(variant.classification),
             name: text(variant.name),
@@ -853,7 +935,7 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
   }
   if (detailBySourceId.size !== recommended.index.length) fail("Recommended details and index disagree");
   const visibleLegacy = new Set(legacyTeams.filter((team) => team.source !== "do-uy").map((team) => String(team.id)));
-  teams.push(...otherTeams(recommended.other, visibleLegacy, ledger, heroOf, resolver));
+  teams.push(...otherTeams(recommended.other, recommended.otherGroups, visibleLegacy, ledger, heroOf, resolver));
   const seasons = list(recommended.seasons.seasonOptions, "seasons.seasonOptions").map((row, i) => obj(row, `seasonOptions[${i}]`));
   const khaiSeason = text(khaiDocument.season);
   const khaiSeasonId = khaiSeason === null ? null : (seasons.find((option) => option.displayNameVi === khaiSeason)?.sourceSeasonId as string | undefined) ?? null;
@@ -896,7 +978,7 @@ export async function buildPublicationArtifacts(input: PublicationBuildInput): P
     displayLabels: labels,
     collections: [
       { id: "recommended", count: count("recommended"), descriptionVi: "Đội chuẩn theo mùa nguồn (source-reference), có điểm/bậc gốc." },
-      { id: "other", count: count("other"), descriptionVi: "Biến thể đội cũ đã được nhận (admitted), không phải kho cũ thô." },
+      { id: "other", count: count("other"), descriptionVi: "Phương án Đội khác đã nhận (admitted) và đủ dữ liệu như website; teamGroupId gom phương án cùng team." },
       { id: "khaihoang", count: count("khaihoang"), descriptionVi: "Đội Khai hoang công khai." },
       { id: "engine", count: visibleEngine, descriptionVi: "Kho đội cũ của engine (đọc từ artifact v1/v2)." },
     ],

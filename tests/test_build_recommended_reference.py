@@ -21,6 +21,13 @@ from pipeline.build_recommended_reference import (
 ROOT = Path(__file__).resolve().parents[1]
 from pipeline.recommended_identity import build_display_mapping, build_mapping, resolve_identity
 
+# Hàng admitted thật luôn có đủ 3 tướng đã resolve (khóa team cần ``heroIdentityId`` và ``unit``).
+ADMITTED_HOLDERS = [
+    {"heroIdentityId": f"hero:fixture-{index}", "tacticIdentityIds": [f"tactic:{index}a", f"tactic:{index}b"],
+     "nameRaw": f"Tướng {index}", "tacticSlotsRaw": [f"Chiêu {index}A", f"Chiêu {index}B"], "bookSlotsRaw": ["Binh thư"]}
+    for index in (1, 2, 3)
+]
+
 def _publish(inputs, output, *, links=None, qilue=None):
     candidate = copy.deepcopy(inputs)
     admitted = candidate.get("otherTeams") or []
@@ -271,7 +278,8 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
         }
         inputs = {"inventory": inventory, "records": [index_row], "details": {scope_key: [detail], empty_key: []},
                   "otherTeams": [{"sourceConfigId": "z", "classification": "distinct", "sourceSeasonLabel": "PK-S28",
-                                  "legacyTeamId": "legacy-z", "legacyVariantId": "variant-z"}],
+                                  "legacyTeamId": "legacy-z", "legacyVariantId": "variant-z",
+                                  "holders": copy.deepcopy(ADMITTED_HOLDERS), "unit": ["Kỵ"]}],
                   "mappingHash": "b", "decisionSnapshotHash": "c", "dedupKeyVersion": 1}
         return inputs, scope_key, empty_key
 
@@ -488,6 +496,8 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
             "classification": "distinct",
             "legacyTeamId": "legacy-a",
             "legacyVariantId": "variant-a",
+            "holders": copy.deepcopy(ADMITTED_HOLDERS),
+            "unit": ["Cung"],
             "recommended": True,
             "sourceLabel": "YouTube",
             "sourceSeasonIds": ["s"],
@@ -552,6 +562,15 @@ class BuildRecommendedReferenceTest(unittest.TestCase):
             self.assertEqual(published["legacyReferences"][0]["legacyContent"], legacy)
             self.assertEqual(other["legacyContent"], legacy)
             self.assertEqual((other["recommended"], other["sourceLabel"], other["sourceSeasonIds"]), (True, "YouTube", ["s"]))
+            # Team = bộ 3 tướng + binh chủng: record mang khóa team, cờ đủ dữ liệu, thứ tự; payload có bảng teamGroups.
+            payload = json.loads((generation / "other-teams.json").read_text())
+            self.assertEqual((other["dataComplete"], other["optionRank"]), (True, 0))
+            self.assertTrue(other["teamGroupId"].startswith("g-"))
+            self.assertEqual(payload["teamGroups"], [{
+                "teamGroupId": other["teamGroupId"], "teamGroupKey": other["teamGroupKey"],
+                "memberVariantIds": ["variant-a"], "completeVariantIds": ["variant-a"],
+                "representativeVariantId": "variant-a",
+            }])
             manifest = json.loads((generation / "manifest.json").read_text())
             self.assertEqual(manifest["legacyTeamsHash"], ledger["localTeamsSha256"])
             self.assertTrue(manifest["contentLinksHash"].startswith("sha256:"))

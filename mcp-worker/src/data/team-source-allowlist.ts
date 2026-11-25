@@ -157,6 +157,19 @@ export function allowTierRanking(raw: unknown): { id?: string; tier?: string; up
   return pick(rec(raw), { id: str, tier: str, updatedAt: str });
 }
 
+function count(value: unknown): number | undefined {
+  return Number.isInteger(value) && (value as number) >= 0 ? (value as number) : undefined;
+}
+
+/**
+ * Team của một phương án đội khác (`other-teams.json`, builder tính): `teamGroupId` gom phương án cùng bộ 3 tướng + binh
+ * chủng, `optionCount` = số phương án đủ dữ liệu của team, `optionRank` = thứ tự phương án của website (Đề cử trước, rồi
+ * thứ tự ledger; phương án đại diện của team là phương án có `optionRank` nhỏ nhất).
+ */
+export function allowOtherTeamGroup(raw: unknown): { teamGroupId?: string; optionCount?: number; optionRank?: number } {
+  return pick(rec(raw), { teamGroupId: str, optionCount: count, optionRank: count });
+}
+
 /** Holder của biến thể đội khác: chỉ các field trang đội đọc. */
 export function allowOtherHolder(raw: unknown): Raw {
   const holder = rec(raw);

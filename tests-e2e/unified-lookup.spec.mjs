@@ -492,7 +492,8 @@ test('số liệu Trong cẩm nang của SP Lữ Mông khớp phép đếm độ
     for (const name of new Set(realTactics(holder, true))) tactics.set(name, (tactics.get(name) ?? 0) + 1);
     representative.push({ family: 'recommended', name: record.displayNameVi, score: record.value, order });
   }
-  for (const record of others.records) {
+  // Đội khác chỉ tính phương án đủ dữ liệu (`dataComplete`), đúng tập phương án có trang trên website.
+  for (const record of others.records.filter((item) => item.dataComplete === true)) {
     const holder = (record.holders ?? []).find((item) => String(item.nameRaw ?? '').trim() === vietnameseKey);
     if (!holder) continue;
     other += 1;

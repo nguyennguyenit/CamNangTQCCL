@@ -9,6 +9,7 @@ import re
 import tempfile
 from pathlib import Path
 from pipeline.common import canonical_json, sha256_hex
+from pipeline.other_team_groups import annotate_other_teams
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.tactic_summaries import build_tactic_summaries, validate_tactic_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
@@ -448,20 +449,25 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     if inventory.get("displayLabels") is not None:
         seasons["displayLabels"] = inventory["displayLabels"]
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
-    other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.", "records": inputs.get("otherTeams", [])}
+    # Team = bộ 3 tướng + binh chủng; mỗi hàng là một phương án (other_team_groups). Website và MCP chỉ dùng
+    # phương án đủ dữ liệu, nên số liệu "Trong cẩm nang" cũng chỉ tính các phương án đó.
+    other_records, team_groups = annotate_other_teams(inputs.get("otherTeams") or [])
+    complete_other = [row for row in other_records if row["dataComplete"]]
+    other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.",
+             "records": other_records, "teamGroups": team_groups}
     details = inputs.get("details", {})
     # Số liệu "Trong cẩm nang" (Phase 7) tính từ chính `records` đã sắp ở trên — cùng thứ tự với
     # `index.json` phát ra, nên thứ tự đồng hạng của số liệu khớp bản phát.
     summaries = build_hero_summaries(
-        catalog_bytes=catalog_bytes, records=records, other_records=inputs.get("otherTeams") or [],
+        catalog_bytes=catalog_bytes, records=records, other_records=complete_other,
     )
-    validate_hero_summaries_shape(summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    validate_hero_summaries_shape(summaries, records=records, other_records=complete_other)
     # Cùng nguồn và thứ tự cho số liệu theo chiến pháp (hồ sơ chiến pháp).
     tactic_summaries = build_tactic_summaries(
         tactic_catalog_bytes=tactic_catalog_bytes, hero_catalog_bytes=catalog_bytes,
-        records=records, other_records=inputs.get("otherTeams") or [],
+        records=records, other_records=complete_other,
     )
-    validate_tactic_summaries_shape(tactic_summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    validate_tactic_summaries_shape(tactic_summaries, records=records, other_records=complete_other)
     payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries, "tactic-summaries.json": tactic_summaries}
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]

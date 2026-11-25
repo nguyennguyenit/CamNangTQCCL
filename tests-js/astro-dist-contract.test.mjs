@@ -50,6 +50,8 @@ const sha256 = (bytes) => createHash("sha256").update(bytes).digest("hex");
 
 const LEGACY_TEAM_ID = "team-intro-0";
 const LEGACY_HANDLE = "vinh-quang-thuong";
+/** Phương án admitted + đủ dữ liệu của đội gốc mẫu: chỉ đội gốc có phương án như vậy mới có trang Đội khác. */
+const LEGACY_VARIANT_ID = `v-${"a".repeat(64)}`;
 const LEGACY_ROUTE_SEGMENT = LEGACY_HANDLE;
 
 const KHAIHOANG_TEAM_ID = "gia-cat-khac-sp-ma-sieu-phap-chinh";
@@ -81,7 +83,7 @@ const zhPathOf = (viPath) => (viPath === "/" ? "/zh/" : `/zh${viPath}`);
 /** Bản của một đường dẫn ở mọi locale đang bật (thứ tự `SITE_LOCALES`): output thật có một trang cho mỗi locale. */
 const localizedPathsOf = (viPath) => SITE_LOCALES.map((locale) => localePath(viPath, locale));
 /** Số URL sitemap cho mỗi locale: mọi route có bản gương + trang danh sách blog (chưa kể trang mùa). */
-const SITEMAP_ROUTES_PER_LOCALE = 3195;
+const SITEMAP_ROUTES_PER_LOCALE = 3007;
 
 /** Nhóm mục sitemap (một cho mỗi locale) của một route có bản gương; `/` (Landing) được xếp riêng ở đầu. */
 const mirroredEntries = (viPaths) => viPaths.flatMap((viPath) => {
@@ -291,7 +293,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   const payloads = {
     "seasons.json": jsonBytes({ schemaVersion: 1, seasonOptions: [], scopes: [] }),
     "index.json": jsonBytes({ schemaVersion: 1, records: [] }),
-    "other-teams.json": jsonBytes({ schemaVersion: 1, records: [] }),
+    "other-teams.json": jsonBytes({ schemaVersion: 1, records: [{ legacyTeamId: LEGACY_TEAM_ID, legacyVariantId: LEGACY_VARIANT_ID, dataComplete: true }] }),
     "hero-summaries.json": jsonBytes({ schemaVersion: 1, provenance: {
       catalogSha256: `sha256:${"0".repeat(64)}`,
       recommendedJoin: "heroes[].nameRaw ↔ chinese|aliases", otherJoin: "holders[].nameRaw ↔ hanViet",
@@ -377,7 +379,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
   const sitemap = orderedSitemap(FIXTURE_SITEMAP_ENTRIES);
   await writeFile(join(distDir, "sitemap.xml"), sitemap);
   await writeBlogOutputs(distDir);
-  await writeFile(join(distDir, "my-teams-source-index.json"), `${JSON.stringify({ [`khaihoang:${KHAIHOANG_TEAM_ID}`]: MY_TEAMS_HASH, [`legacy:${LEGACY_TEAM_ID}`]: MY_TEAMS_HASH })}\n`);
+  await writeFile(join(distDir, "my-teams-source-index.json"), `${JSON.stringify({ [`khaihoang:${KHAIHOANG_TEAM_ID}`]: MY_TEAMS_HASH, [`legacy:${LEGACY_TEAM_ID}`]: MY_TEAMS_HASH, [`legacy:${LEGACY_TEAM_ID}~${LEGACY_VARIANT_ID}`]: MY_TEAMS_HASH })}\n`);
   // Trang chi tiết có bản ở mọi locale cùng pin identity dưới thư mục tiền tố.
   for (const locale of SITE_LOCALES) {
     const base = localeDistDir(distDir, locale);
@@ -1044,7 +1046,8 @@ test("built dist declares canonical, article metadata, robots and the catalog si
   const sitemap = await read("sitemap.xml");
   assert.match(sitemap, /^<\?xml version="1\.0" encoding="UTF-8"\?>/u);
   const locations = [...sitemap.matchAll(/<loc>([^<]*)<\/loc>/gu)].map(([, location]) => location);
-  // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 443 legacy, 20 Khai hoang,
+  // Release baseline: Landing, 8 trang mục, 8 trang nhóm Tra cứu, 4 trang chính sách, 1681 Recommended, 255 Đội khác (phương án admitted
+  // + đủ dữ liệu; 188 đội gốc còn lại là handle tạm ẩn, không có trang), 20 Khai hoang,
   // 1029 trang riêng mục Tra cứu (263 tướng, 423 chiến pháp, 59 quân sư sau đợt theo client Global; 5 phương lược + 40 thẻ kỳ lược
   // PK-S27) — mỗi route một trang cho mỗi locale — và trang danh sách blog của mỗi locale (build không khai COMMUNITY_API_ORIGIN nên chưa có bài).
   const lookupRoutes = await lookupDetailRoutes();
@@ -1249,7 +1252,8 @@ test("sitemap endpoint publishes exactly the root page plus the catalog routes",
   ];
   const routePaths = [...mirrored, "/bai-viet/"].flatMap(localizedPathsOf).filter((path) => path !== "/");
   assert.equal(catalog.recommended.length, 1681);
-  assert.equal(catalog.legacy.length, 443);
+  assert.equal(catalog.legacy.length, 255);
+  assert.equal(catalog.hiddenLegacy.length, 188);
   assert.equal(catalog.khaiHoang.length, 20);
   assert.equal(lookupRoutes.entries.length, 1029);
   assert.equal(locations.length, SITE_LOCALES.length * (SITEMAP_ROUTES_PER_LOCALE + seasonPageList.length));

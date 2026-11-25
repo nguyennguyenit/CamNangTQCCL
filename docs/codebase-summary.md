@@ -38,6 +38,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | `js/render.js` | Builder dùng chung: `el`/icon (DOM) và `t`/`svgTree`/`iconTree` (cây view), nhóm Cùng Tồn, bảng Khai hoang (`khaihoangTableTree`/`khaihoangTable`), thân chi tiết Khai hoang (`khaihoangDetailTrees`) và chi tiết cấu hình mùa. |
 | `js/view-tree.js` | Cây view một định nghĩa cho build và trình duyệt: `treeToHtml` (build, luôn escape), `treeToDom` (client), `treeToText` (llms), `disableButtons`/`enableControl` (nút dựng sẵn chờ gắn sự kiện). |
 | `js/recommended-reference-render.js` | Thẻ, bảng, nhóm Tier và thân chi tiết Đội chuẩn/Đội khác/Cùng Tồn dưới dạng cây view; nhận `locale` tường minh. |
+| `js/other-team-groups.js` | Đội khác theo team: `otherTeamListEntries` (mục danh sách, đếm/facet theo team, link tới phương án khớp; dùng chung bản dựng sẵn, trình duyệt và llms) và `otherTeamOptions` (khối "Các phương án khác của team"); đọc `teamGroups` của builder, không tự tính thứ tự. |
 | `src/lib/team-ssr.ts`, `src/lib/team-section-ssr.js` | Dựng sẵn thân trang chi tiết đội và trạng thái mặc định của bốn trang danh sách từ publication đã pin. |
 | `js/filters.js` | Chuẩn hoá chữ bỏ dấu và blob tìm kiếm của một đội, dùng chung với MCP. |
 | `js/unified-lookup.js`, `js/lookup-page.js`, `js/lookup-profile.js`, `js/lookup-master.js`, `js/lookup-data.js`, `js/lookup-detail.js`, `src/lib/lookup-pages.ts` | Tra cứu tám nhóm, mỗi nhóm một trang: nạp và xác minh payload theo trang, tìm kiếm, cây markup dùng chung build/DOM (trang nhóm dựng sẵn đủ mọi mục), hồ sơ và quan hệ theo ID; năm nhóm catalog (Trang bị, Quân sư, Cải tạo binh chủng, Công trình, Kỳ lược) dùng bố cục danh sách + chi tiết của `lookup-master.js`. |
@@ -80,7 +81,8 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 | [`mcp-worker/scripts/`](../mcp-worker/scripts/) | Deterministic asset build/evidence, exact-version deployment controller, live/edge verifier và repository gate credential-free. |
 | `pipeline/site_localization.py`, `pipeline/site-localization-policy.json` | Inventory/review gate, candidate private và publication pin chung cho display, Recommended và Lookup. |
 | `pipeline/build_json.py` | Build team, facet từ HTML export + `team-intro-supplement.json` + đội đề cử YouTube `team-youtube-pk-s27.json` (trùng byte bản commit, `--check`); Cùng Tồn, khai hoang chỉ với `--overwrite-curated`. |
-| `pipeline/recommended_team_dedup.py` | Ledger Đội khác `pipeline/recommended-other-teams.json`: đối chiếu đội gốc với Đội chuẩn của mùa mặc định, gộp hàng trùng nội bộ, đánh dấu `recommended` cho nguồn YouTube ([season-team-data.md](season-team-data.md)). |
+| `pipeline/recommended_team_dedup.py` | Ledger Đội khác `pipeline/recommended-other-teams.json`: đối chiếu đội gốc với Đội chuẩn của mùa mặc định (khóa v1), gộp hàng trùng nội bộ (khóa v2 có binh thư + binh chủng), đánh dấu `recommended` cho nguồn YouTube ([season-team-data.md](season-team-data.md)). |
+| `pipeline/other_team_groups.py` | Team (bộ 3 tướng + binh chủng), cờ đủ dữ liệu, `optionRank`, khóa gộp nội bộ v2 và bảng `teamGroups` của `other-teams.json`, kèm bất biến kiểm chéo (fail loud). |
 | `pipeline/build_books_dict.py` | Validate bảng map Hán→Việt với facet binh thư; mang hiệu ứng (`effect`/`effectViet`/`effectVersion`, đủ cả ba) và tên nguồn (`sourceNames`/`excludedSourceNames`). |
 | `pipeline/build_team_tier.py` | Join tier curate theo team ID, validate tier fail-loud. |
 | `worker/src/index.ts` | `POST /analyze`: origin, limits, Turnstile, image guard, model, response. |

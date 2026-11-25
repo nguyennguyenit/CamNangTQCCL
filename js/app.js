@@ -482,7 +482,7 @@ async function main() {
       const registry = recommendedModel.seasons || {};
       // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn (cùng hàm với bản dựng sẵn).
       sections['team-chuan']?.update(recommendedModel.index.records,referenceSectionState('recommended',location.href,registry,localStore()),registry);
-      sections['team-khac']?.update(recommendedModel.other.records,referenceSectionState('other',location.href,registry,localStore()),registry);
+      sections['team-khac']?.update(recommendedModel.other,referenceSectionState('other',location.href,registry,localStore()),registry);
       canonicaliseView();
       canonicaliseRosterParams();
     }
@@ -684,8 +684,11 @@ async function main() {
     });
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
+    const openTeamHref = (team) => teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id});
+    // Đội gốc chưa đủ dữ liệu không có trang (bảng route không có handle): công cụ ẩn nút "Mở đội" thay vì để nút không làm gì.
+    const canOpenTeam = (team) => openTeamHref(team) !== null;
     const onOpenTeam = (team) => {
-      const href = teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id});
+      const href = openTeamHref(team);
       if (!href) return;
       rememberReturn();
       location.assign(href);
@@ -694,7 +697,7 @@ async function main() {
       if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, rawNames, mount });
       // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
       if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, jaEntries, rawNames, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
-      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, jaEntries, rawNames, loadRecommended, onOpenTeam }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, jaEntries, rawNames, loadRecommended, onOpenTeam, canOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
       mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。", "この機能に必要な図鑑データが現在利用できません。")));
     }

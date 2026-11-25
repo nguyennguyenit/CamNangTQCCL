@@ -437,6 +437,8 @@ function myTeamsExpectedKeys(catalog, khaiHoangSource) {
     variantsOf.set(variant.legacyTeamId, [...(variantsOf.get(variant.legacyTeamId) ?? []), variant.legacyVariantId]);
   }
   const legacy = new Map(catalog.legacy.map((entry) => [entry.legacyTeamId, [["", `legacy:${variantKey(entry.legacyTeamId, null)}`]]]));
+  // Chỉ mục giữ mọi đội gốc, kể cả handle tạm ẩn (không có trang): đội đã lưu từ trang nay bị ẩn vẫn đối chiếu được hash nguồn.
+  const hiddenLegacyKeys = (catalog.hiddenLegacy ?? []).map((entry) => `legacy:${variantKey(entry.legacyTeamId, null)}`);
   const khaiHoang = new Map((khaiHoangSource?.teams ?? []).map((team) => [team.id, [
     ["", `khaihoang:${variantKey(team.id, null)}`],
     ...(team.variants ?? []).map((variant) => [variant.id, `khaihoang:${variantKey(team.id, variant.id)}`]),
@@ -444,6 +446,7 @@ function myTeamsExpectedKeys(catalog, khaiHoangSource) {
   const variantKeys = [...variantsOf].flatMap(([teamId, variantIds]) => variantIds.map((variantId) => `legacy:${variantKey(teamId, variantId)}`));
   const all = new Set([
     ...[...recommended.values(), ...legacy.values(), ...khaiHoang.values()].flatMap((items) => items.map(([, key]) => key)),
+    ...hiddenLegacyKeys,
     ...variantKeys,
   ]);
   return { recommended, legacy, khaiHoang, all };

@@ -269,8 +269,10 @@ export const SOURCE_TIER_ORDER = ['T0','T0.5','T1','T1.5','T2','T3','FUNC','功�
 export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队','機能特化編成') : value;
 
 function fixedRank(a,b) {
-  // Đội khác: hàng đề cử đứng trước. Trong mỗi nhóm, hàng Đội khác không có `tierOrder`/`value`/`listIndex` nên thứ tự
-  // rơi xuống tie-break cuối theo `legacyVariantId` (hash), KHÔNG phải thứ tự trong `other-teams.json` (xem #129).
+  // Đội khác: `optionRank` do builder tính (Đề cử trước, rồi thứ tự ledger) là nguồn thứ tự duy nhất khi hai hàng đều có.
+  if (Number.isInteger(a.optionRank) && Number.isInteger(b.optionRank)) return a.optionRank - b.optionRank;
+  // Hàng không có `optionRank` (dữ liệu cũ): hàng đề cử đứng trước, trong mỗi nhóm rơi xuống tie-break cuối theo
+  // `legacyVariantId` (hash) vì hàng Đội khác không có `tierOrder`/`value`/`listIndex`.
   const recommended = Number(isRecommendedOtherRow(b)) - Number(isRecommendedOtherRow(a));
   if (recommended) return recommended;
   const tier = (a.tierOrder ?? 999) - (b.tierOrder ?? 999);

@@ -115,13 +115,14 @@ test('detail hrefs come from the registered final segments and carry identity (p
   assert.equal(teamDetailPath({}),null);
   assert.equal(teamDetailPath({legacyTeamId:'../secret'}),null);
 
-  assert.equal(
-    teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-'+'a'.repeat(64)}),
-    `/doi-khac/${LEGACY_SEGMENT}/?variant=v-${'a'.repeat(64)}`,
-  );
-  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:''}),`/doi-khac/${LEGACY_SEGMENT}/?variant=`);
-  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'/bad'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad`);
-  // Link nội bộ chỉ có đường dẫn (+ variant): đường về nằm ở history.state/referrer/sessionStorage của trang chi tiết, không ở URL.
+  // Mỗi đội gốc đúng một phương án (catalog kiểm): link mới tới trang Đội khác không mang `?variant=`, nên trang mở thẳng
+  // thân dựng sẵn thay vì ẩn thân rồi tải lại other-teams.json.
+  for (const legacyVariantId of ['v-'+'a'.repeat(64),'','/bad',null,undefined]) {
+    assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId}),`/doi-khac/${LEGACY_SEGMENT}/`,String(legacyVariantId));
+  }
+  assert.equal(referenceDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-'+'a'.repeat(64)}),`/doi-khac/${LEGACY_SEGMENT}/`);
+  // Link nội bộ chỉ có đường dẫn (+ variant của Khai hoang): đường về nằm ở history.state/referrer/sessionStorage của trang
+  // chi tiết, không ở URL.
   assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED},{locale:'zh'}),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   // A registered identity without a handle is still not routable.
@@ -143,9 +144,9 @@ test('list href builders emit clean detail URLs: identity and variant only, in e
     [referenceDetailHref({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`],
     [referenceDetailHref({sourceConfigId:RECOMMENDED},{locale:'zh'}),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`],
     [referenceDetailHref({sourceConfigId:RECOMMENDED},{locale:'ja'}),`/ja/doi-chuan/${RECOMMENDED_SEGMENT}/`],
-    // Đội khác luôn mang variant của hàng; `id` là tên khác của `legacyTeamId`.
-    [referenceDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-1'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=v-1`],
-    [referenceDetailHref({id:LEGACY,legacyVariantId:'v-1'},{locale:'zh'}),`/zh/doi-khac/${LEGACY_SEGMENT}/?variant=v-1`],
+    // Đội khác: mỗi đội gốc đúng một phương án nên không variant; `id` là tên khác của `legacyTeamId`.
+    [referenceDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-1'}),`/doi-khac/${LEGACY_SEGMENT}/`],
+    [referenceDetailHref({id:LEGACY,legacyVariantId:'v-1'},{locale:'zh'}),`/zh/doi-khac/${LEGACY_SEGMENT}/`],
     [referenceDetailHref({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`],
     // Khai hoang: `variant` chỉ khi cấu hình đang chọn khác mặc định.
     [khaiHoangCardHref(KHAIHOANG,''),`/khai-hoang/${KHAIHOANG_HANDLE}/`],
@@ -581,6 +582,8 @@ test('old reference URLs migrate to the registered routes while any config key k
   const legacy=migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`);
   assert.equal(legacy.target,`/doi-khac/${LEGACY_SEGMENT}/`);
 
+  // URL gốc cũ có `legacyVariant` giữ nguyên ý nghĩa cũ: biến thể đi tiếp sang `?variant=` để trang chi tiết đối chiếu
+  // (biến thể không thuộc đội thì báo lỗi), không lặng lẽ thành trang của đội.
   const variant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=v-9#team-khac`);
   assert.equal(variant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=v-9`);
   const malformedVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=%2Fbad#team-khac`);

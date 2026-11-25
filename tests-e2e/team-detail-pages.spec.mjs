@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import {readFileSync} from 'node:fs';
 
 const publication=async request=>{
   const pin=await (await request.get('/data/recommended/current.json')).json();
@@ -16,6 +17,15 @@ const routeHandles=async request=>{
 };
 const recommendedPath=(handles,id)=>`/doi-chuan/${encodeURIComponent(handles.r[id])}/`;
 const legacyPath=(handles,id)=>`/doi-khac/${encodeURIComponent(handles.l[id])}/`;
+/** Đội gốc có trang Đội khác (phương án admitted + đủ dữ liệu): đúng các đội có trong bảng route handle đã build. */
+const pagedTeams=async request=>{
+  const [teams,handles]=await Promise.all([rawTeams(request),routeHandles(request)]);
+  return teams.filter(team=>handles.l[team.id]);
+};
+/** Phương án đủ dữ liệu đầu tiên của `other-teams.json` (chỉ phương án này có trang để thử `?variant=`). */
+const completeRecord=other=>other.records.find(row=>row.dataComplete===true);
+/** Ledger handle đóng băng (giữ cả handle tạm ẩn của đội không có trang). */
+const frozenLegacyHandles=()=>JSON.parse(readFileSync(new URL('../pipeline/team-route-handles.json',import.meta.url),'utf8')).handles.legacy;
 
 test('Recommended detail loads directly, survives reload and shows verified source content',async({page,request})=>{
   const {index}=await publication(request);
@@ -117,7 +127,7 @@ test('recommended hero cards keep role, tactic ordinals and books, linked to Tra
 });
 
 test('Đội khác detail drops the score panel content and Chinese name instead of faking them',async({page,request})=>{
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   const handles=await routeHandles(request);
   const team=teams.find(item=>item.nickname && item.faction && item.unitType?.length) || teams[0];
   await page.goto(legacyPath(handles,team.id));
@@ -282,7 +292,7 @@ test('Recommended detail distinguishes absent slots from untranslated populated 
 });
 
 test('legacy original keeps notes, counters, hero notes and every alternative',async({page,request})=>{
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   const handles=await routeHandles(request);
   const team=teams.find(item=>item.notes && (item.counters?.good?.length || item.counters?.avoid?.length))
     || teams.find(item=>item.notes);
@@ -317,7 +327,7 @@ test('legacy original keeps notes, counters, hero notes and every alternative',a
 });
 
 test('hostile source text is rendered as text and never executed',async({page,request})=>{
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   await page.goto(legacyPath(await routeHandles(request),teams[0].id));
   const hostile='<img src=x onerror="document.title=\'pwned\'">"><script>document.title="pwned"</script>';
   const rendered=await page.evaluate(async text=>{
@@ -339,7 +349,7 @@ test('hostile source text is rendered as text and never executed',async({page,re
   await expect(page).toHaveTitle(/^(?!pwned).*/);
 });
 test('duplicate legacy content renders once while every reviewed locator remains visible',async({page,request})=>{
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   await page.goto(legacyPath(await routeHandles(request),teams[0].id));
   const result=await page.evaluate(async()=>{
     // The direct renderer needs the legacy route registry before it can build original-team links.
@@ -386,7 +396,7 @@ test('duplicate legacy content renders once while every reviewed locator remains
 test('only the exact admitted pair resolves a variant and a bad one links back to the original',async({page,request})=>{
   const {other}=await publication(request);
   const handles=await routeHandles(request);
-  const admitted=other.records[0];
+  const admitted=completeRecord(other);
   const originalPath=legacyPath(handles,admitted.legacyTeamId);
   await page.goto(`${originalPath}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
   await expect(page.locator('#team-detail-body')).toBeVisible();
@@ -405,6 +415,14 @@ test('only the exact admitted pair resolves a variant and a bad one links back t
   expect(originalPath.startsWith('/doi-khac/')).toBe(true);
   // A rejected variant must never be answered with the original team content.
   await expect(page.locator('#team-detail-body')).toBeHidden();
+  // Biến thể có thật nhưng thuộc đội gốc khác (`/<A>/?variant=<biến thể của B>`): báo lỗi như cũ, không dựng nội dung trộn.
+  const foreign=other.records.find(row=>row.dataComplete===true && row.legacyTeamId!==admitted.legacyTeamId);
+  await page.goto(`${originalPath}?variant=${encodeURIComponent(foreign.legacyVariantId)}`);
+  await expect(page.locator('#team-detail-status [role="alert"]')).toContainText('Biến thể này không có trong dữ liệu đội khác đã xác minh');
+  await expect(page.locator('#team-detail-body')).toBeHidden();
+  await expect(page.locator('#team-detail-body')).toBeEmpty();
+  await expect(page.locator('#team-detail-root')).not.toContainText(foreign.legacyVariantId);
+  await expect(page.locator('#team-detail-badges')).toBeHidden();
   for (const suffix of ['?variant=','?variant=%2Fbad']) {
     await page.goto(`${originalPath}${suffix}`);
     await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
@@ -415,21 +433,70 @@ test('only the exact admitted pair resolves a variant and a bad one links back t
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });
 
-test('original pages stay readable while Recommended artifacts are unavailable',async({page,request})=>{
+test('only complete admitted originals have a page: a hidden handle keeps its ledger entry but serves the static 404',async({page,request})=>{
   const teams=await rawTeams(request);
   const handles=await routeHandles(request);
+  const frozen=frozenLegacyHandles();
   const {other}=await publication(request);
-  const pending=teams.find(team=>!other.records.some(row=>row.legacyTeamId===team.id));
-  await page.route('**/data/recommended/**',route=>route.abort());
-
-  await page.goto(legacyPath(handles,pending.id));
-  await expect(page.locator('#team-detail-body')).toBeVisible();
-  await expect(page.locator('h1#team-detail-title')).toHaveText(pending.nickname || pending.name);
-
-  // Duplicate/pending originals are reachable directly but are not admitted into Team khác.
-  await page.unroute('**/data/recommended/**');
+  const admitted=new Set(other.records.map(row=>row.legacyTeamId));
+  const complete=new Set(other.records.filter(row=>row.dataComplete===true).map(row=>row.legacyTeamId));
+  // Một đội admitted thiếu dữ liệu và một đội không admitted (trùng/chờ danh tính): cả hai ẩn, handle vẫn trong ledger.
+  const hidden=[
+    teams.find(team=>admitted.has(team.id) && !complete.has(team.id)),
+    teams.find(team=>!admitted.has(team.id)),
+  ];
+  for (const team of hidden) {
+    expect(team).toBeTruthy();
+    expect(frozen[team.id],team.id).toBeTruthy();
+    expect(handles.l[team.id],`${team.id} không được có trong bảng route của trang`).toBeUndefined();
+    for (const prefix of ['','/zh','/ja']) {
+      const response=await request.get(`${prefix}/doi-khac/${encodeURIComponent(frozen[team.id])}/`);
+      expect(response.status(),`${prefix} ${team.id}`).toBe(404);
+    }
+  }
+  await page.goto(`/doi-khac/${encodeURIComponent(frozen[hidden[0].id])}/`);
+  await expect(page.locator('#not-found-title')).toBeVisible();
+  // Danh sách không link tới đội bị ẩn.
   await page.goto('/doi-khac/');
-  await expect(page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${pending.id}"]`)).toHaveCount(0);
+  for (const team of hidden) await expect(page.locator(`#section-team-khac .reference-team-card[data-legacy-team-id="${team.id}"]`)).toHaveCount(0);
+});
+
+test('Đội khác pages stay readable while Recommended artifacts are unavailable',async({page,request})=>{
+  const teams=await pagedTeams(request);
+  const handles=await routeHandles(request);
+  const team=teams[0];
+  await page.route('**/data/recommended/**',route=>route.abort());
+  await page.goto(legacyPath(handles,team.id));
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('h1#team-detail-title')).toHaveText(team.nickname || team.name);
+});
+
+test('the other options of a team are real links to their own pages, marked where they differ, both without and with ?variant=',async({page,request})=>{
+  const handles=await routeHandles(request);
+  const {other}=await publication(request);
+  const byVariant=new Map(other.records.map(row=>[row.legacyVariantId,row]));
+  const group=other.teamGroups.find(item=>item.completeVariantIds.length>=3);
+  const options=group.completeVariantIds.map(id=>byVariant.get(id)).sort((a,b)=>a.optionRank-b.optionRank);
+  const [current,...rest]=options;
+  const currentPath=legacyPath(handles,current.legacyTeamId);
+  const expected=rest.map(row=>legacyPath(handles,row.legacyTeamId));
+  const optionLinks=()=>page.locator('#team-detail-body .detail-team-options a.detail-team-option-link').evaluateAll(links=>links.map(link=>link.getAttribute('href')));
+
+  for (const suffix of ['',`?variant=${encodeURIComponent(current.legacyVariantId)}`]) {
+    await page.goto(`${currentPath}${suffix}`);
+    await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
+    const section=page.locator('#team-detail-body .detail-team-options');
+    await expect(section.locator('h2')).toHaveText('Các phương án khác của team');
+    expect(await optionLinks(),suffix).toEqual(expected);
+    const diffs=section.locator('.detail-team-option-item.is-diff');
+    expect(await diffs.count()).toBeGreaterThan(0);
+    await expect(diffs.first().locator('.visually-hidden')).toHaveText(' (khác phương án đang xem)');
+  }
+  for (const path of expected) expect((await request.get(path)).status(),path).toBe(200);
+  // Bấm sang phương án khác: trang đó liệt kê lại phương án vừa xem.
+  await page.locator('#team-detail-body a.detail-team-option-link').first().click();
+  await expect(page).toHaveURL(expected[0]);
+  expect(await optionLinks()).toContain(currentPath);
 });
 
 test('Recommended detail is prerendered: broken runtime payloads cannot change it and nothing is fetched for it',async({page,request})=>{
@@ -625,7 +692,7 @@ test('a shared link without origin still offers the matching family scope',async
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',recommendedReturn);
   // Không referrer/state/storage: nút giữ link họ đội dựng sẵn; `teamDetailReturn: null` (khác `undefined`) chứng minh script đã chạy.
   await expect.poll(()=>page.evaluate(()=>history.state?.teamDetailReturn)).toBeNull();
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   await page.goto(legacyPath(handles,teams[0].id));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href','/doi-khac/');
   await expect.poll(()=>page.evaluate(()=>history.state?.teamDetailReturn)).toBeNull();
@@ -718,7 +785,7 @@ test('old reference links replace into dedicated routes while config keeps gamep
 test('retired team routes serve the static 404 while their replacements resolve',async({page,request})=>{
   const handles=await routeHandles(request);
   const {index}=await publication(request);
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   const recommendedId='team-b8ink3';
   expect(index.records.some(row=>row.sourceConfigId===recommendedId)).toBe(true);
   expect(handles.r[recommendedId]).toBe('pk-s24-tu-ma-phi-hung');
@@ -756,7 +823,7 @@ test('unknown routes serve the static 404 instead of the root shell',async({page
   await expect(page.locator('#section-menu-toggle')).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#section-menu-items')).toBeVisible();
 
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   const nested=await request.get(`${legacyPath(await routeHandles(request),teams[0].id)}data/teams.json`);
   expect(nested.status()).toBe(404);
   expect(await nested.text()).not.toContain('"id"');
@@ -765,7 +832,7 @@ test('unknown routes serve the static 404 instead of the root shell',async({page
 });
 
 test('theme toggle works on detail pages even when localStorage is denied',async({page,request})=>{
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   await page.addInitScript(()=>{
     Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new Error('denied');}});
   });
@@ -888,7 +955,7 @@ test('copy link on a Khai hoang detail keeps the chosen variant and drops from',
 test('a changed teams.json reads as a verification failure and an unreachable one as a network failure',async({page,request})=>{
   // Chỉ biến thể đã đối chiếu mới cần dữ liệu lúc chạy (thân mặc định đã dựng sẵn): đường tải phải đóng kín khi nguồn lệch.
   const {other}=await publication(request);
-  const admitted=other.records[0];
+  const admitted=completeRecord(other);
   const path=`${legacyPath(await routeHandles(request),admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`;
   await page.route('**/data/teams.json',async route=>{
     const response=await route.fetch();
@@ -909,7 +976,7 @@ test('a changed teams.json reads as a verification failure and an unreachable on
 test('prerendered Đội chuẩn and Đội khác details fetch nothing; an admitted variant fetches the display publication and teams.json once',async({page,request})=>{
   const handles=await routeHandles(request);
   const {index,other}=await publication(request);
-  const teams=await rawTeams(request);
+  const teams=await pagedTeams(request);
   const dataRequests=()=>{
     const requests=[];
     const record=req=>{const {pathname}=new URL(req.url());if (pathname.startsWith('/data/') && !pathname.startsWith('/data/recommended/')) requests.push(pathname);};
@@ -925,7 +992,7 @@ test('prerendered Đội chuẩn and Đội khác details fetch nothing; an admi
     seen.stop();
     expect(seen.requests,path).toEqual([]);
   }
-  const admitted=other.records[0];
+  const admitted=completeRecord(other);
   const seen=dataRequests();
   await page.goto(`${legacyPath(handles,admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
   await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
