@@ -403,7 +403,8 @@ test.describe("9c · link nguồn", () => {
       const href = (id) => card(page, id).locator(".mt-source-link").getAttribute("href");
       expect(await href("team-link-r")).toBe(`${prefix}/doi-chuan/${tables.r[RECOMMENDED_ID]}/`);
       expect(await href("team-link-han")).toBe(`${prefix}/doi-chuan/${encodeURIComponent(tables.r[hanId])}/`);
-      expect(await href("team-link-l")).toBe(`${prefix}/doi-khac/${tables.l[LEGACY_ID]}/?variant=${LEGACY_VARIANT}`);
+      // Đội đã lưu từ trang biến thể (khóa `x~v`): mỗi đội gốc một phương án nên link về thẳng trang của đội, không `?variant=`.
+      expect(await href("team-link-l")).toBe(`${prefix}/doi-khac/${tables.l[LEGACY_ID]}/`);
       expect(await href("team-link-k")).toBe(`${prefix}/khai-hoang/${tables.k[KHAI_HOANG_ID]}/?variant=${variant.id}`);
 
       await card(page, "team-link-k").locator(".mt-source-link").click();

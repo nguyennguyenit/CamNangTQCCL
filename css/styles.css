@@ -6974,17 +6974,104 @@ main.layout:has(> .detail-content) {
   padding-bottom: 0;
 }
 
-/* Binh thư tham khảo theo tướng (Đội khác không ghi binh thư): chữ nhạt + ghi chú nghiêng để không lẫn với binh thư
-   của chính đội. */
-.detail-hero-books.is-hint .detail-hero-books-item {
+/* "Các phương án khác của team" (trang Đội khác): mỗi phương án một mục có link tới trang của nó, bên dưới là các tướng
+   có chiến pháp/binh thư khác phương án đang xem; ô khác (`.is-diff`) nền son nhạt + chữ đậm, nhãn đọc màn hình kèm theo. */
+.detail-team-options-note {
+  margin: 0;
+  font: var(--type-small);
   color: var(--muted);
 }
 
-.detail-hero-hint-note {
-  margin: var(--space-4) 0 0;
+.detail-team-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-12);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail-team-option {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+  padding: var(--space-14) var(--space-18);
+  background: var(--panel);
+  border: var(--border-hair) solid var(--line);
+  border-radius: var(--radius-10);
+}
+
+.detail-team-option-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-8);
+  margin: 0;
+}
+
+.detail-team-option-link {
+  font: var(--type-strong);
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: var(--space-3);
+}
+
+.detail-team-option-link:hover {
+  color: var(--accent);
+}
+
+.detail-team-option-diff {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.detail-team-option-hero {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-12);
+  row-gap: var(--space-4);
+  font: var(--type-small);
+  color: var(--ink-2);
+}
+
+.detail-team-option-name {
+  font: var(--type-hero-name);
+  color: var(--ink);
+}
+
+.detail-team-option-slots {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-6);
+}
+
+.detail-team-option-label {
   font: var(--type-meta);
   color: var(--muted);
-  font-style: italic;
+}
+
+.detail-team-option-item {
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-3);
+}
+
+.detail-team-option-item.is-diff {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-weight: var(--weight-semibold);
+}
+
+/* "N phương án" trên thẻ/hàng bảng team Đội khác: chữ đậm cùng cỡ dòng meta, không xuống dòng giữa số và chữ. */
+.reference-option-count {
+  color: var(--ink-2);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
 }
 
 /* ---------- Ô kỳ lược (trang chi tiết Đội chuẩn) ---------- */

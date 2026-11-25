@@ -35,6 +35,7 @@ import {
 import { api, describeError, loadSession, signInPrompt } from "./community-api.js";
 import { L, LOCALE_INTL, contentLocaleIsVietnamese, currentLocale, localePath, pick } from "./i18n.js";
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
+import { websiteOtherRecords } from "./other-team-groups.js";
 import { createRawNameResolver, localName, localRawName, localRecordName } from "./website-display.js";
 import { withLocaleAliases } from "./locale-name-aliases.js";
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
@@ -1118,7 +1119,8 @@ export function initAnalyze(deps, mount) {
     writeUrl({ [SEASON_QUERY_KEY]: season, [TEAM_QUERY_KEY]: doi }, push);
     const standardRecords = (loaded.index?.records || []).filter((record) => season === "all" || record.sourceSeasonId === season);
     const standard = compareTeams(team, standardRecords, { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
-    const other = compareTeams(team, loaded.other?.records || [], { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
+    // Chỉ đối chiếu phương án Đội khác mà website hiện (đủ dữ liệu, có trang), cùng quy tắc với danh sách và MCP.
+    const other = compareTeams(team, websiteOtherRecords(loaded.other), { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf });
     compared = { team, season, standard, other };
     compareSub.textContent = L("Theo số tướng rồi số chiến pháp khớp", "按相同武将数、再按相同战法数排序", "一致する武将数、次に一致する戦法数の順に並べています");
     compareBody.replaceChildren(

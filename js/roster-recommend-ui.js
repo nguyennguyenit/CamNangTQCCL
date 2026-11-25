@@ -147,7 +147,7 @@ function relativeTime(iso, locale) {
   return format.format(-Math.floor(seconds / 86400), "day");
 }
 
-export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, jaEntries = null, rawNames = null, loadRecommended, onOpenTeam }, mount) {
+export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, jaEntries = null, rawNames = null, loadRecommended, onOpenTeam, canOpenTeam = null }, mount) {
   if (!mount) return;
   // Gợi ý đội chạy bằng công cụ cục bộ nên không phụ thuộc Worker AI: chưa cấu hình thì chỉ thiếu đọc ảnh và nút "Vì sao?".
   const aiReady = isAnalyzeConfigured();
@@ -1111,7 +1111,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
     "outline",
     { class: "roster-pill roster-tier" },
   );
-  const openButton = (team) => el("button", { type: "button", class: "roster-open", onClick: () => onOpenTeam?.(team) }, [L("Mở đội", "查看队伍", "部隊を開く"), arrowIcon()]);
+  /** Nút mở trang đội; đội không có trang (`canOpenTeam` trả false, ví dụ đội gốc chưa đủ dữ liệu) thì không có nút. */
+  const openButton = (team) => (canOpenTeam && !canOpenTeam(team)
+    ? null
+    : el("button", { type: "button", class: "roster-open", onClick: () => onOpenTeam?.(team) }, [L("Mở đội", "查看队伍", "部隊を開く"), arrowIcon()]));
 
   /**
    * Nút "Lưu vào đội của tôi" của một thẻ kết quả: đội nháp dựng LÚC BẤM từ đúng lựa chọn đang hiện (tướng/chiến pháp đã

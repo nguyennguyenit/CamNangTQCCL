@@ -12,6 +12,7 @@ import {
   setZhNameResolver,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent } from './recommended-reference-render.js';
+import { otherTeamOptions } from './other-team-groups.js';
 import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
@@ -88,15 +89,6 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   };
 
   const {family, generationId, manifestSha256, legacyTeamId, legacyTeamsSha256} = root.dataset;
-  // Binh thư tham khảo theo tướng do SSR tính (`data-book-hints`): nhánh biến thể dựng lại bằng đúng bảng này.
-  const bookHints = (() => {
-    try {
-      const parsed = JSON.parse(root.dataset.bookHints || 'null');
-      return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
-    } catch {
-      return null;
-    }
-  })();
   const pin = {schemaVersion: 1, generationId, manifestSha256};
   const websitePin = JSON.parse(documentTarget.querySelector('#website-display-publication')?.textContent || 'null');
   let websiteDisplay;
@@ -163,10 +155,14 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     const team = matches[0];
     const originalLink = el('a', {class: 'detail-link', href: teamDetailPath({legacyTeamId})}, L('Xem đội gốc', '查看原始阵容', '元の編成を見る'));
     let admitted;
+    let teamOptions = [];
     try {
       const {load} = await loadVerifiedRecommendedManifest(pin, name => fetchBytes(`/data/recommended/${name}`));
       const other = await load('other-teams.json');
+      // Biến thể phải thuộc đúng đội gốc của trang: `/<A>/?variant=<biến thể của B>` báo lỗi, không dựng nội dung trộn.
       admitted = (other.records || []).find(row => row.legacyTeamId === legacyTeamId && row.legacyVariantId === requestedVariant) || null;
+      // Các phương án khác của team: cùng hàm và cùng payload đã pin với bản dựng sẵn (src/lib/team-ssr.ts).
+      if (admitted) teamOptions = otherTeamOptions(other, legacyTeamId);
     } catch {
       // Không xác minh được biến thể thì báo rõ, không hiển thị đội gốc như thể là biến thể.
       showError(L('Không xác minh được biến thể được yêu cầu.', '无法验证所请求的变体。', 'リクエストされたバリアントを検証できませんでした。'), {actions: [originalLink]});
@@ -179,7 +175,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
     const content = {...(admitted.legacyContent || team), notes: team.notes};
     // Nhãn "Đề cử" theo đúng hàng biến thể đã admit; `content` (đưa vào builder lưu đội) không mang field hiển thị này.
     paintHeader({...content, referenceRecommended: admitted.recommended === true}, null, legacyVariantBuilder(content, requestedVariant));
-    showContent(legacyOriginalDetailContent(content, {variant: admitted, bookHints}));
+    showContent(legacyOriginalDetailContent(content, {variant: admitted, teamOptions}));
   }
 
   async function load() {

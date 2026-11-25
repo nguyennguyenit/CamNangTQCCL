@@ -410,10 +410,11 @@ test.describe("Chiêu mộ", () => {
  */
 async function analyzeFixture(page) {
   const fixture = await page.evaluate(async () => {
-    const [{ compareTeams, createEntityIndex, referenceTeam }, { encodeTeamParam }, { createBookNameIndex, createTacticIdResolver }] = await Promise.all([
+    const [{ compareTeams, createEntityIndex, referenceTeam }, { encodeTeamParam }, { createBookNameIndex, createTacticIdResolver }, { websiteOtherRecords }] = await Promise.all([
       import("/js/analyze-map.js"),
       import("/js/analyze-state.js"),
       import("/js/lookup-ids.js"),
+      import("/js/other-team-groups.js"),
     ]);
     const json = (path) => fetch(path).then((response) => response.json());
     const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
@@ -445,7 +446,8 @@ async function analyzeFixture(page) {
       const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
       // Đội khác hiện ra đúng như trang xếp (top 5 theo tướng rồi chiến pháp khớp), không phải bản ghi khớp đầu tiên
       // trong `other-teams.json`: đội đề cử đứng đầu file nhưng chưa chắc lọt top 5.
-      const otherMatch = compareTeams(team, other.records, { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf })[0]?.record;
+      // Trang chỉ đối chiếu phương án Đội khác mà website hiện (đủ dữ liệu, có trang).
+      const otherMatch = compareTeams(team, websiteOtherRecords(other), { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf })[0]?.record;
       if (unsureIndex < 0 || !otherMatch) continue;
       const reads = team.heroes.map((member, position) => ({
         nameCn: position === unsureIndex

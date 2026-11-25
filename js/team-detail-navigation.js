@@ -119,18 +119,10 @@ export function teamDetailPath(target, locale = currentLocale()) {
   return segment ? localePath(`/${prefix}/${encodeURIComponent(segment)}/`, locale) : null;
 }
 
-export function teamDetailHref(target, {from, origin, locale = currentLocale()} = {}) {
-  const path = teamDetailPath(target, locale);
-  if (!path) return null;
+/** Ghép query của link chi tiết: `variant` (nếu có) rồi `from` đã qua `safeReturnUrl`. */
+function detailHrefWithQuery(path, variant, {from, origin} = {}) {
   const query = new URLSearchParams();
-  // Khai hoang chỉ phát `variant` cho cấu hình nondefault; legacy giữ nguyên hành vi cũ.
-  const khaiHoang = routableIdentifier(target?.khaiHoangTeamId) && !routableIdentifier(target?.sourceConfigId) && !routableIdentifier(target?.legacyTeamId);
-  const variant = khaiHoang
-    ? (routableIdentifier(target?.khaiHoangVariantId) ? target.khaiHoangVariantId : null)
-    : !target.sourceConfigId && target?.legacyVariantId !== null && target?.legacyVariantId !== undefined
-      ? String(target.legacyVariantId)
-      : null;
-  if (variant !== null) query.set('variant', variant);
+  if (variant !== null && variant !== undefined) query.set('variant', String(variant));
   const returnUrl = safeReturnUrl(from, {origin});
   if (returnUrl) query.set('from', returnUrl);
   const search = query.toString();
@@ -138,8 +130,21 @@ export function teamDetailHref(target, {from, origin, locale = currentLocale()} 
 }
 
 /**
- * Link chi tiết của một hàng Đội chuẩn (`sourceConfigId`) / Đội khác (`legacyTeamId` hoặc `id`, kèm biến thể);
- * dùng chung giữa danh sách dựng sẵn lúc build và trình duyệt. `from`: URL trang danh sách.
+ * Link trang chi tiết. Khai hoang chỉ phát `variant` cho cấu hình nondefault. Đội khác không phát `variant`: mỗi đội gốc
+ * đúng một phương án (src/lib/team-detail-routes.ts dừng build nếu không), nên `legacyVariantId` thừa, và `?variant=` còn
+ * làm trang ẩn thân dựng sẵn rồi tải lại other-teams.json. URL cũ có `?variant=` vẫn mở được (js/team-detail.js).
+ */
+export function teamDetailHref(target, {from, origin, locale = currentLocale()} = {}) {
+  const path = teamDetailPath(target, locale);
+  if (!path) return null;
+  const khaiHoang = routableIdentifier(target?.khaiHoangTeamId) && !routableIdentifier(target?.sourceConfigId) && !routableIdentifier(target?.legacyTeamId);
+  const variant = khaiHoang && routableIdentifier(target?.khaiHoangVariantId) ? target.khaiHoangVariantId : null;
+  return detailHrefWithQuery(path, variant, {from, origin});
+}
+
+/**
+ * Link chi tiết của một hàng Đội chuẩn (`sourceConfigId`) / Đội khác (`legacyTeamId` hoặc `id`; biến thể không vào URL);
+ * dùng chung giữa danh sách dựng sẵn lúc build, trang chi tiết và trình duyệt. `from`: URL trang danh sách.
  */
 export function referenceDetailHref(row, options) {
   return teamDetailHref(
@@ -461,8 +466,10 @@ export function migrateLegacyReferenceUrl(href, resolver = {}) {
     if (target) return {target, replace: true};
   }
   if (legacyTeamId && resolver.hasLegacy?.(legacyTeamId)) {
-    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {from, locale});
-    if (target) return {target, replace: true};
+    // URL gốc cũ có `legacyVariant` giữ nguyên ý nghĩa: biến thể đi tiếp sang `?variant=` để trang chi tiết đối chiếu
+    // (biến thể không thuộc đội thì báo lỗi). Link mới (`teamDetailHref`) không phát `variant` cho Đội khác.
+    const path = teamDetailPath({legacyTeamId}, locale);
+    if (path) return {target: detailHrefWithQuery(path, legacyVariantId, {from}), replace: true};
   }
   return null;
 }

@@ -47,6 +47,23 @@ for (const [name, listPath, linkSelector, script, variant] of [
   });
 }
 
+test("Đội khác: ?variant= của đội gốc khác ẩn thân dựng sẵn khi đang tải rồi báo lỗi, không dựng nội dung trộn", async ({ page, request }) => {
+  const pin = await (await request.get("/data/recommended/current.json")).json();
+  const other = await (await request.get(`/data/recommended/${pin.generationId}/other-teams.json`)).json();
+  const path = await firstDetailHref(page, "/doi-khac/", "main a[data-team-detail-link]");
+  await page.goto(path);
+  const own = await page.locator("#team-detail-root").getAttribute("data-legacy-team-id");
+  const foreign = other.records.find((row) => row.dataComplete === true && row.legacyTeamId !== own);
+  await page.unroute("**/*");
+  const release = await openGated(page, `${path}?variant=${encodeURIComponent(foreign.legacyVariantId)}`, "team-detail.js");
+  expect(await page.locator("#team-detail-body").evaluate((node) => node.hidden), "đang tải: thân dựng sẵn bị ẩn").toBe(true);
+  release();
+  await expect(page.locator("#team-detail-status .error")).toBeVisible();
+  await expect(page.locator("#team-detail-body")).toBeHidden();
+  expect(await page.locator("#team-detail-body").evaluate((node) => node.childElementCount), "sau lỗi không còn thân").toBe(0);
+  await expect(page.locator("#team-detail-root")).not.toContainText(foreign.legacyVariantId);
+});
+
 test("Khai hoang: bấm chip Mặc định khi chưa tải gì không tải dữ liệu và không xoá thân dựng sẵn", async ({ page }) => {
   const path = await firstDetailHref(page, "/khai-hoang/", "main a.kh-title-link");
   const requested = [];

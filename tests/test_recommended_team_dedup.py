@@ -189,6 +189,35 @@ class RecommendedDedupTest(unittest.TestCase):
         self.assertEqual(result["counts"], {"distinct": 3, "duplicate": 3, "pendingIdentity": 0, "pendingSource": 0})
         self.assertEqual(len(result["admitted"]), result["counts"]["distinct"])
 
+    def test_local_merge_keeps_book_and_unit_variants(self):
+        """Gộp trùng nội bộ (khóa v2) xét cả binh thư và binh chủng: hàng đề cử thiếu binh thư không nuốt
+        hàng sheet đủ binh thư cùng tướng + chiến pháp."""
+        entries = [{"kind": "hero", "stableId": f"h{index}", "aliases": [f"H{index}"],
+                    "reviewStatus": "reviewed", "evidenceRef": f"fixture:{index}"} for index in range(1, 4)]
+        entries += [{"kind": "tactic", "stableId": f"t{index}", "aliases": [f"T{index}"],
+                     "reviewStatus": "reviewed", "evidenceRef": f"fixture:t{index}"} for index in range(1, 7)]
+
+        def team(identifier, source, books=("B1",), unit=("Cung",)):
+            heroes = [{"name": f"H{index}", "tactics": [{"name": f"T{2 * index - 1}"}, {"name": f"T{2 * index}"}],
+                       "books": [{"name": name} for name in books]} for index in range(1, 4)]
+            return {"id": identifier, "source": source, "name": identifier, "unitType": list(unit), "heroes": heroes}
+
+        teams = [
+            team("youtube-0", "youtube", books=()),         # đề cử nhưng thiếu binh thư
+            team("team-intro-1", "team-intro"),             # chỉ khác binh thư → phương án riêng
+            team("moi-phe-2", "moi-phe", books=("B2",)),    # khác binh thư → phương án riêng
+            team("moi-phe-3", "moi-phe", unit=("Kỵ",)),     # khác binh chủng → phương án riêng
+            team("moi-phe-4", "moi-phe"),                   # trùng hệt team-intro-1 → duplicate
+            team("youtube-5", "youtube", books=()),         # trùng hệt youtube-0 → duplicate
+        ]
+        result = build_other_team_ledger(teams, [], {"entries": entries}, season_id="pk-s27")
+        self.assertEqual(result["localMergeKeyVersion"], 2)
+        self.assertEqual([row["legacyTeamId"] for row in result["admitted"]],
+                         ["youtube-0", "team-intro-1", "moi-phe-2", "moi-phe-3"])
+        decisions = {row["legacyTeamId"]: row for row in result["decisions"]}
+        self.assertEqual(decisions["moi-phe-4"].get("matchingLocal"), "team-intro-1")
+        self.assertEqual(decisions["youtube-5"].get("matchingLocal"), "youtube-0")
+
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests/fixtures/sgsdeck-recommended"
 DETAIL_URL = "https://sgsdeck.com/recommended/og-bingyan-40y-lvbu-b"
