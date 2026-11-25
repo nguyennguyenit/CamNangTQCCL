@@ -559,7 +559,8 @@ test('the legacy table names rows by nickname before name without touching ident
   await row.locator('.reference-table-name').click();
   await expect(page).toHaveURL(new RegExp(href.split('?')[0]));
   await expect(page.locator('#team-detail-root')).toHaveAttribute('data-legacy-team-id',legacy.legacyTeamId);
-  if (legacy.legacyVariantId) await expect(page).toHaveURL(new RegExp(`variant=${encodeURIComponent(legacy.legacyVariantId)}`));
+  // Mỗi đội gốc một phương án: link không mang `?variant=`, trang mở thẳng thân dựng sẵn.
+  expect(new URL(page.url()).searchParams.has('variant')).toBe(false);
   await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
   await expect(page.locator('#team-detail-body')).toBeVisible();
 });

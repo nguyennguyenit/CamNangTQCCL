@@ -143,7 +143,9 @@ class PublishedGenerationTest(unittest.TestCase):
             tactic_catalog_bytes=(root / "data/tactics.json").read_bytes(),
             hero_catalog_bytes=(root / "data/heroes-dict.json").read_bytes(),
             records=json.loads((generation / "index.json").read_text())["records"],
-            other_records=json.loads((generation / "other-teams.json").read_text())["records"],
+            # Số liệu chỉ tính phương án Đội khác đủ dữ liệu (cùng tập mà website hiện).
+            other_records=[row for row in json.loads((generation / "other-teams.json").read_text())["records"]
+                           if row.get("dataComplete")],
         )
 
 

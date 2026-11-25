@@ -547,3 +547,22 @@ test("trang đội mùa cũ hơn mùa hiện tại có nhãn \"mùa cũ\" (zh: �
   }
   assert.ok(old > 0 && current > 0 && newer > 0);
 });
+
+test("Đội khác chỉ dựng trang cho phương án admitted + đủ dữ liệu: handle tạm ẩn không có file dist, không vào sitemap và llms", async () => {
+  const catalog = await teamDetailCatalog();
+  assert.ok(catalog.legacy.length > 0 && catalog.hiddenLegacy.length > 0, "dữ liệu thật có cả trang và handle tạm ẩn");
+  const [sitemap, full] = await Promise.all([read("sitemap.xml"), read("llms-full.txt")]);
+  const llmsUrls = new Set(markdownLinks(full));
+  for (const [locale, prefix] of TEAM_LOCALES) {
+    // Thư mục trang Đội khác của dist đúng bằng các trang trong catalog, không thừa trang của handle tạm ẩn.
+    const dirs = (await readdir(dist(`${prefix.slice(1)}${prefix ? "/" : ""}doi-khac`), { withFileTypes: true }))
+      .filter((entry) => entry.isDirectory()).map((entry) => entry.name).sort();
+    assert.deepEqual(dirs, catalog.legacy.map((entry) => entry.routeSegment).sort(), `${locale}: thư mục doi-khac/ của dist`);
+    for (const entry of catalog.hiddenLegacy) {
+      const url = `${ORIGIN}${prefix}${entry.routePath}`;
+      assert.equal(await exists(pageFile(`${prefix}${entry.routePath}`)), false, `${locale}: ${entry.legacyTeamId} bị ẩn mà vẫn có trang`);
+      assert.ok(!sitemap.includes(`"${url}"`) && !sitemap.includes(`>${url}<`), `${locale}: sitemap còn ${url}`);
+      assert.ok(!llmsUrls.has(url), `${locale}: llms-full.txt còn ${url}`);
+    }
+  }
+});

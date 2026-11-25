@@ -40,11 +40,14 @@ const legacyTeam=(id,overrides={})=>({
   heroes:[{name:'Tuân Úc',baseName:'Tuân Úc',alternatives:[],variant:null,isSP:false,isCO:false,tactics:[],books:[],note:null}],
   counters:{good:[],avoid:[]},notes:null,...overrides,
 });
-const admittedRow=(legacyTeamId,legacyVariantId,legacyContent)=>({
+/** Hàng admitted của `other-teams.json`; `dataComplete` mặc định true (phương án đủ dữ liệu có trang). */
+const admittedRow=(legacyTeamId,legacyVariantId,legacyContent,options={})=>({
   classification:'distinct',dedupKeyVersion:1,legacyTeamId,legacyVariantId,
   name:legacyContent.name,nickname:legacyContent.nickname,source:legacyContent.source,
   sourceLabel:'Giới thiệu',holders:[],legacyContent,
   legacyContentSha256:'sha256:'+'3'.repeat(64),
+  // Khóa có mặt với giá trị `undefined` thì JSON bỏ hẳn khóa: dùng để thử hàng thiếu cờ.
+  dataComplete:Object.hasOwn(options,'dataComplete') ? options.dataComplete : true,
 });
 
 /** Fixture ledger freezes the raw identifier as the handle; season codes are owned by the catalog. */
@@ -69,7 +72,8 @@ async function fixture({
   seasonCodes={},
   teams,
   khaiHoangTeams=KHAIHOANG_TEAMS,
-  variants=[['team-intro-0','v-'+'a'.repeat(64)]],
+  // Mặc định: team-intro-0 đủ dữ liệu (có trang), team-intro-1 admitted thiếu dữ liệu, moi-phe-4 không admitted.
+  variants=[['team-intro-0','v-'+'a'.repeat(64)],['team-intro-1','v-'+'b'.repeat(64),{dataComplete:false}]],
   legacyTeamsHash,
 }={}) {
   const root=await mkdtemp(join(tmpdir(),'team-detail-routes-'));
@@ -92,7 +96,7 @@ async function fixture({
   const payloads={
     'seasons.json':bytes({schemaVersion:1,seasonOptions:[],scopes:[]}),
     'index.json':bytes({schemaVersion:1,records}),
-    'other-teams.json':bytes({schemaVersion:1,records:variants.map(([teamId,variantId])=>admittedRow(teamId,variantId,byId.get(teamId) || legacyTeam(teamId)))}),
+    'other-teams.json':bytes({schemaVersion:1,records:variants.map(([teamId,variantId,options])=>admittedRow(teamId,variantId,byId.get(teamId) || legacyTeam(teamId),options))}),
     'hero-summaries.json':bytes({schemaVersion:1,provenance:{catalogSha256:`sha256:${'0'.repeat(64)}`,
       recommendedJoin:'heroes[].nameRaw ↔ chinese|aliases',otherJoin:'holders[].nameRaw ↔ hanViet',
       unmatchedSlots:{recommended:0,other:0},ambiguousSlots:{recommended:0,other:0}},summaries:{}}),
@@ -163,13 +167,14 @@ test('route builders are the single source of the Vietnamese path shape',()=>{
   assert.equal(recommendedRoutePath('pk-s24-仙人盾'),`/doi-chuan/${encodeURIComponent('pk-s24-仙人盾')}/`);
 });
 
-test('catalog routes every selected Recommended row and every raw original exactly once',async t=>{
-  const setup=await fixture();
+test('catalog routes every selected Recommended row and every complete admitted original exactly once',async t=>{
+  const setup=await fixture({variants:[['team-intro-0','v-'+'a'.repeat(64)],['team-intro-1','v-'+'b'.repeat(64)],['moi-phe-4','v-'+'c'.repeat(64)]]});
   t.after(()=>rm(setup.root,{recursive:true,force:true}));
   const catalog=await build(setup);
 
   assert.deepEqual(catalog.recommended.map(entry=>entry.sourceConfigId),['team-alpha','yxms-049-仙人盾-by大米']);
   assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId),['team-intro-0','team-intro-1','moi-phe-4']);
+  assert.deepEqual(catalog.hiddenLegacy,[]);
   // The final segment is the row's season code plus the frozen handle; every path derives from it.
   assert.equal(catalog.recommended[0].routeSegment,'pk-s24-team-alpha');
   assert.equal(catalog.recommended[0].routePath,'/doi-chuan/pk-s24-team-alpha/');
@@ -181,14 +186,51 @@ test('catalog routes every selected Recommended row and every raw original exact
   assert.equal(catalog.legacy[0].routePath,'/doi-khac/team-intro-0/');
   assert.equal(catalog.legacy[0].htmlPath,'doi-khac/team-intro-0/index.html');
 
-  // Originals that were never admitted into Team khác still have their own readable page.
-  assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='moi-phe-4').variantIds,[]);
+  // Mỗi trang Đội khác là đúng một phương án đã admit.
+  assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='moi-phe-4').variantIds,['v-'+'c'.repeat(64)]);
   assert.deepEqual(catalog.legacy.find(entry=>entry.legacyTeamId==='team-intro-0').variantIds,['v-'+'a'.repeat(64)]);
 
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(await readFile(setup.teamsPath))}`);
   assert.equal(catalog.generationId,setup.generationId);
+});
+
+test('only complete admitted originals get a page; the others keep their frozen handle and turn into a 404',async t=>{
+  const setup=await fixture();
+  t.after(()=>rm(setup.root,{recursive:true,force:true}));
+  const catalog=await build(setup);
+
+  // team-intro-1 admitted nhưng thiếu dữ liệu, moi-phe-4 không admitted (trùng/chờ danh tính): không dựng trang.
+  assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId),['team-intro-0']);
+  assert.deepEqual(catalog.hiddenLegacy.map(entry=>[entry.legacyTeamId,entry.reason]),[['team-intro-1','incomplete'],['moi-phe-4','not-admitted']]);
+  assert.deepEqual(catalog.htmlPaths.filter(path=>path.startsWith('doi-khac/')),['doi-khac/team-intro-0/index.html']);
+  // Handle tạm ẩn vẫn là handle đóng băng của ledger, cùng URL cũ khi phương án đủ dữ liệu trở lại.
+  for (const entry of catalog.hiddenLegacy) {
+    assert.equal(entry.routeSegment,setup.defaultHandles.legacy[entry.legacyTeamId]);
+    assert.equal(entry.routePath,legacyRoutePath(entry.routeSegment));
+    assert.equal(Object.hasOwn(entry,'htmlPath'),false,'handle tạm ẩn không có file trang');
+  }
+  assert.ok(catalog.variants.some(variant=>variant.legacyTeamId==='team-intro-1'),'biến thể admitted vẫn nằm trong danh sách biến thể');
+
+  // Ledger vẫn phải giữ đúng bộ khóa của mọi đội gốc, kể cả đội bị ẩn: thiếu handle của đội ẩn là lỗi như cũ.
+  const withoutHidden=await setup.alternativeLedger({handles:{legacy:{'team-intro-0':'team-intro-0'}}},'without-hidden.json');
+  await assert.rejects(build(setup,withoutHidden),/missing handles for 2 legacy team: moi-phe-4, team-intro-1/);
+  // Hai đội (một hiện, một ẩn) không được dùng chung handle.
+  const sharedHidden=await setup.alternativeLedger({handles:{legacy:{...setup.defaultHandles.legacy,'moi-phe-4':'team-intro-0'}}},'shared-hidden.json');
+  await assert.rejects(build(setup,sharedHidden),/duplicate legacy route paths/i);
+});
+
+test('an original with more than one admitted variant or without a boolean completeness flag is rejected',async t=>{
+  const cleanup=[];
+  t.after(()=>Promise.all(cleanup.map(setup=>rm(setup.root,{recursive:true,force:true}))));
+  // Link trang chi tiết Đội khác không còn mang `?variant=`: một đội gốc hai biến thể phải dừng build, không lặng lẽ mở biến thể đầu.
+  const twoVariants=await fixture({variants:[['team-intro-0','v-'+'a'.repeat(64)],['team-intro-0','v-'+'d'.repeat(64)]]}); cleanup.push(twoVariants);
+  await assert.rejects(build(twoVariants),/team-intro-0.*more than one admitted variant/i);
+  for (const flag of [undefined,null,'true',1]) {
+    const setup=await fixture({variants:[['team-intro-0','v-'+'a'.repeat(64),{dataComplete:flag}]]}); cleanup.push(setup);
+    await assert.rejects(build(setup),/dataComplete/,`must reject ${JSON.stringify(flag)}`);
+  }
 });
 
 test('the season code in the final segment always comes from the row',async t=>{
@@ -397,12 +439,12 @@ test('a custom project root must supply the ledger that belongs to it',async t=>
   // Custom roots are never served from the default cache, and they never poison it.
   const custom=await teamDetailCatalog({recommendedRoot:setup.recommendedRoot,teamsPath:setup.teamsPath,handlesPath:setup.handlesPath,khaiHoangPath:setup.khaiHoangPath});
   assert.equal(custom.recommended.length,2);
-  assert.equal(custom.htmlPaths.length,7);
+  assert.equal(custom.htmlPaths.length,5);
   assert.equal(custom.generationId,setup.generationId);
   const cached=await teamDetailCatalog();
   assert.equal(cached.generationId,defaultCatalog.generationId);
   assert.equal(cached.recommended.length,1681);
-  assert.equal(cached.htmlPaths.length,2144);
+  assert.equal(cached.htmlPaths.length,defaultCatalog.htmlPaths.length);
 });
 
 test('worktree publication yields the real route inventory and pins the real originals',async()=>{
@@ -415,11 +457,22 @@ test('worktree publication yields the real route inventory and pins the real ori
 
   assert.equal(catalog.legacyTeamsSha256,`sha256:${hash(teamsBytes)}`);
   assert.equal(catalog.generationId,ledger.generationId);
-  assert.equal(catalog.legacy.length,teams.length);
-  assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId).sort(),teams.map(team=>team.id).sort());
+  // Trang Đội khác = đúng các phương án admitted + đủ dữ liệu của generation đang pin; mọi đội gốc khác là handle tạm ẩn.
+  const other=JSON.parse(await readFile(new URL(`../src/data/recommended-reference/${catalog.generationId}/other-teams.json`,import.meta.url),'utf8'));
+  const complete=other.records.filter(row=>row.dataComplete===true).map(row=>row.legacyTeamId).sort();
+  assert.deepEqual(catalog.legacy.map(entry=>entry.legacyTeamId).sort(),complete);
+  assert.equal(catalog.legacy.length+catalog.hiddenLegacy.length,teams.length);
+  assert.deepEqual([...catalog.legacy,...catalog.hiddenLegacy].map(entry=>entry.legacyTeamId).sort(),teams.map(team=>team.id).sort());
+  const admitted=new Set(other.records.map(row=>row.legacyTeamId));
+  for (const entry of catalog.hiddenLegacy) {
+    assert.equal(entry.reason,admitted.has(entry.legacyTeamId) ? 'incomplete' : 'not-admitted',entry.legacyTeamId);
+    assert.equal(entry.routeSegment,ledger.handles.legacy[entry.legacyTeamId],entry.legacyTeamId);
+  }
+  assert.deepEqual(Object.keys(ledger.handles.legacy).sort(),teams.map(team=>team.id).sort(),'ledger giữ handle của mọi đội gốc');
   assert.equal(catalog.recommended.length,Object.keys(ledger.handles.recommended).length);
   assert.equal(catalog.recommended.length,1681);
-  assert.equal(catalog.legacy.length,443);
+  assert.equal(catalog.legacy.length,255);
+  assert.equal(catalog.hiddenLegacy.length,188);
   assert.equal(new Set(catalog.recommended.map(entry=>entry.sourceConfigId)).size,catalog.recommended.length);
   assert.equal(catalog.htmlPaths.length,catalog.recommended.length+catalog.legacy.length+catalog.khaiHoang.length);
   assert.equal(new Set(catalog.htmlPaths).size,catalog.htmlPaths.length);
@@ -449,7 +502,7 @@ test('worktree publication yields the real route inventory and pins the real ori
     assert.equal(entry.htmlPath,`doi-khac/${entry.routeSegment}/index.html`);
   }
   for (const variant of catalog.variants) {
-    assert.ok(catalog.legacy.some(entry=>entry.legacyTeamId===variant.legacyTeamId));
+    assert.ok([...catalog.legacy,...catalog.hiddenLegacy].some(entry=>entry.legacyTeamId===variant.legacyTeamId));
   }
 
   // Khai hoang identity is pinned here and its pages ship in the same emitted inventory.
@@ -471,7 +524,7 @@ test('worktree publication yields the real route inventory and pins the real ori
     catalog.htmlPaths.filter(path=>path.startsWith('khai-hoang/')),
     catalog.khaiHoang.map(entry=>entry.htmlPath).sort(),
   );
-  assert.equal(catalog.htmlPaths.length,1681+443+20);
+  assert.equal(catalog.htmlPaths.length,1681+255+20);
 });
 
 test('Khai hoang route contract: an injected source yields the emitted routes and pins',async t=>{
@@ -509,7 +562,8 @@ test('Khai hoang route contract: a v3 ledger reads the v1 Recommended publicatio
   assert.deepEqual(Object.keys(ledger.handles).sort(),['khaihoang','legacy','recommended']);
   assert.equal(catalog.generationId,setup.generationId);
   assert.equal(catalog.recommended.length,2);
-  assert.equal(catalog.legacy.length,3);
+  assert.equal(catalog.legacy.length,1);
+  assert.equal(catalog.hiddenLegacy.length,2);
   const published=await Promise.all([
     readFile(join(setup.recommendedRoot,'current.json'),'utf8'),
     readFile(join(setup.recommendedRoot,setup.generationId,'manifest.json'),'utf8'),

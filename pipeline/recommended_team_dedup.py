@@ -9,6 +9,7 @@ from pathlib import Path
 
 
 from pipeline.common import canonical_json
+from pipeline.other_team_groups import LOCAL_MERGE_KEY_VERSION, local_merge_key
 from pipeline.recommended_identity import build_mapping, resolve_identity
 
 DEDUP_KEY_VERSION = 1
@@ -129,13 +130,15 @@ def _possibly_duplicate(partial_holders, candidate):
 
 
 def _merge_local_duplicates(admitted, decisions):
-    """Hàng admitted trùng tuyệt đối nhau (cùng dedup key) chỉ giữ hàng đầu tiên theo thứ tự đã xếp
-    (đề cử trước, rồi thứ tự xuất hiện); hàng còn lại thành ``duplicate`` trỏ ``matchingLocal`` về hàng giữ."""
+    """Hàng admitted trùng tuyệt đối nhau theo khóa gộp nội bộ v2 (tướng + chiến pháp + binh thư + binh chủng,
+    ``other_team_groups.local_merge_key``) chỉ giữ hàng đầu tiên theo thứ tự đã xếp (đề cử trước, rồi thứ tự
+    xuất hiện); hàng còn lại thành ``duplicate`` trỏ ``matchingLocal`` về hàng giữ. Khác binh thư hoặc binh chủng
+    là phương án riêng của cùng bộ tướng, không gộp."""
     by_team = {row["legacyTeamId"]: row for row in decisions}
     kept, owner = [], {}
     for item in admitted:
         decision = by_team[item["legacyTeamId"]]
-        key = decision["dedupKey"]
+        key = local_merge_key(item)
         if key in owner:
             decision.update({"classification": "duplicate", "matchingLocal": owner[key]})
             continue
@@ -224,6 +227,7 @@ def build_other_team_ledger(teams, recommended_records, mapping_descriptor, team
     result["pending"] = [item for item in decisions if item["classification"].startswith("pending")]
     result["pendingBranches"] = pending_branches
     result["inputTeamRows"] = len(teams)
+    result["localMergeKeyVersion"] = LOCAL_MERGE_KEY_VERSION
     return result
 
 

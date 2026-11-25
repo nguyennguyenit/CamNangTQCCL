@@ -156,6 +156,31 @@ describe("tqccl_get_team", () => {
     expect(detail.team!.sourceScore).toBeUndefined();
   });
 
+  it("gives each other item its team (teamGroupId) and the team's complete option count", async () => {
+    const pub = await publication();
+    const others = pub.teams.filter((team) => team.collection === "other");
+    const variants = others.map((team) => (pub.getTeam(team.ref) as unknown as { variants: Array<Record<string, any>> }).variants[0]!);
+    const perGroup = new Map<string, number>();
+    for (const variant of variants) perGroup.set(variant.teamGroupId, (perGroup.get(variant.teamGroupId) ?? 0) + 1);
+    // Mỗi biến thể có trong artifact đều đủ dữ liệu; optionCount = số phương án đủ dữ liệu cùng team.
+    for (const variant of variants) {
+      expect(variant.teamGroupId).toMatch(/^g-[0-9a-f]{16}$/u);
+      expect(variant.optionCount).toBe(perGroup.get(variant.teamGroupId));
+    }
+    const index = variants.findIndex((variant) => variant.optionCount > 1);
+    const team = others[index]!;
+    const variant = variants[index]!;
+    const listed = await handlers.call("tqccl_find_teams", { collection: "other", query: team.nameVi, limit: 50 });
+    const item = listed.items.find((entry) => entry.ref === team.ref)!;
+    expect(item).toMatchObject({ teamGroupId: variant.teamGroupId, optionCount: variant.optionCount });
+    const detail = await handlers.call("tqccl_get_team", { reference: item.reference });
+    expect(detail.team).toMatchObject({ teamGroupId: variant.teamGroupId, optionCount: variant.optionCount });
+    // Họ khác không mang trường team của Đội khác.
+    const recommended = await handlers.call("tqccl_find_teams", { collection: "recommended", limit: 1 });
+    expect(recommended.items[0]).not.toHaveProperty("teamGroupId");
+    expect(recommended.items[0]).not.toHaveProperty("optionCount");
+  });
+
   it("keeps the Đề cử flag of each other variant from other-teams.json through find/get", async () => {
     const pub = await publication();
     const others = pub.teams.filter((team) => team.collection === "other");
