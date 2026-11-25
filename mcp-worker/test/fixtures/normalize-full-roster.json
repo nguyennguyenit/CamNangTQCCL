@@ -1,0 +1,524 @@
+{
+ "note": "Kho 238 muc (93 tuong, 145 chien phap) theo canonicalId; an danh, khong ten tai khoan.",
+ "heroes": [
+  {
+   "canonicalId": "hero:lu-bo",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:40y-lu-bo",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:ta-tu",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:truong-xuan-hoa",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:lu-mong",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:sp-lu-mong",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:sp-luu-diep",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:tao-phi",
+   "redStars": 3
+  },
+  {
+   "canonicalId": "hero:chan-co",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:co-chan-co",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:tieu-kieu",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:co-tieu-kieu",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:tu-ma-y",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:ha-hau-don",
+   "redStars": 3
+  },
+  {
+   "canonicalId": "hero:sp-phap-chinh",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:phap-chinh",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:man-sung",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:vuong-song",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:dieu-thuyen",
+   "redStars": 3
+  },
+  {
+   "canonicalId": "hero:sp-dieu-thuyen",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:sp-tuan-uc",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:tao-thao",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:truong-lieu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:luu-bi",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:bang-thong",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:ma-sieu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:sp-ma-sieu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:gia-cat-luong",
+   "redStars": 3
+  },
+  {
+   "canonicalId": "hero:sp-gia-cat-luong",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:quan-vu",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:sp-ton-kien",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:ton-kien",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:ton-thuong-huong",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:truong-chieu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:luc-ton",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:sp-vien-thieu",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:vu-cat",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:dong-trac",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:sp-bang-duc",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:sp-quach-gia",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:quach-gia",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:tao-thuc",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:hac-chieu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:tao-nhan",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:trinh-duc",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:tuan-du",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:dien-vi",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:tu-hoang",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:chung-hoi",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:truong-bao",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:quan-hung",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:quan-ngan-binh",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:tran-dao",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:khuong-duy",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:hoang-trung",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:trieu-van",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:truong-phi",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:sp-chu-du",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:chu-du",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:ma-trung",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:lang-thong",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:ton-quyen",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:cam-ninh",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:chu-thai",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:thai-su-tu",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:luc-khang",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:sp-truong-bao",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:hua-du",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:thu-thu",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:lu-linh-y",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:chuc-dung-phu-nhan",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:truong-giac",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:sp-hoang-phu-tung",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:thai-ung",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:vuong-nguyen-co",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:nhac-tien",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:dang-ngai",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:ha-hau-uyen",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:tuong-uyen",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:hoang-cai",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:trinh-pho",
+   "redStars": 3
+  },
+  {
+   "canonicalId": "hero:ton-sach",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:ly-nho",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:nhan-luong",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:truong-nhuong",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:sp-hoang-nguyet-anh",
+   "redStars": 1
+  },
+  {
+   "canonicalId": "hero:hoang-nguyet-anh",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:gia-cat-khac",
+   "redStars": 4
+  },
+  {
+   "canonicalId": "hero:dai-kieu",
+   "redStars": 2
+  },
+  {
+   "canonicalId": "hero:tran-cung",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:tu-ma-huy",
+   "redStars": 5
+  },
+  {
+   "canonicalId": "hero:ha-thi",
+   "redStars": 0
+  },
+  {
+   "canonicalId": "hero:vien-thuat",
+   "redStars": 1
+  }
+ ],
+ "tactics": [
+  "tactic:danh-dau-thang-do",
+  "tactic:thinh-khi-linh-dich",
+  "tactic:pha-tran-thoi-kien",
+  "tactic:so-bong-so-gio",
+  "tactic:tu-dien-so-ca",
+  "tactic:bat-mon-kim-toa-tran",
+  "tactic:tram-sa-quyet-thuy",
+  "tactic:du-dich-tham-nhap",
+  "tactic:nhat-ky-duong-thien",
+  "tactic:thua-dich-bat-ngu",
+  "tactic:bach-ky-kiep-doanh",
+  "tactic:danh-bai-quan-dich",
+  "tactic:hop-quan-tu-chung",
+  "tactic:toa-nhue",
+  "tactic:khac-dich-che-thang",
+  "tactic:binh-phong",
+  "tactic:hoanh-qua-duoc-ma",
+  "tactic:phong-tro-hoa-the",
+  "tactic:tri-ke",
+  "tactic:tam-lanh-song-gio",
+  "tactic:phong-thi-tran",
+  "tactic:dung-gia-dac-tien",
+  "tactic:me-hoac",
+  "tactic:bach-ma-nghia-tong",
+  "tactic:van-vo-song-toan",
+  "tactic:binh-vo-thuong-the",
+  "tactic:linh-giap-may",
+  "tactic:ham-tran-doanh",
+  "tactic:ho-bao-ky",
+  "tactic:bach-nhi-binh",
+  "tactic:vo-duong-phi-quan",
+  "tactic:hoanh-tao-thien-quan",
+  "tactic:tuyet-dia-phan-kich",
+  "tactic:si-biet-tam-nhat",
+  "tactic:ke-hay-muu-gioi",
+  "tactic:doat-hon-hiep-phach",
+  "tactic:van-tien-te-phat",
+  "tactic:dai-kich-si",
+  "tactic:ket-minh",
+  "tactic:cat-xuong-tri-doc",
+  "tactic:thuyen-co-muon-ten",
+  "tactic:khuynh-quoc-khuynh-thanh",
+  "tactic:tuong-binh",
+  "tactic:ho-ve-quan",
+  "tactic:quan-cam-pham",
+  "tactic:linh-thanh-chau",
+  "tactic:thua-thang-truong-khu",
+  "tactic:nhat-luc-cu-thu",
+  "tactic:van-tru-quyet-toan",
+  "tactic:thiet-ky-khu-tri",
+  "tactic:hinh-co-quan-luoc",
+  "tactic:co-hinh-tran",
+  "tactic:uy-muu-vo-dich",
+  "tactic:pha-quan-uy-thang",
+  "tactic:mau-gianh-loi-the",
+  "tactic:tien-thanh-ky-lu",
+  "tactic:ich-ky-kim-co",
+  "tactic:chung-dong-van-ke",
+  "tactic:doc-suc-tinh-ke",
+  "tactic:thoi-co-chien-thang",
+  "tactic:trung-dung-nghia-liet",
+  "tactic:nhan-loi-che-quyen",
+  "tactic:tat-phong-sau-vu",
+  "tactic:chung-vong-so-quy",
+  "tactic:dan-duong-binh",
+  "tactic:tien-dang-tu-si",
+  "tactic:phi-hung-quan",
+  "tactic:giai-phien-ve",
+  "tactic:lam-nguy-cuu-chu",
+  "tactic:cong-bat-duong-quyen",
+  "tactic:toan-quan-dong-long",
+  "tactic:pho-thang-dao-hoa",
+  "tactic:nhanh-tri-dong-nao",
+  "tactic:ngu-lan-tran",
+  "tactic:duong-suc-doi-chien",
+  "tactic:thoi-phong-doan-nhan",
+  "tactic:thai-binh-dao-phap",
+  "tactic:khi-lang-tam-quan",
+  "tactic:quy-than-dinh-uy",
+  "tactic:thieu-dot-doanh-luy",
+  "tactic:an-ui-quan-dan",
+  "tactic:hoa-si-nguyen-lieu",
+  "tactic:tam-the-tran",
+  "tactic:duong-phong-thoi-quyet",
+  "tactic:cuong-dung-vo-tien",
+  "tactic:dan-huyen-luc-chien",
+  "tactic:quyet-thuy-hoi-thanh",
+  "tactic:loa-y-huyet-chien",
+  "tactic:so-trang-trich-kich",
+  "tactic:cu-thuy-doan-kieu",
+  "tactic:vo-phong-tran",
+  "tactic:tuyet-ky-cap-dao",
+  "tactic:kich-ky-noa-quy",
+  "tactic:hinh-nhat-tran",
+  "tactic:tiem-long-tran",
+  "tactic:huy-quan-ket-tran",
+  "tactic:bach-luyen-thanh-cuong",
+  "tactic:cuong-cong",
+  "tactic:tinh-hoa",
+  "tactic:hiep-the-long-quyen",
+  "tactic:truyen-hich-tuyen-uy",
+  "tactic:cho-doi-xuat-phat",
+  "tactic:liem-chung-nhi-kich",
+  "tactic:yeu-thuat",
+  "tactic:nhat-cu-tiem-diet",
+  "tactic:am-trieu-hung-dung",
+  "tactic:bat-nhuc-su-menh",
+  "tactic:am-tang-huyen-co",
+  "tactic:do-ky-thuong-nhuc",
+  "tactic:ta-huu-khai-cung",
+  "tactic:doan-binh-tuong-tiep",
+  "tactic:kieu-dung-thien-chien",
+  "tactic:ngu-dich-binh-chuong",
+  "tactic:lieu-su-nhu-than",
+  "tactic:toa-chi-no-tap",
+  "tactic:truong-gia-chi-phong",
+  "tactic:ti-thuc-kich-hu",
+  "tactic:phan-dot",
+  "tactic:ky-ho-nan-ha",
+  "tactic:loan-cung-am-vu",
+  "tactic:tien-ngon",
+  "tactic:lac-phuong",
+  "tactic:lo-mang",
+  "tactic:lac-loi",
+  "tactic:thanh-dong-kich-tay",
+  "tactic:yen-ky-tuc-co",
+  "tactic:xuat-ky-bat-y",
+  "tactic:phong-thanh-hac-le",
+  "tactic:thien-hang-hoa-vu",
+  "tactic:thu-khoi-dao-lac",
+  "tactic:hau-phat-che-nhan",
+  "tactic:bach-my",
+  "tactic:thien-ly-tri-vien",
+  "tactic:toa-thu-co-thanh",
+  "tactic:khinh-dung-phi-yen",
+  "tactic:tung-binh-kiep-luoc",
+  "tactic:than-thuong-thiet-chien",
+  "tactic:co-luoc-tung-hoanh",
+  "tactic:lu-giang-thuong-giap",
+  "tactic:thi-chi-bat-di",
+  "tactic:than-thuong-su",
+  "tactic:tu-du",
+  "tactic:kieu-kien-than-hanh",
+  "tactic:khiem-nhuong",
+  "tactic:bao-liem-tu-phuong"
+ ]
+}
