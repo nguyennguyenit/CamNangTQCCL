@@ -183,6 +183,15 @@ describe("Đội khác: validator MCP kiểm cùng bất biến teamGroups với
     await expect(verifyOtherTeamGroups(forged.records, forged.teamGroups)).rejects.toThrow(/teamGroupKey differs from holders/u);
   });
 
+  it("từ chối khóa team null khi tướng không có identity, dù id khớp hash của chuỗi rỗng", async () => {
+    const data = clone();
+    const record = data.records[0]!;
+    for (const holder of record.holders) holder.heroIdentityId = null;
+    record.teamGroupKey = null;
+    record.teamGroupId = `g-${createHash("sha256").update("").digest("hex").slice(0, 16)}`;
+    await expect(verifyOtherTeamGroups(data.records, data.teamGroups)).rejects.toThrow(/teamGroupKey differs from holders/u);
+  });
+
   it("từ chối member sai thứ tự optionRank", async () => {
     const data = clone();
     multi(data).memberVariantIds.reverse();

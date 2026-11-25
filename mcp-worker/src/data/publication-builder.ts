@@ -202,7 +202,9 @@ export async function verifyOtherTeamGroups(records: readonly Json[], groups: re
     const variant = record.legacyVariantId;
     if (byVariant.has(variant)) fail(`Team khác variant appears twice: ${String(variant)}`);
     byVariant.set(variant, record);
-    if (record.teamGroupKey !== otherTeamGroupKey(record)) fail(`Team khác teamGroupKey differs from holders and unit: ${String(variant)}`);
+    // Khóa tính lại là null khi tướng thiếu identity: luôn từ chối, kể cả record cũng ghi khóa null (khớp builder Python).
+    const expectedKey = otherTeamGroupKey(record);
+    if (expectedKey === null || record.teamGroupKey !== expectedKey) fail(`Team khác teamGroupKey differs from holders and unit: ${String(variant)}`);
     if (record.teamGroupId !== (await teamGroupIdOf(record.teamGroupKey))) fail(`Team khác teamGroupId differs from its key: ${String(variant)}`);
     if (record.dataComplete !== otherDataComplete(record)) fail(`Team khác dataComplete flag differs from holders: ${String(variant)}`);
     if (!Number.isInteger(record.optionRank)) fail(`Team khác variant has no optionRank: ${String(variant)}`);
