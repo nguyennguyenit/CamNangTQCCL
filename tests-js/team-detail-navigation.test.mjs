@@ -2,11 +2,18 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   TEAM_RETURN_STORAGE_KEY,
+  TEAM_DETAIL_RETURN_STORAGE_KEY,
+  SECTION_QUERY_KEYS,
+  SSR_STALE_EXEMPT_KEYS,
   teamDetailPath,
   teamDetailHref,
+  referenceDetailHref,
+  khaiHoangCardHref,
   safeReturnUrl,
   familyReturnHref,
-  returnHrefFor,
+  resolveDetailReturn,
+  rememberDetailReturn,
+  detailUrlWithoutReturn,
   isNativeNavigationClick,
   captureReturnSnapshot,
   matchesReturnSnapshot,
@@ -51,6 +58,39 @@ function memoryStorage({failGet=false,failSet=false}={}) {
   };
 }
 
+/** Các đích độc hại dùng chung: `safeReturnUrl` và từng nguồn của `resolveDetailReturn` phải bỏ qua mọi mục. */
+const HOSTILE_RETURNS=[
+  'https://evil.example/',
+  '//evil.example/',
+  '/\\evil.example',
+  'javascript:alert(1)',
+  'data:text/html,<script>',
+  '/doi-khac/tan-ngo-thuong/',
+  '/doi-chuan/pk-s24-tu-ma-phi-hung/',
+  '/%2e%2e/admin',
+  '/..%2fadmin',
+  '/?q=a#unknown-tab',
+  '/?q=a\u0000b',
+  'not a url',
+  '',
+  null,
+  undefined,
+  123,
+];
+
+const DETAIL_PATH=`/doi-chuan/${RECOMMENDED_SEGMENT}/`;
+const DETAIL_URL=`${ROOT}${DETAIL_PATH}`;
+
+/** Storage theo đúng bố cục của `rememberDetailReturn`: `{[pathname chi tiết bỏ locale]: đích bỏ locale}`; đích độc cũng đi đường này. */
+function storageWith(entries) {
+  const storage=memoryStorage();
+  storage.map.set(TEAM_DETAIL_RETURN_STORAGE_KEY,JSON.stringify(entries));
+  return storage;
+}
+
+/** Mọi ca truyền `origin` của trang (`location.origin`): Node không có `location`, trình duyệt thì có, nên không được để mặc định. */
+const resolveReturn=(overrides={})=>resolveDetailReturn({href:DETAIL_URL,referrer:'',state:null,storage:null,origin:ROOT,...overrides});
+
 test('the route-handle registry is uninitialised until a caller registers one',async()=>{
   // A fresh module instance proves the shipped default is "no registry", never an old ID path.
   const fresh=await import(new URL('../js/team-detail-navigation.js?uninitialised',import.meta.url).href);
@@ -64,7 +104,7 @@ test('the route-handle registry is uninitialised until a caller registers one',a
   }),null);
 });
 
-test('detail hrefs come from the registered final segments and carry only identity plus a safe origin',()=>{
+test('detail hrefs come from the registered final segments and carry identity (plus a variant), never a return source',()=>{
   assert.equal(handles(),true);
   assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   assert.equal(teamDetailPath({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`);
@@ -81,18 +121,44 @@ test('detail hrefs come from the registered final segments and carry only identi
   );
   assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:''}),`/doi-khac/${LEGACY_SEGMENT}/?variant=`);
   assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'/bad'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad`);
-  assert.equal(
-    teamDetailHref({sourceConfigId:RECOMMENDED},{from:'/?season=pk-s24&q=quan#team-chuan'}),
-    `/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/doi-chuan/?season=pk-s24&q=quan')}`,
-  );
-  // An unsafe origin is dropped instead of being propagated into the detail URL.
-  assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED},{from:'https://evil.example/'}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  // Link nội bộ chỉ có đường dẫn (+ variant): đường về nằm ở history.state/referrer/sessionStorage của trang chi tiết, không ở URL.
+  assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
+  assert.equal(teamDetailHref({sourceConfigId:RECOMMENDED},{locale:'zh'}),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   // A registered identity without a handle is still not routable.
-  assert.equal(teamDetailHref({sourceConfigId:'team-missing'},{from:'/?q=a#team-chuan'}),null);
+  assert.equal(teamDetailHref({sourceConfigId:'team-missing'}),null);
 
   // Non-ASCII segments stay encoded in the emitted href.
   assert.equal(setTeamRouteHandles({r:{'yxms-049':'pk-s24-仙人盾'}}),true);
   assert.equal(teamDetailPath({sourceConfigId:'yxms-049'}),`/doi-chuan/${encodeURIComponent('pk-s24-仙人盾')}/`);
+});
+
+test('list href builders emit clean detail URLs: identity and variant only, in every locale',()=>{
+  assert.equal(setTeamRouteHandles({
+    r:{[RECOMMENDED]:RECOMMENDED_SEGMENT},
+    l:{[LEGACY]:LEGACY_SEGMENT},
+    k:{[KHAIHOANG]:KHAIHOANG_HANDLE},
+  }),true);
+  const hrefs=[
+    // Đội chuẩn: không variant.
+    [referenceDetailHref({sourceConfigId:RECOMMENDED}),`/doi-chuan/${RECOMMENDED_SEGMENT}/`],
+    [referenceDetailHref({sourceConfigId:RECOMMENDED},{locale:'zh'}),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`],
+    [referenceDetailHref({sourceConfigId:RECOMMENDED},{locale:'ja'}),`/ja/doi-chuan/${RECOMMENDED_SEGMENT}/`],
+    // Đội khác luôn mang variant của hàng; `id` là tên khác của `legacyTeamId`.
+    [referenceDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-1'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=v-1`],
+    [referenceDetailHref({id:LEGACY,legacyVariantId:'v-1'},{locale:'zh'}),`/zh/doi-khac/${LEGACY_SEGMENT}/?variant=v-1`],
+    [referenceDetailHref({legacyTeamId:LEGACY}),`/doi-khac/${LEGACY_SEGMENT}/`],
+    // Khai hoang: `variant` chỉ khi cấu hình đang chọn khác mặc định.
+    [khaiHoangCardHref(KHAIHOANG,''),`/khai-hoang/${KHAIHOANG_HANDLE}/`],
+    [khaiHoangCardHref(KHAIHOANG,KHAIHOANG_VARIANT),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`],
+    [khaiHoangCardHref(KHAIHOANG,KHAIHOANG_VARIANT,{locale:'zh'}),`/zh/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`],
+  ];
+  for (const [actual,expected] of hrefs) {
+    assert.equal(actual,expected);
+    assert.doesNotMatch(actual,/[?&]from=/u);
+  }
+  // Identity không có route handle thì không có link, thay vì link ID cũ.
+  assert.equal(referenceDetailHref({sourceConfigId:'team-missing'}),null);
+  assert.equal(khaiHoangCardHref('team-missing',''),null);
 });
 
 test('the registry replaces atomically and refuses malformed payloads',()=>{
@@ -187,6 +253,14 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?q=x&tier=T0'),'/goi-y-doi-tu-kho/');
   assert.equal(safeReturnUrl('/goi-y-doi-tu-kho/?season=pk-s28&scenario=a'),'/goi-y-doi-tu-kho/?season=pk-s28');
   assert.equal(safeReturnUrl('/theo-doi-chieu-mo/?q=x'),'/theo-doi-chieu-mo/');
+  // Đội chuẩn giữ thêm `kho`/`xep` (lọc/sắp theo kho cục bộ) để Quay lại về đúng danh sách; Đội khác không có kho nên bỏ như khóa lạ.
+  assert.equal(safeReturnUrl('/doi-chuan/?season=all&q=x&kho=rap-duoc&xep=de-rap'),'/doi-chuan/?season=all&q=x&kho=rap-duoc&xep=de-rap');
+  assert.equal(safeReturnUrl('/zh/doi-chuan/?kho=thieu-2'),'/zh/doi-chuan/?kho=thieu-2');
+  assert.equal(safeReturnUrl('/doi-khac/?q=x&kho=rap-duoc&xep=de-rap'),'/doi-khac/?q=x');
+  // Hai khóa này không làm danh sách dựng sẵn sai (chỉ thêm badge/đổi thứ tự khi máy có kho): bảo vệ chống nháy không tính chúng.
+  assert.deepEqual(SSR_STALE_EXEMPT_KEYS,['kho','xep']);
+  for (const key of SSR_STALE_EXEMPT_KEYS) assert.ok(SECTION_QUERY_KEYS['/doi-chuan/'].includes(key),key);
+  assert.equal(SECTION_QUERY_KEYS['/doi-khac/'].some(key=>SSR_STALE_EXEMPT_KEYS.includes(key)),false);
   // Absolute URLs are accepted only for the page's own origin.
   assert.equal(safeReturnUrl(`${ROOT}/doi-chuan/?q=a`,{origin:ROOT}),'/doi-chuan/?q=a');
   assert.equal(safeReturnUrl(`${ROOT}/#team-chuan`,{origin:ROOT}),'/doi-chuan/');
@@ -200,24 +274,7 @@ test('return origin accepts section URLs, normalizes old root state, and rejects
   assert.equal(safeReturnUrl('/'),null);
   assert.equal(safeReturnUrl('/#so-lieu'),null);
 
-  for (const hostile of [
-    'https://evil.example/',
-    '//evil.example/',
-    '/\\evil.example',
-    'javascript:alert(1)',
-    'data:text/html,<script>',
-    '/doi-khac/tan-ngo-thuong/',
-    '/doi-chuan/pk-s24-tu-ma-phi-hung/',
-    '/%2e%2e/admin',
-    '/..%2fadmin',
-    '/?q=a#unknown-tab',
-    '/?q=a\u0000b',
-    'not a url',
-    '',
-    null,
-    undefined,
-    123,
-  ]) {
+  for (const hostile of HOSTILE_RETURNS) {
     assert.equal(safeReturnUrl(hostile),null,`must reject ${String(hostile)}`);
   }
   // Malformed percent escapes are rejected, not thrown.
@@ -231,9 +288,212 @@ test('a share link without origin still returns to the right family page',()=>{
   assert.equal(familyReturnHref('legacy'),'/doi-khac/');
   assert.equal(familyReturnHref('recommended',{sourceSeasonId:'pk-s24'}),'/doi-chuan/?season=pk-s24');
   assert.equal(familyReturnHref('recommended',{sourceSeasonId:'all'}),'/doi-chuan/');
-  assert.equal(returnHrefFor('recommended',{from:'/doi-chuan/?q=a'}),'/doi-chuan/?q=a');
-  assert.equal(returnHrefFor('recommended',{from:'https://evil.example/',sourceSeasonId:'pk-s24'}),'/doi-chuan/?season=pk-s24');
-  assert.equal(returnHrefFor('legacy',{}),'/doi-khac/');
+  // Không nguồn hợp lệ nào thì resolver trả null để trang chi tiết giữ nguyên link họ đội đã dựng sẵn.
+  assert.equal(resolveDetailReturn(),null);
+  assert.equal(resolveReturn(),null);
+});
+
+test('detail return resolves state, then a legacy ?from=, then the referrer, then session storage, then nothing',()=>{
+  const stored=storageWith({[DETAIL_PATH]:'/doi-chuan/?q=storage'});
+  const legacyHref=`${DETAIL_URL}?variant=1&from=${encodeURIComponent('/doi-chuan/?q=from')}`;
+  const referrer=`${ROOT}/doi-chuan/?season=s27&kho=rap-duoc`;
+
+  // 1. history.state hợp lệ thắng mọi nguồn khác, kể cả khi là URL tuyệt đối cùng origin và còn khóa kho.
+  assert.equal(resolveReturn({state:{teamDetailReturn:'/doi-chuan/?q=state'},href:legacyHref,referrer,storage:stored}),'/doi-chuan/?q=state');
+  assert.equal(resolveReturn({state:{teamDetailReturn:`${ROOT}/doi-chuan/?q=a&kho=rap-duoc&xep=de-rap&utm_source=x`}}),'/doi-chuan/?q=a&kho=rap-duoc&xep=de-rap');
+
+  // 2. state thiếu/hỏng → `?from=` của link cũ (tương đối và tuyệt đối cùng origin).
+  for (const state of [null,undefined,{},{teamDetailReturn:null},{teamDetailReturn:''},{teamDetailReturn:{url:'/doi-chuan/?q=state'}},'x',7,[],['/doi-chuan/?q=state']]) {
+    assert.equal(resolveReturn({state,href:legacyHref,referrer,storage:stored}),'/doi-chuan/?q=from',`state ${JSON.stringify(state)}`);
+  }
+  assert.equal(
+    resolveReturn({href:`${DETAIL_URL}?from=${encodeURIComponent(`${ROOT}/doi-chuan/?q=abs&kho=thieu-2&rogue=1`)}`,referrer,storage:stored}),
+    '/doi-chuan/?q=abs&kho=thieu-2',
+  );
+
+  // 3. Không state/from: referrer thắng storage cũ (mở lại cùng đội từ danh sách khác không lấy đích của lần trước).
+  assert.equal(resolveReturn({referrer,storage:stored}),'/doi-chuan/?season=s27&kho=rap-duoc');
+
+  // 4. Referrer không cho biết người dùng đến từ đâu (khác origin, trang đăng nhập Google, hỏng, rỗng) hoặc là chính trang
+  //    chi tiết này ở ngôn ngữ/variant khác → storage theo trang chi tiết.
+  for (const useless of ['https://evil.example/doi-chuan/?q=a','https://accounts.google.com/','not a url',DETAIL_URL,`${DETAIL_URL}?variant=1`,`${ROOT}/zh${DETAIL_PATH}`,'',null,undefined]) {
+    assert.equal(resolveReturn({referrer:useless,storage:stored}),'/doi-chuan/?q=storage',`referrer ${String(useless)}`);
+  }
+
+  // 4b. Referrer cùng origin là trang khác ngoài danh sách (trang riêng Tra cứu, trang mùa, Landing, Đội của tôi, blog, trang
+  //     chi tiết đội khác): người dùng vừa đi đường khác tới đây, đích cũ trong storage là sai → null (giữ link họ đội).
+  for (const elsewhere of [`${ROOT}/tra-cuu/tuong/luu-bi/`,`${ROOT}/doi-chuan/pk-s27/`,`${ROOT}/`,`${ROOT}/doi-cua-toi/`,`${ROOT}/blog/bai-viet/`,`${ROOT}/doi-khac/${LEGACY_SEGMENT}/`,`${ROOT}/zh/tra-cuu/tuong/luu-bi/`]) {
+    assert.equal(resolveReturn({referrer:elsewhere,storage:stored}),null,`referrer ${elsewhere}`);
+  }
+
+  // 5. Hết nguồn → null (không storage, storage rỗng hoặc mục của trang khác).
+  assert.equal(resolveReturn({referrer:'https://accounts.google.com/'}),null);
+  assert.equal(resolveReturn({storage:memoryStorage()}),null);
+  assert.equal(resolveReturn({storage:storageWith({'/doi-chuan/team-other/':'/doi-chuan/?q=other'})}),null);
+});
+
+test('detail return keeps the page language: a zh referrer stays zh and storage written in one locale is re-prefixed in another',()=>{
+  const zhDetail=`${ROOT}/zh/doi-khac/${LEGACY_SEGMENT}/`;
+  assert.equal(resolveReturn({href:zhDetail,referrer:`${ROOT}/zh/doi-khac/?q=x`}),'/zh/doi-khac/?q=x');
+  const storage=memoryStorage();
+  assert.equal(rememberDetailReturn(storage,DETAIL_URL,'/doi-chuan/?q=x'),true);
+  assert.equal(resolveReturn({href:`${ROOT}/zh${DETAIL_PATH}`,storage}),'/zh/doi-chuan/?q=x');
+  assert.equal(resolveReturn({href:`${ROOT}/ja${DETAIL_PATH}`,storage}),'/ja/doi-chuan/?q=x');
+  assert.equal(resolveReturn({href:DETAIL_URL,storage}),'/doi-chuan/?q=x');
+  // Ghi từ bản zh, đọc ở bản vi.
+  assert.equal(rememberDetailReturn(storage,`${ROOT}/zh${DETAIL_PATH}`,'/zh/doi-chuan/?season=all&kho=rap-duoc'),true);
+  assert.equal(resolveReturn({href:DETAIL_URL,storage}),'/doi-chuan/?season=all&kho=rap-duoc');
+});
+
+test('detail return on Khai hoang: a referrer pair is overridden by the opened team, a legacy ?from= keeps its own pair',()=>{
+  const detail=`${ROOT}/khai-hoang/${KHAIHOANG_HANDLE}/`;
+  const referrer=`${ROOT}/khai-hoang/?khTeam=A&khVariant=a1`;
+  // Mở tab mới từ đội B khi URL danh sách còn mang cặp của A: cặp lấy từ đội của trang chi tiết, variant chỉ khi có.
+  assert.equal(resolveReturn({href:detail,referrer,khaiHoang:{teamId:'B',variantId:''}}),'/khai-hoang/?khTeam=B');
+  assert.equal(resolveReturn({href:detail,referrer,khaiHoang:{teamId:'B',variantId:'b2'}}),'/khai-hoang/?khTeam=B&khVariant=b2');
+  assert.equal(
+    resolveReturn({href:`${ROOT}/zh/khai-hoang/${KHAIHOANG_HANDLE}/`,referrer:`${ROOT}/zh/khai-hoang/?khTeam=A`,khaiHoang:{teamId:'B',variantId:''}}),
+    '/zh/khai-hoang/?khTeam=B',
+  );
+  // Link cũ và history.state giữ nguyên cặp của chúng, không bị ghi đè.
+  assert.equal(
+    resolveReturn({href:`${detail}?from=${encodeURIComponent('/khai-hoang/?khTeam=A')}`,referrer,khaiHoang:{teamId:'B',variantId:'b2'}}),
+    '/khai-hoang/?khTeam=A',
+  );
+  assert.equal(resolveReturn({href:detail,state:{teamDetailReturn:'/khai-hoang/?khTeam=A'},referrer,khaiHoang:{teamId:'B'}}),'/khai-hoang/?khTeam=A');
+  // Chỉ ghi đè khi đích là trang Khai hoang và caller có đội; referrer khác trang hoặc không có `khaiHoang` giữ nguyên.
+  assert.equal(resolveReturn({href:detail,referrer:`${ROOT}/doi-chuan/?q=x`,khaiHoang:{teamId:'B',variantId:'b2'}}),'/doi-chuan/?q=x');
+  assert.equal(resolveReturn({href:detail,referrer}),'/khai-hoang/?khTeam=A&khVariant=a1');
+  assert.equal(resolveReturn({href:detail,referrer,khaiHoang:{teamId:'',variantId:'b2'}}),'/khai-hoang/?khTeam=A&khVariant=a1');
+  // Đội không routable không được ghi vào URL danh sách: bỏ cả cặp.
+  assert.equal(resolveReturn({href:detail,referrer,khaiHoang:{teamId:'../x',variantId:'b2'}}),'/khai-hoang/');
+  // Đích ghim vào storage đã là kết quả ghi đè: đổi ngôn ngữ/đăng nhập lại không tính lại cặp.
+  const storage=memoryStorage();
+  rememberDetailReturn(storage,detail,resolveReturn({href:detail,referrer,khaiHoang:{teamId:'B',variantId:'b2'}}));
+  assert.equal(resolveReturn({href:`${ROOT}/zh/khai-hoang/${KHAIHOANG_HANDLE}/`,referrer:'https://accounts.google.com/',storage,khaiHoang:{teamId:'B',variantId:''}}),'/zh/khai-hoang/?khTeam=B&khVariant=b2');
+});
+
+test('detail return skips a hostile value in any source and lets the next valid source win',()=>{
+  const fromUrl=(value)=>`${DETAIL_URL}?from=${encodeURIComponent(value)}`;
+  const valid={
+    state:{teamDetailReturn:'/doi-chuan/?q=state'},
+    href:fromUrl('/doi-chuan/?q=from'),
+    referrer:`${ROOT}/doi-chuan/?q=referrer`,
+    storage:storageWith({[DETAIL_PATH]:'/doi-chuan/?q=storage'}),
+  };
+  for (const hostile of HOSTILE_RETURNS) {
+    const label=String(hostile);
+    // `?from=` chỉ có thể là chuỗi; giá trị khác không có trong query.
+    const hostileFrom=typeof hostile==='string'?fromUrl(hostile):DETAIL_URL;
+    assert.equal(resolveReturn({...valid,state:{teamDetailReturn:hostile}}),'/doi-chuan/?q=from',`state ${label}`);
+    assert.equal(resolveReturn({...valid,state:{teamDetailReturn:hostile},href:hostileFrom}),'/doi-chuan/?q=referrer',`state + from ${label}`);
+    assert.equal(resolveReturn({...valid,state:{teamDetailReturn:hostile},href:hostileFrom,referrer:hostile}),'/doi-chuan/?q=storage',`state + from + referrer ${label}`);
+    assert.equal(
+      resolveReturn({state:{teamDetailReturn:hostile},href:hostileFrom,referrer:hostile,storage:storageWith({[DETAIL_PATH]:hostile})}),
+      null,
+      `every source ${label}`,
+    );
+  }
+  // History state không phải object (chuỗi, số, mảng, Map) không bao giờ được đọc như `{teamDetailReturn}`.
+  for (const state of ['/doi-chuan/?q=state',7,true,['/doi-chuan/?q=state'],new Map([['teamDetailReturn','/doi-chuan/?q=state']])]) {
+    assert.equal(resolveReturn({state}),null,String(state));
+  }
+  // Referrer giả domain hoặc khác scheme/cổng không phải origin của trang.
+  for (const referrer of [
+    'https://tqccl.com.evil.example/doi-chuan/?q=x',
+    'https://tqccl.com@evil.example/doi-chuan/?q=x',
+    'https://evil.example/doi-chuan/?q=x',
+    'http://tqccl.com/doi-chuan/?q=x',
+    'https://tqccl.com:8443/doi-chuan/?q=x',
+  ]) {
+    assert.equal(resolveReturn({referrer}),null,referrer);
+    assert.equal(resolveReturn({href:fromUrl(referrer)}),null,`from ${referrer}`);
+    assert.equal(resolveReturn({state:{teamDetailReturn:referrer}}),null,`state ${referrer}`);
+  }
+  // `origin` là origin của trang (location.origin), không phải của nguồn: URL tuyệt đối chỉ hợp lệ khi cùng origin đó.
+  const absolute=`${ROOT}/doi-chuan/?q=x`;
+  assert.equal(resolveReturn({referrer:absolute,origin:'https://evil.example'}),null);
+  assert.equal(resolveReturn({href:fromUrl(absolute),origin:'https://evil.example'}),null);
+  assert.equal(resolveReturn({state:{teamDetailReturn:absolute},origin:'https://evil.example'}),null);
+  assert.equal(resolveReturn({referrer:absolute}),'/doi-chuan/?q=x');
+});
+
+test('detail return ignores a broken session storage instead of throwing',()=>{
+  for (const raw of [
+    '{not json',
+    'null',
+    '[]',
+    '"/doi-chuan/"',
+    '7',
+    'true',
+    JSON.stringify({[DETAIL_PATH]:7}),
+    JSON.stringify({[DETAIL_PATH]:null}),
+    JSON.stringify({[DETAIL_PATH]:{target:'/doi-chuan/?q=x'}}),
+    JSON.stringify({'/doi-chuan/team-other/':'/doi-chuan/?q=other'}),
+    // Khóa là pathname bỏ locale: mục ghi tay theo pathname có tiền tố không được đọc.
+    JSON.stringify({[`/zh${DETAIL_PATH}`]:'/doi-chuan/?q=x'}),
+  ]) {
+    const storage=memoryStorage();
+    storage.map.set(TEAM_DETAIL_RETURN_STORAGE_KEY,raw);
+    assert.equal(resolveReturn({storage}),null,raw);
+  }
+  assert.equal(resolveReturn({storage:memoryStorage({failGet:true})}),null);
+  assert.equal(resolveReturn({storage:null}),null);
+  assert.equal(resolveReturn({storage:undefined}),null);
+});
+
+test('detail return storage is keyed by the detail path without its locale, capped at 32 entries and tolerant of failures',()=>{
+  const read=(storage)=>JSON.parse(storage.map.get(TEAM_DETAIL_RETURN_STORAGE_KEY));
+  const storage=memoryStorage();
+  assert.equal(rememberDetailReturn(storage,`${DETAIL_URL}?variant=2#top`,'/zh/doi-chuan/?q=x&kho=rap-duoc&rogue=1'),true);
+  assert.deepEqual(read(storage),{[DETAIL_PATH]:'/doi-chuan/?q=x&kho=rap-duoc'});
+  // Cùng đội ở bản zh dùng chung khóa và ghi đè mục cũ, không thêm mục.
+  assert.equal(rememberDetailReturn(storage,`${ROOT}/zh${DETAIL_PATH}`,'/zh/doi-chuan/?q=y'),true);
+  assert.deepEqual(read(storage),{[DETAIL_PATH]:'/doi-chuan/?q=y'});
+
+  // Đích không an toàn không bao giờ được ghi.
+  for (const hostile of HOSTILE_RETURNS) {
+    assert.equal(rememberDetailReturn(storage,DETAIL_URL,hostile),false,`must not store ${String(hostile)}`);
+  }
+  assert.deepEqual(read(storage),{[DETAIL_PATH]:'/doi-chuan/?q=y'});
+
+  // Tối đa 32 mục: mục cũ nhất bị loại; ghi lại mục đã có đưa nó lên mới nhất.
+  const many=memoryStorage();
+  for (let index=0;index<40;index+=1) rememberDetailReturn(many,`${ROOT}/doi-chuan/team-${index}/`,`/doi-chuan/?q=${index}`);
+  assert.deepEqual(Object.keys(read(many)),Array.from({length:32},(_,index)=>`/doi-chuan/team-${index+8}/`));
+  assert.equal(read(many)['/doi-chuan/team-39/'],'/doi-chuan/?q=39');
+  rememberDetailReturn(many,`${ROOT}/doi-chuan/team-8/`,'/doi-chuan/?q=again');
+  rememberDetailReturn(many,`${ROOT}/doi-chuan/team-new/`,'/doi-chuan/?q=new');
+  const keys=Object.keys(read(many));
+  assert.equal(keys.length,32);
+  assert.equal(keys.includes('/doi-chuan/team-9/'),false);
+  assert.deepEqual(keys.slice(-2),['/doi-chuan/team-8/','/doi-chuan/team-new/']);
+  assert.equal(read(many)['/doi-chuan/team-8/'],'/doi-chuan/?q=again');
+
+  // Storage hỏng/bị chặn không chặn điều hướng: không ném, báo false khi không ghi được.
+  assert.equal(rememberDetailReturn(memoryStorage({failSet:true}),DETAIL_URL,'/doi-chuan/'),false);
+  assert.equal(rememberDetailReturn(null,DETAIL_URL,'/doi-chuan/'),false);
+  assert.doesNotThrow(()=>rememberDetailReturn(memoryStorage({failGet:true}),DETAIL_URL,'/doi-chuan/?q=x'));
+  // Giá trị cũ hỏng bị thay bằng bản ghi hợp lệ thay vì làm hỏng lần ghi mới.
+  const poisoned=memoryStorage();
+  poisoned.map.set(TEAM_DETAIL_RETURN_STORAGE_KEY,'{not json');
+  assert.equal(rememberDetailReturn(poisoned,DETAIL_URL,'/doi-chuan/?q=x'),true);
+  assert.deepEqual(read(poisoned),{[DETAIL_PATH]:'/doi-chuan/?q=x'});
+  poisoned.map.set(TEAM_DETAIL_RETURN_STORAGE_KEY,JSON.stringify({[DETAIL_PATH]:{target:'x'},'rogue':'/doi-chuan/?q=rogue'}));
+  assert.equal(rememberDetailReturn(poisoned,`${ROOT}/doi-chuan/team-other/`,'/doi-chuan/?q=other'),true);
+  assert.deepEqual(read(poisoned),{'/doi-chuan/team-other/':'/doi-chuan/?q=other'});
+});
+
+test('the detail URL loses only a legacy from and otherwise comes back as the exact same string',()=>{
+  assert.equal(detailUrlWithoutReturn('/doi-chuan/x/?variant=2&from=%2Fdoi-chuan%2F#a'),'/doi-chuan/x/?variant=2#a');
+  assert.equal(detailUrlWithoutReturn('/doi-chuan/x/?from=%2Fdoi-chuan%2F'),'/doi-chuan/x/');
+  assert.equal(detailUrlWithoutReturn('/doi-chuan/x/?from=a&variant=1&from=b'),'/doi-chuan/x/?variant=1');
+  // Có `from` thì thành path + query + hash tương đối; origin của URL tuyệt đối không đi vào thanh địa chỉ.
+  assert.equal(detailUrlWithoutReturn(`${ROOT}/doi-chuan/x/?from=%2F&variant=1`),'/doi-chuan/x/?variant=1');
+  // Không có `from`: trả nguyên chuỗi, không re-encode (`%20`, `%3A`) và không đổi origin.
+  for (const href of ['/doi-chuan/x/','/doi-khac/x/?variant=a%20b','/doi-khac/x/?variant=a%20b#top','/tra-cuu/chien-phap/?id=tactic%3Aan-ui-quan-dan',`${ROOT}/doi-khac/x/?variant=%2Fbad`,'/doi-khac/x/?fromage=1']) {
+    assert.equal(detailUrlWithoutReturn(href),href);
+  }
 });
 
 test('only unmodified primary clicks may record a return snapshot',()=>{
@@ -315,26 +575,24 @@ test('old reference URLs migrate to the registered routes while any config key k
 
   const recommended=migrate(`${ROOT}/?season=pk-s24&detail=${RECOMMENDED}#team-chuan`);
   assert.equal(recommended.replace,true);
-  assert.equal(
-    recommended.target,
-    `/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/doi-chuan/?season=pk-s24')}`,
-  );
+  // Đích Quay lại không đi trong URL chi tiết: trang chi tiết đọc referrer của lần `location.replace` (URL cũ).
+  assert.equal(recommended.target,`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
 
   const legacy=migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`);
-  assert.equal(legacy.target,`/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/doi-khac/')}`);
+  assert.equal(legacy.target,`/doi-khac/${LEGACY_SEGMENT}/`);
 
   const variant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=v-9#team-khac`);
-  assert.equal(variant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=v-9&from=${encodeURIComponent('/doi-khac/')}`);
+  assert.equal(variant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=v-9`);
   const malformedVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=%2Fbad#team-khac`);
-  assert.equal(malformedVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad&from=${encodeURIComponent('/doi-khac/')}`);
+  assert.equal(malformedVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad`);
   const emptyVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=#team-khac`);
-  assert.equal(emptyVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=&from=${encodeURIComponent('/doi-khac/')}`);
+  assert.equal(emptyVariant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=`);
 
-  // Migrate chạy trên mọi trang mục: query riêng của trang đi tiếp làm `from` sau khi lọc.
+  // Migrate chạy trên mọi trang mục: link chuyển tiếp không mang query của trang đi tiếp.
   const onSection=migrate(`/tra-cuu/?detail=${RECOMMENDED}&group=heroes&utm_source=z`);
-  assert.equal(onSection.target,`/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/tra-cuu/?group=heroes')}`);
+  assert.equal(onSection.target,`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   const onKhaiHoang=migrate(`/khai-hoang/?legacyTeam=${LEGACY}&khTeam=x`);
-  assert.equal(onKhaiHoang.target,`/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/khai-hoang/?khTeam=x')}`);
+  assert.equal(onKhaiHoang.target,`/doi-khac/${LEGACY_SEGMENT}/`);
 
   // Unknown identity must not become an arbitrary path.
   assert.equal(migrate(`${ROOT}/?detail=team-missing#team-chuan`),null);
@@ -376,20 +634,6 @@ test('Khai hoang detail routes come from the frozen handle registry and omit a d
   assert.equal(
     teamDetailHref({khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:KHAIHOANG_VARIANT}),
     `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`,
-  );
-  // Href tự đủ state: `from` là URL root kèm đúng cặp của card, không query lạ nào khác.
-  assert.equal(
-    teamDetailHref(
-      {khaiHoangTeamId:KHAIHOANG,khaiHoangVariantId:KHAIHOANG_VARIANT},
-      {from:khaiHoangUrlWithPair('/khai-hoang/',{teamId:KHAIHOANG,variantId:KHAIHOANG_VARIANT})},
-    ),
-    `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`
-      + `&from=${encodeURIComponent(`/khai-hoang/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}`)}`,
-  );
-  // `from` ngoài origin hoặc không an toàn bị bỏ, không kéo state lạ vào URL chi tiết.
-  assert.equal(
-    teamDetailHref({khaiHoangTeamId:KHAIHOANG},{from:'https://evil.example/'}),
-    `/khai-hoang/${KHAIHOANG_HANDLE}/`,
   );
   // Family `k` cũng được validate nguyên khối như hai family cũ.
   for (const payload of [{k:[]},{k:null},{k:{'../secret':'ok'}},{k:{[KHAIHOANG]:'inner space'}},{k:{a:'same',b:'same'}},{k:{[KHAIHOANG]:KHAIHOANG_HANDLE},x:{}}]) {
@@ -520,39 +764,47 @@ test('Khai hoang selection map is sparse, inventory-limited, and authoritative w
   assert.equal(captureReturnSnapshot({href:'https://evil.example/',khaihoangVariants:{[KHAIHOANG]:KHAIHOANG_VARIANT}}),null);
 });
 
-test('the detail page variant URL only replaces its own variant query',()=>{
-  const detail=`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}&from=${encodeURIComponent('/#khaihoang')}`;
-  assert.equal(
-    khaiHoangDetailVariantUrl(detail,'jp-s23'),
-    `/khai-hoang/${KHAIHOANG_HANDLE}/?variant=jp-s23&from=${encodeURIComponent('/#khaihoang')}`,
-  );
-  // Về mặc định thì bỏ hẳn `variant`, `from` vẫn nguyên.
-  assert.equal(khaiHoangDetailVariantUrl(detail,''),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=${encodeURIComponent('/#khaihoang')}`);
-  assert.equal(khaiHoangDetailVariantUrl(detail,'/bad'),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=${encodeURIComponent('/#khaihoang')}`);
-  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?from=%2F%23khaihoang`,'jp-s23'),`/khai-hoang/${KHAIHOANG_HANDLE}/?from=%2F%23khaihoang&variant=jp-s23`);
+test('the detail page variant URL only replaces its own variant query and drops a leftover legacy from',()=>{
+  const detail=`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=${KHAIHOANG_VARIANT}`;
+  const legacy=`${detail}&from=${encodeURIComponent('/#khaihoang')}`;
+  assert.equal(khaiHoangDetailVariantUrl(detail,'jp-s23'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=jp-s23`);
+  // Link cũ còn `from`: đổi variant cũng dọn `from`, không phát lại nó (đích Quay lại đã ghim ở history.state/sessionStorage).
+  assert.equal(khaiHoangDetailVariantUrl(legacy,'jp-s23'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=jp-s23`);
+  // Về mặc định thì bỏ hẳn `variant`.
+  assert.equal(khaiHoangDetailVariantUrl(legacy,''),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(khaiHoangDetailVariantUrl(legacy,'/bad'),`/khai-hoang/${KHAIHOANG_HANDLE}/`);
+  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?from=%2F%23khaihoang`,'jp-s23'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=jp-s23`);
   // Không có gì khác bị chạm: hash và query lạ của trang chi tiết giữ nguyên.
-  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=a&from=x#top`,'b'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=b&from=x#top`);
+  assert.equal(khaiHoangDetailVariantUrl(`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=a&from=x&q=y#top`,'b'),`/khai-hoang/${KHAIHOANG_HANDLE}/?variant=b&q=y#top`);
 });
 
-test('a Khai hoang share link without origin returns to the Khai hoang page',()=>{
+test('a Khai hoang detail page resolves its legacy sources and otherwise leaves the default list link alone',()=>{
+  const detail=`${ROOT}/khai-hoang/${KHAIHOANG_HANDLE}/`;
+  const fromUrl=(value)=>`${detail}?from=${encodeURIComponent(value)}`;
   assert.equal(familyReturnHref('khaihoang'),'/khai-hoang/');
   assert.equal(familyReturnHref('khaihoang',{sourceSeasonId:'pk-s24',sourceCategoryId:'交戰'}),'/khai-hoang/');
-  assert.equal(returnHrefFor('khaihoang',{from:`/khai-hoang/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}`}),`/khai-hoang/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}`);
-  assert.equal(returnHrefFor('khaihoang',{from:'https://evil.example/'}),'/khai-hoang/');
-  assert.equal(returnHrefFor('khaihoang',{}),'/khai-hoang/');
-  assert.equal(returnHrefFor('khaihoang',{from:'/khai-hoang/handle/'}),'/khai-hoang/');
+  assert.equal(
+    resolveReturn({href:fromUrl(`/khai-hoang/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}`)}),
+    `/khai-hoang/?khTeam=${KHAIHOANG}&khVariant=${KHAIHOANG_VARIANT}`,
+  );
+  // Không nguồn, nguồn độc hay trang con của Khai hoang: null để trang giữ `/khai-hoang/` dựng sẵn.
+  assert.equal(resolveReturn({href:detail}),null);
+  assert.equal(resolveReturn({href:fromUrl('https://evil.example/')}),null);
+  assert.equal(resolveReturn({href:fromUrl('/khai-hoang/handle/')}),null);
+  assert.equal(resolveReturn({href:detail,referrer:`${ROOT}/khai-hoang/handle/`}),null);
   // Snapshot và `from` cũ dạng `/#khaihoang` vẫn quay về đúng trang.
-  assert.equal(returnHrefFor('khaihoang',{from:'/#khaihoang'}),'/khai-hoang/');
+  assert.equal(resolveReturn({href:fromUrl('/#khaihoang')}),'/khai-hoang/');
 });
 
 test('Chinese pages keep detail, return and migration links under /zh/ with the same allowlist',()=>{
   handles();
   assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED},'zh'),`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`);
   assert.equal(teamDetailPath({sourceConfigId:RECOMMENDED},'vi'),`/doi-chuan/${RECOMMENDED_SEGMENT}/`);
-  // `from` giữ đúng ngôn ngữ của trang nguồn và lọc khóa như bản Việt.
+  // Link chi tiết bản Trung không mang nguồn quay lại; nguồn cũ (`from`) giữ đúng ngôn ngữ và lọc khóa như bản Việt.
+  assert.equal(teamDetailHref({legacyTeamId:LEGACY},{locale:'zh'}),`/zh/doi-khac/${LEGACY_SEGMENT}/`);
   assert.equal(
-    teamDetailHref({legacyTeamId:LEGACY},{from:`${ROOT}/zh/doi-khac/?q=abc&utm_source=x&detail=y`,origin:ROOT,locale:'zh'}),
-    `/zh/doi-khac/${LEGACY_SEGMENT}/?from=%2Fzh%2Fdoi-khac%2F%3Fq%3Dabc`,
+    resolveReturn({href:`${ROOT}/zh/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/zh/doi-khac/?q=abc&utm_source=x&detail=y')}`}),
+    '/zh/doi-khac/?q=abc',
   );
   assert.equal(safeReturnUrl('/zh/khai-hoang/?khTeam=a&x=1',{origin:ROOT}),'/zh/khai-hoang/?khTeam=a');
   assert.equal(safeReturnUrl('/zh/#team-khac',{origin:ROOT}),'/zh/doi-khac/');
@@ -561,13 +813,14 @@ test('Chinese pages keep detail, return and migration links under /zh/ with the 
   }
   assert.equal(familyReturnHref('recommended',{sourceSeasonId:'pk-s24',locale:'zh'}),'/zh/doi-chuan/?season=pk-s24');
   assert.equal(familyReturnHref('khaihoang',{locale:'zh'}),'/zh/khai-hoang/');
-  assert.equal(returnHrefFor('other',{from:'https://evil.example/zh/doi-khac/',origin:ROOT,locale:'zh'}),'/zh/doi-khac/');
+  assert.equal(familyReturnHref('other',{locale:'zh'}),'/zh/doi-khac/');
+  assert.equal(resolveReturn({href:`${ROOT}/zh/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('https://evil.example/zh/doi-khac/')}`}),null);
   // Khóa phục hồi Khai hoang tách theo ngôn ngữ: snapshot bản Việt không khớp trang bản Trung.
   assert.equal(khaiHoangContextKey('/zh/khai-hoang/?khTeam=a',{origin:ROOT}),'/zh/khai-hoang/');
   const snapshot=captureReturnSnapshot({href:'/khai-hoang/',scrollY:10,tab:'khaihoang',origin:ROOT});
   assert.equal(matchesReturnSnapshot(snapshot,'/zh/khai-hoang/',{origin:ROOT}),false);
   assert.deepEqual(
     migrateLegacyReferenceUrl(`${ROOT}/zh/doi-chuan/?detail=${RECOMMENDED}`,{hasRecommended:()=>true}),
-    {target:`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/?from=%2Fzh%2Fdoi-chuan%2F`,replace:true},
+    {target:`/zh/doi-chuan/${RECOMMENDED_SEGMENT}/`,replace:true},
   );
 });

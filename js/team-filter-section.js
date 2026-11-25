@@ -138,7 +138,7 @@ import { decorateCoverageBadges, rosterControlNodes, rosterHintNode, rosterSumma
 import { treeToDom } from './view-tree.js';
 import { icon, svgNode } from './render.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE, canonicalTeamView } from './team-view.js';
-import { isNativeNavigationClick, safeReturnUrl } from './team-detail-navigation.js';
+import { isNativeNavigationClick } from './team-detail-navigation.js';
 
 // Đo lường (GA4 `filter_change`): chỉ gọi từ thao tác của người dùng trên điều khiển, không từ lần dựng đầu hay khôi phục URL.
 const trackFilter=(filter,value)=>track('filter_change',{filter,filter_value:String(value)});
@@ -165,11 +165,13 @@ export function referenceHeadTextTree(title,family) {
 }
 
 /**
- * Dấu của danh sách dựng sẵn: mùa, từ khóa, bộ lọc, kiểu hiển thị, số đội đang hiện và nguồn quay lại của mọi
- * link chi tiết (`from`). Trình duyệt chỉ nhận lại DOM dựng sẵn khi dấu khớp đúng trạng thái nó sắp vẽ.
+ * Dấu của danh sách dựng sẵn: mùa, từ khóa, bộ lọc, kiểu hiển thị và số đội đang hiện. Trình duyệt chỉ nhận lại DOM dựng
+ * sẵn khi dấu khớp đúng trạng thái nó sắp vẽ. Không có URL trang: link chi tiết là URL sạch nên URL không làm DOM khác
+ * đi; danh sách không đọc `scenario`/`ruleset`/`config`, còn `source` đã nằm trong `filters`. `kho`/`xep` cũng không
+ * vào dấu: thứ tự theo kho đã chặn riêng bằng `rosterOrdered` ở `renderView`.
  */
-export const referenceViewSignature=(state,mode,from,shown=PAGE_SIZE)=>
-  JSON.stringify([state.season ?? null,state.query || '',state.filters || {},mode,from ?? null,shown]);
+export const referenceViewSignature=(state,mode,shown=PAGE_SIZE)=>
+  JSON.stringify([state.season ?? null,state.query || '',state.filters || {},mode,shown]);
 
 // Nhóm chính Loại binh → Phe → Tier; Nhóm/Bộ đội hình thu gọn trong accordion.
 const PRIMARY_FACETS=['unit','faction','tier'];
@@ -524,8 +526,7 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     view.removeAttribute('data-ssr-signature');
     // Đang lọc/sắp theo kho thì danh sách khác bản dựng sẵn: không nhận lại DOM đó.
     const rosterOrdered=Boolean(coverage && (state.rosterFilter || state.rosterSort));
-    const from=safeReturnUrl(location.href);
-    const prerenderedFor=count=>!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,from,count);
+    const prerenderedFor=count=>!rosterOrdered && prerendered!==undefined && prerendered===referenceViewSignature(state,mode,count);
     // Mùa dài hơn một lượt: bản dựng sẵn có đủ mọi đội (dấu mang tổng số đội), nên nhận lại cả danh sách ở lần vẽ đầu
     // và coi như đã "Xem thêm" hết, thay vì bỏ phần sau lượt đầu rồi dựng lại.
     const wholeList=!prerenderedFor(shown) && prerenderedFor(filteredRows.length);

@@ -23,6 +23,13 @@ export const HOST_BRIDGE_KEYS: readonly string[] = Object.freeze([
   ANALYZE_HISTORY_KEY,
 ]);
 
+/**
+ * Host cũ chuyển hẳn về domain chính `https://tqccl.com`. `planHostBridge` giữ bản sao literal vì được nhúng nguyên thân vào
+ * script inline nên không tham chiếu được hằng ngoài thân hàm; `tests-js/host-bridge.test.mjs` khóa hai bên khớp. Verifier
+ * `dist/` coi link tới các host này là link nội bộ (cùng bản build, chỉ khác hostname).
+ */
+export const LEGACY_HOSTS: readonly string[] = Object.freeze(['tqccl.pages.dev', 'www.tqccl.com']);
+
 export interface HostBridgeStorage {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;

@@ -358,7 +358,39 @@ async function main() {
     };
     /** Chỉ sửa URL (replaceState), không vẽ lại: cho khóa không còn tác dụng mà mục đã tự bỏ khỏi trạng thái của nó. */
     const replaceReferenceQuery = changes => history.replaceState(history.state, '', referenceQueryURL(changes));
+    // Quay lại một danh sách đang lọc/sắp theo kho (`kho`/`xep` trên URL): kho đọc không đồng bộ nên lúc khôi phục danh sách còn
+    // chưa lọc. Mở thẻ và cuộn ở đó sẽ rơi vào danh sách sai, nên hai bước này hoãn tới lần áp kho đầu tiên (kể cả khi máy không
+    // có kho) và chỉ chạy một lần; người dùng đổi bộ lọc trước đó thì bỏ hẳn.
+    let rosterPending = false;
+    let afterRoster = null;
+    const rosterSettled = () => {
+      rosterPending = false;
+      const restore = afterRoster;
+      afterRoster = null;
+      try { restore?.(); } catch (error) { console.error(error); }
+    };
+    // Kho đọc chậm (mạng yếu, `/api/me` treo) thì bước hoãn không được giật trang về vị trí cũ sau khi người dùng đã tự cuộn
+    // hay bấm, cũng không được chạy quá muộn: tương tác đầu tiên hoặc hết hạn chờ đều bỏ hẳn bước khôi phục.
+    const ROSTER_RESTORE_TIMEOUT_MS = 3000;
+    const ROSTER_RESTORE_CANCEL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
+    const deferUntilRoster = restore => {
+      let timer = 0;
+      const cancel = () => {
+        if (afterRoster === run) afterRoster = null;
+        stop();
+      };
+      const stop = () => {
+        clearTimeout(timer);
+        for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.removeEventListener(type, cancel, true);
+      };
+      const run = () => { stop(); restore(); };
+      for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.addEventListener(type, cancel, {capture: true, passive: true});
+      timer = setTimeout(cancel, ROSTER_RESTORE_TIMEOUT_MS);
+      afterRoster = run;
+    };
     const navigateReference = (changes, push = false) => {
+      // Người dùng tự đổi bộ lọc: vị trí cũ đang chờ kho không còn đúng.
+      afterRoster = null;
       // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
       if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
       history[push ? 'pushState' : 'replaceState'](history.state, '', referenceQueryURL(changes));
@@ -369,7 +401,7 @@ async function main() {
     const sessionStore = () => {
       try { return globalThis.sessionStorage; } catch { return null; }
     };
-    const referenceHref = row => referenceDetailHref(row, {from:location.href});
+    const referenceHref = row => referenceDetailHref(row);
     // Snapshot chỉ là trạng thái giao diện; lỗi storage không được chặn điều hướng.
     const rememberReturn = () => {
       const tab = pageSection;
@@ -400,6 +432,7 @@ async function main() {
       ? safeKhaiHoangVariants(snapshot.khaihoangVariants,khaihoangInventory)
       : null;
     const restoreReturnState = () => {
+      afterRoster = null;
       const fromHistory = history.state?.teamReturn;
       const historySnapshot = fromHistory && matchesReturnSnapshot(fromHistory,location.href)
         ? captureReturnSnapshot({
@@ -433,11 +466,16 @@ async function main() {
       }
       const snapshot = historySnapshot || sessionSnapshot;
       if (!snapshot) return;
-      const section=sections[snapshot.tab || pageSection];
-      if (section?.setDisclosureState) section.setDisclosureState(snapshot.disclosures);
-      else section?.setFiltersExpanded?.(snapshot.disclosures?.filters);
-      if (!snapshot.scrollY) return;
-      requestAnimationFrame(()=>window.scrollTo({top:snapshot.scrollY,behavior:'instant'}));
+      const restoreView = () => {
+        const section=sections[snapshot.tab || pageSection];
+        if (section?.setDisclosureState) section.setDisclosureState(snapshot.disclosures);
+        else section?.setFiltersExpanded?.(snapshot.disclosures?.filters);
+        if (!snapshot.scrollY) return;
+        requestAnimationFrame(()=>window.scrollTo({top:snapshot.scrollY,behavior:'instant'}));
+      };
+      const listQuery = new URL(location.href).searchParams;
+      if (rosterPending && (listQuery.has('kho') || listQuery.has('xep'))) deferUntilRoster(restoreView);
+      else restoreView();
     };
     function renderReference() {
       if (!REFERENCE_SECTIONS.includes(pageSection) || !recommendedModel) return;
@@ -541,12 +579,13 @@ async function main() {
     const loadRosterSource = ({ fresh = false } = {}) => {
       if (!rosterSection?.setRoster) return;
       const run = ++rosterLoad;
+      rosterPending = true;
       if (fresh) rosterSection.setRoster(undefined);
       (async () => {
         const user = await loadSession({ probe: false, fresh });
         const roster = readOwnedRoster(localStore(), { userId: user?.id ?? null });
         if (run !== rosterLoad) return;
-        if (!roster) { rosterSection.setRoster(null); return; }
+        if (!roster) { rosterSection.setRoster(null); rosterSettled(); return; }
         const [heroesDict, tacticsDict] = await Promise.all([loadLookupPayload('heroes-dict.json'), loadLookupPayload('tactics.json')]);
         if (run !== rosterLoad) return;
         const bySeason = new Map();
@@ -556,10 +595,11 @@ async function main() {
           }
           return bySeason.get(seasonId);
         });
+        rosterSettled();
       })().catch(error => {
         // Lỗi phiên hoặc lỗi tải từ điển: danh sách giữ nguyên, không badge và không dòng dẫn sai.
         console.error(error);
-        if (run === rosterLoad) rosterSection.setRoster(undefined);
+        if (run === rosterLoad) { rosterSection.setRoster(undefined); rosterSettled(); }
       });
     };
     loadRosterSource();
@@ -569,13 +609,13 @@ async function main() {
       renderReference();
       khaiHoangUI?.updateLinks();
     };
-    // Mount controller Khai hoang trước restore: restoration ghi lựa chọn vào card đã dựng,
-    // href tự đủ state cho Cmd/Ctrl-click và copy link mà không cần sửa URL nguồn.
+    // Mount controller Khai hoang trước restore: restoration ghi lựa chọn vào card đã dựng. Href của thẻ chỉ là URL chi tiết
+    // sạch; trạng thái danh sách đi theo snapshot (history.state + sessionStorage) và referrer, trang chi tiết tự dựng đích Quay lại.
     if (pageSection === 'khaihoang') {
       khaiHoangUI = khaihoangTable(khaihoang, {
         // Trang Khai hoang do build dựng sẵn: nhận lại nguyên DOM đó, chỉ gắn sự kiện.
         adopt: adoptPrerendered ? mount.querySelector(':scope > .khaihoang') : null,
-        hrefFor: (teamId, variantId) => khaiHoangCardHref(teamId, variantId, {from: location.href}),
+        hrefFor: (teamId, variantId) => khaiHoangCardHref(teamId, variantId),
         // Primary click: đồng bộ cặp đang bấm rồi mới ghi snapshot, không preventDefault.
         onNavigate: (event, teamId, variantId) => {
           if (!isNativeNavigationClick(event)) return;
@@ -645,7 +685,7 @@ async function main() {
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
     const onOpenTeam = (team) => {
-      const href = teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id},{from:location.href});
+      const href = teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id});
       if (!href) return;
       rememberReturn();
       location.assign(href);

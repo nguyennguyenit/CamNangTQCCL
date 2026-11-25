@@ -75,6 +75,9 @@ const STALE_CASES = [
   ["Đội khác: bộ lọc trong URL", "/zh/doi-khac/?faction=thuc", "#section-team-khac > .reference-view", null, true],
   ["Cùng Tồn: kịch bản trong URL", "/cung-ton/?scenario=x", "#section-coexist > .coexist-group-view", null, true],
   ["Khai hoang: cặp đang chọn trong URL", "/khai-hoang/?khTeam=x&khVariant=y", "#section-khaihoang .kh-team-view", null, true],
+  // `kho`/`xep` chỉ thêm badge/đổi thứ tự khi máy có kho: người không có kho vẫn thấy ngay danh sách dựng sẵn.
+  ["Đội chuẩn: kho và xep trong URL (không phải trạng thái khác mặc định)", "/doi-chuan/?kho=rap-duoc&xep=de-rap", "#section-team-chuan > .reference-view", null, false],
+  ["Đội chuẩn: kho kèm bộ lọc khác vẫn là trạng thái khác mặc định", "/doi-chuan/?q=x&kho=rap-duoc", "#section-team-chuan > .reference-view", null, true],
   ["Khai hoang: mặc định", "/khai-hoang/", "#section-khaihoang .kh-team-view", null, false],
 ];
 for (const [name, url, selector, storedView, hidden] of STALE_CASES) {
@@ -87,10 +90,22 @@ for (const [name, url, selector, storedView, hidden] of STALE_CASES) {
   });
 }
 
-test("Đội chuẩn: nhận lại danh sách dựng sẵn thì link chi tiết mang nguồn quay lại của trang", async ({ page }) => {
+test("Đội chuẩn: nhận lại danh sách dựng sẵn thì link chi tiết là URL sạch, không mang nguồn quay lại", async ({ page }) => {
   await bootWithProbe(page, "/doi-chuan/", ".reference-team-card");
-  const href = await page.locator(".reference-team-card a[data-team-detail-link]").first().getAttribute("href");
-  expect(new URL(href, "http://x").searchParams.get("from")).toBe("/doi-chuan/");
+  const hrefs = await page.locator(".reference-team-card a[data-team-detail-link]").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
+  expect(hrefs.length).toBeGreaterThan(0);
+  for (const href of hrefs) {
+    expect(href, "link chi tiết Đội chuẩn là URL canonical trần").toMatch(/^\/doi-chuan\/[^/?#]+\/$/);
+  }
+});
+
+test("Đội chuẩn: ?kho=&xep= khi máy chưa có kho vẫn nhận lại nguyên node dựng sẵn (chữ ký không còn URL)", async ({ page }) => {
+  const prerendered = await bootWithProbe(page, "/doi-chuan/?kho=rap-duoc&xep=de-rap", ".reference-team-card");
+  expect(prerendered).toBe(defaultSeasonTeams);
+  expect(await survivors(page), "node dựng sẵn bị thay").toBe(prerendered);
+  await expect(page.locator(".reference-team-card")).toHaveCount(prerendered);
+  // Chưa biết mùa có độ phủ hay không (máy chưa có kho): giữ `kho`/`xep` trên URL.
+  expect(new URL(page.url()).search).toBe("?kho=rap-duoc&xep=de-rap");
 });
 
 // Nút dựng sẵn chưa có sự kiện: khoá đến khi trình duyệt gắn xong (bấm lúc đó không được "im lặng").

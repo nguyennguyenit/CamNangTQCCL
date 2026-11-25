@@ -158,7 +158,8 @@ test.describe("Đội chuẩn: badge kho", () => {
     await expect(bar(page).getByRole("link", { name: "Nhập kho" })).toHaveAttribute("href", "/goi-y-doi-tu-kho/");
     await expect(section(page).locator(".roster-stock-badge")).toHaveCount(0);
     await expect(bar(page).getByRole("button")).toHaveCount(0);
-    // Danh sách dựng sẵn đủ đội của mùa mặc định được nhận lại nguyên vẹn, như không có `kho`/`xep`.
+    // Danh sách dựng sẵn đủ đội của mùa mặc định được nhận lại nguyên vẹn, như không có `kho`/`xep` (chữ ký không còn URL
+    // nên hai khóa này không làm lệch dấu; thứ tự theo kho đã chặn riêng khi máy có kho).
     await expect(section(page).locator("[data-reference-key]")).toHaveCount(records.filter((record) => record.sourceSeasonId === SEASON).length);
     // Chưa biết mùa có độ phủ hay không (máy chưa có kho): giữ `kho`/`xep` trên URL.
     expect(new URL(page.url()).search).toBe("?kho=rap-duoc&xep=de-rap");
@@ -207,6 +208,38 @@ test("quay lại từ trang chi tiết khi đang sắp theo kho: giữ thứ t�
   await waitForCoverage(page);
   expect(await cards.evaluateAll((nodes) => nodes.map((node) => node.dataset.referenceKey))).toEqual(order);
   await expect(section(page).locator(`.reference-team-card[data-reference-key="${key}"] a[data-team-detail-link]`).first()).toBeFocused();
+});
+
+test("quay lại từ trang chi tiết khi đang lọc kho=rap-duoc&xep=de-rap: link sạch, đích đủ hai khóa qua reload, thẻ vừa mở nằm lại trong khung nhìn", async ({ page }) => {
+  // Kho gồm mọi đội của mùa mặc định nên danh sách "Ráp được" đủ dài để cuộn.
+  const roster = rosterFor(SEASON, records.filter((record) => record.sourceSeasonId === SEASON).map((record) => record.sourceConfigId));
+  const complete = expectedFor(SEASON, roster).summary.complete;
+  expect(complete, "kho đầy đủ phải ráp được đủ nhiều đội để cuộn").toBeGreaterThan(10);
+  await seedRoster(page, roster);
+  const listUrl = "/doi-chuan/?kho=rap-duoc&xep=de-rap";
+  await page.goto(listUrl);
+  await waitForCoverage(page);
+  const cards = section(page).locator(".reference-team-card");
+  const target = cards.nth(Math.min(25, complete - 1));
+  const key = await target.getAttribute("data-reference-key");
+  await target.scrollIntoViewIfNeeded();
+  const scrolled = await page.evaluate(() => Math.round(window.scrollY));
+  expect(scrolled).toBeGreaterThan(0);
+  await target.locator(".team-name a").click();
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  // Link chi tiết sạch; đích Quay lại mang đủ `kho` và `xep` (allowlist của Đội chuẩn) và sống qua reload.
+  expect(new URL(page.url()).search).toBe("");
+  const back = page.locator("#team-return-link");
+  await expect(back).toHaveAttribute("href", listUrl);
+  await page.reload();
+  await expect(back).toHaveAttribute("href", listUrl);
+  await back.click();
+  await expect(page).toHaveURL(listUrl);
+  await waitForCoverage(page);
+  // Kho tới sau lần vẽ đầu: cuộn và mở thẻ hoãn tới khi danh sách đã lọc/sắp theo kho, nên thẻ đích không trôi khỏi khung nhìn.
+  const reopened = section(page).locator(`.reference-team-card[data-reference-key="${key}"]`);
+  await expect(reopened).toBeInViewport();
+  await expect(reopened.locator("a[data-team-detail-link]").first()).toBeFocused();
 });
 
 test("thanh kho ẩn không chiếm chỗ: Đội khác không có thanh kho hiển thị", async ({ page }) => {

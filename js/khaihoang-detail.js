@@ -8,7 +8,7 @@ import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { createSaveButton, embeddedBuilder } from './my-teams-save-button.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { setTacticDisplayName, setZhNameResolver } from './recommended-reference-state.js';
-import { khaiHoangDetailVariantUrl, returnHrefFor } from './team-detail-navigation.js';
+import { detailUrlWithoutReturn, khaiHoangDetailVariantUrl, rememberDetailReturn, resolveDetailReturn } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
 import { treeToDom } from './view-tree.js';
@@ -26,6 +26,9 @@ const VERIFY_FAILURES = new Set([MISSING_PIN_MESSAGE, CHANGED_SOURCE_MESSAGE, MI
 const decoder = new TextDecoder();
 const sha256Hex = async (bytes) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))]
   .map((value) => value.toString(16).padStart(2, '0')).join('');
+const sessionStore = () => {
+  try { return globalThis.sessionStorage; } catch { return null; }
+};
 
 /**
  * Trang chi tiết một đội khai hoang: phiên bản đang chọn (đội hình + ghi chú), rồi điểm và hướng dẫn của team.
@@ -54,8 +57,6 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   const panel = documentTarget.querySelector('#team-detail-panel');
   const panelActions = documentTarget.querySelector('#team-detail-actions');
   let loadBytes = createByteLoader();
-  const from = new URL(location.href).searchParams.get('from');
-  if (returnLink) returnLink.href = returnHrefFor('khaihoang', {from});
 
   let pending = false;
   let team = null;
@@ -73,6 +74,40 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
   };
 
   const requestedVariant = () => new URL(location.href).searchParams.get('variant') || '';
+
+  /**
+   * Đích nút "Quay lại": link nội bộ không mang `from`, nên đích lấy theo `resolveDetailReturn` (history.state → `?from=` của link
+   * cũ → referrer cùng origin → sessionStorage theo trang) rồi ghim vào history.state + sessionStorage và dọn `from` khỏi thanh
+   * địa chỉ. Đích lấy từ referrer thì cặp đội/cấu hình bị ghi đè bằng đội của trang này và cấu hình lúc vào: Cmd/Ctrl/middle-click
+   * vào thẻ B không chạy đồng bộ cặp, nên URL danh sách có thể còn cặp của thẻ A. `?variant=` chỉ được tính khi là chip có thật
+   * (dựng sẵn), để link cũ/hỏng không ghim một cấu hình lạ vào cặp quay lại. Nút "Xem cấu hình mặc định" là link thật tới trang
+   * mới: đích sống qua sessionStorage. Không có đích thì nút giữ link `/khai-hoang/` dựng sẵn.
+   */
+  const knownVariant = (variantId) => !!variantId
+    && [...body.querySelectorAll('.kh-config-chip[data-variant]')].some((chip) => chip.dataset.variant === variantId);
+  const pinReturnLink = () => {
+    const storage = sessionStore();
+    const variantId = requestedVariant();
+    const target = resolveDetailReturn({
+      href: location.href,
+      referrer: document.referrer,
+      state: history.state,
+      storage,
+      origin: location.origin,
+      khaiHoang: {teamId, variantId: knownVariant(variantId) ? variantId : ''},
+    });
+    if (target) {
+      if (returnLink) returnLink.href = target;
+      rememberDetailReturn(storage, location.href, target);
+    }
+    const clean = detailUrlWithoutReturn(location.href);
+    const state = history.state && typeof history.state === 'object' ? history.state : {};
+    if (clean !== location.href || state.teamDetailReturn !== (target ?? null)) {
+      history.replaceState({...state, teamDetailReturn: target ?? null}, '', clean);
+    }
+  };
+  pinReturnLink();
+
   const variantFor = (variantId) =>
     (variantId ? (team?.variants || []).find((variant) => variant.id === variantId) : null) || null;
 
@@ -125,7 +160,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     for (const chip of mount.chips) chip.setAttribute('aria-pressed', String((chip.dataset.variant || '') === variantId));
   };
 
-  /** Đổi cấu hình chỉ thay query `variant` của chính trang, giữ nguyên `from` và phần còn lại. */
+  /** Đổi cấu hình chỉ thay query `variant` của chính trang; đích Quay lại đã ghim ở history.state nên giữ nguyên trong entry này. */
   const selectVariant = async (variantId) => {
     history.replaceState(history.state, '', khaiHoangDetailVariantUrl(location.href, variantId));
     // Thân dựng sẵn chính là cấu hình mặc định: chọn lại "Mặc định" khi chưa tải gì không cần dữ liệu (và không được

@@ -7,6 +7,13 @@ import { currentLocale, localeFromPath, localePath, stripLocale } from './i18n.j
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from './lookup-ids.js';
 
 export const TEAM_RETURN_STORAGE_KEY = 'tqccl:team-return:v1';
+/**
+ * Đích Quay lại của từng trang chi tiết trong phiên: `{[pathname chi tiết bỏ locale]: đích danh sách bỏ locale}`, tối đa
+ * 32 mục (mục cũ nhất bị loại). Sống qua những lần vào trang mới mà `history.state` trống và referrer vô dụng (đổi ngôn
+ * ngữ, quay về sau đăng nhập Google, skip-link rồi reload, nút "Xem cấu hình mặc định") — xem `resolveDetailReturn`.
+ */
+export const TEAM_DETAIL_RETURN_STORAGE_KEY = 'tqccl:team-detail-return:v1';
+const MAX_DETAIL_RETURNS = 32;
 
 /** Tám mục cẩm nang; `tab` của snapshot và `aria-current` của nav đều dùng đúng id này. */
 export const SECTION_TABS = ['team-chuan','team-khac','coexist','khaihoang','lookup','recruit-tracker','analyze','roster-recommend'];
@@ -19,12 +26,13 @@ export const KHAIHOANG_VARIANT_QUERY_KEY = 'khVariant';
  * Khóa query mỗi trang mục giữ lại khi dựng URL quay lại; khóa khác bị bỏ lặng lẽ.
  * Đội khác chỉ có một mùa nên không giữ `season` (bị bỏ lặng lẽ như khóa lạ).
  * Đội chuẩn/Đội khác không còn `score` (bộ lọc điểm đã bỏ) và `category` (bộ chọn danh mục đã bỏ); thêm `view` cho chế độ Thẻ/Bảng.
+ * Đội chuẩn giữ thêm `kho`/`xep` (lọc/sắp theo kho trên máy) để Quay lại về đúng danh sách đã lọc; Đội khác không có kho.
  * Cùng Tồn chỉ có nhóm, cấu hình và phạm vi kịch bản/luật; Soi đội giữ mùa đối chiếu và đội đã xác nhận
  * (`doi`, chỉ ID canonical); Gợi ý đội giữ mùa đang chọn.
  * Trang nhóm Tra cứu giữ hồ sơ đang mở (`id`); mục lục `/tra-cuu/` giữ `group`/`id` của link cũ để chuyển tiếp.
  */
 export const SECTION_QUERY_KEYS = Object.freeze({
-  '/doi-chuan/': ['season','q','faction','unit','tier','view','subcategory','source','scenario','ruleset','config'],
+  '/doi-chuan/': ['season','q','faction','unit','tier','view','subcategory','source','scenario','ruleset','config','kho','xep'],
   '/doi-khac/': ['q','faction','unit','view','subcategory','source','scenario','ruleset','config'],
   '/cung-ton/': ['group','config','scenario','ruleset'],
   '/soi-doi-tu-anh/': ['season','doi'],
@@ -34,6 +42,13 @@ export const SECTION_QUERY_KEYS = Object.freeze({
   ...Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map(group => [lookupGroupPath(group), ['id']])),
   '/theo-doi-chieu-mo/': [],
 });
+
+/**
+ * Khóa của Đội chuẩn mà danh sách dựng sẵn vẫn đúng khi có mặt: lọc/sắp theo kho chỉ thêm badge và đổi thứ tự khi máy
+ * có kho (đã có kiểm riêng ở `renderView`), nên không tính vào "trang mở ở trạng thái khác bản dựng sẵn" của
+ * `ssrStaleGuardScript` — người không có kho vẫn thấy danh sách dựng sẵn ngay.
+ */
+export const SSR_STALE_EXEMPT_KEYS = Object.freeze(['kho','xep']);
 
 /** Selectors that would send the detail page straight back to itself. */
 const LOOP_QUERY_KEYS = ['detail','legacyTeam','legacyVariant','from'];
@@ -119,7 +134,12 @@ export function teamDetailPath(target, locale = currentLocale()) {
   return segment ? localePath(`/${prefix}/${encodeURIComponent(segment)}/`, locale) : null;
 }
 
-export function teamDetailHref(target, {from, origin, locale = currentLocale()} = {}) {
+/**
+ * Href trang chi tiết: đường dẫn theo route handle + `variant` khi nó chọn nội dung (Đội khác luôn có, Khai hoang chỉ khi
+ * cấu hình khác mặc định). KHÔNG mang trạng thái điều hướng: đích "Quay lại" do chính trang chi tiết quyết định
+ * (`resolveDetailReturn`), nên link nội bộ luôn là URL canonical (+ `variant`), không có biến thể URL theo trang nguồn.
+ */
+export function teamDetailHref(target, {locale = currentLocale()} = {}) {
   const path = teamDetailPath(target, locale);
   if (!path) return null;
   const query = new URLSearchParams();
@@ -131,15 +151,13 @@ export function teamDetailHref(target, {from, origin, locale = currentLocale()} 
       ? String(target.legacyVariantId)
       : null;
   if (variant !== null) query.set('variant', variant);
-  const returnUrl = safeReturnUrl(from, {origin});
-  if (returnUrl) query.set('from', returnUrl);
   const search = query.toString();
   return search ? `${path}?${search}` : path;
 }
 
 /**
  * Link chi tiết của một hàng Đội chuẩn (`sourceConfigId`) / Đội khác (`legacyTeamId` hoặc `id`, kèm biến thể);
- * dùng chung giữa danh sách dựng sẵn lúc build và trình duyệt. `from`: URL trang danh sách.
+ * dùng chung giữa danh sách dựng sẵn lúc build và trình duyệt.
  */
 export function referenceDetailHref(row, options) {
   return teamDetailHref(
@@ -150,12 +168,9 @@ export function referenceDetailHref(row, options) {
   );
 }
 
-/** Link chi tiết của thẻ Khai hoang: `from` là URL mục đã gắn đúng cặp đội/cấu hình đang chọn. */
-export function khaiHoangCardHref(teamId, variantId, {from, origin, locale} = {}) {
-  return teamDetailHref(
-    {khaiHoangTeamId: teamId, khaiHoangVariantId: variantId},
-    {from: khaiHoangUrlWithPair(from, {teamId, variantId}), origin, locale},
-  );
+/** Link chi tiết của thẻ Khai hoang: `variant` chỉ có khi cấu hình đang chọn khác mặc định. */
+export function khaiHoangCardHref(teamId, variantId, {locale} = {}) {
+  return teamDetailHref({khaiHoangTeamId: teamId, khaiHoangVariantId: variantId}, {locale});
 }
 
 /**
@@ -241,10 +256,6 @@ export function familyReturnHref(family, {sourceSeasonId, locale = currentLocale
   return `${path}${search ? `?${search}` : ''}`;
 }
 
-export function returnHrefFor(family, {from, origin, ...scope} = {}) {
-  return safeReturnUrl(from, {origin}) || familyReturnHref(family, scope);
-}
-
 /**
  * Khóa phục hồi của Khai hoang: `safeReturnUrl` chuẩn hóa trước (URL gốc `/#khaihoang` cũng về
  * `/khai-hoang/`), chỉ khi thuộc đúng trang Khai hoang mới bỏ đúng `khTeam`/`khVariant`.
@@ -293,11 +304,141 @@ export function khaiHoangUrlWithPair(href, {teamId, variantId} = {}) {
   return `${url.pathname}${url.search}${url.hash}`;
 }
 
-/** URL trang chi tiết: chỉ thay đúng `variant`, giữ `from`, path và hash; không chạm root. */
+/** URL trang chi tiết: chỉ thay đúng `variant`, bỏ `from` còn sót của link cũ, giữ path và hash; không chạm root. */
 export function khaiHoangDetailVariantUrl(href, variantId) {
   const url = new URL(href, RETURN_ORIGIN);
+  url.searchParams.delete('from');
   if (routableIdentifier(variantId)) url.searchParams.set('variant', variantId);
   else url.searchParams.delete('variant');
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+/** Giá trị query `name` của `href`; URL hỏng coi như không có. */
+function queryValue(href, name) {
+  try {
+    return new URL(href, RETURN_ORIGIN).searchParams.get(name);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Ô sessionStorage của một trang chi tiết: khóa là pathname bỏ tiền tố locale (cùng một đội ở mọi ngôn ngữ dùng chung một
+ * đích), `locale` là ngôn ngữ của trang để dựng lại đích đúng bản.
+ */
+function detailReturnSlot(href) {
+  try {
+    const {pathname} = new URL(href, RETURN_ORIGIN);
+    return {key: stripLocale(pathname), locale: localeFromPath(pathname)};
+  } catch {
+    return null;
+  }
+}
+
+/** Các cặp `[khóa, đích]` đã lưu, cũ → mới; storage không đọc được hoặc nội dung hỏng thì rỗng. */
+function storedDetailReturns(storage) {
+  let parsed;
+  try {
+    parsed = JSON.parse(storage.getItem(TEAM_DETAIL_RETURN_STORAGE_KEY));
+  } catch {
+    return [];
+  }
+  return plainObject(parsed)
+    ? Object.entries(parsed).filter(([key, target]) => key.startsWith('/') && typeof target === 'string')
+    : [];
+}
+
+/**
+ * Đích ghim trong sessionStorage chỉ dùng khi referrer không cho biết người dùng đến từ đâu (rỗng, hỏng, khác origin: skip-link
+ * rồi reload, quay về sau đăng nhập Google) hoặc referrer chính là trang chi tiết này ở ngôn ngữ/variant khác (đổi ngôn ngữ,
+ * đổi variant, nút "Xem cấu hình mặc định"). Referrer cùng origin là trang khác (trang riêng Tra cứu, trang mùa, Landing,
+ * Đội của tôi, trang chi tiết đội khác) nghĩa là người dùng vừa đi đường khác tới đây: đích cũ của lần trước là sai, nên
+ * trả `false` để caller giữ link họ đội dựng sẵn.
+ */
+function referrerAllowsStoredReturn(referrer, origin, slotKey) {
+  if (typeof referrer !== 'string' || referrer === '') return true;
+  let url;
+  try {
+    url = new URL(referrer);
+  } catch {
+    return true;
+  }
+  if (!origin || url.origin !== origin) return true;
+  return stripLocale(url.pathname) === slotKey;
+}
+
+/**
+ * Đích là trang Khai hoang thì cặp đội/cấu hình lấy theo trang chi tiết đang mở (`khaiHoang`), không theo URL danh sách lúc
+ * click: Cmd/Ctrl/middle-click vào thẻ B mở tab mới không chạy đồng bộ cặp, nên URL danh sách có thể còn cặp của thẻ A.
+ */
+function withKhaiHoangPair(url, khaiHoang) {
+  return khaiHoang?.teamId && khaiHoangContextKey(url) !== null ? khaiHoangUrlWithPair(url, khaiHoang) : url;
+}
+
+/**
+ * Đích nút "Quay lại" của trang chi tiết. Link nội bộ không mang trạng thái điều hướng nên trang tự quyết định theo thứ
+ * tự sau; mọi nguồn đều qua `safeReturnUrl`, nguồn thiếu/hỏng/độc bị bỏ qua và nguồn kế tiếp thắng:
+ *   1. `state.teamDetailReturn`: đích đã ghim vào chính history entry này (reload, đổi variant không tính lại);
+ *   2. `?from=` của link cũ đã chia sẻ trước khi link nội bộ bỏ `from` (giữ nguyên cặp Khai hoang của nó);
+ *   3. `referrer` cùng origin: click thường, Cmd/Ctrl/middle-click, `location.assign`, `location.replace` của link cũ.
+ *      Đích là trang Khai hoang thì cặp bị ghi đè bằng `khaiHoang` `{teamId, variantId}` (đội của trang chi tiết, variant
+ *      lúc vào nếu là cấu hình có thật);
+ *   4. sessionStorage theo trang chi tiết (`rememberDetailReturn`): lần vào trang mới mà referrer vô dụng (đổi ngôn ngữ,
+ *      quay về sau đăng nhập Google, skip-link rồi reload, nút "Xem cấu hình mặc định"). Referrer đứng TRƯỚC storage để
+ *      mở lại cùng đội từ danh sách khác không lấy đích cũ; referrer cùng origin là trang khác (trang riêng Tra cứu, trang
+ *      mùa, Landing...) chặn luôn bước này (`referrerAllowsStoredReturn`);
+ *   5. `null`: caller giữ link họ đội đã dựng sẵn.
+ * `origin` PHẢI là `location.origin` của trang, không bao giờ suy từ referrer (suy từ referrer thì referrer nào cũng thành
+ * "cùng origin"). Trả URL gốc-tương-đối của trang danh sách, hoặc `null`.
+ * @param {{href?: string, referrer?: string, state?: unknown, storage?: Storage | null, origin?: string, khaiHoang?: {teamId?: string, variantId?: string} | null}} [options]
+ * @returns {string | null}
+ */
+export function resolveDetailReturn({href, referrer, state, storage, origin, khaiHoang = null} = {}) {
+  const safe = (raw) => safeReturnUrl(raw, {origin});
+  const pinned = plainObject(state) ? safe(state.teamDetailReturn) : null;
+  if (pinned) return pinned;
+  const legacy = safe(queryValue(href, 'from'));
+  if (legacy) return legacy;
+  const opened = safe(referrer);
+  if (opened) return withKhaiHoangPair(opened, khaiHoang);
+  const slot = detailReturnSlot(href);
+  if (!slot || !referrerAllowsStoredReturn(referrer, origin, slot.key)) return null;
+  const stored = storedDetailReturns(storage).find(([key]) => key === slot.key);
+  return stored ? safe(localePath(stored[1], slot.locale)) : null;
+}
+
+/**
+ * Ghim đích đã quyết (`resolveDetailReturn`) của trang chi tiết `href` vào sessionStorage để lần vào trang mới của cùng đội
+ * (đổi ngôn ngữ, quay về sau đăng nhập, skip-link rồi reload) vẫn quay về đúng danh sách. Đích lưu đã bỏ tiền tố locale;
+ * đích không an toàn không được ghi. Trả `false` khi không ghi được (storage hỏng/bị chặn) — không bao giờ ném.
+ */
+export function rememberDetailReturn(storage, href, target) {
+  const slot = detailReturnSlot(href);
+  const safe = safeReturnUrl(target);
+  if (!slot || !safe) return false;
+  const entries = storedDetailReturns(storage).filter(([key]) => key !== slot.key);
+  entries.push([slot.key, stripLocale(safe)]);
+  try {
+    storage.setItem(TEAM_DETAIL_RETURN_STORAGE_KEY, JSON.stringify(Object.fromEntries(entries.slice(-MAX_DETAIL_RETURNS))));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * URL trang chi tiết đã bỏ `from` của link cũ để thanh địa chỉ (và link chia sẻ/đổi ngôn ngữ) sạch. Không có `from` thì trả
+ * NGUYÊN chuỗi, không re-encode query; có `from` thì trả path + query + hash tương đối.
+ */
+export function detailUrlWithoutReturn(href) {
+  let url;
+  try {
+    url = new URL(href, RETURN_ORIGIN);
+  } catch {
+    return href;
+  }
+  if (!url.searchParams.has('from')) return href;
+  url.searchParams.delete('from');
   return `${url.pathname}${url.search}${url.hash}`;
 }
 
@@ -441,6 +582,7 @@ export function readReturnSnapshot(href, storage, {origin, khaihoangInventory} =
 /**
  * URL tham chiếu cũ được resolve bằng identity thật rồi replace sang route mới.
  * Key `config` luôn giữ precedence gameplay, kể cả khi giá trị không hợp lệ.
+ * Target là URL chi tiết sạch: đích Quay lại sống ở referrer của chính lần `location.replace` này (URL cũ), không ở URL chi tiết.
  */
 export function migrateLegacyReferenceUrl(href, resolver = {}) {
   let url;
@@ -453,15 +595,14 @@ export function migrateLegacyReferenceUrl(href, resolver = {}) {
   const detail = url.searchParams.get('detail');
   const legacyTeamId = url.searchParams.get('legacyTeam');
   const legacyVariantId = url.searchParams.get('legacyVariant');
-  const from = safeReturnUrl(`${url.pathname}${url.search}${url.hash}`);
   // Trang chi tiết cùng ngôn ngữ với URL cũ đang mở.
   const locale = localeFromPath(url.pathname);
   if (detail && resolver.hasRecommended?.(detail)) {
-    const target = teamDetailHref({sourceConfigId: detail}, {from, locale});
+    const target = teamDetailHref({sourceConfigId: detail}, {locale});
     if (target) return {target, replace: true};
   }
   if (legacyTeamId && resolver.hasLegacy?.(legacyTeamId)) {
-    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {from, locale});
+    const target = teamDetailHref({legacyTeamId, legacyVariantId}, {locale});
     if (target) return {target, replace: true};
   }
   return null;

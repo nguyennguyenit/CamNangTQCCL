@@ -33,7 +33,7 @@ import {
   mirroredSitemapPaths,
   mirroredSitemapRoutes,
 } from "../src/pages/sitemap.xml.ts";
-import { ADMIN_ANALYTICS_MARKER, COMMUNITY_PAGES, verifyAstroDist, verifyLanguageSwitcher } from "../scripts/verify-astro-dist.mjs";
+import { ADMIN_ANALYTICS_MARKER, COMMUNITY_PAGES, internalLinksWithReturnQuery, verifyAstroDist, verifyLanguageSwitcher } from "../scripts/verify-astro-dist.mjs";
 import { jsonLd } from "../src/lib/blog-posts.ts";
 import { articleJsonLd, blogIndexJsonLd, llmsDocument, rssDocument } from "../src/lib/blog-seo.ts";
 import { assertFrontendShellContract } from "./frontend-shell-contract-assertions.mjs";
@@ -1675,6 +1675,146 @@ test("nhóm chuyển ngôn ngữ: mỗi trang có hai nhóm, đủ mọi locale 
     const unmarked = html.replaceAll(' aria-current="page" data-lang-current', "");
     assert.throws(() => verifyLanguageSwitcher(unmarked, "x.html", locale), /wrong current language/u);
   }
+});
+
+/** Link nội bộ vi phạm hợp đồng URL sạch của một trang (mặc định `/doi-chuan/`): danh sách `{href, reason}`. */
+const badLinks = (html, path = "/doi-chuan/") => internalLinksWithReturnQuery(html, `${FIXTURE_ORIGIN}${path}`);
+const reasonsOf = (html, path) => badLinks(html, path).map((link) => link.reason);
+const anchorTo = (href, attributes = "") => `<a ${attributes} href="${href}">x</a>`;
+
+test("verifier link: link nội bộ mang `from` bị báo dù che bằng entity, mã hóa phần trăm, host cũ hay link tương đối", () => {
+  for (const href of [
+    "/doi-chuan/x/?from=%2Fdoi-chuan%2F",
+    "/doi-chuan/x/?variant=1&amp;from=%2Fdoi-chuan%2F",
+    "/doi-chuan/x/?variant=1&#38;from=x",
+    "/doi-chuan/x/?variant=1&#x26;from=x",
+    "/doi-chuan/x/?&#102;rom=x",
+    "/doi-chuan/x/?&#x66;rom=x",
+    "/doi-chuan/x/?&#X66;rom=x",
+    "/doi-chuan/x/?f&#114;&#x6f;m=x",
+    "/doi-chuan/x/?%66rom=x",
+    "/doi-chuan/x/?from",
+    "/doi-chuan/x/?from#top",
+    "/zh/khai-hoang/x/?variant=v&from=%2Fzh%2Fkhai-hoang%2F",
+    // Tương đối và protocol-relative được ghép với URL trang trước khi xét host.
+    "?from=x",
+    "../doi-khac/x/?from=x",
+    "//www.tqccl.com/doi-chuan/x/?from=%2F",
+    // Origin của site và hai host cũ chuyển hẳn về nó (`host-bridge`) đều là link nội bộ.
+    "https://tqccl.com/doi-chuan/x/?from=%2F",
+    "https://www.tqccl.com/doi-chuan/x/?from=%2Fdoi-chuan%2F",
+    "https://tqccl.pages.dev/doi-chuan/x/?from=%2Fdoi-chuan%2F",
+  ]) {
+    assert.deepEqual(reasonsOf(anchorTo(href)), ["from"], href);
+  }
+  // Báo cáo mang href đã giải mã entity: người đọc thấy đúng thứ trình duyệt sẽ mở.
+  assert.deepEqual(badLinks(anchorTo("/doi-chuan/x/?variant=1&amp;from=%2F")), [{ href: "/doi-chuan/x/?variant=1&from=%2F", reason: "from" }]);
+  // Thẻ/thuộc tính viết hoa, nháy đơn, không nháy, xuống dòng và `>` trong giá trị có nháy vẫn là một link.
+  for (const html of [
+    "<A HREF='/doi-chuan/x/?from=1'>x</A>",
+    "<a class=link href=/doi-chuan/x/?from=1>x</a>",
+    '<a title="a > b" href="/doi-chuan/x/?from=1">x</a>',
+    "<a\n  class=\"c\"\n  href=\"/doi-chuan/x/?from=1\"\n>x</a>",
+    '<a href="/doi-chuan/x/?from=1"/>',
+    // Trình duyệt dùng thuộc tính `href` đầu tiên.
+    '<a href="/doi-chuan/x/?from=1" href="/doi-chuan/x/">x</a>',
+  ]) {
+    assert.deepEqual(reasonsOf(html), ["from"], html);
+  }
+  assert.deepEqual(reasonsOf('<a href="/doi-chuan/x/" href="/doi-chuan/x/?from=1">x</a>'), []);
+  // Mỗi link vi phạm báo riêng, kể cả nhiều link trong một trang.
+  assert.equal(badLinks(`${anchorTo("/doi-chuan/a/?from=1")}<p>giữa</p>${anchorTo("/doi-chuan/b/?from=2")}${anchorTo("/doi-chuan/c/")}`).length, 2);
+});
+
+test("verifier link: link tới trang chi tiết có rel noreferrer bị báo vì trang chi tiết cần referrer để quay lại danh sách", () => {
+  for (const rel of ["noreferrer", "noopener noreferrer", "NOREFERRER", "external  noreferrer\tnoopener", "&#110;oreferrer"]) {
+    for (const href of [
+      "/doi-chuan/x/",
+      "/doi-khac/x/?variant=1",
+      "/khai-hoang/x/",
+      "/zh/doi-chuan/x/",
+      "/ja/khai-hoang/x/?variant=v",
+      "https://tqccl.com/doi-chuan/x/",
+      "https://www.tqccl.com/doi-khac/x/",
+      "https://tqccl.pages.dev/doi-khac/x/",
+    ]) {
+      assert.deepEqual(reasonsOf(anchorTo(href, `rel="${rel}"`)), ["noreferrer"], `${rel} ${href}`);
+    }
+  }
+  // Một link có đủ hai vi phạm thì báo cả hai.
+  assert.deepEqual(reasonsOf(anchorTo("/doi-chuan/x/?from=1", 'rel="noopener noreferrer"')), ["from", "noreferrer"]);
+  // Không báo: rel khác, link ngoài, và trang không phải chi tiết (luật chỉ khóa phần làm hỏng nút Quay lại).
+  for (const html of [
+    anchorTo("/doi-chuan/x/", 'rel="noopener"'),
+    anchorTo("/doi-chuan/x/", 'rel="norefererx noreferrers"'),
+    anchorTo("/doi-chuan/x/"),
+    anchorTo("https://example.com/doi-chuan/x/", 'rel="noopener noreferrer" target="_blank"'),
+    anchorTo("https://kazten.com/entry/2026/06/19/180000", 'rel="noopener noreferrer" target="_blank"'),
+    anchorTo("/doi-chuan/", 'rel="noreferrer"'),
+    anchorTo("/tra-cuu/tuong/", 'rel="noreferrer"'),
+  ]) {
+    assert.deepEqual(reasonsOf(html), [], html);
+  }
+});
+
+test("verifier link: không báo link ngoài, hash, `from=` lồng trong giá trị khác hay nằm ngoài thẻ <a> (JSON-LD, data-href, script, style, chú thích)", () => {
+  for (const html of [
+    anchorTo("https://example.com/?from=x"),
+    anchorTo("https://tqccl.com.evil.example/doi-chuan/x/?from=x"),
+    anchorTo("https://evil.example/https://tqccl.com/doi-chuan/x/?from=x"),
+    // Preview `*.tqccl.pages.dev` và subdomain khác không thuộc host cũ của cầu chuyển domain.
+    anchorTo("https://abc123.tqccl.pages.dev/doi-chuan/x/?from=x"),
+    anchorTo("https://blog.tqccl.com/doi-chuan/x/?from=x"),
+    anchorTo("#?from=x"),
+    anchorTo("/doi-chuan/?q=a%3Ffrom%3Db"),
+    anchorTo("/doi-chuan/x/?variant=1#from=x"),
+    anchorTo("/doi-chuan/x/?fromage=1&xfrom=2&from_=3&amp;ffrom=4"),
+    anchorTo("/doi-chuan/x/?variant=a%20from%3Db"),
+    anchorTo("mailto:a@b.vn?subject=from=1"),
+    anchorTo("javascript:void(0)"),
+    anchorTo("http://["),
+    anchorTo(""),
+    "<a>chưa có href</a>",
+    "<p>?from=x và &amp;from=y là chữ thường</p>",
+    '<div data-href="/doi-chuan/x/?from=1" data-team-detail-link="/doi-chuan/x/?from=1">x</div>',
+    '<link rel="canonical" href="https://tqccl.com/doi-chuan/x/?from=1">',
+    '<abbr href="/doi-chuan/x/?from=1">x</abbr>',
+    '<script type="application/ld+json">{"url":"https://tqccl.com/doi-chuan/x/?from=%2F","text":"<a href=\\"/x/?from=1\\">"}</script>',
+    "<script>const link = '<a href=\"/doi-chuan/x/?from=1\">x</a>';</script>",
+    '<SCRIPT>var a = "<a href=\'/doi-chuan/x/?from=1\'>";</SCRIPT>',
+    '<style>a[href*="?from="] { color: red; }</style>',
+    '<!-- <a href="/doi-chuan/x/?from=1">x</a> -->',
+  ]) {
+    assert.deepEqual(badLinks(html), [], html);
+  }
+  // Nội dung script/chú thích bị bỏ nhưng link thật nằm cạnh vẫn bị bắt.
+  assert.deepEqual(reasonsOf(`<script>1</script><!-- c -->${anchorTo("/doi-chuan/x/?from=1")}<style>a{}</style>`), ["from"]);
+});
+
+test("dist verifier rejects an internal link that carries from or hides the referrer of a detail page, on every emitted HTML page", async (t) => {
+  const fixture = await lookupDistFixture(t);
+  await fixture.verify();
+  const original = new Map();
+  for (const file of ["doi-chuan/index.html", "zh/doi-chuan/index.html", "404.html"]) {
+    original.set(file, await readFile(join(fixture.distDir, file), "utf8"));
+  }
+  const inject = async (file, link) => writeFile(join(fixture.distDir, file), `${original.get(file)}${link}\n`);
+  const restore = async (file) => writeFile(join(fixture.distDir, file), original.get(file));
+  for (const [file, link, pattern] of [
+    ["doi-chuan/index.html", '<a href="/doi-chuan/x/?from=%2Fdoi-chuan%2F">x</a>', /clean-URL contract.*doi-chuan\/index\.html: from \/doi-chuan\/x\/\?from=/u],
+    ["zh/doi-chuan/index.html", '<a href="/zh/doi-chuan/x/?variant=1&amp;from=%2Fzh%2Fdoi-chuan%2F">x</a>', /zh\/doi-chuan\/index\.html: from \/zh\/doi-chuan\/x\/\?variant=1&from=/u],
+    ["404.html", '<a href="https://tqccl.pages.dev/doi-khac/x/?&#102;rom=%2F">x</a>', /404\.html: from https:\/\/tqccl\.pages\.dev\/doi-khac\/x\/\?from=/u],
+    ["doi-chuan/index.html", '<a href="/khai-hoang/x/" rel="noopener noreferrer">x</a>', /doi-chuan\/index\.html: noreferrer \/khai-hoang\/x\//u],
+  ]) {
+    await inject(file, link);
+    await assert.rejects(fixture.verify(), pattern, `${file} ${link}`);
+    await restore(file);
+  }
+  // Link ngoài mang `from` hoặc rel noreferrer là hợp lệ; trang trở về nguyên trạng thì verifier chạy lại xanh.
+  await inject("doi-chuan/index.html", '<a href="https://example.com/?from=x" rel="noopener noreferrer" target="_blank">x</a>');
+  await fixture.verify();
+  await restore("doi-chuan/index.html");
+  await fixture.verify();
 });
 
 test("dist verifier rejects a 404 without the hidden block of every prefixed locale", async (t) => {

@@ -286,7 +286,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     ]);
   }
 
-  function camNangCards(view, rawName, from) {
+  function camNangCards(view, rawName) {
     /** Danh sách tên cho bản đang xem; bản khác bỏ tên không tra được (chữ Hán / tên Nhật) để không trộn ngôn ngữ. */
     const localNames = (items) => (zh
       ? items.map((item) => ({ ...item, name: rawName ? rawName(item.name) : null })).filter((item) => item.name)
@@ -346,7 +346,7 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
     const teams = t("article", { class: "cam-nang-card" }, [
       t("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容", "代表的な編成")),
       t("ul", { class: "cam-nang-teams" }, view.representative.map((team) => {
-        const href = representativeTeamHref(team, from);
+        const href = representativeTeamHref(team);
         // Tên đội chỉ có bản Việt: bản khác dùng nhãn chung, mùa/vị trí ở dòng phụ vẫn phân biệt từng đội.
         const name = L(team.name, "查看阵容", "編成を見る");
         return t("li", { class: "cam-nang-team" }, [
@@ -399,10 +399,10 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
   }
 
   /** Khối "Trong cẩm nang" dựng sẵn của trang riêng một tướng từ bảng số liệu đã kiểm. */
-  function heroSummaryTree(id, table, rawName, from) {
+  function heroSummaryTree(id, table, rawName) {
     const view = camNangView(table[id]);
     return summaryBlockTree(view
-      ? [camNangCards(view, rawName, from)]
+      ? [camNangCards(view, rawName)]
       : [t("p", { class: "lookup-summary-status", role: "status" }, L("Chưa có trong đội nào.", "尚未出现在任何阵容中。", "まだどの編成にも登場していません。"))]);
   }
 
@@ -482,20 +482,20 @@ export function createProfileRenderer({ group, openInPage, onClose, summaries = 
 
   /**
    * Hồ sơ của trang riêng một mục (cây `article`); `null` khi mã không có trong corpus. `summaryTable` là bảng "Trong
-   * cẩm nang" đã kiểm của nhóm (tướng hoặc chiến pháp; vắng thì không có khối), `rawName` tra tên Hán của bản zh,
-   * `from` là URL trang để các link đội quay lại đúng chỗ (build không có).
+   * cẩm nang" đã kiểm của nhóm (tướng hoặc chiến pháp; vắng thì không có khối), `rawName` tra tên Hán của bản zh.
+   * Link "đội tiêu biểu" là URL chi tiết sạch: đích Quay lại do trang chi tiết tự quyết, không đi theo link.
    * @param {any} corpus
    * @param {string} id
-   * @param {{summaryTable?: any, rawName?: ((viName: string) => string | null) | null, from?: string}} [options]
+   * @param {{summaryTable?: any, rawName?: ((viName: string) => string | null) | null}} [options]
    */
-  function profilePageTree(corpus, id, { summaryTable = null, rawName = null, from } = {}) {
+  function profilePageTree(corpus, id, { summaryTable = null, rawName = null } = {}) {
     const parts = profileParts(corpus, id, true);
     if (!parts) return null;
     const { entryRow, header, notice, body } = parts;
     const record = entryRow.record ?? {};
     const summary = !summaryTable ? null
-      : entryRow.group === "heroes" ? heroSummaryTree(id, summaryTable, rawName, from)
-        : entryRow.group === "tactics" ? tacticSummaryBlockTree({ id, record, table: summaryTable, corpus, from })
+      : entryRow.group === "heroes" ? heroSummaryTree(id, summaryTable, rawName)
+        : entryRow.group === "tactics" ? tacticSummaryBlockTree({ id, record, table: summaryTable, corpus })
           : null;
     return t("article", {
       class: entryRow.group === "tactics" ? "lookup-dialog is-page is-tactic" : "lookup-dialog is-page",

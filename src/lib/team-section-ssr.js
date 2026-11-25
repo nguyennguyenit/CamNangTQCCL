@@ -1,6 +1,6 @@
 // Phần thân dựng sẵn (lúc build) của bốn trang danh sách đội. Cùng đường chọn mặc định, cùng builder cây view
 // và cùng cách dựng link với trình duyệt (`js/app.js` + `js/team-filter-section.js`): trình duyệt nhận lại nguyên
-// DOM này khi trạng thái đầu của nó (URL, kiểu hiển thị, nguồn quay lại) khớp dấu `data-ssr-signature`, lệch thì thay như cũ.
+// DOM này khi trạng thái đầu của nó (mùa, từ khóa, bộ lọc, kiểu hiển thị, số đội) khớp dấu `data-ssr-signature`, lệch thì thay như cũ.
 // Chạy trong Node không cần `document`; mọi hàm nhận `locale` tường minh.
 
 import { localePath, withLocale } from '../../js/i18n.js';
@@ -9,7 +9,7 @@ import { projectRecommendedRows, referenceSectionState } from '../../js/recommen
 import { coexistTeamCard, recommendedListTrees } from '../../js/recommended-reference-render.js';
 import { coexistGroups, coexistScenarioIds, readSeasonQuery } from '../../js/season-ui-state.js';
 import { projectSeasonBrowse } from '../../js/season-context.js';
-import { SECTION_QUERY_KEYS, TEAM_RETURN_STORAGE_KEY, khaiHoangCardHref, referenceDetailHref, safeReturnUrl } from '../../js/team-detail-navigation.js';
+import { SECTION_QUERY_KEYS, SSR_STALE_EXEMPT_KEYS, TEAM_RETURN_STORAGE_KEY, khaiHoangCardHref, referenceDetailHref } from '../../js/team-detail-navigation.js';
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_STORAGE_KEY, TEAM_VIEW_TABLE } from '../../js/team-view.js';
 import {
   PAGE_SIZE,
@@ -51,11 +51,11 @@ export function recommendedSectionTrees({ family, rows, registry, locale }) {
     const state = referenceSectionState(family, url.href, registry, null);
     const labels = registry.displayLabels || {};
     const filtered = projectRecommendedRows(rows, state, labels);
-    const hrefFor = (row) => referenceDetailHref(row, { from: url.href, origin: url.origin, locale });
+    const hrefFor = (row) => referenceDetailHref(row, { locale });
     const mountId = family === 'other' ? 'section-team-khac' : 'section-team-chuan';
     const title = referenceSectionTitle(family);
     const limit = family === 'other' ? PAGE_SIZE : filtered.length;
-    const signature = referenceViewSignature(state, state.view, safeReturnUrl(url.href, { origin: url.origin }), Math.max(PAGE_SIZE, limit));
+    const signature = referenceViewSignature(state, state.view, Math.max(PAGE_SIZE, limit));
     return inertUntilBound([
       // Đội khác: nhãn mùa tĩnh cùng cây với trình duyệt (`referenceSeasonLabelTree`); Đội chuẩn không dựng sẵn ô chọn mùa.
       t('header', { class: 'reference-head' }, [referenceHeadTextTree(title, family), family === 'other' ? referenceSeasonLabelTree(registry, rows) : null].filter(Boolean)),
@@ -75,8 +75,8 @@ const staticTacticTags = (tree) => {
 
 /**
  * Thân trang mùa Đội chuẩn: MỌI đội của mùa (không giới hạn `PAGE_SIZE`, không phân trang) nhóm theo Tier bằng đúng
- * builder thẻ của danh sách, mỗi đội 3 tướng + chiến pháp + link chi tiết. Không có `from=` (trang mùa không thuộc
- * `SECTION_QUERY_KEYS`): nút quay lại của trang đội giữ hành vi hiện tại. Trang tĩnh, không nạp app.js.
+ * builder thẻ của danh sách, mỗi đội 3 tướng + chiến pháp + link chi tiết sạch như mọi danh sách. Trang mùa không thuộc
+ * `SECTION_QUERY_KEYS` nên không thành đích Quay lại: nút quay lại của trang đội giữ link mặc định. Trang tĩnh, không nạp app.js.
  */
 export function seasonPageTrees({ rows, sourceSeasonId, registry, locale }) {
   return withLocale(locale, () => {
@@ -136,8 +136,7 @@ export function coexistScenarioBlocks({ model, locale }) {
 /** Khai hoang: cả trang ở trạng thái mặc định (mọi đội, bộ lọc "Tất cả", cấu hình mặc định). `data`: `khaihoang.json` đã bản địa hoá. */
 export function khaihoangSectionTrees({ data, locale }) {
   return withLocale(locale, () => {
-    const url = pageUrl('/khai-hoang/', locale);
-    const hrefFor = (teamId, variantId) => khaiHoangCardHref(teamId, variantId, { from: url.href, origin: url.origin, locale });
+    const hrefFor = (teamId, variantId) => khaiHoangCardHref(teamId, variantId, { locale });
     return inertUntilBound([khaihoangTableTree(data, { hrefFor, locale })]);
   });
 }
@@ -149,11 +148,13 @@ const SECTION_PATHS = { 'team-chuan': '/doi-chuan/', 'team-khac': '/doi-khac/', 
  * khác (query của mục trong URL, kiểu hiển thị đã lưu khác Thẻ, hoặc lựa chọn Khai hoang được khôi phục từ snapshot quay
  * lại) thì gắn `data-ssr-stale` lên mount để CSS ẩn phần phụ thuộc trạng thái cho đến khi `js/app.js` dựng xong đúng
  * trạng thái — không để danh sách sai mùa/bộ lọc hiện (và bấm được) suốt lúc tải. Không có JavaScript thì không ẩn gì.
+ * `kho`/`xep` (`SSR_STALE_EXEMPT_KEYS`) không tính: chúng chỉ thêm badge/đổi thứ tự khi máy có kho, người không có kho vẫn
+ * phải thấy danh sách dựng sẵn ngay.
  */
 export function ssrStaleGuardScript(section) {
   const config = {
     id: `section-${section}`,
-    keys: SECTION_QUERY_KEYS[SECTION_PATHS[section]] ?? [],
+    keys: (SECTION_QUERY_KEYS[SECTION_PATHS[section]] ?? []).filter((key) => !SSR_STALE_EXEMPT_KEYS.includes(key)),
     viewKey: section === 'team-chuan' || section === 'team-khac' ? TEAM_VIEW_STORAGE_KEY : null,
     // Chỉ kiểu hiển thị hợp lệ khác Thẻ mới đổi danh sách; giá trị lạ trong storage vẫn về Thẻ (`canonicalTeamView`).
     otherViews: [TEAM_VIEW_GRID, TEAM_VIEW_TABLE],

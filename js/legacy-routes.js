@@ -1,7 +1,7 @@
 // Bảng chuyển tiếp hash cũ của SPA sang đường dẫn mục mới. ESM thuần, không import: index.astro
 // nhúng `resolveLegacyRoute.toString()` vào một script inline chặn trong <head>, nên thân hàm phải
-// tự đủ (không tham chiếu biến/tham số ngoài). `js/team-detail-navigation.js` dùng cùng hàm này để
-// chuẩn hóa `from` và snapshot quay lại có dạng URL gốc cũ.
+// tự đủ (không tham chiếu biến/tham số ngoài). `js/team-detail-navigation.js` dùng cùng hàm này để chuẩn hóa mọi đích quay
+// lại (state, `from` của link cũ, referrer, snapshot) có dạng URL gốc cũ.
 
 /**
  * Trả về đích root-relative cùng origin cho một URL gốc, hoặc `null` khi URL phải ở lại `/`.
