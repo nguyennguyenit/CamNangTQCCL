@@ -19,6 +19,7 @@ import {
   type ResearchOutput,
   type ResearchToolName,
 } from "./research-contracts.js";
+import { MAX_UNRESOLVED_CANDIDATES } from "./shared-schemas.js";
 import { handleFindTeams, handleGetTeam } from "./team-handlers.js";
 import { createToolContext, enforceResultSize, parseToolInput, type ToolContext } from "./tool-context.js";
 
@@ -158,8 +159,11 @@ export function compactNormalizeResult(
   const warnings = summarizeWarnings(normalized.warnings);
   const unresolved = (state.unresolved ?? []).map((entry) => {
     const { observationId, entityKind, reason, candidates, trust } = entry as Record<string, unknown>;
-    // Identity conflict dồn mọi canonicalId của các observation trùng id: loại trùng để vừa `max(20)` của schema.
-    return { observationId, entityKind, reason, candidates: [...new Set(candidates as unknown[])], trust };
+    // Identity conflict (và xung đột locked-resource) dồn mọi canonicalId của các observation/đội liên quan: loại trùng
+    // rồi cắt còn MAX_UNRESOLVED_CANDIDATES, nếu không client gửi > 20 id khác nhau cùng observationId sẽ làm output
+    // sai schema → INTERNAL_ERROR. Mục vẫn là unresolved nên client vẫn phải rà soát; candidates chỉ là gợi ý.
+    const unique = [...new Set(candidates as unknown[])].slice(0, MAX_UNRESOLVED_CANDIDATES);
+    return { observationId, entityKind, reason, candidates: unique, trust };
   });
   const finalIds = new Set<string>([
     ...state.heroes.map(({ canonicalId }) => canonicalId as string),

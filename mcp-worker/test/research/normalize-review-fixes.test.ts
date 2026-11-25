@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { normalizedCanonicalStateSchema } from "../../src/research/shared-schemas.js";
 import { ResearchHandlerError, summarizeWarnings } from "../../src/research/research-handlers.js";
+import { loadRosterFixture } from "../fixtures/normalize-full-roster.js";
 import { realHandlers } from "../fixtures/real-handlers.js";
 
 const handlers = realHandlers();
@@ -66,6 +67,15 @@ describe("review M2: candidates không trùng", () => {
     const result = await normalize(observations);
     const entry = (result.canonicalState.unresolved as Array<{ observationId: string; candidates: string[] }>).find((item) => item.observationId === "x")!;
     expect([...entry.candidates].sort()).toEqual(["hero:40y-lu-bo", "hero:vuong-di"]);
+  });
+
+  it("21 canonicalId khác nhau cùng observationId → không INTERNAL_ERROR, candidates cắt còn 20, vẫn cần rà soát", async () => {
+    const heroIds = loadRosterFixture().heroes.slice(0, 21).map(({ canonicalId }) => canonicalId);
+    expect(new Set(heroIds).size).toBe(21);
+    const result = await normalize(heroIds.map((canonicalId) => ({ observationId: "x", entityKind: "hero", canonicalId, evidence: evidence() })));
+    const entry = (result.canonicalState.unresolved as Array<{ observationId: string; candidates: string[] }>).find((item) => item.observationId === "x")!;
+    expect(entry.candidates).toEqual(heroIds.slice(0, 20));
+    expect(result.reviewRequired).toBe(true);
   });
 });
 

@@ -370,13 +370,15 @@ export const canonicalStateSchema = z
   .strict()
   .describe("State đã chuẩn hóa.");
 
+/** Trần `candidates` của một mục chưa rõ trong kết quả normalize (khớp trần `candidates` ở observation đầu vào). */
+export const MAX_UNRESOLVED_CANDIDATES = 20;
 /** Mục chưa rõ trong kết quả normalize: không còn `observedText`/`evidence` (client biết text mình gửi qua `observationId`). */
 export const compactUnresolvedSchema = z
   .object({
     observationId: nonEmptyText.describe("ID observation chưa rõ."),
     entityKind: z.enum(["hero", "tactic", "team"]).describe("Loại thực thể."),
     reason: z.enum(["ambiguous", "unknown"]).describe("Lý do chưa rõ."),
-    candidates: z.array(canonicalId).max(20).describe("ID ứng viên."),
+    candidates: z.array(canonicalId).max(MAX_UNRESOLVED_CANDIDATES).describe("ID ứng viên."),
     trust: z.literal("untrusted").describe("Dữ liệu từ client, không tin."),
   })
   .strict()
