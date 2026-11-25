@@ -370,11 +370,15 @@ async function main() {
       try { restore?.(); } catch (error) { console.error(error); }
     };
     // Kho đọc chậm (mạng yếu, `/api/me` treo) thì bước hoãn không được giật trang về vị trí cũ sau khi người dùng đã tự cuộn
-    // hay bấm, cũng không được chạy quá muộn: tương tác đầu tiên hoặc hết hạn chờ đều bỏ hẳn bước khôi phục.
+    // hay bấm: tương tác đầu tiên bỏ hẳn bước khôi phục. Hết hạn chờ mà người dùng chưa chạm trang thì khôi phục một lần trên
+    // danh sách hiện có; kho về muộn sau đó chỉ lọc lại danh sách, không cuộn lần nữa.
     const ROSTER_RESTORE_TIMEOUT_MS = 3000;
     const ROSTER_RESTORE_CANCEL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
     const deferUntilRoster = restore => {
       let timer = 0;
+      // Kéo thanh cuộn bằng chuột không phát sự kiện nào ở trên: vị trí cuộn đã đổi so với lúc hoãn nghĩa là người dùng đã tự
+      // cuộn, nên bước hoãn không kéo trang về vị trí cũ.
+      const scrollAtDefer = window.scrollY;
       const cancel = () => {
         if (afterRoster === run) afterRoster = null;
         stop();
@@ -383,9 +387,18 @@ async function main() {
         clearTimeout(timer);
         for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.removeEventListener(type, cancel, true);
       };
-      const run = () => { stop(); restore(); };
+      const run = () => {
+        stop();
+        if (window.scrollY === scrollAtDefer) restore();
+      };
+      // Bước hoãn đã bị thay/bỏ (người dùng đổi bộ lọc, lần khôi phục khác) thì chỉ dọn listener.
+      const expire = () => {
+        if (afterRoster !== run) return stop();
+        afterRoster = null;
+        run();
+      };
       for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.addEventListener(type, cancel, {capture: true, passive: true});
-      timer = setTimeout(cancel, ROSTER_RESTORE_TIMEOUT_MS);
+      timer = setTimeout(expire, ROSTER_RESTORE_TIMEOUT_MS);
       afterRoster = run;
     };
     const navigateReference = (changes, push = false) => {

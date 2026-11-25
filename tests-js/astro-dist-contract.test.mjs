@@ -1788,11 +1788,20 @@ test("verifier link: không báo link ngoài, hash, `from=` lồng trong giá tr
     '<SCRIPT>var a = "<a href=\'/doi-chuan/x/?from=1\'>";</SCRIPT>',
     '<style>a[href*="?from="] { color: red; }</style>',
     '<!-- <a href="/doi-chuan/x/?from=1">x</a> -->',
+    // Chữ `<a …>` trong RCDATA không phải thẻ; host đúng nhưng cổng khác là origin khác.
+    '<textarea><a href="/doi-chuan/x/?from=1">x</a></textarea>',
+    '<title>&lt;a&gt; <a href="/doi-chuan/x/?from=1"></title>',
+    anchorTo("https://tqccl.com:8443/doi-chuan/x/?from=x"),
+    anchorTo("https://tqccl.com:80/doi-chuan/x/?from=x"),
   ]) {
     assert.deepEqual(badLinks(html), [], html);
   }
   // Nội dung script/chú thích bị bỏ nhưng link thật nằm cạnh vẫn bị bắt.
   assert.deepEqual(reasonsOf(`<script>1</script><!-- c -->${anchorTo("/doi-chuan/x/?from=1")}<style>a{}</style>`), ["from"]);
+  // Giá trị không nháy chứa `=` và tên entity viết hoa kiểu HTML cũ vẫn mở URL có `from`.
+  for (const html of ["<a href=/doi-chuan/x/?v=1&from=x>x</a>", '<a href="/doi-chuan/x/?v=1&AMP;from=x">x</a>', anchorTo("http://tqccl.com/doi-chuan/x/?from=x")]) {
+    assert.deepEqual(reasonsOf(html), ["from"], html);
+  }
 });
 
 test("dist verifier rejects an internal link that carries from or hides the referrer of a detail page, on every emitted HTML page", async (t) => {

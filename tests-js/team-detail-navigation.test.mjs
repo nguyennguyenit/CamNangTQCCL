@@ -13,6 +13,7 @@ import {
   familyReturnHref,
   resolveDetailReturn,
   rememberDetailReturn,
+  forgetDetailReturn,
   detailUrlWithoutReturn,
   isNativeNavigationClick,
   captureReturnSnapshot,
@@ -344,6 +345,21 @@ test('detail return keeps the page language: a zh referrer stays zh and storage 
   // Ghi từ bản zh, đọc ở bản vi.
   assert.equal(rememberDetailReturn(storage,`${ROOT}/zh${DETAIL_PATH}`,'/zh/doi-chuan/?season=all&kho=rap-duoc'),true);
   assert.equal(resolveReturn({href:DETAIL_URL,storage}),'/doi-chuan/?season=all&kho=rap-duoc');
+});
+
+test('a fresh visit with no return target forgets the old one, so a later language switch does not revive a previous list',()=>{
+  const storage=memoryStorage();
+  rememberDetailReturn(storage,DETAIL_URL,'/doi-chuan/?q=old');
+  rememberDetailReturn(storage,`${ROOT}/doi-chuan/other-team/`,'/doi-chuan/?q=keep');
+  // Vào lại từ trang riêng Tra cứu: resolver không nhận đích cũ.
+  assert.equal(resolveReturn({referrer:`${ROOT}/tra-cuu/tuong/luu-bi/`,storage}),null);
+  assert.equal(forgetDetailReturn(storage,DETAIL_URL),true);
+  // Đổi sang zh: referrer là chính trang chi tiết bản vi, nhưng đích cũ đã bị xoá.
+  assert.equal(resolveReturn({href:`${ROOT}/zh${DETAIL_PATH}`,referrer:DETAIL_URL,storage}),null);
+  // Đội khác không bị đụng tới.
+  assert.equal(resolveReturn({href:`${ROOT}/doi-chuan/other-team/`,storage}),'/doi-chuan/?q=keep');
+  assert.equal(forgetDetailReturn(memoryStorage({failSet:true}),DETAIL_URL),true);
+  assert.doesNotThrow(()=>forgetDetailReturn(null,DETAIL_URL));
 });
 
 test('detail return on Khai hoang: a referrer pair is overridden by the opened team, a legacy ?from= keeps its own pair',()=>{

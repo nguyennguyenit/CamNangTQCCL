@@ -131,15 +131,19 @@ export function verifyLanguageSwitcher(html, htmlPath, locale) {
   }
 }
 
-// Phần HTML không có link người đọc bấm được: chú thích, thân `<script>` (gồm JSON-LD) và `<style>`.
-const NON_LINK_CONTENT = /<!--[^]*?-->|<(script|style)(?=[\s/>])(?:"[^"]*"|'[^']*'|[^'">])*>[^]*?<\/\1\s*>/giu;
-// Một thuộc tính `tên[=giá trị]` của thẻ; giá trị có nháy kép, nháy đơn hoặc không nháy.
-const ATTRIBUTE = /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'=<>`]+)))?/gu;
+// Phần HTML không có link người đọc bấm được: chú thích, thân `<script>` (gồm JSON-LD), `<style>` và chữ thuần của
+// `<textarea>`/`<title>` (RCDATA: chữ `<a …>` trong đó không phải thẻ).
+const NON_LINK_CONTENT = /<!--[^]*?-->|<(script|style|textarea|title)(?=[\s/>])(?:"[^"]*"|'[^']*'|[^'">])*>[^]*?<\/\1\s*>/giu;
+// Một thuộc tính `tên[=giá trị]` của thẻ; giá trị có nháy kép, nháy đơn hoặc không nháy (giá trị không nháy được chứa `=`,
+// như `href=/x/?v=1&from=x`: trình duyệt chỉ cắt ở khoảng trắng hoặc `>`).
+const ATTRIBUTE = /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'<>`]+)))?/gu;
 // Tham chiếu ký tự trong giá trị thuộc tính: thập phân, thập lục phân (dấu `;` cuối có thể vắng như trình duyệt chấp nhận)
 // và tên có `;`. Giải mã một lượt: `&amp;#102;` là chữ `&#102;`, không phải `f`.
 const CHARACTER_REFERENCE = /&(?:#[xX]([0-9a-fA-F]+);?|#([0-9]+);?|([a-zA-Z][a-zA-Z0-9]*);)/gu;
+// Tên phân biệt hoa thường như HTML; bản viết hoa `AMP`/`LT`/`GT`/`QUOT` là tên hợp lệ có sẵn từ HTML cũ.
 const NAMED_REFERENCES = Object.freeze({
-  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0", num: "#", quest: "?", equals: "=", sol: "/", colon: ":", period: ".",
+  amp: "&", AMP: "&", lt: "<", LT: "<", gt: ">", GT: ">", quot: '"', QUOT: '"', apos: "'", nbsp: "\u00a0", num: "#", quest: "?",
+  equals: "=", sol: "/", colon: ":", period: ".",
 });
 
 function decodeCharacterReferences(value) {
@@ -150,8 +154,8 @@ function decodeCharacterReferences(value) {
   });
 }
 
-/** Host của link nội bộ: domain của `site` và các host cũ chuyển hẳn về nó (cùng bản build, chỉ khác hostname). */
-const INTERNAL_HOSTS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_HOSTS]);
+/** Origin của link nội bộ: host của `site` và các host cũ chuyển hẳn về nó (cùng bản build), http hoặc https, cổng mặc định. */
+const INTERNAL_ORIGINS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_HOSTS].flatMap((host) => [`https://${host}`, `http://${host}`]));
 const REL_NOREFERRER = /(?:^|\s)noreferrer(?:\s|$)/iu;
 /** Trang chi tiết đội (cùng hình dạng với trang mùa Đội chuẩn): `/<họ>/<segment>/` sau khi bỏ tiền tố locale. */
 const TEAM_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac|khai-hoang)\/[^/]+\/$/u;
@@ -183,7 +187,7 @@ export function internalLinksWithReturnQuery(html, pageUrl) {
     } catch {
       continue;
     }
-    if (!/^https?:$/u.test(url.protocol) || !INTERNAL_HOSTS.has(url.hostname)) continue;
+    if (!INTERNAL_ORIGINS.has(url.origin)) continue;
     if (url.searchParams.has("from")) violations.push({ href, reason: "from" });
     if (TEAM_DETAIL_PATH.test(stripLocale(url.pathname)) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
   }

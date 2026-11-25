@@ -8,7 +8,7 @@ import { detailPanelActions, isNetworkError } from './detail-actions.js';
 import { createSaveButton, embeddedBuilder } from './my-teams-save-button.js';
 import { detailBadges } from './recommended-reference-render.js';
 import { setTacticDisplayName, setZhNameResolver } from './recommended-reference-state.js';
-import { detailUrlWithoutReturn, khaiHoangDetailVariantUrl, rememberDetailReturn, resolveDetailReturn } from './team-detail-navigation.js';
+import { detailUrlWithoutReturn, forgetDetailReturn, khaiHoangDetailVariantUrl, rememberDetailReturn, resolveDetailReturn } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
 import { treeToDom } from './view-tree.js';
@@ -99,7 +99,7 @@ export async function initKhaiHoangDetail({ documentTarget = document } = {}) {
     if (target) {
       if (returnLink) returnLink.href = target;
       rememberDetailReturn(storage, location.href, target);
-    }
+    } else forgetDetailReturn(storage, location.href);
     const clean = detailUrlWithoutReturn(location.href);
     const state = history.state && typeof history.state === 'object' ? history.state : {};
     if (clean !== location.href || state.teamDetailReturn !== (target ?? null)) {

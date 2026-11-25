@@ -145,6 +145,13 @@ test("đã có đích ghim trong phiên, vào lại từ trang cùng site ngoài
     await expect.poll(() => page.evaluate(() => history.state?.teamDetailReturn), { message: referer }).toBeNull();
     await expect(backLink(page)).toHaveAttribute("href", `/doi-chuan/?season=${encodeURIComponent(season)}`);
   }
+  // Lần vào không có đích đã xoá đích cũ của đội này: đổi ngôn ngữ ngay sau đó (entry mới, referrer là chính trang chi tiết)
+  // không được làm sống lại danh sách đã lọc của lần truy cập trước.
+  const zhUrl = new URL(detailUrl);
+  zhUrl.pathname = `/zh${zhUrl.pathname}`;
+  await page.goto(zhUrl.href, { referer: detailUrl });
+  await expect.poll(() => page.evaluate(() => history.state?.teamDetailReturn)).toBeNull();
+  await expect(backLink(page)).toHaveAttribute("href", `/zh/doi-chuan/?season=${encodeURIComponent(season)}`);
 });
 
 test("link cũ ?from=: Quay lại đúng nguồn (kể cả kho), thanh địa chỉ hết from, skip-link rồi reload vẫn đúng", async ({ page, request }) => {

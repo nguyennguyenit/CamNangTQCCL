@@ -12,7 +12,7 @@ import {
   setZhNameResolver,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent } from './recommended-reference-render.js';
-import { detailUrlWithoutReturn, rememberDetailReturn, resolveDetailReturn, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
+import { detailUrlWithoutReturn, forgetDetailReturn, rememberDetailReturn, resolveDetailReturn, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { otherTeamOptions } from './other-team-groups.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
@@ -45,7 +45,7 @@ function pinReturnLink(link) {
   if (target) {
     if (link) link.href = target;
     rememberDetailReturn(storage, location.href, target);
-  }
+  } else forgetDetailReturn(storage, location.href);
   const clean = detailUrlWithoutReturn(location.href);
   const state = history.state && typeof history.state === 'object' ? history.state : {};
   if (clean !== location.href || state.teamDetailReturn !== (target ?? null)) {

@@ -6,6 +6,7 @@ import { buildSeasonCandidates } from "../js/roster-season-candidates.js";
 import { buildListCoverage } from "../js/roster-list-coverage.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
 import { createRosterIdResolver } from "../js/roster-id-resolve.js";
+import { TEAM_RETURN_STORAGE_KEY } from "../js/team-detail-navigation.js";
 
 const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
 const { generationId } = read("src/data/recommended-reference/current.json");
@@ -240,6 +241,61 @@ test("quay lại từ trang chi tiết khi đang lọc kho=rap-duoc&xep=de-rap: 
   const reopened = section(page).locator(`.reference-team-card[data-reference-key="${key}"]`);
   await expect(reopened).toBeInViewport();
   await expect(reopened.locator("a[data-team-detail-link]").first()).toBeFocused();
+});
+
+/**
+ * Mở lại danh sách `kho=rap-duoc&xep=de-rap` với snapshot quay lại cuộn tới 1500px và kho trên mây của tài khoản đủ mọi đội
+ * mùa mặc định. `/api/me` chỉ trả lời khi test gọi `release()`; không gọi thì phiên treo mãi.
+ */
+async function openListWithPendingRoster(page) {
+  const listUrl = "/doi-chuan/?kho=rap-duoc&xep=de-rap";
+  const roster = rosterFor(SEASON, records.filter((record) => record.sourceSeasonId === SEASON).map((record) => record.sourceConfigId));
+  const { state } = mergeLocal(emptyCloudState("u-alice"), { ...roster, tacticOverrides: [] }, createRosterIdResolver(dicts), { now: 1_700_000_000_000 });
+  const cloud = JSON.stringify({ userId: state.userId, cursor: state.cursor, pulledKinds: state.pulledKinds, records: state.records, dirty: state.dirty, rejected: state.rejected });
+  let release;
+  const gate = new Promise((resolveGate) => { release = resolveGate; });
+  await page.route("**/api/me", async (route) => {
+    await gate;
+    await route.fulfill({ json: { user: { id: "u-alice", name: "Alice", role: "user" } } });
+  });
+  await page.addInitScript(([cloudKey, cloudValue, returnKey, snapshot]) => {
+    localStorage.setItem("tqccl:community-session", "1");
+    if (localStorage.getItem(cloudKey) === null) localStorage.setItem(cloudKey, cloudValue);
+    if (!sessionStorage.getItem("e2e:seeded")) {
+      sessionStorage.setItem("e2e:seeded", "1");
+      sessionStorage.setItem(returnKey, JSON.stringify(snapshot));
+    }
+  }, [CLOUD_STORAGE_KEY, cloud, TEAM_RETURN_STORAGE_KEY, { version: 1, url: listUrl, scrollY: 1500, tab: "team-chuan", disclosures: {} }]);
+  await page.goto(listUrl);
+  await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
+  return { release };
+}
+
+const scrollTop = (page) => page.evaluate(() => Math.round(window.scrollY));
+
+test("quay lại danh sách có kho=… mà phiên kho treo: hết hạn chờ vẫn khôi phục vị trí cuộn một lần, không bỏ hẳn", async ({ page }) => {
+  await openListWithPendingRoster(page);
+  await expect.poll(() => scrollTop(page), { timeout: 10_000 }).toBeGreaterThan(1000);
+});
+
+test("kho về muộn sau hạn chờ: chỉ khôi phục cuộn một lần, kho tới sau không kéo trang lần nữa", async ({ page }) => {
+  const { release } = await openListWithPendingRoster(page);
+  // Hạn chờ (3 giây) khôi phục vị trí cũ trên danh sách hiện có.
+  await expect.poll(() => scrollTop(page), { timeout: 10_000 }).toBeGreaterThan(1000);
+  // Người đọc cuộn tiếp tới chỗ khác, rồi kho mới tới (khoảng 4 giây sau khi mở trang).
+  await page.evaluate(() => window.scrollTo({ top: 200, behavior: "instant" }));
+  release();
+  await waitForCoverage(page);
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 100))));
+  expect(await scrollTop(page)).toBe(200);
+});
+
+test("kéo thanh cuộn (không phát wheel/pointer/phím) trong lúc chờ kho: hết hạn chờ không kéo trang về vị trí cũ", async ({ page }) => {
+  await openListWithPendingRoster(page);
+  // Cuộn bằng script giống kéo thanh cuộn: không có sự kiện nào trong danh sách hủy.
+  await page.evaluate(() => window.scrollTo({ top: 300, behavior: "instant" }));
+  await page.waitForTimeout(3_500);
+  expect(await scrollTop(page)).toBe(300);
 });
 
 test("thanh kho ẩn không chiếm chỗ: Đội khác không có thanh kho hiển thị", async ({ page }) => {

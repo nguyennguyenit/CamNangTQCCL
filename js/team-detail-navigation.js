@@ -429,6 +429,24 @@ export function rememberDetailReturn(storage, href, target) {
 }
 
 /**
+ * Lần vào mới của trang chi tiết `href` không có đích (đi từ trang ngoài danh sách): xoá đích cũ của đúng đội đó, để entry mới
+ * kế tiếp (đổi ngôn ngữ, đăng nhập) không làm sống lại danh sách của lần truy cập trước. Không bao giờ ném.
+ */
+export function forgetDetailReturn(storage, href) {
+  const slot = detailReturnSlot(href);
+  if (!slot) return false;
+  const entries = storedDetailReturns(storage);
+  const kept = entries.filter(([key]) => key !== slot.key);
+  if (kept.length === entries.length) return true;
+  try {
+    storage.setItem(TEAM_DETAIL_RETURN_STORAGE_KEY, JSON.stringify(Object.fromEntries(kept)));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * URL trang chi tiết đã bỏ `from` của link cũ để thanh địa chỉ (và link chia sẻ/đổi ngôn ngữ) sạch. Không có `from` thì trả
  * NGUYÊN chuỗi, không re-encode query; có `from` thì trả path + query + hash tương đối.
  */
