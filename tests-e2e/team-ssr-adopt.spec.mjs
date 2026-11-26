@@ -1,27 +1,9 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { bootWithProbe } from "./helpers/boot.mjs";
 
 // Trang danh sách đội dựng sẵn: khi trạng thái đầu của trình duyệt khớp mặc định thì nhận lại đúng các node đó
 // (không nháy, không nhân đôi); lệch mặc định (URL khác, kiểu hiển thị khác) thì thay như cũ.
-
-/** Giữ app.js lại tới khi đã ghi nhớ node dựng sẵn, rồi thả cho trang khởi động. */
-async function bootWithProbe(page, url, selector, beforeRelease = null) {
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
-  await page.route("**/js/app.js", async (route) => { await gate; await route.continue(); });
-  // Module script bị giữ nên DOMContentLoaded chưa tới: chờ HTML đã parse qua phần thân (chân trang nằm sau main).
-  await page.goto(url, { waitUntil: "commit" });
-  await page.locator(".site-footer").waitFor({ state: "attached" });
-  const prerendered = await page.evaluate((query) => {
-    window.__ssrNodes = [...document.querySelectorAll(query)];
-    return window.__ssrNodes.length;
-  }, selector);
-  expect(prerendered, `${url}: HTML dựng sẵn phải có ${selector} trước khi app.js chạy`).toBeGreaterThan(0);
-  await beforeRelease?.();
-  release();
-  await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
-  return prerendered;
-}
 
 const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
 const { generationId } = read("src/data/recommended-reference/current.json");

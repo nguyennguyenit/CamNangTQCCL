@@ -677,7 +677,8 @@ const lookupJaPinValue = tacticDisplayJson ? pick(locale, null, null, await look
     <main id="main-content" class:list={['layout', landing && 'layout-landing']}>
       <div class={contentClass}>
         {sectionLabel && activeSection !== 'lookup' && !PRERENDERED_TEAM_SECTIONS.includes(activeSection ?? '') ? <noscript><h1 class="reference-title">{sectionLabel}</h1><p class="scope-note">{SECTION_NOSCRIPT_MESSAGE}</p></noscript> : null}
-        {seasonScope ? <div id="season-controls" class="season-controls" role="group" aria-label={SCOPE_GROUP_LABEL}></div> : null}
+        {/* `app.js` luôn đặt `hidden` cho khối này (nó chỉ giữ select phạm vi và dòng tóm tắt ẩn để đọc URL): phát sẵn `hidden` để lề dưới 16px của khối rỗng không dịch cả mục lên 16px khi boot. */}
+        {seasonScope ? <div id="season-controls" class="season-controls" role="group" aria-label={SCOPE_GROUP_LABEL} hidden></div> : null}
         <slot />
       </div>
     </main>

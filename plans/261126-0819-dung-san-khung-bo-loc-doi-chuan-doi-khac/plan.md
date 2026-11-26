@@ -1,7 +1,7 @@
 ---
 title: "Dựng sẵn khung bộ lọc của Đội chuẩn / Đội khác"
 description: "Build phát sẵn cả khung tương tác (ô chọn mùa, thanh công cụ, sidebar lọc có chip đã đếm) quanh danh sách dựng sẵn, để bộ lọc hiện cùng lúc với danh sách và hết nhảy bố cục khi JS boot."
-status: pending
+status: completed
 priority: P2
 effort: 14h
 branch: feat/ssr-khung-bo-loc
@@ -31,9 +31,9 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 
 | # | Phase | Status |
 |---|-------|--------|
-| 1 | [Tách khung thành cây dùng chung (không đổi hành vi)](./phase-01-tach-khung-thanh-cay-dung-chung.md) | Pending |
-| 2 | [Phát khung từ build](./phase-02-phat-khung-tu-build.md) | Pending |
-| 3 | [Khoá bằng test, verifier và cập nhật docs](./phase-03-khoa-bang-test-va-verifier.md) | Pending |
+| 1 | [Tách khung thành cây dùng chung (không đổi hành vi)](./phase-01-tach-khung-thanh-cay-dung-chung.md) | Completed |
+| 2 | [Phát khung từ build](./phase-02-phat-khung-tu-build.md) | Completed |
+| 3 | [Khoá bằng test, verifier và cập nhật docs](./phase-03-khoa-bang-test-va-verifier.md) | Completed |
 
 ## Non-goals (đã tách issue)
 
@@ -44,15 +44,15 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 
 ## Success Criteria
 
-- [ ] Khung bao của thẻ đội đầu tiên trước và sau boot, đo ở 1440px và 390px, vi/zh/ja:
+- [x] Khung bao của thẻ đội đầu tiên trước và sau boot, đo ở 1440px và 390px, vi/zh/ja:
   - `/doi-khac/`: lệch ≤1px.
   - `/doi-chuan/`: lệch ≤1px, **trừ** phần lệch dọc đúng bằng chiều cao thanh kho cộng gap khi là khách (#181).
-- [ ] `.reference-head` và `.reference-results` dựng sẵn bằng bản sau boot ở trạng thái mặc định, sau khi bỏ `disabled`/`aria-disabled`, con của danh sách và thanh kho.
-- [ ] Mọi `button`/`input`/`select` của khung dựng sẵn bị khoá trước boot và dùng được sau boot. HTML Khai hoang không đổi.
-- [ ] URL có `?faction=`, `?season=` hoặc kiểu hiển thị đã lưu: trước boot không thấy chip, số đếm, nút kiểu hiển thị, mùa hay badge "Đang diễn ra" sai.
-- [ ] Không JS, hoặc dữ liệu/boot lỗi: không thấy điều khiển chết. Danh sách vẫn đọc được. Nhãn mùa tĩnh của Đội khác vẫn hiện.
-- [ ] Tab vào thẻ trước boot thì sau boot focus vẫn ở đó. Quay lại trên mobile khi panel lọc đang mở thì danh sách không bị đẩy.
-- [ ] Xanh: `npm run test:node`, `npm run test:dist`, `npm run verify` (sau `npm run build`), các spec e2e trong gate của phase 3.
+- [x] `.reference-head` và `.reference-results` dựng sẵn bằng bản sau boot ở trạng thái mặc định, sau khi bỏ `disabled`/`aria-disabled`, con của danh sách và thanh kho.
+- [x] Mọi `button`/`input`/`select` của khung dựng sẵn bị khoá trước boot và dùng được sau boot. HTML Khai hoang không đổi.
+- [x] URL có `?faction=`, `?season=` hoặc kiểu hiển thị đã lưu: trước boot không thấy chip, số đếm, nút kiểu hiển thị, mùa hay badge "Đang diễn ra" sai.
+- [x] Không JS, hoặc dữ liệu/boot lỗi: không thấy điều khiển chết. Danh sách vẫn đọc được. Nhãn mùa tĩnh của Đội khác vẫn hiện.
+- [x] Tab vào thẻ trước boot thì sau boot focus vẫn ở đó. Quay lại trên mobile khi panel lọc đang mở thì danh sách không bị đẩy.
+- [x] Xanh: `npm run test:node`, `npm run test:dist`, `npm run verify` (sau `npm run build`), các spec e2e trong gate của phase 3.
 
 ## Rủi ro chính
 

@@ -12,7 +12,7 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "8e3ed2ac9893615b8d1da9d8b34878e4c45d67e101358333db386c3f2cd26049",
+      "concreteInventorySha256": "5ee8811d01edc6c3b48e77f4f25978459864c27daee4a88968e3b43aef361c1e",
       "concreteLocationCount": 76735,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
@@ -818,7 +818,7 @@
     "src/components/pages/LookupItemPage.astro": "34f3b8685fb1ae6a171064d8980e3b9f1e62d351b662ae29f6fce32858b2f7dc",
     "src/components/pages/RecommendedDetail.astro": "b595f2f4a47f3a9c9e1fe6f4d4655ca537dbdce6aa1a7354822b08928db011b6",
     "src/components/pages/SectionPage.astro": "8cc175c3b1ba45df31a77097cc7de89461889bca5fffe4011b1a439f4cca4c55",
-    "src/layouts/SiteLayout.astro": "58c80a3a6304d86840bb4af022d25c9067c06695d1aaf0e32e40f10334252774",
+    "src/layouts/SiteLayout.astro": "700f62affdf7f562e01f389889bc8490614c85a049d959ccbb6e6b30b1f1fcf9",
     "src/lib/build-date.ts": "2c46966da5db7675f1f092f79a540dd345125211dea16238fa779bea58c9773f",
     "src/lib/landing-stats.ts": "0aaf3e3ef6ca6a2d091552917ff200014ade124c5fb3d2f41941ba39de21f4e4",
     "src/lib/lookup-item-pages.ts": "e277f6ec32f8f756227990d145122706c436f01b6ae3d14a7739b8419b76d5a6",

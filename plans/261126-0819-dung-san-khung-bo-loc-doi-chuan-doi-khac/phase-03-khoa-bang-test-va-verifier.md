@@ -1,7 +1,7 @@
 ---
 phase: 3
 title: "Khoá bằng test, verifier và cập nhật docs"
-status: pending
+status: completed
 priority: P2
 effort: "3h"
 dependencies: [2]
@@ -70,12 +70,12 @@ npx playwright test tests-e2e/team-ssr-adopt.spec.mjs tests-e2e/team-ssr-nojs.sp
 
 ## Todo
 
-- [ ] Viết `team-ssr-layout-shift.spec.mjs` (đo đúng cách, roster = đúng chiều cao), xác nhận nó bắt được lỗi khi bỏ khung
-- [ ] So DOM của `.reference-head` và `.reference-results` trước và sau boot
-- [ ] Parity: thêm `ja`
-- [ ] Cập nhật docs và changelog
-- [ ] Ghi chú vào report cũ của plan 261015
-- [ ] Regression gate toàn bộ xanh
+- [x] Viết `team-ssr-layout-shift.spec.mjs` (đo đúng cách, roster = đúng chiều cao), xác nhận nó bắt được lỗi khi bỏ khung
+- [x] So DOM của `.reference-head` và `.reference-results` trước và sau boot
+- [x] Parity: thêm `ja`
+- [x] Cập nhật docs và changelog
+- [x] Ghi chú vào report cũ của plan 261015
+- [x] Regression gate toàn bộ xanh
 - [ ] Mở PR từ `feat/ssr-khung-bo-loc` vào `main`, đề xuất Astra review
 
 ## Success Criteria
