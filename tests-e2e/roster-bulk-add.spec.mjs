@@ -239,6 +239,23 @@ test.describe("Dán danh sách tên", () => {
     await expect(picker.locator(".roster-paste-status")).toHaveText("已将 3 项加入库存。1 个无法识别的名称仍保留在输入框中，可修改。");
     expect((await stored(page)).ownedHeroes.map((item) => item.name)).toEqual(["Tào Tháo", "Lưu Bị", "Quan Vũ"]);
   });
+
+  test("bản ja: ô dán và ô tìm nhận tên Nhật (関羽) và chữ Hán tự dạng Nhật (蔡文姫), hiện tên Nhật; kho vẫn lưu tên Việt chuẩn", async ({ page }) => {
+    await page.goto("/ja/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const picker = page.locator("#section-roster-recommend .roster-picker");
+    await picker.locator(".roster-picker-search").fill("関羽");
+    await expect(picker.locator(".roster-picker-name").first()).toHaveText("関羽");
+    await picker.locator(".roster-paste-toggle").click();
+    await picker.locator(".roster-paste-input").fill("関羽\n蔡文姫\n存在しない名前");
+    await picker.locator(".roster-paste-match").click();
+    const review = picker.getByRole("region", { name: "照合結果" });
+    await expect(review.locator(".roster-paste-summary")).toHaveText("一致 2 件 · 要選択 0 件 · 認識できない名前 1 件");
+    await expect(review.locator('[data-group="matched"] .roster-paste-name')).toHaveText(["関羽", "蔡琰"]);
+    await review.getByRole("button", { name: "2 件を在庫に追加" }).click();
+    await expect(picker.locator(".roster-paste-status")).toContainText("2 件を在庫に追加しました。");
+    expect((await stored(page)).ownedHeroes.map((item) => item.name)).toEqual(["Quan Vũ", "Thái Văn Cơ"]);
+  });
 });
 
 test.describe("390px", () => {

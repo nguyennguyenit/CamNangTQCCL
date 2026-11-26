@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-26 (Bản ja: tên mùa Nhật, ô dán và ô tìm kho nhận tên Nhật, #153, #162)
+
+- Changed: bản ja hiện tên mùa chính thức của server Nhật thay cho tên mùa nguồn: PK-S27 là **漢焔不滅** (trước đây 漢焰長明 ở ô chọn mùa, chip mùa Gợi ý đội, nhãn mùa Đội khác, Soi đội, Đội của tôi; 漢焔長明 ở trang mùa và trang đội dựng sẵn). Bảng `js/ja-season-names.js` là bản chiếu các thuật ngữ mùa có nguồn của `pipeline/ja-glossary.json` (test giữ hai nơi khớp nhau); bộ tra tên ja (`createJaNameResolver().fromRaw`) dùng bảng này nên mọi trang dựng sẵn đổi theo, và nhãn mùa Đội cộng đồng (`seasonLabel`, dạng `PK-S27 · …`) cũng vậy. Mùa chưa có tên Nhật đã xác minh không tự dịch (ô chọn mùa hiện tên nguồn, trang dựng sẵn đổi tự dạng như trước), liệt kê ở mục "Tên mùa" của [ja-gaps.md](ja-gaps.md); mục này đọc generation đang pin nên chuỗi publish chạy lại `node scripts/report-ja-gaps.mjs` ([season-team-data.md](season-team-data.md)). Bản zh không đổi.
+- Changed: Gợi ý đội bản ja: ô "Dán danh sách tên" và ô tìm của bảng chọn nhanh nhận tên Nhật (lớp `data/lookup-ja.json`, như Soi đội) và chữ Hán viết kiểu Nhật (`関羽`, `蔡文姫`); helper `withJaInventoryNames` (`js/locale-name-aliases.js`), bộ tra tên ja có thêm `shinjitai`. Câu gợi ý ja ghi thêm 日本語名. Kho vẫn lưu theo mã và tên Việt chuẩn.
+- Generation Recommended `462d8f12…` (chỉ ghim lại hash nguồn, không đổi bản dịch); handle 1681/443/20 (không đổi).
+- Tests: `tests-js/ja-season-names.test.mjs`, `tests-js/roster-ja-inventory-names.test.mjs`, `tests-js/doi-khac-single-season.test.mjs` (bản ja); e2e `tests-e2e/ja-locale.spec.mjs` (ô chọn mùa ja/zh), `tests-e2e/roster-bulk-add.spec.mjs` (dán và tìm tên Nhật).
+
 ## 2026-11-20 (Bỏ `?from=` khỏi link nội bộ tới trang chi tiết đội)
 
 - Changed: link nội bộ tới trang chi tiết (thẻ Đội chuẩn/Đội khác/Khai hoang, Soi đội, Gợi ý đội, "Đội tiêu biểu" của Tra cứu, link đổi ngôn ngữ) chỉ còn URL canonical, kèm `variant` khi nó chọn nội dung; không còn `?from=`. Số liệu production 2026-11-20 (cả vi/zh/ja): `/doi-chuan/` 338 thẻ có `from` / 0 sạch (169 href khác nhau), `/doi-khac/` 120 / 0, `/khai-hoang/` 40 / 0 (20 giá trị `from`). Canonical vốn đã sạch, nhưng link nội bộ trỏ URL không canonical (Google khuyên trỏ canonical) và số biến thể URL không có trần vì client dùng `location.href` làm `from`.
