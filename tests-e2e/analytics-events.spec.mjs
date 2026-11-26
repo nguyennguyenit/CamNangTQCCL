@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { dataLayerEntries, PRODUCTION_ORIGIN, routeProductionHost, seedConsent } from './helpers/production-host.mjs';
+import { gotoBooted } from './helpers/boot.mjs';
 
 /**
  * Sự kiện GA4 tùy chỉnh (js/analytics.js `track`): feedback/donate mở hộp thoại, Tra cứu (search có debounce, chọn hồ sơ),
@@ -15,8 +16,7 @@ const ALLOWED_PARAM_KEYS = new Set([
 async function openProductionHost(page, context, baseURL, path, consent = 'denied') {
   await routeProductionHost(context, baseURL);
   await seedConsent(context, consent);
-  await page.goto(`${PRODUCTION_ORIGIN}${path}`);
-  await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
+  await gotoBooted(page, `${PRODUCTION_ORIGIN}${path}`);
 }
 
 /** Mọi `gtag('event', …)` tuỳ chỉnh đã vào dataLayer, theo thứ tự (bỏ `page_view` do loader gửi kèm URL đầy đủ). */

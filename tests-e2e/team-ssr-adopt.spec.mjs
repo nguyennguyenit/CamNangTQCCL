@@ -69,15 +69,15 @@ test("Đội chuẩn: URL lệch mặc định (kiểu hiển thị khác) thay 
 // Thân dựng sẵn là trạng thái mặc định: trang mở ở trạng thái khác thì danh sách mặc định không được hiện (và bấm được)
 // suốt lúc app.js còn tải dữ liệu; trạng thái mặc định thì hiện ngay; app.js dựng xong thì danh sách hiện lại.
 const STALE_CASES = [
-  ["Đội chuẩn: mùa khác trong URL", "/doi-chuan/?season=pk-s24", "#section-team-chuan > .reference-view", null, true],
-  ["Đội chuẩn: kiểu Bảng đã lưu", "/doi-chuan/", "#section-team-chuan > .reference-view", "bang", true],
-  ["Đội chuẩn: giá trị lưu lạ vẫn là Thẻ", "/doi-chuan/", "#section-team-chuan > .reference-view", "cards", false],
-  ["Đội khác: bộ lọc trong URL", "/zh/doi-khac/?faction=thuc", "#section-team-khac > .reference-view", null, true],
+  ["Đội chuẩn: mùa khác trong URL", "/doi-chuan/?season=pk-s24", "#section-team-chuan .reference-view", null, true],
+  ["Đội chuẩn: kiểu Bảng đã lưu", "/doi-chuan/", "#section-team-chuan .reference-view", "bang", true],
+  ["Đội chuẩn: giá trị lưu lạ vẫn là Thẻ", "/doi-chuan/", "#section-team-chuan .reference-view", "cards", false],
+  ["Đội khác: bộ lọc trong URL", "/zh/doi-khac/?faction=thuc", "#section-team-khac .reference-view", null, true],
   ["Cùng Tồn: kịch bản trong URL", "/cung-ton/?scenario=x", "#section-coexist > .coexist-group-view", null, true],
   ["Khai hoang: cặp đang chọn trong URL", "/khai-hoang/?khTeam=x&khVariant=y", "#section-khaihoang .kh-team-view", null, true],
   // `kho`/`xep` chỉ thêm badge/đổi thứ tự khi máy có kho: người không có kho vẫn thấy ngay danh sách dựng sẵn.
-  ["Đội chuẩn: kho và xep trong URL (không phải trạng thái khác mặc định)", "/doi-chuan/?kho=rap-duoc&xep=de-rap", "#section-team-chuan > .reference-view", null, false],
-  ["Đội chuẩn: kho kèm bộ lọc khác vẫn là trạng thái khác mặc định", "/doi-chuan/?q=x&kho=rap-duoc", "#section-team-chuan > .reference-view", null, true],
+  ["Đội chuẩn: kho và xep trong URL (không phải trạng thái khác mặc định)", "/doi-chuan/?kho=rap-duoc&xep=de-rap", "#section-team-chuan .reference-view", null, false],
+  ["Đội chuẩn: kho kèm bộ lọc khác vẫn là trạng thái khác mặc định", "/doi-chuan/?q=x&kho=rap-duoc", "#section-team-chuan .reference-view", null, true],
   ["Khai hoang: mặc định", "/khai-hoang/", "#section-khaihoang .kh-team-view", null, false],
 ];
 for (const [name, url, selector, storedView, hidden] of STALE_CASES) {
@@ -151,4 +151,160 @@ test("Đội chuẩn: lỗi dữ liệu hiện ở đầu mục, trước các t
     return Boolean(error) && (!card || Boolean(error.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING));
   });
   expect(errorFirst).toBe(true);
+});
+
+// ---------- Khung lọc dựng sẵn (thanh công cụ, sidebar lọc, ô chọn mùa, "Xem thêm") ----------
+// HTML dựng sẵn có luôn khung bộ lọc quanh danh sách nên bố cục không nhảy khi app.js boot. Điều khiển của khung bị khoá tới lúc
+// app.js gắn xong; client giữ nguyên node khung (đầu mục, khung kết quả, danh sách) và chỉ thay con của ô chọn mùa, thanh công cụ
+// và sidebar trong cùng một task, nên focus của người đã tab vào thẻ không mất.
+const REFERENCE_PAGES = [["/doi-chuan/", true], ["/doi-khac/", false]];
+/** Điều khiển của khung (không tính nút nằm trong danh sách thẻ). */
+const SHELL_CONTROLS = ".reference-head select, .reference-toolbar :is(button, input), .reference-filters :is(button, input, select), .reference-more button";
+
+for (const [path, hasSeasonSelect] of REFERENCE_PAGES) {
+  test(`${path}: khung lọc dựng sẵn có mặt và bị khoá trước khi app.js chạy, dùng được sau boot`, async ({ page }) => {
+    await bootWithProbe(page, path, ".reference-team-card", async () => {
+      await expect(page.locator(".reference-toolbar")).toHaveCount(1);
+      await expect(page.locator("aside.reference-filters")).toHaveCount(1);
+      await expect(page.locator(".reference-head select")).toHaveCount(hasSeasonSelect ? 1 : 0);
+      const state = await page.evaluate((query) => [...document.querySelectorAll(query)].map((node) => [node.tagName, node.disabled, node.getAttribute("aria-disabled")]), SHELL_CONTROLS);
+      expect(state.length, `${path}: phải có điều khiển của khung`).toBeGreaterThanOrEqual(10);
+      for (const [tag, disabled, ariaDisabled] of state) {
+        expect(disabled, tag).toBe(true);
+        expect(ariaDisabled, tag).toBe("true");
+      }
+    });
+    // Sau boot: không điều khiển nào của khung còn bị khoá; riêng "Xóa lọc" tự vô hiệu vì chưa có lọc nào (không mang aria-disabled).
+    const left = await page.evaluate((query) => [...document.querySelectorAll(query)]
+      .filter((node) => node.hasAttribute("aria-disabled") || (node.disabled && !node.matches(".clear-btn"))).length, SHELL_CONTROLS);
+    expect(left, `${path}: điều khiển của khung còn bị khoá sau boot`).toBe(0);
+    await expect(page.locator(".reference-search-input")).toBeEnabled();
+    await expect(page.locator(".view-btn").first()).toBeEnabled();
+    await expect(page.locator(".reference-filters .fchip").first()).toBeEnabled();
+    await expect(page.locator(".reference-filters .clear-btn")).toBeDisabled();
+    await expect(page.locator(".reference-filters .clear-btn")).not.toHaveAttribute("aria-disabled");
+    if (hasSeasonSelect) await expect(page.locator(".reference-head select")).toBeEnabled();
+    // Khung trước boot đã đúng khung sau boot ở trạng thái mặc định: "Xem thêm" của Đội khác (60 team đầu trên hơn 60 team) vẫn có nút.
+    if (!hasSeasonSelect) await expect(page.locator(".reference-more button.lookup-more")).toBeEnabled();
+  });
+
+  test(`${path}: client giữ nguyên node khung dựng sẵn, chỉ thay con của ô chọn mùa, thanh công cụ và sidebar`, async ({ page }) => {
+    const kept = ".reference-head, .reference-browser, .reference-results, .reference-toolbar, aside.reference-filters, .reference-results-body, .reference-view, .reference-team-card";
+    const prerendered = await bootWithProbe(page, path, `${kept}${hasSeasonSelect ? ", label.reference-season-field" : ""}`);
+    expect(await survivors(page), `${path}: node khung dựng sẵn bị thay`).toBe(prerendered);
+    await expect(page.locator(".reference-toolbar .reference-search-input")).toBeEnabled();
+    await expect(page.locator("h1")).toHaveCount(1);
+  });
+
+  test(`${path}: tab vào link của thẻ đầu trước boot thì sau boot focus vẫn ở đó`, async ({ page }) => {
+    await bootWithProbe(page, path, ".reference-team-card", async () => {
+      // Điều khiển của khung bị khoá nên Tab bỏ qua chúng; tới link đầu tiên của thẻ đầu tiên.
+      for (let step = 0; step < 80; step += 1) {
+        await page.keyboard.press("Tab");
+        if (await page.evaluate(() => document.activeElement?.matches(".reference-team-card a"))) break;
+      }
+      expect(await page.evaluate(() => document.activeElement?.matches(".reference-team-card a"))).toBe(true);
+      await page.evaluate(() => { window.__focused = document.activeElement; });
+    });
+    expect(await page.evaluate(() => window.__focused.isConnected && document.activeElement === window.__focused)).toBe(true);
+  });
+}
+
+// Trang mở ở trạng thái khác mặc định: số đếm, chip, nút kiểu hiển thị, ô chọn mùa và huy hiệu "Đang diễn ra" của khung dựng sẵn
+// sẽ sai, nên ẩn (vẫn giữ chỗ) tới khi app.js dựng đúng; sau boot hiện đúng theo URL.
+const STALE_PARTS = ".reference-filters .chip-row, .reference-filters .clear-btn, .reference-filter-head, .reference-count, .reference-view-toggle, .reference-search-input, label.reference-season-field > *";
+const SHELL_STALE_CASES = [
+  ["Đội chuẩn: bộ lọc trong URL", `/doi-chuan/?faction=${encodeURIComponent("Thục")}`, null,
+    (page) => expect(page.locator('.fchip[data-focus-key="faction:Thục"]')).toHaveAttribute("aria-pressed", "true")],
+  ["Đội chuẩn: mùa khác trong URL", "/doi-chuan/?season=pk-s24", null,
+    async (page) => {
+      await expect(page.locator("#section-team-chuan select")).toHaveValue("pk-s24");
+      await expect(page.locator(".reference-season-status")).toBeHidden();
+    }],
+  ["Đội chuẩn: tất cả mùa", "/doi-chuan/?season=all", null,
+    (page) => expect(page.locator("#section-team-chuan select")).toHaveValue("all")],
+  ["Đội khác: kiểu Bảng đã lưu", "/doi-khac/", "bang",
+    (page) => expect(page.locator(".view-btn-bang")).toHaveAttribute("aria-pressed", "true")],
+];
+for (const [name, url, storedView, check] of SHELL_STALE_CASES) {
+  test(`${name}: chip, số đếm, nút kiểu hiển thị, ô chọn mùa và huy hiệu ẩn (giữ chỗ) trước boot, hiện đúng theo URL sau boot`, async ({ page }) => {
+    if (storedView) await page.addInitScript((value) => localStorage.setItem("tqccl.teamView.v1", value), storedView);
+    await bootWithProbe(page, url, ".reference-team-card", async () => {
+      const hidden = await page.evaluate((query) => [...document.querySelectorAll(query)].map((node) => [node.className?.baseVal ?? node.className ?? node.tagName, getComputedStyle(node).visibility]), STALE_PARTS);
+      expect(hidden.length, `${url}: phải có phần phụ thuộc trạng thái`).toBeGreaterThan(0);
+      for (const [part, visibility] of hidden) expect(visibility, `${url}: ${part}`).toBe("hidden");
+      // Giữ chỗ: khung vẫn chiếm chỗ (ẩn bằng visibility, không bằng display).
+      for (const selector of [".reference-toolbar", "aside.reference-filters"]) {
+        const box = await page.locator(selector).boundingBox();
+        expect(box?.height ?? 0, `${url}: ${selector} phải giữ chỗ`).toBeGreaterThan(20);
+      }
+    });
+    await check(page);
+    // Nút "Xóa lọc" khi không có gì để xóa vẫn ẩn theo kiểu sẵn có (`.clear-btn:disabled`, giữ chỗ): không tính là còn ẩn vì dấu stale.
+    const stillHidden = await page.evaluate((query) => [...document.querySelectorAll(query)].filter((node) => getComputedStyle(node).visibility === "hidden" && !node.matches(".clear-btn:disabled")).length, STALE_PARTS);
+    expect(stillHidden, `${url}: phần khung còn ẩn sau boot`).toBe(0);
+    await expect(page.locator("[data-ssr-stale]")).toHaveCount(0);
+  });
+}
+
+// Dữ liệu Đội chuẩn/Đội khác không tải được: không điều khiển chết nào của khung được hiện, danh sách (bản dựng sẵn) chiếm cả hàng.
+for (const [path, hasSeasonSelect] of REFERENCE_PAGES) {
+  test(`${path}: dữ liệu không tải được thì khung lọc chết bị ẩn, danh sách đọc được chiếm cả hàng`, async ({ page }) => {
+    await page.route("**/data/recommended/**", (route) => route.abort());
+    await page.goto(path);
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+    await expect(page.locator("main .error")).toBeAttached();
+    await expect(page.locator(".section[data-ssr-failed]")).toHaveCount(1);
+    for (const selector of [".reference-toolbar", ".reference-filters", "label.reference-season-field", ".reference-more"]) {
+      const hidden = await page.locator(selector).evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).display === "none"));
+      expect(hidden, `${path}: ${selector} phải ẩn`).toBe(true);
+    }
+    await expect(page.locator(".reference-team-card").first()).toBeVisible();
+    const widths = await page.evaluate(() => [".reference-results", ".reference-results-body"].map((selector) => document.querySelector(selector).getBoundingClientRect().width));
+    expect(Math.abs(widths[0] - widths[1]), `${path}: danh sách phải chiếm cả hàng (${widths})`).toBeLessThanOrEqual(1);
+    if (!hasSeasonSelect) await expect(page.locator(".reference-season-static")).toBeVisible();
+  });
+}
+
+// Quay lại từ trang chi tiết trên mobile khi panel lọc đang mở: snapshot ghi `disclosures.filters = true`; panel phải mở sẵn trong
+// HTML dựng sẵn (trước boot) để lúc app.js mở lại panel, thân danh sách (và thẻ đầu trong đó) không bị đẩy xuống.
+test("Đội chuẩn trên mobile: quay lại khi panel lọc đang mở thì panel mở sẵn trước boot và danh sách không bị đẩy khi boot", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  const page = await context.newPage();
+  await page.goto("/doi-chuan/");
+  await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+  await page.locator("#section-team-chuan .filter-collapse-toggle").click();
+  await expect(page.locator("#section-team-chuan aside.reference-filters")).toBeVisible();
+  await page.locator("#section-team-chuan .reference-team-card a[data-team-detail-link]").first().click();
+  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+  let release;
+  const gate = new Promise((resolve) => { release = resolve; });
+  await page.route("**/js/app.js", async (route) => { await gate; await route.continue(); });
+  await page.goBack({ waitUntil: "commit" });
+  await page.locator(".site-footer").waitFor({ state: "attached" });
+  // Đo so với đầu mục (không phụ thuộc cuộn): chiều cao panel và vị trí đầu thân danh sách. Thanh kho nằm TRONG thân và hiện sau
+  // boot theo trạng thái kho trên máy (không thuộc khung dựng sẵn), nên đo đầu thân chứ không đo thẻ đầu.
+  const measure = () => page.evaluate(() => {
+    const section = document.querySelector("#section-team-chuan");
+    const filters = section.querySelector("aside.reference-filters");
+    const body = section.querySelector(".reference-results-body");
+    const origin = section.getBoundingClientRect().top;
+    return {
+      display: getComputedStyle(filters).display,
+      panel: Math.round(filters.getBoundingClientRect().height),
+      body: Math.round(body.getBoundingClientRect().top - origin),
+    };
+  });
+  const before = await measure();
+  expect(before.display, "panel lọc phải mở sẵn trước boot").not.toBe("none");
+  expect(before.panel, "panel lọc phải có chiều cao thật trước boot").toBeGreaterThan(100);
+  release();
+  await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+  const after = await measure();
+  expect(after.display, "panel lọc vẫn mở sau boot").not.toBe("none");
+  expect(Math.abs(after.panel - before.panel), `panel đổi cao ${after.panel - before.panel}px khi boot`).toBeLessThanOrEqual(1);
+  expect(Math.abs(after.body - before.body), `danh sách bị đẩy ${after.body - before.body}px khi boot`).toBeLessThanOrEqual(1);
+  await expect(page.locator("#section-team-chuan .filter-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator("[data-ssr-filters-open]")).toHaveCount(0);
+  await context.close();
 });

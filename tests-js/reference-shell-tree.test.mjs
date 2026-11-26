@@ -10,6 +10,7 @@ import { treeToHtml } from "../js/view-tree.js";
 import { SOURCE_TIER_ORDER } from "../js/recommended-reference-state.js";
 import { TEAM_VIEW_CARDS, TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from "../js/team-view.js";
 import { PAGE_SIZE } from "../js/team-filter-section.js";
+import { WAITING_OR_JS_REQUIRED } from "../scripts/verify-astro-dist.mjs";
 import {
   PRIMARY_FACETS,
   SECONDARY_FACETS,
@@ -26,8 +27,6 @@ import {
 
 const LOCALES = ["vi", "zh", "ja"];
 const MOUNT_ID = "section-team-chuan";
-/** Chữ chờ/đòi JavaScript mà trang đội dựng sẵn không được còn mang; cùng biểu thức với `WAITING_OR_JS_REQUIRED` của `scripts/verify-astro-dist.mjs`. */
-const WAITING_OR_JS_REQUIRED = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
 
 /** 3 đội: 2 phe, 2 loại binh, 1 tier. */
 const ROWS = [

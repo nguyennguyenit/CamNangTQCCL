@@ -190,30 +190,35 @@ export function referenceFiltersChildrenTree({mountId,scopeItems,state,labels,fa
   ];
 }
 
+const keep=tree=>tree;
+
 /**
  * Vùng kết quả: thanh kho (ẩn, trình duyệt tự vẽ), thông báo, danh sách (`viewTree`), "Xem thêm" và dòng "không có đội". Cờ `hidden`
- * của ba phần tử sau tính bằng `referenceNoticeHidden`/`referenceMoreHidden`/`referenceEmptyHidden`; nút bên trong "Xem thêm" do
- * trình duyệt dựng theo lượt.
+ * của ba phần tử sau tính bằng `referenceNoticeHidden`/`referenceMoreHidden`/`referenceEmptyHidden`. `moreTrees`: con của hàng
+ * "Xem thêm" (nút + ghi chú); hàng ẩn thì không có con. `lock` (mặc định giữ nguyên) áp lên từng phần tử ngoài danh sách: bản dựng sẵn
+ * khoá điều khiển của khung bằng nó, còn nút trong danh sách do builder danh sách tự quyết.
  */
-export function referenceResultsBodyTree({noticeText,emptyText,emptyHidden,moreHidden,viewTree}) {
+export function referenceResultsBodyTree({noticeText,emptyText,emptyHidden,moreHidden,moreTrees=[],viewTree,lock=keep}) {
   return t('div',{class:'reference-results-body'},[
-    t('div',{class:'reference-roster-bar',hidden:true}),
-    t('p',{class:'scope-note reference-notice',role:'status',hidden:referenceNoticeHidden(noticeText)},noticeText || null),
+    lock(t('div',{class:'reference-roster-bar',hidden:true})),
+    lock(t('p',{class:'scope-note reference-notice',role:'status',hidden:referenceNoticeHidden(noticeText)},noticeText || null)),
     viewTree,
-    t('div',{class:'lookup-more-row reference-more',hidden:moreHidden}),
-    t('p',{class:'empty reference-empty',hidden:emptyHidden},emptyText || null),
+    lock(t('div',{class:'lookup-more-row reference-more',hidden:moreHidden},moreHidden ? [] : moreTrees)),
+    lock(t('p',{class:'empty reference-empty',hidden:emptyHidden},emptyText || null)),
   ]);
 }
 
 /**
  * Khung của danh sách: `.reference-browser > .reference-results > [toolbar, aside.reference-filters.collapsed#${mountId}-filters,
- * vùng kết quả]`. Tham số là hợp của ba cây thành phần.
+ * vùng kết quả]`. Tham số là hợp của ba cây thành phần. `lock` (mặc định giữ nguyên) áp lên thanh công cụ, sidebar và các phần
+ * tử của vùng kết quả ngoài danh sách; bản dựng sẵn truyền `disableControls(…, () => true)` để khoá điều khiển của khung.
  */
 export function referenceShellTree(params) {
+  const lock=params.lock ?? keep;
   return t('div',{class:'reference-browser'},[
     t('div',{class:'reference-results'},[
-      referenceToolbarTree(params),
-      t('aside',{class:'reference-filters collapsed',id:`${params.mountId}-filters`,'aria-label':L('Bộ lọc','筛选','絞り込み')},referenceFiltersChildrenTree(params)),
+      lock(referenceToolbarTree(params)),
+      lock(t('aside',{class:'reference-filters collapsed',id:`${params.mountId}-filters`,'aria-label':L('Bộ lọc','筛选','絞り込み')},referenceFiltersChildrenTree(params))),
       referenceResultsBodyTree(params),
     ]),
   ]);

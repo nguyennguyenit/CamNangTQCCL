@@ -1,7 +1,7 @@
 ---
 phase: 2
 title: "Phát khung từ build"
-status: pending
+status: completed
 priority: P2
 effort: "6h"
 dependencies: [1]
@@ -109,18 +109,18 @@ npx playwright test tests-e2e/team-ssr-adopt.spec.mjs tests-e2e/team-ssr-nojs.sp
 
 ## Todo
 
-- [ ] Viết Tests Before (Node + e2e adopt + focus), xác nhận đỏ
-- [ ] Đổi `disableButtons` thành `disableControls` (lsp references trước)
-- [ ] `recommendedSectionTrees` phát khung; khoá khung riêng, `inertUntilBound` riêng
-- [ ] Client nhận lại khung tại chỗ, thay con của season field, toolbar và aside
-- [ ] `data-ssr-failed` ở nhánh lỗi dữ liệu và `catch` của `main()`
-- [ ] Stale guard: `data-ssr-filters-open` từ snapshot quay lại
-- [ ] CSS: mở rộng stale; ẩn khung chết cho `scripting:none` và `ssr-failed`; mở panel khi có `filters-open`
-- [ ] Marker verifier và fixture `astro-dist-contract`
-- [ ] Cập nhật selector `team-ssr-adopt.spec.mjs:72-80` và `team-section-ssr.test.mjs:115-126`
-- [ ] Helper `gotoBooted`, đổi các `goto` liên quan
-- [ ] Tests After (stale, lỗi dữ liệu, quay lại trên mobile, nojs) và ghi kích thước
-- [ ] Regression gate xanh
+- [x] Viết Tests Before (Node + e2e adopt + focus), xác nhận đỏ
+- [x] Đổi `disableButtons` thành `disableControls` (lsp references trước)
+- [x] `recommendedSectionTrees` phát khung; khoá khung riêng, `inertUntilBound` riêng
+- [x] Client nhận lại khung tại chỗ, thay con của season field, toolbar và aside
+- [x] `data-ssr-failed` ở nhánh lỗi dữ liệu và `catch` của `main()`
+- [x] Stale guard: `data-ssr-filters-open` từ snapshot quay lại
+- [x] CSS: mở rộng stale; ẩn khung chết cho `scripting:none` và `ssr-failed`; mở panel khi có `filters-open`
+- [x] Marker verifier và fixture `astro-dist-contract`
+- [x] Cập nhật selector `team-ssr-adopt.spec.mjs:72-80` và `team-section-ssr.test.mjs:115-126`
+- [x] Helper `gotoBooted`, đổi các `goto` liên quan
+- [x] Tests After (stale, lỗi dữ liệu, quay lại trên mobile, nojs) và ghi kích thước
+- [x] Regression gate xanh
 
 ## Success Criteria
 

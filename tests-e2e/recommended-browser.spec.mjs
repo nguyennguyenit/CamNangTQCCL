@@ -3,6 +3,7 @@ import {readFileSync} from 'node:fs';
 import {buildSeasonCandidates} from '../js/roster-season-candidates.js';
 import {ROSTER_SCAN_STORAGE_KEY} from '../js/roster-scan-state.js';
 import {PRODUCTION_ORIGIN,dataLayerEntries,routeProductionHost,seedConsent} from './helpers/production-host.mjs';
+import {gotoBooted} from './helpers/boot.mjs';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
 function navLink(page, name, mobile = false) {
@@ -24,7 +25,7 @@ for (const width of [320,375,768,1280]) {
     test(`recommended browser is usable at ${width}px in ${theme}`,async({page})=>{
       await page.setViewportSize({width,height:800});
       await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
-      await page.goto('/doi-chuan/');
+      await gotoBooted(page,'/doi-chuan/');
       if (width < 1280) await page.locator('#section-menu-toggle').click();
       await expect(navLink(page, 'Đội chuẩn', width < 1280)).toHaveAttribute('aria-current','page');
       await expect(navLink(page, 'Đội khác', width < 1280)).toHaveAttribute('href','/doi-khac/');
@@ -59,9 +60,7 @@ test('cards expose holders tactics books and a native detail link',async({page})
 });
 
 test('Team khác honors explicit factions; its single season is a static label, not a select',async({page})=>{
-  await page.goto('/doi-khac/?faction=Thục');
-  // Thẻ dựng sẵn hiện trước khi app.js chạy: chờ khởi động xong mới thao tác bộ lọc.
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+  await gotoBooted(page,'/doi-khac/?faction=Thục');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
   await expect(page.locator('#section-team-khac').getByLabel('Mùa',{exact:true})).toHaveCount(0);
   await expect(page.locator('#section-team-khac select')).toHaveCount(0);
@@ -74,8 +73,7 @@ test('season scope changes stay on the browser; a retired category key is stripp
   // Danh mục không khớp ít nhất một đội của mùa mặc định: nếu còn được áp dụng thì danh sách sẽ hụt.
   const category=index.records.map(row=>row.sourceCategoryId).find(value=>value&&inDefault.some(row=>row.sourceCategoryId!==value));
   expect(category,{message:'cần một danh mục thu hẹp được mùa mặc định'}).toBeTruthy();
-  await page.goto(`/doi-chuan/?category=${encodeURIComponent(category)}`);
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+  await gotoBooted(page,`/doi-chuan/?category=${encodeURIComponent(category)}`);
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   await expect(page).not.toHaveURL(/category=/);
   await revealAll(section);
@@ -138,7 +136,7 @@ test('source detail preserves alternative holders and prefers available Vietname
 });
 
 test('Back and Forward restore URL-owned reference snapshots without rewriting history',async({page})=>{
-  await page.goto('/doi-chuan/?q=sentinel');
+  await gotoBooted(page,'/doi-chuan/?q=sentinel');
   await navLink(page, 'Đội khác').click();
   await expect(page).toHaveURL('/doi-khac/');
   await page.goBack();
@@ -171,7 +169,7 @@ const firstRenderedRecord=async(section,selector,attribute,candidates,keyOf)=>{
 test('localized facet chips filter with raw values, show scoped counts and keep the same card membership',async({page,request})=>{
   const {seasons,index}=await referenceData(request);
   await page.setViewportSize({width:375,height:812});
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   await section.getByRole('button',{name:'Bộ lọc'}).click();
@@ -208,7 +206,7 @@ test('mobile keeps search and the native season select outside the collapsed fil
   const active=options.find(item=>item.sourceSeasonId===seasons.defaultSourceSeasonId) || options[0];
   const target=options.find(item=>item.sourceSeasonId!==active.sourceSeasonId);
   await page.setViewportSize({width:375,height:812});
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   const season=section.getByLabel('Mùa',{exact:true});
   await expect(section.getByLabel('Tìm mùa')).toHaveCount(0);
@@ -235,12 +233,12 @@ test('uncollected season and an unmatched filter read as different states',async
   const section=page.locator('#section-team-chuan');
   const seasonUrl=scope=>`/doi-chuan/?season=${encodeURIComponent(scope.sourceSeasonId)}`;
   if (uncollected) {
-    await page.goto(seasonUrl(uncollected));
+    await gotoBooted(page,seasonUrl(uncollected));
     await expect(section.locator('.empty')).toHaveText('Mùa này chưa được thu thập.');
     await expect(section.locator('.scope-note')).toContainText('chưa được thu thập');
   }
   const complete=scopes.find(scope=>scope.state==='complete');
-  await page.goto(`${seasonUrl(complete)}&q=khong-ton-tai-tren-doi`);
+  await gotoBooted(page,`${seasonUrl(complete)}&q=khong-ton-tai-tren-doi`);
   await expect(section.locator('.empty')).toHaveText('Không có đội khớp bộ lọc.');
   await expect(section.locator('.fchip').first()).toBeAttached();
 });
@@ -289,8 +287,7 @@ for (const [sourceConfigId,codes] of [
         await expect(heading.locator('.hn')).toHaveText(code ? shown.slice(code.length+1) : shown);
       }
     };
-    await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
-    await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+    await gotoBooted(page,`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
     const card=page.locator(`#section-team-chuan .reference-team-card[data-source-config-id="${sourceConfigId}"]`);
     await expect(card).toBeVisible();
     await assertHeadings(card.locator('.reference-holder .hero-name'));
@@ -453,7 +450,7 @@ test('a retired score filter is ignored, stripped from the URL and never filters
   const {index}=await referenceData(request);
   const seasonId=index.records[0].sourceSeasonId;
   const total=index.records.filter(row=>row.sourceSeasonId===seasonId).length;
-  await page.goto(`/doi-chuan/?season=${encodeURIComponent(seasonId)}&score=113`);
+  await gotoBooted(page,`/doi-chuan/?season=${encodeURIComponent(seasonId)}&score=113`);
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.reference-count')).toHaveText(`${total} / ${total} đội`);
   await expect(section.locator('.fgroup .flabel')).not.toContainText(['Điểm']);
@@ -465,7 +462,7 @@ test('source tier filters while retired sort is reported without touching gamepl
   const {index}=await referenceData(request);
   const seasonId=index.records[0].sourceSeasonId;
   const total=index.records.filter(row=>row.sourceSeasonId===seasonId && row.tierRaw==='T1').length;
-  await page.goto(`/doi-chuan/?season=${encodeURIComponent(seasonId)}&tier=T1&sort=score&scenario=binh-dien-xuan-thu`);
+  await gotoBooted(page,`/doi-chuan/?season=${encodeURIComponent(seasonId)}&tier=T1&sort=score&scenario=binh-dien-xuan-thu`);
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.scope-note')).toContainText('không còn áp dụng');
   // Danh sách dựng theo lượt 60 đội; nhóm Tier vẫn là bộ lọc chính.
@@ -570,7 +567,7 @@ test('the legacy table names rows by nickname before name without touching ident
 });
 
 test('Thẻ/Bảng remembers the choice, keeps filters and lets the URL win over storage',async({page})=>{
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBeNull();
@@ -590,18 +587,18 @@ test('Thẻ/Bảng remembers the choice, keeps filters and lets the URL win over
   await expect(section.locator('.view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
   await expect(section.locator('.reference-table tbody tr')).toHaveCount(filtered);
   // Nạp lại trang không có `view`: dùng giá trị đã lưu, vẫn giữ từ khóa tìm.
-  await page.goto('/doi-chuan/?q=L%E1%BB%AF%20B%E1%BB%91');
+  await gotoBooted(page,'/doi-chuan/?q=L%E1%BB%AF%20B%E1%BB%91');
   await expect(section.locator('.reference-table tbody tr')).toHaveCount(filtered);
   await expect(section.locator('.view-btn[data-view="the"]')).toHaveAttribute('aria-pressed','false');
   // Trang Đội khác dùng chung lựa chọn đã lưu.
-  await page.goto('/doi-khac/');
+  await gotoBooted(page,'/doi-khac/');
   await expect(page.locator('#section-team-khac .reference-table tbody tr').first()).toBeVisible();
   // Quay về Thẻ rồi mở URL Bảng đã chia sẻ: URL thắng giá trị đã lưu.
   await page.locator('#section-team-khac .view-btn[data-view="the"]').click();
   await expect(page).not.toHaveURL(/view=/);
   expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBe('the');
   await expect(page.locator('#section-team-khac .reference-team-card').first()).toBeVisible();
-  await page.goto('/doi-chuan/?view=bang');
+  await gotoBooted(page,'/doi-chuan/?view=bang');
   await expect(page.locator('#section-team-chuan .reference-table tbody tr').first()).toBeVisible();
   await expect(page.locator('#section-team-chuan .view-btn[data-view="bang"]')).toHaveAttribute('aria-pressed','true');
 });
@@ -611,7 +608,7 @@ for (const [width,columns] of [[1440,4],[1280,3],[1024,2],[390,1]]) {
   test(`4-column grid view renders ${columns} compact columns at ${width}px on both team pages`,async({page})=>{
     await page.setViewportSize({width,height:900});
     for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
-      await page.goto(`${path}?view=luoi`);
+      await gotoBooted(page,`${path}?view=luoi`);
       await expect(page.locator(`${section} .team-grid-dense > .reference-team-card`).first()).toBeVisible();
       await expect(page).toHaveURL(/view=luoi/);
       await expect(page.locator(`${section} .view-btn[data-view="luoi"]`)).toHaveAttribute('aria-pressed','true');
@@ -638,13 +635,13 @@ for (const [width,columns] of [[1440,4],[1280,3],[1024,2],[390,1]]) {
 }
 
 test('Thẻ / Thẻ gọn / Bảng share one remembered choice and one card anatomy across both pages',async({page})=>{
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const chuan=page.locator('#section-team-chuan');
   await expect(chuan.locator('.reference-team-card').first()).toBeVisible();
   await chuan.locator('.view-btn[data-view="luoi"]').click();
   await expect(page).toHaveURL(/view=luoi/);
   expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBe('luoi');
-  await page.goto('/doi-khac/');
+  await gotoBooted(page,'/doi-khac/');
   const khac=page.locator('#section-team-khac');
   await expect(khac.locator('.team-grid-dense > .reference-team-card').first()).toBeVisible();
   await expect(khac.locator('.view-btn[data-view="luoi"]')).toHaveAttribute('aria-pressed','true');
@@ -663,7 +660,7 @@ test('Thẻ / Thẻ gọn / Bảng share one remembered choice and one card anat
   await khac.locator('.view-btn[data-view="the"]').click();
   await expect(page).not.toHaveURL(/view=/);
   expect(await page.evaluate(()=>localStorage.getItem('tqccl.teamView.v1'))).toBe('the');
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   await expect(chuan.locator('.team-grid:not(.team-grid-dense) > .reference-team-card').first()).toBeVisible();
   const recommended=await anatomy('#section-team-chuan');
   expect(other).toEqual(recommended);
@@ -672,7 +669,7 @@ test('Thẻ / Thẻ gọn / Bảng share one remembered choice and one card anat
 });
 
 test('list to detail and Back from the table view restores view, filters, exact identities and scroll',async({page,request})=>{
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   // Một bộ lọc thật (Loại binh), rồi chuyển sang Bảng.
@@ -729,9 +726,8 @@ test('same-document season history re-renders the same records on Back and Forwa
     .find(item=>item.ids.length&&item.ids.length<=60&&item.ids.join()!==defaultIds.join());
   expect(target,{message:'cần một mùa khác mùa mặc định có đội để kiểm lịch sử'}).toBeTruthy();
 
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   // Baseline lấy sau khi client nhận DOM: thân dựng sẵn có đủ đội của mùa mặc định và client giữ nguyên toàn bộ.
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   const baseline={ids:await renderedKeys(),season:await season.inputValue()};
   expect(baseline.ids.length).toBeGreaterThan(0);
@@ -763,7 +759,7 @@ test('same-document season history re-renders the same records on Back and Forwa
 test('list to detail and Back restores the rendered list filters and scroll position',async({page,request})=>{
   const handles=await routeHandles(request);
   const id=Object.keys(handles.r)[0];
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   await expect(section.locator('.reference-team-card').first()).toBeVisible();
   const raw=(await section.locator('.fchip[data-focus-key^="faction:"]').first().getAttribute('data-focus-key')).slice('faction:'.length);
@@ -794,7 +790,7 @@ test('ô vuông phe trong bộ lọc được vẽ thật (content của ::befor
     for (const theme of ['light', 'dark']) {
       await page.setViewportSize({width,height:900});
       await page.addInitScript(value=>localStorage.setItem('theme',value),theme);
-      await page.goto('/doi-chuan/');
+      await gotoBooted(page,'/doi-chuan/');
       const row = page.locator('#section-team-chuan .reference-filters .fchip.f-quan').first();
       const square = await row.evaluate((node)=>{
         const style = getComputedStyle(node,'::before');
@@ -858,7 +854,7 @@ test('N5-3: `view` chỉ có nghĩa khi bằng `luoi` hoặc `bang`; `?view=the`
 
 test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc"; desktop không đổi',async({page})=>{
   await page.setViewportSize({width:390,height:844});
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   const toggle=section.locator('.filter-collapse-toggle');
   const chip=section.locator('.reference-filters .fchip').first();
@@ -880,7 +876,7 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
   await expect(toggle).toBeFocused();
   // Desktop: nút bị ẩn nên Escape không đóng sidebar và không cướp focus.
   await page.setViewportSize({width:1440,height:900});
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   await expect(toggle).toBeHidden();
   const firstChip=section.locator('.reference-filters .fchip').first();
   await expect(firstChip).toBeVisible();
@@ -894,8 +890,7 @@ test('N5-4: panel lọc mobile đóng bằng Escape và trả focus về nút "B
 for (const [path,section] of [['/doi-chuan/','#section-team-chuan'],['/doi-khac/','#section-team-khac']]) {
   test(`every chevron and filter icon on ${path} draws its own strokes`,async({page})=>{
     await page.setViewportSize({width:1280,height:900});
-    await page.goto(path);
-    await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+    await gotoBooted(page,path);
     const root=page.locator(section);
     await expect(root.locator('.reference-team-card').first()).toBeVisible();
     const strokes=await root.evaluate(node=>[
@@ -915,7 +910,7 @@ test('?season=all keeps every Đội chuẩn season and the select says so',asyn
   const total=await page.request.get('/data/recommended/current.json').then(response=>response.json())
     .then(pin=>page.request.get(`/data/recommended/${pin.generationId}/index.json`)).then(response=>response.json())
     .then(index=>index.records.length);
-  await page.goto('/doi-chuan/?season=all');
+  await gotoBooted(page,'/doi-chuan/?season=all');
   const season=section.getByLabel('Mùa',{exact:true});
   await expect(season).toHaveValue('all');
   await expect(season.locator('option:checked')).toHaveText('Tất cả');
@@ -957,7 +952,7 @@ test('card view shows 60 teams at a time and "Xem thêm" appends the next 60 wit
   const {index}=await referenceData(request);
   const total=index.records.length;
   expect(total).toBeGreaterThan(PAGE*2);
-  await page.goto('/doi-chuan/?season=all');
+  await gotoBooted(page,'/doi-chuan/?season=all');
   const section=page.locator('#section-team-chuan');
   const cards=section.locator('.reference-team-card');
   await expect(cards).toHaveCount(PAGE);
@@ -989,7 +984,7 @@ test('card view shows 60 teams at a time and "Xem thêm" appends the next 60 wit
 test('table view pages the same way and resets when the view changes',async({page,request})=>{
   const {index}=await referenceData(request);
   const total=index.records.length;
-  await page.goto('/doi-chuan/?season=all&view=bang');
+  await gotoBooted(page,'/doi-chuan/?season=all&view=bang');
   const section=page.locator('#section-team-chuan');
   const rows=section.locator('.reference-table tbody tr');
   await expect(rows).toHaveCount(PAGE);
@@ -1003,7 +998,7 @@ test('table view pages the same way and resets when the view changes',async({pag
 });
 
 test('Back from a detail opened past the first 60 cards renders through it and restores focus',async({page})=>{
-  await page.goto('/doi-chuan/?season=all');
+  await gotoBooted(page,'/doi-chuan/?season=all');
   const section=page.locator('#section-team-chuan');
   const cards=section.locator('.reference-team-card');
   await expect(cards).toHaveCount(PAGE);
@@ -1020,8 +1015,7 @@ test('Back from a detail opened past the first 60 cards renders through it and r
 });
 
 test('a source-empty third slot reads as an empty seat, not a missing translation',async({page})=>{
-  await page.goto('/doi-chuan/?season=pk-s26');
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+  await gotoBooted(page,'/doi-chuan/?season=pk-s26');
   await revealAll(page.locator('#section-team-chuan'));
   const card=page.locator('#section-team-chuan .reference-team-card[data-source-config-id^="yxms-005"]');
   await expect(card).toHaveCount(1);
@@ -1029,8 +1023,7 @@ test('a source-empty third slot reads as an empty seat, not a missing translatio
   const seat=card.locator('.reference-holder').nth(2);
   await expect(seat.locator('.reference-role')).toHaveText('PHÓ 2');
   await expect(seat.getByRole('img',{name:'Để trống'})).toHaveText('—');
-  await page.goto('/doi-chuan/?season=pk-s26&view=bang');
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+  await gotoBooted(page,'/doi-chuan/?season=pk-s26&view=bang');
   await revealAll(page.locator('#section-team-chuan'));
   const row=page.locator('#section-team-chuan tr[data-reference-key^="yxms-005"]');
   await expect(row).toHaveCount(1);
@@ -1044,7 +1037,7 @@ test('source Tier chips retain ranking and URL across cards, compact view, table
   const expected=scoped.filter(row=>row.tierRaw==='T0' || row.tierRaw==='T1');
   const errors=[];
   page.on('pageerror',error=>errors.push(error.message));
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   await revealAll(section);
   await expect(section.locator('.reference-team-card')).toHaveCount(scoped.length);
@@ -1070,7 +1063,7 @@ test('source Tier chips retain ranking and URL across cards, compact view, table
   await revealAll(section);
   await expect(section.locator('tbody tr')).toHaveCount(scoped.length);
   expect(new URL(page.url()).searchParams.has('tier')).toBe(false);
-  await page.goto('/zh/doi-chuan/?tier=T0');
+  await gotoBooted(page,'/zh/doi-chuan/?tier=T0');
   await expect(page.locator('.tier-group .flabel')).toHaveText('等级');
   await expect(page.locator('.badge.tier').first()).toHaveText('T0');
   expect(errors).toEqual([]);
@@ -1080,7 +1073,7 @@ test('recommended teams form source Tier sections in every view and regroup afte
   const {seasons,index}=await referenceData(request);
   const rows=index.records.filter(row=>row.sourceSeasonId===seasons.defaultSourceSeasonId);
   const tiers=[...new Set(rows.map(row=>row.tierRaw || 'unranked'))];
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const section=page.locator('#section-team-chuan');
   for (const mode of ['the','luoi','bang']) {
     await section.locator(`[data-view="${mode}"]`).click();
@@ -1116,7 +1109,7 @@ test('the ongoing source season is marked independently of the selected season',
   const option=seasons.seasonOptions.find(item=>item.sourceSeasonId===current);
   const other=seasons.seasonOptions.find(item=>item.sourceSeasonId!==current&&index.records.some(row=>row.sourceSeasonId===item.sourceSeasonId)).sourceSeasonId;
   const count=index.records.filter(row=>row.sourceSeasonId===current).length;
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   const season=page.getByRole('combobox',{name:'Mùa',exact:true});
   const status=page.locator('.reference-season-status');
   await expect(season).toHaveValue(current);
@@ -1135,7 +1128,7 @@ test('the ongoing source season is marked independently of the selected season',
   await page.screenshot({path:test.info().outputPath('ongoing-source-season.png')});
   await page.reload();
   await expect(status).toBeVisible();
-  await page.goto('/zh/doi-chuan/');
+  await gotoBooted(page,'/zh/doi-chuan/');
   await expect(status).toHaveText('进行中');
 });
 
@@ -1157,7 +1150,7 @@ test('nguồn JP: trang mùa PK-S26 hiện tier JP trên đúng các đội kh�
   await expect(seasonList.locator('.reference-tier-note')).toHaveCount(heroesOnly);
   await expect(seasonList.locator('.reference-tier-note').first()).toHaveText('khác chiến pháp');
 
-  await page.goto('/doi-chuan/?season=pk-s26');
+  await gotoBooted(page,'/doi-chuan/?season=pk-s26');
   const section=page.locator('#section-team-chuan');
   await revealAll(section);
   const chip=section.locator('.fchip[data-focus-key="source:jp"]');
@@ -1175,7 +1168,7 @@ test('nguồn JP: trang mùa PK-S26 hiện tier JP trên đúng các đội kh�
 
   // Mùa khác (mặc định) không có đội mang tier JP nên không có chip JP.
   expect(seasons.defaultSourceSeasonId).not.toBe('pk-s26');
-  await page.goto('/doi-chuan/');
+  await gotoBooted(page,'/doi-chuan/');
   await revealAll(section);
   await expect(section.locator('.fchip[data-focus-key="source:jp"]')).toHaveCount(0);
 
@@ -1196,8 +1189,7 @@ test('nguồn JP: trang mùa PK-S26 hiện tier JP trên đúng các đội kh�
 const openProductionList=async({page,context,baseURL},path)=>{
   await routeProductionHost(context,baseURL);
   await seedConsent(context,'denied');
-  await page.goto(`${PRODUCTION_ORIGIN}${path}`);
-  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+  await gotoBooted(page,`${PRODUCTION_ORIGIN}${path}`);
 };
 const filterChanges=async page=>(await dataLayerEntries(page))
   .filter(entry=>entry[0]==='event'&&entry[1]==='filter_change').map(entry=>entry[2]);

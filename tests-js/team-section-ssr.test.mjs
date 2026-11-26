@@ -8,7 +8,10 @@ import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifa
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
 import { referenceViewSignature, PAGE_SIZE } from "../js/team-filter-section.js";
 import { TEAM_VIEW_CARDS } from "../js/team-view.js";
-import { ssrStaleGuardScript } from "../src/lib/team-section-ssr.js";
+import { SOURCE_TIER_ORDER, referenceFacetValues } from "../js/recommended-reference-state.js";
+import { treeToHtml } from "../js/view-tree.js";
+import { recommendedSectionTrees, ssrStaleGuardScript } from "../src/lib/team-section-ssr.js";
+import { WAITING_OR_JS_REQUIRED } from "../scripts/verify-astro-dist.mjs";
 
 const parse = (bytes) => JSON.parse(Buffer.from(bytes).toString("utf8"));
 const keysOf = (html) => [...html.matchAll(/data-reference-key="([^"]*)"/gu)].map((match) => match[1]);
@@ -112,17 +115,171 @@ test("Khai hoang dựng sẵn: đủ mọi thẻ đội của dữ liệu, mỗi
   }
 });
 
-test("nút dựng sẵn cần JavaScript (chip chiến pháp, chip cấu hình/loại binh Khai hoang) bị khoá; nút khác giữ nguyên", async () => {
-  const buttons = (html) => [...html.matchAll(/<button\b[^>]*>/gu)].map((match) => match[0]);
-  const needsScript = (tag) => /data-tactic-search=|kh-config-chip|kh-unit-chip/u.test(tag);
-  for (const section of ["team-chuan", "team-khac", "khaihoang"]) {
-    const { html } = await teamSectionParts(section, "vi");
-    const tags = buttons(html);
-    const locked = tags.filter(needsScript);
-    assert.ok(locked.length > 0, `${section}: phải có nút cần JavaScript`);
-    for (const tag of locked) assert.match(tag, /\sdisabled(?=[\s>])[^>]*aria-disabled="true"|aria-disabled="true"[^>]*\sdisabled(?=[\s>])/u, `${section}: nút chưa khoá ${tag}`);
-    for (const tag of tags.filter((candidate) => !needsScript(candidate))) assert.doesNotMatch(tag, /disabled/u, `${section}: nút không cần JS bị khoá ${tag}`);
+/** Duyệt cây view (`{tag, attrs, children}`) mà `recommendedSectionTrees` trả về, không cần `document`. */
+const walk = (node, visit) => {
+  if (typeof node === "string") return;
+  visit(node);
+  for (const child of node.children) walk(child, visit);
+};
+const findAll = (trees, predicate) => {
+  const found = [];
+  for (const tree of [].concat(trees)) walk(tree, (node) => { if (predicate(node)) found.push(node); });
+  return found;
+};
+const classesOf = (node) => String(node.attrs?.class ?? "").split(/\s+/u).filter(Boolean);
+const hasClass = (node, name) => classesOf(node).includes(name);
+const textOf = (node) => (typeof node === "string" ? node : node.children.map(textOf).join(""));
+const isControl = (node) => ["button", "input", "select", "textarea"].includes(node.tag);
+const isLocked = (node) => node.attrs.disabled === true && node.attrs["aria-disabled"] === "true";
+/** Nút của danh sách cần `js/app.js` gắn sự kiện: cùng luật với `NEEDS_SCRIPT` của `src/lib/team-section-ssr.js`. */
+const needsScript = (node) => "data-tactic-search" in node.attrs || /(?:^|\s)kh-(?:config|unit)-chip(?:\s|$)/u.test(node.attrs.class ?? "");
+
+const FAMILIES = [["recommended", "team-chuan"], ["other", "team-khac"]];
+const LOCALES = ["vi", "zh", "ja"];
+
+/** Cây dựng sẵn của một mục danh sách (`[header.reference-head, div.reference-browser]`) từ dữ liệu thật đang pin. */
+async function sectionTrees(family, locale) {
+  const website = await websiteDisplayPublicationSnapshot();
+  const registry = parse(website.recommended.files["seasons.json"]);
+  const data = parse(website.recommended.files[family === "other" ? "other-teams.json" : "index.json"]);
+  const trees = family === "other"
+    ? recommendedSectionTrees({ family, payload: data, registry, locale })
+    : recommendedSectionTrees({ family, rows: data.records, registry, locale });
+  return { trees, registry, data };
+}
+
+for (const [family, section] of FAMILIES) {
+  for (const locale of LOCALES) {
+    test(`khung dựng sẵn (${section}, ${locale}): .reference-browser > .reference-results gồm thanh công cụ, sidebar lọc và thân có .reference-view[data-ssr-signature]`, async () => {
+      const { trees } = await sectionTrees(family, locale);
+      assert.equal(trees.length, 2);
+      const [head, browser] = trees;
+      assert.equal(head.tag, "header");
+      assert.ok(hasClass(head, "reference-head"));
+      assert.ok(hasClass(browser, "reference-browser"));
+      assert.equal(browser.children.length, 1);
+      const [results] = browser.children;
+      assert.ok(hasClass(results, "reference-results"));
+      assert.deepEqual(results.children.map((child) => child.tag), ["div", "aside", "div"]);
+      const [toolbar, filters, body] = results.children;
+      assert.ok(hasClass(toolbar, "reference-toolbar"));
+      assert.ok(hasClass(filters, "reference-filters"));
+      assert.equal(filters.attrs.id, `section-${section}-filters`);
+      assert.ok(hasClass(body, "reference-results-body"));
+      const views = body.children.filter((child) => hasClass(child, "reference-view"));
+      assert.equal(views.length, 1);
+      assert.equal(typeof views[0].attrs["data-ssr-signature"], "string");
+      const { html } = await teamSectionParts(section, locale);
+      assert.equal(count(html, /<h1\b/gu), 1, `${locale}: đúng một h1`);
+      assert.ok(html.includes('<div class="reference-browser"><div class="reference-results"><div class="reference-toolbar">'));
+      assert.equal(count(html, /class="reference-view" data-ssr-signature=/gu), 1);
+    });
+
+    test(`khung dựng sẵn (${section}, ${locale}): mọi điều khiển của khung bị khoá, nút trong danh sách chỉ khoá theo NEEDS_SCRIPT`, async () => {
+      const { trees } = await sectionTrees(family, locale);
+      const view = findAll(trees, (node) => hasClass(node, "reference-view"))[0];
+      const inView = new Set(findAll(view, isControl));
+      const shell = findAll(trees, isControl).filter((control) => !inView.has(control));
+      // Ô chọn mùa (Đội chuẩn), ô tìm, nút Bộ lọc, ba nút kiểu hiển thị, Xóa lọc và chip: đủ loại điều khiển của khung.
+      assert.ok(shell.length >= 10, `${section}: chỉ có ${shell.length} điều khiển của khung`);
+      for (const control of shell) assert.ok(isLocked(control), `${section}/${locale}: ${control.tag}.${control.attrs.class ?? ""} chưa khoá`);
+      const kinds = new Set(shell.map((control) => control.tag));
+      assert.ok(kinds.has("input") && kinds.has("button"));
+      assert.equal(kinds.has("select"), family === "recommended", `${section}: ô chọn mùa chỉ có ở Đội chuẩn`);
+      const buttons = findAll(view, (node) => node.tag === "button");
+      assert.ok(buttons.length > 0 && buttons.some(needsScript), `${section}: danh sách phải có nút cần JavaScript`);
+      for (const button of buttons) assert.equal(isLocked(button), needsScript(button), `${section}/${locale}: nút trong danh sách ${JSON.stringify(button.attrs)}`);
+    });
+
+    test(`khung dựng sẵn (${section}, ${locale}): ${family === "recommended" ? "ô chọn mùa chọn đúng mùa mặc định, huy hiệu Đang diễn ra hiện" : "không có ô chọn mùa, vẫn có nhãn mùa tĩnh"}`, async () => {
+      const { trees, registry } = await sectionTrees(family, locale);
+      const [head] = trees;
+      if (family === "other") {
+        assert.equal(findAll(trees, (node) => node.tag === "select" || node.tag === "option").length, 0);
+        assert.equal(findAll(head, (node) => hasClass(node, "reference-season-static")).length, 1);
+        assert.equal(findAll(trees, (node) => node.tag === "label" && hasClass(node, "reference-season-field")).length, 0);
+        return;
+      }
+      const [field] = findAll(head, (node) => node.tag === "label" && hasClass(node, "reference-season-field"));
+      assert.ok(field, "Đội chuẩn: nhãn .reference-season-field trong đầu mục");
+      const [select] = findAll(field, (node) => node.tag === "select");
+      const options = findAll(select, (node) => node.tag === "option");
+      assert.equal(options[0].attrs.value, "all");
+      assert.deepEqual(options.slice(1).map((option) => option.attrs.value), registry.seasonOptions.map((item) => item.sourceSeasonId));
+      const selected = options.filter((option) => option.attrs.selected === true);
+      assert.deepEqual(selected.map((option) => option.attrs.value), [registry.defaultSourceSeasonId]);
+      const [status] = findAll(field, (node) => hasClass(node, "reference-season-status"));
+      assert.ok(!status.attrs.hidden, "đang xem đúng mùa mặc định nên huy hiệu hiện");
+    });
+
+    test(`khung dựng sẵn (${section}, ${locale}): số đếm và số của từng chip khớp tính lại từ dữ liệu; thông báo rỗng có hidden`, async () => {
+      const { trees, registry, data } = await sectionTrees(family, locale);
+      // Tập đội của danh sách mặc định, dựng thẳng từ dữ liệu: Đội chuẩn theo hàng của mùa mặc định, Đội khác theo team có đại diện.
+      const byVariant = new Map((data.records ?? []).map((row) => [row.legacyVariantId, row]));
+      const items = family === "other"
+        ? data.teamGroups.filter((group) => group.representativeVariantId !== null).map((group) => group.completeVariantIds.map((id) => byVariant.get(id)))
+        : data.records.filter((row) => row.sourceSeasonId === registry.defaultSourceSeasonId).map((row) => [row]);
+      assert.ok(items.length > 0);
+      const [countNode] = findAll(trees, (node) => hasClass(node, "reference-count"));
+      const tail = { vi: `${items.length} đội`, zh: `${items.length} 队`, ja: `${items.length}編成` }[locale];
+      assert.equal(textOf(countNode), `${items.length} / ${tail}`);
+      for (const key of ["unit", "faction", "tier", "subcategory", "source"]) {
+        // Đội chuẩn đếm theo từng giá trị của hàng; Đội khác đếm theo team (hợp giá trị của mọi phương án đủ dữ liệu).
+        const expected = new Map();
+        for (const records of items) {
+          const values = records.flatMap((record) => referenceFacetValues(record, key));
+          for (const value of family === "other" ? new Set(values) : values) expected.set(value, (expected.get(value) ?? 0) + 1);
+        }
+        const [group] = findAll(trees, (node) => node.tag === "div" && hasClass(node, `${key}-group`));
+        assert.equal(Boolean(group), expected.size > 0, `${section}/${locale}: nhóm ${key}`);
+        if (!group) continue;
+        const chips = findAll(group, (node) => node.tag === "button" && hasClass(node, "fchip"));
+        const actual = new Map(chips.map((chip) => [chip.attrs["data-focus-key"].slice(key.length + 1), Number(textOf(findAll(chip, (node) => hasClass(node, "fchip-count"))[0]))]));
+        assert.deepEqual([...actual].sort(), [...expected].sort(), `${section}/${locale}: số chip ${key}`);
+        const valueOf = (chip) => chip.attrs["data-focus-key"].slice(key.length + 1);
+        const counts = chips.map((chip) => Number(textOf(findAll(chip, (node) => hasClass(node, "fchip-count"))[0])));
+        if (key === "tier") {
+          // Tier xếp theo thứ tự cấp bậc của nguồn, không theo số đếm.
+          const ranks = chips.map((chip) => { const index = SOURCE_TIER_ORDER.indexOf(valueOf(chip)); return index < 0 ? 999 : index; });
+          assert.deepEqual(ranks, [...ranks].sort((a, b) => a - b), `${section}/${locale}: chip tier theo SOURCE_TIER_ORDER`);
+        } else {
+          assert.deepEqual(counts, [...counts].sort((a, b) => b - a), `${section}/${locale}: chip ${key} theo số đếm giảm dần`);
+        }
+      }
+      const [notice] = findAll(trees, (node) => hasClass(node, "reference-notice"));
+      assert.equal(notice.attrs.hidden, true);
+      assert.equal(textOf(notice), "");
+      const [empty] = findAll(trees, (node) => hasClass(node, "reference-empty"));
+      assert.equal(empty.attrs.hidden, true, "danh sách còn đội nên dòng 'không có đội' ẩn");
+      // "Xem thêm": Đội chuẩn dựng đủ mọi đội nên hết; Đội khác chỉ dựng PAGE_SIZE team đầu nên còn lượt sau (nút bị khoá, có ghi chú).
+      const [more] = findAll(trees, (node) => hasClass(node, "reference-more"));
+      if (family === "other") {
+        assert.ok(items.length > PAGE_SIZE);
+        assert.ok(!more.attrs.hidden);
+        const moreButtons = findAll(more, (node) => node.tag === "button");
+        assert.equal(moreButtons.length, 1);
+        assert.ok(hasClass(moreButtons[0], "lookup-more") && isLocked(moreButtons[0]));
+        assert.equal(findAll(more, (node) => hasClass(node, "lookup-more-note")).length, 1);
+      } else {
+        assert.equal(more.attrs.hidden, true);
+        assert.equal(more.children.length, 0);
+      }
+      assert.doesNotMatch(trees.map((tree) => treeToHtml(tree)).join(""), WAITING_OR_JS_REQUIRED);
+    });
   }
+}
+
+test("nút dựng sẵn của Khai hoang không đổi: chỉ chip cần JavaScript bị khoá, nút khác giữ nguyên", async () => {
+  const buttons = (html) => [...html.matchAll(/<button\b[^>]*>/gu)].map((match) => match[0]);
+  const scripted = (tag) => /data-tactic-search=|kh-config-chip|kh-unit-chip/u.test(tag);
+  const { html } = await teamSectionParts("khaihoang", "vi");
+  const tags = buttons(html);
+  const locked = tags.filter(scripted);
+  assert.ok(locked.length > 0, "khaihoang: phải có nút cần JavaScript");
+  for (const tag of locked) assert.match(tag, /\sdisabled(?=[\s>])[^>]*aria-disabled="true"|aria-disabled="true"[^>]*\sdisabled(?=[\s>])/u, `khaihoang: nút chưa khoá ${tag}`);
+  for (const tag of tags.filter((candidate) => !scripted(candidate))) assert.doesNotMatch(tag, /disabled/u, `khaihoang: nút không cần JS bị khoá ${tag}`);
+  // Trang Khai hoang không có khung lọc của danh sách đội.
+  assert.doesNotMatch(html, /reference-toolbar|reference-filters|reference-season-field/u);
 });
 
 /** Mọi `href` của một đoạn HTML dựng sẵn, đã bỏ escape `&amp;` của thuộc tính. */
@@ -210,4 +367,58 @@ test("bảo vệ chống nháy chỉ bật với khóa làm danh sách dựng s�
   assert.equal(staleMarked("team-chuan", { storedView: "bang" }), true);
   assert.equal(staleMarked("team-chuan", { search: "?kho=rap-duoc", storedView: "bang" }), true);
   assert.equal(staleMarked("team-chuan", { search: "?kho=rap-duoc", storedView: TEAM_VIEW_CARDS }), false);
+});
+
+/** Chạy script bảo vệ chống nháy với snapshot quay lại giả; `true` khi nó gắn `data-ssr-filters-open` lên mount. */
+function filtersOpenMarked(section, { path = "/doi-chuan/", search = "", historyState = null, session = null } = {}) {
+  const mount = { dataset: {} };
+  vm.runInNewContext(ssrStaleGuardScript(section), {
+    URLSearchParams,
+    URL,
+    location: { search, pathname: path, href: `https://tqccl.com${path}${search}` },
+    history: { state: historyState },
+    localStorage: { getItem: () => null },
+    sessionStorage: { getItem: () => session },
+    document: { getElementById: (id) => (id === `section-${section}` ? mount : null) },
+  });
+  return Object.hasOwn(mount.dataset, "ssrFiltersOpen");
+}
+const returnSnapshot = (url, filters) => ({ version: 1, url, scrollY: 120, tab: "team-chuan", disclosures: { filters } });
+
+test("bảo vệ quay lại mobile: panel lọc mở sẵn khi snapshot khớp URL và `disclosures.filters` là true", () => {
+  const open = returnSnapshot("/doi-chuan/", true);
+  const closed = returnSnapshot("/doi-chuan/", false);
+  const asState = (snapshot) => ({ teamReturn: snapshot });
+  assert.equal(filtersOpenMarked("team-chuan"), false, "không có snapshot");
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState(open) }), true, "history.state.teamReturn");
+  assert.equal(filtersOpenMarked("team-chuan", { session: JSON.stringify(open) }), true, "sessionStorage");
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState(closed) }), false);
+  // Như `restoreReturnState`: snapshot của history thắng snapshot của session.
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState(closed), session: JSON.stringify(open) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState(open), session: JSON.stringify(closed) }), true);
+  // Snapshot của URL khác (query hoặc trang khác) không áp.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?q=x", historyState: asState(open) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState(returnSnapshot("/doi-chuan/?q=x", true)) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { path: "/doi-khac/", historyState: asState(open) }), false);
+  // Khóa không thuộc allowlist của trang (tracking) không làm lệch; snapshot hỏng thì bỏ qua.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?utm_source=x", historyState: asState(open) }), true);
+  assert.equal(filtersOpenMarked("team-chuan", { historyState: asState({ ...open, version: 2 }) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { session: "{không phải JSON" }), false);
+  // Đúng URL có bộ lọc: snapshot mang đủ khóa; bản zh và Đội khác dùng chung luật.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?season=pk-s24&q=x", historyState: asState(returnSnapshot("/doi-chuan/?season=pk-s24&q=x", true)) }), true);
+  assert.equal(filtersOpenMarked("team-chuan", { path: "/zh/doi-chuan/", historyState: asState(returnSnapshot("/zh/doi-chuan/", true)) }), true);
+  assert.equal(filtersOpenMarked("team-khac", { path: "/doi-khac/", historyState: asState(returnSnapshot("/doi-khac/", true)) }), true);
+  // Lọc/sắp theo kho hoãn khôi phục tới khi kho tới: không mở sớm.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc", historyState: asState(returnSnapshot("/doi-chuan/?kho=rap-duoc", true)) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?xep=de-rap", session: JSON.stringify(returnSnapshot("/doi-chuan/?xep=de-rap", true)) }), false);
+  // Mục khác không có panel lọc này.
+  assert.equal(filtersOpenMarked("coexist", { path: "/cung-ton/", historyState: asState(returnSnapshot("/cung-ton/", true)) }), false);
+  assert.equal(filtersOpenMarked("khaihoang", { path: "/khai-hoang/", historyState: asState(returnSnapshot("/khai-hoang/", true)) }), false);
+});
+
+test("script bảo vệ của Cùng Tồn / Khai hoang không mang khối panel lọc, nên HTML của hai mục này không đổi byte", () => {
+  for (const section of ["coexist", "khaihoang"]) {
+    assert.doesNotMatch(ssrStaleGuardScript(section), /ssrFiltersOpen|openKey|allowed/u, section);
+  }
+  for (const section of ["team-chuan", "team-khac"]) assert.match(ssrStaleGuardScript(section), /ssrFiltersOpen/u, section);
 });

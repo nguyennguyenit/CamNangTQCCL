@@ -592,6 +592,8 @@ async function main() {
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
+      // Không có dữ liệu thì không ai gắn sự kiện cho khung lọc dựng sẵn: ẩn khung chết (CSS `data-ssr-failed`), chỉ còn danh sách đọc được.
+      mount.dataset.ssrFailed = '';
       // Lên đầu mục: sau các thẻ dựng sẵn thông báo sẽ nằm ngoài tầm nhìn.
       mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
         ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。', 'おすすめ編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')
@@ -734,9 +736,13 @@ async function main() {
       ? L(displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate"), "数据加载失败：{message}。请刷新页面，如问题持续请联系管理员。", "データの読み込みに失敗しました: {message}。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。")
       : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。", "データを読み込めません。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。");
     mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误", "不明なエラー"))));
+    // Boot lỗi giữa chừng: khung lọc dựng sẵn của hai trang danh sách đội có thể còn khoá hoặc dở dang; ẩn khung chết, giữ danh sách.
+    if (REFERENCE_SECTIONS.includes(pageSection)) mount.dataset.ssrFailed = '';
   } finally {
     // Lỗi boot: thà hiện thân dựng sẵn (kèm thông báo lỗi ở trên) còn hơn để trống.
     delete mount.dataset.ssrStale;
+    // Dấu mở sẵn panel lọc của bản dựng sẵn chỉ sống tới hết lần boot (đã khôi phục thì `setFiltersExpanded` gỡ trước đó).
+    delete mount.dataset.ssrFiltersOpen;
     // Tín hiệu cho e2e: mount xong, kể cả khi nhánh trên đã lỗi.
     document.body.dataset.boot = 'ready';
   }

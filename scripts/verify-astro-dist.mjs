@@ -63,7 +63,7 @@ export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
 
 
 /** Chữ chờ/đòi JavaScript mà trang đội dựng sẵn không được còn mang (HTML tĩnh phải tự đủ nội dung). */
-const WAITING_OR_JS_REQUIRED = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
+export const WAITING_OR_JS_REQUIRED = /Đang tải chi tiết|正在加载详情|cần JavaScript|需要 JavaScript/u;
 
 /**
  * Dấu vết Google Analytics mà khu quản trị (`/quan-tri/` ở mọi locale) không được mang: script gtag, thanh đồng ý, nút
@@ -74,10 +74,12 @@ export const ADMIN_ANALYTICS_MARKER = /gtag|googletagmanager|dataLayer|analytics
 /**
  * Bốn trang danh sách đội dựng sẵn đội mặc định lúc build: mỗi mục phải mang dấu hiệu nội dung của nó
  * (danh sách có dấu `data-ssr-signature` + link chi tiết; Cùng Tồn có nhóm + thẻ đội; Khai hoang có lưới thẻ + link).
+ * Đội chuẩn / Đội khác còn phải mang khung lọc dựng sẵn quanh danh sách (thanh công cụ và sidebar lọc): thiếu khung là bố cục nhảy
+ * khi js/app.js boot.
  */
 const SECTION_MARKERS = Object.freeze({
-  "team-chuan": ['class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
-  "team-khac": ['class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
+  "team-chuan": ['class="reference-toolbar"', 'class="reference-filters', 'class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
+  "team-khac": ['class="reference-toolbar"', 'class="reference-filters', 'class="reference-view" data-ssr-signature=', "reference-team-card", "data-team-detail-link"],
   coexist: ['class="coexist-group-view" data-ssr-signature=', "coexist-team-card"],
   khaihoang: ['class="khaihoang"', "kh-card", "kh-title-link"],
 });

@@ -154,6 +154,29 @@ const trackRosterChange=change=>{
 /** Danh sách dài dựng theo lượt: dựng cả 1366 thẻ một lần làm trang đứng vài giây trên máy chậm. */
 export const PAGE_SIZE=60;
 
+/**
+ * Hàng "Xem thêm": nút + ghi chú số đội mỗi lượt. Dạng cây dùng chung giữa bản dựng sẵn (nút bị khoá tới khi trình duyệt gắn xong)
+ * và `renderMore()`.
+ */
+export const referenceMoreTrees=()=>[
+  t('button',{type:'button',class:'lookup-more'},L('Xem thêm','查看更多','もっと見る')),
+  t('span',{class:'lookup-more-note'},L(`Mỗi lượt hiện ${PAGE_SIZE} đội`,`每次显示 ${PAGE_SIZE} 队`,`1回に${PAGE_SIZE}編成ずつ表示`)),
+];
+
+/**
+ * Chữ của thông báo (thông báo của URL, thêm câu "mùa chưa thu thập") và dòng "không có đội" ở vùng kết quả. Một luật cho `render()`
+ * của trình duyệt và bản dựng sẵn; `scopeCount` là số mục của cả phạm vi (chưa lọc).
+ */
+export function referenceListTexts({family,state,registry,scopeCount}) {
+  // Mùa chưa thu thập đánh dấu trên từng phạm vi của mùa đó; danh sách luôn gộp mọi danh mục.
+  const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.state==='uncollected-season') : null;
+  const scopeNotice=sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):'';
+  return {
+    noticeText:[...(state.notices || []),scopeNotice].filter(Boolean).join(' '),
+    emptyText:scopeCount?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。','絞り込み条件に合う編成がありません。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。','このシーズンのデータはまだありません。'),
+  };
+}
+
 /** Tiêu đề (h1) của mục Đội chuẩn (`recommended`) / Đội khác (`other`); một nguồn cho build lẫn trình duyệt. */
 export const referenceSectionTitle=family=>family==='other' ? L('Đội khác','其他阵容','その他の編成') : L('Đội chuẩn','推荐阵容','おすすめ編成');
 
@@ -231,7 +254,7 @@ export function referenceSeasonLabelTree(registry,rows) {
 
 /**
  * Các `<option>` của ô chọn mùa Đội chuẩn: `all` (link Tra cứu mở `?season=all`) rồi từng mùa của registry. `selected`: giá trị
- * đang chọn, ghi thuộc tính `selected` (bản dựng sẵn); trình duyệt thay `option` tại chỗ không kèm `selected` rồi đặt `select.value`.
+ * đang chọn, ghi thuộc tính `selected`; bản dựng sẵn và trình duyệt cùng ghi nên DOM sau boot ở trạng thái mặc định đúng bằng bản dựng sẵn.
  */
 export function referenceSeasonOptionTrees({registry,selected=null}) {
   return [
@@ -240,21 +263,53 @@ export function referenceSeasonOptionTrees({registry,selected=null}) {
   ];
 }
 
+/** Giá trị mà ô chọn mùa đang chọn: mùa của state (hoặc mùa mặc định của registry) nếu có option, không thì mục đầu `all`. */
+function seasonSelection(registry,state) {
+  const current=state.season || registry.defaultSourceSeasonId;
+  return ['all',...(registry.seasonOptions || []).map(item=>item.sourceSeasonId)].includes(current) ? current : 'all';
+}
+
 /**
  * Ô chọn mùa của Đội chuẩn ở đầu mục: nhãn "Mùa", huy hiệu "Đang diễn ra" (chỉ hiện khi đang xem đúng mùa mặc định của registry),
  * `select` và mũi tên. Mùa đang xem là `state.season` hoặc mùa mặc định; không khớp option nào thì `select` rơi về mục đầu (`all`).
  * Dạng cây dùng chung giữa bản dựng sẵn và trình duyệt; chỉ dùng cho Đội chuẩn (Đội khác có `referenceSeasonLabelTree`).
  */
 export function referenceSeasonFieldTree({registry,state}) {
-  const current=state.season || registry.defaultSourceSeasonId;
-  const values=['all',...(registry.seasonOptions || []).map(item=>item.sourceSeasonId)];
-  const selected=values.includes(current) ? current : 'all';
+  const selected=seasonSelection(registry,state);
   return t('label',{class:'reference-season-field'},[
     t('span',{class:'reference-season-label'},L('Mùa','赛季','シーズン')),
     t('span',{class:'reference-season-status',hidden:selected!==registry.defaultSourceSeasonId},L('Đang diễn ra','进行中','開催中')),
     t('select',{'aria-label':L('Mùa','赛季','シーズン')},referenceSeasonOptionTrees({registry,selected})),
     iconTree(chevron,{size:16}),
   ]);
+}
+
+/**
+ * Đầu mục Đội chuẩn / Đội khác: chữ đầu mục rồi ô chọn mùa (Đội chuẩn) hoặc nhãn mùa tĩnh (Đội khác, khi `rows` cho biết được mùa).
+ * Một cây cho bản dựng sẵn và trình duyệt; `lock` (mặc định giữ nguyên) áp lên ô chọn mùa, bản dựng sẵn khoá điều khiển bằng nó.
+ */
+export function referenceHeadTree({title,family,registry,state,rows,lock=tree=>tree}) {
+  return t('header',{class:'reference-head'},[
+    referenceHeadTextTree(title,family),
+    family==='other' ? referenceSeasonLabelTree(registry,rows) : lock(referenceSeasonFieldTree({registry,state})),
+  ]);
+}
+
+/**
+ * Khung dựng sẵn của `mount` để nhận lại tại chỗ: đầu mục và `.reference-browser` có đủ thanh công cụ, sidebar lọc và danh sách mang
+ * `data-ssr-signature` (Đội chuẩn còn phải có ô chọn mùa). HTML thiếu phần nào (chỉ có danh sách) thì trả `null` để dựng mới.
+ */
+function prerenderedShell(mount,family) {
+  const head=mount.querySelector(':scope > .reference-head');
+  const shell=mount.querySelector(':scope > .reference-browser');
+  const body=shell?.querySelector(':scope > .reference-results > .reference-results-body');
+  const parts=[
+    shell?.querySelector(':scope > .reference-results > .reference-toolbar'),
+    shell?.querySelector(':scope > .reference-results > aside.reference-filters'),
+    body?.querySelector(':scope > .reference-view[data-ssr-signature]'),
+    family==='other' ? head : head?.querySelector('label.reference-season-field'),
+  ];
+  return parts.every(Boolean) ? {head,shell} : null;
 }
 
 /**
@@ -282,22 +337,31 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
   let restoredDisclosures=null;
   const openFacets=new Set();
   const title=referenceSectionTitle(family);
-  // Khung (thanh công cụ, sidebar, vùng kết quả) do `referenceShellTree` dựng, cùng cây với bản dựng sẵn. Cây không mang sự kiện nên
-  // sự kiện gắn bằng delegation ở dưới. Trạng thái đầu là mặc định: `update()` vẽ lại ngay trong cùng task nên chưa có gì kịp hiện.
-  const shell=treeToDom(referenceShellTree({
+  // Khung dựng bằng đúng các cây mà bản dựng sẵn dùng (`referenceHeadTree`, `referenceShellTree`). Cây không mang sự kiện nên sự kiện
+  // gắn bằng delegation ở dưới. Trạng thái đầu là mặc định: `update()` vẽ lại ngay trong cùng task nên chưa có gì kịp hiện.
+  const freshHead=treeToDom(referenceHeadTree({title,family,registry,state,rows:[]}));
+  const freshShell=treeToDom(referenceShellTree({
     mountId:mount.id,title,family,state,labels:{},openFacets,scopeItems:[],count:0,scopeCount:0,activeCount:0,
     noticeText:'',emptyText:'',emptyHidden:referenceEmptyHidden(0),moreHidden:referenceMoreHidden(shown,0),
     viewTree:t('div',{class:'reference-view'}),
   }));
-  // Đầu mục: Đội chuẩn có ô chọn mùa trong một khung nhãn nhỏ phía trên giá trị; Đội khác có nhãn mùa tĩnh, dựng khi có registry.
-  const head=treeToDom(t('header',{class:'reference-head'},[
-    referenceHeadTextTree(title,family),
-    family==='other' ? null : referenceSeasonFieldTree({registry,state}),
-  ]));
+  // Build đã dựng sẵn khung quanh danh sách: nhận lại tại chỗ, không `mount.replaceChildren`. Giữ nguyên node đầu mục, khung kết quả,
+  // thân kết quả và danh sách (người đã tab vào thẻ trước khi boot không mất focus); chỉ thay CON của ô chọn mùa, thanh công cụ và
+  // sidebar bằng bản không khoá của cùng cây. Thiếu phần nào của khung dựng sẵn thì dựng mới như trước.
+  const adopted=adopt ? prerenderedShell(mount,family) : null;
+  const head=adopted?.head ?? freshHead;
+  const shell=adopted?.shell ?? freshShell;
+  if (adopted) {
+    for (const [root,fresh,selector] of [
+      [head,freshHead,'label.reference-season-field'],
+      [shell,freshShell,':scope > .reference-results > .reference-toolbar'],
+      [shell,freshShell,':scope > .reference-results > aside.reference-filters'],
+    ]) root.querySelector(selector)?.replaceChildren(...(fresh.querySelector(selector)?.childNodes ?? []));
+  }
   const heading=head.querySelector('h1');
   const season=head.querySelector('select');
   const seasonStatus=head.querySelector('.reference-season-status');
-  let seasonLabelNode=null, seasonLabelRegistry=null, seasonLabelRows=null;
+  let seasonLabelNode=head.querySelector(':scope > .reference-season-static'), seasonLabelRegistry=null, seasonLabelRows=null;
   const results=shell.querySelector(':scope > .reference-results');
   const toolbar=results.querySelector(':scope > .reference-toolbar');
   const filters=results.querySelector(':scope > .reference-filters');
@@ -368,6 +432,11 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
   toolbar.addEventListener('input',event=>{ if (event.target===searchInput) onQuery({q:searchInput.value || null}); });
   // Ô chọn mùa nằm ở đầu mục (ngoài sidebar và thanh công cụ): gắn `change` trực tiếp.
   season?.addEventListener('change',()=>{trackFilter('season',season.value); onQuery({season:season.value,detail:null,legacyTeam:null,legacyVariant:null},true);});
+  // "Xem thêm" nằm trong thân kết quả (ngoài sidebar và thanh công cụ); nút do `renderMore()` dựng lại theo lượt nên bắt ở hàng chứa.
+  more.addEventListener('click',event=>{
+    const control=event.target.closest?.('.lookup-more');
+    if (control && !control.disabled && more.contains(control)) appendNextPage();
+  });
   // A5: panel lọc mobile đóng bằng Escape và trả focus về nút "Bộ lọc", như menu thả ở header.
   // Desktop luôn hiện sidebar và nút này bị ẩn (`getClientRects` rỗng) nên Escape không đụng tới.
   results.addEventListener('keydown',event=>{
@@ -377,11 +446,13 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     setFiltersExpanded(false);
     toggle.focus({preventScroll:true});
   });
-  mount.replaceChildren(head,shell);
+  if (!adopted) mount.replaceChildren(head,shell);
 
   /** Mở/đóng panel lọc mobile; desktop luôn hiện sidebar nên class này vô hại. */
   function setFiltersExpanded(expanded) {
     const open=expanded === true;
+    // Dấu `data-ssr-filters-open` của script bảo vệ chỉ giữ panel mở tới lúc client tự quyết định.
+    delete mount.dataset.ssrFiltersOpen;
     filters.classList.toggle('collapsed',!open);
     toggle.setAttribute('aria-expanded',String(open));
   }
@@ -399,11 +470,10 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
       if (next) head.append(next);
       return;
     }
-    const current=state.season || registry.defaultSourceSeasonId;
-    // Cùng cây option với bản dựng sẵn; thay `option` tại chỗ để `select` (focus, sự kiện `change`) giữ nguyên.
-    season.replaceChildren(...referenceSeasonOptionTrees({registry}).map(tree=>treeToDom(tree)));
-    if ([...season.options].some(option=>option.value===current)) season.value=current;
-    seasonStatus.hidden=season.value!==registry.defaultSourceSeasonId;
+    const selected=seasonSelection(registry,state);
+    // Cùng cây option với bản dựng sẵn (kể cả `selected`); thay `option` tại chỗ để `select` (focus, sự kiện `change`) giữ nguyên.
+    season.replaceChildren(...referenceSeasonOptionTrees({registry,selected}).map(tree=>treeToDom(tree)));
+    seasonStatus.hidden=selected!==registry.defaultSourceSeasonId;
   }
 
   /** Thanh kho phía trên danh sách: tóm tắt + nút lọc/sắp khi có kho, một dòng dẫn khi máy chưa có kho. */
@@ -505,15 +575,12 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     empty.hidden=referenceEmptyHidden(filteredRows.length);
   }
 
-  /** Hàng "Xem thêm" khi còn đội chưa hiện (cùng mẫu với Tra cứu). */
+  /** Hàng "Xem thêm" khi còn đội chưa hiện (cùng mẫu với Tra cứu); sự kiện bắt ở hàng chứa (`more.addEventListener`). */
   function renderMore() {
     more.replaceChildren();
     more.hidden=referenceMoreHidden(shown,filteredRows.length);
     if (more.hidden) return;
-    more.append(
-      el('button',{type:'button',class:'lookup-more',onClick:appendNextPage},L('Xem thêm','查看更多','もっと見る')),
-      el('span',{class:'lookup-more-note'},L(`Mỗi lượt hiện ${PAGE_SIZE} đội`,`每次显示 ${PAGE_SIZE} 队`,`1回に${PAGE_SIZE}編成ずつ表示`)),
-    );
+    more.append(...referenceMoreTrees().map(tree=>treeToDom(tree)));
   }
 
   /** Hiện thêm một lượt rồi đưa focus tới đội đầu của lượt mới; thẻ/hàng đã hiện giữ nguyên node.
@@ -570,15 +637,13 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
     const sameList=keepSameList && key===listKey && filtered.length===filteredRows.length && filtered.every((row,index)=>row===filteredRows[index]);
     if (key!==listKey) { listKey=key; shown=PAGE_SIZE; }
     count.replaceChildren(...referenceCountTrees({count:filtered.length,scopeCount:scopeRows.length}).map(tree=>treeToDom(tree)));
-    // Mùa chưa thu thập đánh dấu trên từng phạm vi của mùa đó; danh sách luôn gộp mọi danh mục.
-    const sourceScope=family==='recommended' ? registry.scopes?.find(scope=>scope.sourceSeasonId===state.season && scope.state==='uncollected-season') : null;
-    const scopeNotice=sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):'';
-    notice.textContent=[...(state.notices || []),scopeNotice].filter(Boolean).join(' ');
-    notice.hidden=referenceNoticeHidden(notice.textContent);
+    const {noticeText,emptyText:nextEmptyText}=referenceListTexts({family,state,registry,scopeCount:scopeRows.length});
+    notice.textContent=noticeText;
+    notice.hidden=referenceNoticeHidden(noticeText);
     updateViewButtons();
     filteredRows=filtered;
     viewLabels=labels;
-    emptyText=scopeRows.length?L('Không có đội khớp bộ lọc.','没有符合筛选条件的阵容。','絞り込み条件に合う編成がありません。'):sourceScope?L('Mùa này chưa được thu thập.','该赛季尚未收录。','このシーズンはまだ収録されていません。'):L('Mùa này chưa có dữ liệu.','本赛季暂无数据。','このシーズンのデータはまだありません。');
+    emptyText=nextEmptyText;
     if (sameList) decorateCoverageBadges(view,coverage?.byConfigId);
     else renderView();
     // Máy có kho nhưng mùa đang xem không có độ phủ: `kho`/`xep` không có tác dụng, thanh kho ẩn và "Xóa lọc" không gỡ được

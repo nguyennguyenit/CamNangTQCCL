@@ -51,19 +51,23 @@ export function treeToDom(node, doc = globalThis.document, svg = false) {
   return element;
 }
 
+/** Điều khiển mà `disableControls` khoá. */
+const LOCKABLE = new Set(["button", "input", "select", "textarea"]);
+
 /**
- * Bản sao của cây mà mọi nút `button` thoả `matches(attrs)` mang `disabled` + `aria-disabled`: nút dựng sẵn lúc build
- * chưa có sự kiện nên bấm không làm gì cho đến khi trình duyệt gắn xong và gọi `enableControl`.
+ * Bản sao của cây mà mọi điều khiển (`button`, `input`, `select`, `textarea`) thoả `matches(attrs)` mang `disabled` +
+ * `aria-disabled`: điều khiển dựng sẵn lúc build chưa có sự kiện nên chạm vào không làm gì cho đến khi trình duyệt gắn xong
+ * (gỡ khoá bằng `enableControl`, hoặc thay node bằng bản dựng của trình duyệt).
  */
-export function disableButtons(node, matches) {
+export function disableControls(node, matches) {
   if (typeof node === "string") return node;
-  const attrs = node.tag === "button" && matches(node.attrs ?? {})
+  const attrs = LOCKABLE.has(node.tag) && matches(node.attrs ?? {})
     ? { ...node.attrs, disabled: true, "aria-disabled": "true" }
     : node.attrs;
-  return { tag: node.tag, attrs, children: node.children.map((child) => disableButtons(child, matches)) };
+  return { tag: node.tag, attrs, children: node.children.map((child) => disableControls(child, matches)) };
 }
 
-/** Bật lại nút dựng sẵn khi sự kiện của nó đã được gắn (đối ứng của `disableButtons`). */
+/** Bật lại điều khiển dựng sẵn khi sự kiện của nó đã được gắn (đối ứng của `disableControls`). */
 export function enableControl(element) {
   element.removeAttribute("disabled");
   element.removeAttribute("aria-disabled");
