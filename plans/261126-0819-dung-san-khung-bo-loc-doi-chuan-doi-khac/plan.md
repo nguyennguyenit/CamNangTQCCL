@@ -52,7 +52,7 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 - [x] Mọi `button`/`input`/`select` của khung dựng sẵn bị khoá trước boot và dùng được sau boot. HTML Khai hoang không đổi.
 - [x] URL có `?faction=`, `?season=` hoặc kiểu hiển thị đã lưu: trước boot không thấy chip, số đếm, nút kiểu hiển thị, mùa hay badge "Đang diễn ra" sai.
 - [x] Không JS, hoặc dữ liệu/boot lỗi: không thấy điều khiển chết. Danh sách vẫn đọc được. Nhãn mùa tĩnh của Đội khác vẫn hiện.
-- [x] Tab vào thẻ trước boot thì sau boot focus vẫn ở đó. Quay lại trên mobile khi panel lọc đang mở thì danh sách không bị đẩy.
+- [x] Tab vào thẻ trước boot thì sau boot focus vẫn ở đó. Quay lại trên mobile khi panel lọc đang mở thì danh sách không bị đẩy lúc boot. Ngoại lệ #181: máy có kho, khi kho tới thì thanh kho và huy hiệu số bộ lọc (thanh công cụ 390px: 110→164px) vẫn đẩy danh sách.
 - [x] Xanh: `npm run test:node`, `npm run test:dist`, `npm run verify` (sau `npm run build`), các spec e2e trong gate của phase 3.
 
 ## Rủi ro chính
@@ -67,7 +67,7 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 
 ## Review
 
-Không thuộc nhóm rủi ro cao của AGENTS.md (không schema, worker, pipeline hay generation). Sau khi cook xong, đề xuất Astra review PR.
+Ban đầu xếp là không thuộc nhóm rủi ro cao. Thực tế PR **có** đụng `pipeline/` (policy, ledger route handles) và generation đã publish, vì các file JS bị ghim hash phải re-pin/xuất bản lại. Do đó đã chạy Astra → Fable (xem mục Review PR #184).
 
 ## Red Team Review
 
@@ -134,3 +134,7 @@ Câu hỏi và quyết định (hỏi cùng lượt duyệt red-team):
 | 2 | Quay lại mobile với `?kho=`/`?xep=` vẫn dịch danh sách: script bỏ qua hai khóa, `restoreReturnState` hoãn cả việc mở panel | Sửa: panel mở ngay (script và client), chỉ thẻ đích/focus/cuộn chờ kho; e2e 390px cho `?kho=`, `?xep=` và máy có kho khi kho tới muộn | Phase 2 |
 | 3 | Tiêu chí layout-shift: máy có kho không đạt ≤1px (thanh kho hiện sau khi kho tải xong) | **Thay đổi phạm vi (review PR #184, anh chốt): máy có kho cũng thuộc #181.** Spec giữ phép trừ cho cả hai trường hợp, đặt tên rõ; Success Criteria và phase 3 ghi lại | Plan, Phase 3 |
 | 4 | Xung đột với `main` (`772ad109`) | Gộp, giữ cả hai ý ở nguồn; file sinh ra lấy bản của main làm gốc rồi re-pin/publish lại | Changelog |
+
+### Fable — 2026-11-27
+**Verdict:** GO-with-conditions. Đã đóng đúng cả 4 phát hiện của Astra; thay đổi phạm vi #181 được chấp nhận; merge/generation sạch (`8e449aef…` vs `6c504e92…`: 92/93 blob trùng, manifest chỉ khác `generationId`, `localizationInputsHash`).
+Điều kiện: MCP gate trên head xanh; merge khi `main` chưa chạm file bị ghim; ghi phần lệch 54px/371,6px (máy có kho + `?kho=`) vào #181; sửa thân PR và mục Review của plan này.
