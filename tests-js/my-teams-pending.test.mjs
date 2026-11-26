@@ -310,6 +310,17 @@ test("bản lưu dở mang key cũ <đội>~<phương án của trang> được 
   assert.equal(pendingIdForSource(legacyAliasKey(canonical, variantKey, docWith("v-2")), { storage, now: () => NOW }), null, "phương án khác không dùng lại");
 });
 
+test("ACK của id dùng chung giữa key cũ và key canonical: xóa id ở mọi khóa, lần Lưu sau sinh id mới (không ghi đè đội vừa lưu)", async () => {
+  const { releaseDraftId } = await import("../js/my-teams-save-button.js");
+  // Mở Lưu từ key canonical khi bản lưu dở key cũ đang chờ: cùng id nằm dưới hai khóa; khóa khác giữ id riêng.
+  const ids = new Map([["legacy:doi-a~v-1", "team-old"], ["legacy:doi-a", "team-old"], ["recommended:doi-b", "team-b"]]);
+  // Người dùng hủy hộp thoại, OAuth tự lưu bản lưu dở và server xác nhận `team-old`.
+  releaseDraftId("team-old", ids);
+  assert.deepEqual([...ids], [["recommended:doi-b", "team-b"]], "không còn khóa nào giữ id đã xác nhận");
+  releaseDraftId("team-unknown", ids);
+  assert.deepEqual([...ids], [["recommended:doi-b", "team-b"]]);
+});
+
 test("pending: unresolved của bộ chuyển đi cùng bản lưu dở qua OAuth; hết hạn hoặc mục cũ không có trường thì rỗng", async () => {
   const { peekPendingUnresolved } = await import("../js/my-teams-pending.js");
   const storage = memoryStorage();

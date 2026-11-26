@@ -1873,6 +1873,11 @@ test("dist verifier pins the Đội khác variant on the detail root and accepts
     [html.replace(guard, `${guard}${oldGuard}`), /unexpected inline scripts/u],
     // Thiếu guard: mã lạ sẽ hiện thân dựng sẵn như thể là biến thể được xin.
     [html.replace(guard, ""), /unexpected inline scripts/u],
+    // Tên thuộc tính khác nhưng chứa chuỗi pin: `dataset.legacyVariantId` thành undefined, guard ẩn thân cả với mã của trang.
+    [html.replace(` ${pin}`, ` data-backup-${pin}`), /lacks its validated pin.*data-legacy-variant-id/u],
+    // Guard trong chú thích hoặc thành dữ liệu (`type` không phải JavaScript): không chạy.
+    [html.replace(guard, `<!-- ${guard} -->`), /unexpected inline scripts/u],
+    [html.replace(guard, `<script type="application/json">${LEGACY_VARIANT_GUARD_SCRIPT}</script>`), /unexpected inline scripts/u],
   ]) {
     assert.notEqual(mutated, html);
     await writeFile(file, mutated);

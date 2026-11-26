@@ -20,6 +20,15 @@ const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容
 /** `draft.id` theo nguồn: sinh lần đầu, giữ tới khi server xác nhận (thử lại không sinh bản trùng). */
 const draftIds = new Map();
 
+/**
+ * Server đã xác nhận đội `teamId`: bỏ id đó khỏi mọi khóa nguồn đang giữ nó. Một id có thể nằm dưới hai khóa (bản lưu dở key cũ
+ * `<đội>~<phương án>` được dùng lại cho key canonical `<đội>`, `legacyAliasKey`), nên xóa theo id chứ không theo một khóa;
+ * sót lại thì lần Lưu mới sau đó ghi đè đội vừa lưu thay vì tạo đội mới.
+ */
+export function releaseDraftId(teamId, ids = draftIds) {
+  for (const [key, id] of ids) if (id === teamId) ids.delete(key);
+}
+
 /** Nguồn đo lường (`save_my_team.source`) theo loại nguồn của đội nháp; nút của Gợi ý đội truyền nguồn riêng (đội của nó dựng từ nguồn Đội chuẩn/Đội khác). */
 const TRACK_SOURCE_BY_KIND = { recommended: "doi-chuan", legacy: "doi-khac", khaihoang: "khai-hoang", analyze: "soi-doi" };
 /** Nguồn hợp lệ của `save_my_team`: bốn nguồn suy từ đội nháp cộng nguồn riêng của Gợi ý đội. */
@@ -145,7 +154,7 @@ async function openSaveDialog(prep) {
     }
     if (result.ok) {
       completePendingSave(result);
-      draftIds.delete(prep.key);
+      releaseDraftId(prep.draft.id);
       trackSave(prep.trackSource);
       close();
       successToast(result.team, prep.unresolved);
@@ -231,7 +240,7 @@ async function attemptPending() {
     await api.load();
     const result = await api.saveTeam(draft, { boxId: MAIN_BOX });
     if (completePendingSave(result)) {
-      draftIds.delete(`${draft.source.kind}:${draft.source.key}`);
+      releaseDraftId(draft.id);
       trackSave(trackSource);
       successToast(result.team, unresolved);
       return;

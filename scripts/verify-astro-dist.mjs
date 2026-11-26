@@ -155,6 +155,20 @@ function decodeCharacterReferences(value) {
   });
 }
 
+/** Chú thích HTML (trình duyệt không dựng gì bên trong). */
+const HTML_COMMENT = /<!--[^]*?-->/gu;
+/** `type` của `<script>` mà trình duyệt chạy; giá trị khác (vd `application/json`) chỉ là dữ liệu. */
+const EXECUTABLE_SCRIPT_TYPES = new Set(["", "text/javascript", "application/javascript", "module"]);
+
+/** Thuộc tính của một thẻ mở (`<tên …>`), tên viết thường, giá trị đã giải mã entity; thuộc tính lặp lại thì cái đầu thắng như trình duyệt. */
+function tagAttributes(tag) {
+  const values = new Map();
+  for (const [, name, quoted, single, bare] of tag.replace(/^<[^\s/>]+/u, "").replace(/\/?>$/u, "").matchAll(ATTRIBUTE)) {
+    if (!values.has(name.toLowerCase())) values.set(name.toLowerCase(), decodeCharacterReferences(quoted ?? single ?? bare ?? ""));
+  }
+  return values;
+}
+
 /** Origin của link nội bộ: host của `site` và các host cũ chuyển hẳn về nó (cùng bản build), http hoặc https, cổng mặc định. */
 const INTERNAL_ORIGINS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_HOSTS].flatMap((host) => [`https://${host}`, `http://${host}`]));
 const REL_NOREFERRER = /(?:^|\s)noreferrer(?:\s|$)/iu;
@@ -898,13 +912,21 @@ export async function verifyAstroDist({
     }));
     for (const { path, routePath, locale, entry, pins, save, inlineScripts, page } of loaded) {
       verifyLocalePair(page, path, locale, routePath, site);
-      // Pin nằm trên chính thẻ mở `#team-detail-root` (script và JS của trang đọc từ đó), không chỉ có đâu đó trong trang.
-      const root = page.match(/<article\b[^>]*\bid="team-detail-root"[^>]*>/u)?.[0] ?? "";
+      // Pin là đúng thuộc tính (tên + giá trị) của thẻ mở `#team-detail-root` mà script và JS của trang đọc (`dataset`), không phải
+      // chuỗi con: tên khác (`data-backup-data-legacy-variant-id`) hay pin trong chú thích đều không tính.
+      const visible = page.replace(HTML_COMMENT, "");
+      const rootTag = visible.match(/<article\b((?:"[^"]*"|'[^']*'|[^'">])*)>/gu)?.find((tag) => tagAttributes(tag).get("id") === "team-detail-root") ?? "";
+      const rootAttributes = tagAttributes(rootTag);
       for (const pin of pins) {
-        if (!root.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+        const [, name, value] = pin.match(/^([^=]+)="(.*)"$/u);
+        if (rootAttributes.get(name) !== value) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
       }
-      // Script trong thân trang chi tiết đúng như nguồn: không có guard cũ ẩn mọi `?variant=` hay script lạ khác.
-      const articleScripts = [...(page.match(/<article\b[^>]*\bid="team-detail-root"[^]*?<\/article>/u)?.[0] ?? "").matchAll(/<script\b[^>]*>([^]*?)<\/script>/gu)].map((match) => match[1]);
+      // Script THỰC THI trong thân trang chi tiết đúng như nguồn: không có guard cũ ẩn mọi `?variant=`, script lạ, hay guard bị vô
+      // hiệu (trong chú thích, `type` không phải JavaScript).
+      const visibleArticle = visible.slice(visible.indexOf(rootTag)).match(/^[^]*?<\/article>/u)?.[0] ?? "";
+      const articleScripts = [...visibleArticle.matchAll(/<script\b((?:"[^"]*"|'[^']*'|[^'">])*)>([^]*?)<\/script>/gu)]
+        .filter(([, attributes]) => EXECUTABLE_SCRIPT_TYPES.has((tagAttributes(`<script${attributes}>`).get("type") ?? "").trim().toLowerCase()))
+        .map((match) => match[2]);
       if (JSON.stringify(articleScripts) !== JSON.stringify(inlineScripts ?? articleScripts)) {
         throw new Error(`Team detail page carries unexpected inline scripts in its body: ${path}`);
       }
