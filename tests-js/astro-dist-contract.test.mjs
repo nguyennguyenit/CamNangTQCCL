@@ -242,6 +242,11 @@ async function writeStaticFonts(projectDir, distDir) {
   await mkdir(join(distDir, "heroes"), { recursive: true });
   await writeFile(join(projectDir, "public", "heroes", "sample.webp"), "RIFF-sample");
   await writeFile(join(distDir, "heroes", "sample.webp"), "RIFF-sample");
+  // Ảnh báo cáo của nhật ký thực chiến Khai hoang (`public/khai-hoang-log`) là thư mục tĩnh thứ ba.
+  await mkdir(join(projectDir, "public", "khai-hoang-log"), { recursive: true });
+  await mkdir(join(distDir, "khai-hoang-log"), { recursive: true });
+  await writeFile(join(projectDir, "public", "khai-hoang-log", "sample.webp"), "RIFF-log");
+  await writeFile(join(distDir, "khai-hoang-log", "sample.webp"), "RIFF-log");
 }
 
 /** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, logo chữ, QR ủng hộ) được copy nguyên byte như Astro làm. */

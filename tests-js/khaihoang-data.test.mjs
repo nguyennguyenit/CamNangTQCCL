@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createTacticNameIndex } from "../js/lookup-ids.js";
+import { FIELD_LOG_RECOMMENDATIONS, fieldLogBattleDead } from "../js/render.js";
 
 const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8"));
 const tactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
@@ -317,6 +318,93 @@ test("researched opening builds retain their observed stage-specific commanders 
   }
 });
 
+test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field log with real, internally consistent numbers", async () => {
+  const { existsSync } = await import("node:fs");
+  const team = data.teams.find((item) => item.id === "luc-ton-ta-tu-truong-xuan-hoa");
+  const log = team.fieldLog;
+  assert.equal(log.account, "HLxThanos");
+  assert.match(log.note, /1 tài khoản.*mẫu nhỏ.*tham khảo/);
+  assert.deepEqual(log.phases.map((phase) => [phase.landLevel, phase.heroLevelMin, phase.heroLevelMax]), [[4, 8, 10], [5, 20, 20], [6, 28, 28]]);
+  assert.deepEqual(log.phases.map((phase) => phase.battles.length), [3, 2, 1]);
+  const heroNames = new Set(team.heroes.map((hero) => hero.name));
+  const images = [];
+  for (const phase of log.phases) for (const battle of phase.battles) {
+    assert.equal(battle.won, true, battle.id);
+    assert.equal(battle.defenders.length > 0 && battle.defenders.every((item) => item.hero && item.unitType), true, battle.id);
+    if (battle.troopsAfter !== undefined) {
+      assert.ok(battle.troopsAfter < battle.troopsBefore, battle.id);
+      assert.ok(battle.wounded <= battle.troopsBefore - battle.troopsAfter, battle.id);
+    }
+    for (const skill of battle.skills || []) assert.ok(heroNames.has(skill.hero), `${battle.id}: ${skill.hero}`);
+    images.push(...(battle.images || []));
+  }
+  // Reported figures, copied from the in-game battle reports.
+  const battle = (id) => log.phases.flatMap((phase) => phase.battles).find((item) => item.id === id);
+  assert.deepEqual([battle("p1-thu-cung").lost, battle("p1-thu-cung").wounded, battle("p1-lang-thao").lost, battle("p1-quach-di").lost], [178, 59, 483, 436]);
+  assert.deepEqual([battle("p2-891-1449").troopsBefore, battle("p2-891-1449").troopsAfter, battle("p2-891-1449").wounded, battle("p2-891-1449").exp], [6000, 5630, 172, 15243]);
+  assert.deepEqual([battle("p2-899-1444").troopsAfter, battle("p2-899-1444").wounded, battle("p2-899-1444").exp], [5006, 469, 14775]);
+  assert.deepEqual([battle("p3-914-1450").troopsBefore, battle("p3-914-1450").troopsAfter, battle("p3-914-1450").wounded, battle("p3-914-1450").exp], [5992, 4891, 367, 26610]);
+  // Dòng chiến pháp (tướng, phát động, diệt, cứu viện), chép từ thẻ chiến pháp của báo cáo trận.
+  const skillRows = (id) => battle(id).skills.map((skill) => [skill.hero, skill.fired, skill.kills ?? null, skill.rescued ?? null]);
+  assert.deepEqual(skillRows("p2-899-1444"), [["Lục Tốn", 3, 5376, null], ["Tả Từ", 1, null, 196]]);
+  assert.deepEqual(skillRows("p2-891-1449"), [["Lục Tốn", 2, 4921, null], ["Trương Xuân Hoa", 1, 826, null], ["Tả Từ", 1, null, 193]]);
+  assert.deepEqual(skillRows("p3-914-1450"), [["Lục Tốn", 4, 6688, null], ["Trương Xuân Hoa", 3, 3698, null], ["Tả Từ", 1, null, 1131]]);
+  // Screenshots exist on disk with web-friendly, title-bar-free dimensions.
+  assert.equal(images.length, 5);
+  for (const image of images) {
+    assert.match(image.url, /^\/khai-hoang-log\/[a-z0-9-]+\.webp$/);
+    assert.ok(existsSync(new URL(`../public${image.url}`, import.meta.url)), image.url);
+    assert.deepEqual([image.width, image.height], [1296, 728]);
+  }
+  assert.deepEqual(log.recommendations.map((item) => item.id), ["dat4-som", "dat5-cap-20", "dat6-28", "bo-sung-binh", "cong-diem"]);
+  assert.equal(log.recommendations.every((item) => item.note.trim()), true);
+  // Mỗi khuyến nghị có đủ bản zh/ja; không còn bản dịch mồ côi.
+  for (const locale of ["zh", "ja"]) {
+    assert.deepEqual(Object.keys(FIELD_LOG_RECOMMENDATIONS[locale]).sort(), log.recommendations.map((item) => item.id).sort(), locale);
+  }
+  // `lost` là tổng hao gồm thương binh (cột "Tổn thất" của báo cáo trận), nên chết = hao − thương binh.
+  const battles = log.phases.flatMap((phase) => phase.battles);
+  assert.deepEqual(["p1-thu-cung", "p2-899-1444", "p2-891-1449", "p3-914-1450"].map((id) => fieldLogBattleDead(battle(id))), [119, 525, 198, 734]);
+  // Đầy binh = 100 binh mỗi cấp mỗi tướng: khớp hai trận xuất quân đầy ở cấp 8 và cấp 20; trận đất 6 thiếu binh.
+  const fullTroops = (item) => 300 * item.heroLevel;
+  assert.deepEqual(battles.filter((item) => item.troopsBefore).map((item) => item.troopsBefore === fullTroops(item)), [true, true, true, false]);
+  // Mọi số trong khuyến nghị (vi/zh/ja) phải suy ra được từ các trận đã ghi; ba bản dùng cùng một tập số.
+  const derived = new Set([1, 2, 3, 100]); // cỡ mẫu n, số trận, "1 mỏ", 100 binh mỗi cấp
+  for (const phase of log.phases) [phase.landLevel, phase.heroLevelMin, phase.heroLevelMax].forEach((value) => derived.add(value));
+  for (const item of battles) {
+    for (const key of ["heroLevel", "defenderLevel", "garrisonPerHero", "troopsBefore", "troopsAfter", "lost", "wounded"]) {
+      if (Number.isFinite(item[key])) derived.add(item[key]);
+    }
+    const dead = fieldLogBattleDead(item);
+    if (dead !== null) [dead, Number(((dead / item.troopsBefore) * 100).toFixed(1))].forEach((value) => derived.add(value));
+    if (item.troopsBefore) [fullTroops(item), Math.round((item.troopsBefore / fullTroops(item)) * 100)].forEach((value) => derived.add(value));
+  }
+  const numbersIn = (text, locale) => new Set((locale === "vi"
+    ? text.match(/\d{1,3}(?:\.\d{3})+|\d+(?:,\d+)?/g)?.map((raw) => raw.replace(/\./g, "").replace(",", "."))
+    : text.match(/\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?/g)?.map((raw) => raw.replace(/,/g, "")))?.map(Number) ?? []);
+  for (const item of log.recommendations) {
+    const vi = numbersIn(item.note, "vi");
+    for (const value of vi) assert.ok(derived.has(value), `${item.id}: ${value} không suy ra được từ log`);
+    for (const locale of ["zh", "ja"]) {
+      assert.deepEqual([...numbersIn(FIELD_LOG_RECOMMENDATIONS[locale][item.id], locale)].sort(), [...vi].sort(), `${item.id} (${locale})`);
+    }
+  }
+  const recommendation = (id) => log.recommendations.find((item) => item.id === id).note;
+  assert.match(recommendation("dat4-som"), /chết 119, tức 5,0%/);
+  assert.match(recommendation("dat5-cap-20"), /chết 198 binh \(3,3%\).*chết 525 binh \(8,8%\)/);
+  assert.match(recommendation("dat6-28"), /5\.992 binh, khoảng 71% mức đầy 8\.400.*chết 734 binh, tức 12,2%/);
+  assert.match(recommendation("bo-sung-binh"), /chết 3,3–8,8%.*5\.992\/8\.400.*chết 12,2%/);
+  // Trận đất 6 thiếu binh: không bản nào được gọi đội là đầy hoặc gần đầy binh ở trận này.
+  for (const text of [...log.recommendations.map((item) => item.note), ...Object.values(FIELD_LOG_RECOMMENDATIONS.zh), ...Object.values(FIELD_LOG_RECOMMENDATIONS.ja)]) {
+    assert.doesNotMatch(text, /gần đầy|接近满|ほぼ満員/);
+  }
+  // Số đếm (số trận, số tướng) ở bản zh/ja viết bằng chữ như bản vi ("hai trận"): "一战", "二戦", "一人".
+  for (const text of [...Object.values(FIELD_LOG_RECOMMENDATIONS.zh), ...Object.values(FIELD_LOG_RECOMMENDATIONS.ja)]) {
+    assert.doesNotMatch(text, /\d\s*(?:战|戦|人)/);
+  }
+  for (const variant of team.variants) assert.equal(Object.hasOwn(variant, "fieldLog"), false);
+});
+
 test("official recommended teams carry the Tiến cử flag and an explicit image order", () => {
   const officialOrder = [
     "sp-lo-truc-ha-hau-uyen-tran-cung",
@@ -333,4 +421,22 @@ test("official recommended teams carry the Tiến cử flag and an explicit imag
   for (const team of data.teams.filter((item) => item.recommended !== true)) {
     assert.equal(Object.hasOwn(team, "recommendedOrder"), false, team.id);
   }
+});
+
+test("every Khai hoang field log links only local screenshots under /khai-hoang-log/", () => {
+  for (const team of data.teams.filter((item) => item.fieldLog)) {
+    for (const image of team.fieldLog.phases.flatMap((phase) => phase.battles).flatMap((item) => item.images || [])) {
+      assert.match(image.url, /^\/khai-hoang-log\/[a-z0-9-]+\.webp$/, `${team.id}: ${image.url}`);
+    }
+  }
+});
+
+test("fieldLogBattleDead: hao lấy từ binh trước/sau hoặc `lost`, số vô lý thì không tính", () => {
+  assert.equal(fieldLogBattleDead({ troopsBefore: 2400, lost: 178, wounded: 59 }), 119);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 6000, troopsAfter: 5630, wounded: 172 }), 198);
+  assert.equal(fieldLogBattleDead({ lost: 483 }), null);
+  assert.equal(fieldLogBattleDead({ lost: 178, wounded: 59 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 2400, lost: 50, wounded: 60 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 100, lost: 150, wounded: 10 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 0, lost: 0, wounded: 0 }), null);
 });

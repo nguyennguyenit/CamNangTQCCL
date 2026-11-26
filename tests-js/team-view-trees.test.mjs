@@ -380,3 +380,48 @@ for (const locale of ["vi", "zh"]) {
     assert.match(picked, new RegExp(`aria-pressed="true"[^>]*data-variant="${variant.id}"`));
   });
 }
+
+for (const locale of ["vi", "zh", "ja"]) {
+  test(`Khai hoang (${locale}): nhật ký thực chiến có 3 giai đoạn, ảnh lazy-load có chú thích và khuyến nghị`, () => {
+    const team = khaihoang.teams.find((item) => item.id === "luc-ton-ta-tu-truong-xuan-hoa");
+    const run = locale === "vi" ? (fn) => fn() : zhOnly;
+    const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
+    assertPlain(detail);
+    const html = treeToHtml(h("div", {}, detail));
+    const text = textOf(detail);
+    assert.equal((html.match(/class="kh-fieldlog-phase"/g) || []).length, 3);
+    assert.equal((html.match(/class="kh-fieldlog-shot"/g) || []).length, 5);
+    assert.equal((html.match(/<img [^>]*loading="lazy"[^>]*decoding="async"[^>]*>/g) || []).length, 5);
+    // alt mô tả ảnh, không lặp lại chú thích (figcaption) để trình đọc màn hình không đọc hai lần.
+    const alt = { vi: "Ảnh chụp báo cáo trận", zh: "战报截图", ja: "戦闘レポートの画像" }[locale];
+    assert.equal((html.match(new RegExp(`<img [^>]*alt="${alt}"`, "g")) || []).length, 5);
+    assert.match(html, /<img src="\/khai-hoang-log\/luc-ton-dat5-899-1444-ket-qua\.webp" alt="[^"]+" width="1296" height="728"/);
+    assert.match(html, /<a class="kh-fieldlog-shot-link" href="\/khai-hoang-log\/[^"]+" target="_blank" rel="noopener"/);
+    assert.equal((html.match(/<figcaption>/g) || []).length, 5);
+    assert.deepEqual([...html.matchAll(/data-recommendation="([^"]+)"/g)].map((match) => match[1]), team.fieldLog.recommendations.map((item) => item.id));
+    const grouped = (value) => (locale === "vi" ? value : value.replace(".", ","));
+    for (const value of ["HLxThanos", "15.243", "5.630", "26.610", "4.891"].map(grouped)) assert.ok(text.includes(value), `${locale}: ${value}`);
+    // Trận chỉ có `lost` (không có binh sau trận) vẫn hiện số chết = hao − thương binh, như các trận có binh trước/sau.
+    const deadLines = {
+      vi: ["chết 119 (5,0%)", "chết 198 (3,3%)", "chết 525 (8,8%)", "chết 734 (12,2%)"],
+      zh: ["阵亡 119（5.0%）", "阵亡 198（3.3%）", "阵亡 525（8.8%）", "阵亡 734（12.2%）"],
+      ja: ["戦死 119（5.0%）", "戦死 198（3.3%）", "戦死 525（8.8%）", "戦死 734（12.2%）"],
+    }[locale];
+    for (const value of deadLines) assert.ok(text.includes(value), `${locale}: ${value}`);
+    if (locale === "vi") {
+      for (const name of ["Lục Tốn", "Tả Từ", "Trương Xuân Hoa", "Đới Lăng", "Lạc Thống"]) assert.ok(text.includes(name), name);
+      // Lời cảnh báo mẫu nhỏ chỉ hiện một lần, ở đầu khối.
+      assert.equal(text.split("mẫu nhỏ — tham khảo").length - 1, 1);
+      assert.ok(!text.includes("Trinh sát"));
+    } else {
+      const title = locale === "zh" ? "实战日志" : "実戦記録";
+      assert.ok(text.includes(title), title);
+      // Tên tướng trong dòng kỹ năng tra từ điển; tướng thủ ngoài từ điển lấy từ bảng riêng, không còn bị lược.
+      assert.ok(text.includes("陸遜 · ") && text.includes("張春華 · ") && text.includes("左慈 · "));
+      for (const name of ["駱統", "凌操", "戴陵"]) assert.ok(text.includes(name), `${locale}: ${name}`);
+      assert.ok(text.includes("2026/11/14") && !text.includes("14/11/2026"), `${locale}: ngày năm/tháng/ngày`);
+      assert.ok(!text.includes("…"), `${locale}: tướng thủ bị lược`);
+      assert.doesNotMatch(text.slice(text.indexOf(title)), /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i);
+    }
+  });
+}

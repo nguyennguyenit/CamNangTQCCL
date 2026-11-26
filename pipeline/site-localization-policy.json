@@ -12,8 +12,8 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "97afda56293e806e613a054f00308d283bd2254b6b1aa2fec16c1d43379681f4",
-      "concreteLocationCount": 76735,
+      "concreteInventorySha256": "e4d33fdc66d87fef6a2326e716bb6eaf4ce1a6d03a62f38b2903c4760362951d",
+      "concreteLocationCount": 76818,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
       "siteLedgerObligations": 2812,
@@ -763,7 +763,7 @@
   ],
   "sourceFiles": {
     "data/coexist.json": "100a07fa66dde885bd8e528443335540baebd09045c3a393cefc046f80eb7e57",
-    "data/khaihoang.json": "2cad1454bc862788a1817f3f45fa863abdbabe0b38fdef54ac53398abe30a1dc",
+    "data/khaihoang.json": "02700333042df74a5183a1d7794775da781202c16ba38f2b5a02d296a68365e0",
     "data/season-content-links.json": "8b0bb738032214f0ec1feca7967862d6547021a67ab366db82362e6c8330daf9",
     "data/teams.json": "f082c2bb4a489ff24bbf43d4230b4087c9679057d24781730ed42ac36f768c30",
     "js/analyze-map.js": "9af75aefadf71a719e5ec36036cb3af4bc7e7033cdc88e71b8d9ee7eecf4aaf7",
@@ -788,7 +788,7 @@
     "js/recommended-reference-state.js": "2c9907584c0e93e5a724e6f38f1d4f6236adf9aa2e5e0ed356b42818206ca8cc",
     "js/recruit-tracker-store.js": "71b85848b01e6c70586e8a56dacfe7816dbacf4a8513127e25a2d2bd5e4c7183",
     "js/recruit-tracker.js": "34f07a10cd39b45af7a08ac6b75c680d5d88864dc721a7af9c875d7942c0bbe0",
-    "js/render.js": "3951b5c194bf7166e9ab9c54e237287f75546ece2e1013c8630731448096faab",
+    "js/render.js": "4ac0842fb604fc60b82c1ac4e96b7f5c60103226a8104fa5ee225e3c0af940da",
     "js/roster-pasted-name-list-panel.js": "a4e90d3bc796c6acbb4dd4024230b8f47b5d61ce6fac24c97529062933517d2d",
     "js/roster-picker.js": "226a9d4fb347643b30de53d787e6f73e9c15a7498d6eca6c92981f21c5112be7",
     "js/roster-recommend-ui.js": "5ef75efe8d00c730c1c9d719f222c6d34f0c32131f3e1037ea091525cfba35f8",
