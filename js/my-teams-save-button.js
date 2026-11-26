@@ -20,6 +20,15 @@ const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容
 /** `draft.id` theo nguồn: sinh lần đầu, giữ tới khi server xác nhận (thử lại không sinh bản trùng). */
 const draftIds = new Map();
 
+/**
+ * Server đã xác nhận đội `teamId`: bỏ id đó khỏi mọi khóa nguồn đang giữ nó. Một id có thể nằm dưới hai khóa (bản lưu dở key cũ
+ * `<đội>~<phương án>` được dùng lại cho key canonical `<đội>`, `legacyAliasKey`), nên xóa theo id chứ không theo một khóa;
+ * sót lại thì lần Lưu mới sau đó ghi đè đội vừa lưu thay vì tạo đội mới.
+ */
+export function releaseDraftId(teamId, ids = draftIds) {
+  for (const [key, id] of ids) if (id === teamId) ids.delete(key);
+}
+
 /** Nguồn đo lường (`save_my_team.source`) theo loại nguồn của đội nháp; nút của Gợi ý đội truyền nguồn riêng (đội của nó dựng từ nguồn Đội chuẩn/Đội khác). */
 const TRACK_SOURCE_BY_KIND = { recommended: "doi-chuan", legacy: "doi-khac", khaihoang: "khai-hoang", analyze: "soi-doi" };
 /** Nguồn hợp lệ của `save_my_team`: bốn nguồn suy từ đội nháp cộng nguồn riêng của Gợi ý đội. */
@@ -49,12 +58,24 @@ export function embeddedBuilder({ doc = document, location = globalThis.location
   };
 }
 
+/**
+ * Khóa nguồn cũ của cùng nội dung: trang Đội khác nhúng phương án duy nhất của nó (`data-legacy-variant-id`); trước khi URL cũ
+ * `?variant=<mã đó>` được nhận lại như trang canonical, lưu từ đó mang key `<đội>~<mã>`. Bản lưu dở (chờ OAuth) mang key cũ
+ * vẫn là cùng một lần lưu, nên lưu lại từ key mới phải dùng lại id của nó, không thì bản lưu dở phát lại thành đội trùng.
+ */
+export function legacyAliasKey(draft, variantKey, doc = globalThis.document) {
+  if (draft.source.kind !== "legacy" || draft.source.key.includes("~")) return null;
+  const variantId = doc?.querySelector?.("#team-detail-root")?.dataset?.legacyVariantId;
+  return variantId ? `legacy:${variantKey(draft.source.key, variantId)}` : null;
+}
+
 /** Gắn `draft.id` ổn định cho nguồn; trả bản dựng kèm khóa nguồn. */
 async function prepare(build, source = "") {
   const built = await build();
-  const { newTeamId } = await import("./my-teams-sources.js");
+  const { newTeamId, variantKey } = await import("./my-teams-sources.js");
   const key = `${built.draft.source.kind}:${built.draft.source.key}`;
-  const pendingId = pendingIdForSource(key);
+  const alias = legacyAliasKey(built.draft, variantKey);
+  const pendingId = pendingIdForSource(key) ?? (alias ? pendingIdForSource(alias) : null);
   if (pendingId) draftIds.set(key, pendingId);
   else if (!draftIds.has(key)) draftIds.set(key, newTeamId());
   return { ...built, key, trackSource: source || trackSourceOf(built.draft), draft: { ...built.draft, id: draftIds.get(key) } };
@@ -133,7 +154,7 @@ async function openSaveDialog(prep) {
     }
     if (result.ok) {
       completePendingSave(result);
-      draftIds.delete(prep.key);
+      releaseDraftId(prep.draft.id);
       trackSave(prep.trackSource);
       close();
       successToast(result.team, prep.unresolved);
@@ -219,7 +240,7 @@ async function attemptPending() {
     await api.load();
     const result = await api.saveTeam(draft, { boxId: MAIN_BOX });
     if (completePendingSave(result)) {
-      draftIds.delete(`${draft.source.kind}:${draft.source.key}`);
+      releaseDraftId(draft.id);
       trackSave(trackSource);
       successToast(result.team, unresolved);
       return;

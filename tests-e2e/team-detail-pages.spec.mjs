@@ -393,14 +393,21 @@ test('duplicate legacy content renders once while every reviewed locator remains
 });
 
 
-test('only the exact admitted pair resolves a variant and a bad one links back to the original',async({page,request})=>{
+test('an old ?variant= of the page itself keeps the prerendered body and drops the query; a bad one links back to the original',async({page,request})=>{
   const {other}=await publication(request);
   const handles=await routeHandles(request);
   const admitted=completeRecord(other);
   const originalPath=legacyPath(handles,admitted.legacyTeamId);
   await page.goto(`${originalPath}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
+  await expect(page.locator('#team-detail-root')).toHaveAttribute('data-legacy-variant-id',admitted.legacyVariantId);
   await expect(page.locator('#team-detail-body')).toBeVisible();
-  await expect(page.locator('#team-detail-root')).toContainText(admitted.legacyVariantId);
+  // Phương án duy nhất của trang: nội dung chính là bản dựng sẵn, URL về canonical (không khối "vân tay" của nhánh tải lại).
+  await expect(page).toHaveURL(originalPath);
+  await expect(page.locator('#team-detail-root')).not.toContainText(admitted.legacyVariantId);
+  // Link đổi ngôn ngữ theo URL đã sửa ngay, không đợi tương tác (crawler đọc DOM sau khi chạy JS).
+  for (const href of await page.locator('a[data-lang-switch]').evaluateAll(links=>links.map(link=>link.getAttribute('href')))) {
+    expect(href).not.toContain('variant=');
+  }
 
   await page.goto(`${originalPath}?variant=v-${'0'.repeat(64)}`);
   const alert=page.locator('#team-detail-status [role="alert"]');
@@ -431,6 +438,19 @@ test('only the exact admitted pair resolves a variant and a bad one links back t
   }
   await original.click();
   await expect(page.locator('#team-detail-body')).toBeVisible();
+});
+
+test('before team-detail.js runs, the inline guard hides the prerendered body only for a variant other than the page own',async({page,request})=>{
+  const {other}=await publication(request);
+  const admitted=completeRecord(other);
+  const originalPath=legacyPath(await routeHandles(request),admitted.legacyTeamId);
+  // Chặn script trang chi tiết: chỉ script inline của HTML chạy, như lúc crawler/người dùng chưa tải xong JS.
+  await page.route('**/js/team-detail.js',route=>route.abort());
+  await page.goto(`${originalPath}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
+  await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('#team-detail-body')).not.toBeEmpty();
+  await page.goto(`${originalPath}?variant=v-${'0'.repeat(64)}`);
+  await expect(page.locator('#team-detail-body')).toBeHidden();
 });
 
 test('only complete admitted originals have a page: a hidden handle keeps its ledger entry but serves the static 404',async({page,request})=>{
@@ -953,10 +973,10 @@ test('copy link on a Khai hoang detail keeps the chosen variant and drops from',
 });
 
 test('a changed teams.json reads as a verification failure and an unreachable one as a network failure',async({page,request})=>{
-  // Chỉ biến thể đã đối chiếu mới cần dữ liệu lúc chạy (thân mặc định đã dựng sẵn): đường tải phải đóng kín khi nguồn lệch.
+  // Chỉ `?variant=` khác phương án của trang mới cần dữ liệu lúc chạy (thân đã dựng sẵn): đường tải phải đóng kín khi nguồn lệch.
   const {other}=await publication(request);
   const admitted=completeRecord(other);
-  const path=`${legacyPath(await routeHandles(request),admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`;
+  const path=`${legacyPath(await routeHandles(request),admitted.legacyTeamId)}?variant=v-${'0'.repeat(64)}`;
   await page.route('**/data/teams.json',async route=>{
     const response=await route.fetch();
     return route.fulfill({response,body:`${await response.text()}\n`});
@@ -973,7 +993,7 @@ test('a changed teams.json reads as a verification failure and an unreachable on
   await expect(alert).toContainText('Hãy kiểm tra kết nối');
 });
 
-test('prerendered Đội chuẩn and Đội khác details fetch nothing; an admitted variant fetches the display publication and teams.json once',async({page,request})=>{
+test('prerendered Đội chuẩn and Đội khác details fetch nothing, also for an old ?variant= of the page itself; an unknown variant fetches the display publication and teams.json once',async({page,request})=>{
   const handles=await routeHandles(request);
   const {index,other}=await publication(request);
   const teams=await pagedTeams(request);
@@ -993,10 +1013,17 @@ test('prerendered Đội chuẩn and Đội khác details fetch nothing; an admi
     expect(seen.requests,path).toEqual([]);
   }
   const admitted=completeRecord(other);
-  const seen=dataRequests();
+  // URL cũ xin đúng phương án của trang: không tải gì, thân dựng sẵn hiện ngay (không bị script inline ẩn).
+  const own=dataRequests();
   await page.goto(`${legacyPath(handles,admitted.legacyTeamId)}?variant=${encodeURIComponent(admitted.legacyVariantId)}`);
   await expect(page.locator('#team-detail-root')).toHaveAttribute('aria-busy','false');
   await expect(page.locator('#team-detail-body')).toBeVisible();
+  await page.evaluate(()=>new Promise(resolve=>setTimeout(resolve,300)));
+  own.stop();
+  expect(own.requests).toEqual([]);
+  const seen=dataRequests();
+  await page.goto(`${legacyPath(handles,admitted.legacyTeamId)}?variant=v-${'0'.repeat(64)}`);
+  await expect(page.locator('#team-detail-status [role="alert"]')).toBeVisible();
   seen.stop();
   expect(seen.requests.sort()).toEqual(['/data/teams.json','/data/website-display.json']);
 });

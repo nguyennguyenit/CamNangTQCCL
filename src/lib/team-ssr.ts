@@ -75,7 +75,7 @@ export function prepare() {
 }
 
 /** Dữ liệu `data/<name>.json` đã bản địa hoá theo ngôn ngữ trang (bản zh giữ chữ nguồn), dùng chung giữa các trang. */
-async function localizedData(name: 'teams' | 'khaihoang', locale: SiteLocale): Promise<Json> {
+export async function localizedData(name: 'teams' | 'khaihoang', locale: SiteLocale): Promise<Json> {
   const env = await prepare();
   const key = `${name}:${locale}`;
   let data = env.localized.get(key);

@@ -6,6 +6,7 @@ import { familyReturnHref } from '../../../js/team-detail-navigation.js';
 import { localePath, pick } from '../../../js/i18n.js';
 import type { LegacyDetailProps } from '../../lib/team-detail-pages';
 import { legacyDetailParts } from '../../lib/team-ssr';
+import { LEGACY_VARIANT_GUARD_SCRIPT } from '../../lib/legacy-variant-guard.ts';
 import { teamDetailJsonLd } from '../../lib/structured-data.ts';
 import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
@@ -19,6 +20,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const fallbackReturn = familyReturnHref('legacy', { locale });
 // Thân trang + huy hiệu dựng sẵn bằng đúng builder mà trình duyệt dùng; client chỉ nhận lại và gắn tương tác.
 const {bodyHtml, badgesHtml} = await legacyDetailParts(entry, locale);
+// Mỗi đội gốc có trang đúng một phương án (src/lib/team-detail-routes.ts dừng build nếu không). URL cũ `?variant=<mã đó>`
+// trùng nội dung dựng sẵn nên không ẩn thân; chỉ mã lạ mới cần js/team-detail.js đối chiếu.
+if (entry.variantIds.length !== 1) throw new Error(`Legacy detail page needs exactly one admitted variant: ${entry.legacyTeamId}`);
+const [legacyVariantId] = entry.variantIds;
 const description = pick(locale, `Nội dung gốc của đội ${pageLabel} trong dữ liệu đội hình sẵn có.`, `现有阵容数据中「${pageLabel}」的原始内容。`, `既存の編成データにある「${pageLabel}」の元の内容です。`);
 const structured = teamDetailJsonLd({
   locale,
@@ -57,6 +62,7 @@ const structured = teamDetailJsonLd({
     aria-busy="false"
     data-family="legacy"
     data-legacy-team-id={entry.legacyTeamId}
+    data-legacy-variant-id={legacyVariantId}
     data-legacy-teams-sha256={legacyTeamsSha256}
     data-generation-id={generationId}
     data-manifest-sha256={manifestSha256}
@@ -75,8 +81,9 @@ const structured = teamDetailJsonLd({
     </div>
 
     <div id="team-detail-body" data-prerendered set:html={bodyHtml}></div>
-    <!-- URL xin biến thể: thân + huy hiệu dựng sẵn là bản mặc định nên ẩn ngay, js/team-detail.js tải rồi dựng đúng biến thể (không nháy sai nội dung). -->
-    <script is:inline>if (new URLSearchParams(location.search).has('variant')) document.getElementById('team-detail-body').hidden = document.getElementById('team-detail-badges').hidden = true;</script>
+    <!-- URL cũ xin biến thể khác phương án của trang thì ẩn thân dựng sẵn tới khi js/team-detail.js báo lỗi; `?variant=` trùng phương án
+         của trang thì giữ nguyên (src/lib/legacy-variant-guard.ts). -->
+    <script is:inline set:html={LEGACY_VARIANT_GUARD_SCRIPT}></script>
   </article>
 
   <!-- Nháp đội để lưu vào "Đội của tôi" (docs/roster-sync.md § Payload lưu đội); escape như JSON-LD nên tên chứa </script> không phá thẻ. -->

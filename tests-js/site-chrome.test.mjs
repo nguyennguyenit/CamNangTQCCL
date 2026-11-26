@@ -3,7 +3,7 @@
 // thì giữ NGUYÊN chuỗi query (không re-encode `%20`/`%3A`), vì E2E khóa href chính xác của các link này.
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { syncLanguageSwitch } from "../js/site-chrome.js";
+import { LOCATION_REPLACED_EVENT, syncLanguageSwitch } from "../js/site-chrome.js";
 
 /** Link ngôn ngữ giả: `href` do layout phát; sự kiện được gọi tay qua `emit`. */
 function languageLink(href) {
@@ -18,15 +18,17 @@ function languageLink(href) {
   };
 }
 
-/** Trang ở `pageHref` với các link ngôn ngữ có href gốc `baseHrefs`; `go(url)` đổi URL trang như history API. */
+/** Trang ở `pageHref` với các link ngôn ngữ có href gốc `baseHrefs`; `go(url)` đổi URL trang như history API, `fire(type)` phát sự kiện lên window. */
 function setup(pageHref, baseHrefs) {
   const links = baseHrefs.map(languageLink);
-  const windowTarget = { location: new URL(pageHref) };
+  const windowListeners = new Map();
+  const windowTarget = { location: new URL(pageHref), addEventListener: (type, handler) => windowListeners.set(type, handler) };
   syncLanguageSwitch({ documentTarget: { querySelectorAll: () => links }, windowTarget });
   return {
     links,
     hrefs: () => links.map((link) => link.getAttribute("href")),
     go: (href) => { windowTarget.location = new URL(href); },
+    fire: (type) => windowListeners.get(type)?.(),
   };
 }
 
@@ -60,4 +62,13 @@ test("link luôn ghép lại từ href gốc của layout, không cộng dồn q
   page.go("https://tqccl.com/doi-chuan/?q=b&view=bang#x");
   for (const link of page.links) link.emit("focus");
   assert.deepEqual(page.hrefs(), ["/zh/doi-chuan/?q=b&view=bang#x", "/zh/doi-chuan/?season=all#x", "https://other.example/zh/doi-chuan/"]);
+});
+
+test("trang tự bỏ `variant` khỏi URL rồi phát LOCATION_REPLACED_EVENT: link đổi ngôn ngữ theo ngay, không đợi tương tác", () => {
+  const DETAIL = "/doi-khac/vu-sieu-binh/";
+  const page = setup(`https://tqccl.com${DETAIL}?variant=v-1#top`, [`/zh${DETAIL}`, `/ja${DETAIL}`]);
+  assert.deepEqual(page.hrefs(), [`/zh${DETAIL}?variant=v-1#top`, `/ja${DETAIL}?variant=v-1#top`]);
+  page.go(`https://tqccl.com${DETAIL}#top`);
+  page.fire(LOCATION_REPLACED_EVENT);
+  assert.deepEqual(page.hrefs(), [`/zh${DETAIL}#top`, `/ja${DETAIL}#top`]);
 });

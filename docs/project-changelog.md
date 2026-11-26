@@ -1,5 +1,12 @@
 # Project Changelog
 
+## 2026-11-26 (URL cũ `?variant=` của Đội khác hiện nội dung dựng sẵn, #172)
+
+- Fixed: URL cũ `/doi-khac/<handle>/?variant=<mã>` (đã chia sẻ hoặc bị index trước khi link bỏ `variant`) không còn ẩn thân dựng sẵn. Mỗi đội gốc có trang đúng một phương án; đo cả 255 phương án đủ dữ liệu, nội dung tải lại trùng bản dựng sẵn, chỉ thêm khối kỹ thuật "Biến thể đã đối chiếu / Vân tay nội dung". Trang nhúng mã phương án vào `#team-detail-root[data-legacy-variant-id]`; script inline chỉ ẩn thân khi `variant` khác mã đó; `js/team-detail.js` nhận lại bản dựng sẵn (không tải `teams.json`/`website-display.json`) và `replaceState` bỏ `variant`. Mã lạ vẫn tải, đối chiếu và báo lỗi như cũ.
+- Changed: "Lưu vào Đội của tôi" từ URL cũ đó lưu như trang canonical (nguồn `legacy`, key `<x>` thay vì `<x>~<mã>`), khớp cách lưu từ link nội bộ kể từ khi bỏ `variant`. Đội đã lưu trước đó với key `<x>~<mã>` giữ nguyên (chỉ mục nguồn còn đủ 392 key biến thể). Bản lưu dở chờ đăng nhập mang key cũ của đúng phương án trang được dùng lại id khi lưu từ key mới (`legacyAliasKey`, `js/my-teams-save-button.js`), nên không phát lại thành đội trùng.
+- Fixed: nháp lưu của trang Đội khác dựng từ đội đã bản địa hoá theo ngôn ngữ trang (`src/lib/team-detail-pages.ts`), như nội dung đang hiện; trước đây bản vi giữ ghi chú chữ Hán nguồn ở 3 đội (`team-intro-50`, `-51`, `-55`, ví dụ `天公盾` thay vì `Thiên Công Thuẫn`). `contentHash` vẫn tính trên đội nguồn thô.
+- Added: verifier báo link nội bộ tới trang chi tiết Đội chuẩn/Đội khác mang `variant` (Khai hoang vẫn được, cho cấu hình không mặc định; đường dẫn thiếu `/` cuối cũng tính), kiểm `data-legacy-variant-id` trên chính `#team-detail-root` và chỉ chấp nhận đúng script guard của `src/lib/legacy-variant-guard.ts` trong thân trang. Link đổi ngôn ngữ cập nhật ngay khi trang bỏ `variant` (`LOCATION_REPLACED_EVENT`, `js/site-chrome.js`).
+
 ## 2026-11-20 (Bỏ `?from=` khỏi link nội bộ tới trang chi tiết đội)
 
 - Changed: link nội bộ tới trang chi tiết (thẻ Đội chuẩn/Đội khác/Khai hoang, Soi đội, Gợi ý đội, "Đội tiêu biểu" của Tra cứu, link đổi ngôn ngữ) chỉ còn URL canonical, kèm `variant` khi nó chọn nội dung; không còn `?from=`. Số liệu production 2026-11-20 (cả vi/zh/ja): `/doi-chuan/` 338 thẻ có `from` / 0 sạch (169 href khác nhau), `/doi-khac/` 120 / 0, `/khai-hoang/` 40 / 0 (20 giá trị `from`). Canonical vốn đã sạch, nhưng link nội bộ trỏ URL không canonical (Google khuyên trỏ canonical) và số biến thể URL không có trần vì client dùng `location.href` làm `from`.

@@ -8,6 +8,7 @@ import { llmsDocuments } from "../src/lib/llms-documents.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { LEGACY_VARIANT_GUARD_SCRIPT } from "../src/lib/legacy-variant-guard.ts";
 import { seasonPageCatalog, seasonRedirectRules } from "../src/lib/season-pages.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
@@ -154,22 +155,38 @@ function decodeCharacterReferences(value) {
   });
 }
 
+/** Chú thích HTML (trình duyệt không dựng gì bên trong). */
+const HTML_COMMENT = /<!--[^]*?-->/gu;
+
+/** Thuộc tính của một thẻ mở (`<tên …>`), tên viết thường, giá trị đã giải mã entity; thuộc tính lặp lại thì cái đầu thắng như trình duyệt. */
+function tagAttributes(tag) {
+  const values = new Map();
+  for (const [, name, quoted, single, bare] of tag.replace(/^<[^\s/>]+/u, "").replace(/\/?>$/u, "").matchAll(ATTRIBUTE)) {
+    if (!values.has(name.toLowerCase())) values.set(name.toLowerCase(), decodeCharacterReferences(quoted ?? single ?? bare ?? ""));
+  }
+  return values;
+}
+
 /** Origin của link nội bộ: host của `site` và các host cũ chuyển hẳn về nó (cùng bản build), http hoặc https, cổng mặc định. */
 const INTERNAL_ORIGINS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_HOSTS].flatMap((host) => [`https://${host}`, `http://${host}`]));
 const REL_NOREFERRER = /(?:^|\s)noreferrer(?:\s|$)/iu;
 /** Trang chi tiết đội (cùng hình dạng với trang mùa Đội chuẩn): `/<họ>/<segment>/` sau khi bỏ tiền tố locale. */
 const TEAM_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac|khai-hoang)\/[^/]+\/$/u;
+/** Trang chi tiết không có biến thể theo URL: Đội chuẩn (một cấu hình một trang) và Đội khác (một đội gốc một phương án). */
+const SINGLE_VARIANT_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac)\/[^/]+\/$/u;
 
 /**
  * Link nội bộ vi phạm hợp đồng URL sạch của trang HTML ở `pageUrl`, mỗi vi phạm một mục `{href, reason}` (`href` đã giải mã
  * entity, đúng thứ trình duyệt mở): `from` — query `from` (trạng thái điều hướng không được nằm trong link nội bộ: mỗi giá trị
- * là một URL không canonical); `noreferrer` — link tới trang chi tiết có `rel` chứa `noreferrer` (trang chi tiết đọc referrer
+ * là một URL không canonical); `variant` — query `variant` trên link tới trang chi tiết Đội chuẩn/Đội khác (trang đó chỉ có
+ * một nội dung, nên `variant` chỉ tạo URL trùng; Khai hoang vẫn được mang `variant` của cấu hình không mặc định);
+ * `noreferrer` — link tới trang chi tiết có `rel` chứa `noreferrer` (trang chi tiết đọc referrer
  * để dựng nút Quay lại). Phân tích bằng URL thay vì regex trên cả HTML: bỏ chú thích, thân `<script>`/`<style>`, lấy `href`
  * của từng `<a>`, giải mã entity (tên, thập phân, thập lục phân), `new URL(href, pageUrl)`. Nội bộ là origin của `site` và các
  * host cũ của cầu chuyển domain; link ngoài, hash, `from=` nằm trong giá trị khác, JSON-LD hay `data-href` không bị tính.
  * @param {string} html
  * @param {string | URL} pageUrl URL tuyệt đối của trang chứa HTML (để ghép link tương đối)
- * @returns {{href: string, reason: "from" | "noreferrer"}[]}
+ * @returns {{href: string, reason: "from" | "variant" | "noreferrer"}[]}
  */
 export function internalLinksWithReturnQuery(html, pageUrl) {
   const violations = [];
@@ -189,7 +206,10 @@ export function internalLinksWithReturnQuery(html, pageUrl) {
     }
     if (!INTERNAL_ORIGINS.has(url.origin)) continue;
     if (url.searchParams.has("from")) violations.push({ href, reason: "from" });
-    if (TEAM_DETAIL_PATH.test(stripLocale(url.pathname)) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
+    // `/doi-khac/<handle>` thiếu `/` cuối vẫn tới cùng trang (máy chủ chuyển hướng), nên xét như có `/`.
+    const detailPath = stripLocale(url.pathname).replace(/([^/])$/u, "$1/");
+    if (SINGLE_VARIANT_DETAIL_PATH.test(detailPath) && url.searchParams.has("variant")) violations.push({ href, reason: "variant" });
+    if (TEAM_DETAIL_PATH.test(detailPath) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
   }
   return violations;
 }
@@ -211,7 +231,7 @@ async function verifyCleanInternalLinks(distPath, htmlFiles, site) {
   }
   if (problems.length) {
     throw new Error(
-      `dist carries ${problems.length} internal link(s) that break the clean-URL contract (no \`from\` query, no rel=noreferrer toward a detail page); first: ${problems.sort().slice(0, 5).join("; ")}`,
+      `dist carries ${problems.length} internal link(s) that break the clean-URL contract (no \`from\` query, no \`variant\` toward a Đội chuẩn/Đội khác detail page, no rel=noreferrer toward a detail page); first: ${problems.sort().slice(0, 5).join("; ")}`,
     );
   }
 }
@@ -849,11 +869,15 @@ export async function verifyAstroDist({
       entry: "/js/team-detail.js",
       pins: [
         `data-legacy-team-id="${entry.legacyTeamId}"`,
+        // Phương án duy nhất của trang: script inline chỉ ẩn thân dựng sẵn khi URL cũ xin `variant` khác mã này.
+        `data-legacy-variant-id="${entry.variantIds[0]}"`,
         `data-legacy-teams-sha256="${catalog.legacyTeamsSha256}"`,
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
       save: { kind: "legacy", items: myTeamsKeys.legacy.get(entry.legacyTeamId) },
+      // Script inline duy nhất của thân trang: chỉ ẩn thân dựng sẵn khi `variant` khác phương án của trang.
+      inlineScripts: [LEGACY_VARIANT_GUARD_SCRIPT],
     })),
     ...catalog.khaiHoang.map((entry) => ({
       path: entry.htmlPath,
@@ -878,16 +902,32 @@ export async function verifyAstroDist({
     detailHeads[kind].set(value, path);
   };
   for (let start = 0; start < pages.length; start += 64) {
-    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save }) => {
+    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save, inlineScripts }) => {
       const page = await readPage(path);
       claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, path);
       claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, path);
-      return { path, routePath, locale, entry, pins, save, page };
+      return { path, routePath, locale, entry, pins, save, inlineScripts, page };
     }));
-    for (const { path, routePath, locale, entry, pins, save, page } of loaded) {
+    for (const { path, routePath, locale, entry, pins, save, inlineScripts, page } of loaded) {
       verifyLocalePair(page, path, locale, routePath, site);
+      // Pin là đúng thuộc tính (tên + giá trị) của thẻ mở `#team-detail-root` mà script và JS của trang đọc (`dataset`), không phải
+      // chuỗi con: tên khác (`data-backup-data-legacy-variant-id`) hay pin trong chú thích đều không tính.
+      const visible = page.replace(HTML_COMMENT, "");
+      const rootTag = visible.match(/<article\b((?:"[^"]*"|'[^']*'|[^'">])*)>/gu)?.find((tag) => tagAttributes(tag).get("id") === "team-detail-root") ?? "";
+      const rootAttributes = tagAttributes(rootTag);
       for (const pin of pins) {
-        if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+        const [, name, value] = pin.match(/^([^=]+)="(.*)"$/u);
+        if (rootAttributes.get(name) !== value) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+      }
+      // Thân trang Đội khác có hợp đồng tĩnh: MỌI phần tử `<script>` trong article (sau khi bỏ chú thích, bất kể `type`/thuộc tính)
+      // đúng bằng danh sách nguồn, mỗi cái không thuộc tính. Không lọc theo `type`: trình duyệt chạy cả type lạ như `text/ecmascript`,
+      // còn `nomodule`/`type` khác làm guard đúng không chạy.
+      if (inlineScripts) {
+        const visibleArticle = visible.slice(visible.indexOf(rootTag)).match(/^[^]*?<\/article>/u)?.[0] ?? "";
+        const articleScripts = visibleArticle.match(/<script\b(?:"[^"]*"|'[^']*'|[^'">])*>[^]*?<\/script>/gu) ?? [];
+        if (JSON.stringify(articleScripts) !== JSON.stringify(inlineScripts.map((script) => `<script>${script}</script>`))) {
+          throw new Error(`Team detail page carries unexpected inline scripts in its body: ${path}`);
+        }
       }
       if (!page.includes(`src="${entry}"`)) {
         throw new Error(`Team detail page does not load its own entry: ${path} (${entry})`);

@@ -127,5 +127,11 @@ export function syncLanguageSwitch({documentTarget = document, windowTarget = gl
     // Cập nhật ngay trước khi điều hướng: chuột (kể cả mở tab mới), bàn phím và chạm đều đi qua các sự kiện này.
     for (const type of ['pointerdown', 'focus', 'click']) link.addEventListener(type, () => refresh(link));
   }
+  // Trang tự sửa URL tại chỗ (bỏ `variant`/`from` của link cũ): href đã phát trong DOM phải theo ngay, không đợi tương tác,
+  // để crawler đọc DOM sau khi chạy JS không thấy lại query cũ.
+  windowTarget.addEventListener?.(LOCATION_REPLACED_EVENT, () => links.forEach(refresh));
   return links;
 }
+
+/** Sự kiện trang phát lên `window` sau khi `history.replaceState` đổi query/hash của URL hiện tại. */
+export const LOCATION_REPLACED_EVENT = 'tqccl:location-replaced';

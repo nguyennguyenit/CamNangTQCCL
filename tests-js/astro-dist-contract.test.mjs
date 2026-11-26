@@ -18,6 +18,7 @@ import {
   websiteDisplayPublicationSnapshot,
 } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { LEGACY_VARIANT_GUARD_SCRIPT } from "../src/lib/legacy-variant-guard.ts";
 import { DEFAULT_LOCALE, LOCALE_OG, LOCALE_PREFIX, localeFromPath, localePath, pick, stripLocale } from "../js/i18n.js";
 import { ANALYTICS_CONFIG } from "../js/config.js";
 import { HREFLANG, SITE_LOCALES } from "../src/lib/locale-routes.ts";
@@ -386,7 +387,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}</article>${savePayloadHtml("legacy", LEGACY_TEAM_ID)}<script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-variant-id="${LEGACY_VARIANT_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}<script>${LEGACY_VARIANT_GUARD_SCRIPT}</script></article>${savePayloadHtml("legacy", LEGACY_TEAM_ID)}<script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
     await mkdir(join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
@@ -1689,9 +1690,9 @@ const anchorTo = (href, attributes = "") => `<a ${attributes} href="${href}">x</
 test("verifier link: link nội bộ mang `from` bị báo dù che bằng entity, mã hóa phần trăm, host cũ hay link tương đối", () => {
   for (const href of [
     "/doi-chuan/x/?from=%2Fdoi-chuan%2F",
-    "/doi-chuan/x/?variant=1&amp;from=%2Fdoi-chuan%2F",
-    "/doi-chuan/x/?variant=1&#38;from=x",
-    "/doi-chuan/x/?variant=1&#x26;from=x",
+    "/doi-chuan/x/?v=1&amp;from=%2Fdoi-chuan%2F",
+    "/doi-chuan/x/?v=1&#38;from=x",
+    "/doi-chuan/x/?v=1&#x26;from=x",
     "/doi-chuan/x/?&#102;rom=x",
     "/doi-chuan/x/?&#x66;rom=x",
     "/doi-chuan/x/?&#X66;rom=x",
@@ -1712,7 +1713,7 @@ test("verifier link: link nội bộ mang `from` bị báo dù che bằng entity
     assert.deepEqual(reasonsOf(anchorTo(href)), ["from"], href);
   }
   // Báo cáo mang href đã giải mã entity: người đọc thấy đúng thứ trình duyệt sẽ mở.
-  assert.deepEqual(badLinks(anchorTo("/doi-chuan/x/?variant=1&amp;from=%2F")), [{ href: "/doi-chuan/x/?variant=1&from=%2F", reason: "from" }]);
+  assert.deepEqual(badLinks(anchorTo("/doi-chuan/x/?v=1&amp;from=%2F")), [{ href: "/doi-chuan/x/?v=1&from=%2F", reason: "from" }]);
   // Thẻ/thuộc tính viết hoa, nháy đơn, không nháy, xuống dòng và `>` trong giá trị có nháy vẫn là một link.
   for (const html of [
     "<A HREF='/doi-chuan/x/?from=1'>x</A>",
@@ -1734,7 +1735,7 @@ test("verifier link: link tới trang chi tiết có rel noreferrer bị báo v�
   for (const rel of ["noreferrer", "noopener noreferrer", "NOREFERRER", "external  noreferrer\tnoopener", "&#110;oreferrer"]) {
     for (const href of [
       "/doi-chuan/x/",
-      "/doi-khac/x/?variant=1",
+      "/doi-khac/x/?v=1",
       "/khai-hoang/x/",
       "/zh/doi-chuan/x/",
       "/ja/khai-hoang/x/?variant=v",
@@ -1761,6 +1762,30 @@ test("verifier link: link tới trang chi tiết có rel noreferrer bị báo v�
   }
 });
 
+test("verifier link: link tới trang chi tiết Đội chuẩn/Đội khác mang `variant` bị báo; Khai hoang và trang khác thì không", () => {
+  for (const href of [
+    "/doi-khac/x/?variant=v-1",
+    // Thiếu `/` cuối vẫn là cùng trang chi tiết.
+    "/doi-khac/x?variant=v-1",
+    "/doi-khac/x/?variant=",
+    "/zh/doi-khac/x/?variant=v-1#top",
+    "/ja/doi-chuan/x/?variant=1",
+    "https://www.tqccl.com/doi-khac/x/?&#118;ariant=v-1",
+  ]) {
+    assert.deepEqual(reasonsOf(anchorTo(href)), ["variant"], href);
+  }
+  for (const html of [
+    anchorTo("/khai-hoang/x/?variant=v"),
+    anchorTo("/ja/khai-hoang/x/?variant=v"),
+    anchorTo("/doi-khac/?variant=v-1"),
+    anchorTo("/doi-khac/x/y/?variant=v-1"),
+    anchorTo("/doi-khac/x/#variant=v-1"),
+    anchorTo("https://example.com/doi-khac/x/?variant=v-1"),
+  ]) {
+    assert.deepEqual(reasonsOf(html), [], html);
+  }
+});
+
 test("verifier link: không báo link ngoài, hash, `from=` lồng trong giá trị khác hay nằm ngoài thẻ <a> (JSON-LD, data-href, script, style, chú thích)", () => {
   for (const html of [
     anchorTo("https://example.com/?from=x"),
@@ -1771,9 +1796,9 @@ test("verifier link: không báo link ngoài, hash, `from=` lồng trong giá tr
     anchorTo("https://blog.tqccl.com/doi-chuan/x/?from=x"),
     anchorTo("#?from=x"),
     anchorTo("/doi-chuan/?q=a%3Ffrom%3Db"),
-    anchorTo("/doi-chuan/x/?variant=1#from=x"),
+    anchorTo("/doi-chuan/x/?v=1#from=x"),
     anchorTo("/doi-chuan/x/?fromage=1&xfrom=2&from_=3&amp;ffrom=4"),
-    anchorTo("/doi-chuan/x/?variant=a%20from%3Db"),
+    anchorTo("/doi-chuan/x/?v=a%20from%3Db"),
     anchorTo("mailto:a@b.vn?subject=from=1"),
     anchorTo("javascript:void(0)"),
     anchorTo("http://["),
@@ -1815,9 +1840,10 @@ test("dist verifier rejects an internal link that carries from or hides the refe
   const restore = async (file) => writeFile(join(fixture.distDir, file), original.get(file));
   for (const [file, link, pattern] of [
     ["doi-chuan/index.html", '<a href="/doi-chuan/x/?from=%2Fdoi-chuan%2F">x</a>', /clean-URL contract.*doi-chuan\/index\.html: from \/doi-chuan\/x\/\?from=/u],
-    ["zh/doi-chuan/index.html", '<a href="/zh/doi-chuan/x/?variant=1&amp;from=%2Fzh%2Fdoi-chuan%2F">x</a>', /zh\/doi-chuan\/index\.html: from \/zh\/doi-chuan\/x\/\?variant=1&from=/u],
+    ["zh/doi-chuan/index.html", '<a href="/zh/doi-chuan/x/?v=1&amp;from=%2Fzh%2Fdoi-chuan%2F">x</a>', /zh\/doi-chuan\/index\.html: from \/zh\/doi-chuan\/x\/\?v=1&from=/u],
     ["404.html", '<a href="https://tqccl.pages.dev/doi-khac/x/?&#102;rom=%2F">x</a>', /404\.html: from https:\/\/tqccl\.pages\.dev\/doi-khac\/x\/\?from=/u],
     ["doi-chuan/index.html", '<a href="/khai-hoang/x/" rel="noopener noreferrer">x</a>', /doi-chuan\/index\.html: noreferrer \/khai-hoang\/x\//u],
+    ["doi-chuan/index.html", '<a href="/doi-khac/x/?variant=v-1">x</a>', /doi-chuan\/index\.html: variant \/doi-khac\/x\/\?variant=v-1/u],
   ]) {
     await inject(file, link);
     await assert.rejects(fixture.verify(), pattern, `${file} ${link}`);
@@ -1827,6 +1853,41 @@ test("dist verifier rejects an internal link that carries from or hides the refe
   await inject("doi-chuan/index.html", '<a href="https://example.com/?from=x" rel="noopener noreferrer" target="_blank">x</a>');
   await fixture.verify();
   await restore("doi-chuan/index.html");
+  await fixture.verify();
+});
+
+test("dist verifier pins the Đội khác variant on the detail root and accepts only the narrow variant guard in its body", async (t) => {
+  const fixture = await lookupDistFixture(t);
+  await fixture.verify();
+  const file = join(fixture.distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
+  const html = await readFile(file, "utf8");
+  const pin = `data-legacy-variant-id="${LEGACY_VARIANT_ID}"`;
+  const guard = `<script>${LEGACY_VARIANT_GUARD_SCRIPT}</script>`;
+  const oldGuard = "<script>if (new URLSearchParams(location.search).has('variant')) document.getElementById('team-detail-body').hidden = document.getElementById('team-detail-badges').hidden = true;</script>";
+  for (const [mutated, pattern] of [
+    // Mã phương án chỉ còn trong chú thích, không trên `#team-detail-root`.
+    [html.replace(` ${pin}`, "").replace("<article", `<!-- ${pin} --><article`), /lacks its validated pin.*data-legacy-variant-id/u],
+    // Guard cũ ẩn mọi `?variant=` (kể cả mã của chính trang) thay cho guard hẹp.
+    [html.replace(guard, oldGuard), /unexpected inline scripts/u],
+    // Guard hẹp còn nhưng có thêm script ẩn thân.
+    [html.replace(guard, `${guard}${oldGuard}`), /unexpected inline scripts/u],
+    // Thiếu guard: mã lạ sẽ hiện thân dựng sẵn như thể là biến thể được xin.
+    [html.replace(guard, ""), /unexpected inline scripts/u],
+    // Tên thuộc tính khác nhưng chứa chuỗi pin: `dataset.legacyVariantId` thành undefined, guard ẩn thân cả với mã của trang.
+    [html.replace(` ${pin}`, ` data-backup-${pin}`), /lacks its validated pin.*data-legacy-variant-id/u],
+    // Guard trong chú thích hoặc thành dữ liệu (`type` không phải JavaScript): không chạy.
+    [html.replace(guard, `<!-- ${guard} -->`), /unexpected inline scripts/u],
+    [html.replace(guard, `<script type="application/json">${LEGACY_VARIANT_GUARD_SCRIPT}</script>`), /unexpected inline scripts/u],
+    // Guard cũ dưới type lạ mà trình duyệt vẫn chạy (`text/ecmascript`), cạnh guard đúng: ẩn thân cả với mã của trang.
+    [html.replace(guard, `${guard}${oldGuard.replace("<script>", '<script type="text/ecmascript">')}`), /unexpected inline scripts/u],
+    // `nomodule` làm guard đúng không chạy ở trình duyệt hiện đại: mã lạ hiện thân dựng sẵn.
+    [html.replace(guard, `<script nomodule>${LEGACY_VARIANT_GUARD_SCRIPT}</script>`), /unexpected inline scripts/u],
+  ]) {
+    assert.notEqual(mutated, html);
+    await writeFile(file, mutated);
+    await assert.rejects(fixture.verify(), pattern);
+    await writeFile(file, html);
+  }
   await fixture.verify();
 });
 

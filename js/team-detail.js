@@ -18,6 +18,7 @@ import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData
 import { L } from './i18n.js';
 import { setLookupRouteHandlesFromJSON } from './lookup-ids.js';
 import { treeToDom } from './view-tree.js';
+import { LOCATION_REPLACED_EVENT } from './site-chrome.js';
 
 const TEAMS_SOURCE = 'data/teams.json';
 const VERIFY_MESSAGE = L('Không thể xác minh dữ liệu đội hình. Hãy tải lại trang hoặc quay lại danh sách.', '无法验证阵容数据。请刷新页面或返回列表。', '編成データを検証できません。ページを再読み込みするか、一覧に戻ってください。');
@@ -215,8 +216,18 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   }
 
   // Đội chuẩn và đội gốc ở trạng thái mặc định: thân đã dựng sẵn, chỉ gắn tương tác (Khai hoang có entry riêng).
-  // Biến thể đội gốc phụ thuộc `other-teams.json` đã pin nên chỉ biết được lúc chạy: tải, xác minh rồi thay thân.
-  if (family === 'legacy' && requestedVariantPresent) await load();
+  // URL cũ `?variant=` trùng phương án duy nhất của trang (`data-legacy-variant-id`): nội dung chính là bản dựng sẵn, nên nhận
+  // lại và bỏ `variant` khỏi thanh địa chỉ (link chia sẻ/đổi ngôn ngữ về URL canonical). Mã lạ thì phải tải `other-teams.json`
+  // đã pin để đối chiếu và báo lỗi, không hiển thị đội gốc như thể là biến thể được xin.
+  const ownVariant = family === 'legacy' && requestedVariantPresent && requestedVariant === root.dataset.legacyVariantId;
+  if (ownVariant) {
+    const url = new URL(location.href);
+    url.searchParams.delete('variant');
+    history.replaceState(history.state, '', `${url.pathname}${url.search}${url.hash}`);
+    // Link đổi ngôn ngữ đã ghép query lúc khởi tạo: báo để chúng bỏ `variant` ngay.
+    window.dispatchEvent(new Event(LOCATION_REPLACED_EVENT));
+  }
+  if (family === 'legacy' && requestedVariantPresent && !ownVariant) await load();
   else adoptPrerendered();
   return {reload: load};
 }

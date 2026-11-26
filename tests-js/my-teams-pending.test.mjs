@@ -288,6 +288,39 @@ test("M4 sau OAuth: lưu lại cùng nguồn dùng lại draft.id đang chờ n�
   assert.equal(pendingIdForSource(key, { storage, now: () => NOW + PENDING_TTL_MS + 1 }), null, "hết hạn thì không dùng lại");
 });
 
+test("bản lưu dở mang key cũ <đội>~<phương án của trang> được dùng lại khi lưu từ key canonical <đội> (không phát lại thành đội trùng)", async () => {
+  const { legacyAliasKey } = await import("../js/my-teams-save-button.js");
+  const { variantKey } = await import("../js/my-teams-sources.js");
+  const storage = memoryStorage();
+  const docWith = (variantId) => ({ querySelector: (selector) => (selector === "#team-detail-root" ? { dataset: variantId ? { legacyVariantId: variantId } : {} } : null) });
+  // Nháp hợp lệ (stash kiểm cả nội dung), chỉ đổi nguồn sang key cũ `<đội>~<phương án>` của Đội khác.
+  const pending = { ...draftOf("team-old"), source: { kind: "legacy", key: variantKey("doi-a", "v-1"), contentHash: "" } };
+  stashPendingSave(pending, { storage, now: () => NOW });
+  const canonical = { source: { kind: "legacy", key: variantKey("doi-a", null) } };
+  const alias = legacyAliasKey(canonical, variantKey, docWith("v-1"));
+  assert.equal(alias, "legacy:doi-a~v-1");
+  assert.equal(pendingIdForSource(alias, { storage, now: () => NOW }), "team-old", "cùng nội dung → dùng lại id đang chờ");
+  assert.equal(completePendingSave({ ok: true, outcome: "applied", team: { id: "team-old" } }, { storage, now: () => NOW }), true);
+  // Không có alias: trang không phải Đội khác, phương án khác của trang, key đã có biến thể, nguồn khác loại.
+  assert.equal(legacyAliasKey(canonical, variantKey, docWith(null)), null);
+  assert.equal(legacyAliasKey(canonical, variantKey, { querySelector: () => null }), null);
+  assert.equal(legacyAliasKey({ source: { kind: "legacy", key: "doi-a~v-1" } }, variantKey, docWith("v-1")), null);
+  assert.equal(legacyAliasKey({ source: { kind: "recommended", key: "doi-a" } }, variantKey, docWith("v-1")), null);
+  stashPendingSave(pending, { storage, now: () => NOW });
+  assert.equal(pendingIdForSource(legacyAliasKey(canonical, variantKey, docWith("v-2")), { storage, now: () => NOW }), null, "phương án khác không dùng lại");
+});
+
+test("ACK của id dùng chung giữa key cũ và key canonical: xóa id ở mọi khóa, lần Lưu sau sinh id mới (không ghi đè đội vừa lưu)", async () => {
+  const { releaseDraftId } = await import("../js/my-teams-save-button.js");
+  // Mở Lưu từ key canonical khi bản lưu dở key cũ đang chờ: cùng id nằm dưới hai khóa; khóa khác giữ id riêng.
+  const ids = new Map([["legacy:doi-a~v-1", "team-old"], ["legacy:doi-a", "team-old"], ["recommended:doi-b", "team-b"]]);
+  // Người dùng hủy hộp thoại, OAuth tự lưu bản lưu dở và server xác nhận `team-old`.
+  releaseDraftId("team-old", ids);
+  assert.deepEqual([...ids], [["recommended:doi-b", "team-b"]], "không còn khóa nào giữ id đã xác nhận");
+  releaseDraftId("team-unknown", ids);
+  assert.deepEqual([...ids], [["recommended:doi-b", "team-b"]]);
+});
+
 test("pending: unresolved của bộ chuyển đi cùng bản lưu dở qua OAuth; hết hạn hoặc mục cũ không có trường thì rỗng", async () => {
   const { peekPendingUnresolved } = await import("../js/my-teams-pending.js");
   const storage = memoryStorage();
