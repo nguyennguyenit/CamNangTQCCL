@@ -159,17 +159,21 @@ const INTERNAL_ORIGINS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_
 const REL_NOREFERRER = /(?:^|\s)noreferrer(?:\s|$)/iu;
 /** Trang chi tiết đội (cùng hình dạng với trang mùa Đội chuẩn): `/<họ>/<segment>/` sau khi bỏ tiền tố locale. */
 const TEAM_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac|khai-hoang)\/[^/]+\/$/u;
+/** Trang chi tiết không có biến thể theo URL: Đội chuẩn (một cấu hình một trang) và Đội khác (một đội gốc một phương án). */
+const SINGLE_VARIANT_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac)\/[^/]+\/$/u;
 
 /**
  * Link nội bộ vi phạm hợp đồng URL sạch của trang HTML ở `pageUrl`, mỗi vi phạm một mục `{href, reason}` (`href` đã giải mã
  * entity, đúng thứ trình duyệt mở): `from` — query `from` (trạng thái điều hướng không được nằm trong link nội bộ: mỗi giá trị
- * là một URL không canonical); `noreferrer` — link tới trang chi tiết có `rel` chứa `noreferrer` (trang chi tiết đọc referrer
+ * là một URL không canonical); `variant` — query `variant` trên link tới trang chi tiết Đội chuẩn/Đội khác (trang đó chỉ có
+ * một nội dung, nên `variant` chỉ tạo URL trùng; Khai hoang vẫn được mang `variant` của cấu hình không mặc định);
+ * `noreferrer` — link tới trang chi tiết có `rel` chứa `noreferrer` (trang chi tiết đọc referrer
  * để dựng nút Quay lại). Phân tích bằng URL thay vì regex trên cả HTML: bỏ chú thích, thân `<script>`/`<style>`, lấy `href`
  * của từng `<a>`, giải mã entity (tên, thập phân, thập lục phân), `new URL(href, pageUrl)`. Nội bộ là origin của `site` và các
  * host cũ của cầu chuyển domain; link ngoài, hash, `from=` nằm trong giá trị khác, JSON-LD hay `data-href` không bị tính.
  * @param {string} html
  * @param {string | URL} pageUrl URL tuyệt đối của trang chứa HTML (để ghép link tương đối)
- * @returns {{href: string, reason: "from" | "noreferrer"}[]}
+ * @returns {{href: string, reason: "from" | "variant" | "noreferrer"}[]}
  */
 export function internalLinksWithReturnQuery(html, pageUrl) {
   const violations = [];
@@ -189,7 +193,9 @@ export function internalLinksWithReturnQuery(html, pageUrl) {
     }
     if (!INTERNAL_ORIGINS.has(url.origin)) continue;
     if (url.searchParams.has("from")) violations.push({ href, reason: "from" });
-    if (TEAM_DETAIL_PATH.test(stripLocale(url.pathname)) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
+    const detailPath = stripLocale(url.pathname);
+    if (SINGLE_VARIANT_DETAIL_PATH.test(detailPath) && url.searchParams.has("variant")) violations.push({ href, reason: "variant" });
+    if (TEAM_DETAIL_PATH.test(detailPath) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
   }
   return violations;
 }
@@ -211,7 +217,7 @@ async function verifyCleanInternalLinks(distPath, htmlFiles, site) {
   }
   if (problems.length) {
     throw new Error(
-      `dist carries ${problems.length} internal link(s) that break the clean-URL contract (no \`from\` query, no rel=noreferrer toward a detail page); first: ${problems.sort().slice(0, 5).join("; ")}`,
+      `dist carries ${problems.length} internal link(s) that break the clean-URL contract (no \`from\` query, no \`variant\` toward a Đội chuẩn/Đội khác detail page, no rel=noreferrer toward a detail page); first: ${problems.sort().slice(0, 5).join("; ")}`,
     );
   }
 }
@@ -849,6 +855,8 @@ export async function verifyAstroDist({
       entry: "/js/team-detail.js",
       pins: [
         `data-legacy-team-id="${entry.legacyTeamId}"`,
+        // Phương án duy nhất của trang: script inline chỉ ẩn thân dựng sẵn khi URL cũ xin `variant` khác mã này.
+        `data-legacy-variant-id="${entry.variantIds[0]}"`,
         `data-legacy-teams-sha256="${catalog.legacyTeamsSha256}"`,
         `data-generation-id="${catalog.generationId}"`,
         `data-manifest-sha256="${catalog.manifestSha256}"`,

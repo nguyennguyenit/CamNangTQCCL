@@ -154,20 +154,22 @@ test.describe("4–7 · lưu từ trang nguồn", () => {
     expect(byKind.khaihoang.heroes).toEqual(fromKhaiHoang(khaiHoangById(KHAI_HOANG_ID), null, ids, { id: "x" }).draft.heroes);
   });
 
-  test("#6 /doi-khac/<x>/?variant=v → Lưu: đội của biến thể, key x~v", async ({ page, request }) => {
+  test("#6 URL cũ /doi-khac/<x>/?variant=v (phương án duy nhất của trang) → Lưu: như trang canonical, key x, nội dung trùng biến thể", async ({ page, request }) => {
     const tables = await routes(request);
     const mock = await mockRoster(page);
     await page.goto(`${legacyPath(tables)}?variant=${LEGACY_VARIANT}`);
     await expect(page.locator("#team-detail-body")).toBeVisible();
     await saveFromDialog(page);
     const [team] = liveTeams(mock.server);
-    expect(team.source).toMatchObject({ kind: "legacy", key: `${LEGACY_ID}~${LEGACY_VARIANT}` });
+    // Trang nhận lại bản dựng sẵn nên lưu đúng như URL canonical (link nội bộ đã không mang `variant` từ #174).
+    expect(team.source).toMatchObject({ kind: "legacy", key: LEGACY_ID });
+    // Nội dung lưu vẫn trùng đội của biến thể: mỗi đội gốc đúng một phương án, `legacyContent` của nó trùng đội gốc.
     const variant = admittedVariants.find((row) => row.legacyTeamId === LEGACY_ID && row.legacyVariantId === LEGACY_VARIANT);
-    const expected = fromLegacy({ ...variant.legacyContent, notes: legacyById(LEGACY_ID).notes }, ids, { legacyTeamId: LEGACY_ID, legacyVariantId: LEGACY_VARIANT, id: "x" }).draft;
-    expect(team.heroes).toEqual(expected.heroes);
+    const fromVariant = fromLegacy({ ...variant.legacyContent, notes: legacyById(LEGACY_ID).notes }, ids, { legacyTeamId: LEGACY_ID, legacyVariantId: LEGACY_VARIANT, id: "x" }).draft;
+    expect(team.heroes).toEqual(fromVariant.heroes);
     // Hash chép từ chỉ mục build, nên khớp chỉ mục.
     const index = await (await request.get("/my-teams-source-index.json")).json();
-    expect(team.source.contentHash).toBe(index[`legacy:${LEGACY_ID}~${LEGACY_VARIANT}`]);
+    expect(team.source.contentHash).toBe(index[`legacy:${LEGACY_ID}`]);
   });
 
   test("#7 Khai hoang đổi chip biến thể rồi Lưu: đội của biến thể đang hiện", async ({ page, request }) => {

@@ -1,5 +1,11 @@
 # Project Changelog
 
+## 2026-11-26 (URL cũ `?variant=` của Đội khác hiện nội dung dựng sẵn, #172)
+
+- Fixed: URL cũ `/doi-khac/<handle>/?variant=<mã>` (đã chia sẻ hoặc bị index trước khi link bỏ `variant`) không còn ẩn thân dựng sẵn. Mỗi đội gốc có trang đúng một phương án; đo cả 255 phương án đủ dữ liệu, nội dung tải lại trùng bản dựng sẵn, chỉ thêm khối kỹ thuật "Biến thể đã đối chiếu / Vân tay nội dung". Trang nhúng mã phương án vào `#team-detail-root[data-legacy-variant-id]`; script inline chỉ ẩn thân khi `variant` khác mã đó; `js/team-detail.js` nhận lại bản dựng sẵn (không tải `teams.json`/`website-display.json`) và `replaceState` bỏ `variant`. Mã lạ vẫn tải, đối chiếu và báo lỗi như cũ.
+- Changed: "Lưu vào Đội của tôi" từ URL cũ đó lưu như trang canonical (nguồn `legacy`, key `<x>` thay vì `<x>~<mã>`), khớp cách lưu từ link nội bộ kể từ khi bỏ `variant`. Nội dung lưu trùng nhau ở cả 255 phương án (đo bằng `fromLegacy` trên đội gốc và `legacyContent`); đội đã lưu trước đó với key `<x>~<mã>` giữ nguyên.
+- Added: verifier báo link nội bộ tới trang chi tiết Đội chuẩn/Đội khác mang `variant` (Khai hoang vẫn được, cho cấu hình không mặc định) và ghim `data-legacy-variant-id` của mỗi trang Đội khác.
+
 ## 2026-11-20 (Bỏ `?from=` khỏi link nội bộ tới trang chi tiết đội)
 
 - Changed: link nội bộ tới trang chi tiết (thẻ Đội chuẩn/Đội khác/Khai hoang, Soi đội, Gợi ý đội, "Đội tiêu biểu" của Tra cứu, link đổi ngôn ngữ) chỉ còn URL canonical, kèm `variant` khi nó chọn nội dung; không còn `?from=`. Số liệu production 2026-11-20 (cả vi/zh/ja): `/doi-chuan/` 338 thẻ có `from` / 0 sạch (169 href khác nhau), `/doi-khac/` 120 / 0, `/khai-hoang/` 40 / 0 (20 giá trị `from`). Canonical vốn đã sạch, nhưng link nội bộ trỏ URL không canonical (Google khuyên trỏ canonical) và số biến thể URL không có trần vì client dùng `location.href` làm `from`.
