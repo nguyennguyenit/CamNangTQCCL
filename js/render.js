@@ -116,8 +116,8 @@ export const SOURCE_LABEL = {
   "moi-phe": "Meta phe (cũ)",
   "youtube": "YouTube",
 };
-/** Nhãn nguồn đội cũ theo ngôn ngữ trang; giá trị lạ trả nguyên mã. */
-export const sourceLabel = (value) => legacyLabelZh("source", value) ?? SOURCE_LABEL[value] ?? value;
+/** Nhãn nguồn đội cũ theo ngôn ngữ trang; giá trị lạ trả nguyên mã. Tra bằng own-property: `?source=__proto__` hay `constructor` không được lấy thuộc tính kế thừa của object. */
+export const sourceLabel = (value) => legacyLabelZh("source", value) ?? (Object.hasOwn(SOURCE_LABEL, value) ? SOURCE_LABEL[value] : value);
 
 /** Chuẩn hoá CRLF của trường nguồn nhiều dòng; chuỗi đã nhận được giữ nguyên, không trim. */
 const sourceTextLines = (value) => (typeof value === "string" ? value.replace(/\r\n?/g, "\n") : "");

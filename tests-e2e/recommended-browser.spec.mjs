@@ -1,4 +1,8 @@
 import {test,expect} from '@playwright/test';
+import {readFileSync} from 'node:fs';
+import {buildSeasonCandidates} from '../js/roster-season-candidates.js';
+import {ROSTER_SCAN_STORAGE_KEY} from '../js/roster-scan-state.js';
+import {PRODUCTION_ORIGIN,dataLayerEntries,routeProductionHost,seedConsent} from './helpers/production-host.mjs';
 
 /** Link điều hướng của mục: bảng desktop trong header hoặc menu mobile đang mở (footer cũng có link cùng tên). */
 function navLink(page, name, mobile = false) {
@@ -1181,4 +1185,71 @@ test('nguồn JP: trang mùa PK-S26 hiện tier JP trên đúng các đội kh�
   const block=page.locator('#team-detail-root .detail-tier-source');
   await expect(block).toContainText(expected[0].tierSources[0].tierRaw);
   await expect(block.locator('a[href^="https://kazten.com/"]')).toHaveAttribute('rel','noopener noreferrer');
+});
+
+/**
+ * Đo lường GA4 chỉ chạy trên host sản xuất (`js/analytics.js`): trang mở dưới `https://tqccl.com` (helper route về preview, chặn mạng
+ * GA) rồi đọc `window.dataLayer`. Hai test dưới ghim hợp đồng của khung lọc: mỗi thao tác của người dùng ghi đúng một `filter_change`,
+ * ô chọn mùa (nằm ở đầu mục, ngoài sidebar) và chip của thanh kho (cũng là `.fchip`) có đường sự kiện riêng, không bị gốc sự kiện của
+ * sidebar bắt nhầm.
+ */
+const openProductionList=async({page,context,baseURL},path)=>{
+  await routeProductionHost(context,baseURL);
+  await seedConsent(context,'denied');
+  await page.goto(`${PRODUCTION_ORIGIN}${path}`);
+  await expect(page.locator('body')).toHaveAttribute('data-boot','ready');
+};
+const filterChanges=async page=>(await dataLayerEntries(page))
+  .filter(entry=>entry[0]==='event'&&entry[1]==='filter_change').map(entry=>entry[2]);
+
+test('/doi-chuan/: đổi mùa ghi ?season= vào URL và báo đúng một filter_change kiểu season mỗi lần đổi',async({page,context,baseURL})=>{
+  await openProductionList({page,context,baseURL},'/doi-chuan/');
+  const section=page.locator('#section-team-chuan');
+  await expect(section.locator('.reference-team-card').first()).toBeVisible();
+  const season=section.getByLabel('Mùa',{exact:true});
+  const current=await season.inputValue();
+  const next=await season.locator('option').evaluateAll((options,now)=>options.map(option=>option.value).find(value=>value&&value!==now),current);
+  expect(next).toBeTruthy();
+  expect(await filterChanges(page)).toEqual([]);
+  await season.selectOption(next);
+  await expect(page).toHaveURL(new RegExp(`[?&]season=${next}(?:&|$)`,'u'));
+  await expect(season).toHaveValue(next);
+  expect([...new URL(page.url()).searchParams.keys()]).toEqual(['season']);
+  expect(await filterChanges(page)).toEqual([{filter:'season',filter_value:next}]);
+  // Đổi lại là một thao tác nữa (không phải hai, không phải không).
+  await season.selectOption(current);
+  await expect(season).toHaveValue(current);
+  expect(await filterChanges(page)).toEqual([{filter:'season',filter_value:next},{filter:'season',filter_value:current}]);
+});
+
+test('/doi-chuan/ có kho: chip "Ráp được" của thanh kho chỉ thêm kho= vào URL, không có khoá lạ, và báo đúng một filter_change',async({page,context,baseURL,request})=>{
+  const {seasons,index}=await referenceData(request);
+  const season=seasons.defaultSourceSeasonId;
+  const read=name=>JSON.parse(readFileSync(new URL(`../data/${name}`,import.meta.url),'utf8'));
+  // Kho gồm đủ tướng và chiến pháp (đã đối chiếu) của mọi đội mùa mặc định, nên chip "Ráp được" có đội để lọc.
+  const {teams}=buildSeasonCandidates(index.records.filter(row=>row.sourceSeasonId===season),season,{heroesDict:read('heroes-dict.json'),tacticsDict:read('tactics.json')});
+  const heroes=new Set(),tactics=new Set();
+  for (const team of teams) for (const hero of team.heroes) {
+    heroes.add(hero.name);
+    for (const tactic of hero.tactics) if (!tactic.unresolved) tactics.add(tactic.name);
+  }
+  const roster={ownedHeroes:[...heroes].map(name=>({name})),ownedTactics:[...tactics].map(name=>({name})),lockedTeams:[],confirmed:true,updatedAt:'2026-11-11T00:00:00.000Z'};
+  await page.addInitScript(([key,value])=>{ if (localStorage.getItem(key)===null) localStorage.setItem(key,value); },[ROSTER_SCAN_STORAGE_KEY,JSON.stringify(roster)]);
+  await openProductionList({page,context,baseURL},'/doi-chuan/');
+  const bar=page.locator('#section-team-chuan .reference-roster-bar');
+  await expect(bar).toHaveAttribute('data-state','ready');
+  const ready=bar.getByRole('button',{name:/^Ráp được \d+$/});
+  await expect(ready).toHaveAttribute('aria-pressed','false');
+  expect(await filterChanges(page)).toEqual([]);
+  await ready.click();
+  await expect(page).toHaveURL(/[?&]kho=rap-duoc(?:&|$)/);
+  await expect(ready).toHaveAttribute('aria-pressed','true');
+  expect([...new URL(page.url()).searchParams.keys()]).toEqual(['kho']);
+  expect(page.url()).not.toContain('undefined');
+  expect(await filterChanges(page)).toEqual([{filter:'kho',filter_value:'rap-duoc'}]);
+  // Bấm lại để tắt: một thao tác nữa, báo `tat`, URL không còn khoá nào.
+  await ready.click();
+  await expect(ready).toHaveAttribute('aria-pressed','false');
+  expect([...new URL(page.url()).searchParams.keys()]).toEqual([]);
+  expect(await filterChanges(page)).toEqual([{filter:'kho',filter_value:'rap-duoc'},{filter:'kho',filter_value:'tat'}]);
 });

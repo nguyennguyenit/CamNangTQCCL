@@ -1,7 +1,7 @@
 ---
 phase: 1
 title: "Tách khung thành cây dùng chung (không đổi hành vi)"
-status: pending
+status: completed
 priority: P2
 effort: "5h"
 dependencies: []
@@ -89,14 +89,14 @@ npx playwright test tests-e2e/recommended-browser.spec.mjs tests-e2e/team-ssr-ad
 
 ## Todo
 
-- [ ] Ghi baseline e2e, chụp oracle DOM tạm (vi/zh/ja)
-- [ ] Thêm e2e đổi mùa và chip kho (xanh trên code cũ)
-- [ ] Tạo `js/reference-shell-tree.js`, chuyển hằng số và hàm facet sang
-- [ ] `facetEntries` dùng Collator theo locale cộng khoá mã thô; `sourceLabel` dùng `Object.hasOwn`; `chipText` trả `String`
-- [ ] Chuyển `createRecommendedSection` sang `treeToDom`, gắn sự kiện theo đúng gốc đã định
-- [ ] Viết `tests-js/reference-shell-tree.test.mjs`
-- [ ] So oracle, rồi xoá script tạm
-- [ ] Regression gate xanh
+- [x] Ghi baseline e2e, chụp oracle DOM tạm (vi/zh/ja)
+- [x] Thêm e2e đổi mùa và chip kho (xanh trên code cũ)
+- [x] Tạo `js/reference-shell-tree.js`, chuyển hằng số và hàm facet sang
+- [x] `facetEntries` dùng Collator theo locale cộng khoá mã thô; `sourceLabel` dùng `Object.hasOwn`; `chipText` trả `String`
+- [x] Chuyển `createRecommendedSection` sang `treeToDom`, gắn sự kiện theo đúng gốc đã định
+- [x] Viết `tests-js/reference-shell-tree.test.mjs`
+- [x] So oracle, rồi xoá script tạm
+- [x] Regression gate xanh
 
 ## Success Criteria
 

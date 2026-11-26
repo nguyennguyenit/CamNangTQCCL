@@ -12,7 +12,7 @@
     "notes": {
       "approvedDisplaySlots": 11,
       "blocks": 2708,
-      "concreteInventorySha256": "97afda56293e806e613a054f00308d283bd2254b6b1aa2fec16c1d43379681f4",
+      "concreteInventorySha256": "8e3ed2ac9893615b8d1da9d8b34878e4c45d67e101358333db386c3f2cd26049",
       "concreteLocationCount": 76735,
       "hanBlocks": 2617,
       "lookupReviewObligations": 3597,
@@ -257,6 +257,7 @@
         "src/pages/doi-chuan/index.astro",
         "src/components/pages/SectionPage.astro",
         "js/team-filter-section.js",
+        "js/reference-shell-tree.js",
         "js/recommended-reference-render.js"
       ],
       "id": "team-chuan",
@@ -332,6 +333,7 @@
         "src/pages/doi-khac/index.astro",
         "src/components/pages/SectionPage.astro",
         "js/team-filter-section.js",
+        "js/reference-shell-tree.js",
         "js/recommended-reference-render.js"
       ],
       "id": "team-khac",
@@ -788,7 +790,8 @@
     "js/recommended-reference-state.js": "2c9907584c0e93e5a724e6f38f1d4f6236adf9aa2e5e0ed356b42818206ca8cc",
     "js/recruit-tracker-store.js": "71b85848b01e6c70586e8a56dacfe7816dbacf4a8513127e25a2d2bd5e4c7183",
     "js/recruit-tracker.js": "34f07a10cd39b45af7a08ac6b75c680d5d88864dc721a7af9c875d7942c0bbe0",
-    "js/render.js": "3951b5c194bf7166e9ab9c54e237287f75546ece2e1013c8630731448096faab",
+    "js/reference-shell-tree.js": "80fe514e29fd2283d4aeef02da8ec949b34e8c7b33519f59bc378eefe8cac161",
+    "js/render.js": "1074d9a25ed3c9a9654cdcb0efe5bd53e23542a6fd5ba3312843fb720667638e",
     "js/roster-pasted-name-list-panel.js": "93a19c5e1a7af3e117a370ba07267ea24a46031181c4feaa2da3e44139f3ecc2",
     "js/roster-picker.js": "3fc384c85dbe454aae303bd956485f0f8a1b94d256d5bf20a82f85d7d60e3c9f",
     "js/roster-recommend-ui.js": "3c5a5454dd8bc1c47df0385ebad07eb4b7d8fc80085785fd48df432014f9070d",
@@ -799,7 +802,7 @@
     "js/tactic-summaries.js": "19c2baa46f3e3db9c82b544c64f514cb62891eea01b47819afff654fbc281e76",
     "js/team-detail-navigation.js": "16ff1fcd8b2257b3886f4a7d76aa8da45aa0e5696744c80cc2613ae1436b71b3",
     "js/team-detail.js": "9f5243a27b2b306eaacd7f18e93da8f400388b3c1c8f504f15657fba999383aa",
-    "js/team-filter-section.js": "0aeb19a14550b01577c166d1f7ab39eb6a9cfd4df5b46aaf41757fc229bb4edf",
+    "js/team-filter-section.js": "eb58cabbd42919ba9bef0a9e8cce87ff3972f65b20c09cf1b46af5043af61886",
     "js/turnstile.js": "0f8681df7b4e2f4b947f25499ea749e6aec02545e0cbae3330dc4d8c7196a456",
     "js/unified-lookup.js": "552fcf34bd424372d68d417a058a3867df1297d46b1e22ab13168b09ba650163",
     "js/website-display.js": "a51ecb0a6f55e17aa2aee963741caf2ce7d98e62c5405ed355c3436ab10593f8",
