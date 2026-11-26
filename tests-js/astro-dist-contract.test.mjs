@@ -1878,6 +1878,10 @@ test("dist verifier pins the Đội khác variant on the detail root and accepts
     // Guard trong chú thích hoặc thành dữ liệu (`type` không phải JavaScript): không chạy.
     [html.replace(guard, `<!-- ${guard} -->`), /unexpected inline scripts/u],
     [html.replace(guard, `<script type="application/json">${LEGACY_VARIANT_GUARD_SCRIPT}</script>`), /unexpected inline scripts/u],
+    // Guard cũ dưới type lạ mà trình duyệt vẫn chạy (`text/ecmascript`), cạnh guard đúng: ẩn thân cả với mã của trang.
+    [html.replace(guard, `${guard}${oldGuard.replace("<script>", '<script type="text/ecmascript">')}`), /unexpected inline scripts/u],
+    // `nomodule` làm guard đúng không chạy ở trình duyệt hiện đại: mã lạ hiện thân dựng sẵn.
+    [html.replace(guard, `<script nomodule>${LEGACY_VARIANT_GUARD_SCRIPT}</script>`), /unexpected inline scripts/u],
   ]) {
     assert.notEqual(mutated, html);
     await writeFile(file, mutated);

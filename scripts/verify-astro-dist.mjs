@@ -157,8 +157,6 @@ function decodeCharacterReferences(value) {
 
 /** Chú thích HTML (trình duyệt không dựng gì bên trong). */
 const HTML_COMMENT = /<!--[^]*?-->/gu;
-/** `type` của `<script>` mà trình duyệt chạy; giá trị khác (vd `application/json`) chỉ là dữ liệu. */
-const EXECUTABLE_SCRIPT_TYPES = new Set(["", "text/javascript", "application/javascript", "module"]);
 
 /** Thuộc tính của một thẻ mở (`<tên …>`), tên viết thường, giá trị đã giải mã entity; thuộc tính lặp lại thì cái đầu thắng như trình duyệt. */
 function tagAttributes(tag) {
@@ -921,14 +919,15 @@ export async function verifyAstroDist({
         const [, name, value] = pin.match(/^([^=]+)="(.*)"$/u);
         if (rootAttributes.get(name) !== value) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
       }
-      // Script THỰC THI trong thân trang chi tiết đúng như nguồn: không có guard cũ ẩn mọi `?variant=`, script lạ, hay guard bị vô
-      // hiệu (trong chú thích, `type` không phải JavaScript).
-      const visibleArticle = visible.slice(visible.indexOf(rootTag)).match(/^[^]*?<\/article>/u)?.[0] ?? "";
-      const articleScripts = [...visibleArticle.matchAll(/<script\b((?:"[^"]*"|'[^']*'|[^'">])*)>([^]*?)<\/script>/gu)]
-        .filter(([, attributes]) => EXECUTABLE_SCRIPT_TYPES.has((tagAttributes(`<script${attributes}>`).get("type") ?? "").trim().toLowerCase()))
-        .map((match) => match[2]);
-      if (JSON.stringify(articleScripts) !== JSON.stringify(inlineScripts ?? articleScripts)) {
-        throw new Error(`Team detail page carries unexpected inline scripts in its body: ${path}`);
+      // Thân trang Đội khác có hợp đồng tĩnh: MỌI phần tử `<script>` trong article (sau khi bỏ chú thích, bất kể `type`/thuộc tính)
+      // đúng bằng danh sách nguồn, mỗi cái không thuộc tính. Không lọc theo `type`: trình duyệt chạy cả type lạ như `text/ecmascript`,
+      // còn `nomodule`/`type` khác làm guard đúng không chạy.
+      if (inlineScripts) {
+        const visibleArticle = visible.slice(visible.indexOf(rootTag)).match(/^[^]*?<\/article>/u)?.[0] ?? "";
+        const articleScripts = visibleArticle.match(/<script\b(?:"[^"]*"|'[^']*'|[^'">])*>[^]*?<\/script>/gu) ?? [];
+        if (JSON.stringify(articleScripts) !== JSON.stringify(inlineScripts.map((script) => `<script>${script}</script>`))) {
+          throw new Error(`Team detail page carries unexpected inline scripts in its body: ${path}`);
+        }
       }
       if (!page.includes(`src="${entry}"`)) {
         throw new Error(`Team detail page does not load its own entry: ${path} (${entry})`);
