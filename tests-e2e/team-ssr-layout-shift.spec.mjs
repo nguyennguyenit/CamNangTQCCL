@@ -1,16 +1,17 @@
 import { expect, test } from "@playwright/test";
-import { readFileSync } from "node:fs";
-import { buildSeasonCandidates } from "../js/roster-season-candidates.js";
 import { holdBoot } from "./helpers/boot.mjs";
+import { ROSTER_SCAN_KEY, rosterOfFirstTeam } from "./helpers/roster-fixture.mjs";
 
 // Khung bộ lọc của /doi-chuan/ và /doi-khac/ do build phát sẵn (ô chọn mùa, thanh công cụ, sidebar lọc có chip đã đếm). Spec này khóa
 // hai điều bằng cách giữ `js/app.js` lại (bản dựng sẵn thuần), đo, thả app.js, chờ boot rồi đo lại:
-//   1. Bố cục không nhảy: thẻ đội đầu tiên (và sidebar ở desktop) giữ nguyên x, width; y chỉ được dịch đúng bằng thanh gợi ý kho.
+//   1. Bố cục không nhảy: thẻ đội đầu tiên (và sidebar ở desktop) giữ nguyên x, width; y chỉ được dịch đúng bằng thanh gợi ý kho (#181).
 //   2. Khung dựng sẵn là đúng khung client dựng: `.reference-head` và `.reference-results` trước và sau boot bằng nhau ở trạng thái mặc định.
 //
-// Thanh kho (`.reference-roster-bar`, #181) là phần lệch duy nhất được chấp nhận và KHÔNG bị giấu: khách (kho trống) luôn thấy thanh gợi ý
-// ngay sau boot, nên thẻ đầu của Đội chuẩn dịch xuống đúng bằng chiều cao thanh cộng gap của `.reference-results-body` (±1px). Có kho
-// thì thanh hiện khi kho và từ điển tải xong, cùng một luật. Đội khác không có thanh kho nên không được lệch.
+// Thay đổi phạm vi (review PR #184, anh chốt): thanh kho (`.reference-roster-bar`) thuộc #181 ở CẢ HAI trường hợp, không chỉ khách:
+//   - khách (kho trống): thanh dẫn nhập kho hiện chắc chắn ngay sau boot;
+//   - máy có kho: thanh tóm tắt + nút lọc/sắp hiện khi kho và từ điển tải xong.
+// Đó là phần lệch dọc DUY NHẤT được chấp nhận và KHÔNG bị giấu: thẻ đầu của Đội chuẩn dịch xuống đúng bằng chiều cao thanh cộng gap của
+// `.reference-results-body` (±1px), x và width vẫn ≤1px. Đội khác không có thanh kho nên không được lệch ở trục nào. Mọi dung sai khác giữ nguyên.
 
 const TOLERANCE = 1;
 const PAGES = [["/doi-chuan/", "Đội chuẩn"], ["/doi-khac/", "Đội khác"]];
@@ -111,16 +112,17 @@ function firstDifference(before, after) {
 }
 
 /**
- * Các khẳng định chung cho hai lần đo; `expectBar`: có thanh kho hiện sau boot (Đội chuẩn) hay không (Đội khác).
+ * Các khẳng định chung cho hai lần đo; `rosterBar181`: ngoại lệ #181, thanh kho hiện sau boot (Đội chuẩn, cả khách lẫn máy có kho) hay không
+ * (Đội khác). Có thanh thì độ lệch dọc phải đúng bằng chiều cao thanh + gap; không thì không được lệch dọc.
  * Dùng `expect.soft` để một lần chạy báo đủ mọi chỗ lệch (x, y, width, sidebar, DOM) thay vì dừng ở chỗ đầu tiên.
  */
-function expectStableLayout(label, before, after, { expectBar, sidebar }) {
+function expectStableLayout(label, before, after, { rosterBar181, sidebar }) {
   const dx = after.card.x - before.card.x;
   const dy = after.card.y - before.card.y;
   const dWidth = after.card.width - before.card.width;
   expect.soft(Math.abs(dx), `${label}: thẻ đầu lệch ngang ${dx}px`).toBeLessThanOrEqual(TOLERANCE);
   expect.soft(Math.abs(dWidth), `${label}: thẻ đầu đổi rộng ${dWidth}px`).toBeLessThanOrEqual(TOLERANCE);
-  if (expectBar) {
+  if (rosterBar181) {
     expect.soft(after.bar, `${label}: thanh gợi ý kho phải hiện ngay sau boot (#181)`).not.toBeNull();
     expect.soft(before.bar, `${label}: bản dựng sẵn chưa có thanh kho`).toBeNull();
   } else {
@@ -140,7 +142,7 @@ function expectStableLayout(label, before, after, { expectBar, sidebar }) {
 for (const [locale, prefix] of LOCALES) {
   for (const [path, name] of PAGES) {
     for (const [viewport, size] of VIEWPORTS) {
-      test(`${name} ${locale} ${viewport}px: khung dựng sẵn không làm bố cục nhảy khi boot và khớp DOM bản client`, async ({ page }) => {
+      test(`${name} ${locale} ${viewport}px${path === "/doi-chuan/" ? ", khách (thanh kho #181)" : ""}: khung dựng sẵn không làm bố cục nhảy khi boot và khớp DOM bản client`, async ({ page }) => {
         const label = `${prefix}${path} @${size.width}`;
         await page.setViewportSize(size);
         const release = await holdBoot(page, `${prefix}${path}`);
@@ -159,7 +161,7 @@ for (const [locale, prefix] of LOCALES) {
         const afterHtml = await shellHtml(page);
         expect.soft(await mountMarks(page), `${label}: boot xong không còn dấu trạng thái`).toEqual([]);
 
-        expectStableLayout(label, before, after, { expectBar: path === "/doi-chuan/", sidebar });
+        expectStableLayout(label, before, after, { rosterBar181: path === "/doi-chuan/", sidebar });
         expect.soft(firstDifference(beforeHtml.head, afterHtml.head), `${label}: .reference-head sau boot khác bản dựng sẵn`).toBeNull();
         expect.soft(firstDifference(beforeHtml.results, afterHtml.results), `${label}: .reference-results sau boot khác bản dựng sẵn`).toBeNull();
       });
@@ -167,34 +169,13 @@ for (const [locale, prefix] of LOCALES) {
   }
 }
 
-// Máy có kho: thanh kho hiện khi kho và từ điển tải xong, vẫn là phần lệch dọc duy nhất và vẫn đúng bằng chiều cao thanh cộng gap.
-const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
-const { generationId } = read("src/data/recommended-reference/current.json");
-const { records } = read(`src/data/recommended-reference/${generationId}/index.json`);
-const { defaultSourceSeasonId } = read(`src/data/recommended-reference/${generationId}/seasons.json`);
-const dicts = { heroesDict: read("data/heroes-dict.json"), tacticsDict: read("data/tactics.json") };
-const SCAN_KEY = "tqccl.rosterRecommend.scanState.v1";
-
-/** Kho vừa đủ ráp một đội của mùa mặc định (cùng cách dựng với `rosterFor` của bai-viet-kho-redesign.spec.mjs). */
-function rosterOfFirstTeam() {
-  const [record] = records.filter((item) => item.sourceSeasonId === defaultSourceSeasonId);
-  const { teams } = buildSeasonCandidates([record], defaultSourceSeasonId, dicts);
-  const heroes = new Set();
-  const tactics = new Set();
-  for (const team of teams) {
-    for (const hero of team.heroes) {
-      heroes.add(hero.name);
-      for (const tactic of hero.tactics) if (!tactic.unresolved) tactics.add(tactic.name);
-    }
-  }
-  return { ownedHeroes: [...heroes].map((name) => ({ name })), ownedTactics: [...tactics].map((name) => ({ name })), lockedTeams: [], confirmed: true, updatedAt: "2026-11-11T00:00:00.000Z" };
-}
+// Máy có kho (cũng thuộc #181, như khách): thanh kho hiện khi kho và từ điển tải xong, vẫn là phần lệch dọc duy nhất và vẫn đúng bằng chiều cao thanh cộng gap.
 
 for (const [viewport, size] of VIEWPORTS) {
-  test(`Đội chuẩn vi ${viewport}px, máy có kho: thanh kho hiện sau khi kho tải xong là độ lệch dọc duy nhất, đúng bằng chiều cao thanh + gap`, async ({ page }) => {
+  test(`Đội chuẩn vi ${viewport}px, máy có kho (thanh kho #181): thanh kho hiện sau khi kho tải xong là độ lệch dọc duy nhất, đúng bằng chiều cao thanh + gap`, async ({ page }) => {
     const roster = rosterOfFirstTeam();
     expect(roster.ownedHeroes.length, "kho giả phải có tướng").toBeGreaterThan(0);
-    await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [SCAN_KEY, JSON.stringify(roster)]);
+    await page.addInitScript(([key, value]) => localStorage.setItem(key, value), [ROSTER_SCAN_KEY, JSON.stringify(roster)]);
     await page.setViewportSize(size);
     const release = await holdBoot(page, "/doi-chuan/");
     expect(await page.locator(".reference-results").count(), `/doi-chuan/ có kho @${size.width}: bản dựng sẵn phải mang khung lọc (.reference-results)`).toBe(1);
@@ -204,6 +185,6 @@ for (const [viewport, size] of VIEWPORTS) {
     await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
     await expect(page.locator(".reference-roster-bar")).toHaveAttribute("data-state", "ready");
     const after = await measure(page, { sidebar });
-    expectStableLayout(`/doi-chuan/ có kho @${size.width}`, before, after, { expectBar: true, sidebar });
+    expectStableLayout(`/doi-chuan/ có kho @${size.width}`, before, after, { rosterBar181: true, sidebar });
   });
 }

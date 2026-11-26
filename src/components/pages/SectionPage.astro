@@ -105,9 +105,13 @@ const coexistQilueJson = section === 'coexist' ? await coexistQilueTableJson() :
   canonicalUrl={canonicalUrl}
   locale={locale}
 >
-  <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source} set:html={prerendered?.html}></section>
-  {/* Thân dựng sẵn là trạng thái mặc định: URL/kiểu hiển thị/snapshot khác mặc định thì ẩn đến khi js/app.js dựng đúng. */}
-  {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
+  {/* Script bảo vệ (`ssrStaleGuardScript`) là con ĐẦU của mount, không đặt sau nó: trình duyệt phân tích HTML theo luồng và vẽ phần đã tới, nên script nằm
+      sau mount chỉ chạy khi cả danh sách đã về, trong lúc đó khung và danh sách ở trạng thái mặc định hiện sai mùa/bộ lọc. Thân dựng sẵn là trạng thái
+      mặc định: URL/kiểu hiển thị/snapshot khác mặc định thì ẩn đến khi js/app.js dựng đúng. */}
+  <section id={`section-${section}`} class="section active" data-ssr-source={prerendered?.source}>
+    {prerendered && <script is:inline set:html={ssrStaleGuardScript(section)}></script>}
+    {prerendered && <Fragment set:html={prerendered.html} />}
+  </section>
   {coexistQilueJson && <script is:inline type="application/json" id="coexist-qilue-table" set:html={coexistQilueJson}></script>}
   {otherSeasons.length > 0 && (
     <nav class="other-seasons" data-other-seasons aria-labelledby="other-seasons-heading">

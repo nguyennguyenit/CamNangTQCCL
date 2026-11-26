@@ -49,6 +49,27 @@ export function withLocaleAliases(dict, jaEntries) {
 }
 
 /**
+ * Từ điển cho danh mục kho bản ja (Gợi ý đội: ô "Dán danh sách tên" và ô tìm của bảng chọn nhanh): bí danh như
+ * `withLocaleAliases` (tên Nhật của lookup-ja, cùng lớp với Soi đội) cộng thêm tự dạng Nhật của chữ Hán nguồn
+ * (`shinjitai(chinese)`: 蔡文姬 → 蔡文姫, dù tên Nhật của mục là 蔡琰). Người dùng Nhật dán tên Nhật hoặc chữ Hán viết kiểu
+ * Nhật đều khớp; tên trùng giữa nhiều mục vẫn để bộ khớp xếp vào nhóm cần chọn.
+ * `shinjitai` là phép đổi tự dạng của bộ tra tên ja (`createJaNameResolver(...).shinjitai`); vắng thì chỉ nối tên Nhật.
+ * `jaEntries` vắng (lớp ja lỗi) thì chỉ thêm tự dạng Nhật. Mảng trả về là mảng mới, không mang cờ `hasLocaleAliases`
+ * (chỉ dùng cho danh mục kho, không cho `createEntityIndex`).
+ * @template {{id?: string, chinese?: unknown, aliases?: unknown}} T
+ * @param {readonly T[]} dict
+ * @param {Parameters<typeof withLocaleAliases>[1]} jaEntries
+ * @param {((raw: string) => string) | null} [shinjitai]
+ */
+export function withJaInventoryNames(dict, jaEntries, shinjitai = null) {
+  return withLocaleAliases(dict, jaEntries).map((record) => {
+    const chinese = typeof record?.chinese === "string" ? record.chinese.trim() : "";
+    const variant = chinese && typeof shinjitai === "function" ? shinjitai(chinese) : "";
+    return variant && variant !== chinese && !record.aliases.includes(variant) ? { ...record, aliases: [...record.aliases, variant] } : record;
+  });
+}
+
+/**
  * Bảng tên chính xác (bỏ khoảng trắng) → khóa bản ghi (`keyOf(record)`), hai tầng:
  * 1. tên Nhật (`localeNames` do `withLocaleAliases` gắn): ảnh client Nhật in tên Nhật, mà bản Nhật có thể gọi một mục bằng chữ
  *    Hán nguồn của mục khác (固若金湯 bản Nhật là 金城湯池, trùng chữ Hán nguồn của một chiến pháp khác), nên tên Nhật thắng;

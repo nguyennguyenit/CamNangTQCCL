@@ -647,6 +647,159 @@ function guideTree(guide) {
   ].filter(Boolean));
 }
 
+/** Số nguyên có dấu phân cách nghìn theo ngôn ngữ trang (vi: "15.243", zh/ja: "15,243"), không phụ thuộc ICU của máy build. */
+const groupedNumber = (value) => String(value).replace(/\B(?=(\d{3})+(?!\d))/g, L(".", ",", ","));
+const percentText = (value) => L(value.toFixed(1).replace(".", ","), value.toFixed(1), value.toFixed(1));
+
+/**
+ * Bản zh/ja của các khuyến nghị trong `fieldLog.recommendations` (khoá theo `id`; bản vi lấy từ `note` của dữ liệu).
+ * Mọi số trong khuyến nghị phải suy ra được từ các trận đã ghi trong `fieldLog.phases`; test khoá đủ bản dịch cho mỗi `id`
+ * và buộc ba bản vi/zh/ja dùng cùng một tập số (số đếm như "hai trận" viết bằng chữ ở mọi bản).
+ */
+export const FIELD_LOG_RECOMMENDATIONS = Object.freeze({
+  zh: Object.freeze({
+    "dat4-som": "4级地：武将 8 级、带满 2,400 兵即可打：弓兵守军（15 级，3×1,800）一战损兵 178，其中伤兵 59、阵亡 119，即 5.0%（n=1）。骑兵守军两战（武将 9–10 级）损兵 483 与 436，但没有记录出兵数和守军等级；而在 5 级地，弓兵守军一战的阵亡反而多于骑兵守军。日志还不足以判断先打哪种守军。",
+    "dat5-cap-20": "5级地（守军 27 级，3×3,000）：武将 20 级带满 6,000 兵已能打下：骑兵守军一战阵亡 198（3.3%），弓兵守军一战阵亡 525（8.8%）（n=2）。日志里没有更低等级打 5 级地的记录，所以还无法确定最早可打的等级。",
+    "dat6-28": "6级地：武将 28 级时已能打下，但全队只有 5,992 兵，约为满员 8,400 的 71%（日志显示每名武将每级 100 兵：8 级满员 2,400，20 级满员 6,000）。这唯一一战（弓兵守军 30 级，3×5,000）阵亡 734，即 12.2%，为日志最高（n=1），无法区分是 6 级地还是缺兵造成的。所以每次只拿必要的地，例如 1 块 6 级石料地供屯田。",
+    "bo-sung-binh": "战前补满兵：满兵出战的三战（8 级 2,400、20 级 6,000）阵亡 3.3–8.8%；唯一缺兵的一战（28 级 5,992/8,400）阵亡 12.2%。但缺兵的这一战同时是 6 级地，样本无法区分两个因素；这是谨慎的理由，还不是补兵效果的量化证据。",
+    "cong-diem": "加点：陸遜与左慈全加智力；張春華的速度需高于陸遜以抢先出手，其余加智力。日志没有记录属性数值，所以还没有具体的速度门槛。",
+  }),
+  ja: Object.freeze({
+    "dat4-som": "4級地：武将Lv8・兵2,400満員から攻略できる。弓兵守備（Lv15、3×1,800）との一戦は損失178、うち負傷兵59・戦死119＝5.0%（n=1）。騎兵守備との二戦（武将Lv9〜10）は損失483と436だが、出陣兵数と守備レベルの記録がない。5級地では逆に弓兵守備の方が戦死が多かった。どの守備兵種を先に攻めるべきかはログからはまだ判断できない。",
+    "dat5-cap-20": "5級地（守備Lv27、3×3,000）：武将Lv20・兵6,000満員で攻略済み。騎兵守備は戦死198（3.3%）、弓兵守備は戦死525（8.8%）（n=2）。より低いレベルで5級地を攻めた記録がないため、最も早く攻略できるレベルはまだ判断できない。",
+    "dat6-28": "6級地：武将Lv28で攻略済みだが、部隊の兵は5,992で満員8,400の約71%（ログでは武将一人あたりLv×100が満員：Lv8で2,400、Lv20で6,000）。唯一のこの一戦（弓兵守備Lv30、3×5,000）は戦死734＝12.2%でログ中最多（n=1）。6級地のせいか兵不足のせいかは切り分けられない。そのため必要な土地だけを取る（例：屯田用の6級石材地を1つ）。",
+    "bo-sung-binh": "戦闘前に兵を満員まで補充する：満員で出陣した三戦（Lv8で2,400、Lv20で6,000）は戦死3.3〜8.8%、唯一兵が不足していた一戦（Lv28で5,992/8,400）は戦死12.2%。ただし不足の一戦は6級地でもあり、二つの要因を切り分けられない。慎重を期す理由であって、補充の効果を測った数字ではない。",
+    "cong-diem": "加点：陸遜と左慈は知力に全振り。張春華は速度を陸遜より高くして先に行動させ、残りは知力へ。ログに能力値の記録がないため、具体的な速度の目安はまだない。",
+  }),
+});
+const FIELD_LOG_REGION = Object.freeze({ zh: { "Ba Thục": "巴蜀" }, ja: { "Ba Thục": "巴蜀" } });
+/** Chữ Hán của tướng thủ đất không có trong `heroes-dict.json` (zh và ja dùng cùng chữ). */
+const FIELD_LOG_DEFENDER_NAMES = Object.freeze({ "Lạc Thống": "駱統", "Lăng Tháo": "凌操", "Đới Lăng": "戴陵" });
+
+/**
+ * Số binh chết của một trận: `lost` là tổng hao (gồm cả thương binh, như cột "Tổn thất" của báo cáo trận), nên chết =
+ * hao − thương binh. Hao lấy từ binh trước/sau khi có, nếu không thì từ `lost`. Thiếu số hoặc số vô lý → `null`.
+ */
+export function fieldLogBattleDead(battle) {
+  const { troopsBefore, troopsAfter, wounded } = battle;
+  const lost = Number.isFinite(troopsBefore) && Number.isFinite(troopsAfter) ? troopsBefore - troopsAfter : battle.lost;
+  if (!Number.isFinite(lost) || !Number.isFinite(wounded) || !(troopsBefore > 0)) return null;
+  if (wounded < 0 || wounded > lost || lost > troopsBefore) return null;
+  return lost - wounded;
+}
+
+const fieldLogImageTitle = (image, battle) => {
+  const where = Number.isFinite(battle.x) && Number.isFinite(battle.y) ? ` (${battle.x}, ${battle.y})` : "";
+  return image.kind === "stats"
+    ? L(`Thống kê trận${where}`, `战斗统计${where}`, `戦闘統計${where}`)
+    : L(`Kết quả trận${where}`, `战报${where}`, `戦闘結果${where}`);
+};
+
+function fieldLogBattleTree(battle) {
+  const lost = Number.isFinite(battle.troopsAfter) && Number.isFinite(battle.troopsBefore) ? battle.troopsBefore - battle.troopsAfter : battle.lost;
+  const dead = fieldLogBattleDead(battle);
+  const head = [
+    Number.isFinite(battle.x) && Number.isFinite(battle.y) ? `(${battle.x}, ${battle.y})` : null,
+    L(`Tướng cấp ${battle.heroLevel}`, `武将 ${battle.heroLevel} 级`, `武将 Lv${battle.heroLevel}`),
+    battle.won ? L("thắng", "胜", "勝利") : L("thua", "败", "敗北"),
+  ].filter(Boolean).join(" · ");
+  // Bản zh/ja: tướng thủ không có trong từ điển thì tra bảng riêng, vẫn không có thì giữ chỗ bằng "…" (không hiện tên Việt).
+  const defenderNames = (battle.defenders || []).map((item) => {
+    const name = seatName(item.hero);
+    return name === UNRESOLVED_NAME ? FIELD_LOG_DEFENDER_NAMES[item.hero] ?? "…" : name;
+  });
+  const defenders = defenderNames.some((name) => name !== "…") ? defenderNames.join(" · ") : "";
+  const garrison = [
+    battle.defenders?.[0]?.unitType ? unitLabel(battle.defenders[0].unitType) : null,
+    battle.defenderLevel ? L(`cấp ${battle.defenderLevel}`, `${battle.defenderLevel} 级`, `Lv${battle.defenderLevel}`) : null,
+    battle.garrisonPerHero ? `${battle.defenders?.length || 3}×${groupedNumber(battle.garrisonPerHero)}` : null,
+  ].filter(Boolean).join(", ");
+  const before = groupedNumber(battle.troopsBefore);
+  const troops = [
+    Number.isFinite(battle.troopsBefore) && Number.isFinite(battle.troopsAfter)
+      ? L(`Binh ${before} → ${groupedNumber(battle.troopsAfter)}`, `兵力 ${before} → ${groupedNumber(battle.troopsAfter)}`, `兵力 ${before} → ${groupedNumber(battle.troopsAfter)}`)
+      : Number.isFinite(battle.troopsBefore) ? L(`Xuất quân ${before} binh`, `出兵 ${before}`, `出陣 ${before}`) : null,
+    Number.isFinite(lost) ? L(`mất ${groupedNumber(lost)}`, `损兵 ${groupedNumber(lost)}`, `損失 ${groupedNumber(lost)}`) : null,
+    Number.isFinite(battle.wounded) ? L(`${groupedNumber(battle.wounded)} thương binh`, `${groupedNumber(battle.wounded)} 伤兵`, `負傷兵 ${groupedNumber(battle.wounded)}`) : null,
+    dead !== null ? (() => {
+      const share = percentText((dead / battle.troopsBefore) * 100);
+      return L(`chết ${groupedNumber(dead)} (${share}%)`, `阵亡 ${groupedNumber(dead)}（${share}%）`, `戦死 ${groupedNumber(dead)}（${share}%）`);
+    })() : null,
+    Number.isFinite(battle.exp) ? L(`EXP +${groupedNumber(battle.exp)} mỗi tướng`, `每名武将经验 +${groupedNumber(battle.exp)}`, `各武将 経験値 +${groupedNumber(battle.exp)}`) : null,
+    Number.isFinite(battle.levelTo) ? L(`lên cấp ${battle.levelTo}`, `升至 ${battle.levelTo} 级`, `Lv${battle.levelTo}に上昇`) : null,
+  ].filter(Boolean).join(" · ");
+  const skills = (battle.skills || []).map((skill) => t("li", {}, [
+    `${seatName(skill.hero)} · ${tacticName(skill.tactic)}: `,
+    [
+      Number.isFinite(skill.fired) ? L(`phát động ${skill.fired}×`, `发动 ${skill.fired} 次`, `発動 ${skill.fired}回`) : null,
+      Number.isFinite(skill.kills) ? L(`diệt ${groupedNumber(skill.kills)}`, `击杀 ${groupedNumber(skill.kills)}`, `撃破 ${groupedNumber(skill.kills)}`) : null,
+      Number.isFinite(skill.rescued) ? L(`cứu viện ${groupedNumber(skill.rescued)}`, `救援 ${groupedNumber(skill.rescued)}`, `救援 ${groupedNumber(skill.rescued)}`) : null,
+    ].filter(Boolean).join(", "),
+  ]));
+  return t("li", { class: "kh-fieldlog-battle" }, [
+    t("strong", {}, head),
+    defenders || garrison ? t("p", { class: "kh-guide-note" }, [t("span", { class: "kh-fieldlog-label" }, L("Thủ quân: ", "守军：", "守備軍：")), defenders ? (garrison ? `${defenders} (${garrison})` : defenders) : garrison]) : null,
+    troops ? t("p", { class: "kh-guide-note" }, troops) : null,
+    skills.length ? t("ul", { class: "kh-fieldlog-skills" }, skills) : null,
+  ].filter(Boolean));
+}
+
+function fieldLogGallery(battles) {
+  const figures = battles.flatMap((battle) => (battle.images || []).map((image) => {
+    const caption = `${fieldLogImageTitle(image, battle)} · ${L(`tướng cấp ${battle.heroLevel}`, `武将 ${battle.heroLevel} 级`, `武将 Lv${battle.heroLevel}`)}`;
+    return t("figure", { class: "kh-fieldlog-shot" }, [
+      t("a", {
+        class: "kh-fieldlog-shot-link", href: image.url, target: "_blank", rel: "noopener",
+        title: L("Mở ảnh gốc ở tab mới", "在新标签页打开原图", "新しいタブで元画像を開く"),
+      }, [t("img", { src: image.url, alt: L("Ảnh chụp báo cáo trận", "战报截图", "戦闘レポートの画像"), width: image.width, height: image.height, loading: "lazy", decoding: "async" })]),
+      t("figcaption", {}, caption),
+    ]);
+  }));
+  return figures.length ? t("div", { class: "kh-fieldlog-gallery" }, figures) : null;
+}
+
+/**
+ * Nhật ký thực chiến của một team khai hoang (owner theo bộ ba): ba giai đoạn đánh đất theo cấp tướng, ảnh báo cáo
+ * trận và khuyến nghị rút từ log. Số liệu một tài khoản, mẫu nhỏ: khối luôn mở bằng lời cảnh báo đó (một lần).
+ * Văn xuôi vi chỉ hiện ở bản vi; bản zh/ja dựng câu từ trường có cấu trúc và bản dịch của khuyến nghị.
+ */
+function fieldLogTree(log) {
+  if (!log?.phases?.length) return null;
+  const range = (phase) => (phase.heroLevelMin === phase.heroLevelMax ? `${phase.heroLevelMin}` : `${phase.heroLevelMin}–${phase.heroLevelMax}`);
+  // Ngày trong data viết kiểu vi "dd/mm/yyyy"; bản zh/ja đổi thành "yyyy/mm/dd".
+  const ymd = (period) => String(period).replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, (_, d, m, y) => `${y}/${m}/${d}`);
+  const phases = log.phases.map((phase, index) => t("div", { class: "kh-fieldlog-phase" }, [
+    t("h3", {}, L(
+      `Giai đoạn ${index + 1} · Tướng cấp ${range(phase)} đánh đất ${phase.landLevel} · ${phase.period}`,
+      `阶段 ${index + 1} · ${range(phase)} 级武将打 ${phase.landLevel} 级地 · ${ymd(phase.period)}`,
+      `段階 ${index + 1} · Lv${range(phase)} 武将で ${phase.landLevel}級地 · ${ymd(phase.period)}`,
+    )),
+    viProse(phase.note) ? t("p", { class: "kh-guide-note" }, phase.note) : null,
+    t("ul", { class: "kh-fieldlog-battles" }, (phase.battles || []).map(fieldLogBattleTree)),
+    fieldLogGallery(phase.battles || []),
+  ].filter(Boolean)));
+  const translated = L(null, FIELD_LOG_RECOMMENDATIONS.zh, FIELD_LOG_RECOMMENDATIONS.ja);
+  const recommendations = (log.recommendations || [])
+    .map((item) => [item.id, translated ? translated[item.id] : item.note])
+    .filter(([, text]) => text);
+  const region = L(log.region, FIELD_LOG_REGION.zh[log.region], FIELD_LOG_REGION.ja[log.region]);
+  return t("section", { class: "detail-section kh-guide kh-fieldlog" }, [
+    t("h2", { class: "kh-guide-title" }, L("Nhật ký thực chiến", "实战日志", "実戦記録")),
+    t("p", { class: "kh-guide-note" }, [
+      L(`Tài khoản ${log.account}`, `账号 ${log.account}`, `アカウント ${log.account}`), region ? ` · ${region}` : null,
+      " · ",
+      L(log.note,
+        "来自单个账号的实战记录，样本很小，仅供参考，不是强度排名。结果取决于武将红度、装备与守军。",
+        "1アカウントの実戦記録で、サンプルが少ないため参考程度。強さのランキングではない。結果は武将の凸数、装備、守備軍によって変わる。"),
+    ]),
+    ...phases,
+    recommendations.length ? t("div", { class: "kh-guide-list kh-fieldlog-recs" }, [
+      t("h3", {}, L("Khuyến nghị rút từ log (mục tiêu ít chết lính)", "实战建议（以少死兵为目标）", "実戦からの提案（戦死を減らすのが目標）")),
+      t("ol", {}, recommendations.map(([id, text]) => t("li", { dataset: { recommendation: id } }, text))),
+    ]) : null,
+  ].filter(Boolean));
+}
+
 /** Cấu hình đang chọn của một team: bản thân team là build mặc định. */
 function khaihoangBuildFor(team, variantId) {
   if (!variantId) return team;
@@ -672,6 +825,7 @@ export function khaihoangDetailTrees(team, { variantId = "", locale } = {}) {
       ]),
       ratingsTree(team.guide),
       guideTree(team.guide),
+      fieldLogTree(team.fieldLog),
     ].filter(Boolean);
   });
 }

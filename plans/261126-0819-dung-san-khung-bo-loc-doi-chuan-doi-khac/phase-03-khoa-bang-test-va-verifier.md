@@ -50,9 +50,10 @@ Spec layout-shift ở dưới phải **đỏ** khi tạm bỏ phần khung khỏ
 
 **Các khẳng định:**
 - **Vị trí.** Giữ `app.js`, đọc `getBoundingClientRect()` của thẻ `[data-reference-key]` đầu tiên và của `.reference-filters` (ở desktop). Thả `app.js`, chờ `body[data-boot=ready]`, rồi đọc lại.
-  - `/doi-khac/`, và `/doi-chuan/` khi máy có kho: lệch `x`, `y`, `width` ≤1px.
-  - `/doi-chuan/` khi là khách (kho trống): lệch `x` và `width` ≤1px. Lệch `y` phải **đúng bằng** chiều cao `.reference-roster-bar` cộng gap của `.reference-results-body`, sai số ±1px.
-  - Lý do: thanh gợi ý kho hiện ra chắc chắn ngay sau boot, vì `js/community-api.js:229-233` trả `Promise.resolve(null)`. Phần này để lại cho #181. Anh đã chốt: không giấu thanh kho trong test. <!-- Red Team: FM4/A3 -->
+  - `/doi-khac/`: lệch `x`, `y`, `width` ≤1px.
+  - `/doi-chuan/`, **cả khi là khách lẫn khi máy có kho**: lệch `x` và `width` ≤1px. Lệch `y` phải **đúng bằng** chiều cao `.reference-roster-bar` cộng gap của `.reference-results-body`, sai số ±1px.
+  - Lý do: thanh gợi ý kho hiện chắc chắn sau boot. Khách: ngay sau boot, vì `js/community-api.js:229-233` trả `Promise.resolve(null)` nên kho trống. Máy có kho: khi kho và từ điển tải xong. Phần này để lại cho #181. Anh đã chốt: không giấu thanh kho trong test. <!-- Red Team: FM4/A3 -->
+  - **Thay đổi phạm vi (review PR #184, anh chốt): máy có kho cũng thuộc #181.** Bản đầu của phase này đòi máy có kho lệch `x`, `y`, `width` ≤1px; thanh kho của máy có kho hiện sau khi kho tải xong nên không đạt được. Spec đặt cùng một luật cho hai trường hợp (tham số `rosterBar181` của `expectStableLayout`) và đặt tên test theo #181; mọi dung sai khác giữ nguyên.
 - **Khớp DOM** (Red Team A8). Lấy `outerHTML` của `.reference-head` và `.reference-results` trước boot và sau boot ở trạng thái mặc định. Trước khi so:
   - bỏ con của `.reference-view` và `.reference-roster-bar`;
   - bỏ `disabled`/`aria-disabled` của điều khiển khung;

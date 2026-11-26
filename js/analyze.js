@@ -37,6 +37,7 @@ import { L, LOCALE_INTL, contentLocaleIsVietnamese, currentLocale, localePath, p
 import { readRecommendedQuery, tacticDisplayName } from "./recommended-reference-state.js";
 import { websiteOtherRecords } from "./other-team-groups.js";
 import { createRawNameResolver, localName, localRawName, localRecordName } from "./website-display.js";
+import { localSeasonName } from "./ja-season-names.js";
 import { withLocaleAliases } from "./locale-name-aliases.js";
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from "./turnstile.js";
 
@@ -285,10 +286,10 @@ const BOOK_STATUS_LABELS = {
   missing: L("Thiếu binh thư", "缺少兵书", "兵法書なし"),
 };
 
-/** Nhãn mùa trong ô chọn: bản zh dùng tên mùa nguồn, bản vi dùng mã + tên dịch. */
+/** Nhãn mùa trong ô chọn: bản zh dùng tên mùa nguồn, bản ja tên mùa Nhật đã xác minh (thiếu thì tên nguồn), bản vi mã + tên dịch. */
 function seasonOptionText(option) {
   if (!contentLocaleIsVietnamese(currentLocale())) {
-    return [option.displayCode, option.nameRaw].filter(Boolean).join(" · ") || option.label || option.sourceSeasonId;
+    return [option.displayCode, localSeasonName(option.nameRaw, currentLocale())].filter(Boolean).join(" · ") || option.label || option.sourceSeasonId;
   }
   return option.displayCode && option.displayNameVi
     ? `${option.displayCode} · ${option.displayNameVi}`

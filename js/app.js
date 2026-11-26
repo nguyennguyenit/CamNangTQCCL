@@ -359,8 +359,9 @@ async function main() {
     /** Chỉ sửa URL (replaceState), không vẽ lại: cho khóa không còn tác dụng mà mục đã tự bỏ khỏi trạng thái của nó. */
     const replaceReferenceQuery = changes => history.replaceState(history.state, '', referenceQueryURL(changes));
     // Quay lại một danh sách đang lọc/sắp theo kho (`kho`/`xep` trên URL): kho đọc không đồng bộ nên lúc khôi phục danh sách còn
-    // chưa lọc. Mở thẻ và cuộn ở đó sẽ rơi vào danh sách sai, nên hai bước này hoãn tới lần áp kho đầu tiên (kể cả khi máy không
-    // có kho) và chỉ chạy một lần; người dùng đổi bộ lọc trước đó thì bỏ hẳn.
+    // chưa lọc. Mở thẻ, focus và cuộn ở đó sẽ rơi vào danh sách sai, nên các bước này hoãn tới lần áp kho đầu tiên (kể cả khi máy
+    // không có kho) và chỉ chạy một lần; người dùng đổi bộ lọc trước đó thì bỏ hẳn. Panel lọc không phụ thuộc danh sách nên KHÔNG
+    // hoãn: mở muộn thì trên mobile nó đẩy danh sách xuống đúng lúc kho tới (xem `restoreReturnState`).
     let rosterPending = false;
     let afterRoster = null;
     const rosterSettled = () => {
@@ -499,6 +500,9 @@ async function main() {
       };
       const listQuery = new URL(location.href).searchParams;
       if (rosterPending && (listQuery.has('kho') || listQuery.has('xep'))) {
+        // Panel lọc mở ngay, cùng lúc với bản dựng sẵn (script bảo vệ đã mở sẵn nó từ HTML, kể cả khi URL có `kho`/`xep`); chỉ phần
+        // phụ thuộc danh sách đã lọc (thẻ đích, chi tiết đã mở, focus, cuộn) chờ kho.
+        sections[snapshot.tab || pageSection]?.setFiltersExpanded?.(snapshot.disclosures?.filters);
         deferUntilRoster(restoreView, () => sections[snapshot.tab || pageSection]?.forgetRestoredDisclosures?.());
       }
       else restoreView();

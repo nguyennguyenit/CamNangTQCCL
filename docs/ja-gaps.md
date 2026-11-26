@@ -31,6 +31,44 @@ Tổng: 148 / 1029 mục.
 | Binh thư | 29 | 39 | 0 | 68 |
 | Kỳ lược | 27 | 18 | 0 | 45 |
 
+## Tên mùa
+
+Bản ja hiện tên mùa Nhật đã xác minh (`js/ja-season-names.js`, chiếu từ thuật ngữ có nguồn của `pipeline/ja-glossary.json`); ánh xạ theo tên mùa nguồn vì server Nhật đi sau một mùa. Mùa chưa có tên Nhật không tự dịch: ô chọn mùa và nhãn mùa hiện tên nguồn, trang dựng sẵn (trang mùa, trang đội) đổi tự dạng Nhật của tên nguồn.
+
+Có tên Nhật: 1 / 29 mùa.
+
+| Mã | Tên nguồn | Tên Nhật |
+|---|---|---|
+| PK-S27 | 漢焰長明 | 漢焔不滅 |
+| PK-S28 | 九州兵興 | — (chưa có) |
+| PK-S26 | 英雄命世 | — (chưa có) |
+| PK-S25 | 長安之亂 | — (chưa có) |
+| PK-S24 | 霸王討逆 | — (chưa có) |
+| PK-S23 | 定軍山之戰 | — (chưa có) |
+| PK-S22 | 兗州之戰 | — (chưa có) |
+| PK-S21 | 亂世烽煙 | — (chưa có) |
+| PK-S20 | 奇門八陣 | — (chưa có) |
+| PK-S19 | 潼關之戰 | — (chưa có) |
+| PK-S18 | 陳倉之戰 | — (chưa có) |
+| PK-S17 | 天師舉義 | — (chưa có) |
+| PK-S16 | 雲起龍襄 | — (chưa có) |
+| PK-S15 | 襄樊之戰 | — (chưa có) |
+| PK-S14 | 兵戰四時 | — (chưa có) |
+| PK-S13 | 英雄集結 | — (chưa có) |
+| PK-S12 | 王師秉節 | — (chưa có) |
+| PK-S11 | 官渡之戰 | — (chưa có) |
+| PK-S10 | 北定中原 | — (chưa có) |
+| PK-S9 | 興師伐亂 | — (chưa có) |
+| PK-S8 | 軍爭地利 | — (chưa có) |
+| PK-S7 | 赤壁之戰 | — (chưa có) |
+| PK-S6 | 英雄露穎 | — (chưa có) |
+| PK-S5 | 天下爭鋒 | — (chưa có) |
+| PK-S4 | 群雄割據 | — (chưa có) |
+| S3 | 赤壁之戰 | — (chưa có) |
+| S2 | 中原爭霸 | — (chưa có) |
+| S1 | 群雄討董 | — (chưa có) |
+| OG | 兵演春秋 | — (chưa có) |
+
 ## Tướng (heroes): 0 / 263
 
 Không có mục nào thiếu.

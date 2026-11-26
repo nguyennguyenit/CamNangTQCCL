@@ -3,7 +3,8 @@
 
 import { el, t, iconTree, coexistGroupLabel, seasonCoexistGroup } from './render.js';
 import { track } from './analytics.js';
-import { L } from './i18n.js';
+import { L, currentLocale } from './i18n.js';
+import { localSeasonName } from './ja-season-names.js';
 
 /** Khóa nhận diện nhóm: `recordId` khi có, ngược lại số thứ tự 1-based trong danh sách nhận được. */
 export function coexistGroupKey(group, index) {
@@ -200,9 +201,11 @@ export function referenceHeadTextTree(title,family) {
 export const referenceViewSignature=(state,mode,shown=PAGE_SIZE)=>
   JSON.stringify([state.season ?? null,state.query || '',state.filters || {},mode,shown]);
 
+/** Tên mùa nguồn theo bản đang xem: bản ja dùng tên mùa Nhật đã xác minh, thiếu thì giữ tên nguồn. */
+const sourceSeasonName=item=>localSeasonName(item.nameRaw,currentLocale());
 /** Tên mùa không kèm số đội (chip tóm tắt của Gợi ý đội). */
 export const seasonNameText=item=>sourceText()
-  ? [item.displayCode,item.nameRaw].filter(Boolean).join(' · ') || item.label || item.sourceSeasonId
+  ? [item.displayCode,sourceSeasonName(item)].filter(Boolean).join(' · ') || item.label || item.sourceSeasonId
   : item.displayCode && item.displayNameVi
     ? `${item.displayCode} · ${item.displayNameVi}`
     : safeLabel(item.displayNameVi);
@@ -219,7 +222,7 @@ export const seasonOptionTitle=item=>sourceText() ? null : [
 
 /** Tên mùa đứng một mình (không mã, không số đội): bản vi `displayNameVi`, bản khác tên nguồn (như `seasonNameText`). */
 const seasonTitleText=item=>sourceText()
-  ? item.nameRaw || item.label || item.sourceSeasonId
+  ? sourceSeasonName(item) || item.label || item.sourceSeasonId
   : safeLabel(item.displayNameVi);
 
 /**

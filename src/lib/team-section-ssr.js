@@ -174,18 +174,22 @@ export function khaihoangSectionTrees({ data, locale }) {
 const SECTION_PATHS = { 'team-chuan': '/doi-chuan/', 'team-khac': '/doi-khac/', coexist: '/cung-ton/', khaihoang: '/khai-hoang/' };
 
 /**
- * Script inline chạy ngay sau `<section>` dựng sẵn: thân dựng sẵn là trạng thái MẶC ĐỊNH, nên khi trang mở ở trạng thái
- * khác (query của mục trong URL, kiểu hiển thị đã lưu khác Thẻ, hoặc lựa chọn Khai hoang được khôi phục từ snapshot quay
- * lại) thì gắn `data-ssr-stale` lên mount để CSS ẩn phần phụ thuộc trạng thái (danh sách, chip, số đếm, nút kiểu hiển thị, ô chọn
- * mùa) cho đến khi `js/app.js` dựng xong đúng trạng thái — không để danh sách sai mùa/bộ lọc hiện (và bấm được) suốt lúc tải.
- * Không có JavaScript thì không ẩn gì. `kho`/`xep` (`SSR_STALE_EXEMPT_KEYS`) không tính: chúng chỉ thêm badge/đổi thứ tự khi máy
- * có kho, người không có kho vẫn phải thấy danh sách dựng sẵn ngay.
+ * Script inline làm CON ĐẦU của mount `<section>` dựng sẵn (`src/components/pages/SectionPage.astro`), không đặt sau nó: trình duyệt
+ * phân tích HTML theo luồng và vẽ phần đã tới, nên script nằm sau mount chỉ chạy khi cả danh sách đã về, và suốt lúc đó khung lẫn danh sách
+ * ở trạng thái mặc định hiện sai mùa/bộ lọc. Là con đầu thì nó chạy (trình phân tích dừng ở script) trước khi nút nào của thân được tạo,
+ * nên không có khoảnh khắc nào thân dựng sẵn hiện ở trạng thái mặc định khi trang mở ở trạng thái khác. Dùng chung cho cả bốn mục.
+ *
+ * Thân dựng sẵn là trạng thái MẶC ĐỊNH, nên khi trang mở ở trạng thái khác (query của mục trong URL, kiểu hiển thị đã lưu khác Thẻ,
+ * hoặc lựa chọn Khai hoang được khôi phục từ snapshot quay lại) thì gắn `data-ssr-stale` lên mount để CSS ẩn phần phụ thuộc trạng thái
+ * (danh sách, chip, số đếm, nút kiểu hiển thị, ô chọn mùa) cho đến khi `js/app.js` dựng xong đúng trạng thái — không để danh sách sai
+ * mùa/bộ lọc hiện (và bấm được) suốt lúc tải. Không có JavaScript thì không ẩn gì. `kho`/`xep` (`SSR_STALE_EXEMPT_KEYS`) không tính:
+ * chúng chỉ thêm badge/đổi thứ tự khi máy có kho, người không có kho vẫn phải thấy danh sách dựng sẵn ngay.
  *
  * Đội chuẩn / Đội khác còn đọc snapshot quay lại với đúng khóa và luật khớp của `restoreReturnState` (`history.state.teamReturn`
  * rồi `sessionStorage`; khớp khi URL đã lọc theo allowlist của trang bằng URL hiện tại): snapshot ghi panel lọc đang mở
  * (`disclosures.filters === true`) thì gắn `data-ssr-filters-open` để CSS mở sẵn panel trên mobile, khỏi đẩy danh sách xuống
- * khi app.js mở lại panel. Lọc/sắp theo kho hoãn việc khôi phục tới khi kho tới nên không mở sớm. Dấu này do `setFiltersExpanded`
- * và `finally` của `main()` gỡ.
+ * khi app.js mở lại panel. Panel lọc không phụ thuộc danh sách nên mở sớm cả khi URL có `kho`/`xep` (chỉ thẻ đích, focus và cuộn
+ * chờ kho tới, xem `restoreReturnState`). Dấu này do `setFiltersExpanded` và `finally` của `main()` gỡ.
  */
 export function ssrStaleGuardScript(section) {
   const teamList = section === 'team-chuan' || section === 'team-khac';
@@ -199,13 +203,13 @@ export function ssrStaleGuardScript(section) {
     // Chỉ hai trang có khung lọc dựng sẵn mới đọc snapshot của panel lọc: script (và HTML) của Cùng Tồn / Khai hoang giữ nguyên.
     ...(teamList ? { openKey: TEAM_RETURN_STORAGE_KEY, allowed: SECTION_QUERY_KEYS[SECTION_PATHS[section]] } : {}),
   };
-  // Khối thứ hai độc lập với khối `data-ssr-stale` (lỗi ở khối này không làm mất khối kia); `q` do khối trước khai báo.
+  // Khối thứ hai độc lập với khối `data-ssr-stale` (lỗi ở khối này không làm mất khối kia).
   const openBlock = teamList
     ? `try{var o=[history.state&&history.state.teamReturn],i,x,hit=null,`
       + `n=function(h){var u=new URL(h,location.href),p=new URLSearchParams(),m;u.searchParams.forEach(function(v,k){if(c.allowed.indexOf(k)>=0)p.append(k,v);});m=p.toString();return u.pathname+(m?'?'+m:'');},`
       + `cur=n(location.href);try{o.push(JSON.parse(sessionStorage.getItem(c.openKey)));}catch(e){}`
       + `for(i=0;i<o.length&&!hit;i++){x=o[i];if(x&&x.version===1&&typeof x.url==='string'){try{if(n(x.url)===cur)hit=x;}catch(e){}}}`
-      + `if(hit&&hit.disclosures&&hit.disclosures.filters===true&&!q.has('kho')&&!q.has('xep'))document.getElementById(c.id).dataset.ssrFiltersOpen='';}catch(e){}`
+      + `if(hit&&hit.disclosures&&hit.disclosures.filters===true)document.getElementById(c.id).dataset.ssrFiltersOpen='';}catch(e){}`
     : '';
   return `(function(c){try{var q=new URLSearchParams(location.search),s=c.keys.some(function(k){return q.has(k);});`
     + `if(!s&&c.viewKey){s=c.otherViews.indexOf(localStorage.getItem(c.viewKey))>=0;}`

@@ -408,15 +408,20 @@ test("bảo vệ quay lại mobile: panel lọc mở sẵn khi snapshot khớp U
   assert.equal(filtersOpenMarked("team-chuan", { search: "?season=pk-s24&q=x", historyState: asState(returnSnapshot("/doi-chuan/?season=pk-s24&q=x", true)) }), true);
   assert.equal(filtersOpenMarked("team-chuan", { path: "/zh/doi-chuan/", historyState: asState(returnSnapshot("/zh/doi-chuan/", true)) }), true);
   assert.equal(filtersOpenMarked("team-khac", { path: "/doi-khac/", historyState: asState(returnSnapshot("/doi-khac/", true)) }), true);
-  // Lọc/sắp theo kho hoãn khôi phục tới khi kho tới: không mở sớm.
-  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc", historyState: asState(returnSnapshot("/doi-chuan/?kho=rap-duoc", true)) }), false);
-  assert.equal(filtersOpenMarked("team-chuan", { search: "?xep=de-rap", session: JSON.stringify(returnSnapshot("/doi-chuan/?xep=de-rap", true)) }), false);
+  // Panel lọc không phụ thuộc danh sách đã lọc: mở sớm cả khi URL có `kho`/`xep` (chỉ thẻ đích, focus và cuộn chờ kho, xem `restoreReturnState`),
+  // nếu không panel mở muộn đúng lúc kho tới và đẩy danh sách xuống trên mobile.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc", historyState: asState(returnSnapshot("/doi-chuan/?kho=rap-duoc", true)) }), true);
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?xep=de-rap", session: JSON.stringify(returnSnapshot("/doi-chuan/?xep=de-rap", true)) }), true);
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc&xep=de-rap", historyState: asState(returnSnapshot("/doi-chuan/?kho=rap-duoc&xep=de-rap", true)) }), true);
+  // Snapshot ghi panel đóng thì có `kho` cũng không mở; snapshot của URL không có `kho` không áp cho URL có `kho`.
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc", historyState: asState(returnSnapshot("/doi-chuan/?kho=rap-duoc", false)) }), false);
+  assert.equal(filtersOpenMarked("team-chuan", { search: "?kho=rap-duoc", historyState: asState(open) }), false);
   // Mục khác không có panel lọc này.
   assert.equal(filtersOpenMarked("coexist", { path: "/cung-ton/", historyState: asState(returnSnapshot("/cung-ton/", true)) }), false);
   assert.equal(filtersOpenMarked("khaihoang", { path: "/khai-hoang/", historyState: asState(returnSnapshot("/khai-hoang/", true)) }), false);
 });
 
-test("script bảo vệ của Cùng Tồn / Khai hoang không mang khối panel lọc, nên HTML của hai mục này không đổi byte", () => {
+test("script bảo vệ của Cùng Tồn / Khai hoang không mang khối panel lọc, nên script và thân dựng sẵn của hai mục này không đổi byte (chỉ đổi chỗ: con đầu của mount)", () => {
   for (const section of ["coexist", "khaihoang"]) {
     assert.doesNotMatch(ssrStaleGuardScript(section), /ssrFiltersOpen|openKey|allowed/u, section);
   }

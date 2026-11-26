@@ -38,7 +38,7 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 ## Non-goals (đã tách issue)
 
 - #180: `index.json` 4,36 MB chặn tương tác trên cả hai trang.
-- #181: thanh gợi ý kho hiện muộn, đẩy danh sách Đội chuẩn xuống. Phase 3 đo đúng độ lệch này, không giấu nó.
+- #181: thanh gợi ý kho hiện muộn, đẩy danh sách Đội chuẩn xuống, cả khi là khách lẫn khi máy có kho (thay đổi phạm vi, review PR #184). Phase 3 đo đúng độ lệch này, không giấu nó.
 - #182: `modulepreload` cho đồ thị module của `app.js`.
 - Không đổi `referenceViewSignature` và luật nhận lại `.reference-view`.
 
@@ -46,7 +46,8 @@ Hệ quả trên desktop: danh sách bị đẩy ngang 308px (cột 272px cộng
 
 - [x] Khung bao của thẻ đội đầu tiên trước và sau boot, đo ở 1440px và 390px, vi/zh/ja:
   - `/doi-khac/`: lệch ≤1px.
-  - `/doi-chuan/`: lệch ≤1px, **trừ** phần lệch dọc đúng bằng chiều cao thanh kho cộng gap khi là khách (#181).
+  - `/doi-chuan/`: lệch ≤1px, **trừ** phần lệch dọc đúng bằng chiều cao thanh kho cộng gap (#181), cả khi là khách lẫn khi máy có kho.
+  - **Thay đổi phạm vi (review PR #184, anh chốt): máy có kho cũng thuộc #181.** Bản đầu của tiêu chí chỉ loại trừ trường hợp khách và đòi máy có kho lệch ≤1px ở mọi trục; thanh kho của máy có kho hiện sau khi kho và từ điển tải xong nên không đạt được trong phạm vi plan này. Spec vẫn khẳng định đúng chiều cao thanh + gap (±1px) và không giấu thanh; mọi dung sai khác giữ nguyên.
 - [x] `.reference-head` và `.reference-results` dựng sẵn bằng bản sau boot ở trạng thái mặc định, sau khi bỏ `disabled`/`aria-disabled`, con của danh sách và thanh kho.
 - [x] Mọi `button`/`input`/`select` của khung dựng sẵn bị khoá trước boot và dùng được sau boot. HTML Khai hoang không đổi.
 - [x] URL có `?faction=`, `?season=` hoặc kiểu hiển thị đã lưu: trước boot không thấy chip, số đếm, nút kiểu hiển thị, mùa hay badge "Đang diễn ra" sai.
@@ -121,3 +122,15 @@ Câu hỏi và quyết định (hỏi cùng lượt duyệt red-team):
 - Decision deltas checked: 3
 - Reconciled stale references: 1 (Success Criteria của Đội chuẩn)
 - Unresolved contradictions: 0
+
+## Review PR #184 (Astra)
+
+### Session — 2026-11-27
+**Findings:** 4 (đã xác minh, đã sửa)
+
+| # | Finding | Disposition | Applied To |
+|---|---------|-------------|------------|
+| 1 | Script chống nháy đứng sau cả thân dựng sẵn: HTML về dần thì khung/ô chọn mùa ở trạng thái mặc định hiện sai mùa/bộ lọc tới khi cả danh sách về | Sửa: script là con đầu của mount (`SectionPage.astro`), dùng chung cho cả bốn mục; verifier khóa vị trí; e2e phát HTML hai đoạn, cắt trước danh sách | Phase 2 |
+| 2 | Quay lại mobile với `?kho=`/`?xep=` vẫn dịch danh sách: script bỏ qua hai khóa, `restoreReturnState` hoãn cả việc mở panel | Sửa: panel mở ngay (script và client), chỉ thẻ đích/focus/cuộn chờ kho; e2e 390px cho `?kho=`, `?xep=` và máy có kho khi kho tới muộn | Phase 2 |
+| 3 | Tiêu chí layout-shift: máy có kho không đạt ≤1px (thanh kho hiện sau khi kho tải xong) | **Thay đổi phạm vi (review PR #184, anh chốt): máy có kho cũng thuộc #181.** Spec giữ phép trừ cho cả hai trường hợp, đặt tên rõ; Success Criteria và phase 3 ghi lại | Plan, Phase 3 |
+| 4 | Xung đột với `main` (`772ad109`) | Gộp, giữ cả hai ý ở nguồn; file sinh ra lấy bản của main làm gốc rồi re-pin/publish lại | Changelog |

@@ -186,6 +186,12 @@ const PRERENDERED_SECTION_BODY = {
   khaihoang: '<div class="khaihoang"><h1 class="reference-title">Khai hoang</h1><article class="kh-card"><a class="kh-title-link" href="/khai-hoang/x/"></a></article></div>',
 };
 
+/**
+ * Script bảo vệ chống nháy tối thiểu mà verifier đòi làm CON ĐẦU của mount dựng sẵn (bản thật do `ssrStaleGuardScript` sinh): nằm sau mount
+ * thì phần HTML đã stream về hiện ở trạng thái mặc định cho tới khi cả danh sách về.
+ */
+const PRERENDERED_GUARD = '<script>(function(c){try{document.getElementById(c.id).dataset.ssrStale="";}catch(e){}})({});</script>';
+
 /** Thân chi tiết dựng sẵn tối thiểu mà verifier đòi ở mọi trang chi tiết đội. */
 const PRERENDERED_DETAIL_BODY = '<div id="team-detail-body" data-prerendered><section><h2>Đội hình</h2></section></div>';
 
@@ -194,7 +200,7 @@ function sectionPageHtml({ path, locale, section, season, group, sampleId, regis
   return [
     `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}"${group ? ` data-lookup-group="${group}"` : ""}>`,
     `<section id="section-${section}" class="section active"${PRERENDERED_SECTION_BODY[section] && website ? ` data-ssr-source="${website.pin.sha256}"` : ""}>`,
-    PRERENDERED_SECTION_BODY[section] ?? "",
+    PRERENDERED_SECTION_BODY[section] ? `${PRERENDERED_GUARD}${PRERENDERED_SECTION_BODY[section]}` : "",
     group ? `<button type="button" class="lookup-card-button" data-lookup-id="${sampleId}"></button>` : "",
     "</section>",
     season ? '<div id="season-controls"></div>' : "",
@@ -245,6 +251,11 @@ async function writeStaticFonts(projectDir, distDir) {
   await mkdir(join(distDir, "heroes"), { recursive: true });
   await writeFile(join(projectDir, "public", "heroes", "sample.webp"), "RIFF-sample");
   await writeFile(join(distDir, "heroes", "sample.webp"), "RIFF-sample");
+  // Ảnh báo cáo của nhật ký thực chiến Khai hoang (`public/khai-hoang-log`) là thư mục tĩnh thứ ba.
+  await mkdir(join(projectDir, "public", "khai-hoang-log"), { recursive: true });
+  await mkdir(join(distDir, "khai-hoang-log"), { recursive: true });
+  await writeFile(join(projectDir, "public", "khai-hoang-log", "sample.webp"), "RIFF-log");
+  await writeFile(join(distDir, "khai-hoang-log", "sample.webp"), "RIFF-log");
 }
 
 /** Ảnh tĩnh của public (favicon, ảnh chia sẻ og:image, logo, logo chữ, QR ủng hộ) được copy nguyên byte như Astro làm. */
@@ -815,6 +826,9 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
     ["zh/khai-hoang", (html) => html.replace(PRERENDERED_SECTION_BODY.khaihoang, ""), /lacks its prerendered default content/i],
     ["cung-ton", (html) => html.replace(PRERENDERED_SECTION_BODY.coexist, `${PRERENDERED_SECTION_BODY.coexist}<h1>Hai</h1>`), /exactly one h1/i],
     ["doi-khac", (html) => html.replace(PRERENDERED_SECTION_BODY["team-khac"], `${PRERENDERED_SECTION_BODY["team-khac"]}<noscript><p>Mục này cần JavaScript để hiển thị nội dung.</p></noscript>`), /waiting or JavaScript-required text/i],
+    // Script bảo vệ chống nháy phải là con đầu của mount: đặt sau mount (hoặc thiếu) thì phần HTML đã stream về hiện sai trạng thái trước khi nó chạy.
+    ["doi-chuan", (html) => html.replace(PRERENDERED_GUARD, "").replace("</section>", `</section>${PRERENDERED_GUARD}`), /stale guard must be the first child of its mount/i],
+    ["zh/khai-hoang", (html) => html.replace(PRERENDERED_GUARD, ""), /stale guard must be the first child of its mount/i],
   ]) {
     const sectionPath = join(distDir, ...pagePath.split("/"), "index.html");
     const validSection = await readFile(sectionPath, "utf8");
@@ -2190,7 +2204,8 @@ test("bốn trang danh sách đội dựng sẵn đội mặc định: tướng 
       const where = `${locale} /${path}/`;
       assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, `${where}: đúng một h1 (không tính noscript)`);
       assert.doesNotMatch(html, /<noscript>[\s\S]*?JavaScript[\s\S]*?<\/noscript>/u, `${where}: không noscript yêu cầu JavaScript`);
-      const section = html.match(/<section\b[^>]*id="section-[a-z-]+"[\s\S]*?<script\b/u)?.[0] ?? "";
+      // Thân mục dựng sẵn: từ thẻ mở của mount tới script nạp app.js (script bảo vệ chống nháy là con đầu của mount nên không thể cắt ở `<script` đầu tiên).
+      const section = html.match(/<section\b[^>]*id="section-[a-z-]+"[\s\S]*?(?=<script\b[^>]*\bsrc="\/js\/app\.js")/u)?.[0] ?? "";
       const text = visibleText(section);
       if (entry) {
         const href = `${locale === "zh" ? "/zh" : ""}${entry.routePath}`;

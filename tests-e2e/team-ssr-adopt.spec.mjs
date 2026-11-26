@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { bootWithProbe } from "./helpers/boot.mjs";
+import { serveHtmlInTwoChunks } from "./helpers/stream.mjs";
+import { ROSTER_SCAN_KEY, rosterOfFirstTeam } from "./helpers/roster-fixture.mjs";
 
 // Trang danh sách đội dựng sẵn: khi trạng thái đầu của trình duyệt khớp mặc định thì nhận lại đúng các node đó
 // (không nháy, không nhân đôi); lệch mặc định (URL khác, kiểu hiển thị khác) thì thay như cũ.
@@ -229,6 +231,69 @@ for (const [name, url, storedView, check] of SHELL_STALE_CASES) {
   });
 }
 
+// HTML về dần qua mạng: script bảo vệ phải chạy TRƯỚC khi nút nào của thân dựng sẵn được tạo. Đặt nó sau mount thì khung (ô chọn mùa,
+// huy hiệu "Đang diễn ra", chip, số đếm) ở trạng thái mặc định hiện sai mùa/bộ lọc suốt lúc danh sách còn đang về. Máy chủ cục bộ cắt HTML
+// ngay trước danh sách và giữ đoạn sau (`serveHtmlInTwoChunks`); đo ở khoảng giữa hai đoạn, rồi thả đoạn sau để trang boot.
+const STREAM_CUT = '<div class="reference-view" data-ssr-signature=';
+const STREAM_CASES = [
+  ["Đội chuẩn: mùa khác trong URL", "/doi-chuan/", "?season=pk-s24", true],
+  ["Đội chuẩn: bộ lọc trong URL", "/doi-chuan/", `?faction=${encodeURIComponent("Thục")}`, true],
+  ["Đội khác: bộ lọc trong URL", "/doi-khac/", `?faction=${encodeURIComponent("Thục")}`, false],
+];
+/** Phần phụ thuộc trạng thái của khung và `visibility` đã tính của từng phần. */
+const staleParts = (page) => page.evaluate((query) => [...document.querySelectorAll(query)].map((node) => [node.className?.baseVal ?? node.className ?? node.tagName, getComputedStyle(node).visibility]), STALE_PARTS);
+
+for (const [name, path, query, hasSeasonSelect] of STREAM_CASES) {
+  test(`${name}: HTML về dần, khung đã ở trạng thái stale ngay ở đoạn đầu khi danh sách còn chưa về`, async ({ page, baseURL }) => {
+    const stream = await serveHtmlInTwoChunks(baseURL, { documentPath: path, cutBefore: STREAM_CUT });
+    const url = `${path}${query}`;
+    try {
+      await page.goto(`${stream.origin}${url}`, { waitUntil: "commit" });
+      // Đoạn đầu mới tới sidebar lọc: khung đã có trong DOM, danh sách thì chưa.
+      await page.locator("aside.reference-filters").waitFor({ state: "attached" });
+      await page.waitForFunction(() => document.querySelector('link[href="/css/styles.css"]')?.sheet != null);
+      await expect(page.locator(".reference-view"), `${url}: đoạn đầu phải dừng trước danh sách`).toHaveCount(0);
+      // Trình phân tích HTML dừng ở script nên script đứng trước khung đã chạy xong khi khung vào DOM; không cần chờ.
+      await expect(page.locator(".section[data-ssr-stale]"), `${url}: khung đã vào DOM mà script bảo vệ chưa chạy`).toHaveCount(1);
+      const parts = await staleParts(page);
+      expect(parts.length, `${url}: phải có phần phụ thuộc trạng thái`).toBeGreaterThan(0);
+      for (const [part, visibility] of parts) expect(visibility, `${url}: ${part} đang hiện ở trạng thái mặc định`).toBe("hidden");
+      if (hasSeasonSelect) {
+        await expect(page.locator("label.reference-season-field select"), `${url}: ô chọn mùa mặc định đang hiện`).toHaveCSS("visibility", "hidden");
+        await expect(page.locator(".reference-season-status"), `${url}: huy hiệu "Đang diễn ra" đang hiện`).toHaveCSS("visibility", "hidden");
+      }
+      // Đoạn sau về: trang boot và dựng đúng trạng thái của URL; không phần nào của khung còn ẩn.
+      stream.release();
+      await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+      await expect(page.locator("[data-ssr-stale]")).toHaveCount(0);
+      if (query.startsWith("?season=")) await expect(page.locator("#section-team-chuan select")).toHaveValue("pk-s24");
+      const stillHidden = (await staleParts(page)).filter(([part, visibility]) => visibility === "hidden" && !/clear-btn/.test(part));
+      expect(stillHidden, `${url}: phần khung còn ẩn sau boot`).toEqual([]);
+    } finally {
+      await stream.close();
+    }
+  });
+}
+
+test("Đội chuẩn: HTML về dần ở trạng thái mặc định (URL trống) thì khung hiện đủ, không dấu stale", async ({ page, baseURL }) => {
+  const stream = await serveHtmlInTwoChunks(baseURL, { documentPath: "/doi-chuan/", cutBefore: STREAM_CUT });
+  try {
+    await page.goto(`${stream.origin}/doi-chuan/`, { waitUntil: "commit" });
+    await page.locator("aside.reference-filters").waitFor({ state: "attached" });
+    await page.waitForFunction(() => document.querySelector('link[href="/css/styles.css"]')?.sheet != null);
+    await expect(page.locator(".reference-view")).toHaveCount(0);
+    await expect(page.locator("[data-ssr-stale]")).toHaveCount(0);
+    const parts = await staleParts(page);
+    expect(parts.length).toBeGreaterThan(0);
+    // "Xóa lọc" tự vô hiệu khi chưa có lọc (`.clear-btn:disabled`, giữ chỗ): không thuộc dấu stale.
+    for (const [part, visibility] of parts.filter(([part]) => !/clear-btn/.test(part))) expect(visibility, `mặc định: ${part} bị ẩn`).toBe("visible");
+    stream.release();
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+  } finally {
+    await stream.close();
+  }
+});
+
 // Dữ liệu Đội chuẩn/Đội khác không tải được: không điều khiển chết nào của khung được hiện, danh sách (bản dựng sẵn) chiếm cả hàng.
 for (const [path, hasSeasonSelect] of REFERENCE_PAGES) {
   test(`${path}: dữ liệu không tải được thì khung lọc chết bị ẩn, danh sách đọc được chiếm cả hàng`, async ({ page }) => {
@@ -249,44 +314,117 @@ for (const [path, hasSeasonSelect] of REFERENCE_PAGES) {
 }
 
 // Quay lại từ trang chi tiết trên mobile khi panel lọc đang mở: snapshot ghi `disclosures.filters = true`; panel phải mở sẵn trong
-// HTML dựng sẵn (trước boot) để lúc app.js mở lại panel, thân danh sách (và thẻ đầu trong đó) không bị đẩy xuống.
-test("Đội chuẩn trên mobile: quay lại khi panel lọc đang mở thì panel mở sẵn trước boot và danh sách không bị đẩy khi boot", async ({ browser }) => {
-  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
-  const page = await context.newPage();
-  await page.goto("/doi-chuan/");
-  await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
-  await page.locator("#section-team-chuan .filter-collapse-toggle").click();
-  await expect(page.locator("#section-team-chuan aside.reference-filters")).toBeVisible();
-  await page.locator("#section-team-chuan .reference-team-card a[data-team-detail-link]").first().click();
-  await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
-  let release;
-  const gate = new Promise((resolve) => { release = resolve; });
-  await page.route("**/js/app.js", async (route) => { await gate; await route.continue(); });
-  await page.goBack({ waitUntil: "commit" });
-  await page.locator(".site-footer").waitFor({ state: "attached" });
-  // Đo so với đầu mục (không phụ thuộc cuộn): chiều cao panel và vị trí đầu thân danh sách. Thanh kho nằm TRONG thân và hiện sau
-  // boot theo trạng thái kho trên máy (không thuộc khung dựng sẵn), nên đo đầu thân chứ không đo thẻ đầu.
-  const measure = () => page.evaluate(() => {
-    const section = document.querySelector("#section-team-chuan");
-    const filters = section.querySelector("aside.reference-filters");
-    const body = section.querySelector(".reference-results-body");
-    const origin = section.getBoundingClientRect().top;
-    return {
-      display: getComputedStyle(filters).display,
-      panel: Math.round(filters.getBoundingClientRect().height),
-      body: Math.round(body.getBoundingClientRect().top - origin),
-    };
+// HTML dựng sẵn (trước boot) để lúc app.js mở lại panel, thân danh sách (và thẻ đầu trong đó) không bị đẩy xuống. Lọc/sắp theo kho
+// (`?kho=`/`?xep=`) hoãn khôi phục thẻ đích, focus và cuộn tới khi kho tới, nhưng panel không phụ thuộc danh sách nên vẫn mở ngay: mở
+// muộn thì nó đẩy danh sách xuống đúng lúc kho tới.
+
+/**
+ * Đo khi quay lại danh sách trên mobile, so với đầu mục (không phụ thuộc cuộn): panel lọc có mở không, cao bao nhiêu và đầu thân danh sách
+ * ở đâu. Thanh kho nằm TRONG thân và hiện sau boot theo trạng thái kho trên máy (không thuộc khung dựng sẵn), nên đo đầu thân chứ không đo
+ * thẻ đầu.
+ */
+const measureBack = (page) => page.evaluate(() => {
+  const section = document.querySelector("#section-team-chuan");
+  const filters = section.querySelector("aside.reference-filters");
+  const body = section.querySelector(".reference-results-body");
+  const origin = section.getBoundingClientRect().top;
+  return {
+    display: getComputedStyle(filters).display,
+    panel: Math.round(filters.getBoundingClientRect().height),
+    body: Math.round(body.getBoundingClientRect().top - origin),
+  };
+});
+
+/** Cổng giữ request cho tới khi `open()`. */
+const gate = () => {
+  let open;
+  const promise = new Promise((resolve) => { open = resolve; });
+  return { promise, open };
+};
+
+/**
+ * Request chỉ kho cần: `loadLookupPayload` (`js/app.js`) đọc manifest trước khi kiểm hai từ điển, nên giữ manifest là giữ kho. Không giữ chính
+ * `heroes-dict`/`tactics`: mô hình mùa của boot cũng đọc chúng, giữ chúng sẽ chặn cả boot.
+ */
+const ROSTER_ONLY_REQUESTS = ["/data/lookup-manifest.json"];
+
+for (const query of ["", "?kho=rap-duoc", "?xep=de-rap"]) {
+  test(`Đội chuẩn trên mobile${query ? ` (${query})` : ""}: quay lại khi panel lọc đang mở thì panel mở sẵn trước boot và danh sách không bị đẩy khi boot`, async ({ browser }) => {
+    const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+    const page = await context.newPage();
+    await page.goto(`/doi-chuan/${query}`);
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+    await page.locator("#section-team-chuan .filter-collapse-toggle").click();
+    await expect(page.locator("#section-team-chuan aside.reference-filters")).toBeVisible();
+    await page.locator("#section-team-chuan .reference-team-card a[data-team-detail-link]").first().click();
+    await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+    const appGate = gate();
+    await page.route("**/js/app.js", async (route) => { await appGate.promise; await route.continue(); });
+    await page.goBack({ waitUntil: "commit" });
+    await page.locator(".site-footer").waitFor({ state: "attached" });
+    expect(new URL(page.url()).search, "URL quay lại giữ nguyên lọc/sắp theo kho").toBe(query);
+    const before = await measureBack(page);
+    expect(before.display, "panel lọc phải mở sẵn trước boot").not.toBe("none");
+    expect(before.panel, "panel lọc phải có chiều cao thật trước boot").toBeGreaterThan(100);
+    appGate.open();
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+    // Khách: kho trả về (rỗng) ngay sau boot rồi bước khôi phục bị hoãn mới chạy; đo sau đó để bắt cả độ lệch của nó.
+    await expect(page.locator(".reference-roster-bar")).toHaveAttribute("data-state", "empty");
+    const after = await measureBack(page);
+    expect(after.display, "panel lọc vẫn mở sau boot").not.toBe("none");
+    expect(Math.abs(after.panel - before.panel), `panel đổi cao ${after.panel - before.panel}px khi boot`).toBeLessThanOrEqual(1);
+    expect(Math.abs(after.body - before.body), `danh sách bị đẩy ${after.body - before.body}px khi boot`).toBeLessThanOrEqual(1);
+    await expect(page.locator("#section-team-chuan .filter-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
+    await expect(page.locator("[data-ssr-filters-open]")).toHaveCount(0);
+    await context.close();
   });
-  const before = await measure();
-  expect(before.display, "panel lọc phải mở sẵn trước boot").not.toBe("none");
-  expect(before.panel, "panel lọc phải có chiều cao thật trước boot").toBeGreaterThan(100);
-  release();
-  await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
-  const after = await measure();
-  expect(after.display, "panel lọc vẫn mở sau boot").not.toBe("none");
-  expect(Math.abs(after.panel - before.panel), `panel đổi cao ${after.panel - before.panel}px khi boot`).toBeLessThanOrEqual(1);
-  expect(Math.abs(after.body - before.body), `danh sách bị đẩy ${after.body - before.body}px khi boot`).toBeLessThanOrEqual(1);
-  await expect(page.locator("#section-team-chuan .filter-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
-  await expect(page.locator("[data-ssr-filters-open]")).toHaveCount(0);
-  await context.close();
+}
+
+// Máy có kho: kho tới muộn vì manifest Tra cứu còn đang tải (ở khách thì kho trả về ngay trong cùng task với boot nên không quan sát được).
+// Bước khôi phục bị hoãn tới lúc đó chỉ gồm thẻ đích/focus/cuộn; panel lọc phải còn mở NGAY SAU boot, không đóng khi boot kết thúc rồi mới
+// mở lại khi kho tới, nên đầu thân danh sách không dịch ở cả hai thời điểm.
+test("Đội chuẩn trên mobile (?kho=, máy có kho): ngay sau boot, lúc kho chưa tới, panel lọc vẫn mở và đầu thân danh sách không dịch", async ({ browser }) => {
+  const context = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  await context.addInitScript(([key, value]) => localStorage.setItem(key, value), [ROSTER_SCAN_KEY, JSON.stringify(rosterOfFirstTeam())]);
+  const page = await context.newPage();
+  const appGate = gate();
+  const rosterGate = gate();
+  try {
+    await page.goto("/doi-chuan/?kho=rap-duoc");
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+    await expect(page.locator(".reference-roster-bar")).toHaveAttribute("data-state", "ready");
+    await page.locator("#section-team-chuan .filter-collapse-toggle").click();
+    await expect(page.locator("#section-team-chuan aside.reference-filters")).toBeVisible();
+    await page.locator("#section-team-chuan .reference-team-card a[data-team-detail-link]").first().click();
+    await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
+    await page.route("**/js/app.js", async (route) => { await appGate.promise; await route.continue(); });
+    // Kho chỉ tới khi manifest tải xong: giữ nó lại để quan sát trang trong lúc kho chưa tới.
+    await page.route((url) => ROSTER_ONLY_REQUESTS.includes(url.pathname), async (route) => { await rosterGate.promise; await route.continue(); });
+    await page.goBack({ waitUntil: "commit" });
+    await page.locator(".site-footer").waitFor({ state: "attached" });
+    const before = await measureBack(page);
+    expect(before.display, "panel lọc phải mở sẵn trước boot").not.toBe("none");
+    expect(before.panel, "panel lọc phải có chiều cao thật trước boot").toBeGreaterThan(100);
+    appGate.open();
+    await expect(page.locator("body")).toHaveAttribute("data-boot", "ready");
+    await expect(page.locator(".reference-roster-bar"), "kho chưa tới nên thanh kho chưa hiện").toHaveJSProperty("hidden", true);
+    const atBoot = await measureBack(page);
+    expect(atBoot.display, "panel lọc phải còn mở ngay sau boot, lúc kho chưa tới").not.toBe("none");
+    expect(Math.abs(atBoot.panel - before.panel), `panel đổi cao ${atBoot.panel - before.panel}px khi boot`).toBeLessThanOrEqual(1);
+    expect(Math.abs(atBoot.body - before.body), `danh sách bị đẩy ${atBoot.body - before.body}px khi boot`).toBeLessThanOrEqual(1);
+    await expect(page.locator("[data-ssr-filters-open]")).toHaveCount(0);
+    await expect(page.locator("#section-team-chuan .filter-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
+    rosterGate.open();
+    await expect(page.locator(".reference-roster-bar")).toHaveAttribute("data-state", "ready");
+    // Kho tới: panel vẫn mở (bước hoãn không đóng/mở lại nó). Đầu thân danh sách lúc này dịch vì phần phụ thuộc kho hiện muộn (huy hiệu
+    // số bộ lọc `kho` làm thanh công cụ cao thêm, thanh kho): cùng loại với #181, không thuộc việc mở panel nên không đo ở đây.
+    const after = await measureBack(page);
+    expect(after.display, "panel lọc vẫn mở khi kho tới").not.toBe("none");
+    expect(Math.abs(after.panel - before.panel), `panel đổi cao ${after.panel - before.panel}px khi kho tới`).toBeLessThanOrEqual(1);
+    await expect(page.locator("#section-team-chuan .filter-collapse-toggle")).toHaveAttribute("aria-expanded", "true");
+  } finally {
+    appGate.open();
+    rosterGate.open();
+    await context.close();
+  }
 });

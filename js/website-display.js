@@ -2,6 +2,7 @@ import { L, contentLocaleIsVietnamese, currentLocale, pick } from "./i18n.js";
 import { createTacticDisplayTable } from "./lookup-ids.js";
 import { loadLookupJa } from "./lookup-data.js";
 import { parseKanjiVariants, toShinjitai } from "./shinjitai.js";
+import { jaSeasonName } from "./ja-season-names.js";
 
 const HASH = /^[0-9a-f]{64}$/;
 const GENERATION = /^site-localization:[0-9a-f]{64}$/;
@@ -222,6 +223,7 @@ const HAN = /[\u3400-\u9fff\uf900-\ufaff]/u;
  *   (`転・神算鬼謀`), không có thì `<tiền tố Nhật>・<tên Nhật>`; tên gốc không tra được thì `null`.
  * Cả hai lối vào nhận luôn dạng có tiền tố (`轉·刮骨療毒`, `Chuyển · Quát Cốt Liệu Độc`).
  * - `resolver.nameOf(mã)`: tên Nhật của một mục từ điển theo mã (`null` khi mã lạ).
+ * - `resolver.shinjitai(chữ Hán)`: đổi tự dạng Nhật theo bảng của bộ tra (danh mục kho bản ja khớp chữ Hán viết kiểu Nhật).
  * @param {readonly unknown[][]} dicts
  * @param {{entries: Record<string, {name: string}>, prefixedTactics?: {baseId: string, name: string, prefix: string}[]}} jaDocument
  * @param {Readonly<Record<string, string>>} variants bảng của `parseKanjiVariants`
@@ -280,11 +282,14 @@ export function createJaNameResolver(dicts, jaDocument, variants) {
     const trimmed = raw.trim();
     const modified = trimmed.match(PREFIXED_RAW);
     if (modified) return prefixed(modified[1], modified[2]) ?? shinjitai(raw);
+    // Tên mùa nguồn (trang mùa, nhãn mùa của trang đội) có tên Nhật đã xác minh thì dùng tên đó, không đổi tự dạng.
+    const season = jaSeasonName(trimmed);
+    if (season) return season;
     const id = rawId(trimmed);
     return id ? names.get(id) : shinjitai(raw);
   };
   const nameOf = id => (typeof id === "string" ? names.get(id) ?? null : null);
-  return Object.assign(joinedLookup(single), { fromRaw, prefixed, nameOf });
+  return Object.assign(joinedLookup(single), { fromRaw, prefixed, nameOf, shinjitai });
 }
 
 /** Tên hiển thị theo ngôn ngữ: bản không phải tiếng Việt dùng tên của bộ tra (chữ Hán gốc / tên Nhật) khi tra được, bản Việt giữ nguyên. */

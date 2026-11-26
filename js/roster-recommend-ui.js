@@ -32,6 +32,7 @@ import { createScanWriter, reconcileScanWithCloud } from "./roster-scan-writer.j
 import { createRosterIdResolver } from "./roster-id-resolve.js";
 import { DEFAULT_KINDS, createRosterSync } from "./roster-sync.js";
 import { addPicked, buildCatalog, createPicker, removePicked } from "./roster-picker.js";
+import { withJaInventoryNames } from "./locale-name-aliases.js";
 import { track } from "./analytics.js";
 import { addMissingItems, teamMissingItems, undoAddedItems } from "./roster-team-missing-items-bulk-add.js";
 import { createSaveButton } from "./my-teams-save-button.js";
@@ -878,7 +879,10 @@ export function initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict, 
   }
 
   /* ---------- Thêm nhanh từ danh mục: lọc rồi "Chọn tất cả"; khách ghi local, đã đăng nhập ghi vào hộp đang chọn ---------- */
-  const catalog = buildCatalog({ heroesDict, tacticsDict }, "inventory");
+  // Bản ja: ô dán danh sách tên và ô tìm khớp cả tên Nhật (lớp lookup-ja, như Soi đội) và chữ Hán tự dạng Nhật
+  // (`rawNames.shinjitai` của bộ tra tên ja); kho vẫn ghi theo mã và tên Việt chuẩn.
+  const inventoryDict = (dict) => (currentLocale() === "ja" ? withJaInventoryNames(dict, jaEntries, rawNames?.shinjitai ?? null) : dict);
+  const catalog = buildCatalog({ heroesDict: inventoryDict(heroesDict), tacticsDict: inventoryDict(tacticsDict) }, "inventory");
   const ownedNames = (list) => new Set((list || []).flatMap((entry) => [entry.name, entry.canonicalId].filter(Boolean)));
   /** ID các món trong danh mục đang có trong kho (khớp theo ID canonical hoặc tên Việt chuẩn). */
   const pickerSelected = () => {

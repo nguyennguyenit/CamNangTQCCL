@@ -59,6 +59,8 @@ export const STATIC_PUBLIC_DIRECTORIES = Object.freeze([
   Object.freeze({ sourcePath: "public/fonts", outputPath: "fonts" }),
   // Chân dung tướng tự lưu (client Global, không có URL từ xa): `/heroes/<slug>.webp` — xem docs/unified-lookup.md.
   Object.freeze({ sourcePath: "public/heroes", outputPath: "heroes" }),
+  // Ảnh báo cáo trận của nhật ký thực chiến Khai hoang (`fieldLog.phases[].battles[].images[].url`).
+  Object.freeze({ sourcePath: "public/khai-hoang-log", outputPath: "khai-hoang-log" }),
 ]);
 
 
@@ -699,6 +701,12 @@ export async function verifyAstroDist({
         if (!page.includes(marker)) throw new Error(`Team section page lacks its prerendered default content (${marker}): ${htmlPath}`);
       }
       if ((page.match(/<h1\b/gu) ?? []).length !== 1) throw new Error(`Team section page must carry exactly one h1: ${htmlPath}`);
+      // Script bảo vệ chống nháy (`ssrStaleGuardScript`) phải là con ĐẦU của mount: nằm sau mount thì phần HTML đã stream về hiện ở trạng
+      // thái mặc định (sai mùa/bộ lọc) cho tới khi cả danh sách về và script chạy.
+      const guard = new RegExp(`<section\\b[^>]*\\bid="section-${pageSection[1]}"[^>]*><script>([^]*?)</script>`, "u").exec(page);
+      if (!guard?.[1].includes("dataset.ssrStale")) {
+        throw new Error(`Team section page stale guard must be the first child of its mount: ${htmlPath}`);
+      }
       // Chữ người đọc thấy: bỏ chú thích HTML và script (chú thích của footer nhắc JavaScript cho nút hộp thoại).
       if (WAITING_OR_JS_REQUIRED.test(page.replace(/<!--[^]*?-->/gu, "").replace(/<script\b[^]*?<\/script>/gu, ""))) {
         throw new Error(`Team section page must not carry waiting or JavaScript-required text: ${htmlPath}`);
