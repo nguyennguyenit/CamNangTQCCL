@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import io
+import re
 import tempfile
 import shutil
 import unittest
@@ -10,6 +11,7 @@ from pathlib import Path
 
 from pipeline.lookup_translations import canonical_json_bytes
 from pipeline.site_localization import (
+    UI_LITERAL_OBLIGATIONS,
     _assert_lookup_publication,
     _data_classification,
     glossary_digest,
@@ -43,6 +45,53 @@ class KhaiHoangNoteClassificationTest(unittest.TestCase):
         self.assertEqual(_data_classification(("teams", 14, "buildNote"), "Chiến pháp 疾風豪雨"), "translate")
 
 
+class UiObligationOwnerTest(unittest.TestCase):
+    def test_constant_owner_symbols_exist_in_owner_file(self):
+        # Owner dạng hằng (`UPPER_SNAKE`) là tên biến thật trong file sở hữu: đổi tên biến thì obligation phải đổi theo.
+        stale = []
+        for obligation in UI_LITERAL_OBLIGATIONS:
+            entity_id, owner_file, owner_symbol = obligation[0], obligation[3], obligation[4]
+            if not re.fullmatch(r"[A-Z][A-Z0-9_]+", owner_symbol):
+                continue
+            text = (ROOT / owner_file).read_text(encoding="utf-8")
+            if not re.search(rf"(?<![\w$]){re.escape(owner_symbol)}(?![\w$])", text):
+                stale.append((entity_id, owner_file, owner_symbol))
+        self.assertEqual(stale, [])
+
+
+class YoutubeTeamFieldClassificationTest(unittest.TestCase):
+    def test_youtube_trace_fields_are_exempt_and_confidence_is_authored(self):
+        teams = [{"source": "youtube"}]
+        youtube = lambda path, text: _data_classification(path, text, "data/teams.json", teams)
+        self.assertEqual(youtube((0, "nameZh"), "藏器呂布盾"), "exempt")
+        self.assertEqual(youtube((0, "evidence", 0, "videoId"), "khGmfKDo9ng"), "exempt")
+        self.assertEqual(youtube((0, "evidence", 0, "at"), "001m16s"), "exempt")
+        self.assertEqual(_data_classification((0, "evidence", 0, "kind"), "đề cử"), "exempt")
+        self.assertEqual(_data_classification((0, "confidence"), "cao"), "authored-vi")
+        self.assertEqual(_data_classification((0, "heroes", 0, "note"), "Chiến pháp chưa đọc được từ video"), "authored-vi")
+
+    def test_trace_exemption_is_scoped_to_youtube_rows_of_teams_json(self):
+        # Cùng tên field nhưng sai file, sai nguồn hay sai đường dẫn thì không được miễn dịch theo tên.
+        sheet = [{"source": "team-intro"}]
+        youtube = [{"source": "youtube"}]
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾", "data/teams.json", sheet), "translate")
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾", "data/coexist.json", youtube), "translate")
+        self.assertEqual(_data_classification((0, "nameZh"), "藏器呂布盾"), "translate")
+        self.assertEqual(_data_classification((0, "heroes", 0, "at"), "陣前", "data/teams.json", youtube), "translate")
+        with self.assertRaisesRegex(ValueError, "unreviewed data field classification: videoId"):
+            _data_classification((0, "evidence", 0, "videoId"), "abc", "data/khaihoang.json", youtube)
+
+    def test_real_teams_trace_fields_all_on_youtube_rows(self):
+        from pipeline.site_localization import _walk_strings
+        teams = json.loads((ROOT / "data/teams.json").read_bytes())
+        traced = [path for path, text in _walk_strings(teams)
+                  if path[-1] in {"nameZh", "videoId", "at"}]
+        self.assertTrue(traced)
+        for path in traced:
+            self.assertEqual(teams[path[0]]["source"], "youtube")
+            self.assertEqual(_data_classification(path, "x", "data/teams.json", teams), "exempt")
+
+
 class SiteLocalizationTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -59,9 +108,9 @@ class SiteLocalizationTest(unittest.TestCase):
         self.assertEqual(report["unknownLocations"], 0)
         self.assertEqual(report["unknownLocationDetails"], [])
         self.assertEqual(report["duplicateLocations"], 0)
-        self.assertEqual(report["capturedSourcePack"]["records"], 1640)
-        self.assertEqual(report["capturedSourcePack"]["noteBlocks"], 2590)
-        self.assertEqual(report["translation"]["recommendedObligations"], 2590)
+        self.assertEqual(report["capturedSourcePack"]["records"], 1681)
+        self.assertEqual(report["capturedSourcePack"]["noteBlocks"], 2708)
+        self.assertEqual(report["translation"]["recommendedObligations"], 2708)
         self.assertEqual(report["translation"]["lookupReviewObligations"], 3597)
         self.assertGreater(report["translation"]["expectedObligations"], 5470)
         self.assertEqual(report["translation"]["missing"], 0)
@@ -69,7 +118,7 @@ class SiteLocalizationTest(unittest.TestCase):
         site_keys = {(item["entityId"], item["fieldPath"]) for item in obligations}
         lookup = json.loads((ROOT / "pipeline/lookup-translations.json").read_bytes())
         lookup_keys = {(item["entityId"], item["fieldPath"]) for item in lookup["entries"]}
-        self.assertEqual(len(site_keys), 2694)
+        self.assertEqual(len(site_keys), 2812)
         self.assertEqual(len(lookup_keys), 3597)
         self.assertTrue(site_keys.isdisjoint(lookup_keys))
         self.assertEqual(len(site_keys | lookup_keys), report["translation"]["expectedObligations"])
@@ -235,8 +284,8 @@ class SiteLocalizationTest(unittest.TestCase):
             }))
             report = check(root, policy=self.policy)
             self.assertEqual(report["exitCode"], 1)
-            self.assertEqual(report["coverage"]["expected"], 6291)
-            self.assertEqual(report["coverage"]["translated"], 6187)
+            self.assertEqual(report["coverage"]["expected"], 6409)
+            self.assertEqual(report["coverage"]["translated"], 6305)
             self.assertEqual(report["coverage"]["missing"], 104)
             self.assertTrue(any("coverage does not match" in item["reason"] for item in report["problems"]))
 
@@ -458,6 +507,21 @@ class SiteLocalizationTest(unittest.TestCase):
             strict = check(ROOT, stage="all", candidate=full_candidate)
             self.assertEqual(strict["exitCode"], 0)
             self.assertEqual(strict["uiMissingSources"], [])
+            # Bảng khớp tier JP nằm trong input hash và được chiếu lên đúng các hàng PK-S26 đã review.
+            self.assertIn("pipeline/recommended-jp-tiers.json", full_manifest["inputHashes"])
+            selector = json.loads((full_candidate / "recommended/current.json").read_bytes())
+            generation = full_candidate / "recommended" / selector["generationId"]
+            manifest = json.loads((generation / "manifest.json").read_bytes())
+            jp_bytes = (ROOT / "pipeline/recommended-jp-tiers.json").read_bytes()
+            self.assertEqual(manifest["jpTiersHash"], "sha256:" + hashlib.sha256(jp_bytes).hexdigest())
+            index = json.loads((generation / "index.json").read_bytes())["records"]
+            tiered = [row for row in index if row.get("tierSources")]
+            self.assertEqual(len(tiered), 7)
+            self.assertEqual({row["sourceSeasonId"] for row in tiered}, {"pk-s26"})
+            # Kỳ lược của đội được tính ở đường publish này (không qua capture), từ catalog của chính candidate.
+            wumou = next(row for row in index if row["sourceConfigId"] == "s27-official-wumou-qi")
+            self.assertEqual(wumou["qilue"]["cardIds"][0], "qilue-card:bo-tri-thap-dien")
+            self.assertEqual(sum("qilue" in row for row in index), 59)
 
     def test_publication_rejects_lookup_bytes_outside_reviewed_candidate(self):
         with tempfile.TemporaryDirectory() as temporary:

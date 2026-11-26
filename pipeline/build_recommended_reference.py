@@ -9,9 +9,12 @@ import re
 import tempfile
 from pathlib import Path
 from pipeline.common import canonical_json, sha256_hex
+from pipeline.other_team_groups import annotate_other_teams
 from pipeline.hero_summaries import build_hero_summaries, validate_hero_summaries_shape
 from pipeline.tactic_summaries import build_tactic_summaries, validate_tactic_summaries_shape
 from pipeline.lookup_translations import CJK as HAN_SCRIPT
+from pipeline.recommended_jp_tiers import apply_jp_tiers
+from pipeline.recommended_qilue import compute_qilue
 from pipeline.recommended_identity import (
     build_display_mapping,
     resolve_display_kind,
@@ -50,6 +53,7 @@ def raw_source_record(row):
     display_fields = {
         "displayNameVi",
         "displayNotes",
+        "qilue",
         "legacyReferences",
         "sourceSeasonNameVi",
         "sourceSeasonCode",
@@ -63,6 +67,8 @@ def raw_source_record(row):
         "listIndex",
         "tierOrder",
         "subcategoryRaw",
+        # Tier nguồn khác (bảng khớp JP đã review) là lớp hiển thị chiếu lên hàng, không thuộc dữ liệu SGSDeck.
+        "tierSources",
     }
     holder_display_fields = {
         "displayNameVi",
@@ -121,8 +127,16 @@ def _validated_display_notes(value, row):
     return value
 
 
-def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
-    """Re-derive display lineage from authoritative raw inputs at the publication boundary."""
+def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
+                               jp_tiers_bytes=None, qilue_catalog_bytes=None, qilue_overrides_bytes=None):
+    """Re-derive display lineage from authoritative raw inputs at the publication boundary.
+
+    `jp_tiers_bytes` (tùy chọn) là bảng khớp tier JP đã review; có mặt thì hàng khớp nhận `tierSources` và hash bảng
+    vào descriptor, nên đổi bảng là sinh generation mới.
+
+    `qilue_catalog_bytes` (lookup-catalog.json của CÙNG lookup candidate) và `qilue_overrides_bytes` đi cùng nhau:
+    có thì mỗi đội thuộc mùa trong overrides nhận projection hiển thị `qilue` (xem `pipeline/recommended_qilue.py`),
+    ghi giống hệt ở index và detail; manifest ghim hash của cả hai input."""
     if not all(isinstance(value, (bytes, bytearray)) for value in (teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes)):
         raise ValueError("Publication requires authoritative teams, content links, ledger and catalog bytes")
     candidate = copy.deepcopy(inputs)
@@ -201,6 +215,24 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
             if index_notes != detail_notes:
                 raise ValueError("Recommended index/detail displayNotes differ")
 
+    if (qilue_catalog_bytes is None) != (qilue_overrides_bytes is None):
+        raise ValueError("Qilue publication needs both the lookup catalog and the overrides")
+    if qilue_catalog_bytes is not None:
+        qilue = compute_qilue(
+            candidate.get("records") or [],
+            json.loads(bytes(qilue_catalog_bytes)),
+            json.loads(bytes(qilue_overrides_bytes)),
+        )
+        # Hàng detail của source pack không mang `safeScopeKey`: khóa scope của nó là khóa nhóm `details` (`detail_scope`).
+        targets = [((row.get("safeScopeKey"), row.get("sourceConfigId")), row) for row in candidate.get("records") or []]
+        targets += [((detail_scope[identifier], identifier), row) for identifier, row in details_by_id.items()]
+        for key, row in targets:
+            value = qilue.get(key)
+            if value is not None:
+                row["qilue"] = copy.deepcopy(value)
+        candidate["qilueCatalogHash"] = "sha256:" + sha256_hex(bytes(qilue_catalog_bytes))
+        candidate["qilueOverridesHash"] = "sha256:" + sha256_hex(bytes(qilue_overrides_bytes))
+
     if ledger.get("dedupKeyVersion") != 1 or candidate.get("dedupKeyVersion") != 1:
         raise ValueError("Unsupported Team khác dedup key version")
     if ledger.get("sourceInventoryHash") != candidate.get("inventory", {}).get("inventoryHash"):
@@ -276,6 +308,11 @@ def prepare_publication_inputs(inputs, *, teams_bytes, content_links_bytes, ledg
     # Hash kho Tra cứu (khóa nối) vào descriptor ⇒ đổi kho là generation đổi, không thể còn số liệu cũ.
     candidate["heroCatalogHash"] = "sha256:" + sha256_hex(bytes(catalog_bytes))
     candidate["tacticCatalogHash"] = "sha256:" + sha256_hex(bytes(tactic_catalog_bytes))
+    if jp_tiers_bytes is not None:
+        if not isinstance(jp_tiers_bytes, (bytes, bytearray)):
+            raise ValueError("Recommended JP tier table must be bytes")
+        apply_jp_tiers(candidate, jp_tiers_bytes)
+        candidate["jpTiersHash"] = "sha256:" + sha256_hex(bytes(jp_tiers_bytes))
     return candidate
 def _write(path, value):
     data = canonical_bytes(value)
@@ -351,10 +388,14 @@ def validate_generation_inputs(inputs):
                     raise ValueError("Recommended index/detail titles differ")
                 if index_row.get("legacyReferences") != detail_row.get("legacyReferences"):
                     raise ValueError("Recommended index/detail references differ")
+                if index_row.get("tierSources") != detail_row.get("tierSources"):
+                    raise ValueError("Recommended index/detail tierSources differ")
                 if index_row.get("displayNotes") is not None:
                     _validated_display_notes(index_row["displayNotes"], index_row)
                     if index_row["displayNotes"] != detail_row.get("displayNotes"):
                         raise ValueError("Recommended index/detail displayNotes differ")
+                if index_row.get("qilue") != detail_row.get("qilue"):
+                    raise ValueError("Recommended index/detail qilue differ")
     admitted = inputs.get("otherTeams", [])
     if any(row.get("classification") != "distinct" for row in admitted):
         raise ValueError("Public Team khác may contain admitted rows only")
@@ -368,6 +409,21 @@ def validate_generation_inputs(inputs):
             raise ValueError("Public Team khác legacy content identity differs")
         if row.get("legacyContentSha256") != canonical_object_hash(row["legacyContent"]):
             raise ValueError("Public Team khác legacy content fingerprint differs")
+    validate_other_team_flags(admitted)
+
+
+def validate_other_team_flags(admitted):
+    """Đội đề cử (``recommended``) là boolean và đứng đầu; ``sourceSeasonIds`` null hoặc danh sách mã mùa."""
+    for row in admitted:
+        if not isinstance(row.get("recommended", False), bool):
+            raise ValueError("Public Team khác recommended flag must be boolean")
+        seasons = row.get("sourceSeasonIds")
+        if seasons is not None and (not isinstance(seasons, list) or not seasons
+                                    or any(not isinstance(item, str) or not item for item in seasons)):
+            raise ValueError("Public Team khác sourceSeasonIds must be null or a non-empty list")
+    flags = [bool(row.get("recommended")) for row in admitted]
+    if flags != sorted(flags, reverse=True):
+        raise ValueError("Public Team khác recommended rows must come first")
 
 
 # Trường chỉ phục vụ đối chiếu nội bộ (URL trang nguồn): kiểm ở validate_generation_inputs rồi bỏ khỏi bản phát công khai.
@@ -393,20 +449,25 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     if inventory.get("displayLabels") is not None:
         seasons["displayLabels"] = inventory["displayLabels"]
     index = {"schemaVersion": SCHEMA_VERSION, "records": records}
-    other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.", "records": inputs.get("otherTeams", [])}
+    # Team = bộ 3 tướng + binh chủng; mỗi hàng là một phương án (other_team_groups). Website và MCP chỉ dùng
+    # phương án đủ dữ liệu, nên số liệu "Trong cẩm nang" cũng chỉ tính các phương án đó.
+    other_records, team_groups = annotate_other_teams(inputs.get("otherTeams") or [])
+    complete_other = [row for row in other_records if row["dataComplete"]]
+    other = {"schemaVersion": SCHEMA_VERSION, "note": "Các đội có sẵn, đã đối chiếu với Team chuẩn.",
+             "records": other_records, "teamGroups": team_groups}
     details = inputs.get("details", {})
     # Số liệu "Trong cẩm nang" (Phase 7) tính từ chính `records` đã sắp ở trên — cùng thứ tự với
     # `index.json` phát ra, nên thứ tự đồng hạng của số liệu khớp bản phát.
     summaries = build_hero_summaries(
-        catalog_bytes=catalog_bytes, records=records, other_records=inputs.get("otherTeams") or [],
+        catalog_bytes=catalog_bytes, records=records, other_records=complete_other,
     )
-    validate_hero_summaries_shape(summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    validate_hero_summaries_shape(summaries, records=records, other_records=complete_other)
     # Cùng nguồn và thứ tự cho số liệu theo chiến pháp (hồ sơ chiến pháp).
     tactic_summaries = build_tactic_summaries(
         tactic_catalog_bytes=tactic_catalog_bytes, hero_catalog_bytes=catalog_bytes,
-        records=records, other_records=inputs.get("otherTeams") or [],
+        records=records, other_records=complete_other,
     )
-    validate_tactic_summaries_shape(tactic_summaries, records=records, other_records=inputs.get("otherTeams") or [])
+    validate_tactic_summaries_shape(tactic_summaries, records=records, other_records=complete_other)
     payloads = {"seasons.json": seasons, "index.json": index, "other-teams.json": other, "hero-summaries.json": summaries, "tactic-summaries.json": tactic_summaries}
     for scope in inventory["scopes"]:
         key = scope["safeScopeKey"]
@@ -414,6 +475,11 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     descriptor = {"schemaVersion": SCHEMA_VERSION, "inventoryHash": inventory.get("inventoryHash"), "mappingHash": inputs.get("mappingHash"), "decisionSnapshotHash": inputs.get("decisionSnapshotHash"), "dedupKeyVersion": inputs.get("dedupKeyVersion"), "legacyTeamsHash": inputs["legacyTeamsHash"], "contentLinksHash": inputs["contentLinksHash"], "heroSummaryCatalogHash": inputs["heroCatalogHash"], "tacticSummaryCatalogHash": inputs["tacticCatalogHash"], "payloadHashes": {name: sha256_hex(canonical_bytes(value)) for name, value in sorted(payloads.items())}}
     if inputs.get("localizationInputsHash") is not None:
         descriptor["localizationInputsHash"] = inputs["localizationInputsHash"]
+    if inputs.get("jpTiersHash") is not None:
+        descriptor["jpTiersHash"] = inputs["jpTiersHash"]
+    for key in ("qilueCatalogHash", "qilueOverridesHash"):
+        if inputs.get(key) is not None:
+            descriptor[key] = inputs[key]
     generation_id = sha256_hex(canonical_bytes(descriptor))
     target = output / generation_id
     if not target.exists():
@@ -441,7 +507,8 @@ def _build_generation_locked(inputs, output, catalog_bytes, tactic_catalog_bytes
     os.replace(temporary, output / "current.json")
     return selector
 
-def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes):
+def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger_bytes, catalog_bytes, tactic_catalog_bytes,
+                     jp_tiers_bytes=None, qilue_catalog_bytes=None, qilue_overrides_bytes=None):
     candidate = prepare_publication_inputs(
         inputs,
         teams_bytes=teams_bytes,
@@ -449,6 +516,9 @@ def build_generation(inputs, output, *, teams_bytes, content_links_bytes, ledger
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
         tactic_catalog_bytes=tactic_catalog_bytes,
+        jp_tiers_bytes=jp_tiers_bytes,
+        qilue_catalog_bytes=qilue_catalog_bytes,
+        qilue_overrides_bytes=qilue_overrides_bytes,
     )
     validate_generation_inputs(candidate)
     output = Path(output)
@@ -794,6 +864,7 @@ def main():
     parser.add_argument("--tactic-catalog", type=Path, required=True)
     parser.add_argument("--display-map", type=Path, default=DISPLAY_MAP_PATH)
     parser.add_argument("--default-season", type=Path, default=DEFAULT_SEASON_PATH)
+    parser.add_argument("--jp-tiers", type=Path, help="bảng khớp tier JP đã review (pipeline/recommended-jp-tiers.json)")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     teams_bytes = args.teams.read_bytes()
@@ -815,6 +886,7 @@ def main():
         ledger_bytes=ledger_bytes,
         catalog_bytes=catalog_bytes,
         tactic_catalog_bytes=args.tactic_catalog.read_bytes(),
+        jp_tiers_bytes=args.jp_tiers.read_bytes() if args.jp_tiers else None,
     )
 
 

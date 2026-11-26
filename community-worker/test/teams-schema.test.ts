@@ -3,7 +3,7 @@ import { dirname, join } from "node:path";
 import type { DatabaseSync } from "node:sqlite";
 import { fileURLToPath } from "node:url";
 import { beforeEach, describe, expect, it } from "vitest";
-import { createFakeD1 } from "./fakes";
+import { createFakeD1, runMigrations } from "./fakes";
 
 const ROLLBACK_DIR = join(dirname(fileURLToPath(import.meta.url)), "..", "rollback");
 const rollbackSql = (name: string) => readFileSync(join(ROLLBACK_DIR, name), "utf8");
@@ -19,13 +19,8 @@ function user(id: string, bannedUntil: number | null = null) {
   ).run(id, id, `${id}@x.test`, ISO, ISO, bannedUntil);
 }
 
-function season(id: string, closedAt: number | null = null) {
-  db.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at, closed_at) values (?, ?, ?, 1, ?)`).run(
-    id,
-    `Mùa ${id}`,
-    `赛季${id}`,
-    closedAt,
-  );
+function season(id: string) {
+  db.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at) values (?, ?, ?, 1)`).run(id, `Mùa ${id}`, `赛季${id}`);
 }
 
 function team(id: string, authorId = "author", createdAt = 1_000_000_000_000, seasonId = "s1") {
@@ -69,24 +64,72 @@ beforeEach(() => {
 });
 
 describe("community_seasons", () => {
-  it("chỉ cho một mùa mở; đóng mùa cũ rồi mở mùa mới thì được", () => {
-    expect(() => season("s2")).toThrow(/UNIQUE/i);
-    db.prepare(`update community_seasons set closed_at = 5 where id = 's1'`).run();
-    expect(() => season("s2")).not.toThrow();
-    expect(db.prepare(`select id from community_seasons where closed_at is null`).all()).toEqual([{ id: "s2" }]);
-  });
-
-  it("nhiều mùa đã đóng cùng tồn tại", () => {
-    db.prepare(`update community_seasons set closed_at = 5 where id = 's1'`).run();
-    season("s2", 6);
-    season("s3", 7);
-    expect(db.prepare(`select count(*) n from community_seasons`).get()).toEqual({ n: 3 });
+  it("không còn ràng buộc một mùa mở: nhiều mùa cùng tồn tại, không còn cột closed_at", () => {
+    season("s2");
+    season("pk-s5");
+    // og-兵演春秋 do migration 0012 tạo sẵn.
+    expect(db.prepare(`select id from community_seasons order by id`).all()).toEqual([{ id: "og-兵演春秋" }, { id: "pk-s5" }, { id: "s1" }, { id: "s2" }]);
+    const columns = (db.prepare(`pragma table_info(community_seasons)`).all() as { name: string }[]).map((c) => c.name);
+    expect(columns).not.toContain("closed_at");
   });
 
   it("id mùa sai định dạng bị CHECK từ chối", () => {
-    expect(() => season("-bad", 1)).toThrow(/CHECK/i);
-    expect(() => season("Upper", 1)).toThrow(/CHECK/i);
-    expect(() => season("a".repeat(41), 1)).toThrow(/CHECK/i);
+    expect(() => season("-bad")).toThrow(/CHECK/i);
+    expect(() => season("Upper")).toThrow(/CHECK/i);
+    expect(() => season("a".repeat(41))).toThrow(/CHECK/i);
+  });
+});
+
+describe("migration 0012 + rollback 0013", () => {
+  const OLD_ID_RE = /^[a-z0-9][a-z0-9-]{0,39}$/u;
+  let old: DatabaseSync;
+  const seasonIds = () => (old.prepare(`select id from community_seasons order by id`).all() as { id: string }[]).map((r) => r.id);
+  const teamSeason = (id: string) => (old.prepare(`select season_id s from community_teams where id = ?`).get(id) as { s: string }).s;
+  const reportSeason = () => (old.prepare(`select season s from battle_reports where id = 'r-old'`).get() as { s: string }).s;
+  const fkProblems = () => old.prepare(`pragma foreign_key_check`).all();
+
+  // Trạng thái production trước 0012: binh-dien-xuan-thu ĐANG MỞ, 2 đội, 1 chiến báo mang id mùa.
+  beforeEach(() => {
+    old = createFakeD1({ upTo: "0011" }).sqlite;
+    old.prepare(`insert into "user" (id, name, email, "emailVerified", "createdAt", "updatedAt") values ('a', 'a', 'a@x.test', 1, ?, ?)`).run(ISO, ISO);
+    old.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at, closed_at) values ('binh-dien-xuan-thu', 'Binh Diễn Xuân Thu', '兵演春秋', 1, null)`).run();
+    for (const id of ["t1", "t2"]) {
+      old.prepare(
+        `insert into community_teams (id, author_id, season_id, status, title, hero_1, hero_2, hero_3, hero_key, tactics, troop, playstyle, text_lang, created_at)
+         values (?, 'a', 'binh-dien-xuan-thu', 'approved', 't', 'hero:a', 'hero:b', 'hero:c', 'hero:a,hero:b,hero:c', '[]', 'cung', 'p', 'vi', 1)`,
+      ).run(id);
+    }
+    old.prepare(
+      `insert into battle_reports (id, page_key, lang, user_id, result, ally_heroes, enemy_heroes, season, status, created_at)
+       values ('r-old', '/doi-cong-dong/t1/', 'vi', 'a', 'win', '[]', '[]', 'binh-dien-xuan-thu', 'approved', 1)`,
+    ).run();
+    runMigrations(old, { after: "0011" });
+  });
+
+  it("0012 chuyển đội + chiến báo sang og-兵演春秋, xoá mùa cũ, gỡ index và cột closed_at", () => {
+    expect(seasonIds()).toEqual(["og-兵演春秋"]);
+    expect([teamSeason("t1"), teamSeason("t2"), reportSeason()]).toEqual(["og-兵演春秋", "og-兵演春秋", "og-兵演春秋"]);
+    expect(fkProblems()).toEqual([]);
+    const indexes = (old.prepare(`pragma index_list(community_seasons)`).all() as { name: string }[]).map((i) => i.name);
+    expect(indexes).not.toContain("community_seasons_one_open_uidx");
+    expect(old.prepare(`select label_vi, label_zh from community_seasons`).get()).toEqual({ label_vi: "OG · Binh Diễn Xuân Thu", label_zh: "OG · 兵演春秋" });
+  });
+
+  it("0013 đưa về dạng worker cũ đọc được (một mùa mở, id khớp regex cũ); chạy lại 0012 thì roll-forward được", () => {
+    old.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at) values ('pk-s5', 'PK-S5', 'PK-S5', 2)`).run();
+    old.prepare(`update community_teams set season_id = 'pk-s5' where id = 't2'`).run();
+    old.exec(rollbackSql("0013_restore_community_season_open.sql"));
+    expect(seasonIds()).toEqual(["binh-dien-xuan-thu", "pk-s5"]);
+    expect(seasonIds().every((id) => OLD_ID_RE.test(id))).toBe(true);
+    expect(old.prepare(`select id from community_seasons where closed_at is null`).all()).toEqual([{ id: "binh-dien-xuan-thu" }]);
+    expect([teamSeason("t1"), teamSeason("t2"), reportSeason()]).toEqual(["binh-dien-xuan-thu", "pk-s5", "binh-dien-xuan-thu"]);
+    expect(fkProblems()).toEqual([]);
+    expect(() => old.prepare(`insert into community_seasons (id, label_vi, label_zh, opened_at) values ('x', 'x', 'x', 3)`).run()).toThrow(/UNIQUE/i);
+
+    runMigrations(old, { after: "0011", upTo: "0012" });
+    expect(seasonIds()).toEqual(["og-兵演春秋", "pk-s5"]);
+    expect([teamSeason("t1"), teamSeason("t2")]).toEqual(["og-兵演春秋", "pk-s5"]);
+    expect(fkProblems()).toEqual([]);
   });
 });
 

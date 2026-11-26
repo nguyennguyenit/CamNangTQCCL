@@ -410,10 +410,11 @@ test.describe("Chiêu mộ", () => {
  */
 async function analyzeFixture(page) {
   const fixture = await page.evaluate(async () => {
-    const [{ createEntityIndex, diffTeam, referenceTeam }, { encodeTeamParam }, { createBookNameIndex }] = await Promise.all([
+    const [{ compareTeams, createEntityIndex, referenceTeam }, { encodeTeamParam }, { createBookNameIndex, createTacticIdResolver }, { websiteOtherRecords }] = await Promise.all([
       import("/js/analyze-map.js"),
       import("/js/analyze-state.js"),
       import("/js/lookup-ids.js"),
+      import("/js/other-team-groups.js"),
     ]);
     const json = (path) => fetch(path).then((response) => response.json());
     const pin = JSON.parse(document.querySelector("#recommended-publication").textContent);
@@ -424,6 +425,7 @@ async function analyzeFixture(page) {
     ]);
     const indexes = { hero: createEntityIndex(heroes, "hero"), tactic: createEntityIndex(tactics, "tactic"), book: createEntityIndex(books, "book") };
     const bookIdOf = createBookNameIndex(books);
+    const tacticIdOf = createTacticIdResolver(tactics);
     const recordOf = (kind, id) => indexes[kind].byId.get(id);
     const compact = (value) => String(value || "").replace(/\s+/gu, "");
     // Chữ Giản thể như in trong game: alias không khoảng trắng khác `chinese`, không có thì `chinese`.
@@ -442,7 +444,10 @@ async function analyzeFixture(page) {
         recordOf("hero", member.hero) && member.tactics.every((id) => id && recordOf("tactic", id)) && member.book && recordOf("book", member.book));
       if (!complete) continue;
       const unsureIndex = team.heroes.findIndex((member, position) => position > 0 && compact(recordOf("hero", member.hero).chinese).length >= 4);
-      const otherMatch = other.records.find((item) => diffTeam(team, item, null, bookIdOf).heroHit >= 2);
+      // Đội khác hiện ra đúng như trang xếp (top 5 theo tướng rồi chiến pháp khớp), không phải bản ghi khớp đầu tiên
+      // trong `other-teams.json`: đội đề cử đứng đầu file nhưng chưa chắc lọt top 5.
+      // Trang chỉ đối chiếu phương án Đội khác mà website hiện (đủ dữ liệu, có trang).
+      const otherMatch = compareTeams(team, websiteOtherRecords(other), { minHeroes: 2, limit: 5, tacticIdOf, bookIdOf })[0]?.record;
       if (unsureIndex < 0 || !otherMatch) continue;
       const reads = team.heroes.map((member, position) => ({
         nameCn: position === unsureIndex
@@ -891,6 +896,34 @@ test.describe("Gợi ý đội", () => {
     await expect(status).toContainText("Đã đọc xong");
     expect(tokens).toEqual(["fixture-token", "fixture-token-1"]);
     await expect(card.locator(".roster-scan-preview")).toContainText("2 ảnh · vừa xong");
+  });
+
+  test("bản Nhật: ảnh kho in tên Nhật khớp đúng chiến pháp, kho lưu tên Việt chuẩn và hiện tên Nhật", async ({ page }) => {
+    const readJson = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
+    const ja = readJson("data/lookup-ja.json").entries;
+    const tactics = readJson("data/tactics.json");
+    const ids = ["tactic:quoc-chi-trinh-can", "tactic:nhanh-tri-dong-nao", "tactic:kinh-thien-vi-dia"];
+    await page.route("https://challenges.cloudflare.com/**", (route) =>
+      route.fulfill({ contentType: "application/javascript", body: TURNSTILE_STUB }));
+    const bodies = [];
+    await page.route(WORKER_ROUTE, (route) => {
+      bodies.push(route.request().postDataJSON());
+      return route.fulfill({ json: { tactics: ids.map((id) => ({ nameCn: ja[id].name })) } });
+    });
+
+    await page.goto("/ja/goi-y-doi-tu-kho/");
+    await waitForBoot(page);
+    const section = page.locator("#section-roster-recommend");
+    await section.locator(".roster-scan-card").nth(1).locator('input[type="file"]')
+      .setInputFiles({ name: "kho.png", mimeType: "image/png", buffer: transparentPng });
+    await expect(section.locator(".roster-scan-status")).toHaveText("読み取りが完了しました。下のデータを確認してください。");
+    expect(bodies.map((body) => body.locale)).toEqual(["ja"]);
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem("tqccl.rosterRecommend.scanState.v1")));
+    expect(stored.ownedTactics.map(({ name, confidence }) => [name, confidence]))
+      .toEqual(ids.map((id) => [tactics.find((record) => record.id === id).viet, "high"]));
+    const chips = section.locator(".roster-chip-list li");
+    for (const id of ids) await expect(chips.filter({ hasText: ja[id].name })).toHaveCount(1);
+    await expect(section.locator(".roster-chip-check")).toHaveCount(0);
   });
 
   test("ba nút đọc ảnh không dùng chung một token: đang đọc thì khoá cả ba, nén ảnh lỗi không bỏ token", async ({ page }) => {
@@ -1439,6 +1472,7 @@ test.describe("Gợi ý đội", () => {
       body: [
         'export const ANALYZE_CONFIG = { workerUrl: "https://REPLACE_ME/analyze", turnstileSiteKey: "REPLACE_ME", maxImageDim: 1600, jpegQuality: 0.82 };',
         'export function isAnalyzeConfigured() { return !ANALYZE_CONFIG.workerUrl.includes("REPLACE_ME") && !ANALYZE_CONFIG.turnstileSiteKey.includes("REPLACE_ME"); }',
+        'export const ANALYTICS_CONFIG = { measurementId: "G-0K23EKM76G", hosts: ["tqccl.com"] };',
       ].join("\n"),
     }));
     const turnstileRequests = [];

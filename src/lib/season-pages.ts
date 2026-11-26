@@ -9,6 +9,9 @@
  *   trang cũ của mùa mới hiện tại biến mất và được 301 về `/doi-chuan/` (`seasonRedirectRules`).
  * - Mùa 0 đội (chưa thu thập) không có trang; registry rỗng cho 0 trang.
  */
+import { LOCALE_PREFIX, SITE_LOCALES, pick } from '../../js/i18n.js';
+import { localRawName } from '../../js/website-display.js';
+import type { SiteLocale } from './locale-routes.ts';
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog, type RecommendedRouteEntry, type TeamDetailRouteCatalog } from './team-detail-routes.ts';
 
@@ -34,13 +37,15 @@ export interface SeasonPage extends SeasonSummary {
   routePath: string;
   /** File dist bản Việt; bản zh nằm dưới `zh/`. */
   htmlPath: string;
+  /** Mùa cũ hơn mùa hiện tại (`isOldSeason`): chỉ mùa này mang nhãn "mùa cũ"; mùa mới hơn mùa hiện tại không có nhãn. */
+  older: boolean;
 }
 
 export interface SeasonPageCatalog {
   defaultSourceSeasonId: string | null;
   /** Mùa hiện tại (không có trang riêng); `null` khi registry rỗng. */
   current: SeasonSummary | null;
-  /** Mùa cũ có đội, theo thứ tự registry. */
+  /** Mùa không phải mùa hiện tại có đội, theo thứ tự registry. */
   pages: SeasonPage[];
 }
 
@@ -52,9 +57,24 @@ export interface SeasonRedirectRule {
 
 const text = (value: unknown) => (typeof value === 'string' && value.trim() ? value.trim() : null);
 
-/** Mùa cũ: đội thuộc một mùa khác mùa mặc định của registry. Đội không rõ mùa không bị coi là mùa cũ. */
+const SEASON_NUMBER = /^(?:pk-)?s(\d+)$/u;
+
+/** Số mùa trong id (`s1`..`s3`, `pk-s4`..`pk-s28`: một dãy liên tục S1→S3 rồi PK-S4…); `null` khi không đọc được (OG, họ mùa mới). */
+function seasonNumber(sourceSeasonId: string) {
+  const match = SEASON_NUMBER.exec(sourceSeasonId);
+  return match ? Number(match[1]) : null;
+}
+
+/**
+ * Mùa cũ: số mùa trong id NHỎ HƠN số của mùa mặc định. Không dùng vị trí trong `seasonOptions`/`sourceOrder`: đó là thứ tự
+ * ô chọn trên trang nguồn, không phải thời gian (generation #103 xếp PK-S27, PK-S28 … S1, OG). Mùa mặc định, mùa mới hơn
+ * nó (PK-S28 khi mặc định là PK-S27), mùa không đọc được số (OG, họ mới) hoặc thiếu mùa/mặc định đều không có nhãn.
+ */
 export function isOldSeason(sourceSeasonId: string | null | undefined, defaultSourceSeasonId: string | null | undefined) {
-  return Boolean(sourceSeasonId) && Boolean(defaultSourceSeasonId) && sourceSeasonId !== defaultSourceSeasonId;
+  if (!sourceSeasonId || !defaultSourceSeasonId) return false;
+  const season = seasonNumber(sourceSeasonId);
+  const current = seasonNumber(defaultSourceSeasonId);
+  return season !== null && current !== null && season < current;
 }
 
 /**
@@ -101,14 +121,16 @@ export function seasonPageCatalog(
   const current = summaries.find((summary) => summary.sourceSeasonId === defaultSourceSeasonId) ?? null;
   const pages = summaries
     .filter((summary) => summary.sourceSeasonId !== defaultSourceSeasonId && summary.count > 0)
-    .map((summary) => ({ ...summary, routePath: `/doi-chuan/${summary.slug}/`, htmlPath: `doi-chuan/${summary.slug}/index.html` }));
+    .map((summary) => ({ ...summary, routePath: `/doi-chuan/${summary.slug}/`, htmlPath: `doi-chuan/${summary.slug}/index.html`,
+      older: isOldSeason(summary.sourceSeasonId, defaultSourceSeasonId),
+    }));
   return { defaultSourceSeasonId, current, pages };
 }
 
-/** 301 của slug mùa hiện tại về trang danh sách (vi + zh): URL đã index của mùa vừa thành mùa mặc định không bị 404. */
+/** 301 của slug mùa hiện tại về trang danh sách (mọi locale): URL đã index của mùa vừa thành mùa mặc định không bị 404. */
 export function seasonRedirectRules(catalog: Pick<SeasonPageCatalog, 'current'>): SeasonRedirectRule[] {
   if (!catalog.current) return [];
-  return ['', '/zh'].map((prefix) => ({ from: `${prefix}/doi-chuan/${catalog.current!.slug}/`, to: `${prefix}/doi-chuan/`, status: 301 as const }));
+  return SITE_LOCALES.map((locale) => LOCALE_PREFIX[locale]).map((prefix) => ({ from: `${prefix}/doi-chuan/${catalog.current!.slug}/`, to: `${prefix}/doi-chuan/`, status: 301 as const }));
 }
 
 /** Danh mục của publication đã pin của repo (đúng bản mà trang dùng). */
@@ -118,9 +140,13 @@ export async function seasonPages(): Promise<SeasonPageCatalog> {
   return seasonPageCatalog(registry, await teamDetailCatalog());
 }
 
-/** Tên mùa hiển thị theo ngôn ngữ: bản zh dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
-export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: 'vi' | 'zh') {
-  return locale === 'zh' ? season.nameRaw : season.nameVi;
+/** Tên mùa hiển thị theo ngôn ngữ: bản zh và ja dùng tên chữ Hán gốc, bản vi tên Việt; thiếu thì chỉ còn mã. */
+/**
+ * Tên mùa theo ngôn ngữ trang: bản Việt `nameVi`, bản Trung chữ Hán nguồn, bản Nhật chữ nguồn đổi tự dạng qua `resolver.fromRaw`
+ * (truyền `await lookupJaNameResolver()`; vắng thì giữ chữ nguồn).
+ */
+export function seasonDisplayName(season: Pick<SeasonSummary, 'nameVi' | 'nameRaw'>, locale: SiteLocale, resolver: { fromRaw?: (raw: string) => string } | null = null) {
+  return pick(locale, season.nameVi, season.nameRaw, season.nameRaw ? localRawName(season.nameRaw, resolver, locale) : season.nameRaw);
 }
 
 export interface SeasonPageProps {

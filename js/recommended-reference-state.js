@@ -1,16 +1,33 @@
 import { normalizeText } from './filters.js';
 import { canonicalTeamView, resolveTeamView } from './team-view.js';
-import { L, currentLocale, normalizeLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, currentLocale, normalizeLocale } from './i18n.js';
 
 const CJK_TEXT = /[\u3400-\u9fff\uf900-\ufaff]/u;
-let zhNameResolver = null;
+/** Bộ tra tên theo locale; khóa `*` dùng cho mọi bản không phải tiếng Việt chưa có bộ riêng. */
+const nameResolvers = new Map();
+const ANY_SOURCE_LOCALE = '*';
 
 /**
- * Bản zh: bộ phân giải tên Hán-Việt của dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) → chữ Hán
- * gốc, dựng từ từ điển tướng/chiến pháp/binh thư. Bản vi không cần gọi; truyền giá trị không phải hàm để gỡ.
+ * Bản không phải tiếng Việt: bộ phân giải tên Hán-Việt của dữ liệu cũ (`teams.json`, `khaihoang.json`, `coexist.json`) → tên của
+ * bản đang xem, dựng từ từ điển tướng/chiến pháp/binh thư (bản zh: chữ Hán gốc, `createRawNameResolver`; bản ja: tên Nhật,
+ * `createJaNameResolver`). `resolver.fromRaw(chữ Hán nguồn)` (tùy chọn) đổi chữ nguồn đã có chữ Hán; `resolver.prefixed`
+ * (tùy chọn) dựng tên chiến pháp bản cải tạo. `locale` vắng thì bộ tra dùng cho mọi bản chưa có bộ riêng — trình duyệt chỉ có một
+ * bản; lúc build dựng nhiều bản trong một tiến trình nên mỗi bản đăng ký riêng. Bản vi không cần gọi; truyền giá trị không phải
+ * hàm để gỡ (vắng `locale`: gỡ mọi bộ).
+ * @param {unknown} resolver
+ * @param {string | null} [locale]
  */
-export function setZhNameResolver(resolver) {
-  zhNameResolver = typeof resolver === 'function' ? resolver : null;
+export function setZhNameResolver(resolver, locale = null) {
+  const key = locale === null || locale === undefined ? ANY_SOURCE_LOCALE : normalizeLocale(locale);
+  if (typeof resolver === 'function') nameResolvers.set(key, resolver);
+  else if (key === ANY_SOURCE_LOCALE) nameResolvers.clear();
+  else nameResolvers.delete(key);
+}
+
+/** Bộ tra tên của bản `locale` (bản Việt: `null`). */
+function nameResolverFor(locale) {
+  if (contentLocaleIsVietnamese(locale)) return null;
+  return nameResolvers.get(normalizeLocale(locale)) ?? nameResolvers.get(ANY_SOURCE_LOCALE) ?? null;
 }
 
 let tacticDisplayResolver = null;
@@ -28,40 +45,73 @@ export function setTacticDisplayName(resolver) {
  * không tra được thì giữ nguyên; bản zh giữ nguyên (đã có đường tên chữ Hán riêng qua `sourceName`).
  */
 export function tacticDisplayName(value, raw = null, locale = currentLocale()) {
-  if (!tacticDisplayResolver || normalizeLocale(locale) === 'zh') return value;
+  if (!tacticDisplayResolver || !contentLocaleIsVietnamese(locale)) return value;
   return tacticDisplayResolver(value, raw);
 }
 
 /**
- * Tên nguồn theo ngôn ngữ trang. Bản vi trả nguyên; bản zh giữ nguyên chuỗi đã có chữ Hán, còn tên Hán-Việt
- * đổi sang chữ Hán gốc theo từng phần ngăn bởi `·`, `/`, `+`. Phần không tra được bị bỏ (không trộn tiếng Việt
- * vào trang zh); không còn phần nào thì trả chuỗi rỗng để caller hiện ô trống "—".
+ * Tên nguồn theo ngôn ngữ trang. Bản vi trả nguyên. Bản khác: chuỗi đã có chữ Hán đi qua `resolver.fromRaw` (bản zh giữ
+ * nguyên, bản ja ra tên Nhật / tự dạng Nhật); tên Hán-Việt đổi sang tên của bản đang xem theo từng phần ngăn bởi `·`, `/`, `+`.
+ * Phần không tra được bị bỏ (không trộn tiếng Việt vào trang); không còn phần nào thì trả chuỗi rỗng để caller hiện ô trống "—".
  */
 export function sourceName(value, locale = currentLocale()) {
-  if (typeof value !== 'string' || !zhNameResolver || normalizeLocale(locale) !== 'zh' || CJK_TEXT.test(value)) return value;
+  const resolver = typeof value === 'string' ? nameResolverFor(locale) : null;
+  if (!resolver) return value;
+  if (CJK_TEXT.test(value)) return typeof resolver.fromRaw === 'function' ? resolver.fromRaw(value) : value;
   const parts = value.split(/(\s*[·/+]\s*)/u);
   const kept = [];
   for (let index = 0; index < parts.length; index += 2) {
     const name = parts[index].trim();
-    const resolved = name ? zhNameResolver(name) : null;
+    const resolved = name ? resolver(name) : null;
     if (resolved) kept.push({ separator: index ? parts[index - 1] : '', resolved });
   }
   return kept.map((item, index) => (index ? item.separator : '') + item.resolved).join('');
 }
 
-/** Nhãn tiếng Trung của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
-const LEGACY_LABEL_ZH = {
-  faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hỗn hợp':'混合'},
-  unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾'},
-  source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）'},
+/**
+ * Tên chiến pháp bản cải tạo (`prefix`: `Tinh`/`Chuyển`/`Thác` hoặc `精`/`轉`/`拓`) theo bộ tra của bản đang xem khi bộ tra tự dựng
+ * được (bản ja: tên kịch bản `prefixedTactics` hoặc `転・<tên Nhật>`); `undefined` khi bộ tra không hỗ trợ để caller dùng cách
+ * ghép mặc định, chuỗi rỗng khi tên gốc không tra được.
+ */
+export function sourcePrefixedTactic(prefix, value, locale = currentLocale()) {
+  const resolver = nameResolverFor(locale);
+  if (typeof resolver?.prefixed !== 'function') return undefined;
+  return resolver.prefixed(prefix, value) ?? '';
+}
+
+/** Nhãn chữ Hán (theo locale) của giá trị phe / loại binh / nguồn trong dữ liệu cũ (vốn ghi bằng tiếng Việt). */
+const LEGACY_LABEL = {
+  zh: {
+    faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'吴','Quần':'群','Hán':'汉','Hỗn hợp':'混合'},
+    unit: {'Kỵ':'骑','Cung':'弓','Thương':'枪','Khiên':'盾','Khí giới':'器械'},
+    source: {'team-intro':'阵容介绍','do-uy':'都尉','moi-phe':'阵营强势（旧）','youtube':'YouTube'},
+  },
+  ja: {
+    faction: {'Ngụy':'魏','Thục':'蜀','Ngô':'呉','Quần':'群雄','Hán':'漢','Hỗn hợp':'混合'},
+    unit: {'Kỵ':'騎兵','Cung':'弓兵','Thương':'槍兵','Khiên':'盾兵','Khí giới':'器械'},
+    source: {'team-intro':'編成紹介','do-uy':'都尉','moi-phe':'勢力別強編成（旧）','youtube':'YouTube'},
+  },
 };
 
-/** Bản zh: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
+/** Bản zh/ja: nhãn chữ Hán của giá trị cũ; bản vi hoặc giá trị lạ trả `null` để caller dùng nhãn sẵn có. */
 export function legacyLabelZh(kind, value, locale = currentLocale()) {
-  if (normalizeLocale(locale) !== 'zh' || typeof value !== 'string') return null;
-  const table = LEGACY_LABEL_ZH[kind];
+  if (contentLocaleIsVietnamese(locale) || typeof value !== 'string') return null;
+  const table = LEGACY_LABEL[normalizeLocale(locale)]?.[kind];
   return table && Object.hasOwn(table, value) ? table[value] : null;
 }
+
+/**
+ * Tier nguồn Nhật (bảng khớp Kazten đã review, `tierSources` của hàng Recommended do builder chiếu). Là một giá trị của facet
+ * `source` sẵn có (`?source=jp`), không phải khóa facet riêng; `tierRaw` của SGSDeck giữ nguyên bên cạnh.
+ */
+export const TIER_SOURCE_JP = 'jp';
+/** Mục tier JP của một hàng (`{source, tierRaw, matchKind, url, publishedAt}`), vắng thì `null`. */
+export const jpTierSource = row => (Array.isArray(row?.tierSources) ? row.tierSources : [])
+  .find(item => item?.source === TIER_SOURCE_JP && typeof item.tierRaw === 'string') ?? null;
+/** Nhãn của tier JP: chip facet nguồn và tiêu đề khối trên trang chi tiết. */
+export const jpTierSourceLabel = () => L('Tier JP','日服等级','日本版ティア');
+/** Nhãn phụ khi bài nguồn dùng cùng ba tướng nhưng chiến pháp khác cấu hình SGSDeck (`matchKind: heroes-only`). */
+export const jpTierMatchNote = item => item?.matchKind === 'heroes-only' ? L('khác chiến pháp','战法不同','戦法違い') : null;
 
 /** Facet lặp được của danh sách đội; bộ lọc điểm đã bỏ nên `score` không còn ở đây. */
 const REPEATABLE = ['faction','unit','tier','subcategory','source'];
@@ -87,17 +137,17 @@ export function readRecommendedQuery(href, registry = {}) {
   const scalar = {};
   for (const key of SCALARS) {
     const values = url.searchParams.getAll(key).filter(Boolean);
-    if (values.length > 1) notices.push(L(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`, `参数 ${key} 重复，仅使用第一个值。`));
+    if (values.length > 1) notices.push(L(`Tham số ${key} bị lặp; chỉ dùng giá trị đầu.`, `参数 ${key} 重复，仅使用第一个值。`, `パラメータ ${key} が重複しています。最初の値のみ使用します。`));
     scalar[key] = values[0] || null;
   }
-  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持固定顺序。'));
+  if (legacyTier || RETIRED.some(key=>url.searchParams.has(key))) notices.push(L('Bộ lọc sao và tham số sắp xếp cũ không còn áp dụng; đội giữ thứ tự cố định.', '旧的星级筛选和排序参数已不再适用；阵容保持固定顺序。', '旧い星の絞り込みと並べ替えのパラメータは使用されなくなりました。編成は固定の順序で表示します。'));
   const viewValues = url.searchParams.getAll('view').filter(Boolean);
-  if (viewValues.length > 1) notices.push(L('Tham số view bị lặp; chỉ dùng giá trị đầu.', '参数 view 重复，仅使用第一个值。'));
+  if (viewValues.length > 1) notices.push(L('Tham số view bị lặp; chỉ dùng giá trị đầu.', '参数 view 重复，仅使用第一个值。', 'パラメータ view が重複しています。最初の値のみ使用します。'));
   const view = canonicalTeamView(viewValues[0]);
-  if (viewValues[0] && !view) notices.push(L('Kiểu hiển thị không hợp lệ đã bị bỏ.', '无效的显示方式已被忽略。'));
+  if (viewValues[0] && !view) notices.push(L('Kiểu hiển thị không hợp lệ đã bị bỏ.', '无效的显示方式已被忽略。', '無効な表示形式は無視しました。'));
   const seasons = new Set(registry.seasons || registry.seasonOptions?.map(item=>item.sourceSeasonId) || []);
   if (scalar.season && scalar.season !== 'all' && scalar.season !== 'unknown' && seasons.size && !seasons.has(scalar.season)) {
-    notices.push(L('Mùa không tồn tại; đã dùng mùa mặc định.', '赛季不存在，已改用默认赛季。'));
+    notices.push(L('Mùa không tồn tại; đã dùng mùa mặc định.', '赛季不存在，已改用默认赛季。', 'シーズンが存在しないため、既定のシーズンを使用しました。'));
     scalar.season = registry.defaultSourceSeasonId || [...seasons][0] || null;
   }
   return {
@@ -113,16 +163,27 @@ export function readRecommendedQuery(href, registry = {}) {
 
 /**
  * Trạng thái đưa vào danh sách Đội chuẩn (`family` = `recommended`) / Đội khác (`other`): query của URL cộng
- * kiểu hiển thị (URL > `storage` > Thẻ). Đội khác chưa chọn mùa tường minh thì xem mọi mùa. Hàm thuần: trình
+ * kiểu hiển thị (URL > `storage` > Thẻ). Đội khác chỉ có một mùa (mùa mặc định của registry, hiện nhãn tĩnh) nên
+ * mọi `?season=` bị bỏ qua: danh sách luôn đủ đội, không lọc mùa, không thông báo mùa lạ. Hàm thuần: trình
  * duyệt gọi với URL thật, bản dựng sẵn gọi với URL trang trống và `storage` rỗng — cùng một đường chọn mặc định.
  */
 export function referenceSectionState(family, href, registry, storage = null) {
+  if (family === 'other') {
+    const url = new URL(href);
+    url.searchParams.delete('season');
+    const state = readRecommendedQuery(url.href, registry);
+    // Lọc/sắp theo kho chỉ thuộc Đội chuẩn: Đội khác không có độ phủ kho.
+    return {...state, season: 'all', view: resolveTeamView(state.view, storage), rosterFilter: null, rosterSort: null};
+  }
   const state = readRecommendedQuery(href, registry);
-  const resolved = {...state, view: resolveTeamView(state.view, storage)};
-  // Lọc/sắp theo kho chỉ thuộc Đội chuẩn: Đội khác không có độ phủ kho.
-  if (family === 'other') return {...resolved, rosterFilter: null, rosterSort: null, ...(new URL(href).searchParams.has('season') ? {} : {season: 'all'})};
-  return resolved;
+  return {...state, view: resolveTeamView(state.view, storage)};
 }
+
+/**
+ * Hàng Đội khác được đề cử (`recommended: true` do pipeline ghi, hiện cho nguồn YouTube). Chỉ hàng đội gốc
+ * (không có `sourceConfigId`) mới tính; field vắng nghĩa là không đề cử.
+ */
+export const isRecommendedOtherRow = row => row?.recommended === true && !row.sourceConfigId;
 
 /** Facet lặp: giữ nguyên giá trị nguồn, bỏ trùng, không diễn giải. */
 function readFacet(url,key) {
@@ -135,7 +196,8 @@ export function referenceFacetValues(row,key) {
   if (key === 'faction') return [row.factionRaw ?? row.faction].filter(Boolean);
   if (key === 'unit') return row.unitTypesRaw || row.unit || [];
   if (key === 'subcategory') return [row.subcategoryRaw].filter(Boolean);
-  if (key === 'source') return [row.source].filter(Boolean);
+  // Nguồn: bộ sưu tập của đội cũ (`row.source`) hoặc tier nguồn khác của hàng Recommended (hiện chỉ có JP).
+  if (key === 'source') return [row.source,jpTierSource(row) ? TIER_SOURCE_JP : null].filter(Boolean);
   return [];
 }
 
@@ -191,7 +253,7 @@ function searchTerms(row,labels) {
 // phần của khóa cache. Bản zh thêm tên chữ Hán gốc và nhãn phe/binh chữ Hán để tìm bằng tiếng Trung.
 const searchBlobs = new WeakMap();
 function searchBlob(row,labels) {
-  const resolver=currentLocale()==='zh' ? (zhNameResolver || 'zh') : null;
+  const resolver=!contentLocaleIsVietnamese(currentLocale()) ? (nameResolverFor(currentLocale()) || 'zh') : null;
   const cached=searchBlobs.get(row);
   if (cached && cached.labels === labels && cached.resolver === resolver && cached.display === tacticDisplayResolver) return cached.blob;
   const terms=searchTerms(row,labels).filter(Boolean);
@@ -204,9 +266,15 @@ function searchBlob(row,labels) {
 }
 
 export const SOURCE_TIER_ORDER = ['T0','T0.5','T1','T1.5','T2','T3','FUNC','功能隊'];
-export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队') : value;
+export const sourceTierLabel = value => value === '功能隊' || value === 'FUNC' ? L('Đội chức năng','功能队','機能特化編成') : value;
 
 function fixedRank(a,b) {
+  // Đội khác: `optionRank` do builder tính (Đề cử trước, rồi thứ tự ledger) là nguồn thứ tự duy nhất khi hai hàng đều có.
+  if (Number.isInteger(a.optionRank) && Number.isInteger(b.optionRank)) return a.optionRank - b.optionRank;
+  // Hàng không có `optionRank` (dữ liệu cũ): hàng đề cử đứng trước, trong mỗi nhóm rơi xuống tie-break cuối theo
+  // `legacyVariantId` (hash) vì hàng Đội khác không có `tierOrder`/`value`/`listIndex`.
+  const recommended = Number(isRecommendedOtherRow(b)) - Number(isRecommendedOtherRow(a));
+  if (recommended) return recommended;
   const tier = (a.tierOrder ?? 999) - (b.tierOrder ?? 999);
   if (tier) return tier;
   if (a.value == null && b.value != null) return 1;

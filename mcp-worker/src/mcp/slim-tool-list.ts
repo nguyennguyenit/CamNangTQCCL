@@ -3,6 +3,7 @@
  * Zod đầy đủ (authority), còn wire chỉ mang hình dạng cần cho client.
  *
  * - Output: bỏ `description` của mọi schema lồng sâu; giữ mô tả field cấp gốc.
+ * - Output: bỏ cận `±Number.MAX_SAFE_INTEGER` mà Zod tự thêm cho `.int()` (không phải ràng buộc của contract; Zod vẫn kiểm).
  * - Error envelope dùng chung một schema phẳng thay vì lặp union đầy đủ cho từng tool.
  */
 
@@ -16,7 +17,7 @@ export interface ListedTool {
 /** Hình dạng `error` công bố chung; ràng buộc theo mã nằm ở `errorEnvelopeSchema` nội bộ. */
 export const PUBLISHED_ERROR_SCHEMA: JsonSchema = {
   type: "object",
-  description: "Lỗi (isError=true): mã, thông báo an toàn và cách xử lý.",
+  description: "Lỗi (isError=true).",
   properties: {
     code: { type: "string" },
     message: { type: "string" },
@@ -58,12 +59,17 @@ export const PUBLISHED_ERROR_SCHEMA: JsonSchema = {
   ],
 };
 
+/** Cận số nguyên mặc định của Zod (`z.number().int()`): mang trên wire chỉ tốn byte, không thêm ràng buộc nào. */
+const isImplicitIntegerBound = (key: string, value: unknown) =>
+  (key === "maximum" && value === Number.MAX_SAFE_INTEGER) || (key === "minimum" && value === Number.MIN_SAFE_INTEGER);
+
 function stripNestedDescriptions(node: unknown): unknown {
   if (Array.isArray(node)) return node.map(stripNestedDescriptions);
   if (typeof node !== "object" || node === null) return node;
   const output: JsonSchema = {};
   for (const [key, value] of Object.entries(node)) {
     if (key === "description" && typeof value === "string") continue;
+    if (isImplicitIntegerBound(key, value)) continue;
     output[key] = stripNestedDescriptions(value);
   }
   return output;

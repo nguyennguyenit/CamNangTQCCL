@@ -13,6 +13,7 @@ import { createTeamEditor } from "./my-teams-editor.js";
 import { createSourceLinker, loadSourceIndex } from "./my-teams-links.js";
 import { duplicateWarnings } from "./my-teams-model.js";
 import { addGroupForm, boxBar, dupsSection, groupHead, guestCard, privacyNote } from "./my-teams-sections.js";
+import { newTeamId } from "./my-teams-sources.js";
 import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, onMyTeamsChange, openDialog } from "./my-teams-ui.js";
 import { bookRowId } from "./lookup-ids.js";
 import { buildCatalog } from "./roster-picker.js";
@@ -20,6 +21,9 @@ import { el } from "./render.js";
 import { setTeamRouteHandlesFromJSON } from "./team-detail-navigation.js";
 
 const MAIN_BOX = "main";
+
+/** Nội dung đội để so "máy khác đã sửa chưa", bỏ ngày giờ (server tự đổi khi xóa nhóm) và nhóm (so riêng ở `save`). */
+const contentKey = (team) => JSON.stringify({ ...team, updatedAt: null, groupId: null });
 
 async function loadNames(locale) {
   try {
@@ -71,8 +75,11 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
   const seasons = Array.isArray(embedded("my-teams-seasons", [])) ? embedded("my-teams-seasons", []) : [];
   const seasonLabel = (id) => seasons.find((season) => season.id === id)?.label ?? id;
 
-  /** `editing`: id đội đang sửa (trình soạn thay thẻ tại chỗ); `saved`: id đội vừa lưu (thẻ hiện "Đã lưu thay đổi."). */
-  const view = { boxId: MAIN_BOX, editing: null, editor: null, saved: null };
+  /**
+   * `editing`: id đội đang sửa (trình soạn thay thẻ tại chỗ), `editingBox`: hộp của đội đó lúc mở; `saved`: id đội vừa lưu
+   * (thẻ hiện "Đã lưu thay đổi."); `gone`: lần vẽ gần nhất thấy đội đang sửa không còn trong hộp (xem `editingGone`).
+   */
+  const view = { boxId: MAIN_BOX, editing: null, editingBox: null, editor: null, saved: null, gone: false };
   let api;
   let lexicon;
   let sourceIndex = null;
@@ -114,7 +121,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     title,
     message,
     confirmLabel,
-    cancelLabel: L("Hủy", "取消"),
+    cancelLabel: L("Hủy", "取消", "キャンセル"),
     onConfirm: async () => {
       clearMessages();
       const result = await operation();
@@ -125,10 +132,36 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     },
   });
 
+  /**
+   * Rời trang (link điều hướng, đóng tab, tải lại) khi bản soạn còn thay đổi chưa lưu: trình duyệt hỏi lại. Chỉ gắn khi
+   * có trình soạn mở (`openEditor`), gỡ ở `closeEditor`; có hỏi hay không do `isDirty()` quyết định ngay lúc rời.
+   */
+  const guardUnload = (event) => {
+    if (!view.editor?.isDirty()) return;
+    event.preventDefault();
+    event.returnValue = "";
+  };
+
+  /** Đội đang sửa không còn ở hộp lúc mở (xóa, hoặc chuyển hộp từ máy khác): bản ghi để lưu đè đã mất. */
+  const editingGone = () => Boolean(view.editor)
+    && !api.snapshot().teams.some((team) => team.id === view.editing && team.boxId === view.editingBox);
+
   /** Đóng trình soạn đang mở (gỡ listener của nó); không vẽ lại. */
   function closeEditor() {
     view.editor?.dispose();
-    view.editing = view.editor = null;
+    view.editing = view.editor = view.editingBox = null;
+    view.gone = false;
+    window.removeEventListener("beforeunload", guardUnload);
+  }
+
+  /** Vẽ lại trong lúc đang gõ trong trình soạn: giữ focus và vị trí con trỏ (vẽ lại gỡ rồi gắn lại trình soạn). */
+  function paintKeepingFocus() {
+    const active = view.editor?.contains(document.activeElement) ? document.activeElement : null;
+    const range = active && typeof active.selectionStart === "number" ? [active.selectionStart, active.selectionEnd] : null;
+    paint();
+    if (!active?.isConnected) return;
+    active.focus({ preventScroll: true });
+    if (range) active.setSelectionRange(...range);
   }
 
   /**
@@ -139,15 +172,15 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
    */
   async function discardOk() {
     if (view.editor?.isSaving()) {
-      say(L("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.", "正在保存当前编辑的阵容，请保存完成后再试。"));
+      say(L("Đang lưu đội đang sửa. Đợi lưu xong rồi thử lại.", "正在保存当前编辑的阵容，请保存完成后再试。", "編集中の編成を保存しています。保存が完了してからもう一度お試しください。"));
       return false;
     }
     if (!view.editor?.isDirty()) return true;
     return confirmInPage({
-      title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？"),
-      message: L("Đội đang sửa có thay đổi chưa lưu. Tiếp tục thì các thay đổi này mất.", "正在编辑的阵容有未保存的更改，继续将丢失这些更改。"),
-      confirmLabel: L("Bỏ thay đổi", "放弃更改"),
-      cancelLabel: L("Hủy", "取消"),
+      title: L("Bỏ thay đổi chưa lưu?", "放弃未保存的更改？", "未保存の変更を破棄しますか？"),
+      message: L("Đội đang sửa có thay đổi chưa lưu. Tiếp tục thì các thay đổi này mất.", "正在编辑的阵容有未保存的更改，继续将丢失这些更改。", "編集中の編成に未保存の変更があります。続行するとこれらの変更は失われます。"),
+      confirmLabel: L("Bỏ thay đổi", "放弃更改", "変更を破棄"),
+      cancelLabel: L("Hủy", "取消", "キャンセル"),
     });
   }
 
@@ -165,7 +198,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     input.value = value;
     const alert = el("p", { class: "mt-alert", role: "alert", hidden: "" });
     const confirm = el("button", { type: "submit", class: "ana-btn primary" }, confirmLabel);
-    const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消"));
+    const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消", "キャンセル"));
     const form = el("form", { class: "mt-prompt", novalidate: "" }, [
       el("div", { class: "mt-field" }, [el("label", { for: "mt-prompt-input" }, label), input]),
       alert,
@@ -215,17 +248,17 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       }
       openEditor(fresh);
     },
-    onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。")).then((result) => {
+    onMove: (team, select) => run(() => api.moveTeam(team.id, select.value), () => L("Đã chuyển nhóm.", "已移动分组。", "グループを移動しました。")).then((result) => {
       if (!result.ok) paint();
     }),
     onDelete: async (team) => {
       const groupId = team.groupId;
       const done = await confirmDelete({
-        title: L(`Xóa đội “${team.name}”?`, `删除阵容“${team.name}”？`),
-        message: L(`Đội bị xóa khỏi Đội của tôi trên mọi máy. Việc này không hoàn tác được.`, `该阵容将从所有设备的“我的阵容”中删除。此操作无法撤销。`),
-        confirmLabel: L("Xóa đội", "删除阵容"),
+        title: L(`Xóa đội “${team.name}”?`, `删除阵容“${team.name}”？`, `編成「${team.name}」を削除しますか？`),
+        message: L(`Đội bị xóa khỏi Đội của tôi trên mọi máy. Việc này không hoàn tác được.`, `该阵容将从所有设备的“我的阵容”中删除。此操作无法撤销。`, `この編成はすべての端末の「マイ編成」から削除されます。この操作は元に戻せません。`),
+        confirmLabel: L("Xóa đội", "删除阵容", "編成を削除"),
         operation: () => api.deleteTeam(team.id),
-        success: L("Đã xóa đội.", "已删除阵容。"),
+        success: L("Đã xóa đội.", "已删除阵容。", "編成を削除しました。"),
       });
       if (done) (body.querySelector(`.mt-group[data-group-id="${CSS.escape(groupId)}"] .mt-group-name`) ?? body.querySelector(".mt-group-name"))?.focus();
     },
@@ -247,8 +280,11 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const groupOf = (team) => shownGroups.find((group) => group.id === team.groupId) ?? fallback;
     const teamCounts = new Map();
     for (const team of snapshot.teams) teamCounts.set(team.boxId, (teamCounts.get(team.boxId) ?? 0) + 1);
-    // Đội đang sửa đã bị xóa ở nơi khác: đóng trình soạn (không còn bản ghi để lưu vào).
-    if (view.editing && !teams.some((team) => team.id === view.editing)) closeEditor();
+    // Đội đang sửa đã bị xóa / chuyển hộp ở máy khác: KHÔNG đóng trình soạn (người dùng mất bản soạn). Giữ trình soạn
+    // kèm thông báo; Lưu thì ghi thành đội mới trong hộp đang xem, Hủy thì bỏ. Đóng trình soạn khi người dùng tự đổi hộp
+    // là việc của chính thao tác đó (`leaveEditorOk`, tạo / xóa hộp gọi `closeEditor` trước khi vẽ).
+    const orphaned = editingGone();
+    view.gone = orphaned;
 
     const bar = boxBar({ boxes, boxId: view.boxId, teamCounts, owned }, {
       onSelect: async (boxId) => {
@@ -262,24 +298,25 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         focusLater("#mt-box");
       },
       onCreate: async () => (await discardOk()) && promptDialog({
-        title: L("Tạo hộp", "新建仓库"),
-        label: L("Tên hộp", "仓库名称"),
-        confirmLabel: L("Tạo hộp", "新建"),
+        title: L("Tạo hộp", "新建仓库", "倉庫を作成"),
+        label: L("Tên hộp", "仓库名称", "倉庫名"),
+        confirmLabel: L("Tạo hộp", "新建", "作成"),
         submit: async (name) => {
           const result = await api.createBox(name);
           if (result.ok) {
+            closeEditor();
             view.boxId = result.boxId;
-            say(L("Đã tạo hộp.", "已新建仓库。"));
+            say(L("Đã tạo hộp.", "已新建仓库。", "倉庫を作成しました。"));
             paint();
           }
           return result;
         },
       }),
       onRename: () => promptDialog({
-        title: L("Đổi tên hộp", "重命名仓库"),
-        label: L("Tên hộp", "仓库名称"),
+        title: L("Đổi tên hộp", "重命名仓库", "倉庫名を変更"),
+        label: L("Tên hộp", "仓库名称", "倉庫名"),
         value: boxLabel(box),
-        confirmLabel: L("Lưu tên", "保存名称"),
+        confirmLabel: L("Lưu tên", "保存名称", "名前を保存"),
         submit: async (name) => {
           const result = await api.renameBox(box.id, name);
           if (result.ok) paint();
@@ -289,26 +326,36 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       onDelete: async () => {
         if (!(await discardOk())) return;
         const done = await confirmDelete({
-          title: L(`Xóa hộp “${boxLabel(box)}”?`, `删除仓库“${boxLabel(box)}”？`),
-          message: L(`Xóa hộp sẽ mất ${teams.length} đội, các nhóm và kho của hộp này. Không hoàn tác được.`, `删除仓库将同时失去 ${teams.length} 个阵容及该仓库的分组和库存，且无法撤销。`),
-          confirmLabel: L("Xóa hộp", "删除仓库"),
+          title: L(`Xóa hộp “${boxLabel(box)}”?`, `删除仓库“${boxLabel(box)}”？`, `倉庫「${boxLabel(box)}」を削除しますか？`),
+          message: L(`Xóa hộp sẽ mất ${teams.length} đội, các nhóm và kho của hộp này. Không hoàn tác được.`, `删除仓库将同时失去 ${teams.length} 个阵容及该仓库的分组和库存，且无法撤销。`, `倉庫を削除すると、この倉庫の編成 ${teams.length} 件、グループ、所持データも失われます。元に戻せません。`),
+          confirmLabel: L("Xóa hộp", "删除仓库", "倉庫を削除"),
           operation: async () => {
             const result = await api.deleteBox(box.id);
-            if (result.ok) view.boxId = MAIN_BOX;
+            if (result.ok) {
+              closeEditor();
+              view.boxId = MAIN_BOX;
+            }
             return result;
           },
-          success: L("Đã xóa hộp.", "已删除仓库。"),
+          success: L("Đã xóa hộp.", "已删除仓库。", "倉庫を削除しました。"),
         });
         if (done) focusLater("#mt-box");
       },
     });
 
     const notices = [];
-    if (!lexicon.ready) notices.push(el("p", { class: "mt-notice", role: "status" }, L("Chưa tải được danh mục tướng và chiến pháp: tên hiện tạm dưới dạng mã và chưa thể sửa đội.", "未能加载武将与战法图鉴：名称暂以编号显示，暂时无法编辑阵容。")));
+    if (!lexicon.ready) notices.push(el("p", { class: "mt-notice", role: "status" }, L("Chưa tải được danh mục tướng và chiến pháp: tên hiện tạm dưới dạng mã và chưa thể sửa đội.", "未能加载武将与战法图鉴：名称暂以编号显示，暂时无法编辑阵容。", "武将と戦法の図鑑を読み込めませんでした。名前は一時的にコードで表示され、編成は編集できません。")));
     const skipped = snapshot.skipped.filter((item) => item.boxId === view.boxId);
-    if (skipped.length) notices.push(el("p", { class: "mt-notice", role: "status", dataset: { skipped: String(skipped.length) } }, L(`${skipped.length} bản ghi đội bị hỏng nên không hiển thị; các đội khác không bị ảnh hưởng.`, `${skipped.length} 条阵容记录已损坏，未显示；其他阵容不受影响。`)));
-    if (snapshot.rejected.length) notices.push(el("p", { class: "mt-alert", role: "alert" }, L(`${snapshot.rejected.length} thay đổi bị máy chủ từ chối: ${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 项更改被服务器拒绝：${describeFailure({ code: snapshot.rejected[0].code })}`)));
+    if (skipped.length) notices.push(el("p", { class: "mt-notice", role: "status", dataset: { skipped: String(skipped.length) } }, L(`${skipped.length} bản ghi đội bị hỏng nên không hiển thị; các đội khác không bị ảnh hưởng.`, `${skipped.length} 条阵容记录已损坏，未显示；其他阵容不受影响。`, `編成レコード ${skipped.length} 件が破損しているため表示されません。他の編成には影響ありません。`)));
+    if (snapshot.rejected.length) notices.push(el("p", { class: "mt-alert", role: "alert" }, L(`${snapshot.rejected.length} thay đổi bị máy chủ từ chối: ${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 项更改被服务器拒绝：${describeFailure({ code: snapshot.rejected[0].code })}`, `${snapshot.rejected.length} 件の変更がサーバーに拒否されました：${describeFailure({ code: snapshot.rejected[0].code })}`)));
     if (warnings.length) notices.push(dupsSection(warnings, teams, nameOf));
+    const orphan = orphaned
+      ? el("section", { class: "mt-group mt-orphan", dataset: { orphan: "" }, "aria-label": L("Đội đang sửa", "正在编辑的阵容", "編集中の編成") }, [
+        el("p", { class: "mt-notice", role: "status" }, L("Đội này đã bị xóa hoặc chuyển hộp ở thiết bị khác. Bản đang soạn vẫn còn: bấm Lưu để lưu thành đội mới trong hộp đang xem, hoặc Hủy để bỏ.", "此阵容已在其他设备上被删除或移到别的仓库。你正在编辑的内容仍保留：点击“保存”将在当前仓库保存为新阵容，或点击“取消”放弃。", "この編成は他の端末で削除されたか、別の倉庫に移動されました。編集中の内容は残っています。「保存」を押すと表示中の倉庫に新しい編成として保存され、「キャンセル」で破棄されます。",
+        )),
+        el("div", { class: "mt-teams" }, [view.editor]),
+      ])
+      : null;
 
     const ctx = { teams, groups: shownGroups, warnings, owned, groupOf };
     const sections = shownGroups.map((group) => {
@@ -316,10 +363,10 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       const isDefault = /~(?:khai-hoang|ghep-team)$/u.test(group.id);
       const head = groupHead(group, own.length, isDefault, {
         onRename: () => promptDialog({
-          title: L("Đổi tên nhóm", "重命名分组"),
-          label: L("Tên nhóm", "分组名称"),
+          title: L("Đổi tên nhóm", "重命名分组", "グループ名を変更"),
+          label: L("Tên nhóm", "分组名称", "グループ名"),
           value: group.name,
-          confirmLabel: L("Lưu tên", "保存名称"),
+          confirmLabel: L("Lưu tên", "保存名称", "名前を保存"),
           submit: async (name) => {
             const result = await api.renameGroup(group.id, name);
             if (result.ok) paint();
@@ -328,11 +375,11 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         }),
         onDelete: async () => {
           const done = await confirmDelete({
-            title: L(`Xóa nhóm “${groupLabel(group)}”?`, `删除分组“${groupLabel(group)}”？`),
-            message: L(`${own.length} đội trong nhóm sẽ chuyển về Ghép Team. Nhóm bị xóa không khôi phục được.`, `组内 ${own.length} 个阵容将移至“组队”。分组删除后无法恢复。`),
-            confirmLabel: L("Xóa nhóm", "删除分组"),
+            title: L(`Xóa nhóm “${groupLabel(group)}”?`, `删除分组“${groupLabel(group)}”？`, `グループ「${groupLabel(group)}」を削除しますか？`),
+            message: L(`${own.length} đội trong nhóm sẽ chuyển về Ghép Team. Nhóm bị xóa không khôi phục được.`, `组内 ${own.length} 个阵容将移至“组队”。分组删除后无法恢复。`, `グループ内の編成 ${own.length} 件は「チーム編成」に移動されます。削除したグループは復元できません。`),
+            confirmLabel: L("Xóa nhóm", "删除分组", "グループを削除"),
             operation: () => api.deleteGroup(group.id),
-            success: L("Đã xóa nhóm.", "已删除分组。"),
+            success: L("Đã xóa nhóm.", "已删除分组。", "グループを削除しました。"),
           });
           if (done) focusLater(`.mt-group[data-group-id="${CSS.escape(`${view.boxId}~ghep-team`)}"] .mt-group-name`);
         },
@@ -342,7 +389,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
         head,
         own.length
           ? el("div", { class: "mt-teams" }, items)
-          : el("p", { class: "mt-empty" }, L("Chưa có đội trong nhóm này. Khi lưu đội, chọn nhóm này trong hộp thoại lưu hoặc dùng ô “Nhóm” trên thẻ đội để chuyển sang.", "此分组暂无阵容。保存阵容时在保存对话框中选择此分组，或用阵容卡片上的“分组”移入。")),
+          : el("p", { class: "mt-empty" }, L("Chưa có đội trong nhóm này. Khi lưu đội, chọn nhóm này trong hộp thoại lưu hoặc dùng ô “Nhóm” trên thẻ đội để chuyển sang.", "此分组暂无阵容。保存阵容时在保存对话框中选择此分组，或用阵容卡片上的“分组”移入。", "このグループにはまだ編成がありません。編成を保存するときに保存ダイアログでこのグループを選ぶか、編成カードの「グループ」欄で移動してください。")),
       ]);
     });
 
@@ -350,7 +397,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       if (submit.disabled) return;
       submit.disabled = true;
       try {
-        const result = await run(() => api.createGroup(view.boxId, input.value), () => L("Đã thêm nhóm.", "已添加分组。"));
+        const result = await run(() => api.createGroup(view.boxId, input.value), () => L("Đã thêm nhóm.", "已添加分组。", "グループを追加しました。"));
         if (result.ok) body.querySelector("#mt-new-group").value = "";
       } finally {
         submit.disabled = false;
@@ -360,7 +407,8 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     body.replaceChildren(...[
       bar,
       ...notices,
-      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。")) : null,
+      orphan,
+      teams.length === 0 ? el("p", { class: "mt-empty mt-empty-all" }, L("Hộp này chưa có đội. Bấm “Lưu vào đội của tôi” ở Đội chuẩn, Đội khác, Khai hoang, Gợi ý đội hoặc Soi đội để thêm.", "此仓库还没有阵容。在推荐阵容、其他阵容、开荒、武将库配队或截图识阵中点击“保存到我的阵容”即可添加。", "この倉庫にはまだ編成がありません。おすすめ編成、その他の編成、開拓、武将図鑑の編成提案、スクショ編成解析で「マイ編成に保存」を押すと追加できます。")) : null,
       ...sections,
       addGroup,
       privacyNote(),
@@ -374,16 +422,32 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
     const groups = snapshot.groups.filter((group) => group.boxId === team.boxId);
     clearMessages();
     let editor = null;
+    // Đội gốc đã mất (xem `editingGone`) và người dùng đã bấm Lưu: đích lưu thành đội mới `{id, boxId}` được CHỐT một lần và
+    // dùng cho mọi lần thử lại (mất mạng, lỗi tạm), kể cả khi đội gốc xuất hiện lại — không quay về ghi đè đội gốc.
+    let asNewTarget = null;
+    // Đã kiểm trạng thái hiện hành của server trước lần ghi đầu: các lần thử lại / "Giữ bản của tôi" sau đó không kéo lại
+    // (kéo lại sẽ làm lần ghi sau thắng bản của máy khác mà không báo; xung đột do `saveTeam` tự phát hiện).
+    let verified = false;
+    // Nhóm máy khác đã chuyển đội sang từ lúc mở (người dùng không đổi nhóm trong trình soạn): giữ nhóm đó khi lưu.
+    let keepGroup = null;
+    // Nhóm ô chọn của trình soạn hiện lúc mở (cùng quy tắc với `createTeamEditor`): so với `candidate.groupId` để biết người
+    // dùng có tự đổi nhóm hay không.
+    const editorGroups = groups.length ? groups : defaultGroupsOf(team.boxId);
+    const initialGroupId = editorGroups.some((group) => group.id === team.groupId)
+      ? team.groupId
+      : (editorGroups.find((group) => /~ghep-team$/u.test(group.id)) ?? editorGroups[0])?.id ?? team.groupId;
     // Chỉ đóng trình soạn của chính đội này: lời gọi muộn (lưu xong sau khi trình soạn đã đóng) không đụng trình soạn khác.
     const leave = (savedId = null) => {
       if (view.editor !== editor) return;
       closeEditor();
       view.saved = savedId;
       paint();
-      body.querySelector(`[data-team-id="${CSS.escape(team.id)}"] .mt-team-actions button`)?.focus();
+      body.querySelector(`[data-team-id="${CSS.escape(savedId ?? team.id)}"] .mt-team-actions button`)?.focus();
     };
     view.saved = null;
     view.editing = team.id;
+    view.editingBox = team.boxId;
+    window.addEventListener("beforeunload", guardUnload);
     editor = view.editor = createTeamEditor({
       team,
       teams: snapshot.teams.filter((other) => other.boxId === team.boxId),
@@ -392,22 +456,68 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
       catalog: lexicon.catalog,
       owned: snapshot.owned.get(team.boxId) ?? new Set(),
       seasons,
-      save: (candidate) => {
+      save: async (candidate) => {
+        // Biết trước khi bấm Lưu thì thông báo "đã bị xóa / chuyển" đã hiện; chưa biết thì kéo trạng thái hiện hành trước khi
+        // ghi (snapshot cũ có thể chưa thấy việc xóa / chuyển hộp từ máy khác, ghi lúc đó sẽ đè lên nó).
+        const warned = view.gone || asNewTarget !== null;
+        if (!verified && !asNewTarget) {
+          if (!(await api.refresh())) {
+            const status = api.snapshot().status;
+            return status === "signed-out" || status === "mismatch" || status === "guest" ? { ok: false, rejected: true, code: status } : { ok: false, pending: true, code: status };
+          }
+          if (view.editor !== editor) return { ok: false, rejected: true, code: "not_found" };
+          const current = api.snapshot().teams.find((other) => other.id === team.id && other.boxId === team.boxId);
+          if (!current && !warned) {
+            paintKeepingFocus();
+            return { ok: false, rejected: true, code: "team_gone" };
+          }
+          // Máy khác đã sửa nội dung đội này kể từ lúc mở trình soạn (không tính ngày giờ / nhóm do server tự đổi khi xóa nhóm):
+          // hiện hai bản để chọn, không ghi đè im lặng. "Giữ bản của tôi" gọi lại và đi tiếp.
+          if (current && contentKey(current) !== contentKey(team)) {
+            verified = true;
+            return { ok: false, conflict: true, server: current, loser: candidate };
+          }
+          // Nhóm: máy khác chuyển nhóm (không tính server tự dồn về Ghép Team khi nhóm cũ bị xóa). Người dùng không đổi nhóm
+          // thì giữ nhóm hiện hành trên server; cả hai cùng đổi sang nhóm khác nhau thì là xung đột.
+          const groupLiveBefore = api.snapshot().groups.some((group) => group.id === team.groupId && group.boxId === team.boxId);
+          if (current && groupLiveBefore && current.groupId !== team.groupId) {
+            if (candidate.groupId === initialGroupId) {
+              keepGroup = current.groupId;
+            } else if (candidate.groupId !== current.groupId) {
+              verified = true;
+              return { ok: false, conflict: true, server: current, loser: candidate };
+            }
+          }
+          verified = true;
+        }
+        const live = api.snapshot();
+        if (asNewTarget || editingGone()) {
+          // Ghi thành đội mới vào hộp đang xem (hộp cũ có thể đã bị xóa); nhóm / đội thay thế không thuộc hộp này thì bỏ.
+          asNewTarget ??= { id: newTeamId(), boxId: live.boxes.some((box) => box.id === view.boxId) ? view.boxId : MAIN_BOX };
+          const { id, boxId } = asNewTarget;
+          const groupId = live.groups.some((group) => group.id === candidate.groupId && group.boxId === boxId) ? candidate.groupId : `${boxId}~ghep-team`;
+          const replaces = live.teams.some((other) => other.id === candidate.replacesTeamId && other.boxId === boxId) ? candidate.replacesTeamId : null;
+          return api.saveTeam({ ...candidate, id, groupId, replacesTeamId: replaces }, { boxId, groupId });
+        }
         // Nhóm đã chọn bị xóa trong lúc soạn (ở đây hoặc máy khác): lưu vào nhóm dự phòng Ghép Team của hộp,
         // không ghi id nhóm không còn.
-        const live = api.snapshot().groups.some((group) => group.id === candidate.groupId && group.boxId === team.boxId);
-        const groupId = live ? candidate.groupId : `${team.boxId}~ghep-team`;
+        // Nhóm giữ từ server chỉ áp khi người dùng vẫn chưa đổi nhóm; chọn nhóm khác trước khi "Lưu lại" thì theo lựa chọn đó.
+        const wantedGroup = keepGroup !== null && candidate.groupId === initialGroupId ? keepGroup : candidate.groupId;
+        const groupLive = live.groups.some((group) => group.id === wantedGroup && group.boxId === team.boxId);
+        const groupId = groupLive ? wantedGroup : `${team.boxId}~ghep-team`;
         return api.saveTeam({ ...candidate, groupId }, { boxId: team.boxId, groupId });
       },
-      onSaved: () => {
+      onSaved: (saved) => {
         if (view.editor !== editor) return;
-        leave(team.id);
-        say(L("Đã lưu thay đổi.", "已保存更改。"));
+        const asNew = saved.id !== team.id;
+        view.boxId = saved.boxId;
+        leave(saved.id);
+        say(asNew ? L("Đã lưu thành đội mới.", "已保存为新阵容。", "新しい編成として保存しました。") : L("Đã lưu thay đổi.", "已保存更改。", "変更を保存しました。"));
       },
       onCancel: () => leave(),
       onKeepServer: () => {
         if (view.editor !== editor) return;
-        say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。"));
+        say(L("Đã giữ bản trên máy chủ.", "已保留服务器版本。", "サーバー版を残しました。"));
         leave();
       },
     });
@@ -417,7 +527,7 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
 
   /* ---------- Khởi động ---------- */
 
-  mount.replaceChildren(el("p", { class: "mt-loading", role: "status" }, L("Đang tải đội của bạn…", "正在加载你的阵容…")));
+  mount.replaceChildren(el("p", { class: "mt-loading", role: "status" }, L("Đang tải đội của bạn…", "正在加载你的阵容…", "あなたの編成を読み込み中…")));
   try {
     api = await myTeamsApi();
     const [loaded, names, index] = await Promise.all([api.load(), loadNames(locale), loadSourceIndex()]);
@@ -437,7 +547,12 @@ export async function initMyTeams(mount = document.getElementById("my-teams")) {
   paint();
   // Đồng bộ nền vẽ lại danh sách, trừ lúc đang sửa (vẽ lại sẽ gỡ trình soạn khỏi DOM và làm mất focus của người dùng).
   onMyTeamsChange(() => {
-    if (!view.editing) paint();
+    if (!view.editing) {
+      paint();
+      return;
+    }
+    // Đang sửa: chỉ vẽ lại khi đội đang sửa vừa biến mất / xuất hiện lại, để thông báo hiện / ẩn đúng lúc.
+    if (editingGone() !== view.gone) paintKeepingFocus();
   });
   return { paint };
 }

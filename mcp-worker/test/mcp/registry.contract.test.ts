@@ -547,6 +547,8 @@ it('keeps complete discovery below budget and validates correlated errors in eve
  const listBytes=Buffer.byteLength(JSON.stringify({jsonrpc:'2.0',id:1,result:catalog}));
  // Trần tools/list: 90 KiB (Worker cho phép 96 KiB mỗi phản hồi); vượt nghĩa là schema output phình, hãy slim chứ không nâng trần.
  expect(listBytes).toBeLessThan(90*1024);
+ // Cận ±MAX_SAFE_INTEGER Zod tự thêm cho `.int()` không lên wire output (slim-tool-list.ts).
+ for(const tool of catalog.tools)expect(JSON.stringify(tool.outputSchema),tool.name).not.toMatch(/"(?:maximum|minimum)":-?9007199254740991\b/u);
  for(const tool of catalog.tools){const out=tool.outputSchema as {properties:Record<string,Record<string,unknown>>};for(const [name,property] of Object.entries(out.properties)){if(name!=='error')expect(typeof property.description,`${tool.name}.${name}`).toBe('string');}expect(JSON.stringify(out.properties).match(/"description"/gu)?.length??0,tool.name).toBeLessThanOrEqual(Object.keys(out.properties).length+1);}
  const common={message:'Safe',nextAction:'Choose',retryable:false};
  const choices={kind:'team-config',teamId:'team-a',configIds:['config-a','config-b'],totalCount:2,omittedCount:0};

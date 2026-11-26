@@ -35,32 +35,61 @@ test("Đội chuẩn dựng sẵn: đủ mọi đội của mùa mặc định, 
   }
 });
 
-test("Đội khác dựng sẵn: xem mọi mùa, mỗi thẻ có link tới trang đội gốc của chính nó", async () => {
+test("Đội khác dựng sẵn: 60 team đầu theo optionRank của đại diện, thẻ dựng bằng đại diện, ghi số phương án, link tới trang của chính nó", async () => {
   const website = await websiteDisplayPublicationSnapshot();
   const catalog = await teamDetailCatalog();
-  const rows = parse(website.recommended.files["other-teams.json"]).records;
-  const byVariant = new Map(rows.map((row) => [row.legacyVariantId, row]));
-  for (const locale of ["vi", "zh"]) {
+  const payload = parse(website.recommended.files["other-teams.json"]);
+  const byVariant = new Map(payload.records.map((row) => [row.legacyVariantId, row]));
+  // Tập kỳ vọng dựng thẳng từ `teamGroups` của builder: team có đại diện, theo optionRank của đại diện.
+  const teams = payload.teamGroups
+    .filter((group) => group.representativeVariantId !== null)
+    .sort((a, b) => byVariant.get(a.representativeVariantId).optionRank - byVariant.get(b.representativeVariantId).optionRank);
+  assert.ok(teams.length > 60, "dữ liệu thật phải hơn một lượt");
+  const firstPage = teams.slice(0, 60);
+  const multi = firstPage.filter((group) => group.completeVariantIds.length > 1);
+  assert.ok(multi.length > 0, "lượt đầu phải có team nhiều phương án");
+  const optionLabel = { vi: (n) => `${n} phương án`, zh: (n) => `${n} 种方案`, ja: (n) => `${n} 通りの構成` };
+  for (const locale of ["vi", "zh", "ja"]) {
     const { html } = await teamSectionParts("team-khac", locale);
     const keys = keysOf(html);
-    assert.ok(keys.length > 0 && keys.length <= 60);
+    assert.deepEqual(keys, firstPage.map((group) => group.representativeVariantId), `${locale}: đúng 60 team đầu, đúng thứ tự`);
     for (const key of keys) {
-      const entry = catalog.legacy.find((candidate) => candidate.legacyTeamId === byVariant.get(key)?.legacyTeamId);
+      const record = byVariant.get(key);
+      assert.equal(record.dataComplete, true, `${locale}: ${key} thiếu dữ liệu`);
+      const entry = catalog.legacy.find((candidate) => candidate.legacyTeamId === record.legacyTeamId);
       assert.ok(entry, `${locale}: ${key} không phải đội gốc có route`);
-      assert.ok(html.includes(`href="${locale === "zh" ? "/zh" : ""}${entry.routePath}?variant=${encodeURIComponent(key)}`), `${locale}: ${key} thiếu link đúng biến thể`);
+      const path = `${locale === "vi" ? "" : `/${locale}`}${entry.routePath}`;
+      assert.ok(html.includes(`href="${path}"`) || html.includes(`href="${path}?from=`), `${locale}: ${key} thiếu link tới trang của chính nó`);
     }
+    // Mỗi đội gốc đúng một phương án: link tới trang Đội khác không mang `?variant=`.
+    assert.doesNotMatch(html, /[?&]variant=/u, `${locale}: link danh sách không mang ?variant=`);
+    // Mỗi team nhiều phương án ghi đúng số phương án đủ dữ liệu; team một phương án không ghi.
+    const cards = html.split(/(?=<article\b)/u).slice(1);
+    for (const group of firstPage) {
+      const card = cards.find((item) => item.includes(`data-reference-key="${group.representativeVariantId}"`));
+      const n = group.completeVariantIds.length;
+      if (n > 1) assert.ok(card.includes(`<span class="reference-option-count">${optionLabel[locale](n)}</span>`), `${locale}: ${group.teamGroupId} thiếu "${optionLabel[locale](n)}"`);
+      else assert.doesNotMatch(card, /reference-option-count/u, `${locale}: ${group.teamGroupId} một phương án không ghi số`);
+    }
+    assert.equal(count(html, /class="reference-option-count"/gu), multi.length);
     assert.equal(count(html, /<h1\b/gu), 1);
   }
 });
 
 test("Cùng Tồn dựng sẵn: nhóm đầu của mùa mới nhất, năm đội, mỗi đội ba tướng", async () => {
-  for (const locale of ["vi", "zh"]) {
+  for (const locale of ["vi", "zh", "ja"]) {
     const { html } = await teamSectionParts("coexist", locale);
     assert.equal(count(html, /coexist-team-card/gu) >= 5, true, `${locale}: thiếu thẻ đội`);
     assert.equal(count(html, /class="coexist-group-view" data-ssr-signature=/gu), 1);
     assert.equal(count(html, /<h1\b/gu), 1);
     const firstCard = html.split("coexist-team-card")[1];
     assert.equal(count(firstCard.split("</article>")[0], /class="hero reference-holder"/gu), 3, `${locale}: đội đầu phải có ba tướng`);
+    // Nguồn bảng 11 cột: bản vi dựng sẵn Trang bị từng tướng (bản zh, ja không có). Thẻ Kỳ Lược từng đội có ở mọi bản:
+    // năm thẻ theo hiệp, mỗi thẻ link trang riêng Tra cứu Kỳ lược theo bản ngôn ngữ (bản ja dùng tên Nhật của lookup-ja).
+    assert.equal(count(html, /coexist-hero-equipment/gu), locale === "vi" ? 15 : 0, `${locale}: số dòng Trang bị`);
+    assert.equal(count(html, /class="detail-qilue coexist-qilue"/gu), 5, `${locale}: số ô Thẻ Kỳ Lược`);
+    assert.equal(count(html, new RegExp(`class="detail-qilue-card is-link"[^>]*href="${locale === "vi" ? "" : `/${locale}`}/tra-cuu/ky-luoc/`, "gu")), 25, `${locale}: link thẻ`);
+    assert.equal(count(html, /coexist-card-strategy/gu), 0, `${locale}: không còn dòng chữ thô`);
   }
 });
 

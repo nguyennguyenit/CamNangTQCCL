@@ -1,0 +1,43 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-003-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-003",
+ "items": [
+  {
+   "entityId": "recommended:s-b21fc616cf596a0cec9788fd858d5808c0f0bfb009129642837911a16e11a17d/s25-rongguang-qi",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "106443df3c354afc5a3606f122cfb3a82af735d644eeb1eebbe76007fba57099",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "b4107cccf52286b8ae23f3d6925a56bb1b2b3d5bad3c646051f69cba11a58c9c",
+   "verdict": "rejected",
+   "errors": [
+    "Meaning inverted: 無懼張遼 = Trương Liêu mang Vô Cụ (đặc kỹ, cf. 無懼雙爆頭=Vô Cụ Song Bạo Đầu), whose suppression is still terrifying; VI says 'không sợ sức áp chế của Trương Liêu' (not afraid of Trương Liêu's suppression), turning Trương Liêu from own-team asset into an enemy threat"
+   ],
+   "notes": "Vũ khí tối thượng chuyên trị pháp sư tốc độ chậm, sức áp chế của Trương Liêu mang Vô Cụ vẫn rất đáng sợ."
+  },
+  {
+   "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-0617-hun-22",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "211ccb3483c7f4322e25b3cefc376d86b1146052a2d691dc85c0027947e32b04",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "5df8f9b7b3a9523b7f3ac3165a124302dc9d70c89538ed00c8a3cf8cdf8c3637",
+   "verdict": "rejected",
+   "errors": [
+    "Meaning inverted: 可以被打反控 = khi bị đánh có thể phản khống chế (Trình Phổ counter-controls when hit); VI 'có thể bị phản khống chế' means Trình Phổ gets counter-controlled"
+   ],
+   "notes": "T1 ｜ Trình Phổ có thể đổi sang Hác Chiêu hoặc Tào Tháo hoặc Lỗ Túc, nhưng sẽ yếu đi một bậc, vì Trình Phổ khi đánh SP Mã Siêu mạnh ở chỗ khi bị đánh có thể phản khống chế, đồng thời còn có thể Tịnh Hóa bản thân để giải khống."
+  },
+  {
+   "entityId": "recommended:s-bf1c362e813a99325ec75ef411b988bf08154904d48c6ea713e3cbb92f1fbbe1/s28-0617-shu-15",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "213b51ed49c0daa3a65a3ef6bbf05314ebcdc42ddf17e9f9171f55c14eda318e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "36401e1690f9f1274ff05150207409a58f3135f7aaefc82f79c1fb7b000a0bf8",
+   "verdict": "rejected",
+   "errors": [
+    "Wrong action order: 打地需要當鋒先換八門 = khi đánh đất cần đổi Đương Phong Thôi Quyết sang Bát Môn Kim Tỏa Trận trước (swap 當鋒 out for 八門); VI says use Đương Phong Thôi Quyết first, then switch to Bát Môn Kim Tỏa Trận"
+   ],
+   "notes": "T1.5 ｜ Mang quân sư Công Tôn Toản, giai đoạn đầu chiếm ưu thế về môi trường chiến trường; khi đánh đất cần đổi Đương Phong Thôi Quyết sang Bát Môn Kim Tỏa Trận trước để giảm tổn thất chiến đấu."
+  }
+ ]
+}

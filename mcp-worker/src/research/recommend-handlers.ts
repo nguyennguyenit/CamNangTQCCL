@@ -45,23 +45,23 @@ export const recommendTeamsInputSchema = z
       .string()
       .min(1)
       .max(128)
-      .describe("Mùa nguồn trong seasonOptions; lấy từ seasonSelection của tqccl_get_playbook."),
+      .describe("Mùa nguồn trong seasonOptions (seasonSelection của tqccl_get_playbook)."),
     lockedTeams: z
       .array(z.string().min(1).max(256))
       .max(10)
       .optional()
-      .describe("teamId (team:...) trong canonicalState.lockedTeams cần giữ; bỏ trống = giữ mọi đội đã khóa."),
+      .describe("teamId trong canonicalState.lockedTeams cần giữ; bỏ trống = giữ mọi đội đã khóa."),
     maxTeams: z.number().int().min(1).max(10).optional().describe("Số đội tối đa; mặc định 5."),
-    mode: z.enum(["meta", "redStars"]).optional().describe("meta = bậc T0→T1; redStars = nhiều hột. Mặc định meta."),
+    mode: z.enum(["meta", "redStars"]).optional().describe("meta = nhiều T0/T0.5; redStars = nhiều hột. Mặc định meta."),
     tacticOverrides: z
       .array(tacticOverrideSchema)
       .max(MAX_TACTIC_OVERRIDES)
       .optional()
-      .describe("Món bù người dùng đã chọn (tối đa 20); vượt thì INVALID_REQUEST, không bỏ âm thầm."),
+      .describe("Món bù người dùng đã chọn (tối đa 20); vượt thì INVALID_REQUEST."),
     fullBox: z
       .boolean()
       .optional()
-      .describe("Tìm toàn kho; mặc định true khi >40 tướng và >60 chiến pháp như trang Gợi ý kho."),
+      .describe("Tìm toàn kho; mặc định true khi >40 tướng và >60 chiến pháp."),
   })
   .strict();
 export type RecommendTeamsInput = z.infer<typeof recommendTeamsInputSchema>;
@@ -171,7 +171,7 @@ const conflictedEntrySchema = z
 
 export const recommendTeamsOutputSchema = commonResultSchema
   .extend({
-    basis: z.literal("source-reference-fit").describe("Cơ sở ghép: luôn là source-reference-fit (nguồn + kho, không chấm theo luật)."),
+    basis: z.literal("source-reference-fit").describe("Luôn là source-reference-fit (nguồn + kho, không chấm theo luật)."),
     rulesetVerified: z.literal(false).describe("Luôn false: kết quả chưa được kiểm theo ruleset mùa."),
     sourceSeasonId: boundedText.describe("Mùa nguồn."),
     mode: z.enum(["meta", "redStars"]).describe("Chế độ."),
@@ -184,7 +184,7 @@ export const recommendTeamsOutputSchema = commonResultSchema
     conflictedTeams: z
       .array(conflictedEntrySchema)
       .max(MAX_CONFLICTED)
-      .describe("Đội đủ kho khi đứng riêng nhưng không vào danh sách vì dùng chung tướng/chiến pháp với đội đã chọn."),
+      .describe("Đội đủ kho khi đứng riêng nhưng trùng tướng/chiến pháp với đội đã chọn."),
     omittedCounts: z
       .object({
         blockedStrongTeams: z.number().int().nonnegative().describe("Đội mạnh còn thiếu tướng hoặc chiến pháp."),
@@ -200,7 +200,7 @@ export const recommendTeamsOutputSchema = commonResultSchema
         ignored: z.array(tacticOverrideSchema.omit({ tactic: true }).strict()).max(MAX_TACTIC_OVERRIDES).describe("Món bù không khớp đội/ô nào."),
       })
       .strict()
-      .describe("Kết quả áp món bù: yêu cầu, đã áp dụng, bị bỏ qua (báo, không bỏ âm thầm)."),
+      .describe("Kết quả áp món bù: yêu cầu, đã áp dụng, bị bỏ qua."),
     diagnostics: z
       .object({
         seasonSourceRecords: z.number().int().nonnegative().describe("Số bản ghi nguồn của mùa."),
@@ -283,7 +283,13 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     const known = new Set(state.lockedTeams.map((team) => team.teamId as string));
     if ([...wantedLocks].some((id) => !known.has(id))) throw invalid(["lockedTeams"]);
   }
-  const heroNames = new Map(state.heroes.map((hero) => [hero.canonicalId as string, hero.displayName]));
+  // Tên lấy từ catalog theo canonicalId; displayName client gửi bị bỏ qua (state gọn không còn tên, #166).
+  const catalogNames = new Map<string, string>();
+  for (const entry of ctx.index.searchEntries) {
+    if (entry.kind === "hero" || entry.kind === "tactic") catalogNames.set(entry.canonicalId, entry.displayName);
+  }
+  const nameOf = (canonicalId: string): string => catalogNames.get(canonicalId) ?? canonicalId;
+  const heroNames = new Map(state.heroes.map((hero) => [hero.canonicalId as string, nameOf(hero.canonicalId)]));
 
   const heroesDict = ctx.snapshot.artifacts["heroes-dict"] as never;
   const tacticsDict = ctx.snapshot.artifacts.tactics as never;
@@ -295,7 +301,7 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   const tacticRules = buildTacticRules(tacticsDict);
 
   const ownedHeroes = state.heroes.slice(0, 500).map((hero) => ({
-    name: hero.displayName,
+    name: heroNames.get(hero.canonicalId),
     canonicalId: hero.canonicalId,
     ...(hero.redStars === undefined ? {} : { redStars: hero.redStars }),
   }));
@@ -303,7 +309,7 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   const formerTactic: Map<string, string> = createFormerTacticIdIndex(tacticsDict);
   const liveTacticId = (id: string): string => formerTactic.get(id) ?? id;
   const ownedTactics = state.tactics.slice(0, 1_000).map((tactic) => ({
-    name: tactic.displayName,
+    name: catalogNames.get(liveTacticId(tactic.canonicalId)) ?? nameOf(tactic.canonicalId),
     canonicalId: liveTacticId(tactic.canonicalId),
   }));
   const lockedTeams = state.lockedTeams
@@ -339,6 +345,8 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
     keepExistingTeams: true,
     tacticsDict,
     fullBox,
+    // Mode meta: tìm danh sách theo khóa (số T0+T0.5, số T0, số đội, điểm nguồn, hột) thay vì tham lam. Website chưa bật.
+    metaSearch: mode === "meta",
     maxTeams,
   } as never) as Rec;
 
@@ -465,6 +473,10 @@ export async function handleRecommendTeams(ctx: ToolContext, rawInput: unknown):
   if (season.teams.length === 0) warnings.push("season-has-no-mapped-source-teams");
   if (result.legacyUsed === true) warnings.push("legacy-engine-teams-used");
   if (ignored.length > 0) warnings.push("tactic-overrides-ignored");
+  // Tìm danh sách chạm trần nút: kết quả là danh sách tốt nhất đã thấy, chưa chắc tối ưu.
+  if (result.diagnostics?.searchCapped === true) warnings.push("portfolio-search-capped");
+  // Kho dựng được nhiều đội hơn pool DFS (60): đội ngoài pool chỉ được xét tham lam, kết quả chưa chắc tối ưu.
+  if (result.diagnostics?.searchPoolTruncated === true) warnings.push("portfolio-search-pool-truncated");
 
   const output: RecommendTeamsOutput = {
     ...ctx.commonResult([

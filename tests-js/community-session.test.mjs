@@ -11,6 +11,10 @@ globalThis.localStorage = {
   removeItem: (key) => store.delete(key),
 };
 globalThis.document = new EventTarget();
+// Domain chính có gtag: `track()` của js/analytics.js gửi `gtag('event', …)`; test đếm sự kiện `login`.
+const gtagCalls = [];
+globalThis.window = { location: { hostname: "tqccl.com", pathname: "/" }, gtag: (...args) => gtagCalls.push(args) };
+const logins = () => gtagCalls.filter((call) => call[0] === "event" && call[1] === "login");
 const events = [];
 document.addEventListener("community:session", (event) => events.push(event.detail.user?.id ?? null));
 
@@ -58,4 +62,75 @@ test("lượt fresh lỗi mạng rồi đăng xuất ở tab khác: lượt fres
   store.delete(HINT_KEY);
   assert.equal(await loadSession({ probe: false, fresh: true }), null);
   assert.deepEqual(events, [null]);
+});
+
+// `login` (GA4): hint `pending` do signIn() ghi trước khi rời sang Google; lần đầu thấy phiên có người dùng sau lượt quay về là một đăng nhập.
+test("login: quay về từ OAuth có phiên thì báo một lần với method google; các lần tải sau (hint '1') không báo", async () => {
+  gtagCalls.length = 0;
+  store.set(HINT_KEY, "pending");
+  const first = loadSession({ probe: false, fresh: true });
+  assert.equal(pending.length, 1);
+  pending.shift()({ id: "u-carol", email: "carol@example.com", name: "Carol" });
+  assert.equal((await first).id, "u-carol");
+  assert.deepEqual(logins(), [["event", "login", { method: "google" }]]);
+  assert.equal(store.get(HINT_KEY), "1");
+
+  const again = loadSession({ probe: false, fresh: true });
+  pending.shift()({ id: "u-carol" });
+  await again;
+  assert.equal(logins().length, 1, "tải lại khi đã đăng nhập không báo thêm");
+});
+
+test("login: hủy đăng nhập hoặc không có phiên thì không báo, hint bị xóa; khách thường không báo", async () => {
+  gtagCalls.length = 0;
+  store.set(HINT_KEY, "pending");
+  const cancelled = loadSession({ probe: false, fresh: true });
+  pending.shift()(null);
+  assert.equal(await cancelled, null);
+  assert.equal(store.has(HINT_KEY), false);
+
+  store.delete(HINT_KEY);
+  assert.equal(await loadSession({ probe: false, fresh: true }), null);
+  const probed = loadSession({ probe: true, fresh: true });
+  pending.shift()(null);
+  await probed;
+  assert.deepEqual(logins(), []);
+});
+
+test("login: lượt hỏi lỗi mạng không báo; thử lại thành công vẫn báo đúng một lần", async () => {
+  gtagCalls.length = 0;
+  store.set(HINT_KEY, "pending");
+  const failing = loadSession({ probe: false, fresh: true });
+  pending.shift()(undefined, new TypeError("network"));
+  await assert.rejects(failing);
+  assert.deepEqual(logins(), []);
+  assert.equal(store.get(HINT_KEY), "pending", "hint giữ nguyên để lượt hỏi sau còn nhận ra lượt quay về");
+  const retry = loadSession({ probe: false });
+  pending.shift()({ id: "u-dan" });
+  await retry;
+  assert.equal(logins().length, 1);
+});
+
+test("login: hai lượt hỏi phiên chồng nhau chỉ báo một lần (dùng chung lượt, hoặc lượt fresh thay lượt cũ)", async () => {
+  gtagCalls.length = 0;
+  store.set(HINT_KEY, "pending");
+  const a = loadSession({ probe: false, fresh: true });
+  const b = loadSession({ probe: false });
+  assert.equal(pending.length, 1, "lượt thứ hai dùng lại lượt đang chờ");
+  pending.shift()({ id: "u-erin" });
+  await Promise.all([a, b]);
+  assert.equal(logins().length, 1);
+
+  gtagCalls.length = 0;
+  store.set(HINT_KEY, "pending");
+  const stale = loadSession({ probe: false, fresh: true });
+  const fresh = loadSession({ probe: false, fresh: true });
+  assert.equal(pending.length, 2);
+  const [answerStale, answerFresh] = pending.splice(0);
+  answerStale({ id: "u-frank" });
+  await stale;
+  assert.deepEqual(logins(), [], "lượt cũ đã bị lượt fresh thay: không báo");
+  answerFresh({ id: "u-frank" });
+  await fresh;
+  assert.equal(logins().length, 1);
 });

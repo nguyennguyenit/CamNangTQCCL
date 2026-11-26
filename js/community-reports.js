@@ -56,8 +56,8 @@ export function reportSummary(report, { caption = null, nameOf = keepName } = {}
   return el('div', { class: 'cm-report-summary' }, [
     caption ? el('div', { class: 'cm-report-verdict' }, [pill, el('span', { class: 'cm-report-caption' }, caption)]) : pill,
     el('dl', { class: 'cm-report-sides' }, [
-      el('div', {}, [el('dt', {}, L('Đội ta', '我方')), el('dd', {}, heroLine(report?.allyHeroes, nameOf, 'ally'))]),
-      el('div', {}, [el('dt', {}, L('Đối thủ', '对手')), el('dd', {}, heroLine(report?.enemyHeroes, nameOf, 'enemy'))]),
+      el('div', {}, [el('dt', {}, L('Đội ta', '我方', '自軍')), el('dd', {}, heroLine(report?.allyHeroes, nameOf, 'ally'))]),
+      el('div', {}, [el('dt', {}, L('Đối thủ', '对手', '対戦相手')), el('dd', {}, heroLine(report?.enemyHeroes, nameOf, 'enemy'))]),
     ]),
     report?.note ? el('p', { class: 'cm-report-note' }, String(report.note)) : null,
   ]);
@@ -69,6 +69,7 @@ function statsPanel(stats, nameOf = keepName) {
     return el('p', { class: 'scope-note cm-empty' }, L(
       'Chưa có chiến báo nào được duyệt cho đội này.',
       '该阵容暂无已审核的战报。',
+      'この編成の承認済み戦報はまだありません。',
     ));
   }
   const wins = Number(stats.wins) || 0;
@@ -82,19 +83,20 @@ function statsPanel(stats, nameOf = keepName) {
   ]);
   return el('div', { class: 'cm-stats' }, [
     el('dl', { class: 'cm-stat-grid' }, [
-      fact(L('Số trận', '场次'), formatNumber(total)),
+      fact(L('Số trận', '场次', '試合数'), formatNumber(total)),
       fact(
-        L('Tỉ lệ thắng', '胜率'),
+        L('Tỉ lệ thắng', '胜率', '勝率'),
         formatPercent(wins / total),
         L(
           `${formatNumber(wins)} thắng · ${formatNumber(losses)} thua · ${formatNumber(draws)} hoà`,
           `${formatNumber(wins)} 胜 · ${formatNumber(losses)} 负 · ${formatNumber(draws)} 平`,
+          `${formatNumber(wins)} 勝 · ${formatNumber(losses)} 敗 · ${formatNumber(draws)} 分`,
         ),
       ),
     ]),
     opponents.length
       ? el('div', { class: 'cm-opponents' }, [
-          el('h3', { class: 'cm-subtitle' }, L('Đối thủ thường gặp', '常见对手')),
+          el('h3', { class: 'cm-subtitle' }, L('Đối thủ thường gặp', '常见对手', 'よく当たる相手')),
           el('ol', { class: 'cm-opponent-list' }, opponents.map((opponent) => {
             const count = Number(opponent?.count) || 0;
             const opponentWins = Number(opponent?.wins) || 0;
@@ -103,6 +105,7 @@ function statsPanel(stats, nameOf = keepName) {
               el('span', { class: 'cm-opponent-count' }, L(
                 `${formatNumber(count)} trận · thắng ${formatNumber(opponentWins)}`,
                 `${formatNumber(count)} 场 · 胜 ${formatNumber(opponentWins)}`,
+                `${formatNumber(count)} 試合 · 勝利 ${formatNumber(opponentWins)}`,
               )),
             ]);
           })),
@@ -117,8 +120,8 @@ function reportItem(report, { tagged = false, nameOf = keepName } = {}) {
     reportSummary(report, { nameOf }),
     imageUrl
       ? el('a', { class: 'cm-report-image-link', href: imageUrl, target: '_blank', rel: 'noopener' }, [
-          el('img', { class: 'cm-report-image', src: imageUrl, alt: L('Ảnh kết quả trận', '战斗结果截图'), loading: 'lazy', decoding: 'async' }),
-          el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）')),
+          el('img', { class: 'cm-report-image', src: imageUrl, alt: L('Ảnh kết quả trận', '战斗结果截图', '戦闘結果のスクリーンショット'), loading: 'lazy', decoding: 'async' }),
+          el('span', { class: 'visually-hidden' }, L('(mở tab mới)', '（在新标签页打开）', '（新しいタブで開く）')),
         ])
       : null,
     el('p', { class: 'cm-report-meta' }, [
@@ -136,7 +139,7 @@ function submitFlow({ pageKey, lang }) {
   const status = liveStatus();
   const body = el('div', { class: 'cm-report-flow' });
   const wrapper = el('div', { class: 'cm-report-submit', role: 'group', 'aria-labelledby': titleId }, [
-    el('h3', { id: titleId, class: 'cm-subtitle' }, L('Gửi chiến báo của bạn', '提交你的战报')),
+    el('h3', { id: titleId, class: 'cm-subtitle' }, L('Gửi chiến báo của bạn', '提交你的战报', '戦報を送信する')),
     body,
     status,
   ]);
@@ -148,12 +151,13 @@ function submitFlow({ pageKey, lang }) {
 
   function startStep() {
     status.set('');
-    const openButton = el('button', { class: 'ana-btn primary', type: 'button' }, L('Gửi chiến báo', '提交战报'));
+    const openButton = el('button', { class: 'ana-btn primary', type: 'button' }, L('Gửi chiến báo', '提交战报', '戦報を送信'));
     openButton.addEventListener('click', pickStep);
     body.replaceChildren(
       el('p', { class: 'scope-note' }, L(
         'Chụp màn hình kết quả trận có dùng đội này. AI sẽ đọc đội hình, bạn kiểm tra lại rồi gửi để quản trị viên duyệt.',
         '上传使用该阵容的战斗结果截图。AI 会识别双方阵容，你核对后提交，由管理员审核。',
+        'この編成を使った戦闘結果のスクリーンショットを用意してください。AIが編成を読み取り、内容を確認して送信すると、管理者が審査します。',
       )),
       openButton,
     );
@@ -162,7 +166,7 @@ function submitFlow({ pageKey, lang }) {
   function pickStep() {
     const inputId = 'cm-report-file';
     const input = el('input', { id: inputId, class: 'cm-file', type: 'file', accept: 'image/jpeg,image/png,image/webp', 'aria-describedby': 'cm-report-file-note' });
-    const cancel = el('button', { class: 'ana-btn', type: 'button' }, L('Huỷ', '取消'));
+    const cancel = el('button', { class: 'ana-btn', type: 'button' }, L('Huỷ', '取消', 'キャンセル'));
     cancel.addEventListener('click', () => {
       startStep();
       body.querySelector('button')?.focus();
@@ -172,11 +176,12 @@ function submitFlow({ pageKey, lang }) {
       if (file) analyze(file);
     });
     body.replaceChildren(
-      el('label', { class: 'cm-label', for: inputId }, L('Chọn ảnh kết quả trận', '选择战斗结果截图')),
+      el('label', { class: 'cm-label', for: inputId }, L('Chọn ảnh kết quả trận', '选择战斗结果截图', '戦闘結果のスクリーンショットを選択')),
       input,
       el('p', { id: 'cm-report-file-note', class: 'scope-note' }, L(
         'Ảnh được thu nhỏ trước khi tải lên và gửi tới dịch vụ AI để đọc đội hình. Nên cắt bỏ tên tài khoản.',
         '图片会先压缩再上传，并发送给 AI 服务识别阵容。建议裁掉账号名称。',
+        '画像は縮小してからアップロードされ、編成の読み取りのためAIサービスに送信されます。アカウント名は切り取ることをおすすめします。',
       )),
       el('div', { class: 'cm-form-row' }, [cancel]),
     );
@@ -185,18 +190,18 @@ function submitFlow({ pageKey, lang }) {
 
   async function analyze(file) {
     if (!/^image\//.test(file.type)) {
-      status.set(L('Hãy chọn một tệp ảnh.', '请选择图片文件。'), 'error');
+      status.set(L('Hãy chọn một tệp ảnh.', '请选择图片文件。', '画像ファイルを選択してください。'), 'error');
       return;
     }
     body.setAttribute('aria-busy', 'true');
-    status.set(L('Đang phân tích ảnh…', '正在识别图片…'));
+    status.set(L('Đang phân tích ảnh…', '正在识别图片…', '画像を解析しています…'));
     try {
       const blob = await downscaleImage(file);
       const form = new FormData();
       form.append('image', blob, 'report.jpg');
       const result = await api('/api/reports/analyze', { method: 'POST', form });
       if (!result?.uploadId) throw new Error('missing uploadId');
-      status.set(L('Đã đọc xong ảnh. Hãy kiểm tra và sửa nếu cần.', '识别完成，请核对并按需修改。'));
+      status.set(L('Đã đọc xong ảnh. Hãy kiểm tra và sửa nếu cần.', '识别完成，请核对并按需修改。', '読み取りが完了しました。内容を確認し、必要に応じて修正してください。'));
       confirmStep(result.uploadId, result.analysis || {}, blob);
     } catch (error) {
       status.set(describeError(error), 'error');
@@ -208,7 +213,7 @@ function submitFlow({ pageKey, lang }) {
   function confirmStep(uploadId, analysis, blob) {
     const previewUrl = URL.createObjectURL(blob);
     const resultSelect = el('select', { id: 'cm-report-result', class: 'cm-select', required: '' }, [
-      el('option', { value: '' }, L('Chọn kết quả', '选择结果')),
+      el('option', { value: '' }, L('Chọn kết quả', '选择结果', '結果を選択')),
       ...RESULTS.map((value) => el('option', { value }, resultLabel(value))),
     ]);
     resultSelect.value = RESULTS.includes(analysis.result) ? analysis.result : '';
@@ -218,18 +223,18 @@ function submitFlow({ pageKey, lang }) {
     enemyInput.value = (analysis.enemy?.heroes || []).join(', ');
     const noteInput = el('textarea', { id: 'cm-report-note', class: 'cm-textarea', rows: '2', maxlength: String(NOTE_MAX_LENGTH) });
     noteInput.value = typeof analysis.notes === 'string' ? analysis.notes.slice(0, NOTE_MAX_LENGTH) : '';
-    const submit = el('button', { class: 'ana-btn primary', type: 'submit' }, L('Gửi để duyệt', '提交审核'));
-    const cancel = el('button', { class: 'ana-btn', type: 'button' }, L('Huỷ', '取消'));
+    const submit = el('button', { class: 'ana-btn primary', type: 'submit' }, L('Gửi để duyệt', '提交审核', '審査に送信'));
+    const cancel = el('button', { class: 'ana-btn', type: 'button' }, L('Huỷ', '取消', 'キャンセル'));
     const field = (id, label, control) => el('div', { class: 'cm-field' }, [el('label', { class: 'cm-label', for: id }, label), control]);
-    const heading = el('p', { class: 'cm-step-title' }, L('Xác nhận chiến báo', '确认战报'));
+    const heading = el('p', { class: 'cm-step-title' }, L('Xác nhận chiến báo', '确认战报', '戦報の確認'));
     const form = el('form', { class: 'cm-report-form', novalidate: '' }, [
       heading,
-      el('img', { class: 'cm-report-preview', src: previewUrl, alt: L('Ảnh bạn đã chọn', '你选择的图片') }),
-      field('cm-report-result', L('Kết quả', '结果'), resultSelect),
-      field('cm-report-ally', L('Tướng phe ta', '我方武将'), allyInput),
-      field('cm-report-enemy', L('Tướng đối thủ (nếu thấy)', '对手武将（如可见）'), enemyInput),
-      el('p', { id: 'cm-report-names-hint', class: 'scope-note' }, L('Ngăn tên tướng bằng dấu phẩy.', '武将名之间用逗号分隔。')),
-      field('cm-report-note', L('Ghi chú (không bắt buộc)', '备注（可选）'), noteInput),
+      el('img', { class: 'cm-report-preview', src: previewUrl, alt: L('Ảnh bạn đã chọn', '你选择的图片', 'あなたが選んだ画像') }),
+      field('cm-report-result', L('Kết quả', '结果', '結果'), resultSelect),
+      field('cm-report-ally', L('Tướng phe ta', '我方武将', '自軍の武将'), allyInput),
+      field('cm-report-enemy', L('Tướng đối thủ (nếu thấy)', '对手武将（如可见）', '対戦相手の武将（確認できる場合）'), enemyInput),
+      el('p', { id: 'cm-report-names-hint', class: 'scope-note' }, L('Ngăn tên tướng bằng dấu phẩy.', '武将名之间用逗号分隔。', '武将名はカンマで区切ってください。')),
+      field('cm-report-note', L('Ghi chú (không bắt buộc)', '备注（可选）', 'メモ（任意）'), noteInput),
       el('div', { class: 'cm-form-row' }, [cancel, submit]),
     ]);
     const release = () => URL.revokeObjectURL(previewUrl);
@@ -245,14 +250,14 @@ function submitFlow({ pageKey, lang }) {
       const enemyHeroes = splitNames(enemyInput.value);
       const invalid = !RESULTS.includes(result) ? resultSelect : !allyHeroes.length ? allyInput : null;
       if (invalid) {
-        status.set(L('Hãy chọn kết quả và nhập tướng phe ta.', '请选择结果并填写我方武将。'), 'error');
+        status.set(L('Hãy chọn kết quả và nhập tướng phe ta.', '请选择结果并填写我方武将。', '結果を選択し、自軍の武将を入力してください。'), 'error');
         invalid.setAttribute('aria-invalid', 'true');
         invalid.focus();
         return;
       }
       for (const control of [resultSelect, allyInput]) control.removeAttribute('aria-invalid');
       submit.disabled = true;
-      status.set(L('Đang gửi…', '正在提交…'));
+      status.set(L('Đang gửi…', '正在提交…', '送信中…'));
       try {
         const note = noteInput.value.trim();
         await api('/api/reports', {
@@ -271,21 +276,22 @@ function submitFlow({ pageKey, lang }) {
   }
 
   function pendingStep() {
-    const heading = el('p', { class: 'cm-step-title cm-pending' }, L('Đã gửi — đang chờ duyệt', '已提交，等待审核'));
-    const another = el('button', { class: 'ana-btn', type: 'button' }, L('Gửi chiến báo khác', '再提交一份'));
+    const heading = el('p', { class: 'cm-step-title cm-pending' }, L('Đã gửi — đang chờ duyệt', '已提交，等待审核', '送信済み — 承認待ち'));
+    const another = el('button', { class: 'ana-btn', type: 'button' }, L('Gửi chiến báo khác', '再提交一份', 'もう1件送信'));
     another.addEventListener('click', pickStep);
     body.replaceChildren(
       heading,
       el('p', { class: 'scope-note' }, L(
         'Chiến báo sẽ hiện ở đây và được tính vào thống kê sau khi quản trị viên duyệt.',
         '战报经管理员审核通过后会显示在此处并计入统计。',
+        '管理者の承認後、戦報はここに表示され、統計に反映されます。',
       )),
       el('div', { class: 'cm-form-row' }, [
-        el('a', { class: 'ana-btn', href: localePath('/chien-bao/') }, L('Xem chiến báo của tôi', '查看我的战报')),
+        el('a', { class: 'ana-btn', href: localePath('/chien-bao/') }, L('Xem chiến báo của tôi', '查看我的战报', 'マイ戦報を見る')),
         another,
       ]),
     );
-    status.set(L('Đã gửi chiến báo, đang chờ duyệt.', '战报已提交，等待审核。'));
+    status.set(L('Đã gửi chiến báo, đang chờ duyệt.', '战报已提交，等待审核。', '戦報を送信しました。承認待ちです。'));
     focusHeading(heading);
   }
 
@@ -296,16 +302,15 @@ function submitFlow({ pageKey, lang }) {
 /**
  * Khối "Chiến báo thực chiến": số liệu + danh sách đã duyệt + luồng gửi.
  * `sharedPool` (đội cộng đồng): không lọc theo `lang`, mỗi chiến báo kèm nhãn `[VI]`/`[ZH]`.
- * `archived` (mùa đã đóng): thay luồng gửi bằng ghi chú lưu trữ.
  * `heroNames` (tuỳ chọn): `() => Promise<(tên, phía) => tên hiển thị>` — chỉ gọi khi có tên tướng để hiện. Danh sách
  * vẽ ngay bằng tên gốc, tên được thay khi bộ tra về; lỗi thì giữ tên gốc.
  */
-export function mountReports(container, { pageKey, lang, user, sharedPool = false, archived = false, heroNames = null }) {
+export function mountReports(container, { pageKey, lang, user, sharedPool = false, heroNames = null }) {
   const titleId = 'cm-reports-title';
   const statsBox = el('div', { class: 'cm-stats-box' });
-  const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Chiến báo đã duyệt', '已审核战报') });
+  const list = el('ol', { class: 'cm-report-list', 'aria-label': L('Chiến báo đã duyệt', '已审核战报', '承認済み戦報') });
   const status = liveStatus();
-  const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm chiến báo', '查看更多战报'));
+  const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm chiến báo', '查看更多战报', '戦報をもっと見る'));
   let cursor = null;
   let namer = null;
   let nameOf = keepName;
@@ -360,18 +365,17 @@ export function mountReports(container, { pageKey, lang, user, sharedPool = fals
   });
 
   section = el('section', { class: 'cm-block cm-reports', 'aria-labelledby': titleId }, [
-    el('h2', { id: titleId, class: 'cm-title' }, L('Chiến báo thực chiến', '实战战报')),
+    el('h2', { id: titleId, class: 'cm-title' }, L('Chiến báo thực chiến', '实战战报', '実戦戦報')),
     el('p', { class: 'scope-note' }, L(
       'Kết quả trận thật do người chơi gửi, đã được quản trị viên duyệt.',
       '由玩家提交、经管理员审核的真实战斗结果。',
+      'プレイヤーが送信し、管理者が承認した実際の戦闘結果です。',
     )),
     statsBox,
     list,
     moreButton,
     status,
-    archived
-      ? el('p', { class: 'scope-note cm-archived' }, L('Mùa đã lưu trữ — không nhận chiến báo mới.', '赛季已归档，不再接受新战报。'))
-      : user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。')),
+    user ? submitFlow({ pageKey, lang }) : signInPrompt(L('Đăng nhập để gửi chiến báo của bạn.', '登录后即可提交你的战报。', 'ログインして戦報を送信しましょう。')),
   ]);
   list.hidden = true;
   container.append(section);

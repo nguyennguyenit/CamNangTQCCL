@@ -3611,7 +3611,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Trận Tỷ Thủy Quan"
+        "Trận Dĩ Thủy Quan"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -6962,7 +6962,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Khởi Binh Tuyết Hận"
+        "Cầm Binh Rửa Hận"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -7113,7 +7113,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Loạn Hoàng Cân"
+        "Chiến Loạn Khăn Vàng"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -8153,7 +8153,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Chử Tửu Luận Anh Hùng"
+        "Nấu rượu luận anh hùng"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -8264,7 +8264,7 @@
     "linkScore": 0.0,
     "lookup": {
       "acquiredFromVi": [
-        "Quần Hùng Thảo Đổng"
+        "Quần Hùng Manh Động"
       ],
       "activationRate": 0.35,
       "conditions": [],
@@ -10979,7 +10979,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Thủy Yêm Thất Quân"
+        "Nước Ngập Thất Quân"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -11025,7 +11025,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Cắt râu bỏ áo"
+        "Cắt Râu Vứt Áo"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -11071,7 +11071,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Loạn Chung Hội"
+        "Chung Hội Chi Loạn"
       ],
       "activationRate": 0.55,
       "conditions": [],
@@ -11309,7 +11309,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Bành Việt Nạo Sở"
+        "Dương Đông Kích Tây"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -11398,7 +11398,7 @@
     "linkScore": 1.0,
     "lookup": {
       "acquiredFromVi": [
-        "Tôn Sách bị ám sát"
+        "Tôn Sách bị thích sát"
       ],
       "activationRate": 0.45,
       "conditions": [],
@@ -12888,7 +12888,7 @@
       "effectZhSource": {
         "kind": "translation"
       },
-      "exchangeConditionVi": "Đào Viên Kết Nghĩa",
+      "exchangeConditionVi": "Kết Nghĩa Vườn Đào",
       "formerIds": [],
       "inheritedFromIds": [],
       "maxUsers": 1,
@@ -17468,7 +17468,7 @@
     "linkScore": null,
     "lookup": {
       "acquiredFromVi": [
-        "Kiến Trí Đồn Điền"
+        "Xây Dựng Đồn Điền"
       ],
       "activationRate": 1,
       "conditions": [],
@@ -19440,6 +19440,54 @@
     ],
     "type": "ACTIVE",
     "viet": "Gan Dạ"
+  },
+  {
+    "aliases": [],
+    "chinese": "衡軛陣",
+    "effect": "我軍武將統御各不相同時，敵軍普通攻擊有70%機率選擇我軍兵力最高的單體；且我軍武將造成傷害後，有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）造成傷害提升2.5%→5%，受到傷害後有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）受到傷害降低2.5%→5%（每種效果皆可疊加，最多4次，持續3回合）",
+    "effectViet": "Khi Võ Tướng quân ta có Thống Trị khác nhau, công kích thường của quân địch có 70% xác suất chọn đơn thể Binh Lực cao nhất của quân ta; đồng thời sau khi Võ Tướng quân ta gây sát thương, có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) tăng sát thương gây ra 2.5%→5%, sau khi phải chịu sát thương có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) giảm sát thương phải chịu 2.5%→5% (mỗi hiệu quả đều có thể tích lũy tối đa 4 lần, duy trì 3 hiệp)",
+    "hanViet": "Hành Ách Trận",
+    "iconUrl": null,
+    "id": "tactic:hanh-ach-tran",
+    "linkScore": null,
+    "lookup": {
+      "acquiredFromVi": [],
+      "activationRate": 1.0,
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Trận pháp mới của mùa Hán Diễm Trường Minh (PK-S27); chữ Việt theo thẻ Xem Chiến Pháp của client Global."
+        }
+      ],
+      "conflictsVi": null,
+      "cooldown": null,
+      "effectTypeVi": "Tăng ích",
+      "effectZhSource": {
+        "kind": "translation"
+      },
+      "exchangeConditionVi": null,
+      "formerIds": [],
+      "inheritedFromIds": [],
+      "maxUsers": null,
+      "missingFields": [],
+      "pointCost": null,
+      "revisions": []
+    },
+    "pending": false,
+    "quality": "S",
+    "source": null,
+    "sourceHeroCn": null,
+    "target": null,
+    "targetViet": "Tập thể quân ta (3 người)",
+    "troopFit": [
+      "Kỵ binh",
+      "Khiên binh",
+      "Cung binh",
+      "Thương binh",
+      "Khí giới"
+    ],
+    "type": "FORMATION",
+    "viet": "Hành Ách Trận"
   },
   {
     "aliases": [],

@@ -1,7 +1,7 @@
 // Hàm thuần của trang Đội cộng đồng (không đụng DOM, không gọi mạng): kiểm form → body API, chọn phe
 // từ kết quả AI, đọc chế độ từ query, gộp trang danh sách, khối cảnh báo đội tương tự.
 
-import { localePath } from './i18n.js';
+import { DEFAULT_LOCALE, isSiteLocale, localePath, pick } from './i18n.js';
 
 /** Binh chủng mà API chấp nhận (thứ tự hiển thị). */
 export const TROOPS = Object.freeze(['cung', 'khiGioi', 'ky', 'thuan', 'thuong']);
@@ -29,7 +29,7 @@ const length = (text) => Array.from(text).length;
 const sureId = (cell) => (cell?.state === 'sure' && typeof cell.id === 'string' && cell.id ? cell.id : null);
 
 /**
- * Nháp đã xác nhận + các ô nhập → body `POST /api/community-teams` (không có `season`: server gán mùa mở).
+ * Nháp đã xác nhận + các ô nhập → body `POST /api/community-teams` (`season` = id mùa người dùng chọn, bắt buộc).
  * Ném `TeamFormError` (mã `invalid_*` như API) khi thiếu hoặc trùng.
  */
 export function teamPayloadFromDraft(draft, fields) {
@@ -45,6 +45,8 @@ export function teamPayloadFromDraft(draft, fields) {
   const title = trimmed(fields?.title);
   if (!title || length(title) > TITLE_MAX) throw new TeamFormError('invalid_title');
   if (!TROOPS.includes(fields?.troop)) throw new TeamFormError('invalid_troop');
+  const season = trimmed(fields?.season);
+  if (!season) throw new TeamFormError('invalid_season');
   const playstyle = trimmed(fields?.playstyle);
   if (length(playstyle) < PLAYSTYLE_MIN || length(playstyle) > TEXT_MAX) throw new TeamFormError('invalid_text');
   const optional = {};
@@ -58,13 +60,14 @@ export function teamPayloadFromDraft(draft, fields) {
     throw new TeamFormError('invalid_uploads');
   }
   return {
+    season,
     title,
     heroes,
     tactics,
     troop: fields.troop,
     playstyle,
     ...optional,
-    lang: fields?.lang === 'zh' ? 'zh' : 'vi',
+    lang: isSiteLocale(fields?.lang) ? fields.lang : DEFAULT_LOCALE,
     uploadIds: [...uploadIds],
   };
 }
@@ -119,7 +122,10 @@ export function similarNotice(count, hasMore, locale) {
   const n = Number(count) || 0;
   if (n <= 0) return null;
   const shown = hasMore ? `${n}+` : String(n);
-  return locale === 'zh'
-    ? { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' }
-    : { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' };
+  return pick(
+    locale,
+    { title: `Đã có ${shown} đội cùng 3 tướng này`, text: 'Bạn vẫn có thể đăng, nhưng nên xem trước để tránh trùng.' },
+    { title: `已有 ${shown} 个相同三名武将的阵容`, text: '你仍可发布，但建议先看看，避免重复。' },
+    { title: `既に ${shown} 件、同じ武将3名の編成があります`, text: '投稿は可能ですが、重複を避けるため先にご確認ください。' },
+  );
 }

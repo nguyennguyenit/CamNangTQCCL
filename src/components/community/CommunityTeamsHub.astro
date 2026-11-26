@@ -4,37 +4,38 @@
 // Nhận `locale` để bản /zh/ dùng lại nguyên component. Trong mount có danh sách link dựng sẵn tới trang từng đội:
 // `/api/` bị robots.txt chặn nên crawler không render được danh sách bằng JS; JS thay nội dung mount khi chạy.
 // Trang chỉ có một h1 ("Đội cộng đồng"); chế độ chi tiết `?id=` ẩn đầu trang này và lấy tên đội làm h1.
-import { localePath, pick } from '../../../js/i18n.js';
+import { htmlLang, localePath, pick } from '../../../js/i18n.js';
+import type { SiteLocale } from '../../lib/locale-routes';
 import { communityTeamPath, type CommunityTeam } from '../../lib/community-teams.ts';
 
 interface Props {
-  locale: 'vi' | 'zh';
+  locale: SiteLocale;
   teams: readonly CommunityTeam[];
 }
 
 const { locale, teams } = Astro.props;
-const t = (vi: string, zh: string) => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 ---
 <section class="cm-page cm-team-page" aria-labelledby="cm-team-title">
   <header class="cm-team-head" id="cm-team-head">
     <div class="cm-team-head-text">
-      <p class="cm-team-kicker" id="cm-team-kicker">{t('Cộng đồng', '社区')}</p>
-      <h1 id="cm-team-title" class="cm-team-h1" tabindex="-1">{t('Đội cộng đồng', '社区阵容')}</h1>
+      <p class="cm-team-kicker" id="cm-team-kicker">{t('Cộng đồng', '社区', 'コミュニティ')}</p>
+      <h1 id="cm-team-title" class="cm-team-h1" tabindex="-1">{t('Đội cộng đồng', '社区阵容', 'コミュニティ編成')}</h1>
       <p class="cm-team-lead">
-        {t('Đội do người chơi đăng cho mùa đang mở. Quản trị viên duyệt trước khi đội hiện công khai; mọi người có thể bình chọn, bình luận và gửi chiến báo.', '玩家为当前赛季发布的阵容。管理员审核后才会公开显示；大家可以投票、评论并提交战报。')}
-        {' '}<a class="cm-team-lead-link" href={localePath('/chien-bao/', locale)}>{t('Cách gửi chiến báo', '如何提交战报')}</a>
+        {t('Đội do người chơi đăng cho mùa bạn đang chơi. Quản trị viên duyệt trước khi đội hiện công khai; mọi người có thể bình chọn, bình luận và gửi chiến báo.', '玩家为自己正在玩的赛季发布的阵容。管理员审核后才会公开显示；大家可以投票、评论并提交战报。', 'プレイヤーが現在プレイ中のシーズン向けに投稿した編成です。管理者の承認後に公開され、投票・コメント・戦報の送信ができます。')}
+        {' '}<a class="cm-team-lead-link" href={localePath('/chien-bao/', locale)}>{t('Cách gửi chiến báo', '如何提交战报', '戦報の送り方')}</a>
       </p>
     </div>
     <div class="cm-team-head-nav" id="cm-team-head-nav"></div>
   </header>
   <div id="community-teams" class="cm-team-root">
     {teams.length > 0 && (
-      <ul class="cm-team-static-list" aria-label={t('Danh sách đội', '阵容列表')}>
+      <ul class="cm-team-static-list" aria-label={t('Danh sách đội', '阵容列表', '編成一覧')}>
         {teams.map((team) => (
-          <li><a class="cm-link" href={communityTeamPath(team.id, locale)} lang={team.textLang === 'zh' ? 'zh-Hans' : 'vi'}>{team.title}</a></li>
+          <li><a class="cm-link" href={communityTeamPath(team.id, locale)} lang={htmlLang(team.textLang)}>{team.title}</a></li>
         ))}
       </ul>
     )}
-    <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。')}</p></noscript>
+    <noscript><p class="scope-note">{t('Trang này cần JavaScript để hiển thị.', '此页面需要启用 JavaScript 才能显示。', 'このページの表示にはJavaScriptが必要です。')}</p></noscript>
   </div>
 </section>

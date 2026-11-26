@@ -11,10 +11,12 @@ import { setZhNameResolver } from "../js/recommended-reference-state.js";
 import {
   coexistTeamCard,
   legacyOriginalDetailContent,
+  qilueLookupTable,
   recommendedListTrees,
   recommendedTeamCard,
   recommendedTeamDetailContent,
   recommendedTeamTable,
+  setCoexistQilueTable,
 } from "../js/recommended-reference-render.js";
 import {
   khaihoangDetailTrees,
@@ -22,6 +24,8 @@ import {
   seasonCoexistGroup,
 } from "../js/render.js";
 import { TEAM_VIEW_CARDS, TEAM_VIEW_TABLE } from "../js/team-view.js";
+import { otherTeamOptions } from "../js/other-team-groups.js";
+import { setTeamRouteHandles } from "../js/team-detail-navigation.js";
 
 assert.equal(typeof document, "undefined", "test chạy ngoài trình duyệt");
 
@@ -33,6 +37,10 @@ const khaihoang = json("data/khaihoang.json");
 const coexist = json("data/coexist.json");
 const seasonLinks = json("data/season-content-links.json");
 const labels = json(`${REFERENCE}/seasons.json`).displayLabels;
+const lookupCatalog = json("data/lookup-catalog.json");
+const qilueById = new Map(lookupCatalog.qilueCards.map((row) => [row.id, row]));
+// Build đăng ký bảng tra Thẻ Kỳ Lược từ lookup-catalog đã pin trước khi dựng Cùng Tồn (src/lib/team-ssr.ts).
+setCoexistQilueTable(qilueLookupTable(lookupCatalog));
 const resolveZh = createRawNameResolver(...["heroes-dict", "tactics", "books-dict"].map((name) => json(`data/${name}.json`)));
 
 const detailRecords = readdirSync(new URL(`../${REFERENCE}`, import.meta.url))
@@ -44,7 +52,14 @@ const fullRecord = detailRecords.find((row) => row.heroes.length === 3
   && row.displayNotes?.blocks?.some((block) => block.owner === "team"));
 const alternativeRecord = detailRecords.find((row) => row.alternativeHoldersRaw?.length
   && row.heroes.every((hero) => filled(hero.tacticSlotsVi).length));
-const otherRecords = json(`${REFERENCE}/other-teams.json`).records;
+const otherPayload = json(`${REFERENCE}/other-teams.json`);
+const otherRecords = otherPayload.records;
+const legacyHandles = json("pipeline/team-route-handles.json").handles.legacy;
+/** Dựng với bảng route handle Đội khác đã đăng ký (như `prepare()` của build), trả lại bảng rỗng sau đó. */
+const withLegacyHandles = (handles, build) => {
+  assert.equal(setTeamRouteHandles({ l: handles }), true);
+  try { return build(); } finally { setTeamRouteHandles({}); }
+};
 
 const zhOnly = (run) => {
   setZhNameResolver(resolveZh);
@@ -71,6 +86,33 @@ const heroValues = (record, locale) => record.heroes.flatMap((hero) => locale ==
   : [hero.displayNameVi, ...filled(hero.tacticSlotsVi), ...filled(hero.bookSlotsVi)]);
 /** Tên chiến pháp bỏ tiền tố cải tạo ("Tinh · X") vì thẻ ghép tiền tố vào chữ hiển thị. */
 const bare = (value) => value.replace(/^(Tinh|Chuyển|Thác|精|轉|拓)\s*[·・]\s*/u, "");
+
+test("tier JP: huy hiệu cạnh tier SGSDeck trên thẻ/bảng, khối nguồn có link trên trang chi tiết, đủ ba ngôn ngữ", () => {
+  const source = { source: "jp", url: "https://kazten.com/entry/2026/06/19/180000", publishedAt: "2026-06-19" };
+  const exact = { ...fullRecord, tierSources: [{ ...source, tierRaw: "T0", matchKind: "exact" }] };
+  const heroesOnly = { ...fullRecord, tierSources: [{ ...source, tierRaw: "T0.5", matchKind: "heroes-only" }] };
+  const notes = { vi: "khác chiến pháp", zh: "战法不同", ja: "戦法違い" };
+  for (const locale of ["vi", "zh", "ja"]) {
+    const card = treeToHtml(recommendedTeamCard(exact, { href: "/doi-chuan/x/", labels, locale }));
+    assert.match(card, /data-tier-source="jp"/, `thẻ ${locale}`);
+    assert.ok(textOf(recommendedTeamCard(exact, { href: "/doi-chuan/x/", labels, locale })).includes("JP T0"), `thẻ ${locale}`);
+    assert.ok(!card.includes(notes[locale]), `đội khớp đủ không mang nhãn khác chiến pháp (${locale})`);
+    // Tier SGSDeck vẫn hiện nguyên bên cạnh.
+    assert.ok(textOf(recommendedTeamCard(exact, { labels, locale })).includes(fullRecord.tierRaw));
+    assert.ok(textOf(recommendedTeamCard(heroesOnly, { labels, locale })).includes(notes[locale]), `nhãn phụ ${locale}`);
+    assert.ok(textOf(recommendedTeamTable([heroesOnly], { labels, locale })).includes("JP T0.5"), `bảng ${locale}`);
+    const detail = treeToHtml(h("div", {}, recommendedTeamDetailContent(heroesOnly, { labels, locale })));
+    assert.match(detail, /class="detail-section detail-tier-source"/);
+    assert.match(detail, /href="https:\/\/kazten\.com\/entry\/2026\/06\/19\/180000"[^>]*rel="noopener noreferrer"/);
+    assert.ok(detail.includes("2026-06-19"), `ngày đăng ${locale}`);
+  }
+  // Hàng không có tier JP giữ nguyên thẻ và trang chi tiết.
+  assert.doesNotMatch(treeToHtml(recommendedTeamCard(fullRecord, { labels })), /data-tier-source/);
+  assert.doesNotMatch(treeToHtml(h("div", {}, recommendedTeamDetailContent(fullRecord, { labels }))), /detail-tier-source/);
+  // URL không phải http(s) không thành link.
+  const unsafe = { ...fullRecord, tierSources: [{ ...source, url: "javascript:alert(1)", tierRaw: "T0", matchKind: "exact" }] };
+  assert.doesNotMatch(treeToHtml(h("div", {}, recommendedTeamDetailContent(unsafe, { labels }))), /javascript:/);
+});
 
 test("ngoài trình duyệt locale mặc định là vi và locale tường minh không rò sang lần gọi sau", () => {
   const zhHtml = textOf(recommendedTeamCard(fullRecord, { href: "/doi-chuan/x/", labels, locale: "zh" }));
@@ -134,6 +176,73 @@ for (const locale of ["vi", "zh"]) {
     includesAll(text, locale === "zh" ? names.map((name) => resolveZh(name)) : names.map(bare), `đội gốc ${locale}`);
   });
 
+  test(`Đội khác (${locale}): trang một phương án có khối "Các phương án khác của team" với link thật tới phương án đủ dữ liệu khác, theo optionRank`, () => {
+    const byVariant = new Map(otherRecords.map((record) => [record.legacyVariantId, record]));
+    const group = otherPayload.teamGroups.find((item) => item.completeVariantIds.length >= 3);
+    assert.ok(group, "team mẫu có từ ba phương án đủ dữ liệu");
+    const complete = group.completeVariantIds.map((id) => byVariant.get(id)).sort((a, b) => a.optionRank - b.optionRank);
+    const current = complete[1];
+    const options = otherTeamOptions(otherPayload, current.legacyTeamId);
+    // Đúng các phương án đủ dữ liệu khác của team, theo optionRank, không gồm phương án đang xem.
+    assert.deepEqual(options.map((option) => option.record.legacyVariantId), complete.filter((record) => record !== current).map((record) => record.legacyVariantId));
+    const team = teams.find((item) => item.id === current.legacyTeamId);
+    const handles = Object.fromEntries(complete.map((record) => [record.legacyTeamId, legacyHandles[record.legacyTeamId]]));
+    const body = run(() => withLegacyHandles(handles, () => legacyOriginalDetailContent(team, { locale, teamOptions: options })));
+    assertPlain(body);
+    const html = [].concat(body).map(treeToHtml).join("");
+    const section = html.match(/<section class="detail-section detail-team-options">[\s\S]*?<\/section>/u)?.[0];
+    assert.ok(section, `có khối phương án khác ${locale}`);
+    assert.ok(section.includes(locale === "zh" ? "本队其他方案" : "Các phương án khác của team"), `tiêu đề ${locale}`);
+    const prefix = locale === "zh" ? "/zh" : "";
+    const hrefs = [...section.matchAll(/<a [^>]*href="([^"]+)"/gu)].map((match) => match[1]);
+    assert.deepEqual(hrefs, options.map((option) => `${prefix}/doi-khac/${legacyHandles[option.record.legacyTeamId]}/`), `link theo thứ tự ${locale}`);
+    assert.ok(hrefs.every((href) => !href.includes("variant=")), "link mới không mang ?variant=");
+    // Chỗ khác phương án đang xem: có class is-diff và nhãn cho trình đọc màn hình đi kèm từng mục.
+    const diffs = (section.match(/class="detail-team-option-item is-diff"/gu) || []).length;
+    assert.ok(diffs > 0, `có chỗ khác ${locale}`);
+    assert.equal((section.match(/class="visually-hidden"/gu) || []).length, diffs, `mỗi chỗ khác có nhãn đọc màn hình ${locale}`);
+    assert.ok(textOf(body).includes(locale === "zh" ? "与当前方案不同" : "khác phương án đang xem"), `nhãn ${locale}`);
+  });
+
+  test(`Đội khác (${locale}): team một phương án không có khối phương án khác; dữ liệu giả có </script> và " được escape`, () => {
+    const single = otherPayload.teamGroups.find((item) => item.completeVariantIds.length === 1);
+    const singleRecord = otherRecords.find((record) => record.legacyVariantId === single.completeVariantIds[0]);
+    assert.deepEqual(otherTeamOptions(otherPayload, singleRecord.legacyTeamId), []);
+    const singleTeam = teams.find((item) => item.id === singleRecord.legacyTeamId);
+    assert.doesNotMatch(treeToHtml(h("div", {}, run(() => legacyOriginalDetailContent(singleTeam, { locale, teamOptions: [] })))), /detail-team-options/);
+
+    const hostile = '</script><img src=x onerror="alert(1)">"';
+    const holder = (hero, tactics, books, extra = {}) => ({
+      heroIdentityId: hero, nameRaw: "Tuân Úc", displayNameVi: "Tuân Úc",
+      tacticIdentityIds: tactics.map((name) => `tactic:${name}`), tacticSlotsRaw: tactics, bookSlotsRaw: books, ...extra,
+    });
+    const record = (id, rank, holders, extra = {}) => ({
+      legacyTeamId: id, legacyVariantId: `v-${id}`, teamGroupId: "g-probe", dataComplete: true, optionRank: rank,
+      name: `Đội ${id}`, nickname: null, source: "team-intro", holders, ...extra,
+    });
+    const payload = {
+      records: [
+        record("probe-a", 0, [holder("hero:1", ["A", "B"], ["X", "Y"]), holder("hero:2", ["C", "D"], ["Z"]), holder("hero:3", ["E", "F"], ["W"])]),
+        record("probe-b", 1, [holder("hero:2", ["C", hostile], ["Z"]), holder("hero:1", ["B", "A"], ["Y", "X"]), holder("hero:3", ["E", "F"], ["W"], { displayNameVi: hostile })], { nickname: hostile }),
+      ],
+      teamGroups: [{ teamGroupId: "g-probe", completeVariantIds: ["v-probe-a", "v-probe-b"], memberVariantIds: ["v-probe-a", "v-probe-b"], representativeVariantId: "v-probe-a" }],
+    };
+    const [option] = otherTeamOptions(payload, "probe-a");
+    // Chiến pháp so theo danh tính, bỏ thứ tự; binh thư chính (ô đầu) giữ vị trí, binh thư phụ bỏ thứ tự.
+    assert.deepEqual(option.holders.map((item) => [item.holder.heroIdentityId, item.tacticDiffers, item.bookDiffers, item.changed]), [
+      ["hero:2", [false, true], [false], true],
+      ["hero:1", [false, false], [true, false], true],
+      ["hero:3", [false, false], [false], false],
+    ]);
+    const html = [].concat(run(() => withLegacyHandles({ "probe-a": "probe-a", "probe-b": "probe-b" }, () => legacyOriginalDetailContent(singleTeam, { locale, teamOptions: [option] })))).map(treeToHtml).join("");
+    assert.doesNotMatch(html, /<\/script>|<img/u, "chữ nguồn không thành thẻ");
+    if (locale === "vi") {
+      assert.ok(html.includes("&lt;/script&gt;&lt;img src=x onerror=&quot;alert(1)&quot;&gt;&quot;") || html.includes("&lt;/script&gt;&lt;img src=x onerror=\"alert(1)\"&gt;\""), "chữ nguồn giữ nguyên dạng chữ");
+    }
+    // Tướng không đổi gì không có dòng; hai tướng đổi mỗi tướng một dòng.
+    assert.equal((html.match(/class="detail-team-option-hero"/gu) || []).length, 2);
+  });
+
   test(`Cùng Tồn (${locale}): nhóm có đội, tướng, chiến pháp, binh thư; nhánh bảng nguồn cũng dựng được`, () => {
     const group = { content: coexist[0], source: null };
     const tree = run(() => seasonCoexistGroup(group, { teamCard: (team) => coexistTeamCard(team, { locale }), locale }));
@@ -150,6 +259,80 @@ for (const locale of ["vi", "zh"]) {
     assertPlain(sourceTree);
     assert.match(treeToHtml(sourceTree), new RegExp(`data-record-id="${link.recordId}"`));
     assert.ok(textOf(sourceTree).length > 100);
+    assert.doesNotMatch(treeToHtml(sourceTree), /Trang bị:|Thẻ Kỳ Lược/u, "bảng 10 cột không có Trang bị/Thẻ Kỳ Lược");
+  });
+
+  test(`Cùng Tồn bảng 11 cột (${locale}): Trang bị dưới cộng điểm, Thẻ Kỳ Lược theo hiệp có link Tra cứu ở cả hai bản`, () => {
+    const links = seasonLinks.filter((item) => item.scenarioId === "han-diem-truong-minh");
+    assert.equal(links.length, 5, "kịch bản Hán Diễm Trường Minh có trong dữ liệu");
+    const allTeams = links.flatMap((link) => link.target.payload.teams);
+    assert.equal(allTeams.length, 25);
+    assert.ok(allTeams.every((team) => team.strategyCardIds?.length === team.strategyCardsRaw.split("→").length), "25 đội map đủ thẻ");
+    const prefix = locale === "zh" ? "/zh" : "";
+    for (const link of links) {
+      const group = { recordId: link.recordId, source: link.target.source, content: link.target.payload };
+      const tree = run(() => seasonCoexistGroup(group, { teamCard: (item) => coexistTeamCard(item, { locale }), locale }));
+      assertPlain(tree);
+      const html = treeToHtml(tree);
+      const cards = html.split('class="team-card reference-team-card coexist-team-card"').slice(1);
+      assert.equal(cards.length, link.target.payload.teams.length);
+      link.target.payload.teams.forEach((team, index) => {
+        const card = cards[index];
+        // Thứ tự hiệp của nguồn: Hiệp 2 → Hiệp 6, mỗi thẻ là link trang riêng Tra cứu, tên client (vi) hoặc chữ Hán (zh).
+        const hrefs = [...card.matchAll(/<a class="detail-qilue-card is-link"[^>]*href="([^"]+)"/g)].map((match) => match[1]);
+        assert.deepEqual(hrefs, team.strategyCardIds.map((id) => `${prefix}/tra-cuu/ky-luoc/${id.slice("qilue-card:".length)}/`), team.recordId);
+        const names = [...card.matchAll(/<span class="detail-qilue-card-name">([^<]+)<\/span>/g)].map((match) => match[1]);
+        assert.deepEqual(names, team.strategyCardIds.map((id) => qilueById.get(id)[locale === "zh" ? "nameZh" : "nameVi"]), team.recordId);
+        const rounds = [...card.matchAll(/<span class="detail-qilue-round-label">([^<]+)<\/span>/g)].map((match) => match[1]);
+        assert.deepEqual(rounds, team.strategyCardIds.map((_, round) => (locale === "zh" ? `第${round + 2}回合` : `Hiệp ${round + 2}`)));
+        assert.ok(card.includes(locale === "zh" ? ">奇略卡<" : ">Thẻ Kỳ Lược<"));
+        assert.doesNotMatch(card, /coexist-card-strategy|Phương lược|作戰方略/u, "không có chữ thô hay phương lược tự suy");
+      });
+      if (locale === "zh") {
+        assert.doesNotMatch(html, /Trang bị|Thẻ Kỳ Lược|coexist-hero-equipment|Phong Lang Cư Tế|Trấn Giữ Quân Diên/u);
+        continue;
+      }
+      for (const card of cards) assert.equal((card.match(/coexist-hero-equipment/g) || []).length, 3, "mỗi tướng một dòng Trang bị");
+      assert.doesNotMatch(html, /Cải tạo:|Phong Lang Cư Tế|Trấn Giữ Quân Diên/u, "tên sheet lệch hiện bằng tên client");
+    }
+    if (locale === "vi") {
+      const link = links[0];
+      const team = link.target.payload.teams[0];
+      const group = { recordId: link.recordId, source: link.target.source, content: link.target.payload };
+      const html = treeToHtml(run(() => seasonCoexistGroup(group, { teamCard: (item) => coexistTeamCard(item, { locale }), locale })));
+      // Nguồn "A\n\nB": bỏ dòng trống, giữ ngắt dòng để CSS pre-line hiện hai dòng.
+      assert.equal(team.heroes[0].equipmentRaw, "Trị Quân, Ngự Sách\n\nSức Sống, Hộ Chủ");
+      assert.ok(html.includes('<p class="line books coexist-hero-extra">+ Thống Soái</p><p class="line books coexist-hero-equipment">Trang bị: Trị Quân, Ngự Sách\nSức Sống, Hộ Chủ</p>'));
+      const aliased = allTeams.find((item) => item.strategyCardsRaw.includes("Phong Lang Cư Tế"));
+      assert.ok(aliased.strategyCardIds.includes("qilue-card:phong-lang-cu-tu"));
+      assert.ok(allTeams.some((item) => item.strategyCardIds.includes("qilue-card:tri-duyen-quan-the")));
+    }
+  });
+
+  test(`Cùng Tồn (${locale}): tên đội nhiều dòng nhận cấp đội và ghi chú ở bất kỳ dòng nào sau tên`, () => {
+    const link = seasonLinks.find((item) => item.scenarioId === "han-diem-truong-minh"
+      && item.target.payload.teams.some((team) => team.teamNameRaw.startsWith("Tiềm Long Lữ Bố Cung")));
+    assert.ok(link, "đội Tiềm Long Lữ Bố Cung có trong dữ liệu");
+    const real = link.target.payload.teams.find((team) => team.teamNameRaw.startsWith("Tiềm Long Lữ Bố Cung"));
+    assert.equal(real.teamNameRaw, "Tiềm Long Lữ Bố Cung\n19C\n(Kỹ Năng Quân Sư Điêu Thuyền)");
+    const variants = [
+      [real.teamNameRaw, "Tiềm Long Lữ Bố Cung", "19C", "Kỹ Năng Quân Sư Điêu Thuyền"],
+      ["Tiềm Long Lữ Bố Cung\n(Kỹ Năng Quân Sư Điêu Thuyền)\n19C", "Tiềm Long Lữ Bố Cung", "19C", "Kỹ Năng Quân Sư Điêu Thuyền"],
+      ["Ngũ Mưu Bạch Nhị Cung/\n\nHổ Báo Kỵ\n20C", "Ngũ Mưu Bạch Nhị Cung/ Hổ Báo Kỵ", "20C", ""],
+      ["Hoàng Mã Thương\n19C", "Hoàng Mã Thương", "19C", ""],
+      ["Đội 19C", "Đội 19C", "", ""],
+    ];
+    for (const [teamNameRaw, name, level, note] of variants) {
+      const content = { ...link.target.payload, teams: [{ ...real, teamNameRaw }] };
+      const html = treeToHtml(run(() => seasonCoexistGroup({ recordId: link.recordId, source: link.target.source, content },
+        { teamCard: (item) => coexistTeamCard(item, { locale }), locale })));
+      const title = html.match(/<h3 class="team-name">([^<]*)<\/h3>/)?.[1];
+      if (locale === "vi") assert.equal(title, name, teamNameRaw);
+      const badge = html.match(/<span class="badge tier reference-tier"[^>]*>([^<]*)<\/span>/)?.[1] ?? "";
+      assert.equal(badge, level, teamNameRaw);
+      const shown = html.match(/<span class="coexist-team-note">([^<]*)<\/span>/)?.[1] ?? "";
+      assert.equal(shown, locale === "zh" ? "" : note, teamNameRaw);
+    }
   });
 
   test(`Khai hoang (${locale}): trang danh sách và trang chi tiết có tướng, chiến pháp, ghi chú, điểm`, () => {
@@ -165,6 +348,24 @@ for (const locale of ["vi", "zh"]) {
     assert.match(html, new RegExp(`href="/khai-hoang/${team.id}/"`));
     // Mọi đội của dữ liệu đều có thẻ.
     assert.equal((html.match(/class="team-card reference-team-card kh-card"/g) || []).length, khaihoang.teams.length);
+    const flagged = [...khaihoang.teams, ...khaihoang.chamSuTeams].filter((item) => item.recommended === true).length;
+    assert.equal((html.match(/class="badge badge-band kh-recommended"/g) || []).length, flagged);
+    // Đội Tiến cử đứng đầu lúc render (cả đội khai hoang lẫn Chạm Sứ), các đội còn lại theo sau.
+    // Mỗi thẻ: đoạn HTML tới thẻ kế tiếp; thẻ khai hoang cuối cắt ở khối tham khảo (Chạm Sứ, mỏ) phía sau.
+    const badgeRun = (cardClass) => html.split(`class="${cardClass}"`).slice(1)
+      .map((card) => card.split('class="kh-reference"')[0].includes("kh-recommended"));
+    for (const [cardClass, list] of [["team-card reference-team-card kh-card", khaihoang.teams], ["cham-su-card", khaihoang.chamSuTeams]]) {
+      const n = list.filter((item) => item.recommended === true).length;
+      assert.deepEqual(badgeRun(cardClass), list.map((_, i) => i < n), `${cardClass} ${locale}`);
+    }
+    // Thứ tự 1-2-3 theo `recommendedOrder` (thứ tự ảnh nhà phát hành): thẻ đầu tiên của trang là đội số 1, rồi 2, 3...
+    const hrefOrder = [...html.matchAll(/class="team-card reference-team-card kh-card"[\s\S]*?href="\/khai-hoang\/([^"/]+)\/"/g)].map((match) => match[1]);
+    const expectedOrder = khaihoang.teams.filter((item) => item.recommended === true)
+      .sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((item) => item.id);
+    assert.ok(expectedOrder.length >= 3, "cần ít nhất ba đội Tiến cử để khoá thứ tự 1-2-3");
+    assert.deepEqual(hrefOrder.slice(0, expectedOrder.length), expectedOrder, `thứ tự recommendedOrder ${locale}`);
+    // Tip Chạm Sứ là văn xuôi tiếng Việt: chỉ bản vi có.
+    assert.equal(html.includes('class="cham-su-tip"'), locale === "vi" && Boolean(khaihoang.chamSuTip), `chamSuTip ${locale}`);
 
     const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
     assert.ok(Array.isArray(detail));
@@ -180,10 +381,10 @@ for (const locale of ["vi", "zh"]) {
   });
 }
 
-for (const locale of ["vi", "zh"]) {
+for (const locale of ["vi", "zh", "ja"]) {
   test(`Khai hoang (${locale}): nhật ký thực chiến có 3 giai đoạn, ảnh lazy-load có chú thích và khuyến nghị`, () => {
     const team = khaihoang.teams.find((item) => item.id === "luc-ton-ta-tu-truong-xuan-hoa");
-    const run = locale === "zh" ? zhOnly : (fn) => fn();
+    const run = locale === "vi" ? (fn) => fn() : zhOnly;
     const detail = run(() => khaihoangDetailTrees(team, { variantId: "", locale }));
     assertPlain(detail);
     const html = treeToHtml(h("div", {}, detail));
@@ -194,18 +395,26 @@ for (const locale of ["vi", "zh"]) {
     assert.match(html, /<img src="\/khai-hoang-log\/luc-ton-dat5-891-1449-ket-qua\.webp" alt="[^"]+" width="1296" height="728"/);
     assert.match(html, /<a class="kh-fieldlog-shot-link" href="\/khai-hoang-log\/[^"]+" target="_blank" rel="noopener"/);
     assert.equal((html.match(/<figcaption>/g) || []).length, 5);
-    assert.equal((html.match(/data-recommendation="/g) || []).length, 5);
-    for (const value of ["HLxThanos", "15.243", "5630", "26.610", "4.891"].map((value) => (locale === "zh" ? value.replace(".", ",") : value))) {
-      if (value === "5630") assert.ok(text.includes(locale === "zh" ? "5,630" : "5.630"), value);
-      else assert.ok(text.includes(value), `${locale}: ${value}`);
-    }
+    assert.deepEqual([...html.matchAll(/data-recommendation="([^"]+)"/g)].map((match) => match[1]), team.fieldLog.recommendations.map((item) => item.id));
+    const grouped = (value) => (locale === "vi" ? value : value.replace(".", ","));
+    for (const value of ["HLxThanos", "15.243", "5.630", "26.610", "4.891"].map(grouped)) assert.ok(text.includes(value), `${locale}: ${value}`);
+    // Trận chỉ có `lost` (không có binh sau trận) vẫn hiện số chết = hao − thương binh, như các trận có binh trước/sau.
+    const deadLines = {
+      vi: ["chết 119 (5,0%)", "chết 198 (3,3%)", "chết 525 (8,8%)", "chết 734 (12,2%)"],
+      zh: ["阵亡 119（5.0%）", "阵亡 198（3.3%）", "阵亡 525（8.8%）", "阵亡 734（12.2%）"],
+      ja: ["戦死 119（5.0%）", "戦死 198（3.3%）", "戦死 525（8.8%）", "戦死 734（12.2%）"],
+    }[locale];
+    for (const value of deadLines) assert.ok(text.includes(value), `${locale}: ${value}`);
     if (locale === "vi") {
       for (const name of ["Lục Tốn", "Tả Từ", "Trương Xuân Hoa", "Đới Lăng", "Lạc Thống"]) assert.ok(text.includes(name), name);
-      assert.ok(text.includes("mẫu nhỏ — tham khảo"));
+      // Lời cảnh báo mẫu nhỏ chỉ hiện một lần, ở đầu khối.
+      assert.equal(text.split("mẫu nhỏ — tham khảo").length - 1, 1);
       assert.ok(!text.includes("Trinh sát"));
     } else {
+      const title = locale === "zh" ? "实战日志" : "実戦記録";
+      assert.ok(text.includes(title), title);
       assert.ok(text.includes("陸遜") && text.includes("張春華"));
-      assert.doesNotMatch(text.slice(text.indexOf("实战日志")), /[ạảãàáâấầẩẫậắằẳẵặêếềểễệôốồổỗộơớờởỡợưứừửữự]/i);
+      assert.doesNotMatch(text.slice(text.indexOf(title)), /[ạảãàáâấầẩẫậắằẳẵặêếềểễệôốồổỗộơớờởỡợưứừửữự]/i);
     }
   });
 }

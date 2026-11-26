@@ -3,6 +3,8 @@
 // cố định trong dữ liệu (binh thư: `pipeline/books-han-viet-map.json` -> `books-dict.json`); không nơi nào dựng
 // mã binh thư từ tên Việt. Mọi href Tra cứu đi qua module này, không tự nối chuỗi ở nơi khác.
 
+import { LOCALE_PREFIX, SITE_LOCALES } from "./i18n.js";
+
 /** Slug ASCII của tên Việt: bỏ dấu, `đ` → `d`, cụm ký tự khác chữ/số thành một `-`. */
 export function lookupSlug(value) {
   return String(value ?? "")
@@ -271,11 +273,13 @@ export const LOOKUP_GROUP_SLUGS = Object.freeze({
   "troop-mods": "cai-tao-binh-chung",
   buildings: "cong-trinh",
   books: "binh-thu",
+  qilue: "ky-luoc",
 });
 
 const GROUP_BY_KIND = Object.freeze({
   hero: "heroes", tactic: "tactics", equipment: "equipment", "equipment-special": "equipment",
   advisor: "advisors", "troop-mod": "troop-mods", building: "buildings", book: "books",
+  "qilue-strategy": "qilue", "qilue-card": "qilue",
 });
 
 /** Nhóm Tra cứu của một mã hồ sơ canonical (`hero:…`, `equipment-special:…`); mã sai dạng trả `null`. */
@@ -352,10 +356,11 @@ export function lookupHref(id) {
 /**
  * Đích chuyển tiếp của trang mục lục `/tra-cuu/` cho link cũ `?group=<nhóm>&id=<mã>` (hoặc chỉ `?id=`):
  * trang nhóm (kèm hồ sơ khi mã hợp lệ và thuộc nhóm), khóa khác của query đi tiếp. Không có `group`/`id`
- * thì trả `null` (ở lại mục lục); giá trị lặp/lạ/lệch nhóm trả mục lục đã bỏ hai khóa đó.
+ * thì trả `null` (ở lại mục lục); giá trị lặp/lạ/lệch nhóm trả mục lục đã bỏ hai khóa đó. Đích giữ tiền tố ngôn ngữ của
+ * `href` khi pathname nằm dưới một phần tử của `prefixes` (`LOOKUP_HUB_TABLES.prefixes`, theo `SITE_LOCALES`).
  * Tự đủ (không đóng gói biến ngoài) để trang mục lục nhúng `toString()` vào script inline chạy trước khi vẽ.
  */
-export function lookupHubTarget(href, slugs, kinds) {
+export function lookupHubTarget(href, slugs, kinds, prefixes) {
   const url = new URL(href);
   const params = url.searchParams;
   if (!params.has("group") && !params.has("id")) return null;
@@ -363,7 +368,7 @@ export function lookupHubTarget(href, slugs, kinds) {
   const ids = params.getAll("id");
   params.delete("group");
   params.delete("id");
-  const prefix = url.pathname.startsWith("/zh/") ? "/zh" : "";
+  const prefix = (Array.isArray(prefixes) ? prefixes : []).find((item) => url.pathname.startsWith(`${item}/`)) ?? "";
   const rest = params.toString();
   const hub = `${prefix}/tra-cuu/${rest ? `?${rest}` : ""}${url.hash}`;
   if (groups.length > 1 || ids.length > 1) return hub;
@@ -377,5 +382,12 @@ export function lookupHubTarget(href, slugs, kinds) {
   return `${prefix}/tra-cuu/${slugs[group]}/${query ? `?${query}` : ""}${url.hash}`;
 }
 
-/** Bảng tra `lookupHubTarget` cần (truyền tường minh để bản nhúng inline tự đủ). */
-export const LOOKUP_HUB_TABLES = Object.freeze({ slugs: LOOKUP_GROUP_SLUGS, kinds: GROUP_BY_KIND });
+/**
+ * Bảng tra `lookupHubTarget` cần (truyền tường minh để bản nhúng inline tự đủ); `prefixes` là tiền tố đường dẫn của mọi
+ * locale có tiền tố, theo thứ tự `SITE_LOCALES`.
+ */
+export const LOOKUP_HUB_TABLES = Object.freeze({
+  slugs: LOOKUP_GROUP_SLUGS,
+  kinds: GROUP_BY_KIND,
+  prefixes: Object.freeze(SITE_LOCALES.map((locale) => LOCALE_PREFIX[locale]).filter(Boolean)),
+});

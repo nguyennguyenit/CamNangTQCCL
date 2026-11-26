@@ -17,7 +17,7 @@ import {
 
 function commentItem(comment, { onDelete, tagged = false }) {
   const deleteButton = comment.canDelete
-    ? el('button', { class: 'cm-text-btn cm-comment-delete', type: 'button' }, L('Xoá', '删除'))
+    ? el('button', { class: 'cm-text-btn cm-comment-delete', type: 'button' }, L('Xoá', '删除', '削除'))
     : null;
   const item = el('li', { class: 'cm-comment', dataset: { commentId: String(comment.id) } }, [
     avatar(comment.author),
@@ -39,18 +39,19 @@ function commentItem(comment, { onDelete, tagged = false }) {
  * Khối bình luận. `user` null → mời đăng nhập thay cho ô nhập.
  * `sharedPool` (đội cộng đồng, kho chung vi/zh): không lọc theo `lang`, mỗi bình luận kèm nhãn `[VI]`/`[ZH]`;
  * bài mới vẫn gửi `lang` của trang.
- * `count` (tuỳ chọn): số bình luận do worker đếm cho trang (đội cộng đồng: `commentCount` của đội — đếm mọi bình
- * luận của pageKey nên có thể gồm bình luận đã bị ẩn, không phải đúng số đang hiện); hiện cạnh tiêu đề "Bình luận 12"
- * và cộng/trừ theo lượt đăng/xoá trong trang. Nạp xong trang cuối thì số lấy theo danh sách đang hiện (không còn
+ * `count` (tuỳ chọn): số bình luận do worker đếm cho trang (đội cộng đồng: `commentCount` của đội; từ PR #108 worker đếm
+ * theo đúng điều kiện hiển thị, bản cũ đếm cả bình luận của người bị ẩn); hiện cạnh tiêu đề "Bình luận 12" và cộng/trừ
+ * theo lượt đăng/xoá trong trang. Số này vẫn có thể lệch danh sách thật (worker bản cũ, chi tiết và bình luận tải ở hai
+ * request, bình luận đổi giữa hai lần tải), nên nạp xong trang cuối thì số lấy theo danh sách đang hiện (không còn
  * "Bình luận 3" trên dòng "Chưa có bình luận nào"); còn trang sau thì không nhỏ hơn số đã hiện.
  * Trả về element section để trang gắn vào.
  */
 export function mountComments(container, { pageKey, lang, user, sharedPool = false, count = null }) {
   const titleId = 'cm-comments-title';
   const list = el('ol', { class: 'cm-comment-list', 'aria-labelledby': titleId });
-  const empty = el('p', { class: 'scope-note cm-empty' }, L('Chưa có bình luận nào. Hãy là người đầu tiên!', '还没有评论，来发表第一条吧！'));
+  const empty = el('p', { class: 'scope-note cm-empty' }, L('Chưa có bình luận nào. Hãy là người đầu tiên!', '还没有评论，来发表第一条吧！', 'まだコメントがありません。最初のコメントを投稿しましょう！'));
   const status = liveStatus();
-  const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm bình luận', '查看更多评论'));
+  const moreButton = el('button', { class: 'ana-btn cm-more', type: 'button', hidden: '' }, L('Xem thêm bình luận', '查看更多评论', 'コメントをもっと見る'));
   let cursor = null;
   let total = Number.isFinite(Number(count)) && count !== null ? Math.max(0, Number(count)) : null;
   const countNode = total === null ? null : el('span', { class: 'cm-title-count' });
@@ -69,7 +70,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
   };
 
   const onDelete = async (comment, item, button) => {
-    if (!window.confirm(L('Xoá bình luận này?', '确定删除这条评论吗？'))) return;
+    if (!window.confirm(L('Xoá bình luận này?', '确定删除这条评论吗？', 'このコメントを削除しますか？'))) return;
     button.disabled = true;
     try {
       await api(`/api/comments/${encodeURIComponent(comment.id)}`, { method: 'DELETE' });
@@ -77,7 +78,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
       item.remove();
       bump(-1);
       refreshEmpty();
-      status.set(L('Đã xoá bình luận.', '评论已删除。'));
+      status.set(L('Đã xoá bình luận.', '评论已删除。', 'コメントを削除しました。'));
       (next?.querySelector('button, a') || textarea || moreButton).focus?.();
     } catch (error) {
       button.disabled = false;
@@ -142,13 +143,14 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
       counter.textContent = L(
         `${textarea.value.length}/${COMMENT_MAX_LENGTH} ký tự`,
         `${textarea.value.length}/${COMMENT_MAX_LENGTH} 字`,
+        `${textarea.value.length}/${COMMENT_MAX_LENGTH} 文字`,
       );
     };
     updateCounter();
     textarea.addEventListener('input', updateCounter);
-    const submit = el('button', { class: 'ana-btn primary', type: 'submit' }, L('Gửi bình luận', '发表评论'));
+    const submit = el('button', { class: 'ana-btn primary', type: 'submit' }, L('Gửi bình luận', '发表评论', 'コメントを投稿'));
     composer = el('form', { class: 'cm-comment-form', novalidate: '' }, [
-      el('label', { class: 'cm-label', for: inputId }, L('Viết bình luận', '写评论')),
+      el('label', { class: 'cm-label', for: inputId }, L('Viết bình luận', '写评论', 'コメントを書く')),
       textarea,
       el('div', { class: 'cm-form-row' }, [counter, submit]),
     ]);
@@ -156,12 +158,12 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
       event.preventDefault();
       const body = textarea.value.trim();
       if (!body) {
-        status.set(L('Hãy nhập nội dung bình luận.', '请输入评论内容。'), 'error');
+        status.set(L('Hãy nhập nội dung bình luận.', '请输入评论内容。', 'コメントの内容を入力してください。'), 'error');
         textarea.focus();
         return;
       }
       submit.disabled = true;
-      status.set(L('Đang gửi…', '正在发送…'));
+      status.set(L('Đang gửi…', '正在发送…', '送信中…'));
       try {
         const created = await api('/api/comments', { method: 'POST', json: { page: pageKey, lang, body } });
         const comment = { ...created, lang: created?.lang || lang, author: created?.author || user, canDelete: created?.canDelete ?? true };
@@ -170,7 +172,7 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
         refreshEmpty();
         textarea.value = '';
         updateCounter();
-        status.set(L('Đã đăng bình luận.', '评论已发表。'));
+        status.set(L('Đã đăng bình luận.', '评论已发表。', 'コメントを投稿しました。'));
         textarea.focus();
       } catch (error) {
         status.set(describeError(error), 'error');
@@ -179,11 +181,11 @@ export function mountComments(container, { pageKey, lang, user, sharedPool = fal
       }
     });
   } else {
-    composer = signInPrompt(L('Đăng nhập để bình luận.', '登录后即可评论。'));
+    composer = signInPrompt(L('Đăng nhập để bình luận.', '登录后即可评论。', 'ログインするとコメントできます。'));
   }
 
   const section = el('section', { class: 'cm-block cm-comments', 'aria-labelledby': titleId }, [
-    el('h2', { id: titleId, class: 'cm-title' }, countNode ? [L('Bình luận', '评论'), ' ', countNode] : L('Bình luận', '评论')),
+    el('h2', { id: titleId, class: 'cm-title' }, countNode ? [L('Bình luận', '评论', 'コメント'), ' ', countNode] : L('Bình luận', '评论', 'コメント')),
     composer,
     status,
     list,

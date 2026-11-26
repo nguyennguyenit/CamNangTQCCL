@@ -4,6 +4,7 @@ import {
   TEAM_RETURN_STORAGE_KEY,
   teamDetailPath,
   teamDetailHref,
+  referenceDetailHref,
   safeReturnUrl,
   familyReturnHref,
   returnHrefFor,
@@ -75,12 +76,15 @@ test('detail hrefs come from the registered final segments and carry only identi
   assert.equal(teamDetailPath({}),null);
   assert.equal(teamDetailPath({legacyTeamId:'../secret'}),null);
 
+  // Mỗi đội gốc đúng một phương án (catalog kiểm): link mới tới trang Đội khác không mang `?variant=`, nên trang mở thẳng
+  // thân dựng sẵn thay vì ẩn thân rồi tải lại other-teams.json.
+  for (const legacyVariantId of ['v-'+'a'.repeat(64),'','/bad',null,undefined]) {
+    assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId}),`/doi-khac/${LEGACY_SEGMENT}/`,String(legacyVariantId));
+  }
   assert.equal(
-    teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-'+'a'.repeat(64)}),
-    `/doi-khac/${LEGACY_SEGMENT}/?variant=v-${'a'.repeat(64)}`,
+    referenceDetailHref({legacyTeamId:LEGACY,legacyVariantId:'v-'+'a'.repeat(64)},{from:'/doi-khac/?q=quan'}),
+    `/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/doi-khac/?q=quan')}`,
   );
-  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:''}),`/doi-khac/${LEGACY_SEGMENT}/?variant=`);
-  assert.equal(teamDetailHref({legacyTeamId:LEGACY,legacyVariantId:'/bad'}),`/doi-khac/${LEGACY_SEGMENT}/?variant=%2Fbad`);
   assert.equal(
     teamDetailHref({sourceConfigId:RECOMMENDED},{from:'/?season=pk-s24&q=quan#team-chuan'}),
     `/doi-chuan/${RECOMMENDED_SEGMENT}/?from=${encodeURIComponent('/doi-chuan/?season=pk-s24&q=quan')}`,
@@ -323,6 +327,8 @@ test('old reference URLs migrate to the registered routes while any config key k
   const legacy=migrate(`${ROOT}/?legacyTeam=${LEGACY}#team-khac`);
   assert.equal(legacy.target,`/doi-khac/${LEGACY_SEGMENT}/?from=${encodeURIComponent('/doi-khac/')}`);
 
+  // URL gốc cũ có `legacyVariant` giữ nguyên ý nghĩa cũ: biến thể đi tiếp sang `?variant=` để trang chi tiết đối chiếu
+  // (biến thể không thuộc đội thì báo lỗi), không lặng lẽ thành trang của đội.
   const variant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=v-9#team-khac`);
   assert.equal(variant.target,`/doi-khac/${LEGACY_SEGMENT}/?variant=v-9&from=${encodeURIComponent('/doi-khac/')}`);
   const malformedVariant=migrate(`${ROOT}/?legacyTeam=${LEGACY}&legacyVariant=%2Fbad#team-khac`);

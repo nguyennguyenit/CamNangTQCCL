@@ -14,7 +14,7 @@ import type {
 import type { SeasonContext } from "../domain/canonical-state.js";
 import { legacyDomainAdapter } from "../domain/legacy-domain-adapter.js";
 import { seasonDomain, type BrowseEntry } from "../domain/season-domain-adapter.js";
-import { allowGuide, allowTierRanking } from "../data/team-source-allowlist.js";
+import { allowGuide, allowOtherTeamGroup, allowTierRanking } from "../data/team-source-allowlist.js";
 import { decodeCursor, encodeCursor, type CursorBinding } from "./cursor.js";
 import { PUBLIC_ERRORS, ResearchHandlerError, type ResearchErrorCode } from "./handler-error.js";
 import { fitPage } from "./page.js";
@@ -33,14 +33,14 @@ import { parseToolInput, type ToolContext } from "./tool-context.js";
 export const TEAM_COLLECTION_IDS = ["recommended", "other", "khaihoang", "engine"] as const;
 export type TeamCollectionId = (typeof TEAM_COLLECTION_IDS)[number];
 
-const locale = z.enum(["vi", "zh"]).optional().describe("vi (mặc định) hoặc zh; chỉ đổi tên hiển thị và pagePath.");
-const cursorText = z.string().max(2_048).optional().describe("Cursor trang trước; bắt buộc kèm expectedWorkflowVersion.");
+const locale = z.enum(["vi", "zh"]).optional().describe("Mặc định vi; chỉ đổi tên và pagePath.");
+const cursorText = z.string().max(2_048).optional().describe("Cursor trang trước; cần expectedWorkflowVersion.");
 const refId = z.string().min(1).max(256).regex(/^[^\u0000-\u001f\u007f-\u009f]+$/u);
 const nullableText = z.string().max(2_048).nullable().optional();
 
 export const referenceSelectorSchema = z
   .object({
-    collection: z.enum(TEAM_COLLECTION_IDS).describe("Họ đội: recommended, other, khaihoang hoặc engine."),
+    collection: z.enum(TEAM_COLLECTION_IDS).describe("Họ đội."),
     sourceConfigId: refId.optional().describe("recommended: sourceConfigId."),
     legacyTeamId: refId.optional().describe("other: legacyTeamId."),
     legacyVariantId: refId.optional().describe("other: legacyVariantId của biến thể đã nhận."),
@@ -87,8 +87,8 @@ export type ReferenceSelector = z.infer<typeof referenceSelectorSchema>;
 export const findTeamsInputSchema = z
   .object({
     collection: z.enum(TEAM_COLLECTION_IDS).describe("Họ đội cần duyệt; không trộn họ."),
-    sourceSeasonId: seasonId.optional().describe("Chỉ recommended: mùa nguồn lấy từ registry của tqccl_get_playbook."),
-    sourceCategoryId: seasonId.optional().describe("Chỉ recommended: nhóm nguồn (ví dụ giao chiến)."),
+    sourceSeasonId: seasonId.optional().describe("Chỉ recommended: mùa nguồn từ registry của tqccl_get_playbook."),
+    sourceCategoryId: seasonId.optional().describe("Chỉ recommended: nhóm nguồn (vd giao chiến)."),
     query: z.string().max(256).optional().describe("Tên, biệt danh hoặc tên tướng; bỏ trống để duyệt."),
     heroes: z
       .array(
@@ -172,6 +172,9 @@ const teamHeaderShape = {
   translationStatus: text2k("Trạng thái bản dịch của tên đội."),
   pagePath: z.string().max(512).optional().describe("Trang đội trên website theo locale; engine không có."),
   configId: seasonId.optional().describe("engine + seasonContext: configId của mục này."),
+  recommended: z.boolean().optional().describe("Chỉ other: true nếu là đội Đề cử trên website."),
+  teamGroupId: z.string().max(64).optional().describe("Chỉ other: team (bộ 3 tướng + binh chủng) của phương án; cùng giá trị là cùng team."),
+  optionCount: count("Chỉ other: số phương án đủ dữ liệu của team trên website.").optional(),
 };
 
 const teamItemSchema = z
@@ -186,7 +189,7 @@ const teamItemSchema = z
   .strict();
 
 export const findTeamsOutputSchema = commonResultSchema.extend({
-  locale: z.enum(["vi", "zh"]).describe("Locale đã dùng cho tên và pagePath."),
+  locale: z.enum(["vi", "zh"]).describe("Locale của tên và pagePath."),
   collection: z.enum(TEAM_COLLECTION_IDS).describe("Họ đội đã duyệt."),
   total: z.number().int().nonnegative().describe("Tổng số đội khớp bộ lọc."),
   items: z.array(teamItemSchema).max(50).describe("Đội của trang hiện tại."),
@@ -261,7 +264,13 @@ function publicTeamsFor(pub: PublicationReadModel, filter: Parameters<Publicatio
   }
 }
 
-/** Mỗi biến thể `other` đã nhận là một mục có selector riêng. */
+/** `teamGroupId` + `optionCount` của một phương án `other` (allowlist ở biên output; `optionRank` chỉ nằm trong artifact). */
+function otherTeamFields(variant: ArtifactRecord): { teamGroupId?: string; optionCount?: number } {
+  const { teamGroupId, optionCount } = allowOtherTeamGroup(variant);
+  return { ...(teamGroupId === undefined ? {} : { teamGroupId }), ...(optionCount === undefined ? {} : { optionCount }) };
+}
+
+/** Mỗi phương án `other` (admitted + đủ dữ liệu như website) là một mục có selector và trang riêng. */
 function expandedItems(pub: PublicationReadModel, views: readonly TeamSummaryView[], loc: Locale): TeamItem[] {
   const items: TeamItem[] = [];
   for (const view of views) {
@@ -280,6 +289,8 @@ function expandedItems(pub: PublicationReadModel, views: readonly TeamSummaryVie
         ...item,
         ...(typeof variant.name === "string" ? { name: variant.name, nameVi: variant.name } : {}),
         nickname: typeof variant.nickname === "string" ? variant.nickname : null,
+        recommended: variant.recommended === true,
+        ...otherTeamFields(variant),
         tierRaw: typeof variant.historicalTier === "string" ? variant.historicalTier : null,
         factionRaw: typeof variant.faction === "string" ? variant.faction : null,
         unitTypes: Array.isArray(variant.unit) ? variant.unit.filter((entry): entry is string => typeof entry === "string") : [],
@@ -523,13 +534,13 @@ function provenanceFor(collection: TeamCollectionId) {
 // get_team
 // -------------------------------------------------------------------------------------------
 
-export const TEAM_SECTIONS = ["overview", "notes", "variants", "guide"] as const;
+export const TEAM_SECTIONS = ["overview", "qilue", "notes", "variants", "guide"] as const;
 
 export const getTeamInputSchema = z
   .object({
     reference: referenceInputSchema.describe("Selector từ tqccl_find_teams; collection quyết định field bắt buộc."),
-    section: z.enum(TEAM_SECTIONS).optional().describe("overview (mặc định) | notes | variants | guide; notes/variants có phân trang."),
-    limit: decimalNumberish(z.number().int().min(1).max(50).optional()).describe("Số mục mỗi trang cho notes/variants, mặc định 20."),
+    section: z.enum(TEAM_SECTIONS).optional().describe("Mặc định overview; notes/variants có phân trang."),
+    limit: decimalNumberish(z.number().int().min(1).max(50).optional()).describe("Số mục mỗi trang, mặc định 20."),
     cursor: cursorText,
     locale,
     seasonContext: seasonContextSchema.optional().describe("Chỉ engine: cần để đọc cấu hình theo mùa."),
@@ -703,6 +714,21 @@ const guideSchema = z
   })
   .strict();
 
+const qilueNamed = { id: z.string().max(256), nameVi: z.string().max(256), nameZh: z.string().max(256) };
+const QILUE_CARD_TYPES = ["dung", "muu", "phu", "sach", "te"] as const;
+
+/** Kỳ lược của đội, tên tra từ catalog Kỳ lược cùng publication; `round` (hiệp 2..6) chỉ có khi `ordered`. */
+const qilueSchema = z
+  .object({
+    strategy: z.object(qilueNamed).strict().nullable(),
+    cards: z
+      .array(z.object({ round: z.number().int().min(2).max(6).optional(), ...qilueNamed, type: z.enum(QILUE_CARD_TYPES), rarity: z.enum(["common", "rare"]) }).strict())
+      .max(5),
+    ordered: z.boolean(),
+    copyFrom: z.array(z.string().max(256)).max(5).optional(),
+  })
+  .strict();
+
 const variantSchema = z
   .object({
     id: text2k("ID biến thể."),
@@ -731,19 +757,20 @@ const teamDetailSchema = z
   .strict();
 
 export const getTeamOutputSchema = commonResultSchema.extend({
-  locale: z.enum(["vi", "zh"]).describe("Locale đã dùng cho tên và pagePath."),
+  locale: z.enum(["vi", "zh"]).describe("Locale của tên và pagePath."),
   section: z.enum(TEAM_SECTIONS).describe("Section đã trả về."),
   seasonContext: seasonContextSchema.optional(),
   team: teamDetailSchema.optional().describe("Có khi section=overview."),
   sections: z
     .array(z.object({ name: z.enum(TEAM_SECTIONS).describe("Tên section."), total: count("Số mục của section.") }).strict())
-    .max(4)
+    .max(TEAM_SECTIONS.length)
     .optional()
     .describe("Các section có dữ liệu; có khi section=overview."),
   total: z.number().int().nonnegative().optional().describe("Tổng mục của section phân trang."),
   notes: z.array(notesBlockSchema).max(50).optional().describe("Khối ghi chú của trang hiện tại (section=notes)."),
   variants: z.array(variantSchema).max(50).optional().describe("Biến thể của trang hiện tại (section=variants)."),
   guide: guideSchema.optional().describe("Hướng dẫn nguồn (section=guide)."),
+  qilue: qilueSchema.optional().describe("Kỳ lược (section=qilue); copyFrom: sourceConfigId đội nguồn."),
   build: z
     .object({
       ref: z.string().max(300).describe("Nhãn <collection>:<id> của đội."),
@@ -753,7 +780,7 @@ export const getTeamOutputSchema = commonResultSchema.extend({
     })
     .strict()
     .optional()
-    .describe("Có khi section khác overview: build của chính đội này, để không lấy nhầm build đội khác."),
+    .describe("Có khi section khác overview: build của chính đội này."),
 });
 
 interface TeamParts {
@@ -761,6 +788,7 @@ interface TeamParts {
   notes: z.infer<typeof notesBlockSchema>[];
   variants: Array<z.infer<typeof variantSchema>>;
   guide?: z.infer<typeof guideSchema>;
+  qilue?: z.infer<typeof qilueSchema>;
   provenance: Array<{ artifact: string; recordId?: string; trust?: "untrusted" }>;
   seasonContext?: SeasonContext;
 }
@@ -807,6 +835,33 @@ function notesFromRecord(prefix: string, owner: string, entries: Record<string, 
 
 function tacticPath(pub: PublicationReadModel | undefined, id: unknown, loc: Locale): string | undefined {
   return typeof id === "string" ? localized(pub?.routes.get(id), loc) : undefined;
+}
+
+/**
+ * Section kỳ lược từ `detail.qilue` (mã đã kiểm lúc dựng publication); tên, loại và độ hiếm tra từ entity catalog
+ * cùng publication. Thiếu entity nghĩa là artifact hỏng, không đoán tên.
+ */
+function qilueSection(pub: PublicationReadModel, raw: unknown): z.infer<typeof qilueSchema> | undefined {
+  if (raw === undefined) return undefined;
+  const value = asRecord(raw);
+  const named = (id: unknown, kind: "qilue-strategy" | "qilue-card") => {
+    const entity = typeof id === "string" ? pub.getEntity(id) : undefined;
+    if (entity === undefined || entity.kind !== kind || entity.nameZh === null) throw fail("INTERNAL_ERROR");
+    return { entity, name: { id: entity.id, nameVi: entity.nameVi, nameZh: entity.nameZh } };
+  };
+  const ordered = value.ordered === true;
+  return {
+    strategy: value.strategyId === null ? null : named(value.strategyId, "qilue-strategy").name,
+    cards: stringList(value.cardIds).map((id, index) => {
+      const { entity, name } = named(id, "qilue-card");
+      const type = QILUE_CARD_TYPES.find((entry) => entry === entity.profile.type);
+      const rarity = entity.profile.rarity === "common" || entity.profile.rarity === "rare" ? entity.profile.rarity : undefined;
+      if (type === undefined || rarity === undefined) throw fail("INTERNAL_ERROR");
+      return { ...(ordered ? { round: index + 2 } : {}), ...name, type, rarity };
+    }),
+    ordered,
+    ...(Array.isArray(value.copyFrom) ? { copyFrom: stringList(value.copyFrom) } : {}),
+  };
 }
 
 function buildRecommended(pub: PublicationReadModel, selector: ReferenceSelector, loc: Locale): TeamParts {
@@ -863,6 +918,7 @@ function buildRecommended(pub: PublicationReadModel, selector: ReferenceSelector
         ? []
         : [{ id: "notes", owner: "team", textVi: null, textRaw: nullableString(record.notesRaw) }];
   const value = typeof record.value === "number" ? record.value : null;
+  const qilue = qilueSection(pub, detail.qilue);
   return {
     team: {
       ...itemHeader(summary, loc, selector),
@@ -874,6 +930,7 @@ function buildRecommended(pub: PublicationReadModel, selector: ReferenceSelector
     },
     notes,
     variants: [],
+    ...(qilue === undefined ? {} : { qilue }),
     provenance: [{ artifact: "reference-team-details", recordId: ref, trust: "untrusted" }, { artifact: "public-routes" }],
   };
 }
@@ -949,6 +1006,8 @@ function buildOther(pub: PublicationReadModel, selector: ReferenceSelector, loc:
     team: {
       ...itemHeader(summary, loc, { ...selector, legacyVariantId: publicVariantId(String(variant.variantId)) }),
       nickname: nullableString(variant.nickname),
+      recommended: variant.recommended === true,
+      ...otherTeamFields(variant),
       context,
       tierRankings: asRecords(variant.historicalRankings).slice(0, 20).map(allowTierRanking),
       heroes,
@@ -1115,7 +1174,7 @@ export async function handleGetTeam(ctx: ToolContext, rawInput: unknown) {
 
   if (input.cursor === undefined) ctx.ensureExpectedWorkflow(input.expectedWorkflowVersion);
   else ctx.requireExpectedWorkflow(input.expectedWorkflowVersion);
-  if (input.cursor !== undefined && (section === "overview" || section === "guide")) throw fail("CURSOR_INVALID");
+  if (input.cursor !== undefined && section !== "notes" && section !== "variants") throw fail("CURSOR_INVALID");
   if (seasonContext !== undefined && selector.collection !== "engine") throw scopeInvalid("seasonContext");
   if (selector.collection === "engine") ensureSeasonContext(ctx, seasonContext);
 
@@ -1132,6 +1191,7 @@ export async function handleGetTeam(ctx: ToolContext, rawInput: unknown) {
   const sections = (
     [
       { name: "overview" as const, total: 1 },
+      { name: "qilue" as const, total: parts.qilue === undefined ? 0 : 1 },
       { name: "notes" as const, total: parts.notes.length },
       { name: "variants" as const, total: parts.variants.length },
       { name: "guide" as const, total: parts.guide === undefined ? 0 : 1 },
@@ -1148,6 +1208,7 @@ export async function handleGetTeam(ctx: ToolContext, rawInput: unknown) {
   if (section === "overview") return { ...base, team: parts.team, sections };
   const build = { ref: parts.team.ref, name: parts.team.name, heroes: parts.team.heroes };
   if (section === "guide") return { ...base, build, guide: parts.guide };
+  if (section === "qilue") return { ...base, build, qilue: parts.qilue };
 
   const binding: CursorBinding = {
     tool: "tqccl_get_team",

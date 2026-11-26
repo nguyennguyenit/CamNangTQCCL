@@ -1,0 +1,31 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-ky-luoc-261118-r1b-001-rejected",
+ "reviewerSession": "reviewer:RvDkKl261118-r1b-001",
+ "items": [
+  {
+   "entityId": "recommended:s-25f0658de8d580d8428d0865458094b3a8818b90fafce9d4901c88f3429da404/s1-shu-taoyuan",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "0909042e75e09cfd82de1961f5b00fd91811711cb6f52e1746040a642d89a3d9",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "c074fc632567433ff943cd54392cbaaa7782095c3eea6557a5374bd85a0fbcff",
+   "verdict": "rejected",
+   "errors": [
+    "桃園結義 is a decided project term (identity map tactic/bond 桃園結義 = Kết Nghĩa Vườn Đào; brief binding decision); VI renders it as 'kết nghĩa Đào Viên'"
+   ],
+   "notes": "Ba người Lưu Bị, Quan Vũ, Trương Phi Kết Nghĩa Vườn Đào"
+  },
+  {
+   "entityId": "recommended:s-656d382a572c2f2ae5253747cf9ec9d9f70d1dc9b0eafa4de612fa388cea277a/s27-guanguanzhang",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "d04995f48cc875ba001d6587888c6e7944db223a1908f2d054ad5f27e10f8e57",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "ad805191a6aacfe63aabf3eb8db93c19453671dd65bada3c75465fdf0d746a61",
+   "verdict": "rejected",
+   "errors": [
+    "青州 is the abbreviation of the team's own tactic 青州兵 (Quan Ngân Bình slot), unique in authority -> full name Lính Thanh Châu (rule 3; lookup-catalog/identity map); VI leaves bare 'Thanh Châu' while expanding 盛氣"
+   ],
+   "notes": "Đội hình kỳ cựu của hệ thống Thịnh Khí Linh Địch và Lính Thanh Châu, luôn có thể tạo ra bất ngờ."
+  }
+ ]
+}

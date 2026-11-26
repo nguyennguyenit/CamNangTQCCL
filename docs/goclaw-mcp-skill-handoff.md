@@ -36,7 +36,7 @@ MCP xuất đúng bảy tên đã có prefix (bề mặt P*; tám tên cũ đã 
 
 Không tự thêm prefix lần hai. Đội GoClaw phải kiểm tra quy tắc đặt tên và collision của đúng phiên bản sẽ triển khai, rồi grant tối thiểu theo các tên MCP thực sự discovery được.
 
-Catalog, schema input/output và annotation có nguồn thực thi tại [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts) và [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts). Không sao chép schema từ tài liệu này vào skill. Catalog/reference/recommend cần snapshot manifest v3; trên v1/v2 chúng trả `CAPABILITY_UNAVAILABLE` (không bao giờ là mảng rỗng). Giới hạn kết quả `TQCCL_MCP_MAX_RESULT_BYTES` là 131072 (128 KiB; trước đó 96 KiB) vì `tools/list` vượt trần cũ.
+Catalog, schema input/output và annotation có nguồn thực thi tại [`research-contracts.ts`](../mcp-worker/src/research/research-contracts.ts) và [`tool-definitions.ts`](../mcp-worker/src/mcp/tool-definitions.ts). Không sao chép schema từ tài liệu này vào skill. Catalog/reference/recommend cần snapshot manifest v3; trên v1/v2 chúng trả `CAPABILITY_UNAVAILABLE` (không bao giờ là mảng rỗng). Giới hạn phản hồi `TQCCL_MCP_MAX_RESULT_BYTES` là 98304 (`mcp-worker/wrangler.jsonc`); mỗi kết quả tool dưới 40 000 ký tự / 42 KiB (xem [Research MCP server](mcp-research-server.md)).
 
 ## Luồng consumer khuyến nghị
 
@@ -72,9 +72,9 @@ Formatter non-echo và mapping lỗi MCP được kiểm chứng tại [registry
 
 ## Cutover, discovery và rollback
 
-- **Đổi catalog = đổi consumer.** Tám tên của bề mặt cũ (danh sách trong changelog) không còn; không có alias. Sau mỗi release đổi catalog, consumer phải reconnect và refresh `tools/list` (Dewee: reconnect server, xem [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)), rồi cập nhật grant/service key theo tên mới.
+- **Đổi catalog = đổi consumer.** Tám tên của bề mặt cũ (danh sách trong changelog) không còn; không có alias. Sau mỗi release đổi catalog hoặc output schema, consumer phải reconnect và refresh `tools/list` (Dewee: reconnect server, xem [dewee#887](https://github.com/nextlevelbuilder/dewee/issues/887)), rồi cập nhật grant/service key theo tên mới. Release #165 đổi output schema của `tqccl_normalize_entities` (kết quả gọn, không trả tên) và `WORKFLOW_BUILD_ID`: client đã cache schema cũ sẽ từ chối kết quả mới cho tới khi refresh; mọi binding cũ phải normalize + xác nhận lại.
 - **Release 1 / Release 2** là lịch deploy (6 tên đọc + playbook, rồi `tqccl_recommend_teams`), thuộc quy trình deploy trong [kế hoạch](../plans/260927-1727-mcp-skill-redesign/design.md), không phải hợp đồng runtime. Hiện **chưa deploy** và **Dewee R0–R2 chưa chạy**; không coi bảy tool là đã live.
-- **CLI fallback** (cùng handler, không qua MCP): `playbook`, `search`, `entity`, `find-teams`, `team`, `normalize`, `recommend`, và `search-rules` (chỉ CLI). Bảng alias nằm ở [`cli.ts`](../mcp-worker/src/cli.ts) (`CLI_ALIASES`).
+- **CLI fallback** (cùng handler, không qua MCP): `playbook`, `search`, `entity`, `find-teams`, `team`, `normalize`, `recommend`, và `search-rules` (chỉ CLI). Bảng alias nằm ở [`cli.ts`](../mcp-worker/src/cli.ts) (`CLI_ALIASES`). Payload lớn (kho đầy đủ) truyền bằng `--input -` (stdin) hoặc `--input-file <path>` thay vì `--input '<json>'` trên command line.
 - **Rollback:** deploy exact Worker version trước đó (code và data quay lại cùng lúc); consumer reconnect/refresh discovery lại về tên cũ. Chi tiết trong [Research MCP server](mcp-research-server.md).
 - **Sở hữu:** repository này sở hữu MCP, knowledge dataset (`agent-knowledge/`) và skill repo trong `.agents/skills/`; skill/prompt/grant/rollout phía GoClaw/Dewee vẫn thuộc consumer.
 

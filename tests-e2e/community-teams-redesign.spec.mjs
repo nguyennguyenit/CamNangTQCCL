@@ -3,17 +3,17 @@ import { PLAYER, PNG_1X1, mockCommunityApi } from "./helpers/community-mock.mjs"
 
 // Hành vi của thiết kế mới Đội cộng đồng (artboard DoiCongDong*Moi, BanNoticeMoi): chip binh chủng thay select,
 // xoá đội qua hộp xác nhận trong trang, thông báo khoá có ngày hết khoá / vĩnh viễn, một h1, trang /zh/.
-const OPEN_SEASON = { id: "s1", labelVi: "Mùa 1", labelZh: "第一赛季", openedAt: "2026-10-01T00:00:00.000Z" };
-const SEASONS = { open: OPEN_SEASON, seasons: [OPEN_SEASON] };
+const CURRENT_SEASON = { id: "pk-s27", labelVi: "PK-S27 · Hán Diễm Trường Minh", labelZh: "PK-S27 · 汉艳长明" };
+const SEASONS = { current: CURRENT_SEASON.id, seasons: [{ id: "og-兵演春秋", labelVi: "OG · Binh Diễn Xuân Thu", labelZh: "OG · 兵演春秋" }, CURRENT_SEASON] };
 const HEROES = ["hero:tao-thao", "hero:quan-vu", "hero:truong-phi"];
 const TACTICS = [["tactic:binh-phong", "tactic:an-ui-quan-dan"], ["tactic:anh-thanh-tu-thu", "tactic:binh-vo-thuong-the"], ["tactic:bach-bo-xuyen-duong", "tactic:bach-ke-da-muu"]];
 const teamItem = (id, overrides = {}) => ({
-  id, title: `Đội ${id}`, season: OPEN_SEASON, heroes: HEROES, tactics: TACTICS, troop: "ky", author: PLAYER,
+  id, title: `Đội ${id}`, season: CURRENT_SEASON, heroes: HEROES, tactics: TACTICS, troop: "ky", author: PLAYER,
   upVotes: 3, downVotes: 1, evidenceCount: 2, points: 6, commentCount: 4, imageCount: 1, textLang: "vi",
   createdAt: "2026-10-10T08:00:00.000Z", ...overrides,
 });
 const teamDetail = (id, overrides = {}) => ({
-  ...teamItem(id), status: "approved", heroKey: [...HEROES].sort().join(","), myVote: 0, seasonOpen: true,
+  ...teamItem(id), status: "approved", heroKey: [...HEROES].sort().join(","), myVote: 0,
   analysis: { playstyle: "Mở đầu bằng khống chế.", strengths: null, weaknesses: null, counters: null, counteredBy: null, substitutes: null },
   ...overrides,
 });
@@ -43,7 +43,7 @@ test("đăng đội: chip binh chủng chọn bằng bàn phím, danh sách ki�
   await expect(check).toContainText("Chưa chọn");
 
   // Tab vào nhóm (một tab stop), Space chọn, mũi tên đổi lựa chọn: Cung → Khí giới → Kỵ.
-  await page.locator("#cm-team-title-input").focus();
+  await page.locator("#cm-team-season-pick").focus();
   await page.keyboard.press("Tab");
   await expect(group.getByRole("radio", { name: "Cung" })).toBeFocused();
   await page.keyboard.press("Space");
@@ -213,13 +213,16 @@ test("/zh/doi-cong-dong/: đầu trang, thanh lọc, thẻ và form đều có c
   await mockCommunityApi(page, { user: PLAYER, teams: { seasons: SEASONS, list: { items: [teamItem("t1")], nextCursor: null } } });
   await page.goto("/zh/doi-cong-dong/");
   await expect(page.locator("h1")).toHaveText("社区阵容");
-  await expect(page.locator("#cm-team-kicker")).toHaveText("社区 · 第一赛季进行中");
+  await expect(page.locator("#cm-team-kicker")).toHaveText("社区");
   await expect(page.getByRole("group", { name: "排序" }).getByRole("button", { name: "热门" })).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator(".cm-team-card").first()).toContainText("曹操");
   await page.getByRole("link", { name: "发布阵容" }).click();
   await expect(page.getByRole("heading", { level: 2, name: "发布新阵容" })).toBeVisible();
   await expect(page.getByRole("group", { name: "兵种" }).getByRole("radio")).toHaveCount(5);
   await expect(page.getByRole("button", { name: "提交审核" })).toBeVisible();
+  const seasonPick = page.getByLabel("你正在玩的赛季");
+  await expect(seasonPick).toHaveValue("pk-s27");
+  await expect(seasonPick.locator("option")).toHaveText(["OG · 兵演春秋", "PK-S27 · 汉艳长明（当前）"]);
 });
 
 /** HTML tối thiểu của trang đội tĩnh (preview e2e không có trang đội thật). */
@@ -288,8 +291,8 @@ test("chi tiết ?id=: tên tướng và chiến pháp A/B dẫn sang Tra cứu 
   }
 });
 
-test("tiêu đề Bình luận theo danh sách đang hiện khi worker đếm cả bình luận đã ẩn", async ({ page }) => {
-  // Worker đếm mọi bình luận của trang (kể cả của người bị khoá / ẩn), danh sách thì lọc: nạp hết mà rỗng thì là 0.
+test("tiêu đề Bình luận theo danh sách đang hiện khi số worker đếm lệch danh sách đã nạp hết", async ({ page }) => {
+  // `commentCount` của chi tiết (3) có thể lệch danh sách (worker bản cũ đếm cả bình luận bị ẩn, hoặc chi tiết và bình luận tải ở hai request): nạp hết mà rỗng thì là 0.
   await mockCommunityApi(page, { user: PLAYER, comments: [], teams: { seasons: SEASONS, details: (id) => teamDetail(id, { commentCount: 3 }) } });
   await routeStaticTeam(page, "/doi-cong-dong/t1/");
   await page.goto("/doi-cong-dong/t1/");

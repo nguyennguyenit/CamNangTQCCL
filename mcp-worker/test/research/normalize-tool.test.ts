@@ -81,7 +81,7 @@ describe("tqccl_normalize_entities name resolution", () => {
       ["hero:co-dai-kieu", heroFamilyId("Đại Kiều")],
       ["hero:vuong-di", heroFamilyId("Vương Dị")],
     ]);
-    expect(result.canonicalState.heroes.find(({ canonicalId }) => canonicalId === "hero:vuong-di")?.displayName).toBe("Vương Dị");
+    expect(result.resolvedIds).toEqual(["hero:40y-lu-bo", "hero:vuong-di", "hero:co-dai-kieu", "tactic:me-hoac", "tactic:ho-bao-ky"]);
     expect(result.canonicalState.tactics.map(({ canonicalId }) => canonicalId)).toEqual(["tactic:ho-bao-ky", "tactic:me-hoac"]);
     expect(result.canonicalState.unresolved).toEqual([]);
     expect(result.reviewRequired).toBe(false);

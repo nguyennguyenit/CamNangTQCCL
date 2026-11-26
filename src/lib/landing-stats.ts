@@ -1,4 +1,8 @@
+import { contentLocaleIsVietnamese, pick } from '../../js/i18n.js';
+import { localRawName } from '../../js/website-display.js';
+import { lookupJaNameResolver } from './lookup-pages';
 import { createTacticDisplayName } from '../../js/lookup-ids.js';
+import type { SiteLocale } from './locale-routes';
 import { websiteDisplayPublicationSnapshot } from './root-static-artifacts';
 import { recommendedRoutePath, teamDetailCatalog } from './team-detail-routes';
 
@@ -8,8 +12,8 @@ import { recommendedRoutePath, teamDetailCatalog } from './team-detail-routes';
  * Nguồn (một snapshot duy nhất, đã xác minh hash ở cả `website-display.json` và generation Recommended):
  * - `recommended/index.json` — cấu hình Đội chuẩn, hạng T0, mùa nguồn, thẻ/bảng xem trước.
  * - `recommended/seasons.json` — mùa mặc định + nhãn Việt của phe/loại binh/mục.
- * - `recommended/other-teams.json` — đúng tập trang `/doi-khac/` hiển thị (40), không phải `data/teams.json` (166,
- *   kho gốc trước khi khử trùng).
+ * - `recommended/other-teams.json` — bảng `teamGroups` (team = bộ 3 tướng + binh chủng, builder tính) và phương án đủ
+ *   dữ liệu: đúng tập thẻ `/doi-khac/` hiển thị, không phải `data/teams.json` (kho gốc trước khi khử trùng).
  * - `publicFiles/*.json` — `heroes-dict.json`, `tactics.json` (kho Tra cứu), `coexist.json`, `khaihoang.json`.
  *
  * Mẫu số của từng số ghi ngay ở trường tương ứng; số nào không có nguồn thì câu chứa nó không được dựng.
@@ -26,11 +30,11 @@ export interface LandingStatistics {
   heroes: number;
   /** Chiến pháp = phần tử `tactics.json`. */
   tactics: number;
-  /** Đội khác = bản ghi `other-teams.json` (tập trang `/doi-khac/`). */
+  /** Đội khác = số team có phương án đủ dữ liệu (`teamGroups` có đại diện) — đúng số thẻ `/doi-khac/`. */
   otherTeams: number;
-  /** Đội khác có ghi đội sợ = `legacyContent.counters.avoid` không rỗng. */
+  /** Team Đội khác có ít nhất một phương án đủ dữ liệu ghi đội sợ (`legacyContent.counters.avoid` không rỗng). */
   otherTeamsWithCounters: number;
-  /** Đội khác có ít nhất một phương án thay thế trong `legacyContent`. */
+  /** Team Đội khác có ít nhất một phương án đủ dữ liệu ghi tướng/chiến pháp/binh thư thay thế trong `legacyContent`. */
   otherTeamsWithAlternatives: number;
   /** Cùng Tồn: số nhóm, số đội mỗi nhóm, số tướng không trùng mỗi nhóm (dữ liệu phải đồng nhất giữa các nhóm). */
   coexist: { groups: number; teamsPerGroup: number; heroesPerGroup: number };
@@ -39,7 +43,8 @@ export interface LandingStatistics {
 }
 
 /** Ngôn ngữ của Landing: `vi` dùng bản Việt đã duyệt, `zh` dùng chữ Hán gốc của dữ liệu nguồn. */
-export type LandingLocale = 'vi' | 'zh';
+/** Ngôn ngữ của Landing: mọi phần tử `SITE_LOCALES`. */
+export type LandingLocale = SiteLocale;
 
 /** Một tướng trong thẻ/bảng xem trước; chuỗi đã đúng ngôn ngữ trang (Việt đã duyệt hoặc chữ Hán gốc). */
 export interface LandingPreviewHolder {
@@ -143,13 +148,13 @@ export function viNumber(value: number): string {
   return String(value).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
-/** Số theo ngôn ngữ trang: `vi` chấm phân cách nghìn, `zh` dấu phẩy (zh-CN); cùng luật kiểm như `viNumber`. */
+/** Số theo ngôn ngữ trang: `vi` chấm phân cách nghìn, `zh`/`ja` dấu phẩy; cùng luật kiểm như `viNumber`. */
 export function localeNumber(value: number, locale: LandingLocale): string {
   const vi = viNumber(value);
-  return locale === 'zh' ? vi.replaceAll('.', ',') : vi;
+  return pick(locale, vi, vi.replaceAll('.', ','), vi.replaceAll('.', ','));
 }
 
-/** Số phương án thay thế trong `legacyContent` của một đội (tướng, chiến pháp, binh thư). */
+/** Số tướng/chiến pháp/binh thư thay thế ghi trong `legacyContent` của một phương án. */
 function alternativeSlots(legacyContent: unknown): number {
   const heroes = (legacyContent as Record<string, unknown> | null)?.heroes;
   if (!Array.isArray(heroes)) return 0;
@@ -172,17 +177,34 @@ function alternativeSlots(legacyContent: unknown): number {
   return total;
 }
 
-/** Bản ghi Đội khác chỉ dùng `legacyContent`: số đội sợ và số phương án thay thế. */
-function parseOtherTeamLegends(value: unknown) {
-  return fieldArray(value, 'records', 'other-teams.json').map((row) => {
-    const legacyContent = field(row, 'legacyContent');
-    const counters = field(legacyContent, 'counters');
-    const avoid = field(counters, 'avoid');
-    return {
-      avoidCount: Array.isArray(avoid) ? avoid.length : 0,
-      alternativeCount: alternativeSlots(legacyContent),
-    };
-  });
+/**
+ * Team Đội khác hiển thị trên website: mỗi `teamGroups` có đại diện (`representativeVariantId`) là một team, kèm cờ đội sợ
+ * và thay thế gộp trên mọi phương án đủ dữ liệu (`completeVariantIds`) của team. Bảng do builder tính và kiểm; phương án
+ * trỏ tới không có trong `records` hoặc không đủ dữ liệu là lỗi build, không lặng lẽ bỏ team.
+ */
+function parseOtherTeamGroups(value: unknown) {
+  const byVariant = new Map(
+    fieldArray(value, 'records', 'other-teams.json').map((row) => [field(row, 'legacyVariantId'), row]),
+  );
+  return fieldArray(value, 'teamGroups', 'other-teams.json')
+    .filter((group) => field(group, 'representativeVariantId') !== null)
+    .map((group) => {
+      const options = fieldArray(group, 'completeVariantIds', 'other-teams.teamGroups[]').map((variantId) => {
+        const row = byVariant.get(variantId);
+        if (!row || field(row, 'dataComplete') !== true) {
+          throw new Error(`Số liệu Landing: phương án ${String(variantId)} của team Đội khác không có hoặc thiếu dữ liệu`);
+        }
+        return field(row, 'legacyContent');
+      });
+      if (!options.length) throw new Error(`Số liệu Landing: team Đội khác ${String(field(group, 'teamGroupId'))} không có phương án đủ dữ liệu`);
+      return {
+        hasCounters: options.some((content) => {
+          const avoid = field(field(content, 'counters'), 'avoid');
+          return Array.isArray(avoid) && avoid.length > 0;
+        }),
+        hasAlternatives: options.some((content) => alternativeSlots(content) > 0),
+      };
+    });
 }
 
 /** Cùng Tồn: số đội và số tướng không trùng của từng nhóm; các nhóm phải đồng nhất để câu chữ đúng. */
@@ -259,7 +281,7 @@ export async function landingStatistics(): Promise<LandingStatistics> {
   const snapshot = await websiteDisplayPublicationSnapshot();
 
   const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'));
-  const legends = parseOtherTeamLegends(publishedJson(snapshot.recommended.files, 'other-teams.json'));
+  const otherTeams = parseOtherTeamGroups(publishedJson(snapshot.recommended.files, 'other-teams.json'));
   const heroes = publishedArray(publishedJson(snapshot.publicFiles, 'heroes-dict.json'), 'heroes-dict.json');
   const tactics = publishedArray(publishedJson(snapshot.publicFiles, 'tactics.json'), 'tactics.json');
 
@@ -278,9 +300,9 @@ export async function landingStatistics(): Promise<LandingStatistics> {
     sourceSeasons: new Set(recommended.map((row) => row.sourceSeasonId)).size,
     heroes: heroes.length,
     tactics: tactics.length,
-    otherTeams: legends.length,
-    otherTeamsWithCounters: legends.filter((legend) => legend.avoidCount > 0).length,
-    otherTeamsWithAlternatives: legends.filter((legend) => legend.alternativeCount > 0).length,
+    otherTeams: otherTeams.length,
+    otherTeamsWithCounters: otherTeams.filter((team) => team.hasCounters).length,
+    otherTeamsWithAlternatives: otherTeams.filter((team) => team.hasAlternatives).length,
     coexist: { groups: groups.length, teamsPerGroup: firstGroup.teams, heroesPerGroup: firstGroup.heroes },
     khaiHoang: {
       teams: khaiHoangTeams.length,
@@ -295,11 +317,16 @@ export async function landingStatistics(): Promise<LandingStatistics> {
  * Hai khối xem trước của Landing dựng từ dữ liệu publish thật của phạm vi mặc định
  * (`seasons.defaultSourceSeasonId` + scope đầu tiên): thẻ đội đầu tiên và 4 hàng đầu của nhóm tier đầu —
  * đúng dữ liệu mà thẻ và chế độ Bảng của `/doi-chuan/` hiển thị, kèm link chi tiết tính lúc build.
- * Bản `zh` hiển thị chữ Hán gốc của nguồn (tên đội, tướng, chiến pháp, binh thư, phe, loại binh);
+ * Bản `zh` hiển thị chữ Hán gốc của nguồn (tên đội, tướng, chiến pháp, binh thư, phe, loại binh); bản `ja` đưa cùng chữ đó qua
+ * bộ tra tên Nhật (tên Nhật theo mã, chữ chưa đối chiếu đổi tự dạng);
  * `href` luôn là đường canonical tiếng Việt — nơi render thêm tiền tố ngôn ngữ.
  */
 export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<LandingPreviews> {
-  const zh = locale === 'zh';
+  // Bản không phải tiếng Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+  const sourceText = !contentLocaleIsVietnamese(locale);
+  const jaNames = pick(locale, null, null, await lookupJaNameResolver());
+  const local = (value: string): string => localRawName(value, jaNames, locale);
+  const localAll = (values: (string | null)[]): string[] => values.filter(Boolean).map((value) => local(value as string));
   const snapshot = await websiteDisplayPublicationSnapshot();
   const seasons = publishedJson(snapshot.recommended.files, 'seasons.json');
   const recommended = parseRecommendedRecords(publishedJson(snapshot.recommended.files, 'index.json'), createTacticDisplayName(publishedJson(snapshot.publicFiles, 'tactics.json')));
@@ -318,19 +345,19 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
   type Holder = Row['holders'][number];
   // Bản zh: khoá nguồn của phe/loại binh chính là chữ Hán hiển thị.
   const factionOf = (row: Row): string | null =>
-    row.factionRaw ? (zh ? row.factionRaw : labels.faction[row.factionRaw] ?? null) : null;
+    row.factionRaw ? (sourceText ? local(row.factionRaw) : labels.faction[row.factionRaw] ?? null) : null;
   const unitsOf = (row: Row): string[] =>
-    zh ? row.unitsRaw.filter(Boolean) : row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean);
+    sourceText ? localAll(row.unitsRaw) : row.unitsRaw.map((unit) => labels.unit[unit]).filter(Boolean);
   // Cùng quy tắc `sourceTierLabel` (js/recommended-reference-state.js): đội chức năng có nhãn riêng.
   const tierOf = (row: Row): string | null =>
-    row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? (zh ? '功能队' : 'Đội chức năng') : row.tierRaw ?? null;
-  const holderName = (holder: Holder): string => (zh ? holder.nameZh ?? holder.name : holder.name) ?? '';
+    row.tierRaw === '功能隊' || row.tierRaw === 'FUNC' ? pick(locale, 'Đội chức năng', '功能队', '機能特化編成') : row.tierRaw ?? null;
+  const holderName = (holder: Holder): string => (sourceText ? (holder.nameZh ? local(holder.nameZh) : holder.name) : holder.name) ?? '';
   const toPreview = (row: Row): LandingTeamPreview => {
     const href = row.sourceConfigId ? routeByConfig.get(row.sourceConfigId) : undefined;
     if (!href) throw new Error(`Số liệu Landing: không có route chi tiết cho ${row.sourceConfigId ?? '(thiếu id)'}`);
     return {
       href,
-      name: (zh ? row.nameZh ?? row.name : row.name) ?? '',
+      name: (sourceText ? (row.nameZh ? local(row.nameZh) : row.name) : row.name) ?? '',
       score: row.score === null ? null : String(row.score),
       tier: tierOf(row),
       faction: factionOf(row),
@@ -338,8 +365,8 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
       units: unitsOf(row),
       holders: row.holders.map((holder) => ({
         name: holderName(holder),
-        tactics: (zh ? holder.tacticsZh : holder.tactics).filter(Boolean) as string[],
-        books: (zh ? holder.booksZh : holder.books).filter(Boolean) as string[],
+        tactics: sourceText ? localAll(holder.tacticsZh) : holder.tactics.filter(Boolean) as string[],
+        books: sourceText ? localAll(holder.booksZh) : holder.books.filter(Boolean) as string[],
       })),
     };
   };
@@ -353,7 +380,7 @@ export async function landingPreviews(locale: LandingLocale = 'vi'): Promise<Lan
     team: toPreview(first),
     table: {
       tier: tierOf(first) ?? '',
-      count: zh ? ` · ${count} 队` : ` · ${count} đội`,
+      count: pick(locale, ` · ${count} đội`, ` · ${count} 队`, ` · ${count}編成`),
       rows: tierRows.slice(0, 4).map(toPreview),
     },
   };
@@ -370,27 +397,48 @@ export interface LandingCopy {
   khaiHoangNote: string;
 }
 
-export function landingCopy(stats: LandingStatistics, locale: LandingLocale = 'vi'): LandingCopy {
-  const { coexist, khaiHoang } = stats;
-  if (locale === 'zh') {
+/** Câu có số theo từng ngôn ngữ (bảng đủ mọi phần tử `SITE_LOCALES`). */
+const LANDING_COPY: Record<SiteLocale, (stats: LandingStatistics) => LandingCopy> = {
+  vi: (stats) => {
+    const { coexist, khaiHoang } = stats;
+    return {
+      heroLead: `${viNumber(stats.standardConfigs)} cấu hình đội từ ${viNumber(stats.sourceSeasons)} mùa, ${viNumber(stats.otherTeams)} đội người chơi tổng hợp, cùng ${viNumber(stats.heroes)} tướng và ${viNumber(stats.tactics)} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
+      standardCount: `${viNumber(stats.standardConfigs)} cấu hình`,
+      standardNote: 'theo mùa và danh mục, kèm điểm tham khảo.',
+      otherCount: `${viNumber(stats.otherTeams)} đội`,
+      otherNote: `người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có tướng/chiến pháp thay thế.`,
+      coexistNote: `${viNumber(coexist.groups)} nhóm, mỗi nhóm ${viNumber(coexist.teamsPerGroup)} đội dùng cùng lúc — ${viNumber(coexist.heroesPerGroup)} tướng không trùng nhau.`,
+      khaiHoangNote: `${viNumber(khaiHoang.teams)} đội mở đất, ${viNumber(khaiHoang.beforeAfterTeams)} đội có đủ cấu hình trước/sau, ${viNumber(khaiHoang.chamSuTeams)} đội Chạm Sứ, cùng quân thủ của ${viNumber(khaiHoang.mines)} mỏ.`,
+    };
+  },
+  zh: (stats) => {
+    const { coexist, khaiHoang } = stats;
     const n = (value: number) => localeNumber(value, 'zh');
     return {
       heroLead: `${n(stats.standardConfigs)} 套推荐配将，覆盖 ${n(stats.sourceSeasons)} 个赛季；另有 ${n(stats.otherTeams)} 支玩家汇总阵容，以及 ${n(stats.heroes)} 名武将、${n(stats.tactics)} 个战法可供查询——免费使用，无需注册。`,
       standardCount: `${n(stats.standardConfigs)} 套配将`,
       standardNote: '，按赛季与分类整理，附参考评分。',
       otherCount: `${n(stats.otherTeams)} 支阵容`,
-      otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换方案。`,
+      otherNote: `，均为玩家汇总：${n(stats.otherTeamsWithCounters)} 支注明畏惧阵容，${n(stats.otherTeamsWithAlternatives)} 支附有替换武将/战法。`,
       coexistNote: `${n(coexist.groups)} 组，每组 ${n(coexist.teamsPerGroup)} 支队伍可同时上阵——共 ${n(coexist.heroesPerGroup)} 名武将互不重复。`,
       khaiHoangNote: `${n(khaiHoang.teams)} 支开荒队伍，其中 ${n(khaiHoang.beforeAfterTeams)} 支配有完整的前后期配置、${n(khaiHoang.chamSuTeams)} 支碰瓷队，另附 ${n(khaiHoang.mines)} 座矿的守军信息。`,
     };
-  }
-  return {
-    heroLead: `${viNumber(stats.standardConfigs)} cấu hình đội từ ${viNumber(stats.sourceSeasons)} mùa, ${viNumber(stats.otherTeams)} đội người chơi tổng hợp, cùng ${viNumber(stats.heroes)} tướng và ${viNumber(stats.tactics)} chiến pháp để tra cứu — miễn phí, không cần tài khoản.`,
-    standardCount: `${viNumber(stats.standardConfigs)} cấu hình`,
-    standardNote: 'theo mùa và danh mục, kèm điểm tham khảo.',
-    otherCount: `${viNumber(stats.otherTeams)} đội`,
-    otherNote: `người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có phương án thay thế.`,
-    coexistNote: `${viNumber(coexist.groups)} nhóm, mỗi nhóm ${viNumber(coexist.teamsPerGroup)} đội dùng cùng lúc — ${viNumber(coexist.heroesPerGroup)} tướng không trùng nhau.`,
-    khaiHoangNote: `${viNumber(khaiHoang.teams)} đội mở đất, ${viNumber(khaiHoang.beforeAfterTeams)} đội có đủ cấu hình trước/sau, ${viNumber(khaiHoang.chamSuTeams)} đội Chạm Sứ, cùng quân thủ của ${viNumber(khaiHoang.mines)} mỏ.`,
-  };
+  },
+  ja: (stats) => {
+    const { coexist, khaiHoang } = stats;
+    const n = (value: number) => localeNumber(value, 'ja');
+    return {
+      heroLead: `${n(stats.standardConfigs)}件のおすすめ編成を${n(stats.sourceSeasons)}シーズン分収録。プレイヤーが集めた${n(stats.otherTeams)}編成に加え、${n(stats.heroes)}名の武将と${n(stats.tactics)}個の戦法も検索できます。無料・登録不要。`,
+      standardCount: `${n(stats.standardConfigs)}件の編成`,
+      standardNote: '。シーズンとカテゴリ別に整理し、参考スコアを付けています。',
+      otherCount: `${n(stats.otherTeams)}編成`,
+      otherNote: `。いずれもプレイヤーの集計で、${n(stats.otherTeamsWithCounters)}編成に苦手な編成の記載、${n(stats.otherTeamsWithAlternatives)}編成に代替の武将・戦法を掲載しています。`,
+      coexistNote: `${n(coexist.groups)}組。各組${n(coexist.teamsPerGroup)}部隊を同時に運用でき、計${n(coexist.heroesPerGroup)}名の武将が重複しません。`,
+      khaiHoangNote: `開拓用${n(khaiHoang.teams)}編成（うち${n(khaiHoang.beforeAfterTeams)}編成は前期・後期の構成が揃い、${n(khaiHoang.chamSuTeams)}編成は当たり屋編成）と、${n(khaiHoang.mines)}か所の鉱山の守備情報を掲載しています。`,
+    };
+  },
+};
+
+export function landingCopy(stats: LandingStatistics, locale: LandingLocale = 'vi'): LandingCopy {
+  return LANDING_COPY[locale](stats);
 }

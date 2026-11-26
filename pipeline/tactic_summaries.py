@@ -7,7 +7,8 @@ Khóa nối là **so khớp chính xác theo từng nguồn**, không nối ID d
 
 - Đội chuẩn (`index.json`, `heroes[].tacticSlotsRaw` và `heroes[].tacticBeforeLevel20Raw` chữ Hán) ↔
   `chinese`/`aliases[]` của `data/tactics.json`, chỉ bỏ khoảng trắng.
-- Đội khác (`other-teams.json`, `holders[].tacticSlotsRaw` tên Việt) ↔ `viet`/`hanViet` (bỏ khoảng trắng hai đầu).
+- Đội khác (`other-teams.json`, `holders[].tacticSlotsRaw` tên Việt) ↔ `viet`, không có thì `hanViet` (bỏ khoảng trắng
+  hai đầu).
 - Tướng mang chiến pháp nối như `hero_summaries` (chữ Hán ↔ `heroes-dict`, tên Việt ↔ `hanViet`); ô tướng không
   khớp vẫn đếm cho chiến pháp nhưng không có tướng mang.
 
@@ -52,9 +53,16 @@ def _catalog(catalog_bytes, label):
 
 
 def build_tactic_join_indexes(catalog):
-    """Khóa nối chiến pháp: chữ Hán (bỏ khoảng trắng) và tên Việt (`viet`, `hanViet`) của từng ID."""
+    """Khóa nối chiến pháp: chữ Hán (bỏ khoảng trắng) và tên Việt của từng ID.
+
+    Tên Việt xét theo tầng như `createTacticNameIndex` (`js/lookup-ids.js`): tên hiển thị hiện hành `viet` thắng
+    tên Hán-Việt `hanViet` trùng chữ của chiến pháp khác (ví dụ "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là
+    `hanViet` cũ của 暗渡陳倉). Chỉ khi không có `viet` nào khớp mới xét `hanViet`; trùng trong cùng tầng vẫn là
+    khớp nhiều ID.
+    """
     chinese = defaultdict(set)
-    vietnamese = defaultdict(set)
+    current = defaultdict(set)
+    han_viet = defaultdict(set)
     for tactic in catalog:
         identifier = tactic.get("id")
         if not isinstance(identifier, str) or not identifier.startswith(TACTIC_PREFIX):
@@ -63,10 +71,12 @@ def build_tactic_join_indexes(catalog):
             key = _stripped(value)
             if key:
                 chinese[key].add(identifier)
-        for value in (tactic.get("viet"), tactic.get("hanViet")):
+        for tier, value in ((current, tactic.get("viet")), (han_viet, tactic.get("hanViet"))):
             key = _trimmed(value)
             if key:
-                vietnamese[key].add(identifier)
+                tier[key].add(identifier)
+    vietnamese = {key: ids for key, ids in han_viet.items() if key not in current}
+    vietnamese.update(current)
     return chinese, vietnamese
 
 
@@ -170,9 +180,8 @@ def build_tactic_summaries(*, tactic_catalog_bytes, hero_catalog_bytes, records,
             "tacticCatalogSha256": "sha256:" + hashlib.sha256(bytes(tactic_catalog_bytes)).hexdigest(),
             "heroCatalogSha256": "sha256:" + hashlib.sha256(bytes(hero_catalog_bytes)).hexdigest(),
             # Chuỗi mô tả nằm trong payload đã phát của generation đang ghim: sửa là phải publish generation mới.
-            # Phép nối thực tế còn gồm `heroes[].tacticBeforeLevel20Raw` (xem docstring module).
-            "recommendedJoin": "heroes[].tacticSlotsRaw ↔ chinese|aliases (bỏ khoảng trắng)",
-            "otherJoin": "holders[].tacticSlotsRaw ↔ viet|hanViet (bỏ khoảng trắng hai đầu)",
+            "recommendedJoin": "heroes[].tacticSlotsRaw + heroes[].tacticBeforeLevel20Raw ↔ chinese|aliases (bỏ khoảng trắng)",
+            "otherJoin": "holders[].tacticSlotsRaw ↔ viet, rồi hanViet (bỏ khoảng trắng hai đầu)",
             "unmatchedSlots": unmatched,
             "ambiguousSlots": ambiguous,
         },

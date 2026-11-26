@@ -47,6 +47,7 @@ RECEIPTS_PATH = "pipeline/site-translation-reviews.json"
 REVIEW_OUTPUT_DIR = "pipeline/localization-reviews"
 IDENTITY_MAP_PATH = "pipeline/recommended-identity-map.json"
 OTHER_LEDGER_PATH = "pipeline/recommended-other-teams.json"
+JP_TIERS_PATH = "pipeline/recommended-jp-tiers.json"
 
 SCHEMA_VERSION = 1
 CLASSIFICATIONS = ("translate", "canonical", "authored-vi", "exempt", "missing-source")
@@ -130,10 +131,12 @@ NOTE_OWNERS = ("alternative", "primary", "team")
 NOTE_FIELD_PATTERN = "displayNotes.blocks[].textRaw"
 NOTE_ENTITY_PATTERN = "recommended:{safeScopeKey}/{sourceConfigId}"
 
+QILUE_OVERRIDES_PATH = "pipeline/recommended-qilue-overrides.json"
 ROW_DERIVED = frozenset(
     {
         "displayNameVi",
         "displayNotes",
+        "qilue",
         "legacyReferences",
         "sourceCategoryNameVi",
         "sourceSeasonCode",
@@ -223,9 +226,11 @@ CANONICAL_DATA_FIELDS = {
 AUTHORED_VI_DATA_FIELDS = {
     "avoid",
     "buildNote",
+    "chamSuTip",
     "context",
     "disclaimerRaw",
     "displayLabel",
+    "equipmentRaw",
     "evidenceRefs",
     "good",
     "groupLabel",
@@ -237,6 +242,7 @@ AUTHORED_VI_DATA_FIELDS = {
     "openingSuggestionsRaw",
     "overview",
     "seasonNote",
+    "strategyCardsRaw",
     "summary",
     "summaryRaw",
     "target",
@@ -264,11 +270,17 @@ EXEMPT_DATA_FIELDS = {
     "sourceConfigId",
     "sourceScopeId",
     "status",
+    "strategyCardIds",
     "type",
     "url",
     "variant",
 }
 CANONICAL_DATA_FIELDS.update({"alternatives", "baseName", "rawType", "trainHeroes"})
+# Đội đề cử YouTube trong data/teams.json: tên gốc của creator (nameZh) và mốc video (evidence[].videoId, .at)
+# giữ để truy nguyên, không dịch. Miễn dịch chỉ theo đúng đường dẫn này của hàng `source == "youtube"`
+# (`_youtube_trace_field`), không theo tên field cho mọi file data. Mức tin cậy là chữ Việt tự soạn.
+YOUTUBE_TRACE_SOURCE = ("data/teams.json", "youtube")
+AUTHORED_VI_DATA_FIELDS.add("confidence")
 UI_LITERAL_OBLIGATIONS = (
     ("ui:app/load-error", "errorTemplate", "Lỗi tải dữ liệu: {message}. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "js/app.js", "main", "error", "translate", 'displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate")'),
     ("ui:analyze/provider-error", "errorMessage", "Không thể phân tích ảnh. Vui lòng thử lại.", "js/analyze.js", "callWorker", "error", "translate", "localizeWorkerError(data?.error, res.status)"),
@@ -332,13 +344,13 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recruit/banner-name-prompt", "prompt", "Tên gói/banner hạn giờ:", "js/recruit-tracker.js", "addLimitedBanner", "prompt", "translate"),
     ("ui:recruit-store/account-missing", "error", "Thiếu account.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
     ("ui:recruit-store/banner-missing", "error", "Thiếu banner.", "js/recruit-tracker-store.js", "validateRecruitTrackerImport", "error", "translate"),
-    ("ui:khaihoang/guide-heading", "heading", "Hướng dẫn khai hoang", "js/render.js", "khaihoangGuide", "data", "authored-vi", 't("h2", { class: "kh-guide-title" }, L("Hướng dẫn khai hoang", "开荒攻略"))'),
+    ("ui:khaihoang/guide-heading", "heading", "Hướng dẫn khai hoang", "js/render.js", "khaihoangGuide", "data", "authored-vi", 't("h2", { class: "kh-guide-title" }, L("Hướng dẫn khai hoang", "开荒攻略", "開拓攻略"))'),
     # Phase 8 — Cùng Tồn: đầu mục, chọn mùa/phiên bản, dòng đếm, ghi chú gập và thẻ đội.
     ("ui:coexist/kicker", "kicker", "Đội hình", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
     ("ui:coexist/title", "title", "Cùng Tồn", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
     ("ui:coexist/lead", "lead", "Năm đội dùng được cùng lúc trong một tài khoản, 15 tướng không trùng nhau. Chọn mùa rồi chọn phiên bản để tham khảo.", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
-    ("ui:coexist/season-aria", "ariaLabel", "'Mùa'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi", "el('select', {'aria-label': L('Mùa', '赛季')})"),
-    ("ui:coexist/season-label", "label", "'Mùa'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi", "el('span', {class: 'reference-season-label'}, L('Mùa', '赛季'))"),
+    ("ui:coexist/season-aria", "ariaLabel", "'Mùa'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi", "el('select', {'aria-label': L('Mùa', '赛季', 'シーズン')})"),
+    ("ui:coexist/season-label", "label", "'Mùa'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi", "el('span', {class: 'reference-season-label'}, L('Mùa', '赛季', 'シーズン'))"),
     ("ui:coexist/season-latest", "status", "'Mới nhất'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
     ("ui:coexist/version-aria", "ariaLabel", "'Chọn phiên bản Cùng Tồn'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
     ("ui:coexist/version-label", "label", "'Phiên bản'", "js/team-filter-section.js", "createSeasonCoexistSection", "static", "authored-vi"),
@@ -351,9 +363,12 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:coexist/counts-clean", "verdict", "không trùng", "js/render.js", "seasonCoexistGroup", "data", "authored-vi"),
     ("ui:coexist/counts-duplicate", "verdict", "`có trùng: ${counts.duplicates.join(\", \")}`", "js/render.js", "seasonCoexistGroup", "data", "authored-vi"),
     ("ui:coexist/level-title", "title", "'Cấp độ đội'", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
-    ("ui:recommended/tactic-before-level-20", "label", "'Trước cấp 20'", "js/recommended-reference-render.js", "beforeLevel20Block", "data", "authored-vi", "L('Trước cấp 20','20级前')"),
+    ("ui:recommended/tactic-before-level-20", "label", "'Trước cấp 20'", "js/recommended-reference-render.js", "beforeLevel20Block", "data", "authored-vi", "L('Trước cấp 20','20级前','20レベル前')"),
     ("ui:coexist/refit-line", "refitLine", "`Cải tạo: ${team.unitTacticEffects}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/advisor-line", "advisorLine", "`QS: ${hero.advisorSkill}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
+    ("ui:coexist/equipment-line", "equipmentLine", "`Trang bị: ${hero.equipment}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
+    ("ui:coexist/strategy-cards-line", "strategyCardsLine", "`Thẻ Kỳ Lược: ${team.strategyCards}`", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
+    ("ui:coexist/strategy-cards-label", "label", "L('Thẻ Kỳ Lược','奇略卡')", "js/recommended-reference-render.js", "coexistQilueTree", "data", "authored-vi", "L('Thẻ Kỳ Lược','奇略卡','奇略カード')"),
     ("ui:coexist/books-missing", "emptyLabel", "'Chưa ghi'", "js/recommended-reference-render.js", "coexistTeamCard", "data", "authored-vi"),
     ("ui:coexist/slot-missing", "missing", "Chưa có dữ liệu", "js/render.js", "coexistModel", "data", "authored-vi"),
     # Khai hoang: danh sách mang đội + phiên bản và tham khảo chung (Chạm Sứ, quân thủ mỏ); trang chi tiết mang đội hình, ghi chú, điểm, hướng dẫn.
@@ -411,14 +426,14 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:section-page/khai-hoang", "title", "Khai hoang — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/components/pages/SectionPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/khai-hoang", "metaDescription", "Hướng dẫn khai hoang theo từng đội: build trước và sau, thanh điểm mốc và cách đánh đất.", "src/components/pages/SectionPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/tra-cuu", "title", "Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/components/pages/LookupHubPage.astro", "page metadata", "static", "authored-vi"),
-    ("ui:section-page/tra-cuu", "metaDescription", "Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư theo tên Việt hoặc chữ Hán.", "src/components/pages/LookupHubPage.astro", "page metadata", "static", "authored-vi"),
+    ("ui:section-page/tra-cuu", "metaDescription", "Tra cứu tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược theo tên Việt hoặc chữ Hán.", "src/components/pages/LookupHubPage.astro", "page metadata", "static", "authored-vi"),
     # Trang nhóm Tra cứu (/tra-cuu/<slug>/): tiêu đề, mô tả và dòng dẫn ghép nhãn nhóm + mô tả nhóm đã khai bên dưới.
     ("ui:lookup-page/title", "title", "`${current.label} — Tra cứu — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`", "src/components/pages/LookupGroupPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:lookup-page/meta-description", "metaDescription", "`${current.label}: ${current.description}. Tìm theo tên Việt, Hán-Việt hoặc chữ Hán.`", "src/components/pages/LookupGroupPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:lookup-page/lead", "lead", "`${current.description} — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.`", "src/components/pages/LookupGroupPage.astro", "page header", "static", "authored-vi"),
     # Trang riêng từng mục Tra cứu (/tra-cuu/<nhóm>/<slug>/): tiêu đề ghép tên mục + nhãn nhóm; mô tả ghép từ chính bản ghi.
     ("ui:lookup-item/title", "title", "`${name} — ${groupLabel} — ${section} — ${siteName}`", "src/lib/lookup-item-pages.ts", "lookupItemPage", "static", "authored-vi"),
-    ("ui:lookup-item/section", "label", "pick(locale, 'Tra cứu', '图鉴查询')", "src/lib/lookup-item-pages.ts", "lookupItemPage", "static", "authored-vi"),
+    ("ui:lookup-item/section", "label", "pick(locale, 'Tra cứu', '图鉴查询', '図鑑')", "src/lib/lookup-item-pages.ts", "lookupItemPage", "static", "authored-vi"),
     ("ui:lookup-item/description-heroes", "metaDescription", "chỉ số, thích tính binh chủng, chiến pháp bản thân và các đội hình dùng tướng này.", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
     ("ui:lookup-item/description-tactics", "metaDescription", "— chiến pháp${head ?", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
     ("ui:lookup-item/description-books", "metaDescription", "— binh thư${tail(effect", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
@@ -426,9 +441,11 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup-item/description-advisors", "metaDescription", "— kỹ năng quân sư", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
     ("ui:lookup-item/description-troop-mods", "metaDescription", "— cải tạo binh chủng${tail(", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
     ("ui:lookup-item/description-buildings", "metaDescription", "hiệu quả và tài nguyên theo từng cấp.", "src/lib/lookup-item-pages.ts", "describe", "static", "authored-vi"),
-    ("ui:lookup-item/tagline", "tagline", "t('Tra cứu', '图鉴查询')", "src/components/pages/LookupItemPage.astro", "page header", "static", "authored-vi"),
-    ("ui:lookup-item/back-aria", "ariaLabel", "t('Quay lại danh sách Tra cứu', '返回图鉴列表')", "src/components/pages/LookupItemPage.astro", "back navigation", "return", "authored-vi"),
-    ("ui:lookup-item/back", "backLink", "t(`Quay lại ${page.groupLabel}`, `返回${page.groupLabel}`)", "src/components/pages/LookupItemPage.astro", "back navigation", "return", "authored-vi"),
+    ("ui:lookup-item/description-qilue-strategy", "metaDescription", "— phương lược kỳ lược, dùng thẻ ${types.join(', ')}", "src/lib/lookup-item-pages.ts", "describeQilue", "static", "authored-vi"),
+    ("ui:lookup-item/description-qilue-card", "metaDescription", "— thẻ kỳ lược ${head.join(' · ')}", "src/lib/lookup-item-pages.ts", "describeQilue", "static", "authored-vi"),
+    ("ui:lookup-item/tagline", "tagline", "t('Tra cứu', '图鉴查询', '図鑑')", "src/components/pages/LookupItemPage.astro", "page header", "static", "authored-vi"),
+    ("ui:lookup-item/back-aria", "ariaLabel", "t('Quay lại danh sách Tra cứu', '返回图鉴列表', '図鑑の一覧に戻る')", "src/components/pages/LookupItemPage.astro", "back navigation", "return", "authored-vi"),
+    ("ui:lookup-item/back", "backLink", "t(`Quay lại ${page.groupLabel}`, `返回${page.groupLabel}`, `${page.groupLabel}に戻る`)", "src/components/pages/LookupItemPage.astro", "back navigation", "return", "authored-vi"),
     ("ui:section-page/theo-doi-chieu-mo", "title", "Theo dõi chiêu mộ — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/components/pages/SectionPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/theo-doi-chieu-mo", "metaDescription", "Theo dõi chiêu mộ theo tài khoản: lịch sử, mốc bảo hiểm và số lượt còn lại của từng đợt.", "src/components/pages/SectionPage.astro", "page metadata", "static", "authored-vi"),
     ("ui:section-page/soi-doi-tu-anh", "title", "Soi đội từ ảnh — Cẩm Nang Game Tam Quốc Chí - Chiến Lược", "src/components/pages/SectionPage.astro", "page metadata", "static", "authored-vi"),
@@ -473,6 +490,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:layout/lookup-desc-troop-mods", "menuDescription", "Cải tạo binh chủng và gợi ý build", "src/lib/lookup-pages.ts", "LOOKUP_DESCRIPTIONS", "static", "authored-vi"),
     ("ui:layout/lookup-desc-buildings", "menuDescription", "Công trình theo cấp và hiệu quả", "src/lib/lookup-pages.ts", "LOOKUP_DESCRIPTIONS", "static", "authored-vi"),
     ("ui:layout/lookup-desc-books", "menuDescription", "Binh thư theo tên Việt và chữ Hán", "src/lib/lookup-pages.ts", "LOOKUP_DESCRIPTIONS", "static", "authored-vi"),
+    ("ui:layout/lookup-desc-qilue", "menuDescription", "Phương lược và thẻ kỳ lược theo loại, độ hiếm", "src/lib/lookup-pages.ts", "LOOKUP_DESCRIPTIONS", "static", "authored-vi"),
     ("ui:layout/menu-dialog-label", "ariaLabel", "Menu", "src/layouts/SiteLayout.astro", "menu mobile", "static", "authored-vi"),
     ("ui:layout/theme-toggle-to-dark", "ariaLabel", "Chuyển sang giao diện tối", "src/layouts/SiteLayout.astro", "header", "static", "authored-vi"),
     ("ui:layout/theme-toggle-to-light", "ariaLabel", "Chuyển sang giao diện sáng", "src/layouts/SiteLayout.astro", "header", "static", "authored-vi"),
@@ -505,7 +523,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:landing/stats-heading", "heading", "Số liệu cẩm nang", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/stats-configs", "label", "cấu hình Đội chuẩn", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/stats-tier0", "label", "cấu hình xếp T0", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
-    ("ui:landing/stats-seasons", "label", "t('mùa', '个赛季')", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
+    ("ui:landing/stats-seasons", "label", "t('mùa', '个赛季', 'シーズン')", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/stats-heroes", "label", "tướng", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/stats-tactics", "label", "chiến pháp", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/stats-note", "note", "Số liệu mang tính tham khảo, không phải phương án duy nhất.", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
@@ -534,7 +552,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:landing/vaults-standard-count", "countLabel", "${viNumber(stats.standardConfigs)} cấu hình", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
     ("ui:landing/vaults-standard-note", "note", "theo mùa và danh mục, kèm điểm tham khảo.", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
     ("ui:landing/vaults-other-count", "countLabel", "${viNumber(stats.otherTeams)} đội", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
-    ("ui:landing/vaults-other-note", "note", "người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có phương án thay thế.", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
+    ("ui:landing/vaults-other-note", "note", "người chơi tổng hợp: ${viNumber(stats.otherTeamsWithCounters)} đội ghi đội sợ, ${viNumber(stats.otherTeamsWithAlternatives)} đội có tướng/chiến pháp thay thế.", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
     ("ui:landing/land-coexist-note", "note", "${viNumber(coexist.groups)} nhóm, mỗi nhóm ${viNumber(coexist.teamsPerGroup)} đội dùng cùng lúc — ${viNumber(coexist.heroesPerGroup)} tướng không trùng nhau.", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
     ("ui:landing/land-khaihoang-note", "note", "${viNumber(khaiHoang.teams)} đội mở đất, ${viNumber(khaiHoang.beforeAfterTeams)} đội có đủ cấu hình trước/sau, ${viNumber(khaiHoang.chamSuTeams)} đội Chạm Sứ, cùng quân thủ của ${viNumber(khaiHoang.mines)} mỏ.", "src/lib/landing-stats.ts", "landingCopy", "static", "authored-vi"),
     ("ui:landing/preview-card-label", "ariaLabel", "Ví dụ một thẻ đội", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
@@ -542,7 +560,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:landing/preview-card-role-main", "roleLabel", "'CHỦ'", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/preview-card-role-deputy-1", "roleLabel", "'PHÓ 1'", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/preview-card-role-deputy-2", "roleLabel", "'PHÓ 2'", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
-    ("ui:landing/preview-card-books-missing", "emptyLabel", "t('Chưa ghi', '未注明')", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
+    ("ui:landing/preview-card-books-missing", "emptyLabel", "t('Chưa ghi', '未注明', '記載なし')", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/preview-card-link", "action", "'Chi tiết'", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/preview-table-caption", "caption", "Ví dụ chế độ Bảng", "src/components/landing/Landing.astro", "landing", "static", "authored-vi"),
     ("ui:landing/preview-table-count", "count", " · ${count} đội", "src/lib/landing-stats.ts", "landingPreviews", "static", "authored-vi"),
@@ -556,7 +574,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recommended/kicker", "kicker", "'Đội hình'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/filter-heading", "heading", "'Bộ lọc'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/clear", "action", "'Xóa lọc'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
-    ("ui:recommended/season-label", "label", "L('Mùa','赛季')", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
+    ("ui:recommended/season-label", "label", "L('Mùa','赛季','シーズン')", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/view-group", "ariaLabel", "'Kiểu hiển thị'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/view-cards", "label", "label:'Thẻ'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
     ("ui:recommended/view-grid", "label", "label:'Thẻ gọn'", "js/team-filter-section.js", "createRecommendedSection", "static", "authored-vi"),
@@ -605,12 +623,17 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:recommended/detail-bonds-label", "label", "'Duyên phận'", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
     ("ui:recommended/detail-stat-note", "label", "Lưu ý: ", "js/recommended-reference-render.js", "detailHeroCard", "static", "authored-vi"),
     ("ui:recommended/detail-missing", "text", "'Chưa có dữ liệu'", "js/recommended-reference-render.js", "detailHeroCard", "empty", "authored-vi"),
-    ("ui:route-recommended/score-label", "label", "t('Điểm', '评分')", "src/components/pages/RecommendedDetail.astro", "score panel", "static", "authored-vi"),
+    ("ui:recommended/detail-qilue", "heading", "L('Kỳ lược','奇略','奇略')", "js/recommended-reference-render.js", "qilueSection", "static", "authored-vi"),
+    ("ui:recommended/detail-qilue-strategy", "label", "L('Phương lược','作戰方略','方略')", "js/recommended-reference-render.js", "qilueBody", "static", "authored-vi"),
+    ("ui:recommended/detail-qilue-round", "label", "L(`Hiệp ${index+2}`,`第${index+2}回合`,`第${index+2}ターン`)", "js/recommended-reference-render.js", "qilueRound", "data", "authored-vi"),
+    ("ui:recommended/detail-qilue-unordered", "note", "L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序','出典にターン順の記載なし')", "js/recommended-reference-render.js", "qilueBody", "static", "authored-vi"),
+    ("ui:recommended/detail-qilue-copy", "label", "L('Dùng kỳ lược của:','沿用此队奇略：','次の編成の奇略を使用：')", "js/recommended-reference-render.js", "qilueSection", "data", "authored-vi"),
+    ("ui:route-recommended/score-label", "label", "t('Điểm', '评分', 'スコア')", "src/components/pages/RecommendedDetail.astro", "score panel", "static", "authored-vi"),
     ("ui:route-recommended/score-source", "label", "tổng hợp", "src/components/pages/RecommendedDetail.astro", "score panel", "static", "authored-vi"),
     ("ui:route-recommended/tier-label", "title", "title=\"Tier\"", "src/components/pages/RecommendedDetail.astro", "header", "static", "authored-vi"),
     ("ui:lookup/kicker", "kicker", "Tra cứu", "src/components/pages/LookupGroupPage.astro", "page header", "static", "authored-vi"),
     ("ui:lookup/title", "title", "<h1 class=\"reference-title\">{t('Tra cứu'", "src/components/pages/LookupHubPage.astro", "page header", "static", "authored-vi"),
-    ("ui:lookup/lead", "lead", "Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình và binh thư — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.", "src/components/pages/LookupHubPage.astro", "page header", "static", "authored-vi"),
+    ("ui:lookup/lead", "lead", "Tướng, chiến pháp, trang bị, quân sư, cải tạo binh chủng, công trình, binh thư và kỳ lược — tìm bằng tên Việt, Hán-Việt hoặc chữ Hán.", "src/components/pages/LookupHubPage.astro", "page header", "static", "authored-vi"),
     ("ui:lookup/search-aria", "ariaLabel", "t(`Tìm ${LOOKUP_GROUP_UNITS[group]}`", "src/components/pages/LookupGroupPage.astro", "search", "static", "authored-vi"),
     ("ui:lookup/search-placeholder", "placeholder", "`Tìm ${LOOKUP_GROUP_UNITS[group]}… (gõ không dấu hoặc chữ Hán đều được)`", "src/components/pages/LookupGroupPage.astro", "search", "static", "authored-vi"),
     ("ui:lookup/group-aria", "ariaLabel", "t('Nhóm tra cứu'", "src/components/pages/LookupGroupPage.astro", "group links", "static", "authored-vi"),
@@ -623,8 +646,9 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup/unit-troop-mods", "unit", '"troop-mods": "cải tạo binh chủng"', "js/unified-lookup.js", "LOOKUP_GROUP_UNITS", "static", "authored-vi"),
     ("ui:lookup/unit-buildings", "unit", 'buildings: "công trình"', "js/unified-lookup.js", "LOOKUP_GROUP_UNITS", "static", "authored-vi"),
     ("ui:lookup/unit-books", "unit", 'books: "binh thư"', "js/unified-lookup.js", "LOOKUP_GROUP_UNITS", "static", "authored-vi"),
-    ("ui:lookup/book-former-names", "label", 'L("Tên cũ", "旧名")', "js/lookup-detail.js", "bookProfile", "static", "authored-vi"),
-    ("ui:lookup/book-effect-version", "label", 'L("Số liệu theo bản", "数据版本")', "js/lookup-detail.js", "bookProfile", "static", "authored-vi"),
+    ("ui:lookup/unit-qilue", "unit", 'qilue: "kỳ lược"', "js/unified-lookup.js", "LOOKUP_GROUP_UNITS", "static", "authored-vi"),
+    ("ui:lookup/book-former-names", "label", 'L("Tên cũ", "旧名", "旧名")', "js/lookup-detail.js", "bookProfile", "static", "authored-vi"),
+    ("ui:lookup/book-effect-version", "label", 'L("Số liệu theo bản", "数据版本", "データ版")', "js/lookup-detail.js", "bookProfile", "static", "authored-vi"),
     ("ui:lookup/more", "action", '"Xem thêm"', "js/unified-lookup.js", "lookupMoreTrees", "static", "authored-vi"),
     ("ui:lookup/more-note", "note", "`Mỗi lượt hiện ${pageSize} kết quả`", "js/unified-lookup.js", "lookupMoreTrees", "static", "authored-vi"),
     ("ui:lookup/empty", "empty", '"Không có kết quả phù hợp."', "js/lookup-page.js", "initLookupPage", "empty", "authored-vi"),
@@ -632,7 +656,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup/profile-loading", "status", '"Đang tải hồ sơ…"', "js/lookup-page.js", "initLookupPage", "static", "authored-vi"),
     ("ui:lookup/close", "ariaLabel", '"Đóng hồ sơ"', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
     ("ui:lookup/badge-cost", "label", '`Thống ngự ${record.cost}`', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
-    ("ui:lookup/fact-role", "label", '[L("Vai trò", "定位"), valueText(fieldByKey(profile, "roleTagViet"), "")]', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
+    ("ui:lookup/fact-role", "label", '[L("Vai trò", "定位", "役割"), valueText(fieldByKey(profile, "roleTagViet"), "")]', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
     ("ui:lookup/fact-title", "label", '"Danh hiệu độc quyền"', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
     ("ui:lookup/fact-traits", "label", '"Đặc tính"', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
     ("ui:lookup/section-stats", "heading", '"Chỉ số"', "js/lookup-profile.js", "createProfileRenderer", "static", "authored-vi"),
@@ -666,11 +690,13 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup/hero-civil-points", "label", '"Điểm nội chính"', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
     ("ui:lookup/hero-collectible-bonus", "label", '"Thưởng sưu tầm"', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
     ("ui:lookup/hero-red-rules", "label", '"Quy tắc điểm đỏ"', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
-    ("ui:lookup/hero-usage", "label", 'L("Đánh giá", "评价")', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
-    ("ui:lookup/hero-card-packs", "heading", 'L("Cách nhận", "获取途径")', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
-    ("ui:lookup/hero-card-pack-core", "label", 'L("Tướng lõi", "核心")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
-    ("ui:lookup/hero-card-pack-regular", "label", 'L("Thường", "非核心")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
-    ("ui:lookup/hero-card-pack-rates", "label", '`${L("lõi", "核心")} ${percentText(pack.coreRate)} / ${L("thường", "非核心")} ${percentText(pack.nonCoreRate)}`', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
+    ("ui:lookup/hero-usage", "label", 'L("Đánh giá", "评价", "評価")', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
+    ("ui:lookup/hero-card-packs", "heading", 'L("Cách nhận", "获取途径", "入手方法")', "js/lookup-detail.js", "heroProfile", "static", "authored-vi"),
+    ("ui:lookup/hero-card-pack-core", "label", 'L("Tướng lõi", "核心", "コア")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
+    ("ui:lookup/hero-card-pack-regular", "label", 'L("Thường", "非核心", "非コア")', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
+    ("ui:lookup/hero-card-pack-rates", "label", '`${L("lõi", "核心", "コア")} ${percentText(pack.coreRate)} / ${L("thường", "非核心", "非コア")} ${percentText(pack.nonCoreRate)}`', "js/lookup-detail.js", "cardPackField", "static", "authored-vi"),
+    ("ui:lookup/qilue-rarity-common", "label", 'common: ["Thường", "普通", "普通"]', "js/lookup-detail.js", "QILUE_RARITY_LABELS", "static", "authored-vi"),
+    ("ui:lookup/qilue-rarity-rare", "label", 'rare: ["Hiếm", "稀有", "稀有"]', "js/lookup-detail.js", "QILUE_RARITY_LABELS", "static", "authored-vi"),
     # Tra cứu bốn nhóm catalog dạng danh sách + chi tiết (Trang bị, Quân sư, Cải tạo binh chủng, Công trình).
     ("ui:lookup-master/group-equipment", "label", "Trang bị", "js/lookup-master.js", "GROUP_LABELS", "static", "authored-vi"),
     ("ui:lookup-master/group-advisors", "label", "Quân sư", "js/lookup-master.js", "GROUP_LABELS", "static", "authored-vi"),
@@ -738,6 +764,55 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:lookup-master/cost-wood", "label", '"Gỗ"', "js/lookup-master.js", "COST_KEYS", "static", "authored-vi"),
     ("ui:lookup-master/cost-stone", "label", '"Đá"', "js/lookup-master.js", "COST_KEYS", "static", "authored-vi"),
     ("ui:lookup-master/cost-iron", "label", '"Sắt"', "js/lookup-master.js", "COST_KEYS", "static", "authored-vi"),
+    ("ui:lookup-master/group-qilue", "label", 'qilue: ["Kỳ lược", "奇略", "奇略"]', "js/lookup-master.js", "GROUP_LABELS", "static", "authored-vi"),
+    ("ui:lookup-master/panel-qilue", "ariaLabel", "Chi tiết kỳ lược", "js/lookup-master.js", "masterPanelLabel", "static", "authored-vi"),
+    ("ui:lookup-master/filter-qilue", "ariaLabel", "Lọc kỳ lược", "js/lookup-master.js", "FILTER_ARIA", "static", "authored-vi"),
+    ("ui:lookup-master/summary-qilue-tail", "hint", " · màu theo loại thẻ", "js/lookup-master.js", "masterSummaryTrees", "static", "authored-vi"),
+    ("ui:lookup-master/summary-unit-qilue", "unit", 'text(locale, "kỳ lược", "项奇略", "件の奇略")', "js/lookup-master.js", "masterSummaryTrees", "static", "authored-vi"),
+    ("ui:lookup-master/summary-unit-qilue-type", "unit", "`thẻ ${cardType}`", "js/lookup-master.js", "masterSummaryTrees", "data", "authored-vi"),
+    ("ui:lookup-master/qilue-strategy-sub", "label", '`Phương lược · thẻ ${types.join(", ")}`', "js/lookup-master.js", "qilueRowTree", "data", "authored-vi"),
+    ("ui:lookup-master/qilue-card-sub", "label", 'text(locale, "Thẻ kỳ lược", "奇略卡", "奇略カード"), qilueLabel("target"', "js/lookup-master.js", "qilueRowTree", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-section-strategy", "heading", 'title: text(locale, "Phương lược", "作战方略", "方略")', "js/lookup-master.js", "qilueResultTrees", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-section-type", "heading", '`Thẻ ${qilueLabel("type", type, "vi")}`', "js/lookup-master.js", "qilueResultTrees", "data", "authored-vi"),
+    ("ui:lookup-master/qilue-card-eyebrow", "label", 'text(locale, "Thẻ kỳ lược", "奇略卡", "奇略カード")].join(" · ")', "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-fact-type", "label", 'text(locale, "Loại", "类型", "種類")', "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-fact-rarity", "label", 'text(locale, "Độ hiếm", "稀有度", "レア度")', "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-fact-target", "label", 'text(locale, "Đối tượng", "目标", "対象")', "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-effect-heading", "heading", 'text(locale, "Hiệu ứng", "效果", "効果")', "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-strategies-heading", "heading", "Dùng được với phương lược", "js/lookup-master.js", "qilueCardDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-strategy-eyebrow", "label", 'text(locale, "Phương lược", "作战方略", "方略")].join(" · ")', "js/lookup-master.js", "qilueStrategyDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-aliases", "label", '`Tên khác: ${aliases.join(", ")}`', "js/lookup-master.js", "qilueStrategyDetail", "data", "authored-vi"),
+    ("ui:lookup-master/qilue-buff-heading", "heading", "Hiệu quả mỗi thẻ", "js/lookup-master.js", "qilueStrategyDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-types-heading", "heading", "Loại thẻ dùng được", "js/lookup-master.js", "qilueStrategyDetail", "static", "authored-vi"),
+    ("ui:lookup-master/qilue-type-count", "label", "` · ${count} thẻ`", "js/lookup-master.js", "qilueStrategyDetail", "data", "authored-vi"),
+    # Máy tính nâng cấp công trình trên trang nhóm Công trình (Tra cứu): chữ tác giả mới, lớp `authored-vi`.
+    ("ui:building-calc/cost-wood", "label", 'wood: ["Gỗ", "木材"]', "js/building-upgrade-calculator.js", "COST_LABELS", "static", "authored-vi", 'wood: ["Gỗ", "木材", "木材"]'),
+    ("ui:building-calc/cost-stone", "label", 'stone: ["Đá", "石料"]', "js/building-upgrade-calculator.js", "COST_LABELS", "static", "authored-vi", 'stone: ["Đá", "石料", "石材"]'),
+    ("ui:building-calc/cost-iron", "label", 'iron: ["Sắt", "铁矿"]', "js/building-upgrade-calculator.js", "COST_LABELS", "static", "authored-vi", 'iron: ["Sắt", "铁矿", "鉄鉱"]'),
+    ("ui:building-calc/duration-days", "unit", '[days, "ngày", "天"]', "js/building-upgrade-calculator.js", "formatUpgradeDuration", "data", "authored-vi", '[days, "ngày", "天", "日"]'),
+    ("ui:building-calc/duration-hours", "unit", '[hours, "giờ", "小时"]', "js/building-upgrade-calculator.js", "formatUpgradeDuration", "data", "authored-vi", '[hours, "giờ", "小时", "時間"]'),
+    ("ui:building-calc/duration-minutes", "unit", '[minutes, "phút", "分钟"]', "js/building-upgrade-calculator.js", "formatUpgradeDuration", "data", "authored-vi", '[minutes, "phút", "分钟", "分"]'),
+    ("ui:building-calc/duration-seconds", "unit", '[seconds, "giây", "秒"]', "js/building-upgrade-calculator.js", "formatUpgradeDuration", "data", "authored-vi", '[seconds, "giây", "秒", "秒"]'),
+    ("ui:building-calc/duration-zero", "label", 'text(locale, "0 phút", "0分钟")', "js/building-upgrade-calculator.js", "formatUpgradeDuration", "empty", "authored-vi", 'text(locale, "0 phút", "0分钟", "0分")'),
+    ("ui:building-calc/missing-both", "warning", "`Thiếu dữ liệu cấp ${list(both)}: tài nguyên và thời gian`", "js/building-upgrade-calculator.js", "missingLevelMessages", "data", "authored-vi"),
+    ("ui:building-calc/missing-cost", "warning", "`Thiếu dữ liệu cấp ${list(costOnly)}: tài nguyên`", "js/building-upgrade-calculator.js", "missingLevelMessages", "data", "authored-vi"),
+    ("ui:building-calc/missing-time", "warning", "`Thiếu dữ liệu cấp ${list(timeOnly)}: thời gian`", "js/building-upgrade-calculator.js", "missingLevelMessages", "data", "authored-vi"),
+    ("ui:building-calc/title", "heading", '"Tính tài nguyên nâng cấp"', "js/building-upgrade-calculator.js", "buildingCalculatorShellTree", "static", "authored-vi"),
+    ("ui:building-calc/lead", "lead", '"Cộng gỗ, đá, sắt và thời gian cần để nâng cấp nhiều công trình"', "js/building-upgrade-calculator.js", "buildingCalculatorShellTree", "static", "authored-vi"),
+    ("ui:building-calc/field-building", "label", 'text(locale, "Công trình", "建筑")', "js/building-upgrade-calculator.js", "rowTree", "static", "authored-vi", 'text(locale, "Công trình", "建筑", "施設")'),
+    ("ui:building-calc/option", "label", "`${buildingName(item, locale)} · Lv ${itemMax}`", "js/building-upgrade-calculator.js", "rowTree", "data", "authored-vi"),
+    ("ui:building-calc/field-from", "label", 'text(locale, "Cấp hiện tại", "当前等级")', "js/building-upgrade-calculator.js", "rowTree", "static", "authored-vi", 'text(locale, "Cấp hiện tại", "当前等级", "現在のレベル")'),
+    ("ui:building-calc/field-to", "label", 'text(locale, "Cấp đích", "目标等级")', "js/building-upgrade-calculator.js", "rowTree", "static", "authored-vi", 'text(locale, "Cấp đích", "目标等级", "目標レベル")'),
+    ("ui:building-calc/remove-aria", "ariaLabel", "`Bỏ dòng ${name}`", "js/building-upgrade-calculator.js", "rowTree", "data", "authored-vi"),
+    ("ui:building-calc/remove", "action", 'text(locale, "Bỏ", "移除")', "js/building-upgrade-calculator.js", "rowTree", "static", "authored-vi", 'text(locale, "Bỏ", "移除", "削除")'),
+    ("ui:building-calc/range-invalid", "warning", '"Cấp đích cần lớn hơn cấp hiện tại."', "js/building-upgrade-calculator.js", "rowResultTree", "empty", "authored-vi"),
+    ("ui:building-calc/row-range", "label", "`Lv ${row.from} → ${row.to}`", "js/building-upgrade-calculator.js", "rowResultTree", "data", "authored-vi"),
+    ("ui:building-calc/totals-heading", "heading", 'text(locale, "Tổng cộng", "合计")', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi", 'text(locale, "Tổng cộng", "合计", "合計")'),
+    ("ui:building-calc/totals-time", "label", 'text(locale, "Thời gian", "耗时")', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi", 'text(locale, "Thời gian", "耗时", "所要時間")'),
+    ("ui:building-calc/totals-missing", "warning", "`Tổng chưa gồm ${total.missingLevelCount} cấp thiếu dữ liệu.`", "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi"),
+    ("ui:building-calc/totals-note", "note", '"Thời gian là tổng thời gian nâng lần lượt từng cấp, chưa trừ hiệu quả giảm thời gian nâng cấp."', "js/building-upgrade-calculator.js", "totalsTree", "data", "authored-vi"),
+    ("ui:building-calc/empty", "empty", '"Chưa có công trình nào. Bấm “Thêm công trình” để bắt đầu."', "js/building-upgrade-calculator.js", "buildingCalculatorBodyTree", "empty", "authored-vi"),
+    ("ui:building-calc/add", "action", 'text(locale, "+ Thêm công trình", "+ 添加建筑")', "js/building-upgrade-calculator.js", "buildingCalculatorBodyTree", "static", "authored-vi", 'text(locale, "+ Thêm công trình", "+ 添加建筑", "+ 施設を追加")'),
     # 3 công cụ Beta (Phase 9): chữ tác giả mới trong phần render của công cụ — lớp `authored-vi`.
     ("ui:recruit/kicker", "kicker", "Công cụ · Beta", "js/recruit-tracker.js", "initRecruitTracker", "static", "authored-vi"),
     ("ui:recruit/title", "title", "Theo dõi chiêu mộ", "js/recruit-tracker.js", "initRecruitTracker", "static", "authored-vi"),
@@ -798,11 +873,11 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/step-review", "step", "Kiểm tra", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     ("ui:roster/step-suggest", "step", "Gợi ý", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     ("ui:roster/step-caps", "caps", "Bước ${index + 1}", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
-    ("ui:roster/scan-count", "count", "${total} ${scan.unit} đã đọc", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
+    ("ui:roster/scan-count", "count", "${total} ${scan.unit.vi} đã đọc", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
     ("ui:roster/scan-done", "state", "Đọc lại", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
     ("ui:roster/scan-pending", "state", "Chưa đọc", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
     ("ui:roster/scan-pick-file", "status", "Chưa có ảnh", "js/roster-recommend-ui.js", "initRosterRecommend", "status", "authored-vi"),
-    ("ui:roster/scan-pick-action", "action", 'L("Chọn ảnh", "选择图片")', "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
+    ("ui:roster/scan-pick-action", "action", 'L("Chọn ảnh", "选择图片", "画像を選択")', "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
     ("ui:roster/scan-token-first", "status", "Xác thực Turnstile trước.", "js/roster-recommend-ui.js", "initRosterRecommend", "status", "authored-vi"),
     ("ui:roster/scan-status", "status", "Đã đọc xong. Kiểm tra lại dữ liệu bên dưới.", "js/roster-recommend-ui.js", "initRosterRecommend", "status", "authored-vi"),
     ("ui:roster/review-toggle", "action", "Sửa kho đã đọc", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
@@ -811,7 +886,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/add-placeholder", "placeholder", "Thêm tướng ảnh chưa đọc ra…", "js/roster-recommend-ui.js", "addControl", "static", "authored-vi"),
     ("ui:roster/add-action", "action", "Thêm", "js/roster-recommend-ui.js", "addControl", "static", "authored-vi"),
     ("ui:roster/remove-aria", "ariaLabel", "Bỏ ", "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
-    ("ui:roster/flag-check", "label", 'L("kiểm tra", "待核对")', "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
+    ("ui:roster/flag-check", "label", 'L("kiểm tra", "待核对", "要確認")', "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
     ("ui:roster/locked-empty", "empty", "Chưa có đội khóa.", "js/roster-recommend-ui.js", "teamList", "empty", "authored-vi"),
     ("ui:roster/locked-heroes", "label", "Tướng: ", "js/roster-recommend-ui.js", "teamList", "data", "authored-vi"),
     ("ui:roster/locked-tactics", "label", "Chiến pháp: ", "js/roster-recommend-ui.js", "teamList", "data", "authored-vi"),
@@ -823,7 +898,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/portfolio-empty", "empty", "Chưa có đội nào xây dựng được từ kho hiện tại.", "js/roster-recommend-ui.js", "renderRecommendation", "empty", "authored-vi"),
     ("ui:roster/add-full", "empty", "Đã đủ ${MAX_TEAMS} đội", "js/roster-recommend-ui.js", "renderRecommendation", "empty", "authored-vi"),
     ("ui:roster/add-empty", "empty", "Chưa có đội phù hợp để thêm từ kho hiện tại.", "js/roster-recommend-ui.js", "renderRecommendation", "empty", "authored-vi"),
-    ("ui:roster/result-tactics", "label", 'L("Chiến pháp", "战法")', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
+    ("ui:roster/result-tactics", "label", 'L("Chiến pháp", "战法", "戦法")', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     ("ui:roster/result-variants", "label", "Đã thay:", "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     # Gợi ý theo mùa + mục Thiếu món + "Vì sao?" (plans/260929-0415-goi-y-doi-theo-mua).
     ("ui:roster/ai-note", "note", "AI chỉ đọc ảnh, và chỉ giải thích món bù khi bạn hỏi. Đội được chọn bằng công cụ cục bộ từ dữ liệu đã tuyển chọn.", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
@@ -864,7 +939,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/scan-read", "action", "Đọc ảnh", "js/roster-recommend-ui.js", "paintScanCards", "static", "authored-vi"),
     ("ui:roster/scan-read-aria", "ariaLabel", "Đọc ảnh ${scan.label}", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
     ("ui:roster/scan-reread-aria", "ariaLabel", "Đọc lại ảnh ${scan.label}", "js/roster-recommend-ui.js", "paintScanCards", "data", "authored-vi"),
-    ("ui:roster/chip-count-truncated", "count", "${items.length} ${scan.unit} · hiện ${visible.length}", "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
+    ("ui:roster/chip-count-truncated", "count", "${items.length} ${scan.unit.vi} · hiện ${visible.length}", "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
     ("ui:roster/chip-show-all", "action", "Hiện tất cả ${items.length}", "js/roster-recommend-ui.js", "itemList", "data", "authored-vi"),
     ("ui:roster/chip-collapse", "action", "Thu gọn", "js/roster-recommend-ui.js", "itemList", "static", "authored-vi"),
     ("ui:roster/add-tactic-placeholder", "placeholder", "Thêm chiến pháp…", "js/roster-recommend-ui.js", "initRosterRecommend", "static", "authored-vi"),
@@ -876,7 +951,7 @@ UI_LITERAL_OBLIGATIONS = (
     ("ui:roster/summary-counts", "count", "${state.ownedHeroes.length} tướng · ${state.ownedTactics.length} chiến pháp", "js/roster-recommend-ui.js", "paintSummary", "data", "authored-vi"),
     ("ui:roster/summary-locked", "count", "${lockedTotal} đội khóa", "js/roster-recommend-ui.js", "paintSummary", "data", "authored-vi"),
     ("ui:roster/tier-pill", "label", 'Bậc: ${entry.tier || "—"}', "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
-    ("ui:roster/hero-row-label", "label", 'L("Tướng", "武将")', "js/roster-recommend-ui.js", "heroRows", "data", "authored-vi"),
+    ("ui:roster/hero-row-label", "label", 'L("Tướng", "武将", "武将")', "js/roster-recommend-ui.js", "heroRows", "data", "authored-vi"),
     ("ui:roster/portfolio-count", "count", "${portfolio.length}/${MAX_TEAMS} đội", "js/roster-recommend-ui.js", "renderRecommendation", "data", "authored-vi"),
     ("ui:roster/missing-count", "count", "Thiếu ${total} món", "js/roster-recommend-ui.js", "renderRecommendation", "conflict", "authored-vi"),
     ("ui:roster/substitute-title", "label", " thay ${slot.tactic}", "js/roster-recommend-ui.js", "renderRecommendation", "conflict", "authored-vi"),
@@ -1770,9 +1845,24 @@ def _json_path(path):
     return result
 
 
-def _data_classification(path, text):
+def _youtube_trace_field(relative, document, path):
+    """`[i].nameZh`, `[i].evidence[j].videoId|at` của hàng nguồn YouTube trong `data/teams.json`."""
+    source_file, source = YOUTUBE_TRACE_SOURCE
+    if relative != source_file or not path or not isinstance(path[0], int) or not isinstance(document, list):
+        return False
+    row = document[path[0]] if path[0] < len(document) else None
+    if not isinstance(row, dict) or row.get("source") != source:
+        return False
+    rest = path[1:]
+    return rest == ("nameZh",) or (
+        len(rest) == 3 and rest[0] == "evidence" and isinstance(rest[1], int) and rest[2] in {"videoId", "at"}
+    )
+
+
+def _data_classification(path, text, relative=None, document=None):
     field = next((part for part in reversed(path) if isinstance(part, str)), "")
-    if field in EXEMPT_DATA_FIELDS or re.match(r"^(?:https?://|sha256:)", text):
+    if (field in EXEMPT_DATA_FIELDS or _youtube_trace_field(relative, document, path)
+            or re.match(r"^(?:https?://|sha256:)", text)):
         return "exempt"
     if CJK.search(text):
         return "translate"
@@ -1899,7 +1989,7 @@ def site_translation_obligations(root, pack):
     for relative, owner in DATA_INVENTORY_OWNERS.items():
         value = json.loads(_repo_member(root, relative, label="data translation source").read_bytes())
         for path, text in _walk_strings(value):
-            if _data_classification(path, text) != "translate":
+            if _data_classification(path, text, relative, value) != "translate":
                 continue
             json_path = _json_path(path)
             obligations.append({
@@ -1952,7 +2042,7 @@ def concrete_site_locations(root, pack, ledger_relative):
                 "entityId": f"data:{relative}:{_json_path(path[:-1]) or '$'}",
                 "fieldPath": _json_path(path),
                 "owner": owner,
-                "classification": _data_classification(path, text),
+                "classification": _data_classification(path, text, relative, value),
                 "authority": relative,
             })
     lookup = json.loads(_repo_member(root, "pipeline/lookup-translations.json", label="Lookup ledger").read_bytes())
@@ -2072,6 +2162,8 @@ def compile_candidate(root, output, *, stage):
             "pipeline/recommended-display-map.json",
             "pipeline/recommended-default-season.json",
             "pipeline/recommended-content-links.json",
+            JP_TIERS_PATH,
+            QILUE_OVERRIDES_PATH,
             IDENTITY_MAP_PATH,
             OTHER_LEDGER_PATH,
         )
@@ -2122,6 +2214,11 @@ def compile_candidate(root, output, *, stage):
         # bản đang phát trên đĩa — số liệu không thể lệch với `data/heroes-dict.json` sau publish.
         catalog_bytes=(lookup_root / "heroes-dict.json").read_bytes(),
         tactic_catalog_bytes=(lookup_root / "tactics.json").read_bytes(),
+        # Tier nguồn JP: bảng khớp đã review, chỉ chiếu lên hàng khớp; file nằm trong input hash ở trên.
+        jp_tiers_bytes=_repo_member(root, JP_TIERS_PATH).read_bytes(),
+        # Kỳ lược của đội đọc từ chữ ghi chú, đối chiếu catalog Kỳ lược của chính candidate này.
+        qilue_catalog_bytes=(lookup_root / "lookup-catalog.json").read_bytes(),
+        qilue_overrides_bytes=_repo_member(root, QILUE_OVERRIDES_PATH).read_bytes(),
     )
 
     source_hashes = {

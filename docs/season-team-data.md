@@ -69,11 +69,22 @@ xem [hợp đồng consumer](mcp-research-server.md).
 ## Cùng Tồn và nguồn Recommended
 
 [Parser CSV](../pipeline/parse_coexist_csv.py) giữ nhóm, ba vị trí tướng, các
-slot có thứ tự, dòng ghi chú và điều kiện nguồn. Cột J thuộc “Cải tạo chiến
-pháp binh chủng”; không tự chuyển thành quân sư. Payload nguồn mới nằm trong
-`season-content-links.json`. [Bản đồ record](../pipeline/coexist-source-record-map.json)
-tách ID ổn định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần
-review mapping, không đổi ID theo vị trí CSV.
+slot có thứ tự, dòng ghi chú và điều kiện nguồn. Parser nhận hai dạng bảng theo
+header, mọi record trong một file cùng số cột:
+
+- 10 cột (Binh Diễn Xuân Thu): cột J thuộc “Cải tạo chiến pháp binh chủng”
+  (`unitTacticEffectsRaw` của đội); không tự chuyển thành quân sư.
+- 11 cột (Hán Diễm Trường Minh): thêm cột Trang Bị theo từng tướng
+  (`equipmentRaw`) và cột cuối Thẻ Kỳ Lược của đội (`strategyCardsRaw`, chỉ ở
+  dòng đầu đội). Dạng này không có `unitTacticEffectsRaw`; payload 10 cột không
+  mang hai trường mới. Validator Python/JS từ chối đội trộn trường hai dạng.
+
+Dòng “Ghi chú”/“Ghi Chú” mở phần ghi chú không phân biệt hoa thường. Payload
+nguồn nằm trong `season-content-links.json`. Mỗi nguồn có một bản đồ record
+([Binh Diễn](../pipeline/coexist-source-record-map.json),
+[Hán Diễm](../pipeline/coexist-han-diem-source-record-map.json)) tách ID ổn
+định khỏi fingerprint nội dung và tọa độ dòng; thay nội dung cần review mapping,
+không đổi ID theo vị trí CSV.
 
 `parse_coexist_csv.py` là thư viện, không có CLI. `parse_coexist_csv(csv_text,
 expected_hash=...)` parse snapshot; `build_content_links(...)` là bộ sinh các link
@@ -87,7 +98,7 @@ import json
 from pathlib import Path
 from pipeline.parse_coexist_csv import build_content_links
 links = json.loads(Path("pipeline/season-content-links.json").read_text(encoding="utf-8"))
-current = [link for link in links if link["target"]["type"] == "source-owned-coexist"]
+current = [link for link in links if link["scenarioId"] == "binh-dien-xuan-thu"]
 rebuilt = build_content_links(
     Path("plans/260907-0233-season-team-lookup/research/coexist-binh-dien-xuan-thu.csv").read_bytes().decode("utf-8"),
     json.loads(Path("pipeline/coexist-source-record-map.json").read_text(encoding="utf-8")),
@@ -99,12 +110,33 @@ print(len(rebuilt), rebuilt == current)  # 5 True với snapshot đang commit
 EOF
 ```
 
+Hán Diễm Trường Minh dùng cùng lệnh với snapshot
+`plans/261117-0206-cung-ton-han-diem-truong-minh/research/coexist-han-diem-truong-minh.csv`,
+bản đồ `pipeline/coexist-han-diem-source-record-map.json` và
+`scenarioId == "han-diem-truong-minh"`.
+
+Bảng 11 cột còn nối Thẻ Kỳ Lược với catalog Kỳ lược
+([`pipeline/coexist_qilue.py`](../pipeline/coexist_qilue.py)): mỗi tên trong
+`strategyCardsRaw` (theo thứ tự hiệp, tách bằng `→`) phải khớp `nameVi` của một
+`qilueCards` trong `data/lookup-catalog.json` hoặc một alias đã duyệt trong
+[`pipeline/coexist-qilue-aliases.json`](../pipeline/coexist-qilue-aliases.json)
+(alias ghi mã thẻ, chữ Hán và nguồn; thêm alias cần chủ repo duyệt). Kết quả là
+`strategyCardIds` của đội. Tên lạ hay chuỗi sai luật game (3–5 thẻ không trùng,
+tối đa 1 thẻ hiếm, loại thẻ thuộc một phương lược) làm `build_content_links` và
+`build_season_data` dừng; sheet không ghi phương lược nên không suy ra. Mã thẻ là
+projection: content fingerprint bỏ qua nên bản đồ record không đổi, còn
+`build_season_data` nối lại từ chữ nguồn với catalog đang pin và từ chối mã lệch
+(catalog Kỳ lược đổi tên/mã thì chạy lại `build_content_links` cho kịch bản đó).
+`build_content_links` mặc định đọc catalog/alias đang commit; truyền
+`qilue_catalog=`/`qilue_aliases=` để dựng với bản khác.
+
 Với snapshot mới: cập nhật `snapshotHash` trong metadata nguồn và review bản đồ
-record trước, thay các link `source-owned-coexist` trong
-`pipeline/season-content-links.json` bằng kết quả, rồi publish bằng
+record trước, thay các link `source-owned-coexist` của đúng kịch bản đó trong
+`pipeline/season-content-links.json` bằng kết quả (link kịch bản khác giữ nguyên byte), rồi publish bằng
 `python3 -m pipeline.build_season_data` như mục Bảo trì.
 
-Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa.
+Khai hoang dùng hướng dẫn được bảo trì mới nhất và không thuộc sidecar mùa; mùa mục tiêu
+hiện là Hán Diễm Trường Minh (PK-S27), ghi ở `season`/`seasonNote` của `data/khaihoang.json`.
 Text gợi ý khai hoang trong nguồn Cùng Tồn không tự thêm đội hoặc liên kết
 chuyển hình vào dữ liệu Khai hoang.
 
@@ -154,6 +186,7 @@ python3 -m pipeline.build_recommended_reference \
   --content-links pipeline/recommended-content-links.json \
   --catalog data/heroes-dict.json \
   --tactic-catalog data/tactics.json \
+  --jp-tiers pipeline/recommended-jp-tiers.json \
   --output src/data/recommended-reference
 ```
 
@@ -181,6 +214,20 @@ giải quyết được luôn là wildcard khi đối chiếu, không phải b�
 `recommended-other-teams.json` được ghi vào `other-teams.json`; duplicate và
 pending không đi vào public artifact.
 
+Đội khác chỉ có một mùa: corpus đối chiếu của `recommended_team_dedup` là Đội
+chuẩn của đúng mùa mặc định (`--default-season`, mặc định
+`pipeline/recommended-default-season.json`, hiện `pk-s27`; ledger ghi
+`recommendedCorpusSeasonId`), không phải mọi mùa, và mọi hàng admitted mang
+`sourceSeasonIds: [<mùa đó>]`. Đội gốc gồm sheet cộng đồng và đội đề cử curate tay
+từ YouTube trong `pipeline/team-youtube-pk-s27.json` (bản ghi đã chuẩn hóa, không
+có `id`, `source: "youtube"`); `pipeline.build_json` nối chúng vào `data/teams.json`
+sau supplement với ID `youtube-<n>`, giữ `nameZh`, `confidence`, `evidence`. Hàng
+nguồn YouTube có `recommended: true` (nguồn khác `false`), `sourceLabel` "YouTube"
+và đứng trước; giao diện hiện nhãn "Đề cử". Sau khi loại hàng trùng Đội chuẩn, các
+hàng admitted trùng tuyệt đối nhau (cùng dedup key tướng + chiến pháp) chỉ giữ hàng
+đầu theo thứ tự đã xếp (đề cử trước, rồi thứ tự xuất hiện); hàng còn lại thành
+`duplicate` với `matchingLocal` trỏ về hàng được giữ.
+
 `src/data/recommended-reference/current.json` chọn đúng một generation bất biến.
 Manifest khai báo hash và kích thước của `seasons.json`, `index.json`,
 `other-teams.json` và từng `details-<safeScopeKey>.json`. Astro chỉ xuất
@@ -194,6 +241,14 @@ không theo thứ tự mùa của SGSDeck. Builder dừng nếu mùa đó không
 `available`. Đổi mùa mặc định: sửa file, chạy lại chuỗi `site_localization build → check →
 publish` bên dưới, rồi `team_route_handles --rebind` và `lookup_route_handles --write` (redirect
 301 cho trang mùa của mùa mới hiện tại). File không thuộc glossary nên không làm stale receipt dịch.
+Đội khác không tự đi theo: corpus dedup và `sourceSeasonIds` của ledger Đội khác lấy mùa mặc định
+tại lúc chạy `recommended_team_dedup`, còn nhãn mùa của `/doi-khac/` đọc `sourceSeasonIds` của các hàng.
+Vì vậy đổi mùa mặc định thì phải quyết định biên tập về mùa của Đội khác (giữ mùa cũ hay chuyển sang
+mùa mới cùng bộ đội gốc tương ứng); nếu chuyển, chạy lại `recommended_team_dedup` (dedup với Đội chuẩn
+của mùa mới) trước chuỗi publish và review lại phân loại ledger. Hiện chưa giữ được Đội khác ở mùa cũ:
+builder bắt chạy lại dedup mỗi khi inventory Recommended đổi, và lần chạy đó gắn mọi hàng Đội khác sang
+mùa mặc định mới (kể cả đội YouTube của mùa cũ). Muốn giữ mùa cũ thì phải neo mùa trong pipeline trước
+(issue #134).
 
 Builder bắt buộc `--teams` và `--content-links`. `data/teams.json` là bản đội gốc
 duy nhất được đối chiếu; [`pipeline/recommended-content-links.json`](../pipeline/recommended-content-links.json)
@@ -214,6 +269,46 @@ Generation descriptor pin thêm `legacyTeamsHash` và `contentLinksHash`, nên �
 tương ứng, `textRaw` không rỗng và `textVi` đã review không rỗng/không chứa chữ Hán.
 Capture chỉ nhận ownership cùng `textRaw`; strict publication mới yêu cầu `textVi`.
 Renderer không suy ownership hoặc fallback raw khi bản dịch thiếu.
+
+### Tier nguồn Nhật (`tierSources`)
+
+`--jp-tiers` (tuỳ chọn ở CLI, luôn có trong chuỗi `site_localization`: `pipeline/recommended-jp-tiers.json`
+nằm trong `inputHashes` của candidate) nhận bảng khớp tier JP đã review, schema 1. Bảng có một `source`
+(bài tier, `url` https, `publishedAt`, `vnSourceSeasonId`) và `entries`, mỗi entry giữ đội theo chữ Nhật,
+`tierJa`, `match.kind` (`exact`, `heroes-only`, `none`), `match.recommendedTeamId` và `reviewStatus`.
+Kiểm hình dạng và chiếu nằm ở [`pipeline/recommended_jp_tiers.py`](../pipeline/recommended_jp_tiers.py).
+
+- Chỉ entry `reviewed` có `match.kind` là `exact` hoặc `heroes-only` được chiếu, thành
+  `tierSources: [{source: "jp", tierRaw, matchKind, url, publishedAt}]` trên hàng index và detail cùng
+  `sourceConfigId`. `tierRaw` của SGSDeck giữ nguyên; tier JP chỉ là trường hiển thị, không vào raw lineage,
+  `recommendedCorpusHash`, content links hay identity map.
+- Đối chiếu mùa theo tên kịch bản, không theo số mùa: số mùa JP lệch VN (JP S25「時代の英雄」= VN PK-S26,
+  JP「漢焔不滅」= VN PK-S27). Builder dừng khi hàng đích không có, lệch mùa với `source.vnSourceSeasonId`,
+  vắng ở detail hoặc bị hai entry trỏ tới; index và detail phải có cùng `tierSources`.
+- Mã tướng nội bộ của bảng (`do-uy:<tên>`) không ra bản phát. Descriptor ghi `jpTiersHash`, nên đổi bảng là
+  sinh generation mới (chạy lại chuỗi publish bên dưới).
+- Giao diện: facet nguồn sẵn có (`?source=jp`, chip "Tier JP" / 日服等级 / 日本版ティア) đếm theo mùa, huy hiệu
+  `JP <tier>` trên thẻ/bảng, khối "Tier JP" trên trang chi tiết kèm link bài nguồn. Đội `heroes-only` có nhãn
+  phụ "khác chiến pháp".
+
+Hiện bảng chỉ có PK-S26 (Kazten, 7 đội gán được tier: 2 `exact`, 5 `heroes-only`); tier PK-S27 theo issue #115.
+
+### Kỳ lược của đội (`qilue`)
+
+`qilue` là projection hiển thị của record Đội chuẩn. Nó được tính ở ranh giới publish (`prepare_publication_inputs`, gọi từ `site_localization.compile_candidate`) từ chữ Hán ghi chú đội, đối chiếu với `lookup-catalog.json` của **cùng** candidate. Trường này không vào source pack (`display_fields`, `ROW_DERIVED`), nên `recommendedCorpusHash` và `pipeline/recommended-other-teams.json` không đổi. Manifest ghim `qilueCatalogHash` và `qilueOverridesHash`.
+
+- **Các dạng nguồn** (`pipeline/recommended_qilue.py`):
+  - `official`: `作戰方略：…。奇略卡（第 2→6 回合）：a→…`
+  - `qimou`: `奇謀（X）：a→…`
+  - `bare`: `X：a→[極]b→…`
+  - `list`: `奇略：a、b…`, không có thứ tự.
+- **`pipeline/recommended-qilue-overrides.json`** gồm: `seasons` (allowlist mùa), `noteVariantsZh` (biến thể chữ Hán sai, chỉ áp trong chuỗi kỳ lược), `copyFrom` (đội ghi 復刻), `fix` (nguồn ghi sai) và `skip` (có lý do).
+- **Fail-closed:** publish dừng nếu gặp một trong các trường hợp:
+  - tên thẻ lạ;
+  - sai luật game (3–5 thẻ, tối đa 1 thẻ hiếm, loại thẻ phải thuộc 2 loại của phương lược);
+  - đội có chữ kỳ lược nhưng không đọc ra được và không nằm trong `skip`.
+- **Trang chi tiết:** section "Kỳ lược" nằm giữa Đội hình và Ghi chú. Block ghi chú chỉ chứa dòng kỳ lược của 台服 (`hideNoteBlockId`) bị ẩn, nhưng chỉ trên trang này.
+- **MCP:** `tqccl_get_team` có section `qilue` đã kèm tên.
 
 ### Tên Việt và dữ liệu Trung nguyên bản
 
@@ -302,7 +397,8 @@ Hàng mới, kể cả id từng bị gỡ nay quay lại, nhận handle suy t�
 trùng thì dùng handle suy từ tên kèm `-2`, `-3`… Tombstone không bao giờ được
 cấp lại, kể cả cho chính id từng giữ nó (id SGSDeck không bảo đảm danh tính đội),
 nên một URL đã công bố không bao giờ trỏ sang đội khác. Legacy/Khai hoang không
-đổi; `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
+đổi; khi `data/teams.json` thêm đội gốc thì dùng `--rebind --append-legacy` (handle
+legacy cũ giữ nguyên, đội mới nhận handle chỉ-thêm, xem deployment guide). `--check` sau đó phải đạt (kiểm cả mùa đã ghi và tombstone không trùng
 segment đang sống). `--write` chỉ dựng ledger lần đầu (`retiredRecommended`
 rỗng) nên từ chối ledger đã có tombstone.
 
@@ -378,7 +474,10 @@ Sau khi đổi generation trong lúc chạy `npm run dev`, khởi động lại 
 Quyền lưu và hiển thị cấu hình/điểm Recommended đã được người dùng xác nhận
 ngày 2026-09-12. Dữ liệu này là tham khảo nguồn, không tự trở thành điểm,
 tier hoặc eligibility gameplay VN. Khai hoang hiện tại vẫn dùng dữ liệu bảo
-trì riêng; danh mục Khaihoang của Recommended chỉ nằm trong Team chuẩn.
+trì riêng; danh mục Khaihoang của Recommended nằm trong Team chuẩn. Đưa một cấu hình
+Khai hoang của Recommended sang mục Khai hoang là bước curate tay (tên chiêu theo `data/tactics.json`, đội mới
+thêm cuối mảng `teams` để giữ khóa receipt `teams[N]`, thêm handle vào ledger rồi publish lại), không có
+đồng bộ tự động.
 
 ## Kiểm tra phạm vi đã có dữ liệu
 
@@ -388,9 +487,11 @@ hiện có. Một kịch bản xuất hiện trong registry không bảo đảm 
 cấu hình đủ bằng chứng. Tập rỗng phải được giữ nguyên cho đến khi đủ bằng
 chứng, không điền bằng dữ liệu mùa khác.
 
-Registry hiện có hai kịch bản tham khảo, đều chưa có luật đã review:
+Registry hiện có ba kịch bản tham khảo, đều chưa có luật đã review:
+**PK-S27 · Hán Diễm Trường Minh** (đứng đầu, mặc định của `/cung-ton/`) cho năm
+nhóm từ cùng tab Google Sheet sau khi chủ sheet ghi đè (snapshot 2026-11-17),
 **PK-S26 · Anh Hùng Mệnh Thế** cho năm nhóm Cùng Tồn legacy và
-**OG · Binh Diễn Xuân Thu** cho năm nhóm được thêm sau. Configs/evaluations
+**OG · Binh Diễn Xuân Thu** cho năm nhóm nhập 2026-09-07. Configs/evaluations
 vẫn rỗng nên chưa có tier hay điểm VN theo luật. Website cho phép đọc nguồn
 khi chỉ chọn kịch bản; request gameplay theo mùa của MCP cần cặp
 kịch bản/luật đã review, vì vậy dữ liệu hiện tại chưa cung cấp cặp hợp lệ cho

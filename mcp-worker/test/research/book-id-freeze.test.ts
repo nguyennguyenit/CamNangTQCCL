@@ -29,7 +29,7 @@ function model() {
     heroes: [],
     tactics: [],
     books: [{ id: ID, chinese: "以直报怨", viet: "Lấy Thẳng Báo Oán", aliases: ["Dĩ Trực Báo Oán"], sourceNames: ["以直報怨"], effect: "e", effectViet: "v", effectVersion: "2021-11" }],
-    catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [] },
+    catalog: { equipment: [], specials: [], advisors: [], troopMods: [], buildings: [], qilueStrategies: [], qilueCards: [] },
   });
   return buildPublicationReadModel(
     {

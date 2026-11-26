@@ -7,6 +7,8 @@ import { createTacticIdResolver } from "./lookup-ids.js";
 /** Chỉ cấu hình Giao chiến: Khai hoang có mục riêng và không dùng cho đội PK. */
 const BATTLE_CATEGORY = "交戰";
 const EMPTY_SLOTS = new Set(["", "—", "-"]);
+/** Số ô chiến pháp của mỗi tướng trong đội gốc `data/teams.json`. */
+const LEGACY_TACTICS_PER_HERO = 2;
 
 const rawKey = (value) => (typeof value === "string" ? value.replace(/\s+/gu, "") : "");
 
@@ -81,6 +83,8 @@ export function buildSeasonCandidates(records, seasonId, { heroesDict, tacticsDi
       source: "season",
       seasonId,
       tier,
+      // Điểm nguyên bản của nguồn (khóa phụ của mục tiêu meta khi tìm danh sách); null khi nguồn không ghi.
+      score: Number.isFinite(record.value) ? record.value : null,
       unitType: unitTypesRaw.map((raw) => UNIT_LABELS[raw]).filter(Boolean),
       unitTypesRaw,
       heroes,
@@ -164,6 +168,8 @@ const heroSetKey = (team) => (team.heroes || [])
  * @param {number} [input.poolLimit=60]  số đội (đã qua kiểm kho) mà DFS fullBox duyệt; đội ngoài giới hạn vẫn được bước tham lam xét
  * @param {boolean} [input.fullBox]
  * @param {"meta"|"redStars"} [input.mode]
+ * @param {boolean} [input.metaSearch]  mode meta: tìm danh sách theo khóa (số T0+T0.5, số T0, số đội, điểm nguồn, hột)
+ *   thay vì tham lam; MCP bật, website chưa bật
  * @param {Array} input.ownedHeroes  `string | {name, canonicalId?, redStars?}`
  * @param {Array} input.ownedTactics  `string | {name, canonicalId?}`
  * @param {object[]} [input.lockedTeams]
@@ -205,15 +211,20 @@ export function recommendRoster({
     maxTeams,
   });
   let portfolioTeams = season.portfolioTeams;
+  let legacyDiagnostics = null;
   if (portfolioTeams.length < maxTeams && legacyTeams.length) {
     const chosenKeys = new Set(season.addTeams.map((entry) => heroSetKey(entry.team)));
     const legacy = recommendTeams({
       ...shared,
       teams: legacyTeams.filter((team) => !chosenKeys.has(heroSetKey(team))),
       teamTier: legacyTier,
+      // Đội gốc mỗi tướng 2 ô chiến pháp; ô nguồn bỏ trống (chưa đọc được, ví dụ đội YouTube) là ô chưa đối chiếu,
+      // nên đội đó là "unreconciled", không bao giờ "build-now".
+      minTacticsPerHero: LEGACY_TACTICS_PER_HERO,
       maxTeams,
       seedEntries: season.addTeams,
     });
+    legacyDiagnostics = legacy.diagnostics;
     const chosen = new Set(portfolioTeams);
     portfolioTeams = [
       ...portfolioTeams,
@@ -226,7 +237,12 @@ export function recommendRoster({
     blockedStrongTeams: [...season.blockedStrongTeams].sort((a, b) => missingCount(a) - missingCount(b)),
     incompatibleTeams: season.incompatibleTeams,
     conflictedTeams: season.conflictedTeams,
-    diagnostics: season.diagnostics,
+    // Đội mùa giữ chẩn đoán của mình; giới hạn tìm kiếm (trần nút, cắt pool) tính cả lượt bù đội cũ.
+    diagnostics: {
+      ...season.diagnostics,
+      searchCapped: season.diagnostics.searchCapped === true || legacyDiagnostics?.searchCapped === true,
+      searchPoolTruncated: season.diagnostics.searchPoolTruncated === true || legacyDiagnostics?.searchPoolTruncated === true,
+    },
     legacyUsed: portfolioTeams.some((entry) => entry.source === "legacy"),
   };
 }

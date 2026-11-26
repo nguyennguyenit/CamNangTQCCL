@@ -3,23 +3,24 @@
 Sinh bằng `node scripts/report-zh-gaps.mjs` (không sửa tay). Mục nằm đây khi `lookupProfile(...).viOnly` ở bản zh: hồ sơ zh bỏ phần chỉ có chữ Việt (điều kiện, lịch sử, mô tả, lựa chọn…) và hiện một dòng báo thiếu.
 Cột "Phần thiếu" so hồ sơ vi với hồ sơ zh của cùng mục.
 
-Tổng: 109 / 983 mục.
+Tổng: 110 / 1029 mục.
 
 | Nhóm | Mục thiếu | Tổng mục |
 |---|---:|---:|
 | Tướng | 0 | 263 |
-| Chiến pháp | 109 | 422 |
+| Chiến pháp | 110 | 423 |
 | Trang bị | 0 | 114 |
 | Quân sư | 0 | 59 |
 | Cải tạo binh chủng | 0 | 16 |
 | Công trình | 0 | 41 |
 | Binh thư | 0 | 68 |
+| Kỳ lược | 0 | 45 |
 
 ## Tướng (heroes): 0 / 263
 
 Không có mục nào thiếu.
 
-## Chiến pháp (tactics): 109 / 422
+## Chiến pháp (tactics): 110 / 423
 
 | Mã | Tên | Phần thiếu |
 |---|---|---|
@@ -115,6 +116,7 @@ Không có mục nào thiếu.
 | tactic:toa-dieu-kinh-ngao | Tọa Điếu Kình Ngao | acquiredFromVi |
 | tactic:tuyet-ke-chiet-muu | Tuyệt Kế Chiết Mưu | conditions (2) |
 | tactic:vo-thanh-chi-tu | Quân Thần Chi Tử | acquiredFromVi |
+| tactic:hanh-ach-tran | Hành Ách Trận | conditions (1) |
 | tactic:tinh-bach-ma-nghia-tong | Tinh • Bạch Mã Nghĩa Tòng | conditions (6) |
 | tactic:tinh-bach-nhi-binh | Tinh • Bạch Nhị Binh | conditions (7) |
 | tactic:tinh-dai-kich-si | Tinh • Đại Kích Sĩ | conditions (6) |
@@ -150,5 +152,9 @@ Không có mục nào thiếu.
 Không có mục nào thiếu.
 
 ## Binh thư (books): 0 / 68
+
+Không có mục nào thiếu.
+
+## Kỳ lược (qilue): 0 / 45
 
 Không có mục nào thiếu.

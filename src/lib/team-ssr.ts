@@ -4,21 +4,22 @@
  * `treeToHtml`; dữ liệu là byte đã pin của publication (`websiteDisplayPublicationSnapshot`), bản Việt áp lớp
  * dịch bằng chính `loadWebsiteDisplay` + `localizeData` như trình duyệt.
  *
- * Trạng thái toàn cục mà builder cần (bảng route handle, bộ tra tên Hán của bản zh) đặt một lần ở `prepare()`.
+ * Trạng thái toàn cục mà builder cần (bảng route handle, bộ tra tên của bản zh và bản ja) đặt một lần ở `prepare()`.
  */
 import { createRawNameResolver, loadWebsiteDisplay, localizeData } from '../../js/website-display.js';
 import { treeToHtml, treeToText } from '../../js/view-tree.js';
 import { projectRecommendedRows, setZhNameResolver } from '../../js/recommended-reference-state.js';
 import { setTeamRouteHandles } from '../../js/team-detail-navigation.js';
-import { detailBadges, legacyOriginalDetailContent, recommendedTeamDetailContent } from '../../js/recommended-reference-render.js';
+import { detailBadges, legacyOriginalDetailContent, qilueLookupTable, recommendedTeamDetailContent, setCoexistQilueTable } from '../../js/recommended-reference-render.js';
 import { khaihoangDetailTrees } from '../../js/render.js';
+import { otherTeamOptions } from '../../js/other-team-groups.js';
 import { coexistScenarioBlocks, coexistSectionTrees, inertUntilBound, khaihoangSectionTrees, recommendedSectionTrees, seasonPageTrees } from './team-section-ssr.js';
 import { loadSeasonModel } from '../../js/season-ui-state.js';
 import { HERO_SUMMARY_FILE, parseHeroSummaries } from '../../js/hero-summaries.js';
 import { TACTIC_SUMMARY_FILE, parseTacticSummaries } from '../../js/tactic-summaries.js';
-import { readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
+import { lookupJaPublicationSnapshot, readPublicArtifact, seasonArtifactHashes, websiteDisplayPublicationSnapshot, type WebsiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import { teamDetailCatalog } from './team-detail-routes.ts';
-import { lookupRouteHandles } from './lookup-pages.ts';
+import { lookupJaNameResolver, lookupRouteHandles } from './lookup-pages.ts';
 import { tacticDisplayTable } from './tactic-display.ts';
 import type { SiteLocale } from './locale-routes';
 import type { LegacyRouteEntry, KhaiHoangRouteEntry, RecommendedRouteEntry } from './team-detail-routes.ts';
@@ -47,7 +48,10 @@ export function prepare() {
     const dicts = await Promise.all(['heroes-dict', 'tactics', 'books-dict'].map(async (routeParam) =>
       parse((await readPublicArtifact({ kind: 'data', routeParam })).bytes)));
     const rawName = createRawNameResolver(...dicts);
-    setZhNameResolver(rawName);
+    // Build dựng mọi bản trong một tiến trình: mỗi bản đăng ký bộ tra riêng (zh: chữ Hán gốc; ja: tên Nhật, cùng dữ liệu mà
+    // trang `/ja/` nạp lại ở trình duyệt qua `loadRawNameResolver`).
+    setZhNameResolver(rawName, 'zh');
+    setZhNameResolver(await lookupJaNameResolver(), 'ja');
     // Cùng bảng route handle mà SiteLayout nhúng cho trang mục (`r`/`l`/`k`).
     const registered = setTeamRouteHandles({
       r: Object.fromEntries(catalog.recommended.map((entry) => [entry.sourceConfigId, entry.routeSegment])),
@@ -89,13 +93,38 @@ export interface TeamDetailParts {
   badgesHtml: string;
 }
 
-/** Cây thân + huy hiệu của trang chi tiết Đội chuẩn; `record` là bản ghi chi tiết đã pin của cấu hình. */
-async function recommendedDetailTrees(record: Json, lookupLinks: unknown, locale: SiteLocale) {
+interface QilueContext {
+  /** `qilueLookupTable` của lookup-catalog.json đã pin trong publication: mã kỳ lược → tên vi/zh/ja, loại, độ hiếm. */
+  table: Json;
+  /** Bản ghi index cùng generation theo `sourceConfigId`: đội nguồn của dạng kỳ lược chép (`form: copy`). */
+  teams: Map<string, Json>;
+}
+
+let qilueContext: Promise<QilueContext> | undefined;
+
+/** Bảng tra kỳ lược + index đội cho section Kỳ lược của trang chi tiết (một lần cho cả lần build, dùng chung mọi bản và llms). */
+function qilueOptions() {
+  return qilueContext ??= (async () => {
+    const env = await prepare();
+    const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
+    // Tên Nhật của mục kỳ lược: cùng lớp lookup-ja đã kiểm mà trang Tra cứu `/ja/` dùng.
+    const ja = await lookupJaPublicationSnapshot();
+    const rows: Json[] = parse(env.website.recommended.files['index.json'])?.records ?? [];
+    return { table: qilueLookupTable(catalog, ja.document), teams: new Map(rows.map((row) => [row.sourceConfigId, row])) };
+  })();
+}
+
+/**
+ * Cây thân + huy hiệu của trang chi tiết Đội chuẩn; `record` là bản ghi chi tiết đã pin của cấu hình. `plainText`: bản
+ * chữ thuần cho llms (section Kỳ lược thu về dòng gọn).
+ */
+async function recommendedDetailTrees(record: Json, lookupLinks: unknown, locale: SiteLocale, plainText = false) {
   const env = await prepare();
   const labels = parse(env.website.recommended.files['seasons.json'])?.displayLabels ?? null;
   const legacyTeams = await localizedData('teams', locale);
-  // Tùy chọn của builder JS (không có kiểu JSDoc): `lookupLinks`/`locale` là khóa hợp lệ.
-  const options: Json = { legacyTeams, labels, lookupLinks, locale };
+  const qilue = await qilueOptions();
+  // Tùy chọn của builder JS (không có kiểu JSDoc): `lookupLinks`/`qilueTable`/`qilueTeams`/`plainText`/`locale` là khóa hợp lệ.
+  const options: Json = { legacyTeams, labels, lookupLinks, qilueTable: qilue.table, qilueTeams: qilue.teams, plainText, locale };
   return { body: recommendedTeamDetailContent(record, options) as Tree[], badges: detailBadges(record, labels, { locale }) as Tree[] };
 }
 
@@ -105,20 +134,47 @@ export async function recommendedDetailParts(record: Json, lookupLinks: unknown,
   return { bodyHtml: html(body), badgesHtml: html(badges) };
 }
 
-/** Chữ thuần của trang chi tiết Đội chuẩn (huy hiệu rồi thân) — llms.txt dùng đúng cây mà HTML dựng từ. */
+/** Chữ thuần của trang chi tiết Đội chuẩn (huy hiệu rồi thân) — llms.txt dùng cùng builder và cùng bản ghi với HTML. */
 export async function recommendedDetailText(record: Json, lookupLinks: unknown, locale: SiteLocale): Promise<string> {
-  const { body, badges } = await recommendedDetailTrees(record, lookupLinks, locale);
+  const { body, badges } = await recommendedDetailTrees(record, lookupLinks, locale, true);
   return treeToText([...badges, ...body]);
+}
+
+let otherTeams: Promise<Json> | undefined;
+
+/** `other-teams.json` đã pin, parse một lần cho cả lần build (file ~1 MB, trang Đội khác dựng hàng trăm lần mỗi locale). */
+export function otherTeamsPayload() {
+  return otherTeams ??= (async () => parse((await prepare()).website.recommended.files['other-teams.json']))();
+}
+
+let recommendedLegacyIds: Promise<Set<string>> | undefined;
+
+/** Mã đội gốc có ít nhất một hàng `recommended: true` trong `other-teams.json` đã pin (field vắng = không đề cử). */
+function recommendedLegacyTeamIds() {
+  return recommendedLegacyIds ??= (async () => {
+    const admitted: Json[] = (await otherTeamsPayload())?.records ?? [];
+    return new Set<string>(admitted.filter((row) => row.recommended === true).map((row) => row.legacyTeamId));
+  })();
 }
 
 async function legacyDetailTrees(entry: LegacyRouteEntry, locale: SiteLocale) {
   const teams: Json[] = await localizedData('teams', locale);
   const matches = teams.filter((team) => team.id === entry.legacyTeamId);
   if (matches.length !== 1) throw new Error(`Legacy team must resolve to exactly one record: ${entry.legacyTeamId}`);
-  return { body: legacyOriginalDetailContent(matches[0], { locale }) as Tree[], badges: detailBadges(matches[0], null, { locale }) as Tree[] };
+  // Đề cử nằm ở hàng `other-teams.json` đã admit (không ở `teams.json`): đội có hàng đề cử nào thì hiện nhãn ở trạng thái không có biến thể.
+  const referenceRecommended = (await recommendedLegacyTeamIds()).has(entry.legacyTeamId);
+  // Các phương án đủ dữ liệu khác cùng team (link thật tới trang của từng phương án); nhánh `?variant=` phía client dựng lại
+  // bằng cùng hàm trên cùng payload đã pin.
+  const teamOptions = otherTeamOptions(await otherTeamsPayload(), entry.legacyTeamId);
+  // Tùy chọn của builder JS (không có kiểu JSDoc): `locale`/`teamOptions` là khóa hợp lệ.
+  const options: Json = { locale, teamOptions };
+  return {
+    body: legacyOriginalDetailContent(matches[0], options) as Tree[],
+    badges: detailBadges({ ...matches[0], referenceRecommended }, null, { locale }) as Tree[],
+  };
 }
 
-/** Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể). */
+/** Thân + huy hiệu trang chi tiết Đội khác (nội dung đội gốc ở trạng thái không có biến thể, kèm các phương án khác của team). */
 export async function legacyDetailParts(entry: LegacyRouteEntry, locale: SiteLocale): Promise<TeamDetailParts> {
   const { body, badges } = await legacyDetailTrees(entry, locale);
   return { bodyHtml: html(body), badgesHtml: html(badges) };
@@ -135,7 +191,7 @@ async function khaiHoangDetailTrees(entry: KhaiHoangRouteEntry, locale: SiteLoca
   if (matches.length !== 1) throw new Error(`Khai hoang team must resolve to exactly one record: ${entry.khaiHoangTeamId}`);
   const [team] = matches;
   const options: Json = { variantId: '', locale };
-  return { body: inertUntilBound(khaihoangDetailTrees(team, options)) as Tree[], badges: detailBadges({ unitType: team.unitType ? [team.unitType] : [] }, null, { locale }) as Tree[] };
+  return { body: inertUntilBound(khaihoangDetailTrees(team, options)) as Tree[], badges: detailBadges({ unitType: team.unitType ? [team.unitType] : [], khaihoangRecommended: team.recommended === true }, null, { locale }) as Tree[] };
 }
 
 /** Thân + huy hiệu trang chi tiết Khai hoang ở cấu hình mặc định. */
@@ -162,6 +218,32 @@ function seasonModel() {
   })();
 }
 
+let coexistQilueJson: Promise<string> | undefined;
+
+/**
+ * Bảng tra Thẻ Kỳ Lược của thẻ Cùng Tồn từ lookup-catalog.json đã pin: đăng ký cho builder (`setCoexistQilueTable`) và
+ * trả JSON gọn (mã, tên vi/zh, loại, độ hiếm; `jaNames` là tên Nhật của thẻ theo cùng lớp lookup-ja mà Đội chuẩn dùng)
+ * mà trang `/cung-ton/` nhúng ở `#coexist-qilue-table` để trình duyệt dựng lại thẻ khi đổi mùa/nhóm bằng đúng bảng của
+ * bản dựng sẵn. Bản ja cần tên Nhật của mọi thẻ (`qilueItem` dừng build khi thiếu).
+ */
+export function coexistQilueTableJson(): Promise<string> {
+  return coexistQilueJson ??= (async () => {
+    const catalog = parse((await readPublicArtifact({ kind: 'data', routeParam: 'lookup-catalog' })).bytes);
+    const rows = Array.isArray(catalog?.qilueCards) ? catalog.qilueCards : [];
+    const jaEntries = (await lookupJaPublicationSnapshot()).document?.entries ?? {};
+    const jaNames: Json = Object.fromEntries(rows
+      .filter(({ id }: Json) => typeof jaEntries[id]?.name === 'string' && jaEntries[id].name.trim())
+      .map(({ id }: Json) => [id, { name: jaEntries[id].name }]));
+    const compact = {
+      qilueStrategies: [],
+      qilueCards: rows.map(({ id, nameVi, nameZh, type, rarity }: Json) => ({ id, nameVi, nameZh, type, rarity })),
+      jaNames,
+    };
+    setCoexistQilueTable(qilueLookupTable(compact, jaNames));
+    return JSON.stringify(compact).replace(/</g, '\\u003c');
+  })();
+}
+
 export interface TeamSectionParts {
   /** HTML thân của mục ở trạng thái mặc định (nằm trong `#section-<mục>`). */
   html: string;
@@ -175,10 +257,17 @@ export async function teamSectionParts(section: TeamSection, locale: SiteLocale)
   if (section === 'team-chuan' || section === 'team-khac') {
     const registry = parse(env.website.recommended.files['seasons.json']);
     const family = section === 'team-khac' ? 'other' : 'recommended';
-    const rows = parse(env.website.recommended.files[family === 'other' ? 'other-teams.json' : 'index.json']).records;
-    return { html: html(recommendedSectionTrees({ family, rows, registry, locale })), source };
+    // Đội khác dựng theo team nên cần cả payload (`records` + `teamGroups`); Đội chuẩn chỉ cần `records`.
+    const data = parse(env.website.recommended.files[family === 'other' ? 'other-teams.json' : 'index.json']);
+    const trees = family === 'other'
+      ? recommendedSectionTrees({ family, payload: data, registry, locale })
+      : recommendedSectionTrees({ family, rows: data.records, registry, locale });
+    return { html: html(trees), source };
   }
-  if (section === 'coexist') return { html: html(coexistSectionTrees({ model: await seasonModel(), locale })), source };
+  if (section === 'coexist') {
+    await coexistQilueTableJson();
+    return { html: html(coexistSectionTrees({ model: await seasonModel(), locale })), source };
+  }
   return { html: html(khaihoangSectionTrees({ data: await localizedData('khaihoang', locale), locale })), source };
 }
 
@@ -223,6 +312,7 @@ export interface CoexistScenarioText {
 /** Chữ thuần của mọi nhóm Cùng Tồn theo từng mùa đã duyệt (llms.txt). */
 export async function coexistScenarioTexts(locale: SiteLocale): Promise<CoexistScenarioText[]> {
   await prepare();
+  await coexistQilueTableJson();
   const blocks = coexistScenarioBlocks({ model: await seasonModel(), locale }) as Array<{ scenarioId: string; label: string; query: string; groups: Tree[] }>;
   return blocks.map((block) => ({ ...block, groups: block.groups.map((tree) => treeToText(tree)) }));
 }

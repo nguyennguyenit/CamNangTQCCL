@@ -17,12 +17,15 @@ function defaultStorage() {
 
 /**
  * Cất đội nháp (thay mục cũ) kèm `unresolved` của bộ chuyển nguồn, để toast sau OAuth báo đúng những gì không vào đội.
+ * `trackSource` (tùy chọn) là nguồn đo lường của nút lưu, để lượt lưu sau OAuth báo đúng nguồn.
  * Trả `false` khi storage vắng, đầy hoặc bị chặn; không ném.
  */
-export function stashPendingSave(draft, { unresolved = [], storage = defaultStorage(), now = Date.now } = {}) {
+export function stashPendingSave(draft, { unresolved = [], trackSource = "", storage = defaultStorage(), now = Date.now } = {}) {
   try {
     if (!storage) return false;
-    storage.setItem(PENDING_KEY, JSON.stringify({ draft, unresolved: Array.isArray(unresolved) ? unresolved : [], createdAt: now() }));
+    const entry = { draft, unresolved: Array.isArray(unresolved) ? unresolved : [], createdAt: now() };
+    if (trackSource) entry.trackSource = trackSource;
+    storage.setItem(PENDING_KEY, JSON.stringify(entry));
     return true;
   } catch {
     return false;
@@ -59,6 +62,17 @@ export function peekPendingUnresolved({ storage = defaultStorage(), now = Date.n
     return Array.isArray(unresolved) ? unresolved : [];
   } catch {
     return [];
+  }
+}
+
+/** `trackSource` cất cùng bản lưu dở còn hạn; không có bản lưu dở hay mục cũ không có trường thì `""`. */
+export function peekPendingTrackSource({ storage = defaultStorage(), now = Date.now } = {}) {
+  if (!peekPendingSave({ storage, now })) return "";
+  try {
+    const source = JSON.parse(storage.getItem(PENDING_KEY)).trackSource;
+    return typeof source === "string" ? source : "";
+  } catch {
+    return "";
   }
 }
 

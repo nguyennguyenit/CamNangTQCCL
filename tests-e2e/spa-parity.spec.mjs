@@ -742,9 +742,18 @@ test("opening a roster recommendation preserves its section and opens the exact 
   await waitForBoot(page);
   await page.getByRole("button", { name: "Gợi ý 5 đội", exact: true }).click();
   // Kho dựng từ đội cũ: đội cũ lấp chỗ trống sau đội của mùa và mang nhãn "Tham khảo – đội cũ".
-  const recommendation = page.locator(".roster-team-list .roster-result-team").filter({
+  const legacyCards = page.locator(".roster-team-list .roster-result-team").filter({
     has: page.locator('.roster-status[data-status="legacy"]'),
-  }).first();
+  });
+  await expect(legacyCards.first()).toBeVisible();
+  // Đội cũ chỉ có trang Đội khác khi có phương án đủ dữ liệu: thẻ không có nút "Mở đội" là đội mà trang trả 404.
+  for (const card of await legacyCards.filter({ hasNot: page.locator(".roster-open") }).all()) {
+    const name = await card.locator(".roster-result-name").textContent();
+    const team = teamsFixture.find((entry) => entry.name === name);
+    expect(team, name).toBeTruthy();
+    expect((await page.request.get(legacyRoute(team.id))).status(), name).toBe(404);
+  }
+  const recommendation = legacyCards.filter({ has: page.locator(".roster-open") }).first();
   const selectedName = await recommendation.locator(".roster-result-name").textContent();
   const selectedTeam = teamsFixture.find((team) => team.name === selectedName);
   expect(selectedTeam).toBeTruthy();
@@ -1004,9 +1013,10 @@ test("aria-current đúng trên cả 8 trang mục", async ({ page }) => {
       if (await active.isVisible()) break;
       await toggle.click();
     }
-    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp).
+    // Đúng một dấu "trang hiện tại" nhìn thấy được (footer và menu mobile không lặp). Link bản đang xem của nhóm chuyển
+    // ngôn ngữ (`data-lang-current`) đánh dấu ngôn ngữ, không phải mục, nên không tính.
     await expect(active).toBeVisible();
-    await expect(page.locator('a[aria-current="page"]:visible')).toHaveCount(1);
+    await expect(page.locator('a[aria-current="page"]:visible:not([data-lang-current])')).toHaveCount(1);
   }
 });
 
@@ -1030,7 +1040,7 @@ test("footer dùng chung có trên Landing, trang mục, trang chi tiết và 40
   expect(dates.size).toBe(1);
 });
 
-test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
+test("menu mobile giữ đủ 8 dòng Tra cứu tới trang nhóm và tiêu đề nhóm là link tới /tra-cuu/", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/tra-cuu/");
   await waitForBoot(page);
@@ -1045,15 +1055,16 @@ test("menu mobile giữ đủ 7 dòng Tra cứu tới trang nhóm và tiêu đ�
   const groupLinks = overlay.locator('a[href^="/tra-cuu/"]:not([href="/tra-cuu/"])');
   expect(await groupLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")))).toEqual([
     "/tra-cuu/tuong/", "/tra-cuu/chien-phap/", "/tra-cuu/trang-bi/", "/tra-cuu/quan-su/",
-    "/tra-cuu/cai-tao-binh-chung/", "/tra-cuu/cong-trinh/", "/tra-cuu/binh-thu/",
+    "/tra-cuu/cai-tao-binh-chung/", "/tra-cuu/cong-trinh/", "/tra-cuu/binh-thu/", "/tra-cuu/ky-luoc/",
   ]);
   // Bấm dòng con vào đúng trang nhóm, menu đóng lại; trên trang nhóm dòng đó là trang hiện tại.
   await overlay.locator('a[href="/tra-cuu/chien-phap/"]').click();
   await expect(page).toHaveURL("/tra-cuu/chien-phap/");
   await expect(page.locator("#section-menu-items")).toBeHidden();
   await page.locator("#section-menu-toggle").click();
-  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]')).toHaveAttribute("aria-current", "page");
-  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]')).not.toHaveAttribute("aria-current", /.+/);
+  // Chân menu có link bản đang xem của nhóm chuyển ngôn ngữ trỏ cùng trang: chỉ xét link mục.
+  await expect(overlay.locator('a[href="/tra-cuu/chien-phap/"]:not([data-lang-current])')).toHaveAttribute("aria-current", "page");
+  await expect(overlay.locator('a[href="/tra-cuu/tuong/"]:not([data-lang-current])')).not.toHaveAttribute("aria-current", /.+/);
 });
 
 test("Back/Forward cùng tài liệu đóng menu mobile và mở khóa cuộn", async ({ page }) => {
@@ -1130,11 +1141,12 @@ test("rời trang bằng điều hướng khác tài liệu rồi quay lại kh�
 
 /* ---------- Vòng sửa Opus (P3-B1…B3, N1…N5) ---------- */
 
-test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang", async ({ page }) => {
-  const detail = `/doi-khac/${encodeURIComponent(routeHandles.legacy[teamsFixture[0].id])}/`;
-  for (const width of [1280, 1440]) {
-    await page.setViewportSize({ width, height: 900 });
-    for (const path of ["/", "/doi-chuan/", detail]) {
+// Một test cho mỗi trang (kể cả bản zh/ja: nhãn nav và nhóm chuyển ngôn ngữ mỗi bản một độ rộng khác nhau);
+// gộp chung một test thì trên runner CI vượt giới hạn 30 s.
+for (const path of ["/", "/doi-chuan/", legacyRoute(teamsFixture[0].id), "/zh/", "/ja/", "/ja/doi-chuan/"]) {
+  test(`menu thả Game neo phải và mọi panel nằm trong khung nhìn, không cuộn ngang: ${path}`, async ({ page }) => {
+    for (const width of [1280, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
       await page.goto(path);
       await expect(page.locator("#nav-toggle-game")).toBeVisible();
       const buttons = await page.locator(".site-nav [data-dropdown-button]").all();
@@ -1152,8 +1164,8 @@ test("menu thả Game neo phải và mọi panel nằm trong khung nhìn, không
       // Nhóm Game neo theo mép phải nút (artboard LandingMenu: right 0, width 500).
       expect(await page.locator("#nav-toggle-game").evaluate((node) => node.closest("[data-dropdown]").classList.contains("nav-dropdown-game"))).toBe(true);
     }
-  }
-});
+  });
+}
 
 test("header 821–1279px dùng ☰ thay nav ngang; 1280px mọi nhãn nav một dòng", async ({ page }) => {
   for (const width of [821, 1024, 1180, 1279]) {
@@ -1359,7 +1371,7 @@ test("không có JavaScript: trang mục có h1 tên mục; trang đội dựng 
   await expect(nojs.locator("#section-lookup [data-lookup-id]")).toHaveCount(HEROES_TOTAL);
   await expect(nojs.locator("#section-lookup .lookup-card").first()).toBeVisible();
   await nojs.goto(new URL(LOOKUP_HUB, baseURL).href, { waitUntil: "domcontentloaded" });
-  await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(7);
+  await expect(nojs.locator("#section-lookup a.lookup-hub-card")).toHaveCount(8);
   await context.close();
 });
 

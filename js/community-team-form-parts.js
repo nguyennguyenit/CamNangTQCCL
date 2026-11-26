@@ -35,7 +35,7 @@ export function pill(children, hidden = false) {
 export function troopChips(name = 'cm-team-troop') {
   const inputs = TROOPS.map((value) => el('input', { type: 'radio', name, value }));
   const group = el('fieldset', { class: 'chip-chon-nhom cm-team-troops', id: 'cm-team-troop' }, [
-    el('legend', { class: 'cm-team-fld-label' }, L('Binh chủng', '兵种')),
+    el('legend', { class: 'cm-team-fld-label' }, L('Binh chủng', '兵种', '兵種')),
     el('div', { class: 'chip-chon-hang' }, inputs.map((input) => el('label', { class: 'chip-chon' }, [
       input,
       el('span', { class: 'chip-chon-mat' }, [
@@ -74,8 +74,8 @@ export function countedField({ id, label, hint = '', control, max, wide = false 
 
 /** Tên ô theo vị trí: "Tướng 3 · Chiến pháp 2". */
 export function cellPlace(heroIndex, position) {
-  const hero = L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`);
-  return position === 0 ? hero : `${hero} · ${L(`Chiến pháp ${position}`, `战法 ${position}`)}`;
+  const hero = L(`Tướng ${heroIndex + 1}`, `武将 ${heroIndex + 1}`, `武将 ${heroIndex + 1}`);
+  return position === 0 ? hero : `${hero} · ${L(`Chiến pháp ${position}`, `战法 ${position}`, `戦法 ${position}`)}`;
 }
 
 /** Chữ AI đọc được (giữ chữ Hán trong `lang`), dùng cho dòng "đọc được …". */
@@ -85,10 +85,10 @@ export function rawText(raw) {
 }
 
 const COUNT_KEYS = [
-  ['sure', () => L('Khớp', '匹配')],
-  ['unsure', () => L('Không chắc', '不确定')],
-  ['unknown', () => L('Không rõ', '无法识别')],
-  ['empty', () => L('Còn trống', '空白')],
+  ['sure', () => L('Khớp', '匹配', '一致')],
+  ['unsure', () => L('Không chắc', '不确定', '不確実')],
+  ['unknown', () => L('Không rõ', '无法识别', '認識不可')],
+  ['empty', () => L('Còn trống', '空白', '空欄')],
 ];
 
 /**
@@ -102,13 +102,13 @@ export function readSummary(cells) {
   let side;
   if (pending.length) {
     side = el('div', { class: 'cm-team-pending' }, [
-      el('h4', { class: 'cm-team-pending-title' }, L(`Cần bạn chọn ${pending.length} ô trước khi gửi`, `提交前还需确认 ${pending.length} 格`)),
+      el('h4', { class: 'cm-team-pending-title' }, L(`Cần bạn chọn ${pending.length} ô trước khi gửi`, `提交前还需确认 ${pending.length} 格`, `送信前に ${pending.length} マスの確認が必要です`)),
       ...pending.slice(0, 3).map((cell) => {
         const button = el('button', { class: 'cm-team-jump', type: 'button' }, [
           el('span', { class: 'cm-team-jump-text' }, [
             el('span', { class: 'cm-team-jump-where' }, cell.place),
             el('span', { class: 'cm-team-jump-why' }, [
-              cell.state === 'unsure' ? L('Không chắc · đọc được ', '不确定 · 识别为 ') : L('Không có trong danh sách · ', '列表中没有 · '),
+              cell.state === 'unsure' ? L('Không chắc · đọc được ', '不确定 · 识别为 ', '不確実 · 認識結果: ') : L('Không có trong danh sách · ', '列表中没有 · ', 'リストにありません · '),
               rawText(cell.raw),
             ]),
           ]),
@@ -119,15 +119,15 @@ export function readSummary(cells) {
       }),
     ]);
   } else if (counts.sure === cells.length) {
-    side = el('p', { class: 'cm-team-done' }, [teamIcon('checkCircle'), L('Đủ 9/9 ô: 3 tướng và 6 chiến pháp khớp danh sách.', '9/9 格已完成：3 名武将和 6 个战法均与列表匹配。')]);
+    side = el('p', { class: 'cm-team-done' }, [teamIcon('checkCircle'), L('Đủ 9/9 ô: 3 tướng và 6 chiến pháp khớp danh sách.', '9/9 格已完成：3 名武将和 6 个战法均与列表匹配。', '9/9 マス完了：武将3名と戦法6つがすべてリストと一致しました。')]);
   } else {
     side = el('p', { class: 'cm-team-pending-title' }, L(
       `Còn ${counts.empty + counts.unknown} ô trống: gõ hoặc chọn từ gợi ý.`,
-      `还有 ${counts.empty + counts.unknown} 格未填：请输入或从提示中选择。`,
+      `还有 ${counts.empty + counts.unknown} 格未填：请输入或从提示中选择。`, `未入力が ${counts.empty + counts.unknown} マスあります。入力するか候補から選択してください。`,
     ));
   }
   return el('div', { class: 'cm-team-read-summary' }, [
-    el('ul', { class: 'cm-team-counts', 'aria-label': L('Tình trạng 9 ô', '9 格状态') }, COUNT_KEYS.map(([key, label]) => el('li', {
+    el('ul', { class: 'cm-team-counts', 'aria-label': L('Tình trạng 9 ô', '9 格状态', '9マスの状態') }, COUNT_KEYS.map(([key, label]) => el('li', {
       class: 'cm-team-count',
       dataset: { state: key, zero: String(counts[key] === 0) },
     }, [
@@ -145,7 +145,7 @@ export function checkItem(name, value, ok) {
     el('span', { class: 'cm-team-check-text' }, [
       el('span', { class: 'cm-team-check-name' }, name),
       el('span', { class: 'cm-team-check-val', dataset: { ok: String(ok) } }, [
-        el('span', { class: 'visually-hidden' }, ok ? L('Đạt: ', '已满足：') : L('Chưa đạt: ', '未满足：')),
+        el('span', { class: 'visually-hidden' }, ok ? L('Đạt: ', '已满足：', '達成：') : L('Chưa đạt: ', '未满足：', '未達成：')),
         value,
       ]),
     ]),

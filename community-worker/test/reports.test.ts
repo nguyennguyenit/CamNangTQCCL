@@ -129,6 +129,23 @@ describe("POST /api/reports/analyze", () => {
 });
 
 describe("gửi + kiểm duyệt chiến báo", () => {
+  it("lang=ja: gửi, duyệt, hiện ở danh sách ja và không lẫn sang vi; lang ngoài danh sách -> 400", async () => {
+    const h = createHarness();
+    h.setFetch(() => modelReply("{}"));
+    const id = await submitReport(h, "bob", { lang: "ja" });
+    await h.request(`/api/admin/reports/${id}/approve`, { as: "admin", method: "POST" });
+    const ja = await (await h.request(`/api/reports?page=${PAGE}&lang=ja`)).json<ApiJson>();
+    expect(ja.items).toEqual([expect.objectContaining({ id, lang: "ja" })]);
+    expect((await (await h.request(`/api/reports?page=${PAGE}&lang=vi`)).json<ApiJson>()).items).toEqual([]);
+    expect((await h.request(`/api/reports?page=${PAGE}&lang=ko`)).status).toBe(400);
+    const { uploadId } = await (await analyze(h, "bob")).json<ApiJson>();
+    const ko = await h.request("/api/reports", {
+      as: "bob",
+      json: { page: PAGE, lang: "ko", uploadId, result: "win", allyHeroes: ["曹操"], enemyHeroes: [] },
+    });
+    expect((await ko.json<ApiJson>()).error.code).toBe("invalid_lang");
+  });
+
   it("upload của người khác không dùng được; gửi xong ảnh chuyển khỏi pending", async () => {
     const h = createHarness();
     h.setFetch(() => modelReply("{}"));
@@ -309,7 +326,7 @@ describe("chiến báo trên trang đội cộng đồng", () => {
   const send = (h: Harness, as: "alice" | "bob", uploadId: string, extra: Record<string, unknown> = {}, page = TEAM_PAGE) =>
     h.request("/api/reports", { as, json: { page, lang: "vi", uploadId, result: "win", allyHeroes: ["曹操"], enemyHeroes: ["刘备"], ...extra } });
 
-  it("đội approved mùa mở -> 201, season = mùa của đội dù client gửi khác", async () => {
+  it("đội approved -> 201, season = mùa của đội dù client gửi khác", async () => {
     const h = createHarness();
     seedSeason(h, "s1");
     await seedTeam(h, { id: "t1" });
@@ -321,10 +338,10 @@ describe("chiến báo trên trang đội cộng đồng", () => {
     expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "attached" });
   });
 
-  it("đội pending -> 404; mùa đóng -> 409 season_closed; upload còn pending, không rate limit, gửi lại vào đội chuẩn được", async () => {
+  it("đội pending -> 404; đội mùa không phải hiện hành -> 201; upload còn pending, không rate limit khi bị từ chối", async () => {
     const h = createHarness();
     seedSeason(h, "s1");
-    seedSeason(h, "s0", 5);
+    seedSeason(h, "s0");
     await seedTeam(h, { id: "t1", status: "pending" });
     await seedTeam(h, { id: "t2", season: "s0" });
     const id = await upload(h);
@@ -332,29 +349,37 @@ describe("chiến báo trên trang đội cộng đồng", () => {
     const missing = await send(h, "bob", id);
     expect(missing.status).toBe(404);
     expect((await missing.json<ApiJson>()).error.code).toBe("not_found");
-    const closed = await send(h, "bob", id, {}, "/doi-cong-dong/t2/");
-    expect(closed.status).toBe(409);
-    expect((await closed.json<ApiJson>()).error.code).toBe("season_closed");
     expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "pending" });
     expect(h.objects.has(`pending/${id}`)).toBe(true);
     expect(reportKeys(h)).toEqual([]);
     expect(reportCount(h)).toBe(before);
-    expect((await send(h, "bob", id, {}, PAGE)).status).toBe(201);
+    const old = await send(h, "bob", id, {}, "/doi-cong-dong/t2/");
+    expect(old.status).toBe(201);
+    expect(h.sqlite.prepare("select season from battle_reports where id = ?").get((await old.json<ApiJson>()).id)).toMatchObject({ season: "s0" });
   });
 
-  it("mùa đóng giữa preflight và batch -> 409, upload vẫn pending, không còn ảnh reports/", async () => {
+  it("id mùa của đội đổi giữa preflight và batch (migration 0012 / rollback chen giữa) -> chiến báo mang mùa mới của đội", async () => {
     const h = createHarness();
     seedSeason(h, "s1");
+    seedSeason(h, "s2");
     await seedTeam(h, { id: "t1" });
     const id = await upload(h);
-    h.beforeNextBatch(() => void h.sqlite.prepare("update community_seasons set closed_at = 9 where id = 's1'").run());
+    h.beforeNextBatch(() => void h.sqlite.prepare("update community_teams set season_id = 's2' where id = 't1'").run());
     const res = await send(h, "bob", id);
-    expect(res.status).toBe(409);
-    expect((await res.json<ApiJson>()).error.code).toBe("season_closed");
-    expect(h.sqlite.prepare("select status from uploads where id = ?").get(id)).toMatchObject({ status: "pending" });
-    expect(h.objects.has(`pending/${id}`)).toBe(true);
-    expect(reportKeys(h)).toEqual([]);
-    expect(h.sqlite.prepare("select count(*) as n from battle_reports").get()).toMatchObject({ n: 0 });
+    expect(res.status).toBe(201);
+    const reportId = (await res.json<ApiJson>()).id as string;
+    expect(h.sqlite.prepare("select season from battle_reports where id = ?").get(reportId)).toMatchObject({ season: "s2" });
+  });
+
+  it("worker mới trên schema cũ (trước 0012): gửi chiến báo vào đội được, season lấy từ đội", async () => {
+    const h = createHarness({}, { migrationsUpTo: "0011" });
+    seedSeason(h, "binh-dien-xuan-thu");
+    await seedTeam(h, { id: "t1", season: "binh-dien-xuan-thu" });
+    const id = await upload(h);
+    const res = await send(h, "bob", id, { season: "khac" });
+    expect(res.status).toBe(201);
+    const reportId = (await res.json<ApiJson>()).id as string;
+    expect(h.sqlite.prepare("select season from battle_reports where id = ?").get(reportId)).toMatchObject({ season: "binh-dien-xuan-thu" });
   });
 
   it("đội bị gỡ giữa preflight và batch -> 404, upload vẫn pending", async () => {

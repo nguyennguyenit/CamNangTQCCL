@@ -2,7 +2,8 @@
 // Lỗi JSON `{error:{code,message}}` của server không bao giờ hiện nguyên văn: luôn đổi sang câu song ngữ
 // theo mã trạng thái, giống cách js/analyze.js chặn văn bản upstream.
 
-import { L, currentLocale, formatDate, localePath } from './i18n.js';
+import { L, LOCALE_INTL, LOCALE_LABEL, currentLocale, formatDate, isSiteLocale, localePath } from './i18n.js';
+import { track } from './analytics.js';
 import { el, icon, svgNode } from './render.js';
 
 /** Khoá localStorage ghi "có thể đang đăng nhập": trang thường chỉ hỏi `/api/me` khi có dấu này. */
@@ -25,30 +26,30 @@ export class CommunityError extends Error {
 }
 
 function unavailableMessage() {
-  return L('Tính năng cộng đồng tạm thời không khả dụng. Vui lòng thử lại sau.', '社区功能暂时不可用，请稍后再试。');
+  return L('Tính năng cộng đồng tạm thời không khả dụng. Vui lòng thử lại sau.', '社区功能暂时不可用，请稍后再试。', 'コミュニティ機能は現在ご利用いただけません。しばらくしてからもう一度お試しください。');
 }
 
 function statusMessage(status) {
   switch (status) {
     case 400:
     case 422:
-      return L('Dữ liệu gửi lên chưa hợp lệ. Hãy kiểm tra lại.', '提交的内容无效，请检查后重试。');
+      return L('Dữ liệu gửi lên chưa hợp lệ. Hãy kiểm tra lại.', '提交的内容无效，请检查后重试。', '送信内容が正しくありません。ご確認ください。');
     case 401:
-      return L('Bạn cần đăng nhập để làm việc này.', '请先登录再进行此操作。');
+      return L('Bạn cần đăng nhập để làm việc này.', '请先登录再进行此操作。', 'この操作にはログインが必要です。');
     case 403:
-      return L('Bạn không có quyền làm việc này.', '你没有执行此操作的权限。');
+      return L('Bạn không có quyền làm việc này.', '你没有执行此操作的权限。', 'この操作を行う権限がありません。');
     case 404:
-      return L('Không tìm thấy nội dung yêu cầu.', '找不到请求的内容。');
+      return L('Không tìm thấy nội dung yêu cầu.', '找不到请求的内容。', 'リクエストされたコンテンツが見つかりません。');
     case 409:
-      return L('Nội dung bị trùng với mục đã có.', '内容与已有条目重复。');
+      return L('Nội dung bị trùng với mục đã có.', '内容与已有条目重复。', '既存の項目と内容が重複しています。');
     case 413:
-      return L('Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn.', '图片太大，请选择更小的图片。');
+      return L('Ảnh quá lớn. Hãy chọn ảnh nhỏ hơn.', '图片太大，请选择更小的图片。', '画像が大きすぎます。より小さい画像を選んでください。');
     case 415:
-      return L('Định dạng ảnh không được hỗ trợ (chỉ JPEG, PNG, WebP).', '不支持该图片格式（仅支持 JPEG、PNG、WebP）。');
+      return L('Định dạng ảnh không được hỗ trợ (chỉ JPEG, PNG, WebP).', '不支持该图片格式（仅支持 JPEG、PNG、WebP）。', '対応していない画像形式です（JPEG、PNG、WebPのみ）。');
     case 429:
-      return L('Bạn thao tác quá nhanh. Hãy thử lại sau ít phút.', '操作过于频繁，请几分钟后再试。');
+      return L('Bạn thao tác quá nhanh. Hãy thử lại sau ít phút.', '操作过于频繁，请几分钟后再试。', '操作が多すぎます。数分後にもう一度お試しください。');
     default:
-      return L('Không thể hoàn tất thao tác. Vui lòng thử lại.', '无法完成操作，请重试。');
+      return L('Không thể hoàn tất thao tác. Vui lòng thử lại.', '无法完成操作，请重试。', '操作を完了できませんでした。もう一度お試しください。');
   }
 }
 
@@ -57,87 +58,83 @@ function codeMessage(code) {
   switch (code) {
     case 'ai_overloaded':
     case 'ai_unavailable':
-      return L('Dịch vụ AI đang bận. Hãy thử lại sau ít phút.', 'AI 服务繁忙，请几分钟后再试。');
+      return L('Dịch vụ AI đang bận. Hãy thử lại sau ít phút.', 'AI 服务繁忙，请几分钟后再试。', 'AIサービスが混み合っています。数分後にもう一度お試しください。');
     case 'ai_not_configured':
     case 'feature_disabled':
-      return L('Tính năng này hiện chưa được bật.', '该功能暂未开启。');
+      return L('Tính năng này hiện chưa được bật.', '该功能暂未开启。', 'この機能は現在有効になっていません。');
     case 'slug_taken':
-      return L('Slug này đã được dùng cho một bài cùng ngôn ngữ.', '同一语言中已有文章使用此 slug。');
+      return L('Slug này đã được dùng cho một bài cùng ngôn ngữ.', '同一语言中已有文章使用此 slug。', '同じ言語の記事で、このスラッグはすでに使われています。');
     case 'translation_key_taken':
-      return L('Khoá bản dịch này đã có bài cùng ngôn ngữ.', '同一语言中已有文章使用此译文关联键。');
+      return L('Khoá bản dịch này đã có bài cùng ngôn ngữ.', '同一语言中已有文章使用此译文关联键。', '同じ言語の記事で、この翻訳キーはすでに使われています。');
     case 'invalid_upload':
-      return L('Ảnh đã tải lên không còn hợp lệ. Hãy chọn lại ảnh.', '上传的图片已失效，请重新选择。');
+      return L('Ảnh đã tải lên không còn hợp lệ. Hãy chọn lại ảnh.', '上传的图片已失效，请重新选择。', 'アップロードした画像は無効になりました。画像を選び直してください。');
     case 'ai_secret_missing':
-      return L('Worker chưa có secret AI_CONFIG_SECRET nên chưa lưu được cấu hình AI.', 'Worker 尚未设置 AI_CONFIG_SECRET，无法保存 AI 配置。');
+      return L('Worker chưa có secret AI_CONFIG_SECRET nên chưa lưu được cấu hình AI.', 'Worker 尚未设置 AI_CONFIG_SECRET，无法保存 AI 配置。', 'WorkerにAI_CONFIG_SECRETが未設定のため、AI設定を保存できません。');
     case 'missing_api_key':
-      return L('Nhà cung cấp mới hoặc vừa đổi endpoint cần nhập API key.', '新服务商或更换了 endpoint 的服务商需要填写 API 密钥。');
+      return L('Nhà cung cấp mới hoặc vừa đổi endpoint cần nhập API key.', '新服务商或更换了 endpoint 的服务商需要填写 API 密钥。', '新規のプロバイダー、またはendpointを変更したプロバイダーにはAPIキーの入力が必要です。');
     case 'invalid_endpoint':
-      return L('Endpoint phải là URL https hợp lệ; nhà cung cấp theo mẫu phải dùng đúng endpoint của mẫu.', 'Endpoint 必须是有效的 https URL；使用模板的服务商须使用模板的 endpoint。');
+      return L('Endpoint phải là URL https hợp lệ; nhà cung cấp theo mẫu phải dùng đúng endpoint của mẫu.', 'Endpoint 必须是有效的 https URL；使用模板的服务商须使用模板的 endpoint。', 'endpointは有効なhttps URLである必要があります。テンプレートのプロバイダーはテンプレートのendpointを使用してください。');
     case 'duplicate_id':
-      return L('Có hai nhà cung cấp trùng id. Hãy tải lại trang rồi thử lại.', '有两个服务商 ID 重复，请刷新页面后重试。');
+      return L('Có hai nhà cung cấp trùng id. Hãy tải lại trang rồi thử lại.', '有两个服务商 ID 重复，请刷新页面后重试。', 'プロバイダーのIDが重複しています。ページを再読み込みしてからもう一度お試しください。');
     case 'invalid_models':
     case 'invalid_modelId':
     case 'invalid_effort_style':
     case 'invalid_efforts':
-      return L('Model tự thêm không hợp lệ: cần model id, kiểu tham số suy luận và ít nhất một mức effort.', '自定义模型无效：需填写模型 ID、推理参数类型并至少选择一个推理强度。');
+      return L('Model tự thêm không hợp lệ: cần model id, kiểu tham số suy luận và ít nhất một mức effort.', '自定义模型无效：需填写模型 ID、推理参数类型并至少选择一个推理强度。', '追加モデルが無効です。モデルID、推論パラメーターの種類、および1つ以上のeffortレベルが必要です。');
     case 'invalid_chain':
     case 'invalid_groups':
-      return L('Chuỗi của một tính năng không hợp lệ (tối đa 10 mắt xích). Hãy tải lại trang rồi thử lại.', '某功能的调用链无效（最多 10 环），请刷新页面后重试。');
+      return L('Chuỗi của một tính năng không hợp lệ (tối đa 10 mắt xích). Hãy tải lại trang rồi thử lại.', '某功能的调用链无效（最多 10 环），请刷新页面后重试。', '機能のチェーンが無効です（最大10段）。ページを再読み込みしてからもう一度お試しください。');
     case 'duplicate_model':
-      return L('Model id bị trùng trong cùng nhà cung cấp.', '同一服务商中的模型 ID 重复。');
+      return L('Model id bị trùng trong cùng nhà cung cấp.', '同一服务商中的模型 ID 重复。', '同じプロバイダー内でモデルIDが重複しています。');
     case 'unknown_provider':
     case 'unknown_model':
     case 'invalid_effort':
-      return L('Có mắt xích trỏ tới nhà cung cấp, model hoặc mức effort không còn tồn tại.', '有链节指向已不存在的服务商、模型或推理强度。');
+      return L('Có mắt xích trỏ tới nhà cung cấp, model hoặc mức effort không còn tồn tại.', '有链节指向已不存在的服务商、模型或推理强度。', '存在しなくなったプロバイダー、モデル、またはeffortレベルを指しているチェーンがあります。');
     case 'model_not_vision':
-      return L('Tính năng đọc ảnh chỉ dùng được model nhận ảnh.', '识图功能只能使用支持图片的模型。');
+      return L('Tính năng đọc ảnh chỉ dùng được model nhận ảnh.', '识图功能只能使用支持图片的模型。', '画像認識には画像対応モデルのみ使用できます。');
     case 'invalid_timeout':
     case 'invalid_budget':
-      return L('Timeout mỗi lượt phải từ 5 đến 120 giây; trần tổng không nhỏ hơn timeout và không quá 180 giây.', '单次超时须为 5–120 秒；总时限不小于单次超时且不超过 180 秒。');
+      return L('Timeout mỗi lượt phải từ 5 đến 120 giây; trần tổng không nhỏ hơn timeout và không quá 180 giây.', '单次超时须为 5–120 秒；总时限不小于单次超时且不超过 180 秒。', '1回あたりのタイムアウトは5〜120秒、合計上限はタイムアウト以上かつ180秒以内にしてください。');
+    case 'token_limit':
+      return L('Đã đủ 10 token còn hiệu lực. Hãy thu hồi bớt token cũ rồi tạo lại.', '有效令牌已达 10 个上限，请先撤销旧令牌再创建。', '有効なトークンが上限の10個に達しています。古いトークンを無効化してから作成し直してください。');
     case 'invalid_target':
-      return L('Không thể thao tác trên chính mình.', '不能对自己执行此操作。');
+      return L('Không thể thao tác trên chính mình.', '不能对自己执行此操作。', '自分自身には操作できません。');
     case 'invalid_duration':
-      return L('Thời hạn khoá không hợp lệ.', '封禁时长无效。');
+      return L('Thời hạn khoá không hợp lệ.', '封禁时长无效。', '停止期間が無効です。');
     case 'invalid_reason':
-      return L('Cần nhập lý do (tối đa 500 ký tự).', '请填写理由（最多 500 个字符）。');
+      return L('Cần nhập lý do (tối đa 500 ký tự).', '请填写理由（最多 500 个字符）。', '理由を入力してください（最大500文字）。');
     case 'invalid_role':
-      return L('Vai trò không hợp lệ.', '角色无效。');
+      return L('Vai trò không hợp lệ.', '角色无效。', 'ロールが無効です。');
     case 'role_unchanged':
-      return L('Tài khoản đã có vai trò này.', '该账号已是此角色。');
+      return L('Tài khoản đã có vai trò này.', '该账号已是此角色。', 'すでにこのロールが設定されています。');
     case 'not_banned':
-      return L('Tài khoản này không đang bị khoá.', '该账号当前未被封禁。');
+      return L('Tài khoản này không đang bị khoá.', '该账号当前未被封禁。', 'このアカウントは現在停止されていません。');
     case 'user_banned':
-      return L('Tài khoản đang bị khoá. Hãy mở khoá trước khi xoá.', '账号正被封禁，请先解封再删除。');
+      return L('Tài khoản đang bị khoá. Hãy mở khoá trước khi xoá.', '账号正被封禁，请先解封再删除。', 'アカウントが停止中です。削除する前に停止を解除してください。');
     case 'user_deleting':
-      return L('Tài khoản đang được xoá; chưa thể thao tác.', '账号正在删除中，暂时无法操作。');
+      return L('Tài khoản đang được xoá; chưa thể thao tác.', '账号正在删除中，暂时无法操作。', 'アカウントを削除中のため、まだ操作できません。');
     case 'conflict':
-      return L('Trạng thái tài khoản vừa thay đổi. Dữ liệu đã được tải lại.', '账号状态刚刚发生变化，数据已重新加载。');
+      return L('Trạng thái tài khoản vừa thay đổi. Dữ liệu đã được tải lại.', '账号状态刚刚发生变化，数据已重新加载。', 'アカウントの状態が変更されました。データを再読み込みしました。');
     case 'confirm_mismatch':
-      return L('Email xác nhận không khớp.', '确认邮箱不匹配。');
+      return L('Email xác nhận không khớp.', '确认邮箱不匹配。', '確認用のメールアドレスが一致しません。');
     case 'delete_incomplete':
-      return L('Xoá chưa hoàn tất (lỗi lưu trữ ảnh). Có thể bấm “Thử xoá tiếp”.', '删除尚未完成（图片存储出错），可点击“继续删除”重试。');
+      return L('Xoá chưa hoàn tất (lỗi lưu trữ ảnh). Có thể bấm “Thử xoá tiếp”.', '删除尚未完成（图片存储出错），可点击“继续删除”重试。', '削除が完了していません（画像ストレージのエラー）。「削除を再試行」を押してください。');
     case 'vote_conflict':
-      return L('Phiếu bình chọn vừa thay đổi ở nơi khác. Hãy thử lại.', '投票状态刚刚发生变化，请重试。');
-    case 'season_closed':
-      return L('Mùa của đội này đã đóng: không nhận thêm bình chọn hay chiến báo.', '该阵容所属赛季已结束，不再接受投票或战报。');
-    case 'season_not_open':
-      return L('Hiện chưa có mùa nào đang mở nên chưa thể đăng đội.', '目前没有进行中的赛季，暂时无法发布阵容。');
+      return L('Phiếu bình chọn vừa thay đổi ở nơi khác. Hãy thử lại.', '投票状态刚刚发生变化，请重试。', '投票の状態が他の場所で変更されました。もう一度お試しください。');
     case 'own_team':
-      return L('Bạn không thể bình chọn cho đội của chính mình.', '不能给自己的阵容投票。');
+      return L('Bạn không thể bình chọn cho đội của chính mình.', '不能给自己的阵容投票。', '自分の編成には投票できません。');
     case 'has_evidence':
-      return L('Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.', '该阵容已有他人通过审核的战报；请联系管理员处理。');
+      return L('Đội đã có chiến báo được duyệt của người khác; liên hệ quản trị để gỡ.', '该阵容已有他人通过审核的战报；请联系管理员处理。', 'この編成にはすでに他のユーザーの承認済み戦報があります。管理者に連絡して取り下げてください。');
     case 'image_missing':
-      return L('Một ảnh đã tải lên không còn nữa. Hãy chọn lại ảnh.', '有图片已丢失，请重新选择图片。');
-    case 'season_exists':
-      return L('Mã mùa này đã tồn tại.', '该赛季代码已存在。');
-    case 'season_conflict':
-      return L('Mùa đang mở vừa thay đổi ở nơi khác. Hãy tải lại trang rồi thử lại.', '进行中的赛季刚刚发生变化，请刷新页面后重试。');
+      return L('Một ảnh đã tải lên không còn nữa. Hãy chọn lại ảnh.', '有图片已丢失，请重新选择图片。', 'アップロードした画像が失われています。画像を選び直してください。');
     case 'invalid_season':
-      return L('Mã mùa chỉ gồm chữ thường, số và dấu gạch ngang (không dùng “all”); hai tên mùa không được để trống.', '赛季代码只能包含小写字母、数字和连字符（不可用“all”）；两个赛季名称都不能为空。');
+      return L('Hãy chọn mùa trong danh sách.', '请从列表中选择赛季。', 'リストからシーズンを選んでください。');
+    case 'season_catalog_unavailable':
+      return L('Chưa tải được danh sách mùa, thử lại sau.', '暂时无法加载赛季列表，请稍后再试。', 'シーズン一覧を読み込めません。しばらくしてからもう一度お試しください。');
     case 'invalid_heroes':
-      return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。');
+      return L('Cần đúng 3 tướng khác nhau, chọn từ danh sách.', '需要三名不同的武将，请从列表中选择。', '異なる3人の武将をリストから選んでください。');
     case 'invalid_tactics':
-      return L('Cần đủ 6 chiến pháp khác nhau (2 cho mỗi tướng), chọn từ danh sách.', '需要六个互不相同的战法（每名武将两个），请从列表中选择。');
+      return L('Cần đủ 6 chiến pháp khác nhau (2 cho mỗi tướng), chọn từ danh sách.', '需要六个互不相同的战法（每名武将两个），请从列表中选择。', '互いに異なる6つの戦法（武将ごとに2つ）をリストから選んでください。');
     default:
       return null;
   }
@@ -235,11 +232,14 @@ export function loadSession({ probe = true, fresh = false } = {}) {
     if (fresh) document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user: null } }));
     return Promise.resolve(null);
   }
+  // Hint `pending` do `signIn()` ghi trước khi rời sang Google: lần đầu thấy phiên sau lượt quay về là đăng nhập thành công (hint tự đổi thành '1', nên chỉ báo một lần).
+  const returningFromSignIn = readHint() === 'pending';
   const pending = api('/api/me').then(
     (body) => {
       const user = body?.user && typeof body.user === 'object' ? body.user : null;
       if (sessionPromise !== pending) return user;
       writeHint(user ? '1' : null);
+      if (user && returningFromSignIn) track('login', { method: 'google' });
       document.dispatchEvent(new CustomEvent(SESSION_EVENT, { detail: { user } }));
       return user;
     },
@@ -306,7 +306,7 @@ export function downscaleImage(file, { maxDim = IMAGE_MAX_DIM, quality = IMAGE_J
     const img = new Image();
     const fail = () => {
       URL.revokeObjectURL(url);
-      reject(new CommunityError(L('Không đọc được ảnh. Hãy chọn ảnh khác.', '无法读取图片，请换一张。')));
+      reject(new CommunityError(L('Không đọc được ảnh. Hãy chọn ảnh khác.', '无法读取图片，请换一张。', '画像を読み込めません。別の画像を選んでください。')));
     };
     img.onload = () => {
       URL.revokeObjectURL(url);
@@ -354,14 +354,14 @@ export function avatar(user, className = 'cm-avatar') {
   return el('span', { class: `${className} cm-avatar-fallback`, 'aria-hidden': 'true' }, name ? name[0].toUpperCase() : '?');
 }
 
-/** Nhãn ngôn ngữ gốc `[VI]`/`[ZH]` của một văn bản trong kho dùng chung vi/zh; `null` khi không rõ. */
+/** Nhãn ngôn ngữ gốc `[VI]`/`[ZH]`… của một văn bản trong kho dùng chung mọi locale; `null` khi không rõ. */
 export function langTag(lang, className = 'cm-lang-tag') {
-  if (lang !== 'vi' && lang !== 'zh') return null;
-  return el('span', { class: className, dataset: { lang }, title: lang === 'vi' ? 'Tiếng Việt' : '中文' }, `[${lang.toUpperCase()}]`);
+  if (!isSiteLocale(lang)) return null;
+  return el('span', { class: className, dataset: { lang }, title: LOCALE_LABEL[lang] }, `[${lang.toUpperCase()}]`);
 }
 
 export function displayName(user) {
-  return String(user?.name || '').trim() || L('Người chơi', '玩家');
+  return String(user?.name || '').trim() || L('Người chơi', '玩家', 'プレイヤー');
 }
 
 /** Vùng thông báo trực tiếp cho trình đọc màn hình. */
@@ -381,11 +381,11 @@ export function signInPrompt(message) {
   const status = liveStatus();
   const button = el('button', { class: 'ana-btn primary cm-signin-btn', type: 'button' }, [
     googleIcon(),
-    L('Đăng nhập bằng Google', '使用 Google 登录'),
+    L('Đăng nhập bằng Google', '使用 Google 登录', 'Googleでログイン'),
   ]);
   button.addEventListener('click', async () => {
     button.disabled = true;
-    status.set(L('Đang chuyển tới Google…', '正在跳转到 Google…'));
+    status.set(L('Đang chuyển tới Google…', '正在跳转到 Google…', 'Googleに移動しています…'));
     try {
       await signIn();
     } catch (error) {
@@ -432,12 +432,12 @@ export function splitNames(value, max = 5) {
 }
 
 export function resultLabel(result) {
-  if (result === 'win') return L('Thắng', '胜');
-  if (result === 'loss') return L('Thua', '负');
-  if (result === 'draw') return L('Hoà', '平');
-  return L('Chưa rõ', '未知');
+  if (result === 'win') return L('Thắng', '胜', '勝ち');
+  if (result === 'loss') return L('Thua', '负', '負け');
+  if (result === 'draw') return L('Hoà', '平', '引き分け');
+  return L('Chưa rõ', '未知', '不明');
 }
 
 export function formatPercent(ratio) {
-  return new Intl.NumberFormat(L('vi-VN', 'zh-CN'), { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
+  return new Intl.NumberFormat(LOCALE_INTL[currentLocale()], { style: 'percent', maximumFractionDigits: 0 }).format(ratio);
 }

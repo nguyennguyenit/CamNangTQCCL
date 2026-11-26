@@ -694,7 +694,7 @@ class ClientHeroSupplementTest(unittest.TestCase):
             self._build(overrides={"hero:dai-kieu": {"inheritTacticId": "tactic:cap-toc"}})
 
     def test_hero_note_appends_season_condition_to_existing_and_client_heroes(self):
-        note = {"conditions": [{"kind": "season", "textVi": "Mùa mới: phe Hán, trước mùa này là phe Quần.", "textZh": "新賽季：漢陣營，本賽季前為群雄陣營。"}]}
+        note = {"conditions": [{"kind": "season", "textVi": "Phe Hán từ bản cập nhật 4/11/2026, trước đó là phe Quần.", "textZh": "自2026年11月4日更新起為漢陣營，此前為群雄陣營。"}]}
         output = self._build(heroes=[self._hero()], hero_notes={"hero:ha-hau-don": note, "hero:tao-ngang": note})
         rows = {item["id"]: item for item in json.loads((output / "heroes-dict.json").read_bytes())}
         for owner in ("hero:ha-hau-don", "hero:tao-ngang"):
@@ -777,10 +777,16 @@ class ClientTacticCaptureTest(unittest.TestCase):
             retired = extra.get("retired", {})
             defaults = {owner: entry for owner, entry in self._baseline_zh_effects().items() if owner not in retired}
             extra["zhEffects"] = {**defaults, **extra.get("zhEffects", {})}
+        # Kỳ lược là phần bắt buộc của capture client: fixture mang đúng bản chụp thật cùng bản dịch zh của nó.
+        real = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+        qilue = {key: real[key] for key in build_module.QILUE_CAPTURE_KEYS}
+        qilue_texts = {owner: entry for owner, entry in real["zhTexts"].items() if owner.startswith("qilue-")}
+        extra["zhTexts"] = {**qilue_texts, **extra.get("zhTexts", {})}
         document = {
             "schemaVersion": 1,
             "source": {"kind": "game-client", "edition": "Global", "client": "Tam Quốc Chí - Chiến Lược", "version": "24.526", "screen": "Chiến Pháp > Toàn bộ", "capturedAt": "2026-10-16"},
             "tactics": tactics,
+            **qilue,
             **extra,
         }
         path = self.directory / "client-tactics.json"
@@ -1114,6 +1120,252 @@ class ZhEffectsDataTest(unittest.TestCase):
             text = compact(entry["text"])
             missing = [compact(found) for found in level_range.findall(document["tactics"][owner]["effectVi"]) if compact(found) not in text]
             self.assertEqual(missing, [], owner)
+
+
+class ClientQilueCaptureTest(unittest.TestCase):
+    """Kỳ lược PK-S27 chụp từ client Global 24.547 (Đồ Giám Võ Lược Kỳ Mưu): 5 phương lược, 40 thẻ."""
+
+    # Hai loại thẻ mỗi phương lược dùng được, theo màn Phương Lược Tác Chiến (plans/reports/261117-client-ky-luoc-pk-s27.md).
+    EXPECTED_CARD_TYPES = {
+        "整軍": ["phu", "te"], "強攻": ["dung", "phu"], "謀算": ["muu", "phu"],
+        "久戰": ["dung", "te"], "襲擾": ["muu", "sach"],
+    }
+
+    def _document(self):
+        return json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+
+    def test_capture_has_five_strategies_and_forty_cards(self):
+        strategies, cards = build_module._client_qilue(self._document())
+        self.assertEqual(len(strategies), 5)
+        self.assertEqual(len(cards), 40)
+        self.assertEqual({row["nameZh"]: row["cardTypes"] for row in strategies}, self.EXPECTED_CARD_TYPES)
+        for card_type in ("dung", "muu", "phu", "sach", "te"):
+            rows = [row for row in cards if row["type"] == card_type]
+            self.assertEqual(len(rows), 8, card_type)
+            self.assertEqual(sum(row["rarity"] == "rare" for row in rows), 2, card_type)
+        names = [row["nameZh"] for row in [*strategies, *cards]]
+        self.assertEqual(len(names), len(set(names)))
+        self.assertTrue(all(row["id"].startswith("qilue-strategy:") for row in strategies))
+        self.assertTrue(all(row["id"].startswith("qilue-card:") for row in cards))
+        by_zh = {row["nameZh"]: row for row in cards}
+        self.assertEqual(by_zh["設伏十面"]["nameVi"], "Bố Trí Thập Diện")
+        self.assertEqual(by_zh["治延軍勢"]["nameVi"], "Trị Duyên Quân Thế")
+        self.assertEqual({row["nameZh"]: row["nameVi"] for row in strategies}["謀算"], "Mưu tính")
+
+    def test_slug_is_a_frozen_key_not_derived_from_the_name(self):
+        document = self._document()
+        document["qilueCards"]["qilue-card:bo-tri-thap-dien"]["nameVi"] = "Tên khác hẳn"
+        _, cards = build_module._client_qilue(document)
+        self.assertIn("qilue-card:bo-tri-thap-dien", {row["id"] for row in cards})
+
+    def test_invalid_capture_is_rejected(self):
+        def mutate(change):
+            document = copy.deepcopy(self._document())
+            change(document)
+            with self.assertRaises(ValueError):
+                build_module._client_qilue(document)
+
+        mutate(lambda d: d["qilueCards"].update({"qilue-card:Sai Dau": d["qilueCards"]["qilue-card:bo-tri-thap-dien"]}))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(rarity="epic"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(type="khac"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(effectVi="<b>x</b>"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(rarity="rare"))
+        mutate(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(aliasesZh=["十面埋伏"]))
+        mutate(lambda d: d["qilueStrategies"]["qilue-strategy:muu-tinh"].update(cardTypes=["muu"]))
+        mutate(lambda d: d["qilueCards"].pop("qilue-card:bo-tri-thap-dien"))
+
+
+class QilueCatalogTest(unittest.TestCase):
+    """Nhóm Tra cứu Kỳ lược trong candidate lookup: 2 khóa catalog phẳng theo hợp đồng của nhóm."""
+
+    SEASON = {
+        "kind": "season",
+        "textVi": "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+        "textZh": "漢焰長明賽季（PK-S27，客戶端 24.547）",
+    }
+    STRATEGY_KEYS = {"id", "nameVi", "aliasesVi", "nameZh", "aliasesZh", "conditions", "missingFields", "cardTypes",
+                     "descriptionVi", "buffVi", "descriptionZh", "buffZh", "zhSource"}
+    CARD_KEYS = {"id", "nameVi", "aliasesVi", "nameZh", "aliasesZh", "conditions", "missingFields", "type", "rarity",
+                 "targetVi", "effectVi", "effectZh", "zhSource"}
+
+    @classmethod
+    def setUpClass(cls):
+        cls.directory = Path(tempfile.mkdtemp())
+        cls.output = cls.directory / "candidate"
+        cls.manifest = build_candidate(
+            inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
+            identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
+            output=cls.output,
+        )
+        cls.heroes = json.loads((cls.output / "heroes-dict.json").read_bytes())
+        cls.tactics = json.loads((cls.output / "tactics.json").read_bytes())
+        cls.catalog = json.loads((cls.output / "lookup-catalog.json").read_bytes())
+        cls.document = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+
+    @classmethod
+    def tearDownClass(cls):
+        shutil.rmtree(cls.directory, ignore_errors=True)
+
+    def _build_with(self, mutate):
+        """Dựng candidate từ bản sao file client tactics thật đã sửa bằng `mutate`."""
+        directory = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, directory, ignore_errors=True)
+        document = copy.deepcopy(self.document)
+        mutate(document)
+        path = directory / "client-tactics.json"
+        path.write_text(json.dumps(document, ensure_ascii=False), encoding="utf-8")
+        return build_candidate(
+            inputs=ROOT / "pipeline" / "lookup-inputs", source=ROOT / "data" / "sgsdeck",
+            identity=ROOT / "pipeline" / "lookup-identity.json", translations=ROOT / "pipeline" / "lookup-translations.json",
+            client_tactics=path, output=directory / "candidate",
+        )
+
+    def _payload_error(self, mutate):
+        heroes, tactics, catalog = copy.deepcopy(self.heroes), copy.deepcopy(self.tactics), copy.deepcopy(self.catalog)
+        mutate(heroes, tactics, catalog)
+        with self.assertRaises(ValueError) as caught:
+            _validate_payloads(heroes, tactics, catalog)
+        return str(caught.exception)
+
+    def test_catalog_has_five_strategies_and_forty_cards_in_contract_shape(self):
+        strategies, cards = self.catalog["qilueStrategies"], self.catalog["qilueCards"]
+        self.assertEqual((len(strategies), len(cards)), (5, 40))
+        self.assertEqual([row["id"] for row in strategies], sorted(row["id"] for row in strategies))
+        self.assertEqual([row["id"] for row in cards], sorted(row["id"] for row in cards))
+        self.assertTrue(all(set(row) == self.STRATEGY_KEYS for row in strategies))
+        self.assertTrue(all(set(row) == self.CARD_KEYS for row in cards))
+        texts = self.document["zhTexts"]
+        for row in [*strategies, *cards]:
+            self.assertEqual(row["aliasesZh"], [row["nameZh"]], row["id"])
+            self.assertEqual(row["conditions"], [self.SEASON], row["id"])
+            self.assertEqual(row["missingFields"], [], row["id"])
+            self.assertEqual(row["zhSource"], {"kind": "translation"}, row["id"])
+        for row in cards:
+            self.assertEqual(row["aliasesVi"], [], row["id"])
+            self.assertEqual(row["effectZh"], texts[row["id"]]["effectZh"]["text"], row["id"])
+        for row in strategies:
+            self.assertEqual((row["descriptionZh"], row["buffZh"]), (texts[row["id"]]["descriptionZh"]["text"], texts[row["id"]]["buffZh"]["text"]))
+        by_id = {row["id"]: row for row in [*strategies, *cards]}
+        card = by_id["qilue-card:bo-tri-thap-dien"]
+        self.assertEqual((card["nameVi"], card["nameZh"], card["type"], card["rarity"], card["targetVi"]), ("Bố Trí Thập Diện", "設伏十面", "muu", "common", "Nhóm quân ta"))
+        strategy = by_id["qilue-strategy:muu-tinh"]
+        self.assertEqual((strategy["nameVi"], strategy["aliasesVi"], strategy["nameZh"], strategy["cardTypes"]), ("Mưu tính", ["Mưu Toán"], "謀算", ["muu", "phu"]))
+        # Biến thể chữ Hán sai trong ghi chú đội không bao giờ vào catalog công khai.
+        self.assertNotIn("十面埋伏", (self.output / "lookup-catalog.json").read_text(encoding="utf-8"))
+        validate_candidate(self.output)
+
+    def test_every_qilue_row_is_ledgered_and_counted(self):
+        ledger = json.loads((self.output / "ledger.json").read_bytes())
+        ids = {row["id"] for key in ("qilueStrategies", "qilueCards") for row in self.catalog[key]}
+        capture = [row for row in ledger if row["fieldPath"] == "clientCapture.qilue"]
+        self.assertEqual(sorted(row["entityId"] for row in capture), sorted(ids))
+        self.assertTrue(all((row["disposition"], row["chosenInput"]) == ("corrected-public", "client-capture") for row in capture))
+        sample = next(row for row in capture if row["entityId"] == "qilue-card:bo-tri-thap-dien")
+        entry = self.document["qilueCards"]["qilue-card:bo-tri-thap-dien"]
+        self.assertEqual(sample["sourceValueHash"], hashlib.sha256(build_module.canonical_json_bytes(entry)).hexdigest())
+        translated = [row for row in ledger if row["entityId"] in ids and row["fieldPath"].startswith("zhTexts.")]
+        self.assertEqual(len(translated), 40 + 5 * 2)
+        generation = json.loads((self.output / "generation.json").read_bytes())
+        self.assertEqual((generation["counts"]["qilueStrategies"], generation["counts"]["qilueCards"]), (5, 40))
+
+    def test_missing_qilue_capture_key_stops_the_build(self):
+        for key in ("qilueSource", "qilueStrategies", "qilueCards"):
+            with self.subTest(key=key), self.assertRaisesRegex(ValueError, "client qilue capture must declare"):
+                self._build_with(lambda document: document.pop(key))
+
+    def test_missing_or_stale_qilue_chinese_text_stops_the_build(self):
+        card, strategy = "qilue-card:bo-tri-thap-dien", "qilue-strategy:muu-tinh"
+        cases = (
+            (lambda d: d["zhTexts"].pop(card), f"lacks Chinese text: {card}.effectZh"),
+            (lambda d: d["zhTexts"][strategy].pop("buffZh"), f"lacks Chinese text: {strategy}.buffZh"),
+            (lambda d: d["qilueCards"][card].update(effectVi="Tỷ lệ phát động Chiến Pháp chủ động hiệp này tăng 12%"), "stale against the Vietnamese text"),
+            (lambda d: d["zhTexts"][card].update(nameZh=d["zhTexts"][card]["effectZh"]), "zhTexts entry is invalid"),
+            (lambda d: d["zhTexts"][card]["effectZh"].update(text="<b>本回合</b>"), "zhTexts value is invalid"),
+            (lambda d: d["zhTexts"][card]["effectZh"].update(text="no chinese"), "has no Chinese text"),
+        )
+        for mutate, message in cases:
+            with self.subTest(message=message), self.assertRaisesRegex(ValueError, message):
+                self._build_with(mutate)
+
+    def test_validator_rejects_qilue_shape_and_value_corruption(self):
+        cases = {
+            "catalog key": lambda h, t, c: c.pop("qilueCards"),
+            "row key": lambda h, t, c: c["qilueCards"][0].pop("effectZh"),
+            "extra key": lambda h, t, c: c["qilueStrategies"][0].update(type="muu"),
+            "count": lambda h, t, c: c["qilueCards"].pop(),
+            "alias variant": lambda h, t, c: c["qilueCards"][0]["aliasesZh"].append("十面埋伏"),
+            "type": lambda h, t, c: c["qilueCards"][0].update(type="khac"),
+            "rarity": lambda h, t, c: c["qilueCards"][0].update(rarity="epic"),
+            "target": lambda h, t, c: c["qilueCards"][0].update(targetVi="Quân ta"),
+            "card types": lambda h, t, c: c["qilueStrategies"][0].update(cardTypes=["muu", "muu"]),
+            "card alias": lambda h, t, c: c["qilueCards"][0]["aliasesVi"].append("Tên khác"),
+            "missing zh": lambda h, t, c: c["qilueCards"][0].update(effectZh=None),
+            "zh source": lambda h, t, c: c["qilueStrategies"][0].update(zhSource={"kind": "source"}),
+            "missing fields": lambda h, t, c: c["qilueCards"][0].update(missingFields=["effectZh"]),
+            "id kind": lambda h, t, c: c["qilueCards"][0].update(id=c["qilueCards"][0]["id"].replace("qilue-card:", "qilue-strategy:")),
+            "order": lambda h, t, c: c["qilueCards"].reverse(),
+            "no season": lambda h, t, c: c["qilueCards"][0].update(conditions=[]),
+            "season without zh": lambda h, t, c: c["qilueCards"][0]["conditions"][0].pop("textZh"),
+            "season kind": lambda h, t, c: c["qilueCards"][0]["conditions"][0].update(kind="scenario"),
+            "season number": lambda h, t, c: c["qilueCards"][0]["conditions"][0].update(textZh="漢焰長明賽季（PK-S27，客戶端）"),
+            "season html": lambda h, t, c: c["qilueCards"][0]["conditions"][0].update(textZh="<i>漢焰長明賽季（PK-S27，客戶端 24.547）</i>"),
+            "zh name": lambda h, t, c: c["qilueCards"][0].update(nameZh="Bo Tri", aliasesZh=["Bo Tri"]),
+            "vi cjk": lambda h, t, c: c["qilueCards"][0].update(effectVi="本回合"),
+        }
+        for label, mutate in cases.items():
+            with self.subTest(label):
+                self._payload_error(mutate)
+        # Hàng hợp lệ của nhóm khác không được mang `textZh` ở điều kiện: quy tắc chỉ mở cho tướng và kỳ lược.
+        self._payload_error(lambda h, t, c: c["equipment"][0].update(conditions=[dict(self.SEASON)]))
+
+    def test_only_reviewed_cross_group_name_collisions_are_allowed(self):
+        self.assertEqual(build_module.QILUE_NAME_COLLISIONS_ALLOWED, {
+            ("Ám Độ Trần Thương", "tactic:lap-lo-danh-trao"), ("Cường Công", "tactic:cuong-cong"), ("強攻", "tactic:cuong-cong"),
+            ("久戰", "book:chien-dau-truong-ky"),
+        })
+        _validate_payloads(self.heroes, self.tactics, self.catalog)
+        hero = next(row for row in self.heroes if row["id"] == "hero:luu-bi")
+        tactic = next(row for row in self.tactics if row["id"] == "tactic:binh-phong")
+        cases = (
+            # Tên Việt, chữ Hán và alias Việt của kỳ lược so với tên Việt/Hán-Việt/chữ Hán/alias của chiến pháp và tướng.
+            (lambda h, t, c: next(r for r in t if r["id"] == "tactic:binh-phong")["aliases"].append("Bố Trí Thập Diện"), "tactic:binh-phong"),
+            (lambda h, t, c: next(r for r in h if r["id"] == "hero:luu-bi")["aliases"].append("設伏十面"), "hero:luu-bi"),
+            (lambda h, t, c: c["qilueCards"][0].update(nameVi=hero["hanViet"]), "hero:luu-bi"),
+            (lambda h, t, c: c["qilueStrategies"][0].update(nameZh=tactic["chinese"], aliasesZh=[tactic["chinese"]]), "tactic:binh-phong"),
+            (lambda h, t, c: c["qilueStrategies"][0]["aliasesVi"].append(tactic["viet"]), "tactic:binh-phong"),
+            # So khớp không phân biệt hoa thường; allowlist khóa theo đúng mã nhóm kia.
+            (lambda h, t, c: next(r for r in t if r["id"] == "tactic:binh-phong")["aliases"].append("bố trí thập diện"), "qilue-card:bo-tri-thap-dien"),
+            (lambda h, t, c: next(r for r in h if r["id"] == "hero:luu-bi")["aliases"].append("Cường Công"), "hero:luu-bi"),
+        )
+        for mutate, owner in cases:
+            with self.subTest(owner=owner):
+                self.assertIn("name collision", message := self._payload_error(mutate))
+                self.assertIn(owner, message)
+
+    def test_cross_group_name_collision_stops_the_build(self):
+        with self.assertRaisesRegex(ValueError, "qilue name collision.*hero:luu-bi"):
+            self._build_with(lambda d: d["qilueCards"]["qilue-card:bo-tri-thap-dien"].update(nameVi="Lưu Bị"))
+
+
+class QilueBookCollisionTest(unittest.TestCase):
+    """Tên kỳ lược trùng tên binh thư (viet/chinese/sourceNames) chỉ được phép khi có trong allowlist đã duyệt."""
+
+    def test_qilue_names_collide_with_books_only_inside_the_allowlist(self):
+        document = json.loads((ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes())
+        strategies, cards = build_module._client_qilue(document)
+        books = json.loads((ROOT / "data" / "books-dict.json").read_bytes())
+        names = {}
+        for book in books:
+            for name in (book.get("viet"), book.get("chinese"), *book.get("sourceNames", [])):
+                if isinstance(name, str) and name.strip():
+                    names.setdefault(build_module._name_key(name), set()).add(book["id"])
+        found = set()
+        for row in (*strategies, *cards):
+            for name in (row["nameVi"], row["nameZh"], *row.get("aliasesVi", [])):
+                for book_id in names.get(build_module._name_key(name), ()):
+                    found.add((name, book_id))
+        self.assertEqual(found - build_module.QILUE_NAME_COLLISIONS_ALLOWED, set())
+        self.assertIn(("久戰", "book:chien-dau-truong-ky"), found)
 
 
 if __name__ == "__main__":

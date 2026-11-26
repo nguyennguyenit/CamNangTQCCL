@@ -3,6 +3,7 @@
 // là thứ người dùng thực sự thấy: ô "Không chắc"/"Không rõ" tính là sai (người dùng phải sửa tay).
 
 import { createEntityIndex, draftFromRead } from "../../js/analyze-map.js";
+import { withLocaleAliases } from "../../js/locale-name-aliases.js";
 import type { AnalyzeResult, ScreenKind, SideId } from "../src/schema";
 
 export interface ExpectedMember {
@@ -14,6 +15,8 @@ export interface ExpectedMember {
 
 export interface Fixture {
   image: string;
+  /** "ja" = ảnh client Nhật (chữ in tự dạng Nhật); thiếu thì suy từ tên có `-ja-` (xem `isJaFixture`). */
+  locale?: string;
   source: string;
   expected: {
     /** Loại màn hình người duyệt đã xác nhận; thiếu thì không chấm (fixture xuất từ mẫu người dùng chỉ có nhãn AI tự đoán). */
@@ -51,12 +54,25 @@ export interface Indexes {
   books: unknown;
 }
 
-export function buildIndexes(dicts: Dicts): Indexes {
+/** `entries` của `data/lookup-ja.json` (hoặc cả tài liệu), đầu vào của `withLocaleAliases`. */
+export type JaEntries = Parameters<typeof withLocaleAliases>[1];
+
+/**
+ * Dựng chỉ mục khớp tên. Có `jaEntries` thì mỗi từ điển đi qua `withLocaleAliases` trước, để tên Nhật in trong ảnh
+ * client Nhật ("SP荀彧", "経天緯地") khớp đúng ID canonical; không có thì y hệt hành vi cũ cho fixture vi/zh.
+ */
+export function buildIndexes(dicts: Dicts, jaEntries?: JaEntries): Indexes {
+  const prepare = (dict: Dict): Dict => (jaEntries ? withLocaleAliases(dict, jaEntries) : dict);
   return {
-    heroes: createEntityIndex(dicts.heroes, "hero"),
-    tactics: createEntityIndex(dicts.tactics, "tactic"),
-    books: createEntityIndex(dicts.books, "book"),
+    heroes: createEntityIndex(prepare(dicts.heroes), "hero"),
+    tactics: createEntityIndex(prepare(dicts.tactics), "tactic"),
+    books: createEntityIndex(prepare(dicts.books), "book"),
   };
+}
+
+/** Fixture ảnh client Nhật: trường `locale: "ja"` hoặc tên file/ảnh dạng `*-ja-*`. */
+export function isJaFixture(fixture: Fixture, name = fixture.image): boolean {
+  return fixture.locale === "ja" || /-ja-/.test(name) || /-ja-/.test(fixture.image);
 }
 
 const tally = (hit: boolean): Tally => ({ hit: hit ? 1 : 0, total: 1 });

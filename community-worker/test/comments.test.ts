@@ -8,6 +8,21 @@ async function postComment(h: Harness, as: "alice" | "bob" | "admin", body = "Đ
 }
 
 describe("comments", () => {
+  it("lang=ja: đăng và đọc tách riêng khỏi vi/zh; lang ngoài danh sách -> 400", async () => {
+    const h = createHarness();
+    await postComment(h, "alice", "Đội mạnh");
+    const created = await postComment(h, "bob", "強い編成", "ja");
+    expect(created.status).toBe(201);
+    expect(await created.json<ApiJson>()).toMatchObject({ body: "強い編成", lang: "ja" });
+    const ja = await (await h.request(`/api/comments?page=${PAGE}&lang=ja`)).json<ApiJson>();
+    expect(ja.items.map((i: { body: string }) => i.body)).toEqual(["強い編成"]);
+    const vi = await (await h.request(`/api/comments?page=${PAGE}&lang=vi`)).json<ApiJson>();
+    expect(vi.items.map((i: { body: string }) => i.body)).toEqual(["Đội mạnh"]);
+    const ko = await postComment(h, "bob", "x", "ko");
+    expect(ko.status).toBe(400);
+    expect((await ko.json<ApiJson>()).error.code).toBe("invalid_lang");
+  });
+
   it("đăng cần đăng nhập; danh sách tách theo lang, mới nhất trước, canDelete theo người xem", async () => {
     const h = createHarness();
     expect((await h.request("/api/comments", { json: { page: PAGE, lang: "vi", body: "x" } })).status).toBe(401);
@@ -88,9 +103,9 @@ describe("bình luận trên trang đội cộng đồng", () => {
   const post = (h: Harness, as: "alice" | "bob", page = TEAM, lang = "vi") => h.request("/api/comments", { as, json: { page, lang, body: "hay" } });
   const post2 = (h: Harness, as: "alice" | "bob", lang: string, page = TEAM) => h.request("/api/comments", { as, json: { page, lang, body: `n-${lang}` } });
 
-  it("mùa đóng vẫn 201; đội pending -> 404; đội đang xoá -> 404", async () => {
+  it("đội mùa khác vẫn 201; đội pending -> 404; đội đang xoá -> 404", async () => {
     const h = createHarness();
-    seedSeason(h, "s0", 5);
+    seedSeason(h, "s0");
     await seedTeam(h, { id: "t1", season: "s0" });
     await seedTeam(h, { id: "t2", status: "pending", season: "s0" });
     await seedTeam(h, { id: "t3", season: "s0" });

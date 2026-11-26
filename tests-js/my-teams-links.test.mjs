@@ -24,9 +24,14 @@ test("#9c link nguồn: Đội chuẩn (kể cả id chữ Hán đã băm), Đ�
   assert.equal(linker.href({ kind: "recommended", key: sourceKeyPart(HAN_ID) }, "zh"), `/zh/doi-chuan/${tables.r[HAN_ID]}/`);
 
   assert.equal(linker.href({ kind: "legacy", key: variantKey(LEGACY.legacyTeamId, null) }, "vi"), `/doi-khac/${tables.l[LEGACY.legacyTeamId]}/`);
+  // Đội đã lưu từ trang biến thể (khóa `id~biến thể`) vẫn ra đúng trang của đội: mỗi đội gốc một phương án nên link không mang `?variant=`.
   assert.equal(
     linker.href({ kind: "legacy", key: variantKey(LEGACY.legacyTeamId, LEGACY.legacyVariantId) }, "vi"),
-    `/doi-khac/${tables.l[LEGACY.legacyTeamId]}/?variant=${LEGACY.legacyVariantId}`,
+    `/doi-khac/${tables.l[LEGACY.legacyTeamId]}/`,
+  );
+  assert.deepEqual(
+    linker.target({ kind: "legacy", key: variantKey(LEGACY.legacyTeamId, LEGACY.legacyVariantId) }),
+    { family: "l", id: LEGACY.legacyTeamId, variant: LEGACY.legacyVariantId },
   );
   const variant = KH.variants[0].id;
   assert.equal(linker.href({ kind: "khaihoang", key: variantKey(KH.id, variant) }, "zh"), `/zh/khai-hoang/${tables.k[KH.id]}/?variant=${variant}`);

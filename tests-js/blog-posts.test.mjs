@@ -4,7 +4,7 @@ import {
   fetchBlogPosts,
   relatedPosts,
   renderBlogMarkdown,
-  translationOf,
+  translationsOf,
   validatePostsPayload,
 } from "../src/lib/blog-posts.ts";
 
@@ -93,8 +93,13 @@ test("fetched posts are newest first with locale paths, headings and reading tim
   assert.deepEqual(posts.map((item) => item.path), ["/bai-viet/moi-nhat/", "/bai-viet/doi-hinh-mua-moi/", "/zh/bai-viet/doi-hinh-mua-moi/"]);
   assert.deepEqual(posts[0].headings, [{ depth: 2, id: "mo-dau", text: "Mở đầu" }]);
   assert.equal(posts[0].readingMinutes, 1);
-  assert.equal(translationOf(posts[1], posts)?.path, "/zh/bai-viet/doi-hinh-mua-moi/");
-  assert.equal(translationOf(posts[0], posts), null);
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(translationsOf(posts[1], posts)).map(([lang, item]) => [lang, item.path])),
+    { vi: "/bai-viet/doi-hinh-mua-moi/", zh: "/zh/bai-viet/doi-hinh-mua-moi/" },
+  );
+  assert.deepEqual(Object.keys(translationsOf(posts[2], posts)), ["zh", "vi"]);
+  // Bài không có translationKey chỉ có chính nó.
+  assert.deepEqual(Object.keys(translationsOf(posts[0], posts)), ["vi"]);
   // Liên quan: cùng ngôn ngữ, chung thẻ; bản dịch tiếng Trung không được tính.
   assert.deepEqual(relatedPosts(posts[1], posts).map((item) => item.id), ["p2"]);
 });

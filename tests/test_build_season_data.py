@@ -336,18 +336,39 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         self.assertEqual(result['season-team-configs.json'],[])
         self.assertEqual(result['season-team-evaluations.json'],[])
         links=result['season-content-links.json']
-        self.assertEqual(len(links),10)
+        self.assertEqual(len(links),15)
         source=[link for link in links if link['target']['type']=='source-owned-coexist']
-        self.assertEqual(len(source),5)
-        self.assertEqual(sum(len(link['target']['payload']['teams']) for link in source),25)
+        self.assertEqual(len(source),10)
+        for scenario in ('binh-dien-xuan-thu','han-diem-truong-minh'):
+            scoped=[link for link in source if link['scenarioId']==scenario]
+            self.assertEqual((len(scoped),sum(len(link['target']['payload']['teams']) for link in scoped)),(5,25),scenario)
         self.assertEqual({key for link in source for key in link['target']['source']},{'id','format','snapshotHash','disclaimerRaw'})
         self.assertNotRegex(json.dumps(result,ensure_ascii=False),r'https?://|sourceUrl|"provider"')
         scenarios={link['scenarioId'] for link in links}
-        self.assertEqual(scenarios,{'anh-hung-menh-the','binh-dien-xuan-thu'})
+        self.assertEqual(scenarios,{'anh-hung-menh-the','binh-dien-xuan-thu','han-diem-truong-minh'})
+        self.assertEqual(result['season-registry.json'][0]['id'],'han-diem-truong-minh')
         legacy=[link for link in links if link['target']['type']=='legacy-locator']
         self.assertEqual(len(legacy),5)
         self.assertTrue(all(link['reviewStatus']=='reviewed' and link['scenarioId']=='anh-hung-menh-the' for link in legacy))
         self.assertTrue(all(link['rulesetId'] is None and not link['configIds'] for link in links))
+
+    def test_coexist_strategy_card_ids_must_match_the_pinned_qilue_catalog(self):
+        from pipeline.coexist_qilue import read_catalog
+        registry,evidence,options=self.bundle()
+        self.assertEqual(sum(len(team.get('strategyCardIds',[]))>0 for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh' for team in link['target']['payload']['teams']),25)
+        catalog=read_catalog();catalog['qilueCards']=[row for row in catalog['qilueCards'] if row['id']!='qilue-card:phong-lang-cu-tu']
+        with self.assertRaisesRegex(ValueError,'Phong Lang Cư Tế'):seasons.build_season_data(registry,evidence,**options,qilue_catalog=catalog)
+        # Sửa tay mã thẻ (fingerprint không đổi vì mã là projection) vẫn bị bắt khi nối lại từ chữ nguồn.
+        team=next(link for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh')['target']['payload']['teams'][0]
+        team['strategyCardIds']=list(reversed(team['strategyCardIds']))
+        with self.assertRaisesRegex(ValueError,'strategyCardIds differ'):seasons.build_season_data(registry,evidence,**options)
+        for change in (lambda team:team.update(strategyCardIds=[]),lambda team:team.update(strategyCardIds=['qilue-card:Sai Ma']),lambda team:team.update(strategyCardIds=['qilue-card:a','qilue-card:a']),lambda team:team.update(strategyCardIds=[['qilue-card:a']]),lambda team:team.update(strategyCardsRaw='')):
+            registry,evidence,options=self.bundle()
+            change(next(link for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh')['target']['payload']['teams'][0])
+            with self.subTest(change=change),self.assertRaisesRegex(ValueError,'invalid source strategy card ids'):seasons.build_season_data(registry,evidence,**options)
+        registry,evidence,options=self.bundle()
+        options['content_links'][0]['target']['payload']['teams'][0]['strategyCardIds']=['qilue-card:can-quet-tay-ha']
+        with self.assertRaisesRegex(ValueError,'invalid source strategy card ids'):seasons.build_season_data(registry,evidence,**options)
 
     def test_source_snapshot_url_and_observation_evidence_must_match(self):
         for mode in ('hash','url','no-observation'):
@@ -361,6 +382,30 @@ class CuratedSeasonBundleTest(unittest.TestCase):
         changes=[lambda link:link['target']['payload']['teams'][0]['heroes'].pop(),lambda link:link['target']['payload']['teams'][0]['heroes'][0]['bookSlotsRaw'].pop(),lambda link:link['target']['payload']['teams'][0].update(recordId=link['recordId']),lambda link:link['target']['payload']['teams'][0].update(teamNameRaw='Changed revision'),lambda link:link['target']['payload']['teams'][0]['sourceLocator'].update(csvRecordEnd=999)]
         for index,change in enumerate(changes):
             registry,evidence,options=self.bundle();change(options['content_links'][0])
+            with self.subTest(index=index),self.assertRaises(ValueError):seasons.build_season_data(registry,evidence,**options)
+
+    def test_source_table_shape_must_not_mix_effect_or_equipment_fields(self):
+        from pipeline.season_validation import content_fingerprint
+        def strategy_link(options):
+            return next(link for link in options['content_links'] if link['scenarioId']=='han-diem-truong-minh')
+        def refit_link(options):
+            return options['content_links'][0]
+        changes=[
+            (strategy_link,lambda team:team['heroes'][1].pop('equipmentRaw')),
+            (strategy_link,lambda team:team.update(unitTacticEffectsRaw='')),
+            (strategy_link,lambda team:team.pop('strategyCardsRaw')),
+            (refit_link,lambda team:team['heroes'][0].update(equipmentRaw='Linh Động')),
+            (refit_link,lambda team:team.update(strategyCardsRaw='A → B')),
+            (refit_link,lambda team:(team.pop('unitTacticEffectsRaw'),team.update(strategyCardsRaw=''))),
+            # Đội 11 cột đầy đủ, hợp lệ khi đứng riêng, vẫn không được trộn vào nhóm 10 cột.
+            (refit_link,lambda team:(team.pop('unitTacticEffectsRaw'),team.update(strategyCardsRaw='A → B'),[hero.update(equipmentRaw='Linh Động') for hero in team['heroes']])),
+        ]
+        for index,(pick,change) in enumerate(changes):
+            registry,evidence,options=self.bundle();link=pick(options);payload=link['target']['payload']
+            team=payload['teams'][0];change(team)
+            # Fingerprint tính lại để lỗi đến từ dạng bảng, không phải từ revision lệch.
+            team['contentFingerprint']=content_fingerprint(team)
+            link['target']['contentFingerprint']=content_fingerprint(payload)
             with self.subTest(index=index),self.assertRaises(ValueError):seasons.build_season_data(registry,evidence,**options)
 
     def test_five_file_publication_failure_restores_all_outputs_and_siblings(self):

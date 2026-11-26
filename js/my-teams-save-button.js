@@ -9,15 +9,27 @@
 
 import { loadSession, signIn, describeError } from "./community-api.js";
 import { L, localePath } from "./i18n.js";
-import { completePendingSave, peekPendingSave, peekPendingUnresolved, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
+import { track } from "./analytics.js";
+import { completePendingSave, peekPendingSave, peekPendingTrackSource, peekPendingUnresolved, pendingIdForSource, stashPendingSave } from "./my-teams-pending.js";
 import { boxLabel, defaultGroupsOf, describeFailure, groupLabel, myTeamsApi, openDialog, showToast } from "./my-teams-ui.js";
 import { el } from "./render.js";
 
 const MAIN_BOX = "main";
-const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容");
+const SAVE_LABEL = () => L("Lưu vào đội của tôi", "保存到我的阵容", "マイ編成に保存");
 
 /** `draft.id` theo nguồn: sinh lần đầu, giữ tới khi server xác nhận (thử lại không sinh bản trùng). */
 const draftIds = new Map();
+
+/** Nguồn đo lường (`save_my_team.source`) theo loại nguồn của đội nháp; nút của Gợi ý đội truyền nguồn riêng (đội của nó dựng từ nguồn Đội chuẩn/Đội khác). */
+const TRACK_SOURCE_BY_KIND = { recommended: "doi-chuan", legacy: "doi-khac", khaihoang: "khai-hoang", analyze: "soi-doi" };
+/** Nguồn hợp lệ của `save_my_team`: bốn nguồn suy từ đội nháp cộng nguồn riêng của Gợi ý đội. */
+const TRACK_SOURCES = new Set([...Object.values(TRACK_SOURCE_BY_KIND), "goi-y-doi"]);
+export const trackSourceOf = (draft) => TRACK_SOURCE_BY_KIND[draft?.source?.kind] ?? "";
+/** Nguồn đọc lại từ sessionStorage không đáng tin: ngoài tập hợp lệ (hoặc vắng, mục cũ) thì suy lại từ đội nháp. */
+export const resolveTrackSource = (stored, draft) => (TRACK_SOURCES.has(stored) ? stored : trackSourceOf(draft));
+export const trackSave = (source) => {
+  if (TRACK_SOURCES.has(source)) track("save_my_team", { source });
+};
 
 /**
  * Hàm dựng cho trang có payload nhúng (`#team-save-payload`): đọc biến thể LÚC GỌI từ `?variant` của URL hiện tại.
@@ -38,14 +50,14 @@ export function embeddedBuilder({ doc = document, location = globalThis.location
 }
 
 /** Gắn `draft.id` ổn định cho nguồn; trả bản dựng kèm khóa nguồn. */
-async function prepare(build) {
+async function prepare(build, source = "") {
   const built = await build();
   const { newTeamId } = await import("./my-teams-sources.js");
   const key = `${built.draft.source.kind}:${built.draft.source.key}`;
   const pendingId = pendingIdForSource(key);
   if (pendingId) draftIds.set(key, pendingId);
   else if (!draftIds.has(key)) draftIds.set(key, newTeamId());
-  return { ...built, key, draft: { ...built.draft, id: draftIds.get(key) } };
+  return { ...built, key, trackSource: source || trackSourceOf(built.draft), draft: { ...built.draft, id: draftIds.get(key) } };
 }
 
 const openTeamsHref = () => localePath("/doi-cua-toi/");
@@ -62,17 +74,17 @@ export function unresolvedNotice(unresolved) {
   const notes = items.filter((item) => item?.reason === "over-limit" && item.field === "notes.general").length;
   const others = items.filter((item) => item?.reason === "over-limit" && item.field !== "notes.general").length;
   return [
-    names ? L(` Có ${names} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${names} 项未能匹配，可在“我的阵容”中修改。`) : "",
-    notes ? L(` ${notes} dòng ghi chú vượt giới hạn dung lượng nên không được lưu, bản đầy đủ vẫn ở trang nguồn.`, ` ${notes} 行备注超出容量上限，未被保存，完整内容仍在来源页面。`) : "",
-    others ? L(` ${others} phương án thay vượt giới hạn nên không được lưu.`, ` ${others} 个替代方案超出上限，未被保存。`) : "",
+    names ? L(` Có ${names} mục chưa đối chiếu được, bạn có thể sửa trong Đội của tôi.`, ` 有 ${names} 项未能匹配，可在“我的阵容”中修改。`, ` ${names} 件は照合できませんでした。「マイ編成」で修正できます。`) : "",
+    notes ? L(` ${notes} dòng ghi chú vượt giới hạn dung lượng nên không được lưu, bản đầy đủ vẫn ở trang nguồn.`, ` ${notes} 行备注超出容量上限，未被保存，完整内容仍在来源页面。`, ` ${notes} 行のメモは容量上限を超えたため保存されませんでした。全文は元のページに残っています。`) : "",
+    others ? L(` ${others} phương án thay vượt giới hạn nên không được lưu.`, ` ${others} 个替代方案超出上限，未被保存。`, ` ${others} 件の代替案は上限を超えたため保存されませんでした。`) : "",
   ].join("");
 }
 
 function successToast(team, unresolved) {
   showToast({
-    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`)}${unresolvedNotice(unresolved)}`,
+    message: `${L(`Đã lưu “${team.name}” vào Đội của tôi.`, `已将“${team.name}”保存到我的阵容。`, `「${team.name}」をマイ編成に保存しました。`)}${unresolvedNotice(unresolved)}`,
     href: openTeamsHref(),
-    linkLabel: L("Mở Đội của tôi", "打开我的阵容"),
+    linkLabel: L("Mở Đội của tôi", "打开我的阵容", "マイ編成を開く"),
   });
 }
 
@@ -98,16 +110,16 @@ async function openSaveDialog(prep) {
   paintGroups();
 
   const alert = el("p", { class: "mt-alert", role: "alert", hidden: "" });
-  const save = el("button", { type: "button", class: "ana-btn primary" }, L("Lưu", "保存"));
-  const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消"));
+  const save = el("button", { type: "button", class: "ana-btn primary" }, L("Lưu", "保存", "保存"));
+  const cancel = el("button", { type: "button", class: "ana-btn" }, L("Hủy", "取消", "キャンセル"));
   const body = el("div", { class: "mt-save-form" }, [
     el("p", { class: "mt-dialog-lead" }, prep.draft.name),
-    el("label", { class: "mt-field", for: "mt-save-box" }, [el("span", {}, L("Hộp", "仓库")), boxSelect]),
-    el("label", { class: "mt-field", for: "mt-save-group" }, [el("span", {}, L("Nhóm", "分组")), groupSelect]),
+    el("label", { class: "mt-field", for: "mt-save-box" }, [el("span", {}, L("Hộp", "仓库", "倉庫")), boxSelect]),
+    el("label", { class: "mt-field", for: "mt-save-group" }, [el("span", {}, L("Nhóm", "分组", "グループ")), groupSelect]),
     alert,
     el("div", { class: "mt-dialog-actions" }, [cancel, save]),
   ]);
-  const { close } = openDialog({ title: L("Lưu vào đội của tôi", "保存到我的阵容"), body });
+  const { close } = openDialog({ title: L("Lưu vào đội của tôi", "保存到我的阵容", "マイ編成に保存"), body });
   cancel.addEventListener("click", close);
 
   save.addEventListener("click", async () => {
@@ -122,13 +134,14 @@ async function openSaveDialog(prep) {
     if (result.ok) {
       completePendingSave(result);
       draftIds.delete(prep.key);
+      trackSave(prep.trackSource);
       close();
       successToast(result.team, prep.unresolved);
       return;
     }
     alert.textContent = describeFailure(result);
     alert.hidden = false;
-    save.textContent = L("Lưu lại", "重新保存");
+    save.textContent = L("Lưu lại", "重新保存", "再保存");
     save.disabled = false;
   });
   groupSelect.focus();
@@ -136,12 +149,12 @@ async function openSaveDialog(prep) {
 
 /* ---------- Bấm nút ---------- */
 
-async function onSave(build) {
-  const prep = await prepare(build);
+async function onSave(build, source) {
+  const prep = await prepare(build, source);
   const user = await loadSession({ probe: true });
   if (!user) {
     // Rời trang sang Google: cất nháp (đã có id) để trang quay lại lưu đúng một lần, vào hộp chính theo nhóm mặc định của nguồn.
-    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` }, { unresolved: prep.unresolved });
+    stashPendingSave({ ...prep.draft, groupId: `${MAIN_BOX}~${prep.defaultGroup}` }, { unresolved: prep.unresolved, trackSource: prep.trackSource });
     await signIn();
     return;
   }
@@ -152,9 +165,9 @@ const failedToast = (error, retry) =>
   showToast({
     kind: "error",
     message: error?.message === "unknown-variant" || error?.message === "no-payload"
-      ? L("Không dựng được đội để lưu từ trang này.", "无法从此页面生成可保存的阵容。")
+      ? L("Không dựng được đội để lưu từ trang này.", "无法从此页面生成可保存的阵容。", "このページから保存できる編成を作成できませんでした。")
       : describeError(error),
-    actionLabel: L("Lưu lại", "重新保存"),
+    actionLabel: L("Lưu lại", "重新保存", "再保存"),
     onAction: retry,
   });
 
@@ -163,13 +176,13 @@ const failedToast = (error, retry) =>
  * nút xuất hiện: trang Gợi ý đội chỉ dựng nút sau khi người dùng bấm "Gợi ý", mà trang quay về từ OAuth chưa có kết quả.
  * @returns {HTMLButtonElement}
  */
-export function createSaveButton({ build, className = "detail-action mt-save-btn" }) {
+export function createSaveButton({ build, className = "detail-action mt-save-btn", source = "" }) {
   const button = el("button", { type: "button", class: className, dataset: { mtSave: "" } }, SAVE_LABEL());
   const run = async () => {
     button.disabled = true;
     button.setAttribute("aria-busy", "true");
     try {
-      await onSave(build);
+      await onSave(build, source);
     } catch (error) {
       failedToast(error, run);
     } finally {
@@ -199,6 +212,7 @@ async function attemptPending() {
   const draft = peekPendingSave();
   if (!draft) return;
   const unresolved = peekPendingUnresolved();
+  const trackSource = resolveTrackSource(peekPendingTrackSource(), draft);
   try {
     if (!(await loadSession({ probe: true }))) return;
     const api = await myTeamsApi({ dialog: true });
@@ -206,12 +220,13 @@ async function attemptPending() {
     const result = await api.saveTeam(draft, { boxId: MAIN_BOX });
     if (completePendingSave(result)) {
       draftIds.delete(`${draft.source.kind}:${draft.source.key}`);
+      trackSave(trackSource);
       successToast(result.team, unresolved);
       return;
     }
-    showToast({ kind: "error", message: describeFailure(result), actionLabel: L("Lưu lại", "重新保存"), onAction: attemptPending });
+    showToast({ kind: "error", message: describeFailure(result), actionLabel: L("Lưu lại", "重新保存", "再保存"), onAction: attemptPending });
   } catch (error) {
-    showToast({ kind: "error", message: describeError(error), actionLabel: L("Lưu lại", "重新保存"), onAction: attemptPending });
+    showToast({ kind: "error", message: describeError(error), actionLabel: L("Lưu lại", "重新保存", "再保存"), onAction: attemptPending });
   }
 }
 

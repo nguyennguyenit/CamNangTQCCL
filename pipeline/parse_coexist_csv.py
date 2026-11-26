@@ -8,6 +8,11 @@ from .season_validation import content_fingerprint, raw_text, sha256
 from .build_season_data import record, identifier, array, version
 
 HEADER=['Tiến cử khai hoang','Tên đội','Võ Tướng','Chiến Pháp','','Thêm điểm','Binh Thư','','','Hiệu Quả Cải Tạo Chiến Pháp Binh Chủng']
+# Bảng 11 cột (từ mùa Hán Diễm Trường Minh): thêm cột Trang Bị theo từng tướng, cột cuối là Thẻ Kỳ Lược
+# của cả đội thay cho cải tạo chiến pháp binh chủng. Hai khái niệm khác nhau nên mang trường riêng.
+STRATEGY_CARD_HEADER=['Tiến Cử Khai Hoang','Tên Đội','Võ Tướng','Chiến Pháp','','Thêm Điểm','Trang Bị','Binh Thư','','','Thẻ Kỳ Lược']
+# Số cột của snapshot chọn header phải gặp ở mọi nhóm; mọi record trong một file có cùng số cột.
+HEADERS={len(HEADER):HEADER,len(STRATEGY_CARD_HEADER):STRATEGY_CARD_HEADER}
 
 
 def parse_coexist_csv(csv_text, *, expected_hash=None):
@@ -15,7 +20,7 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
     if expected_hash is not None and sha256(expected_hash)!='sha256:'+hashlib.sha256(csv_text.encode('utf-8')).hexdigest():
         raise ValueError('snapshot hash mismatch')
     reader=csv.reader(io.StringIO(csv_text,newline=''),strict=True)
-    groups=[];group=None;team=None;expect_header=False;notes=False;disclaimer=[]
+    groups=[];group=None;team=None;expect_header=False;notes=False;disclaimer=[];header=None
 
     def complete_team():
         if team is not None and len(team['heroes'])!=3:
@@ -26,11 +31,15 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
             line_end=reader.line_num
             # Embedded quoted newlines belong to the same CSV record.
             line_start=line_end-sum(value.count('\n') for value in row)
-            if len(row)!=10:
-                raise ValueError('source must have exactly ten columns')
+            if header is None:
+                if len(row) not in HEADERS:raise ValueError('unsupported source column count')
+                header=HEADERS[len(row)]
+            if len(row)!=len(header):
+                raise ValueError('source records must share one column count')
             for cell in row:raw_text(cell)
+            strategy_cards=header is STRATEGY_CARD_HEADER
             if expect_header:
-                if row!=HEADER:raise ValueError('source header drift')
+                if row!=header:raise ValueError('source header drift')
                 expect_header=False
                 continue
             if re.fullmatch(r'Cùng tồn \d+',row[0]):
@@ -47,7 +56,7 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
                 if any(row[1:]):raise ValueError('unexpected content before group')
                 disclaimer.append(row[0]);continue
             if row[0]:
-                if row[0]=='Ghi chú':notes=True
+                if row[0].casefold()=='ghi chú':notes=True
                 field='notesRaw' if notes else 'openingSuggestionsRaw'
                 group[field]+=('\n' if group[field] else '')+row[0]
             if not row[2]:
@@ -57,13 +66,21 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
                 name=re.sub(r'\s+\d+C\s*$','',row[1])
                 name=re.sub(r'\s+',' ',name).strip()
                 if not name:raise ValueError('empty team name')
-                team=dict(teamNameRaw=row[1],teamName=name,unitTacticEffectsRaw=row[9],heroes=[],sourceLocator=dict(csvRecordStart=number,csvRecordEnd=number,lineStart=line_start,lineEnd=line_end))
+                locator=dict(csvRecordStart=number,csvRecordEnd=number,lineStart=line_start,lineEnd=line_end)
+                if strategy_cards:
+                    team=dict(teamNameRaw=row[1],teamName=name,strategyCardsRaw=row[10],heroes=[],sourceLocator=locator)
+                else:
+                    team=dict(teamNameRaw=row[1],teamName=name,unitTacticEffectsRaw=row[9],heroes=[],sourceLocator=locator)
                 group['teams'].append(team)
             elif team is None or len(team['heroes'])>=3:
                 raise ValueError('orphan continuation hero')
-            elif row[9]:
+            elif row[-1]:
+                # Cột cuối (cải tạo hoặc Thẻ Kỳ Lược) chỉ thuộc dòng đầu đội; dòng tiếp có chữ thì không rõ chủ.
                 raise ValueError('unverified continuation effect ownership')
-            team['heroes'].append(dict(nameRaw=row[2],tacticSlotsRaw=row[3:5],statFocusRaw=row[5],bookSlotsRaw=row[6:9]))
+            if strategy_cards:
+                team['heroes'].append(dict(nameRaw=row[2],tacticSlotsRaw=row[3:5],statFocusRaw=row[5],equipmentRaw=row[6],bookSlotsRaw=row[7:10]))
+            else:
+                team['heroes'].append(dict(nameRaw=row[2],tacticSlotsRaw=row[3:5],statFocusRaw=row[5],bookSlotsRaw=row[6:9]))
             team['sourceLocator'].update(csvRecordEnd=number,lineEnd=line_end)
     except csv.Error as error:
         raise ValueError('malformed CSV') from error
@@ -73,9 +90,17 @@ def parse_coexist_csv(csv_text, *, expected_hash=None):
     return dict(disclaimerRaw='\n'.join(disclaimer),groups=groups)
 
 
-def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs):
-    """Attach reviewed opaque record IDs to exact content revisions, never rows."""
+def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs,qilue_catalog=None,qilue_aliases=None):
+    """Attach reviewed opaque record IDs to exact content revisions, never rows.
+
+    Bảng 11 cột: mỗi đội có chữ Thẻ Kỳ Lược nhận thêm `strategyCardIds` (mã `qilue-card:*` theo thứ tự hiệp), nối với
+    `qilue_catalog` (lookup-catalog.json) qua bảng alias đã duyệt (`pipeline/coexist_qilue.py`); tên lạ làm build dừng.
+    Mặc định đọc catalog/alias đang commit. Mã thẻ là projection nên không vào content fingerprint."""
     parsed=parse_coexist_csv(csv_text,expected_hash=source['snapshotHash'])
+    card_lookup=None
+    if any('strategyCardsRaw' in team for group in parsed['groups'] for team in group['teams']):
+        from .coexist_qilue import card_index,read_aliases,read_catalog
+        card_lookup=card_index(read_catalog() if qilue_catalog is None else qilue_catalog,read_aliases() if qilue_aliases is None else qilue_aliases)
     record(identity_map,('schemaVersion','sourceId','reviewStatus','groups'))
     version(identity_map['schemaVersion'])
     if identity_map['reviewStatus']!='reviewed' or identity_map['sourceId']!=source['id']:
@@ -104,6 +129,10 @@ def build_content_links(csv_text,identity_map,source,*,scenario_id,evidence_refs
             if revision not in teams_by_revision or revision in team_used:raise ValueError('unreviewed or duplicate team revision')
             team_used.add(revision)
             team.update(recordId=teams_by_revision[revision]['recordId'],contentFingerprint=revision)
+            if card_lookup is not None:
+                from .coexist_qilue import resolve_strategy_cards
+                cards=resolve_strategy_cards(team['strategyCardsRaw'],*card_lookup,label=team['recordId'])
+                if cards:team['strategyCardIds']=cards
         if team_used!=set(teams_by_revision):raise ValueError('missing reviewed teams')
         source_copy=copy.deepcopy(source);source_copy['disclaimerRaw']=parsed['disclaimerRaw']
         links.append(dict(schemaVersion=1,id='link:'+mapping['recordId'],kind='coexist',recordId=mapping['recordId'],scenarioId=scenario_id,rulesetId=None,configIds=[],reviewStatus='reviewed',evidenceRefs=list(evidence_refs),target=dict(type='source-owned-coexist',source=source_copy,contentFingerprint=digest,payload=payload)))

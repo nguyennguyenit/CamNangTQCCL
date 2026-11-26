@@ -9,14 +9,14 @@ import type { SiteLocale } from './locale-routes';
 
 const SCHEMA = 'https://schema.org';
 const absolute = (path: string, site: URL | string) => new URL(path, site).href;
-const htmlLang = (locale: SiteLocale) => pick(locale, 'vi', 'zh-Hans');
+const htmlLang = (locale: SiteLocale) => pick(locale, 'vi', 'zh-Hans', 'ja');
 
 /** Trò chơi mà cẩm nang nói tới: mọi trang đội/Tra cứu là một phần của nó. */
 function videoGame(locale: SiteLocale) {
-  return { '@type': 'VideoGame', name: '三国志·战略版', alternateName: pick(locale, 'Tam Quốc Chí - Chiến Lược', '三国志战略版') };
+  return { '@type': 'VideoGame', name: '三国志·战略版', alternateName: pick(locale, 'Tam Quốc Chí - Chiến Lược', '三国志战略版', '三國志 真戦') };
 }
 
-const homeCrumb = (locale: SiteLocale) => ({ name: pick(locale, 'Trang chủ', '首页'), path: localePath('/', locale) });
+const homeCrumb = (locale: SiteLocale) => ({ name: pick(locale, 'Trang chủ', '首页', 'ホーム'), path: localePath('/', locale) });
 
 export interface NamedPath {
   name: string;
@@ -98,7 +98,7 @@ export function communityTeamJsonLd(input: CommunityTeamStructured) {
     },
     breadcrumbJsonLd([
       homeCrumb(locale),
-      { name: pick(locale, 'Đội cộng đồng', '社区阵容'), path: localePath('/doi-cong-dong/', locale) },
+      { name: pick(locale, 'Đội cộng đồng', '社区阵容', 'コミュニティ編成'), path: localePath('/doi-cong-dong/', locale) },
       { name: input.name, path: input.path },
     ], site),
     {
@@ -164,7 +164,7 @@ export interface LookupItemStructured {
   term: boolean;
   path: string;
   name: string;
-  /** Tên bằng ngôn ngữ còn lại có trong trang (chữ Hán ở bản Việt, tên Việt ở bản Trung); vắng thì bỏ. */
+  /** Tên khác có trong trang (chữ Hán ở bản Việt, tên chữ Hán gốc ở bản Nhật); vắng thì bỏ. */
   alternateName?: string | null;
   description: string;
   /** Ảnh tuyệt đối `https` của tướng; mục không có ảnh thì bỏ. */

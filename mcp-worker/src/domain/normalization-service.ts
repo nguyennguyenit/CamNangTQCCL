@@ -39,6 +39,11 @@ type NormalizationObservation = StructuredObservation;
 export interface NormalizationResult {
   canonicalState: CanonicalState;
   observations: NormalizationObservation[];
+  /**
+   * Theo vị trí của observations đầu vào: true nếu observation đó còn được dùng sau khi áp manualCorrection,
+   * replacesCanonicalId và chọn identity theo độ ưu tiên (cùng observationId); false nếu bị loại hoặc xung đột identity.
+   */
+  effectiveObservations: boolean[];
   warnings: string[];
   reviewRequired: boolean;
   confirmationBinding: ConfirmationBinding;
@@ -633,9 +638,11 @@ export async function normalizeObservations({
     normalizationDigest: await createNormalizationDigest(canonicalState),
     canonicalProjectionVersion: projectionVersion(canonicalState),
   };
+  const processableSet = new Set(processable);
   return {
     canonicalState,
     observations: sanitizedObservations,
+    effectiveObservations: sanitizedObservations.map((observation) => processableSet.has(observation)),
     warnings,
     reviewRequired: unresolved.length > 0,
     confirmationBinding,

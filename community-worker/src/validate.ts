@@ -12,8 +12,12 @@ export const ID_RE = {
   book: /^book:[a-z0-9]+(?:-[a-z0-9]+)*$/u,
 } as const;
 export const SLUG_RE = /^[a-z0-9][a-z0-9-]{0,100}$/u;
-export const LANGS = ["vi", "zh"] as const;
+// Ngôn ngữ nội dung cộng đồng: nguồn duy nhất cho kiểu `Lang`, `parseLang` và thông báo lỗi. Thêm ngôn ngữ = thêm vào
+// đây VÀ migration mở CHECK lang/text_lang của D1 (tiền lệ migrations/0015_lang_ja.sql), apply trước khi deploy.
+// Site chỉ được thêm locale vào `SITE_LOCALES` (src/lib/locale-routes.ts) sau khi worker này đã nhận locale đó.
+export const LANGS = ["vi", "zh", "ja"] as const;
 export type Lang = (typeof LANGS)[number];
+const LANG_LIST = `${LANGS.slice(0, -1).join(", ")} hoặc ${LANGS[LANGS.length - 1]}`;
 export const REPORT_RESULTS = ["win", "loss", "draw"] as const;
 export type ReportResult = (typeof REPORT_RESULTS)[number];
 export const MAX_HEROES = 5;
@@ -42,8 +46,8 @@ export function parseId(value: unknown, kind: keyof typeof ID_RE, field: string)
 }
 
 export function parseLang(value: unknown): Lang {
-  if (value !== "vi" && value !== "zh") throw bad("invalid_lang", "lang phải là vi hoặc zh");
-  return value;
+  if (typeof value !== "string" || !(LANGS as readonly string[]).includes(value)) throw bad("invalid_lang", `lang phải là ${LANG_LIST}`);
+  return value as Lang; // vừa kiểm thuộc LANGS
 }
 
 export function parseSlug(value: unknown): string {

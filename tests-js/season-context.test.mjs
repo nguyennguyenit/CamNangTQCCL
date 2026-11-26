@@ -165,6 +165,69 @@ test('source discriminator, nested slots, published source URLs and stale conten
   }
 });
 
+test('11-column source teams carry strategy cards and per-hero equipment; mixed table shapes reject',async()=>{
+  /** Đổi đội đầu sang dạng bảng 11 cột (hoặc dạng lỗi) rồi tính lại fingerprint để lỗi chỉ đến từ dạng bảng. */
+  const reshape=async(data,change)=>{
+    const target=data['season-content-links'][0].target,team=target.payload.teams[0];
+    change(team);
+    team.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(team));
+    target.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(target.payload));
+    return data;
+  };
+  const strategy=team=>{delete team.unitTacticEffectsRaw;team.strategyCardsRaw='A → B → C';team.heroes.forEach(hero=>{hero.equipmentRaw='Trị Quân, Ngự Sách\n\nSức Sống, Hộ Chủ';});};
+  const model=await validateSeasonBundle(await reshape(await referenceFixture(),strategy));
+  const content=projectSeasonBrowse(model,resolveBrowseState(model,context)).coexist.scenarioReference[0].content;
+  assert.equal(content.teams[0].strategyCardsRaw,'A → B → C');
+  assert.equal(content.teams[0].heroes[0].equipmentRaw,'Trị Quân, Ngự Sách\n\nSức Sống, Hộ Chủ');
+  await validateSeasonBundle(await reshape(await referenceFixture(),()=>{}));
+  for(const change of [
+    team=>{strategy(team);delete team.heroes[1].equipmentRaw;},
+    team=>{strategy(team);team.unitTacticEffectsRaw='';},
+    team=>{strategy(team);team.strategyCardsRaw=7;},
+    team=>{team.heroes[0].equipmentRaw='Linh Động';},
+    team=>{delete team.unitTacticEffectsRaw;},
+    team=>{strategy(team);team.heroes[0].equipmentRaw='\u0007';},
+  ]){
+    await assert.rejects(validateSeasonBundle(await reshape(await referenceFixture(),change)),SeasonContextError);
+  }
+  const mixed=await referenceFixture();const payload=mixed['season-content-links'][0].target.payload;
+  const second=structuredClone(payload.teams[0]);second.recordId='source-team-b';strategy(second);
+  second.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(second));payload.teams.push(second);
+  mixed['season-content-links'][0].target.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(payload));
+  await assert.rejects(validateSeasonBundle(mixed),SeasonContextError);
+});
+
+test('11-column teams may carry catalog strategy card ids outside the content fingerprint; malformed ids reject',async()=>{
+  const strategy=team=>{delete team.unitTacticEffectsRaw;team.strategyCardsRaw='A → B → C';team.heroes.forEach(hero=>{hero.equipmentRaw='Hộ Chủ';});};
+  const build=async change=>{
+    const data=await referenceFixture();const target=data['season-content-links'][0].target,team=target.payload.teams[0];
+    strategy(team);
+    team.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(team));
+    target.contentFingerprint=await seasonFingerprint(contentFingerprintProjection(target.payload));
+    // Mã thẻ gắn SAU fingerprint (như pipeline): fingerprint đã duyệt không đổi.
+    change(team);
+    return data;
+  };
+  const ids=['qilue-card:a-b','qilue-card:c','qilue-card:d-e-f'];
+  const model=await validateSeasonBundle(await build(team=>{team.strategyCardIds=[...ids];}));
+  assert.deepEqual(projectSeasonBrowse(model,resolveBrowseState(model,context)).coexist.scenarioReference[0].content.teams[0].strategyCardIds,ids);
+  for(const change of [
+    team=>{team.strategyCardIds=[];},
+    team=>{team.strategyCardIds='qilue-card:a';},
+    team=>{team.strategyCardIds=['qilue-card:a','qilue-card:a'];},
+    team=>{team.strategyCardIds=['qilue-strategy:muu-tinh'];},
+    team=>{team.strategyCardIds=['qilue-card:Sai'];},
+    team=>{team.strategyCardIds=[7];},
+    team=>{team.strategyCardIds=[['qilue-card:a']];},
+    team=>{team.strategyCardIds=[...ids];team.strategyCardsRaw=' ';},
+  ]){
+    await assert.rejects(validateSeasonBundle(await build(change)),SeasonContextError);
+  }
+  // Đội bảng 10 cột không được mang mã thẻ.
+  const refit=await referenceFixture();refit['season-content-links'][0].target.payload.teams[0].strategyCardIds=['qilue-card:a'];
+  await assert.rejects(validateSeasonBundle(refit),SeasonContextError);
+});
+
 test('reference requires both reviewed scenario attribution and matching snapshot observation',async()=>{
   for(const change of ['attribution','observation']){
     const data=await referenceFixture();const proof=data['season-evidence'].find(p=>p.id===(change==='attribution'?'source-attribution':'source-proof'));

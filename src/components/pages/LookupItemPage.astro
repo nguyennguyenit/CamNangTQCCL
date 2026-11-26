@@ -1,7 +1,7 @@
 ---
-// Trang riêng của một mục Tra cứu `/tra-cuu/<nhóm>/<slug>/` dùng chung cho bản Việt và bản Trung. Hồ sơ đầy đủ dựng lúc
+// Trang riêng của một mục Tra cứu `/tra-cuu/<nhóm>/<slug>/` dùng chung cho mọi ngôn ngữ. Hồ sơ đầy đủ dựng lúc
 // build bằng đúng cây view của hộp thoại/panel (src/lib/lookup-item-pages.ts) nên đọc được không cần JavaScript;
-// js/lookup-item-page.js chỉ gắn nút chọn phiên bản hiệu ứng. Canonical là chính URL này, hreflang vi/zh do SiteLayout phát.
+// js/lookup-item-page.js chỉ gắn nút chọn phiên bản hiệu ứng. Canonical là chính URL này, hreflang do SiteLayout phát.
 import SiteLayout from '../../layouts/SiteLayout.astro';
 import { pick } from '../../../js/i18n.js';
 import { lookupItemPage } from '../../lib/lookup-item-pages';
@@ -16,7 +16,7 @@ interface Props {
 }
 
 const { id, locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 const page = await lookupItemPage(id, locale, Astro.site!);
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 ---
@@ -25,7 +25,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   description={page.description}
   pageKind="detail"
   activeSection="lookup"
-  tagline={t('Tra cứu', '图鉴查询')}
+  tagline={t('Tra cứu', '图鉴查询', '図鑑')}
   canonicalUrl={canonicalUrl}
   ogType="article"
   locale={locale}
@@ -35,10 +35,10 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
   <Fragment slot="head">
     {page.structured.map((data) => <script is:inline type="application/ld+json" set:html={jsonLd(data)}></script>)}
   </Fragment>
-  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Tra cứu', '返回图鉴列表')}>
+  <nav class="detail-back-row" aria-label={t('Quay lại danh sách Tra cứu', '返回图鉴列表', '図鑑の一覧に戻る')}>
     <a class="detail-link detail-back-link" href={page.groupHref}>
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="11 6 5 12 11 18"></polyline></svg>
-      {t(`Quay lại ${page.groupLabel}`, `返回${page.groupLabel}`)}
+      {t(`Quay lại ${page.groupLabel}`, `返回${page.groupLabel}`, `${page.groupLabel}に戻る`)}
     </a>
   </nav>
   {page.master

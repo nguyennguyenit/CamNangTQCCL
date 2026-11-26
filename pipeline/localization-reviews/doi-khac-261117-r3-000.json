@@ -1,0 +1,23 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r3-000",
+ "reviewerSession": "reviewer:RvDk261117-r3-000",
+ "items": [
+  {
+   "entityId": "recommended:s-7a1e33bfc0ac6fff929a64590c51e861b7118dfbe2150febbccc4f2105a9da15/s28-kh-zuo-tai-ke",
+   "fieldPath": "displayNotes.blocks.p-1.textRaw",
+   "inputFingerprint": "2c21effa7c2fdc2e8e24198ed3ef894738993a39abd30578667b8df59265c250",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "a902d135dfc8fed4c4504ba555e19fe7c2d78b310f9e7cc43a0631d559b0d898",
+   "verdict": "accepted"
+  },
+  {
+   "entityId": "troop-option:tien-dang-tu-si:chuyen-cu-my-special-shield",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "8b6d311cdade6dd36d9461b78bb3c412d185961b5baa8f841326688c54a3772e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "ed46d4549e394410d2ba2828a37a3dd49f6960b79f6c80b5af8ec3ca0c0ca474",
+   "verdict": "accepted"
+  }
+ ]
+}

@@ -33,6 +33,17 @@ const siteverifyCalls = (h: Harness) => h.fetchCalls.filter((c) => c.url === SIT
 const rows = (h: Harness) => h.sqlite.prepare("select * from feedback order by created_at, id").all() as Record<string, unknown>[];
 
 describe("POST /api/feedback", () => {
+  it("lang=ja: lưu D1 và thư báo ghi (ja); lang ngoài danh sách -> 400 invalid_lang", async () => {
+    const h = createHarness();
+    acceptTurnstile(h);
+    expect((await send(h, feedback({ page: "/ja/tra-cuu/", lang: "ja" }))).status).toBe(201);
+    expect(rows(h)).toEqual([expect.objectContaining({ page: "/ja/tra-cuu/", lang: "ja" })]);
+    expect(h.mails[0]?.text).toContain("/ja/tra-cuu/ (ja)");
+    const ko = await send(h, feedback({ lang: "ko" }));
+    expect(ko.status).toBe(400);
+    expect((await ko.json<ApiJson>()).error.code).toBe("invalid_lang");
+  });
+
   it("khách ẩn danh qua Turnstile: lưu D1 trạng thái new và gửi thư có Reply-To", async () => {
     const h = createHarness();
     acceptTurnstile(h);

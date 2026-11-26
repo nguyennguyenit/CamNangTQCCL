@@ -9,65 +9,68 @@ interface Props {
 }
 
 const { locale } = Astro.props;
-const t = (vi: string, zh: string): string => pick(locale, vi, zh);
+const t = (...variants: string[]): string => pick(locale, ...variants);
 
 const sections: PolicySection[] = [
   {
     id: 'khong-chinh-thuc',
-    heading: t('Trang không chính thức', '非官方网站'),
+    heading: t('Trang không chính thức', '非官方网站', '非公式サイト'),
     paragraphs: [
       t(
         'Cẩm Nang TQCCL là trang do người chơi xây dựng, không liên kết, không được tài trợ hay xác nhận bởi nhà phát triển hoặc nhà phát hành Tam Quốc Chí – Chiến Lược. Thông tin trên site không phải thông báo chính thức của game.',
         '本手册由玩家搭建，与《三国志·战略版》的开发商或发行商无任何关联，也未获其赞助或认可。本站信息并非游戏官方公告。',
+        '本手帳はプレイヤーが制作したものであり、『三國志 真戦』の開発元および運営会社とは一切関係がなく、その支援や承認を受けたものでもありません。本サイトの情報は、ゲームの公式なお知らせではありません。',
       ),
     ],
   },
   {
     id: 'ban-quyen',
-    heading: t('Bản quyền game', '游戏版权'),
+    heading: t('Bản quyền game', '游戏版权', 'ゲームの著作権'),
     paragraphs: [
       t(
         'Tên game, tên tướng, chiến pháp, hình ảnh và nhãn hiệu liên quan thuộc về chủ sở hữu tương ứng. Site chỉ dùng chúng để tra cứu, hướng dẫn và bình luận, không nhằm mục đích thương mại.',
         '游戏名称、武将、战法名称、图片及相关商标均归各自权利人所有。本站仅将其用于查询、攻略与评论，不作商业用途。',
+        'ゲームの名称、武将、戦法の名称、画像および関連する商標は、それぞれの権利者に帰属します。本サイトはこれらを検索、攻略解説およびコメントの目的にのみ使用しており、商業目的では使用しません。',
       ),
     ],
     contact: {
-      before: t('Nếu bạn là chủ sở hữu và muốn gỡ nội dung nào, hãy gửi email tới', '如你是权利人并希望下架任何内容，请发送邮件至'),
-      after: t('; chúng tôi sẽ xem xét và phản hồi sớm.', '，我们会尽快核查并回复。'),
+      before: t('Nếu bạn là chủ sở hữu và muốn gỡ nội dung nào, hãy gửi email tới', '如你是权利人并希望下架任何内容，请发送邮件至', '権利者の方で、掲載内容の削除をご希望の場合は、'),
+      after: t('; chúng tôi sẽ xem xét và phản hồi sớm.', '，我们会尽快核查并回复。', '宛にメールをお送りください。内容を確認のうえ、速やかに返信いたします。'),
     },
   },
   {
     id: 'ban-dich',
-    heading: t('Bản dịch và độ chính xác của dữ liệu', '译名与数据准确性'),
+    heading: t('Bản dịch và độ chính xác của dữ liệu', '译名与数据准确性', '訳名とデータの正確性'),
     paragraphs: [
       t(
         'Tên tướng và chiến pháp ở bản tiếng Việt dùng âm Hán Việt và có thể khác tên trong game; bản tiếng Trung giữ chữ Hán gốc. Đội hình, tier và điểm chỉ mang tính tham khảo. Sau mỗi lần game cập nhật, số liệu trên site có thể chưa kịp khớp.',
         '越南语版武将与战法名称采用汉越音译，可能与游戏内名称不同；中文版保留原始汉字。阵容、等级和评分仅供参考。游戏每次更新后，本站数据可能未能及时同步。',
+        'ベトナム語版の武将名および戦法名は漢越音で表記しているため、ゲーム内の名称と異なる場合があります。日本語版では、ゲーム内の日本語表記に準拠した名称を用いています。編成、ティアおよび評価点は参考情報です。ゲームのアップデート後は、本サイトのデータの反映が間に合わない場合があります。',
       ),
     ],
   },
   {
     id: 'tham-khao',
-    heading: t('Chỉ mang tính tham khảo', '仅供参考'),
+    heading: t('Chỉ mang tính tham khảo', '仅供参考', '参考情報であること'),
     items: [
-      t('Đội hình và gợi ý là ý kiến tham khảo, không bảo đảm thắng trong mọi hoàn cảnh.', '阵容与建议仅供参考，不保证在任何情况下都能获胜。'),
-      t('Kết quả do AI đọc ảnh hoặc gợi ý có thể sai; hãy đối chiếu với game.', 'AI 识别或推荐的结果可能有误，请以游戏内为准。'),
-      t('Bình luận và chiến báo là ý kiến của người đăng, không phải quan điểm của cẩm nang.', '评论和战报代表发布者本人观点，不代表本手册立场。'),
+      t('Đội hình và gợi ý là ý kiến tham khảo, không bảo đảm thắng trong mọi hoàn cảnh.', '阵容与建议仅供参考，不保证在任何情况下都能获胜。', '編成や提案は参考意見であり、あらゆる状況での勝利を保証するものではありません。'),
+      t('Kết quả do AI đọc ảnh hoặc gợi ý có thể sai; hãy đối chiếu với game.', 'AI 识别或推荐的结果可能有误，请以游戏内为准。', 'AI による読み取りや提案の結果には誤りが含まれる場合があります。ゲーム内の情報と照らし合わせてご確認ください。'),
+      t('Bình luận và chiến báo là ý kiến của người đăng, không phải quan điểm của cẩm nang.', '评论和战报代表发布者本人观点，不代表本手册立场。', 'コメントや戦報は投稿者本人の意見であり、本手帳の見解を示すものではありません。'),
     ],
   },
   {
     id: 'giao-dich',
-    heading: t('Giao dịch và an toàn tài khoản game', '交易与游戏账号安全'),
+    heading: t('Giao dịch và an toàn tài khoản game', '交易与游戏账号安全', '取引とゲームアカウントの安全'),
     items: [
-      t('Site không bán vật phẩm, không nhận nạp thẻ và không bao giờ hỏi mật khẩu tài khoản game của bạn.', '本站不出售道具、不代充值，也绝不会索要你的游戏账号密码。'),
-      t('Chỉ tải game và nạp qua liên kết chính thức của nhà phát hành; site không chịu trách nhiệm cho giao dịch với bên thứ ba.', '请仅通过发行商官方链接下载游戏和充值；本站不对与第三方的交易负责。'),
-      t('Ủng hộ tác giả là hoàn toàn tự nguyện và không kèm quyền lợi nào trên site hay trong game.', '支持作者完全出于自愿，不附带任何站内或游戏内权益。'),
+      t('Site không bán vật phẩm, không nhận nạp thẻ và không bao giờ hỏi mật khẩu tài khoản game của bạn.', '本站不出售道具、不代充值，也绝不会索要你的游戏账号密码。', '本サイトはアイテムの販売やチャージの代行を行わず、ゲームアカウントのパスワードをお尋ねすることも決してありません。'),
+      t('Chỉ tải game và nạp qua liên kết chính thức của nhà phát hành; site không chịu trách nhiệm cho giao dịch với bên thứ ba.', '请仅通过发行商官方链接下载游戏和充值；本站不对与第三方的交易负责。', 'ゲームのダウンロードおよびチャージは、運営会社の公式リンクからのみ行ってください。本サイトは、第三者との取引について責任を負いません。'),
+      t('Ủng hộ tác giả là hoàn toàn tự nguyện và không kèm quyền lợi nào trên site hay trong game.', '支持作者完全出于自愿，不附带任何站内或游戏内权益。', '作者への支援は完全に任意であり、サイト内やゲーム内の特典は一切付きません。'),
     ],
   },
   {
     id: 'thay-doi',
-    heading: t('Thay đổi', '内容变更'),
-    paragraphs: [t('Khi nội dung trang này thay đổi, ngày hiệu lực phía trên sẽ được cập nhật.', '本页内容如有变更，上方生效日期将随之更新。')],
+    heading: t('Thay đổi', '内容变更', '内容の変更'),
+    paragraphs: [t('Khi nội dung trang này thay đổi, ngày hiệu lực phía trên sẽ được cập nhật.', '本页内容如有变更，上方生效日期将随之更新。', 'このページの内容を変更した場合は、上部の施行日を更新します。')],
   },
 ];
 ---
@@ -75,14 +78,16 @@ const sections: PolicySection[] = [
   locale={locale}
   path="/mien-tru-trach-nhiem/"
   idPrefix="disclaimer"
-  title={t('Miễn trừ trách nhiệm', '免责声明')}
+  title={t('Miễn trừ trách nhiệm', '免责声明', '免責事項')}
   description={t(
     'Cẩm Nang TQCCL là trang không chính thức: bản quyền game, bản dịch và độ chính xác của dữ liệu, nội dung chỉ mang tính tham khảo và an toàn giao dịch.',
     '《三国志战略版攻略手册》为非官方网站：游戏版权、译名与数据准确性、内容仅供参考及交易安全说明。',
+    '「三國志 真戦 攻略手帳」は非公式サイトです。ゲームの著作権、訳名とデータの正確性、参考情報であること、取引の安全についてご説明します。',
   )}
   lead={t(
     'Những điều bạn nên biết về tính chất không chính thức, bản quyền và giới hạn của thông tin trên cẩm nang.',
     '关于本手册的非官方性质、版权归属以及信息局限，你需要了解的事项。',
+    '本手帳が非公式であること、著作権の帰属、および情報の限界について、あらかじめご承知おきいただきたい事項です。',
   )}
   effectiveDate="2026-09-28"
   sections={sections}

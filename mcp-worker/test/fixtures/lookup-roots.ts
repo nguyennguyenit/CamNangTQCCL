@@ -1,8 +1,10 @@
+import { createHash } from "node:crypto";
 import { copyFile, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { LOOKUP_GROUP_SLUGS, groupForId, lookupDerivedSlug } from "../../../js/lookup-ids.js";
 import { seasonConsumerFixture } from "../../../tests-js/fixtures/season-fixtures.mjs";
 import {
   ARTIFACT_NAMES,
@@ -81,6 +83,80 @@ export async function sha256Hex(bytes: Uint8Array): Promise<string> {
   return [...new Uint8Array(digest)]
     .map((byte) => byte.toString(16).padStart(2, "0"))
     .join("");
+}
+
+/** Mùa duy nhất của nhóm Kỳ lược (hợp đồng catalog): mọi row mang đúng điều kiện này. */
+export const QILUE_SEASON_CONDITION = Object.freeze({
+  kind: "season",
+  textVi: "Mùa Hán Diễm Trường Minh (PK-S27, client 24.547)",
+  textZh: "漢焰長明賽季（PK-S27，客戶端 24.547）",
+});
+
+/**
+ * Vài row Kỳ lược đúng shape hợp đồng `lookup-catalog.json` (`qilueStrategies`, `qilueCards`):
+ * `aliasesZh` luôn là `[nameZh]`; danh sách phương lược dùng được thẻ không nằm trong row.
+ */
+export function qilueCatalogRows(): { qilueStrategies: JsonRecord[]; qilueCards: JsonRecord[] } {
+  const common = (id: string, nameVi: string, aliasesVi: string[], nameZh: string) => ({
+    id, nameVi, aliasesVi, nameZh, aliasesZh: [nameZh],
+    conditions: [{ ...QILUE_SEASON_CONDITION }], missingFields: [], zhSource: { kind: "translation" },
+  });
+  const strategy = (id: string, nameVi: string, aliasesVi: string[], nameZh: string, cardTypes: string[], descriptionVi: string, buffVi: string) => ({
+    ...common(id, nameVi, aliasesVi, nameZh), cardTypes, descriptionVi, buffVi,
+    descriptionZh: `${nameZh}：${descriptionVi}`, buffZh: `${nameZh}：${buffVi}`,
+  });
+  const card = (id: string, nameVi: string, nameZh: string, type: string, rarity: string, targetVi: string, effectVi: string) => ({
+    ...common(id, nameVi, [], nameZh), type, rarity, targetVi, effectVi, effectZh: `${nameZh}：${effectVi}`,
+  });
+  return {
+    qilueStrategies: [
+      strategy("qilue-strategy:cuong-cong", "Cường Công", [], "強攻", ["dung", "phu"],
+        "Bẫy trận xông pha, cường hóa sát thương bùng nổ của Chiến Pháp Đột Kích", "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Võ Lực"),
+      strategy("qilue-strategy:muu-tinh", "Mưu tính", ["Mưu Toán"], "謀算", ["muu", "phu"],
+        "Vận dụng kế sách, cường hóa khả năng sử dụng Chiến Pháp chủ động", "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Trí Lực"),
+    ],
+    qilueCards: [
+      card("qilue-card:am-do-tran-thuong", "Ám Độ Trần Thương", "暗度陳倉", "muu", "common", "Nhóm quân ta",
+        "Khi thi triển Chiến Pháp chuẩn bị hiệp này có 50% xác suất bỏ qua chuẩn bị"),
+      card("qilue-card:bat-vua-pha-doanh", "Bắt Vua Phá Doanh", "擒王破營", "dung", "rare", "Toàn quân ta",
+        "Hiệp này sau khi phát động Chiến Pháp Đột Kích, tỉ lệ phát động Chiến Pháp Đột Kích của Võ Tướng đồng đội tăng 5%"),
+      card("qilue-card:bo-tri-thap-dien", "Bố Trí Thập Diện", "設伏十面", "muu", "common", "Nhóm quân ta",
+        "Hiệp này tăng 10% sát thương Mưu Lược"),
+    ],
+  };
+}
+
+/** Canonical JSON khớp `handlesSha256` của ledger route Tra cứu: khoá sắp theo code point, không khoảng trắng. */
+function canonicalJson(value: unknown): string {
+  if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+    const record = value as JsonRecord;
+    return `{${Object.keys(record).sort().map((key) => `${JSON.stringify(key)}:${canonicalJson(record[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+/**
+ * Ledger slug trang Tra cứu (`pipeline/lookup-route-handles.json`) cho đúng các id có trang riêng, đủ mọi nhóm
+ * của `LOOKUP_GROUP_SLUGS` (gồm `qilue`), slug = slug suy từ id, `handlesSha256` tính lại sau khi `edit`.
+ */
+export function lookupRouteLedgerFor(
+  ids: readonly string[],
+  pins: { generationId: string; booksSha256: string },
+  edit?: (handles: Record<string, Record<string, string>>) => void,
+): Uint8Array {
+  const handles: Record<string, Record<string, string>> = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, {}]));
+  const retired: Record<string, Record<string, string>> = Object.fromEntries(Object.keys(LOOKUP_GROUP_SLUGS).map((group) => [group, {}]));
+  for (const id of ids) {
+    const slug = lookupDerivedSlug(id);
+    const group = groupForId(id);
+    if (slug !== null && group !== null) handles[group]![id] = slug;
+  }
+  edit?.(handles);
+  const handlesSha256 = createHash("sha256").update(canonicalJson({ handles, retired }), "utf8").digest("hex");
+  return new TextEncoder().encode(JSON.stringify({
+    schemaVersion: 1, generationId: pins.generationId, booksSha256: pins.booksSha256,
+    handles, retired, handlesSha256, note: "fixture",
+  }));
 }
 
 /**
@@ -168,6 +244,7 @@ export function withLookupIdentity(dictionaries: {
           costs: { wood: 100, iron: null, stone: null }, durationVi: "5 phút", effectVi: null, effectZh: null, durationZh: null,
         }],
       }],
+      ...qilueCatalogRows(),
     },
   };
 }

@@ -14,7 +14,7 @@ describe("tqccl_get_team build ở mọi section", () => {
     expect(guide.guide).toBeDefined();
     expect(guide.build?.ref).toBe(overview.team?.ref);
     expect(guide.build?.heroes).toEqual(overview.team?.heroes);
-    expect(tacticsOf(guide.build?.heroes, "Gia Cát Khác")).toEqual(["Thịnh Khí Linh Địch", "Tiềm Long Trận"]);
+    expect(tacticsOf(guide.build?.heroes, "Gia Cát Khác")).toEqual(["Thịnh Khí Linh Địch", "Tam Thế Trận/Tiềm Long Trận"]);
   });
 
   it("section phân trang (notes) cũng kèm build", async () => {

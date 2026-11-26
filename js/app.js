@@ -4,13 +4,15 @@
 import { seasonConfigDetail, el, khaihoangTable } from "./render.js";
 import { createLookupPayloadLoader, loadLookupBundle } from "./lookup-data.js";
 import { initLookupPage } from "./lookup-page.js";
+import { initBuildingCalculator } from "./building-upgrade-calculator.js";
 import { setLookupRouteHandlesFromJSON } from "./lookup-ids.js";
 import { LOOKUP_GROUP_PAYLOADS } from "./unified-lookup.js";
 import { initAnalyze } from "./analyze.js";
 import { initRecruitTracker } from "./recruit-tracker.js";
 import { initRosterRecommend } from "./roster-recommend-ui.js";
-import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from "./website-display.js";
-import { L, currentLocale, localePath } from "./i18n.js";
+import { createByteLoader, displayValue, loadRawNameResolver, loadWebsiteDisplay, localizeData, readLookupJaPin, readTacticDisplayTable } from "./website-display.js";
+import { loadLookupJa } from "./lookup-data.js";
+import { L, contentLocaleIsVietnamese, currentLocale, localePath } from "./i18n.js";
 
 import { COEXIST_LATEST_SCENARIO_ID, coexistGroups, coexistScenarioIds as coexistScenarioIdsOf, loadSeasonModel, readSeasonQuery, updateSeasonURL, BUNDLE_NOTICE } from './season-ui-state.js';
 import { createSeasonCoexistSection, createRecommendedSection } from "./team-filter-section.js";
@@ -42,7 +44,7 @@ const $ = (sel) => document.querySelector(sel);
 
 /** Đội chuẩn/Đội khác: hai trang danh sách tham chiếu. */
 const REFERENCE_SECTIONS = ['team-chuan', 'team-khac'];
-/** Hai công cụ Beta: không có phạm vi mùa của layout (Soi đội tự chọn mùa Đội chuẩn trong công cụ). */
+/** Hai công cụ Beta: không có phạm vi mùa của layout (Soi đội tự chọn mùa Đội chuẩn trong công cụ); cả hai đọc ảnh nên bản ja nạp tên Nhật để khớp. */
 const TOOL_SECTIONS = ['analyze', 'roster-recommend'];
 /** Mục dùng cả kho Tra cứu (tướng, chiến pháp, catalog): Theo dõi chiêu mộ và hai công cụ. */
 const LOOKUP_SECTIONS = ['recruit-tracker', ...TOOL_SECTIONS];
@@ -99,11 +101,11 @@ function stripTrackingParams() {
  */
 function scenarioText(scenario) {
   if (!scenario) return '';
-  if (currentLocale() !== 'zh') return scenario.labelVi;
+  if (contentLocaleIsVietnamese(currentLocale())) return scenario.labelVi;
   const code = scenario.labelVi.split(' · ')[0].trim();
   return /^[A-Z0-9]+(?:-[A-Z0-9]+)*$/.test(code) ? code : scenario.id;
 }
-const rulesetText = rule => (rule && currentLocale() === 'zh' ? rule.id : rule?.label || '');
+const rulesetText = rule => (rule && !contentLocaleIsVietnamese(currentLocale()) ? rule.id : rule?.label || '');
 
 const RETIRED_REFERENCE_PARAMS = ['score', 'category'];
 function stripRetiredReferenceParams(pageSection) {
@@ -206,7 +208,8 @@ async function main() {
         .map(team => [team.id, new Set((team.variants || []).map(variant => variant.id))]),
     );
     // Kho Tra cứu, tier (chỉ Gợi ý đội) và mô hình mùa độc lập nhau: tải song song, lỗi của từng phần tự xử lý.
-    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs] = await Promise.all([
+    const jaPin = readLookupJaPin();
+    const [lookupBundle, teamTier, seasonModel, rawNames, lookupBooks, lookupDocs, jaEntries] = await Promise.all([
       needsLookup ? loadLookupBundle(loadBytes).catch(() => null) : null,
       pageSection === 'roster-recommend' ? loadOptionalJSON("/data/team-tier.json", []) : [],
       // Phạm vi mùa chỉ có payload ở 3 trang mục; thiếu hash là trang không dùng đến mô hình mùa.
@@ -220,12 +223,15 @@ async function main() {
       // Binh thư chỉ có ở trang nhóm Binh thư; lỗi chỉ làm lưới trống.
       lookupGroup === 'books' ? loadLookupBooks(loadBytes).catch(() => []) : [],
       lookupPayloads ? loadLookupDocs(lookupPayloads.entry).catch(() => null) : null,
+      // Bản ja (trang có pin `#lookup-ja-pin`): Soi đội và đọc kho của Gợi ý đội nối tên Nhật vào bí danh để khớp tên in trong
+      // ảnh; lỗi chỉ làm việc khớp lùi về tên chữ Hán.
+      TOOL_SECTIONS.includes(pageSection) && jaPin ? loadLookupJa(loadBytes, jaPin).then(({ document }) => document.entries).catch(() => null) : null,
     ]);
     if (rawNames) setZhNameResolver(rawNames);
     // Bản Việt: tên chiến pháp lưu trong dữ liệu đội hiển thị theo `viet` hiện hành (bảng nhúng lúc build, không tải thêm).
     setTacticDisplayName(readTacticDisplayTable());
     if ((needsLookup && !lookupBundle) || (lookupPayloads && !lookupDocs)) {
-      mount.append(el("p", { class: "error", role: "alert" }, L("Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động.", "图鉴查询数据暂不可用。阵容相关栏目仍可正常使用。")));
+      mount.append(el("p", { class: "error", role: "alert" }, L("Dữ liệu Tra cứu hiện không khả dụng. Các mục đội hình vẫn hoạt động.", "图鉴查询数据暂不可用。阵容相关栏目仍可正常使用。", "図鑑データは現在利用できません。編成関連のセクションは引き続きご利用いただけます。")));
     }
     const heroesDict = lookupBundle?.heroes ?? [];
     const tactics = lookupBundle?.tactics ?? [];
@@ -324,7 +330,7 @@ async function main() {
         const match = projection[classification].find(item=>item.configId === state.configId);
         if (match) { row = {...match,classification}; break; }
       }
-      if (!row) { detailMount.append(el('p',{class:'error',role:'status'},L('Không có cấu hình này trong phạm vi đã chọn.','所选范围内没有此配置。'))); return; }
+      if (!row) { detailMount.append(el('p',{class:'error',role:'status'},L('Không có cấu hình này trong phạm vi đã chọn.','所选范围内没有此配置。','選択した範囲にこの構成はありません。'))); return; }
       detailMount.append(seasonConfigDetail(row,seasonModel,{
         onClose:()=>{
           navigateQuery({config:null});
@@ -340,16 +346,22 @@ async function main() {
       if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
       renderScope();
     };
-    const navigateReference = (changes, push = false) => {
-      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
-      if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
+    /** URL hiện tại sau khi áp `changes` (null/"" = gỡ khóa, mảng = lặp khóa). */
+    const referenceQueryURL = changes => {
       const url = new URL(location.href);
       for (const [key,value] of Object.entries(changes)) {
         url.searchParams.delete(key);
         if (Array.isArray(value)) value.forEach(item=>url.searchParams.append(key,item));
         else if (value !== null && value !== undefined && value !== '') url.searchParams.set(key,value);
       }
-      history[push ? 'pushState' : 'replaceState'](history.state, '', url);
+      return url;
+    };
+    /** Chỉ sửa URL (replaceState), không vẽ lại: cho khóa không còn tác dụng mà mục đã tự bỏ khỏi trạng thái của nó. */
+    const replaceReferenceQuery = changes => history.replaceState(history.state, '', referenceQueryURL(changes));
+    const navigateReference = (changes, push = false) => {
+      // Kiểu hiển thị được ghi nhớ theo trình duyệt; URL chỉ mang `view=luoi|bang`, Thẻ là mặc định.
+      if (Object.hasOwn(changes, 'view')) writeStoredTeamView(localStore(), changes.view);
+      history[push ? 'pushState' : 'replaceState'](history.state, '', referenceQueryURL(changes));
       renderReference();
       const params = new URL(location.href).searchParams;
       if (detailMount) detailMount.hidden = !['config','detail','legacyTeam'].some(key=>params.has(key)) && !REFERENCE_SECTIONS.includes(pageSection);
@@ -432,7 +444,7 @@ async function main() {
       const registry = recommendedModel.seasons || {};
       // URL > giá trị đã lưu > Thẻ; cả hai trang danh sách dùng chung một lựa chọn (cùng hàm với bản dựng sẵn).
       sections['team-chuan']?.update(recommendedModel.index.records,referenceSectionState('recommended',location.href,registry,localStore()),registry);
-      sections['team-khac']?.update(recommendedModel.other.records,referenceSectionState('other',location.href,registry,localStore()),registry);
+      sections['team-khac']?.update(recommendedModel.other,referenceSectionState('other',location.href,registry,localStore()),registry);
       canonicaliseView();
       canonicaliseRosterParams();
     }
@@ -465,12 +477,12 @@ async function main() {
     }
     // Cùng Tồn không có select phạm vi: ô chọn mùa của mục là điều khiển duy nhất.
     const scopeSelects = seasonScoped && pageSection !== 'coexist';
-    const scenarioSelect = scopeSelects ? el('select', {id:'season-scenario'}, [el('option',{value:''},L('Tất cả — tham khảo','全部 — 仅供参考')), ...reviewedScenarioIds.map(id => el('option',{value:id},scenarioText(seasonModel.data['season-registry'].find(scenario=>scenario.id===id))))]) : null;
-    const rulesetSelect = scopeSelects ? el('select', {id:'season-ruleset', 'aria-label':L('Phiên bản luật','规则版本')}) : null;
-    const rulesetControl = scopeSelects ? el('label',{id:'season-ruleset-control',for:'season-ruleset'},[L('Phiên bản luật','规则版本'),rulesetSelect]) : null;
+    const scenarioSelect = scopeSelects ? el('select', {id:'season-scenario'}, [el('option',{value:''},L('Tất cả — tham khảo','全部 — 仅供参考','すべて — 参考')), ...reviewedScenarioIds.map(id => el('option',{value:id},scenarioText(seasonModel.data['season-registry'].find(scenario=>scenario.id===id))))]) : null;
+    const rulesetSelect = scopeSelects ? el('select', {id:'season-ruleset', 'aria-label':L('Phiên bản luật','规则版本','ルールバージョン')}) : null;
+    const rulesetControl = scopeSelects ? el('label',{id:'season-ruleset-control',for:'season-ruleset'},[L('Phiên bản luật','规则版本','ルールバージョン'),rulesetSelect]) : null;
     const summary = seasonScoped ? el('p', {id:'season-summary', role:'status', class:'scope-note'}) : null;
     if (seasonScoped) {
-      controls.replaceChildren(...(scopeSelects ? [el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},[L('Mùa','赛季'),scenarioSelect]),rulesetControl])] : []), summary);
+      controls.replaceChildren(...(scopeSelects ? [el('div',{class:'reference-scope-controls'},[el('label',{for:'season-scenario'},[L('Mùa','赛季','シーズン'),scenarioSelect]),rulesetControl])] : []), summary);
       // Đội chuẩn/Đội khác giữ khối phạm vi ẩn (URL vẫn đọc được); Cùng Tồn chỉ giữ dòng tóm tắt ẩn.
       controls.hidden = true;
       summary.hidden = pageSection === 'coexist';
@@ -489,11 +501,11 @@ async function main() {
       const rule = scenario?.rulesets.find(item=>item.id === browse?.rulesetId);
       if (scopeSelects) {
         scenarioSelect.value = scenario?.id || '';
-        rulesetSelect.replaceChildren(el('option',{value:''},L('Chưa chọn — tham khảo','未选择 — 仅供参考')), ...(scenario?.rulesets || []).filter(rule=>rule.reviewStatus === 'reviewed').map(rule=>el('option',{value:rule.id},rulesetText(rule))));
+        rulesetSelect.replaceChildren(el('option',{value:''},L('Chưa chọn — tham khảo','未选择 — 仅供参考','未選択 — 参考')), ...(scenario?.rulesets || []).filter(rule=>rule.reviewStatus === 'reviewed').map(rule=>el('option',{value:rule.id},rulesetText(rule))));
         rulesetSelect.value = browse?.rulesetId || '';
         rulesetSelect.disabled = !scenario || !scenario.rulesets.some(rule=>rule.reviewStatus === 'reviewed');
       }
-      summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? L('Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.','剧本或规则版本无效，请重新选择范围。') : browse.kind === 'all-reference' ? L('Tất cả — tham khảo','全部 — 仅供参考') : `${scenarioText(scenario)} · ${browse.kind === 'verified-pair' ? rulesetText(rule) : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? L('Chưa chọn phiên bản luật — tham khảo','未选择规则版本 — 仅供参考') : L('Chưa có phiên bản luật được xác minh — tham khảo','暂无已验证的规则版本 — 仅供参考')}`;
+      summary.textContent = !seasonModel ? BUNDLE_NOTICE : browse.kind === 'invalid' ? L('Kịch bản hoặc phiên bản luật không hợp lệ. Hãy chọn lại phạm vi.','剧本或规则版本无效，请重新选择范围。','シナリオまたはルールバージョンが無効です。範囲を選び直してください。') : browse.kind === 'all-reference' ? L('Tất cả — tham khảo','全部 — 仅供参考','すべて — 参考') : `${scenarioText(scenario)} · ${browse.kind === 'verified-pair' ? rulesetText(rule) : scenario?.rulesets.some(rule=>rule.reviewStatus === 'reviewed') ? L('Chưa chọn phiên bản luật — tham khảo','未选择规则版本 — 仅供参考','ルールバージョン未選択 — 参考') : L('Chưa có phiên bản luật được xác minh — tham khảo','暂无已验证的规则版本 — 仅供参考','検証済みのルールバージョンなし — 参考')}`;
       if (coexistUI) {
         const groups = projection ? coexistGroups(projection) : coexist.map(content=>({content,source:null}));
         // `group` không hợp lệ (kể cả lặp khóa) được coi là "có yêu cầu": mục tự về nhóm đầu và bỏ khỏi URL.
@@ -508,18 +520,18 @@ async function main() {
     }
     if (pageSection === 'team-chuan') {
       sections['team-chuan'] = recommendedModel
-        ? createRecommendedSection({mount,family:'recommended',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
+        ? createRecommendedSection({mount,family:'recommended',onQuery:navigateReference,onReplaceQuery:replaceReferenceQuery,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     } else if (pageSection === 'team-khac') {
       sections['team-khac'] = recommendedModel
-        ? createRecommendedSection({mount,family:'other',onQuery:navigateReference,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
+        ? createRecommendedSection({mount,family:'other',onQuery:navigateReference,onReplaceQuery:replaceReferenceQuery,hrefFor:referenceHref,onNavigate:onReferenceNavigate,adopt:adoptPrerendered})
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
-      // Lên đầu mục: sau thẻ dựng sẵn (tối đa 60 đội) thông báo sẽ nằm ngoài tầm nhìn.
+      // Lên đầu mục: sau các thẻ dựng sẵn thông báo sẽ nằm ngoài tầm nhìn.
       mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
-        ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。')
-        : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。')));
+        ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。', 'おすすめ編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')
+        : L('Dữ liệu đội khác hiện không khả dụng. Các mục khác vẫn hoạt động.', '其他阵容数据暂不可用。其他栏目仍可正常使用。', 'その他の編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')));
     }
     // Badge kho của Đội chuẩn: kho đọc từ máy (khách: kho local; đã đăng nhập: cache cloud của chính người đó), không
     // chặn boot. Từ điển tướng/chiến pháp chỉ tải khi máy có kho; độ phủ tính theo từng mùa và nhớ lại.
@@ -620,30 +632,42 @@ async function main() {
       } : null,
       // Bản Trung: bộ tra tên Hán gốc (có binh thư) cho khối "Trong cẩm nang"; bản Việt trả null, không tải gì.
       loadRawNames: () => loadRawNameResolver(loadBytes),
+      // Bộ nạp byte dùng chung: lớp ja và `lookup-manifest` không bị tải lại lần nữa.
+      loadBytes,
+    });
+
+    // Trang nhóm Công trình: máy tính nâng cấp nhiều công trình dùng `catalog.buildings` vừa tải.
+    if (lookupGroup === 'buildings' && lookupDocs?.catalog) initBuildingCalculator({
+      mount: $('[data-building-calc]'),
+      buildings: lookupDocs.catalog.buildings,
+      locale: currentLocale(),
     });
 
     // Kết quả công cụ giữ nguyên trang người dùng: đội chuẩn theo mùa và đội gốc đi trang chi tiết riêng.
+    const openTeamHref = (team) => teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id},{from:location.href});
+    // Đội gốc chưa đủ dữ liệu không có trang (bảng route không có handle): công cụ ẩn nút "Mở đội" thay vì để nút không làm gì.
+    const canOpenTeam = (team) => openTeamHref(team) !== null;
     const onOpenTeam = (team) => {
-      const href = teamDetailHref(team.source === 'season' ? {sourceConfigId:team.id} : {legacyTeamId:team.id},{from:location.href});
+      const href = openTeamHref(team);
       if (!href) return;
       rememberReturn();
       location.assign(href);
     };
     if (lookupBundle) {
-      if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, mount });
+      if (pageSection === 'recruit-tracker') initRecruitTracker({ heroesDict, rawNames, mount });
       // Soi đội nạp generation Đội chuẩn lười (lần đầu cần đối chiếu); link đội qua route chi tiết chung.
-      if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
-      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, loadRecommended, onOpenTeam }, mount);
+      if (pageSection === 'analyze') initAnalyze({ heroesDict, tacticsDict: tactics, booksDict, jaEntries, rawNames, loadRecommended, teamHref: referenceHref, onNavigate: onReferenceNavigate }, mount);
+      if (pageSection === 'roster-recommend') initRosterRecommend({ teams, teamTier, heroesDict, tacticsDict: tactics, jaEntries, rawNames, loadRecommended, onOpenTeam, canOpenTeam }, mount);
     } else if (['recruit-tracker', 'analyze', 'roster-recommend'].includes(pageSection)) {
-      mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。")));
+      mount.append(el("p", { class: "error", role: "status" }, L("Tính năng này cần dữ liệu Tra cứu đang không khả dụng.", "此功能需要的图鉴查询数据暂不可用。", "この機能に必要な図鑑データが現在利用できません。")));
     }
   } catch (err) {
     console.error(err);
     // Bản Việt dùng mẫu lỗi đã duyệt trong publication; bản Trung không áp lớp dịch Việt nên dùng câu riêng.
     const template = websiteDisplay
-      ? L(displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate"), "数据加载失败：{message}。请刷新页面，如问题持续请联系管理员。")
-      : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。");
-    mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误"))));
+      ? L(displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate"), "数据加载失败：{message}。请刷新页面，如问题持续请联系管理员。", "データの読み込みに失敗しました: {message}。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。")
+      : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。", "データを読み込めません。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。");
+    mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误", "不明なエラー"))));
   } finally {
     // Lỗi boot: thà hiện thân dựng sẵn (kèm thông báo lỗi ở trên) còn hơn để trống.
     delete mount.dataset.ssrStale;

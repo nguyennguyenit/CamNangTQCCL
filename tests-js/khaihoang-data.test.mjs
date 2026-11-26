@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import { createTacticNameIndex } from "../js/lookup-ids.js";
+import { FIELD_LOG_RECOMMENDATIONS, fieldLogBattleDead } from "../js/render.js";
 
 const data = JSON.parse(await readFile(new URL("../data/khaihoang.json", import.meta.url), "utf8"));
 const tactics = JSON.parse(await readFile(new URL("../data/tactics.json", import.meta.url), "utf8"));
@@ -18,13 +19,18 @@ const expectedGuideHeroReferences = [
 
 // Reviewed phase-1 migration table: the 30 retired `displayNote` owners, each recorded as the
 // destination field of its sentences. `null` means the field must be absent rather than empty, and
-// the pair must reproduce the retired value sentence for sentence (59 sentences in total).
+// the pair must reproduce the retired value sentence for sentence (71 sentences in total).
 const noteMigration = [
   ["teams[0].variants[0]", "Pháp Chính mang Tiềm Long từ đầu; cần có Thôi Phong.", "Cấu hình hướng tới tài khoản nhiều hột; không suy các mốc mở đất cho mọi tài khoản."],
   ["teams[0].variants[1]", "Đổi vị trí Giải Phiền và Thịnh Khí; sau cấp 20 SP Mã Siêu dùng Bạo Lệ + Mau Giành.", null],
   ["teams[0].heroes[2]", "Sau cấp 20 để Pháp Chính làm chủ tướng.", null],
+  ["teams[1].heroes[0]", "Sau cấp 20 nên dùng Tam Thế Trận (khuyến nghị); Tiềm Long Trận vẫn dùng được. Tam Thế Trận giúp chiến pháp của Quan Ngân Bình phát động ổn định hơn nhưng làm Gia Cát Khác nhận Chống Đỡ ít thường xuyên hơn; vẫn khuyến nghị vì độ ổn định.", null],
+  ["teams[1].heroes[1]", "Sau cấp 20 chiến pháp thứ hai dùng Gió Táp Mưa Sa hoặc Dùng Nước Đẩy Cầu đều được.", null],
+  ["teams[1].heroes[2]", "Sau cấp 20 Nhạc Tiến dùng Nhanh Chân Tranh Đất, Văn Võ Song Toàn hoặc Lính Thanh Châu đều được; trước cấp 20 giữ Nhanh Chân Tranh Đất.", null],
   ["teams[1].variants[0]", "Sau cấp 20 chuyển chủ tướng sang Quan Ngân Bình, Thanh Châu đặt trên Quan. Chỉnh Võ Lực Quan cao hơn Nhạc. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
+  ["teams[2].heroes[0]", "Trước cấp 20 dùng Vô Đương Phi Quân hoặc Hoành Tảo Thiên Quân đều được.", null],
   ["teams[2].variants[0]", "Sau cấp 20 dùng Bát Môn thay Tiềm Long trên Gia Cát Khác. Giữ cấu hình Cung và Vô Đương, không đổi sang Kỵ.", null],
+  ["teams[2].variants[1]", "Chỉ dùng được ở mùa có Thôi Phong Đoạn Nhẫn. Trước cấp 20 Khương Duy dùng Hoành Tảo Thiên Quân hoặc Vô Đương Phi Quân đều được; sau cấp 20 Khương Duy đổi sang Đoạt Hồn Hiệp Phách + Sợ Bóng Sợ Gió hoặc Thượng Binh Phạt Mưu, Gia Cát Khác mang Vô Đương Phi Quân, Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn. Cấu hình mặc định ở trên vẫn giữ nguyên.", null],
   ["teams[2].heroes[2]", "Sau cấp 20 để Gia Cát Khác làm chủ tướng.", null],
   ["teams[3]", null, "Thận trọng với thủ quân có tất trúng vì làm giảm lợi thế né tránh của Tả Từ. Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao."],
   ["teams[3].variants[0]", "Tam Thế ở Trương Xuân Hoa; Tả Từ mang cả Thịnh Khí + Sĩ Biệt thay Sợ Bóng Sợ Gió. Không trộn hai cấu hình. Chỉ có bộ hai chiêu, chưa chốt trước cấp 20 hoặc mạnh hơn mặc định.", null],
@@ -35,13 +41,15 @@ const noteMigration = [
   ["teams[5].variants[0]", "Chọn nhánh Cung: giữ Vô Đương ở Trần Cung, khác bản mặc định chuyển Kỵ.", null],
   ["teams[7].variants[0]", "Khương Duy mang Vô Đương trước cấp 20; sau cấp 20 Hạ Hầu Uyên dùng Mau Giành thay Nhất Kỵ. Đây là nhánh Cung.", null],
   ["teams[8].variants[0]", "SP Viên Thiệu đổi Nằm Gai sang Xế Đao; Trương Xuân Hoa đổi Thịnh Khí sang Thời Cơ. Chỉ có bộ hai chiêu.", null],
+  ["teams[8].heroes[1]", "Sau cấp 20 chiến pháp thứ hai dùng Thôi Phong Đoạn Nhẫn hoặc Mau Giành Lợi Thế; Thôi Phong Đoạn Nhẫn chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.", null],
   ["teams[10].variants[0]", "Sau cấp 20 Nhạc Tiến mang Thanh Châu; Thái Văn Cơ mang Tạm Lánh + Cắt Xương. Sĩ Tranh Tiên Phó chưa được xác nhận là alias của Nhanh Chân Tranh Đất.", null],
   ["teams[11].variants[0]", "Thay Thịnh Khí bằng Sĩ Biệt khi chuẩn bị đất 6.", "Bản mặc định giữ Thịnh Khí để quét đất 5; đối chiếu thủ quân trước khi đánh."],
   ["teams[11].variants[1]", "Dùng bộ chiêu này ngay sau cấp 20. Giữ ba mức thích tính khác nhau để Võ Phong hoạt động.", null],
   ["teams[11].heroes[0]", "Chủ tướng trước và sau cấp 20; cộng toàn Thống Soái. Sau cấp 20 cần thức tỉnh. Giữ ba mức thích tính khác nhau để Võ Phong Trận hoạt động. Sau điện 7, có thể luyện Trình Phổ đến cấp 20 để thay làm chủ tướng, giữ Võ Phong và đổi Thịnh Khí sang Lâm Nguy Cứu Chủ.", null],
   ["teams[11].heroes[1]", "Cộng khoảng 15 điểm Tốc Độ, còn lại Võ Lực; chỉnh tốc theo thủ quân. Cần có Thôi Phong Đoạn Nhẫn; không nhầm với Phá Phong Đoạn Nhẫn.", "Ưu tiên đất Thương, tránh đội tất trúng hoặc hỗn loạn."],
-  ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
+  ["teams[11].heroes[2]", "Cộng toàn Thống Soái trong giai đoạn đầu; khi chuyển Trình Phổ đánh đất cao, đổi sang toàn Trí Lực. Sau cấp 20 chỉ giữ Vô Đương Phi Quân + Thời Cơ Chiến Thắng, không thêm Cắt Xương Trị Độc. Thực chiến: đội cấp 24–25 với bộ chiến pháp này đã thắng thủ quân cấp 6 (15K) hai lần.", "Đối chiếu phiên bản chiến pháp, hột tướng và thủ quân của mùa đang chơi."],
   ["teams[12].heroes[2]", "Đồng Lòng Hợp Sức (勠力同心): chiến pháp sự kiện Chủ động, xác suất 50%, trị liệu và tăng Thống Soái.", null],
+  ["teams[17].heroes[1]", "Dùng Thôi Phong Đoạn Nhẫn ngay từ trước cấp 20 nên chỉ build được ở mùa có Thôi Phong Đoạn Nhẫn.", null],
   ["teams[13].heroes[0]", "Có thể thay bằng Pháp Chính; đội Gia Cát Khác · SP Mã Siêu · Pháp Chính đã có riêng. Chiến pháp sau cấp 20 dùng khi đã thức tỉnh.", null],
   ["teams[14]", "Ở cấu hình mặc định, Trương Xuân Hoa cộng Trí Lực. Phương án thay Kích Kỳ Nọa Quy bằng 疾風豪雨 (chưa xác nhận tên Việt) có cách cộng điểm riêng: Trương Xuân Hoa cộng Thống Soái trước cấp 20, Trí Lực sau cấp 20.", "Mốc mở đất phụ thuộc hột tướng, trang bị, thủ quân và đội đánh hao; không áp mốc nhanh nhất cho mọi tài khoản."],
   ["teams[14].heroes[0]", "Cộng Thống Soái.", null],
@@ -50,6 +58,17 @@ const noteMigration = [
   ["teams[15].heroes[0]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
   ["teams[15].heroes[1]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
   ["teams[15].heroes[2]", "Chỉ có dữ liệu sau cấp 20; không suy ra bộ trước cấp 20.", null],
+];
+
+// Ghi chú tự soạn của các cấu hình Khai hoang mùa Hán Diễm Trường Minh (PK-S27) đưa từ Đội chuẩn lên
+// (issue #66): không thuộc bảng migration displayNote ở trên, ghim riêng để sửa câu phải sửa cả test.
+const pkS27Notes = [
+  ["teams[0].variants[2]", "Ghi theo đúng bản gốc: Pháp Chính làm chủ tướng, mang Tiềm Long Trận + Giải Phiền Vệ; Gia Cát Khác trước cấp 20 mang Giải Phiền Vệ, sau cấp 20 Thời Cơ Chiến Thắng + Thịnh Khí Linh Địch. Chính bản gốc ghi chiến pháp của Pháp Chính và Gia Cát Khác có thể bị in đảo, chưa xác nhận; nếu đảo lại thì trùng lựa chọn Thôi Phong · Tiềm Long. SP Mã Siêu cần từ 3 đỏ trở lên. Cộng điểm: Pháp Chính Thống Soái; SP Mã Siêu Võ Lực; Gia Cát Khác Thống Soái trước cấp 20, chia đều Trí Lực và Thống Soái sau cấp 20. Có thể dùng SP Hoàng Nguyệt Anh thay Pháp Chính.", "Cấp 5 dùng đội Chạm Sứ đánh đất 4; đánh đất 5 từ cấp 10 (nhanh nhất) đến cấp 13 (thông thường). Khi thành chính mới cấp 7 có thể tạm dùng Vương Nguyên Cơ (Trí Lực, Tiềm Long Trận + Tạm Lánh Sóng Gió) với SP Mã Siêu và Gia Cát Khác (Giải Phiền Vệ + Thịnh Khí Linh Địch)."],
+  ["teams[2].variants[2]", "Gia Cát Khác làm chủ tướng trước và sau cấp 20; sau cấp 20 Hạ Hầu Uyên mang Thôi Phong Đoạn Nhẫn thay Mau Giành Lợi Thế. Cộng điểm: Gia Cát Khác Thống Soái trước cấp 20, Trí Lực sau cấp 20; Hạ Hầu Uyên Võ Lực; Khương Duy Trí Lực. Bản Kỵ để đánh đất Khiên: trước cấp 20 Khương Duy mang Hổ Báo Kỵ và cộng Võ Lực, Gia Cát Khác chia đều Trí Lực và Thống Soái; sau cấp 20 Khương Duy dùng Thời Cơ Chiến Thắng + Hổ Báo Kỵ. Có thể dùng Pháp Chính thay Gia Cát Khác.", "Bản Cung đánh đất Kỵ, Cung, Thương. Đủ đỏ: cấp 5 mở đất 4, cấp 10 (nhanh nhất) đến cấp 13 (thông thường) mở đất 5; tướng trắng: cấp 7 mở đất 4, cấp 17 mở đất 5. Từ cấp 23 có thể tách hai tướng dẫn một tướng để đánh đất."],
+  ["teams[4].variants[1]", "Xếp hạng thấp nhất trong nhóm đội cùng phe: chỉ nên chọn khi không còn đội khai hoang khác. Hạ Hầu Uyên làm chủ tướng và bắt buộc mang Lõa Y Huyết Chiến, thiếu chiêu này thì không đủ sát thương. Thái Sử Từ nhanh nhất đội để giảm phòng trước; khi dùng đội Chạm Sứ đánh đất 5 thì mang Mau Giành Lợi Thế. Trước cấp 20 Hoàng Nguyệt Anh chọn Tam Thế Trận hoặc Thịnh Khí Linh Địch. Cộng điểm: Hạ Hầu Uyên Võ Lực; Thái Sử Từ Tốc Độ cao nhất đội, còn lại Võ Lực; Hoàng Nguyệt Anh Thống Soái.", "Trước cấp 20 bộ này đi Cung để đánh đất Thương; gặp đất Cung, Kỵ, Khiên thì đổi sang Kỵ, Thái Sử Từ làm chủ tướng mang Nhất Kỵ Đương Thiên, Hạ Hầu Uyên mang Lõa Y Huyết Chiến, Hoàng Nguyệt Anh mang Hổ Báo Kỵ. Sau cấp 20 trinh sát thủ quân rồi mới chọn binh chủng. Đủ đỏ: cấp 7 dùng đội Chạm Sứ mở đất 4, cấp 15–17 dùng đội Chạm Sứ mở đất 5; tướng trắng: cấp 8 và cấp 18. Sau cấp 20 mở đất 5 ổn định mà không cần Chạm Sứ."],
+  ["teams[6].variants[0]", "Đội bình dân, Khương Duy làm chủ tướng. Cộng điểm: Khương Duy Trí Lực; Thái Sử Từ Tốc Độ cao nhất đội, còn lại Võ Lực; Thái Văn Cơ Thống Soái. Trước cấp 20 Thái Sử Từ chọn Mau Giành Lợi Thế hoặc Bạo Lệ Vô Nhân. Bản Kỵ để đánh đất Khiên: trước cấp 20 Khương Duy đổi sang Hoành Tảo Thiên Quân và cộng Võ Lực. Có thể dùng Trương Xuân Hoa thay Thái Văn Cơ, tổn thất sẽ cao hơn.", "Bản Cung đánh đất Thương, Kỵ, Cung. Đội bình dân tổn thất cao: từ cấp 7 dùng đội Chạm Sứ mở đất 4, từ cấp 16 dùng đội Chạm Sứ mở đất 5 để giảm hao binh."],
+  ["teams[18]", "Cấu hình khai hoang mùa Hán Diễm Trường Minh (PK-S27), Trương Phi làm chủ tướng. Trương Phi cần có Hùng Liệt; Trương Phi và Quan Ngân Bình nên từ 3 đỏ trở lên, tướng trắng không khuyến nghị. Cộng điểm: Trương Phi Võ Lực; Quan Ngân Bình Tốc Độ cao nhất đội, còn lại Võ Lực; Thái Văn Cơ Thống Soái. Có thể dùng Trương Xuân Hoa thay Thái Văn Cơ, tổn thất sẽ cao hơn.", "Cấp 7 mở đất 4, cấp 17 mở đất 5. Đội Thương này khai hoang tổn thất cao, đánh đất 5 dễ thua nên cần đánh chắc. Sau khi thành chính đạt cấp 7, thay Thái Văn Cơ bằng Hoàng Nguyệt Anh (cộng Thống Soái, mang Thịnh Khí Linh Địch + Đại Kích Sĩ) để chuyển sang đội Thương đầu mùa; về sau có thể chuyển sang đội Thương Thục với Trương Phi và Quan Ngân Bình."],
+  ["teams[19]", "Cấu hình khai hoang 15 COST mùa Hán Diễm Trường Minh (PK-S27) theo bảng tham khảo đội khai hoang Hà Thị của nhà phát hành. Hà Thị là tướng phe Hán 4 COST dùng được suốt mùa Hán Diễm Trường Minh: COST thấp, chiến pháp tự mang có tỉ lệ phát động cao, nên cộng toàn Trí Lực. Bảng tham khảo không ghi binh chủng; Cung suy từ Vô Đương Phi Quân của Gia Cát Khác (chiến pháp binh chủng chỉ dùng cho Cung). Cộng điểm: Gia Cát Khác Trí Lực, Hà Thị Trí Lực, SP Lô Trực Thống Soái. Ảnh tham khảo không ghi chủ tướng; thứ tự tướng theo ảnh.", "Cùng bảng có bản 10 COST hai tướng (bản mùa S2/S3): SP Lô Trực (Thịnh Khí Linh Địch; sau cấp 20 Thịnh Khí Linh Địch + Cắt Xương Trị Độc, cộng Thống Soái) và Hà Thị (Sĩ Biệt Tam Nhật; sau cấp 20 Sĩ Biệt Tam Nhật + Thái Bình Đạo Pháp, cộng Trí Lực). Hà Thị cũng dùng được cho đội Chạm Sứ."],
 ];
 
 test("Khác Bình Tiến uses spears in both opening phases", () => {
@@ -62,7 +81,7 @@ test("Khác Bình Tiến uses spears in both opening phases", () => {
 });
 
 test("curated options are complete for each declared phase and preserve the roster", () => {
-  assert.equal(data.season, "Binh Diễn Xuân Thu");
+  assert.equal(data.season, "Hán Diễm Trường Minh");
   for (const team of data.teams) {
     const variants = team.variants || [];
     assert.equal(new Set(variants.map((v) => v.id)).size, variants.length, team.title);
@@ -74,19 +93,22 @@ test("curated options are complete for each declared phase and preserve the rost
       for (const phase of ["Before", "After"]) {
         const names = [];
         let populated = 0;
+        // Trước cấp 20 theo `variant.unitType` (huy hiệu thẻ); sau cấp 20 có thể đổi binh chủng như đội mặc
+        // (vd Cung → Kỵ), nhưng cả ba tướng cùng một loại.
+        const phaseUnit = phase === "Before" ? variant.unitType : variant.heroes.find((h) => h.unitTypeAfter)?.unitTypeAfter;
         for (const hero of variant.heroes) {
           const skills = phase === "Before" ? (hero.tacticBefore ? [hero.tacticBefore] : []) : hero.tacticsAfter || [];
           if (!skills.length) continue;
           populated++;
           assert.equal(skills.length, phase === "Before" ? 1 : 2, key);
-          assert.equal(hero[`unitType${phase}`], variant.unitType, key);
-          for (const name of skills) {
+          assert.equal(hero[`unitType${phase}`], phaseUnit, key);
+          for (const name of skills.flatMap((skill) => skill.split("/"))) {
             const tactic = tactics.find((t) => t.id === tacticId(name));
             assert.ok(tactic, `${key}: unknown ${name}`);
             assert.notEqual(tactic.type, "Nội chính", key);
             if (tactic.troopFit.length) {
               const compatibleUnits = tactic.troopFit.map((unit) => unit.replace(/ binh$/u, ""));
-              assert.ok(compatibleUnits.includes(variant.unitType), `${key}: ${name}`);
+              assert.ok(compatibleUnits.includes(phaseUnit), `${key}: ${name}`);
             }
             names.push(name);
           }
@@ -100,8 +122,9 @@ test("curated options are complete for each declared phase and preserve the rost
   }
 });
 
-test("Chạm Sứ groups match the separate sheet table without opening-team linkage", () => {
-  // Google Sheet snapshot: tests/fixtures/khaihoang-cham-su-source.csv (2026-09-06).
+test("Chạm Sứ groups keep the sheet table and add the official two- and three-slot reference teams", () => {
+  // Hai ô: bảng Google Sheet (tests/fixtures/khaihoang-cham-su-source.csv, 2026-09-06) đối chiếu ảnh "Tham Khảo Đội Hình Ăn Vạ".
+  // Ba ô: bảng thứ hai của ảnh chính thức (ô "Vệ thành" là tướng Vệ Thành trong từ điển).
   const expected = [
     [["Lữ Mông", "Bạch Mã Nghĩa Tòng"], ["Giả Hủ", "Ngụy Thư Tương Gian"]],
     [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"]],
@@ -111,6 +134,11 @@ test("Chạm Sứ groups match the separate sheet table without opening-team lin
     [["Hạ Hầu Uyên", "Lõa Y Huyết Chiến"], ["Tào Thuận", "Thiết Kỳ Khu Trì"]],
     [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"]],
     [["Cam Ninh", "Phá Quân Uy Thắng"], ["Lăng Thống", "Phong Thi Trận"]],
+    [["Trương Nhượng", "Ngụy Thư Tương Gian"], ["Chu Thái", "Phong Thi Trận"], ["Hoàng Nguyệt Anh", "Trưởng Giả Chi Phong"]],
+    [["Mã Siêu", "Lõa Y Huyết Chiến"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Tây Lương Thiết Kỵ/Đại Kích Sĩ"]],
+    [["Giả Hủ", "Ngụy Thư Tương Gian"], ["Thái Sử Từ", "Đánh Bại Quân Địch"], ["Tử Sĩ", "Bạch Mã Nghĩa Tòng"]],
+    [["Tôn Thượng Hương", "Lõa Y Huyết Chiến"], ["Lăng Thống", "Phong Thi Trận"], ["Vệ Thành", "Đánh Bại Quân Địch/Tây Lương Thiết Kỵ"]],
+    [["Cam Ninh", "Phá Quân Uy Thắng"], ["Hoàng Nguyệt Anh", "Phong Thi Trận"], ["Vệ Thành", "Thịnh Khí Linh Địch"]],
   ];
   assert.ok(Array.isArray(data.chamSuTeams), "missing independent Chạm Sứ table");
   assert.deepEqual(data.chamSuTeams.map((t) => t.heroes.map((h) => [h.name, h.tactic])), expected);
@@ -118,11 +146,18 @@ test("Chạm Sứ groups match the separate sheet table without opening-team lin
   for (const group of data.chamSuTeams) {
     assert.ok(group.id);
     assert.equal(group.title, group.heroes.map((h) => h.name).join(" · "));
-    assert.match(group.note, /mang 1 lính/i);
+    if (group.heroes.length === 2) assert.match(group.note, /mang 1 lính/i);
     assert.equal(group.unitType, undefined);
     assert.equal(Object.hasOwn(group, "sources"), false);
   }
   assert.match(data.chamSuTeams[0].note, /Điêu Thuyền, Hoàng Cái, Phùng Kỷ/);
+  assert.match(data.chamSuTip, /reset Điểm Chiến Pháp/);
+  const flagged = data.chamSuTeams.filter((group) => group.recommended === true);
+  assert.deepEqual(
+    flagged.sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((group) => group.id),
+    ["truong-nhuong-hoang-nguyet-anh", "lu-mong-gia-hu", "gia-hu-thai-su-tu-tu-binh"],
+  );
+  flagged.forEach((group, index) => assert.equal(group.recommendedOrder, index + 1, group.id));
   for (const team of data.teams) assert.equal(Object.hasOwn(team, "transforms"), false);
   for (const team of data.teams) assert.equal(Object.hasOwn(team, "sources"), false, team.title);
 });
@@ -197,7 +232,7 @@ test("every retired display note keeps its sentences in exactly one owner field"
   const owners = objectNodes(data)
     .filter(([, node]) => Object.hasOwn(node, "buildNote") || Object.hasOwn(node, "openingNote"))
     .map(([path]) => path);
-  assert.deepEqual(owners.sort(), noteMigration.map(([path]) => path).sort());
+  assert.deepEqual(owners.sort(), [...noteMigration, ...pkS27Notes].map(([path]) => path).sort());
 
   let sentences = 0;
   for (const [path, build, opening] of noteMigration) {
@@ -206,7 +241,22 @@ test("every retired display note keeps its sentences in exactly one owner field"
     sentences += [build, opening].filter(Boolean).join(" ").split(/(?<=\.)\s+/)
       .filter((sentence) => sentence.trim()).length;
   }
-  assert.equal(sentences, 59);
+  assert.equal(sentences, 71);
+});
+
+test("PK-S27 opening configurations keep their authored notes, Chinese-source label and Vietnamese-only prose", () => {
+  for (const [path, build, opening] of pkS27Notes) {
+    const owner = path.replace(/\[(\d+)\]/g, ".$1").split(".").reduce((node, key) => node[key], data);
+    assert.deepEqual([owner.buildNote ?? null, owner.openingNote ?? null], [build, opening], path);
+    for (const text of [build, opening, owner.note].filter(Boolean)) assert.doesNotMatch(text, /\p{Script=Han}/u, path);
+  }
+  const variants = data.teams.flatMap((team) => (team.variants || []).filter((variant) => variant.id === "cn-pk-s27"));
+  assert.equal(variants.length, 4);
+  for (const variant of variants) {
+    assert.equal(variant.label, "CN · PK-S27");
+    assert.equal(variant.region, "Trung Quốc");
+    assert.match(variant.period, /Hán Diễm Trường Minh \(PK-S27\)/);
+  }
 });
 
 test("the retired displayNote field is gone from the whole document", () => {
@@ -301,7 +351,48 @@ test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field l
     assert.ok(existsSync(new URL(`../public${image.url}`, import.meta.url)), image.url);
     assert.deepEqual([image.width, image.height], [1296, 728]);
   }
-  assert.deepEqual(log.recommendations.map((item) => item.id), ["dat4-som", "dat5-cho-20", "dat6-28", "bo-sung-binh", "cong-diem"]);
+  assert.deepEqual(log.recommendations.map((item) => item.id), ["dat4-som", "dat5-cap-20", "dat6-28", "bo-sung-binh", "cong-diem"]);
   assert.equal(log.recommendations.every((item) => item.note.trim()), true);
+  // Mỗi khuyến nghị có đủ bản zh/ja; không còn bản dịch mồ côi.
+  for (const locale of ["zh", "ja"]) {
+    assert.deepEqual(Object.keys(FIELD_LOG_RECOMMENDATIONS[locale]).sort(), log.recommendations.map((item) => item.id).sort(), locale);
+  }
+  // `lost` là tổng hao gồm thương binh (cột "Tổn thất" của báo cáo trận), nên chết = hao − thương binh; số chết
+  // trích trong khuyến nghị phải khớp các trận đã ghi.
+  assert.deepEqual(["p1-thu-cung", "p2-891-1449", "p2-899-1444", "p3-914-1450"].map((id) => fieldLogBattleDead(battle(id))), [119, 198, 525, 734]);
+  const recommendation = (id) => log.recommendations.find((item) => item.id === id).note;
+  assert.match(recommendation("dat4-som"), /chết 119, tức 5,0%/);
+  assert.match(recommendation("dat5-cap-20"), /chết 198 binh \(3,3%\).*chết 525 binh \(8,8%\)/);
+  assert.match(recommendation("dat6-28"), /chết 734 binh, tức 12,2%/);
+  // Không trích thống kê không có trận nào trong log làm mẫu.
+  for (const item of log.recommendations) assert.doesNotMatch(item.note, /n=(?:[3-9]|\d{2,})\b|5\.400|21,7%|cấp 18–19/, item.id);
   for (const variant of team.variants) assert.equal(Object.hasOwn(variant, "fieldLog"), false);
+});
+
+test("official recommended teams carry the Tiến cử flag and an explicit image order", () => {
+  const officialOrder = [
+    "sp-lo-truc-ha-hau-uyen-tran-cung",
+    "sp-hoang-nguyet-anh-sp-ma-sieu-gia-cat-khac",
+    "gia-cat-khac-thai-su-tu-ta-tu",
+    "khuong-duy-ha-hau-uyen-gia-cat-khac",
+    "gia-cat-khac-quan-ngan-binh-nhac-tien",
+    "khuong-duy-quan-ngan-binh-thai-van-co",
+    "sp-vien-thieu-ha-hau-uyen-truong-xuan-hoa",
+  ];
+  const flagged = data.teams.filter((team) => team.recommended === true);
+  assert.deepEqual(flagged.sort((a, b) => a.recommendedOrder - b.recommendedOrder).map((team) => team.id), officialOrder);
+  flagged.forEach((team, index) => assert.equal(team.recommendedOrder, index + 1, team.id));
+  for (const team of data.teams.filter((item) => item.recommended !== true)) {
+    assert.equal(Object.hasOwn(team, "recommendedOrder"), false, team.id);
+  }
+});
+
+test("fieldLogBattleDead: hao lấy từ binh trước/sau hoặc `lost`, số vô lý thì không tính", () => {
+  assert.equal(fieldLogBattleDead({ troopsBefore: 2400, lost: 178, wounded: 59 }), 119);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 6000, troopsAfter: 5630, wounded: 172 }), 198);
+  assert.equal(fieldLogBattleDead({ lost: 483 }), null);
+  assert.equal(fieldLogBattleDead({ lost: 178, wounded: 59 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 2400, lost: 50, wounded: 60 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 100, lost: 150, wounded: 10 }), null);
+  assert.equal(fieldLogBattleDead({ troopsBefore: 0, lost: 0, wounded: 0 }), null);
 });

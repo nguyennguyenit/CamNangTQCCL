@@ -1,2 +1,11 @@
+# Mọi file văn bản checkout bằng LF (kể cả Windows với core.autocrlf=true): pipeline và MCP băm
+# byte của working tree, nên CRLF làm lệch digest so với hash đã ghim.
+* text=auto eol=lf
+
+# CSV snapshot/export giữ nguyên byte đã commit (một số file CRLF theo RFC 4180, đã được tham chiếu/đối chiếu).
+*.csv -text
+
 # Preserve the checksum-bound export's CRLF and spaces inside quoted multiline cells.
+# Đặt SAU rule chung để thắng (dòng sau ghi đè dòng trước).
 plans/260907-0233-season-team-lookup/research/coexist-binh-dien-xuan-thu.csv -text whitespace=-blank-at-eol,cr-at-eol
+plans/261117-0206-cung-ton-han-diem-truong-minh/research/coexist-han-diem-truong-minh.csv -text whitespace=-blank-at-eol,cr-at-eol

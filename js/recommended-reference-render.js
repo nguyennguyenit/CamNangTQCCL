@@ -1,14 +1,22 @@
-import { t, iconTree, svgTree, FACTION_CODE, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, sourceLabel, unitLabel, variantNameNodes } from './render.js';
-import { legacyLabelZh, sourceTierLabel, sourceName, tacticDisplayName } from './recommended-reference-state.js';
-import { teamDetailPath } from './team-detail-navigation.js';
+import { t, iconTree, svgTree, FACTION_CODE, SOURCE_PROSE_MISSING_JA, UNRESOLVED_NAME, formatModifiedTactic, heroMentionNodes, khaihoangRecommendedBadge, sourceLabel, unitLabel, variantNameNodes } from './render.js';
+import { isRecommendedOtherRow, jpTierMatchNote, jpTierSource, jpTierSourceLabel, legacyLabelZh, sourceTierLabel, sourceName, sourcePrefixedTactic, tacticDisplayName } from './recommended-reference-state.js';
+import { validateHttpSourceUrl } from './http-source-url.js';
+import { referenceDetailHref, teamDetailPath } from './team-detail-navigation.js';
 import { lookupItemPath } from './lookup-ids.js';
+import { qilueLabel } from './lookup-detail.js';
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from './team-view.js';
-import { L, currentLocale, localePath, withLocale } from './i18n.js';
+import { L, contentLocaleIsVietnamese, contentMode, currentLocale, localePath, withLocale } from './i18n.js';
 import { enableControl } from './view-tree.js';
 
 const CJK = /[\u3400-\u9fff\uf900-\ufaff]/u;
-const isZh = () => currentLocale() === 'zh';
-const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内容尚未就绪');
+// `sourceText`: trang không phải bản Việt hiện chữ nguồn (chữ Hán) thay cho lớp dịch Việt; hiện chỉ có bản zh.
+const sourceText = () => !contentLocaleIsVietnamese(currentLocale());
+const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内容尚未就绪','コンテンツの準備ができていません');
+/**
+ * Bản ja: văn xuôi chữ Trung của nguồn (ghi chú đội `displayNotes`, giới thiệu `introRaw`, ghi chú chỉ số) chưa có bản dịch Nhật
+ * nên bị ẩn, thay bằng một dòng báo thiếu ở khối "Ghi chú" (như bản zh bỏ chữ chỉ có tiếng Việt).
+ */
+const hidesSourceProse = () => contentMode(currentLocale()) === 'ja';
 /**
  * Chữ công khai của một giá trị nguồn. Bản vi: chuỗi còn chữ Hán không được hiện. Bản zh: dữ liệu không áp
  * bản dịch nên chữ Hán gốc là nội dung chính; tên Hán-Việt của dữ liệu cũ đổi sang chữ Hán qua `sourceName`.
@@ -16,18 +24,18 @@ const unavailable = () => L('Nội dung tiếng Việt chưa sẵn sàng','内�
 const text = value => {
   if (typeof value !== 'string' || !value.trim()) return unavailable();
   // Tên không tra được chữ Hán bị thay bằng "—" để không lộ tiếng Việt ở bản zh.
-  if (isZh()) return sourceName(value.trim()) || UNRESOLVED_NAME;
+  if (sourceText()) return sourceName(value.trim()) || UNRESOLVED_NAME;
   return CJK.test(value) ? unavailable() : value.trim();
 };
 /** Văn xuôi nguồn (ghi chú, mô tả): bản zh chỉ nhận chữ Hán gốc, văn tiếng Việt bị bỏ để trang không trộn ngôn ngữ. */
 const prose = value => {
   if (typeof value !== 'string' || !value.trim()) return null;
-  if (isZh()) return CJK.test(value) ? value.trim() : null;
+  if (sourceText()) return CJK.test(value) && !hidesSourceProse() ? value.trim() : null;
   return text(value);
 };
 /** Bản zh: tên đã đổi được sang chữ Hán mới hiện; tên không tra được bị bỏ. Bản vi trả nguyên. */
 const zhResolved = value => {
-  if (!isZh()) return value;
+  if (!sourceText()) return value;
   const name = sourceName(String(value ?? ''));
   return CJK.test(name) ? name : null;
 };
@@ -36,7 +44,7 @@ const localizedSlot = (raw,vi) => {
   const hasDisplay = typeof vi === 'string' && Boolean(vi.trim());
   if (!hasSource && !hasDisplay) return {value:null,interactive:false};
   // Bản zh luôn lấy giá trị nguồn (chữ Hán gốc); tên Hán-Việt của dữ liệu cũ được đổi qua `sourceName`.
-  if (isZh()) {
+  if (sourceText()) {
     const value=text(hasSource && typeof raw === 'string' ? raw : vi);
     // Ô chiến pháp/binh thư không tra được chữ Hán thì bỏ hẳn ô, không hiện "—" như một chiến pháp.
     if (value === UNRESOLVED_NAME) return {value:null,interactive:false};
@@ -50,9 +58,9 @@ const localizedSlot = (raw,vi) => {
 
 /** Tên tướng của một ô: bản vi ưu tiên tên Việt, bản zh ưu tiên tên nguồn chữ Hán. */
 const holderName=holder=>{
-  const name=text(isZh() ? holder.nameRaw || holder.displayNameVi || '' : holder.displayNameVi || holder.nameRaw || '');
+  const name=text(sourceText() ? holder.nameRaw || holder.displayNameVi || '' : holder.displayNameVi || holder.nameRaw || '');
   // Rút gọn tên trên giao diện Việt; tên nguồn và danh tính cấu hình vẫn giữ nguyên.
-  return isZh() ? name : name.replace(/^CO Vô Song (Đại Kiều|Tiểu Kiều|Tinh Thái)$/, 'CO $1');
+  return sourceText() ? name : name.replace(/^CO Vô Song (Đại Kiều|Tiểu Kiều|Tinh Thái)$/, 'CO $1');
 };
 
 /** Tên tướng đúng như trang hiển thị theo ngôn ngữ `locale` (dùng cho JSON-LD của trang đội, không phụ thuộc ngôn ngữ toàn cục). */
@@ -65,7 +73,7 @@ function holderNameNodes(holder) {
 /** Nguồn để trống ô tướng (đội hai tướng, parser đệm ô thứ ba): không phải bản dịch còn thiếu. */
 const isSourceEmpty=holder=>holder?.slotState === 'source-empty';
 function sourceEmptySeat(className) {
-  const label=L('Để trống','留空');
+  const label=L('Để trống','留空','空欄');
   return t('span',{class:`${className} source-empty-seat`,role:'img','aria-label':label,title:label},'—');
 }
 
@@ -87,10 +95,13 @@ function tacticSlotEntries(holder) {
     const slot=localizedSlot(raw[index],vi[index]);
     const shown=kinds[index] === 'bond' || !slot.value ? slot.value : tacticDisplayName(slot.value,raw[index]);
     const prefix=kinds[index] === 'bond' ? null : modifiedTacticPrefix(raw[index],holder.notesRaw);
+    const modified=prefix && slot.value && slot.value !== unavailable();
+    // Bản ja: bộ tra tên Nhật dựng tên bản cải tạo (`prefixedTactics` hoặc `転・<tên>`); bản khác ghép tiền tố như cũ.
+    const localized=modified ? sourcePrefixedTactic(prefix[1],raw[index] || vi[index]) : undefined;
     return {
       ...slot,
-      value:prefix && slot.value && slot.value !== unavailable()
-        ? `${L(...prefix)} · ${shown}` : formatModifiedTactic(shown),
+      value:modified
+        ? localized || `${L(prefix[0],prefix[1],prefix[1])} · ${shown}` : formatModifiedTactic(shown),
       searchValue:shown,
       raw:raw[index],
       rawLabel:prefix ? `${prefix[1]} · ${raw[index]}` : formatModifiedTactic(raw[index]),
@@ -104,7 +115,7 @@ function tacticSlotEntries(holder) {
 /** Vai trò viết tắt theo vị trí trong đội; `data-role` giữ khóa tiếng Việt cố định cho CSS. */
 const HERO_ROLE_KEYS = ['CHỦ','PHÓ 1','PHÓ 2'];
 /** Nhãn hiển thị của vai trò; artboard Main/MainTable dùng đúng ba nhãn này. */
-const heroRoles = () => [L('CHỦ','主将'),L('PHÓ 1','副将1'),L('PHÓ 2','副将2')];
+const heroRoles = () => [L('CHỦ','主将','主将'),L('PHÓ 1','副将1','副将1'),L('PHÓ 2','副将2','副将2')];
 
 /**
  * Ô chiến pháp: giá trị đã bản địa hoá mới bấm được để tìm, còn lại chỉ hiển thị. Nút mang giá trị tìm
@@ -113,7 +124,7 @@ const heroRoles = () => [L('CHỦ','主将'),L('PHÓ 1','副将1'),L('PHÓ 2','�
 function tacticTag(entry) {
   if (!entry.value) return null;
   return entry.interactive
-    ? t('button',{type:'button',class:'tag t-tactic',title:L('Tìm chiến pháp này','搜索此战法'),dataset:{tacticSearch:entry.searchValue}},entry.value)
+    ? t('button',{type:'button',class:'tag t-tactic',title:L('Tìm chiến pháp này','搜索此战法','この戦法を検索'),dataset:{tacticSearch:entry.searchValue}},entry.value)
     : t('span',{class:'tag t-tactic'},entry.value);
 }
 
@@ -147,12 +158,12 @@ function holderView(holder,{index=0}={}) {
     t('div',{class:'hero-name'},holderNameNodes(holder)),
     tactics.length ? t('div',{class:'line tactics'},tactics) : null,
     bonds.length ? t('div',{class:'line bonds'},[
-      t('span',{class:'slot-label'},L('Duyên phận:','缘分：')),
+      t('span',{class:'slot-label'},L('Duyên phận:','缘分：','絆：')),
       ...bonds.map(entry=>t('span',{class:'tag t-bond'},entry.value)),
     ]) : null,
     t('p',{class:'line books'},books.length
       ? t('span',{class:'reference-book-values'},books.join(' · '))
-      : t('span',{class:'reference-books-missing'},L('Chưa ghi','未注明'))),
+      : t('span',{class:'reference-books-missing'},L('Chưa ghi','未注明','記載なし'))),
   ]);
 }
 
@@ -190,7 +201,7 @@ export function labelValue(labels,kind,raw) {
 function kindLabel(labels,kind,raw) {
   if (typeof raw !== 'string' || !raw.trim()) return null;
   const value=raw.trim();
-  if (isZh()) return CJK.test(value) ? value : legacyLabelZh(kind,value) ?? null;
+  if (sourceText()) return CJK.test(value) ? sourceName(value) : legacyLabelZh(kind,value) ?? null;
   return labelValue(labels,kind,value) || (CJK.test(value) ? null : value);
 }
 
@@ -201,6 +212,9 @@ const factionCode=(labels,raw)=>FACTION_CODE[labelValue(labels,'faction',raw) ??
 export function detailBadges(row,labels,{locale}={}) {
   return withLocale(locale,()=>badgeTrees(row,labels));
 }
+
+/** Nhãn chữ "Đề cử" của hàng Đội khác được đề cử (thẻ, thẻ gọn, bảng, đầu trang chi tiết); không chỉ dựa vào màu. */
+const referenceRecommendedBadge=()=>t('span',{class:'badge badge-band reference-recommended'},L('Đề cử','推荐','おすすめ'));
 
 function badgeTrees(row,labels) {
   const nodes=[];
@@ -214,17 +228,21 @@ function badgeTrees(row,labels) {
     const label=kindLabel(labels,'unit',raw);
     if (label) nodes.push(t('span',{class:'badge unit'},label));
   }
+  const recommended=khaihoangRecommendedBadge({recommended:row?.khaihoangRecommended});
+  if (recommended) nodes.push(recommended);
+  // Trang chi tiết Đội khác: `referenceRecommended` do builder trang gắn từ hàng `other-teams.json` của đội.
+  if (row?.referenceRecommended === true) nodes.push(referenceRecommendedBadge());
   return nodes;
 }
 
 /** Vai trò đầy đủ của thẻ tướng trên trang chi tiết (artboard TeamDetail). */
-const detailHeroRoles=()=>[L('Chủ tướng','主将'),L('Phó tướng 1','副将1'),L('Phó tướng 2','副将2')];
+const detailHeroRoles=()=>[L('Chủ tướng','主将','主将'),L('Phó tướng 1','副将1','副将1'),L('Phó tướng 2','副将2','副将2')];
 
 const arrowIcon=()=>iconTree([svgTree('path',{d:'M9 6l6 6-6 6'})],{size:14,stroke:2});
 
 /** Ô giá trị của thẻ: có hồ sơ Tra cứu thì là link, không có thì chỉ là chữ. */
 const lookupItem=(cls,href,children)=>href
-  ? t('a',{class:`${cls} is-link`,href,title:L('Mở trong Tra cứu','在图鉴查询中打开')},[...children,t('span',{class:`${cls}-go`,'aria-hidden':'true'},arrowIcon())])
+  ? t('a',{class:`${cls} is-link`,href,title:L('Mở trong Tra cứu','在图鉴查询中打开','図鑑で開く')},[...children,t('span',{class:`${cls}-go`,'aria-hidden':'true'},arrowIcon())])
   : t('span',{class:cls},children);
 
 /** Tên hiển thị của chủ ghi chú: tên tướng theo ngôn ngữ trang. */
@@ -243,7 +261,7 @@ function beforeLevel20Block(holder,links) {
   const bond=holder.tacticBeforeLevel20Kind === 'bond';
   const value=bond || slot.value === unavailable() ? slot.value : formatModifiedTactic(tacticDisplayName(slot.value,raw));
   return t('div',{class:'detail-hero-block detail-hero-before-block'},[
-    t('span',{class:'detail-hero-label'},L('Trước cấp 20','20级前')),
+    t('span',{class:'detail-hero-label'},L('Trước cấp 20','20级前','20レベル前')),
     t('ul',{class:'detail-hero-books'},[t('li',{},lookupItem(
       'detail-hero-books-item',
       bond ? null : lookupHref(links,'tactic',raw,vi),
@@ -278,11 +296,12 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
       const value=localizedSlot(raw,vi).value;
       return value ? {value,raw,vi} : null;
     }).filter(Boolean);
-  const stat=legacy ? null : localizedSlot(holder.statFocusRaw,holder.statFocusVi);
+  // Ghi chú chỉ số (`statFocusKind: note`) là văn xuôi nguồn: bản ja ẩn như ghi chú đội.
+  const stat=legacy || (holder.statFocusKind === 'note' && hidesSourceProse()) ? null : localizedSlot(holder.statFocusRaw,holder.statFocusVi);
   const statText=stat?.value
-    ? (holder.statFocusKind === 'note' && stat.value !== unavailable() ? L(`Lưu ý: ${stat.value}`,`注意：${stat.value}`) : stat.value)
+    ? (holder.statFocusKind === 'note' && stat.value !== unavailable() ? L(`Lưu ý: ${stat.value}`,`注意：${stat.value}`,`注意：${stat.value}`) : stat.value)
     : null;
-  const missing=()=>t('p',{class:'detail-hero-missing'},L('Chưa có dữ liệu','暂无数据'));
+  const missing=()=>t('p',{class:'detail-hero-missing'},L('Chưa có dữ liệu','暂无数据','データなし'));
   const tacticList=tactics.length
     ? t('ol',{class:'detail-hero-tactics'},tactics.map((item,index)=>t('li',{},lookupItem(
       'detail-hero-tactics-item',
@@ -299,20 +318,20 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
     : missing();
   const block=(label,body,cls)=>t('div',{class:`detail-hero-block ${cls}`},[t('span',{class:'detail-hero-label'},label),body]);
   const head=[role ? t('span',{class:'detail-hero-role'},role) : null,statText ? t('span',{class:'detail-hero-stat'},statText) : null].filter(Boolean);
-  const mainLabel=L('Chủ tướng','主将');
+  const mainLabel=L('Chủ tướng','主将','主将');
   return t('section',{class:`reference-detail-holder detail-hero-card${isMain ? ' is-main' : ''}`},[
     head.length ? t('header',{class:'detail-hero-head'},head) : null,
     t(level,{class:'detail-hero-name'},[
       ...(legacy ? [text(holder.name)] : holderNameNodes(holder)),
-      isMain ? t('span',{class:'badge role main-holder',title:mainLabel,'aria-label':mainLabel},L('C','主')) : null,
+      isMain ? t('span',{class:'badge role main-holder',title:mainLabel,'aria-label':mainLabel},L('C','主','主')) : null,
     ]),
     beforeLevel20Block(holder,links),
-    block(L('Chiến pháp','战法'),tacticList,'detail-hero-tactics-block'),
+    block(L('Chiến pháp','战法','戦法'),tacticList,'detail-hero-tactics-block'),
     bonds.length ? t('div',{class:'detail-hero-block detail-hero-bonds'},[
-      t('span',{class:'detail-hero-label'},L('Duyên phận','缘分')),
+      t('span',{class:'detail-hero-label'},L('Duyên phận','缘分','絆')),
       t('span',{class:'detail-hero-bond-list'},bonds.map(entry=>t('span',{class:'tag t-bond'},entry.value))),
     ]) : null,
-    block(L('Binh thư','兵书'),bookList,'detail-hero-books-block'),
+    block(L('Binh thư','兵书','兵法書'),bookList,'detail-hero-books-block'),
   ].filter(Boolean));
 }
 
@@ -320,18 +339,19 @@ function detailHeroCard(holder,{role=null,level='h3',isMain=false,legacy=false,l
  * Khối "Ghi chú" dưới đội hình: ghi chú chung của đội rồi ghi chú từng tướng (nhãn tên tướng). Ghi chú văn
  * xuôi đi qua `prose` nên mỗi trang chỉ một ngôn ngữ. Không còn ghi chú nào thì không dựng khối.
  */
-function detailNotes(teamNotes,holderNotes=[],{level='h2',names=holderNotes.map(note=>note.label)}={}) {
+function detailNotes(teamNotes,holderNotes=[],{level='h2',names=holderNotes.map(note=>note.label),sourceMissing=false}={}) {
   const body=value=>heroMentionNodes(value,names);
   const items=[
+    sourceMissing ? t('li',{class:'detail-note detail-note-missing'},SOURCE_PROSE_MISSING_JA) : null,
     ...teamNotes.map(value=>prose(value)).filter(Boolean).map(value=>t('li',{class:'detail-note'},body(value))),
     ...holderNotes.flatMap(({label,values})=>values.map(value=>prose(value)).filter(Boolean).map(value=>t('li',{class:'detail-note detail-note-holder'},[
       label ? t('span',{class:'detail-note-owner'},label) : null,
       t('span',{class:'detail-note-text'},body(value)),
     ].filter(Boolean)))),
-  ];
+  ].filter(Boolean);
   if (!items.length) return null;
   return t('section',{class:'detail-section detail-notes'},[
-    t(level,{class:'detail-notes-title'},L('Ghi chú','备注')),
+    t(level,{class:'detail-notes-title'},L('Ghi chú','备注','備考')),
     t('ul',{class:'detail-note-list'},items),
   ]);
 }
@@ -354,9 +374,9 @@ const lineupTitle=holders=>(holders || [])
  * (contract bước 6). Bản vi chỉ nhận chuỗi đã có tiếng Việt; bản zh dùng tên chữ Hán nguồn, đội gốc ghép tên tướng.
  */
 function rowDisplayName(row) {
-  if (isZh()) {
+  if (sourceText()) {
     const raw=[row.nameZh].find(value=>typeof value === 'string' && CJK.test(value));
-    return raw ? raw.trim() : lineupTitle(row.heroes || row.holders) || unavailable();
+    return raw ? sourceName(raw.trim()) : lineupTitle(row.heroes || row.holders) || unavailable();
   }
   const candidates=row.sourceConfigId
     ? [row.displayNameVi,row.nameZh,row.name,row.nickname]
@@ -371,32 +391,85 @@ function factionOf(row,labels) {
   return {label:kindLabel(labels,'faction',raw) ?? '',code:factionCode(labels,raw) || 'none'};
 }
 
-/** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. */
-function metaLine(row,labels) {
+/**
+ * Nhãn "N phương án" của team Đội khác có nhiều phương án đủ dữ liệu (cùng bộ tướng + binh chủng, khác chiến pháp/binh thư);
+ * team một phương án không ghi.
+ */
+const optionCountBadge=count=>Number.isInteger(count) && count>1
+  ? t('span',{class:'reference-option-count'},L(`${count} phương án`,`${count} 种方案`,`${count} 通りの構成`))
+  : null;
+
+/** Dòng "■ phe · binh" của thẻ và ô đội của bảng: chỉ phần có dữ liệu, phần thiếu bỏ hẳn. `optionCount`: số phương án của team Đội khác. */
+function metaLine(row,labels,optionCount=0) {
   const faction=factionOf(row,labels);
   const units=(row.unitTypesRaw?.length ? row.unitTypesRaw : (row.unit || []))
     .map(value=>kindLabel(labels,'unit',value))
     .filter(Boolean);
   const nodes=[];
+  if (isRecommendedOtherRow(row)) nodes.push(referenceRecommendedBadge());
   if (row.sourceConfigId && row.tierRaw) nodes.push(t('span',{class:'badge tier reference-tier',title:'Tier'},sourceTierLabel(row.tierRaw)));
+  const jp=row.sourceConfigId ? jpTierBadge(row) : null;
+  if (jp) nodes.push(jp);
   if (faction.label) nodes.push(t('span',{class:`reference-faction f-${faction.code}`},faction.label));
   if (units.length) nodes.push(t('span',{class:'reference-units'},units.join(' · ')));
+  const options=optionCountBadge(optionCount);
+  if (options) nodes.push(options);
   if (!nodes.length) return null;
   return t('p',{class:'reference-meta'},nodes.flatMap((node,index)=>index ? [' · ',node] : [node]));
+}
+
+/** Tên hiển thị của bài nguồn tier JP (Kazten); bản Nhật dùng tên tác giả bằng chữ Nhật. */
+const jpTierSourceName=()=>L('Kazten','Kazten','カズ天');
+
+/** Huy hiệu tier JP cạnh tier SGSDeck ("JP T0"), kèm nhãn phụ khi bài nguồn dùng chiến pháp khác. */
+function jpTierBadge(row) {
+  const jp=jpTierSource(row);
+  if (!jp) return null;
+  const note=jpTierMatchNote(jp);
+  return t('span',{class:'reference-tier-source',dataset:{tierSource:jp.source}},[
+    t('span',{class:'badge tier reference-tier',title:`${jpTierSourceLabel()} · ${jpTierSourceName()} ${jp.publishedAt || ''}`.trim()},`JP ${jp.tierRaw}`),
+    note ? ' ' : null,
+    note ? t('span',{class:'reference-tier-note'},note) : null,
+  ]);
+}
+
+/** Khối "Tier JP" của trang chi tiết: tier, nhãn chiến pháp khác, nguồn có ngày đăng và link bài (chỉ URL http(s) hợp lệ). */
+function jpTierSection(record) {
+  const jp=jpTierSource(record);
+  if (!jp) return null;
+  const href=validateHttpSourceUrl(jp.url);
+  const origin=`${jpTierSourceName()} · ${jp.publishedAt || ''}`.replace(/ · $/,'');
+  return t('section',{class:'detail-section detail-tier-source',dataset:{tierSource:jp.source}},[
+    t('h2',{},jpTierSourceLabel()),
+    t('dl',{class:'detail-facts'},[
+      fact('tier-source-tier','Tier',jp.tierRaw),
+      fact('tier-source-origin',L('Nguồn','来源','出典'),href ? t('a',{class:'detail-link',href,target:'_blank',rel:'noopener noreferrer'},origin) : origin),
+    ]),
+    jpTierMatchNote(jp) ? t('p',{class:'scope-note'},L(
+      'Khác chiến pháp: bài nguồn dùng cùng ba tướng nhưng chiến pháp khác cấu hình này.',
+      '战法不同：来源文章使用相同的三名武将，但战法与此配置不同。',
+      '戦法違い：出典記事は同じ武将3名ですが、戦法がこの構成と異なります。',
+    )) : null,
+    t('p',{class:'scope-note'},L(
+      'Đánh giá cá nhân của tác giả bài nguồn; tier SGSDeck giữ nguyên.',
+      '来源作者的个人评价；SGSDeck 等级保持不变。',
+      '出典記事の作者による個人的な評価です。SGSDeck のティアはそのまま表示しています。',
+    )),
+  ]);
 }
 
 // Điểm giữ đúng độ chính xác của dữ liệu; thiếu điểm là ô ấn trống "—" (không phải 0) cùng khuôn với
 // ô có điểm, để thẻ Đội chuẩn và Đội khác chung một bố cục đầu thẻ.
 const scoreBadge=row=>row.value != null
   ? t('span',{class:'reference-score-wrap'},[
-    t('span',{class:'badge score reference-score',title:L('Điểm','评分')},String(row.value)),
+    t('span',{class:'badge score reference-score',title:L('Điểm','评分','スコア')},String(row.value)),
     ' ',
-    t('span',{class:'reference-score-unit'},L('điểm','分')),
+    t('span',{class:'reference-score-unit'},L('điểm','分','点')),
   ])
-  : t('span',{class:'reference-score-wrap is-missing',title:L('Chưa có điểm','暂无评分')},[
+  : t('span',{class:'reference-score-wrap is-missing',title:L('Chưa có điểm','暂无评分','スコアなし')},[
     t('span',{class:'badge score reference-score missing-score','aria-hidden':'true'},'—'),
-    t('span',{class:'visually-hidden'},L('Chưa có điểm','暂无评分')),
-    t('span',{class:'reference-score-unit','aria-hidden':'true'},L('điểm','分')),
+    t('span',{class:'visually-hidden'},L('Chưa có điểm','暂无评分','スコアなし')),
+    t('span',{class:'reference-score-unit','aria-hidden':'true'},L('điểm','分','点')),
   ]);
 
 /** Tên các phương án thay thế của dữ liệu cũ; bản zh chỉ giữ tên đổi được sang chữ Hán. */
@@ -406,9 +479,9 @@ const tacticAlternativeNames=values=>alternativeNames(values).map(value=>tacticD
 
 function legacyAlternativeLines(content) {
   return (content?.heroes || []).flatMap(hero=>[
-    ...alternativeNames(hero.alternatives).map(value=>[hero.name,L('Tướng thay','替换武将'),value]),
-    ...(hero.tactics || []).flatMap(item=>tacticAlternativeNames(item.alternatives).map(value=>[hero.name,L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),value])),
-    ...(hero.books || []).flatMap(item=>alternativeNames(item.alternatives).map(value=>[hero.name,L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim()),value])),
+    ...alternativeNames(hero.alternatives).map(value=>[hero.name,L('Tướng thay','替换武将','代替武将'),value]),
+    ...(hero.tactics || []).flatMap(item=>tacticAlternativeNames(item.alternatives).map(value=>[hero.name,L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim(), `戦法 ${zhResolved(item.name) ?? ''}`.trim()),value])),
+    ...(hero.books || []).flatMap(item=>alternativeNames(item.alternatives).map(value=>[hero.name,L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim(), `兵法書 ${zhResolved(item.name) ?? ''}`.trim()),value])),
   ].map(([owner,label,value])=>t('p',{class:'alternative-line'},`${text(owner)} · ${label}: ${value}`)));
 }
 
@@ -418,7 +491,7 @@ function alternativesDisclosure(row) {
   const nodes=holders.length ? holders.map((holder,index)=>holderView(holder,{index})) : legacyAlternativeLines(row.legacyContent);
   if (!nodes.length) return null;
   return t('details',{class:'reference-alternatives'},[
-    t('summary',{},L(`Thay thế (${nodes.length})`,`替换方案（${nodes.length}）`)),
+    t('summary',{},L(`Thay thế (${nodes.length})`,`替换方案（${nodes.length}）`,`代替案（${nodes.length}）`)),
     t('div',{class:'alternative-body'},nodes),
   ]);
 }
@@ -428,7 +501,7 @@ function fearLine(row) {
   const contents=[row.legacyContent,...(row.legacyReferences || []).map(reference=>reference.legacyContent)].filter(Boolean);
   const values=[...new Set(contents.flatMap(content=>alternativeNames(content.counters?.avoid)))];
   if (!values.length) return null;
-  return t('p',{class:'reference-fear'},[t('strong',{},L('Sợ','怕')),' ',values.join(' · ')]);
+  return t('p',{class:'reference-fear'},[t('strong',{},L('Sợ','怕','苦手')),' ',values.join(' · ')]);
 }
 
 const detailHrefFor=(href,children,cls)=>href
@@ -446,14 +519,14 @@ export function recommendedTeamCard(row,{href,labels,locale}={}) {
   return withLocale(locale,()=>teamCardTree(row,href,labels));
 }
 
-function teamCardTree(row,href,labels) {
+function teamCardTree(row,href,labels,optionCount=0) {
   const name=rowDisplayName(row);
   const fear=fearLine(row);
   return t('article',{class:'team-card reference-team-card',dataset:{referenceKey:referenceRowKey(row),sourceConfigId:row.sourceConfigId || '',legacyTeamId:row.legacyTeamId || '',faction:row.factionRaw || row.faction || '',factionCode:factionOf(row,labels).code}},[
     t('header',{class:'reference-card-head'},[
       t('div',{class:'reference-card-title'},[
         t('h3',{class:'team-name'},href ? t('a',{href,dataset:{teamDetailLink:''}},name) : name),
-        metaLine(row,labels),
+        metaLine(row,labels,optionCount),
       ]),
       scoreBadge(row),
     ]),
@@ -461,7 +534,7 @@ function teamCardTree(row,href,labels) {
     alternativesDisclosure(row),
     t('footer',{class:'reference-card-foot'},[
       fear,
-      href ? t('a',{class:'ana-link-btn',href,dataset:{teamDetailLink:''}},[L('Chi tiết','详情'),iconTree([svgTree('line',{x1:5,y1:12,x2:19,y2:12}),svgTree('polyline',{points:'13 6 19 12 13 18'})],{size:16})]) : null,
+      href ? t('a',{class:'ana-link-btn',href,dataset:{teamDetailLink:''}},[L('Chi tiết','详情','詳細'),iconTree([svgTree('line',{x1:5,y1:12,x2:19,y2:12}),svgTree('polyline',{points:'13 6 19 12 13 18'})],{size:16})]) : null,
     ].filter(Boolean)),
   ]);
 }
@@ -469,10 +542,58 @@ function teamCardTree(row,href,labels) {
 /** Nguồn Cùng Tồn ghi biến thể 40 năm dạng hậu tố ("Lữ Bố 40th"): đưa về tiền tố `40Y` để dùng chung chip biến thể. */
 const coexistHeroName=name=>String(name ?? '').replace(/^(.+?)\s*40th$/iu,'40Y $1');
 
+/** Id của bảng tra kỳ lược nhúng trong trang Cùng Tồn (`src/components/pages/SectionPage.astro`). */
+export const COEXIST_QILUE_TABLE_ID='coexist-qilue-table';
+let coexistQilueTableValue=null;
+
+/**
+ * Đăng ký bảng tra kỳ lược (`qilueLookupTable`) cho thẻ Cùng Tồn. Build gọi một lần từ lookup-catalog đã pin trước khi
+ * dựng; trình duyệt không gọi mà đọc bảng nhúng `#coexist-qilue-table` (kèm tên Nhật `jaNames`) lần đầu cần (cùng nguồn
+ * với bản dựng sẵn).
+ */
+export function setCoexistQilueTable(table) {
+  coexistQilueTableValue=table;
+}
+
+/**
+ * Bảng tra cho thẻ Cùng Tồn có mã thẻ. Thiếu bảng (build quên đăng ký, trang thiếu payload nhúng) là lỗi dựng: ném lỗi
+ * thay vì lặng lẽ bỏ ô kỳ lược.
+ */
+function coexistQilueTable() {
+  if (!coexistQilueTableValue) {
+    const raw=globalThis.document?.getElementById?.(COEXIST_QILUE_TABLE_ID)?.textContent;
+    if (raw) {
+      const data=JSON.parse(raw);
+      coexistQilueTableValue=qilueLookupTable(data,data.jaNames ?? null);
+    }
+  }
+  if (!coexistQilueTableValue) throw new Error('Coexist qilue table is not registered');
+  return coexistQilueTableValue;
+}
+
+/**
+ * Ô "Thẻ Kỳ Lược" ở chân thẻ Cùng Tồn: thẻ theo thứ tự hiệp của nguồn (thẻ đầu dùng ở hiệp 2), mỗi thẻ là ô của Đội chuẩn
+ * (`qilueCard`: tên client hoặc chữ Hán, nhãn loại, dấu Hiếm, link trang riêng Tra cứu). Nguồn không ghi phương lược nên
+ * không có chip phương lược.
+ */
+function coexistQilueTree(ids) {
+  const table=coexistQilueTable();
+  const cards=ids.map(id=>qilueItem(table,id,'qilue-card:'));
+  return t('div',{class:'detail-qilue coexist-qilue'},[
+    t('p',{class:'detail-qilue-label'},L('Thẻ Kỳ Lược','奇略卡','奇略カード')),
+    t('ol',{class:'coexist-qilue-rounds'},cards.map((card,index)=>t('li',{class:'coexist-qilue-round'},[
+      t('span',{class:'detail-qilue-round-label'},qilueRound(index)),
+      qilueCard(card),
+    ]))),
+  ]);
+}
+
 /**
  * Thẻ một đội Cùng Tồn (cây view): cùng khung và dòng tướng (vai trò · tên · chiến pháp · binh thư) với thẻ Đội chuẩn.
- * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, unitTacticEffects, heroes:[{name, tag,
- * tactics, books, statFocus, advisorSkill}]}`; chiến pháp chỉ hiển thị, không bấm tìm như Đội chuẩn.
+ * `team` đã bản địa hoá (`coexistGroupModel` của render.js): `{name, level, note, unitTacticEffects, strategyCardIds,
+ * strategyCards, heroes:[{name, tag, tactics, books, statFocus, equipment, advisorSkill}]}`; chiến pháp chỉ hiển thị, không
+ * bấm tìm như Đội chuẩn. Ghi chú đội, Trang bị và chữ thô Thẻ Kỳ Lược chỉ có ở bản vi (bản zh, ja nhận chuỗi rỗng nên không
+ * dựng). Thẻ Kỳ Lược có mã (`strategyCardIds`) dựng ô theo hiệp ở mọi bản. Chuỗi nhiều dòng giữ ngắt dòng (`pre-line`).
  */
 export function coexistTeamCard(team,{locale}={}) {
   return withLocale(locale,()=>coexistCardTree(team));
@@ -480,9 +601,11 @@ export function coexistTeamCard(team,{locale}={}) {
 
 function coexistCardTree(team) {
   const meta=[
-    team.level ? t('span',{class:'badge tier reference-tier',title:L('Cấp độ đội','阵容等级')},team.level) : null,
-    team.unitTacticEffects ? t('span',{class:'coexist-card-upgrade'},L(`Cải tạo: ${team.unitTacticEffects}`,`改造：${team.unitTacticEffects}`)) : null,
+    team.level ? t('span',{class:'badge tier reference-tier',title:L('Cấp độ đội','阵容等级','編成レベル')},team.level) : null,
+    team.note ? t('span',{class:'coexist-team-note'},team.note) : null,
+    team.unitTacticEffects ? t('span',{class:'coexist-card-upgrade'},L(`Cải tạo: ${team.unitTacticEffects}`,`改造：${team.unitTacticEffects}`,`改造：${team.unitTacticEffects}`)) : null,
   ].filter(Boolean);
+  const strategyCardIds=Array.isArray(team.strategyCardIds) ? team.strategyCardIds : [];
   return t('article',{class:'team-card reference-team-card coexist-team-card',dataset:{factionCode:'none'}},[
     t('header',{class:'reference-card-head'},[
       t('div',{class:'reference-card-title'},[
@@ -493,7 +616,7 @@ function coexistCardTree(team) {
     t('div',{class:'heroes'},(team.heroes || []).map((hero,index)=>{
       const extra=[
         hero.statFocus ? `+ ${hero.statFocus}` : null,
-        hero.advisorSkill ? L(`QS: ${hero.advisorSkill}`,`军师：${hero.advisorSkill}`) : null,
+        hero.advisorSkill ? L(`QS: ${hero.advisorSkill}`,`军师：${hero.advisorSkill}`,`軍師：${hero.advisorSkill}`) : null,
       ].filter(Boolean);
       return t('div',{class:'hero reference-holder',dataset:{role:HERO_ROLE_KEYS[index] || ''}},[
         t('span',{class:'reference-role'},heroRoles()[index] || ''),
@@ -501,14 +624,18 @@ function coexistCardTree(team) {
         hero.tactics.length ? t('div',{class:'line tactics'},hero.tactics.map(value=>t('span',{class:'tag t-tactic'},value))) : null,
         t('p',{class:'line books'},hero.books.length
           ? t('span',{class:'reference-book-values'},hero.books.join(' · '))
-          : t('span',{class:'reference-books-missing'},L('Chưa ghi','未注明'))),
+          : t('span',{class:'reference-books-missing'},L('Chưa ghi','未注明','記載なし'))),
         hero.tag || extra.length ? t('p',{class:'line books coexist-hero-extra'},[
           hero.tag ? t('span',{class:'coexist-hero-tag'},hero.tag) : null,
           extra.join(' · '),
         ].filter(Boolean)) : null,
+        hero.equipment ? t('p',{class:'line books coexist-hero-equipment'},`Trang bị: ${hero.equipment}`) : null,
       ].filter(Boolean));
     })),
-  ]);
+    strategyCardIds.length
+      ? t('footer',{class:'reference-card-foot'},coexistQilueTree(strategyCardIds))
+      : team.strategyCards ? t('footer',{class:'reference-card-foot'},t('p',{class:'coexist-card-strategy'},`Thẻ Kỳ Lược: ${team.strategyCards}`)) : null,
+  ].filter(Boolean));
 }
 
 const tableCell=(children,cls)=>t('td',{class:cls},children);
@@ -530,32 +657,34 @@ function tableHeroCell(holder) {
  * Hàng mang `data-reference-key` để test bám danh tính bản ghi, không bám số lượng.
  */
 export function recommendedTeamTable(rows,{hrefFor,labels,locale}={}) {
-  return withLocale(locale,()=>{
-    const head=t('tr',{},[
-      t('th',{scope:'col',class:'reference-table-team'},L('Đội','队伍')),
-      t('th',{scope:'col'},L('Chủ tướng','主将')),
-      t('th',{scope:'col'},L('Phó 1','副将1')),
-      t('th',{scope:'col'},L('Phó 2','副将2')),
-      t('th',{scope:'col',class:'reference-table-score-head'},L('Điểm','评分')),
-    ]);
-    return t('table',{class:'reference-table'},[t('thead',{},head),t('tbody',{},rows.map(row=>tableRowTree(row,hrefFor,labels)))]);
-  });
+  return withLocale(locale,()=>teamTableTree(rows.map(row=>tableRowTree(row,hrefFor?.(row),labels))));
+}
+
+/** Khung bảng 5 cột quanh các hàng đã dựng (`tableRowTree`); dùng chung cho hàng đội và hàng team Đội khác. */
+function teamTableTree(rowTrees) {
+  const head=t('tr',{},[
+    t('th',{scope:'col',class:'reference-table-team'},L('Đội','队伍','編成')),
+    t('th',{scope:'col'},L('Chủ tướng','主将','主将')),
+    t('th',{scope:'col'},L('Phó 1','副将1','副将1')),
+    t('th',{scope:'col'},L('Phó 2','副将2','副将2')),
+    t('th',{scope:'col',class:'reference-table-score-head'},L('Điểm','评分','スコア')),
+  ]);
+  return t('table',{class:'reference-table'},[t('thead',{},head),t('tbody',{},rowTrees)]);
 }
 
 /** Một hàng của bảng; danh sách dựng theo lượt nối thêm hàng vào `tbody` sẵn có. */
 export function recommendedTeamTableRow(row,{hrefFor,labels,locale}={}) {
-  return withLocale(locale,()=>tableRowTree(row,hrefFor,labels));
+  return withLocale(locale,()=>tableRowTree(row,hrefFor?.(row),labels));
 }
 
-function tableRowTree(row,hrefFor,labels) {
-  const href=hrefFor?.(row);
+function tableRowTree(row,href,labels,optionCount=0) {
   const name=rowDisplayName(row);
   const holders=(row.heroes || row.holders || []).slice(0,3);
   const lineup=holders.filter(holder=>!isSourceEmpty(holder)).map(holderName).filter(Boolean).join(' · ');
   return t('tr',{dataset:{referenceKey:referenceRowKey(row)}},[
     t('th',{scope:'row',class:'reference-table-team'},[
       detailHrefFor(href,name,'reference-table-name'),
-      metaLine(row,labels),
+      metaLine(row,labels,optionCount),
       t('span',{class:'reference-table-lineup'},lineup),
     ]),
     ...Array.from({length:3},(_,index)=>tableHeroCell(holders[index])),
@@ -570,11 +699,21 @@ export function teamItemTree(row,mode,{hrefFor,labels,locale}={}) {
     : recommendedTeamCard(row,{href:hrefFor?.(row),labels,locale});
 }
 
-/** Khối các mục: bảng trong khung, hoặc lưới thẻ (`luoi` là lưới gọn). */
-function teamRowsTree(items,mode,{hrefFor,labels,locale}={}) {
+/**
+ * Một mục team của Đội khác (`otherTeamListEntries`): thẻ hoặc hàng bảng dựng bằng phương án đại diện, link là `entry.href`
+ * (trang của phương án khớp bộ lọc), dòng meta ghi số phương án đủ dữ liệu khi team có hơn một.
+ */
+export function otherTeamItemTree(entry,mode,{labels,locale}={}) {
+  return withLocale(locale,()=>mode===TEAM_VIEW_TABLE
+    ? tableRowTree(entry.displayRecord,entry.href,labels,entry.optionCount)
+    : teamCardTree(entry.displayRecord,entry.href,labels,entry.optionCount));
+}
+
+/** Khối các mục: bảng trong khung, hoặc lưới thẻ (`luoi` là lưới gọn). `itemTree(item, mode)` dựng một mục. */
+function teamRowsTree(items,mode,itemTree) {
   return mode===TEAM_VIEW_TABLE
-    ? t('div',{class:'reference-table-frame'},recommendedTeamTable(items,{hrefFor,labels,locale}))
-    : t('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(row=>teamItemTree(row,mode,{hrefFor,labels,locale})));
+    ? t('div',{class:'reference-table-frame'},teamTableTree(items.map(item=>itemTree(item,mode))))
+    : t('div',{class:mode===TEAM_VIEW_GRID?'team-grid team-grid-dense':'team-grid'},items.map(item=>itemTree(item,mode)));
 }
 
 /** Tier của một đội; đội chưa xếp hạng thuộc nhóm `unranked`. */
@@ -593,32 +732,34 @@ export function groupRowsByTier(items) {
 /** Một nhóm Tier; `total` là số đội của nhóm trên toàn bộ danh sách đã lọc, không chỉ lượt đang hiện. */
 export function tierSectionTree(tier,items,{index,total,mode,mountId,hrefFor,labels,locale}) {
   return withLocale(locale,()=>{
-    const label=tier==='unranked' ? L('Chưa xếp hạng','未评级') : sourceTierLabel(tier);
+    const label=tier==='unranked' ? L('Chưa xếp hạng','未评级','未評価') : sourceTierLabel(tier);
     const headingId=`${mountId}-tier-heading-${index}`;
     return t('section',{class:'reference-tier-section',dataset:{tier},'aria-labelledby':headingId},[
       t('h2',{class:'reference-tier-heading',id:headingId},[
         t('span',{},label),
-        t('span',{class:'reference-tier-count'},L(` · ${total} đội`,` · ${total} 队`)),
+        t('span',{class:'reference-tier-count'},L(` · ${total} đội`,` · ${total} 队`,` · ${total}編成`)),
       ]),
-      teamRowsTree(items,mode,{hrefFor,labels,locale}),
+      teamRowsTree(items,mode,(row,itemMode)=>teamItemTree(row,itemMode,{hrefFor,labels,locale})),
     ]);
   });
 }
 
 /**
  * Phần thân danh sách đội (cây view) của `rows` đã lọc: Đội chuẩn nhóm theo Tier, Đội khác một khối. Chỉ dựng
- * `limit` đội đầu (mặc định tất cả); số đội của từng nhóm Tier vẫn đếm trên toàn bộ `rows`.
+ * `limit` mục đầu (mặc định tất cả); số đội của từng nhóm Tier vẫn đếm trên toàn bộ `rows`. Đội khác: `rows` là mục team
+ * của `otherTeamListEntries` (đã mang link của từng mục nên không dùng `hrefFor`).
  */
 export function recommendedListTrees(rows,{family,mode,limit=rows.length,labels,hrefFor,mountId,locale}={}) {
   const visible=rows.slice(0,limit);
-  if (family!=='recommended') return [teamRowsTree(visible,mode,{hrefFor,labels,locale})];
+  if (family!=='recommended') return [withLocale(locale,()=>teamRowsTree(visible,mode,(entry,itemMode)=>otherTeamItemTree(entry,itemMode,{labels})))];
   return [...groupRowsByTier(visible)].map(([tier,items],index)=>tierSectionTree(tier,items,{
     index,mode,mountId,hrefFor,labels,locale,
     total:rows.filter(row=>tierOf(row)===tier).length,
   }));
 }
 
-function notesByOwner(record) {
+/** `hiddenBlockId`: block ghi chú mà section Kỳ lược đã thể hiện trọn (`qilue.hideNoteBlockId`), bỏ khỏi khối Ghi chú. */
+function notesByOwner(record,hiddenBlockId=null) {
   const blocks=record.displayNotes?.blocks;
   if (!Array.isArray(blocks)) {
     return {team:[unavailable()],primary:new Map(),alternative:new Map(),projected:false};
@@ -626,19 +767,24 @@ function notesByOwner(record) {
   const team=[];
   const primary=new Map();
   const alternative=new Map();
+  let hiddenSource=0;
   for (const block of blocks) {
+    if (hiddenBlockId && block?.id === hiddenBlockId) continue;
+    // Bản ja: ghi chú chữ Trung chưa có bản dịch Nhật, chỉ đếm để hiện dòng báo thiếu.
+    if (hidesSourceProse()) { if (typeof block?.textRaw === 'string' && block.textRaw.trim()) hiddenSource++; continue; }
     // Bản zh dùng nguyên văn nguồn (`textRaw`), bản vi dùng bản dịch (`textVi`).
-    const value=(isZh() ? block?.textRaw : block?.textVi) || unavailable();
+    const value=(sourceText() ? block?.textRaw : block?.textVi) || unavailable();
     const bucket=block.owner === 'primary' ? primary : block.owner === 'alternative' ? alternative : null;
     if (!bucket) { team.push(value); continue; }
     const index=Number.isInteger(block.holderIndex) ? block.holderIndex : -1;
     if (index < 0) { team.push(value); continue; }
     bucket.set(index,[...(bucket.get(index) || []),value]);
   }
-  return {team,primary,alternative,projected:true};
+  return {team,primary,alternative,projected:true,hiddenSource};
 }
 
-function legacyContentSections(content,{title,provenance=[],links=null}={}) {
+/** `afterLineup`: khối đặt ngay sau "Cấu hình gốc" (trang Đội khác: các phương án khác của team). */
+function legacyContentSections(content,{title,provenance=[],links=null,afterLineup=null}={}) {
   const counters=content.counters || {};
   const counterList=(values,cls)=>t('ul',{class:'counters'},values.map(value=>t('li',{class:`chip ${cls}`},String(value))));
   const good=alternativeNames(counters.good);
@@ -646,9 +792,9 @@ function legacyContentSections(content,{title,provenance=[],links=null}={}) {
   const heroAlternatives=(content.heroes || []).flatMap(hero=>{
     const heroNames=alternativeNames(hero.alternatives);
     const rows=[
-      heroNames.length ? fact('legacy-hero-alternatives',L('Tướng thay thế','替换武将'),heroNames.join(' · ')) : null,
-      ...(hero.tactics || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-tactic-alternatives',L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim()),tacticAlternativeNames(item.alternatives).join(' · '))),
-      ...(hero.books || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-book-alternatives',L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim()),alternativeNames(item.alternatives).join(' · '))),
+      heroNames.length ? fact('legacy-hero-alternatives',L('Tướng thay thế','替换武将','代替武将'),heroNames.join(' · ')) : null,
+      ...(hero.tactics || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-tactic-alternatives',L(`Chiến pháp ${tacticDisplayName(item.name)}`,`战法 ${zhResolved(item.name) ?? ''}`.trim(), `戦法 ${zhResolved(item.name) ?? ''}`.trim()),tacticAlternativeNames(item.alternatives).join(' · '))),
+      ...(hero.books || []).filter(item=>alternativeNames(item.alternatives).length).map(item=>fact('legacy-book-alternatives',L(`Binh thư ${item.name}`,`兵书 ${zhResolved(item.name) ?? ''}`.trim(), `兵法書 ${zhResolved(item.name) ?? ''}`.trim()),alternativeNames(item.alternatives).join(' · '))),
     ].filter(Boolean);
     return rows.length ? [t('section',{class:'legacy-alternative-group'},[t('h3',{},text(hero.name)),t('dl',{class:'detail-facts'},rows)])] : [];
   });
@@ -659,30 +805,183 @@ function legacyContentSections(content,{title,provenance=[],links=null}={}) {
   return [
     title ? t('h3',{class:'legacy-content-title'},title) : null,
     ...provenance,
-    section(L('Cấu hình gốc','原始配置'),heroCards.length ? t('div',{class:'detail-hero-grid'},heroCards) : null),
+    section(L('Cấu hình gốc','原始配置','元の構成'),heroCards.length ? t('div',{class:'detail-hero-grid'},heroCards) : null),
+    afterLineup,
     detailNotes([],heroNotes,{names:(content.heroes || []).map(hero=>holderLabel(hero,{legacy:true}))}),
-    section(L('Mô tả & cách vận hành','说明与玩法'),content.notes ? noteParagraph(content.notes) : null),
-    section(L('Khắc chế','克制关系'),[
-      good.length ? t('div',{class:'counter-group'},[t('h3',{},L('Khắc chế tốt','克制')),counterList(good,'good')]) : null,
-      avoid.length ? t('div',{class:'counter-group'},[t('h3',{},L('Nên tránh','应避开')),counterList(avoid,'avoid')]) : null,
+    section(L('Mô tả & cách vận hành','说明与玩法','解説と運用'),content.notes ? noteParagraph(content.notes) : null),
+    section(L('Khắc chế','克制关系','相性'),[
+      good.length ? t('div',{class:'counter-group'},[t('h3',{},L('Khắc chế tốt','克制','有利')),counterList(good,'good')]) : null,
+      avoid.length ? t('div',{class:'counter-group'},[t('h3',{},L('Nên tránh','应避开','避けるべき')),counterList(avoid,'avoid')]) : null,
     ].filter(Boolean)),
-    section(L('Phương án thay thế','替换方案'),heroAlternatives),
+    section(L('Phương án thay thế','替换方案','代替案'),heroAlternatives),
   ].filter(Boolean);
 }
 
 /** Tiêu đề đội gốc: bản vi dùng biệt danh/tên đội, bản zh ghép tên tướng chữ Hán. */
-const legacyTitle=(content,fallback)=>isZh()
+const legacyTitle=(content,fallback)=>sourceText()
   ? lineupTitle(content.heroes) || fallback
   : content.nickname || content.name || fallback;
 
-/** Nội dung chi tiết Team chuẩn cho trang riêng; trả mảng cây view (các section), không tự tạo article/h1. */
-export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null,lookupLinks=null,locale}={}) {
-  return withLocale(locale,()=>recommendedDetailTrees(record,{legacyTeams,lookupLinks}));
+const QILUE_KINDS=[['qilueStrategies','qilue-strategy:'],['qilueCards','qilue-card:']];
+
+/**
+ * Bảng tra kỳ lược `{mã → {nameVi, nameZh, nameJa, type, rarity}}` từ `lookup-catalog.json` (`qilueStrategies` + `qilueCards`;
+ * phương lược có `type`/`rarity` là `null`) và tên Nhật của `data/lookup-ja.json` (`jaEntries`: `entries` hoặc cả tài liệu;
+ * vắng thì `nameJa` là `null`). Build dựng một lần từ catalog đã pin, dùng chung cho mọi bản và llms.
+ * Catalog thiếu nhóm, mã sai tiền tố/trùng hay thiếu tên là dữ liệu hỏng: ném lỗi thay vì dựng ô thiếu.
+ */
+export function qilueLookupTable(catalog,jaEntries=null) {
+  const entries=jaEntries && typeof jaEntries === 'object' && jaEntries.entries && typeof jaEntries.entries === 'object' ? jaEntries.entries : jaEntries ?? {};
+  const table={};
+  for (const [key,prefix] of QILUE_KINDS) {
+    const rows=catalog?.[key];
+    if (!Array.isArray(rows)) throw new Error(`Lookup catalog has no ${key}`);
+    for (const row of rows) {
+      const id=row?.id;
+      const names=[row?.nameVi,row?.nameZh];
+      if (typeof id !== 'string' || !id.startsWith(prefix) || Object.hasOwn(table,id) || !names.every(name=>typeof name === 'string' && name.trim())) {
+        throw new Error(`Lookup catalog has an invalid ${key} row: ${String(id)}`);
+      }
+      const ja=Object.hasOwn(entries,id) && typeof entries[id]?.name === 'string' && entries[id].name.trim() ? entries[id].name.trim() : null;
+      table[id]=Object.freeze({nameVi:row.nameVi.trim(),nameZh:row.nameZh.trim(),nameJa:ja,type:row.type ?? null,rarity:row.rarity ?? null});
+    }
+  }
+  return Object.freeze(table);
 }
 
-function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
+/** Một mục kỳ lược theo ngôn ngữ trang; mã không có trong bảng tra (hay thiếu tên của bản đang dựng) là dữ liệu hỏng nên build dừng. */
+function qilueItem(table,id,prefix) {
+  if (typeof id !== 'string' || !id.startsWith(prefix) || !Object.hasOwn(table,id)) throw new Error(`Unknown qilue id: ${String(id)}`);
+  const row=table[id];
+  const name=L(row.nameVi,row.nameZh,row.nameJa ?? '');
+  if (!name) throw new Error(`Qilue id has no name for locale ${currentLocale()}: ${id}`);
+  const path=lookupItemPath(id);
+  return {id,name,type:row.type,rarity:row.rarity,href:path ? localePath(path) : null};
+}
+
+/**
+ * Mô hình hiển thị của `record.qilue` (xem pipeline/recommended_qilue.py): `{strategy, cards, ordered}` hoặc, với dạng chép
+ * (`form: copy`), `{sources:[{name, href, model}]}` — đội nguồn tra trong `teams` (index cùng generation) theo
+ * `sourceConfigId`; đội nguồn chưa có kỳ lược thì `model` là `null` (chỉ còn link). Không có bảng tra thì không dựng gì.
+ */
+function qilueModel(qilue,table,teams) {
+  if (!qilue || typeof qilue !== 'object' || !table) return null;
+  if (qilue.form === 'copy') {
+    const ids=Array.isArray(qilue.copyFrom) ? qilue.copyFrom : [];
+    const sources=ids.map(sourceConfigId=>{
+      const row=teams?.get?.(sourceConfigId);
+      if (!row) throw new Error(`Recommended qilue copy source is not in the generation: ${String(sourceConfigId)}`);
+      const model=row.qilue?.form === 'copy' ? null : qilueModel(row.qilue,table,teams);
+      return {name:rowDisplayName(row),href:teamDetailPath({sourceConfigId}),model};
+    });
+    return sources.length ? {sources} : null;
+  }
+  const cards=(Array.isArray(qilue.cardIds) ? qilue.cardIds : []).map(id=>qilueItem(table,id,'qilue-card:'));
+  if (!cards.length) return null;
+  const strategy=qilue.strategyId == null ? null : qilueItem(table,qilue.strategyId,'qilue-strategy:');
+  return {strategy,cards,ordered:qilue.ordered === true};
+}
+
+/** Nhãn hiệp của ô thứ `index` (thẻ đầu dùng ở hiệp 2). */
+const qilueRound=index=>L(`Hiệp ${index+2}`,`第${index+2}回合`,`第${index+2}ターン`);
+
+/**
+ * Một thẻ kỳ lược: tên, nhãn loại có màu (`data-tone`), dấu Hiếm — cùng class nhãn với Tra cứu (`lookup-qilue-tag`,
+ * `lookup-qilue-rare`); có trang riêng Tra cứu thì cả ô là link.
+ */
+function qilueCard(card) {
+  const rare=card.rarity === 'rare' ? qilueLabel('rarity','rare') : null;
+  const type=qilueLabel('type',card.type);
+  const children=[
+    t('span',{class:'detail-qilue-card-name'},card.name),
+    t('span',{class:'detail-qilue-marks'},[
+      type ? t('span',{class:'lookup-qilue-tag','data-tone':card.type},type) : null,
+      rare ? t('span',{class:'lookup-qilue-rare'},rare) : null,
+    ]),
+  ];
+  const attrs={class:card.href ? 'detail-qilue-card is-link' : 'detail-qilue-card','data-tone':card.type};
+  return card.href
+    ? t('a',{...attrs,href:card.href,title:L('Mở trong Tra cứu','在图鉴查询中打开','図鑑で開く')},children)
+    : t('span',attrs,children);
+}
+
+/** Chip phương lược, lưới "Hiệp 2…" (có thứ tự) hoặc chú thích + chip thẻ (không thứ tự) của một mô hình kỳ lược. */
+function qilueBody(model) {
+  const strategy=model.strategy ? t('p',{class:'detail-qilue-strategy'},[
+    t('span',{class:'detail-qilue-label'},L('Phương lược','作戰方略','方略')),
+    model.strategy.href
+      ? t('a',{class:'detail-qilue-chip is-link',href:model.strategy.href,title:L('Mở trong Tra cứu','在图鉴查询中打开','図鑑で開く')},model.strategy.name)
+      : t('span',{class:'detail-qilue-chip'},model.strategy.name),
+  ]) : null;
+  if (!model.ordered) {
+    return [strategy,
+      t('p',{class:'detail-qilue-note'},L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序','出典にターン順の記載なし')),
+      t('ul',{class:'detail-qilue-chips'},model.cards.map(card=>t('li',{},qilueCard(card)))),
+    ];
+  }
+  return [strategy,t('ol',{class:'detail-qilue-rounds',dataset:{count:model.cards.length}},model.cards.map((card,index)=>t('li',{class:'detail-qilue-round'},[
+    t('span',{class:'detail-qilue-round-label'},qilueRound(index)),
+    qilueCard(card),
+  ])))];
+}
+
+/** Dòng gọn cho chữ thuần (llms): "Kỳ lược (Mưu tính): Hiệp 2 …, …" hoặc danh sách thẻ kèm câu "không ghi thứ tự". */
+function qilueLine(model,prefix=L('Kỳ lược','奇略','奇略')) {
+  const strategy=model.strategy ? L(` (${model.strategy.name})`,`（${model.strategy.name}）`,`（${model.strategy.name}）`) : '';
+  const separator=L(', ','、','、');
+  if (!model.ordered) {
+    const names=model.cards.map(card=>card.name).join(separator);
+    return `${prefix}${strategy}${L(': ','：','：')}${names}${L('. ','。','。')}${L('Nguồn không ghi thứ tự hiệp','来源未注明回合顺序','出典にターン順の記載なし')}${L('.','。','。')}`;
+  }
+  return `${prefix}${strategy}${L(': ','：','：')}${model.cards.map((card,index)=>`${qilueRound(index)} ${card.name}`).join(separator)}`;
+}
+
+/**
+ * Section "Kỳ lược" của trang chi tiết (giữa Đội hình và Ghi chú). `plainText`: bản chữ thuần cho llms, mỗi kỳ lược
+ * thu về một dòng gọn thay cho lưới ô.
+ */
+function qilueSection(model,{plainText=false}={}) {
+  const sectionClass='detail-section detail-qilue';
+  if (plainText) {
+    const lines=model.sources
+      ? [
+        L(`Dùng kỳ lược của: ${model.sources.map(source=>source.name).join(', ')}`,`沿用此队奇略：${model.sources.map(source=>source.name).join('、')}`,`次の編成の奇略を使用：${model.sources.map(source=>source.name).join('、')}`),
+        ...model.sources.filter(source=>source.model).map(source=>qilueLine(source.model,model.sources.length > 1 ? `${source.name} · ${L('Kỳ lược','奇略','奇略')}` : undefined)),
+      ]
+      : [qilueLine(model)];
+    return t('section',{class:sectionClass},lines.map(line=>t('p',{class:'detail-qilue-line'},line)));
+  }
+  const title=t('h2',{},L('Kỳ lược','奇略','奇略'));
+  if (!model.sources) return t('section',{class:sectionClass},[title,...qilueBody(model)]);
+  const links=model.sources.flatMap((source,index)=>[
+    index ? L(', ','、','、') : null,
+    source.href ? t('a',{class:'detail-qilue-team',href:source.href,dataset:{teamDetailLink:''}},source.name) : t('span',{class:'detail-qilue-team'},source.name),
+  ]);
+  return t('section',{class:sectionClass},[
+    title,
+    t('p',{class:'detail-qilue-copy'},[L('Dùng kỳ lược của:','沿用此队奇略：','次の編成の奇略を使用：'),' ',...links]),
+    ...model.sources.filter(source=>source.model).map(source=>t('div',{class:'detail-qilue-source'},[
+      model.sources.length > 1 ? t('p',{class:'detail-qilue-source-name'},source.name) : null,
+      ...qilueBody(source.model),
+    ])),
+  ]);
+}
+
+/**
+ * Nội dung chi tiết Team chuẩn cho trang riêng; trả mảng cây view (các section), không tự tạo article/h1.
+ * `qilueTable` (`qilueLookupTable`) + `qilueTeams` (Map `sourceConfigId → bản ghi index` cùng generation) bật section
+ * Kỳ lược; `plainText` dựng bản chữ thuần cho llms.
+ */
+export function recommendedTeamDetailContent(record,{legacyTeams=[],labels=null,lookupLinks=null,qilueTable=null,qilueTeams=null,plainText=false,locale}={}) {
+  return withLocale(locale,()=>recommendedDetailTrees(record,{legacyTeams,lookupLinks,qilueTable,qilueTeams,plainText}));
+}
+
+function recommendedDetailTrees(record,{legacyTeams,lookupLinks,qilueTable,qilueTeams,plainText}) {
   const out=[];
-  const notes=notesByOwner(record);
+  const qilue=qilueModel(record.qilue,qilueTable,qilueTeams);
+  // Block ghi chú mà section Kỳ lược đã thể hiện trọn chỉ ẩn khi section thật sự được dựng (trang chi tiết).
+  const hiddenNote=qilue && typeof record.qilue.hideNoteBlockId === 'string' ? record.qilue.hideNoteBlockId : null;
+  const notes=notesByOwner(record,hiddenNote);
   const holders=record.heroes || record.holders || [];
   const alternatives=record.alternativeHoldersRaw || [];
   const roles=detailHeroRoles();
@@ -693,20 +992,22 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
     isMain:index===0,
     links,
   }));
-  if (heroCards.length) out.push(section(L('Đội hình','阵容'),t('div',{class:'detail-hero-grid'},heroCards)));
+  if (heroCards.length) out.push(section(L('Đội hình','阵容','編成'),t('div',{class:'detail-hero-grid'},heroCards)));
+  if (qilue) out.push(qilueSection(qilue,{plainText}));
   // Ghi chú đội + ghi chú từng tướng gom về một khối dưới đội hình, không nằm trong thẻ tướng.
   const holderNotes=(owners,bucket,offset=0)=>owners.map((holder,position)=>({
     label:isSourceEmpty(holder) ? null : holderLabel(holder),
     values:notes.projected ? bucket.get(offset+position) || [] : [],
   }));
   const lineupNames=[...holders,...alternatives].filter(holder=>!isSourceEmpty(holder)).map(holder=>holderLabel(holder));
-  const teamNotes=detailNotes(notes.team,holderNotes(holders,notes.primary),{names:lineupNames});
+  const introHidden=hidesSourceProse() && typeof record.introRaw === 'string' && CJK.test(record.introRaw);
+  const teamNotes=detailNotes(notes.team,holderNotes(holders,notes.primary),{names:lineupNames,sourceMissing:Boolean(notes.hiddenSource) || introHidden});
   if (teamNotes) out.push(teamNotes);
 
   const groups=Array.from({length:Math.ceil(alternatives.length/3)},(_,index)=>{
     const slice=alternatives.slice(index*3,index*3+3);
     return t('section',{class:'reference-alternative-group'},[
-      t('h3',{},L(`Cấu hình thay thế ${index+1}`,`替换配置 ${index+1}`)),
+      t('h3',{},L(`Cấu hình thay thế ${index+1}`,`替换配置 ${index+1}`,`代替構成 ${index+1}`)),
       t('div',{class:'detail-hero-grid'},slice.map((holder,position)=>detailHeroCard(holder,{
         level:'h4',
         role:roles[position] || null,
@@ -716,7 +1017,7 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
       detailNotes([],holderNotes(slice,notes.alternative,index*3),{level:'h4',names:lineupNames}),
     ].filter(Boolean));
   });
-  const alternativeSection=section(L('Cấu hình thay thế','替换配置'),groups);
+  const alternativeSection=section(L('Cấu hình thay thế','替换配置','代替構成'),groups);
   if (alternativeSection) out.push(alternativeSection);
 
   const legacyReferenceGroups=new Map();
@@ -734,16 +1035,18 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
       t('p',{class:'scope-note'},L(
         `Đội gốc: ${reference.legacyTeamId}${reference.legacyVariantId ? ` · biến thể ${reference.legacyVariantId}` : ''}`,
         `原始队伍：${reference.legacyTeamId}${reference.legacyVariantId ? ` · 变体 ${reference.legacyVariantId}` : ''}`,
+        `元の編成：${reference.legacyTeamId}${reference.legacyVariantId ? ` · バリアント ${reference.legacyVariantId}` : ''}`,
       )),
       t('p',{class:'scope-note'},L(
         `Bằng chứng rà soát: ${reference.evidenceRef || 'Chưa ghi'} · ${reference.legacyContentSha256 || ''}`,
         `核对依据：${reference.evidenceRef || '未注明'} · ${reference.legacyContentSha256 || ''}`,
+        `照合の根拠：${reference.evidenceRef || '記載なし'} · ${reference.legacyContentSha256 || ''}`,
       )),
       // Route chưa đăng ký trả `null`: giữ link không href, không để `localePath(null)` thành "/".
-      t('p',{class:'detail-link-row'},t('a',{class:'detail-link',href:(path=>path ? localePath(path) : null)(teamDetailPath({legacyTeamId:reference.legacyTeamId}))},L('Xem trang đội gốc','查看原始队伍页面'))),
+      t('p',{class:'detail-link-row'},t('a',{class:'detail-link',href:(path=>path ? localePath(path) : null)(teamDetailPath({legacyTeamId:reference.legacyTeamId}))},L('Xem trang đội gốc','查看原始队伍页面','元の編成ページを見る'))),
     ]));
     out.push(t('section',{class:'detail-section legacy-reference'},[
-      t('h2',{},L('Nội dung đội gốc đã đối chiếu','已核对的原始队伍内容')),
+      t('h2',{},L('Nội dung đội gốc đã đối chiếu','已核对的原始队伍内容','照合済みの元の編成内容')),
       ...legacyContentSections(localizedContent,{
         title:legacyTitle(localizedContent,first.legacyTeamId),
         provenance,
@@ -752,15 +1055,18 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
     ]));
   }
 
-  const seasonValue=isZh()
+  const tierSource=jpTierSection(record);
+  if (tierSource) out.push(tierSource);
+
+  const seasonValue=sourceText()
     ? record.sourceSeasonCode || record.sourceSeasonId
     : [record.sourceSeasonCode || record.sourceSeasonId,record.sourceSeasonNameVi].filter(Boolean).join(' · ');
-  const categoryValue=isZh() ? record.sourceCategoryId : record.sourceCategoryNameVi || record.sourceCategoryId;
+  const categoryValue=sourceText() ? sourceName(record.sourceCategoryId) : record.sourceCategoryNameVi || record.sourceCategoryId;
   out.push(t('section',{class:'detail-section detail-source'},[
-    t('h2',{},L('Phạm vi','范围')),
+    t('h2',{},L('Phạm vi','范围','範囲')),
     t('dl',{class:'detail-facts'},[
-      seasonValue ? fact('source-season',L('Mùa','赛季'),seasonValue) : null,
-      categoryValue ? fact('source-category',L('Danh mục','分类'),categoryValue) : null,
+      seasonValue ? fact('source-season',L('Mùa','赛季','シーズン'),seasonValue) : null,
+      categoryValue ? fact('source-category',L('Danh mục','分类','カテゴリ'),categoryValue) : null,
     ].filter(Boolean)),
     record.introRaw ? noteParagraph(record.introRaw) : null,
   ].filter(Boolean)));
@@ -768,25 +1074,82 @@ function recommendedDetailTrees(record,{legacyTeams,lookupLinks}) {
 }
 
 /** Loại binh gốc của đội cũ (`"Thương(★★★★)"`, `"Kỵ/Cung(…)"`): bản zh đổi từng tên binh sang chữ Hán, giữ phần sao. */
-const rawTypeLabel=value=>isZh()
+const rawTypeLabel=value=>sourceText()
   ? String(value).replace(/^[^(（]+/u,names=>names.split('/').map(name=>unitLabel(name.trim())).join('/'))
   : value;
 
-/** Nội dung đội gốc; dùng cho trang original và cho biến thể đã được admit. */
-export function legacyOriginalDetailContent(team,{variant,locale}={}) {
-  return withLocale(locale,()=>legacyOriginalTrees(team,variant));
+/** Một ô của khối phương án khác: ô khác phương án đang xem có `is-diff` và nhãn cho trình đọc màn hình. */
+const teamOptionItem=(value,differs)=>t('span',{class:differs ? 'detail-team-option-item is-diff' : 'detail-team-option-item'},[
+  value,
+  differs ? t('span',{class:'visually-hidden'},L(' (khác phương án đang xem)','（与当前方案不同）','（表示中の構成と異なる）')) : null,
+]);
+
+/** Một dòng tướng có chỗ khác: tên tướng, chiến pháp, binh thư (đủ ô, ô khác được đánh dấu); cách đọc tên như thẻ danh sách. */
+function teamOptionHero({holder,tacticDiffers,bookDiffers}) {
+  const tactics=tacticSlotEntries(holder).filter(entry=>!entry.bond && entry.value)
+    .map(entry=>teamOptionItem(entry.value,tacticDiffers[entry.index] === true));
+  const books=Array.from({length:3},(_,slot)=>{
+    const value=localizedSlot(holder.bookSlotsRaw?.[slot],holder.bookSlotsVi?.[slot]).value;
+    return value ? teamOptionItem(value,bookDiffers[slot] === true) : null;
+  }).filter(Boolean);
+  const group=(label,items)=>items.length
+    ? t('span',{class:'detail-team-option-slots'},[t('span',{class:'detail-team-option-label'},label),...items])
+    : null;
+  return t('li',{class:'detail-team-option-hero'},[
+    t('span',{class:'detail-team-option-name'},holderName(holder)),
+    group(L('Chiến pháp','战法','戦法'),tactics),
+    group(L('Binh thư','兵书','兵法書'),books),
+  ].filter(Boolean));
 }
 
-function legacyOriginalTrees(team,variant) {
-  const out=[...legacyContentSections(team,{})];
+/**
+ * Khối "Các phương án khác của team" của trang Đội khác: mỗi phương án đủ dữ liệu khác cùng team (`otherTeamOptions` của
+ * js/other-team-groups.js, theo `optionRank`) là một link thật tới trang của chính phương án đó (`referenceDetailHref`),
+ * kèm các tướng có chiến pháp/binh thư khác phương án đang xem. Phương án không có route bị bỏ; không còn mục nào ⇒ null.
+ */
+function teamOptionsSection(options) {
+  const items=(Array.isArray(options) ? options : []).map(({record,holders})=>{
+    const href=referenceDetailHref(record);
+    if (!href) return null;
+    const changed=(holders || []).filter(item=>item.changed);
+    return t('li',{class:'detail-team-option'},[
+      t('p',{class:'detail-team-option-head'},[
+        t('a',{class:'detail-team-option-link',href},rowDisplayName(record)),
+        isRecommendedOtherRow(record) ? referenceRecommendedBadge() : null,
+      ].filter(Boolean)),
+      changed.length ? t('ul',{class:'detail-team-option-diff'},changed.map(teamOptionHero)) : null,
+    ].filter(Boolean));
+  }).filter(Boolean);
+  if (!items.length) return null;
+  return t('section',{class:'detail-section detail-team-options'},[
+    t('h2',{},L('Các phương án khác của team','本队其他方案','このチームの他の構成')),
+    t('p',{class:'detail-team-options-note'},L(
+      'Cùng bộ tướng và binh chủng. Chiến pháp, binh thư được đánh dấu là chỗ khác phương án đang xem.',
+      '相同武将与兵种。标记的战法、兵书与当前方案不同。',
+      '武将と兵種は同じです。印の付いた戦法・兵法書が表示中の構成と異なります。',
+    )),
+    t('ol',{class:'detail-team-option-list'},items),
+  ]);
+}
+
+/**
+ * Thân trang chi tiết Đội khác (nội dung đội gốc; cũng dùng cho biến thể đã admit ở nhánh `?variant=`). `teamOptions`:
+ * các phương án khác của team (`otherTeamOptions`), dựng thành khối ngay sau "Cấu hình gốc".
+ */
+export function legacyOriginalDetailContent(team,{variant,locale,teamOptions=null}={}) {
+  return withLocale(locale,()=>legacyOriginalTrees(team,variant,teamOptions));
+}
+
+function legacyOriginalTrees(team,variant,teamOptions) {
+  const out=[...legacyContentSections(team,{afterLineup:teamOptionsSection(teamOptions)})];
   out.push(t('section',{class:'detail-section detail-source'},[
-    t('h2',{},L('Phạm vi','范围')),
+    t('h2',{},L('Phạm vi','范围','範囲')),
     t('dl',{class:'detail-facts'},[
-      fact('source-legacy-id',L('Mã đội gốc','原始队伍编号'),t('code',{translate:'no'},team.id || L('Chưa có','暂无'))),
-      fact('source-label',L('Bộ đội hình','阵容合集'),team.source ? sourceLabel(team.source) : L('Chưa xác định','不明')),
-      team.rawType ? fact('source-raw-type',L('Loại binh gốc','原始兵种'),rawTypeLabel(team.rawType)) : null,
-      variant ? fact('source-variant',L('Biến thể đã đối chiếu','已核对的变体'),t('code',{translate:'no'},variant.legacyVariantId)) : null,
-      variant?.legacyContentSha256 ? fact('source-variant-proof',L('Vân tay nội dung','内容指纹'),t('code',{translate:'no'},variant.legacyContentSha256)) : null,
+      fact('source-legacy-id',L('Mã đội gốc','原始队伍编号','元の編成ID'),t('code',{translate:'no'},team.id || L('Chưa có','暂无','なし'))),
+      fact('source-label',L('Bộ đội hình','阵容合集','編成コレクション'),team.source ? sourceLabel(team.source) : L('Chưa xác định','不明','不明')),
+      team.rawType ? fact('source-raw-type',L('Loại binh gốc','原始兵种','元の兵種'),rawTypeLabel(team.rawType)) : null,
+      variant ? fact('source-variant',L('Biến thể đã đối chiếu','已核对的变体','照合済みのバリアント'),t('code',{translate:'no'},variant.legacyVariantId)) : null,
+      variant?.legacyContentSha256 ? fact('source-variant-proof',L('Vân tay nội dung','内容指纹','内容フィンガープリント'),t('code',{translate:'no'},variant.legacyContentSha256)) : null,
     ].filter(Boolean)),
   ]));
   return out;

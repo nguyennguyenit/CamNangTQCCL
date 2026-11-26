@@ -9,14 +9,14 @@ const CONFIG_KEYS = ['schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId',
 const TIERS = new Set(['T0', 'T0.5', 'T1', 'T1.5', 'T2', 'T3']);
 const META_TIERS = new Set(['T0', 'T0.5', 'T1']);
 const MODELS = new WeakMap();
-/** Thông báo theo mã lỗi, mỗi mã một cặp [tiếng Việt, tiếng Trung]; chọn theo ngôn ngữ trang lúc tạo lỗi. */
+/** Thông báo theo mã lỗi, mỗi mã một cặp [tiếng Việt, tiếng Trung, tiếng Nhật]; chọn theo ngôn ngữ trang lúc tạo lỗi. */
 const MESSAGES = {
-  SEASON_BUNDLE_INVALID: ['Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.', '剧本数据无效或不同步。'],
-  SEASON_CONTEXT_INVALID: ['Kịch bản hoặc phiên bản luật không hợp lệ.', '剧本或规则版本无效。'],
-  SEASON_CONTEXT_REQUIRED: ['Chọn phiên bản luật đã xác minh để thực hiện thao tác này.', '请选择已验证的规则版本以执行此操作。'],
-  CONFIG_NOT_FOUND: ['Không tìm thấy cấu hình phù hợp phạm vi.', '未找到符合范围的配置。'],
-  CONFIG_AMBIGUOUS: ['Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.', '该阵容有多个符合的配置，请选择具体配置。'],
-  CANDIDATE_LIMIT_EXCEEDED: ['Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.', '符合范围的配置过多，暂时无法生成推荐。'],
+  SEASON_BUNDLE_INVALID: ['Dữ liệu kịch bản không hợp lệ hoặc không đồng bộ.', '剧本数据无效或不同步。', 'シナリオデータが無効、または同期されていません。'],
+  SEASON_CONTEXT_INVALID: ['Kịch bản hoặc phiên bản luật không hợp lệ.', '剧本或规则版本无效。', 'シナリオまたはルールバージョンが無効です。'],
+  SEASON_CONTEXT_REQUIRED: ['Chọn phiên bản luật đã xác minh để thực hiện thao tác này.', '请选择已验证的规则版本以执行此操作。', 'この操作を行うには、検証済みのルールバージョンを選択してください。'],
+  CONFIG_NOT_FOUND: ['Không tìm thấy cấu hình phù hợp phạm vi.', '未找到符合范围的配置。', '範囲に合う構成が見つかりません。'],
+  CONFIG_AMBIGUOUS: ['Đội có nhiều cấu hình phù hợp; hãy chọn cấu hình cụ thể.', '该阵容有多个符合的配置，请选择具体配置。', 'この編成には該当する構成が複数あります。具体的な構成を選択してください。'],
+  CANDIDATE_LIMIT_EXCEEDED: ['Quá nhiều cấu hình phù hợp phạm vi; chưa thể tạo gợi ý.', '符合范围的配置过多，暂时无法生成推荐。', '範囲に合う構成が多すぎるため、現在はおすすめを生成できません。'],
 };
 const message = code => L(...(MESSAGES[code] || MESSAGES.SEASON_BUNDLE_INVALID));
 
@@ -84,10 +84,15 @@ export async function seasonFingerprint(value) {
   return `sha256:${[...new Uint8Array(digest)].map(x => x.toString(16).padStart(2, '0')).join('')}`;
 }
 export function configFingerprintProjection(config) { return Object.fromEntries(CONFIG_KEYS.map(key => [key, config[key]])); }
+// Định danh/tọa độ và projection tính từ catalog (mã Thẻ Kỳ Lược Cùng Tồn) không phải nội dung nguồn nên không vào
+// fingerprint; cùng tập với `FINGERPRINT_EXCLUDED` của pipeline/season_validation.py.
+const FINGERPRINT_EXCLUDED = ['sourceLocator', 'contentFingerprint', 'recordId', 'strategyCardIds'];
+/** Mã thẻ kỳ lược của catalog Tra cứu; cùng mẫu với `QILUE_CARD_ID` của pipeline/season_validation.py. */
+const QILUE_CARD_ID = /^qilue-card:[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function contentFingerprintProjection(value) {
   if (Array.isArray(value)) return value.map(contentFingerprintProjection);
   if (!value || typeof value !== 'object') return value;
-  return Object.fromEntries(Object.entries(value).filter(([key]) => !['sourceLocator', 'contentFingerprint', 'recordId'].includes(key)).map(([key, item]) => [key, contentFingerprintProjection(item)]));
+  return Object.fromEntries(Object.entries(value).filter(([key]) => !FINGERPRINT_EXCLUDED.includes(key)).map(([key, item]) => [key, contentFingerprintProjection(item)]));
 }
 function sourceSeason(value) {
   if (value === null) return;
@@ -282,16 +287,30 @@ async function validateContent(state) {
       object(payload, ['groupLabel', 'summaryRaw', 'openingSuggestionsRaw', 'notesRaw', 'teams']);
       text(payload.groupLabel); for (const key of ['summaryRaw', 'openingSuggestionsRaw', 'notesRaw']) text(payload[key], 20000, true);
       ensure(list(payload.teams).length > 0);
+      // Bảng 10 cột: đội mang cải tạo (`unitTacticEffectsRaw`). Bảng 11 cột: đội mang Thẻ Kỳ Lược (`strategyCardsRaw`),
+      // mỗi tướng mang Trang Bị (`equipmentRaw`). Một nhóm đến từ đúng một bảng nên mọi đội cùng một dạng.
+      const effectFields = ['unitTacticEffectsRaw', 'strategyCardsRaw'];
+      const shapes = new Set();
       for (const team of payload.teams) {
-        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'unitTacticEffectsRaw', 'heroes']); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
+        object(team, ['recordId', 'sourceLocator', 'contentFingerprint', 'teamNameRaw', 'teamName', 'heroes'], [...effectFields, 'strategyCardIds']); id(team.recordId); ensure(!sourceRecords.has(team.recordId)); sourceRecords.add(team.recordId);
+        const effects = effectFields.filter(key => Object.hasOwn(team, key)); ensure(effects.length === 1); shapes.add(effects[0]);
+        const equipment = effects[0] === 'strategyCardsRaw';
+        // Mã Thẻ Kỳ Lược (`strategyCardIds`, projection của `strategyCardsRaw` lúc dựng dữ liệu): chỉ ở bảng 11 cột.
+        if (Object.hasOwn(team, 'strategyCardIds')) {
+          const cards = list(team.strategyCardIds); ensure(equipment && typeof team.strategyCardsRaw === 'string' && team.strategyCardsRaw.trim() && cards.length > 0);
+          for (const card of cards) ensure(typeof card === 'string' && QILUE_CARD_ID.test(card));
+          ensure(new Set(cards).size === cards.length);
+        }
         sourceLocator(team.sourceLocator); hash(team.contentFingerprint);
-        text(team.teamName); for (const key of ['teamNameRaw', 'unitTacticEffectsRaw']) text(team[key], 20000, true); ensure(team.teamNameRaw.trim());
+        text(team.teamName); for (const key of ['teamNameRaw', effects[0]]) text(team[key], 20000, true); ensure(team.teamNameRaw.trim());
         for (const hero of list(team.heroes, 3)) {
-          object(hero, ['nameRaw', 'tacticSlotsRaw', 'statFocusRaw', 'bookSlotsRaw']); text(hero.nameRaw, 20000, true); ensure(hero.nameRaw.trim()); text(hero.statFocusRaw, 20000, true);
+          object(hero, ['nameRaw', 'tacticSlotsRaw', 'statFocusRaw', 'bookSlotsRaw', ...(equipment ? ['equipmentRaw'] : [])]); text(hero.nameRaw, 20000, true); ensure(hero.nameRaw.trim()); text(hero.statFocusRaw, 20000, true);
+          if (equipment) text(hero.equipmentRaw, 20000, true);
           list(hero.tacticSlotsRaw, 2).forEach(value => text(value, 20000, true)); list(hero.bookSlotsRaw, 3).forEach(value => text(value, 20000, true));
         }
         ensure(team.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(team)));
       }
+      ensure(shapes.size === 1);
       ensure(target.contentFingerprint === await seasonFingerprint(contentFingerprintProjection(payload)));
       ensure(evidence.some(proof => claimMatches(proof, 'source-observation', null, null) && proof.snapshotHash === target.source.snapshotHash));
       state.content.set(link.id, payload);

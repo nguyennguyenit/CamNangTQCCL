@@ -11,6 +11,7 @@ Deploy tách hai surface: static site trên Cloudflare Pages và Vision proxy tr
 - Cloudflare account, Wrangler login, Pages project, Worker và Turnstile widget.
 - API key của ít nhất một nhà cung cấp AI OpenAI-compatible đọc được ảnh (vd DeepSeek platform.deepseek.com, số dư trả trước; hoặc OpenCode Zen), nhập ở tab **AI** của `/quan-tri/` rồi gán vào chuỗi của từng tính năng — không đặt trong env.
 - Khi rebuild: HTML export đúng tên trong `Meta Team PK/`; raw crawl cache hoặc quyền/network để recrawl.
+- Windows: `.gitattributes` ép mọi file văn bản checkout bằng LF (`* text=auto eol=lf`) dù `core.autocrlf=true`, vì pipeline/MCP băm byte working tree nên CRLF làm lệch digest đã ghim (từng ghim nhầm hash CRLF của `data/khaihoang.json`). `*.csv` giữ `-text` (snapshot có CRLF thật). Clone Windows cũ vẫn còn file CRLF trên đĩa sau khi kéo rule này (`git add --renormalize .` chỉ sửa index, không viết lại file): commit hoặc `git stash` thay đổi local, rồi `git rm --cached -r -q . && git reset --hard` để checkout lại toàn bộ bằng LF; hoặc clone mới.
 
 ## Preview và test local
 
@@ -70,9 +71,9 @@ python3 -m pipeline.suggest_team_tier path/to/saved-tier-list.html
 
 ### Cảnh báo bắt buộc
 
-`pipeline.build_json` mặc định chỉ **ghi đè** `data/teams.json` và `data/facets.json`; từ HTML hiện có cộng `pipeline/aliases.json`, `pipeline/team-nicknames.json` và `pipeline/team-intro-supplement.json` (6 Team PK `team-intro-50…55` curate ngoài HTML) kết quả trùng byte bản commit. `--check` chỉ so với `data/` và exit 1 nếu lệch, không ghi. `coexist.json`/`khaihoang.json` đã curate vượt HTML (variants, options, đội bổ sung): chỉ `--overwrite-curated` mới ghi đè chúng, và hiện `khaihoang.json` sẽ mất phần curate. Builder cố ý loại `Team Đô Úy.html`; `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive và không được publish. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
+`pipeline.build_json` mặc định chỉ **ghi đè** `data/teams.json` và `data/facets.json`; từ HTML hiện có cộng `pipeline/aliases.json`, `pipeline/team-nicknames.json` và `pipeline/team-intro-supplement.json` (6 Team PK `team-intro-50…55` curate ngoài HTML) và `pipeline/team-youtube-pk-s27.json` (đội đề cử YouTube, ID `youtube-<n>`) kết quả trùng byte bản commit. `--check` chỉ so với `data/` và exit 1 nếu lệch, không ghi. `coexist.json`/`khaihoang.json` đã curate vượt HTML (variants, options, đội bổ sung): chỉ `--overwrite-curated` mới ghi đè chúng, và hiện `khaihoang.json` sẽ mất phần curate. Builder cố ý loại `Team Đô Úy.html`; `pipeline/do-uy-ss18-source.json` giữ 40 record nguồn thô làm archive và không được publish. Một clone sạch thường thiếu HTML nguồn và raw crawl cache vì chúng bị ignore.
 
-**ID đội là ID công khai** (handle trong `pipeline/team-route-handles.json`, tier, ledger Đội khác đều neo vào đó). `build_teams` đọc `data/teams.json` đang commit và giữ ID theo (nguồn, tập tên tướng đã sắp; trùng thì theo thứ tự xuất hiện); đội mới nhận số kế tiếp của đúng nguồn. Đội đã commit không còn trong nguồn (kể cả khi tên tướng trong HTML khác tên đã sửa trong `data/teams.json`) làm lệnh dừng và liệt kê ID, không ghi file nào. Sửa tên trong `data/teams.json` thì phải sửa cả input: `normalize.clean_text` bỏ dấu thanh kết hợp thừa (`Giả Hụ̉`, `Lục Tốṇ`, `Lỗ Túc̣` trong HTML) và chuẩn NFC; `aliases.json` `heroes` chỉ gộp `baseName`, `heroNames` sửa cả tên hiển thị; nickname dạng chuỗi chỉ áp cho Team PK, dạng `{"nickname", "sources"}` ghi rõ nguồn. Xem trước bằng `python3 -m pipeline.build_json --check` (chỉ đọc).
+**ID đội là ID công khai** (handle trong `pipeline/team-route-handles.json`, tier, ledger Đội khác đều neo vào đó). `build_teams` đọc `data/teams.json` đang commit và giữ ID theo (nguồn, tập tên tướng đã sắp): trong một khóa, đội có nội dung y hệt bản đã commit giữ đúng ID đó trước (đội mới cùng bộ tướng chen lên trên trong sheet không lấy ID cũ), phần còn lại theo thứ tự xuất hiện; đội mới nhận số kế tiếp của đúng nguồn. Đội gốc mới cần handle qua `team_route_handles --rebind --append-legacy` (xem phần route chi tiết bên dưới). Đội đã commit không còn trong nguồn (kể cả khi tên tướng trong HTML khác tên đã sửa trong `data/teams.json`) làm lệnh dừng và liệt kê ID, không ghi file nào. Sửa tên trong `data/teams.json` thì phải sửa cả input: `normalize.clean_text` bỏ dấu thanh kết hợp thừa (`Giả Hụ̉`, `Lục Tốṇ`, `Lỗ Túc̣` trong HTML) và chuẩn NFC; `aliases.json` `heroes` chỉ gộp `baseName`, `heroNames` sửa cả tên hiển thị; nickname dạng chuỗi chỉ áp cho Team PK, dạng `{"nickname", "sources"}` ghi rõ nguồn. Xem trước bằng `python3 -m pipeline.build_json --check` (chỉ đọc).
 
 Quy trình an toàn:
 
@@ -95,7 +96,7 @@ Build output: dist
 Node: 24.20.0
 ```
 
-Astro dùng static output, không adapter. Pages Function duy nhất là [`functions/api/[[path]].ts`](../functions/api/[[path]].ts): proxy same-origin `/api/*` sang `community-worker` (service binding `COMMUNITY`, không có thì `COMMUNITY_API_ORIGIN`) để cookie phiên là first-party; `.github/workflows/pages-deploy.yml` chạy `wrangler pages deploy dist` ở repository root nên đóng gói kèm `functions/`. Mọi trang HTML (kể cả trang chi tiết đội) vẫn là file tĩnh trong `dist/`; `functions/` không nằm trong `dist/`. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), 7 trang nhóm Tra cứu, đúng bộ trang chi tiết đội sinh từ catalog, đúng bộ trang riêng Tra cứu sinh từ ledger slug, bộ llms của `llmsDocuments()` (chỉ bản Việt), output blog, trang đội cộng đồng, bản `/zh/` của các trang HTML (trừ `404.html`), manifest-approved `js/`, `css/`, `fonts/`, `data/`, `_headers` và `_redirects`. Shared verifier dẫn xuất allowlist từ chính các inventory đó, đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ. Với dữ liệu ngày 2026-10-15, build ra 4917 trang HTML (gồm 1772 trang riêng Tra cứu), sitemap 4912 URL và 36 file `/llms/…`; con số đổi theo dữ liệu, không phải hằng số để kiểm tay.
+Astro dùng static output, không adapter. Pages Function duy nhất là [`functions/api/[[path]].ts`](../functions/api/[[path]].ts): proxy same-origin `/api/*` sang `community-worker` (service binding `COMMUNITY`, không có thì `COMMUNITY_API_ORIGIN`) để cookie phiên là first-party; `.github/workflows/pages-deploy.yml` chạy `wrangler pages deploy dist` ở repository root nên đóng gói kèm `functions/`. Mọi trang HTML (kể cả trang chi tiết đội) vẫn là file tĩnh trong `dist/`; `functions/` không nằm trong `dist/`. `dist/` phải chỉ chứa `index.html` (Landing), `404.html`, `sitemap.xml`, `robots.txt`, đúng bộ tám trang mục (`<mục>/index.html`), 7 trang nhóm Tra cứu, đúng bộ trang chi tiết đội sinh từ catalog, đúng bộ trang riêng Tra cứu sinh từ ledger slug, bộ llms của `llmsDocuments()` (chỉ bản Việt), output blog, trang đội cộng đồng, bản `/zh/` và `/ja/` của các trang HTML (trừ `404.html`), manifest-approved `js/`, `css/`, `fonts/`, `data/`, `_headers` và `_redirects`. Shared verifier dẫn xuất allowlist từ chính các inventory đó, đối chiếu raw bytes với source và từ chối `pipeline/`, `worker/`, tests, plans, symlink, secret-like hoặc file lạ. Với dữ liệu ngày 2026-11-18, build ra 8698 trang HTML (gồm 2949 trang riêng Tra cứu = 983 mục × vi/zh/ja), sitemap 8685 URL và 37 file `/llms/…`; con số đổi theo dữ liệu, không phải hằng số để kiểm tay. Sau mỗi lần promote Tra cứu phải dựng lại `data/lookup-ja.json` (`python3 -m pipeline.build_lookup_ja --write`, rồi `--check`), nếu không build dừng vì lệch `lookupGenerationId` ([ja-lookup-data.md](ja-lookup-data.md)).
 
 Publication hiển thị là một snapshot fail-closed: `data/website-display.json` pin source JSON, generation Recommended và generation/hash Lookup đã review. `npm run build` kiểm publication hiện hành trước Astro; `npm run verify` kiểm lại publication và exact `dist/`. Không publish candidate site nếu Lookup công khai chưa được promote đúng candidate.
 
@@ -107,7 +108,7 @@ Xuất bản/gỡ bài, duyệt/xoá đội, khoá/mở khoá/xoá tài khoản 
 
 Trang mùa Đội chuẩn `/doi-chuan/<mã mùa>/` (và `/zh/…`) sinh từ [`src/lib/season-pages.ts`](../src/lib/season-pages.ts) cùng registry mùa (`seasons.json`) của generation đã pin: mỗi mùa cũ có đội một trang, mùa hiện tại (`defaultSourceSeasonId`) và mùa 0 đội không có trang. Khi mùa mặc định đổi, trang cũ của mùa mới hiện tại biến mất nên `public/_redirects` có 301 `/doi-chuan/<slug>/ → /doi-chuan/` (vi + zh) do `python3 -m pipeline.lookup_route_handles --write` sinh và `--check` giữ khớp; `npm run verify` kiểm lại luật này trong `dist/_redirects`. Sau khi publish generation Recommended mới hoặc đổi mùa mặc định, chạy `--write` rồi commit `public/_redirects`.
 
-Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json`, và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v3, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Hai khoá top-level `recommendedSeasons` (mùa của mỗi hàng đang công bố) và `retiredRecommended` (segment đã ngừng công bố → `sourceConfigId` từng giữ nó) chỉ dành cho pipeline, inventory bỏ qua. Handle gán một lần; khi publication sinh successor chạy `python3 -m pipeline.team_route_handles --rebind` (chỉ đọc ledger và generation đang chọn, không cần generation cũ): hàng còn lại cùng mùa giữ handle; hàng nguồn đã gỡ rời ledger, URL của nó trả 404 và segment thành tombstone vĩnh viễn; hàng đổi mùa bỏ segment cũ như hàng gỡ rồi nhận handle như hàng mới; hàng mới (kể cả id quay lại) nhận handle suy từ tên, trùng segment đang sống hoặc tombstone thì thêm hậu tố từ `sourceConfigId`, vẫn trùng thì `-2`, `-3`…; tombstone không bao giờ được cấp lại, kể cả cho id từng giữ nó. Rebind không sinh lại handle; sau đó `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
+Trang chi tiết đội là route tĩnh sinh sẵn: `/doi-chuan/<mùa>-<handle>/` cho mỗi bản ghi Recommended, `/doi-khac/<handle>/` cho mỗi đội gốc trong `data/teams.json` có phương án admitted + đủ dữ liệu (đội gốc còn lại ở `hiddenLegacy`: không dựng trang, trả 404, handle vẫn giữ trong ledger để quay lại đúng URL khi đủ dữ liệu), và `/khai-hoang/<handle>/` cho mỗi đội Khai hoang trong publication đã xác minh. [`src/lib/team-detail-routes.ts`](../src/lib/team-detail-routes.ts) là inventory dùng chung cho build và verifier, đọc handle đóng băng trong `pipeline/team-route-handles.json` (ledger v3, publication Recommended v1) và **fail** nếu ledger lệch generation/hash/key-set, handle không routable hoặc route trùng; `dist/` không được thừa/thiếu trang. Hai khoá top-level `recommendedSeasons` (mùa của mỗi hàng đang công bố) và `retiredRecommended` (segment đã ngừng công bố → `sourceConfigId` từng giữ nó) chỉ dành cho pipeline, inventory bỏ qua. Handle gán một lần; khi publication sinh successor chạy `python3 -m pipeline.team_route_handles --rebind` (chỉ đọc ledger và generation đang chọn, không cần generation cũ): hàng còn lại cùng mùa giữ handle; hàng nguồn đã gỡ rời ledger, URL của nó trả 404 và segment thành tombstone vĩnh viễn; hàng đổi mùa bỏ segment cũ như hàng gỡ rồi nhận handle như hàng mới; hàng mới (kể cả id quay lại) nhận handle suy từ tên, trùng segment đang sống hoặc tombstone thì thêm hậu tố từ `sourceConfigId`, vẫn trùng thì `-2`, `-3`…; tombstone không bao giờ được cấp lại, kể cả cho id từng giữ nó. Rebind không sinh lại handle. `data/teams.json` đổi thì `--rebind` dừng; sau khi review, `--rebind --append-legacy` giữ nguyên mọi handle legacy đã công bố (id legacy biến mất làm lệnh dừng) và cấp handle cho đội gốc mới theo thứ tự trong file: slug tên/biệt danh, trùng handle đang sống thì thêm slug ASCII của id đội, vẫn trùng thì `-2`, `-3`…; sau đó `python3 -m pipeline.team_route_handles --check` trước `npm run build`. Không có SPA fallback/redirect: `404.html` top-level giữ `not-found-title`, không boot `app.js` hoặc detail entry; URL cũ `/teams/...` hay bất kỳ handle ngoài catalog phải trả 404 tĩnh thay vì root shell.
 
 Trang riêng Tra cứu `/tra-cuu/<nhóm>/<slug>/` (và `/zh/…`) sinh từ [`src/lib/lookup-detail-routes.ts`](../src/lib/lookup-detail-routes.ts), đọc slug đóng băng trong `pipeline/lookup-route-handles.json`. Ledger pin `generationId` của `data/lookup-manifest.json` và hash `data/books-dict.json`; build **fail** nếu pin lệch, tập mã khác corpus hoặc ledger bị sửa tay. Vì vậy mỗi khi generation Tra cứu đổi (sau `promote_unified_lookup`) hoặc `books-dict.json` đổi, chạy trước `npm run build`:
 
@@ -123,6 +124,8 @@ node scripts/report-zh-gaps.mjs                     # sinh lại docs/zh-gaps.md
 `public/_headers` đặt `Cache-Control: public, max-age=0, must-revalidate` cho mọi shell, trang mục, trang chi tiết, bản `/zh/`, blog/RSS, bộ llms, JS/CSS/font/data và ảnh tĩnh; danh sách luật chỉ nằm trong chính file đó và được `tests-js/pages-headers-contract.test.mjs` kiểm phủ đủ output đã publish.
 
 Local test chỉ xác nhận syntax, coverage của mọi shell/trang mục/trang chi tiết/raw asset (gồm `fonts/`) đã publish và exact copy vào `dist/_headers`; phải quan sát header response thật trên Pages preview trước promotion. Pages parse `_headers` như deployment control, không phục vụ file này như static asset.
+
+Header trên `*.pages.dev` chưa chứng minh được header trên custom domain. Zone `tqccl.com` có Browser Cache TTL riêng: để mặc định (4 giờ) thì Cloudflare đè `max-age=0` của JS/CSS/font/ảnh (các đuôi file Cloudflare cache mặc định) thành `max-age=14400`, còn HTML và JSON vẫn `max-age=0`. Hậu quả sau mỗi deploy: trình duyệt đã vào site trong 4 giờ trước đó nhận HTML mới nhưng chạy module JS cũ. Sự cố 18/11/2026: `/ja/…` render lại toàn bộ nội dung bằng tiếng Việt vì `js/i18n.js` cũ chưa có `ja`, header vẫn tiếng Nhật. Zone phải đặt Browser Cache TTL là **Respect Existing Headers**, và sau mỗi lần promote phải kiểm header thật trên `tqccl.com` (bước 10 ở mục dưới).
 
 Trước deploy:
 
@@ -140,12 +143,17 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 1. Tạo release commit tập trung; không deploy từ worktree dirty.
 2. Ghi deployment ID/version production known-good hiện tại trước khi tạo preview.
 3. Kiểm tra Pages settings khớp root/build/output/Node ở trên.
-4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…`, `/khai-hoang/…`, vài trang riêng `/tra-cuu/<nhóm>/<slug>/`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng; `/llms.txt`, một file `/llms/…` và `/llms-full.txt` trả `text/plain`. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
+4. Trên preview, xác nhận `/`, `/404.html`, vài route thuộc cả ba họ `/doi-chuan/…`, `/doi-khac/…` (kèm một handle Đội khác tạm ẩn trả 404), `/khai-hoang/…`, vài trang riêng `/tra-cuu/<nhóm>/<slug>/`, JS/CSS và JSON public trả đúng artifact. Kiểm `/robots.txt` khớp byte source, trỏ đúng `Sitemap` production origin; `/sitemap.xml` trả MIME XML với đúng tập URL, không `/teams/…` hay trùng; `/llms.txt`, một file `/llms/…` và `/llms-full.txt` trả `text/plain`. ID/handle ngoài catalog, `/teams/…` cũ và private path phải trả 404 tĩnh, không shell root; status/body thật chỉ chứng minh trên preview.
 5. Quan sát `Cache-Control` thật cho shell, trang chi tiết đội, `404.html`, JS/CSS/JSON và xác nhận `_headers` không được phục vụ như asset.
 6. Preview origin khác production nên Vision POST bị Worker từ chối theo danh sách exact `ALLOWED_ORIGINS`; không nới origin để làm preview canary.
 7. Sau phê duyệt promotion, kiểm tra production-origin `POST /analyze` được phép, origin lạ bị từ chối, và `OPTIONS` trả CORS headers đã cấu hình. Preflight chỉ là CORS transport, không xác thực caller.
 8. Production origin là `https://tqccl.com`; dữ liệu localStorage của người dùng trên hai host cũ được cầu chuyển domain mang sang (không đè khóa đã có trên tqccl.com). Preview `*.tqccl.pages.dev` có storage origin riêng và không bị cầu chuyển đụng tới.
 9. Kiểm tra client mới và client đã cache đều nhận cùng deployment sau revalidation. Chỉ ghi facts vào Deployment Record sau khi có bằng chứng thực.
+10. Sau promotion, kiểm `Cache-Control` trên chính domain production cho JS, CSS, một JSON và một trang HTML. Mỗi dòng phải in `max-age=0`; thấy `max-age=14400` (hay số khác 0) nghĩa là Browser Cache TTL của zone đang đè `_headers` (xem đoạn về custom domain ở trên), sửa trên dashboard rồi kiểm lại:
+
+   ```bash
+   for asset in /js/i18n.js /js/app.js /css/styles.css /data/facets.json /ja/doi-chuan/; do printf '%s ' "$asset"; curl -sI "https://tqccl.com$asset" | grep -i '^cache-control'; done
+   ```
 
 ## Chuyển domain chính sang tqccl.com
 
@@ -155,6 +163,7 @@ Không thực hiện các bước sau trong build/local verification. Khi releas
 
 - **Turnstile widget hostnames phải gồm `tqccl.com`, `www.tqccl.com`, `tqccl.pages.dev`.** Thiếu hostname nào thì widget trên host đó không cấp token, hoặc siteverify trả hostname mà Worker không nhận.
 - Custom domain `tqccl.com` và `www.tqccl.com` của Pages project ở trạng thái Active (SSL đã cấp).
+- **Zone `tqccl.com` → Caching → Configuration → Browser Cache TTL = Respect Existing Headers.** Giá trị mặc định 4 giờ đè `max-age=0` của `_headers` cho JS/CSS/font/ảnh, làm trình duyệt chạy JS cũ trên HTML mới sau mỗi deploy.
 
 Thứ tự release:
 
@@ -229,6 +238,20 @@ Frontend public config trong `js/config.js`:
 
 Các giá trị này công khai, không phải secret.
 
+### Google Analytics 4 (`ANALYTICS_CONFIG`)
+
+`js/config.js` có thêm `ANALYTICS_CONFIG` (công khai, không phải secret): `measurementId` (id đo `G-…`, một nguồn cho script `<head>` ở `src/lib/analytics-loader.ts` và cho `js/analytics.js`) và `hosts` (host được gửi số liệu, hiện chỉ `tqccl.com`: localhost, `*.pages.dev`, `www.tqccl.com` và bản build test không nạp gì; `/quan-tri/` không bao giờ có GA). Chuyển sang property khác thì sửa `measurementId` rồi chạy gate; không có secret hay biến môi trường.
+
+Cài đặt phía GA4 nằm ở Admin của property: không có trong repo và test không kiểm được. Làm trước khi bật trên production, vì code và [chính sách bảo mật](../src/components/pages/PrivacyPage.astro) dựa vào chúng:
+
+1. Data streams → web stream → Enhanced measurement: tắt "Page changes based on browser history events" (site gọi `history.pushState/replaceState` khi lọc, đổi kiểu xem, mở hồ sơ và gõ tìm, nên mỗi thao tác sẽ thành một lượt xem trang; lượt xem trang đầu do loader gửi tường minh) và tắt "Site search" (hoặc đổi tham số tìm kiếm sang một tham số site không dùng): ô tìm của Đội chuẩn/Đội khác ghi `?q=` theo từng phím, không debounce.
+2. Cùng web stream → mục Events → Redact data → Query parameters: thêm `q`, để từ khoá tìm kiếm nằm trên URL trang danh sách đội bị che trong báo cáo (chính sách bảo mật nói như vậy). Sự kiện `search` của Tra cứu thì chỉ được gửi khi người dùng đã đồng ý.
+3. Configure tag settings → List unwanted referrals: thêm `accounts.google.com` (lần quay về sau đăng nhập Google không thành nguồn truy cập).
+4. Admin → Data collection and modification → Data collection: Google signals data collection tắt (code cũng đặt `allow_google_signals: false`). Admin → Product links: không liên kết Google Ads hay dịch vụ quảng cáo nào.
+5. Admin → Data collection and modification → Data retention: Event data retention 14 tháng.
+
+Kiểm sau deploy bằng Realtime/DebugView: `page_view` đầu mang `page_location` có `utm_*` (nếu URL vào trang có), không có `page_view` hay `view_search_results` thừa khi lọc hoặc gõ ở `/doi-chuan/`, và không có sự kiện `search` khi người dùng chưa đồng ý.
+
 ### Secrets
 
 ```bash
@@ -281,6 +304,26 @@ Test Worker chạy trên D1 giả (`node:sqlite` áp migration thật) và smoke
 - **Worker về version known-good**: `/api/roster` biến mất; client mới báo lỗi đồng bộ và giữ kho cloud cache ở chế độ chỉ đọc; Đội của tôi không lưu được.
 - **D1**: không xóa bảng khi rollback. Code cũ không đọc bảng mới; xóa bảng là thao tác phá hủy, chỉ làm khi có quyết định riêng. Time Travel ghi đè mọi ghi sau bookmark, chỉ dùng khi dữ liệu sai nghiêm trọng.
 
+## Bản tiếng Nhật `/ja/` (`lang = ja`, migration `0015`)
+
+Site có `/ja/` ghi nội dung cộng đồng với `lang = ja`, nên phải lên **sau** khi D1 production đã áp `community-worker/migrations/0015_lang_ja.sql` và `community-worker` mới đã deploy. Thứ tự bắt buộc: **sao lưu D1 → migration `0015` → deploy `community-worker` → merge PR site có `/ja/` vào `main`** (push `main` tự deploy Pages). Merge site trước thì mọi lần ghi ở `/ja/` trả 400 `invalid_lang`. Lệnh kiểm trước/sau, sao lưu và rollback nằm ở một chỗ: [community-worker.md, mục Thứ tự deploy](community-worker.md#thứ-tự-deploy). Vision Worker nhận `locale: "ja"` deploy riêng theo [Cloudflare Worker](#cloudflare-worker), nên lên trước hoặc cùng lúc với site: Worker cũ bỏ qua `locale` khi đọc ảnh (bản ja đọc bằng prompt cũ, không có hướng dẫn tự dạng Nhật) và từ chối `explainSubstitute` có `locale: "ja"`, nên nút "Vì sao?" ở `/ja/goi-y-doi-tu-kho/` lỗi cho tới khi Worker mới lên.
+
+## Token API cá nhân (`api_tokens`, `POST /api/recruit/pulls`)
+
+Thêm bảng D1 `api_tokens`, route `/api/tokens` (cookie) và `POST /api/recruit/pulls` (Bearer) để tool ngoài trình duyệt ghi lượt quay vào Theo dõi chiêu mộ (hợp đồng ở [community-worker.md](community-worker.md#token-api-cá-nhân-ghi-theo-dõi-chiêu-mộ-từ-tool)). Không đổi Pages.
+
+### Thứ tự release
+
+1. Ghi bookmark: `cd community-worker && npx wrangler d1 time-travel info tqccl-community`.
+2. Kiểm `npx wrangler d1 migrations list tqccl-community --remote` chỉ còn `0014_api_tokens.sql` chờ áp (migration phá schema `0012_community_season_catalog.sql` phải áp xong theo runbook riêng: Worker tương thích chạy trước). Rồi `npm run db:migrate:remote`. `0014_api_tokens.sql` chỉ thêm bảng `api_tokens` + một index, không sửa bảng đang chạy.
+3. `npm run deploy`. Kiểm: `curl -i -X POST https://tqccl.com/api/recruit/pulls -H "Authorization: Bearer x" -H "Content-Type: application/json" -d "{}"` → `401 invalid_token` (không phải 403 `forbidden_origin` hay 404).
+4. Đăng nhập trên tqccl.com, tạo token bằng lệnh DevTools ở community-worker.md, gửi một lượt thử cho một tài khoản tracker rồi tải lại trang Theo dõi chiêu mộ: dòng mới hiện trong Nhật ký. Xoá dòng thử trên UI nếu không muốn giữ (gửi lại cùng `key` sẽ không ghi lại).
+
+### Rollback
+
+- **Worker về version known-good**: `/api/tokens` và `/api/recruit/pulls` biến mất (404); event đã ghi vẫn là bản ghi `recruit_records` bình thường.
+- **D1**: để nguyên bảng `api_tokens` (Worker cũ không đọc). Muốn vô hiệu mọi token ngay mà không rollback: `npx wrangler d1 execute tqccl-community --remote --command "update api_tokens set revoked_at = unixepoch() * 1000 where revoked_at is null"`.
+
 ## Publish lại bản dịch hiển thị
 
 Mọi thay đổi chữ UI hoặc file trong `sourceFiles` của `pipeline/site-localization-policy.json` đều phải đi qua chuỗi
@@ -319,8 +362,8 @@ Kỳ vọng `204`, `access-control-allow-origin: https://tqccl.com` và `vary: O
 Smoke checklist sau promotion được ủy quyền:
 
 1. Mở production, đi qua Landing và đủ tám đường dẫn mục (`/doi-chuan/`, `/doi-khac/`, `/cung-ton/`, `/khai-hoang/`, `/tra-cuu/`, `/theo-doi-chieu-mo/`, `/soi-doi-tu-anh/`, `/goi-y-doi-tu-kho/`), kiểm tra JSON/network không lỗi; dán một hash cũ (ví dụ `/#khaihoang`, `/#lookup?group=heroes`) và một URL `/` có khóa cũ vào tab đang mở `/` để xác nhận chuyển tiếp đúng.
-2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin, bộ lọc mùa/phe/loại binh và chuyển Thẻ/Thẻ gọn/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
-3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` và một `/khai-hoang/…`, reload, rồi dùng link quay lại; xem nguồn trang (hoặc tắt JavaScript) để xác nhận tướng, chiến pháp, binh thư có sẵn trong HTML và link chiến pháp/binh thư là `/tra-cuu/<nhóm>/<slug>/`; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
+2. Kiểm tra Đội chuẩn và Đội khác load đúng generation đang pin (Đội khác: số thẻ = số team có phương án đủ dữ liệu, thẻ ghi số phương án), bộ lọc mùa/phe/loại binh và chuyển Thẻ/Thẻ gọn/Bảng hoạt động, không có asset/team Đô Úy, panel lọc mobile mở/đóng đúng; đổi theme sáng/tối và tải lại một trang mục để xác nhận không nháy và giữ lựa chọn.
+3. Mở trực tiếp một `/doi-chuan/…`, một `/doi-khac/…` (khối "Các phương án khác của team" link tới trang phương án khác) và một `/khai-hoang/…`, reload, rồi dùng link quay lại; xem nguồn trang (hoặc tắt JavaScript) để xác nhận tướng, chiến pháp, binh thư có sẵn trong HTML và link chiến pháp/binh thư là `/tra-cuu/<nhóm>/<slug>/`; một handle không tồn tại và một URL `/teams/…` cũ phải trả trang 404 tĩnh.
 4. Test tra cứu (trang nhóm, hộp thoại `?id=`, một trang riêng), theme, tracker export/import bằng dữ liệu không nhạy cảm.
 5. Upload screenshot đã crop; xác nhận Turnstile, analyze và map/team match.
 6. Test scan/review/recommend; reload và xác nhận state không chứa ảnh/token.

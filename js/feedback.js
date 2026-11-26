@@ -6,6 +6,7 @@ import { L, currentLocale } from './i18n.js';
 import { api, describeError, loadSession } from './community-api.js';
 import { initModalDialog } from './modal-dialog.js';
 import { renderTurnstileWidget, TURNSTILE_ERROR_MESSAGE } from './turnstile.js';
+import { track } from './analytics.js';
 
 const PAGE_MAX_LENGTH = 300;
 
@@ -67,13 +68,13 @@ export function initFeedbackDialog(doc = document) {
     const missing = [title, body].filter((field) => !field.value.trim());
     for (const field of missing) field.setAttribute('aria-invalid', 'true');
     if (missing.length) {
-      setStatus(L('Hãy nhập tiêu đề và nội dung.', '请填写标题和内容。'), 'error');
+      setStatus(L('Hãy nhập tiêu đề và nội dung.', '请填写标题和内容。', 'タイトルと内容を入力してください。'), 'error');
       missing[0].focus();
       return;
     }
     await prepared;
     if (!signedIn && !token) {
-      setStatus(L('Hãy đợi xác thực chống bot hoàn tất rồi gửi lại.', '请等待人机验证完成后再提交。'), 'error');
+      setStatus(L('Hãy đợi xác thực chống bot hoàn tất rồi gửi lại.', '请等待人机验证完成后再提交。', 'ボット対策の認証が完了するまでお待ちのうえ、もう一度送信してください。'), 'error');
       return;
     }
     const payload = {
@@ -86,12 +87,13 @@ export function initFeedbackDialog(doc = document) {
     };
     if (!signedIn) payload.turnstileToken = token;
     submit.disabled = true;
-    setStatus(L('Đang gửi…', '正在提交…'));
+    setStatus(L('Đang gửi…', '正在提交…', '送信中…'));
     try {
       await api('/api/feedback', { method: 'POST', json: payload });
+      track('feedback', { action: 'submit', kind: payload.kind });
       form.reset();
       email.value = accountEmail;
-      setStatus(L('Cảm ơn bạn! Góp ý đã được gửi.', '感谢反馈！已成功提交。'));
+      setStatus(L('Cảm ơn bạn! Góp ý đã được gửi.', '感谢反馈！已成功提交。', 'ご意見ありがとうございます。送信が完了しました。'));
     } catch (error) {
       setStatus(describeError(error), 'error');
     } finally {
@@ -107,6 +109,7 @@ export function initFeedbackDialog(doc = document) {
   return initModalDialog('feedback-dialog', 'feedback', {
     doc,
     onOpen: () => {
+      track('feedback', { action: 'open', kind: kind.value });
       prepared ??= prepare();
     },
   });

@@ -5,10 +5,12 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { localePath, pick } from '../../../js/i18n.js';
 import type { SiteLocale } from '../../lib/locale-routes';
 import { POLICY_CONTACT_EMAIL } from '../../lib/policy-pages';
+import { EXTERNAL_REL } from '../../lib/official-links';
 
 /**
- * Mỗi mục: đoạn mở đầu, danh sách gạch đầu dòng, đoạn kết, rồi câu liên hệ (đều tuỳ chọn, theo đúng
- * thứ tự này). `contact` chèn link email liên hệ giữa `before` và `after`.
+ * Mỗi mục: đoạn mở đầu, danh sách gạch đầu dòng, đoạn kết, link ra ngoài, rồi câu liên hệ (đều tuỳ chọn, theo đúng
+ * thứ tự này). `link` chèn một link http(s) mở tab mới giữa `before` và `after`; `contact` chèn link email liên hệ
+ * giữa `before` và `after`.
  */
 export type PolicySection = {
   id: string;
@@ -16,6 +18,7 @@ export type PolicySection = {
   paragraphs?: string[];
   items?: string[];
   closing?: string[];
+  link?: {before: string; href: string; label: string; after: string};
   contact?: {before: string; after: string};
 };
 
@@ -35,9 +38,11 @@ interface Props {
 
 const { locale, path, idPrefix, title, description, lead, effectiveDate, sections } = Astro.props;
 const canonicalUrl = new URL(localePath(path, locale), Astro.site);
-const effectiveLabel = locale === 'zh' ? effectiveDate : effectiveDate.split('-').reverse().join('/');
-const effectiveText = pick(locale, 'Có hiệu lực từ', '生效日期');
-const pageTitle = pick(locale, `${title} — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`, `${title} — 三国志战略版攻略手册`);
+const [year, month, day] = effectiveDate.split('-');
+const effectiveLabel = pick(locale, effectiveDate.split('-').reverse().join('/'), effectiveDate, `${year}年${Number(month)}月${Number(day)}日`);
+const effectiveText = pick(locale, 'Có hiệu lực từ', '生效日期', '施行日');
+const newTabLabel = pick(locale, '(mở tab mới)', '(在新标签页打开)', '（新しいタブで開く）');
+const pageTitle = pick(locale, `${title} — Cẩm Nang Game Tam Quốc Chí - Chiến Lược`, `${title} — 三国志战略版攻略手册`, `${title} — 三國志 真戦 攻略手帳`);
 ---
 <SiteLayout
   title={pageTitle}
@@ -60,6 +65,7 @@ const pageTitle = pick(locale, `${title} — Cẩm Nang Game Tam Quốc Chí - C
           {section.paragraphs?.map((paragraph) => <p>{paragraph}</p>)}
           {section.items ? <ul>{section.items.map((item) => <li>{item}</li>)}</ul> : null}
           {section.closing?.map((paragraph) => <p>{paragraph}</p>)}
+          {section.link ? <p>{section.link.before} <a href={section.link.href} target="_blank" rel={EXTERNAL_REL}>{section.link.label}<span class="visually-hidden"> {newTabLabel}</span></a>{section.link.after}</p> : null}
           {section.contact ? <p>{section.contact.before} <a href={`mailto:${POLICY_CONTACT_EMAIL}`}>{POLICY_CONTACT_EMAIL}</a>{section.contact.after}</p> : null}
         </section>
       ))}

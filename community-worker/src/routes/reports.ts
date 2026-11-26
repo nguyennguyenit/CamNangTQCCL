@@ -10,7 +10,7 @@ import { ApiError, decodeCursor, iso, paginate } from "../http";
 import { visibleUserSql } from "../moderation";
 import { consumeRateLimit } from "../ratelimit";
 import { aggregateStats } from "../stats";
-import { communityTeamVisibleOpenSql, communityTeamVisibleSql, diagnoseCommunityTeam } from "./teams";
+import { communityTeamVisibleSql } from "./teams";
 import {
   IMAGE_TYPES,
   parseHeroes,
@@ -93,11 +93,6 @@ async function communityTeamVisible(c: Ctx, teamId: string, now: number): Promis
   return row?.ok === 1;
 }
 
-/** Mã lỗi khi ghi vào trang đội bị từ chối: đội không hiển thị -> 404, mùa đóng -> 409. */
-function teamRefusal(state: "missing" | "closed" | "ok"): ApiError {
-  return state === "closed" ? new ApiError(409, "season_closed", "Mùa đã đóng") : new ApiError(404, "not_found", "Không tìm thấy đội");
-}
-
 export const reports = new Hono<AppEnv>();
 
 reports.post("/api/reports/analyze", async (c) => {
@@ -169,14 +164,10 @@ reports.post("/api/reports", async (c) => {
   if (!upload) throw new ApiError(400, "invalid_upload", "Ảnh chiến báo không tồn tại hoặc đã hết hạn");
   const object = await c.env.MEDIA.get(upload.object_key);
   if (!object) throw new ApiError(400, "invalid_upload", "Ảnh chiến báo không tồn tại hoặc đã hết hạn");
-  // Trang đội cộng đồng: kiểm đội/mùa TRƯỚC rate limit để lượt bị từ chối không tốn hạn mức; mùa lấy từ đội, bỏ giá trị client.
+  // Trang đội cộng đồng: kiểm đội TRƯỚC rate limit để lượt bị từ chối không tốn hạn mức.
   const teamId = communityTeamIdFromPage(page);
-  let season = clientSeason;
-  if (teamId) {
-    const team = await diagnoseCommunityTeam(c.env.DB, teamId, createdAt);
-    if (team.state !== "ok") throw teamRefusal(team.state);
-    season = team.seasonId;
-  }
+  const missingTeam = new ApiError(404, "not_found", "Không tìm thấy đội");
+  if (teamId && !(await communityTeamVisible(c, teamId, createdAt))) throw missingTeam;
   await consumeRateLimit(c.env.DB, "report", user.id, createdAt);
 
   // Chuyển ảnh khỏi vùng pending (bị cron dọn sau 24 giờ) sang reports/.
@@ -186,10 +177,17 @@ reports.post("/api/reports", async (c) => {
     httpMetadata: { contentType: upload.content_type },
     customMetadata: { userId: user.id },
   });
+  // Đội cộng đồng: mùa lấy từ đội NGAY trong câu ghi (bỏ giá trị client) để migration/rollback đổi id mùa chen giữa
+  // preflight và batch không để lại id mùa cũ.
   const insert = c.env.DB.prepare(
     "insert into battle_reports (id, page_key, lang, user_id, image_key, result, ally_heroes, enemy_heroes, note, season, status, created_at) " +
-      `select ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?${teamId ? ` where ${communityTeamVisibleOpenSql}` : ""}`,
-  ).bind(id, page, lang, user.id, imageKey, result, JSON.stringify(allyHeroes), JSON.stringify(enemyHeroes), note, season, createdAt, ...(teamId ? [teamId, createdAt] : []));
+      (teamId
+        ? `select ?, ?, ?, ?, ?, ?, ?, ?, ?, (select season_id from community_teams where id = ?), 'pending', ? where ${communityTeamVisibleSql}`
+        : "select ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?"),
+  ).bind(
+    id, page, lang, user.id, imageKey, result, JSON.stringify(allyHeroes), JSON.stringify(enemyHeroes), note,
+    teamId ?? clientSeason, createdAt, ...(teamId ? [teamId, createdAt] : []),
+  );
   let inserted: number;
   try {
     const results = await c.env.DB.batch([
@@ -206,8 +204,7 @@ reports.post("/api/reports", async (c) => {
   if (!inserted) {
     // Giữ pending/<uploadId> và dòng upload pending; chỉ bỏ bản sao mới.
     await c.env.MEDIA.delete(imageKey);
-    const after = teamId ? await diagnoseCommunityTeam(c.env.DB, teamId, now()) : { state: "missing" as const };
-    throw teamRefusal(after.state === "closed" ? "closed" : "missing");
+    throw missingTeam;
   }
   await c.env.MEDIA.delete(upload.object_key);
   return c.json({ id, status: "pending" }, 201);
@@ -220,7 +217,7 @@ reports.get("/api/reports", async (c) => {
   // Điều kiện ẩn đặt ở lời gọi công khai (listReports còn phục vụ /api/me/reports và /api/admin/reports).
   const teamId = communityTeamIdFromPage(page);
   if (teamId) {
-    // Trang đội cộng đồng: kho chung vi/zh (bỏ lọc lang); đội không hiển thị -> rỗng, không lộ trạng thái.
+    // Trang đội cộng đồng: kho chung mọi ngôn ngữ (bỏ lọc lang); đội không hiển thị -> rỗng, không lộ trạng thái.
     if (!(await communityTeamVisible(c, teamId, now))) return c.json({ items: [], nextCursor: null });
     const { rows, nextCursor } = await listReports(c, ["r.page_key = ?", "r.status = 'approved'", visibleUserSql("u")], [page, now]);
     return c.json({ items: rows.map(toPublicReport), nextCursor });

@@ -2057,6 +2057,24 @@
       "maxUsers": null,
       "exchangeConditionVi": null
     },
+    "tactic:hanh-ach-tran": {
+      "nameVi": "Hành Ách Trận",
+      "quality": "S",
+      "type": "FORMATION",
+      "activationRate": 1.0,
+      "troopFit": [
+        "Kỵ binh",
+        "Khiên binh",
+        "Cung binh",
+        "Thương binh",
+        "Khí giới"
+      ],
+      "targetVi": "Tập thể quân ta (3 người)",
+      "effectTypeVi": "Tăng ích",
+      "effectVi": "Khi Võ Tướng quân ta có Thống Trị khác nhau, công kích thường của quân địch có 70% xác suất chọn đơn thể Binh Lực cao nhất của quân ta; đồng thời sau khi Võ Tướng quân ta gây sát thương, có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) tăng sát thương gây ra 2.5%→5%, sau khi phải chịu sát thương có 60% xác suất (chịu ảnh hưởng bởi thuộc tính cao nhất của người mang) khiến nhóm Đồng Minh (2 người) giảm sát thương phải chịu 2.5%→5% (mỗi hiệu quả đều có thể tích lũy tối đa 4 lần, duy trì 3 hiệp)",
+      "maxUsers": null,
+      "exchangeConditionVi": null
+    },
     "tactic:hao-hung-so": {
       "nameVi": "Hào Hùng-Sơ",
       "quality": "C",
@@ -7458,6 +7476,15 @@
     "tactic:gan-da": {
       "nameZh": "壯膽"
     },
+    "tactic:hanh-ach-tran": {
+      "nameZh": "衡軛陣",
+      "conditions": [
+        {
+          "kind": "season",
+          "textVi": "Trận pháp mới của mùa Hán Diễm Trường Minh (PK-S27); chữ Việt theo thẻ Xem Chiến Pháp của client Global."
+        }
+      ]
+    },
     "tactic:hao-hung-so": {
       "nameZh": "初級激昂"
     },
@@ -9582,6 +9609,13 @@
         "ref": "https://forum.gamer.com.tw/C.php?bsn=36815&snA=1819"
       }
     },
+    "tactic:hanh-ach-tran": {
+      "text": "我軍武將統御各不相同時，敵軍普通攻擊有70%機率選擇我軍兵力最高的單體；且我軍武將造成傷害後，有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）造成傷害提升2.5%→5%，受到傷害後有60%機率（受攜帶者最高屬性影響）使友軍群體（2人）受到傷害降低2.5%→5%（每種效果皆可疊加，最多4次，持續3回合）",
+      "viSha256": "5a497a879950467fb102f37dba6e0d1e72d290c1c64ad68a6189ef04a62b99c1",
+      "source": {
+        "kind": "translation"
+      }
+    },
     "tactic:hao-hung-so": {
       "text": "使我軍單體速度提升10→20點，持續2回合",
       "viSha256": "223e8755eba20d7657c92f2996b8c473a201ca600daacef77b68cd3a1df6baee",
@@ -11644,6 +11678,296 @@
         "viSha256": "a83e364eb84dea86355a51b538db920bae55f35b5fe71db3cb2d32869a107cce"
       }
     },
+    "qilue-card:am-do-tran-thuong": {
+      "effectZh": {
+        "text": "本回合施放準備戰法時，有 50% 機率跳過準備",
+        "viSha256": "b52f32dd62a269ea1009b1aaf5e913666384a7f9dd489d98ad809d5964fd6f59"
+      }
+    },
+    "qilue-card:an-tich-mang-thuong": {
+      "effectZh": {
+        "text": "本回合受到的傷害降低 8%",
+        "viSha256": "8bec6ff4d727a1e5eaca029b053c9b611bce539d63982f54ae1f8486ceaeaa0b"
+      }
+    },
+    "qilue-card:bac-lang-chuy-tan": {
+      "effectZh": {
+        "text": "破陣提升 20%",
+        "viSha256": "153f9bed65a6d00e0809cc38b2c0034567efeefc63aad73addb3c70e6e10c638"
+      }
+    },
+    "qilue-card:bai-huyen-tu-nghia": {
+      "effectZh": {
+        "text": "本回合造成的治療量提升 15%",
+        "viSha256": "2cbf3e0cc4979927ea09e514ce0c0e8db8d9a7a4a29784af66e8d92a7e741e85"
+      }
+    },
+    "qilue-card:bat-vua-pha-doanh": {
+      "effectZh": {
+        "text": "本回合發動突擊戰法後，友軍武將的突擊戰法發動率提升 5%（可疊加）",
+        "viSha256": "b7d6962b1ff5e2143a066e39d447ccf369db55a28bb299c24e916aba20df69d6"
+      }
+    },
+    "qilue-card:bi-so-doat-the": {
+      "effectZh": {
+        "text": "本回合受到普通攻擊後，對敵軍單體造成 1 次兵刃傷害（傷害率 50%）",
+        "viSha256": "587831ea768a566c79fe907ff43e6eb0f2e1fdf098cb3eb8caf80c4ffc37b0f2"
+      }
+    },
+    "qilue-card:bo-tri-thap-dien": {
+      "effectZh": {
+        "text": "本回合主動戰法發動率提升 10%",
+        "viSha256": "459322ee2d8413eaed2e2cce9be0ff90c3f6435f057e9e660274adb4b078dde0"
+      }
+    },
+    "qilue-card:can-quet-tay-ha": {
+      "effectZh": {
+        "text": "本回合武力最高的單體獲得 40% 連擊率",
+        "viSha256": "df8457cd1d17dab46b92b7656b50f8155c5c750c3eba3d6f150b4f4cd71d76e5"
+      }
+    },
+    "qilue-card:cang-nhieu-cang-tot": {
+      "effectZh": {
+        "text": "此前每使用 1 次奇略，我軍本回合首個主動戰法發動後，有 15% 機率嘗試再次發動",
+        "viSha256": "c227da1eaafb7e915224e4bf804cc03edb1b90db960cbd515b9f464e7444aa70"
+      }
+    },
+    "qilue-card:cau-hien-duoi-trang": {
+      "effectZh": {
+        "text": "本回合施加控制狀態後，該狀態還會施加於另一名敵軍",
+        "viSha256": "d6625981c2d270fe12327f1fa61b76ac538dbf8608a1e8e23591fc80bea7d08c"
+      }
+    },
+    "qilue-card:chi-khi-ngap-tran": {
+      "effectZh": {
+        "text": "我軍武力最高的武將造成的兵刃傷害提升 5%（此前每使用 1 張奇略或已損失 15% 兵力，再提升 3%）",
+        "viSha256": "a44df2d51a37b994de2b6a740e3b480038579a9dba8746c9854c178389f381e8"
+      }
+    },
+    "qilue-card:cong-lao-hien-hach": {
+      "effectZh": {
+        "text": "使敵軍下一次使用的奇略無效",
+        "viSha256": "06ee162929f3ce0bcec786b717905af66e70655e964bbc09551458ba2ce4efdf"
+      }
+    },
+    "qilue-card:dan-tran-tu-chien": {
+      "effectZh": {
+        "text": "本回合智力與武力最高的一名單體免疫計窮",
+        "viSha256": "400789f40925257db5f53695184e717605bfa721efab596b212fa527046dbcc1"
+      }
+    },
+    "qilue-card:don-doc-tham-nhap": {
+      "effectZh": {
+        "text": "本回合發動失敗的突擊戰法嘗試再次發動 1 次",
+        "viSha256": "829656c528c7090f097d08f4d28bf869fd940351c19f54fa471b0f75867236e3"
+      }
+    },
+    "qilue-card:du-dich-roi-trai": {
+      "effectZh": {
+        "text": "此前已釋放過 1 次主動戰法時，奇略生效後有 10% 機率再生效 1 次",
+        "viSha256": "f4d26ec528bfd65e9c176e85ec28fe1981f51ecf4d9679f4b26537a0b8435fdf"
+      }
+    },
+    "qilue-card:dung-dien-truong-an": {
+      "effectZh": {
+        "text": "本回合敵軍施放的非準備主動戰法需準備 1 回合",
+        "viSha256": "ddb12ffe90a2f61b99abed6877f78f59f4396183c91c84069a175aaaa52b5fba"
+      }
+    },
+    "qilue-card:giau-tai-giau-cua": {
+      "effectZh": {
+        "text": "本回合我軍行動時，若控制狀態生效，使敵軍單體獲得相同的控制狀態",
+        "viSha256": "551b7281bc532c6e2fd08d764cc61ece11632d993b01641445b0f5e6cef7dd1b"
+      }
+    },
+    "qilue-card:go-bo-xieng-xich": {
+      "effectZh": {
+        "text": "本回合開始時若處於控制狀態，獲得對應該狀態的免疫，持續 1 回合",
+        "viSha256": "2fa2994e96cbfe21a0c030afbae53a7c8bd7c7ab6c748eb05a552829c44720ad"
+      }
+    },
+    "qilue-card:hop-vay-giap-kich": {
+      "effectZh": {
+        "text": "本回合發動主動戰法後，治療兵力最低的友軍單體（治療率 50%）",
+        "viSha256": "91c2279be1e5508e221062fde37d6a763ea53c1c74bb913753bee8246fdc9b0c"
+      }
+    },
+    "qilue-card:khong-so-lam-nguy": {
+      "effectZh": {
+        "text": "已有的隨機增益狀態延長 1 回合",
+        "viSha256": "81603f09712888ba19ecfb849dc2016d174a316340a9d5f6f76510700cbece1a"
+      }
+    },
+    "qilue-card:ky-cong-gian-phong": {
+      "effectZh": {
+        "text": "為隨機一名敵軍單位隨機獲得 1 種功能性增益（準備回合後，每獲得 1 個曾獲得的功能性狀態，有 30% 機率重複 1 次）",
+        "viSha256": "11b2585495bff518e06e1045d4696be4944d3c2021f70a68c04e93134566e00f"
+      }
+    },
+    "qilue-card:lanh-hiem-hong-mon": {
+      "effectZh": {
+        "text": "本回合造成治療時，有機率對敵軍單體額外造成謀略傷害（相當於治療量的 30%，每名武將至多觸發 5 次）",
+        "viSha256": "ed6c6963866274437b3126ea91e2ae2e2168bf5ce5793344e906781b321b374a"
+      }
+    },
+    "qilue-card:lap-ke-an-tru": {
+      "effectZh": {
+        "text": "本回合我軍兵力最高的單體援護我軍全體，同時受到的普通攻擊傷害降低 30%",
+        "viSha256": "0a7f19ffd3a82340b4d2079362d124580e06e4fbbe31b707f1c1d4cdf50a1b46"
+      }
+    },
+    "qilue-card:lui-buoc-cong-thanh": {
+      "effectZh": {
+        "text": "此前每使用過 1 張奇略，之後使用奇略時有 30% 機率隨機施放 1 張我方曾使用過的奇略",
+        "viSha256": "d78986cdefc9a614c728e43f8edfaf833f200095817e7a7f6f3d16ee1c11a912"
+      }
+    },
+    "qilue-card:nap-sach-tang-thu": {
+      "effectZh": {
+        "text": "本回合敵軍隨機獲得 1 種控制狀態",
+        "viSha256": "b27e284e537644c791222e31afff0fe46797f21583b359621c47b5c170808041"
+      }
+    },
+    "qilue-card:nhan-sach-di-kieu": {
+      "effectZh": {
+        "text": "本回合隨機獲得 1 種此前未曾獲得的功能性增益",
+        "viSha256": "ab3f1ccc7b4de68dfe025bc17cf453bfa65cc9b279892be45adb71b042af654a"
+      }
+    },
+    "qilue-card:nho-co-dich-co": {
+      "effectZh": {
+        "text": "本回合我軍智力最高的單體，主動戰法發動率計算後的結果將被反轉",
+        "viSha256": "5b33160a687c7bd3c92fc757f7e4f2bb69ccd8f968fcd0221f330a6de25cb610"
+      }
+    },
+    "qilue-card:nhuong-com-se-ao": {
+      "effectZh": {
+        "text": "本回合受到傷害時，治療友軍單體（治療率 40%）",
+        "viSha256": "39409e72e4cba637848088342cae885b0bfb2778791948e74d88e8b41713e907"
+      }
+    },
+    "qilue-card:pha-mui-giap-dich": {
+      "effectZh": {
+        "text": "本回合突擊戰法造成的傷害提升 12%",
+        "viSha256": "00b18f4dd3019168bf6875f1f0de1b50f3aeaaba3b91f8d7ce1a0b6f9724dec2"
+      }
+    },
+    "qilue-card:phong-lang-cu-tu": {
+      "effectZh": {
+        "text": "本回合突擊戰法發動率提升 10%",
+        "viSha256": "48e0fba62f06a5715ef6008d76da3de5fa81e47a2505855a974a13634f9dac02"
+      }
+    },
+    "qilue-card:phong-thuong-tang-ap": {
+      "effectZh": {
+        "text": "準備回合後，敵軍全體每被施加 1 次持續傷害狀態，本回合敵軍受到持續傷害時額外承受 5% 傷害",
+        "viSha256": "155b8b6f88deedc6211e0aeccf2e69dc9d3b78089a4093340857dded3139e5e3"
+      }
+    },
+    "qilue-card:so-ca-tu-khoi": {
+      "effectZh": {
+        "text": "本回合主動戰法造成的傷害提升 10%",
+        "viSha256": "b9f2c1fd7111a0e3e8ff5479f8ed7f86af3e908dd3f76cc7f898e2fcf8974c49"
+      }
+    },
+    "qilue-card:song-trong-that-bai": {
+      "effectZh": {
+        "text": "我軍每受到 1 次普通攻擊，受到的傷害降低 2%",
+        "viSha256": "dfc371c5457606c043f768f0a146fdda8a8b6df8555e23ce24fa66dc668be932"
+      }
+    },
+    "qilue-card:tam-sach-cung-tien": {
+      "effectZh": {
+        "text": "本回合敵軍獲得的功能性狀態，也會施加於我軍一名單位",
+        "viSha256": "7eff322036838bde41387ff8846dad1eb7967f11aa5aa8a2d7dabe8a80b152af"
+      }
+    },
+    "qilue-card:thay-mat-bay-muu": {
+      "effectZh": {
+        "text": "本回合獲得功能性增益時，額外獲得另一種功能性增益",
+        "viSha256": "47657fa010e5187ca86c926ea2bef3cc3ec89c524828a978dd2f9ab9df126ce4"
+      }
+    },
+    "qilue-card:tram-dich-chieu-hang": {
+      "effectZh": {
+        "text": "此前每發動 1 次突擊戰法，本回合突擊戰法傷害提升 3%",
+        "viSha256": "3d34bc21a7ea9100c998d20eaf5b274cfc5fc0210dd691530f5944c70f0a30b6"
+      }
+    },
+    "qilue-card:tranh-hoa-cu-kiem": {
+      "effectZh": {
+        "text": "本回合敵軍隨機獲得 1 種持續傷害狀態（受武力與智力中較高者影響，傷害率 50%）",
+        "viSha256": "9d1d63bbf62401710fdbd8e43654ab08bb33e861ed6c2c1c49441e4ae8946f31"
+      }
+    },
+    "qilue-card:tri-duyen-quan-the": {
+      "effectZh": {
+        "text": "本回合我軍施加的持續傷害狀態延長 1 回合",
+        "viSha256": "d05dd9fc059ed45bec4d4f5df75a184ad705f5755943a1bed94e054e1da37e5d"
+      }
+    },
+    "qilue-card:truy-kich-tu-tran": {
+      "effectZh": {
+        "text": "本回合普通攻擊後，治療友軍單體（治療率 40%）",
+        "viSha256": "74d793cbf305ff2536525fb9a0624a200140cfd68a3122a18f30589682d190a6"
+      }
+    },
+    "qilue-card:uoc-phap-tam-chuong": {
+      "effectZh": {
+        "text": "本回合治療我軍兵力最低的單體（治療率 100%），並對敵軍兵力最低的單體造成謀略傷害（傷害率受累計溢出治療量影響，至多 200%）",
+        "viSha256": "47c87a050e8a8ca28289e7ffb5e9e19b096d5b4e4a54d07c6443916b0ef632bf"
+      }
+    },
+    "qilue-strategy:chien-dau-lau-dai": {
+      "buffZh": {
+        "text": "每裝備 1 張奇略，我軍武將武力與統率各提升 2 點",
+        "viSha256": "46245d2b79dc8fce76c84e7b3ca59d9d0f26ce4e0cce2e7b3bbc0c81dae3a11a"
+      },
+      "descriptionZh": {
+        "text": "披甲鏖戰，強化承傷能力與突擊戰法",
+        "viSha256": "327660dadae722ea0fee0ecd41ef0ca94ecd7fcc0eec5eacbcdf522e0c1a4213"
+      }
+    },
+    "qilue-strategy:cuong-cong": {
+      "buffZh": {
+        "text": "每裝備 1 張奇略，我軍武將武力提升 3 點",
+        "viSha256": "e5d5716e9f93e0dc9644b17e744575a60a47acc9a30e7133fbb17e6a1043c977"
+      },
+      "descriptionZh": {
+        "text": "衝鋒陷陣，強化突擊戰法的爆發傷害",
+        "viSha256": "e8af1712a2b1c85409e1b15f8bfda95ee64999e8134d84fa4c88e7e4c6966be0"
+      }
+    },
+    "qilue-strategy:muu-tinh": {
+      "buffZh": {
+        "text": "每裝備 1 張奇略，我軍武將智力提升 3 點",
+        "viSha256": "236605d78660c60e7810a2ed3a455e70dab63b4d4eb4d646349a2d97a9fb4609"
+      },
+      "descriptionZh": {
+        "text": "運籌帷幄，強化主動戰法的運用能力",
+        "viSha256": "06e4317947bc451a20e78b32be2c3a8d7cd3bd043cb8ebac6f8b4363a04fa899"
+      }
+    },
+    "qilue-strategy:quay-nhieu": {
+      "buffZh": {
+        "text": "每裝備 1 張奇略，敵軍武將武力與智力各降低 2 點",
+        "viSha256": "f0542dffd97018edb4650e824c3e77f744419b07bc6a2f7250e6a04ba640c606"
+      },
+      "descriptionZh": {
+        "text": "靈活制敵，強化主動戰法與控制效果",
+        "viSha256": "1ac4b9de10d1e4d2799f9c34de4b318075169295288972e1960e60e8b5956c48"
+      }
+    },
+    "qilue-strategy:toan-quan": {
+      "buffZh": {
+        "text": "每裝備 1 張奇略，我軍武將統率提升 3 點",
+        "viSha256": "f1b3b2c3c196b82050e41b3f5aba3a04b9f9a7d404dd9685ebc92810c4bab07d"
+      },
+      "descriptionZh": {
+        "text": "兵強甲堅，降低傷害並提供增益效果",
+        "viSha256": "da1209db73380bb1ff6eee36f18ada54507e07d3c27033a40fd92f8e769d1b2a"
+      }
+    },
     "troop-mod:bach-ma-nghia-tong": {
       "effectZh": {
         "text": "將弓兵進階為弓馬嫻熟的白馬義從：部隊行軍速度提高 50%，我軍全體戰鬥前 2 回合獲得先攻（優先行動）並提高 10% 主動戰法發動率",
@@ -13167,6 +13491,400 @@
         "text": "改為我軍智力最高武將施加",
         "viSha256": "09bcbad65462e96f4d7f26d907c6a8411b40255abe96f24a439de9aae30b152d"
       }
+    }
+  },
+  "qilueSource": {
+    "kind": "game-client",
+    "edition": "Global",
+    "client": "Tam Quốc Chí - Chiến Lược",
+    "version": "24.547",
+    "screen": "Kỳ Lược Triều Hán > Võ Lược Kỳ Mưu > Đồ Giám; Phương Lược Tác Chiến",
+    "capturedAt": "2026-11-17"
+  },
+  "qilueStrategies": {
+    "qilue-strategy:toan-quan": {
+      "nameVi": "Toàn quân",
+      "aliasesVi": [
+        "Chỉnh Đốn Quân"
+      ],
+      "nameZh": "整軍",
+      "cardTypes": [
+        "phu",
+        "te"
+      ],
+      "descriptionVi": "Lính mạnh giáp tốt, Giảm ST và cung cấp hiệu ứng tăng ích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Thống Soái"
+    },
+    "qilue-strategy:cuong-cong": {
+      "nameVi": "Cường Công",
+      "nameZh": "強攻",
+      "cardTypes": [
+        "dung",
+        "phu"
+      ],
+      "descriptionVi": "Bẫy trận xông pha, cường hóa sát thương bùng nổ của Chiến Pháp Đột Kích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Võ Lực"
+    },
+    "qilue-strategy:muu-tinh": {
+      "nameVi": "Mưu tính",
+      "aliasesVi": [
+        "Mưu Toán"
+      ],
+      "nameZh": "謀算",
+      "cardTypes": [
+        "muu",
+        "phu"
+      ],
+      "descriptionVi": "Vận dụng kế sách, cường hóa khả năng sử dụng Chiến Pháp chủ động",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 3 điểm Trí Lực"
+    },
+    "qilue-strategy:chien-dau-lau-dai": {
+      "nameVi": "Chiến đấu lâu dài",
+      "aliasesVi": [
+        "Chiến Dài"
+      ],
+      "nameZh": "久戰",
+      "cardTypes": [
+        "dung",
+        "te"
+      ],
+      "descriptionVi": "Mặc giáp kịch chiến, cường hóa khả năng Chịu ST và Chiến Pháp Đột Kích",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng quân ta tăng 2 điểm Võ Lực và Thống Soái"
+    },
+    "qilue-strategy:quay-nhieu": {
+      "nameVi": "Quấy nhiễu",
+      "aliasesVi": [
+        "Tập Kích"
+      ],
+      "nameZh": "襲擾",
+      "cardTypes": [
+        "muu",
+        "sach"
+      ],
+      "descriptionVi": "Khắc chế địch linh hoạt, cường hóa Chiến Pháp Chủ Động và hiệu ứng khống chế",
+      "buffVi": "Mỗi trang bị 1 Kỳ Lược, Võ Tướng địch giảm 2 điểm Võ Lực và Trí Lực"
+    }
+  },
+  "qilueCards": {
+    "qilue-card:am-do-tran-thuong": {
+      "nameVi": "Ám Độ Trần Thương",
+      "nameZh": "暗度陳倉",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Khi thi triển Chiến Pháp chuẩn bị hiệp này có 50% xác suất bỏ qua chuẩn bị"
+    },
+    "qilue-card:an-tich-mang-thuong": {
+      "nameVi": "Ẩn Tích Mang Thương",
+      "nameZh": "芒碭隱蹤",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Giảm 8% ST phải chịu hiệp này"
+    },
+    "qilue-card:bac-lang-chuy-tan": {
+      "nameVi": "Bác Lãng Chuy Tần",
+      "nameZh": "博浪椎秦",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Tăng 20% Phá Trận"
+    },
+    "qilue-card:bai-huyen-tu-nghia": {
+      "nameVi": "Bái Huyện Tụ Nghĩa",
+      "nameZh": "沛縣聚義",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Tăng 15% lượng trị liệu gây ra trong hiệp này"
+    },
+    "qilue-card:bat-vua-pha-doanh": {
+      "nameVi": "Bắt Vua Phá Doanh",
+      "nameZh": "擒王破營",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Đột Kích, tỉ lệ phát động Chiến Pháp Đột Kích của Võ Tướng đồng đội tăng 5% (có thể tích lũy)"
+    },
+    "qilue-card:bi-so-doat-the": {
+      "nameVi": "Bì Sở Đoạt Thế",
+      "nameZh": "疲楚奪勢",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi chịu tấn công thường, gây 1 lần sát thương Binh Đao cho cá thể quân địch (tỷ lệ sát thương 50%)"
+    },
+    "qilue-card:bo-tri-thap-dien": {
+      "nameVi": "Bố Trí Thập Diện",
+      "nameZh": "設伏十面",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động tỉ lệ phát động tăng 10%"
+    },
+    "qilue-card:can-quet-tay-ha": {
+      "nameVi": "Càn Quét Tây Hà",
+      "nameZh": "橫掃河西",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Cá thể có Võ Lực Cao Nhất trong hiệp này nhận 40% tỉ lệ Liên Kích"
+    },
+    "qilue-card:cang-nhieu-cang-tot": {
+      "nameVi": "Càng Nhiều Càng Tốt",
+      "nameZh": "多多益善",
+      "type": "muu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đó, mỗi lần dùng Kỳ Lược 1 lần, Chiến Pháp Chủ Động đầu tiên trong hiệp này của quân ta sau khi phát động sẽ có 15% xác suất thử phát động lại"
+    },
+    "qilue-card:cau-hien-duoi-trang": {
+      "nameVi": "Cầu Hiền Dưới Trăng",
+      "nameZh": "月下追賢",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Sau khi thi triển trạng thái khống chế trong hiệp này, trạng thái này còn được áp dụng lên một quân địch khác"
+    },
+    "qilue-card:chi-khi-ngap-tran": {
+      "nameVi": "Chí Khí Ngập Tràn",
+      "nameZh": "壯志不絕",
+      "type": "dung",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Võ Tướng Võ Lực cao nhất quân ta gây ra sát thương Binh Đao tăng 5% (trước đó mỗi lần dùng 1 lá Kỳ Lược hoặc đã tổn thất 15% Binh Lực thì tăng thêm 3%)"
+    },
+    "qilue-card:cong-lao-hien-hach": {
+      "nameVi": "Công Lao Hiển Hách",
+      "nameZh": "居功至偉",
+      "type": "sach",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Vô hiệu Kỳ Lược địch sử dụng lần sau"
+    },
+    "qilue-card:dan-tran-tu-chien": {
+      "nameVi": "Dàn Trận Tử Chiến",
+      "nameZh": "背水列陣",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Một cá thể có Trí Lực và Võ Lực cao nhất trong hiệp này miễn dịch Kế Tận"
+    },
+    "qilue-card:don-doc-tham-nhap": {
+      "nameVi": "Đơn Độc Thâm Nhập",
+      "nameZh": "孤軍深入",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này phát động thất bại Chiến Pháp Đột Kích thử phát động lại 1 lần"
+    },
+    "qilue-card:du-dich-roi-trai": {
+      "nameVi": "Dụ Địch Rời Trại",
+      "nameZh": "誘敵離營",
+      "type": "muu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Đã phóng thích 1 lần Chiến Pháp Chủ Động trước đó, sau khi Kỳ Lược hiệu lực sẽ có 10% xác suất phát huy hiệu lực thêm 1 lần nữa"
+    },
+    "qilue-card:dung-dien-truong-an": {
+      "nameVi": "Dựng Điện Trường An",
+      "nameZh": "築闕長安",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "effectVi": "Hiệp này địch quân thi triển Chiến Pháp Chủ Động không chuẩn bị cần chuẩn bị 1 hiệp"
+    },
+    "qilue-card:giau-tai-giau-cua": {
+      "nameVi": "Giấu Tài Giấu Của",
+      "nameZh": "韜晦自污",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này khi quân ta hành động, nếu Trạng thái Khống chế có hiệu lực， thì làm cho Quân địch đơn thể nhận cùng một Trạng thái Khống chế"
+    },
+    "qilue-card:go-bo-xieng-xich": {
+      "nameVi": "Gỡ Bỏ Xiềng Xích",
+      "nameZh": "親釋刑縛",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Tại đầu hiệp này nếu đang ở trạng thái Khống chế, thì nhận trạng thái miễn dịch tương ứng với trạng thái đó trong 1 hiệp"
+    },
+    "qilue-card:hop-vay-giap-kich": {
+      "nameVi": "Hợp Vây Giáp Kích",
+      "nameZh": "合圍夾擊",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi phát động Chiến Pháp Chủ Động, Trị Liệu đơn thể Đồng Minh Binh Lực thấp nhất (tỷ lệ Trị Liệu 50%)"
+    },
+    "qilue-card:khong-so-lam-nguy": {
+      "nameVi": "Không Sợ Lâm Nguy",
+      "nameZh": "臨危不懼",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Tăng ích ngẫu nhiên đã có kéo dài thêm 1 hiệp"
+    },
+    "qilue-card:ky-cong-gian-phong": {
+      "nameVi": "Kỳ Công Gián Phong",
+      "nameZh": "諫封示公",
+      "type": "phu",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Nhận ngẫu nhiên 1 loại Tăng ích tính năng cho một đơn vị địch ngẫu nhiên (Sau hiệp chuẩn bị với mỗi nhận 1 trạng thái tính năng từng nhận sẽ có 30% xác suất lặp lại 1 lần)"
+    },
+    "qilue-card:lanh-hiem-hong-mon": {
+      "nameVi": "Lánh Hiểm Hồng Môn",
+      "nameZh": "鴻門遁險",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này khi gây Trị Liệu có xác suất gây thêm sát thương Mưu Lược cho đơn thể quân địch (bằng 30% lượng Trị Liệu, mỗi Võ Tướng tối đa kích hoạt 5 lần)"
+    },
+    "qilue-card:lap-ke-an-tru": {
+      "nameVi": "Lập Kế An Trữ",
+      "nameZh": "定計安儲",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này đơn thể có Binh Lực cao nhất của quân ta cứu viện toàn thể quân ta, đồng thời giảm 30% sát thương tấn công thường phải chịu"
+    },
+    "qilue-card:lui-buoc-cong-thanh": {
+      "nameVi": "Lui Bước Công Thành",
+      "nameZh": "功成身退",
+      "type": "phu",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đó, cứ mỗi Kỳ Lược Kỳ Lược đã dùng, khi sử dụng Kỳ Lược sau đó sẽ có 30% xác suất ngẫu nhiên thi triển 1 Kỳ Lược đã từng được phe ta dùng"
+    },
+    "qilue-card:nap-sach-tang-thu": {
+      "nameVi": "Nạp Sách Tàng Thư",
+      "nameZh": "藏書納籍",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Một quân địch",
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái khống chế"
+    },
+    "qilue-card:nhan-sach-di-kieu": {
+      "nameVi": "Nhận Sách Di Kiều",
+      "nameZh": "圯橋受書",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Trong hiệp này ngẫu nhiên nhận 1 Tăng ích chức năng chưa từng nhận trước đó"
+    },
+    "qilue-card:nho-co-dich-co": {
+      "nameVi": "Nhổ Cờ Dịch Cờ",
+      "nameZh": "拔旗易幟",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này sau khi tính toán tỉ lệ phát động Chiến Pháp Chủ Động của cá thể có Trí Lực cao nhất trong quân ta sẽ bị đảo ngược"
+    },
+    "qilue-card:nhuong-com-se-ao": {
+      "nameVi": "Nhường Cơm Sẻ Áo",
+      "nameZh": "推食解衣",
+      "type": "te",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Hiệp này khi nhận sát thương sẽ trị liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)"
+    },
+    "qilue-card:pha-mui-giap-dich": {
+      "nameVi": "Phá Mũi Giáp Địch",
+      "nameZh": "摧鋒陷敵",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích gây ra sát thương tăng 12%"
+    },
+    "qilue-card:phong-lang-cu-tu": {
+      "nameVi": "Phong Lang Cư Tư",
+      "nameZh": "封狼居胥",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Đột Kích tỉ lệ phát động tăng 10%"
+    },
+    "qilue-card:phong-thuong-tang-ap": {
+      "nameVi": "Phong Thưởng Tăng Ấp",
+      "nameZh": "受封增邑",
+      "type": "sach",
+      "rarity": "rare",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Sau hiệp chuẩn bị, mỗi lần toàn địch bị thi triển trạng thái ST duy trì, thì khi quân địch trúng ST duy trì hiệp này, sẽ phải chịu thêm 5% sát thương"
+    },
+    "qilue-card:so-ca-tu-khoi": {
+      "nameVi": "Sở Ca Tứ Khởi",
+      "nameZh": "楚歌四起",
+      "type": "muu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này Chiến Pháp Chủ Động gây ra sát thương tăng 10%"
+    },
+    "qilue-card:song-trong-that-bai": {
+      "nameVi": "Sống Trong Thất Bại",
+      "nameZh": "敗中求生",
+      "type": "te",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Mỗi khi quân ta phải chịu 1 lần Công Thường, giảm 2% ST phải chịu"
+    },
+    "qilue-card:tam-sach-cung-tien": {
+      "nameVi": "Tam Sách Cùng Tiến",
+      "nameZh": "三策並進",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trong hiệp này trạng thái chức năng mà quân địch nhận được cũng sẽ được áp dụng cho một đơn vị của quân ta"
+    },
+    "qilue-card:thay-mat-bay-muu": {
+      "nameVi": "Thay Mặt Bày Mưu",
+      "nameZh": "借箸代籌",
+      "type": "phu",
+      "rarity": "common",
+      "targetVi": "Nhóm quân ta",
+      "effectVi": "Trong hiệp này khi nhận Tăng ích chức năng, nhận thêm một Tăng ích chức năng khác"
+    },
+    "qilue-card:tram-dich-chieu-hang": {
+      "nameVi": "Trảm Địch Chiêu Hàng",
+      "nameZh": "斬逆納降",
+      "type": "dung",
+      "rarity": "rare",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trước đây mỗi lần phát động 1 Chiến Pháp Đột Kích, trong hiệp này Chiến Pháp Đột Kích sát thương tăng 3%"
+    },
+    "qilue-card:tranh-hoa-cu-kiem": {
+      "nameVi": "Tránh Họa Cự Kiệm",
+      "nameZh": "居儉避禍",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Toàn quân địch",
+      "effectVi": "Trong hiệp này quân địch ngẫu nhiên nhận được 1 trạng thái sát thương duy trì (chịu ảnh hưởng bởi chỉ số cao hơn trong Võ Lực và Trí Lực, tỷ lệ sát thương 50%)"
+    },
+    "qilue-card:tri-duyen-quan-the": {
+      "nameVi": "Trị Duyên Quân Thế",
+      "nameZh": "治延軍勢",
+      "type": "sach",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Trạng thái sát thương duy trì do quân ta thi triển trong hiệp này kéo dài 1 hiệp"
+    },
+    "qilue-card:truy-kich-tu-tran": {
+      "nameVi": "Truy Kích Tử Trận",
+      "nameZh": "追亡逐北",
+      "type": "dung",
+      "rarity": "common",
+      "targetVi": "Toàn quân ta",
+      "effectVi": "Hiệp này sau khi Tấn công thường, Trị Liệu đơn thể Đồng Minh (tỷ lệ Trị Liệu 40%)"
+    },
+    "qilue-card:uoc-phap-tam-chuong": {
+      "nameVi": "Ước Pháp Tam Chương",
+      "nameZh": "約法三章",
+      "type": "te",
+      "rarity": "rare",
+      "targetVi": "Một quân ta",
+      "effectVi": "Hiệp này Trị Liệu đơn thể Binh Lực thấp nhất của quân ta (tỷ lệ Trị Liệu 100%), gây sát thương Mưu Lược cho đơn thể Binh Lực thấp nhất của quân địch (tỷ lệ sát thương bị ảnh hưởng bởi lượng Trị Liệu dôi ra tích lũy, tối đa 200%)"
     }
   }
 }

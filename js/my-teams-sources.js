@@ -485,7 +485,7 @@ export function fromKhaiHoang(team, variant, ids, { id, contentHash } = {}) {
     tierLabel: "",
     replacesTeamId: null,
     heroes,
-    notes: { general: block(khaiHoangNotes(build)), strengths: "", goodAgainst: "", avoid: "" },
+    notes: { general: fitNotes(khaiHoangNotes(build), unresolved), strengths: "", goodAgainst: "", avoid: "" },
     userAlternatives: [],
     source: { kind: "khaihoang", key: variantKey(team.id, variant?.id), contentHash: contentHash ?? khaiHoangSourceHash(team, variant) },
   };

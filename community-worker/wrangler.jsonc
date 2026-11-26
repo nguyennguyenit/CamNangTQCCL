@@ -9,7 +9,9 @@
   "name": "tqccl-community",
   "main": "src/index.ts",
   "compatibility_date": "2026-01-01",
-  "compatibility_flags": ["nodejs_compat"],
+  // global_fetch_strictly_public: catalog mùa đọc /data/recommended/* của chính zone tqccl.com; không có flag thì fetch
+  // same-zone đi thẳng origin và trả 522. Mọi fetch khác của Worker (GitHub, Turnstile, nhà cung cấp AI) vốn ra Internet.
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "observability": { "enabled": true },
   // D1 tạo bằng `npx wrangler d1 create tqccl-community` (APAC).
   "d1_databases": [

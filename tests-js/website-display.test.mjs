@@ -241,6 +241,33 @@ test('raw-name resolver maps Hán-Việt names back to source Chinese only on Ch
   assert.equal(localName('Không có', resolve, 'zh'), 'Không có');
 });
 
+test('raw-name resolver indexes aliases after main names so an alias never overrides a main name', () => {
+  const resolve = createRawNameResolver([
+    {chinese: '盧植', viet: 'Lô Thực', hanViet: 'Lô Thực', aliases: ['Lô Trực']},
+    {chinese: 'SP 盧植', viet: 'SP Lô Thực', hanViet: 'SP Lô Thực', aliases: ['SP盧植', 'SP Lô Trực', 'Tào Tháo', 5, ' ']},
+    {chinese: '曹操', viet: 'Tào Tháo', hanViet: 'Tào Tháo'},
+    {chinese: '甲', viet: 'Alias Trước', aliases: ['Lô Thực']},
+  ]);
+  assert.equal(resolve('SP Lô Trực'), 'SP 盧植');
+  assert.equal(resolve('sp lô trực (S)'), 'SP 盧植');
+  assert.equal(resolve('Lô Trực'), '盧植');
+  // Alias trùng tên chính của mục khác (kể cả mục đứng sau) không đè tên chính.
+  assert.equal(resolve('Tào Tháo'), '曹操');
+  assert.equal(resolve('Lô Thực'), '盧植');
+  assert.equal(resolve('SP Lô Trực/Tào Tháo'), 'SP 盧植/曹操');
+});
+
+test('raw-name resolver lets a current Vietnamese name win over another entry\'s Hán-Việt name', () => {
+  // "Lập Lờ Đánh Tráo" là `viet` của 移花接木 nhưng là `hanViet` cũ của 暗渡陳倉 (đứng trước trong danh mục).
+  const resolve = createRawNameResolver(
+    [{chinese: '暗渡陳倉', viet: 'Ám Độ Trần Thương', hanViet: 'Lập Lờ Đánh Tráo'}],
+    [{chinese: '移花接木', viet: 'Lập Lờ Đánh Tráo', hanViet: 'Di Hoa Tiếp Mộc'}],
+  );
+  assert.equal(resolve('Lập Lờ Đánh Tráo'), '移花接木');
+  assert.equal(resolve('Ám Độ Trần Thương'), '暗渡陳倉');
+  assert.equal(resolve('Di Hoa Tiếp Mộc'), '移花接木');
+});
+
 test('combined "A/B" slots resolve only when every part resolves', () => {
   const resolve = createRawNameResolver([{chinese: '呂蒙', viet: 'Lữ Mông'}, {chinese: '程普', viet: 'Trình Phổ'}]);
   assert.equal(resolve('Lữ Mông/Trình Phổ'), '呂蒙/程普');

@@ -16,6 +16,10 @@ const ZH_EFFECT_KINDS = new Set(["source", "capture", "translation"]);
 const MISSING_TEXT = new Set(["待補充", "待补充"]);
 const CONDITION_KINDS = new Set(["season", "scenario", "requirement"]);
 const HERO_VARIANTS = new Set(["base", "sp", "co", "40y"]);
+/** Bộ giá trị đóng của hàng kỳ lược (hợp đồng catalog; nhãn hiển thị ở `qilueLabel` của js/lookup-detail.js). */
+export const QILUE_CARD_TYPES = Object.freeze(["dung", "muu", "phu", "sach", "te"]);
+export const QILUE_RARITIES = Object.freeze(["common", "rare"]);
+export const QILUE_TARGETS = Object.freeze(["Toàn quân ta", "Một quân ta", "Nhóm quân ta", "Một quân địch", "Toàn quân địch"]);
 
 const isPlainObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isOptionalString = (value) => value === null || typeof value === "string";
@@ -50,13 +54,14 @@ function requireRevisions(owner, rows) {
   if (rows.length && rows.filter((row) => row.isCurrent).length !== 1) throw new Error(`${owner}.revisions thiếu bản hiện hành duy nhất`);
 }
 
-function requireCommon(owner, record, keys) {
+/** `zh`: điều kiện được kèm `textZh` (kỳ lược: tên mùa chữ Hán theo hợp đồng catalog). */
+function requireCommon(owner, record, keys, { zh = false } = {}) {
   requireShape(owner, record, keys);
   if (typeof record.id !== "string" || typeof record.nameVi !== "string" || !isStringList(record.aliasesVi)
     || !isStringList(record.aliasesZh) || !isStringList(record.missingFields)) {
     throw new Error(`${owner} có scalar không hợp lệ`);
   }
-  requireConditions(owner, record.conditions);
+  requireConditions(owner, record.conditions, { zh });
 }
 
 function requireUniqueId(owner, record, prefix, allIds) {
@@ -167,7 +172,7 @@ function validateTacticsDocument(tactics) {
 
 function validateCatalogDocument(catalog) {
   const allIds = new Set();
-  const catalogKeys = ["schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings"];
+  const catalogKeys = ["schemaVersion", "equipment", "specials", "advisors", "troopMods", "buildings", "qilueStrategies", "qilueCards"];
   if (!isPlainObject(catalog)) throw new Error("lookup-catalog.json có shape không hợp lệ");
   if (!keysEqual(catalog, catalogKeys)) {
     const differing = catalogKeys.find((key) => !(key in catalog))
@@ -182,12 +187,14 @@ function validateCatalogDocument(catalog) {
     ["advisors", "advisor:", [...COMMON_KEYS, "elementVi", "effectVi", "usageVi", "tacticPoints", "heroIds", "nameZh", "effectZh", "usageZh", "zhSource"]],
     ["troopMods", "troop-mod:", [...COMMON_KEYS, "effectVi", "appliesToVi", "suggestedBuildVi", "troopLimitVi", "revisions", "options", "effectZh", "appliesToZh", "suggestedBuildZh", "zhSource"]],
     ["buildings", "building:", [...COMMON_KEYS, "summaryVi", "mainCityOnly", "maxLevel", "levels", "summaryZh", "zhSource"]],
+    ["qilueStrategies", "qilue-strategy:", [...COMMON_KEYS, "nameZh", "cardTypes", "descriptionVi", "buffVi", "descriptionZh", "buffZh", "zhSource"]],
+    ["qilueCards", "qilue-card:", [...COMMON_KEYS, "nameZh", "type", "rarity", "targetVi", "effectVi", "effectZh", "zhSource"]],
   ];
   for (const [key, prefix, keys] of groups) {
     if (!Array.isArray(catalog[key])) throw new Error(`lookup-catalog.json thiếu ${key}`);
     for (const record of catalog[key]) {
       requireUniqueId(key, record, prefix, allIds);
-      requireCommon(record.id, record, keys);
+      requireCommon(record.id, record, keys, { zh: key.startsWith("qilue") });
     }
   }
   for (const row of catalog.equipment) {
@@ -230,6 +237,30 @@ function validateCatalogDocument(catalog) {
       if (!Number.isInteger(level.level) || !Object.values(level.costs).every(isOptionalNumber) || ![level.durationVi, level.effectVi, level.effectZh, level.durationZh].every(isOptionalString)) {
         throw new Error(`${row.id}.levels có scalar không hợp lệ`);
       }
+    }
+  }
+  validateQilue(catalog);
+}
+
+/**
+ * Hàng kỳ lược (hợp đồng catalog): tên game `nameZh` có chữ Hán và `aliasesZh` đúng bằng `[nameZh]` (biến thể chữ Hán sai
+ * của ghi chú đội không bao giờ vào catalog công khai); chữ Việt chính không rỗng; chữ Hán dịch đi kèm `zhSource`.
+ */
+function validateQilue(catalog) {
+  const nonEmpty = (value) => typeof value === "string" && value.trim() !== "";
+  const named = (row) => nonEmpty(row.nameZh) && /[\u3400-\u9fff]/u.test(row.nameZh) && row.aliasesZh.length === 1 && row.aliasesZh[0] === row.nameZh;
+  for (const row of catalog.qilueStrategies) {
+    const types = row.cardTypes;
+    if (!named(row) || ![row.descriptionVi, row.buffVi].every(nonEmpty) || ![row.descriptionZh, row.buffZh].every(isOptionalString)
+      || !isStringList(types) || types.length !== 2 || new Set(types).size !== 2 || !types.every((type) => QILUE_CARD_TYPES.includes(type))
+      || !isZhSource(row.zhSource, row.descriptionZh || row.buffZh)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
+    }
+  }
+  for (const row of catalog.qilueCards) {
+    if (!named(row) || !QILUE_CARD_TYPES.includes(row.type) || !QILUE_RARITIES.includes(row.rarity) || !QILUE_TARGETS.includes(row.targetVi)
+      || !nonEmpty(row.effectVi) || !isOptionalString(row.effectZh) || !isZhSource(row.zhSource, row.effectZh)) {
+      throw new Error(`${row.id} có scalar không hợp lệ`);
     }
   }
 }
@@ -378,4 +409,82 @@ export function createLookupPayloadLoader(fetchFn) {
     const [pinned, bytes] = await Promise.all([manifest(), fetchFn(name)]);
     return Object.freeze(await verifiedDocument(pinned, name, bytes));
   });
+}
+
+/* ---------- Lớp tiếng Nhật (`data/lookup-ja.json`, hợp đồng ở docs/ja-lookup-data.md) ---------- */
+
+export const LOOKUP_JA_SOURCE_NAMES = Object.freeze(["data/books-dict.json", "data/heroes-dict.json", "data/ja-kanji-variants.json", "data/lookup-catalog.json", "data/tactics.json"]);
+const JA_ENTRY_KEYS = new Set(["name", "nameStatus", "nameOriginal", "nameOriginalLang", "texts", "translatedFromVi"]);
+const JA_NAME_STATUS = new Set(["verified", "derived"]);
+/** `lang` của tên gốc, tính lúc build theo lối viết (`pipeline/han_script.py`); vắng trường thì trang dùng `zh`. */
+const JA_NAME_ORIGINAL_LANGS = Object.freeze(["zh-Hans", "zh-Hant", "zh"]);
+const PIN = /^sha256:([0-9a-f]{64})$/;
+const nonEmpty = (value) => typeof value === "string" && value.trim().length > 0;
+
+/**
+ * Kiểm tài liệu `lookup-ja.json` đã parse: đúng schema, cùng `lookupGenerationId` với lookup manifest đang phát (`generationId`),
+ * mọi mục có tên/trạng thái/tên gốc (`nameOriginalLang`, nếu có, là một trong `JA_NAME_ORIGINAL_LANGS`), `texts` chỉ chứa chữ. Trả tài liệu (không đông cứng sâu; nơi gọi giữ nguyên, không sửa).
+ * @param {any} document
+ * @param {{lookupGenerationId: string}} expected
+ */
+export function validateLookupJaDocument(document, { lookupGenerationId }) {
+  if (!isPlainObject(document) || document.schemaVersion !== 1) throw new Error("lookup-ja.json schemaVersion không hợp lệ");
+  if (!keysEqual(document, ["schemaVersion", "lookupGenerationId", "sources", "notice", "payloadSha256", "prefixedTactics", "entries"])) {
+    throw new Error("lookup-ja.json có shape không hợp lệ");
+  }
+  if (typeof lookupGenerationId !== "string" || document.lookupGenerationId !== lookupGenerationId) {
+    throw new Error("lookup-ja.json không cùng thế hệ với lookup manifest");
+  }
+  if (!keysEqual(document.sources, LOOKUP_JA_SOURCE_NAMES) || !Object.values(document.sources).every((value) => HEX256.test(value))) {
+    throw new Error("lookup-ja.json sources không hợp lệ");
+  }
+  if (!isPlainObject(document.notice) || document.notice.machineTranslated !== true || !nonEmpty(document.notice.numbersEdition) || !HEX256.test(document.payloadSha256)) {
+    throw new Error("lookup-ja.json notice/payloadSha256 không hợp lệ");
+  }
+  if (!Array.isArray(document.prefixedTactics) || !document.prefixedTactics.every((row) => isPlainObject(row)
+    && keysEqual(row, ["baseId", "name", "prefix"]) && typeof row.baseId === "string" && row.baseId.startsWith("tactic:") && nonEmpty(row.name) && nonEmpty(row.prefix))) {
+    throw new Error("lookup-ja.json prefixedTactics không hợp lệ");
+  }
+  if (!isPlainObject(document.entries) || !Object.keys(document.entries).length) throw new Error("lookup-ja.json thiếu entries");
+  for (const [id, entry] of Object.entries(document.entries)) {
+    if (!isPlainObject(entry) || Object.keys(entry).some((key) => !JA_ENTRY_KEYS.has(key))
+      || !nonEmpty(entry.name) || !JA_NAME_STATUS.has(entry.nameStatus) || !nonEmpty(entry.nameOriginal)
+      || (entry.nameOriginalLang !== undefined && !JA_NAME_ORIGINAL_LANGS.includes(entry.nameOriginalLang))
+      || !isPlainObject(entry.texts) || !Object.values(entry.texts).every(nonEmpty)
+      || (entry.translatedFromVi !== undefined && !isStringList(entry.translatedFromVi))) {
+      throw new Error(`lookup-ja.json mục không hợp lệ: ${id}`);
+    }
+  }
+  return document;
+}
+
+/** Bytes `lookup-ja.json` khớp pin `sha256:<hex>` nhúng trong trang rồi đúng hợp đồng (`validateLookupJaDocument`). */
+export async function verifyLookupJa(bytes, pin, { lookupGenerationId }) {
+  const expected = PIN.exec(typeof pin === "string" ? pin : "")?.[1];
+  if (!expected) throw new Error("Pin lookup-ja.json không hợp lệ");
+  if (!(bytes instanceof Uint8Array)) throw new Error("lookup-ja.json phải là Uint8Array");
+  if (await digest(bytes) !== expected) throw new Error("lookup-ja.json không khớp pin");
+  return validateLookupJaDocument(parseJson("lookup-ja.json", bytes), { lookupGenerationId });
+}
+
+/** Bytes `ja-kanji-variants.json` khớp hash mà `lookup-ja.json` khai (`sources`); trả tài liệu đã parse. */
+export async function verifyKanjiVariants(bytes, jaDocument) {
+  if (!(bytes instanceof Uint8Array)) throw new Error("ja-kanji-variants.json phải là Uint8Array");
+  if (await digest(bytes) !== jaDocument?.sources?.["data/ja-kanji-variants.json"]) throw new Error("ja-kanji-variants.json không khớp lookup-ja.json");
+  return parseJson("ja-kanji-variants.json", bytes);
+}
+
+/**
+ * Nạp lớp ja của một trang `/ja/` qua bộ nạp byte dùng chung (`createByteLoader` của js/website-display.js): `lookup-ja.json`
+ * khớp `pin`, cùng thế hệ với `lookup-manifest.json` đang phát; `withVariants` tải thêm bảng tự dạng (khớp hash trong
+ * `sources`) cho tên thô chưa có trong từ điển. Trả `{document, variants}` (`variants` là tài liệu đã parse hoặc `null`).
+ */
+export async function loadLookupJa(loadBytes, pin, { withVariants = false } = {}) {
+  if (typeof loadBytes !== "function") throw new TypeError("loadBytes phải là hàm");
+  const [jaBytes, manifestBytes] = await Promise.all([loadBytes("data/lookup-ja.json"), loadBytes(`data/${MANIFEST_NAME}`)]);
+  const manifest = manifestFrom(manifestBytes);
+  await validateManifest(manifest);
+  const document = await verifyLookupJa(jaBytes, pin, { lookupGenerationId: manifest.generationId });
+  const variants = withVariants ? await verifyKanjiVariants(await loadBytes("data/ja-kanji-variants.json"), document) : null;
+  return { document, variants };
 }

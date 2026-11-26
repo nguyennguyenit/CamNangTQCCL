@@ -1,0 +1,19 @@
+{
+ "schemaVersion": 1,
+ "batchId": "doi-khac-261117-r1-014-rejected",
+ "reviewerSession": "reviewer:RvDk261117-r1-014",
+ "items": [
+  {
+   "entityId": "troop-option:tien-dang-tu-si:chuyen-cu-my-special-shield",
+   "fieldPath": "nameVi",
+   "inputFingerprint": "8b6d311cdade6dd36d9461b78bb3c412d185961b5baa8f841326688c54a3772e",
+   "glossaryDigest": "sha256:558beac2444dfc956fcb4685d1b384e845040c6b4f5d3033271a8e89e51e5436",
+   "textSha256": "19bdde7fc276b6fbad3852d1d984dd8382d3d1765c320709d1556086f42d662b",
+   "verdict": "rejected",
+   "errors": [
+    "Variant prefix 轉· must be the spaced project form 'Chuyển · ' (rule 5; same option in vo-duong-phi-quan item 113 already uses 'Chuyển · Cử thuẫn')"
+   ],
+   "notes": "Chuyển · Cử thuẫn"
+  }
+ ]
+}

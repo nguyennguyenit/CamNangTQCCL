@@ -9,7 +9,24 @@ import {
 } from "../../../js/hero-identity.js";
 import { FilesystemDataSource } from "../../src/data/filesystem-data-source.js";
 import { buildSnapshotIndex } from "../../src/data/snapshot-index.js";
+import { normalizeObservations } from "../../src/domain/normalization-service.js";
 import { createResearchHandlers } from "../../src/research/research-handlers.js";
+import {
+  buildIdObservations,
+  buildMixedObservations,
+  buildNameObservations,
+  loadRosterEnv,
+  loadRosterFixture,
+  prepareForDomain,
+  type Observation,
+} from "../fixtures/normalize-full-roster.js";
+
+// Số đo 2026-11-19 (domain, máy dev). Không coverage: normalize (a) 21-23 ms, (b) 28-35 ms; recommend 238 mục fullBox
+// (snapshot đã nạp) 33-43 ms; recommend lần đầu gồm cold load snapshot + index ~620 ms. Dưới `--coverage` (CI chạy
+// test:coverage): normalize (a) 53-60 ms, (b) 81-91 ms; recommend 65-69 ms. Ngưỡng ≈ 3× số đo chậm nhất để chịu cả
+// coverage lẫn tải song song: normalize 300 ms, recommend 250 ms.
+const NORMALIZE_BUDGET_MS = 300;
+const RECOMMEND_BUDGET_MS = 250;
 
 const productionDataRoot = fileURLToPath(
   new URL("../../../data", import.meta.url),
@@ -141,6 +158,9 @@ describe("production-shaped CPU proxy", () => {
         },
       }));
     const handlers = createResearchHandlers({ dataSource: source });
+    // Handler mới nạp snapshot ở lần gọi đầu; cold load đã đo riêng (coldLoadMs) và rất nhạy tải song song, nên khởi
+    // động trước để "warm" đo đúng chi phí normalize + recommend.
+    await handlers.call("tqccl_get_playbook", { intent: "lookup" });
 
     startedAt = performance.now();
     const normalized = await handlers.call("tqccl_normalize_entities", {
@@ -172,8 +192,52 @@ describe("production-shaped CPU proxy", () => {
     expect(snapshot.artifacts.teams.length).toBeGreaterThan(100);
     expect(observations.length).toBe(60);
     expect(recommended.portfolioTeams.length + recommended.blockedStrongTeams.length).toBeGreaterThan(0);
-    expect(coldLoadMs).toBeLessThan(2_000);
+    // Cô lập ~0,7 s; khi cả bộ test chạy song song (nhiều file nạp snapshot 9 MB) đo được 2-2,6 s, nên ngưỡng 4 s (≈ 6×).
+    expect(coldLoadMs).toBeLessThan(4_000);
     expect(indexMs).toBeLessThan(1_000);
     expect(warmNormalizeAndRecommendMs).toBeLessThan(2_000);
+  });
+});
+
+describe("full-roster CPU budget (#165)", () => {
+  it("normalizes the 238/263-item name roster and recommends for the 238-item fullBox roster inside budget", async () => {
+    const env = await loadRosterEnv();
+    const roster = loadRosterFixture();
+    const timeNormalize = async (observations: Observation[]) => {
+      const startedAt = performance.now();
+      const result = await normalizeObservations({
+        workflowVersion: env.ctx.workflowVersion,
+        observations: prepareForDomain(env.ctx, observations) as never,
+      });
+      return { result, ms: elapsed(startedAt) };
+    };
+    const a = await timeNormalize(buildNameObservations(env, roster));
+    const b = await timeNormalize(buildMixedObservations(env, roster));
+
+    const byId = await normalizeObservations({
+      workflowVersion: env.ctx.workflowVersion,
+      observations: buildIdObservations(env, roster) as never,
+    });
+    const handlers = createResearchHandlers({ dataSource: new FilesystemDataSource({ dataRoot: productionDataRoot }) });
+    // Nạp snapshot + dựng index trước khi đo: recommendMs là chi phí tính toán, cold load đã có test riêng ở trên.
+    await handlers.call("tqccl_get_playbook", { intent: "lookup" });
+    const startedAt = performance.now();
+    const recommended = await handlers.call("tqccl_recommend_teams", {
+      expectedWorkflowVersion: env.ctx.workflowVersion,
+      canonicalState: byId.canonicalState as never,
+      confirmationBinding: byId.confirmationBinding,
+      sourceSeasonId: env.snapshot.publication!.seasons.defaultSourceSeasonId,
+      maxTeams: 10,
+      fullBox: true,
+    });
+    const recommendMs = elapsed(startedAt);
+
+    console.info("TQCCL_FULL_ROSTER_BUDGET", JSON.stringify({ normalizeAMs: a.ms, normalizeBMs: b.ms, recommendMs, teams: recommended.portfolioTeams.length }));
+
+    expect(recommended.portfolioTeams.length).toBeGreaterThan(0);
+    // Ngưỡng và lý do: xem hằng NORMALIZE_BUDGET_MS/RECOMMEND_BUDGET_MS ở đầu file.
+    expect(a.ms).toBeLessThan(NORMALIZE_BUDGET_MS);
+    expect(b.ms).toBeLessThan(NORMALIZE_BUDGET_MS);
+    expect(recommendMs).toBeLessThan(RECOMMEND_BUDGET_MS);
   });
 });

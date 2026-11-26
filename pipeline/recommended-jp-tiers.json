@@ -1,0 +1,1250 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "name": "カズ天 都尉武将使用テンプレ編成",
+    "url": "https://kazten.com/entry/2026/06/19/180000",
+    "author": "カズ天 (kazten19w)",
+    "publishedAt": "2026-06-19",
+    "imagesUpdatedThrough": "2026-09-15",
+    "fetchedAt": "2026-11-17",
+    "context": "pre-season",
+    "assessment": "author-personal",
+    "seasonJa": "S25 時代の英雄",
+    "scenarioNameRaw": "英雄命世",
+    "seasonVn": "PK-S26",
+    "vnSourceSeasonId": "pk-s26",
+    "seasonMappingRef": "plans/reports/researcher-261117-0153-jp-tier-sources.md; scenarioNameRaw theo seasons.json của generation Recommended (pk-s26)"
+  },
+  "matchRules": {
+    "exact": "Cùng ba tướng và mỗi tướng cùng cặp chiến pháp (không xét thứ tự hai ô)",
+    "heroes-only": "Cùng ba tướng, chiến pháp khác",
+    "none": "Không có hàng PK-S26 cùng ba tướng",
+    "tierAssignable": "reviewStatus = reviewed và match.kind khác none"
+  },
+  "doUyHeroes": [
+    {
+      "id": "do-uy:周劭",
+      "nameJa": "周劭",
+      "sourceNameRaw": "周劭",
+      "displayNameVi": "Chu Thiệu"
+    },
+    {
+      "id": "do-uy:沈姮",
+      "nameJa": "沈姮",
+      "sourceNameRaw": "沈姮",
+      "displayNameVi": "Thẩm Hằng"
+    },
+    {
+      "id": "do-uy:徐彥",
+      "nameJa": "徐彦",
+      "sourceNameRaw": "徐彥",
+      "displayNameVi": "Từ Ngạn"
+    },
+    {
+      "id": "do-uy:皇甫宏",
+      "nameJa": "皇甫宏",
+      "sourceNameRaw": "皇甫宏",
+      "displayNameVi": "Hoàng Phủ Hoành"
+    },
+    {
+      "id": "do-uy:蕭芷",
+      "nameJa": "蕭芷",
+      "sourceNameRaw": "蕭芷",
+      "displayNameVi": "Tiêu Chỉ"
+    },
+    {
+      "id": "do-uy:陳翊",
+      "nameJa": "陳翊",
+      "sourceNameRaw": "陳翊",
+      "displayNameVi": "Trần Dực"
+    },
+    {
+      "id": "do-uy:馬嬋",
+      "nameJa": "馬嬋",
+      "sourceNameRaw": "馬嬋",
+      "displayNameVi": "Mã Thiền"
+    },
+    {
+      "id": "do-uy:楊琪",
+      "nameJa": "楊琪",
+      "sourceNameRaw": "楊琪",
+      "displayNameVi": "Dương Kỳ"
+    }
+  ],
+  "tacticSpellingJa": [
+    {
+      "sourceJa": "戮力同心",
+      "nameJa": "勠力同心",
+      "note": "Kazten gõ 戮; trong game 勠"
+    },
+    {
+      "sourceJa": "霊気一動",
+      "nameJa": "霊機一動",
+      "note": "Kazten gõ 気; trong game 機"
+    },
+    {
+      "sourceJa": "精魚鱗陣",
+      "nameJa": "魚鱗陣",
+      "note": "Bản 精 (拓) không có ID riêng trong catalog; ghi theo ID gốc"
+    },
+    {
+      "sourceJa": "精鋒矢陣",
+      "nameJa": "鋒矢陣",
+      "note": "Bản 精 (拓) không có ID riêng trong catalog; ghi theo ID gốc"
+    }
+  ],
+  "entries": [
+    {
+      "tierJa": "T0",
+      "teamNameJa": "富貴騎",
+      "heroesJa": [
+        "SP荀彧",
+        "周劭",
+        "SP郭嘉"
+      ],
+      "heroes": [
+        "hero:sp-tuan-uc",
+        "do-uy:周劭",
+        "hero:sp-quach-gia"
+      ],
+      "tacticsJa": [
+        [
+          "竭力佐謀",
+          "刮骨療毒"
+        ],
+        [
+          "霊気一動",
+          "戮力同心"
+        ],
+        [
+          "昏迷乱擾",
+          "上兵破謀"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:doc-suc-tinh-ke",
+          "tactic:cat-xuong-tri-doc"
+        ],
+        [
+          "tactic:nhanh-tri-dong-nao",
+          "tactic:dong-long-hop-suc"
+        ],
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:thuong-binh-phat-muu"
+        ]
+      ],
+      "match": {
+        "kind": "exact",
+        "recommendedTeamId": "yxms-027-周劭富貴騎"
+      },
+      "reviewStatus": "reviewed",
+      "note": "SGSDeck xếp T0.5."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "富連騎",
+      "heroesJa": [
+        "SP荀彧",
+        "沈姮",
+        "SP郭嘉"
+      ],
+      "heroes": [
+        "hero:sp-tuan-uc",
+        "do-uy:沈姮",
+        "hero:sp-quach-gia"
+      ],
+      "tacticsJa": [
+        [
+          "竭力佐謀",
+          "刮骨療毒"
+        ],
+        [
+          "霊気一動",
+          "上兵破謀"
+        ],
+        [
+          "昏迷乱擾",
+          "戮力同心"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:doc-suc-tinh-ke",
+          "tactic:cat-xuong-tri-doc"
+        ],
+        [
+          "tactic:nhanh-tri-dong-nao",
+          "tactic:thuong-binh-phat-muu"
+        ],
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:dong-long-hop-suc"
+        ]
+      ],
+      "match": {
+        "kind": "heroes-only",
+        "recommendedTeamId": "yxms-028-沈姮富貴騎"
+      },
+      "reviewStatus": "reviewed",
+      "note": "Khác chiến pháp: SP Quách Gia: Kazten Đồng Lòng Hợp Sức / SGSDeck Đương Phong Thôi Quyết. SGSDeck xếp T0.5."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "法徐盾",
+      "heroesJa": [
+        "SP関羽",
+        "徐彦",
+        "SP法正"
+      ],
+      "heroes": [
+        "hero:sp-quan-vu",
+        "do-uy:徐彥",
+        "hero:sp-phap-chinh"
+      ],
+      "tacticsJa": [
+        [
+          "寡兵奮戦",
+          "撃其惰帰"
+        ],
+        [
+          "魚鱗陣",
+          "藤甲兵"
+        ],
+        [
+          "伏機即動",
+          "非攻制勝"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:di-qua-dich-chung",
+          "tactic:kich-ky-noa-quy"
+        ],
+        [
+          "tactic:ngu-lan-tran",
+          "tactic:linh-giap-may"
+        ],
+        [
+          "tactic:duong-suc-doi-chien",
+          "tactic:khong-danh-ma-thang"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba. Gần nhất: yxms-014-皇甫法關盾 (Hoàng Phủ Hoành thay Từ Ngạn), đã khớp exact với 法宏盾."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "法宏盾",
+      "heroesJa": [
+        "SP関羽",
+        "皇甫宏",
+        "SP法正"
+      ],
+      "heroes": [
+        "hero:sp-quan-vu",
+        "do-uy:皇甫宏",
+        "hero:sp-phap-chinh"
+      ],
+      "tacticsJa": [
+        [
+          "寡兵奮戦",
+          "撃其惰帰"
+        ],
+        [
+          "魚鱗陣",
+          "魅惑"
+        ],
+        [
+          "伏機即動",
+          "非攻制勝"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:di-qua-dich-chung",
+          "tactic:kich-ky-noa-quy"
+        ],
+        [
+          "tactic:ngu-lan-tran",
+          "tactic:me-hoac"
+        ],
+        [
+          "tactic:duong-suc-doi-chien",
+          "tactic:khong-danh-ma-thang"
+        ]
+      ],
+      "match": {
+        "kind": "exact",
+        "recommendedTeamId": "yxms-014-皇甫法關盾"
+      },
+      "reviewStatus": "reviewed",
+      "note": "SGSDeck xếp T0.5."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "二喬弓",
+      "heroesJa": [
+        "皇甫宏",
+        "孫尚香",
+        "無双大喬"
+      ],
+      "heroes": [
+        "do-uy:皇甫宏",
+        "hero:ton-thuong-huong",
+        "hero:co-dai-kieu"
+      ],
+      "tacticsJa": [
+        [
+          "志操堅固",
+          "草船借箭"
+        ],
+        [
+          "剣鋒破砕",
+          "摧鋒断刃"
+        ],
+        [
+          "魅惑",
+          "精魚鱗陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:lam-nguy-cuu-chu",
+          "tactic:thuyen-co-muon-ten"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:thoi-phong-doan-nhan"
+        ],
+        [
+          "tactic:me-hoac",
+          "tactic:ngu-lan-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba. 精魚鱗陣 ghi theo ID gốc Ngư Lân Trận."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "周馬槍",
+      "heroesJa": [
+        "SP馬超",
+        "周劭",
+        "SP皇甫嵩"
+      ],
+      "heroes": [
+        "hero:sp-ma-sieu",
+        "do-uy:周劭",
+        "hero:sp-hoang-phu-tung"
+      ],
+      "tacticsJa": [
+        [
+          "剣鋒破砕",
+          "摧鋒断刃"
+        ],
+        [
+          "志操堅固",
+          "解煩兵"
+        ],
+        [
+          "草船借箭",
+          "精魚鱗陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:thoi-phong-doan-nhan"
+        ],
+        [
+          "tactic:lam-nguy-cuu-chu",
+          "tactic:giai-phien-ve"
+        ],
+        [
+          "tactic:thuyen-co-muon-ten",
+          "tactic:ngu-lan-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; SGSDeck có SP Mã Siêu + SP Hoàng Phủ Tung với Hứa Du (yxms-042-皇馬槍, s26-huangma-*). 精魚鱗陣 ghi theo ID gốc Ngư Lân Trận."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "太師弓",
+      "heroesJa": [
+        "SP盧植",
+        "SP貂蝉",
+        "蕭芷"
+      ],
+      "heroes": [
+        "hero:sp-lo-thuc",
+        "hero:sp-dieu-thuyen",
+        "do-uy:蕭芷"
+      ],
+      "tacticsJa": [
+        [
+          "剛柔一体",
+          "雁行陣"
+        ],
+        [
+          "玄虚深蔵",
+          "戮力同心"
+        ],
+        [
+          "先駆死士",
+          "因利制権"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:cuong-nhu-ket-hop",
+          "tactic:nhan-hanh-tran"
+        ],
+        [
+          "tactic:tham-tang-nhuoc-hu",
+          "tactic:dong-long-hop-suc"
+        ],
+        [
+          "tactic:tien-dang-tu-si",
+          "tactic:nhan-loi-che-quyen"
+        ]
+      ],
+      "match": {
+        "kind": "heroes-only",
+        "recommendedTeamId": "yxms-044-拒馬弓"
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không khớp theo tên: yxms-045-太師弓 của SGSDeck là SP Lô Thực + SP Điêu Thuyền + SP Đổng Trác (khác bộ ba). Bộ ba Kazten khớp yxms-044-拒馬弓; hai tướng đổi chỗ Nhạn Hành Trận và Nhân Lợi Chế Quyền. SGSDeck xếp T0.5."
+    },
+    {
+      "tierJa": "T0",
+      "teamNameJa": "太熊弓",
+      "heroesJa": [
+        "SP董卓",
+        "SP貂蝉",
+        "蕭芷"
+      ],
+      "heroes": [
+        "hero:sp-dong-trac",
+        "hero:sp-dieu-thuyen",
+        "do-uy:蕭芷"
+      ],
+      "tacticsJa": [
+        [
+          "雁行陣",
+          "上兵破謀"
+        ],
+        [
+          "玄虚深蔵",
+          "戮力同心"
+        ],
+        [
+          "先駆死士",
+          "剛柔一体"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:nhan-hanh-tran",
+          "tactic:thuong-binh-phat-muu"
+        ],
+        [
+          "tactic:tham-tang-nhuoc-hu",
+          "tactic:dong-long-hop-suc"
+        ],
+        [
+          "tactic:tien-dang-tu-si",
+          "tactic:cuong-nhu-ket-hop"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-045-太師弓 (SGSDeck) có SP Lô Thực thay Tiêu Chỉ."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "五謀騎",
+      "heroesJa": [
+        "SP郭嘉",
+        "荀攸",
+        "楊琪"
+      ],
+      "heroes": [
+        "hero:sp-quach-gia",
+        "hero:tuan-du",
+        "do-uy:楊琪"
+      ],
+      "tacticsJa": [
+        [
+          "昏迷乱擾",
+          "上兵破謀"
+        ],
+        [
+          "竭力佐謀",
+          "刮骨療毒"
+        ],
+        [
+          "霊気一動",
+          "戮力同心"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:thuong-binh-phat-muu"
+        ],
+        [
+          "tactic:doc-suc-tinh-ke",
+          "tactic:cat-xuong-tri-doc"
+        ],
+        [
+          "tactic:nhanh-tri-dong-nao",
+          "tactic:dong-long-hop-suc"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-029-楊琪五謀臣 dùng Giả Hủ thay SP Quách Gia."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "女王盾",
+      "heroesJa": [
+        "司馬懿",
+        "蕭芷",
+        "満寵"
+      ],
+      "heroes": [
+        "hero:tu-ma-y",
+        "do-uy:蕭芷",
+        "hero:man-sung"
+      ],
+      "tacticsJa": [
+        [
+          "神算鬼謀",
+          "衆志成城"
+        ],
+        [
+          "魅惑",
+          "独行赴闘"
+        ],
+        [
+          "形一陣",
+          "伏機即動"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:dung-vo-than-thong",
+          "tactic:toan-quan-dong-long"
+        ],
+        [
+          "tactic:me-hoac",
+          "tactic:doc-hanh-pho-dau"
+        ],
+        [
+          "tactic:hinh-nhat-tran",
+          "tactic:duong-suc-doi-chien"
+        ]
+      ],
+      "match": {
+        "kind": "heroes-only",
+        "recommendedTeamId": "yxms-024-蕭芷太尉盾"
+      },
+      "reviewStatus": "reviewed",
+      "note": "Khác chiến pháp: Tư Mã Ý: Kazten Dụng Võ Thần Thông / SGSDeck Hãn Thiên Sí Địa. SGSDeck xếp T0.5. Mức heroes-only dựa vào ánh xạ derived/medium 神算鬼謀 → 用武通神 (truyền thừa của Tư Mã Ý); nếu 神算鬼謀 thực ra là 熯天熾地 (tên Nhật 燎原之火 theo lookup-ja) thì là exact, không ảnh hưởng việc gán tier."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "曹魏騎",
+      "heroesJa": [
+        "夏侯惇",
+        "夏侯淵",
+        "沈姮"
+      ],
+      "heroes": [
+        "hero:ha-hau-don",
+        "hero:ha-hau-uyen",
+        "do-uy:沈姮"
+      ],
+      "tacticsJa": [
+        [
+          "西涼鉄騎",
+          "鉄騎駆馳"
+        ],
+        [
+          "裸衣血戦",
+          "百騎劫営"
+        ],
+        [
+          "竭力佐謀",
+          "上兵破謀"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:tay-luong-thiet-ky",
+          "tactic:thiet-ky-khu-tri"
+        ],
+        [
+          "tactic:loa-y-huyet-chien",
+          "tactic:bach-ky-kiep-doanh"
+        ],
+        [
+          "tactic:doc-suc-tinh-ke",
+          "tactic:thuong-binh-phat-muu"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "反惇盾",
+      "heroesJa": [
+        "陳翊",
+        "夏侯惇",
+        "満寵"
+      ],
+      "heroes": [
+        "do-uy:陳翊",
+        "hero:ha-hau-don",
+        "hero:man-sung"
+      ],
+      "tacticsJa": [
+        [
+          "奇計良謀",
+          "横戈躍馬"
+        ],
+        [
+          "文武両道",
+          "衆妙奇計"
+        ],
+        [
+          "陥陣営",
+          "非攻制勝"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:ke-hay-muu-gioi",
+          "tactic:hoanh-qua-duoc-ma"
+        ],
+        [
+          "tactic:van-vo-song-toan",
+          "tactic:chung-dong-van-ke"
+        ],
+        [
+          "tactic:ham-tran-doanh",
+          "tactic:khong-danh-ma-thang"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-031-惇惇盾 và s26-dundun-dun dùng Tào Tháo thay Trần Dực."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "周蜀弓",
+      "heroesJa": [
+        "諸葛亮",
+        "龐統",
+        "周劭"
+      ],
+      "heroes": [
+        "hero:gia-cat-luong",
+        "hero:bang-thong",
+        "do-uy:周劭"
+      ],
+      "tacticsJa": [
+        [
+          "草船借箭",
+          "衆志成城"
+        ],
+        [
+          "太平道法",
+          "刮目相待"
+        ],
+        [
+          "昏迷乱擾",
+          "剣鋒破砕"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:thuyen-co-muon-ten",
+          "tactic:toan-quan-dong-long"
+        ],
+        [
+          "tactic:thai-binh-dao-phap",
+          "tactic:si-biet-tam-nhat"
+        ],
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:duong-phong-thoi-quyet"
+        ]
+      ],
+      "match": {
+        "kind": "heroes-only",
+        "recommendedTeamId": "yxms-010-周劭蜀弓"
+      },
+      "reviewStatus": "reviewed",
+      "note": "Khác chiến pháp: Gia Cát Lượng: Kazten Thuyền Cỏ Mượn Tên, Toàn Quân Đồng Lòng / SGSDeck Cắt Xương Trị Độc, Nhạn Hành Trận; Chu Thiệu: Kazten Đoạt Hồn Hiệp Phách / SGSDeck Thừa Địch Bất Ngu. SGSDeck xếp T0."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "西翊弓",
+      "heroesJa": [
+        "諸葛亮",
+        "龐統",
+        "陳翊"
+      ],
+      "heroes": [
+        "hero:gia-cat-luong",
+        "hero:bang-thong",
+        "do-uy:陳翊"
+      ],
+      "tacticsJa": [
+        [
+          "先駆死士",
+          "雁行陣"
+        ],
+        [
+          "太平道法",
+          "衆志成城"
+        ],
+        [
+          "剣鋒破砕",
+          "戮力同心"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:tien-dang-tu-si",
+          "tactic:nhan-hanh-tran"
+        ],
+        [
+          "tactic:thai-binh-dao-phap",
+          "tactic:toan-quan-dong-long"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:dong-long-hop-suc"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-010-周劭蜀弓 dùng Chu Thiệu thay Trần Dực."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "雑草魂",
+      "heroesJa": [
+        "姜維",
+        "蕭芷",
+        "諸葛亮"
+      ],
+      "heroes": [
+        "hero:khuong-duy",
+        "do-uy:蕭芷",
+        "hero:gia-cat-luong"
+      ],
+      "tacticsJa": [
+        [
+          "戮力同心",
+          "上兵破謀"
+        ],
+        [
+          "雁行陣",
+          "先駆死士"
+        ],
+        [
+          "剣鋒破砕",
+          "刮骨療毒"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:dong-long-hop-suc",
+          "tactic:thuong-binh-phat-muu"
+        ],
+        [
+          "tactic:nhan-hanh-tran",
+          "tactic:tien-dang-tu-si"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:cat-xuong-tri-doc"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "needs-review",
+      "note": "Ô phó tướng 2 không chắc: bảng mục lục Kazten ghi SP Pháp Chính, ảnh đội và văn bài ghi Gia Cát Lượng (bảng lấy Gia Cát Lượng). Không dùng để gán tier tới khi xác minh."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "東呉弓",
+      "heroesJa": [
+        "周瑜",
+        "SP呂蒙",
+        "周劭"
+      ],
+      "heroes": [
+        "hero:chu-du",
+        "hero:sp-lu-mong",
+        "do-uy:周劭"
+      ],
+      "tacticsJa": [
+        [
+          "昏迷乱擾",
+          "風助火勢"
+        ],
+        [
+          "雁行陣",
+          "深計遠略"
+        ],
+        [
+          "剛柔一体",
+          "衆志成城"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:phong-tro-hoa-the"
+        ],
+        [
+          "tactic:nhan-hanh-tran",
+          "tactic:tham-muu-vien-lu"
+        ],
+        [
+          "tactic:cuong-nhu-ket-hop",
+          "tactic:toan-quan-dong-long"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-032-嘟嘟弓周瑜 dùng Lục Tốn thay Chu Thiệu."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "都堅弓",
+      "heroesJa": [
+        "SP周瑜",
+        "SP呂蒙",
+        "蕭芷"
+      ],
+      "heroes": [
+        "hero:sp-chu-du",
+        "hero:sp-lu-mong",
+        "do-uy:蕭芷"
+      ],
+      "tacticsJa": [
+        [
+          "文武両道",
+          "衆志成城"
+        ],
+        [
+          "雁行陣",
+          "戮力同心"
+        ],
+        [
+          "鈍兵挫鋭",
+          "先駆死士"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:van-vo-song-toan",
+          "tactic:toan-quan-dong-long"
+        ],
+        [
+          "tactic:nhan-hanh-tran",
+          "tactic:dong-long-hop-suc"
+        ],
+        [
+          "tactic:toa-nhue",
+          "tactic:tien-dang-tu-si"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; yxms-033-嘟嘟弓sp周瑜 dùng Lục Tốn thay Tiêu Chỉ."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "至尊喬弓",
+      "heroesJa": [
+        "孫権",
+        "無双大喬",
+        "皇甫宏"
+      ],
+      "heroes": [
+        "hero:ton-quyen",
+        "hero:co-dai-kieu",
+        "do-uy:皇甫宏"
+      ],
+      "tacticsJa": [
+        [
+          "剣鋒破砕",
+          "兵無常勢"
+        ],
+        [
+          "魅惑",
+          "深計遠略"
+        ],
+        [
+          "志操堅固",
+          "精鋒矢陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:me-hoac",
+          "tactic:tham-muu-vien-lu"
+        ],
+        [
+          "tactic:lam-nguy-cuu-chu",
+          "tactic:phong-thi-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba. 精鋒矢陣 ghi theo ID gốc Phong Thỉ Trận."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "甘太徐",
+      "heroesJa": [
+        "甘寧",
+        "太史慈",
+        "徐彦"
+      ],
+      "heroes": [
+        "hero:cam-ninh",
+        "hero:thai-su-tu",
+        "do-uy:徐彥"
+      ],
+      "tacticsJa": [
+        [
+          "草船借箭",
+          "錦帆軍"
+        ],
+        [
+          "文武両道",
+          "摧鋒断刃"
+        ],
+        [
+          "剣鋒破砕",
+          "志操堅固"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:thuyen-co-muon-ten",
+          "tactic:quan-cam-pham"
+        ],
+        [
+          "tactic:van-vo-song-toan",
+          "tactic:thoi-phong-doan-nhan"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:lam-nguy-cuu-chu"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; SGSDeck có Cam Ninh + Thái Sử Từ với SP Lữ Mông, Chu Thái hoặc Trình Phổ."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "孫熊騎",
+      "heroesJa": [
+        "孫権",
+        "周泰",
+        "馬嬋"
+      ],
+      "heroes": [
+        "hero:ton-quyen",
+        "hero:chu-thai",
+        "do-uy:馬嬋"
+      ],
+      "tacticsJa": [
+        [
+          "剣鋒破砕",
+          "兵無常勢"
+        ],
+        [
+          "鋒矢陣",
+          "合軍集衆"
+        ],
+        [
+          "志操堅固",
+          "飛熊軍"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:binh-vo-thuong-the"
+        ],
+        [
+          "tactic:phong-thi-tran",
+          "tactic:hop-quan-tu-chung"
+        ],
+        [
+          "tactic:lam-nguy-cuu-chu",
+          "tactic:phi-hung-quan"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba; Tôn Quyền + Chu Thái đi với Tô Tín (yxms-035-蘇信孫權騎), Lăng Thống (yxms-040-孫權吳騎) hoặc Thái Sử Từ (s26-sun-tai-zhou), không có Mã Thiền."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "妖精盾",
+      "heroesJa": [
+        "周劭",
+        "張角",
+        "左慈"
+      ],
+      "heroes": [
+        "do-uy:周劭",
+        "hero:truong-giac",
+        "hero:ta-tu"
+      ],
+      "tacticsJa": [
+        [
+          "藤甲兵",
+          "武鋒陣"
+        ],
+        [
+          "太平道法",
+          "刮目相待"
+        ],
+        [
+          "伏機即動",
+          "刮骨療毒"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:linh-giap-may",
+          "tactic:vo-phong-tran"
+        ],
+        [
+          "tactic:thai-binh-dao-phap",
+          "tactic:si-biet-tam-nhat"
+        ],
+        [
+          "tactic:duong-suc-doi-chien",
+          "tactic:cat-xuong-tri-doc"
+        ]
+      ],
+      "match": {
+        "kind": "heroes-only",
+        "recommendedTeamId": "yxms-050-千機盾"
+      },
+      "reviewStatus": "reviewed",
+      "note": "Khác chiến pháp: Chu Thiệu: Kazten Lính Giáp Mây / SGSDeck Thuyền Cỏ Mượn Tên; Tả Từ: Kazten Dưỡng Sức Đợi Chiến / SGSDeck Dốc Sức Tính Kế. SGSDeck xếp T0.5."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "温翊弓",
+      "heroesJa": [
+        "陳翊",
+        "呂布",
+        "許攸"
+      ],
+      "heroes": [
+        "do-uy:陳翊",
+        "hero:lu-bo",
+        "hero:hua-du"
+      ],
+      "tacticsJa": [
+        [
+          "錦帆軍",
+          "草船借箭"
+        ],
+        [
+          "剣鋒破砕",
+          "摧鋒断刃"
+        ],
+        [
+          "志操堅固",
+          "精魚鱗陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:quan-cam-pham",
+          "tactic:thuyen-co-muon-ten"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:thoi-phong-doan-nhan"
+        ],
+        [
+          "tactic:lam-nguy-cuu-chu",
+          "tactic:ngu-lan-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "needs-review",
+      "note": "Ô phó tướng 2 không chắc: nhãn ảnh đội ghi Tả Từ, chân dung, mục lục và văn bài là Hứa Du (bảng lấy Hứa Du). yxms-053-陳熙溫侯弓 dùng Trần Hy (陳熙), không phải Trần Dực (陳翊), nên không gộp. Không dùng để gán tier tới khi xác minh."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "遼喬槍",
+      "heroesJa": [
+        "無双大喬",
+        "張遼",
+        "皇甫宏"
+      ],
+      "heroes": [
+        "hero:co-dai-kieu",
+        "hero:truong-lieu",
+        "do-uy:皇甫宏"
+      ],
+      "tacticsJa": [
+        [
+          "魅惑",
+          "草船借箭"
+        ],
+        [
+          "剣鋒破砕",
+          "摧鋒断刃"
+        ],
+        [
+          "非攻制勝",
+          "潜龍陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:me-hoac",
+          "tactic:thuyen-co-muon-ten"
+        ],
+        [
+          "tactic:duong-phong-thoi-quyet",
+          "tactic:thoi-phong-doan-nhan"
+        ],
+        [
+          "tactic:khong-danh-ma-thang",
+          "tactic:tiem-long-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "needs-review",
+      "note": "Đội không có trong bảng mục lục T0.5; chủ tướng lấy theo ảnh (tướng trên cùng) và văn bài. Không dùng để gán tier tới khi xác minh."
+    },
+    {
+      "tierJa": "T0.5",
+      "teamNameJa": "女堅弓",
+      "heroesJa": [
+        "蕭芷",
+        "SP貂蝉",
+        "王異"
+      ],
+      "heroes": [
+        "do-uy:蕭芷",
+        "hero:sp-dieu-thuyen",
+        "hero:vuong-di"
+      ],
+      "tacticsJa": [
+        [
+          "剛柔一体",
+          "先駆死士"
+        ],
+        [
+          "玄虚深蔵",
+          "戮力同心"
+        ],
+        [
+          "昏迷乱擾",
+          "潜龍陣"
+        ]
+      ],
+      "tactics": [
+        [
+          "tactic:cuong-nhu-ket-hop",
+          "tactic:tien-dang-tu-si"
+        ],
+        [
+          "tactic:tham-tang-nhuoc-hu",
+          "tactic:dong-long-hop-suc"
+        ],
+        [
+          "tactic:doat-hon-hiep-phach",
+          "tactic:tiem-long-tran"
+        ]
+      ],
+      "match": {
+        "kind": "none",
+        "recommendedTeamId": null
+      },
+      "reviewStatus": "reviewed",
+      "note": "Không có hàng PK-S26 cùng bộ ba."
+    }
+  ]
+}

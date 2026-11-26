@@ -1,8 +1,10 @@
 // Dữ liệu mẫu Đội cộng đồng + quản trị cho các công cụ chụp trang thật với `/api/**` giả lập
 // (`capture-community.mjs` dựng artboard, `compare-moi.mjs` so ảnh 28 artboard Thiết kế mới). Đội mẫu lấy tướng +
 // chiến pháp thật của Đội khác (id catalog) để thẻ hiện tên và chân dung đúng.
-export const SEASON = { id: 's1', labelVi: 'Mùa 1', labelZh: '第一赛季', openedAt: '2026-10-01T00:00:00.000Z' };
-export const SEASONS = { open: SEASON, seasons: [SEASON] };
+// Mùa hiện hành (`current`) không đứng đầu danh mục, như worker (thứ tự picker nguồn, OG trước).
+export const FIRST_SEASON = { id: 'og-兵演春秋', labelVi: 'OG · Binh Diễn Xuân Thu', labelZh: 'OG · 兵演春秋' };
+export const SEASON = { id: 'pk-s27', labelVi: 'PK-S27 · Hán Diễm Trường Minh', labelZh: 'PK-S27 · 汉艳长明' };
+export const SEASONS = { current: SEASON.id, seasons: [FIRST_SEASON, SEASON] };
 export const AUTHORS = [
   { id: 'u2', name: 'Gia Cát', image: null }, { id: 'u3', name: 'Quan Vũ', image: null }, { id: 'u7', name: 'Tiểu Kiều', image: null },
 ];
@@ -34,7 +36,7 @@ export const ANALYSIS = {
   substitutes: 'Thiếu SP Tuân Úc: dùng Tuân Úc thường, đổi Uy Mưu Vô Địch sang Lâm Nguy Cứu Chủ.',
 };
 export const teamDetail = (index, overrides = {}) => ({
-  ...teamItem(index), status: 'approved', heroKey: [...SAMPLES[index][1]].sort().join(','), myVote: 1, seasonOpen: true,
+  ...teamItem(index), status: 'approved', heroKey: [...SAMPLES[index][1]].sort().join(','), myVote: 1,
   analysis: ANALYSIS, ...overrides,
 });
 export const REPORTS = [

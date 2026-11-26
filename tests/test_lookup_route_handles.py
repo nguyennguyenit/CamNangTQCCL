@@ -41,6 +41,8 @@ def make_data(root: Path, *, heroes=None, books=None, tactics=None, generation=G
         "advisors": [{"id": "advisor:lo-tuc", "nameVi": "Lỗ Túc"}],
         "troopMods": [{"id": "troop-mod:dan-duong", "nameVi": "Đan Dương Binh"}],
         "buildings": [{"id": "building:bat-tran-do", "nameVi": "Bát Trận Đồ"}],
+        "qilueStrategies": [{"id": "qilue-strategy:cuong-cong", "nameVi": "Cường Công"}],
+        "qilueCards": [{"id": "qilue-card:bo-tri-thap-dien", "nameVi": "Bố Trí Thập Diện"}],
     })
     write_json(data / "books-dict.json", books if books is not None else [
         {"id": "book:binh-hanh-quy-dao", "viet": "Binh Hành Quỷ Đạo", "chinese": "兵行诡道"},
@@ -95,6 +97,66 @@ class LookupLedgerTest(unittest.TestCase):
         self.assertEqual([i for i, _ in corpus["groups"]["books"]], ["book:binh-hanh-quy-dao", "book:han-viet-thu"])
         every = [i for items in corpus["groups"].values() for i, _ in items]
         self.assertFalse([i for i in every if i.startswith("equipment-special:")])
+
+    def test_qilue_group_lists_strategies_then_cards_under_two_kinds(self):
+        self.assertEqual(lrh.GROUP_KINDS["qilue"], ("qilue-strategy", "qilue-card"))
+        self.assertTrue(all(isinstance(kinds, tuple) and kinds for kinds in lrh.GROUP_KINDS.values()))
+        corpus = lrh.load_corpus(self.data)
+        self.assertEqual(corpus["groups"]["qilue"], [("qilue-strategy:cuong-cong", "Cường Công"), ("qilue-card:bo-tri-thap-dien", "Bố Trí Thập Diện")])
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        self.assertEqual(self.handles()["qilue"], {"qilue-strategy:cuong-cong": "cuong-cong", "qilue-card:bo-tri-thap-dien": "bo-tri-thap-dien"})
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_corpus_rejects_an_id_of_another_kind_and_a_missing_catalog_key(self):
+        catalog = json.loads((self.data / "lookup-catalog.json").read_text(encoding="utf-8"))
+        wrong = copy.deepcopy(catalog)
+        wrong["qilueStrategies"].append({"id": "tactic:cuong-cong", "nameVi": "Cường Công"})
+        write_json(self.data / "lookup-catalog.json", wrong)
+        with self.assertRaisesRegex(lrh.LookupRouteHandleError, "qilue.*tactic:cuong-cong"):
+            lrh.load_corpus(self.data)
+        for key in ("qilueStrategies", "qilueCards"):
+            missing = copy.deepcopy(catalog)
+            missing.pop(key)
+            write_json(self.data / "lookup-catalog.json", missing)
+            with self.subTest(key=key), self.assertRaisesRegex(lrh.LookupRouteHandleError, key):
+                lrh.load_corpus(self.data)
+
+    def drop_group(self, group, *, handles=True, retired=True, redigest=True):
+        """Ledger written before `group` existed: the section is absent and the digest covers only the others."""
+        def mutate(ledger):
+            if handles:
+                ledger["handles"].pop(group)
+            if retired:
+                ledger["retired"].pop(group)
+        self.edit_ledger(mutate, redigest=redigest)
+
+    def test_write_adds_a_known_group_missing_from_an_older_ledger(self):
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        before = self.handles()
+        self.drop_group("qilue")
+        self.assertEqual(self.run_cli("--check")[0], 1)  # --check never migrates
+        self.assertEqual(self.run_cli("--write")[0], 0)
+        self.assertEqual(self.handles(), before)
+        self.assertEqual(json.loads(self.ledger.read_text(encoding="utf-8"))["retired"]["qilue"], {})
+        self.assertEqual(self.run_cli("--check")[0], 0)
+
+    def test_write_refuses_other_edits_of_a_ledger_missing_a_group(self):
+        cases = {
+            "edited by hand": lambda: (self.drop_group("qilue"), self.edit_ledger(lambda l: l["handles"]["heroes"].update({"hero:dang-ai": "hand-edited"}))),
+            "groups must be exactly": lambda: self.drop_group("qilue", retired=False),
+            "groups must be exactly ": lambda: self.drop_group("qilue", handles=False),
+            "groups must be exactly  ": lambda: self.edit_ledger(lambda l: (l["handles"].update({"other": {}}), l["retired"].update({"other": {}})), redigest=True),
+        }
+        for label, damage in cases.items():
+            with self.subTest(label.strip()):
+                self.ledger.unlink(missing_ok=True)
+                self.assertEqual(self.run_cli("--write")[0], 0)
+                damage()
+                tampered = self.ledger.read_bytes()
+                code, _, err = self.run_cli("--write")
+                self.assertEqual(code, 1)
+                self.assertIn(label.strip(), err)
+                self.assertEqual(self.ledger.read_bytes(), tampered)
 
     def test_book_ids_are_read_from_rows_never_derived_from_names(self):
         self.assertEqual(self.run_cli("--write")[0], 0)
@@ -288,10 +350,10 @@ class LookupLedgerTest(unittest.TestCase):
 
     def test_merged_tactic_gets_one_301_per_locale_and_dropped_one_none(self):
         self.merge_tactic()
+        self.assertEqual(lrh.REDIRECT_LOCALE_PREFIXES, ("", "/zh", "/ja"))
         self.assertEqual(self.redirects.read_text(encoding="utf-8"), "\n".join([
             lrh.REDIRECTS_HEADER,
-            "/tra-cuu/chien-phap/cu/ /tra-cuu/chien-phap/binh-thanh/ 301",
-            "/zh/tra-cuu/chien-phap/cu/ /zh/tra-cuu/chien-phap/binh-thanh/ 301",
+            *(f"{prefix}/tra-cuu/chien-phap/cu/ {prefix}/tra-cuu/chien-phap/binh-thanh/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES),
         ]) + "\n")
         self.assertEqual(self.run_cli("--check")[0], 0)
 
@@ -300,7 +362,7 @@ class LookupLedgerTest(unittest.TestCase):
         self.write_registry("og-兵演春秋")
         self.assertEqual(self.run_cli("--write")[0], 0)
         lines = self.redirects.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(lines[-2:], ["/doi-chuan/og/ /doi-chuan/ 301", "/zh/doi-chuan/og/ /zh/doi-chuan/ 301"])
+        self.assertEqual(lines[-3:], [f"{prefix}/doi-chuan/og/ {prefix}/doi-chuan/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES])
         self.assertEqual(self.run_cli("--check")[0], 0)
         # The default season changes: the committed rule is stale until regenerated, then it follows the new season.
         self.write_registry("pk-s24")
@@ -309,7 +371,7 @@ class LookupLedgerTest(unittest.TestCase):
         self.assertIn("is stale; run --write", err)
         self.assertEqual(self.run_cli("--write")[0], 0)
         lines = self.redirects.read_text(encoding="utf-8").splitlines()
-        self.assertEqual(lines[-2:], ["/doi-chuan/pk-s24/ /doi-chuan/ 301", "/zh/doi-chuan/pk-s24/ /zh/doi-chuan/ 301"])
+        self.assertEqual(lines[-3:], [f"{prefix}/doi-chuan/pk-s24/ {prefix}/doi-chuan/ 301" for prefix in lrh.REDIRECT_LOCALE_PREFIXES])
         self.assertNotIn("/doi-chuan/og/ /doi-chuan/ 301", lines)
         self.assertEqual(self.run_cli("--check")[0], 0)
 
@@ -354,7 +416,7 @@ class RealLedgerTest(unittest.TestCase):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         self.assertEqual(lrh.ledger_problems(ledger, corpus), [])
         counts = {group: len(items) for group, items in ledger["handles"].items()}
-        self.assertEqual(sum(counts.values()), len(corpus["groups"]["heroes"]) + len(corpus["groups"]["tactics"]) + sum(len(corpus["groups"][g]) for g in ("equipment", "advisors", "troop-mods", "buildings", "books")))
+        self.assertEqual(sum(counts.values()), len(corpus["groups"]["heroes"]) + len(corpus["groups"]["tactics"]) + sum(len(corpus["groups"][g]) for g in ("equipment", "advisors", "troop-mods", "buildings", "books", "qilue")))
         self.assertEqual(counts["heroes"], len(json.loads((REPO_ROOT / "data/heroes-dict.json").read_bytes())))
 
     def test_committed_bytes_are_canonical(self):
@@ -365,14 +427,70 @@ class RealLedgerTest(unittest.TestCase):
         ledger = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
         former = lrh.former_owner_map(REPO_ROOT / "data")
         season = lrh.season_redirect_lines(lrh.DEFAULT_RECOMMENDED_ROOT)
-        self.assertEqual(len(season), 2, "the pinned registry has a current season, so one rule per locale")
+        self.assertEqual(len(season), len(lrh.REDIRECT_LOCALE_PREFIXES), "the pinned registry has a current season, so one rule per locale")
         self.assertEqual(lrh.DEFAULT_REDIRECTS_PATH.read_bytes(), lrh.redirects_bytes(former, ledger, season))
         tactics = json.loads((REPO_ROOT / "data/tactics.json").read_bytes())
         pairs = sum(len(row["lookup"]["formerIds"]) for row in tactics)
         rules = [line for line in lrh.DEFAULT_REDIRECTS_PATH.read_text(encoding="utf-8").splitlines() if not line.startswith("#")]
-        self.assertEqual(len(rules), 2 * pairs + 2)
+        self.assertEqual(len(rules), len(lrh.REDIRECT_LOCALE_PREFIXES) * (pairs + 1))
         self.assertTrue(all(line.endswith("/ 301") for line in rules))
 
+
+
+class RealLedgerQilueMigrationTest(unittest.TestCase):
+    """The committed 7-group ledger gains the Kỳ lược group on `--write` without touching a frozen slug."""
+
+    def setUp(self):
+        from pipeline import build_unified_lookup as lookup
+        self.tmp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.tmp, True)
+        self.data = self.tmp / "data"
+        for name in ("lookup-manifest.json", "heroes-dict.json", "tactics.json", "lookup-catalog.json", "books-dict.json"):
+            self.data.mkdir(exist_ok=True)
+            shutil.copy(REPO_ROOT / "data" / name, self.data / name)
+        catalog = json.loads((self.data / "lookup-catalog.json").read_bytes())
+        if "qilueStrategies" not in catalog:  # data/ chưa promote nhóm Kỳ lược: thêm đúng hàng client vào bản sao
+            strategies, cards = lookup._client_qilue(json.loads((REPO_ROOT / "pipeline" / "lookup-client-tactics.json").read_bytes()))
+            catalog.update(qilueStrategies=strategies, qilueCards=cards)
+            write_json(self.data / "lookup-catalog.json", catalog)
+        self.ledger = self.tmp / "ledger.json"
+        self.before = json.loads(lrh.DEFAULT_LEDGER_PATH.read_bytes())
+        if "qilue" in self.before["handles"]:  # ledger đã có nhóm Kỳ lược: dựng lại đúng dạng 7 nhóm trước đó
+            for section in ("handles", "retired"):
+                self.before[section].pop("qilue")
+            self.before["handlesSha256"] = lrh.handles_digest(self.before["handles"], self.before["retired"])
+        self.ledger.write_bytes(lrh.ledger_bytes(self.before))
+        self.redirects = self.tmp / "_redirects"
+        shutil.copy(lrh.DEFAULT_REDIRECTS_PATH, self.redirects)
+
+    def run_cli(self, *args):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = lrh.main([*args, "--data-dir", str(self.data), "--ledger", str(self.ledger), "--redirects", str(self.redirects)])
+        return code, err.getvalue()
+
+    def test_write_appends_45_qilue_handles_and_keeps_every_frozen_slug(self):
+        self.assertEqual(set(self.before["handles"]), set(lrh.GROUP_KINDS) - {"qilue"})
+        code, err = self.run_cli("--write")
+        self.assertEqual(code, 0, err)
+        after = json.loads(self.ledger.read_bytes())
+        qilue = after["handles"].pop("qilue")
+        self.assertEqual(after["retired"].pop("qilue"), {})
+        self.assertEqual((after["handles"], after["retired"]), (self.before["handles"], self.before["retired"]))
+        self.assertEqual(len(qilue), 45)
+        self.assertEqual(qilue["qilue-card:bo-tri-thap-dien"], "bo-tri-thap-dien")
+        self.assertEqual(qilue["qilue-strategy:cuong-cong"], "cuong-cong")
+        self.assertEqual(self.run_cli("--check"), (0, ""))
+
+    def test_write_still_refuses_a_hand_edited_committed_ledger(self):
+        ledger = json.loads(self.ledger.read_bytes())
+        ledger["handles"]["heroes"]["hero:luu-bi"] = "luu-bi-sua-tay"
+        self.ledger.write_text(json.dumps(ledger, ensure_ascii=False), encoding="utf-8")
+        tampered = self.ledger.read_bytes()
+        code, err = self.run_cli("--write")
+        self.assertEqual(code, 1)
+        self.assertIn("edited by hand", err)
+        self.assertEqual(self.ledger.read_bytes(), tampered)
 
 
 class RealBooksRenameTest(unittest.TestCase):

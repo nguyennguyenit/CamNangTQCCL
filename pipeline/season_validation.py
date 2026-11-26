@@ -1,8 +1,11 @@
 """Pure canonical fingerprints and seasonal configuration/link contracts."""
 import hashlib
+import re
 
 from pipeline.common import canonical_json
 
+# Mã thẻ kỳ lược của catalog Tra cứu (`qilue-card:<slug>`); cùng mẫu với `QILUE_CARD_ID` của js/season-context.js.
+QILUE_CARD_ID = re.compile(r'qilue-card:[a-z0-9]+(?:-[a-z0-9]+)*')
 CONFIG_FIELDS = ('schemaVersion', 'id', 'teamId', 'scenarioId', 'rulesetId', 'unitTypes', 'heroSlots', 'requirements', 'effectBundles')
 
 
@@ -31,12 +34,18 @@ def config_fingerprint(config):
     return fingerprint({key: config[key] for key in CONFIG_FIELDS})
 
 
+# Trường định danh/tọa độ và projection tính từ catalog (mã Thẻ Kỳ Lược Cùng Tồn) không phải nội dung nguồn:
+# bỏ khỏi fingerprint để bản đồ record đã duyệt chỉ đổi khi chữ nguồn đổi. Giữ cùng tập với `contentFingerprintProjection`
+# của js/season-context.js.
+FINGERPRINT_EXCLUDED = ('sourceLocator', 'contentFingerprint', 'recordId', 'strategyCardIds')
+
+
 def content_fingerprint(value):
     def project(item):
         if isinstance(item, list):
             return [project(child) for child in item]
         if isinstance(item, dict):
-            return {key: project(child) for key, child in item.items() if key not in ('sourceLocator', 'contentFingerprint', 'recordId')}
+            return {key: project(child) for key, child in item.items() if key not in FINGERPRINT_EXCLUDED}
         return item
     return fingerprint(project(value))
 
@@ -342,8 +351,25 @@ def validate_source_body(body,seen_records):
     teams=array(payload['teams'])
     if not teams:
         raise ValueError('empty source group')
+    # Bảng 10 cột: đội mang cải tạo chiến pháp binh chủng. Bảng 11 cột: đội mang Thẻ Kỳ Lược, mỗi tướng
+    # mang Trang Bị. Một nhóm đến từ đúng một bảng nên mọi đội cùng một dạng, không trộn trường hai dạng.
+    team_fields=('recordId','sourceLocator','contentFingerprint','teamNameRaw','teamName','heroes')
+    effect_fields=('unitTacticEffectsRaw','strategyCardsRaw')
+    shapes=set()
     for team in teams:
-        record(team,('recordId','sourceLocator','contentFingerprint','teamNameRaw','teamName','unitTacticEffectsRaw','heroes'))
+        record(team,team_fields,effect_fields+('strategyCardIds',))
+        present=[field for field in effect_fields if field in team]
+        if len(present)!=1:
+            raise ValueError('source team requires exactly one team effect field')
+        # Mã Thẻ Kỳ Lược (projection của `strategyCardsRaw`): chỉ ở đội bảng 11 cột, mảng mã `qilue-card:*` không trùng.
+        # Việc mã khớp chữ nguồn và catalog do `pipeline/coexist_qilue.check_payload_cards` kiểm lúc publish.
+        if 'strategyCardIds' in team:
+            cards=team['strategyCardIds']
+            if (present[0]!='strategyCardsRaw' or not isinstance(team['strategyCardsRaw'],str) or not team['strategyCardsRaw'].strip()
+                    or not isinstance(cards,list) or not cards or not all(isinstance(card,str) and QILUE_CARD_ID.fullmatch(card) for card in cards)
+                    or len(set(cards))!=len(cards)):
+                raise ValueError('invalid source strategy card ids')
+        shapes.add(present[0])
         key=identifier(team['recordId'])
         if key in seen_records:
             raise ValueError('duplicate source team identity')
@@ -351,17 +377,21 @@ def validate_source_body(body,seen_records):
         locator=record(team['sourceLocator'],('csvRecordStart','csvRecordEnd','lineStart','lineEnd'))
         if any(type(value) is not int or not 1<=value<=9007199254740991 for value in locator.values()) or locator['csvRecordEnd']-locator['csvRecordStart']!=2 or locator['lineEnd']<locator['lineStart']:
             raise ValueError('invalid source locator')
-        raw_text(team['teamNameRaw'],nonempty=True);text(team['teamName']);raw_text(team['unitTacticEffectsRaw'])
+        raw_text(team['teamNameRaw'],nonempty=True);text(team['teamName']);raw_text(team[present[0]])
         if len(array(team['heroes']))!=3:
             raise ValueError('source team must have three heroes')
+        equipment=present[0]=='strategyCardsRaw'
         for hero in team['heroes']:
-            record(hero,('nameRaw','tacticSlotsRaw','statFocusRaw','bookSlotsRaw'))
+            record(hero,('nameRaw','tacticSlotsRaw','statFocusRaw','bookSlotsRaw')+(('equipmentRaw',) if equipment else ()))
             raw_text(hero['nameRaw'],nonempty=True);raw_text(hero['statFocusRaw'])
+            if equipment:raw_text(hero['equipmentRaw'])
             for key,count in (('tacticSlotsRaw',2),('bookSlotsRaw',3)):
                 if len(array(hero[key]))!=count:
                     raise ValueError('source ordered slot count mismatch')
                 for value in hero[key]:raw_text(value)
         if sha256(team['contentFingerprint'])!=content_fingerprint(team):
             raise ValueError('source team content fingerprint mismatch')
+    if len(shapes)!=1:
+        raise ValueError('source group mixes table formats')
     if sha256(body['contentFingerprint'])!=content_fingerprint(payload):
         raise ValueError('source group content fingerprint mismatch')

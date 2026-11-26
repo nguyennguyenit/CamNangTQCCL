@@ -1,4 +1,4 @@
-// API duyệt đội cộng đồng + quản trị mùa: duyệt/từ chối nguyên tử, audit đúng một dòng, xoá ảnh từ chối gọi lại được.
+// API duyệt đội cộng đồng: duyệt/từ chối nguyên tử, audit đúng một dòng, xoá ảnh từ chối gọi lại được.
 
 import { describe, expect, it } from "vitest";
 import { createHarness, seedSeason, seedTeam, type Harness } from "./fakes";
@@ -7,7 +7,6 @@ import { createHarness, seedSeason, seedTeam, type Harness } from "./fakes";
 const json = async (res: Response): Promise<any> => res.json();
 
 const ADMIN = "/api/admin/community-teams";
-const SEASONS = "/api/admin/community-seasons";
 const count = (h: Harness, sql: string, ...args: (string | number)[]): number => (h.sqlite.prepare(sql).get(...args) as { n: number }).n;
 const audits = (h: Harness, action: string) =>
   h.sqlite.prepare("select * from admin_audit where action = ? order by created_at, id").all(action) as Record<string, unknown>[];
@@ -208,67 +207,5 @@ describe("GET /api/admin/community-teams", () => {
     expect(pendingList.items[0].deleting).toBe(false);
     const counts = await json(await h.request("/api/admin/counts", { as: "moderator" }));
     expect(counts.teamsPending).toBe(1);
-  });
-});
-
-describe("POST /api/admin/community-seasons", () => {
-  const body = (id: string) => ({ id, labelVi: `Mùa ${id}`, labelZh: `赛季${id}` });
-
-  it("root mở A rồi B: A đóng, B mở; audit season.open meta.previous", async () => {
-    const h = createHarness();
-    const a = await h.request(SEASONS, { as: "admin", json: body("a") });
-    expect(a.status).toBe(201);
-    expect(await json(a)).toEqual({ id: "a", labelVi: "Mùa a", labelZh: "赛季a", openedAt: new Date(h.clock.now).toISOString(), closedAt: null, previous: null });
-    h.clock.now += 1000;
-    const b = await h.request(SEASONS, { as: "admin", json: body("b") });
-    expect(b.status).toBe(201);
-    expect((await json(b)).previous).toBe("a");
-    expect(h.sqlite.prepare("select closed_at from community_seasons where id = 'a'").get()).toMatchObject({ closed_at: h.clock.now });
-    expect(h.sqlite.prepare("select closed_at from community_seasons where id = 'b'").get()).toMatchObject({ closed_at: null });
-    const listed = await json(await h.request("/api/community-seasons"));
-    expect(listed.open.id).toBe("b");
-    const rows = audits(h, "season.open");
-    expect(rows).toHaveLength(2);
-    expect(rows[1]).toMatchObject({ target_type: "season", target_id: "b", target_label: "b", subject_user_id: null, actor_id: "u-admin" });
-    expect(JSON.parse(rows[1].meta as string)).toEqual({ previous: "a" });
-    expect(JSON.parse(rows[0].meta as string)).toEqual({ previous: null });
-  });
-
-  it("trùng id -> 409 season_exists, mùa đang mở không đổi, không audit mới", async () => {
-    const h = createHarness();
-    seedSeason(h, "a", 5, 1);
-    seedSeason(h, "b");
-    const res = await h.request(SEASONS, { as: "admin", json: body("a") });
-    expect(res.status).toBe(409);
-    expect((await json(res)).error.code).toBe("season_exists");
-    expect(h.sqlite.prepare("select closed_at from community_seasons where id = 'b'").get()).toMatchObject({ closed_at: null });
-    expect(audits(h, "season.open")).toHaveLength(0);
-  });
-
-  it("mùa khác được mở chen giữa lúc đọc và batch -> 409 season_conflict, không đổi gì, không audit", async () => {
-    const h = createHarness();
-    seedSeason(h, "a");
-    h.beforeNextBatch(() => {
-      h.sqlite.prepare("update community_seasons set closed_at = 5 where closed_at is null").run();
-      h.sqlite.prepare("insert into community_seasons (id, label_vi, label_zh, opened_at) values ('x', 'x', 'x', 6)").run();
-    });
-    const res = await h.request(SEASONS, { as: "admin", json: body("b") });
-    expect(res.status).toBe(409);
-    expect((await json(res)).error.code).toBe("season_conflict");
-    expect(h.sqlite.prepare("select id from community_seasons where closed_at is null").get()).toMatchObject({ id: "x" });
-    expect(count(h, "select count(*) n from community_seasons where id = 'b'")).toBe(0);
-    expect(audits(h, "season.open")).toHaveLength(0);
-  });
-
-  it("KDV 403, user 403, khách 401, id sai 400; không đổi gì", async () => {
-    const h = createHarness();
-    seedSeason(h, "a");
-    expect((await h.request(SEASONS, { as: "moderator", json: body("b") })).status).toBe(403);
-    expect((await h.request(SEASONS, { as: "bob", json: body("b") })).status).toBe(403);
-    expect((await h.request(SEASONS, { json: body("b") })).status).toBe(401);
-    expect((await h.request(SEASONS, { as: "admin", json: body("Bad Id") })).status).toBe(400);
-    expect((await h.request(SEASONS, { as: "admin", json: body("all") })).status).toBe(400);
-    expect(count(h, "select count(*) n from community_seasons")).toBe(1);
-    expect(h.sqlite.prepare("select closed_at from community_seasons where id = 'a'").get()).toMatchObject({ closed_at: null });
   });
 });

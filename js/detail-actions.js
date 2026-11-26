@@ -4,10 +4,10 @@
 import { el, icon, svgNode } from './render.js';
 import { L } from './i18n.js';
 
-const COPY_LINK_LABEL = L('Sao chép liên kết đội', '复制阵容链接');
-const COPY_FALLBACK_LABEL = L('Liên kết đội', '阵容链接');
-const COPIED_MESSAGE = L('Đã sao chép liên kết', '链接已复制');
-const COPY_FAILED_MESSAGE = L('Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.', '无法自动复制。链接已为你选中，请手动复制。');
+const COPY_LINK_LABEL = L('Sao chép liên kết đội', '复制阵容链接', '編成リンクをコピー');
+const COPY_FALLBACK_LABEL = L('Liên kết đội', '阵容链接', '編成リンク');
+const COPIED_MESSAGE = L('Đã sao chép liên kết', '链接已复制', 'リンクをコピーしました');
+const COPY_FAILED_MESSAGE = L('Không sao chép tự động được. Liên kết đã được chọn sẵn để bạn tự sao chép.', '无法自动复制。链接已为你选中，请手动复制。', '自動でコピーできませんでした。リンクを選択済みですので、手動でコピーしてください。');
 
 /**
  * Lỗi mạng/HTTP khi tải dữ liệu chi tiết: fetch bị chặn (TypeError của trình duyệt) hoặc bộ nạp báo
