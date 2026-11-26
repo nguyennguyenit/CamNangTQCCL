@@ -346,7 +346,9 @@ test("a real legacy detail query reaches its dedicated source detail", async ({ 
   expect(row).toBeTruthy();
 
   await page.goto(`/?detail=${encodeURIComponent(row.sourceConfigId)}`);
-  await expect(page).toHaveURL(/\/doi-chuan\/[^/?]+\/\?from=%2Fdoi-chuan%2F$/);
+  // Link chi tiết sạch (không còn `?from=`); đích Quay lại là trang mục đã chuyển tiếp, đọc từ referrer của `location.replace`.
+  await expect(page).toHaveURL(/\/doi-chuan\/[^/?]+\/$/);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/doi-chuan/");
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(page.locator("#team-detail-root")).toHaveAttribute("data-source-config-id", row.sourceConfigId);
 });
@@ -398,29 +400,23 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
   await waitForBoot(page);
   await expect(page.locator(".kh-card")).toHaveCount(khaiHoangTeams.length);
   expect(new URL(page.url()).search).toBe("");
-  // Card mặc định đã tự đủ state: `from` mang đúng cặp của chính nó và không mang query lạ nào.
-  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute(
-    "href",
-    `${khaiHoangRoute(teamA.id)}?from=${encodeURIComponent(pairFrom(teamA.id, ""))}`,
-  );
+  // Link card là URL chi tiết sạch (không `from`, không query lạ): đích Quay lại do trang chi tiết tự dựng từ referrer.
+  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", khaiHoangRoute(teamA.id));
 
   // Đổi selector ghi cặp vào URL root và dựng lại href của đúng card đó.
   await cardA.locator(`.kh-config-chip[data-variant="${variantA}"]`).click();
   expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamA.id);
   expect(new URL(page.url()).searchParams.get("khVariant")).toBe(variantA);
-  const hrefA = `${khaiHoangRoute(teamA.id)}?variant=${variantA}&from=${encodeURIComponent(pairFrom(teamA.id, variantA))}`;
+  const hrefA = `${khaiHoangRoute(teamA.id)}?variant=${variantA}`;
   await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", hrefA);
-  await expect(cardA.locator(".kh-detail-link")).toHaveAttribute("href", hrefA);
-  await expect(cardB.locator(".kh-detail-link")).toHaveAttribute(
-    "href",
-    `${khaiHoangRoute(teamB.id)}?from=${encodeURIComponent(pairFrom(teamB.id, ""))}`,
-  );
+  await expect(cardB.locator(".kh-detail-link")).toHaveAttribute("href", khaiHoangRoute(teamB.id));
 
-  // Primary click: URL detail mang variant và `from` an toàn, nút quay lại dùng đúng `from`.
+  // Primary click: URL detail chỉ mang `variant`; nút quay lại mang đúng cặp của card (referrer là URL danh sách đã đồng bộ cặp).
   await cardA.locator(".kh-detail-link").click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
   expect(new URL(page.url()).pathname).toBe(khaiHoangRoute(teamA.id));
   expect(new URL(page.url()).searchParams.get("variant")).toBe(variantA);
+  expect([...new URL(page.url()).searchParams.keys()]).toEqual(["variant"]);
   await expect(page.locator("#team-return-link")).toHaveAttribute("href", pairFrom(teamA.id, variantA));
 
   // A4: chọn B rồi A, mở A bằng primary click, Back: cả hai lấy từ map của snapshot.
@@ -438,14 +434,22 @@ test("Khai hoang selection uses its own query URL and survives detail round trip
   expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
   expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
 
-  // Copy link của B rồi mở trong cùng tab: B lấy từ URL, A vẫn lấy từ map cùng context.
+  // Copy link của B rồi mở trong cùng tab: không referrer và chưa có đích ghim cho đội B, nên Quay lại về `/khai-hoang/` mặc định
+  // (hợp đồng chấp nhận: không còn `khTeam` trong URL danh sách); chip của B và A vẫn khôi phục từ snapshot phiên.
   const hrefB = await cardB.locator(".kh-detail-link").getAttribute("href");
+  expect(hrefB).toBe(`${khaiHoangRoute(teamB.id)}?variant=${variantB}`);
   await page.goto(new URL(hrefB, page.url()).href);
   await expect(page.locator("#team-detail-body")).toBeVisible();
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", "/khai-hoang/");
   await page.locator("#team-return-link").click();
+  await expect(page).toHaveURL("/khai-hoang/");
   await waitForBoot(page);
   expect(await cardB.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantB);
   expect(await cardA.locator('.kh-config-chip[aria-pressed="true"]').getAttribute("data-variant")).toBe(variantA);
+  expect(new URL(page.url()).searchParams.has("khTeam")).toBe(false);
+  // Chọn lại cấu hình của B ghi cặp B vào URL danh sách: vòng đi-về qua mục khác bên dưới phục hồi đúng cặp đó.
+  await cardB.locator(`.kh-config-chip[data-variant="${variantB}"]`).click();
+  expect(new URL(page.url()).searchParams.get("khTeam")).toBe(teamB.id);
 
   // Surface khác không mang cặp Khai hoang sang query của nó, và quay lại thì cặp được phục hồi.
   await page.locator('a[data-section="coexist"]').click();
@@ -566,7 +570,7 @@ for (const snapshotUrl of ["/#khaihoang", "/khai-hoang/"]) {
   });
 }
 
-test("switching into Khai hoang refreshes each native detail link's return URL", async ({ page }) => {
+test("switching into Khai hoang keeps each native detail link clean while the return link carries the clicked card's pair", async ({ page }) => {
   await page.goto("/doi-chuan/");
   await waitForBoot(page);
   await page.locator('a[data-section="khaihoang"]').click();
@@ -575,7 +579,7 @@ test("switching into Khai hoang refreshes each native detail link's return URL",
   const team = khaiHoangTeamA;
   const link = khaiHoangCard(page, team).locator(".kh-detail-link");
   const returnUrl = `/khai-hoang/?khTeam=${team.id}`;
-  await expect(link).toHaveAttribute("href", new RegExp(`from=${encodeURIComponent(returnUrl)}$`));
+  await expect(link).toHaveAttribute("href", khaiHoangRoute(team.id));
   await link.click();
   await expect(page.locator("#team-return-link")).toHaveAttribute("href", returnUrl);
 });

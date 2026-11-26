@@ -1,3 +1,8 @@
+# Mọi route: trang chi tiết đội đọc `document.referrer` cùng origin để dựng đích "Quay lại" (click thường, Cmd/Ctrl/middle-click,
+# tab mới). Cùng giá trị đang chạy ở Cloudflare trên production; đặt trong repo để test khóa nó, không chỉ tin vào zone.
+/*
+  Referrer-Policy: strict-origin-when-cross-origin
+
 /
   Cache-Control: public, max-age=0, must-revalidate
 

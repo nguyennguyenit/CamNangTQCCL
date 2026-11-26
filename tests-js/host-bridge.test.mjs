@@ -5,6 +5,7 @@ import vm from "node:vm";
 import {
   HOST_BRIDGE_KEYS,
   HOST_BRIDGE_SCRIPT,
+  LEGACY_HOSTS,
   planHostBridge as planWithKeys,
   runHostBridge,
 } from "../src/lib/host-bridge.ts";
@@ -60,6 +61,13 @@ test("allowlist is exactly the app's persistent localStorage keys", () => {
   for (const key of [RECRUIT_TRACKER_KEY, ROSTER_SCAN_STORAGE_KEY, TEAM_VIEW_STORAGE_KEY, ANALYZE_HISTORY_KEY]) {
     assert.ok(HOST_BRIDGE_KEYS.includes(key), key);
   }
+});
+
+test("LEGACY_HOSTS (verifier dist coi là host nội bộ) khớp bản sao literal trong planHostBridge và đúng là các host được chuyển về domain chính", () => {
+  // `planHostBridge` được nhúng nguyên thân vào script inline nên giữ literal riêng; hai danh sách không được lệch nhau.
+  const literal = planWithKeys.toString().match(/LEGACY_HOSTS\s*=\s*\[([^\]]*)\]/u)?.[1] ?? "";
+  assert.deepEqual([...literal.matchAll(/['"]([^'"]+)['"]/gu)].map((match) => match[1]), [...LEGACY_HOSTS]);
+  for (const hostname of LEGACY_HOSTS) assert.equal(planHostBridge(page({ hostname })).action, "redirect", hostname);
 });
 
 for (const hostname of ["tqccl.pages.dev", "www.tqccl.com"]) {

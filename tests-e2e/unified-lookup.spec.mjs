@@ -541,7 +541,8 @@ test('từ đội tiêu biểu vào trang chi tiết rồi Quay lại về đún
   await expect(lookup(page).locator('.cam-nang-grid')).toBeVisible();
   const team = lookup(page).locator('.cam-nang-team a').first();
   const href = await team.getAttribute('href');
-  expect(href).toMatch(/^\/doi-chuan\/.+[?]from=/);
+  // Link đội tiêu biểu là URL chi tiết sạch (Đội chuẩn: chỉ path); đích Quay lại là hồ sơ, lấy từ referrer của trang Tra cứu.
+  expect(href).toMatch(/^\/doi-chuan\/[^/?#]+\/$/);
   await team.click();
   await expect(page).toHaveURL(/\/doi-chuan\//);
   await page.locator('.detail-back-link, .detail-back-row a').first().click();
@@ -1027,14 +1028,15 @@ test('hàng đội tiêu biểu: cả hàng là vùng bấm của link đội (P
       expect(hit.height, `${width}: chiều cao hàng`).toBeGreaterThanOrEqual(44);
       expect(hit.sameLink, `${width}: điểm ở ô điểm trỏ về link đội`).toBe(true);
     }
-    // Bấm ở vùng điểm vẫn điều hướng tới trang đội và giữ `from` mở lại hồ sơ.
+    // Bấm ở vùng điểm vẫn điều hướng tới trang đội với URL sạch; nút Quay lại mở lại đúng hồ sơ (referrer của trang Tra cứu).
     await rows.first().scrollIntoViewIfNeeded();
     const first = rows.first().locator('.cam-nang-team-name');
     const href = await first.getAttribute('href');
     const box = await rows.first().locator('.cam-nang-team-score').boundingBox();
     await page.mouse.click(box.x + box.width * 0.8, box.y + box.height * 0.8);
     await expect(page).toHaveURL(new RegExp(href.split('?')[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
-    expect(new URL(page.url()).searchParams.get('from')).toContain('id=hero%3Asp-lu-mong');
+    expect(new URL(page.url()).searchParams.has('from')).toBe(false);
+    await expect(page.locator('#team-return-link')).toHaveAttribute('href', '/tra-cuu/tuong/?id=hero%3Asp-lu-mong');
   }
 });
 

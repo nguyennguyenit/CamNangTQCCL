@@ -28,7 +28,8 @@ import { validateLookupBundle } from "../js/lookup-data.js";
 import { sourceKeyPart, variantKey } from "../js/my-teams-sources.js";
 import { mySourceIndex, mySourceIndexJson } from "../src/lib/my-teams-source-index.ts";
 import { LOOKUP_GROUP_SLUGS, lookupGroupPath } from "../js/lookup-ids.js";
-import { DEFAULT_LOCALE, LOCALE_PREFIX, localePath } from "../js/i18n.js";
+import { DEFAULT_LOCALE, LOCALE_PREFIX, localePath, stripLocale } from "../js/i18n.js";
+import { LEGACY_HOSTS } from "../src/lib/host-bridge.ts";
 import { ANALYTICS_CONFIG } from "../js/config.js";
 
 /** Mục lục Tra cứu: trang tĩnh, không nạp app; các trang có app là 7 trang mục khác cộng 7 trang nhóm Tra cứu. */
@@ -103,7 +104,8 @@ export const COMMUNITY_PAGES = Object.freeze(SITE_LOCALES.flatMap((locale) => [
 ]));
 
 const LANG_SWITCHER = /<nav\b[^>]*\bdata-lang-switcher\b[^>]*>([\s\S]*?)<\/nav>/gu;
-const ANCHOR = /<a\b([^>]*)>/gu;
+// `<a …>`: dấu `>` trong giá trị có nháy không đóng thẻ sớm; group 1 là chuỗi thuộc tính.
+const ANCHOR = /<a(?=[\s/>])((?:"[^"]*"|'[^']*'|[^'">])*)>/giu;
 
 /**
  * Nhóm chuyển ngôn ngữ (header + chân menu mobile): mỗi nhóm có đúng một link cho mỗi locale theo thứ tự `SITE_LOCALES`;
@@ -128,6 +130,91 @@ export function verifyLanguageSwitcher(html, htmlPath, locale) {
         throw new Error(`Language switcher marks the wrong current language (${link.hreflang}): ${htmlPath}`);
       }
     }
+  }
+}
+
+// Phần HTML không có link người đọc bấm được: chú thích, thân `<script>` (gồm JSON-LD), `<style>` và chữ thuần của
+// `<textarea>`/`<title>` (RCDATA: chữ `<a …>` trong đó không phải thẻ).
+const NON_LINK_CONTENT = /<!--[^]*?-->|<(script|style|textarea|title)(?=[\s/>])(?:"[^"]*"|'[^']*'|[^'">])*>[^]*?<\/\1\s*>/giu;
+// Một thuộc tính `tên[=giá trị]` của thẻ; giá trị có nháy kép, nháy đơn hoặc không nháy (giá trị không nháy được chứa `=`,
+// như `href=/x/?v=1&from=x`: trình duyệt chỉ cắt ở khoảng trắng hoặc `>`).
+const ATTRIBUTE = /([^\s"'<>/=]+)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'<>`]+)))?/gu;
+// Tham chiếu ký tự trong giá trị thuộc tính: thập phân, thập lục phân (dấu `;` cuối có thể vắng như trình duyệt chấp nhận)
+// và tên có `;`. Giải mã một lượt: `&amp;#102;` là chữ `&#102;`, không phải `f`.
+const CHARACTER_REFERENCE = /&(?:#[xX]([0-9a-fA-F]+);?|#([0-9]+);?|([a-zA-Z][a-zA-Z0-9]*);)/gu;
+// Tên phân biệt hoa thường như HTML; bản viết hoa `AMP`/`LT`/`GT`/`QUOT` là tên hợp lệ có sẵn từ HTML cũ.
+const NAMED_REFERENCES = Object.freeze({
+  amp: "&", AMP: "&", lt: "<", LT: "<", gt: ">", GT: ">", quot: '"', QUOT: '"', apos: "'", nbsp: "\u00a0", num: "#", quest: "?",
+  equals: "=", sol: "/", colon: ":", period: ".",
+});
+
+function decodeCharacterReferences(value) {
+  return value.replace(CHARACTER_REFERENCE, (match, hex, decimal, name) => {
+    if (name !== undefined) return Object.hasOwn(NAMED_REFERENCES, name) ? NAMED_REFERENCES[name] : match;
+    const code = Number.parseInt(hex ?? decimal, hex === undefined ? 10 : 16);
+    return code > 0 && code <= 0x10ffff && !(code >= 0xd800 && code <= 0xdfff) ? String.fromCodePoint(code) : "\ufffd";
+  });
+}
+
+/** Origin của link nội bộ: host của `site` và các host cũ chuyển hẳn về nó (cùng bản build), http hoặc https, cổng mặc định. */
+const INTERNAL_ORIGINS = new Set([new URL(astroConfig.site).hostname, ...LEGACY_HOSTS].flatMap((host) => [`https://${host}`, `http://${host}`]));
+const REL_NOREFERRER = /(?:^|\s)noreferrer(?:\s|$)/iu;
+/** Trang chi tiết đội (cùng hình dạng với trang mùa Đội chuẩn): `/<họ>/<segment>/` sau khi bỏ tiền tố locale. */
+const TEAM_DETAIL_PATH = /^\/(?:doi-chuan|doi-khac|khai-hoang)\/[^/]+\/$/u;
+
+/**
+ * Link nội bộ vi phạm hợp đồng URL sạch của trang HTML ở `pageUrl`, mỗi vi phạm một mục `{href, reason}` (`href` đã giải mã
+ * entity, đúng thứ trình duyệt mở): `from` — query `from` (trạng thái điều hướng không được nằm trong link nội bộ: mỗi giá trị
+ * là một URL không canonical); `noreferrer` — link tới trang chi tiết có `rel` chứa `noreferrer` (trang chi tiết đọc referrer
+ * để dựng nút Quay lại). Phân tích bằng URL thay vì regex trên cả HTML: bỏ chú thích, thân `<script>`/`<style>`, lấy `href`
+ * của từng `<a>`, giải mã entity (tên, thập phân, thập lục phân), `new URL(href, pageUrl)`. Nội bộ là origin của `site` và các
+ * host cũ của cầu chuyển domain; link ngoài, hash, `from=` nằm trong giá trị khác, JSON-LD hay `data-href` không bị tính.
+ * @param {string} html
+ * @param {string | URL} pageUrl URL tuyệt đối của trang chứa HTML (để ghép link tương đối)
+ * @returns {{href: string, reason: "from" | "noreferrer"}[]}
+ */
+export function internalLinksWithReturnQuery(html, pageUrl) {
+  const violations = [];
+  for (const [, attributes] of html.replace(NON_LINK_CONTENT, "").matchAll(ANCHOR)) {
+    // Trình duyệt dùng thuộc tính đầu tiên khi một thuộc tính lặp lại.
+    const values = new Map();
+    for (const [, name, quoted, single, bare] of attributes.matchAll(ATTRIBUTE)) {
+      if (!values.has(name.toLowerCase())) values.set(name.toLowerCase(), decodeCharacterReferences(quoted ?? single ?? bare ?? ""));
+    }
+    const href = values.get("href");
+    if (href === undefined) continue;
+    let url;
+    try {
+      url = new URL(href, pageUrl);
+    } catch {
+      continue;
+    }
+    if (!INTERNAL_ORIGINS.has(url.origin)) continue;
+    if (url.searchParams.has("from")) violations.push({ href, reason: "from" });
+    if (TEAM_DETAIL_PATH.test(stripLocale(url.pathname)) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
+  }
+  return violations;
+}
+
+/** URL của một file HTML trong dist (`a/index.html` → `/a/`) để ghép link tương đối của nó. */
+const htmlPageUrl = (file, site) => new URL(`/${file.replace(/(^|\/)index\.html$/u, "$1")}`, site);
+
+/**
+ * Mọi trang HTML đã build (kể cả bài blog và bản `/zh/`, `/ja/`) không có link nội bộ vi phạm `internalLinksWithReturnQuery`.
+ * HTML tĩnh chỉ là một nửa: link dựng sau hydrate được khóa bằng test của builder và E2E.
+ */
+async function verifyCleanInternalLinks(distPath, htmlFiles, site) {
+  const problems = [];
+  for (let start = 0; start < htmlFiles.length; start += 64) {
+    await Promise.all(htmlFiles.slice(start, start + 64).map(async (file) => {
+      const html = await readFile(resolve(distPath, file), "utf8");
+      for (const { href, reason } of internalLinksWithReturnQuery(html, htmlPageUrl(file, site))) problems.push(`${file}: ${reason} ${href}`);
+    }));
+  }
+  if (problems.length) {
+    throw new Error(
+      `dist carries ${problems.length} internal link(s) that break the clean-URL contract (no \`from\` query, no rel=noreferrer toward a detail page); first: ${problems.sort().slice(0, 5).join("; ")}`,
+    );
   }
 }
 
@@ -996,6 +1083,9 @@ export async function verifyAstroDist({
       throw new Error(`Secret-like file entered dist: ${file}`);
     }
   }
+
+  // Link nội bộ của mọi trang HTML đã build: không `from`, không rel=noreferrer tới trang chi tiết (quét cuối để lỗi rẻ hơn lộ trước).
+  await verifyCleanInternalLinks(distPath, files.filter((file) => file.endsWith(".html")), astroConfig.site);
 
   return {
     assetCount: manifest.length,

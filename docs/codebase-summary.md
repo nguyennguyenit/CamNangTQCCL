@@ -12,7 +12,7 @@ Repo có bốn boundary triển khai: Astro static build + SPA vanilla chạy tr
 ├── src/lib/                # manifest, safe raw-artifact reader, dựng sẵn trang đội/Tra cứu, JSON-LD, llms
 ├── src/pages/{js,css,data} # Astro static endpoints
 ├── css/, js/, data/        # source runtime canonical
-├── public/_headers         # Pages cache policy source
+├── public/_headers         # Pages cache + referrer policy source
 ├── scripts/                # shared dist verifier, soát token/thiết kế, báo cáo zh-gaps/ja-gaps (`docs/zh-gaps.md`, `docs/ja-gaps.md`), so output theo locale
 ├── pipeline/               # parser/normalizer/builder Python stdlib
 ├── worker/                 # Vision proxy Cloudflare

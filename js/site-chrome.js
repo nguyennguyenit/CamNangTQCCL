@@ -94,6 +94,19 @@ export function initFooterGameDisclosure({documentTarget = document, windowTarge
 }
 
 /**
+ * Query của trang đang xem để gắn vào link ngôn ngữ, bỏ `from` còn sót của link chi tiết cũ (đích Quay lại đã ghim ở
+ * history.state/sessionStorage, link đổi ngôn ngữ không được phát lại nó). Không có `from` thì trả NGUYÊN chuỗi, không
+ * dựng lại qua `URLSearchParams` (sẽ re-encode `%20`/`%3A` của mọi trang).
+ */
+function searchWithoutFrom(search) {
+  const params = new URLSearchParams(search);
+  if (!params.has('from')) return search;
+  params.delete('from');
+  const rest = params.toString();
+  return rest ? `?${rest}` : '';
+}
+
+/**
  * Nhóm chuyển ngôn ngữ (header + menu mobile) có một link thật cho mỗi locale: `[data-lang-switch]` tới bản gương
  * của trang ở từng ngôn ngữ khác, `[data-lang-current]` về chính trang đang xem. Bộ lọc, biến thể và deep-link nằm ở
  * query/hash và đổi tại chỗ (history API), nên href của mọi link được ghép lại với query/hash của lúc bấm; href gốc
@@ -107,7 +120,7 @@ export function syncLanguageSwitch({documentTarget = document, windowTarget = gl
     link.dataset.langBase ??= link.getAttribute('href') || '/';
     const target = new URL(link.dataset.langBase, location.href);
     if (target.origin !== location.origin) return;
-    link.setAttribute('href', `${target.pathname}${target.search || location.search}${target.hash || location.hash}`);
+    link.setAttribute('href', `${target.pathname}${target.search || searchWithoutFrom(location.search)}${target.hash || location.hash}`);
   };
   for (const link of links) {
     refresh(link);

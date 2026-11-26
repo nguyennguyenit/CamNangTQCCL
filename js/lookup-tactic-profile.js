@@ -36,13 +36,13 @@ function barRow(label, value, percent) {
 }
 
 /**
- * Link trang chi tiết của một đội tiêu biểu (Đội chuẩn theo mã cấu hình, Đội khác theo mã đội cũ). `from` là URL
- * trang đang xem để trang chi tiết quay lại đúng chỗ: trình duyệt mặc định là trang hiện tại, build không có.
+ * Link trang chi tiết của một đội tiêu biểu (Đội chuẩn theo mã cấu hình, Đội khác theo mã đội cũ). Link sạch như mọi link
+ * nội bộ tới trang chi tiết: đích Quay lại do trang chi tiết tự quyết (referrer là trang Tra cứu đang xem).
  */
-export function representativeTeamHref(team, from = globalThis.location?.href) {
+export function representativeTeamHref(team) {
   const detail = team.family === "recommended"
-    ? teamDetailHref({ sourceConfigId: team.sourceConfigId }, { from })
-    : teamDetailHref({ legacyTeamId: team.legacyTeamId, legacyVariantId: team.legacyVariantId }, { from });
+    ? teamDetailHref({ sourceConfigId: team.sourceConfigId })
+    : teamDetailHref({ legacyTeamId: team.legacyTeamId, legacyVariantId: team.legacyVariantId });
   return detail ? localePath(detail) : null;
 }
 
@@ -225,7 +225,7 @@ export function tacticProfileBody(corpus, entryRow, profile, tail = [], { panels
   ]);
 }
 
-function camNangCards(view, record, from) {
+function camNangCards(view, record) {
   const appearance = t("article", { class: "cam-nang-card" }, [
     t("h4", { class: "cam-nang-title" }, L("Xuất hiện trong", "出现于", "登場数")),
     t("div", { class: "cam-nang-counts" }, [
@@ -256,7 +256,7 @@ function camNangCards(view, record, from) {
   const teams = t("article", { class: "cam-nang-card" }, [
     t("h4", { class: "cam-nang-title" }, L("Đội tiêu biểu", "代表阵容", "代表的な編成")),
     t("ul", { class: "cam-nang-teams" }, view.representative.map((team) => {
-      const href = representativeTeamHref(team, from);
+      const href = representativeTeamHref(team);
       // Tên đội chỉ có bản Việt: bản zh dùng nhãn chung, tướng mang/mùa ở dòng phụ vẫn phân biệt từng đội.
       const name = L(team.name, "查看阵容", "編成を見る");
       return t("li", { class: "cam-nang-team" }, [
@@ -289,10 +289,10 @@ function summaryBlockTree(content) {
  * Khối "Trong cẩm nang" dựng sẵn của trang riêng: `table` là bảng số liệu đã kiểm của chiến pháp (`tactic-summaries.json`),
  * `corpus` có kho tướng để nối tên tướng mang; chiến pháp chưa vào đội nào thì khối chỉ có dòng báo.
  */
-export function tacticSummaryBlockTree({ id, record, table, corpus, from }) {
+export function tacticSummaryBlockTree({ id, record, table, corpus }) {
   const view = tacticCamNangView(table[id], corpus);
   return summaryBlockTree(view
-    ? [camNangCards(view, record, from)]
+    ? [camNangCards(view, record)]
     : [t("p", { class: "lookup-summary-status", role: "status" }, L("Chưa có trong đội nào.", "尚未出现在任何阵容中。", "まだどの編成にも登場していません。"))]);
 }
 

@@ -128,11 +128,9 @@ test("every version replaces only its card and restores the default", async ({ p
       }
       await expect(next).toHaveText(neighbor);
       await expect(next.getByRole("link").first()).toHaveAttribute("href", neighborHref);
-      // Link của card đang chọn tự mang cặp đang hoạt động ngay khi đổi phiên bản.
+      // Link của card đang chọn mang đúng `variant` đang hoạt động ngay khi đổi phiên bản, và không mang nguồn quay lại.
       for (const link of await card.getByRole("link").all()) {
-        await expect(link).toHaveAttribute("href", new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
-        await expect(link).toHaveAttribute("href", new RegExp(`variant=${variant.id}`));
-        await expect(link).toHaveAttribute("href", /from=/);
+        await expect(link).toHaveAttribute("href", detailPath(handles, team.id, { variant: variant.id }));
       }
     }
     if (team.variants?.length) {
@@ -238,8 +236,8 @@ test("each card links its title and Chi tiết to the same detail route", async 
     const links = card.getByRole("link");
     await expect(links).toHaveText([team.title, "Chi tiết"]);
     const href = await links.first().getAttribute("href");
-    expect(href).toMatch(new RegExp(`/khai-hoang/${handles.k[team.id]}/`));
-    expect(href).toMatch(/from=/);
+    // Cấu hình mặc định: URL canonical trần, không `variant` và không `from`.
+    expect(href).toBe(detailPath(handles, team.id));
     await expect(links.nth(1)).toHaveAttribute("href", href);
   }
 });
@@ -614,7 +612,7 @@ test("teams without a guide render build and notes only, with no empty guide gro
   expect(probe).toEqual({empty: true, absent: true, rendered: true});
 });
 
-test("detail URL keeps variant and from in sync across select, reload and history", async ({ page, request }) => {
+test("detail URL keeps variant in sync and keeps the pinned return pair across select, reload and history", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const target = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
   const [first, second] = target.variants;
@@ -624,72 +622,82 @@ test("detail URL keeps variant and from in sync across select, reload and histor
   const card = page.locator(".kh-card").filter({ has: page.getByRole("heading", { name: target.title, exact: true }) });
   const cta = card.getByRole("link").first();
   await card.locator(`.kh-config-chip[data-variant="${first.id}"]`).click();
-  const entryUrl = await cta.getAttribute("href");
-  expect(entryUrl).toContain(`/khai-hoang/${handles.k[target.id]}/`);
-  expect(entryUrl).toContain(`variant=${first.id}`);
-  expect(entryUrl).toContain("from=");
+  // Link card chỉ mang path + `variant`: không còn `from`.
+  expect(await cta.getAttribute("href")).toBe(detailPath(handles, target.id, { variant: first.id }));
   await cta.click();
 
   await expect(detailChip(page, first.id)).toHaveAttribute("aria-pressed", "true");
-  // `from` là URL root an toàn mang đúng cặp đang chọn; nút quay lại dùng nguyên giá trị đó.
+  // URL chi tiết sạch; đích Quay lại là URL danh sách mang đúng cặp đang chọn (referrer, ghi đè bằng đội của trang) và được
+  // ghim vào history.state của entry này.
   const entry = new URL(page.url());
-  const from = entry.searchParams.get("from");
-  expect(from.startsWith("/")).toBe(true);
-  expect(from).toContain("/khai-hoang/?");
-  expect(from).toContain(`khTeam=${target.id}`);
-  expect(from).toContain(`khVariant=${first.id}`);
-  await expect(page.locator("#team-return-link")).toHaveAttribute("href", from);
+  expect([...entry.searchParams.keys()]).toEqual(["variant"]);
+  const back = `/khai-hoang/?khTeam=${target.id}&khVariant=${first.id}`;
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", back);
+  expect(await page.evaluate(() => history.state?.teamDetailReturn)).toBe(back);
 
-  // Đổi cấu hình thay query của chính trang, giữ nguyên `from` và không tạo lịch sử mới.
+  // Đổi cấu hình chỉ thay query `variant` của chính trang, giữ nguyên đích đã ghim và không tạo lịch sử mới.
   const historyLength = await page.evaluate(() => history.length);
   await detailChip(page, second.id).click();
   const changed = new URL(page.url());
   expect(changed.pathname).toBe(entry.pathname);
   expect(changed.searchParams.get("variant")).toBe(second.id);
-  expect(changed.searchParams.get("from")).toBe(from);
+  expect([...changed.searchParams.keys()]).toEqual(["variant"]);
   expect(await page.evaluate(() => history.length)).toBe(historyLength);
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", back);
 
+  // Reload cùng entry: history.state thắng nên đích vẫn là cặp lúc vào, không đổi theo cấu hình vừa chọn.
   await page.reload();
   await expect(detailChip(page, second.id)).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", back);
 
   // Back về danh sách rồi Forward: entry lịch sử đã bị replaceState nên phải mở lại đúng
-  // cấu hình vừa chọn, không quay về cấu hình lúc mới vào trang.
+  // cấu hình vừa chọn, không quay về cấu hình lúc mới vào trang; đích đã ghim vẫn còn.
   await page.goBack();
   await expect(page.locator(".kh-card")).toHaveCount(data.teams.length);
   await page.goForward();
   await expect(detailChip(page, second.id)).toHaveAttribute("aria-pressed", "true");
   await expect(page.locator("#team-detail-body .kh-build")).toContainText(second.buildNote);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", back);
 
-  // Chọn mặc định gỡ hẳn query `variant` nhưng vẫn giữ `from`.
+  // Chọn mặc định gỡ hẳn query `variant`: URL chi tiết trở về canonical trần.
   await detailChip(page, "").click();
   const restored = new URL(page.url());
   expect(restored.searchParams.has("variant")).toBe(false);
-  expect(restored.searchParams.get("from")).toBe(from);
+  expect(restored.search).toBe("");
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", back);
 });
 
-test("unknown variants warn and offer the default build instead of pretending", async ({ page, request }) => {
+test("unknown variants warn and offer the default build instead of pretending, and the legacy return pair survives the fallback link", async ({ page, request }) => {
   const handles = await routeHandles(request);
   const target = teamByTitle("Lục Tốn · Tả Từ · Trương Xuân Hoa");
+  // Link cũ mang `from` KHÁC mặc định (cặp của một đội khác): đích đó phải sống qua link "Xem cấu hình mặc định".
+  const source = teamByTitle("Gia Cát Khác · Thái Sử Từ · Tả Từ");
+  const returnPair = `/khai-hoang/?khTeam=${source.id}&khVariant=${source.variants[0].id}`;
   await routeDetail(page);
-  await page.goto(detailPath(handles, target.id, { variant: "khong-co-cau-hinh", from: "/khai-hoang/" }));
+  await page.goto(detailPath(handles, target.id, { variant: "khong-co-cau-hinh", from: returnPair }));
 
   const status = page.locator("#team-detail-status");
   await expect(status.locator('[role="alert"]')).toContainText("khong-co-cau-hinh");
   await expect(page.locator("#team-detail-body")).toBeHidden();
   await expect(page.locator("#team-detail-body .kh-build")).toHaveCount(0);
+  // Link cũ vẫn được đọc: nút Quay lại trỏ đúng cặp trong `from`, rồi `from` bị dọn khỏi thanh địa chỉ.
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", returnPair);
+  expect(new URL(page.url()).searchParams.has("from")).toBe(false);
   const fallback = page.locator("#team-detail-default-variant");
-  await expect(fallback).toHaveAttribute("href", /\/khai-hoang\/[^?]+\/\?/);
+  await expect(fallback).toHaveAttribute("href", detailPath(handles, target.id));
   const href = await fallback.getAttribute("href");
   expect(href).not.toContain("variant=");
-  expect(href).toContain("from=");
+  expect(href).not.toContain("from=");
   await expect(page.locator("#team-detail-retry")).toHaveCount(0);
 
+  // Link thật tới entry mới (không state/from, referrer là chính trang chi tiết): đích sống qua sessionStorage theo trang.
   await fallback.click();
   await expect(page.locator("#team-detail-body")).toBeVisible();
   await expect(detailChip(page, "")).toHaveAttribute("aria-pressed", "true");
   await expect(new URL(page.url()).searchParams.has("variant")).toBe(false);
+  await expect(page.locator("#team-return-link")).toHaveAttribute("href", returnPair);
 
   const foreign = teamByTitle("Gia Cát Khác · SP Mã Siêu · Pháp Chính").variants[0].id;
   await page.goto(detailPath(handles, target.id, {variant: foreign}));
