@@ -12,8 +12,8 @@ import {
   setZhNameResolver,
 } from './recommended-reference-state.js';
 import { detailBadges, legacyOriginalDetailContent } from './recommended-reference-render.js';
+import { detailUrlWithoutReturn, forgetDetailReturn, rememberDetailReturn, resolveDetailReturn, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { otherTeamOptions } from './other-team-groups.js';
-import { safeReturnUrl, setTeamRouteHandlesFromJSON, teamDetailPath } from './team-detail-navigation.js';
 import { createByteLoader, loadRawNameResolver, loadWebsiteDisplay, localizeData, readTacticDisplayTable } from './website-display.js';
 import { L } from './i18n.js';
 import { setLookupRouteHandlesFromJSON } from './lookup-ids.js';
@@ -29,11 +29,28 @@ async function fetchBytes(path) {
   return response.arrayBuffer();
 }
 
-function upgradeReturnLink(link) {
-  if (!link) return;
-  const from = new URL(location.href).searchParams.get('from');
-  const target = safeReturnUrl(from);
-  if (target) link.href = target;
+const sessionStore = () => {
+  try { return globalThis.sessionStorage; } catch { return null; }
+};
+
+/**
+ * Đích nút "Quay lại": link nội bộ không mang `from`, nên đích lấy theo `resolveDetailReturn` (history.state → `?from=` của link
+ * cũ → referrer cùng origin → sessionStorage theo trang). Đích tìm được ghim vào history.state của entry này (reload, đổi variant)
+ * và sessionStorage (đổi ngôn ngữ, quay về sau đăng nhập Google, skip-link rồi reload đều là entry mới), rồi `from` cũ được dọn khỏi
+ * thanh địa chỉ. Không có đích thì nút giữ link họ đội dựng sẵn; `teamDetailReturn: null` ghi lại cho biết script đã chạy.
+ */
+function pinReturnLink(link) {
+  const storage = sessionStore();
+  const target = resolveDetailReturn({href: location.href, referrer: document.referrer, state: history.state, storage, origin: location.origin});
+  if (target) {
+    if (link) link.href = target;
+    rememberDetailReturn(storage, location.href, target);
+  } else forgetDetailReturn(storage, location.href);
+  const clean = detailUrlWithoutReturn(location.href);
+  const state = history.state && typeof history.state === 'object' ? history.state : {};
+  if (clean !== location.href || state.teamDetailReturn !== (target ?? null)) {
+    history.replaceState({...state, teamDetailReturn: target ?? null}, '', clean);
+  }
 }
 
 export async function initTeamDetail({documentTarget = document} = {}) {
@@ -57,7 +74,7 @@ export async function initTeamDetail({documentTarget = document} = {}) {
   const badges = documentTarget.querySelector('#team-detail-badges');
   const panel = documentTarget.querySelector('#team-detail-panel');
   const panelActions = documentTarget.querySelector('#team-detail-actions');
-  upgradeReturnLink(returnLink);
+  pinReturnLink(returnLink);
 
   /**
    * Đội nháp của biến thể đội khác, dựng LÚC BẤM từ đúng nội dung đang hiển thị (`content` của `loadLegacy`, kèm ghi chú đội

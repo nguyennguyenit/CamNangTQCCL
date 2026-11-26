@@ -8,12 +8,15 @@ const headersPath = new URL("../public/_headers", import.meta.url);
 const robotsPath = new URL("../public/robots.txt", import.meta.url);
 const redirectsPath = new URL("../public/_redirects", import.meta.url);
 const cachePolicy = "public, max-age=0, must-revalidate";
+/** Đích Quay lại của trang chi tiết đọc referrer cùng origin (Cmd/Ctrl/middle-click, tab mới); chính sách phải nằm trong repo chứ không chỉ ở Cloudflare. */
+const referrerPolicy = "strict-origin-when-cross-origin";
 /**
  * Tiền tố của mọi locale đã khai bảng ở `js/i18n.js`, kể cả locale chưa nối vào `SITE_LOCALES`: `_headers`,
  * `robots.txt` và `_redirects` là file tĩnh nên có luật cho locale sắp bật từ trước, đúng cả khi 2 hay 3 locale bật.
  */
 const LOCALE_PREFIXES = Object.keys(LOCALE_PREFIX).filter((locale) => locale !== DEFAULT_LOCALE).map((locale) => LOCALE_PREFIX[locale]);
 const expectedRules = [
+  "/*",
   "/",
   "/index.html",
   ...LOCALE_PREFIXES.map((prefix) => `${prefix}/*`),
@@ -80,13 +83,15 @@ function ruleMatches(rule, path) {
   return path.startsWith(rule.slice(0, -1));
 }
 
-function policyFor(rules, path) {
+function headerFor(rules, path, name) {
   const matched = [...rules]
     .filter(([rule]) => ruleMatches(rule, path))
-    .map(([, headers]) => headers.get("cache-control"))
+    .map(([, headers]) => headers.get(name))
     .filter(Boolean);
   return matched.at(-1);
 }
+
+const policyFor = (rules, path) => headerFor(rules, path, "cache-control");
 
 function visibleVersion({ policy, cachedVersion, deployedVersion, canRevalidate }) {
   if (!cachedVersion) return deployedVersion;
@@ -100,9 +105,22 @@ function visibleVersion({ policy, cachedVersion, deployedVersion, canRevalidate 
 test("_headers has exact mutable-asset revalidation rules", async () => {
   const rules = parseHeaders(await readFile(headersPath, "utf8"));
   assert.deepEqual([...rules.keys()], expectedRules);
-  for (const headers of rules.values()) {
-    assert.deepEqual(Object.fromEntries(headers), { "cache-control": cachePolicy });
+  for (const [rule, headers] of rules) {
+    // `/*` chỉ mang Referrer-Policy (không phải luật cache); mọi luật còn lại chỉ mang đúng chính sách cache.
+    assert.deepEqual(Object.fromEntries(headers), rule === "/*" ? { "referrer-policy": referrerPolicy } : { "cache-control": cachePolicy }, rule);
   }
+});
+
+test("_headers đặt Referrer-Policy cho mọi route để trang chi tiết quay lại danh sách bằng referrer cùng origin", async () => {
+  const rules = parseHeaders(await readFile(headersPath, "utf8"));
+  assert.equal(rules.get("/*")?.get("referrer-policy"), referrerPolicy);
+  // `/*` khớp mọi đường dẫn: shell, trang mục, trang chi tiết đội ở mọi bản ngôn ngữ.
+  for (const path of ["/", "/doi-chuan/", "/doi-chuan/pk-s24-tu-ma-phi-hung/", "/doi-khac/hoang-ma-thuong/", "/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/",
+    ...LOCALE_PREFIXES.flatMap((prefix) => [`${prefix}/`, `${prefix}/doi-chuan/pk-s24-tu-ma-phi-hung/`, `${prefix}/khai-hoang/gia-cat-khac-sp-ma-sieu-phap-chinh/`])]) {
+    assert.equal(headerFor(rules, path, "referrer-policy"), referrerPolicy, `${path} phải có Referrer-Policy`);
+  }
+  // Một nguồn duy nhất: không luật nào khác thêm hay ghi đè Referrer-Policy.
+  assert.deepEqual([...rules].filter(([, headers]) => headers.has("referrer-policy")).map(([rule]) => rule), ["/*"]);
 });
 
 test("_headers covers every published shell and mutable raw asset", async () => {

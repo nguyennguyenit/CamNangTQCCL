@@ -2,9 +2,13 @@
 // publication. Dữ liệu thật của repo qua `src/lib/team-ssr.ts` — cùng đường mà Astro gọi.
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import vm from "node:vm";
 import { teamSectionParts } from "../src/lib/team-ssr.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { referenceViewSignature, PAGE_SIZE } from "../js/team-filter-section.js";
+import { TEAM_VIEW_CARDS } from "../js/team-view.js";
+import { ssrStaleGuardScript } from "../src/lib/team-section-ssr.js";
 
 const parse = (bytes) => JSON.parse(Buffer.from(bytes).toString("utf8"));
 const keysOf = (html) => [...html.matchAll(/data-reference-key="([^"]*)"/gu)].map((match) => match[1]);
@@ -28,7 +32,7 @@ test("Đội chuẩn dựng sẵn: đủ mọi đội của mùa mặc định, 
     for (const key of keys) assert.equal(bySource.get(key)?.sourceSeasonId, registry.defaultSourceSeasonId, `${locale}: ${key} không thuộc mùa mặc định`);
     for (const key of keys) {
       const entry = catalog.recommended.find((candidate) => candidate.sourceConfigId === key);
-      assert.ok(html.includes(`href="${locale === "zh" ? "/zh" : ""}${entry.routePath}?from=${encodeURIComponent(locale === "zh" ? "/zh/doi-chuan/" : "/doi-chuan/")}"`), `${locale}: ${key} thiếu link chi tiết mang nguồn quay lại`);
+      assert.ok(html.includes(`href="${locale === "zh" ? "/zh" : ""}${entry.routePath}"`), `${locale}: ${key} thiếu link chi tiết sạch (URL canonical, không nguồn quay lại)`);
     }
     assert.equal(count(html, /<h1\b/gu), 1);
     assert.equal(count(html, /class="reference-view" data-ssr-signature=/gu), 1);
@@ -102,7 +106,7 @@ test("Khai hoang dựng sẵn: đủ mọi thẻ đội của dữ liệu, mỗi
     assert.equal(count(html, /class="team-card reference-team-card kh-card/gu), data.teams.length);
     for (const team of data.teams) {
       const entry = catalog.khaiHoang.find((candidate) => candidate.khaiHoangTeamId === team.id);
-      assert.ok(html.includes(`href="${locale === "zh" ? "/zh" : ""}${entry.routePath}?`), `${locale}: ${team.id} thiếu link chi tiết`);
+      assert.ok(html.includes(`href="${locale === "zh" ? "/zh" : ""}${entry.routePath}"`), `${locale}: ${team.id} thiếu link chi tiết sạch`);
     }
     assert.equal(count(html, /<h1\b/gu), 1);
   }
@@ -119,4 +123,91 @@ test("nút dựng sẵn cần JavaScript (chip chiến pháp, chip cấu hình/l
     for (const tag of locked) assert.match(tag, /\sdisabled(?=[\s>])[^>]*aria-disabled="true"|aria-disabled="true"[^>]*\sdisabled(?=[\s>])/u, `${section}: nút chưa khoá ${tag}`);
     for (const tag of tags.filter((candidate) => !needsScript(candidate))) assert.doesNotMatch(tag, /disabled/u, `${section}: nút không cần JS bị khoá ${tag}`);
   }
+});
+
+/** Mọi `href` của một đoạn HTML dựng sẵn, đã bỏ escape `&amp;` của thuộc tính. */
+const hrefsOf = (html) => [...html.matchAll(/\bhref="([^"]*)"/gu)].map((match) => match[1].replaceAll("&amp;", "&"));
+
+test("link chi tiết dựng sẵn của Đội chuẩn, Đội khác và Khai hoang không mang `from` ở mọi bản (vi, zh, ja)", async () => {
+  for (const locale of ["vi", "zh", "ja"]) {
+    const prefix = locale === "vi" ? "" : `/${locale}`;
+    const detail = new RegExp(`^${prefix}/(?:doi-chuan|doi-khac|khai-hoang)/[^/?#]+/(?:\\?|$)`, "u");
+    for (const section of ["team-chuan", "team-khac", "khaihoang"]) {
+      const hrefs = hrefsOf((await teamSectionParts(section, locale)).html);
+      const details = hrefs.filter((href) => detail.test(href));
+      assert.ok(details.length > 0, `${locale} ${section}: phải có link chi tiết`);
+      for (const href of hrefs) {
+        assert.equal(new URL(href, "https://tqccl.invalid").searchParams.has("from"), false, `${locale} ${section}: ${href}`);
+      }
+      // Đội chuẩn, Đội khác (mỗi đội gốc một phương án) và thẻ Khai hoang (cấu hình mặc định) đều là URL canonical trần.
+      for (const href of details) {
+        const keys = [...new URL(href, "https://tqccl.invalid").searchParams.keys()];
+        assert.deepEqual(keys, [], `${locale} ${section}: ${href}`);
+      }
+    }
+  }
+});
+
+/** Chữ ký `data-ssr-signature` của khối danh sách dựng sẵn (đã bỏ escape thuộc tính HTML), hoặc `null` khi trang không có. */
+const signatureOf = (html) => {
+  const raw = html.match(/class="reference-view" data-ssr-signature="([^"]*)"/u)?.[1];
+  if (raw === undefined) return null;
+  return JSON.parse(raw.replaceAll("&quot;", '"').replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&amp;", "&"));
+};
+
+test("chữ ký danh sách dựng sẵn là [mùa, từ khóa, bộ lọc, kiểu xem, số đội]: không còn thành phần URL", async () => {
+  const website = await websiteDisplayPublicationSnapshot();
+  const registry = parse(website.recommended.files["seasons.json"]);
+  const records = parse(website.recommended.files["index.json"]).records;
+  const noFilters = { faction: [], unit: [], tier: [], subcategory: [], source: [] };
+  const defaultTeams = records.filter((row) => row.sourceSeasonId === registry.defaultSourceSeasonId).length;
+  for (const locale of ["vi", "zh", "ja"]) {
+    const chuan = signatureOf((await teamSectionParts("team-chuan", locale)).html);
+    assert.deepEqual(chuan, [registry.defaultSourceSeasonId, "", noFilters, TEAM_VIEW_CARDS, Math.max(PAGE_SIZE, defaultTeams)], `${locale}: Đội chuẩn`);
+    const khac = signatureOf((await teamSectionParts("team-khac", locale)).html);
+    assert.deepEqual(khac, ["all", "", noFilters, TEAM_VIEW_CARDS, PAGE_SIZE], `${locale}: Đội khác`);
+    // Trình duyệt dựng cùng chữ ký từ chính trạng thái của nó; vì không có URL nên `?kho=`/`?xep=` không làm lệch dấu.
+    assert.equal(
+      JSON.stringify(chuan),
+      referenceViewSignature({ season: registry.defaultSourceSeasonId, query: "", filters: noFilters }, TEAM_VIEW_CARDS, Math.max(PAGE_SIZE, defaultTeams)),
+    );
+  }
+  assert.equal(signatureOf((await teamSectionParts("khaihoang", "vi")).html), null);
+});
+
+/** Chạy script bảo vệ chống nháy trong một context giả; `true` khi nó gắn `data-ssr-stale` lên mount. */
+function staleMarked(section, { search = "", storedView = null } = {}) {
+  const mount = { dataset: {} };
+  vm.runInNewContext(ssrStaleGuardScript(section), {
+    URLSearchParams,
+    URL,
+    location: { search, pathname: "/", href: "https://tqccl.com/" },
+    history: { state: null },
+    localStorage: { getItem: () => storedView },
+    sessionStorage: { getItem: () => null },
+    document: { getElementById: (id) => (id === `section-${section}` ? mount : null) },
+  });
+  return Object.hasOwn(mount.dataset, "ssrStale");
+}
+
+test("bảo vệ chống nháy chỉ bật với khóa làm danh sách dựng sẵn sai: `kho`/`xep` thì không", () => {
+  for (const [section, search, stale] of [
+    ["team-chuan", "", false],
+    ["team-chuan", "?utm_source=x", false],
+    ["team-chuan", "?kho=rap-duoc", false],
+    ["team-chuan", "?xep=de-rap", false],
+    ["team-chuan", "?kho=rap-duoc&xep=de-rap&utm_source=x", false],
+    ["team-chuan", "?season=pk-s24", true],
+    ["team-chuan", "?q=x&kho=rap-duoc", true],
+    ["team-chuan", "?unit=x&xep=de-rap", true],
+    ["team-khac", "?faction=thuc", true],
+    ["team-khac", "?kho=rap-duoc", false],
+    ["khaihoang", "?khTeam=x", true],
+  ]) {
+    assert.equal(staleMarked(section, { search }), stale, `${section}${search}`);
+  }
+  // Kiểu hiển thị đã lưu khác Thẻ vẫn bật bảo vệ (danh sách đổi); `kho` không cứu được điều đó.
+  assert.equal(staleMarked("team-chuan", { storedView: "bang" }), true);
+  assert.equal(staleMarked("team-chuan", { search: "?kho=rap-duoc", storedView: "bang" }), true);
+  assert.equal(staleMarked("team-chuan", { search: "?kho=rap-duoc", storedView: TEAM_VIEW_CARDS }), false);
 });

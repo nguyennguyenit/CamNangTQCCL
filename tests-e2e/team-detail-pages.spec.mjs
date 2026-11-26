@@ -157,6 +157,8 @@ test('copy link reports the real clipboard result and offers a selected fallback
   const query=`?from=${encodeURIComponent('/doi-chuan/?season=' + row.sourceSeasonId)}`;
   await page.goto(`${recommendedPath(handles,row.sourceConfigId)}${query}`);
   await expect(page.locator('#team-detail-body')).toBeVisible();
+  // Link cũ mang `from`: được đọc rồi dọn khỏi thanh địa chỉ để URL chia sẻ/canonical của trang luôn sạch.
+  await expect.poll(()=>new URL(page.url()).searchParams.has('from')).toBe(false);
   const button=page.locator('#team-copy-link');
   await expect(button).toHaveAttribute('aria-label','Sao chép liên kết đội');
   await button.click();
@@ -527,9 +529,8 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   const cta=card.getByRole('link',{name:'Chi tiết'});
   const href=await title.getAttribute('href');
   expect(href).toBe(await cta.getAttribute('href'));
-  // Path is exactly the frozen catalog route; the only query is the safe return origin.
-  expect(href.split('?')[0]).toBe(detailPath);
-  expect(new URLSearchParams(href.split('?')[1] || '').get('from')).toBe(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
+  // Link nội bộ là đúng route trong catalog đã đóng băng và không mang query nào: Đội chuẩn không có `variant`, không còn `from`.
+  expect(href).toBe(detailPath);
   // Both anchors carry the stable delegation marker instead of a pinned path prefix.
   await expect(title).toHaveAttribute('data-team-detail-link','');
   await expect(cta).toHaveAttribute('data-team-detail-link','');
@@ -541,6 +542,8 @@ test('card title and CTA are the same native link and modified clicks stay nativ
   const opened=await popup;
   await opened.waitForURL('**/doi-chuan/**');
   expect(new URL(opened.url()).pathname).toBe(detailPath);
+  // Tab mới không có history.state; đích Quay lại đọc từ referrer (danh sách đang xem).
+  await expect(opened.locator('#team-return-link')).toHaveAttribute('href',`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`);
   await opened.close();
   expect(new URL(page.url()).pathname).toBe('/doi-chuan/');
   expect(await page.evaluate(()=>history.length)).toBe(before);
@@ -687,9 +690,12 @@ test('a shared link without origin still offers the matching family scope',async
   const recommendedReturn=`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}`;
   await page.goto(recommendedPath(handles,row.sourceConfigId));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',recommendedReturn);
+  // Không referrer/state/storage: nút giữ link họ đội dựng sẵn; `teamDetailReturn: null` (khác `undefined`) chứng minh script đã chạy.
+  await expect.poll(()=>page.evaluate(()=>history.state?.teamDetailReturn)).toBeNull();
   const teams=await pagedTeams(request);
   await page.goto(legacyPath(handles,teams[0].id));
   await expect(page.locator('#team-return-link')).toHaveAttribute('href','/doi-khac/');
+  await expect.poll(()=>page.evaluate(()=>history.state?.teamDetailReturn)).toBeNull();
 });
 test('legacy detail return links normalize the old Team chuẩn source URL',async({page,request})=>{
   const {index}=await publication(request);
@@ -699,6 +705,10 @@ test('legacy detail return links normalize the old Team chuẩn source URL',asyn
   const oldFrom=`/?season=${encodeURIComponent(row.sourceSeasonId)}#team-chuan`;
   await page.goto(`${recommendedPath(handles,row.sourceConfigId)}?from=${encodeURIComponent(oldFrom)}`);
   await expect(page.locator('#team-detail-body')).toBeVisible();
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href',sectionUrl);
+  // `from` cũ được đọc rồi dọn khỏi thanh địa chỉ; đích vẫn sống qua reload nhờ history.state.
+  await expect.poll(()=>new URL(page.url()).searchParams.has('from')).toBe(false);
+  await page.reload();
   await expect(page.locator('#team-return-link')).toHaveAttribute('href',sectionUrl);
   await page.locator('#team-return-link').click();
   await expect(page).toHaveURL(sectionUrl);
@@ -750,10 +760,11 @@ test('old reference links replace into dedicated routes while config keeps gamep
   const row=index.records[0];
   const legacyTeamId='team-intro-14';
   const legacyDetail=legacyPath(handles,legacyTeamId);
-  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&detail=${encodeURIComponent(row.sourceConfigId)}`);
-  await expect(page).toHaveURL(new RegExp(`/doi-chuan/[^/?]+/`));
+  await page.goto(`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&q=thu&detail=${encodeURIComponent(row.sourceConfigId)}`);
+  await expect(page).toHaveURL(new RegExp(`/doi-chuan/[^/?]+/$`));
   await expect(page.locator('#team-detail-body')).toBeVisible();
-  await expect(page.locator('#team-return-link')).toHaveAttribute('href',new RegExp(`season=${encodeURIComponent(row.sourceSeasonId)}`));
+  // Link chuyển tiếp sạch: đích Quay lại là referrer của lần `location.replace` (trang mục cũ, đã bỏ `detail`), không còn `from`.
+  await expect(page.locator('#team-return-link')).toHaveAttribute('href',`/doi-chuan/?season=${encodeURIComponent(row.sourceSeasonId)}&q=thu`);
 
   await page.goto(`/doi-khac/?legacyTeam=${legacyTeamId}`);
   await expect(page).toHaveURL(new RegExp(`doi-khac/${handles.l[legacyTeamId]}/`));
