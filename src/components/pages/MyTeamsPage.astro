@@ -6,6 +6,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import { websiteDisplayPublicationSnapshot } from '../../lib/root-static-artifacts.ts';
 import { teamDetailCatalog } from '../../lib/team-detail-routes';
 import { LOCALE_PREFIX, pick } from '../../../js/i18n.js';
+import { localSeasonName } from '../../../js/ja-season-names.js';
 import type { SiteLocale } from '../../lib/locale-routes';
 
 interface Props {
@@ -24,13 +25,13 @@ const routeTables = JSON.stringify({
   k: Object.fromEntries(catalog.khaiHoang.map((entry) => [entry.khaiHoangTeamId, entry.handle])),
 }).replace(/</g, '\\u003c');
 // Danh mục mùa của generation đã pin (cùng `seasons.json` của Đội chuẩn): ô "Mùa" của trình soạn và nhãn mùa trên thẻ.
-// Bản vi `PK-S27 · Hán Diễm Trường Minh`; bản zh dùng tên chữ Hán gốc.
+// Bản vi `PK-S27 · Hán Diễm Trường Minh`; bản zh dùng tên chữ Hán gốc; bản ja tên mùa Nhật đã xác minh (thiếu thì tên gốc).
 const website = await websiteDisplayPublicationSnapshot();
 const registry = JSON.parse(Buffer.from(website.recommended.files['seasons.json']).toString('utf8'));
 const seasonOptions = (Array.isArray(registry?.seasonOptions) ? registry.seasonOptions : [])
   .filter((option: { sourceSeasonId?: unknown }) => typeof option?.sourceSeasonId === 'string' && option.sourceSeasonId)
   .map((option: { sourceSeasonId: string; displayCode?: string; displayNameVi?: string; nameRaw?: string }) => {
-    const name = pick(locale, option.displayNameVi, option.nameRaw, option.nameRaw);
+    const name = pick(locale, option.displayNameVi, option.nameRaw, localSeasonName(option.nameRaw, locale));
     return { id: option.sourceSeasonId, label: [option.displayCode, name].filter(Boolean).join(' · ') || option.sourceSeasonId };
   });
 const seasonTable = JSON.stringify(seasonOptions).replace(/</g, '\\u003c');

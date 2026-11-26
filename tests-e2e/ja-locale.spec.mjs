@@ -144,6 +144,15 @@ for (const [path, section] of SECTIONS) {
   });
 }
 
+test('ô chọn mùa Đội chuẩn bản Nhật hiện tên mùa Nhật 漢焔不滅; bản zh giữ tên nguồn 漢焰長明', async ({ page }) => {
+  await page.goto('/ja/doi-chuan/');
+  const option = page.locator('#section-team-chuan select option[value="pk-s27"]');
+  await expect(option).toHaveText(/^PK-S27 · 漢焔不滅/u);
+  await expect(page.locator('#section-team-chuan select')).not.toContainText('漢焰長明');
+  await page.goto('/zh/doi-chuan/');
+  await expect(page.locator('#section-team-chuan select option[value="pk-s27"]')).toHaveText(/^PK-S27 · 漢焰長明/u);
+});
+
 test('ba họ trang chi tiết và một trang mùa bản Nhật: tiêu đề chữ Nhật, link về danh sách bản Nhật, đủ hreflang', async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   const sitemap = await page.request.get('/sitemap.xml').then((response) => response.text());

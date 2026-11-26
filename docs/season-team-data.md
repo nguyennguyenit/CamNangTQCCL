@@ -370,6 +370,7 @@ python3 -m pipeline.team_route_handles --check
 python3 -m pipeline.site_localization prune --root .
 git add -A src/data/recommended-reference
 python3 -m unittest tests.test_build_recommended_reference
+node scripts/report-ja-gaps.mjs   # mục "Tên mùa" đọc seasons.json của generation đang pin
 npm run build
 npm run verify
 npm run test:dist

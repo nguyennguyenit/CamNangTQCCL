@@ -10,8 +10,10 @@
 // Khi branch chưa bật `ja` trong `SITE_LOCALES`, script tự chạy lại trong tiến trình con có `scripts/preview-locale-hook.mjs`
 // (nạp `js/i18n.js` với `ja`), nên báo cáo trước và sau khi bật `/ja/` là một.
 import { spawnSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { SITE_LOCALES, withLocale } from "../js/i18n.js";
+import { jaSeasonName } from "../js/ja-season-names.js";
 import { lookupJaEntry } from "../js/lookup-detail.js";
 import { lookupGroupLabels } from "../js/unified-lookup.js";
 import { cell, groupTotals, localeGaps, runGapsReport } from "./report-zh-gaps.mjs";
@@ -46,8 +48,18 @@ export function nameStatusCounts(corpus) {
   }));
 }
 
-/** Markdown của báo cáo; `totals` là số mục mỗi nhóm của corpus, `names` là `nameStatusCounts`. */
-export function renderJaGapsReport(gaps, totals, names) {
+/**
+ * Tên mùa bản ja theo registry mùa (`seasons.json` của generation Đội chuẩn đang pin), cùng thứ tự registry:
+ * `[{code, nameRaw, ja}]`, `ja` là `null` khi mùa chưa có tên Nhật đã xác minh (trang ja giữ tên nguồn).
+ */
+export function jaSeasonRows(registry) {
+  return (Array.isArray(registry?.seasonOptions) ? registry.seasonOptions : [])
+    .filter((item) => typeof item?.nameRaw === "string" && item.nameRaw.trim())
+    .map((item) => ({ code: item.displayCode || item.sourceSeasonId, nameRaw: item.nameRaw.trim(), ja: jaSeasonName(item.nameRaw) }));
+}
+
+/** Markdown của báo cáo; `totals` là số mục mỗi nhóm của corpus, `names` là `nameStatusCounts`, `seasons` là `jaSeasonRows`. */
+export function renderJaGapsReport(gaps, totals, names, seasons = []) {
   const labels = withLocale("vi", () => lookupGroupLabels("vi"));
   const groups = Object.keys(totals);
   const lines = [
@@ -71,6 +83,20 @@ export function renderJaGapsReport(gaps, totals, names) {
     ...groups.map((group) => `| ${labels[group]} | ${names[group].verified} | ${names[group].derived} | ${names[group].missing} | ${totals[group]} |`),
     "",
   ];
+  if (seasons.length) {
+    lines.push(
+      "## Tên mùa",
+      "",
+      "Bản ja hiện tên mùa Nhật đã xác minh (`js/ja-season-names.js`, chiếu từ thuật ngữ có nguồn của `pipeline/ja-glossary.json`); ánh xạ theo tên mùa nguồn vì server Nhật đi sau một mùa. Mùa chưa có tên Nhật không tự dịch: ô chọn mùa và nhãn mùa hiện tên nguồn, trang dựng sẵn (trang mùa, trang đội) đổi tự dạng Nhật của tên nguồn.",
+      "",
+      `Có tên Nhật: ${seasons.filter((row) => row.ja).length} / ${seasons.length} mùa.`,
+      "",
+      "| Mã | Tên nguồn | Tên Nhật |",
+      "|---|---|---|",
+      ...seasons.map((row) => `| ${cell(row.code)} | ${cell(row.nameRaw)} | ${cell(row.ja ?? "— (chưa có)")} |`),
+      "",
+    );
+  }
   for (const group of groups) {
     const rows = gaps.filter((gap) => gap.group === group);
     lines.push(`## ${labels[group]} (${group}): ${rows.length} / ${totals[group]}`, "");
@@ -87,6 +113,12 @@ export function renderJaGapsReport(gaps, totals, names) {
   return lines.join("\n");
 }
 
+/** Registry mùa của generation Đội chuẩn đang pin (`src/data/recommended-reference/current.json`). */
+function pinnedSeasonRegistry() {
+  const read = (path) => JSON.parse(readFileSync(new URL(`../src/data/recommended-reference/${path}`, import.meta.url), "utf8"));
+  return read(`${read("current.json").generationId}/seasons.json`);
+}
+
 async function main(argv) {
   if (!SITE_LOCALES.includes("ja")) {
     // `ja` chưa bật: chạy lại chính script trong tiến trình con nạp `js/i18n.js` có `ja` (xem đầu file).
@@ -97,7 +129,7 @@ async function main(argv) {
   return runGapsReport({
     argv,
     reportPath: JA_GAPS_REPORT_PATH,
-    render: (corpus) => renderJaGapsReport(jaGaps(corpus), groupTotals(corpus), nameStatusCounts(corpus)),
+    render: (corpus) => renderJaGapsReport(jaGaps(corpus), groupTotals(corpus), nameStatusCounts(corpus), jaSeasonRows(pinnedSeasonRegistry())),
     command: "node scripts/report-ja-gaps.mjs",
   });
 }

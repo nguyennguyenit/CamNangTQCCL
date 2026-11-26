@@ -5,6 +5,7 @@ import { classifyName, createEntityIndex } from './analyze-map.js';
 import { heroFamilyId } from './hero-identity.js';
 import { L, currentLocale, normalizeLocale, pick } from './i18n.js';
 import { heroPortrait } from './hero-portrait.js';
+import { jaSeasonLabel } from './ja-season-names.js';
 import { createLookupPayloadLoader } from './lookup-data.js';
 import { createTacticIdResolver } from './lookup-ids.js';
 import { el } from './render.js';
@@ -119,10 +120,14 @@ export function troopLabel(troop) {
   }
 }
 
-/** Nhãn mùa theo locale. */
+/**
+ * Nhãn mùa theo locale. Bản ja: mùa có tên Nhật đã xác minh thì `<mã> · <tên Nhật>` (cả lúc build, khi chưa có bộ tra tên);
+ * mùa khác đổi tự dạng qua bộ tra tên như trước.
+ */
 export function seasonLabel(season, locale = currentLocale()) {
   if (!season) return '';
-  const source = typeof season.labelZh === 'string' && season.labelZh ? localRawName(season.labelZh, localNames, locale) : season.labelZh;
+  const raw = typeof season.labelZh === 'string' && season.labelZh ? season.labelZh : null;
+  const source = raw ? (locale === 'ja' ? jaSeasonLabel(raw) : null) ?? localRawName(raw, localNames, locale) : season.labelZh;
   return pick(locale, season.labelVi, season.labelZh, source) || season.labelVi || season.labelZh || String(season.id ?? '');
 }
 

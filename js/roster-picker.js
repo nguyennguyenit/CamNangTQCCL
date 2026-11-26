@@ -247,7 +247,7 @@ export function createPicker({ policy, catalog, title, lead, selected, onToggle,
   let shownCount = PAGE_SIZE;
   let disabled = false;
 
-  const search = el("input", { type: "search", class: "ana-input roster-picker-search", id: `${uid}-q`, autocomplete: "off", placeholder: L("Tìm tên Việt, Hán-Việt hoặc chữ Hán…", "搜索越南名、汉越音或汉字…", "ベトナム語名・漢越音・漢字で検索…"), "aria-label": L("Tìm trong danh mục", "搜索图鉴", "図鑑内を検索") });
+  const search = el("input", { type: "search", class: "ana-input roster-picker-search", id: `${uid}-q`, autocomplete: "off", placeholder: L("Tìm tên Việt, Hán-Việt hoặc chữ Hán…", "搜索越南名、汉越音或汉字…", "日本語名・ベトナム語名・漢越音・漢字で検索…"), "aria-label": L("Tìm trong danh mục", "搜索图鉴", "図鑑内を検索") });
   const filterRow = el("div", { class: "roster-picker-filters" });
   const status = el("p", { class: "roster-picker-count", role: "status", tabindex: "-1", "aria-live": "polite" });
   const selectAllBtn = el("button", { type: "button", class: "ana-btn roster-picker-selectall" });

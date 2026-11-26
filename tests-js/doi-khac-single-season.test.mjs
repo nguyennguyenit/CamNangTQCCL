@@ -10,6 +10,7 @@ import { projectRecommendedRows, readRecommendedQuery, referenceSectionState } f
 import { otherTeamListEntries } from "../js/other-team-groups.js";
 import { detailBadges, recommendedListTrees } from "../js/recommended-reference-render.js";
 import { otherTeamsSeasonId, referenceSeasonLabelTree } from "../js/team-filter-section.js";
+import { jaSeasonName } from "../js/ja-season-names.js";
 import { safeReturnUrl } from "../js/team-detail-navigation.js";
 import { recommendedSectionTrees } from "../src/lib/team-section-ssr.js";
 import { TEAM_VIEW_GRID, TEAM_VIEW_TABLE } from "../js/team-view.js";
@@ -93,7 +94,9 @@ test("team có đại diện đề cử đứng đầu theo optionRank; field re
 for (const locale of ["vi", "zh", "ja"]) {
   test(`Đội khác dựng sẵn (${locale}): nhãn mùa tĩnh từ registry, không ô chọn, nhãn Đề cử trên đúng team, team đề cử đứng đầu`, () => {
     const markup = html(recommendedSectionTrees({ family: "other", payload: sample, registry, locale }));
-    const name = locale === "vi" ? season.displayNameVi : season.nameRaw;
+    // Bản ja: tên mùa Nhật đã xác minh (mùa Đội khác hiện là PK-S27 = 漢焔不滅), thiếu thì tên nguồn như bản zh.
+    const name = locale === "vi" ? season.displayNameVi : locale === "ja" ? jaSeasonName(season.nameRaw) ?? season.nameRaw : season.nameRaw;
+    if (locale === "ja" && season.sourceSeasonId === "pk-s27") assert.equal(name, "漢焔不滅");
     assert.ok(markup.includes(`<div class="reference-season-field reference-season-static"><span class="reference-season-label">${SEASON_PREFIX[locale]}</span> <span class="reference-season-name">${name}</span></div>`));
     assert.doesNotMatch(markup, /<select|<option|Tất cả|Chưa rõ mùa|全部|赛季不明/u);
     assert.equal(badgeCount(markup), flaggedIds.length);
