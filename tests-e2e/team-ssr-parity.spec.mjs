@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 // DOM dựng sẵn mà trình duyệt nhận lại phải đúng bằng DOM trình duyệt tự dựng cho cùng URL: bỏ dấu `data-ssr-source`
-// của HTML (page.route) thì client không nhận lại mà dựng từ dữ liệu; hai bản outerHTML phải trùng.
+// của HTML (page.route) thì client không nhận lại mà dựng từ dữ liệu; hai bản outerHTML phải trùng. Cả hai phía đều là DOM SAU boot
+// nên spec này chỉ so khối danh sách; phép so khung dựng sẵn với khung sau boot nằm ở team-ssr-layout-shift.spec.mjs.
 const LISTS = [
   ["/doi-chuan/", ".reference-view"],
   ["/doi-khac/", ".reference-view"],
@@ -36,7 +37,7 @@ async function listHtml(page, url, selector, { stripMarker }) {
   return html;
 }
 
-for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"]]) {
+for (const [locale, prefix] of [["vi", ""], ["zh", "/zh"], ["ja", "/ja"]]) {
   for (const [path, selector] of LISTS) {
     test(`${locale} ${path}: DOM nhận lại từ bản dựng sẵn bằng DOM client tự dựng`, async ({ browser }) => {
       const adoptedPage = await (await browser.newContext()).newPage();

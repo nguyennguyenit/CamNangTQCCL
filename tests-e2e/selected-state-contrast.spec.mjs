@@ -3,6 +3,7 @@
 // #16140F và 1,28:1 với chip chưa chọn #2A2620 — chip trông như một cái lỗ. Họ token `--select*` thay thế.
 // Đo trên DOM thật: nền đối chiếu là tổ tiên gần nhất có nền đục, và nền của một phần tử anh em chưa chọn.
 import { expect, test } from '@playwright/test';
+import { gotoBooted } from './helpers/boot.mjs';
 
 const MIN_NON_TEXT = 3;   // WCAG 1.4.11 (thành phần/trạng thái)
 const MIN_TEXT = 4.5;     // WCAG 1.4.3
@@ -80,7 +81,7 @@ for (const theme of ['dark', 'light']) {
       await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
       for (const item of CASES) {
         if (item.widths && !item.widths.includes(width)) continue;
-        await page.goto(item.path);
+        await gotoBooted(page, item.path);
         await expect(page.locator(item.selected).first(), `${item.path} ${item.selected}`).toBeVisible();
         const measured = await measure(page, item);
         const label = `${theme}/${width} ${item.path} ${item.selected}`;
@@ -106,7 +107,7 @@ test('chip phe đang bật: ô vuông phe và số đếm đọc được ở c�
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 900 });
       await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
-      await page.goto(FACTION.path);
+      await gotoBooted(page, FACTION.path);
       if (width === 390) await page.locator('#section-team-chuan .filter-collapse-toggle').click();
       const chip = page.locator(FACTION.chip);
       await expect(chip).toBeVisible();
@@ -173,9 +174,8 @@ test('theme tối: thẻ, sidebar, header và footer tách lớp khỏi nền tr
   await page.setViewportSize({ width: 1440, height: 900 });
   for (const theme of ['dark', 'light']) {
     await page.addInitScript((value) => { try { localStorage.setItem('theme', value); } catch { /* storage bị chặn */ } }, theme);
-    await page.goto('/doi-chuan/');
-    // Sidebar lọc do app.js dựng: chờ khởi động xong (thẻ dựng sẵn đã hiện từ trước).
-    await expect(page.locator('body')).toHaveAttribute('data-boot', 'ready');
+    await gotoBooted(page, '/doi-chuan/');
+    // Sidebar lọc có sẵn từ build nhưng còn khoá: đo sau khi app.js khởi động xong, lúc nó thành điều khiển thật.
     await expect(page.locator('#section-team-chuan .team-card').first()).toBeVisible();
     const measured = await page.evaluate(() => {
       const style = (selector) => getComputedStyle(document.querySelector(selector));

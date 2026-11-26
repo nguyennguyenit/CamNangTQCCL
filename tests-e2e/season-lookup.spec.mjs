@@ -11,6 +11,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
 import { replaceWebsiteDisplayPin, websiteDisplayFixture } from './fixtures/website-display-fixture.mjs';
+import { gotoBooted } from './helpers/boot.mjs';
 
 const repositoryRoot = fileURLToPath(new URL('../', import.meta.url));
 function trackedScreenshotHashes() {
@@ -350,7 +351,7 @@ for(const width of [375,1280]) test(`real Binh Dien review screenshot at ${width
   await page.screenshot({path:testInfo.outputPath(`ui-real-binh-dien-${width}.png`)});
 });
 test('Team khác faction facet filters by derived faction without mutating the scope model',async({page})=>{
-  await page.goto('/doi-khac/');
+  await gotoBooted(page,'/doi-khac/');
   const section=page.locator('#section-team-khac');
   const facet=section.locator('.fchip[data-focus-key^="faction:"]').first();
   const raw=(await facet.getAttribute('data-focus-key')).slice('faction:'.length);
@@ -398,7 +399,8 @@ test('optional unverified conditions remain informational in inventory compariso
   await expect(page.locator('.season-inventory-comparison')).not.toContainText('chưa thể đề xuất build');
 });
 test('keyboard facet toggles preserve focus and pressed state after filtering',async({page})=>{
-  await page.goto('/doi-khac/');
+  // `focus()` không chờ nút hết khoá: chip dựng sẵn còn `disabled` tới khi app.js boot, nên phải chờ boot trước.
+  await gotoBooted(page,'/doi-khac/');
   const facet=page.locator('#section-team-khac .fchip[data-focus-key^="faction:"]').first();
   const raw=(await facet.getAttribute('data-focus-key')).slice('faction:'.length);
   await facet.focus();await page.keyboard.press('Space');

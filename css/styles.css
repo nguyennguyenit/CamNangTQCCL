@@ -7847,8 +7847,8 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
   display: none;
 }
 
-/* Bốn trang danh sách đội: thân dựng sẵn là trạng thái mặc định. Trang mở ở trạng thái khác (script inline sau mount gắn
-   `data-ssr-stale`) thì ẩn danh sách — vẫn giữ chỗ — đến khi js/app.js dựng đúng trạng thái và gỡ dấu. */
+/* Bốn trang danh sách đội: thân dựng sẵn là trạng thái mặc định. Trang mở ở trạng thái khác (script inline là con đầu của mount gắn
+   `data-ssr-stale` trước khi nút nào của thân được tạo) thì ẩn danh sách — vẫn giữ chỗ — đến khi js/app.js dựng đúng trạng thái và gỡ dấu. */
 .section[data-ssr-stale] :is(.reference-view, .coexist-group-view) {
   visibility: hidden;
 }
@@ -7856,6 +7856,53 @@ html:not([data-lookup-js]) #section-lookup .lookup-more-row {
 /* Đội chuẩn / Đội khác dùng chung hàng "Xem thêm"; hết đội thì bỏ cả khoảng trống của hàng. */
 .reference-more[hidden] {
   display: none;
+}
+
+/* Khung lọc dựng sẵn của Đội chuẩn / Đội khác cũng là trạng thái mặc định. Trang mở ở trạng thái khác (`data-ssr-stale`) thì phần phụ
+   thuộc trạng thái của khung — chip, "Xóa lọc", số đếm, nút kiểu hiển thị, ô tìm, và mọi nội dung của ô chọn mùa kèm huy hiệu
+   "Đang diễn ra" — ẩn nhưng vẫn giữ chỗ (khung, viền, hàng) đến khi js/app.js dựng đúng. Nhãn mùa tĩnh của Đội khác (`div`) là
+   nội dung, không phụ thuộc URL nên không ẩn. */
+.section[data-ssr-stale] :is(
+  .reference-filters .chip-row,
+  .reference-filters .clear-btn,
+  .reference-filter-head,
+  .reference-count,
+  .reference-view-toggle,
+  .reference-search-input,
+  label.reference-season-field > *
+) {
+  visibility: hidden;
+}
+
+/* Khung lọc chỉ có nghĩa khi js/app.js gắn sự kiện. Không có JavaScript (`scripting: none`) hoặc boot/dữ liệu lỗi
+   (`data-ssr-failed`) thì khung dựng sẵn là điều khiển chết: ẩn hẳn, để danh sách đọc được chiếm cả hàng. Nhãn mùa tĩnh của Đội khác
+   vẫn hiện (nội dung). */
+@media (scripting: none) {
+  :is(#section-team-chuan, #section-team-khac) :is(.reference-toolbar, .reference-filters, label.reference-season-field, .reference-more) {
+    display: none;
+  }
+
+  :is(#section-team-chuan, #section-team-khac) .reference-results-body {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}
+
+:is(#section-team-chuan, #section-team-khac)[data-ssr-failed] :is(.reference-toolbar, .reference-filters, label.reference-season-field, .reference-more) {
+  display: none;
+}
+
+:is(#section-team-chuan, #section-team-khac)[data-ssr-failed] .reference-results-body {
+  grid-column: 1 / -1;
+  grid-row: 1;
+}
+
+/* Quay lại từ trang chi tiết khi panel lọc đang mở (snapshot, script bảo vệ gắn `data-ssr-filters-open`, kể cả khi URL có `kho`/`xep`):
+   trên mobile panel mở sẵn ngay trong HTML dựng sẵn, nên lúc js/app.js mở lại panel, danh sách không bị đẩy xuống. */
+@media (max-width: 900px) {
+  .section[data-ssr-filters-open] .reference-filters.collapsed {
+    display: flex;
+  }
 }
 
 /* ---------- Tra cứu: danh sách + chi tiết (Trang bị, Quân sư, Cải tạo binh chủng, Công trình) ----------

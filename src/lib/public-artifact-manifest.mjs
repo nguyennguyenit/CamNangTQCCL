@@ -100,6 +100,7 @@ export const PUBLIC_ARTIFACTS = Object.freeze([
   entry("js", "other-team-groups"),
   entry("js", "recommended-reference-render"),
   entry("js", "recommended-reference-state"),
+  entry("js", "reference-shell-tree"),
   entry("js", "render"),
   entry("js", "roster-cloud-store"),
   entry("js", "roster-conflict-view"),

@@ -175,13 +175,22 @@ const SEASON_MARKER = {
   tactics: `sha256:${"0".repeat(64)}`,
 };
 
+/** Khung lọc dựng sẵn tối thiểu quanh danh sách Đội chuẩn / Đội khác (thanh công cụ + sidebar lọc) mà verifier đòi. */
+const PRERENDERED_SHELL = { toolbar: '<div class="reference-toolbar"></div>', filters: '<aside class="reference-filters collapsed"></aside>' };
+
 /** Nội dung đội dựng sẵn tối thiểu mà verifier đòi ở bốn trang danh sách đội (vân tay publication ở `website`). */
 const PRERENDERED_SECTION_BODY = {
-  "team-chuan": '<h1 class="reference-title">Đội chuẩn</h1><div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-chuan/x/"></a></article></div>',
-  "team-khac": '<h1 class="reference-title">Đội khác</h1><div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-khac/x/"></a></article></div>',
+  "team-chuan": `<h1 class="reference-title">Đội chuẩn</h1>${PRERENDERED_SHELL.toolbar}${PRERENDERED_SHELL.filters}<div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-chuan/x/"></a></article></div>`,
+  "team-khac": `<h1 class="reference-title">Đội khác</h1>${PRERENDERED_SHELL.toolbar}${PRERENDERED_SHELL.filters}<div class="reference-view" data-ssr-signature="[]"><article class="reference-team-card"><a data-team-detail-link href="/doi-khac/x/"></a></article></div>`,
   coexist: '<h1 class="reference-title">Cùng Tồn</h1><div class="coexist-group-view" data-ssr-signature="[]"><article class="coexist-team-card"></article></div>',
   khaihoang: '<div class="khaihoang"><h1 class="reference-title">Khai hoang</h1><article class="kh-card"><a class="kh-title-link" href="/khai-hoang/x/"></a></article></div>',
 };
+
+/**
+ * Script bảo vệ chống nháy tối thiểu mà verifier đòi làm CON ĐẦU của mount dựng sẵn (bản thật do `ssrStaleGuardScript` sinh): nằm sau mount
+ * thì phần HTML đã stream về hiện ở trạng thái mặc định cho tới khi cả danh sách về.
+ */
+const PRERENDERED_GUARD = '<script>(function(c){try{document.getElementById(c.id).dataset.ssrStale="";}catch(e){}})({});</script>';
 
 /** Thân chi tiết dựng sẵn tối thiểu mà verifier đòi ở mọi trang chi tiết đội. */
 const PRERENDERED_DETAIL_BODY = '<div id="team-detail-body" data-prerendered><section><h2>Đội hình</h2></section></div>';
@@ -191,7 +200,7 @@ function sectionPageHtml({ path, locale, section, season, group, sampleId, regis
   return [
     `<!doctype html>${pairHead(locale, `/${path}/`)}<body data-page-section="${section}"${group ? ` data-lookup-group="${group}"` : ""}>`,
     `<section id="section-${section}" class="section active"${PRERENDERED_SECTION_BODY[section] && website ? ` data-ssr-source="${website.pin.sha256}"` : ""}>`,
-    PRERENDERED_SECTION_BODY[section] ?? "",
+    PRERENDERED_SECTION_BODY[section] ? `${PRERENDERED_GUARD}${PRERENDERED_SECTION_BODY[section]}` : "",
     group ? `<button type="button" class="lookup-card-button" data-lookup-id="${sampleId}"></button>` : "",
     "</section>",
     season ? '<div id="season-controls"></div>' : "",
@@ -811,9 +820,15 @@ test("dist verifier admits exactly the catalog team pages, the 404 and no stale 
   // Bốn trang danh sách đội phải mang đội mặc định dựng sẵn, đúng một h1 và không đòi JavaScript.
   for (const [pagePath, mutate, expected] of [
     ["doi-chuan", (html) => html.replace(PRERENDERED_SECTION_BODY["team-chuan"], ""), /lacks its prerendered default content/i],
+    // Có danh sách mà thiếu khung lọc dựng sẵn: bố cục sẽ nhảy khi app.js boot.
+    ["zh/doi-chuan", (html) => html.replace(PRERENDERED_SHELL.toolbar, ""), /lacks its prerendered default content \(class="reference-toolbar"\)/i],
+    ["doi-khac", (html) => html.replace(PRERENDERED_SHELL.filters, ""), /lacks its prerendered default content \(class="reference-filters\)/i],
     ["zh/khai-hoang", (html) => html.replace(PRERENDERED_SECTION_BODY.khaihoang, ""), /lacks its prerendered default content/i],
     ["cung-ton", (html) => html.replace(PRERENDERED_SECTION_BODY.coexist, `${PRERENDERED_SECTION_BODY.coexist}<h1>Hai</h1>`), /exactly one h1/i],
     ["doi-khac", (html) => html.replace(PRERENDERED_SECTION_BODY["team-khac"], `${PRERENDERED_SECTION_BODY["team-khac"]}<noscript><p>Mục này cần JavaScript để hiển thị nội dung.</p></noscript>`), /waiting or JavaScript-required text/i],
+    // Script bảo vệ chống nháy phải là con đầu của mount: đặt sau mount (hoặc thiếu) thì phần HTML đã stream về hiện sai trạng thái trước khi nó chạy.
+    ["doi-chuan", (html) => html.replace(PRERENDERED_GUARD, "").replace("</section>", `</section>${PRERENDERED_GUARD}`), /stale guard must be the first child of its mount/i],
+    ["zh/khai-hoang", (html) => html.replace(PRERENDERED_GUARD, ""), /stale guard must be the first child of its mount/i],
   ]) {
     const sectionPath = join(distDir, ...pagePath.split("/"), "index.html");
     const validSection = await readFile(sectionPath, "utf8");
@@ -2189,7 +2204,8 @@ test("bốn trang danh sách đội dựng sẵn đội mặc định: tướng 
       const where = `${locale} /${path}/`;
       assert.equal((html.match(/<h1\b/gu) ?? []).length, 1, `${where}: đúng một h1 (không tính noscript)`);
       assert.doesNotMatch(html, /<noscript>[\s\S]*?JavaScript[\s\S]*?<\/noscript>/u, `${where}: không noscript yêu cầu JavaScript`);
-      const section = html.match(/<section\b[^>]*id="section-[a-z-]+"[\s\S]*?<script\b/u)?.[0] ?? "";
+      // Thân mục dựng sẵn: từ thẻ mở của mount tới script nạp app.js (script bảo vệ chống nháy là con đầu của mount nên không thể cắt ở `<script` đầu tiên).
+      const section = html.match(/<section\b[^>]*id="section-[a-z-]+"[\s\S]*?(?=<script\b[^>]*\bsrc="\/js\/app\.js")/u)?.[0] ?? "";
       const text = visibleText(section);
       if (entry) {
         const href = `${locale === "zh" ? "/zh" : ""}${entry.routePath}`;

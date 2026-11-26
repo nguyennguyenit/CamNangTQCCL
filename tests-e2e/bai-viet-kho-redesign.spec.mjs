@@ -12,6 +12,7 @@ import { buildListCoverage } from "../js/roster-list-coverage.js";
 import { CLOUD_STORAGE_KEY, emptyCloudState, mergeLocal } from "../js/roster-cloud-store.js";
 import { createRosterIdResolver } from "../js/roster-id-resolve.js";
 import { FIXTURE_COVER, FIXTURE_PORT, FIXTURE_SLUG } from "../scripts/design-canvas/bai-viet-fixture.mjs";
+import { gotoBooted } from "./helpers/boot.mjs";
 
 const read = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), "utf8"));
 const { generationId } = read("src/data/recommended-reference/current.json");
@@ -146,7 +147,7 @@ test.describe("Đội chuẩn có kho ở 390px: món thiếu trên thẻ", () =
 test.describe("Đội chuẩn có kho: số trên nút, ngôn ngữ, nguồn kho, trang mùa cũ", () => {
   test("đang lọc chip hoặc tìm từ khoá thì ẩn số đội trên hai nút lọc kho; bỏ lọc thì hiện lại", async ({ page }) => {
     await seedLocal(page, roster);
-    await page.goto("/doi-chuan/");
+    await gotoBooted(page, "/doi-chuan/");
     const section = page.locator("#section-team-chuan");
     const bar = section.locator(".reference-roster-bar");
     await expect(bar).toHaveAttribute("data-state", "ready");

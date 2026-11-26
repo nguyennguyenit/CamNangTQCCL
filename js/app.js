@@ -359,8 +359,9 @@ async function main() {
     /** Chỉ sửa URL (replaceState), không vẽ lại: cho khóa không còn tác dụng mà mục đã tự bỏ khỏi trạng thái của nó. */
     const replaceReferenceQuery = changes => history.replaceState(history.state, '', referenceQueryURL(changes));
     // Quay lại một danh sách đang lọc/sắp theo kho (`kho`/`xep` trên URL): kho đọc không đồng bộ nên lúc khôi phục danh sách còn
-    // chưa lọc. Mở thẻ và cuộn ở đó sẽ rơi vào danh sách sai, nên hai bước này hoãn tới lần áp kho đầu tiên (kể cả khi máy không
-    // có kho) và chỉ chạy một lần; người dùng đổi bộ lọc trước đó thì bỏ hẳn.
+    // chưa lọc. Mở thẻ, focus và cuộn ở đó sẽ rơi vào danh sách sai, nên các bước này hoãn tới lần áp kho đầu tiên (kể cả khi máy
+    // không có kho) và chỉ chạy một lần; người dùng đổi bộ lọc trước đó thì bỏ hẳn. Panel lọc không phụ thuộc danh sách nên KHÔNG
+    // hoãn: mở muộn thì trên mobile nó đẩy danh sách xuống đúng lúc kho tới (xem `restoreReturnState`).
     let rosterPending = false;
     let afterRoster = null;
     const rosterSettled = () => {
@@ -499,6 +500,9 @@ async function main() {
       };
       const listQuery = new URL(location.href).searchParams;
       if (rosterPending && (listQuery.has('kho') || listQuery.has('xep'))) {
+        // Panel lọc mở ngay, cùng lúc với bản dựng sẵn (script bảo vệ đã mở sẵn nó từ HTML, kể cả khi URL có `kho`/`xep`); chỉ phần
+        // phụ thuộc danh sách đã lọc (thẻ đích, chi tiết đã mở, focus, cuộn) chờ kho.
+        sections[snapshot.tab || pageSection]?.setFiltersExpanded?.(snapshot.disclosures?.filters);
         deferUntilRoster(restoreView, () => sections[snapshot.tab || pageSection]?.forgetRestoredDisclosures?.());
       }
       else restoreView();
@@ -592,6 +596,8 @@ async function main() {
         : null;
     }
     if (REFERENCE_SECTIONS.includes(pageSection) && !recommendedModel) {
+      // Không có dữ liệu thì không ai gắn sự kiện cho khung lọc dựng sẵn: ẩn khung chết (CSS `data-ssr-failed`), chỉ còn danh sách đọc được.
+      mount.dataset.ssrFailed = '';
       // Lên đầu mục: sau các thẻ dựng sẵn thông báo sẽ nằm ngoài tầm nhìn.
       mount.prepend(el('p',{class:'error',role:'status'}, pageSection === 'team-chuan'
         ? L('Dữ liệu đội chuẩn hiện không khả dụng. Các mục khác vẫn hoạt động.', '推荐阵容数据暂不可用。其他栏目仍可正常使用。', 'おすすめ編成のデータは現在利用できません。他のセクションは引き続きご利用いただけます。')
@@ -734,9 +740,13 @@ async function main() {
       ? L(displayValue(websiteDisplay, "ui:app/load-error", "errorTemplate"), "数据加载失败：{message}。请刷新页面，如问题持续请联系管理员。", "データの読み込みに失敗しました: {message}。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。")
       : L("Không thể tải dữ liệu. Hãy tải lại trang hoặc liên hệ quản trị viên nếu lỗi tiếp diễn.", "无法加载数据。请刷新页面，如问题持续请联系管理员。", "データを読み込めません。ページを再読み込みしてください。問題が続く場合は管理者にお問い合わせください。");
     mount.prepend(el("p", { class: "error", role: "alert" }, template.replace("{message}", L("không xác định", "未知错误", "不明なエラー"))));
+    // Boot lỗi giữa chừng: khung lọc dựng sẵn của hai trang danh sách đội có thể còn khoá hoặc dở dang; ẩn khung chết, giữ danh sách.
+    if (REFERENCE_SECTIONS.includes(pageSection)) mount.dataset.ssrFailed = '';
   } finally {
     // Lỗi boot: thà hiện thân dựng sẵn (kèm thông báo lỗi ở trên) còn hơn để trống.
     delete mount.dataset.ssrStale;
+    // Dấu mở sẵn panel lọc của bản dựng sẵn chỉ sống tới hết lần boot (đã khôi phục thì `setFiltersExpanded` gỡ trước đó).
+    delete mount.dataset.ssrFiltersOpen;
     // Tín hiệu cho e2e: mount xong, kể cả khi nhánh trên đã lỗi.
     document.body.dataset.boot = 'ready';
   }

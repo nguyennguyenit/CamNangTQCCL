@@ -91,5 +91,25 @@ test.describe("không có JavaScript", () => {
         await expect(page.locator("#team-detail-root")).toHaveAttribute("aria-busy", "false");
       });
     }
+
+    // Khung lọc dựng sẵn chỉ có nghĩa khi có JavaScript (điều khiển bị khoá, không ai gắn sự kiện): không JS thì ẩn cả khung
+    // chết, danh sách chiếm cả bề ngang nội dung; nhãn mùa tĩnh của Đội khác là nội dung nên vẫn hiện.
+    for (const { path } of LISTS.filter((item) => item.path === "/doi-chuan/" || item.path === "/doi-khac/")) {
+      test(`${locale} ${path}: khung lọc chết (thanh công cụ, sidebar, ô chọn mùa, "Xem thêm") ẩn, danh sách chiếm cả bề ngang nội dung`, async ({ page }) => {
+        await page.goto(`${prefix}${path}`, { waitUntil: "domcontentloaded" });
+        for (const selector of [".reference-toolbar", "aside.reference-filters", "label.reference-season-field", ".reference-more"]) {
+          const display = await page.locator(`main ${selector}`).evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).display));
+          expect(display.every((value) => value === "none"), `${path}: ${selector} phải ẩn (${display})`).toBe(true);
+        }
+        // Khung vẫn nằm trong HTML (cùng một HTML cho mọi người xem), chỉ không hiện.
+        expect(await page.locator("main .reference-toolbar").count()).toBe(1);
+        expect(await page.locator("main aside.reference-filters").count()).toBe(1);
+        if (path === "/doi-khac/") await expect(page.locator("main .reference-season-static")).toBeVisible();
+        await expect(page.locator("main .reference-team-card").first()).toBeVisible();
+        const widths = await page.evaluate(() => [".reference-head", ".reference-results", ".reference-results-body"].map((selector) => document.querySelector(selector).getBoundingClientRect().width));
+        expect(Math.abs(widths[1] - widths[2]), `${path}: danh sách phải chiếm cả hàng (${widths})`).toBeLessThanOrEqual(1);
+        expect(Math.abs(widths[0] - widths[2]), `${path}: danh sách rộng bằng đầu mục (${widths})`).toBeLessThanOrEqual(1);
+      });
+    }
   }
 });
