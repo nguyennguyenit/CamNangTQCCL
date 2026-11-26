@@ -357,15 +357,42 @@ test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field l
   for (const locale of ["zh", "ja"]) {
     assert.deepEqual(Object.keys(FIELD_LOG_RECOMMENDATIONS[locale]).sort(), log.recommendations.map((item) => item.id).sort(), locale);
   }
-  // `lost` là tổng hao gồm thương binh (cột "Tổn thất" của báo cáo trận), nên chết = hao − thương binh; số chết
-  // trích trong khuyến nghị phải khớp các trận đã ghi.
-  assert.deepEqual(["p1-thu-cung", "p2-891-1449", "p2-899-1444", "p3-914-1450"].map((id) => fieldLogBattleDead(battle(id))), [119, 198, 525, 734]);
+  // `lost` là tổng hao gồm thương binh (cột "Tổn thất" của báo cáo trận), nên chết = hao − thương binh.
+  const battles = log.phases.flatMap((phase) => phase.battles);
+  assert.deepEqual(["p1-thu-cung", "p2-899-1444", "p2-891-1449", "p3-914-1450"].map((id) => fieldLogBattleDead(battle(id))), [119, 525, 198, 734]);
+  // Đầy binh = 100 binh mỗi cấp mỗi tướng: khớp hai trận xuất quân đầy ở cấp 8 và cấp 20; trận đất 6 thiếu binh.
+  const fullTroops = (item) => 300 * item.heroLevel;
+  assert.deepEqual(battles.filter((item) => item.troopsBefore).map((item) => item.troopsBefore === fullTroops(item)), [true, true, true, false]);
+  // Mọi số trong khuyến nghị (vi/zh/ja) phải suy ra được từ các trận đã ghi; ba bản dùng cùng một tập số.
+  const derived = new Set([1, 2, 3, 100]); // cỡ mẫu n, số trận, "1 mỏ", 100 binh mỗi cấp
+  for (const phase of log.phases) [phase.landLevel, phase.heroLevelMin, phase.heroLevelMax].forEach((value) => derived.add(value));
+  for (const item of battles) {
+    for (const key of ["heroLevel", "defenderLevel", "garrisonPerHero", "troopsBefore", "troopsAfter", "lost", "wounded"]) {
+      if (Number.isFinite(item[key])) derived.add(item[key]);
+    }
+    const dead = fieldLogBattleDead(item);
+    if (dead !== null) [dead, Number(((dead / item.troopsBefore) * 100).toFixed(1))].forEach((value) => derived.add(value));
+    if (item.troopsBefore) [fullTroops(item), Math.round((item.troopsBefore / fullTroops(item)) * 100)].forEach((value) => derived.add(value));
+  }
+  const numbersIn = (text, locale) => new Set((locale === "vi"
+    ? text.match(/\d{1,3}(?:\.\d{3})+|\d+(?:,\d+)?/g)?.map((raw) => raw.replace(/\./g, "").replace(",", "."))
+    : text.match(/\d{1,3}(?:,\d{3})+|\d+(?:\.\d+)?/g)?.map((raw) => raw.replace(/,/g, "")))?.map(Number) ?? []);
+  for (const item of log.recommendations) {
+    const vi = numbersIn(item.note, "vi");
+    for (const value of vi) assert.ok(derived.has(value), `${item.id}: ${value} không suy ra được từ log`);
+    for (const locale of ["zh", "ja"]) {
+      assert.deepEqual([...numbersIn(FIELD_LOG_RECOMMENDATIONS[locale][item.id], locale)].sort(), [...vi].sort(), `${item.id} (${locale})`);
+    }
+  }
   const recommendation = (id) => log.recommendations.find((item) => item.id === id).note;
   assert.match(recommendation("dat4-som"), /chết 119, tức 5,0%/);
   assert.match(recommendation("dat5-cap-20"), /chết 198 binh \(3,3%\).*chết 525 binh \(8,8%\)/);
-  assert.match(recommendation("dat6-28"), /chết 734 binh, tức 12,2%/);
-  // Không trích thống kê không có trận nào trong log làm mẫu.
-  for (const item of log.recommendations) assert.doesNotMatch(item.note, /n=(?:[3-9]|\d{2,})\b|5\.400|21,7%|cấp 18–19/, item.id);
+  assert.match(recommendation("dat6-28"), /5\.992 binh, khoảng 71% mức đầy 8\.400.*chết 734 binh, tức 12,2%/);
+  assert.match(recommendation("bo-sung-binh"), /chết 3,3–8,8%.*5\.992\/8\.400.*chết 12,2%/);
+  // Trận đất 6 thiếu binh: không bản nào được gọi đội là đầy hoặc gần đầy binh ở trận này.
+  for (const text of [...log.recommendations.map((item) => item.note), ...Object.values(FIELD_LOG_RECOMMENDATIONS.zh), ...Object.values(FIELD_LOG_RECOMMENDATIONS.ja)]) {
+    assert.doesNotMatch(text, /gần đầy|接近满|ほぼ満員/);
+  }
   for (const variant of team.variants) assert.equal(Object.hasOwn(variant, "fieldLog"), false);
 });
 
@@ -384,6 +411,14 @@ test("official recommended teams carry the Tiến cử flag and an explicit imag
   flagged.forEach((team, index) => assert.equal(team.recommendedOrder, index + 1, team.id));
   for (const team of data.teams.filter((item) => item.recommended !== true)) {
     assert.equal(Object.hasOwn(team, "recommendedOrder"), false, team.id);
+  }
+});
+
+test("every Khai hoang field log links only local screenshots under /khai-hoang-log/", () => {
+  for (const team of data.teams.filter((item) => item.fieldLog)) {
+    for (const image of team.fieldLog.phases.flatMap((phase) => phase.battles).flatMap((item) => item.images || [])) {
+      assert.match(image.url, /^\/khai-hoang-log\/[a-z0-9-]+\.webp$/, `${team.id}: ${image.url}`);
+    }
   }
 });
 

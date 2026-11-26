@@ -574,7 +574,7 @@
             "heroLevelMin": 8,
             "heroLevelMax": 10,
             "landLevel": 4,
-            "note": "Ba trận thắng đất cấp 4; ảnh báo cáo trận đã hết hạn trong game nên chỉ lưu số liệu chữ. Trận thủ Cung hao ít nhất; hai trận gặp thủ Kỵ mất nhiều hơn.",
+            "note": "Ba trận thắng đất cấp 4; ảnh báo cáo trận đã hết hạn trong game nên chỉ lưu số liệu chữ. Hai trận gặp thủ Kỵ không ghi số binh xuất quân hay cấp thủ quân nên không so được với trận thủ Cung.",
             "battles": [
               {
                 "id": "p1-thu-cung",
@@ -635,6 +635,55 @@
             "note": "Hai trận thắng đất cấp 5 khi tướng cấp 20, đều xuất quân đầy 6.000 binh. Log chưa có trận đất 5 ở cấp tướng thấp hơn.",
             "battles": [
               {
+                "id": "p2-899-1444",
+                "x": 899,
+                "y": 1444,
+                "heroLevel": 20,
+                "won": true,
+                "defenders": [
+                  {
+                    "hero": "Phan Chương",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Hàn Đương",
+                    "unitType": "Cung"
+                  },
+                  {
+                    "hero": "Tưởng Khâm",
+                    "unitType": "Cung"
+                  }
+                ],
+                "defenderLevel": 27,
+                "garrisonPerHero": 3000,
+                "troopsBefore": 6000,
+                "troopsAfter": 5006,
+                "wounded": 469,
+                "exp": 14775,
+                "skills": [
+                  {
+                    "hero": "Lục Tốn",
+                    "tactic": "Hỏa Thiêu Liên Doanh",
+                    "fired": 3,
+                    "kills": 5376
+                  },
+                  {
+                    "hero": "Tả Từ",
+                    "tactic": "Kim Đơn Mật Thuật",
+                    "fired": 1,
+                    "rescued": 196
+                  }
+                ],
+                "images": [
+                  {
+                    "url": "/khai-hoang-log/luc-ton-dat5-899-1444-ket-qua.webp",
+                    "kind": "summary",
+                    "width": 1296,
+                    "height": 728
+                  }
+                ]
+              },
+              {
                 "id": "p2-891-1449",
                 "x": 891,
                 "y": 1449,
@@ -673,6 +722,12 @@
                     "tactic": "Trầm Đoạn Cơ Mưu",
                     "fired": 1,
                     "kills": 826
+                  },
+                  {
+                    "hero": "Tả Từ",
+                    "tactic": "Kim Đơn Mật Thuật",
+                    "fired": 1,
+                    "rescued": 193
                   }
                 ],
                 "images": [
@@ -689,49 +744,6 @@
                     "height": 728
                   }
                 ]
-              },
-              {
-                "id": "p2-899-1444",
-                "x": 899,
-                "y": 1444,
-                "heroLevel": 20,
-                "won": true,
-                "defenders": [
-                  {
-                    "hero": "Phan Chương",
-                    "unitType": "Cung"
-                  },
-                  {
-                    "hero": "Hàn Đương",
-                    "unitType": "Cung"
-                  },
-                  {
-                    "hero": "Tưởng Khâm",
-                    "unitType": "Cung"
-                  }
-                ],
-                "defenderLevel": 27,
-                "garrisonPerHero": 3000,
-                "troopsBefore": 6000,
-                "troopsAfter": 5006,
-                "wounded": 469,
-                "exp": 14775,
-                "skills": [
-                  {
-                    "hero": "Lục Tốn",
-                    "tactic": "Hỏa Thiêu Liên Doanh",
-                    "fired": 3,
-                    "kills": 5376
-                  }
-                ],
-                "images": [
-                  {
-                    "url": "/khai-hoang-log/luc-ton-dat5-899-1444-ket-qua.webp",
-                    "kind": "summary",
-                    "width": 1296,
-                    "height": 728
-                  }
-                ]
               }
             ]
           },
@@ -741,7 +753,7 @@
             "heroLevelMin": 28,
             "heroLevelMax": 28,
             "landLevel": 6,
-            "note": "Một trận thắng mỏ Đá cấp 6; chỉ có một mẫu nên chưa kết luận được gì ngoài mức hao của trận này.",
+            "note": "Một trận thắng mỏ Đá cấp 6 khi đội thiếu binh (5.992/8.400); chỉ có một mẫu nên chưa kết luận được gì ngoài mức hao của trận này.",
             "battles": [
               {
                 "id": "p3-914-1450",
@@ -810,7 +822,7 @@
         "recommendations": [
           {
             "id": "dat4-som",
-            "note": "Đất 4 đánh được từ tướng cấp 8 với đội đầy 2.400 binh. Ở cấp 8–10 nên ưu tiên đất thủ Cung, để đất thủ Kỵ sau: trận gặp thủ Cung hao 178 binh (59 thương binh, chết 119, tức 5,0%; n=1), hai trận gặp thủ Kỵ hao 483 và 436 binh (n=2), gấp 2,4–2,7 lần."
+            "note": "Đất 4 đánh được từ tướng cấp 8 với đội đầy 2.400 binh: trận thủ Cung (cấp 15, 3×1.800) hao 178 binh, gồm 59 thương binh, chết 119, tức 5,0% (n=1). Hai trận gặp thủ Kỵ ở cấp 9–10 hao 483 và 436 binh nhưng không ghi số binh xuất quân hay cấp thủ quân; ở đất 5 thì trận thủ Cung lại chết nhiều hơn trận thủ Kỵ. Log chưa đủ để chọn loại thủ quân nên đánh trước."
           },
           {
             "id": "dat5-cap-20",
@@ -818,15 +830,15 @@
           },
           {
             "id": "dat6-28",
-            "note": "Đất 6 đã thắng ở tướng cấp 28 với gần đầy binh, nhưng trận duy nhất (thủ Cung cấp 30, 3×5.000) chết 734 binh, tức 12,2% (n=1). Vì vậy mỗi lượt chỉ lấy mỏ cần thiết, ví dụ 1 mỏ Đá 6 cho Đồn Điền."
+            "note": "Đất 6 đã thắng ở tướng cấp 28 dù đội chỉ có 5.992 binh, khoảng 71% mức đầy 8.400 (log cho mốc 100 binh mỗi cấp mỗi tướng: đầy 2.400 ở cấp 8, 6.000 ở cấp 20). Trận duy nhất này (thủ Cung cấp 30, 3×5.000) chết 734 binh, tức 12,2%, cao nhất log (n=1); chưa tách được phần do đất 6 và phần do thiếu binh. Vì vậy mỗi lượt chỉ lấy mỏ cần thiết, ví dụ 1 mỏ Đá 6 cho Đồn Điền."
           },
           {
             "id": "bo-sung-binh",
-            "note": "Bổ sung đầy binh trước trận: các trận có ghi số binh trong log đều xuất quân đầy hoặc gần đầy (2.400 ở cấp 8, 6.000 ở cấp 20, 5.992 ở cấp 28). Log chưa có trận thiếu binh để so sánh."
+            "note": "Bổ sung đầy binh trước trận: ba trận xuất quân đầy (2.400 ở cấp 8, 6.000 ở cấp 20) chết 3,3–8,8%; trận duy nhất thiếu binh (5.992/8.400 ở cấp 28) chết 12,2%. Trận thiếu binh lại là trận đất 6 nên mẫu chưa tách được hai yếu tố; đây là lý do thận trọng, chưa phải số đo hiệu quả của việc bổ sung binh."
           },
           {
             "id": "cong-diem",
-            "note": "Cộng điểm: Lục Tốn và Tả Từ dồn Trí; Trương Xuân Hoa giữ Tốc cao hơn Tốc Lục Tốn nhân 1,2 để ra đòn trước, còn lại dồn Trí (log: Tốc Trương Xuân Hoa 82,5 so với Lục Tốn 59,9)."
+            "note": "Cộng điểm: Lục Tốn và Tả Từ dồn Trí; Trương Xuân Hoa cần Tốc cao hơn Lục Tốn để ra đòn trước, còn lại dồn Trí. Log không ghi chỉ số thuộc tính nên chưa có mốc Tốc cụ thể."
           }
         ]
       }

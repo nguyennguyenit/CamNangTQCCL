@@ -653,25 +653,28 @@ const percentText = (value) => L(value.toFixed(1).replace(".", ","), value.toFix
 
 /**
  * Bản zh/ja của các khuyến nghị trong `fieldLog.recommendations` (khoá theo `id`; bản vi lấy từ `note` của dữ liệu).
- * Mọi số trong khuyến nghị phải tính lại được từ các trận đã ghi trong `fieldLog.phases`; test khoá đủ bản dịch cho mỗi `id`.
+ * Mọi số trong khuyến nghị phải suy ra được từ các trận đã ghi trong `fieldLog.phases`; test khoá đủ bản dịch cho mỗi `id`
+ * và buộc ba bản vi/zh/ja dùng cùng một tập số (số đếm như "hai trận" viết bằng chữ ở mọi bản).
  */
 export const FIELD_LOG_RECOMMENDATIONS = Object.freeze({
   zh: Object.freeze({
-    "dat4-som": "4级地：武将 8 级、带满 2400 兵即可打。8–10 级时优先打弓兵守军的地，骑兵守军的地放后面：弓兵守军一战损兵 178（伤兵 59，阵亡 119，即 5.0%；n=1），骑兵守军两战损兵 483 与 436（n=2），是前者的 2.4–2.7 倍。",
-    "dat5-cap-20": "5级地（守军 27 级，3×3000）：武将 20 级带满 6000 兵已能打下：骑兵守军一战阵亡 198（3.3%），弓兵守军一战阵亡 525（8.8%）（n=2）。日志里没有更低等级打 5 级地的记录，所以还无法确定最早可打的等级。",
-    "dat6-28": "6级地：武将 28 级、兵接近满员时已能打下，但唯一一战（弓兵守军 30 级，3×5000）阵亡 734，即 12.2%（n=1），所以每次只拿必要的地，例如 1 块 6 级石料地供屯田。",
-    "bo-sung-binh": "战前补满兵：日志中有兵力记录的战斗都是满兵或接近满兵出战（8 级 2400、20 级 6000、28 级 5992）。日志里还没有缺兵出战的记录可供对比。",
-    "cong-diem": "加点：陸遜与左慈全加智力；張春華的速度保持高于陸遜速度的 1.2 倍以抢先出手，其余加智力（日志：張春華速度 82.5，陸遜 59.9）。",
+    "dat4-som": "4级地：武将 8 级、带满 2,400 兵即可打：弓兵守军（15 级，3×1,800）一战损兵 178，其中伤兵 59、阵亡 119，即 5.0%（n=1）。骑兵守军两战（武将 9–10 级）损兵 483 与 436，但没有记录出兵数和守军等级；而在 5 级地，弓兵守军一战的阵亡反而多于骑兵守军。日志还不足以判断先打哪种守军。",
+    "dat5-cap-20": "5级地（守军 27 级，3×3,000）：武将 20 级带满 6,000 兵已能打下：骑兵守军一战阵亡 198（3.3%），弓兵守军一战阵亡 525（8.8%）（n=2）。日志里没有更低等级打 5 级地的记录，所以还无法确定最早可打的等级。",
+    "dat6-28": "6级地：武将 28 级时已能打下，但全队只有 5,992 兵，约为满员 8,400 的 71%（日志显示每名武将每级 100 兵：8 级满员 2,400，20 级满员 6,000）。这唯一一战（弓兵守军 30 级，3×5,000）阵亡 734，即 12.2%，为日志最高（n=1），无法区分是 6 级地还是缺兵造成的。所以每次只拿必要的地，例如 1 块 6 级石料地供屯田。",
+    "bo-sung-binh": "战前补满兵：满兵出战的三战（8 级 2,400、20 级 6,000）阵亡 3.3–8.8%；唯一缺兵的一战（28 级 5,992/8,400）阵亡 12.2%。但缺兵的这一战同时是 6 级地，样本无法区分两个因素；这是谨慎的理由，还不是补兵效果的量化证据。",
+    "cong-diem": "加点：陸遜与左慈全加智力；張春華的速度需高于陸遜以抢先出手，其余加智力。日志没有记录属性数值，所以还没有具体的速度门槛。",
   }),
   ja: Object.freeze({
-    "dat4-som": "4級地：武将Lv8・兵2,400満員から攻略できる。Lv8〜10では弓兵守備の土地を優先し、騎兵守備の土地は後回しに。弓兵守備との1戦は損失178（負傷兵59、戦死119＝5.0%、n=1）、騎兵守備との2戦は損失483と436（n=2）で、2.4〜2.7倍。",
+    "dat4-som": "4級地：武将Lv8・兵2,400満員から攻略できる。弓兵守備（Lv15、3×1,800）との1戦は損失178、うち負傷兵59・戦死119＝5.0%（n=1）。騎兵守備との二戦（武将Lv9〜10）は損失483と436だが、出陣兵数と守備レベルの記録がない。5級地では逆に弓兵守備の方が戦死が多かった。どの守備兵種を先に攻めるべきかはログからはまだ判断できない。",
     "dat5-cap-20": "5級地（守備Lv27、3×3,000）：武将Lv20・兵6,000満員で攻略済み。騎兵守備は戦死198（3.3%）、弓兵守備は戦死525（8.8%）（n=2）。より低いレベルで5級地を攻めた記録がないため、最も早く攻略できるレベルはまだ判断できない。",
-    "dat6-28": "6級地：武将Lv28・兵ほぼ満員で攻略済みだが、唯一の1戦（弓兵守備Lv30、3×5,000）で戦死734＝12.2%（n=1）。そのため必要な土地だけを取る（例：屯田用の6級石材地を1つ）。",
-    "bo-sung-binh": "戦闘前に兵を満員まで補充する：兵数を記録した戦闘はすべて満員かほぼ満員で出陣した（Lv8で2,400、Lv20で6,000、Lv28で5,992）。兵が不足した状態の記録はまだなく、比較はできない。",
-    "cong-diem": "加点：陸遜と左慈は知力に全振り。張春華は速度を陸遜の1.2倍以上に保って先に行動させ、残りは知力へ（ログ：張春華の速度82.5、陸遜59.9）。",
+    "dat6-28": "6級地：武将Lv28で攻略済みだが、部隊の兵は5,992で満員8,400の約71%（ログでは武将1人あたりLv×100が満員：Lv8で2,400、Lv20で6,000）。唯一のこの1戦（弓兵守備Lv30、3×5,000）は戦死734＝12.2%でログ中最多（n=1）。6級地のせいか兵不足のせいかは切り分けられない。そのため必要な土地だけを取る（例：屯田用の6級石材地を1つ）。",
+    "bo-sung-binh": "戦闘前に兵を満員まで補充する：満員で出陣した三戦（Lv8で2,400、Lv20で6,000）は戦死3.3〜8.8%、唯一兵が不足していた一戦（Lv28で5,992/8,400）は戦死12.2%。ただし不足の一戦は6級地でもあり、二つの要因を切り分けられない。慎重を期す理由であって、補充の効果を測った数字ではない。",
+    "cong-diem": "加点：陸遜と左慈は知力に全振り。張春華は速度を陸遜より高くして先に行動させ、残りは知力へ。ログに能力値の記録がないため、具体的な速度の目安はまだない。",
   }),
 });
 const FIELD_LOG_REGION = Object.freeze({ zh: { "Ba Thục": "巴蜀" }, ja: { "Ba Thục": "巴蜀" } });
+/** Chữ Hán của tướng thủ đất không có trong `heroes-dict.json` (zh và ja dùng cùng chữ). */
+const FIELD_LOG_DEFENDER_NAMES = Object.freeze({ "Lạc Thống": "駱統", "Lăng Tháo": "凌操", "Đới Lăng": "戴陵" });
 
 /**
  * Số binh chết của một trận: `lost` là tổng hao (gồm cả thương binh, như cột "Tổn thất" của báo cáo trận), nên chết =
@@ -700,10 +703,12 @@ function fieldLogBattleTree(battle) {
     L(`Tướng cấp ${battle.heroLevel}`, `武将 ${battle.heroLevel} 级`, `武将 Lv${battle.heroLevel}`),
     battle.won ? L("thắng", "胜", "勝利") : L("thua", "败", "敗北"),
   ].filter(Boolean).join(" · ");
-  // Tướng thủ chưa có tên trong từ điển thì bản zh/ja bỏ tên đó (thêm "…") thay vì hiện dấu "—" hay tên Việt.
-  const defenderNames = (battle.defenders || []).map((item) => seatName(item.hero));
-  const knownDefenders = defenderNames.filter((name) => name !== UNRESOLVED_NAME);
-  const defenders = knownDefenders.length ? `${knownDefenders.join(" · ")}${knownDefenders.length < defenderNames.length ? " …" : ""}` : "";
+  // Bản zh/ja: tướng thủ không có trong từ điển thì tra bảng riêng, vẫn không có thì giữ chỗ bằng "…" (không hiện tên Việt).
+  const defenderNames = (battle.defenders || []).map((item) => {
+    const name = seatName(item.hero);
+    return name === UNRESOLVED_NAME ? FIELD_LOG_DEFENDER_NAMES[item.hero] ?? "…" : name;
+  });
+  const defenders = defenderNames.some((name) => name !== "…") ? defenderNames.join(" · ") : "";
   const garrison = [
     battle.defenders?.[0]?.unitType ? unitLabel(battle.defenders[0].unitType) : null,
     battle.defenderLevel ? L(`cấp ${battle.defenderLevel}`, `${battle.defenderLevel} 级`, `Lv${battle.defenderLevel}`) : null,
@@ -746,7 +751,7 @@ function fieldLogGallery(battles) {
       t("a", {
         class: "kh-fieldlog-shot-link", href: image.url, target: "_blank", rel: "noopener",
         title: L("Mở ảnh gốc ở tab mới", "在新标签页打开原图", "新しいタブで元画像を開く"),
-      }, [t("img", { src: image.url, alt: caption, width: image.width, height: image.height, loading: "lazy", decoding: "async" })]),
+      }, [t("img", { src: image.url, alt: L("Ảnh chụp báo cáo trận", "战报截图", "戦闘レポートの画像"), width: image.width, height: image.height, loading: "lazy", decoding: "async" })]),
       t("figcaption", {}, caption),
     ]);
   }));
@@ -761,11 +766,13 @@ function fieldLogGallery(battles) {
 function fieldLogTree(log) {
   if (!log?.phases?.length) return null;
   const range = (phase) => (phase.heroLevelMin === phase.heroLevelMax ? `${phase.heroLevelMin}` : `${phase.heroLevelMin}–${phase.heroLevelMax}`);
+  // Ngày trong data viết kiểu vi "dd/mm/yyyy"; bản zh/ja đổi thành "yyyy/mm/dd".
+  const ymd = (period) => String(period).replace(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, (_, d, m, y) => `${y}/${m}/${d}`);
   const phases = log.phases.map((phase, index) => t("div", { class: "kh-fieldlog-phase" }, [
     t("h3", {}, L(
       `Giai đoạn ${index + 1} · Tướng cấp ${range(phase)} đánh đất ${phase.landLevel} · ${phase.period}`,
-      `阶段 ${index + 1} · ${range(phase)} 级武将打 ${phase.landLevel} 级地 · ${phase.period}`,
-      `段階 ${index + 1} · Lv${range(phase)} 武将で ${phase.landLevel}級地 · ${phase.period}`,
+      `阶段 ${index + 1} · ${range(phase)} 级武将打 ${phase.landLevel} 级地 · ${ymd(phase.period)}`,
+      `段階 ${index + 1} · Lv${range(phase)} 武将で ${phase.landLevel}級地 · ${ymd(phase.period)}`,
     )),
     viProse(phase.note) ? t("p", { class: "kh-guide-note" }, phase.note) : null,
     t("ul", { class: "kh-fieldlog-battles" }, (phase.battles || []).map(fieldLogBattleTree)),

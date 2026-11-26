@@ -392,7 +392,10 @@ for (const locale of ["vi", "zh", "ja"]) {
     assert.equal((html.match(/class="kh-fieldlog-phase"/g) || []).length, 3);
     assert.equal((html.match(/class="kh-fieldlog-shot"/g) || []).length, 5);
     assert.equal((html.match(/<img [^>]*loading="lazy"[^>]*decoding="async"[^>]*>/g) || []).length, 5);
-    assert.match(html, /<img src="\/khai-hoang-log\/luc-ton-dat5-891-1449-ket-qua\.webp" alt="[^"]+" width="1296" height="728"/);
+    // alt mô tả ảnh, không lặp lại chú thích (figcaption) để trình đọc màn hình không đọc hai lần.
+    const alt = { vi: "Ảnh chụp báo cáo trận", zh: "战报截图", ja: "戦闘レポートの画像" }[locale];
+    assert.equal((html.match(new RegExp(`<img [^>]*alt="${alt}"`, "g")) || []).length, 5);
+    assert.match(html, /<img src="\/khai-hoang-log\/luc-ton-dat5-899-1444-ket-qua\.webp" alt="[^"]+" width="1296" height="728"/);
     assert.match(html, /<a class="kh-fieldlog-shot-link" href="\/khai-hoang-log\/[^"]+" target="_blank" rel="noopener"/);
     assert.equal((html.match(/<figcaption>/g) || []).length, 5);
     assert.deepEqual([...html.matchAll(/data-recommendation="([^"]+)"/g)].map((match) => match[1]), team.fieldLog.recommendations.map((item) => item.id));
@@ -413,7 +416,11 @@ for (const locale of ["vi", "zh", "ja"]) {
     } else {
       const title = locale === "zh" ? "实战日志" : "実戦記録";
       assert.ok(text.includes(title), title);
-      assert.ok(text.includes("陸遜") && text.includes("張春華"));
+      // Tên tướng trong dòng kỹ năng tra từ điển; tướng thủ ngoài từ điển lấy từ bảng riêng, không còn bị lược.
+      assert.ok(text.includes("陸遜 · ") && text.includes("張春華 · ") && text.includes("左慈 · "));
+      for (const name of ["駱統", "凌操", "戴陵"]) assert.ok(text.includes(name), `${locale}: ${name}`);
+      assert.ok(text.includes("2026/11/14") && !text.includes("14/11/2026"), `${locale}: ngày năm/tháng/ngày`);
+      assert.ok(!text.includes("…"), `${locale}: tướng thủ bị lược`);
       assert.doesNotMatch(text.slice(text.indexOf(title)), /[ạảãàáâấầẩẫậắằẳẵặêếềểễệôốồổỗộơớờởỡợưứừửữự]/i);
     }
   });
