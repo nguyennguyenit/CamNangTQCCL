@@ -247,7 +247,7 @@ test("quay lại từ trang chi tiết khi đang lọc kho=rap-duoc&xep=de-rap: 
  * Mở lại danh sách `kho=rap-duoc&xep=de-rap` với snapshot quay lại cuộn tới 1500px và kho trên mây của tài khoản đủ mọi đội
  * mùa mặc định. `/api/me` chỉ trả lời khi test gọi `release()`; không gọi thì phiên treo mãi.
  */
-async function openListWithPendingRoster(page) {
+async function openListWithPendingRoster(page, disclosures = {}) {
   const listUrl = "/doi-chuan/?kho=rap-duoc&xep=de-rap";
   const roster = rosterFor(SEASON, records.filter((record) => record.sourceSeasonId === SEASON).map((record) => record.sourceConfigId));
   const { state } = mergeLocal(emptyCloudState("u-alice"), { ...roster, tacticOverrides: [] }, createRosterIdResolver(dicts), { now: 1_700_000_000_000 });
@@ -265,7 +265,7 @@ async function openListWithPendingRoster(page) {
       sessionStorage.setItem("e2e:seeded", "1");
       sessionStorage.setItem(returnKey, JSON.stringify(snapshot));
     }
-  }, [CLOUD_STORAGE_KEY, cloud, TEAM_RETURN_STORAGE_KEY, { version: 1, url: listUrl, scrollY: 1500, tab: "team-chuan", disclosures: {} }]);
+  }, [CLOUD_STORAGE_KEY, cloud, TEAM_RETURN_STORAGE_KEY, { version: 1, url: listUrl, scrollY: 1500, tab: "team-chuan", disclosures }]);
   await page.goto(listUrl);
   await expect(page.locator('body[data-boot="ready"]')).toBeAttached();
   return { release };
@@ -296,6 +296,27 @@ test("kéo thanh cuộn (không phát wheel/pointer/phím) trong lúc chờ kho:
   await page.evaluate(() => window.scrollTo({ top: 300, behavior: "instant" }));
   await page.waitForTimeout(3_500);
   expect(await scrollTop(page)).toBe(300);
+});
+
+test("kho về muộn sau hạn chờ mà người dùng đã đổi bộ lọc/focus: kho tới không áp lại trạng thái mở/đóng và focus cũ", async ({ page }) => {
+  const target = records.filter((record) => record.sourceSeasonId === SEASON)[30].sourceConfigId;
+  // Nút đóng/mở bộ lọc chỉ hiện ở màn hẹp.
+  await page.setViewportSize({ width: 390, height: 800 });
+  const { release } = await openListWithPendingRoster(page, { filters: true, target });
+  const filters = page.locator("#section-team-chuan-filters");
+  const targetLink = section(page).locator(`.reference-team-card[data-reference-key="${target}"] a[data-team-detail-link]`).first();
+  // Hạn chờ khôi phục snapshot trên danh sách chưa lọc: bộ lọc mở, thẻ đích nhận focus.
+  await expect(targetLink).toBeFocused({ timeout: 10_000 });
+  await expect(filters).not.toHaveClass(/\bcollapsed\b/);
+  // Người đọc đóng bộ lọc (focus chuyển sang nút), rồi kho mới tới và làm danh sách đổi.
+  const toggle = section(page).locator(".filter-collapse-toggle");
+  await toggle.click();
+  await expect(filters).toHaveClass(/\bcollapsed\b/);
+  release();
+  await waitForCoverage(page);
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve, 100))));
+  await expect(filters).toHaveClass(/\bcollapsed\b/);
+  await expect(toggle).toBeFocused();
 });
 
 test("thanh kho ẩn không chiếm chỗ: Đội khác không có thanh kho hiển thị", async ({ page }) => {

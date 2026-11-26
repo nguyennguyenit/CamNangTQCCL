@@ -678,6 +678,8 @@ export function createRecommendedSection({mount,family,onQuery,onReplaceQuery=on
       restoredDisclosures=disclosures;
       applyDisclosures(disclosures);
     },
+    /** Người dùng đã thao tác sau lần khôi phục: kho tới sau đó không áp lại trạng thái mở/đóng và focus cũ. */
+    forgetRestoredDisclosures(){restoredDisclosures=null;},
   };
 
   function applyDisclosures(disclosures={}) {

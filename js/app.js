@@ -374,7 +374,8 @@ async function main() {
     // danh sách hiện có; kho về muộn sau đó chỉ lọc lại danh sách, không cuộn lần nữa.
     const ROSTER_RESTORE_TIMEOUT_MS = 3000;
     const ROSTER_RESTORE_CANCEL_EVENTS = ['wheel', 'touchstart', 'keydown', 'pointerdown'];
-    const deferUntilRoster = restore => {
+    /** `forget`: bỏ trạng thái mở/đóng + thẻ đích mà mục giữ để áp lại khi kho tới (`setRoster`). */
+    const deferUntilRoster = (restore, forget) => {
       let timer = 0;
       // Kéo thanh cuộn bằng chuột không phát sự kiện nào ở trên: vị trí cuộn đã đổi so với lúc hoãn nghĩa là người dùng đã tự
       // cuộn, nên bước hoãn không kéo trang về vị trí cũ.
@@ -391,11 +392,21 @@ async function main() {
         stop();
         if (window.scrollY === scrollAtDefer) restore();
       };
+      // Đã khôi phục khi hết hạn, kho chưa tới: mục vẫn giữ snapshot để áp lại khi kho làm danh sách đổi. Người dùng thao
+      // tác (mở/đóng bộ lọc, chuyển focus, cuộn) trước lúc đó thì lựa chọn mới hơn thắng: bỏ snapshot, kho tới không áp lại.
+      const forgetOnInteraction = () => {
+        const onInteract = () => {
+          for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.removeEventListener(type, onInteract, true);
+          forget?.();
+        };
+        for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.addEventListener(type, onInteract, {capture: true, passive: true});
+      };
       // Bước hoãn đã bị thay/bỏ (người dùng đổi bộ lọc, lần khôi phục khác) thì chỉ dọn listener.
       const expire = () => {
         if (afterRoster !== run) return stop();
         afterRoster = null;
         run();
+        if (rosterPending) forgetOnInteraction();
       };
       for (const type of ROSTER_RESTORE_CANCEL_EVENTS) window.addEventListener(type, cancel, {capture: true, passive: true});
       timer = setTimeout(expire, ROSTER_RESTORE_TIMEOUT_MS);
@@ -487,7 +498,9 @@ async function main() {
         requestAnimationFrame(()=>window.scrollTo({top:snapshot.scrollY,behavior:'instant'}));
       };
       const listQuery = new URL(location.href).searchParams;
-      if (rosterPending && (listQuery.has('kho') || listQuery.has('xep'))) deferUntilRoster(restoreView);
+      if (rosterPending && (listQuery.has('kho') || listQuery.has('xep'))) {
+        deferUntilRoster(restoreView, () => sections[snapshot.tab || pageSection]?.forgetRestoredDisclosures?.());
+      }
       else restoreView();
     };
     function renderReference() {
