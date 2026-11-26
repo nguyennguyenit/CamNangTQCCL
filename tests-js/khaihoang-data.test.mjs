@@ -344,6 +344,11 @@ test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field l
   assert.deepEqual([battle("p2-891-1449").troopsBefore, battle("p2-891-1449").troopsAfter, battle("p2-891-1449").wounded, battle("p2-891-1449").exp], [6000, 5630, 172, 15243]);
   assert.deepEqual([battle("p2-899-1444").troopsAfter, battle("p2-899-1444").wounded, battle("p2-899-1444").exp], [5006, 469, 14775]);
   assert.deepEqual([battle("p3-914-1450").troopsBefore, battle("p3-914-1450").troopsAfter, battle("p3-914-1450").wounded, battle("p3-914-1450").exp], [5992, 4891, 367, 26610]);
+  // Dòng chiến pháp (tướng, phát động, diệt, cứu viện), chép từ thẻ chiến pháp của báo cáo trận.
+  const skillRows = (id) => battle(id).skills.map((skill) => [skill.hero, skill.fired, skill.kills ?? null, skill.rescued ?? null]);
+  assert.deepEqual(skillRows("p2-899-1444"), [["Lục Tốn", 3, 5376, null], ["Tả Từ", 1, null, 196]]);
+  assert.deepEqual(skillRows("p2-891-1449"), [["Lục Tốn", 2, 4921, null], ["Trương Xuân Hoa", 1, 826, null], ["Tả Từ", 1, null, 193]]);
+  assert.deepEqual(skillRows("p3-914-1450"), [["Lục Tốn", 4, 6688, null], ["Trương Xuân Hoa", 3, 3698, null], ["Tả Từ", 1, null, 1131]]);
   // Screenshots exist on disk with web-friendly, title-bar-free dimensions.
   assert.equal(images.length, 5);
   for (const image of images) {
@@ -392,6 +397,10 @@ test("Lục Tốn · Tả Từ · Trương Xuân Hoa keeps a three-phase field l
   // Trận đất 6 thiếu binh: không bản nào được gọi đội là đầy hoặc gần đầy binh ở trận này.
   for (const text of [...log.recommendations.map((item) => item.note), ...Object.values(FIELD_LOG_RECOMMENDATIONS.zh), ...Object.values(FIELD_LOG_RECOMMENDATIONS.ja)]) {
     assert.doesNotMatch(text, /gần đầy|接近满|ほぼ満員/);
+  }
+  // Số đếm (số trận, số tướng) ở bản zh/ja viết bằng chữ như bản vi ("hai trận"): "一战", "二戦", "一人".
+  for (const text of [...Object.values(FIELD_LOG_RECOMMENDATIONS.zh), ...Object.values(FIELD_LOG_RECOMMENDATIONS.ja)]) {
+    assert.doesNotMatch(text, /\d\s*(?:战|戦|人)/);
   }
   for (const variant of team.variants) assert.equal(Object.hasOwn(variant, "fieldLog"), false);
 });

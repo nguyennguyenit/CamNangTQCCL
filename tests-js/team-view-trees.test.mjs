@@ -421,7 +421,7 @@ for (const locale of ["vi", "zh", "ja"]) {
       for (const name of ["駱統", "凌操", "戴陵"]) assert.ok(text.includes(name), `${locale}: ${name}`);
       assert.ok(text.includes("2026/11/14") && !text.includes("14/11/2026"), `${locale}: ngày năm/tháng/ngày`);
       assert.ok(!text.includes("…"), `${locale}: tướng thủ bị lược`);
-      assert.doesNotMatch(text.slice(text.indexOf(title)), /[ạảãàáâấầẩẫậắằẳẵặêếềểễệôốồổỗộơớờởỡợưứừửữự]/i);
+      assert.doesNotMatch(text.slice(text.indexOf(title)), /[àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ]/i);
     }
   });
 }
