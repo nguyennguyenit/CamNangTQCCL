@@ -244,9 +244,9 @@ Server xử lý bản ghi `box` trước, rồi `group`, rồi mọi bản ghi c
 
 ## Payload lưu đội trên trang chi tiết
 
-- Đội chuẩn và Khai hoang (bản mặc định) dùng HTML dựng sẵn mà không tải dữ liệu đội (`adoptPrerendered` trong `js/team-detail.js`): nhúng lúc build `<script type="application/json" id="team-save-payload">`, escape như `jsonLd` (`src/lib/blog-posts.ts`).
+- Đội chuẩn, Đội khác và Khai hoang (bản mặc định) dùng HTML dựng sẵn mà không tải dữ liệu đội (`adoptPrerendered` trong `js/team-detail.js`): nhúng lúc build `<script type="application/json" id="team-save-payload">`, escape như `jsonLd` (`src/lib/blog-posts.ts`). Nháp Đội khác dựng từ đội đã bản địa hoá theo ngôn ngữ trang; `contentHash` tính trên đội nguồn thô.
 - Khai hoang: nhúng mọi biến thể, khóa theo id biến thể; nút lưu đọc biến thể **lúc bấm** từ URL hiện tại (`?variant`), vì đổi biến thể chỉ `replaceState` (`js/khaihoang-detail.js`).
-- Đội khác có `?variant` chỉ biết lúc chạy (`loadLegacy` trong `js/team-detail.js`): dựng đội nháp lúc bấm từ `admitted.legacyContent`, key `${legacyTeamId}~${legacyVariantId}`.
+- Đội khác: mỗi trang đúng một phương án (`data-legacy-variant-id`); URL cũ `?variant=<mã đó>` nhận lại bản dựng sẵn và lưu như trang canonical, key `${legacyTeamId}`. Bản lưu dở mang key cũ `${legacyTeamId}~${legacyVariantId}` của đúng phương án đó được dùng lại id (`legacyAliasKey`). `?variant` lạ: `loadLegacy` đối chiếu `other-teams.json` rồi báo lỗi.
 
 ## Hash nguồn và "Bản gốc đã cập nhật"
 

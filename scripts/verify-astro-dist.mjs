@@ -8,6 +8,7 @@ import { llmsDocuments } from "../src/lib/llms-documents.ts";
 import { websiteDisplayPublicationSnapshot } from "../src/lib/root-static-artifacts.ts";
 import { recommendedPublicationSnapshot } from "../src/lib/recommended-reference-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { LEGACY_VARIANT_GUARD_SCRIPT } from "../src/lib/legacy-variant-guard.ts";
 import { seasonPageCatalog, seasonRedirectRules } from "../src/lib/season-pages.ts";
 import { lookupDetailRoutes } from "../src/lib/lookup-detail-routes.ts";
 import { lookupBuildCorpus } from "../src/lib/lookup-pages.ts";
@@ -193,7 +194,8 @@ export function internalLinksWithReturnQuery(html, pageUrl) {
     }
     if (!INTERNAL_ORIGINS.has(url.origin)) continue;
     if (url.searchParams.has("from")) violations.push({ href, reason: "from" });
-    const detailPath = stripLocale(url.pathname);
+    // `/doi-khac/<handle>` thiếu `/` cuối vẫn tới cùng trang (máy chủ chuyển hướng), nên xét như có `/`.
+    const detailPath = stripLocale(url.pathname).replace(/([^/])$/u, "$1/");
     if (SINGLE_VARIANT_DETAIL_PATH.test(detailPath) && url.searchParams.has("variant")) violations.push({ href, reason: "variant" });
     if (TEAM_DETAIL_PATH.test(detailPath) && REL_NOREFERRER.test(values.get("rel") ?? "")) violations.push({ href, reason: "noreferrer" });
   }
@@ -862,6 +864,8 @@ export async function verifyAstroDist({
         `data-manifest-sha256="${catalog.manifestSha256}"`,
       ],
       save: { kind: "legacy", items: myTeamsKeys.legacy.get(entry.legacyTeamId) },
+      // Script inline duy nhất của thân trang: chỉ ẩn thân dựng sẵn khi `variant` khác phương án của trang.
+      inlineScripts: [LEGACY_VARIANT_GUARD_SCRIPT],
     })),
     ...catalog.khaiHoang.map((entry) => ({
       path: entry.htmlPath,
@@ -886,16 +890,23 @@ export async function verifyAstroDist({
     detailHeads[kind].set(value, path);
   };
   for (let start = 0; start < pages.length; start += 64) {
-    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save }) => {
+    const loaded = await Promise.all(pages.slice(start, start + 64).map(async ({ path, routePath, locale, entry, pins, save, inlineScripts }) => {
       const page = await readPage(path);
       claimHead("<title>", page.match(/<title>([^<]*)<\/title>/u)?.[1] ?? null, path);
       claimHead("meta description", page.match(/<meta\b(?=[^>]*\bname=["']description["'])[^>]*\bcontent="([^"]*)"/u)?.[1] ?? null, path);
-      return { path, routePath, locale, entry, pins, save, page };
+      return { path, routePath, locale, entry, pins, save, inlineScripts, page };
     }));
-    for (const { path, routePath, locale, entry, pins, save, page } of loaded) {
+    for (const { path, routePath, locale, entry, pins, save, inlineScripts, page } of loaded) {
       verifyLocalePair(page, path, locale, routePath, site);
+      // Pin nằm trên chính thẻ mở `#team-detail-root` (script và JS của trang đọc từ đó), không chỉ có đâu đó trong trang.
+      const root = page.match(/<article\b[^>]*\bid="team-detail-root"[^>]*>/u)?.[0] ?? "";
       for (const pin of pins) {
-        if (!page.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+        if (!root.includes(pin)) throw new Error(`Team detail page lacks its validated pin: ${path} (${pin})`);
+      }
+      // Script trong thân trang chi tiết đúng như nguồn: không có guard cũ ẩn mọi `?variant=` hay script lạ khác.
+      const articleScripts = [...(page.match(/<article\b[^>]*\bid="team-detail-root"[^]*?<\/article>/u)?.[0] ?? "").matchAll(/<script\b[^>]*>([^]*?)<\/script>/gu)].map((match) => match[1]);
+      if (JSON.stringify(articleScripts) !== JSON.stringify(inlineScripts ?? articleScripts)) {
+        throw new Error(`Team detail page carries unexpected inline scripts in its body: ${path}`);
       }
       if (!page.includes(`src="${entry}"`)) {
         throw new Error(`Team detail page does not load its own entry: ${path} (${entry})`);

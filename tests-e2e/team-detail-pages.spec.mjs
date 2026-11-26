@@ -404,6 +404,10 @@ test('an old ?variant= of the page itself keeps the prerendered body and drops t
   // Phương án duy nhất của trang: nội dung chính là bản dựng sẵn, URL về canonical (không khối "vân tay" của nhánh tải lại).
   await expect(page).toHaveURL(originalPath);
   await expect(page.locator('#team-detail-root')).not.toContainText(admitted.legacyVariantId);
+  // Link đổi ngôn ngữ theo URL đã sửa ngay, không đợi tương tác (crawler đọc DOM sau khi chạy JS).
+  for (const href of await page.locator('a[data-lang-switch]').evaluateAll(links=>links.map(link=>link.getAttribute('href')))) {
+    expect(href).not.toContain('variant=');
+  }
 
   await page.goto(`${originalPath}?variant=v-${'0'.repeat(64)}`);
   const alert=page.locator('#team-detail-status [role="alert"]');

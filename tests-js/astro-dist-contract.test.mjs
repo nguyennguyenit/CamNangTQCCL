@@ -18,6 +18,7 @@ import {
   websiteDisplayPublicationSnapshot,
 } from "../src/lib/root-static-artifacts.ts";
 import { teamDetailCatalog } from "../src/lib/team-detail-routes.ts";
+import { LEGACY_VARIANT_GUARD_SCRIPT } from "../src/lib/legacy-variant-guard.ts";
 import { DEFAULT_LOCALE, LOCALE_OG, LOCALE_PREFIX, localeFromPath, localePath, pick, stripLocale } from "../js/i18n.js";
 import { ANALYTICS_CONFIG } from "../js/config.js";
 import { HREFLANG, SITE_LOCALES } from "../src/lib/locale-routes.ts";
@@ -386,7 +387,7 @@ async function writeRecommendedFixture(projectDir, distDir, { legacyTeamsHash } 
     await mkdir(join(base, "doi-khac", LEGACY_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
       join(base, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html"),
-      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-variant-id="${LEGACY_VARIANT_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}</article>${savePayloadHtml("legacy", LEGACY_TEAM_ID)}<script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
+      `<!doctype html>${pairHead(locale, `/doi-khac/${LEGACY_ROUTE_SEGMENT}/`)}<article id="team-detail-root" data-legacy-team-id="${LEGACY_TEAM_ID}" data-legacy-variant-id="${LEGACY_VARIANT_ID}" data-legacy-teams-sha256="sha256:${sha256(teamsBytes)}" data-generation-id="${generationId}" data-manifest-sha256="${sha256(manifest)}">${PRERENDERED_DETAIL_BODY}<script>${LEGACY_VARIANT_GUARD_SCRIPT}</script></article>${savePayloadHtml("legacy", LEGACY_TEAM_ID)}<script type="module" src="/js/team-detail.js"></script>${COMMUNITY_MOUNT_HTML}\n`,
     );
     await mkdir(join(base, "khai-hoang", KHAIHOANG_ROUTE_SEGMENT), { recursive: true });
     await writeFile(
@@ -1764,6 +1765,8 @@ test("verifier link: link tới trang chi tiết có rel noreferrer bị báo v�
 test("verifier link: link tới trang chi tiết Đội chuẩn/Đội khác mang `variant` bị báo; Khai hoang và trang khác thì không", () => {
   for (const href of [
     "/doi-khac/x/?variant=v-1",
+    // Thiếu `/` cuối vẫn là cùng trang chi tiết.
+    "/doi-khac/x?variant=v-1",
     "/doi-khac/x/?variant=",
     "/zh/doi-khac/x/?variant=v-1#top",
     "/ja/doi-chuan/x/?variant=1",
@@ -1850,6 +1853,32 @@ test("dist verifier rejects an internal link that carries from or hides the refe
   await inject("doi-chuan/index.html", '<a href="https://example.com/?from=x" rel="noopener noreferrer" target="_blank">x</a>');
   await fixture.verify();
   await restore("doi-chuan/index.html");
+  await fixture.verify();
+});
+
+test("dist verifier pins the Đội khác variant on the detail root and accepts only the narrow variant guard in its body", async (t) => {
+  const fixture = await lookupDistFixture(t);
+  await fixture.verify();
+  const file = join(fixture.distDir, "doi-khac", LEGACY_ROUTE_SEGMENT, "index.html");
+  const html = await readFile(file, "utf8");
+  const pin = `data-legacy-variant-id="${LEGACY_VARIANT_ID}"`;
+  const guard = `<script>${LEGACY_VARIANT_GUARD_SCRIPT}</script>`;
+  const oldGuard = "<script>if (new URLSearchParams(location.search).has('variant')) document.getElementById('team-detail-body').hidden = document.getElementById('team-detail-badges').hidden = true;</script>";
+  for (const [mutated, pattern] of [
+    // Mã phương án chỉ còn trong chú thích, không trên `#team-detail-root`.
+    [html.replace(` ${pin}`, "").replace("<article", `<!-- ${pin} --><article`), /lacks its validated pin.*data-legacy-variant-id/u],
+    // Guard cũ ẩn mọi `?variant=` (kể cả mã của chính trang) thay cho guard hẹp.
+    [html.replace(guard, oldGuard), /unexpected inline scripts/u],
+    // Guard hẹp còn nhưng có thêm script ẩn thân.
+    [html.replace(guard, `${guard}${oldGuard}`), /unexpected inline scripts/u],
+    // Thiếu guard: mã lạ sẽ hiện thân dựng sẵn như thể là biến thể được xin.
+    [html.replace(guard, ""), /unexpected inline scripts/u],
+  ]) {
+    assert.notEqual(mutated, html);
+    await writeFile(file, mutated);
+    await assert.rejects(fixture.verify(), pattern);
+    await writeFile(file, html);
+  }
   await fixture.verify();
 });
 

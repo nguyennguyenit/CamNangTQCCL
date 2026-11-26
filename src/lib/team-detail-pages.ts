@@ -13,7 +13,7 @@ import { createRawNameResolver } from '../../js/website-display.js';
 import { legacyLabelZh } from '../../js/recommended-reference-state.js';
 import { holderDisplayName } from '../../js/recommended-reference-render.js';
 import { SOURCE_LABEL } from '../../js/render.js';
-import { fromKhaiHoang, fromLegacy, fromRecommended } from '../../js/my-teams-sources.js';
+import { fromKhaiHoang, fromLegacy, fromRecommended, legacySourceHash } from '../../js/my-teams-sources.js';
 import { readPublicArtifact, websiteDisplayPublicationSnapshot } from './root-static-artifacts.ts';
 import {
   detailTitleRanks,
@@ -24,7 +24,7 @@ import {
   type RecommendedRouteEntry,
   type TeamDetailRouteCatalog,
 } from './team-detail-routes.ts';
-import { prepare, recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
+import { localizedData, prepare, recommendedDetailParts, recommendedDetailText, type TeamDetailParts } from './team-ssr.ts';
 import { lookupDetailRoutes } from './lookup-detail-routes.ts';
 import { isOldSeason, seasonPages } from './season-pages.ts';
 import type { NamedPath } from './structured-data.ts';
@@ -378,6 +378,9 @@ export async function legacyDetailPaths(locale: SiteLocale) {
   const teams: Array<{ id: string; heroes?: Array<{ name?: string }> }> = json(website.publicFiles['teams.json']);
   const teamsById = new Map(teams.map((team) => [team.id, team]));
   const ids = await lookupIdResolver();
+  // Nháp "Lưu vào Đội của tôi" dựng từ đội đã bản địa hoá theo ngôn ngữ trang, như nội dung người đọc đang thấy (ghi chú chữ Hán
+  // đã có bản Việt thì lưu bản Việt); `contentHash` vẫn tính trên đội nguồn thô để khớp chỉ mục `my-teams-source-index.json`.
+  const localizedTeamsById = new Map((await localizedData('teams', locale) as Array<{ id: string }>).map((team) => [team.id, team]));
   const heroesById = new Map(teams.map((team) => [team.id, (team.heroes ?? []).map((hero) => hero?.name ?? '')]));
   const resolve = await sourceNameResolver(locale);
   const links = await heroLinkBuilder(locale);
@@ -409,11 +412,12 @@ export async function legacyDetailPaths(locale: SiteLocale) {
     ].filter(Boolean).join(' · ');
     const heroes = links((heroesById.get(entry.legacyTeamId) ?? []).map((name) => ({ raw: resolve(name), vi: name })));
     const sourceTeam = teamsById.get(entry.legacyTeamId);
-    if (!sourceTeam) throw new Error(`Legacy source team missing for the save payload: ${entry.legacyTeamId}`);
+    const shownTeam = localizedTeamsById.get(entry.legacyTeamId);
+    if (!sourceTeam || !shownTeam) throw new Error(`Legacy source team missing for the save payload: ${entry.legacyTeamId}`);
     const savePayload: TeamSavePayload = {
       schema: 1,
       kind: 'legacy',
-      items: { '': saveItem(fromLegacy(sourceTeam, ids, { legacyTeamId: entry.legacyTeamId, id: BUILD_DRAFT_ID })) },
+      items: { '': saveItem(fromLegacy(shownTeam, ids, { legacyTeamId: entry.legacyTeamId, id: BUILD_DRAFT_ID, contentHash: legacySourceHash(sourceTeam) })) },
     };
     const props: LegacyDetailProps = { entry, title: title(entry), pageLabel, heroes, savePayload, ...catalogPins(catalog) };
     return { params: { team: entry.routeSegment }, props };

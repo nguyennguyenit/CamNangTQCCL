@@ -49,12 +49,24 @@ export function embeddedBuilder({ doc = document, location = globalThis.location
   };
 }
 
+/**
+ * Khóa nguồn cũ của cùng nội dung: trang Đội khác nhúng phương án duy nhất của nó (`data-legacy-variant-id`); trước khi URL cũ
+ * `?variant=<mã đó>` được nhận lại như trang canonical, lưu từ đó mang key `<đội>~<mã>`. Bản lưu dở (chờ OAuth) mang key cũ
+ * vẫn là cùng một lần lưu, nên lưu lại từ key mới phải dùng lại id của nó, không thì bản lưu dở phát lại thành đội trùng.
+ */
+export function legacyAliasKey(draft, variantKey, doc = globalThis.document) {
+  if (draft.source.kind !== "legacy" || draft.source.key.includes("~")) return null;
+  const variantId = doc?.querySelector?.("#team-detail-root")?.dataset?.legacyVariantId;
+  return variantId ? `legacy:${variantKey(draft.source.key, variantId)}` : null;
+}
+
 /** Gắn `draft.id` ổn định cho nguồn; trả bản dựng kèm khóa nguồn. */
 async function prepare(build, source = "") {
   const built = await build();
-  const { newTeamId } = await import("./my-teams-sources.js");
+  const { newTeamId, variantKey } = await import("./my-teams-sources.js");
   const key = `${built.draft.source.kind}:${built.draft.source.key}`;
-  const pendingId = pendingIdForSource(key);
+  const alias = legacyAliasKey(built.draft, variantKey);
+  const pendingId = pendingIdForSource(key) ?? (alias ? pendingIdForSource(alias) : null);
   if (pendingId) draftIds.set(key, pendingId);
   else if (!draftIds.has(key)) draftIds.set(key, newTeamId());
   return { ...built, key, trackSource: source || trackSourceOf(built.draft), draft: { ...built.draft, id: draftIds.get(key) } };

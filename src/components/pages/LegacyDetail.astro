@@ -6,6 +6,7 @@ import { familyReturnHref } from '../../../js/team-detail-navigation.js';
 import { localePath, pick } from '../../../js/i18n.js';
 import type { LegacyDetailProps } from '../../lib/team-detail-pages';
 import { legacyDetailParts } from '../../lib/team-ssr';
+import { LEGACY_VARIANT_GUARD_SCRIPT } from '../../lib/legacy-variant-guard.ts';
 import { teamDetailJsonLd } from '../../lib/structured-data.ts';
 import { jsonLd } from '../../lib/blog-posts.ts';
 import type { SiteLocale } from '../../lib/locale-routes';
@@ -80,9 +81,9 @@ const structured = teamDetailJsonLd({
     </div>
 
     <div id="team-detail-body" data-prerendered set:html={bodyHtml}></div>
-    <!-- URL cũ xin biến thể khác phương án của trang: thân + huy hiệu dựng sẵn không phải nội dung được xin nên ẩn ngay, js/team-detail.js
-         đối chiếu rồi báo lỗi (không nháy sai nội dung). `?variant=` trùng phương án của trang thì giữ nguyên bản dựng sẵn. -->
-    <script is:inline>(function(r,v){if(v!==null&&v!==r.dataset.legacyVariantId)document.getElementById('team-detail-body').hidden=document.getElementById('team-detail-badges').hidden=true;})(document.getElementById('team-detail-root'),new URLSearchParams(location.search).get('variant'));</script>
+    <!-- URL cũ xin biến thể khác phương án của trang thì ẩn thân dựng sẵn tới khi js/team-detail.js báo lỗi; `?variant=` trùng phương án
+         của trang thì giữ nguyên (src/lib/legacy-variant-guard.ts). -->
+    <script is:inline set:html={LEGACY_VARIANT_GUARD_SCRIPT}></script>
   </article>
 
   <!-- Nháp đội để lưu vào "Đội của tôi" (docs/roster-sync.md § Payload lưu đội); escape như JSON-LD nên tên chứa </script> không phá thẻ. -->

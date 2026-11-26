@@ -172,6 +172,24 @@ test.describe("4–7 · lưu từ trang nguồn", () => {
     expect(team.source.contentHash).toBe(index[`legacy:${LEGACY_ID}`]);
   });
 
+  test("#6b lưu từ trang Đội khác có ghi chú chữ Hán đã có bản Việt: nháp lưu ghi chú như trang đang hiện, hash vẫn của nguồn", async ({ page, request }) => {
+    // team-intro-55: ghi chú nguồn chữ Hán (天公盾) có bản dịch Việt trong publication hiển thị.
+    const id = "team-intro-55";
+    const tables = await routes(request);
+    const mock = await mockRoster(page);
+    await page.goto(`/doi-khac/${encodeURIComponent(tables.l[id])}/`);
+    await expect(page.locator("#team-detail-body")).toBeVisible();
+    const shown = await page.locator("#team-detail-body").innerText();
+    await saveFromDialog(page);
+    const [team] = liveTeams(mock.server);
+    const general = team.notes?.general ?? "";
+    expect(general).not.toBe("");
+    expect(general).not.toMatch(/\p{Script=Han}/u);
+    for (const line of general.split("\n").filter(Boolean)) expect(shown).toContain(line.trim());
+    const index = await (await request.get("/my-teams-source-index.json")).json();
+    expect(team.source).toMatchObject({ kind: "legacy", key: id, contentHash: index[`legacy:${id}`] });
+  });
+
   test("#7 Khai hoang đổi chip biến thể rồi Lưu: đội của biến thể đang hiện", async ({ page, request }) => {
     const tables = await routes(request);
     const mock = await mockRoster(page);
